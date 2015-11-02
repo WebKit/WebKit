@@ -1334,9 +1334,9 @@ _llint_op_put_setter_by_id:
     dispatch(5)
 
 
-_llint_op_put_getter_setter:
+_llint_op_put_getter_setter_by_id:
     traceExecution()
-    callSlowPath(_llint_slow_path_put_getter_setter)
+    callSlowPath(_llint_slow_path_put_getter_setter_by_id)
     dispatch(6)
 
 

@@ -503,7 +503,7 @@ void JIT::emit_op_put_setter_by_id(Instruction* currentInstruction)
     callOperation(operationPutSetterById, regT0, m_codeBlock->identifier(currentInstruction[2].u.operand).impl(), options, regT1);
 }
 
-void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
+void JIT::emit_op_put_getter_setter_by_id(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
     int32_t attribute = currentInstruction[3].u.operand;

@@ -1173,6 +1173,7 @@
 		70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B0A9D01A9B66200001306A /* RuntimeFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70DC3E091B2DF2C700054299 /* IteratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */; };
 		70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DC3E081B2DF2C700054299 /* IteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		70DE9A091BE7D69E005D89D9 /* LLIntAssembly.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */; };
 		70EC0EC21AA0D7DA00B6AAFA /* JSStringIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70EC0EBC1AA0D7DA00B6AAFA /* JSStringIterator.cpp */; };
 		70EC0EC31AA0D7DA00B6AAFA /* JSStringIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70EC0EC61AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70EC0EC01AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp */; };
@@ -3196,6 +3197,7 @@
 		70B0A9D01A9B66200001306A /* RuntimeFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeFlags.h; sourceTree = "<group>"; };
 		70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorPrototype.cpp; sourceTree = "<group>"; };
 		70DC3E081B2DF2C700054299 /* IteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorPrototype.h; sourceTree = "<group>"; };
+		70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntAssembly.h; path = LLIntAssembly.h; sourceTree = "<group>"; };
 		70EC0EBC1AA0D7DA00B6AAFA /* JSStringIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringIterator.cpp; sourceTree = "<group>"; };
 		70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringIterator.h; sourceTree = "<group>"; };
 		70EC0EC01AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringIteratorPrototype.cpp; sourceTree = "<group>"; };
@@ -4988,6 +4990,7 @@
 				9928FF3918AC4AEC00B8CF12 /* JSReplayInputs.cpp */,
 				9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */,
 				A7C225CD1399849C00FF1662 /* KeywordLookup.h */,
+				70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */,
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
 				996B730C1BD9FA2C00331B84 /* ModuleLoaderObject.lut.h */,
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
@@ -7163,6 +7166,7 @@
 				A5C3A1A618C0490200C9593A /* JSGlobalObjectConsoleClient.h in Headers */,
 				A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */,
 				A57D23EA1891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h in Headers */,
+				70DE9A091BE7D69E005D89D9 /* LLIntAssembly.h in Headers */,
 				BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */,
 				A51007C1187CC3C600B38879 /* JSGlobalObjectInspectorController.h in Headers */,
 				A50E4B6418809DD50068A46D /* JSGlobalObjectRuntimeAgent.h in Headers */,
