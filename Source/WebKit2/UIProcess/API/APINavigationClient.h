@@ -81,8 +81,10 @@ public:
     virtual bool canAuthenticateAgainstProtectionSpace(WebKit::WebPageProxy&, WebKit::WebProtectionSpace*) { return false; }
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy*) { }
 
-    // FIXME: This function should not be part of this client.
+    // FIXME: These function should not be part of this client.
     virtual void processDidCrash(WebKit::WebPageProxy&) { }
+    virtual void processDidBecomeResponsive(WebKit::WebPageProxy&) { }
+    virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
 
     virtual RefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
 

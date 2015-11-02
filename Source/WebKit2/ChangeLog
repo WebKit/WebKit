@@ -1,3 +1,32 @@
+2015-11-02  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Add objC delegate callback for webProcessDidBecomeResponsive and webProcessDidBecomeUnresponsive.
+        https://bugs.webkit.org/show_bug.cgi?id=150778
+
+        Add methods into WKNavigationDelegatePrivate to notify WebKit client when web process becomes unresponsive
+        or responsive, which is reported by WebKit::ResponsivenessTimer.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/APINavigationClient.h: Add two new method processDidBecomeResponsive and processDidBecomeUnresponsive
+            to NavigationClient; they are called when WebKit::ResponsivenessTimer update its client's state.
+        (API::NavigationClient::processDidBecomeResponsive):
+        (API::NavigationClient::processDidBecomeUnresponsive):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Add two new delegate method to WKNavigationDelegatePrivate:
+            _webViewWebProcessDidBecomeResponsive: and _webViewWebProcessDidBecomeUnresponsive:
+        * UIProcess/Cocoa/NavigationState.h: Add new overriding methods processDidBecomeResponsive and processDidBecomeUnresponsive.
+            Also add a bool member for each method to indicate if the delegate has implement the related method.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate): Update the new bool members based on the delegate.
+        (WebKit::NavigationState::NavigationClient::processDidBecomeResponsive): Send the delegate message to navigationDelegate
+            if _webViewWebProcessDidBecomeResponsive: is implemented.
+        (WebKit::NavigationState::NavigationClient::processDidBecomeUnresponsive): Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive): Call navigationClient's processDidBecomeUnresponsive if the page proxy
+            has navigationClient.
+        (WebKit::WebPageProxy::processDidBecomeResponsive):  Call navigationClient's processDidBecomeResponsive if the page proxy
+            has navigationClient.
+
 2015-11-02  Beth Dakin  <bdakin@apple.com>
 
         Tapping and holding a link should have a share option

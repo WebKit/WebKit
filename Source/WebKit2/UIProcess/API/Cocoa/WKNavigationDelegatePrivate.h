@@ -51,6 +51,8 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 
 - (void)_webViewWebProcessDidCrash:(WKWebView *)webView;
+- (void)_webViewWebProcessDidBecomeResponsive:(WKWebView *)webView;
+- (void)_webViewWebProcessDidBecomeUnresponsive:(WKWebView *)webView;
 
 - (NSData *)_webCryptoMasterKeyForWebView:(WKWebView *)webView;
 
