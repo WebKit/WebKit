@@ -80,9 +80,10 @@ function continueTest1()
     var transaction = database.transaction("TestObjectStore", "readwrite");
     var objectStore = transaction.objectStore("TestObjectStore");
 
-    // Queue up a whole bunch of gets to keep the transaction alive for awhile
-    for (var i = 0; i < 10; ++i)
+    // Queue up some gets to keep the transaction alive long enough for the setTimeout to fire.
+    objectStore.get("foo").onsuccess = function() {
         objectStore.get("foo");
+    }
 
     var testWhileInactive = function() {
         try {

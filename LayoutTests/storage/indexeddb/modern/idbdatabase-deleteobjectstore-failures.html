@@ -100,11 +100,12 @@ function continueTest2()
         } catch(e) {
             alert("Failed to deleteObjectStore with a non-existent objectstore - " + e);
         }
-        
-        // Queue up a whole bunch of puts to keep the transaction alive for awhile
+
+        // Queue up some puts to keep the transaction alive long enough for the setTimeout to fire.
         var objectStore = versionTransaction.objectStore("TestObjectStore");
-        for (var i = 0; i < 10; ++i)
-            objectStore.put("AH AH AH AH AH", i + " puts");
+        objectStore.put("we will we will", 1).onsuccess = function() {
+            objectStore.put("rock you", 2);
+        }
         
         // After the versionChange transaction becomes inactive, but while it's still in-progress, try to delete the objectstore
         var tryInactiveDelete = function() 
