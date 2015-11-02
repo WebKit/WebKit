@@ -279,8 +279,17 @@ section#home > header > h2 {
     text-align: center;
 }
 
-section#home > options > label > input[type="number"] {
-   width: 50px;
+section#home input[type="number"] {
+    width: 70px;
+}
+ 
+section#home > suites input[type="number"] {
+    display: none;
+    float: right;
+}
+
+section#home > suites input[type="number"].selected {
+    display: inline;
 }
 
 /* -------------------------------------------------------------------------- */

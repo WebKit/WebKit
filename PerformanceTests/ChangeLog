@@ -1,5 +1,46 @@
 2015-11-01  Said Abou-Hallawa  <sabouhallawa@apple,com>
 
+        Add an option to make the graphics benchmark runs a specific test with fixed complexity
+        https://bugs.webkit.org/show_bug.cgi?id=150529
+
+        Reviewed by Darin Adler.
+
+        Beside each test in the suites tree, we are going to show the complexity
+        arithmetic mean of the of the last run in an edit control. Based on a
+        new option these edit controls will all be visible or hidden. If they are
+        visible their values can be changed. The benchmark runner if it run in
+        the non-adaptive mode will set the complexity of the test to the passed
+        value and will not change it ever. The animator will animate the test and
+        frame rate will also be measured.
+
+        * Animometer/runner/animometer.html: Add a new option for the non-adaptive mode.
+        
+        * Animometer/runner/resources/animometer.css:
+        (section#home input[type="number"]): Define the width of all the edit control in the <home> section.
+        (section#home > suites input[type="number"]): The edit controls in the <suites> box will be right aligned and hidden by default.
+        (section#home > suites input[type="number"].selected): When the class "selected" is added, the edit controls will be visible.
+        (section#home > options > label > input[type="number"]): Deleted.
+        
+        * Animometer/runner/resources/animometer.js:
+        (window.benchmarkRunnerClient.didFinishLastIteration): Update the local storage with the results of each test.
+        (window.optionsManager._adaptiveTestElement): Returns the checkbox for setting the adaptive test option.
+        (window.suitesManager._editElement):  Returns the edit element associated with each test element in the suites tree.
+        (window.suitesManager._editsElements): Returns a list of all the elements in the <suites> box.
+        (window.suitesManager._localStorageNameForTest): Change this function to take strings.
+        (window.suitesManager._createTestElement): Adds an edit control beside each test.
+        (window.suitesManager.updateEditsElementsState): Adds/Removes the 'selected' class to/from all the tests edit elements.
+        (window.suitesManager.updateUIFromLocalStorage): Reads the edit control value from the local storage.
+        (window.suitesManager.updateLocalStorageFromUI): Saves the edit control value to the local storage.
+        (window.suitesManager.updateLocalStorageFromJSON): Saves the last run results to the local storage.
+        (window.benchmarkController.initialize): Shows/Hides the test edit controls based on the adaptive test option.
+        (window.benchmarkController.onChangeAdaptiveTestCheckbox): An onchange event handler for the adaptive test checkbox.
+        
+        * Animometer/tests/resources/main.js: 
+        (Benchmark.prototype.update): Fix the complexity of the test if the running mode is non-adaptive test and desired complexity is not zero.
+        (window.runBenchmark): Add the test complexity as a new benchmark option.
+
+2015-11-01  Said Abou-Hallawa  <sabouhallawa@apple,com>
+
         Make the size of the benchmark canvas adaptive to the screen size and screen resolution
         https://bugs.webkit.org/show_bug.cgi?id=150530
 

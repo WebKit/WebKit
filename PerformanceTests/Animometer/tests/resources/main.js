@@ -179,7 +179,11 @@ Benchmark.prototype =
         }
 
         var tuneValue = 0;
-        if (!(this._isSampling && this.options["fix-test-complexity"])) {
+        if (this.options["complexity"] && !this.options["adaptive-test"]) {
+            // this.tune(0) returns the current complexity of the test.
+            tuneValue = this.options["complexity"] - this.tune(0);
+        }
+        else if (!(this._isSampling && this.options["fix-test-complexity"])) {
             // The relationship between frameRate and test complexity is inverse-proportional so we
             // need to use the negative of PIDController.tune() to change the complexity of the test.
             tuneValue = -this._controller.tune(currentFrameRate, timeDelta / 1000);
@@ -237,7 +241,9 @@ window.addEventListener("load", function()
 // This function is called from the suite controller run-callback when running the benchmark runner.
 window.runBenchmark = function(suite, test, options, recordTable, progressBar)
 {
-    var mergedOptions = Utilities.mergeObjects(options, Utilities.parseParameters());
-    window.benchmark = window.benchmarkClient.create(suite, test, mergedOptions, recordTable, progressBar);
+    var benchmarkOptions = { complexity: test.complexity };
+    benchmarkOptions = Utilities.mergeObjects(benchmarkOptions, options);
+    benchmarkOptions = Utilities.mergeObjects(benchmarkOptions, Utilities.parseParameters());
+    window.benchmark = window.benchmarkClient.create(suite, test, benchmarkOptions, recordTable, progressBar);
     return window.benchmark.run();
 }

@@ -47,6 +47,7 @@ window.benchmarkRunnerClient = {
         this.score = json[Strings["JSON_SCORE"]];
         this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]]);
         sectionsManager.showJSON("json", json[Strings["JSON_RESULTS"][0]][0]);
+        suitesManager.updateLocalStorageFromJSON(json[Strings["JSON_RESULTS"][0]][0]);
         benchmarkController.showResults();
     }
 }
@@ -142,6 +143,11 @@ window.optionsManager =
         return document.querySelectorAll("section#home > options input");;
     },
     
+    _adaptiveTestElement: function()
+    {
+        return document.querySelector("section#home > options #adaptive-test");;
+    },
+    
     updateUIFromLocalStorage: function()
     {
         var optionsElements = this._optionsElements();
@@ -197,9 +203,19 @@ window.suitesManager =
         return element.querySelector("input[type='checkbox']:not(.expand-button)");
     },
 
-    _localStorageNameForTest: function(suite, test)
+    _editElement: function(element)
     {
-        return suite.name + "/" + test.name;
+        return element.querySelector("input[type='number']");
+    },
+
+    _editsElements: function()
+    {
+        return document.querySelectorAll("section#home > suites input[type='number']");
+    },
+        
+    _localStorageNameForTest: function(suiteName, testName)
+    {
+        return suiteName + "/" + testName;
     },
 
     _updateSuiteCheckboxState: function(suiteCheckbox)
@@ -276,6 +292,7 @@ window.suitesManager =
 
         suiteCheckbox.testsElements.push(testElement);
         span.appendChild(document.createTextNode(" " + test.name));
+        DocumentExtension.createElement("input", { type: "number" }, testElement);
         return testElement;
     },
 
@@ -294,6 +311,20 @@ window.suitesManager =
         }, this);
     },
     
+    updateEditsElementsState: function()
+    {
+        var editsElements = this._editsElements();
+        var show = !optionsManager._adaptiveTestElement().checked;
+
+        for (var i = 0; i < editsElements.length; ++i) {
+            var editElement = editsElements[i];
+            if (show)
+                editElement.classList.add("selected");
+            else
+                editElement.classList.remove("selected");
+        }
+    },
+    
     updateUIFromLocalStorage: function()
     {
         var suitesElements = this._suitesElements();
@@ -305,14 +336,16 @@ window.suitesManager =
             
             suiteCheckbox.testsElements.forEach(function(testElement) {
                 var testCheckbox = this._checkboxElement(testElement);
+                var testEdit = this._editElement(testElement);
                 var test = testCheckbox.test;
                 
-                var str = localStorage.getItem(this._localStorageNameForTest(suite, test));
+                var str = localStorage.getItem(this._localStorageNameForTest(suite.name, test.name));
                 if (str === null)
                     return;
 
                 var value = JSON.parse(str);
                 testCheckbox.checked = value.checked;
+                testEdit.value = value.complexity;
             }, this);
 
             this._updateSuiteCheckboxState(suiteCheckbox);
@@ -334,13 +367,16 @@ window.suitesManager =
             var tests = [];
             suiteCheckbox.testsElements.forEach(function(testElement) {
                 var testCheckbox = this._checkboxElement(testElement);
+                var testEdit = this._editElement(testElement);
                 var test = testCheckbox.test;
                 
-                if (testCheckbox.checked)
+                if (testCheckbox.checked) {
+                    test.complexity = testEdit.value;
                     tests.push(test);
+                }
 
-                var value = { checked: testCheckbox.checked }; 
-                localStorage.setItem(this._localStorageNameForTest(suite, test), JSON.stringify(value));
+                var value = { checked: testCheckbox.checked, complexity: testEdit.value }; 
+                localStorage.setItem(this._localStorageNameForTest(suite.name, test.name), JSON.stringify(value));
             }, this);
 
             if (tests.length)
@@ -348,6 +384,22 @@ window.suitesManager =
         }
 
         return suites;
+    },
+    
+    updateLocalStorageFromJSON: function(iterationResults)
+    {
+        for (var suiteName in iterationResults[Strings["JSON_RESULTS"][1]]) {
+            var suiteResults = iterationResults[Strings["JSON_RESULTS"][1]][suiteName];
+
+            for (var testName in suiteResults[Strings["JSON_RESULTS"][2]]) {
+                var testResults = suiteResults[Strings["JSON_RESULTS"][2]][testName];
+                var data = testResults[Strings["JSON_EXPERIMENTS"][0]]
+                var complexity = Math.round(data[Strings["JSON_MEASUREMENTS"][0]]);
+
+                var value = { checked: true, complexity: complexity };
+                localStorage.setItem(this._localStorageNameForTest(suiteName, testName), JSON.stringify(value));
+            }
+        }
     }
 }
 
@@ -359,8 +411,14 @@ window.benchmarkController =
         optionsManager.updateUIFromLocalStorage();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
+        suitesManager.updateEditsElementsState();
     },
 
+    onChangeAdaptiveTestCheckbox: function()
+    {
+        suitesManager.updateEditsElementsState();
+    },
+    
     _runBenchmark: function(suites, options)
     {
         benchmarkRunnerClient.initialize(suites, options);
