@@ -1,3 +1,11 @@
+2015-11-02  Brian Burg  <bburg@apple.com>
+
+        Run sort-Xcode-project-file for the JavaScriptCore project.
+
+        Unreviewed. Many things were out of order following recent B3 commits.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2015-11-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Rename op_put_getter_setter to op_put_getter_setter_by_id
