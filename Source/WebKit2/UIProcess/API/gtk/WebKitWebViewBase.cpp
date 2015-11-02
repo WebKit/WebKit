@@ -65,6 +65,7 @@
 #include <glib/gi18n-lib.h>
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/glib/GMainLoopSource.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 

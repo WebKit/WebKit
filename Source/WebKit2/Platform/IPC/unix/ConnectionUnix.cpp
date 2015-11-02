@@ -148,7 +148,7 @@ void Connection::platformInvalidate()
         return;
 
 #if PLATFORM(GTK)
-    m_socketEventSource.cancel();
+    m_socketMonitor.stop();
 #elif PLATFORM(EFL)
     m_connectionQueue->unregisterSocketEventHandler(m_socketDescriptor);
 #endif
@@ -377,20 +377,20 @@ bool Connection::open()
     m_isConnected = true;
 #if PLATFORM(GTK)
     GRefPtr<GSocket> socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
-    m_socketEventSource.schedule("[WebKit] Connection::SocketEventHandler", [protectedThis] (GIOCondition condition) {
+    m_socketMonitor.start(socket.get(), G_IO_IN, m_connectionQueue->runLoop(), [protectedThis] (GIOCondition condition) -> gboolean {
         if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
             protectedThis->connectionDidClose();
-            return GMainLoopSource::Stop;
+            return G_SOURCE_REMOVE;
         }
 
         if (condition & G_IO_IN) {
             protectedThis->readyReadHandler();
-            return GMainLoopSource::Continue;
+            return G_SOURCE_CONTINUE;
         }
 
         ASSERT_NOT_REACHED();
-        return GMainLoopSource::Stop;
-    }, socket.get(), G_IO_IN, nullptr, m_connectionQueue->runLoop().mainContext());
+        return G_SOURCE_REMOVE;
+    });
 #elif PLATFORM(EFL)
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor,
         [protectedThis] {

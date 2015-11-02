@@ -1,3 +1,26 @@
+2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Remove support for GSocket main loop sources from GMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=150772
+
+        Reviewed by Žan Doberšek.
+
+        Add GSocketMonitor class to be used by Connection to monitor the
+        availability of the socket file descriptor instead of using a
+        GMainLoopSource.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/glib/GSocketMonitor.cpp: Added.
+        (IPC::GSocketMonitor::~GSocketMonitor):
+        (IPC::GSocketMonitor::socketSourceCallback):
+        (IPC::GSocketMonitor::start):
+        (IPC::GSocketMonitor::stop):
+        * Platform/IPC/glib/GSocketMonitor.h: Added.
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::open):
+        * PlatformGTK.cmake:
+
 2015-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use RunLoop in WorkQueue implementation

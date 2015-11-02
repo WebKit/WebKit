@@ -1,5 +1,26 @@
 2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Remove support for GSocket main loop sources from GMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=150772
+
+        Reviewed by Žan Doberšek.
+
+        It complicated the code just to make generic what is only used in
+        one place.
+
+        * wtf/glib/GMainLoopSource.cpp:
+        (WTF::GMainLoopSource::cancel): Deleted.
+        (WTF::GMainLoopSource::schedule): Deleted.
+        (WTF::GMainLoopSource::scheduleTimeoutSource): Deleted.
+        (WTF::GMainLoopSource::scheduleAfterDelay): Deleted.
+        (WTF::GMainLoopSource::finishVoidCallback): Deleted.
+        (WTF::GMainLoopSource::voidCallback): Deleted.
+        (WTF::GMainLoopSource::prepareBoolCallback): Deleted.
+        * wtf/glib/GMainLoopSource.h:
+        (WTF::GMainLoopSource::Context::operator=): Deleted.
+
+2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Remove delete on destroy GMainLoopSources
         https://bugs.webkit.org/show_bug.cgi?id=150771
 

@@ -53,7 +53,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#include <wtf/glib/GMainLoopSource.h>
+#include "GSocketMonitor.h"
 #endif
 
 namespace IPC {
@@ -337,7 +337,7 @@ private:
     size_t m_fileDescriptorsSize;
     int m_socketDescriptor;
 #if PLATFORM(GTK)
-    GMainLoopSource m_socketEventSource;
+    GSocketMonitor m_socketMonitor;
 #endif
 #elif OS(DARWIN)
     // Called on the connection queue.

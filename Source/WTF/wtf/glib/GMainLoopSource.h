@@ -33,8 +33,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/glib/GRefPtr.h>
 
-typedef struct _GSocket GSocket;
-
 namespace WTF {
 
 class GMainLoopSource {
@@ -60,8 +58,6 @@ public:
     WTF_EXPORT_PRIVATE virtual void scheduleAfterDelay(const char* name, std::function<bool()>&&, std::chrono::microseconds, int priority = G_PRIORITY_DEFAULT, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr);
     WTF_EXPORT_PRIVATE virtual void cancel();
 
-    WTF_EXPORT_PRIVATE void schedule(const char* name, std::function<bool(GIOCondition)>&&, GSocket*, GIOCondition, std::function<void()>&& destroyFunction = nullptr, GMainContext* = nullptr);
-
 protected:
     enum Status { Ready, Scheduled, Dispatching };
 
@@ -71,10 +67,8 @@ protected:
         {
             source = WTF::move(c.source);
             cancellable = WTF::move(c.cancellable);
-            socketCancellable = WTF::move(c.socketCancellable);
             voidCallback = WTF::move(c.voidCallback);
             boolCallback = WTF::move(c.boolCallback);
-            socketCallback = WTF::move(c.socketCallback);
             destroyCallback = WTF::move(c.destroyCallback);
             return *this;
         }
@@ -83,10 +77,8 @@ protected:
 
         GRefPtr<GSource> source;
         GRefPtr<GCancellable> cancellable;
-        GRefPtr<GCancellable> socketCancellable;
         std::function<void ()> voidCallback;
         std::function<bool ()> boolCallback;
-        std::function<bool (GIOCondition)> socketCallback;
         std::function<void ()> destroyCallback;
     };
 
@@ -101,11 +93,9 @@ protected:
 private:
     void scheduleIdleSource(const char* name, GSourceFunc, int priority, GMainContext*);
     void scheduleTimeoutSource(const char* name, GSourceFunc, int priority, GMainContext*);
-    bool socketCallback(GIOCondition);
 
     static gboolean voidSourceCallback(GMainLoopSource*);
     static gboolean boolSourceCallback(GMainLoopSource*);
-    static gboolean socketSourceCallback(GSocket*, GIOCondition, GMainLoopSource*);
 
 protected:
     Context m_context;

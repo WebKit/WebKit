@@ -54,8 +54,6 @@ void GMainLoopSource::cancel()
 
     m_status = Ready;
 
-    g_cancellable_cancel(m_context.socketCancellable.get());
-
     if (!m_context.source)
         return;
 
@@ -84,10 +82,8 @@ void GMainLoopSource::schedule(const char* name, std::function<void ()>&& functi
     m_context = {
         adoptGRef(g_idle_source_new()),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         WTF::move(function),
         nullptr, // boolCallback
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleIdleSource(name, reinterpret_cast<GSourceFunc>(voidSourceCallback), priority, context);
@@ -101,36 +97,11 @@ void GMainLoopSource::schedule(const char* name, std::function<bool ()>&& functi
     m_context = {
         adoptGRef(g_idle_source_new()),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         nullptr, // voidCallback
         WTF::move(function),
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleIdleSource(name, reinterpret_cast<GSourceFunc>(boolSourceCallback), priority, context);
-}
-
-void GMainLoopSource::schedule(const char* name, std::function<bool (GIOCondition)>&& function, GSocket* socket, GIOCondition condition, std::function<void ()>&& destroyFunction, GMainContext* context)
-{
-    cancel();
-
-    ASSERT(!m_context.source);
-    GCancellable* socketCancellable = g_cancellable_new();
-    m_context = {
-        adoptGRef(g_socket_create_source(socket, condition, socketCancellable)),
-        nullptr, // cancellable
-        adoptGRef(socketCancellable),
-        nullptr, // voidCallback
-        nullptr, // boolCallback
-        WTF::move(function),
-        WTF::move(destroyFunction)
-    };
-
-    ASSERT(m_status == Ready);
-    m_status = Scheduled;
-    g_source_set_name(m_context.source.get(), name);
-    g_source_set_callback(m_context.source.get(), reinterpret_cast<GSourceFunc>(socketSourceCallback), this, nullptr);
-    g_source_attach(m_context.source.get(), context);
 }
 
 void GMainLoopSource::scheduleTimeoutSource(const char* name, GSourceFunc sourceFunction, int priority, GMainContext* context)
@@ -153,10 +124,8 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()
     m_context = {
         adoptGRef(g_timeout_source_new(delay.count())),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         WTF::move(function),
         nullptr, // boolCallback
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(voidSourceCallback), priority, context);
@@ -170,10 +139,8 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()
     m_context = {
         adoptGRef(g_timeout_source_new(delay.count())),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         nullptr, // voidCallback
         WTF::move(function),
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(boolSourceCallback), priority, context);
@@ -187,10 +154,8 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()
     m_context = {
         adoptGRef(g_timeout_source_new_seconds(delay.count())),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         WTF::move(function),
         nullptr, // boolCallback
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(voidSourceCallback), priority, context);
@@ -204,10 +169,8 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()
     m_context = {
         adoptGRef(g_timeout_source_new_seconds(delay.count())),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         nullptr, // voidCallback
         WTF::move(function),
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(boolSourceCallback), priority, context);
@@ -250,10 +213,8 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<void ()
     m_context = {
         adoptGRef(createMicrosecondsTimeoutSource(delay.count())),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         WTF::move(function),
         nullptr, // boolCallback
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(voidSourceCallback), priority, context);
@@ -267,10 +228,8 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()
     m_context = {
         adoptGRef(createMicrosecondsTimeoutSource(delay.count())),
         nullptr, // cancellable
-        nullptr, // socketCancellable
         nullptr, // voidCallback
         WTF::move(function),
-        nullptr, // socketCallback
         WTF::move(destroyFunction)
     };
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(boolSourceCallback), priority, context);
@@ -351,40 +310,6 @@ bool GMainLoopSource::boolCallback()
     return retval;
 }
 
-bool GMainLoopSource::socketCallback(GIOCondition condition)
-{
-    if (!m_context.source)
-        return Stop;
-
-    Context context;
-    context = WTF::move(m_context);
-
-    ASSERT(context.socketCallback);
-    ASSERT(m_status == Scheduled || m_status == Dispatching);
-    m_status = Dispatching;
-
-    if (g_cancellable_is_cancelled(context.socketCancellable.get())) {
-        context.destroySource();
-        return Stop;
-    }
-
-    bool retval = context.socketCallback(condition);
-
-    if (m_status != Ready && !m_context.source) {
-        // m_status should reflect whether the GMainLoopSource has been rescheduled during dispatch.
-        ASSERT((!m_context.source && m_status == Dispatching) || m_status == Scheduled);
-        if (retval && !m_context.source)
-            m_context = WTF::move(context);
-        else if (!retval)
-            m_status = Ready;
-    }
-
-    if (context.source)
-        context.destroySource();
-
-    return retval;
-}
-
 gboolean GMainLoopSource::voidSourceCallback(GMainLoopSource* source)
 {
     source->voidCallback();
@@ -394,11 +319,6 @@ gboolean GMainLoopSource::voidSourceCallback(GMainLoopSource* source)
 gboolean GMainLoopSource::boolSourceCallback(GMainLoopSource* source)
 {
     return source->boolCallback() == Continue;
-}
-
-gboolean GMainLoopSource::socketSourceCallback(GSocket*, GIOCondition condition, GMainLoopSource* source)
-{
-    return source->socketCallback(condition) == Continue;
 }
 
 void GMainLoopSource::Context::destroySource()
