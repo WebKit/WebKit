@@ -178,13 +178,13 @@ static Optional<FontTraitsMask> computeTraitsMask(const StyleProperties& style)
     return static_cast<FontTraitsMask>(traitsMask);
 }
 
-static Ref<CSSFontFace> createFontFace(CSSValueList& srcList, FontTraitsMask traitsMask, Document* document, const StyleRuleFontFace* fontFaceRule, bool isInitiatingElementInUserAgentShadowTree)
+static Ref<CSSFontFace> createFontFace(CSSValueList& srcList, FontTraitsMask traitsMask, Document* document, const StyleRuleFontFace& fontFaceRule, bool isInitiatingElementInUserAgentShadowTree)
 {
     RefPtr<CSSFontFaceRule> rule;
 #if ENABLE(FONT_LOAD_EVENTS)
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=112116 - This CSSFontFaceRule has no parent.
     if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled())
-        rule = static_pointer_cast<CSSFontFaceRule>(fontFaceRule->createCSSOMWrapper());
+        rule = static_pointer_cast<CSSFontFaceRule>(fontFaceRule.createCSSOMWrapper());
 #else
     UNUSED_PARAM(fontFaceRule);
 #endif
@@ -203,7 +203,7 @@ static Ref<CSSFontFace> createFontFace(CSSValueList& srcList, FontTraitsMask tra
         foundSVGFont = item.isSVGFontFaceSrc() || item.svgFontFaceElement();
 #endif
         if (!item.isLocal()) {
-            Settings* settings = document ? document->frame() ? &document->frame()->settings() : 0 : 0;
+            Settings* settings = document ? document->settings() : nullptr;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item.isSupportedFormat() && document) {
                 CachedFont* cachedFont = item.cachedFont(document, foundSVGFont, isInitiatingElementInUserAgentShadowTree);
@@ -277,9 +277,9 @@ static Vector<Ref<CSSFontFace>> constructFamilyFontFaces(const String& familyNam
     return result;
 }
 
-void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule, bool isInitiatingElementInUserAgentShadowTree)
+void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace& fontFaceRule, bool isInitiatingElementInUserAgentShadowTree)
 {
-    const StyleProperties& style = fontFaceRule->properties();
+    const StyleProperties& style = fontFaceRule.properties();
     RefPtr<CSSValue> fontFamily = style.getPropertyCSSValue(CSSPropertyFontFamily);
     RefPtr<CSSValue> src = style.getPropertyCSSValue(CSSPropertySrc);
     RefPtr<CSSValue> unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);

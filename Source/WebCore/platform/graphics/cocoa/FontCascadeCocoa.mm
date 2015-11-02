@@ -719,21 +719,21 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
             if (font->platformData().orientation() == Vertical) {
                 if (isCJKIdeographOrSymbol(baseCharacter) && !font->hasVerticalGlyphs()) {
                     variant = BrokenIdeographVariant;
-                    font = font->brokenIdeographFont().get();
+                    font = &font->brokenIdeographFont();
                 } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientationVerticalRight) {
-                    Font* verticalRightFont = font->verticalRightOrientationFont().get();
-                    Glyph verticalRightGlyph = verticalRightFont->glyphForCharacter(baseCharacter);
+                    const Font& verticalRightFont = font->verticalRightOrientationFont();
+                    Glyph verticalRightGlyph = verticalRightFont.glyphForCharacter(baseCharacter);
                     if (verticalRightGlyph == baseCharacterGlyphData.glyph)
-                        font = verticalRightFont;
+                        font = &verticalRightFont;
                 } else {
-                    Font* uprightFont = font->uprightOrientationFont().get();
-                    Glyph uprightGlyph = uprightFont->glyphForCharacter(baseCharacter);
+                    const Font& uprightFont = font->uprightOrientationFont();
+                    Glyph uprightGlyph = uprightFont.glyphForCharacter(baseCharacter);
                     if (uprightGlyph != baseCharacterGlyphData.glyph)
-                        font = uprightFont;
+                        font = &uprightFont;
                 }
             }
         } else {
-            if (const Font* variantFont = font->variantFont(m_fontDescription, variant).get())
+            if (const Font* variantFont = font->variantFont(m_fontDescription, variant))
                 font = variantFont;
         }
 

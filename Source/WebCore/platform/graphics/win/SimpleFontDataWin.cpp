@@ -122,7 +122,7 @@ void Font::platformDestroy()
     delete m_scriptFontProperties;
 }
 
-PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
+RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
 {
     float scaledSize = scaleFactor * m_platformData.size();
     if (isCustomFont()) {

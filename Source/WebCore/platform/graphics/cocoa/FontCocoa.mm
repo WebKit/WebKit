@@ -245,7 +245,7 @@ void Font::platformInit()
         else
             xHeight = scaleEmToUnits(CGFontGetXHeight(m_platformData.cgFont()), unitsPerEm) * pointSize;
     } else
-        xHeight = verticalRightOrientationFont()->fontMetrics().xHeight();
+        xHeight = verticalRightOrientationFont().fontMetrics().xHeight();
 
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
     m_fontMetrics.setAscent(ascent);
@@ -308,7 +308,7 @@ void Font::platformDestroy()
 {
 }
 
-PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
+RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
 {
 #if !CORETEXT_WEB_FONTS
     if (isCustomFont()) {

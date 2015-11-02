@@ -50,7 +50,7 @@ public:
     SVGFontElement* associatedFontElement() const;
     void rebuildFontFace();
     
-    StyleRuleFontFace* fontFaceRule() const { return m_fontFaceRule.get(); }
+    const StyleRuleFontFace& fontFaceRule() const { return m_fontFaceRule.get(); }
 
 private:
     SVGFontFaceElement(const QualifiedName&, Document&);
@@ -63,7 +63,7 @@ private:
 
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
-    RefPtr<StyleRuleFontFace> m_fontFaceRule;
+    Ref<StyleRuleFontFace> m_fontFaceRule;
     SVGFontElement* m_fontElement;
 };
 

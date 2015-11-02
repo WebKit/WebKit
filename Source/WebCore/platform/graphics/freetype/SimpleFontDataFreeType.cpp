@@ -115,7 +115,7 @@ void Font::platformCharWidthInit()
     initCharWidths();
 }
 
-PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
+RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
 {
     ASSERT(m_platformData.scaledFont());
     FontDescription scaledFontDescription = fontDescription;

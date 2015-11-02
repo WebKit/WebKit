@@ -82,7 +82,7 @@ StyleInvalidationAnalysis::StyleInvalidationAnalysis(const Vector<StyleSheetCont
 
     m_ruleSets.resetAuthorStyle();
     for (auto& sheet : sheets)
-        m_ruleSets.authorStyle()->addRulesFromSheet(sheet, mediaQueryEvaluator);
+        m_ruleSets.authorStyle()->addRulesFromSheet(*sheet, mediaQueryEvaluator);
 
     m_hasShadowPseudoElementRulesInAuthorSheet = m_ruleSets.authorStyle()->hasShadowPseudoElementRules();
 }

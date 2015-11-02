@@ -50,7 +50,7 @@ void DocumentRuleSets::initUserStyle(ExtensionStyleSheets& extensionStyleSheets,
 {
     auto tempUserStyle = std::make_unique<RuleSet>();
     if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
-        tempUserStyle->addRulesFromSheet(&pageUserSheet->contents(), medium, &resolver);
+        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), medium, &resolver);
     collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
     collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
@@ -61,7 +61,7 @@ void DocumentRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSSt
 {
     for (unsigned i = 0; i < userSheets.size(); ++i) {
         ASSERT(userSheets[i]->contents().isUserStyleSheet());
-        userStyle.addRulesFromSheet(&userSheets[i]->contents(), medium, &resolver);
+        userStyle.addRulesFromSheet(userSheets[i]->contents(), medium, &resolver);
     }
 }
 
@@ -91,7 +91,7 @@ void DocumentRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet
         ASSERT(!cssSheet->disabled());
         if (cssSheet->mediaQueries() && !medium->eval(cssSheet->mediaQueries(), resolver))
             continue;
-        m_authorStyle->addRulesFromSheet(&cssSheet->contents(), *medium, resolver);
+        m_authorStyle->addRulesFromSheet(cssSheet->contents(), *medium, resolver);
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
     }
     m_authorStyle->shrinkToFit();
