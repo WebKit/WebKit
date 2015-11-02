@@ -1,3 +1,11 @@
+2015-11-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Unreviewed sandbox update.
+
+        Correcting copyright information.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2015-11-02  Tim Horton  <timothy_horton@apple.com>
 
         Get rid of WKWebView's inner WKView (WKView being inside WKWebView leads to weird API issues)
