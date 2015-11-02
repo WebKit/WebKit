@@ -1,3 +1,86 @@
+2015-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile a Patchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=150750
+
+        Reviewed by Geoffrey Garen.
+
+        This adds the glue in B3::LowerToAir that turns a B3::PatchpointValue into an Air::Patch
+        with a B3::PatchpointSpecial.
+
+        Along the way, I found some bugs. For starters, it became clear that I wanted to be able
+        to append constraints to a Stackmap, and I wanted to have more flexibility in how I
+        created a PatchpointValue. I also wanted more helper methods in ValueRep, since
+        otherwise I would have had to write a lot of boilerplate.
+
+        I discovered, and fixed, a minor goof in Air::Code dumping when there are specials.
+
+        There were a ton of indexing bugs in B3StackmapSpecial.
+
+        The spiller was broken in case the Def was not the last Arg, since it was adding things
+        to the insertion set both at instIndex and instIndex + 1, and the two types of additions
+        could occur in the wrong (i.e. the +1 case first) order with an early Def. We often have
+        bugs like this. In the DFG, we were paranoid about performance so we only admit out-of-
+        order insertions as a rare case. I think that we don't really need to be so paranoid.
+        So, I made the new insertion sets use a stable_sort to ensure that everything happens in
+        the right order. I changed DFG::BlockInsertionSet to also use stable_sort; it previously
+        used sort, which is slightly wrong.
+
+        This adds a new test that uses Patchpoint to implement a 32-bit add. It works!
+
+        * b3/B3InsertionSet.cpp:
+        (JSC::B3::InsertionSet::execute):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::appendStore):
+        (JSC::B3::Air::LowerToAir::moveForType):
+        (JSC::B3::Air::LowerToAir::append):
+        (JSC::B3::Air::LowerToAir::ensureSpecial):
+        (JSC::B3::Air::LowerToAir::tryStore):
+        (JSC::B3::Air::LowerToAir::tryStackSlot):
+        (JSC::B3::Air::LowerToAir::tryPatchpoint):
+        (JSC::B3::Air::LowerToAir::tryUpsilon):
+        * b3/B3LoweringMatcher.patterns:
+        * b3/B3PatchpointValue.h:
+        (JSC::B3::PatchpointValue::accepts): Deleted.
+        (JSC::B3::PatchpointValue::PatchpointValue): Deleted.
+        * b3/B3Stackmap.h:
+        (JSC::B3::Stackmap::constrain):
+        (JSC::B3::Stackmap::appendConstraint):
+        (JSC::B3::Stackmap::reps):
+        (JSC::B3::Stackmap::clobber):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        * b3/B3Value.h:
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::ValueRep):
+        (JSC::B3::ValueRep::reg):
+        (JSC::B3::ValueRep::operator bool):
+        (JSC::B3::ValueRep::isAny):
+        (JSC::B3::ValueRep::isSomeRegister):
+        (JSC::B3::ValueRep::isReg):
+        (JSC::B3::ValueRep::isGPR):
+        (JSC::B3::ValueRep::isFPR):
+        (JSC::B3::ValueRep::gpr):
+        (JSC::B3::ValueRep::fpr):
+        (JSC::B3::ValueRep::isStack):
+        (JSC::B3::ValueRep::offsetFromFP):
+        (JSC::B3::ValueRep::isStackArgument):
+        (JSC::B3::ValueRep::offsetFromSP):
+        (JSC::B3::ValueRep::isConstant):
+        (JSC::B3::ValueRep::value):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::dump):
+        * b3/air/AirInsertionSet.cpp:
+        (JSC::B3::Air::InsertionSet::execute):
+        * b3/testb3.cpp:
+        (JSC::B3::testComplex):
+        (JSC::B3::testSimplePatchpoint):
+        (JSC::B3::run):
+        * dfg/DFGBlockInsertionSet.cpp:
+        (JSC::DFG::BlockInsertionSet::execute):
+
 2015-11-02  Mark Lam  <mark.lam@apple.com>
 
         Snippefy op_add for the baseline JIT.

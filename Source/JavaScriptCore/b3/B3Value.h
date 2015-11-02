@@ -210,6 +210,14 @@ protected:
         , m_children(children)
     {
     }
+    explicit Value(unsigned index, Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
+        : m_index(index)
+        , m_opcode(opcode)
+        , m_type(type)
+        , m_origin(origin)
+        , m_children(WTF::move(children))
+    {
+    }
 
 private:
     static Type typeFor(Opcode, Value* firstChild);

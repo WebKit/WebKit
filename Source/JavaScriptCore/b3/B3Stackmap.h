@@ -58,7 +58,7 @@ public:
     typedef void GeneratorFunction(CCallHelpers&, const GenerationParams&);
     typedef SharedTask<GeneratorFunction> Generator;
     
-    Stackmap();
+    JS_EXPORT_PRIVATE Stackmap();
     ~Stackmap();
 
     // Constrain an argument to the Value that uses this Stackmap. In case of a Patchpoint that
@@ -72,6 +72,11 @@ public:
         if (index + 1 >= m_reps.size())
             m_reps.grow(index + 1);
         m_reps[index] = rep;
+    }
+
+    void appendConstraint(const ValueRep& rep)
+    {
+        m_reps.append(rep);
     }
 
     const Vector<ValueRep>& reps() const { return m_reps; }

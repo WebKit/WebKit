@@ -1201,6 +1201,33 @@ void testComplex(unsigned numVars, unsigned numConstructs)
     dataLog("    That took ", after - before, " ms.\n");
 }
 
+void testSimplePatchpoint()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value::AdjacencyList children;
+    children.append(arg1);
+    children.append(arg2);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(
+        proc, Int32, Origin(), WTF::move(children));
+    patchpoint->stackmap.appendConstraint(ValueRep::SomeRegister);
+    patchpoint->stackmap.appendConstraint(ValueRep::SomeRegister);
+    patchpoint->stackmap.setGenerator(
+        [&] (CCallHelpers& jit, const Stackmap::GenerationParams& params) {
+            CHECK(params.reps.size() == 3);
+            CHECK(params.reps[0].isGPR());
+            CHECK(params.reps[1].isGPR());
+            CHECK(params.reps[2].isGPR());
+            jit.move(params.reps[1].gpr(), params.reps[0].gpr());
+            jit.add32(params.reps[2].gpr(), params.reps[0].gpr());
+        });
+    root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -1309,6 +1336,8 @@ void run(const char* filter)
     RUN(testComplex(4, 128));
     RUN(testComplex(4, 256));
     RUN(testComplex(4, 384));
+
+    RUN(testSimplePatchpoint());
 
     if (!didRun)
         usage();

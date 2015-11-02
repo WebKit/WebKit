@@ -74,9 +74,9 @@ void StackmapSpecial::forEachArgImpl(
     ASSERT(value->children().size() >= numIgnoredB3Args);
     ASSERT(inst.args.size() - numIgnoredAirArgs == value->children().size() - numIgnoredB3Args);
     
-    for (unsigned i = 0; i < inst.args.size() - numIgnoredB3Args; ++i) {
-        Arg& arg = inst.args[i + numIgnoredB3Args];
-        Value* child = value->child(i + numIgnoredAirArgs);
+    for (unsigned i = 0; i < inst.args.size() - numIgnoredAirArgs; ++i) {
+        Arg& arg = inst.args[i + numIgnoredAirArgs];
+        Value* child = value->child(i + numIgnoredB3Args);
 
         callback(arg, Arg::Use, Arg::typeForB3Type(child->type()));
     }
@@ -103,7 +103,7 @@ bool StackmapSpecial::isValidImpl(
     // Regardless of constraints, stackmaps have some basic requirements for their arguments. For
     // example, you can't have a non-FP-offset address. This verifies those conditions as well as the
     // argument types.
-    for (unsigned i = 0; i < inst.args.size() - numIgnoredB3Args; ++i) {
+    for (unsigned i = 0; i < inst.args.size() - numIgnoredAirArgs; ++i) {
         Value* child = value->child(i + numIgnoredB3Args);
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         

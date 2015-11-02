@@ -33,7 +33,7 @@
 
 namespace JSC { namespace B3 {
 
-class PatchpointValue : public Value {
+class JS_EXPORT_PRIVATE PatchpointValue : public Value {
 public:
     static bool accepts(Opcode opcode) { return opcode == Patchpoint; }
 
@@ -47,8 +47,16 @@ protected:
 private:
     friend class Procedure;
 
-    PatchpointValue(unsigned index, Type type, Origin origin, const AdjacencyList& children)
-        : Value(index, Patchpoint, type, origin, children)
+    template<typename ListType>
+    PatchpointValue(unsigned index, Type type, Origin origin, ListType&& children)
+        : Value(index, Patchpoint, type, origin, std::forward<ListType>(children))
+    {
+    }
+
+    // It's totally fine to create a PatchpointValue without any children, and then append the
+    // children as you build up the stackmap.
+    PatchpointValue(unsigned index, Type type, Origin origin)
+        : Value(index, Patchpoint, type, origin, AdjacencyList())
     {
     }
 };

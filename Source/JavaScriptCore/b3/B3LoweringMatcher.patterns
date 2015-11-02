@@ -54,6 +54,8 @@ Const64 = Const64()
 StackSlot = StackSlot()
 FramePointer = FramePointer()
 
+Patchpoint = Patchpoint()
+
 Upsilon = Upsilon(value)
 Phi = Phi()
 

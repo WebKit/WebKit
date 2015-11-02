@@ -28,6 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "FPRInfo.h"
+#include "GPRInfo.h"
 #include "Reg.h"
 #include <wtf/PrintStream.h>
 
@@ -77,6 +79,12 @@ public:
         u.reg = reg;
     }
 
+    ValueRep(Kind kind)
+        : m_kind(kind)
+    {
+        ASSERT(kind == Any || kind == SomeRegister);
+    }
+
     static ValueRep reg(Reg reg)
     {
         return ValueRep(reg);
@@ -115,27 +123,45 @@ public:
 
     explicit operator bool() const { return kind() != Any; }
 
+    bool isAny() const { return kind() == Any; }
+
+    bool isSomeRegister() const { return kind() == SomeRegister; }
+    
+    bool isReg() const { return kind() == Register; }
+    
     Reg reg() const
     {
-        ASSERT(kind() == Register);
+        ASSERT(isReg());
         return u.reg;
     }
 
+    bool isGPR() const { return isReg() && reg().isGPR(); }
+    bool isFPR() const { return isReg() && reg().isFPR(); }
+
+    GPRReg gpr() const { return reg().gpr(); }
+    FPRReg fpr() const { return reg().fpr(); }
+
+    bool isStack() const { return kind() == Stack; }
+
     intptr_t offsetFromFP() const
     {
-        ASSERT(kind() == Stack);
+        ASSERT(isStack());
         return u.offsetFromFP;
     }
 
+    bool isStackArgument() const { return kind() == StackArgument; }
+
     intptr_t offsetFromSP() const
     {
-        ASSERT(kind() == StackArgument);
+        ASSERT(isStackArgument());
         return u.offsetFromSP;
     }
 
+    bool isConstant() const { return kind() == Constant; }
+
     int64_t value() const
     {
-        ASSERT(kind() == Constant);
+        ASSERT(isConstant());
         return u.value;
     }
 

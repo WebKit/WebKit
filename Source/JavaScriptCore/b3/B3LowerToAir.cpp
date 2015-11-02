@@ -40,6 +40,8 @@
 #include "B3IndexSet.h"
 #include "B3LoweringMatcher.h"
 #include "B3MemoryValue.h"
+#include "B3PatchpointSpecial.h"
+#include "B3PatchpointValue.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
@@ -336,6 +338,18 @@ public:
         return true;
     }
 
+    void appendStore(Value* value, const Arg& dest)
+    {
+        Air::Opcode move = moveForType(value->type());
+
+        if (imm(value) && isValidForm(move, Arg::Imm, dest.kind())) {
+            append(move, imm(value), dest);
+            return;
+        }
+
+        append(move, tmp(value), dest);
+    }
+
     Air::Opcode moveForType(Type type)
     {
         switch (type) {
@@ -369,6 +383,13 @@ public:
     {
         insts.last().append(Inst(opcode, currentValue, std::forward<Arguments>(arguments)...));
     }
+
+    template<typename T>
+    void ensureSpecial(T*& field)
+    {
+        if (!field)
+            field = static_cast<T*>(code.addSpecial(std::make_unique<T>()));
+    }
     
     IndexSet<Value> locked; // These are values that will have no Tmp in Air.
     IndexMap<Value, Tmp> valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
@@ -383,6 +404,8 @@ public:
     B3::BasicBlock* currentBlock;
     unsigned currentIndex;
     Value* currentValue;
+
+    PatchpointSpecial* patchpointSpecial { 0 };
 
     // The address selector will match any pattern where the input operands are available as Tmps.
     // It doesn't care about sharing. It will happily emit the same address expression over and over
@@ -637,15 +660,7 @@ public:
     
     bool tryStore(Value* value, Value* address)
     {
-        Air::Opcode move = moveForType(value->type());
-        Arg destination = effectiveAddr(address);
-
-        if (imm(value) && isValidForm(move, Arg::Imm, destination.kind())) {
-            append(moveForType(value->type()), imm(value), effectiveAddr(address, currentValue));
-            return true;
-        }
-        
-        append(moveForType(value->type()), tmp(value), effectiveAddr(address, currentValue));
+        appendStore(value, effectiveAddr(address, currentValue));
         return true;
     }
 
@@ -711,6 +726,48 @@ public:
             Lea,
             Arg::stack(stackToStack.get(currentValue->as<StackSlotValue>())),
             tmp(currentValue));
+        return true;
+    }
+
+    bool tryPatchpoint()
+    {
+        PatchpointValue* patchpointValue = currentValue->as<PatchpointValue>();
+        ensureSpecial(patchpointSpecial);
+
+        Inst inst(Patch, patchpointValue, Arg::special(patchpointSpecial));
+
+        if (patchpointValue->type() != Void)
+            inst.args.append(tmp(patchpointValue));
+
+        for (unsigned i = 0; i < patchpointValue->numChildren(); ++i) {
+            ValueRep rep;
+            if (i < patchpointValue->stackmap.reps().size())
+                rep = patchpointValue->stackmap.reps()[i];
+
+            Arg arg;
+            switch (rep.kind()) {
+            case ValueRep::Any:
+                arg = immOrTmp(patchpointValue->child(i));
+                break;
+            case ValueRep::SomeRegister:
+                arg = tmp(patchpointValue->child(i));
+                break;
+            case ValueRep::Register:
+                arg = Tmp(rep.reg());
+                append(Move, immOrTmp(patchpointValue->child(i)), arg);
+                break;
+            case ValueRep::StackArgument:
+                arg = Arg::callArg(rep.offsetFromSP());
+                appendStore(patchpointValue->child(i), arg);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            inst.args.append(arg);
+        }
+        
+        insts.last().append(WTF::move(inst));
         return true;
     }
 

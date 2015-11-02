@@ -34,6 +34,7 @@ namespace JSC { namespace B3 {
 
 void InsertionSet::execute(BasicBlock* block)
 {
+    std::stable_sort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_values, m_insertions);
 }
 

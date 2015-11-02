@@ -102,7 +102,7 @@ void Code::dump(PrintStream& out) const
     if (specials().size()) {
         out.print("Specials:\n");
         for (Special* special : specials())
-            out.print("    ", pointerDump(special), ": ", deepDump(special), "\n");
+            out.print("    ", deepDump(special), "\n");
     }
     if (m_frameSize)
         out.print("Frame size: ", m_frameSize, "\n");

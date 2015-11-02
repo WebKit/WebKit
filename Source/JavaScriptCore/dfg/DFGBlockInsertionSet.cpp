@@ -73,7 +73,7 @@ bool BlockInsertionSet::execute()
     
     // We allow insertions to be given to us in any order. So, we need to
     // sort them before running WTF::executeInsertions.
-    std::sort(m_insertions.begin(), m_insertions.end());
+    std::stable_sort(m_insertions.begin(), m_insertions.end());
 
     executeInsertions(m_graph.m_blocks, m_insertions);
     
