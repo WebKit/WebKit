@@ -2997,7 +2997,18 @@ RegisterID* ArrowFuncExprNode::emitBytecode(BytecodeGenerator& generator, Regist
 {
     return generator.emitNewArrowFunctionExpression(generator.finalDestination(dst), this);
 }
-    
+
+// ------------------------------ YieldExprNode --------------------------------
+
+RegisterID* YieldExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    // FIXME: This is just a stub. When completing ES6 Generators, we need to implement it.
+    generator.emitThrowTypeError(ASCIILiteral("Not implemented yet."));
+    if (dst == generator.ignoredResult())
+        return 0;
+    return generator.emitLoad(dst, jsUndefined());
+}
+
 #if ENABLE(ES6_CLASS_SYNTAX)
 // ------------------------------ ClassDeclNode ---------------------------------
 

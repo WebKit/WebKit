@@ -1,3 +1,148 @@
+2015-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Support Generator Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=150769
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements syntax part of ES6 Generators.
+
+        1. Add ENABLE_ES6_GENERATORS compile time flag. It is disabled by default, and will be enabled once ES6 generator functionality is implemented.
+        2. Add lexer support for YIELD. It changes "yield" from reserved-if-strict word to keyword. And it is correct under the ES6 spec.
+        3. Implement parsing functionality and YieldExprNode stub. YieldExprNode does not emit meaningful bytecodes yet. This should be implemented in the future patch.
+        4. Accept "yield" Identifier as an label etc. under sloppy mode && non-generator code. http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::YieldExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createYield):
+        * parser/Keywords.table:
+        * parser/NodeConstructors.h:
+        (JSC::YieldExprNode::YieldExprNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseBreakStatement):
+        (JSC::Parser<LexerType>::parseContinueStatement):
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseYieldExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parseFunctionExpression):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setSourceParseMode):
+        (JSC::Scope::isGenerator):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::setIsGenerator):
+        (JSC::Scope::setIsModule):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::isYIELDMaskedAsIDENT):
+        (JSC::Parser::matchSpecIdentifier):
+        (JSC::Parser::saveState):
+        (JSC::Parser::restoreState):
+        * parser/ParserModes.h:
+        (JSC::isFunctionParseMode):
+        (JSC::isModuleParseMode):
+        (JSC::isProgramParseMode):
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createYield):
+        * tests/stress/generator-methods.js: Added.
+        (Hello.prototype.gen):
+        (Hello.gen):
+        (Hello):
+        (Hello.prototype.set get string_appeared_here):
+        (Hello.string_appeared_here):
+        (Hello.prototype.20):
+        (Hello.20):
+        (Hello.prototype.42):
+        (Hello.42):
+        (let.object.gen):
+        (let.object.set get string_appeared_here):
+        (let.object.20):
+        (let.object.42):
+        * tests/stress/generator-syntax.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntaxError.Hello.prototype.get gen):
+        (testSyntaxError.Hello):
+        (SyntaxError.Unexpected.token.string_appeared_here.Expected.an.opening.string_appeared_here.before.a.method.testSyntaxError.Hello.prototype.set gen):
+        (SyntaxError.Unexpected.token.string_appeared_here.Expected.an.opening.string_appeared_here.before.a.method.testSyntaxError.Hello):
+        (SyntaxError.Unexpected.token.string_appeared_here.Expected.an.opening.string_appeared_here.before.a.method.testSyntaxError.gen):
+        (testSyntaxError.value):
+        (testSyntaxError.gen.ng):
+        (testSyntaxError.gen):
+        (testSyntax.gen):
+        * tests/stress/yield-and-line-terminator.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntax.gen):
+        (testSyntaxError.gen):
+        * tests/stress/yield-label-generator.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntaxError.test):
+        (SyntaxError.Unexpected.keyword.string_appeared_here.Expected.an.identifier.as.the.target.a.continue.statement.testSyntax.test):
+        * tests/stress/yield-label.js: Added.
+        (yield):
+        (testSyntaxError):
+        (testSyntaxError.test):
+        * tests/stress/yield-named-accessors-generator.js: Added.
+        (t1.let.object.get yield):
+        (t1.let.object.set yield):
+        (t1):
+        (t2.let.object.get yield):
+        (t2.let.object.set yield):
+        (t2):
+        * tests/stress/yield-named-accessors.js: Added.
+        (t1.let.object.get yield):
+        (t1.let.object.set yield):
+        (t1):
+        (t2.let.object.get yield):
+        (t2.let.object.set yield):
+        (t2):
+        * tests/stress/yield-named-variable-generator.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntaxError.t1):
+        (testSyntaxError.t1.yield):
+        (testSyntax.t1.yield):
+        (testSyntax.t1):
+        * tests/stress/yield-named-variable.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntax.t1):
+        (testSyntaxError.t1):
+        (testSyntax.t1.yield):
+        (testSyntaxError.t1.yield):
+        * tests/stress/yield-out-of-generator.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntaxError.hello):
+        (testSyntaxError.gen.hello):
+        (testSyntaxError.gen):
+        (testSyntax.gen):
+        (testSyntax.gen.ok):
+        (testSyntaxError.gen.ok):
+
 2015-11-01  Filip Pizlo  <fpizlo@apple.com>
 
         Dominators should be factored out of the DFG

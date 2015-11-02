@@ -65,9 +65,10 @@ PASS classifyIdentifier("private") is "strict"
 PASS classifyIdentifier("protected") is "strict"
 PASS classifyIdentifier("public") is "strict"
 PASS classifyIdentifier("static") is "strict"
-PASS classifyIdentifier("yield") is "strict"
 PASS isKeyword("let") is false
 PASS isStrictKeyword("let") is true
+PASS isKeyword("yield") is false
+PASS isStrictKeyword("yield") is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

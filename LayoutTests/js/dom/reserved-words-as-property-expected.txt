@@ -1461,18 +1461,18 @@ PASS ({ yield: 42 }.yield === 42) is true
 PASS (function(){({ yield: 42 }.yield === 42)}); true is true
 PASS ({ get yield(){}, set yield(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){({ get yield(){}, set yield(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var yield; true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS (function(){"use strict";var yield; true}); true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS "use strict";var yield = 42; yield === 42 threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS (function(){"use strict";var yield = 42; yield === 42}); true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS "use strict";function g(yield){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS (function(){"use strict";function g(yield){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS "use strict";/yield/.test(function g(yield){ "use strict"; }) threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS (function(){"use strict";/yield/.test(function g(yield){ "use strict"; })}); true threw exception SyntaxError: Cannot use the reserved word 'yield' as a variable name in strict mode..
-PASS "use strict";try{}catch(yield){}; true threw exception SyntaxError: Cannot use the reserved word 'yield' as a catch variable name in strict mode..
-PASS (function(){"use strict";try{}catch(yield){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'yield' as a catch variable name in strict mode..
-PASS "use strict";function yield(){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'yield' as a function name in strict mode..
-PASS (function(){"use strict";function yield(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'yield' as a function name in strict mode..
+PASS "use strict";var yield; true threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS (function(){"use strict";var yield; true}); true threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS "use strict";var yield = 42; yield === 42 threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS (function(){"use strict";var yield = 42; yield === 42}); true threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS "use strict";function g(yield){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS (function(){"use strict";function g(yield){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS "use strict";/yield/.test(function g(yield){ "use strict"; }) threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS (function(){"use strict";/yield/.test(function g(yield){ "use strict"; })}); true threw exception SyntaxError: Cannot use the keyword 'yield' as a variable name..
+PASS "use strict";try{}catch(yield){}; true threw exception SyntaxError: Cannot use the keyword 'yield' as a catch variable name..
+PASS (function(){"use strict";try{}catch(yield){}; true}); true threw exception SyntaxError: Cannot use the keyword 'yield' as a catch variable name..
+PASS "use strict";function yield(){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'yield' as a function name..
+PASS (function(){"use strict";function yield(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'yield' as a function name..
 PASS "use strict";({ "yield": 42 }.yield === 42) is true
 PASS (function(){"use strict";({ "yield": 42 }.yield === 42)}); true is true
 PASS "use strict";({ yield: 42 }.yield === 42) is true

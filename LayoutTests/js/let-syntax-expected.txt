@@ -33,8 +33,8 @@ PASS Does not have syntax error: ';({ get let() { return 50; }, set let(x) { ret
 PASS Does not have syntax error: ''use strict'; ;({ get let() { return 50; }, set let(x) { return 50;} });'
 PASS Does not have syntax error: 'function foo() { { let x; } var x; }'
 PASS Does not have syntax error: ''use strict'; function foo() { { let x; } var x; }'
-SyntaxError: Unexpected keyword 'let'
-SyntaxError: Unexpected keyword 'let'
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let let;'
 SyntaxError: Cannot use the keyword 'let' as a variable name.
 SyntaxError: Cannot use the keyword 'let' as a variable name.

@@ -80,7 +80,6 @@ class SourceCode;
 COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
-enum FunctionParseType { StandardFunctionParseType, ArrowFunctionParseType };
 enum FunctionBodyType { ArrowFunctionBodyExpression, ArrowFunctionBodyBlock, StandardFunctionBodyBlock };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
 
@@ -160,7 +159,7 @@ private:
 };
 
 struct Scope {
-    Scope(const VM* vm, bool isFunction, bool strictMode)
+    Scope(const VM* vm, bool isFunction, bool isGenerator, bool strictMode)
         : m_vm(vm)
         , m_shadowsArguments(false)
         , m_usesEval(false)
@@ -171,6 +170,7 @@ struct Scope {
         , m_allowsLexicalDeclarations(true)
         , m_strictMode(strictMode)
         , m_isFunction(isFunction)
+        , m_isGenerator(isGenerator)
         , m_isLexicalScope(false)
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
@@ -190,6 +190,7 @@ struct Scope {
         , m_allowsLexicalDeclarations(rhs.m_allowsLexicalDeclarations)
         , m_strictMode(rhs.m_strictMode)
         , m_isFunction(rhs.m_isFunction)
+        , m_isGenerator(rhs.m_isGenerator)
         , m_isLexicalScope(rhs.m_isLexicalScope)
         , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
@@ -240,20 +241,34 @@ struct Scope {
         return 0;
     }
 
-    void setIsFunction()
+    void setSourceParseMode(SourceParseMode mode)
     {
-        m_isFunction = true;
-        m_isFunctionBoundary = true;
-        setIsLexicalScope();
-    }
+        switch (mode) {
+        case SourceParseMode::GeneratorMode:
+            setIsGenerator();
+            break;
 
-    void setIsModule()
-    {
-        m_moduleScopeData = ModuleScopeData::create();
+        case SourceParseMode::NormalFunctionMode:
+        case SourceParseMode::GetterMode:
+        case SourceParseMode::SetterMode:
+        case SourceParseMode::MethodMode:
+        case SourceParseMode::ArrowFunctionMode:
+            setIsFunction();
+            break;
+
+        case SourceParseMode::ProgramMode:
+            break;
+
+        case SourceParseMode::ModuleAnalyzeMode:
+        case SourceParseMode::ModuleEvaluateMode:
+            setIsModule();
+            break;
+        }
     }
 
     bool isFunction() const { return m_isFunction; }
     bool isFunctionBoundary() const { return m_isFunctionBoundary; }
+    bool isGenerator() const { return m_isGenerator; }
 
     void setIsLexicalScope() 
     { 
@@ -561,6 +576,25 @@ struct Scope {
     }
 
 private:
+    void setIsFunction()
+    {
+        m_isFunction = true;
+        m_isFunctionBoundary = true;
+        setIsLexicalScope();
+        m_isGenerator = false;
+    }
+
+    void setIsGenerator()
+    {
+        setIsFunction();
+        m_isGenerator = true;
+    }
+
+    void setIsModule()
+    {
+        m_moduleScopeData = ModuleScopeData::create();
+    }
+
     const VM* m_vm;
     bool m_shadowsArguments : 1;
     bool m_usesEval : 1;
@@ -571,6 +605,7 @@ private:
     bool m_allowsLexicalDeclarations : 1;
     bool m_strictMode : 1;
     bool m_isFunction : 1;
+    bool m_isGenerator : 1;
     bool m_isLexicalScope : 1;
     bool m_isFunctionBoundary : 1;
     bool m_isValidStrictMode : 1;
@@ -748,11 +783,13 @@ private:
     {
         bool isFunction = false;
         bool isStrict = false;
+        bool isGenerator = false;
         if (!m_scopeStack.isEmpty()) {
             isStrict = m_scopeStack.last().strictMode();
             isFunction = m_scopeStack.last().isFunction();
+            isGenerator = m_scopeStack.last().isGenerator();
         }
-        m_scopeStack.append(Scope(m_vm, isFunction, isStrict));
+        m_scopeStack.append(Scope(m_vm, isFunction, isGenerator, isStrict));
         return currentScope();
     }
     
@@ -1064,9 +1101,27 @@ private:
         return result;
     }
 
+    // http://ecma-international.org/ecma-262/6.0/#sec-identifiers-static-semantics-early-errors
     ALWAYS_INLINE bool isLETMaskedAsIDENT()
     {
         return match(LET) && !strictMode();
+    }
+
+    // http://ecma-international.org/ecma-262/6.0/#sec-identifiers-static-semantics-early-errors
+    ALWAYS_INLINE bool isYIELDMaskedAsIDENT(bool inGenerator)
+    {
+        return match(YIELD) && !strictMode() && !inGenerator;
+    }
+
+    // http://ecma-international.org/ecma-262/6.0/#sec-generator-function-definitions-static-semantics-early-errors
+    ALWAYS_INLINE bool matchSpecIdentifier(bool inGenerator)
+    {
+        return match(IDENT) || isLETMaskedAsIDENT() || isYIELDMaskedAsIDENT(inGenerator);
+    }
+
+    ALWAYS_INLINE bool matchSpecIdentifier()
+    {
+        return matchSpecIdentifier(currentScope()->isGenerator());
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
@@ -1097,6 +1152,7 @@ private:
     template <class TreeBuilder> TreeStatement parseBlockStatement(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&);
+    template <class TreeBuilder> TreeExpression parseYieldExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseConditionalExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseBinaryExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseUnaryExpression(TreeBuilder&);
@@ -1105,10 +1161,11 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArrayLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseObjectLiteral(TreeBuilder&);
     template <class TreeBuilder> NEVER_INLINE TreeExpression parseStrictObjectLiteral(TreeBuilder&);
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseFunctionExpression(TreeBuilder&);
     enum SpreadMode { AllowSpread, DontAllowSpread };
     template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&, SpreadMode);
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
-    template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName);
+    template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName, bool isGenerator);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind = ConstructorKind::None, SuperBinding = SuperBinding::NotNeeded);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionBodyType, unsigned, SourceParseMode);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, unsigned&);
@@ -1128,7 +1185,8 @@ private:
     template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<const Identifier*>& maybeLocalNames, bool& hasKeywordForLocalBindings);
     template <class TreeBuilder> TreeStatement parseExportDeclaration(TreeBuilder&);
 
-    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionParseType);
+    enum class FunctionDefinitionType { Expression, Declaration, Method };
+    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType);
     
     template <class TreeBuilder> NEVER_INLINE int parseFunctionParameters(TreeBuilder&, SourceParseMode, ParserFunctionInfo<TreeBuilder>&);
 
@@ -1202,10 +1260,12 @@ private:
         m_lexer->setLineNumber(savePoint.oldLineNumber);
     }
 
+    enum class FunctionParsePhase { Parameters, Body };
     struct ParserState {
         int assignmentCount;
         int nonLHSCount;
         int nonTrivialExpressionCount;
+        FunctionParsePhase functionParsePhase;
     };
 
     ALWAYS_INLINE ParserState saveState()
@@ -1214,17 +1274,17 @@ private:
         result.assignmentCount = m_assignmentCount;
         result.nonLHSCount = m_nonLHSCount;
         result.nonTrivialExpressionCount = m_nonTrivialExpressionCount;
+        result.functionParsePhase = m_functionParsePhase;
         return result;
     }
-    
+
     ALWAYS_INLINE void restoreState(const ParserState& state)
     {
         m_assignmentCount = state.assignmentCount;
         m_nonLHSCount = state.nonLHSCount;
         m_nonTrivialExpressionCount = state.nonTrivialExpressionCount;
-        
+        m_functionParsePhase = state.functionParsePhase;
     }
-    
 
     VM* m_vm;
     const SourceCode* m_source;
@@ -1242,6 +1302,7 @@ private:
     bool m_syntaxAlreadyValidated;
     int m_statementDepth;
     int m_nonTrivialExpressionCount;
+    FunctionParsePhase m_functionParsePhase;
     const Identifier* m_lastIdentifier;
     const Identifier* m_lastFunctionName;
     RefPtr<SourceProviderCache> m_functionCache;

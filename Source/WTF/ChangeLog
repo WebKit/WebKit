@@ -1,3 +1,14 @@
+2015-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Support Generator Syntax
+        https://bugs.webkit.org/show_bug.cgi?id=150769
+
+        Reviewed by Geoffrey Garen.
+
+        Added ENABLE_ES6_GENERATORS flag.
+
+        * wtf/FeatureDefines.h:
+
 2015-11-01  Darin Adler  <darin@apple.com>
 
         ASCIICType refinements

@@ -109,10 +109,13 @@ shouldBe('classifyIdentifier("private")', '"strict"');
 shouldBe('classifyIdentifier("protected")', '"strict"');
 shouldBe('classifyIdentifier("public")', '"strict"');
 shouldBe('classifyIdentifier("static")', '"strict"');
-shouldBe('classifyIdentifier("yield")', '"strict"');
 
 // This is in a class of its own because it's treated as a keyword
 // in strict-mode and not a keyword in sloppy mode
 // (non-keyword in sloppy mode is temporary).
 shouldBeFalse('isKeyword("let")'); // "var let" is allowed but "let let" is not.
 shouldBeTrue('isStrictKeyword("let")');
+
+
+shouldBeFalse('isKeyword("yield")');
+shouldBeTrue('isStrictKeyword("yield")');

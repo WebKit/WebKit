@@ -46,6 +46,7 @@ enum FunctionMode { FunctionExpression, FunctionDeclaration };
 
 enum class SourceParseMode {
     NormalFunctionMode,
+    GeneratorMode,
     GetterMode,
     SetterMode,
     MethodMode,
@@ -59,6 +60,7 @@ inline bool isFunctionParseMode(SourceParseMode parseMode)
 {
     switch (parseMode) {
     case SourceParseMode::NormalFunctionMode:
+    case SourceParseMode::GeneratorMode:
     case SourceParseMode::GetterMode:
     case SourceParseMode::SetterMode:
     case SourceParseMode::MethodMode:
@@ -82,6 +84,7 @@ inline bool isModuleParseMode(SourceParseMode parseMode)
         return true;
 
     case SourceParseMode::NormalFunctionMode:
+    case SourceParseMode::GeneratorMode:
     case SourceParseMode::GetterMode:
     case SourceParseMode::SetterMode:
     case SourceParseMode::MethodMode:
@@ -100,6 +103,7 @@ inline bool isProgramParseMode(SourceParseMode parseMode)
         return true;
 
     case SourceParseMode::NormalFunctionMode:
+    case SourceParseMode::GeneratorMode:
     case SourceParseMode::GetterMode:
     case SourceParseMode::SetterMode:
     case SourceParseMode::MethodMode:

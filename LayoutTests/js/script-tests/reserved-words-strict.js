@@ -18,7 +18,6 @@ var reservedWords = [
     "implements",
     "private",
     "public",
-    "yield",
     "interface",
     "package",
     "protected",

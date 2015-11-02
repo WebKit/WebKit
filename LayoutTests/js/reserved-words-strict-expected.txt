@@ -11,7 +11,6 @@ PASS isReserved('private') is true
 PASS isReserved('protected') is true
 PASS isReserved('public') is true
 PASS isReserved('static') is true
-PASS isReserved('yield') is true
 
 SHOULD NOT BE RESERVED:
 PASS isReserved('abstract') is false

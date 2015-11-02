@@ -78,6 +78,7 @@ enum JSTokenType {
     ELSE,
     IMPORT,
     EXPORT,
+    YIELD,
 #if ENABLE(ES6_CLASS_SYNTAX)
     CLASSTOKEN,
     EXTENDS,

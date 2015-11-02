@@ -1929,6 +1929,20 @@ namespace JSC {
         virtual bool isArrowFuncExprNode() const override { return true; }
     };
 
+    class YieldExprNode final : public ExpressionNode {
+    public:
+        YieldExprNode(const JSTokenLocation&, ExpressionNode* argument, bool delegate);
+
+        ExpressionNode* argument() const { return m_argument; }
+        bool delegate() const { return m_delegate; }
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_argument;
+        bool m_delegate;
+    };
+
 #if ENABLE(ES6_CLASS_SYNTAX)
     class ClassExprNode final : public ExpressionNode, public VariableEnvironmentNode {
     public:

@@ -341,6 +341,16 @@ public:
         return node;
     }
 
+    YieldExprNode* createYield(const JSTokenLocation& location)
+    {
+        return new (m_parserArena) YieldExprNode(location, nullptr, /* delegate */ false);
+    }
+
+    YieldExprNode* createYield(const JSTokenLocation& location, ExpressionNode* argument, bool delegate)
+    {
+        return new (m_parserArena) YieldExprNode(location, argument, delegate);
+    }
+
 #if ENABLE(ES6_CLASS_SYNTAX)
     ClassExprNode* createClassExpr(const JSTokenLocation& location, const Identifier& name, VariableEnvironment& classEnvironment, ExpressionNode* constructor,
         ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)

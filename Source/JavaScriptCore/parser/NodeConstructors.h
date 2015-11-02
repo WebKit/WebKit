@@ -915,6 +915,13 @@ namespace JSC {
     {
     }
 
+    inline YieldExprNode::YieldExprNode(const JSTokenLocation& location, ExpressionNode* argument, bool delegate)
+        : ExpressionNode(location)
+        , m_argument(argument)
+        , m_delegate(delegate)
+    {
+    }
+
 #if ENABLE(ES6_CLASS_SYNTAX)
     inline ClassDeclNode::ClassDeclNode(const JSTokenLocation& location, ExpressionNode* classDeclaration)
         : StatementNode(location)
