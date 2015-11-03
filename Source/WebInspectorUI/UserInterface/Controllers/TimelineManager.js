@@ -313,10 +313,6 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
             return new WebInspector.RenderingFrameTimelineRecord(startTime, endTime);
 
-        case TimelineAgent.EventType.ParseHTML:
-            // FIXME: <https://webkit.org/b/150689> Web Inspector: Handle or Remove ParseHTML Timeline Event Records
-            return null;
-
         case TimelineAgent.EventType.EvaluateScript:
             if (!sourceCodeLocation) {
                 var mainFrame = WebInspector.frameResourceManager.mainFrame;

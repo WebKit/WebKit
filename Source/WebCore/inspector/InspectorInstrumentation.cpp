@@ -832,22 +832,6 @@ void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource& cac
     }
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTMLImpl(InstrumentingAgents& instrumentingAgents, unsigned startLine, Frame* frame)
-{
-    int timelineAgentId = 0;
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent()) {
-        timelineAgent->willWriteHTML(startLine, frame);
-        timelineAgentId = timelineAgent->id();
-    }
-    return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
-}
-
-void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCookie& cookie, unsigned endLine)
-{
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didWriteHTML(endLine);
-}
-
 // JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
 static bool isConsoleAssertMessage(MessageSource source, MessageType type)
 {

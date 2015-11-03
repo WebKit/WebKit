@@ -119,13 +119,6 @@ Ref<InspectorObject> TimelineRecordFactory::createTimeStampData(const String& me
     return WTF::move(data);
 }
 
-Ref<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned startLine)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setInteger(ASCIILiteral("startLine"), startLine);
-    return WTF::move(data);
-}
-
 Ref<InspectorObject> TimelineRecordFactory::createAnimationFrameData(int callbackId)
 {
     Ref<InspectorObject> data = InspectorObject::create();

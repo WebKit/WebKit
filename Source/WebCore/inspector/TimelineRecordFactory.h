@@ -61,7 +61,6 @@ public:
     static Ref<Inspector::InspectorObject> createTimerInstallData(int timerId, int timeout, bool singleShot);
     static Ref<Inspector::InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
     static Ref<Inspector::InspectorObject> createTimeStampData(const String&);
-    static Ref<Inspector::InspectorObject> createParseHTMLData(unsigned startLine);
     static Ref<Inspector::InspectorObject> createAnimationFrameData(int callbackId);
     static Ref<Inspector::InspectorObject> createPaintData(const FloatQuad&);
 

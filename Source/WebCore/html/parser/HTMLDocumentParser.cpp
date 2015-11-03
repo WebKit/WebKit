@@ -28,12 +28,12 @@
 #include "HTMLDocumentParser.h"
 
 #include "DocumentFragment.h"
+#include "Frame.h"
+#include "HTMLDocument.h"
 #include "HTMLParserScheduler.h"
 #include "HTMLPreloadScanner.h"
 #include "HTMLScriptRunner.h"
 #include "HTMLTreeBuilder.h"
-#include "HTMLDocument.h"
-#include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
@@ -247,13 +247,6 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     PumpSession session(m_pumpSessionNestingLevel, contextForParsingSession());
 
-    // We tell the InspectorInstrumentation about every pump, even if we
-    // end up pumping nothing.  It can filter out empty pumps itself.
-    // FIXME: m_input.current().length() is only accurate if we
-    // end up parsing the whole buffer in this pump.  We should pass how
-    // much we parsed as part of didWriteHTML instead of willWriteHTML.
-    auto cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().currentLine().zeroBasedInt());
-
     m_xssAuditor.init(document(), &m_xssAuditorDelegate);
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
@@ -294,8 +287,6 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         }
         m_preloadScanner->scan(*m_preloader, *document());
     }
-
-    InspectorInstrumentation::didWriteHTML(cookie, m_input.current().currentLine().zeroBasedInt());
 }
 
 void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLTokenizer::TokenPtr& rawToken)

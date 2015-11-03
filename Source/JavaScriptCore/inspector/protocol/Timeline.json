@@ -15,7 +15,6 @@
                 "Paint",
                 "Composite",
                 "RenderingFrame",
-                "ParseHTML",
                 "TimerInstall",
                 "TimerRemove",
                 "TimerFire",

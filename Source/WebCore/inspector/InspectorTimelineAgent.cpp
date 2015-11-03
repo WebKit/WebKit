@@ -395,20 +395,6 @@ void InspectorTimelineAgent::didPaint(RenderObject* renderer, const LayoutRect& 
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 
-void InspectorTimelineAgent::willWriteHTML(unsigned startLine, Frame* frame)
-{
-    pushCurrentRecord(TimelineRecordFactory::createParseHTMLData(startLine), TimelineRecordType::ParseHTML, true, frame);
-}
-
-void InspectorTimelineAgent::didWriteHTML(unsigned endLine)
-{
-    if (!m_recordStack.isEmpty()) {
-        const TimelineRecordEntry& entry = m_recordStack.last();
-        entry.data->setInteger("endLine", endLine);
-        didCompleteCurrentRecord(TimelineRecordType::ParseHTML);
-    }
-}
-
 void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot, Frame* frame)
 {
     appendRecord(TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot), TimelineRecordType::TimerInstall, true, frame);
@@ -530,9 +516,6 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Composite;
     case TimelineRecordType::RenderingFrame:
         return Inspector::Protocol::Timeline::EventType::RenderingFrame;
-
-    case TimelineRecordType::ParseHTML:
-        return Inspector::Protocol::Timeline::EventType::ParseHTML;
 
     case TimelineRecordType::TimerInstall:
         return Inspector::Protocol::Timeline::EventType::TimerInstall;

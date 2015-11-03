@@ -67,8 +67,6 @@ enum class TimelineRecordType {
     Composite,
     RenderingFrame,
 
-    ParseHTML,
-
     TimerInstall,
     TimerRemove,
     TimerFire,
@@ -137,8 +135,6 @@ public:
     void willRecalculateStyle(Frame*);
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(Frame*);
-    void willWriteHTML(unsigned startLine, Frame*);
-    void didWriteHTML(unsigned endLine);
     void didTimeStamp(Frame&, const String&);
     void didRequestAnimationFrame(int callbackId, Frame*);
     void didCancelAnimationFrame(int callbackId, Frame*);
