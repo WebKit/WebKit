@@ -43,12 +43,19 @@ public:
     WorkerScriptDebugServer(WorkerGlobalScope&, const String&);
     ~WorkerScriptDebugServer() { }
 
+    class Task {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        virtual ~Task() { }
+        virtual void run() = 0;
+    };
+
     virtual void recompileAllJSFunctions() override;
 
     void addListener(Inspector::ScriptDebugListener*);
     void removeListener(Inspector::ScriptDebugListener*, bool skipRecompile);
 
-    void interruptAndRunTask(std::unique_ptr<ScriptDebugServer::Task>);
+    void interruptAndRunTask(std::unique_ptr<Task>);
 
 private:
     virtual ListenerSet& getListeners() override { return m_listeners; }

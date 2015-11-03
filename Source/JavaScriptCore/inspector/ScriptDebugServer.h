@@ -59,13 +59,6 @@ public:
 
     const BreakpointActions& getActionsForBreakpoint(JSC::BreakpointID);
 
-    class Task {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        virtual ~Task() { }
-        virtual void run() = 0;
-    };
-
 protected:
     typedef HashSet<ScriptDebugListener*> ListenerSet;
     typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);

@@ -1,5 +1,18 @@
 2015-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Move ScriptDebugServer::Task to WorkerScriptDebugServer where it is actually used
+        https://bugs.webkit.org/show_bug.cgi?id=150847
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/ScriptDebugServer.h:
+        Remove Task from here, it isn't needed in the general case.
+
+        * parser/SourceProvider.h:
+        Remove unimplemented method.
+
+2015-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Handle or Remove ParseHTML Timeline Event Records
         https://bugs.webkit.org/show_bug.cgi?id=150689
 

@@ -71,7 +71,6 @@ namespace JSC {
         void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
 
         JS_EXPORT_PRIVATE void getID();
-        Vector<size_t>& lineStarts();
 
         String m_url;
         String m_sourceURLDirective;

@@ -58,7 +58,7 @@ WorkerDebuggerAgents& workerDebuggerAgents()
     return agents;
 }
 
-class RunInspectorCommandsTask : public ScriptDebugServer::Task {
+class RunInspectorCommandsTask : public WorkerScriptDebugServer::Task {
 public:
     RunInspectorCommandsTask(WorkerThread* thread, WorkerGlobalScope* workerGlobalScope)
         : m_thread(thread)

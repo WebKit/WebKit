@@ -102,7 +102,7 @@ void WorkerScriptDebugServer::reportException(JSC::ExecState* exec, JSC::Excepti
     WebCore::reportException(exec, exception);
 }
 
-void WorkerScriptDebugServer::interruptAndRunTask(std::unique_ptr<ScriptDebugServer::Task>)
+void WorkerScriptDebugServer::interruptAndRunTask(std::unique_ptr<Task>)
 {
 }
 
