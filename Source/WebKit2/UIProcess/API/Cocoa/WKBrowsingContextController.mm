@@ -769,7 +769,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
 - (BOOL)_webProcessIsResponsive
 {
-    return _page->process().responsivenessTimer()->isResponsive();
+    return _page->process().responsivenessTimer().isResponsive();
 }
 
 @end

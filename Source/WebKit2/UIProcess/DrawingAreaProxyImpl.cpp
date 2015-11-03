@@ -149,7 +149,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
     m_isWaitingForDidUpdateBackingStoreState = false;
 
     // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
-    m_webPageProxy.process().responsivenessTimer()->stop();
+    m_webPageProxy.process().responsivenessTimer().stop();
 
     if (layerTreeContext != m_layerTreeContext) {
         if (!m_layerTreeContext.isEmpty()) {
@@ -272,7 +272,7 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
     if (m_isWaitingForDidUpdateBackingStoreState) {
         // Start the responsiveness timer. We will stop it when we hear back from the WebProcess
         // in didUpdateBackingStoreState.
-        m_webPageProxy.process().responsivenessTimer()->start();
+        m_webPageProxy.process().responsivenessTimer().start();
     }
 
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {

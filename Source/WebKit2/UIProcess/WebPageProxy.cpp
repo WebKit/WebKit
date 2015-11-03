@@ -740,7 +740,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessForReload()
 
     // We allow stale content when reloading a WebProcess that's been killed or crashed.
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID()), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return WTF::move(navigation);
 }
@@ -762,7 +762,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
     auto navigation = m_navigationState->createBackForwardNavigation();
 
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item->itemID()), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return WTF::move(navigation);
 }
@@ -863,7 +863,7 @@ bool WebPageProxy::tryClose()
         return true;
 
     m_process->send(Messages::WebPage::TryClose(), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
     return false;
 }
 
@@ -901,7 +901,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(const ResourceRequest& request
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
     m_process->send(Messages::WebPage::LoadRequest(navigation->navigationID(), request, sandboxExtensionHandle, (uint64_t)shouldOpenExternalURLsPolicy, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return WTF::move(navigation);
 }
@@ -939,7 +939,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
     m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
     m_process->send(Messages::WebPage::LoadRequest(navigation->navigationID(), fileURL, sandboxExtensionHandle, (uint64_t)ShouldOpenExternalURLsPolicy::ShouldNotAllow, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return WTF::move(navigation);
 }
@@ -960,7 +960,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(API::Data* data, const String& MI
 
     m_process->assumeReadAccessToBaseURL(baseURL);
     m_process->send(Messages::WebPage::LoadData(navigation->navigationID(), data->dataReference(), MIMEType, encoding, baseURL, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return WTF::move(navigation);
 }
@@ -982,7 +982,7 @@ RefPtr<API::Navigation> WebPageProxy::loadHTMLString(const String& htmlString, c
 
     m_process->assumeReadAccessToBaseURL(baseURL);
     m_process->send(Messages::WebPage::LoadHTMLString(navigation->navigationID(), htmlString, baseURL, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return WTF::move(navigation);
 }
@@ -1005,7 +1005,7 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
     m_process->assumeReadAccessToBaseURL(baseURL);
     m_process->assumeReadAccessToBaseURL(unreachableURL);
     m_process->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL, m_failingProvisionalLoadURL, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 }
 
 void WebPageProxy::loadPlainTextString(const String& string, API::Object* userData)
@@ -1017,7 +1017,7 @@ void WebPageProxy::loadPlainTextString(const String& string, API::Object* userDa
         reattachToWebProcess();
 
     m_process->send(Messages::WebPage::LoadPlainTextString(string, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 }
 
 void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* userData)
@@ -1029,7 +1029,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
         reattachToWebProcess();
 
     m_process->send(Messages::WebPage::LoadWebArchiveData(webArchiveData->dataReference(), UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 }
 
 void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
@@ -1044,7 +1044,7 @@ void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoi
         reattachToWebProcess();
 
     m_process->send(Messages::WebPage::NavigateToPDFLinkWithSimulatedClick(url, documentPoint, screenPoint), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 }
 
 void WebPageProxy::stopLoading()
@@ -1053,7 +1053,7 @@ void WebPageProxy::stopLoading()
         return;
 
     m_process->send(Messages::WebPage::StopLoading(), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 }
 
 RefPtr<API::Navigation> WebPageProxy::reload(bool reloadFromOrigin, bool contentBlockersEnabled)
@@ -1077,7 +1077,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(bool reloadFromOrigin, bool content
     auto navigation = m_navigationState->createReloadNavigation();
 
     m_process->send(Messages::WebPage::Reload(navigation->navigationID(), reloadFromOrigin, contentBlockersEnabled, sandboxExtensionHandle), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return WTF::move(navigation);
 }
@@ -1118,7 +1118,7 @@ RefPtr<API::Navigation> WebPageProxy::goForward()
         navigation = m_navigationState->createBackForwardNavigation();
 
     m_process->send(Messages::WebPage::GoForward(navigation ? navigation->navigationID() : 0, forwardItem->itemID()), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return navigation;
 }
@@ -1141,7 +1141,7 @@ RefPtr<API::Navigation> WebPageProxy::goBack()
         navigation = m_navigationState->createBackForwardNavigation();
 
     m_process->send(Messages::WebPage::GoBack(navigation ? navigation->navigationID() : 0, backItem->itemID()), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return navigation;
 }
@@ -1160,7 +1160,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
         navigation = m_navigationState->createBackForwardNavigation();
 
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item->itemID()), m_pageID);
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     return navigation;
 }
@@ -1437,7 +1437,7 @@ void WebPageProxy::dispatchViewStateChange()
     // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
     // stop the unresponsiveness timer here.
     if ((changed & ViewState::IsVisible) && !isViewVisible())
-        m_process->responsivenessTimer()->stop();
+        m_process->responsivenessTimer().stop();
 
     if (changed & ViewState::IsInWindow) {
         if (isInWindow())
@@ -1677,7 +1677,7 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 
     // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
     if (event.type() != WebEvent::MouseMove)
-        m_process->responsivenessTimer()->start();
+        m_process->responsivenessTimer().start();
     else {
         if (m_processingMouseMoveEvent) {
             m_nextMouseMoveEvent = std::make_unique<NativeWebMouseEvent>(event);
@@ -1799,7 +1799,7 @@ void WebPageProxy::processNextQueuedWheelEvent()
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     m_process->send(
         Messages::EventDispatcher::WheelEvent(
@@ -1821,7 +1821,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 
     m_keyEventQueue.append(event);
 
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
     if (m_keyEventQueue.size() == 1) // Otherwise, sent from DidReceiveEvent message handler.
         m_process->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
@@ -1916,7 +1916,7 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
 
     m_gestureEventQueue.append(event);
     // FIXME: Consider doing some coalescing here.
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
 
     m_process->send(Messages::EventDispatcher::GestureEvent(m_pageID, event), 0);
 }
@@ -1936,12 +1936,12 @@ void WebPageProxy::handleTouchEventSynchronously(const NativeWebTouchEvent& even
     if (!m_isTrackingTouchEvents)
         return;
 
-    m_process->responsivenessTimer()->start();
+    m_process->responsivenessTimer().start();
     bool handled = false;
     m_process->sendSync(Messages::WebPage::TouchEventSync(event), Messages::WebPage::TouchEventSync::Reply(handled), m_pageID);
     didReceiveEvent(event.type(), handled);
     m_pageClient.doneWithTouchEvent(event, handled);
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     if (event.allTouchPointsAreReleased())
         m_isTrackingTouchEvents = false;
@@ -1978,7 +1978,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     // we do not send any of the events to the page even if is has listeners.
     if (!m_isPageSuspended) {
         m_touchEventQueue.append(event);
-        m_process->responsivenessTimer()->start();
+        m_process->responsivenessTimer().start();
         m_process->send(Messages::WebPage::TouchEvent(event), m_pageID);
     } else {
         if (m_touchEventQueue.isEmpty()) {
@@ -3537,7 +3537,7 @@ void WebPageProxy::didExitFullscreen()
 void WebPageProxy::closePage(bool stopResponsivenessTimer)
 {
     if (stopResponsivenessTimer)
-        m_process->responsivenessTimer()->stop();
+        m_process->responsivenessTimer().stop();
 
     m_pageClient.clearAllEditCommands();
     m_uiClient->close(this);
@@ -3549,7 +3549,7 @@ void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const SecurityOriginData
     MESSAGE_CHECK(frame);
 
     // Since runJavaScriptAlert() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     m_uiClient->runJavaScriptAlert(this, message, frame, securityOrigin, [reply]{ reply->send(); });
 }
@@ -3560,7 +3560,7 @@ void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const SecurityOriginDa
     MESSAGE_CHECK(frame);
 
     // Since runJavaScriptConfirm() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     m_uiClient->runJavaScriptConfirm(this, message, frame, securityOrigin, [reply](bool result) { reply->send(result); });
 }
@@ -3571,7 +3571,7 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const SecurityOriginDat
     MESSAGE_CHECK(frame);
 
     // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     m_uiClient->runJavaScriptPrompt(this, message, defaultValue, frame, securityOrigin, [reply](const String& result) { reply->send(result); });
 }
@@ -3733,7 +3733,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
     MESSAGE_CHECK(frame);
 
     // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     shouldClose = m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame);
 }
@@ -3787,7 +3787,7 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const FileChooserSettings& set
     m_openPanelResultListener = WebOpenPanelResultListenerProxy::create(this);
 
     // Since runOpenPanel() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     if (!m_uiClient->runOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get())) {
         if (!m_pageClient.handleRunOpenPanel(this, frame, parameters.get(), m_openPanelResultListener.get()))
@@ -4154,7 +4154,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
         return;
 
     // Since showPopupMenu() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
 #if PLATFORM(EFL)
     UNUSED_PARAM(data);
@@ -4202,7 +4202,7 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
         return;
 
     // Since showContextMenu() can spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     m_activeContextMenu->show();
 }
@@ -4525,7 +4525,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::GestureChange:
     case WebEvent::GestureEnd:
 #endif
-        m_process->responsivenessTimer()->stop();
+        m_process->responsivenessTimer().stop();
         break;
     }
 
@@ -4638,7 +4638,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
 void WebPageProxy::stopResponsivenessTimer()
 {
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 }
 
 void WebPageProxy::voidCallback(uint64_t callbackID)
@@ -5331,7 +5331,7 @@ void WebPageProxy::drawFooter(WebFrameProxy* frame, const FloatRect& rect)
 void WebPageProxy::runModal()
 {
     // Since runModal() can (and probably will) spin a nested run loop we need to turn off the responsiveness timer.
-    m_process->responsivenessTimer()->stop();
+    m_process->responsivenessTimer().stop();
 
     // Our Connection's run loop might have more messages waiting to be handled after this RunModal message.
     // To make sure they are handled inside of the the nested modal run loop we must first signal the Connection's
@@ -5521,7 +5521,7 @@ void WebPageProxy::updateBackingStoreDiscardableState()
 
     bool isDiscardable;
 
-    if (!m_process->responsivenessTimer()->isResponsive())
+    if (!m_process->responsivenessTimer().isResponsive())
         isDiscardable = false;
     else
         isDiscardable = !m_pageClient.isViewWindowActive() || !isViewVisible();

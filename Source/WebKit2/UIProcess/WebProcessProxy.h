@@ -98,7 +98,7 @@ public:
 
     WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
 
-    ResponsivenessTimer* responsivenessTimer() { return &m_responsivenessTimer; }
+    ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
 
     WebFrameProxy* webFrame(uint64_t) const;
     bool canCreateFrame(uint64_t frameID) const;

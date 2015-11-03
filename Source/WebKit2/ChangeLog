@@ -1,3 +1,55 @@
+2015-11-02  Anders Carlsson  <andersca@apple.com>
+
+        CTTE the responsiveness timer getter
+        https://bugs.webkit.org/show_bug.cgi?id=150825
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (-[WKObservablePageState _webProcessIsResponsive]):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _webProcessIsResponsive]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webProcessIsResponsive]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessForReload):
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::tryClose):
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadHTMLString):
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::loadPlainTextString):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPageProxy::stopLoading):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        (WebKit::WebPageProxy::handleMouseEvent):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::handleKeyboardEvent):
+        (WebKit::WebPageProxy::handleGestureEvent):
+        (WebKit::WebPageProxy::handleTouchEventSynchronously):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::closePage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::runOpenPanel):
+        (WebKit::WebPageProxy::showPopupMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::stopResponsivenessTimer):
+        (WebKit::WebPageProxy::runModal):
+        (WebKit::WebPageProxy::updateBackingStoreDiscardableState):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::responsivenessTimer):
+
 2015-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.1 release.
