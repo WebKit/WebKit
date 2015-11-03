@@ -186,10 +186,9 @@ NetworkSession::NetworkSession(Type type)
     m_session = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
 
-RefPtr<NetworkingDataTask> NetworkSession::createDataTaskWithRequest(const WebCore::ResourceRequest& request, NetworkSessionTaskClient& client)
+Ref<NetworkingDataTask> NetworkSession::createDataTaskWithRequest(const WebCore::ResourceRequest& request, NetworkSessionTaskClient& client)
 {
-    RefPtr<NetworkingDataTask> task = adoptRef(new NetworkingDataTask(*this, client, [m_session dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)]));
-    return task;
+    return adoptRef(*new NetworkingDataTask(*this, client, [m_session dataTaskWithRequest:request.nsURLRequest(WebCore::UpdateHTTPBody)]));
 }
 
 NetworkingDataTask* NetworkSession::dataTaskForIdentifier(uint64_t taskIdentifier)

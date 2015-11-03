@@ -470,7 +470,8 @@ void NetworkResourceLoader::didReceiveResponse(const WebCore::ResourceResponse& 
 void NetworkResourceLoader::didReceiveData(RefPtr<WebCore::SharedBuffer>&& buffer)
 {
     ASSERT(buffer);
-    sharedDidReceiveBuffer(WTF::move(buffer), buffer->size());
+    auto size = buffer->size();
+    sharedDidReceiveBuffer(WTF::move(buffer), size);
 }
 
 void NetworkResourceLoader::didCompleteWithError(const WebCore::ResourceError& error)

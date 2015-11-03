@@ -103,7 +103,7 @@ public:
         Ephemeral
     };
 
-    RefPtr<NetworkingDataTask> createDataTaskWithRequest(const WebCore::ResourceRequest&, NetworkSessionTaskClient&);
+    Ref<NetworkingDataTask> createDataTaskWithRequest(const WebCore::ResourceRequest&, NetworkSessionTaskClient&);
 
     static Ref<NetworkSession> singleton(); // FIXME: This shouldn't actually be a singleton.
     NetworkingDataTask* dataTaskForIdentifier(uint64_t);
