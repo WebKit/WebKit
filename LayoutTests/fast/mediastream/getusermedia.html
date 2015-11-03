@@ -24,6 +24,10 @@
                 finishJSTest();
             }
 
+            function expectedError() {
+                testPassed('Error callback called.');
+            }
+
             function gotStreamInError(s) {
                 testFailed('Stream generated.');
                 finishJSTest();
@@ -87,7 +91,7 @@
                 shouldNotThrow("navigator.webkitGetUserMedia({video:true}, gotStream2, error);")
             }
 
-            shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, error);")
+            shouldNotThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, expectedError);")
             shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, null);")
 
             setUserMediaPermission(true);

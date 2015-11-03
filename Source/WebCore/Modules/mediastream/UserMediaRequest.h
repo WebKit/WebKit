@@ -49,8 +49,6 @@ class Document;
 class Frame;
 class MediaConstraints;
 class MediaStreamPrivate;
-class NavigatorUserMediaErrorCallback;
-class NavigatorUserMediaSuccessCallback;
 class UserMediaController;
 class SecurityOrigin;
 

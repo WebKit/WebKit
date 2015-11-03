@@ -29,6 +29,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaDevicesBuiltins.h"
+#include "NavigatorUserMediaBuiltins.h"
 #endif
 
 #if ENABLE(STREAMS_API)
@@ -64,6 +65,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
         , m_mediaDevicesBuiltins(&vm)
+        , m_navigatorUserMediaBuiltins(&vm)
 #endif
     {
 #if ENABLE(STREAMS_API)
@@ -85,6 +87,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper& mediaDevicesBuiltins() { return m_mediaDevicesBuiltins; }
+    NavigatorUserMediaBuiltinsWrapper& navigatorUserMediaBuiltins() { return m_navigatorUserMediaBuiltins;}
 #endif
 
 private:
@@ -102,6 +105,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper m_mediaDevicesBuiltins;
+    NavigatorUserMediaBuiltinsWrapper m_navigatorUserMediaBuiltins;
 #endif
 
 };

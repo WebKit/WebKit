@@ -41,3 +41,6 @@
 #include "WritableStreamBuiltins.cpp"
 #include "WritableStreamInternalsBuiltins.cpp"
 #endif
+#if ENABLE(MEDIA_STREAM)
+#include "NavigatorUserMediaBuiltins.cpp"
+#endif

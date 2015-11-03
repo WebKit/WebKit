@@ -54,7 +54,7 @@ test('navigator.webkitGetUserMedia({video: true}, Infinity)', true);
 test('navigator.webkitGetUserMedia({video: true}, -Infinity)', true);
 
 // 3 Arguments.
-test('navigator.webkitGetUserMedia({ }, emptyFunction, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia({ }, emptyFunction, emptyFunction)', false);
 test('navigator.webkitGetUserMedia({video: true}, emptyFunction, emptyFunction)', false);
 test('navigator.webkitGetUserMedia({video: true}, emptyFunction, undefined)', true, errorCallbackError);
 test('navigator.webkitGetUserMedia({audio:true, video:true}, emptyFunction, undefined)', true, errorCallbackError);

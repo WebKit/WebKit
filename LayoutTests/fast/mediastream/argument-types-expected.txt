@@ -30,7 +30,7 @@ PASS navigator.webkitGetUserMedia({video: true}, true) threw exception TypeError
 PASS navigator.webkitGetUserMedia({video: true}, 42) threw exception TypeError: Not enough arguments.
 PASS navigator.webkitGetUserMedia({video: true}, Infinity) threw exception TypeError: Not enough arguments.
 PASS navigator.webkitGetUserMedia({video: true}, -Infinity) threw exception TypeError: Not enough arguments.
-PASS navigator.webkitGetUserMedia({ }, emptyFunction, emptyFunction) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS navigator.webkitGetUserMedia({ }, emptyFunction, emptyFunction) did not throw exception.
 PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, emptyFunction) did not throw exception.
 PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, undefined) threw exception TypeError: Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function.
 PASS navigator.webkitGetUserMedia({audio:true, video:true}, emptyFunction, undefined) threw exception TypeError: Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function.

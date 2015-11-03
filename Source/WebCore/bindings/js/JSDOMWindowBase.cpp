@@ -3,6 +3,7 @@
  *  Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
  *  Copyright (C) 2003-2009, 2014 Apple Inc. All rights reseved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
+ *  Copyright (c) 2015 Canon Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -83,34 +84,35 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
 
     m_privateFunctions.init(*this);
 
+#if ENABLE(STREAMS_API)
+    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+#endif
+
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly),
 #if ENABLE(STREAMS_API)
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamReadablePrivateName(), jsNumber(4), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().ReadableStreamControllerPrivateName(), createReadableStreamControllerPrivateConstructor(vm, *this), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().ReadableStreamReaderPrivateName(), createReadableStreamReaderPrivateConstructor(vm, *this), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().streamReadablePrivateName(), jsNumber(4), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().ReadableStreamControllerPrivateName(), createReadableStreamControllerPrivateConstructor(vm, *this), DontDelete | ReadOnly),
+        GlobalPropertyInfo(clientData.builtinNames().ReadableStreamReaderPrivateName(), createReadableStreamReaderPrivateConstructor(vm, *this), DontDelete | ReadOnly),
 #define DECLARE_GLOBAL_STATIC(name)\
         GlobalPropertyInfo(\
-            static_cast<JSVMClientData*>(vm.clientData)->builtinFunctions().readableStreamInternalsBuiltins().name##PrivateName(), \
-            m_privateFunctions.readableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
+            clientData.builtinFunctions().readableStreamInternalsBuiltins().name##PrivateName(), m_privateFunctions.readableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
         WEBCORE_FOREACH_READABLESTREAMINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef DECLARE_GLOBAL_STATIC
 #define DECLARE_GLOBAL_STATIC(name)\
         GlobalPropertyInfo(\
-            static_cast<JSVMClientData*>(vm.clientData)->builtinFunctions().streamInternalsBuiltins().name##PrivateName(), \
-            m_privateFunctions.streamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
+            clientData.builtinFunctions().streamInternalsBuiltins().name##PrivateName(), m_privateFunctions.streamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
         WEBCORE_FOREACH_STREAMINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef DECLARE_GLOBAL_STATIC
 #define DECLARE_GLOBAL_STATIC(name)\
         GlobalPropertyInfo(\
-            static_cast<JSVMClientData*>(vm.clientData)->builtinFunctions().writableStreamInternalsBuiltins().name##PrivateName(), \
-            m_privateFunctions.writableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
+            clientData.builtinFunctions().writableStreamInternalsBuiltins().name##PrivateName(), m_privateFunctions.writableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
         WEBCORE_FOREACH_WRITABLESTREAMINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef DECLARE_GLOBAL_STATIC
 #endif
