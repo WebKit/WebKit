@@ -205,18 +205,6 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         IOHIDEventAppendEvent(eventRef.get(), subEvent.get(), 0);
     }
 
-    if (_activePointCount) {
-        IOHIDFloat progress = _activePoints[0].pathPressure;
-        RetainPtr<IOHIDEventRef> forceEvent = adoptCF(IOHIDEventCreateForceEvent(kCFAllocatorDefault,
-            machTime,
-            0,
-            progress,
-            0,
-            0.0,
-            kIOHIDEventOptionNone));
-        IOHIDEventAppendEvent(eventRef.get(), forceEvent.get(), 0);
-    }
-
     return eventRef.leakRef();
 }
 
