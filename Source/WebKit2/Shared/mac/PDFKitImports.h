@@ -26,6 +26,8 @@
 #ifndef PDFKitImports_h
 #define PDFKitImports_h
 
+#if PLATFORM(MAC)
+
 #if __has_include(<PDFKit/PDFLayerControllerVersioningPriv.h>)
 #import <PDFKit/PDFLayerControllerVersioningPriv.h>
 #endif
@@ -46,5 +48,7 @@ Class pdfAnnotationChoiceWidgetClass();
 #endif
 
 }
+
+#endif // PLATFORM(MAC)
 
 #endif // PDFKitImports_h

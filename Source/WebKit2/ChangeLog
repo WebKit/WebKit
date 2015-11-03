@@ -1,5 +1,11 @@
 2015-11-02  Tim Horton  <timothy_horton@apple.com>
 
+        Try to fix the iOS build
+
+        * Shared/mac/PDFKitImports.h:
+
+2015-11-02  Tim Horton  <timothy_horton@apple.com>
+
         Address a misssed review comment in r191922
 
         * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
