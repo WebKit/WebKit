@@ -1,3 +1,16 @@
+2015-11-03  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics] invisible webview should not paint the content
+        https://bugs.webkit.org/show_bug.cgi?id=150662
+
+        Reviewed by Darin Adler.
+
+        Suspend or resume the painting instead of just initializing m_isPaintingSuspended 
+        for invisible webview not to paint the content until visibility is changed.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::CoordinatedDrawingArea):
+
 2015-11-03  Anders Carlsson  <andersca@apple.com>
 
         Simplify -[_WKRemoteObjectRegistry _invokeMethod:]
