@@ -1,3 +1,13 @@
+2015-11-02  Philippe Normand  <pnormand@igalia.com>
+
+        [Mac][GTK] Disable Ninja response file support
+        https://bugs.webkit.org/show_bug.cgi?id=150801
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsCommon.cmake: The OSX toolchain doesn't
+        support response files, so instruct Ninja to not generate those.
+
 2015-11-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the FTL JIT build with system LLVM on Linux
