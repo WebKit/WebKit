@@ -71,6 +71,8 @@ public:
         case Arg::FP:
             return Tmp::fpTmpForIndex(m_numFPTmps++);
         }
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
     }
 
     unsigned numTmps(Arg::Type type)
@@ -81,6 +83,8 @@ public:
         case Arg::FP:
             return m_numFPTmps;
         }
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
     }
 
     unsigned callArgAreaSize() const { return m_callArgAreaSize; }

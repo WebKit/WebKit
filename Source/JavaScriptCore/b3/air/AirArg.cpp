@@ -46,7 +46,7 @@ void Arg::dump(PrintStream& out) const
         out.print("$", m_offset);
         return;
     case Imm64:
-        out.printf("$0x%llx", m_offset);
+        out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
         return;
     case Addr:
         if (offset())

@@ -73,6 +73,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirBasicBlock.cpp
     b3/air/AirCCallSpecial.cpp
     b3/air/AirCode.cpp
+    b3/air/AirEliminateDeadCode.cpp
     b3/air/AirGenerate.cpp
     b3/air/AirGenerated.cpp
     b3/air/AirHandleCalleeSaves.cpp
@@ -80,6 +81,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirInst.cpp
     b3/air/AirPhaseScope.cpp
     b3/air/AirRegisterPriority.cpp
+    b3/air/AirReportUsedRegisters.cpp
     b3/air/AirSpecial.cpp
     b3/air/AirSpillEverything.cpp
     b3/air/AirStackSlot.cpp
@@ -116,6 +118,7 @@ set(JavaScriptCore_SOURCES
     b3/B3StackSlotValue.cpp
     b3/B3SwitchCase.cpp
     b3/B3SwitchValue.cpp
+    b3/B3TimingScope.cpp
     b3/B3Type.cpp
     b3/B3UpsilonValue.cpp
     b3/B3UseCounts.cpp

@@ -68,6 +68,8 @@ inline size_t sizeofType(Type type)
     case Double:
         return 8;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } } // namespace JSC::B3

@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include <limits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 

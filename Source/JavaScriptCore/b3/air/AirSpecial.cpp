@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include <limits.h>
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace B3 { namespace Air {
