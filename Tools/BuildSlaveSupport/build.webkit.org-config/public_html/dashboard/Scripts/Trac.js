@@ -83,7 +83,7 @@ Trac.prototype = {
         var toDay = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
 
         return this.baseURL + "timeline?changeset=on&format=rss&max=0" +
-            "&from=" +  (toDay.getMonth() + 1) + "%2F" + toDay.getDate() + "%2F" + (toDay.getFullYear() % 100) +
+            "&from=" +  toDay.toISOString().slice(0, 10) +
             "&daysback=" + ((toDay - fromDay) / 1000 / 60 / 60 / 24);
     },
 

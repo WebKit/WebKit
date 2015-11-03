@@ -1,3 +1,13 @@
+2015-11-03  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard should use ISO dates in Trac URLs
+        https://bugs.webkit.org/show_bug.cgi?id=150855
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac.prototype._xmlTimelineURL):
+
 2015-11-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, add myself to the SVG watchlist.
