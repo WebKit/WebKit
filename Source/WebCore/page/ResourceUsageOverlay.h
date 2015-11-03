@@ -80,7 +80,7 @@ private:
 #endif
 
     static const int normalWidth = 500;
-    static const int normalHeight = 120;
+    static const int normalHeight = 130;
 };
 
 }

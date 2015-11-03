@@ -77,6 +77,7 @@ static const RGBA32 colorForGCHeap     = 0xFFA0A0FF;
 static const RGBA32 colorForLibcMalloc = 0xFF00FF00;
 static const RGBA32 colorForFastMalloc = 0xFFFF6060;
 static const RGBA32 colorForOther      = 0xFFC0FF00;
+static const RGBA32 colorForGCOwned    = 0xFFFFC060;
 static const RGBA32 colorForLabels     = 0xFFE0E0E0;
 
 template<typename T, size_t size = 50>
@@ -136,6 +137,7 @@ struct ResourceUsageData {
     size_t layers { 0 };
     size_t images { 0 };
     size_t jitCode { 0 };
+    size_t gcOwned { 0 };
     size_t libcMalloc { 0 };
     size_t bmalloc { 0 };
     size_t sumDirty { 0 };
@@ -284,12 +286,13 @@ static void drawMemoryPie(GraphicsContext& context, float x, float y, ResourceUs
 
     FloatPoint center(x - 15, y + 60);
 
-    size_t bmallocWithDeductions = data.bmalloc - data.gcHeapCapacityHistory.last();
+    size_t bmallocWithDeductions = data.bmalloc - data.gcHeapCapacityHistory.last() - data.gcOwned;
 
     float angle = 0;
     drawSlice(context, center, angle, bmallocWithDeductions, data.sumDirty, colorForFastMalloc);
     drawSlice(context, center, angle, data.libcMalloc, data.sumDirty, colorForLibcMalloc);
     drawSlice(context, center, angle, data.gcHeapCapacityHistory.last(), data.sumDirty, colorForGCHeap);
+    drawSlice(context, center, angle, data.gcOwned, data.sumDirty, colorForGCOwned);
     drawSlice(context, center, angle, data.layers, data.sumDirty, colorForLayers);
     drawSlice(context, center, angle, data.images, data.sumDirty, colorForImages);
     drawSlice(context, center, angle, data.jitCode, data.sumDirty, colorForJITCode);
@@ -344,7 +347,7 @@ void ResourceUsageOverlay::draw(GraphicsContext& context)
     context.clearRect(m_overlay->bounds());
     CGRect viewBounds = m_overlay->bounds();
 
-    size_t bmallocWithDeductions = data.bmalloc - gcHeapCapacity;
+    size_t bmallocWithDeductions = data.bmalloc - gcHeapCapacity - data.gcOwned;
     size_t footprintWithDeductions = data.sumDirty - data.bmalloc - data.layers - data.images - data.libcMalloc - data.jitCode;
 
     showText(context, 10,  20, colorForLabels, String::format("        CPU: %g", data.cpuHistory.last()));
@@ -356,7 +359,8 @@ void ResourceUsageOverlay::draw(GraphicsContext& context)
     showText(context, 10,  80, colorForLayers,     "     Layers: " + formatByteNumber(data.layers));
     showText(context, 10,  90, colorForJITCode,    "     JS JIT: " + formatByteNumber(data.jitCode));
     showText(context, 10, 100, colorForGCHeap,     "    GC heap: " + formatByteNumber(gcHeapSize) + " (" + formatByteNumber(gcHeapCapacity) + ")");
-    showText(context, 10, 110, colorForOther,      "      Other: " + formatByteNumber(footprintWithDeductions));
+    showText(context, 10, 110, colorForGCOwned,    "   GC owned: " + formatByteNumber(data.gcOwned));
+    showText(context, 10, 120, colorForOther,      "      Other: " + formatByteNumber(footprintWithDeductions));
 
     drawCpuHistory(context, m_overlay->frame().width() - 50, 0, viewBounds.size.height, data.cpuHistory);
     drawGCHistory(context, m_overlay->frame().width() - 100, 0, viewBounds.size.height, data.gcHeapSizeHistory, data.gcHeapCapacityHistory);
@@ -444,6 +448,7 @@ NO_RETURN void runSamplerThread(void*)
             copyToVector(data.overlayLayers, layers);
 
             data.gcHeapCapacityHistory.append(data.vm->heap.blockBytesAllocated());
+            data.gcOwned = data.vm->heap.extraMemorySize();
         }
 
         [CATransaction begin];
