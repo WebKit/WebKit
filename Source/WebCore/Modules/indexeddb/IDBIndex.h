@@ -48,13 +48,12 @@ public:
     virtual ~IDBIndex() { }
 
     // Implement the IDL
-    virtual const String name() const = 0;
+    virtual const String& name() const = 0;
     virtual RefPtr<IDBObjectStore> objectStore() const = 0;
     virtual RefPtr<IDBAny> keyPathAny() const = 0;
-    virtual const IDBKeyPath keyPath() const = 0;
+    virtual const IDBKeyPath& keyPath() const = 0;
     virtual bool unique() const = 0;
     virtual bool multiEntry() const = 0;
-    virtual int64_t id() const = 0;
 
     virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;

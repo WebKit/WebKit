@@ -55,14 +55,14 @@ public:
     ~LegacyIndex();
 
     // Implement the IDL
-    virtual const String name() const override final { return m_metadata.name; }
+    virtual const String& name() const override final { return m_metadata.name; }
     virtual RefPtr<IDBObjectStore> objectStore() const override final { return m_objectStore; }
     LegacyObjectStore* legacyObjectStore() const { return m_objectStore.get(); }
     virtual RefPtr<IDBAny> keyPathAny() const override final { return LegacyAny::create(m_metadata.keyPath); }
-    virtual const IDBKeyPath keyPath() const override final { return m_metadata.keyPath; }
+    virtual const IDBKeyPath& keyPath() const override final { return m_metadata.keyPath; }
     virtual bool unique() const override final { return m_metadata.unique; }
     virtual bool multiEntry() const override final { return m_metadata.multiEntry; }
-    virtual int64_t id() const override final { return m_metadata.id; }
+    int64_t id() const { return m_metadata.id; }
 
     // FIXME: Try to modify the code generator so this is unneeded.
     virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
