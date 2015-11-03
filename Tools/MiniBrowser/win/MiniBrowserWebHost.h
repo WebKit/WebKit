@@ -26,6 +26,7 @@
 #pragma once
 
 #include "resource.h"
+#include <comutil.h>
 #include <WebKit/WebKit.h>
 
 class MiniBrowser;

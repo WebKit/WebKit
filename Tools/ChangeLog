@@ -1,3 +1,10 @@
+2015-11-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r191958.
+
+        * MiniBrowser/win/MiniBrowser.h: Add missing include.
+        * MiniBrowser/win/MiniBrowserWebHost.h: Ditto.
+
 2015-11-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add Jiewen Tan (jiewen_tan@apple.com) to committer list.
