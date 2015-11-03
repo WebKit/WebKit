@@ -29,7 +29,7 @@
 #import "PDFPluginChoiceAnnotation.h"
 
 #import "PDFKitImports.h"
-#import "PDFLayerControllerDetails.h"
+#import "PDFLayerControllerSPI.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>

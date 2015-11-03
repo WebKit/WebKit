@@ -458,7 +458,7 @@ bool PluginProxy::isEditingCommandEnabled(const String& commandName)
     return enabled;
 }
     
-bool PluginProxy::handlesPageScaleFactor()
+bool PluginProxy::handlesPageScaleFactor() const
 {
     if (m_waitingOnAsynchronousInitialization)
         return false;
@@ -468,6 +468,18 @@ bool PluginProxy::handlesPageScaleFactor()
         return false;
     
     return handled;
+}
+
+bool PluginProxy::requiresUnifiedScaleFactor() const
+{
+    if (m_waitingOnAsynchronousInitialization)
+        return false;
+
+    bool required = false;
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::RequiresUnifiedScaleFactor(), Messages::PluginControllerProxy::RequiresUnifiedScaleFactor::Reply(required), m_pluginInstanceID))
+        return false;
+    
+    return required;
 }
 
 NPObject* PluginProxy::pluginScriptableNPObject()

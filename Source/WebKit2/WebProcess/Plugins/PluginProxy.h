@@ -111,7 +111,8 @@ private:
     virtual bool shouldAllowScripting() override { return true; }
     virtual bool shouldAllowNavigationFromDrags() override { return false; }
     
-    virtual bool handlesPageScaleFactor() override;
+    virtual bool handlesPageScaleFactor() const override;
+    virtual bool requiresUnifiedScaleFactor() const override;
     
     virtual NPObject* pluginScriptableNPObject() override;
 

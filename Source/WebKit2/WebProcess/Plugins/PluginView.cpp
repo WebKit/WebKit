@@ -521,6 +521,14 @@ bool PluginView::handlesPageScaleFactor() const
     return m_plugin->handlesPageScaleFactor();
 }
 
+bool PluginView::requiresUnifiedScaleFactor() const
+{
+    if (!m_plugin || !m_isInitialized)
+        return false;
+
+    return m_plugin->requiresUnifiedScaleFactor();
+}
+
 void PluginView::webPageDestroyed()
 {
     m_webPage = 0;
@@ -1862,6 +1870,9 @@ bool PluginView::shouldCreateTransientPaintingSnapshot() const
             return false;
         }
     }
+
+    if (!m_plugin->canCreateTransientPaintingSnapshot())
+        return false;
 
     return true;
 }

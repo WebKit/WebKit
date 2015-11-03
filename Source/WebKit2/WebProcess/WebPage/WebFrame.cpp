@@ -514,6 +514,16 @@ bool WebFrame::handlesPageScaleGesture() const
     return pluginView && pluginView->handlesPageScaleFactor();
 }
 
+bool WebFrame::requiresUnifiedScaleFactor() const
+{
+    if (!m_coreFrame->document()->isPluginDocument())
+        return 0;
+
+    PluginDocument* pluginDocument = static_cast<PluginDocument*>(m_coreFrame->document());
+    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+    return pluginView && pluginView->requiresUnifiedScaleFactor();
+}
+
 void WebFrame::setAccessibleName(const String& accessibleName)
 {
     if (!AXObjectCache::accessibilityEnabled())

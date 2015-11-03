@@ -222,10 +222,10 @@ public:
 
     // Ask the plug-in whether it wants URLs and files dragged onto it to cause navigation.
     virtual bool shouldAllowNavigationFromDrags() = 0;
-    
+
     // Ask the plug-in whether it wants to override full-page zoom.
-    virtual bool handlesPageScaleFactor() = 0;
-    
+    virtual bool handlesPageScaleFactor() const = 0;
+
     // Tells the plug-in about focus changes.
     virtual void setFocus(bool) = 0;
 
@@ -296,6 +296,10 @@ public:
     virtual WebCore::AudioHardwareActivityType audioHardwareActivity() const { return WebCore::AudioHardwareActivityType::Unknown; }
 
     virtual void mutedStateChanged(bool) { }
+
+    virtual bool canCreateTransientPaintingSnapshot() const { return true; }
+
+    virtual bool requiresUnifiedScaleFactor() const { return false; }
 
 protected:
     Plugin(PluginType);

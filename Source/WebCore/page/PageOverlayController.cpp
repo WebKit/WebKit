@@ -163,7 +163,7 @@ void PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates()
     bool forceSynchronousScrollLayerPositionUpdates = false;
 
     for (auto& overlay : m_pageOverlays) {
-        if (overlay->overlayType() == PageOverlay::OverlayType::View)
+        if (overlay->needsSynchronousScrolling())
             forceSynchronousScrollLayerPositionUpdates = true;
     }
 

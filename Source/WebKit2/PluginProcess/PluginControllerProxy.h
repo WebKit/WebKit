@@ -144,6 +144,7 @@ private:
     void handleEditingCommand(const String&, const String&, bool&);
     void isEditingCommandEnabled(const String&, bool&);
     void handlesPageScaleFactor(bool&);
+    void requiresUnifiedScaleFactor(bool&);
     void paintEntirePlugin();
     void supportsSnapshotting(bool&);
     void snapshot(ShareableBitmap::Handle& backingStoreHandle);

@@ -89,6 +89,9 @@ messages -> PluginControllerProxy LegacyReceiver {
     # Return whether or not a plugin wants to handle page scale factor itself.
     HandlesPageScaleFactor() -> (bool enabled);
 
+    # Return whether or not a plugin wants page scale, page zoom, and text zoom all to affect page scale.
+    RequiresUnifiedScaleFactor() -> (bool required);
+
     # Sent when the plug-in focus changes.
     SetFocus(bool isFocused)
 

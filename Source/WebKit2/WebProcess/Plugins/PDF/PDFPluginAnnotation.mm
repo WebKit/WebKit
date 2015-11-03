@@ -29,7 +29,7 @@
 #if ENABLE(PDFKIT_PLUGIN)
 
 #import "PDFKitImports.h"
-#import "PDFLayerControllerDetails.h"
+#import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"
@@ -98,14 +98,19 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 void PDFPluginAnnotation::updateGeometry()
 {
     IntSize documentSize(m_pdfLayerController.contentSizeRespectingZoom);
-    IntPoint scrollPosition(m_pdfLayerController.scrollPosition);
     NSRect annotationRect = NSRectFromCGRect([m_pdfLayerController boundsForAnnotation:m_annotation.get()]);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
     styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSPrimitiveValue::CSS_PX);
     styledElement->setInlineStyleProperty(CSSPropertyHeight, annotationRect.size.height, CSSPrimitiveValue::CSS_PX);
+#if !USE(DEPRECATED_PDF_PLUGIN)
+    styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x, CSSPrimitiveValue::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height, CSSPrimitiveValue::CSS_PX);
+#else
+    IntPoint scrollPosition(m_pdfLayerController.scrollPosition);
     styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x - scrollPosition.x(), CSSPrimitiveValue::CSS_PX);
     styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSPrimitiveValue::CSS_PX);
+#endif
 }
 
 bool PDFPluginAnnotation::handleEvent(Event* event)

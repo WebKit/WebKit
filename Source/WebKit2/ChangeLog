@@ -1,3 +1,29 @@
+2015-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin should take advantage of threaded scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=150037
+
+        Reviewed by Anders Carlsson.
+
+        Duplicate PDFPlugin, creating PDFPlugin (the modern version), and
+        DeprecatedPDFPlugin (containing the code that used to be in PDFPlugin
+        prior to this patch).
+
+        The new PDFPlugin differs from the old one in a few significant ways,
+        and we need to keep both alive for the time being. Significant differences
+        include:
+
+        - PDFPlugin is no longer a ScrollableArea
+        - PDFPlugin no longer hosts layers owned by PDFKit; instead, it draws
+          into the page tiles, allowing WebCore's threaded scrolling to do its job
+        - PDFPlugin now resizes itself to the size of the document
+        - PDFPlugin doesn't handle zooming itself, it just delegates to the page
+        - PDFLayerController has large and incompatible API changes
+        - PDFPlugin now implements more of the HUD behavior, but it's still
+          painted by PDFLayerController (into a view-relative PageOverlay)
+
+        [ File list elided because it's long and useless. ]
+
 2015-11-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add tvOS and watchOS to SUPPORTED_PLATFORMS

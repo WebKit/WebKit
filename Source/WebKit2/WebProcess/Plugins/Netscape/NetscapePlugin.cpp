@@ -997,7 +997,7 @@ bool NetscapePlugin::shouldAllowNavigationFromDrags()
     return false;
 }
 
-bool NetscapePlugin::handlesPageScaleFactor()
+bool NetscapePlugin::handlesPageScaleFactor() const
 {
     return false;
 }

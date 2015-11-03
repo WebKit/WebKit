@@ -53,14 +53,10 @@ Ref<PageOverlay> PageOverlay::create(Client& client, OverlayType overlayType)
 
 PageOverlay::PageOverlay(Client& client, OverlayType overlayType)
     : m_client(client)
-    , m_page(nullptr)
     , m_fadeAnimationTimer(*this, &PageOverlay::fadeAnimationTimerFired)
-    , m_fadeAnimationStartTime(0)
     , m_fadeAnimationDuration(fadeAnimationDuration)
-    , m_fadeAnimationType(NoAnimation)
-    , m_fractionFadedIn(1)
+    , m_needsSynchronousScrolling(overlayType == OverlayType::View)
     , m_overlayType(overlayType)
-    , m_backgroundColor(Color::transparent)
     , m_pageOverlayID(generatePageOverlayID())
 {
 }
@@ -163,7 +159,8 @@ void PageOverlay::setPage(Page* page)
 void PageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
     if (auto pageOverlayController = controller()) {
-        pageOverlayController->setPageOverlayOpacity(*this, m_fractionFadedIn);
+        if (m_fadeAnimationType != FadeAnimationType::NoAnimation)
+            pageOverlayController->setPageOverlayOpacity(*this, m_fractionFadedIn);
         pageOverlayController->setPageOverlayNeedsDisplay(*this, dirtyRect);
     }
 }

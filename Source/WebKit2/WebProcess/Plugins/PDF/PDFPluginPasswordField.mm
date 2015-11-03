@@ -29,7 +29,7 @@
 #if ENABLE(PDFKIT_PLUGIN)
 
 #import "PDFKitImports.h"
-#import "PDFLayerControllerDetails.h"
+#import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/Event.h>

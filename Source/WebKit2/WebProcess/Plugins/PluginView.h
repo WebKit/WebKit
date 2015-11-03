@@ -95,6 +95,7 @@ public:
     void setPageScaleFactor(double scaleFactor, WebCore::IntPoint origin);
     double pageScaleFactor() const;
     bool handlesPageScaleFactor() const;
+    bool requiresUnifiedScaleFactor() const;
 
     void pageScaleFactorDidChange();
     void topContentInsetDidChange();

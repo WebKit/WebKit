@@ -225,7 +225,7 @@ private:
     virtual bool shouldAllowScripting() override;
     virtual bool shouldAllowNavigationFromDrags() override;
     
-    virtual bool handlesPageScaleFactor() override;
+    virtual bool handlesPageScaleFactor() const override;
 
     virtual NPObject* pluginScriptableNPObject() override;
     

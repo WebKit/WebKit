@@ -1341,6 +1341,13 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 
 double WebPage::textZoomFactor() const
 {
+    PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
+    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
+        if (pluginView->handlesPageScaleFactor())
+            return pluginView->pageScaleFactor();
+        return pageScaleFactor();
+    }
+
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return 1;
@@ -1350,8 +1357,13 @@ double WebPage::textZoomFactor() const
 void WebPage::setTextZoomFactor(double zoomFactor)
 {
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->handlesPageScaleFactor())
+    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
+        if (pluginView->handlesPageScaleFactor())
+            pluginView->setPageScaleFactor(zoomFactor, IntPoint());
+        else
+            scalePage(zoomFactor, IntPoint());
         return;
+    }
 
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
@@ -1362,8 +1374,11 @@ void WebPage::setTextZoomFactor(double zoomFactor)
 double WebPage::pageZoomFactor() const
 {
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->handlesPageScaleFactor())
-        return pluginView->pageScaleFactor();
+    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
+        if (pluginView->handlesPageScaleFactor())
+            return pluginView->pageScaleFactor();
+        return pageScaleFactor();
+    }
 
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
@@ -1374,8 +1389,11 @@ double WebPage::pageZoomFactor() const
 void WebPage::setPageZoomFactor(double zoomFactor)
 {
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->handlesPageScaleFactor()) {
-        pluginView->setPageScaleFactor(zoomFactor, IntPoint());
+    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
+        if (pluginView->handlesPageScaleFactor())
+            pluginView->setPageScaleFactor(zoomFactor, IntPoint());
+        else
+            scalePage(zoomFactor, IntPoint());
         return;
     }
 
@@ -1388,8 +1406,11 @@ void WebPage::setPageZoomFactor(double zoomFactor)
 void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
     PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame());
-    if (pluginView && pluginView->handlesPageScaleFactor()) {
-        pluginView->setPageScaleFactor(pageZoomFactor, IntPoint());
+    if (pluginView && pluginView->requiresUnifiedScaleFactor()) {
+        if (pluginView->handlesPageScaleFactor())
+            pluginView->setPageScaleFactor(pageZoomFactor, IntPoint());
+        else
+            scalePage(pageZoomFactor, IntPoint());
         return;
     }
 

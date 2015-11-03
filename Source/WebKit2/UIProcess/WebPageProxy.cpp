@@ -2251,7 +2251,7 @@ double WebPageProxy::pageZoomFactor() const
 {
     // Zoom factor for non-PDF pages persists across page loads. We maintain a separate member variable for PDF
     // zoom which ensures that we don't use the PDF zoom for a normal page.
-    if (m_mainFrame && m_mainFrame->isDisplayingPDFDocument())
+    if (m_mainFramePluginHandlesPageScaleGesture)
         return m_pluginZoomFactor;
     return m_pageZoomFactor;
 }
@@ -2260,7 +2260,7 @@ double WebPageProxy::pageScaleFactor() const
 {
     // PDF documents use zoom and scale factors to size themselves appropriately in the window. We store them
     // separately but decide which to return based on the main frame.
-    if (m_mainFrame && m_mainFrame->isDisplayingPDFDocument())
+    if (m_mainFramePluginHandlesPageScaleGesture)
         return m_pluginScaleFactor;
     return m_pageScaleFactor;
 }
@@ -2957,7 +2957,7 @@ void WebPageProxy::clearLoadDependentCallbacks()
     }
 }
 
-void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, const UserData& userData)
+void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, bool pluginHandlesPageScaleGesture, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, const UserData& userData)
 {
     PageClientProtector protector(m_pageClient);
 
@@ -3016,9 +3016,13 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     // WebPageProxy's cache of the value can get out of sync (e.g. in the case where a
     // plugin is handling page scaling itself) so we should reset it to the default
     // for standard main frame loads.
-    if (frame->isMainFrame() && static_cast<FrameLoadType>(opaqueFrameLoadType) == FrameLoadType::Standard) {
-        m_pageScaleFactor = 1;
-        m_pluginScaleFactor = 1;
+    if (frame->isMainFrame()) {
+        m_mainFramePluginHandlesPageScaleGesture = pluginHandlesPageScaleGesture;
+
+        if (static_cast<FrameLoadType>(opaqueFrameLoadType) == FrameLoadType::Standard) {
+            m_pageScaleFactor = 1;
+            m_pluginScaleFactor = 1;
+        }
     }
 
     m_pageLoadState.commitChanges();

@@ -588,7 +588,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
     if (!selection.string.length)
         return dictionaryPopupInfo;
 
-    NSRect rangeRect = pdfPlugin.viewRectForSelection(selection);
+    NSRect rangeRect = pdfPlugin.rectForSelectionInRootView(selection);
 
     NSAttributedString *nsAttributedString = selection.attributedString;
     

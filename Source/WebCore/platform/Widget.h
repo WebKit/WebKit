@@ -110,7 +110,7 @@ public:
 
     WEBCORE_EXPORT virtual void setFrameRect(const IntRect&);
     WEBCORE_EXPORT IntRect frameRect() const;
-    IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
+    WEBCORE_EXPORT IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
 
     void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); }
     void resize(const IntSize& s) { setFrameRect(IntRect(location(), s)); }
@@ -151,7 +151,7 @@ public:
 
     virtual void notifyWidget(WidgetNotification) { }
 
-    IntRect convertToRootView(const IntRect&) const;
+    WEBCORE_EXPORT IntRect convertToRootView(const IntRect&) const;
     IntRect convertFromRootView(const IntRect&) const;
 
     IntPoint convertToRootView(const IntPoint&) const;

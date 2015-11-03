@@ -565,6 +565,11 @@ void PluginControllerProxy::handlesPageScaleFactor(bool& isHandled)
     isHandled = m_plugin->handlesPageScaleFactor();
 }
 
+void PluginControllerProxy::requiresUnifiedScaleFactor(bool& required)
+{
+    required = m_plugin->requiresUnifiedScaleFactor();
+}
+
 void PluginControllerProxy::paintEntirePlugin()
 {
     if (m_pluginSize.isEmpty())
