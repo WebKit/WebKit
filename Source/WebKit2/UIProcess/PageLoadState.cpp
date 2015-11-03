@@ -402,6 +402,14 @@ bool PageLoadState::isLoading(const Data& data)
     return false;
 }
 
+void PageLoadState::willChangeProcessIsResponsive()
+{
+}
+
+void PageLoadState::didChangeProcessIsResponsive()
+{
+}
+
 void PageLoadState::callObserverCallback(void (Observer::*callback)())
 {
     for (auto* observer : m_observers)

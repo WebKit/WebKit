@@ -907,6 +907,16 @@ void NavigationState::didChangeCertificateInfo()
     [m_webView didChangeValueForKey:@"certificateChain"];
 }
 
+void NavigationState::willChangeWebProcessIsResponsive()
+{
+    [m_webView willChangeValueForKey:@"_webProcessIsResponsive"];
+}
+
+void NavigationState::didChangeWebProcessIsResponsive()
+{
+    [m_webView didChangeValueForKey:@"_webProcessIsResponsive"];
+}
+
 } // namespace WebKit
 
 #endif

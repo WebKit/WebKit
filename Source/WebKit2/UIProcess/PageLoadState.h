@@ -75,6 +75,9 @@ public:
 
         virtual void willChangeCertificateInfo() = 0;
         virtual void didChangeCertificateInfo() = 0;
+
+        virtual void willChangeWebProcessIsResponsive() = 0;
+        virtual void didChangeWebProcessIsResponsive() = 0;
     };
 
     class Transaction {
@@ -161,6 +164,11 @@ public:
     void didChangeProgress(const Transaction::Token&, double);
     void didFinishProgress(const Transaction::Token&);
     void setNetworkRequestsInProgress(const Transaction::Token&, bool);
+
+    // FIXME: We piggy-back off PageLoadState::Observer so that both WKWebView and WKObservablePageState
+    // can listen for changes. Once we get rid of WKObservablePageState these could just be part of API::NavigationClient.
+    void willChangeProcessIsResponsive();
+    void didChangeProcessIsResponsive();
 
 private:
     void beginTransaction() { ++m_outstandingTransactionCount; }

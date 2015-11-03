@@ -44,6 +44,7 @@ extern "C" {
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;
 @property (nonatomic, readonly) double estimatedProgress;
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
+@property (nonatomic, readonly) BOOL _webProcessIsResponsive;
 
 // Not KVO compliant.
 @property (nonatomic, readonly) NSURL *unreachableURL;

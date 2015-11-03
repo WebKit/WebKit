@@ -150,6 +150,8 @@ private:
     virtual void didChangeNetworkRequestsInProgress() override;
     virtual void willChangeCertificateInfo() override;
     virtual void didChangeCertificateInfo() override;
+    virtual void willChangeWebProcessIsResponsive() override;
+    virtual void didChangeWebProcessIsResponsive() override;
 
     WKWebView *m_webView;
     WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;

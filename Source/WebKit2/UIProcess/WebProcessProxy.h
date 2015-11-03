@@ -206,8 +206,10 @@ private:
     virtual IPC::ProcessType remoteProcessType() override { return IPC::ProcessType::Web; }
 
     // ResponsivenessTimer::Client
-    void didBecomeUnresponsive(ResponsivenessTimer*) override;
-    void didBecomeResponsive(ResponsivenessTimer*) override;
+    void didBecomeUnresponsive() override;
+    void didBecomeResponsive() override;
+    virtual void willChangeIsResponsive() override;
+    virtual void didChangeIsResponsive() override;
 
     // ProcessThrottlerClient
     void sendProcessWillSuspendImminently() override;

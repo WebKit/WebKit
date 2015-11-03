@@ -85,6 +85,11 @@ using namespace WebKit;
     return _page->pageLoadState().hasOnlySecureContent();
 }
 
+- (BOOL)_webProcessIsResponsive
+{
+    return _page->process().responsivenessTimer()->isResponsive();
+}
+
 - (double)estimatedProgress
 {
     return _page->estimatedProgress();

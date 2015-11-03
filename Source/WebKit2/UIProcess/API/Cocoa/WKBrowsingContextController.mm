@@ -767,6 +767,11 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     return _page->processIdentifier();
 }
 
+- (BOOL)_webProcessIsResponsive
+{
+    return _page->process().responsivenessTimer()->isResponsive();
+}
+
 @end
 
 #endif // WK_API_ENABLED

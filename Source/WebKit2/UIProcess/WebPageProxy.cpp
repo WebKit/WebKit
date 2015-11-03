@@ -4880,6 +4880,16 @@ void WebPageProxy::processDidBecomeResponsive()
         m_loaderClient->processDidBecomeResponsive(*this);
 }
 
+void WebPageProxy::willChangeProcessIsResponsive()
+{
+    m_pageLoadState.willChangeProcessIsResponsive();
+}
+
+void WebPageProxy::didChangeProcessIsResponsive()
+{
+    m_pageLoadState.didChangeProcessIsResponsive();
+}
+
 void WebPageProxy::processDidCrash()
 {
     ASSERT(m_isValid);

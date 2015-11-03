@@ -228,6 +228,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 @property (nonatomic, getter=_allowsMediaDocumentInlinePlayback, setter=_setAllowsMediaDocumentInlinePlayback:) BOOL _allowsMediaDocumentInlinePlayback;
 
+@property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 @end
 
 

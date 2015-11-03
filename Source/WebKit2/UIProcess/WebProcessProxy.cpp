@@ -100,7 +100,7 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool)
 }
 
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
-    : m_responsivenessTimer(this)
+    : m_responsivenessTimer(*this)
     , m_processPool(processPool)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_customProtocolManagerProxy(this, processPool)
@@ -552,20 +552,36 @@ void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
     didClose(connection);
 }
 
-void WebProcessProxy::didBecomeUnresponsive(ResponsivenessTimer*)
+void WebProcessProxy::didBecomeUnresponsive()
 {
     Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
-    for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidBecomeUnresponsive();
+    for (auto& page : pages)
+        page->processDidBecomeUnresponsive();
 }
 
-void WebProcessProxy::didBecomeResponsive(ResponsivenessTimer*)
+void WebProcessProxy::didBecomeResponsive()
 {
     Vector<RefPtr<WebPageProxy>> pages;
     copyValuesToVector(m_pageMap, pages);
-    for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidBecomeResponsive();
+    for (auto& page : pages)
+        page->processDidBecomeResponsive();
+}
+
+void WebProcessProxy::willChangeIsResponsive()
+{
+    Vector<RefPtr<WebPageProxy>> pages;
+    copyValuesToVector(m_pageMap, pages);
+    for (auto& page : pages)
+        page->willChangeProcessIsResponsive();
+}
+
+void WebProcessProxy::didChangeIsResponsive()
+{
+    Vector<RefPtr<WebPageProxy>> pages;
+    copyValuesToVector(m_pageMap, pages);
+    for (auto& page : pages)
+        page->didChangeProcessIsResponsive();
 }
 
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)

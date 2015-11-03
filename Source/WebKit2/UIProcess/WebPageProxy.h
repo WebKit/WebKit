@@ -811,6 +811,9 @@ public:
     void processDidBecomeUnresponsive();
     void processDidBecomeResponsive();
     void processDidCrash();
+    void willChangeProcessIsResponsive();
+    void didChangeProcessIsResponsive();
+
 #if PLATFORM(IOS)
     void processWillBecomeSuspended();
     void processWillBecomeForeground();

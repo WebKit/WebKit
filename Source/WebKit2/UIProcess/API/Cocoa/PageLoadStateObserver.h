@@ -98,6 +98,16 @@ private:
     virtual void willChangeCertificateInfo() override { }
     virtual void didChangeCertificateInfo() override { }
 
+    virtual void willChangeWebProcessIsResponsive() override
+    {
+        [m_object willChangeValueForKey:@"_webProcessIsResponsive"];
+    }
+
+    virtual void didChangeWebProcessIsResponsive() override
+    {
+        [m_object didChangeValueForKey:@"_webProcessIsResponsive"];
+    }
+
     id m_object;
     RetainPtr<NSString> m_activeURLKey;
 };

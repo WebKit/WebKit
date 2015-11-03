@@ -1,3 +1,45 @@
+2015-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Add KVO-compliant _webProcessIsResponsive property to WKWebView and _WKObservablePageState
+        https://bugs.webkit.org/show_bug.cgi?id=150818
+        rdar://problem/22372131
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (-[WKObservablePageState _webProcessIsResponsive]):
+        * UIProcess/API/Cocoa/PageLoadStateObserver.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _webProcessIsResponsive]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webProcessIsResponsive]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::willChangeWebProcessIsResponsive):
+        (WebKit::NavigationState::didChangeWebProcessIsResponsive):
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::willChangeProcessIsResponsive):
+        (WebKit::PageLoadState::didChangeProcessIsResponsive):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::ResponsivenessTimer):
+        (WebKit::ResponsivenessTimer::timerFired):
+        (WebKit::ResponsivenessTimer::stop):
+        * UIProcess/ResponsivenessTimer.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willChangeProcessIsResponsive):
+        (WebKit::WebPageProxy::didChangeProcessIsResponsive):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didBecomeResponsive):
+        (WebKit::WebProcessProxy::willChangeIsResponsive):
+        (WebKit::WebProcessProxy::didChangeIsResponsive):
+        * UIProcess/WebProcessProxy.h:
+
 2015-11-02  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin should take advantage of threaded scrolling

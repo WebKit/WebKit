@@ -30,7 +30,7 @@ namespace WebKit {
 
 static const double responsivenessTimeout = 3;
 
-ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client* client)
+ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client)
     : m_client(client)
     , m_isResponsive(true)
     , m_timer(RunLoop::main(), this, &ResponsivenessTimer::timerFired)
@@ -52,8 +52,11 @@ void ResponsivenessTimer::timerFired()
     if (!m_isResponsive)
         return;
 
+    m_client.willChangeIsResponsive();
     m_isResponsive = false;
-    m_client->didBecomeUnresponsive(this);
+    m_client.didChangeIsResponsive();
+
+    m_client.didBecomeUnresponsive();
 }
     
 void ResponsivenessTimer::start()
@@ -67,9 +70,12 @@ void ResponsivenessTimer::start()
 void ResponsivenessTimer::stop()
 {
     if (!m_isResponsive) {
-        // We got a life sign from the web process!
-        m_client->didBecomeResponsive(this);
+        // We got a life sign from the web process.
+        m_client.willChangeIsResponsive();
         m_isResponsive = true;
+        m_client.didChangeIsResponsive();
+
+        m_client.didBecomeResponsive();
     }
 
     m_timer.stop();

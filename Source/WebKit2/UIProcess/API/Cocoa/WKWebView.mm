@@ -4002,6 +4002,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #endif
 
+- (BOOL)_webProcessIsResponsive
+{
+    return _page->process().responsivenessTimer()->isResponsive();
+}
+
 @end
 
 
