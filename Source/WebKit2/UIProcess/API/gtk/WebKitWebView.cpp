@@ -301,6 +301,8 @@ private:
     virtual void didChangeNetworkRequestsInProgress() override { }
     virtual void willChangeCertificateInfo() override { }
     virtual void didChangeCertificateInfo() override { }
+    virtual void willChangeWebProcessIsResponsive() override { }
+    virtual void didChangeWebProcessIsResponsive() override { }
 
     WebKitWebView* m_webView;
 };
