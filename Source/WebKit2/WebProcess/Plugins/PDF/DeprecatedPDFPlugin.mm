@@ -1749,7 +1749,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchFor
 
     PDFDocument *document = pdfDocument().get();
 
-    PDFSelection *selectionForInitialSearch = [initialSelection copy];
+    RetainPtr<PDFSelection> selectionForInitialSearch = adoptNS([initialSelection copy]);
     if (startInSelection) {
         // Initially we want to include the selected text in the search. So we must modify the starting search
         // selection to fit PDFDocument's search requirements: selection must have a length >= 1, begin before
@@ -1764,8 +1764,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, BOOL searchFor
         }
     }
 
-    PDFSelection *foundSelection = [document findString:target fromSelection:selectionForInitialSearch withOptions:options];
-    [selectionForInitialSearch release];
+    PDFSelection *foundSelection = [document findString:target fromSelection:selectionForInitialSearch.get() withOptions:options];
 
     // If we first searched in the selection, and we found the selection, search again from just past the selection.
     if (startInSelection && [foundSelection isEqual:initialSelection])

@@ -1,3 +1,10 @@
+2015-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        Address a misssed review comment in r191922
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::nextMatchForString):
+
 2015-11-02  Anders Carlsson  <andersca@apple.com>
 
         Add KVO-compliant _webProcessIsResponsive property to WKWebView and _WKObservablePageState
