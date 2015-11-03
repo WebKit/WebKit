@@ -2570,6 +2570,8 @@ webkit.org/b/149632 fast/events/shadow-event-path-2.html [ Skip ]
 webkit.org/b/149632 fast/forms/input-appearance-preventDefault.html [ Skip ]
 webkit.org/b/149632 fast/forms/textarea-input-event.html [ Skip ]
 
+webkit.org/b/150830 fast/text/woff2.html [ Skip ]
+
 ################################################################################
 ######################### Start list of UNREVIEWED failures ########################
 ################################################################################
