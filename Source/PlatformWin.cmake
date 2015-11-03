@@ -15,3 +15,8 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitSystemInterface/win/CMak
     add_subdirectory(${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitSystemInterface/win ${CMAKE_CURRENT_BINARY_DIR}/WebKitSystemInterface)
     add_subdirectory(${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitQuartzCoreAdditions ${CMAKE_CURRENT_BINARY_DIR}/WebKitQuartzCoreAdditions)
 endif ()
+
+if (EXISTS ${CMAKE_SOURCE_DIR}/../Internal/Tools/WKTestBrowser/CMakeLists.txt)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/../Internal/Tools/WKTestBrowser ${CMAKE_CURRENT_BINARY_DIR}/WKTestBrowser)
+endif ()
+

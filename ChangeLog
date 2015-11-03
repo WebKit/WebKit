@@ -1,3 +1,12 @@
+2015-11-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] CMake build update.
+
+        Rubberstamped by Tim Horton.
+
+        * Source/PlatformWin.cmake: Add internal tool to build
+        rules for internal use.
+
 2015-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.1 release.
