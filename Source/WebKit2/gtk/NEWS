@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 2.11.1
+=================
+
+What's new in WebKitGTK+ 2.11.1?
+
+  - Improved general performance by better handling glib main loop sources.
+  - Add autocleanups support to GObjects exposed in public API.
+  - Fixed dashed and dotted border painting.
+  - Upload the accelerated canvas as a texture by copying via GPU directly.
+  - Popup menus no longer use a nested main loop.
+
+=================
 WebKitGTK+  2.9.5
 =================
 
