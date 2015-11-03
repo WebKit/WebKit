@@ -431,27 +431,29 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                     || (j < size - 1 && shorthand.properties()[j + 1] == CSSPropertyWebkitMaskRepeatY && value)) {
                     RefPtr<CSSValue> yValue;
                     RefPtr<CSSValue> nextValue = values[j + 1];
-                    if (is<CSSValueList>(*nextValue))
-                        yValue = downcast<CSSValueList>(*nextValue).itemWithoutBoundsCheck(i);
-                    else
-                        yValue = nextValue;
+                    if (nextValue) {
+                        if (is<CSSValueList>(*nextValue))
+                            yValue = downcast<CSSValueList>(*nextValue).itemWithoutBoundsCheck(i);
+                        else
+                            yValue = nextValue;
 
-                    if (!is<CSSPrimitiveValue>(*value) || !is<CSSPrimitiveValue>(*yValue))
-                        continue;
-
-                    CSSValueID xId = downcast<CSSPrimitiveValue>(*value).getValueID();
-                    CSSValueID yId = downcast<CSSPrimitiveValue>(*yValue).getValueID();
-                    if (xId != yId) {
-                        if (xId == CSSValueRepeat && yId == CSSValueNoRepeat) {
-                            useRepeatXShorthand = true;
-                            ++j;
-                        } else if (xId == CSSValueNoRepeat && yId == CSSValueRepeat) {
-                            useRepeatYShorthand = true;
+                        if (!is<CSSPrimitiveValue>(*value) || !is<CSSPrimitiveValue>(*yValue))
                             continue;
+
+                        CSSValueID xId = downcast<CSSPrimitiveValue>(*value).getValueID();
+                        CSSValueID yId = downcast<CSSPrimitiveValue>(*yValue).getValueID();
+                        if (xId != yId) {
+                            if (xId == CSSValueRepeat && yId == CSSValueNoRepeat) {
+                                useRepeatXShorthand = true;
+                                ++j;
+                            } else if (xId == CSSValueNoRepeat && yId == CSSValueRepeat) {
+                                useRepeatYShorthand = true;
+                                continue;
+                            }
+                        } else {
+                            useSingleWordShorthand = true;
+                            ++j;
                         }
-                    } else {
-                        useSingleWordShorthand = true;
-                        ++j;
                     }
                 }
             }
