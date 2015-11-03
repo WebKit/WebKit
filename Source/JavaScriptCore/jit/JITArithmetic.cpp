@@ -932,9 +932,6 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    emitGetVirtualRegister(op1, leftRegs);
-    emitGetVirtualRegister(op2, rightRegs);
-
     bool leftIsConstInt32 = isOperandConstantInt(op1);
     bool rightIsConstInt32 = isOperandConstantInt(op2);
     JITAddGenerator::OperandsConstness operandsConstness;
@@ -968,10 +965,17 @@ void JIT::emit_op_add(Instruction* currentInstruction)
         fpRegT0, fpRegT1, scratchGPR, scratchFPR);
 
     gen.generateFastPath(*this);
-    gen.endJumpList().link(this);
-    emitPutVirtualRegister(result, resultRegs);
 
-    addSlowCase(gen.slowPathJumpList());
+    if (!gen.endJumpList().empty()) {
+        gen.endJumpList().link(this);
+        emitPutVirtualRegister(result, resultRegs);
+        
+        addSlowCase(gen.slowPathJumpList());
+    } else {
+        gen.slowPathJumpList().link(this);
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
+        slowPathCall.call();
+    }
 }
 
 void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

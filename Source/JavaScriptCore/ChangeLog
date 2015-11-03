@@ -1,3 +1,21 @@
+2015-11-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix some inefficiencies in the baseline usage of JITAddGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=150850
+
+        Reviewed by Michael Saboff.
+
+        1. emit_op_add() was loading the operands twice.  Removed the redundant load.
+        2. The snippet may decide that it wants to go the slow path route all the time.
+           In that case, emit_op_add will end up emitting a branch to an out of line
+           slow path followed by some dead code to store the result of the fast path
+           on to the stack.
+           We now check if the snippet determined that there's no fast path, and just
+           emit the slow path inline, and skip the dead store of the fast path result.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+
 2015-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         B3::LowerToAir should do copy propagation
