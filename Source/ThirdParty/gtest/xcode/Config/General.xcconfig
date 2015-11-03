@@ -78,4 +78,4 @@ SDKROOT = $(SDKROOT_$(PLATFORM_NAME)_$(USE_INTERNAL_SDK));
 SDKROOT_macosx_ = macosx;
 SDKROOT_macosx_YES = macosx.internal;
 
-SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;

@@ -76,7 +76,7 @@ SDKROOT = macosx.internal;
 
 WEBKIT_SYSTEM_INTERFACE_LIBRARY = WebKitSystemInterface
 
-SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);

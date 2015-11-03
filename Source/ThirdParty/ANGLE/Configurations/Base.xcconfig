@@ -47,7 +47,7 @@ LINKER_DISPLAYS_MANGLED_NAMES = YES;
 PREBINDING = NO;
 STRIP_INSTALLED_PRODUCT = NO;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 

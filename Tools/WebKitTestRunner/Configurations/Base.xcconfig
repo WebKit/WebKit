@@ -56,7 +56,7 @@ DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
-SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 SDKROOT = macosx.internal;
 
@@ -70,5 +70,3 @@ WEBKIT_SYSTEM_INTERFACE_LIBRARY = WebKitSystemInterface
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
-
-SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;

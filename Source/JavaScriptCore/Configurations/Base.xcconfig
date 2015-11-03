@@ -94,7 +94,7 @@ HEADER_SEARCH_PATHS = . icu $(LLVM_LOCAL_HEADER_PATH) "${BUILT_PRODUCTS_DIR}/Ext
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 FRAMEWORK_SEARCH_PATHS = $(STAGED_FRAMEWORKS_SEARCH_PATH);
 

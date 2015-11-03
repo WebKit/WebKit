@@ -102,7 +102,7 @@ SDKROOT = macosx.internal;
 
 CODE_SIGN_IDENTITY = -;
 
-SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 FRAMEWORK_CONTENT_DIRECTORY[sdk=macosx*] = Versions/A;
 

@@ -56,7 +56,7 @@ WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 GCC_NO_COMMON_BLOCKS = YES;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 

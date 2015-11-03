@@ -71,7 +71,7 @@ DEBUG_DEFINES_debug = ;
 DEBUG_DEFINES_normal = NDEBUG;
 DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos watchsimulator;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
