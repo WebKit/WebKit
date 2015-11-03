@@ -26,6 +26,7 @@
 		0F2B66A717B6B4FD00A7AE3F /* FlipBytes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */; };
 		0F3501641BB258D500F0A2A3 /* WeakRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3501631BB258C800F0A2A3 /* WeakRandom.h */; };
 		0F4570431BE5B58F0062A629 /* Dominators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570421BE5B58F0062A629 /* Dominators.h */; };
+		0F4570451BE834410062A629 /* BubbleSort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570441BE834410062A629 /* BubbleSort.h */; };
 		0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A641B7443A0002E345D /* ParkingLot.cpp */; };
 		0F824A691B7443A0002E345D /* ParkingLot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F824A651B7443A0002E345D /* ParkingLot.h */; };
 		0F87105A16643F190090B0AD /* RawPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87105916643F190090B0AD /* RawPointer.h */; };
@@ -323,6 +324,7 @@
 		0F300B7D18AB48B400A6D72E /* HashMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashMethod.h; sourceTree = "<group>"; };
 		0F3501631BB258C800F0A2A3 /* WeakRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakRandom.h; sourceTree = "<group>"; };
 		0F4570421BE5B58F0062A629 /* Dominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dominators.h; sourceTree = "<group>"; };
+		0F4570441BE834410062A629 /* BubbleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleSort.h; sourceTree = "<group>"; };
 		0F824A641B7443A0002E345D /* ParkingLot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParkingLot.cpp; sourceTree = "<group>"; };
 		0F824A651B7443A0002E345D /* ParkingLot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParkingLot.h; sourceTree = "<group>"; };
 		0F87105916643F190090B0AD /* RawPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawPointer.h; sourceTree = "<group>"; };
@@ -742,6 +744,7 @@
 				A8A47261151A825A004123FF /* BitVector.h */,
 				A8A47264151A825A004123FF /* BlockStack.h */,
 				A8A47265151A825A004123FF /* BloomFilter.h */,
+				0F4570441BE834410062A629 /* BubbleSort.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
@@ -1229,6 +1232,7 @@
 				FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */,
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,
 				A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */,
+				0F4570451BE834410062A629 /* BubbleSort.h in Headers */,
 				C4F8A93719C65EB400B2B15D /* Stopwatch.h in Headers */,
 				1A6BB769162F300500DD16DB /* StreamBuffer.h in Headers */,
 				A8A4743B151A825B004123FF /* StringBuffer.h in Headers */,

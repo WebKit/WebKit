@@ -71,9 +71,10 @@ bool BlockInsertionSet::execute()
     if (m_insertions.isEmpty())
         return false;
     
-    // We allow insertions to be given to us in any order. So, we need to
-    // sort them before running WTF::executeInsertions.
-    std::stable_sort(m_insertions.begin(), m_insertions.end());
+    // We allow insertions to be given to us in any order. So, we need to sort them before
+    // running WTF::executeInsertions. Also, we don't really care if the sort is stable since
+    // basic block order doesn't have semantics - it's just to make code easier to read.
+    std::sort(m_insertions.begin(), m_insertions.end());
 
     executeInsertions(m_graph.m_blocks, m_insertions);
     

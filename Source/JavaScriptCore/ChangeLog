@@ -1,3 +1,19 @@
+2015-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        B3/Air should use bubble sort for their insertion sets, because it's faster than std::stable_sort
+        https://bugs.webkit.org/show_bug.cgi?id=150828
+
+        Reviewed by Geoffrey Garen.
+
+        Undo the 2% compile time regression caused by http://trac.webkit.org/changeset/191913.
+
+        * b3/B3InsertionSet.cpp:
+        (JSC::B3::InsertionSet::execute): Switch to bubble sort.
+        * b3/air/AirInsertionSet.cpp:
+        (JSC::B3::Air::InsertionSet::execute): Switch to bubble sort.
+        * dfg/DFGBlockInsertionSet.cpp:
+        (JSC::DFG::BlockInsertionSet::execute): Switch back to quicksort.
+
 2015-11-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, partially revert r191952.

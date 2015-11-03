@@ -29,12 +29,13 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlock.h"
+#include <wtf/BubbleSort.h>
 
 namespace JSC { namespace B3 {
 
 void InsertionSet::execute(BasicBlock* block)
 {
-    std::stable_sort(m_insertions.begin(), m_insertions.end());
+    bubbleSort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_values, m_insertions);
 }
 
