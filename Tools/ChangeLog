@@ -1,3 +1,9 @@
+2015-11-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add Jiewen Tan (jiewen_tan@apple.com) to committer list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-11-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, add unittest after r191827.
