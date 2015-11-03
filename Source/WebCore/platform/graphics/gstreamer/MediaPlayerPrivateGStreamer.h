@@ -33,6 +33,7 @@
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/glib/GThreadSafeMainLoopSource.h>
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
@@ -67,7 +68,7 @@ public:
     ~MediaPlayerPrivateGStreamer();
 
     static void registerMediaEngine(MediaEngineRegistrar);
-    gboolean handleMessage(GstMessage*);
+    void handleMessage(GstMessage*);
     void handlePluginInstallerResult(GstInstallPluginsReturn);
 
     bool hasVideo() const override { return m_hasVideo; }
@@ -147,6 +148,8 @@ private:
 
     static bool isAvailable();
 
+    WeakPtr<MediaPlayerPrivateGStreamer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     GstElement* createAudioSink() override;
 
     float playbackPosition() const;
@@ -172,7 +175,6 @@ private:
     bool doSeek(gint64 position, float rate, GstSeekFlags seekType);
     void updatePlaybackRate();
 
-
     String engineDescription() const override { return "GStreamer"; }
     bool isLiveStream() const override { return m_isStreaming; }
     bool didPassCORSAccessCheck() const override;
@@ -186,7 +188,8 @@ private:
     MediaTime totalFrameDelay() override { return MediaTime::zeroTime(); }
 #endif
 
-private:
+    WeakPtrFactory<MediaPlayerPrivateGStreamer> m_weakPtrFactory;
+
     GRefPtr<GstElement> m_source;
 #if ENABLE(VIDEO_TRACK)
     GRefPtr<GstElement> m_textAppSink;

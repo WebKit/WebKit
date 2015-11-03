@@ -41,6 +41,7 @@
 #include <limits>
 #include <wtf/HexNumber.h>
 #include <wtf/MediaTime.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -79,11 +80,6 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 using namespace std;
 
 namespace WebCore {
-
-static gboolean mediaPlayerPrivateMessageCallback(GstBus*, GstMessage* message, MediaPlayerPrivateGStreamer* player)
-{
-    return player->handleMessage(message);
-}
 
 static void mediaPlayerPrivateSourceChangedCallback(GObject*, GParamSpec*, MediaPlayerPrivateGStreamer* player)
 {
@@ -174,6 +170,7 @@ bool MediaPlayerPrivateGStreamer::isAvailable()
 
 MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : MediaPlayerPrivateGStreamerBase(player)
+    , m_weakPtrFactory(this)
     , m_source(0)
     , m_seekTime(0)
     , m_changingRate(false)
@@ -247,8 +244,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_pipeline) {
         GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
         ASSERT(bus);
-        g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateMessageCallback), this);
-        gst_bus_remove_signal_watch(bus.get());
+        gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
 
         g_signal_handlers_disconnect_by_func(m_pipeline.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateSourceChangedCallback), this);
         g_signal_handlers_disconnect_by_func(m_pipeline.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateVideoChangedCallback), this);
@@ -905,7 +901,7 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() cons
     return timeRanges;
 }
 
-gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
+void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 {
     GUniqueOutPtr<GError> err;
     GUniqueOutPtr<gchar> debug;
@@ -924,7 +920,7 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         // notify of the new location(s) of the media.
         if (!g_strcmp0(messageTypeName, "redirect")) {
             mediaLocationChanged(message);
-            return TRUE;
+            return;
         }
     }
 
@@ -1065,7 +1061,7 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     GST_MESSAGE_TYPE_NAME(message));
         break;
     }
-    return TRUE;
+    return;
 }
 
 void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
@@ -1938,8 +1934,24 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 
     GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-    gst_bus_add_signal_watch(bus.get());
-    g_signal_connect(bus.get(), "message", G_CALLBACK(mediaPlayerPrivateMessageCallback), this);
+    gst_bus_set_sync_handler(bus.get(), [](GstBus*, GstMessage* message, gpointer userData) {
+        auto& player = *static_cast<MediaPlayerPrivateGStreamer*>(userData);
+
+        if (!player.handleSyncMessage(message)) {
+            if (isMainThread())
+                player.handleMessage(message);
+            else {
+                GRefPtr<GstMessage> protectMessage(message);
+                auto weakThis = player.createWeakPtr();
+                RunLoop::main().dispatch([weakThis, protectMessage] {
+                    if (weakThis)
+                        weakThis->handleMessage(protectMessage.get());
+                });
+            }
+        }
+        gst_message_unref(message);
+        return GST_BUS_DROP;
+    }, this, nullptr);
 
     g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);
 
