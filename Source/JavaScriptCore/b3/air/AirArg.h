@@ -122,8 +122,6 @@ public:
         case UseAddr:
             return false;
         }
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
     }
 
     // Returns true if the Role implies that the Inst will Def the Arg.
@@ -137,8 +135,6 @@ public:
         case UseDef:
             return true;
         }
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
     }
 
     static Type typeForB3Type(B3::Type type)
@@ -472,8 +468,6 @@ public:
         case Invalid:
             return false;
         }
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
     }
 
     // Tells us if this Arg can be used in a position that requires a FP value.
@@ -496,8 +490,6 @@ public:
         case Tmp:
             return isFPTmp();
         }
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
     }
 
     bool hasType() const
@@ -526,8 +518,6 @@ public:
         case FP:
             return isFP();
         }
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
     }
 
     bool isGPR() const
