@@ -38,6 +38,7 @@
 #include "CursorList.h"
 #include "DashboardRegion.h"
 #include "ElementAncestorIterator.h"
+#include "FontVariantBuilder.h"
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "LocaleToScriptMapping.h"
@@ -1414,64 +1415,8 @@ inline void StyleBuilderCustom::applyInitialFontVariantLigatures(StyleResolver& 
 
 inline void StyleBuilderCustom::applyValueFontVariantLigatures(StyleResolver& styleResolver, CSSValue& value)
 {
-    FontVariantLigatures common = FontVariantLigatures::Normal;
-    FontVariantLigatures discretionary = FontVariantLigatures::Normal;
-    FontVariantLigatures historical = FontVariantLigatures::Normal;
-    FontVariantLigatures contextualAlternates = FontVariantLigatures::Normal;
-
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value)) {
-            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
-            case CSSValueNoCommonLigatures:
-                common = FontVariantLigatures::No;
-                break;
-            case CSSValueCommonLigatures:
-                common = FontVariantLigatures::Yes;
-                break;
-            case CSSValueNoDiscretionaryLigatures:
-                discretionary = FontVariantLigatures::No;
-                break;
-            case CSSValueDiscretionaryLigatures:
-                discretionary = FontVariantLigatures::Yes;
-                break;
-            case CSSValueNoHistoricalLigatures:
-                historical = FontVariantLigatures::No;
-                break;
-            case CSSValueHistoricalLigatures:
-                historical = FontVariantLigatures::Yes;
-                break;
-            case CSSValueContextual:
-                contextualAlternates = FontVariantLigatures::Yes;
-                break;
-            case CSSValueNoContextual:
-                contextualAlternates = FontVariantLigatures::No;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-    } else {
-        switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
-        case CSSValueNormal:
-            break;
-        case CSSValueNone:
-            common = FontVariantLigatures::No;
-            discretionary = FontVariantLigatures::No;
-            historical = FontVariantLigatures::No;
-            contextualAlternates = FontVariantLigatures::No;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
     auto fontDescription = styleResolver.fontDescription();
-    fontDescription.setVariantCommonLigatures(common);
-    fontDescription.setVariantDiscretionaryLigatures(discretionary);
-    fontDescription.setVariantHistoricalLigatures(historical);
-    fontDescription.setVariantContextualAlternates(contextualAlternates);
+    WebCore::applyValueFontVariantLigatures(fontDescription, value);
     styleResolver.setFontDescription(fontDescription);
 }
 
@@ -1499,53 +1444,8 @@ inline void StyleBuilderCustom::applyInitialFontVariantNumeric(StyleResolver& st
 
 inline void StyleBuilderCustom::applyValueFontVariantNumeric(StyleResolver& styleResolver, CSSValue& value)
 {
-    FontVariantNumericFigure figure = FontVariantNumericFigure::Normal;
-    FontVariantNumericSpacing spacing = FontVariantNumericSpacing::Normal;
-    FontVariantNumericFraction fraction = FontVariantNumericFraction::Normal;
-    FontVariantNumericOrdinal ordinal = FontVariantNumericOrdinal::Normal;
-    FontVariantNumericSlashedZero slashedZero = FontVariantNumericSlashedZero::Normal;
-
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value)) {
-            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
-            case CSSValueLiningNums:
-                figure = FontVariantNumericFigure::LiningNumbers;
-                break;
-            case CSSValueOldstyleNums:
-                figure = FontVariantNumericFigure::OldStyleNumbers;
-                break;
-            case CSSValueProportionalNums:
-                spacing = FontVariantNumericSpacing::ProportionalNumbers;
-                break;
-            case CSSValueTabularNums:
-                spacing = FontVariantNumericSpacing::TabularNumbers;
-                break;
-            case CSSValueDiagonalFractions:
-                fraction = FontVariantNumericFraction::DiagonalFractions;
-                break;
-            case CSSValueStackedFractions:
-                fraction = FontVariantNumericFraction::StackedFractions;
-                break;
-            case CSSValueOrdinal:
-                ordinal = FontVariantNumericOrdinal::Yes;
-                break;
-            case CSSValueSlashedZero:
-                slashedZero = FontVariantNumericSlashedZero::Yes;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-    } else
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
-
     auto fontDescription = styleResolver.fontDescription();
-    fontDescription.setVariantNumericFigure(figure);
-    fontDescription.setVariantNumericSpacing(spacing);
-    fontDescription.setVariantNumericFraction(fraction);
-    fontDescription.setVariantNumericOrdinal(ordinal);
-    fontDescription.setVariantNumericSlashedZero(slashedZero);
+    WebCore::applyValueFontVariantNumeric(fontDescription, value);
     styleResolver.setFontDescription(fontDescription);
 }
 
@@ -1569,52 +1469,8 @@ inline void StyleBuilderCustom::applyInitialFontVariantEastAsian(StyleResolver& 
 
 inline void StyleBuilderCustom::applyValueFontVariantEastAsian(StyleResolver& styleResolver, CSSValue& value)
 {
-    FontVariantEastAsianVariant variant = FontVariantEastAsianVariant::Normal;
-    FontVariantEastAsianWidth width = FontVariantEastAsianWidth::Normal;
-    FontVariantEastAsianRuby ruby = FontVariantEastAsianRuby::Normal;
-
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value)) {
-            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
-            case CSSValueJis78:
-                variant = FontVariantEastAsianVariant::Jis78;
-                break;
-            case CSSValueJis83:
-                variant = FontVariantEastAsianVariant::Jis83;
-                break;
-            case CSSValueJis90:
-                variant = FontVariantEastAsianVariant::Jis90;
-                break;
-            case CSSValueJis04:
-                variant = FontVariantEastAsianVariant::Jis04;
-                break;
-            case CSSValueSimplified:
-                variant = FontVariantEastAsianVariant::Simplified;
-                break;
-            case CSSValueTraditional:
-                variant = FontVariantEastAsianVariant::Traditional;
-                break;
-            case CSSValueFullWidth:
-                width = FontVariantEastAsianWidth::FullWidth;
-                break;
-            case CSSValueProportionalWidth:
-                width = FontVariantEastAsianWidth::ProportionalWidth;
-                break;
-            case CSSValueRuby:
-                ruby = FontVariantEastAsianRuby::Yes;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                break;
-            }
-        }
-    } else
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
-
     auto fontDescription = styleResolver.fontDescription();
-    fontDescription.setVariantEastAsianVariant(variant);
-    fontDescription.setVariantEastAsianWidth(width);
-    fontDescription.setVariantEastAsianRuby(ruby);
+    WebCore::applyValueFontVariantEastAsian(fontDescription, value);
     styleResolver.setFontDescription(fontDescription);
 }
 

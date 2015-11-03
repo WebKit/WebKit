@@ -149,6 +149,59 @@ enum class FontVariantEastAsianRuby {
 };
 
 struct FontVariantSettings {
+    FontVariantSettings()
+        : commonLigatures(FontVariantLigatures::Normal)
+        , discretionaryLigatures(FontVariantLigatures::Normal)
+        , historicalLigatures(FontVariantLigatures::Normal)
+        , contextualAlternates(FontVariantLigatures::Normal)
+        , position(FontVariantPosition::Normal)
+        , caps(FontVariantCaps::Normal)
+        , numericFigure(FontVariantNumericFigure::Normal)
+        , numericSpacing(FontVariantNumericSpacing::Normal)
+        , numericFraction(FontVariantNumericFraction::Normal)
+        , numericOrdinal(FontVariantNumericOrdinal::Normal)
+        , numericSlashedZero(FontVariantNumericSlashedZero::Normal)
+        , alternates(FontVariantAlternates::Normal)
+        , eastAsianVariant(FontVariantEastAsianVariant::Normal)
+        , eastAsianWidth(FontVariantEastAsianWidth::Normal)
+        , eastAsianRuby(FontVariantEastAsianRuby::Normal)
+    {
+    }
+
+    FontVariantSettings(
+        FontVariantLigatures commonLigatures,
+        FontVariantLigatures discretionaryLigatures,
+        FontVariantLigatures historicalLigatures,
+        FontVariantLigatures contextualAlternates,
+        FontVariantPosition position,
+        FontVariantCaps caps,
+        FontVariantNumericFigure numericFigure,
+        FontVariantNumericSpacing numericSpacing,
+        FontVariantNumericFraction numericFraction,
+        FontVariantNumericOrdinal numericOrdinal,
+        FontVariantNumericSlashedZero numericSlashedZero,
+        FontVariantAlternates alternates,
+        FontVariantEastAsianVariant eastAsianVariant,
+        FontVariantEastAsianWidth eastAsianWidth,
+        FontVariantEastAsianRuby eastAsianRuby)
+            : commonLigatures(commonLigatures)
+            , discretionaryLigatures(discretionaryLigatures)
+            , historicalLigatures(historicalLigatures)
+            , contextualAlternates(contextualAlternates)
+            , position(position)
+            , caps(caps)
+            , numericFigure(numericFigure)
+            , numericSpacing(numericSpacing)
+            , numericFraction(numericFraction)
+            , numericOrdinal(numericOrdinal)
+            , numericSlashedZero(numericSlashedZero)
+            , alternates(alternates)
+            , eastAsianVariant(eastAsianVariant)
+            , eastAsianWidth(eastAsianWidth)
+            , eastAsianRuby(eastAsianRuby)
+    {
+    }
+
     bool isAllNormal() const
     {
         return commonLigatures == FontVariantLigatures::Normal

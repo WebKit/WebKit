@@ -28,6 +28,7 @@
 
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
+#include "FontFeatureSettings.h"
 #include "TextFlags.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -52,6 +53,24 @@ public:
 
     void addRange(UChar32 from, UChar32 to) { m_ranges.append(UnicodeRange(from, to)); }
     const Vector<UnicodeRange>& ranges() const { return m_ranges; }
+
+    void insertFeature(FontFeature&& feature) { m_featureSettings.insert(WTF::move(feature)); }
+
+    void setVariantCommonLigatures(FontVariantLigatures ligatures) { m_variantSettings.commonLigatures = ligatures; }
+    void setVariantDiscretionaryLigatures(FontVariantLigatures ligatures) { m_variantSettings.discretionaryLigatures = ligatures; }
+    void setVariantHistoricalLigatures(FontVariantLigatures ligatures) { m_variantSettings.historicalLigatures = ligatures; }
+    void setVariantContextualAlternates(FontVariantLigatures ligatures) { m_variantSettings.contextualAlternates = ligatures; }
+    void setVariantPosition(FontVariantPosition position) { m_variantSettings.position = position; }
+    void setVariantCaps(FontVariantCaps caps) { m_variantSettings.caps = caps; }
+    void setVariantNumericFigure(FontVariantNumericFigure figure) { m_variantSettings.numericFigure = figure; }
+    void setVariantNumericSpacing(FontVariantNumericSpacing spacing) { m_variantSettings.numericSpacing = spacing; }
+    void setVariantNumericFraction(FontVariantNumericFraction fraction) { m_variantSettings.numericFraction = fraction; }
+    void setVariantNumericOrdinal(FontVariantNumericOrdinal ordinal) { m_variantSettings.numericOrdinal = ordinal; }
+    void setVariantNumericSlashedZero(FontVariantNumericSlashedZero slashedZero) { m_variantSettings.numericSlashedZero = slashedZero; }
+    void setVariantAlternates(FontVariantAlternates alternates) { m_variantSettings.alternates = alternates; }
+    void setVariantEastAsianVariant(FontVariantEastAsianVariant variant) { m_variantSettings.eastAsianVariant = variant; }
+    void setVariantEastAsianWidth(FontVariantEastAsianWidth width) { m_variantSettings.eastAsianWidth = width; }
+    void setVariantEastAsianRuby(FontVariantEastAsianRuby ruby) { m_variantSettings.eastAsianRuby = ruby; }
 
     void addedToSegmentedFontFace(CSSSegmentedFontFace*);
     void removedFromSegmentedFontFace(CSSSegmentedFontFace*);
@@ -107,6 +126,8 @@ private:
     FontTraitsMask m_traitsMask;
     Vector<UnicodeRange> m_ranges;
     HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces;
+    FontFeatureSettings m_featureSettings;
+    FontVariantSettings m_variantSettings;
     Vector<std::unique_ptr<CSSFontFaceSource>> m_sources;
     CSSFontFaceSource* m_activeSource;
     bool m_isLocalFallback;

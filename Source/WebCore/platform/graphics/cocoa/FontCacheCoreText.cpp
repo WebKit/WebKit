@@ -154,6 +154,8 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
     FeaturesMap result;
 
     switch (variantSettings.commonLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
     case FontVariantLigatures::Yes:
         result.add(fontFeatureTag("liga"), 1);
         result.add(fontFeatureTag("clig"), 1);
@@ -163,10 +165,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("clig"), 0);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.discretionaryLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
     case FontVariantLigatures::Yes:
         result.add(fontFeatureTag("dlig"), 1);
         break;
@@ -174,10 +178,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("dlig"), 0);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.historicalLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
     case FontVariantLigatures::Yes:
         result.add(fontFeatureTag("hlig"), 1);
         break;
@@ -185,10 +191,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("hlig"), 0);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.contextualAlternates) {
+    case FontVariantLigatures::Normal:
+        break;
     case FontVariantLigatures::Yes:
         result.add(fontFeatureTag("calt"), 1);
         break;
@@ -196,10 +204,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("calt"), 0);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.position) {
+    case FontVariantPosition::Normal:
+        break;
     case FontVariantPosition::Subscript:
         result.add(fontFeatureTag("subs"), 1);
         break;
@@ -207,10 +217,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("sups"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.caps) {
+    case FontVariantCaps::Normal:
+        break;
     case FontVariantCaps::AllSmall:
         result.add(fontFeatureTag("c2sc"), 1);
         FALLTHROUGH;
@@ -230,10 +242,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("titl"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.numericFigure) {
+    case FontVariantNumericFigure::Normal:
+        break;
     case FontVariantNumericFigure::LiningNumbers:
         result.add(fontFeatureTag("lnum"), 1);
         break;
@@ -241,10 +255,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("onum"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.numericSpacing) {
+    case FontVariantNumericSpacing::Normal:
+        break;
     case FontVariantNumericSpacing::ProportionalNumbers:
         result.add(fontFeatureTag("pnum"), 1);
         break;
@@ -252,10 +268,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("tnum"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.numericFraction) {
+    case FontVariantNumericFraction::Normal:
+        break;
     case FontVariantNumericFraction::DiagonalFractions:
         result.add(fontFeatureTag("frac"), 1);
         break;
@@ -263,23 +281,42 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("afrc"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
-    if (variantSettings.numericOrdinal == FontVariantNumericOrdinal::Yes)
+    switch (variantSettings.numericOrdinal) {
+    case FontVariantNumericOrdinal::Normal:
+        break;
+    case FontVariantNumericOrdinal::Yes:
         result.add(fontFeatureTag("ordn"), 1);
-    if (variantSettings.numericSlashedZero == FontVariantNumericSlashedZero::Yes)
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.numericSlashedZero) {
+    case FontVariantNumericSlashedZero::Normal:
+        break;
+    case FontVariantNumericSlashedZero::Yes:
         result.add(fontFeatureTag("zero"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 
     switch (variantSettings.alternates) {
+    case FontVariantAlternates::Normal:
+        break;
     case FontVariantAlternates::HistoricalForms:
         result.add(fontFeatureTag("hist"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.eastAsianVariant) {
+    case FontVariantEastAsianVariant::Normal:
+        break;
     case FontVariantEastAsianVariant::Jis78:
         result.add(fontFeatureTag("jp78"), 1);
         break;
@@ -299,10 +336,12 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("trad"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
     switch (variantSettings.eastAsianWidth) {
+    case FontVariantEastAsianWidth::Normal:
+        break;
     case FontVariantEastAsianWidth::FullWidth:
         result.add(fontFeatureTag("fwid"), 1);
         break;
@@ -310,47 +349,64 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         result.add(fontFeatureTag("pwid"), 1);
         break;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
 
-    if (variantSettings.eastAsianRuby == FontVariantEastAsianRuby::Yes)
+    switch (variantSettings.eastAsianRuby) {
+    case FontVariantEastAsianRuby::Normal:
+        break;
+    case FontVariantEastAsianRuby::Yes:
         result.add(fontFeatureTag("ruby"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 
     return result;
 }
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
 {
-    if (!originalFont || (!features.size() && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()))
+    if (!originalFont || (!features.size() && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
+        && (!fontFaceFeatures || !fontFaceFeatures->size()) && (!fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal())))
         return originalFont;
 
     // This algorithm is described at http://www.w3.org/TR/css3-fonts/#feature-precedence
+    FeaturesMap featuresToBeApplied;
 
     // Step 1: CoreText handles default features (such as required ligatures).
 
-    // Steps 2-3: Consult with @font-face
-    // FIXME: This is not yet implemented.
+    // Step 2: Consult with font-variant-* inside @font-face
+    if (fontFaceVariantSettings)
+        featuresToBeApplied = computeFeatureSettingsFromVariants(*fontFaceVariantSettings);
+
+    // Step 3: Consult with font-feature-settings inside @font-face
+    if (fontFaceFeatures) {
+        for (auto& fontFaceFeature : *fontFaceFeatures)
+            featuresToBeApplied.set(fontFaceFeature.tag(), fontFaceFeature.value());
+    }
 
     // Step 4: Font-variant
-    auto fontFeatureSettingsFromVariants = computeFeatureSettingsFromVariants(variantSettings);
+    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
+        featuresToBeApplied.set(newFeature.key, newFeature.value);
 
     // Step 5: Other properties (text-rendering)
     if (textRenderingMode == OptimizeSpeed) {
-        fontFeatureSettingsFromVariants.set(fontFeatureTag("liga"), 0);
-        fontFeatureSettingsFromVariants.set(fontFeatureTag("clig"), 0);
-        fontFeatureSettingsFromVariants.set(fontFeatureTag("dlig"), 0);
-        fontFeatureSettingsFromVariants.set(fontFeatureTag("hlig"), 0);
-        fontFeatureSettingsFromVariants.set(fontFeatureTag("calt"), 0);
+        featuresToBeApplied.set(fontFeatureTag("liga"), 0);
+        featuresToBeApplied.set(fontFeatureTag("clig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("dlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("hlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("calt"), 0);
     }
 
     // Step 6: Font-feature-settings
     for (auto& newFeature : features)
-        fontFeatureSettingsFromVariants.set(newFeature.tag(), newFeature.value());
+        featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
     RetainPtr<CFMutableDictionaryRef> attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    if (fontFeatureSettingsFromVariants.size()) {
+    if (featuresToBeApplied.size()) {
         RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
-        for (auto& p : fontFeatureSettingsFromVariants) {
+        for (auto& p : featuresToBeApplied) {
             auto feature = FontFeature(p.key, p.value);
             appendTrueTypeFeature(featureArray.get(), feature);
             appendOpenTypeFeature(featureArray.get(), feature);
@@ -363,7 +419,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, sizeNumber.get());
     }
     RetainPtr<CTFontDescriptorRef> descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-    return adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
+    auto result = adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
+    return result;
 }
 
 FontWeight fontWeightFromCoreText(CGFloat weight)
@@ -634,7 +691,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSym
     UNUSED_PARAM(variantSettings);
     RetainPtr<CTFontRef> foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
 #endif
-    return preparePlatformFont(foundFont.get(), textRenderingMode, featureSettings, variantSettings);
+    return preparePlatformFont(foundFont.get(), textRenderingMode, nullptr, nullptr, featureSettings, variantSettings);
 }
 
 #if PLATFORM(MAC)
@@ -730,7 +787,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     const FontPlatformData& platformData = originalFontData->platformData();
     // FIXME: Should pass in the locale instead of nullAtom.
     RetainPtr<CTFontRef> result = platformLookupFallbackFont(platformData.font(), description.weight(), nullAtom, characters, length);
-    result = preparePlatformFont(result.get(), description.textRenderingMode(), description.featureSettings(), description.variantSettings());
+    result = preparePlatformFont(result.get(), description.textRenderingMode(), nullptr, nullptr, description.featureSettings(), description.variantSettings());
     if (!result)
         return lastResortFallbackFont(description);
 

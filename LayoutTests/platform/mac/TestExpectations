@@ -261,6 +261,9 @@ fast/css/draggable-region-parser.html
 # Font features are not implemented on Mavericks.
 webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/149246 [ Mavericks ] css3/font-variant-all.html [ ImageOnlyFailure ]
+webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/149246 [ Mavericks ] css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
+webkit.org/b/149246 [ Mavericks ] css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
 
 # This feature is disabled on Mavericks.
 [ Mavericks ] http/tests/navigation/page-cache-pending-image-load.html [ Skip ]

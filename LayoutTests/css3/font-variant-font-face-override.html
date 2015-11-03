@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "FontFeaturesTestOTF";
+    src: url("resources/FontWithFeatures.otf") format("opentype");
+    font-feature-settings: "titl" 1;
+}
+@font-face {
+    font-family: "FontFeaturesTestOTF2";
+    src: url("resources/FontWithFeatures.otf") format("opentype");
+    font-variant-caps: titling-caps;
+}
+@font-face {
+    font-family: "FontFeaturesTestTTF";
+    src: url("resources/FontWithFeatures.ttf") format("truetype");
+    font-feature-settings: "titl" 1;
+}
+@font-face {
+    font-family: "FontFeaturesTestTTF2";
+    src: url("resources/FontWithFeatures.ttf") format("truetype");
+    font-variant-caps: titling-caps;
+}
+</style>
+</head>
+<body>
+This test makes sure that local font feature styles can override the font feature styles declared in @font-face blocks.
+<div style="font: 40px FontFeaturesTestOTF;">OO</div>
+<div style="font: 40px FontFeaturesTestOTF; font-feature-settings: 'titl' 0;">OO</div>
+<div style="font: 40px FontFeaturesTestOTF2;">OO</div>
+<div style="font: 40px FontFeaturesTestOTF2; font-feature-settings: 'titl' 0;">OO</div>
+<div style="font: 40px FontFeaturesTestTTF;">aa</div>
+<div style="font: 40px FontFeaturesTestTTF; font-feature-settings: 'titl' 0;">aa</div>
+<div style="font: 40px FontFeaturesTestTTF2;">aa</div>
+<div style="font: 40px FontFeaturesTestTTF2; font-feature-settings: 'titl' 0;">aa</div>
+</body>
+</html>
