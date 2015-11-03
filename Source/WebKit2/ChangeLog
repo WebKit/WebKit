@@ -1,5 +1,17 @@
 2015-11-03  Alex Christensen  <achristensen@webkit.org>
 
+        Use the same cookie storage as WebCore when using NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=150833
+
+        Reviewed by Antti Koivisto.
+
+        This fixes 12 tests when using NETWORK_SESSION.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::NetworkSession):
+
+2015-11-03  Alex Christensen  <achristensen@webkit.org>
+
         Clean up NETWORK_SESSION code after r191848
         https://bugs.webkit.org/show_bug.cgi?id=150829
 

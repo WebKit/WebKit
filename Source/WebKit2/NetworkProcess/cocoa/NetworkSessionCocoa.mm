@@ -28,9 +28,10 @@
 
 #if USE(NETWORK_SESSION)
 
+#import "SessionTracker.h"
 #import <Foundation/NSURLSession.h>
-
 #import <WebCore/AuthenticationChallenge.h>
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Credential.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
@@ -183,6 +184,11 @@ NetworkSession::NetworkSession(Type type)
     m_sessionDelegate = adoptNS([[NetworkSessionDelegate alloc] initWithNetworkSession:*this]);
 
     NSURLSessionConfiguration *configuration = configurationForType(type);
+    // FIXME: Use SessionTracker to make sure the correct cookie storage is used once there is more than one NetworkSession.
+    if (auto* session = SessionTracker::session(WebCore::SessionID::defaultSessionID())) {
+        if (CFHTTPCookieStorageRef storage = session->cookieStorage().get())
+            configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];
+    }
     m_session = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
 
