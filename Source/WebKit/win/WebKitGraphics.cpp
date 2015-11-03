@@ -62,7 +62,7 @@ static FontCascade makeFont(const WebFontDescription& description)
 
     FontSmoothingType smoothingType;
     if (SUCCEEDED(WebPreferences::sharedStandardPreferences()->fontSmoothing(&smoothingType)))
-        f.setRenderingMode(smoothingType == FontSmoothingTypeWindows ? AlternateRenderingMode : NormalRenderingMode);
+        f.setRenderingMode(smoothingType == FontSmoothingTypeWindows ? FontRenderingMode::Alternate : FontRenderingMode::Normal);
 
     FontCascade font(f, 0, 0);
     font.update(0);

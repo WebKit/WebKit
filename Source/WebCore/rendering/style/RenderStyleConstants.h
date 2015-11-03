@@ -586,7 +586,7 @@ enum TextEmphasisPositions {
 };
 typedef unsigned TextEmphasisPosition;
 
-enum TextOrientation { TextOrientationVerticalRight, TextOrientationUpright, TextOrientationSideways, TextOrientationSidewaysRight };
+enum class TextOrientation { Mixed, Upright, Sideways, SidewaysRight };
 
 enum TextOverflow { TextOverflowClip = 0, TextOverflowEllipsis };
 

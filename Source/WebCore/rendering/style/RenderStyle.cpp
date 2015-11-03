@@ -1819,42 +1819,25 @@ LayoutBoxExtent RenderStyle::imageOutsets(const NinePieceImage& image) const
                            NinePieceImage::computeOutset(image.outset().left(), borderLeftWidth()));
 }
 
-void RenderStyle::getFontAndGlyphOrientation(FontOrientation& fontOrientation, NonCJKGlyphOrientation& glyphOrientation)
+std::pair<FontOrientation, NonCJKGlyphOrientation> RenderStyle::fontAndGlyphOrientation()
 {
-    if (isHorizontalWritingMode()) {
-        fontOrientation = Horizontal;
-        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
-        return;
-    }
+    // FIXME: TextOrientationSideways should map to sideways-left in vertical-lr, which is not supported yet.
+
+    if (isHorizontalWritingMode())
+        return { Horizontal, NonCJKGlyphOrientation::Mixed };
 
     switch (textOrientation()) {
-    case TextOrientationVerticalRight:
-        fontOrientation = Vertical;
-        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
-        return;
-    case TextOrientationUpright:
-        fontOrientation = Vertical;
-        glyphOrientation = NonCJKGlyphOrientationUpright;
-        return;
-    case TextOrientationSideways:
-        if (writingMode() == LeftToRightWritingMode) {
-            // FIXME: This should map to sideways-left, which is not supported yet.
-            fontOrientation = Vertical;
-            glyphOrientation = NonCJKGlyphOrientationVerticalRight;
-            return;
-        }
-        fontOrientation = Horizontal;
-        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
-        return;
-    case TextOrientationSidewaysRight:
-        fontOrientation = Horizontal;
-        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
-        return;
+    case TextOrientation::Mixed:
+        return { Vertical, NonCJKGlyphOrientation::Mixed };
+    case TextOrientation::Upright:
+        return { Vertical, NonCJKGlyphOrientation::Upright };
+    case TextOrientation::Sideways:
+        return { Horizontal, NonCJKGlyphOrientation::Mixed };
+    case TextOrientation::SidewaysRight:
+        return { Horizontal, NonCJKGlyphOrientation::Mixed };
     default:
         ASSERT_NOT_REACHED();
-        fontOrientation = Horizontal;
-        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
-        return;
+        return { Horizontal, NonCJKGlyphOrientation::Mixed };
     }
 }
 

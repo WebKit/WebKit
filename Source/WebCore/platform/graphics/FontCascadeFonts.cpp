@@ -294,7 +294,7 @@ static GlyphData glyphDataForCJKCharacterWithoutSyntheticItalic(UChar32 characte
     
 static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(UChar32 character, NonCJKGlyphOrientation orientation, const GlyphData& data)
 {
-    if (orientation == NonCJKGlyphOrientationUpright || shouldIgnoreRotation(character)) {
+    if (orientation == NonCJKGlyphOrientation::Upright || shouldIgnoreRotation(character)) {
         GlyphData uprightData = data.font->uprightOrientationFont().glyphDataForCharacter(character);
         // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically to be upright.
         if (data.glyph == uprightData.glyph)
@@ -303,7 +303,7 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(UChar32 charact
         // glyph, so we fall back to the upright data and use the horizontal glyph.
         if (uprightData.font)
             return uprightData;
-    } else if (orientation == NonCJKGlyphOrientationVerticalRight) {
+    } else if (orientation == NonCJKGlyphOrientation::Mixed) {
         GlyphData verticalRightData = data.font->verticalRightOrientationFont().glyphDataForCharacter(character);
         // If the glyphs are distinct, we will make the assumption that the font has a vertical-right glyph baked
         // into it.

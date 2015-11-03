@@ -3107,8 +3107,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return parseTextEmphasisPosition(important);
 
     case CSSPropertyWebkitTextOrientation:
-        // FIXME: For now just support sideways, sideways-right, upright and vertical-right.
-        if (id == CSSValueSideways || id == CSSValueSidewaysRight || id == CSSValueVerticalRight || id == CSSValueUpright)
+        if (id == CSSValueSideways || id == CSSValueSidewaysRight || id == CSSValueVerticalRight || id == CSSValueMixed || id == CSSValueUpright)
             validPrimitive = true;
         break;
 

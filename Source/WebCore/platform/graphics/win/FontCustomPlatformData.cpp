@@ -52,7 +52,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     memcpy(logFont.lfFaceName, m_name.charactersWithNullTermination().data(), sizeof(logFont.lfFaceName[0]) * std::min<size_t>(static_cast<size_t>(LF_FACESIZE), 1 + m_name.length()));
 
     logFont.lfHeight = -size;
-    if (renderingMode == NormalRenderingMode)
+    if (renderingMode == FontRenderingMode::Normal)
         logFont.lfHeight *= 32;
     logFont.lfWidth = 0;
     logFont.lfEscapement = 0;
@@ -69,7 +69,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
 
     RetainPtr<CGFontRef> cgFont = adoptCF(CGFontCreateWithPlatformFont(&logFont));
-    return FontPlatformData(WTF::move(hfont), cgFont.get(), size, bold, italic, renderingMode == AlternateRenderingMode);
+    return FontPlatformData(WTF::move(hfont), cgFont.get(), size, bold, italic, renderingMode == FontRenderingMode::Alternate);
 }
 
 // Creates a unique and unpredictable font name, in order to avoid collisions and to

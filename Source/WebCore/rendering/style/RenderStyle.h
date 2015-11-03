@@ -710,7 +710,7 @@ public:
     float specifiedFontSize() const;
     float computedFontSize() const;
     int fontSize() const;
-    void getFontAndGlyphOrientation(FontOrientation&, NonCJKGlyphOrientation&);
+    std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingMultiplier() const { return visual->m_textAutosizingMultiplier; }
@@ -1904,7 +1904,8 @@ public:
     static TextDirection initialDirection() { return LTR; }
     static WritingMode initialWritingMode() { return TopToBottomWritingMode; }
     static TextCombine initialTextCombine() { return TextCombineNone; }
-    static TextOrientation initialTextOrientation() { return TextOrientationVerticalRight; }
+    static TextOrientation initialTextOrientation() { return TextOrientation::
+    Mixed; }
     static ObjectFit initialObjectFit() { return ObjectFitFill; }
     static EEmptyCell initialEmptyCells() { return SHOW; }
     static EListStylePosition initialListStylePosition() { return OUTSIDE; }
@@ -2286,10 +2287,10 @@ inline bool RenderStyle::setEffectiveZoom(float f)
 
 inline bool RenderStyle::setTextOrientation(TextOrientation textOrientation)
 {
-    if (compareEqual(rareInheritedData->m_textOrientation, textOrientation))
+    if (compareEqual(rareInheritedData->m_textOrientation, static_cast<unsigned>(textOrientation)))
         return false;
 
-    rareInheritedData.access()->m_textOrientation = textOrientation;
+    rareInheritedData.access()->m_textOrientation = static_cast<unsigned>(textOrientation);
     return true;
 }
 

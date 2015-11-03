@@ -503,7 +503,7 @@ void Settings::setFontRenderingMode(FontRenderingMode mode)
 {
     if (fontRenderingMode() == mode)
         return;
-    m_fontRenderingMode = mode;
+    m_fontRenderingMode = static_cast<int>(mode);
     if (m_page)
         m_page->setNeedsRecalcStyleInAllFrames();
 }

@@ -101,10 +101,10 @@ public:
     void setSmallCaps(FontSmallCaps c) { m_smallCaps = c; }
     void setIsSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
     void setWeight(FontWeight w) { m_weight = w; }
-    void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
+    void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
-    void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = orientation; }
+    void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = static_cast<unsigned>(orientation); }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
     void setScript(UScriptCode s) { m_script = s; }
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTF::move(settings); }

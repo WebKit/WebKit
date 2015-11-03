@@ -126,14 +126,14 @@ DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderi
     const FontCascade* labelFont;
     const FontCascade* urlFont;
 
-    if (fontRenderingMode == AlternateRenderingMode) {
-        static const FontCascade alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, AlternateRenderingMode);
-        static const FontCascade alternateRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, AlternateRenderingMode);
+    if (fontRenderingMode == FontRenderingMode::Alternate) {
+        static const FontCascade alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, FontRenderingMode::Alternate);
+        static const FontCascade alternateRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, FontRenderingMode::Alternate);
         labelFont = &alternateRenderingModeLabelFont;
         urlFont = &alternateRenderingModeURLFont;
     } else {
-        static const FontCascade normalRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, NormalRenderingMode);
-        static const FontCascade normalRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, NormalRenderingMode);
+        static const FontCascade normalRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, FontRenderingMode::Normal);
+        static const FontCascade normalRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, FontRenderingMode::Normal);
         labelFont = &normalRenderingModeLabelFont;
         urlFont = &normalRenderingModeURLFont;
     }

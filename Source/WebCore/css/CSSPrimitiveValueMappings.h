@@ -3331,16 +3331,16 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOrientation e)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (e) {
-    case TextOrientationSideways:
+    case TextOrientation::Sideways:
         m_value.valueID = CSSValueSideways;
         break;
-    case TextOrientationSidewaysRight:
+    case TextOrientation::SidewaysRight:
         m_value.valueID = CSSValueSidewaysRight;
         break;
-    case TextOrientationVerticalRight:
-        m_value.valueID = CSSValueVerticalRight;
+    case TextOrientation::Mixed:
+        m_value.valueID = CSSValueMixed;
         break;
-    case TextOrientationUpright:
+    case TextOrientation::Upright:
         m_value.valueID = CSSValueUpright;
         break;
     }
@@ -3352,19 +3352,21 @@ template<> inline CSSPrimitiveValue::operator TextOrientation() const
 
     switch (m_value.valueID) {
     case CSSValueSideways:
-        return TextOrientationSideways;
+        return TextOrientation::Sideways;
     case CSSValueSidewaysRight:
-        return TextOrientationSidewaysRight;
+        return TextOrientation::SidewaysRight;
     case CSSValueVerticalRight:
-        return TextOrientationVerticalRight;
+        return TextOrientation::Mixed;
+    case CSSValueMixed:
+        return TextOrientation::Mixed;
     case CSSValueUpright:
-        return TextOrientationUpright;
+        return TextOrientation::Upright;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return TextOrientationVerticalRight;
+    return TextOrientation::Mixed;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)

@@ -5140,7 +5140,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->fontSmoothing(&smoothingType);
     if (FAILED(hr))
         return hr;
-    settings.setFontRenderingMode(smoothingType != FontSmoothingTypeWindows ? NormalRenderingMode : AlternateRenderingMode);
+    settings.setFontRenderingMode(smoothingType != FontSmoothingTypeWindows ? FontRenderingMode::Normal : FontRenderingMode::Alternate);
 
 #if USE(AVFOUNDATION)
     hr = preferences->avFoundationEnabled(&enabled);

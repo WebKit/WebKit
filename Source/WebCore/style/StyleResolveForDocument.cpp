@@ -109,7 +109,7 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
 
     FontOrientation fontOrientation;
     NonCJKGlyphOrientation glyphOrientation;
-    documentStyle.get().getFontAndGlyphOrientation(fontOrientation, glyphOrientation);
+    std::tie(fontOrientation, glyphOrientation) = documentStyle.get().fontAndGlyphOrientation();
     fontDescription.setOrientation(fontOrientation);
     fontDescription.setNonCJKGlyphOrientation(glyphOrientation);
 

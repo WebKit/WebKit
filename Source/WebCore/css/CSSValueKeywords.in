@@ -1035,6 +1035,7 @@ sideways
 sideways-right
 upright
 vertical-right
+mixed
 
 // -webkit-line-box-contain
 font

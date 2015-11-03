@@ -217,7 +217,7 @@ perspective-origin: 392px 288px;
 -webkit-text-emphasis-position: over right;
 -webkit-text-emphasis-style: none;
 -webkit-text-fill-color: rgb(0, 0, 0);
--webkit-text-orientation: vertical-right;
+-webkit-text-orientation: mixed;
 -webkit-text-security: none;
 -webkit-text-stroke-color: rgb(0, 0, 0);
 -webkit-text-stroke-width: 0px;

@@ -700,7 +700,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, variant);
 
     if (!baseCharacterGlyphData.glyph)
-        return 0;
+        return nullptr;
 
     if (length == baseCharacterLength)
         return baseCharacterGlyphData.font;
@@ -720,7 +720,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
                 if (isCJKIdeographOrSymbol(baseCharacter) && !font->hasVerticalGlyphs()) {
                     variant = BrokenIdeographVariant;
                     font = &font->brokenIdeographFont();
-                } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientationVerticalRight) {
+                } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Mixed) {
                     const Font& verticalRightFont = font->verticalRightOrientationFont();
                     Glyph verticalRightGlyph = verticalRightFont.glyphForCharacter(baseCharacter);
                     if (verticalRightGlyph == baseCharacterGlyphData.glyph)

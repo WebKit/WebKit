@@ -569,7 +569,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (equalIgnoringCase(family, lucidaStr))
         isLucidaGrande = true;
 
-    bool useGDI = fontDescription.renderingMode() == AlternateRenderingMode && !isLucidaGrande;
+    bool useGDI = fontDescription.renderingMode() == FontRenderingMode::Alternate && !isLucidaGrande;
 
     // The logical size constant is 32. We do this for subpixel precision when rendering using Uniscribe.
     // This masks rounding errors related to the HFONT metrics being  different from the CGFont metrics.

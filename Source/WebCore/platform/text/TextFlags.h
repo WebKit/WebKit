@@ -43,11 +43,11 @@ enum FontSmoothingMode { AutoSmoothing, NoSmoothing, Antialiased, SubpixelAntial
 
 // This setting is used to provide ways of switching between multiple rendering modes that may have different
 // metrics. It is used to switch between CG and GDI text on Windows.
-enum FontRenderingMode { NormalRenderingMode, AlternateRenderingMode };
+enum class FontRenderingMode { Normal, Alternate };
 
 enum FontOrientation { Horizontal, Vertical };
 
-enum NonCJKGlyphOrientation { NonCJKGlyphOrientationVerticalRight, NonCJKGlyphOrientationUpright };
+enum class NonCJKGlyphOrientation { Mixed, Upright };
 
 // Here, "Leading" and "Trailing" are relevant after the line has been rearranged for bidi.
 // ("Leading" means "left" and "Trailing" means "right.")

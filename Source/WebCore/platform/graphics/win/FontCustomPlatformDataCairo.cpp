@@ -49,7 +49,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     wcsncpy(logFont.lfFaceName, m_name.charactersWithNullTermination().data(), LF_FACESIZE - 1);
 
     logFont.lfHeight = -size;
-    if (renderingMode == NormalRenderingMode)
+    if (renderingMode == FontRenderingMode::Normal)
         logFont.lfHeight *= 32;
     logFont.lfWidth = 0;
     logFont.lfEscapement = 0;

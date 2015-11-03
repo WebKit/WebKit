@@ -1375,7 +1375,7 @@ static void checkForOrientationChange(RenderStyle* style)
 {
     FontOrientation fontOrientation;
     NonCJKGlyphOrientation glyphOrientation;
-    style->getFontAndGlyphOrientation(fontOrientation, glyphOrientation);
+    std::tie(fontOrientation, glyphOrientation) = style->fontAndGlyphOrientation();
 
     const auto& fontDescription = style->fontDescription();
     if (fontDescription.orientation() == fontOrientation && fontDescription.nonCJKGlyphOrientation() == glyphOrientation)
