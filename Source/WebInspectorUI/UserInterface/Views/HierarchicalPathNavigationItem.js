@@ -61,7 +61,7 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
 
         // Update layout for the so other items can adjust to the extra space (or lack thereof) too.
         if (this.parentNavigationBar)
-            this.parentNavigationBar.updateLayoutSoon();
+            this.parentNavigationBar.needsLayout();
     }
 
     get lastComponent()

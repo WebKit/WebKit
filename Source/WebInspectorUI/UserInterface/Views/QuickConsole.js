@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
+WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
 {
     constructor(element)
     {
-        super();
+        super(element);
 
         this._toggleOrFocusKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this._toggleOrFocus.bind(this));
 
@@ -38,12 +38,11 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
         this._otherExecutionContextPathComponents = [];
         this._frameIdentifierToExecutionContextPathComponentMap = {};
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add("quick-console");
+        this.element.classList.add("quick-console");
 
         this.prompt = new WebInspector.ConsolePrompt(null, "text/javascript");
         this.prompt.element.classList.add("text-prompt");
-        this._element.appendChild(this.prompt.element);
+        this.addSubview(this.prompt);
 
         // FIXME: CodeMirror 4 has a default "Esc" key handler that always prevents default.
         // Our keyboard shortcut above will respect the default prevented and ignore the event
@@ -55,7 +54,7 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
         this.prompt.shown();
 
         this._navigationBar = new WebInspector.QuickConsoleNavigationBar;
-        this._element.appendChild(this._navigationBar.element);
+        this.addSubview(this._navigationBar);
 
         this._executionContextSelectorItem = new WebInspector.HierarchicalPathNavigationItem;
         this._executionContextSelectorItem.showSelectorArrows = true;
@@ -74,11 +73,6 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
 
     // Public
 
-    get element()
-    {
-        return this._element;
-    }
-
     get navigationBar()
     {
         return this._navigationBar;
@@ -89,13 +83,6 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
         return this._selectedExecutionContextPathComponent._executionContextIdentifier;
     }
 
-    updateLayout()
-    {
-        // A hard maximum size of 33% of the window.
-        var maximumAllowedHeight = Math.round(window.innerHeight * 0.33);
-        this.prompt.element.style.maxHeight = maximumAllowedHeight + "px";
-    }
-
     consoleLogVisibilityChanged(visible)
     {
         if (visible === this.element.classList.contains(WebInspector.QuickConsole.ShowingLogClassName))
@@ -104,6 +91,15 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
         this.element.classList.toggle(WebInspector.QuickConsole.ShowingLogClassName, visible);
 
         this.dispatchEventToListeners(WebInspector.QuickConsole.Event.DidResize);
+    }
+
+    // Protected
+
+    layout()
+    {
+        // A hard maximum size of 33% of the window.
+        let maximumAllowedHeight = Math.round(window.innerHeight * 0.33);
+        this.prompt.element.style.maxHeight = maximumAllowedHeight + "px";
     }
 
     // Private

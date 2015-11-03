@@ -68,7 +68,7 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
         this.element.classList.add("script");
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
 
@@ -102,28 +102,6 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         this.representedObject.removeEventListener(null, null, this);
 
         this._dataGrid.closed();
-    }
-
-    updateLayout()
-    {
-        super.updateLayout();
-
-        this._dataGrid.updateLayout();
-
-        if (this.startTime !== this._oldStartTime || this.endTime !== this._oldEndTime) {
-            var dataGridNode = this._dataGrid.children[0];
-            while (dataGridNode) {
-                dataGridNode.updateRangeTimes(this.startTime, this.endTime);
-                if (dataGridNode.revealed)
-                    dataGridNode.refreshIfNeeded();
-                dataGridNode = dataGridNode.traverseNextNode(false, null, true);
-            }
-
-            this._oldStartTime = this.startTime;
-            this._oldEndTime = this.endTime;
-        }
-
-        this._processPendingRecords();
     }
 
     get selectionPathComponents()
@@ -215,6 +193,24 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
             var profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(childProfileNode, zeroTime, startTime, endTime);
             this._dataGrid.addRowInSortOrder(profileNodeTreeElement, profileNodeDataGridNode, treeElement);
         }
+    }
+
+    layout()
+    {
+        if (this.startTime !== this._oldStartTime || this.endTime !== this._oldEndTime) {
+            let dataGridNode = this._dataGrid.children[0];
+            while (dataGridNode) {
+                dataGridNode.updateRangeTimes(this.startTime, this.endTime);
+                if (dataGridNode.revealed)
+                    dataGridNode.refreshIfNeeded();
+                dataGridNode = dataGridNode.traverseNextNode(false, null, true);
+            }
+
+            this._oldStartTime = this.startTime;
+            this._oldEndTime = this.endTime;
+        }
+
+        this._processPendingRecords();
     }
 
     // Private

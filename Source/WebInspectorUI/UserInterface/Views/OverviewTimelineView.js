@@ -41,13 +41,14 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
         this._timelineRuler = new WebInspector.TimelineRuler;
         this._timelineRuler.allowsClippedLabels = true;
+        // FIXME: change to `this.addSubview(this._timelineRuler)` once <https://webkit.org/b/150703> is fixed.
         this.element.appendChild(this._timelineRuler.element);
 
         this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
         this._timelineRuler.addMarker(this._currentTimeMarker);
 
         this.element.classList.add("overview");
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         this._networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
         this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
@@ -86,35 +87,6 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     {
         this._networkTimeline.removeEventListener(null, null, this);
         this._recording.removeEventListener(null, null, this);
-    }
-
-    updateLayout()
-    {
-        super.updateLayout();
-
-        var oldZeroTime = this._timelineRuler.zeroTime;
-        var oldStartTime = this._timelineRuler.startTime;
-        var oldEndTime = this._timelineRuler.endTime;
-        var oldCurrentTime = this._currentTimeMarker.time;
-
-        this._timelineRuler.zeroTime = this.zeroTime;
-        this._timelineRuler.startTime = this.startTime;
-        this._timelineRuler.endTime = this.endTime;
-        this._currentTimeMarker.time = this.currentTime;
-
-        // The TimelineDataGridNode graphs are positioned with percentages, so they auto resize with the view.
-        // We only need to refresh the graphs when the any of the times change.
-        if (this.zeroTime !== oldZeroTime || this.startTime !== oldStartTime || this.endTime !== oldEndTime || this.currentTime !== oldCurrentTime) {
-            var dataGridNode = this._dataGrid.children[0];
-            while (dataGridNode) {
-                dataGridNode.refreshGraph();
-                dataGridNode = dataGridNode.traverseNextNode(true, null, true);
-            }
-        }
-
-        this._timelineRuler.updateLayout();
-
-        this._processPendingRepresentedObjects();
     }
 
     get selectionPathComponents()
@@ -185,6 +157,34 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         }
 
         WebInspector.showOriginalOrFormattedSourceCodeLocation(treeElement.sourceCodeTimeline.sourceCodeLocation);
+    }
+
+    layout()
+    {
+        let oldZeroTime = this._timelineRuler.zeroTime;
+        let oldStartTime = this._timelineRuler.startTime;
+        let oldEndTime = this._timelineRuler.endTime;
+        let oldCurrentTime = this._currentTimeMarker.time;
+
+        this._timelineRuler.zeroTime = this.zeroTime;
+        this._timelineRuler.startTime = this.startTime;
+        this._timelineRuler.endTime = this.endTime;
+        this._currentTimeMarker.time = this.currentTime;
+
+        // The TimelineDataGridNode graphs are positioned with percentages, so they auto resize with the view.
+        // We only need to refresh the graphs when the any of the times change.
+        if (this.zeroTime !== oldZeroTime || this.startTime !== oldStartTime || this.endTime !== oldEndTime || this.currentTime !== oldCurrentTime) {
+            let dataGridNode = this._dataGrid.children[0];
+            while (dataGridNode) {
+                dataGridNode.refreshGraph();
+                dataGridNode = dataGridNode.traverseNextNode(true, null, true);
+            }
+        }
+
+        // FIXME: remove once <https://webkit.org/b/150703> is fixed.
+        this._timelineRuler.updateLayout();
+
+        this._processPendingRepresentedObjects();
     }
 
     // Private

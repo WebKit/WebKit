@@ -1,3 +1,169 @@
+2015-11-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Create View base class, refactor some core view classes
+        https://bugs.webkit.org/show_bug.cgi?id=149186
+
+        Reviewed by Brian Burg and Timothy Hatcher.
+
+        This patch introduces a new View base class, which encapsulates DOM element creation,
+        layout scheduling, and subview management. The View class constructor accepts an optional
+        element parameter, allowing an existing DOM element to be associated with the View object,
+        rather than dynamically creating a new element. View also adds a `__view` property to its
+        associated DOM element to facilitate debugging the Inspector UI.
+
+        For the view classes refactored in this patch, the changes are largely mechanical. Dynamically
+        created DOM elements and redundant element getters have been removed. needsLayout has replaced
+        updateLayoutIfNeeded where appropriate. updateLayout has been removed entirely for views that
+        performed no layout other than to cascade layouts to their children.
+
+        * UserInterface/Base/Main.js:
+        Moved TabBar layout updates out of TabBrowser and into Main.js.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        (WebInspector.ConsolePrompt.prototype.layout):
+        (WebInspector.ConsolePrompt.prototype.get element): Deleted.
+        (WebInspector.ConsolePrompt.prototype.updateLayout): Deleted.
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        (WebInspector.ContentBrowser.prototype.get element): Deleted.
+        (WebInspector.ContentBrowser.prototype.updateLayout): Deleted.
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView):
+        (WebInspector.ContentBrowserTabContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.prototype.get element): Deleted.
+        (WebInspector.ContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer):
+        (WebInspector.ContentViewContainer.prototype._showEntry):
+        (WebInspector.ContentViewContainer.prototype._hideEntry):
+        (WebInspector.ContentViewContainer.prototype.get element): Deleted.
+        (WebInspector.ContentViewContainer.prototype.updateLayout): Deleted.
+        (WebInspector.ContentViewContainer.prototype._addContentViewElement): Deleted.
+        (WebInspector.ContentViewContainer.prototype._removeContentViewElement): Deleted.
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.autoSizeColumns):
+        (WebInspector.DataGrid.prototype.layout):
+        (WebInspector.DataGrid.prototype.applyColumnWidthsMap):
+        (WebInspector.DataGrid): Deleted.
+        (WebInspector.DataGrid.prototype.updateLayout): Deleted.
+        (WebInspector.DataGrid.prototype.resizerDragging): Deleted.
+        (WebInspector.DataGrid.prototype.resizerDragEnded): Deleted.
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WebInspector.HierarchicalPathNavigationItem.prototype.set components):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView):
+        (WebInspector.LayoutTimelineView.prototype.layout):
+        (WebInspector.LayoutTimelineView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar):
+        (WebInspector.NavigationBar.prototype.insertNavigationItem):
+        (WebInspector.NavigationBar.prototype.removeNavigationItem):
+        (WebInspector.NavigationBar.prototype.get minimumWidth):
+        (WebInspector.NavigationBar.prototype.layout):
+        (WebInspector.NavigationBar.prototype._mouseDown):
+        (WebInspector.NavigationBar.prototype._mouseMoved):
+        (WebInspector.NavigationBar.prototype._mouseUp):
+        (WebInspector.NavigationBar.prototype._calculateMinimumWidth):
+        (WebInspector.NavigationBar.prototype.updateLayoutSoon.update): Deleted.
+        (WebInspector.NavigationBar.prototype.updateLayoutSoon): Deleted.
+        (WebInspector.NavigationBar.prototype.updateLayout): Deleted.
+        (WebInspector.NavigationBar.prototype.get element): Deleted.
+        * UserInterface/Views/NavigationItem.js:
+        (WebInspector.NavigationItem.prototype.set hidden):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView):
+        (WebInspector.NetworkTimelineView.prototype.layout):
+        (WebInspector.NetworkTimelineView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype.layout):
+        (WebInspector.OverviewTimelineView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole):
+        (WebInspector.QuickConsole.prototype.layout):
+        (WebInspector.QuickConsole.prototype.get element): Deleted.
+        (WebInspector.QuickConsole.prototype.updateLayout): Deleted.
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        (WebInspector.RenderingFrameTimelineView.prototype.layout):
+        (WebInspector.RenderingFrameTimelineView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView):
+        (WebInspector.ScriptTimelineView.prototype.layout):
+        (WebInspector.ScriptTimelineView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar):
+        (WebInspector.TabBar.prototype.insertTabBarItem.animateTabs):
+        (WebInspector.TabBar.prototype.insertTabBarItem.removeStyles):
+        (WebInspector.TabBar.prototype.insertTabBarItem):
+        (WebInspector.TabBar.prototype.removeTabBarItem.animateTabs):
+        (WebInspector.TabBar.prototype.removeTabBarItem.removeStyles):
+        (WebInspector.TabBar.prototype.removeTabBarItem):
+        (WebInspector.TabBar.prototype.hasNormalTab):
+        (WebInspector.TabBar.prototype.layout):
+        (WebInspector.TabBar.prototype._recordTabBarItemSizesAndPositions):
+        (WebInspector.TabBar.prototype._finishExpandingTabsAfterClose.):
+        (WebInspector.TabBar.prototype._finishExpandingTabsAfterClose):
+        (WebInspector.TabBar.prototype._handleClick):
+        (WebInspector.TabBar.prototype._handleMouseMoved):
+        (WebInspector.TabBar.prototype._handleMouseUp):
+        (WebInspector.TabBar.prototype._handleMouseLeave):
+        (WebInspector.TabBar.prototype._handleNewTabMouseEnter):
+        (WebInspector.TabBar.prototype.updateLayoutSoon.update): Deleted.
+        (WebInspector.TabBar.prototype.updateLayoutSoon): Deleted.
+        (WebInspector.TabBar.prototype.updateLayout): Deleted.
+        (WebInspector.TabBar.prototype.get element): Deleted.
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype.get element): Deleted.
+        (WebInspector.TabBrowser.prototype.updateLayout): Deleted.
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.filterUpdated):
+        (WebInspector.TimelineView.prototype.needsLayout):
+        (WebInspector.TimelineView.prototype.updateLayout): Deleted.
+        (WebInspector.TimelineView.prototype.updateLayoutIfNeeded): Deleted.
+        (WebInspector.TimelineView): Deleted.
+
+        * UserInterface/Views/Toolbar.js:
+        (WebInspector.Toolbar):
+        (WebInspector.Toolbar.prototype.set displayMode):
+        (WebInspector.Toolbar.prototype.set sizeMode):
+        (WebInspector.Toolbar.prototype.addToolbarItem):
+        (WebInspector.Toolbar.prototype.layout):
+        (WebInspector.Toolbar.prototype.customUpdateLayout): Deleted.
+        Renamed to layout. This eliminated a layering violation in NavigationBar,
+        where the function previously known as updateLayout checked for a
+        a `customUpdateLayout` function property, and would call it instead of its
+        own layout logic if found.
+
+        * UserInterface/Views/View.js: Added.
+        (WebInspector.View):
+        (WebInspector.View.prototype.get element):
+        (WebInspector.View.prototype.get subviews):
+        (WebInspector.View.prototype.addSubview):
+        Appends a view to the end of the subview list.
+        (WebInspector.View.prototype.insertSubviewBefore):
+        Inserts a view into subview list before another subview.
+        (WebInspector.View.prototype.removeSubview):
+        (WebInspector.View.prototype.replaceSubview):
+        (WebInspector.View.prototype.updateLayout):
+        No longer overridden by subclasses.
+        (WebInspector.View.prototype.updateLayoutIfNeeded):
+        Forces a layout if one has been scheduled, otherwise does nothing.
+        (WebInspector.View.prototype.needsLayout):
+        Schedules a layout for the view.
+        (WebInspector.View.prototype.layout):
+        Overridden by views that require special layout logic. Layouts
+        cascade to child views automatically.
+        (WebInspector.View.prototype._layoutSubtree):
+        Main layout entry point. Called by requestAnimationFrame via needsLayut, by
+        updateLayout when forcing a synchronous layout, and called recursively during
+        subview traversal.
+
 2015-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Handle or Remove ParseHTML Timeline Event Records

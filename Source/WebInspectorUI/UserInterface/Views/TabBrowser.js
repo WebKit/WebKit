@@ -23,19 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
+WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
 {
     constructor(element, tabBar, navigationSidebar, detailsSidebar)
     {
-        super();
+        console.assert(tabBar, "Must provide a TabBar.");
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add("tab-browser");
+        super(element);
 
-        this._tabBar = tabBar || new WebInspector.TabBar;
-        if (!tabBar)
-            this._element.appendChild(this._tabBar.element);
+        this.element.classList.add("tab-browser");
 
+        this._tabBar = tabBar;
         this._navigationSidebar = navigationSidebar || null;
         this._detailsSidebar = detailsSidebar || null;
 
@@ -48,7 +46,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         }
 
         this._contentViewContainer = new WebInspector.ContentViewContainer;
-        this._element.appendChild(this._contentViewContainer.element);
+        this.addSubview(this._contentViewContainer);
 
         var showNextTab = this._showNextTab.bind(this);
         var showPreviousTab = this._showPreviousTab.bind(this);
@@ -73,11 +71,6 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
 
     // Public
 
-    get element()
-    {
-        return this._element;
-    }
-
     get tabBar()
     {
         return this._tabBar;
@@ -96,12 +89,6 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
     get selectedTabContentView()
     {
         return this._contentViewContainer.currentContentView;
-    }
-
-    updateLayout()
-    {
-        this._tabBar.updateLayout();
-        this._contentViewContainer.updateLayout();
     }
 
     bestTabContentViewForClass(constructor)

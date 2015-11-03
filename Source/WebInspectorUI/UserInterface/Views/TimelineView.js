@@ -172,26 +172,18 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         return true;
     }
 
-    updateLayout()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = undefined;
-        }
-
-        // Implemented by sub-classes if needed.
-    }
-
-    updateLayoutIfNeeded()
-    {
-        if (!this._scheduledLayoutUpdateIdentifier)
-            return;
-        this.updateLayout();
-    }
-
     filterUpdated()
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+    }
+
+    needsLayout()
+    {
+        // FIXME: needsLayout can be removed once <https://webkit.org/b/150741> is fixed.
+        if (!this.visible)
+            return;
+
+        super.needsLayout();
     }
 
     // Protected
@@ -246,16 +238,5 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
             return;
 
         this.showContentViewForTreeElement(treeElement);
-    }
-
-    needsLayout()
-    {
-        if (!this.visible)
-            return;
-
-        if (this._scheduledLayoutUpdateIdentifier)
-            return;
-
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
     }
 };

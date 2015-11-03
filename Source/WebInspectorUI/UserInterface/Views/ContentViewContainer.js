@@ -23,25 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspector.Object
+WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspector.View
 {
-    constructor(element)
+    constructor()
     {
         super();
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add("content-view-container");
+        this.element.classList.add("content-view-container");
 
         this._backForwardList = [];
         this._currentIndex = -1;
     }
 
     // Public
-
-    get element()
-    {
-        return this._element;
-    }
 
     get currentIndex()
     {
@@ -65,13 +59,6 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         if (this._currentIndex < 0 || this._currentIndex > this._backForwardList.length - 1)
             return null;
         return this._backForwardList[this._currentIndex];
-    }
-
-    updateLayout()
-    {
-        var currentContentView = this.currentContentView;
-        if (currentContentView)
-            currentContentView.updateLayout();
     }
 
     contentViewForRepresentedObject(representedObject, onlyExisting, extraArguments)
@@ -428,18 +415,6 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
 
     // Private
 
-    _addContentViewElement(contentView)
-    {
-        if (contentView.element.parentNode !== this._element)
-            this._element.appendChild(contentView.element);
-    }
-
-    _removeContentViewElement(contentView)
-    {
-        if (contentView.element.parentNode)
-            contentView.element.parentNode.removeChild(contentView.element);
-    }
-
     _disassociateFromContentView(contentView)
     {
         console.assert(!contentView.visible);
@@ -460,7 +435,9 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
     {
         console.assert(entry instanceof WebInspector.BackForwardEntry);
 
-        this._addContentViewElement(entry.contentView);
+        if (!this.subviews.includes(entry.contentView))
+            this.addSubview(entry.contentView)
+
         entry.prepareToShow(shouldCallShown);
     }
 
@@ -469,7 +446,8 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         console.assert(entry instanceof WebInspector.BackForwardEntry);
 
         entry.prepareToHide();
-        this._removeContentViewElement(entry.contentView);
+        if (this.subviews.includes(entry.contentView))
+            this.removeSubview(entry.contentView)
     }
 };
 
