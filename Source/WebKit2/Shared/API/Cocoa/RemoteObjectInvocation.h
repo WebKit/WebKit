@@ -38,11 +38,22 @@ namespace WebKit {
 
 class RemoteObjectInvocation {
 public:
+    struct ReplyInfo {
+        ReplyInfo(uint64_t replyID, String&& blockSignature)
+            : replyID(replyID)
+            , blockSignature(WTF::move(blockSignature))
+        {
+        }
+
+        const uint64_t replyID;
+        const String blockSignature;
+    };
     RemoteObjectInvocation();
-    RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation);
+    RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&&);
 
     const String& interfaceIdentifier() const { return m_interfaceIdentifier; }
     const API::Dictionary* encodedInvocation() const { return m_encodedInvocation.get(); }
+    const ReplyInfo* replyInfo() const { return m_replyInfo.get(); }
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, RemoteObjectInvocation&);
@@ -50,6 +61,7 @@ public:
 private:
     String m_interfaceIdentifier;
     RefPtr<API::Dictionary> m_encodedInvocation;
+    std::unique_ptr<ReplyInfo> m_replyInfo;
 };
 
 }

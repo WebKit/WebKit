@@ -23,15 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-#if WK_API_ENABLED
+#import <Block_private.h>
 
-@protocol RemoteObjectProtocol <NSObject>
+#else
 
-- (void)sayHello:(NSString *)hello;
-- (void)sayHello:(NSString *)hello completionHandler:(void (^)(NSString *))completionHandler;
+#import <Block.h>
 
-@end
+BLOCK_EXPORT const char* _Block_signature(void*);
 
 #endif
