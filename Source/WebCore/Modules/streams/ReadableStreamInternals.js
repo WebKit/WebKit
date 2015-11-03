@@ -42,19 +42,19 @@ function privateInitializeReadableStreamReader(stream)
         this.@ownerReadableStream = stream;
         this.@storedError = undefined;
         stream.@reader = this;
-        this.@closedPromise = @createNewStreamsPromise();
+        this.@closedPromiseCapability = @newPromiseCapability(Promise);
         return this;
     }
     if (stream.@state === @streamClosed) {
         this.@ownerReadableStream = null;
         this.@storedError = undefined;
-        this.@closedPromise = Promise.resolve();
+        this.@closedPromiseCapability = { @promise: Promise.resolve(undefined), @resolve: function() {}, @reject: function() {} };
         return this;
     }
     // FIXME: ASSERT(stream.@state === @streamErrored);
     this.@ownerReadableStream = null;
     this.@storedError = stream.@storedError;
-    this.@closedPromise = Promise.reject(stream.@storedError);
+    this.@closedPromiseCapability = { @promise: Promise.reject(stream.@storedError), @resolve: function() {}, @reject: function() {} };
 
     return this;
 }
@@ -89,10 +89,7 @@ function teeReadableStream(stream, shouldClone)
         reason: undefined,
     };
 
-    teeState.cancelPromise = new @InternalPromise(function(resolve, reject) {
-       teeState.resolvePromise = resolve;
-       teeState.rejectPromise = reject;
-    });
+    teeState.cancelPromiseCapability = @newPromiseCapability(@InternalPromise);
 
     let pullFunction = @teeReadableStreamPullFunction(teeState, reader, shouldClone);
 
@@ -153,9 +150,10 @@ function teeReadableStreamBranch1CancelFunction(teeState, stream)
         teeState.canceled1 = true;
         teeState.reason1 = r;
         if (teeState.canceled2) {
-            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).then(teeState.resolvePromise, teeState.rejectPromise);
+            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).then(teeState.cancelPromiseCapability.@resolve,
+                                                                                     teeState.cancelPromiseCapability.@reject);
         }
-        return teeState.cancelPromise;
+        return teeState.cancelPromiseCapability.@promise;
     }
 }
 
@@ -165,9 +163,10 @@ function teeReadableStreamBranch2CancelFunction(teeState, stream)
         teeState.canceled2 = true;
         teeState.reason2 = r;
         if (teeState.canceled1) {
-            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).then(teeState.resolvePromise, teeState.rejectPromise);
+            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).then(teeState.cancelPromiseCapability.@resolve,
+                                                                                     teeState.cancelPromiseCapability.@reject);
         }
-        return teeState.cancelPromise;
+        return teeState.cancelPromiseCapability.@promise;
     }
 }
 
@@ -207,14 +206,14 @@ function errorReadableStream(stream, error)
 
     var requests = reader.@readRequests;
     for (var index = 0, length = requests.length; index < length; ++index)
-        @rejectStreamsPromise(requests[index], error);
+        requests[index].@reject.@call(undefined, error);
     reader.@readRequests = [];
 
     @releaseReadableStreamReader(reader);
     reader.@storedError = error;
     reader.@state = @streamErrored;
 
-    @rejectStreamsPromise(reader.@closedPromise, error);
+    reader.@closedPromiseCapability.@reject.@call(undefined, error);
 }
 
 function requestReadableStreamPull(stream)
@@ -314,11 +313,11 @@ function closeReadableStreamReader(reader)
 
     var requests = reader.@readRequests;
     for (var index = 0, length = requests.length; index < length; ++index)
-        @resolveStreamsPromise(requests[index], {value:undefined, done: true});
+        requests[index].@resolve.@call(undefined, {value:undefined, done: true});
     reader.@readRequests = [];
     @releaseReadableStreamReader(reader);
     reader.@state = @streamClosed;
-    @resolveStreamsPromise(reader.@closedPromise);
+    reader.@closedPromiseCapability.@resolve.@call(undefined);
 }
 
 function enqueueInReadableStream(stream, chunk)
@@ -330,7 +329,7 @@ function enqueueInReadableStream(stream, chunk)
     if (stream.@state === @streamClosed)
         return undefined;
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
-        @resolveStreamsPromise(stream.@reader.@readRequests.shift(), {value: chunk, done: false});
+        stream.@reader.@readRequests.shift().@resolve.@call(undefined, {value: chunk, done: false});
         @requestReadableStreamPull(stream);
         return;
     }
@@ -369,8 +368,8 @@ function readFromReadableStreamReader(reader)
             @finishClosingReadableStream(stream);
         return Promise.resolve({value: chunk, done: false});
     }
-    var readPromise = @createNewStreamsPromise();
-    reader.@readRequests.push(readPromise);
+    var readPromiseCapability = @newPromiseCapability(Promise);
+    reader.@readRequests.push(readPromiseCapability);
     @requestReadableStreamPull(stream);
-    return readPromise;
+    return readPromiseCapability.@promise;
 }

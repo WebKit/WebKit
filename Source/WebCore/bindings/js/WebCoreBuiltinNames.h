@@ -33,7 +33,7 @@ namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro)\
     macro(closeRequested) \
-    macro(closedPromise) \
+    macro(closedPromiseCapability) \
     macro(controlledReadableStream) \
     macro(controller) \
     macro(getUserMediaFromJS) \
@@ -43,7 +43,7 @@ namespace WebCore {
     macro(queue) \
     macro(reader) \
     macro(readRequests) \
-    macro(readyPromise) \
+    macro(readyPromiseCapability) \
     macro(state) \
     macro(started) \
     macro(startedPromise) \

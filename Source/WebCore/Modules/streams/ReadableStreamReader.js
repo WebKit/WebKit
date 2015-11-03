@@ -76,5 +76,5 @@ function closed()
     if (!@isReadableStreamReader(this))
         return Promise.reject(new @TypeError("Callee of closed is not a ReadableStreamReader"));
 
-    return this.@closedPromise;
+    return this.@closedPromiseCapability.@promise;
 }

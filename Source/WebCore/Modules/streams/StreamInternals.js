@@ -90,43 +90,6 @@ function validateAndNormalizeQueuingStrategy(size, highWaterMark)
     return normalizedStrategy;
 }
 
-function createNewStreamsPromise()
-{
-    "use strict";
-
-    var resolveFunction;
-    var rejectFunction;
-    var promise = new Promise(function(resolve, reject) {
-        resolveFunction = resolve;
-        rejectFunction = reject;
-    });
-    promise.@resolve = resolveFunction;
-    promise.@reject = rejectFunction;
-    return promise;
-}
-
-function resolveStreamsPromise(promise, value)
-{
-    "use strict";
-
-    if (promise && promise.@resolve) {
-        promise.@resolve(value);
-        promise.@resolve = undefined;
-        promise.@reject = undefined;
-    }
-}
-
-function rejectStreamsPromise(promise, value)
-{
-    "use strict";
-
-    if (promise && promise.@reject) {
-        promise.@reject(value);
-        promise.@resolve = undefined;
-        promise.@reject = undefined;
-    }
-}
-
 function newQueue()
 {
     return { content: [], size: 0 };

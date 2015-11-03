@@ -42,8 +42,8 @@ function initializeWritableStream(underlyingSink, strategy)
         throw new @TypeError("WritableStream constructor takes an object as second argument, if any");
 
     this.@underlyingSink = underlyingSink;
-    this.@closedPromise = @createNewStreamsPromise();
-    this.@readyPromise = Promise.resolve(undefined);
+    this.@closedPromiseCapability = @newPromiseCapability(Promise);
+    this.@readyPromiseCapability = { @promise: Promise.resolve(undefined), @resolve: function() {}, @reject: function() {} };
     this.@queue = @newQueue();
     this.@state = @streamWritable;
     this.@started = false;
@@ -99,13 +99,13 @@ function close()
         return Promise.reject(this.@storedError);
 
     if (this.@state === @streamWaiting)
-        @resolveStreamsPromise(this.@readyPromise, undefined);
+        this.@readyPromiseCapability.@resolve.@call(undefined, undefined);
 
     this.@state = @streamClosing;
     @enqueueValueWithSize(this.@queue, "close", 0);
     @callOrScheduleWritableStreamAdvanceQueue(this);
 
-    return this.@closedPromise;
+    return this.@closedPromiseCapability.@promise;
 }
 
 function write(chunk)
@@ -134,9 +134,9 @@ function write(chunk)
         }
     }
 
-    const promise = @createNewStreamsPromise();
+    const promiseCapability = @newPromiseCapability(Promise);
     try {
-        @enqueueValueWithSize(this.@queue, { promise: promise, chunk: chunk }, chunkSize);
+        @enqueueValueWithSize(this.@queue, { promiseCapability: promiseCapability, chunk: chunk }, chunkSize);
     } catch (e) {
         @errorWritableStream.@call(this, e);
         return Promise.reject(e);
@@ -145,7 +145,7 @@ function write(chunk)
     @syncWritableStreamStateWithQueue(this);
     @callOrScheduleWritableStreamAdvanceQueue(this);
 
-    return promise;
+    return promiseCapability.@promise;
 }
 
 function closed()
@@ -155,7 +155,7 @@ function closed()
     if (!@isWritableStream(this))
         return Promise.reject(new @TypeError("The WritableStream.closed getter can only be used on instances of WritableStream"));
 
-    return this.@closedPromise;
+    return this.@closedPromiseCapability.@promise;
 }
 
 function ready()
@@ -165,7 +165,7 @@ function ready()
     if (!@isWritableStream(this))
         return Promise.reject(new @TypeError("The WritableStream.ready getter can only be used on instances of WritableStream"));
 
-    return this.@readyPromise;
+    return this.@readyPromiseCapability.@promise;
 }
 
 function state()
