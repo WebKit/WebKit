@@ -1,3 +1,15 @@
+2015-11-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Implement support for the autocomplete attribute
+        https://bugs.webkit.org/show_bug.cgi?id=150731
+        rdar://problem/21078968
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt: Rebased.
+        * web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete-expected.txt:
+        Rebased.
+
 2015-11-03  Keith Rollin  <krollin@apple.com>
 
         HTMLOptionElement.text should never return the value of label

@@ -20,8 +20,8 @@ PASS street-address is an allowed autocomplete field name
 PASS address-line1 is an allowed autocomplete field name 
 PASS address-line2 is an allowed autocomplete field name 
 PASS address-line3 is an allowed autocomplete field name 
-PASS locality is an allowed autocomplete field name 
-PASS region is an allowed autocomplete field name 
+FAIL locality is an allowed autocomplete field name assert_equals: expected "locality" but got ""
+FAIL region is an allowed autocomplete field name assert_equals: expected "region" but got ""
 PASS country is an allowed autocomplete field name 
 PASS country-name is an allowed autocomplete field name 
 PASS postal-code is an allowed autocomplete field name 

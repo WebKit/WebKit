@@ -71,4 +71,6 @@ interface HTMLTextAreaElement : HTMLElement {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Reflect] attribute DOMString accessKey;
 #endif
+
+    attribute DOMString autocomplete;
 };
