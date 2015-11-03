@@ -125,6 +125,11 @@ IDBResultData IDBResultData::getCountSuccess(const IDBResourceIdentifier& reques
     return result;
 }
 
+IDBResultData IDBResultData::deleteRecordSuccess(const IDBResourceIdentifier& requestIdentifier)
+{
+    return { IDBResultType::DeleteRecordSuccess, requestIdentifier };
+}
+
 const IDBDatabaseInfo& IDBResultData::databaseInfo() const
 {
     RELEASE_ASSERT(m_databaseInfo);

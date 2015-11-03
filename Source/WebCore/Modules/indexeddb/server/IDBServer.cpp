@@ -224,6 +224,17 @@ void IDBServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeDat
     transaction->getCount(requestData, keyRangeData);
 }
 
+void IDBServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    LOG(IndexedDB, "IDBServer::deleteRecord");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    transaction->deleteRecord(requestData, keyRangeData);
+}
+
 void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "IDBServer::establishTransaction");

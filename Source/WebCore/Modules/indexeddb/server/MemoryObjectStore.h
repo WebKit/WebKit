@@ -58,6 +58,7 @@ public:
 
     bool containsRecord(const IDBKeyData&);
     void deleteRecord(const IDBKeyData&);
+    void deleteRange(const IDBKeyRangeData&);
     void putRecord(MemoryBackingStoreTransaction&, const IDBKeyData&, const ThreadSafeDataBuffer& value);
 
     void setKeyValue(const IDBKeyData&, const ThreadSafeDataBuffer& value);

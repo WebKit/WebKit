@@ -392,7 +392,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     // ...If a record already exists in store ...
     // then remove the record from store using the steps for deleting records from an object store...
     // This is important because formally deleting it from from the object store also removes it from the appropriate indexes.
-    error = m_backingStore->deleteRecord(transactionIdentifier, objectStoreIdentifier, usedKey);
+    error = m_backingStore->deleteRange(transactionIdentifier, objectStoreIdentifier, usedKey);
     if (!error.isNull()) {
         m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
         return;
@@ -471,6 +471,33 @@ void UniqueIDBDatabase::didPerformGetCount(uint64_t callbackIdentifier, const ID
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformGetCount");
 
     performCountCallback(callbackIdentifier, error, count);
+}
+
+void UniqueIDBDatabase::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData, ErrorCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteRecord");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performDeleteRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyRangeData));
+}
+
+void UniqueIDBDatabase::performDeleteRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performDeleteRecord");
+
+    IDBError error = m_backingStore->deleteRange(transactionIdentifier, objectStoreIdentifier, range);
+
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformDeleteRecord, callbackIdentifier, error));
+}
+
+void UniqueIDBDatabase::didPerformDeleteRecord(uint64_t callbackIdentifier, const IDBError& error)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformDeleteRecord");
+
+    performErrorCallback(callbackIdentifier, error);
 }
 
 void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)

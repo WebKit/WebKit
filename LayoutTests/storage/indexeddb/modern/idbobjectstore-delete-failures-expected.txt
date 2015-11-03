@@ -1,0 +1,10 @@
+This tests some obvious failures that can happen while calling IDBObjectStore.delete().
+Initial upgrade needed: Old version - 0 New version - 1
+Failed to delete record from object store with an invalid key
+Failed to delete record from object store that has been deleted
+Initial upgrade versionchange transaction complete
+Failed to delete a record in read-only transaction
+Failed to delete record with inactive transaction
+readwrite transaction complete
+Done
+

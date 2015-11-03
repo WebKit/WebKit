@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBKeyRangeData.h"
 #include "Logging.h"
 #include "MemoryObjectStore.h"
 
@@ -210,17 +211,20 @@ IDBError MemoryIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     return IDBError();
 }
 
-IDBError MemoryIDBBackingStore::deleteRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData)
+IDBError MemoryIDBBackingStore::deleteRange(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range)
 {
-    LOG(IndexedDB, "MemoryIDBBackingStore::deleteRecord");
+    LOG(IndexedDB, "MemoryIDBBackingStore::deleteRange");
 
     ASSERT(objectStoreIdentifier);
 
-    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
-    RELEASE_ASSERT(objectStore);
-    RELEASE_ASSERT(m_transactions.contains(transactionIdentifier));
+    if (!m_transactions.contains(transactionIdentifier))
+        return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store transaction found to delete from"));
 
-    objectStore->deleteRecord(keyData);
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    if (!objectStore)
+        return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found"));
+
+    objectStore->deleteRange(range);
     return IDBError();
 }
 

@@ -79,6 +79,20 @@ bool IDBKeyRangeData::isExactlyOneKey() const
     return !lowerKey.compare(upperKey);
 }
 
+bool IDBKeyRangeData::isValid() const
+{
+    if (isNull)
+        return false;
+
+    if (!lowerKey.isValid() && !lowerKey.isNull())
+        return false;
+
+    if (!upperKey.isValid() && !upperKey.isNull())
+        return false;
+
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

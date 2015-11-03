@@ -79,6 +79,9 @@ public:
     void getCount(TransactionOperation&, const IDBKeyRangeData&);
     void didGetCount(const IDBResultData&);
 
+    void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
+    void didDeleteRecord(const IDBResultData&);
+
     void commitTransaction(IDBTransaction&);
     void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 

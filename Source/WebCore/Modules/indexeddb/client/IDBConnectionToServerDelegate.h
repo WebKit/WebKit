@@ -62,6 +62,7 @@ public:
     virtual void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
     virtual void getRecord(const IDBRequestData&, const IDBKeyRangeData&) = 0;
     virtual void getCount(const IDBRequestData&, const IDBKeyRangeData&) = 0;
+    virtual void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) = 0;
     virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) = 0;
 
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;

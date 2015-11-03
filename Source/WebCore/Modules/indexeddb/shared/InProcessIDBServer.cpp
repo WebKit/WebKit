@@ -167,6 +167,14 @@ void InProcessIDBServer::didGetCount(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didDeleteRecord(const IDBResultData& resultData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData] {
+        m_connectionToServer->didDeleteRecord(resultData);
+    });
+}
+
 void InProcessIDBServer::abortTransaction(IDBResourceIdentifier& resourceIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
@@ -234,6 +242,16 @@ void InProcessIDBServer::getCount(const IDBRequestData& requestData, const IDBKe
         m_server->getCount(requestData, keyRangeData);
     });
 }
+
+void InProcessIDBServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+
+    RunLoop::current().dispatch([this, self, requestData, keyRangeData] {
+        m_server->deleteRecord(requestData, keyRangeData);
+    });
+}
+
 void InProcessIDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     RefPtr<InProcessIDBServer> self(this);

@@ -198,6 +198,23 @@ void UniqueIDBDatabaseTransaction::getCount(const IDBRequestData& requestData, c
     });
 }
 
+void UniqueIDBDatabaseTransaction::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteRecord");
+
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().deleteRecord(requestData, keyRangeData, [this, protectedThis, requestData](const IDBError& error) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteRecord (callback)");
+
+        if (error.isNull())
+            m_databaseConnection->connectionToClient().didDeleteRecord(IDBResultData::deleteRecordSuccess(requestData.requestIdentifier()));
+        else
+            m_databaseConnection->connectionToClient().didDeleteRecord(IDBResultData::error(requestData.requestIdentifier(), error));
+    });
+}
+
 const Vector<uint64_t>& UniqueIDBDatabaseTransaction::objectStoreIdentifiers()
 {
     if (!m_objectStoreIdentifiers.isEmpty())

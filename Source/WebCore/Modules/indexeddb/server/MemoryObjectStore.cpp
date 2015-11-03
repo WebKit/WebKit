@@ -106,6 +106,30 @@ void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
     m_orderedKeys->erase(key);
 }
 
+void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
+{
+    LOG(IndexedDB, "MemoryObjectStore::deleteRange");
+
+    ASSERT(m_writeTransaction);
+
+    if (inputRange.isExactlyOneKey()) {
+        deleteRecord(inputRange.lowerKey);
+        return;
+    }
+
+    IDBKeyRangeData range = inputRange;
+    while (true) {
+        auto key = lowestKeyWithRecordInRange(range);
+        if (key.isNull())
+            break;
+
+        deleteRecord(key);
+
+        range.lowerKey = key;
+        range.lowerOpen = true;
+    }
+}
+
 void MemoryObjectStore::putRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
 {
     LOG(IndexedDB, "MemoryObjectStore::putRecord");

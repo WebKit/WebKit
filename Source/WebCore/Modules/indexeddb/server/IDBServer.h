@@ -65,6 +65,7 @@ public:
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
     void getCount(const IDBRequestData&, const IDBKeyRangeData&);
+    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
     void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
 

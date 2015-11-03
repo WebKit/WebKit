@@ -186,6 +186,22 @@ void IDBConnectionToServer::didGetCount(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
+void IDBConnectionToServer::deleteRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRangeData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::deleteRecord");
+
+    ASSERT(!keyRangeData.isNull);
+
+    saveOperation(operation);
+    m_delegate->deleteRecord(IDBRequestData(operation), keyRangeData);
+}
+
+void IDBConnectionToServer::didDeleteRecord(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didDeleteRecord");
+    completeOperation(resultData);
+}
+
 void IDBConnectionToServer::establishTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBConnectionToServer::establishTransaction");

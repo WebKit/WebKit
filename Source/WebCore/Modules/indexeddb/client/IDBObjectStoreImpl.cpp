@@ -162,9 +162,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
     }
 
     IDBKeyRangeData keyRangeData(keyRange);
-    if (keyRangeData.isNull
-        || (!keyRangeData.lowerKey.isValid() && !keyRangeData.lowerKey.isNull())
-        || (!keyRangeData.upperKey.isValid() && !keyRangeData.upperKey.isNull())) {
+    if (!keyRangeData.isValid()) {
         ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
         return nullptr;
     }
@@ -277,14 +275,45 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC:
 }
 
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::deleteFunction");
+
+    if (m_transaction->isReadOnly()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::ReadOnlyError);
+        return nullptr;
+    }
+
+    if (!m_transaction->isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    if (m_deleted) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    IDBKeyRangeData keyRangeData(keyRange);
+    if (!keyRangeData.isValid()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    Ref<IDBRequest> request = m_transaction->requestDeleteRecord(*context, *this, keyRangeData);
+    return WTF::move(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    return deleteFunction(context, &IDBKeyRange::create(idbKey.get()).get(), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
