@@ -1833,8 +1833,6 @@ std::pair<FontOrientation, NonCJKGlyphOrientation> RenderStyle::fontAndGlyphOrie
         return { Vertical, NonCJKGlyphOrientation::Upright };
     case TextOrientation::Sideways:
         return { Horizontal, NonCJKGlyphOrientation::Mixed };
-    case TextOrientation::SidewaysRight:
-        return { Horizontal, NonCJKGlyphOrientation::Mixed };
     default:
         ASSERT_NOT_REACHED();
         return { Horizontal, NonCJKGlyphOrientation::Mixed };

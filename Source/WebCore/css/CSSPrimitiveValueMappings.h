@@ -3334,9 +3334,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOrientation e)
     case TextOrientation::Sideways:
         m_value.valueID = CSSValueSideways;
         break;
-    case TextOrientation::SidewaysRight:
-        m_value.valueID = CSSValueSidewaysRight;
-        break;
     case TextOrientation::Mixed:
         m_value.valueID = CSSValueMixed;
         break;
@@ -3354,7 +3351,7 @@ template<> inline CSSPrimitiveValue::operator TextOrientation() const
     case CSSValueSideways:
         return TextOrientation::Sideways;
     case CSSValueSidewaysRight:
-        return TextOrientation::SidewaysRight;
+        return TextOrientation::Sideways;
     case CSSValueVerticalRight:
         return TextOrientation::Mixed;
     case CSSValueMixed:
