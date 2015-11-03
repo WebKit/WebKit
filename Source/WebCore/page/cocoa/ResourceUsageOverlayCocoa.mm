@@ -185,9 +185,9 @@ void ResourceUsageOverlay::platformDestroy()
 static void drawCpuHistory(GraphicsContext& gc, float x1, float y1, float y2, RingBuffer<float>& history)
 {
     Ref<Gradient> gradient = Gradient::create(FloatPoint(0, y1), FloatPoint(0, y2));
-    gradient->addColorStop(0.0, Color(0, 255, 0));
+    gradient->addColorStop(0.0, Color(255, 0, 0));
     gradient->addColorStop(0.5, Color(255, 255, 0));
-    gradient->addColorStop(1.0, Color(255, 0, 0));
+    gradient->addColorStop(1.0, Color(0, 255, 0));
     gc.setStrokeGradient(WTF::move(gradient));
     gc.setStrokeThickness(1);
 
@@ -198,8 +198,8 @@ static void drawCpuHistory(GraphicsContext& gc, float x1, float y1, float y2, Ri
         float yScale = y2 - y1;
 
         Path path;
-        path.moveTo(FloatPoint(x1 + i, y1));
-        path.addLineTo(FloatPoint(x1 + i, y1 + (yScale * cpu)));
+        path.moveTo(FloatPoint(x1 + i, y2));
+        path.addLineTo(FloatPoint(x1 + i, y2 - (yScale * cpu)));
         gc.strokePath(path);
         i++;
     });
@@ -216,9 +216,9 @@ static void drawGCHistory(GraphicsContext& gc, float x1, float y1, float y2, Rin
     gc.setStrokeThickness(1);
 
     Ref<Gradient> capacityGradient = Gradient::create(FloatPoint(0, y1), FloatPoint(0, y2));
-    capacityGradient->addColorStop(0.0, Color(0xCC, 0x00, 0x33));
+    capacityGradient->addColorStop(0.0, Color(0xFF, 0x00, 0x00));
     capacityGradient->addColorStop(0.5, Color(0xFF, 0x00, 0x33));
-    capacityGradient->addColorStop(1.0, Color(0xFF, 0x00, 0x00));
+    capacityGradient->addColorStop(1.0, Color(0xCC, 0x00, 0x33));
     gc.setStrokeGradient(WTF::move(capacityGradient));
 
     size_t i = 0;
@@ -228,16 +228,16 @@ static void drawGCHistory(GraphicsContext& gc, float x1, float y1, float y2, Rin
         float yScale = y2 - y1;
 
         Path path;
-        path.moveTo(FloatPoint(x1 + i, y1));
-        path.addLineTo(FloatPoint(x1 + i, y1 + (yScale * mem)));
+        path.moveTo(FloatPoint(x1 + i, y2));
+        path.addLineTo(FloatPoint(x1 + i, y2 - (yScale * mem)));
         gc.strokePath(path);
         i++;
     });
 
     Ref<Gradient> sizeGradient = Gradient::create(FloatPoint(0, y1), FloatPoint(0, y2));
-    sizeGradient->addColorStop(0.0, Color(0x29, 0x56, 0x8F));
+    sizeGradient->addColorStop(0.0, Color(0x96, 0xB1, 0xD2));
     sizeGradient->addColorStop(0.5, Color(0x47, 0x71, 0xA5));
-    sizeGradient->addColorStop(1.0, Color(0x96, 0xB1, 0xD2));
+    sizeGradient->addColorStop(1.0, Color(0x29, 0x56, 0x8F));
     gc.setStrokeGradient(WTF::move(sizeGradient));
 
     i = 0;
@@ -247,8 +247,8 @@ static void drawGCHistory(GraphicsContext& gc, float x1, float y1, float y2, Rin
         float yScale = y2 - y1;
 
         Path path;
-        path.moveTo(FloatPoint(x1 + i, y1));
-        path.addLineTo(FloatPoint(x1 + i, y1 + (yScale * mem)));
+        path.moveTo(FloatPoint(x1 + i, y2));
+        path.addLineTo(FloatPoint(x1 + i, y2 - (yScale * mem)));
         gc.strokePath(path);
         i++;
     });
@@ -307,16 +307,27 @@ static String formatByteNumber(size_t number)
     return String::format("%lu", number);
 }
 
-// FIXME: All of this should be done without using CGContext directly, so the code can be cross-platform.
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+static FontCascade& fontCascade()
+{
+    static NeverDestroyed<FontCascade> font;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        FontCascadeDescription fontDescription;
+        fontDescription.setFamilies({ "Menlo" });
+        fontDescription.setSpecifiedSize(11);
+        fontDescription.setComputedSize(11);
+        font.get() = FontCascade(fontDescription, 0, 0);
+        font.get().update(nullptr);
+    });
+    return font;
+}
 
 static void showText(GraphicsContext& gc, float x, float y, Color color, const String& text)
 {
+    gc.setShouldSmoothFonts(false);
+    gc.setTextDrawingMode(TextModeFill);
     gc.setFillColor(color, ColorSpaceDeviceRGB);
-    CString cstr = text.ascii();
-    CGContextShowTextAtPoint(gc.platformContext(), x, y, cstr.data(), cstr.length());
+    gc.drawText(fontCascade(), TextRun(text), FloatPoint(x, y));
 }
 
 void ResourceUsageOverlay::draw(GraphicsContext& context)
@@ -331,41 +342,26 @@ void ResourceUsageOverlay::draw(GraphicsContext& context)
     context.setShouldSmoothFonts(false);
 
     context.clearRect(m_overlay->bounds());
-    CGContextRef ctx = context.platformContext();
     CGRect viewBounds = m_overlay->bounds();
-
-    context.translate(0, viewBounds.size.height);
-    context.scale(FloatSize(1, -1));
-
-    {
-    GraphicsContextStateSaver saver(context);
-
-    CGContextSetLineWidth(ctx, 2.0);
-    CGContextSelectFont(ctx, "Menlo", 11.0, kCGEncodingMacRoman);
-    CGContextSetCharacterSpacing(ctx, 1.7);
-    CGContextSetTextDrawingMode(ctx, kCGTextFill);
 
     size_t bmallocWithDeductions = data.bmalloc - gcHeapCapacity;
     size_t footprintWithDeductions = data.sumDirty - data.bmalloc - data.layers - data.images - data.libcMalloc - data.jitCode;
 
-    showText(context, 10, 10, colorForOther,      "      Other: " + formatByteNumber(footprintWithDeductions));
-    showText(context, 10, 20, colorForGCHeap,     "    GC heap: " + formatByteNumber(gcHeapSize) + " (" + formatByteNumber(gcHeapCapacity) + ")");
-    showText(context, 10, 30, colorForJITCode,    "     JS JIT: " + formatByteNumber(data.jitCode));
-    showText(context, 10, 40, colorForLayers,     "     Layers: " + formatByteNumber(data.layers));
-    showText(context, 10, 50, colorForImages,     "     Images: " + formatByteNumber(data.images));
-    showText(context, 10, 60, colorForLibcMalloc, "libc malloc: " + formatByteNumber(data.libcMalloc));
-    showText(context, 10, 70, colorForFastMalloc, "    bmalloc: " + formatByteNumber(bmallocWithDeductions));
-    
-    showText(context, 10, 90, colorForLabels,     "  Footprint: " + formatByteNumber(data.sumDirty));
-    showText(context, 10, 100, colorForLabels, String::format("        CPU: %g", data.cpuHistory.last()));
-    }
+    showText(context, 10,  20, colorForLabels, String::format("        CPU: %g", data.cpuHistory.last()));
+    showText(context, 10,  30, colorForLabels,     "  Footprint: " + formatByteNumber(data.sumDirty));
+
+    showText(context, 10,  50, colorForFastMalloc, "    bmalloc: " + formatByteNumber(bmallocWithDeductions));
+    showText(context, 10,  60, colorForLibcMalloc, "libc malloc: " + formatByteNumber(data.libcMalloc));
+    showText(context, 10,  70, colorForImages,     "     Images: " + formatByteNumber(data.images));
+    showText(context, 10,  80, colorForLayers,     "     Layers: " + formatByteNumber(data.layers));
+    showText(context, 10,  90, colorForJITCode,    "     JS JIT: " + formatByteNumber(data.jitCode));
+    showText(context, 10, 100, colorForGCHeap,     "    GC heap: " + formatByteNumber(gcHeapSize) + " (" + formatByteNumber(gcHeapCapacity) + ")");
+    showText(context, 10, 110, colorForOther,      "      Other: " + formatByteNumber(footprintWithDeductions));
 
     drawCpuHistory(context, m_overlay->frame().width() - 50, 0, viewBounds.size.height, data.cpuHistory);
     drawGCHistory(context, m_overlay->frame().width() - 100, 0, viewBounds.size.height, data.gcHeapSizeHistory, data.gcHeapCapacityHistory);
     drawMemoryPie(context, m_overlay->frame().width() - 150, 0, data);
 }
-
-#pragma clang diagnostic pop
 
 static std::array<size_t, 256> dirtyPagesPerVMTag()
 {
