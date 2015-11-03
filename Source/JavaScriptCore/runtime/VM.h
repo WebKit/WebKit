@@ -581,6 +581,8 @@ public:
 
     JS_EXPORT_PRIVATE void queueMicrotask(JSGlobalObject*, PassRefPtr<Microtask>);
     JS_EXPORT_PRIVATE void drainMicrotasks();
+    JS_EXPORT_PRIVATE void setShouldRewriteConstAsVar(bool shouldRewrite) { m_shouldRewriteConstAsVar = shouldRewrite; }
+    ALWAYS_INLINE bool shouldRewriteConstAsVar() { return m_shouldRewriteConstAsVar; }
 
     inline bool shouldTriggerTermination(ExecState*);
 
@@ -634,6 +636,7 @@ private:
     Exception* m_lastException { nullptr };
     bool m_failNextNewCodeBlock { false };
     bool m_inDefineOwnProperty;
+    bool m_shouldRewriteConstAsVar { false };
     std::unique_ptr<CodeCache> m_codeCache;
     LegacyProfiler* m_enabledProfiler;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;

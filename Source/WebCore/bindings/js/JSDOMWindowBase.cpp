@@ -34,6 +34,7 @@
 #include "JSNode.h"
 #include "Logging.h"
 #include "Page.h"
+#include "RuntimeApplicationChecks.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -261,6 +262,12 @@ VM& JSDOMWindowBase::commonVM()
         vm->heap.setIncrementalSweeper(std::make_unique<WebSafeIncrementalSweeper>(&vm->heap));
         vm->heap.machineThreads().addCurrentThread();
 #endif
+
+#if PLATFORM(MAC)
+        if (applicationIsITunes() || applicationIsIBooks())
+            vm->setShouldRewriteConstAsVar(true);
+#endif
+
         initNormalWorldClientData(vm);
     }
 
