@@ -148,15 +148,11 @@ static uint64_t generateReplyIdentifier()
     return *_remoteObjectRegistry;
 }
 
-- (BOOL)_invokeMethod:(const RemoteObjectInvocation&)invocation
+- (void)_invokeMethod:(const RemoteObjectInvocation&)remoteObjectInvocation
 {
-    [self _invokeMessageWithInterfaceIdentifier:invocation.interfaceIdentifier() encodedInvocation:invocation.encodedInvocation()];
+    auto& interfaceIdentifier = remoteObjectInvocation.interfaceIdentifier();
+    auto* encodedInvocation = remoteObjectInvocation.encodedInvocation();
 
-    return YES;
-}
-
-- (void)_invokeMessageWithInterfaceIdentifier:(const String&)interfaceIdentifier encodedInvocation:(const API::Dictionary*)encodedInvocation
-{
     auto interfaceAndObject = _exportedObjects.get(interfaceIdentifier);
     if (!interfaceAndObject.second) {
         NSLog(@"Did not find a registered object for the interface \"%@\"", (NSString *)interfaceIdentifier);

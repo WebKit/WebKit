@@ -1,3 +1,15 @@
+2015-11-03  Anders Carlsson  <andersca@apple.com>
+
+        Simplify -[_WKRemoteObjectRegistry _invokeMethod:]
+        https://bugs.webkit.org/show_bug.cgi?id=150844
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+        (-[_WKRemoteObjectRegistry _invokeMessageWithInterfaceIdentifier:encodedInvocation:]): Deleted.
+        * Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h:
+
 2015-11-02  Anders Carlsson  <andersca@apple.com>
 
         CTTE the responsiveness timer getter

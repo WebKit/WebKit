@@ -44,7 +44,7 @@ class RemoteObjectRegistry;
 - (void)_invalidate;
 
 - (void)_sendInvocation:(NSInvocation *)invocation interface:(_WKRemoteObjectInterface *)interface;
-- (BOOL)_invokeMethod:(const WebKit::RemoteObjectInvocation&)invocation;
+- (void)_invokeMethod:(const WebKit::RemoteObjectInvocation&)invocation;
 
 @end
 
