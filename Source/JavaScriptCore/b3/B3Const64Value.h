@@ -44,6 +44,8 @@ public:
     Value* addConstant(Procedure&, int32_t other) const override;
     Value* addConstant(Procedure&, Value* other) const override;
     Value* subConstant(Procedure&, Value* other) const override;
+    Value* bitAndConstant(Procedure&, Value* other) const override;
+    Value* bitOrConstant(Procedure&, Value* other) const override;
     Value* equalConstant(Procedure&, Value* other) const override;
     Value* notEqualConstant(Procedure&, Value* other) const override;
 

@@ -33,6 +33,7 @@ Load = Load(address)
 Add = Add(left, right)
 Sub = Sub(left, right)
 And = BitAnd(left, right)
+Or = BitOr(left, right)
 
 Shl = Shl(value, amount)
 

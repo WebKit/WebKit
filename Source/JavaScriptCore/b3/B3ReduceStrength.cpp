@@ -137,6 +137,104 @@ private:
 
             break;
 
+        case BitAnd:
+            handleCommutativity();
+
+            // Turn this: BitAnd(constant1, constant2)
+            // Into this: constant1 & constant2
+            if (Value* constantBitAnd = m_value->child(0)->bitAndConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constantBitAnd);
+                break;
+            }
+
+            // Turn this: BitAnd(BitAnd(value, constant1), constant2)
+            // Into this: BitAnd(value, constant1 & constant2).
+            if (m_value->child(0)->opcode() == BitAnd) {
+                Value* newConstant = m_value->child(1)->bitAndConstant(m_proc, m_value->child(0)->child(1));
+                if (newConstant) {
+                    m_insertionSet.insertValue(m_index, newConstant);
+                    m_value->child(0) = m_value->child(0)->child(0);
+                    m_value->child(1) = newConstant;
+                    m_changed = true;
+                }
+            }
+
+            // Turn this: BitAnd(valueX, valueX)
+            // Into this: valueX.
+            if (m_value->child(0) == m_value->child(1)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: BitAnd(value, zero-constant)
+            // Into this: zero-constant.
+            if (m_value->child(1)->isInt(0)) {
+                m_value->replaceWithIdentity(m_value->child(1));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: BitAnd(value, all-ones)
+            // Into this: value.
+            if ((m_value->type() == Int64 && m_value->child(1)->isInt(0xffffffffffffffff))
+                || (m_value->type() == Int32 && m_value->child(1)->isInt(0xffffffff))) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+
+            break;
+
+        case BitOr:
+            handleCommutativity();
+
+            // Turn this: BitOr(constant1, constant2)
+            // Into this: constant1 | constant2
+            if (Value* constantBitAnd = m_value->child(0)->bitOrConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constantBitAnd);
+                break;
+            }
+
+            // Turn this: BitAnd(BitAnd(value, constant1), constant2)
+            // Into this: BitAnd(value, constant1 & constant2).
+            if (m_value->child(0)->opcode() == BitOr) {
+                Value* newConstant = m_value->child(1)->bitOrConstant(m_proc, m_value->child(0)->child(1));
+                if (newConstant) {
+                    m_insertionSet.insertValue(m_index, newConstant);
+                    m_value->child(0) = m_value->child(0)->child(0);
+                    m_value->child(1) = newConstant;
+                    m_changed = true;
+                }
+            }
+
+            // Turn this: BitOr(valueX, valueX)
+            // Into this: valueX.
+            if (m_value->child(0) == m_value->child(1)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: BitOr(value, zero-constant)
+            // Into this: value.
+            if (m_value->child(1)->isInt(0)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: BitOr(value, all-ones)
+            // Into this: all-ones.
+            if ((m_value->type() == Int64 && m_value->child(1)->isInt(0xffffffffffffffff))
+                || (m_value->type() == Int32 && m_value->child(1)->isInt(0xffffffff))) {
+                m_value->replaceWithIdentity(m_value->child(1));
+                m_changed = true;
+                break;
+            }
+
+            break;
+
         case Load8Z:
         case Load8S:
         case Load16Z:

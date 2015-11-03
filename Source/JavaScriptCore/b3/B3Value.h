@@ -112,6 +112,8 @@ public:
     virtual Value* addConstant(Procedure&, int32_t other) const;
     virtual Value* addConstant(Procedure&, Value* other) const;
     virtual Value* subConstant(Procedure&, Value* other) const;
+    virtual Value* bitAndConstant(Procedure&, Value* other) const;
+    virtual Value* bitOrConstant(Procedure&, Value* other) const;
     virtual Value* equalConstant(Procedure&, Value* other) const;
     virtual Value* notEqualConstant(Procedure&, Value* other) const;
 

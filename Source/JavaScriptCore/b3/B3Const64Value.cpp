@@ -61,6 +61,20 @@ Value* Const64Value::subConstant(Procedure& proc, Value* other) const
     return proc.add<Const64Value>(origin(), m_value - other->asInt64());
 }
 
+Value* Const64Value::bitAndConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt64())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), m_value & other->asInt64());
+}
+
+Value* Const64Value::bitOrConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt64())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), m_value | other->asInt64());
+}
+
 Value* Const64Value::equalConstant(Procedure& proc, Value* other) const
 {
     if (!other->hasInt64())

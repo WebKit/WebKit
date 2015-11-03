@@ -127,6 +127,16 @@ Value* Value::subConstant(Procedure&, Value*) const
     return nullptr;
 }
 
+Value* Value::bitAndConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::bitOrConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::equalConstant(Procedure&, Value*) const
 {
     return nullptr;

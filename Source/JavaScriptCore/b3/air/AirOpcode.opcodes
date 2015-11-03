@@ -107,6 +107,17 @@ Lshift32 U:G, UD:G
     Tmp*, Tmp
     Imm, Tmp
 
+Or32 U:G, UD:G
+    Tmp, Tmp
+    Imm, Tmp
+    Tmp, Addr
+    Addr, Tmp
+    Imm, Addr
+
+Or64 U:G, UD:G
+    Tmp, Tmp
+    Imm, Tmp
+
 Lshift64 U:G, UD:G
     Tmp*, Tmp
     Imm, Tmp
@@ -121,7 +132,7 @@ Mul32 U:G, UD:G
 # means movePtr.
 Move U:G, D:G
     Tmp, Tmp
-    Imm, Tmp
+    Imm, Tmp as signExtend32ToPtr
     Imm64, Tmp
     Addr, Tmp as loadPtr # This means that "Move Addr, Tmp" is code-generated as "load" not "move".
     Index, Tmp as loadPtr

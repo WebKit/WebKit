@@ -1,3 +1,73 @@
+2015-11-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add Air lowering for BitOr and impove BitAnd
+        https://bugs.webkit.org/show_bug.cgi?id=150827
+
+        Reviewed by Filip Pizlo.
+
+        In this patch:
+        -B3 to Air lowering for BirOr.
+        -Codegen for BitOr.
+        -Strength reduction for BitOr and BitAnd.
+        -Tests for BitAnd and BitOr.
+        -Bug fix: Move64 with a negative value was destroying the top bits.
+
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::bitAndConstant):
+        (JSC::B3::Const32Value::bitOrConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::bitAndConstant):
+        (JSC::B3::Const64Value::bitOrConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::immForMove):
+        (JSC::B3::Air::LowerToAir::immOrTmpForMove):
+        (JSC::B3::Air::LowerToAir::tryOr):
+        (JSC::B3::Air::LowerToAir::tryConst64):
+        (JSC::B3::Air::LowerToAir::tryUpsilon):
+        (JSC::B3::Air::LowerToAir::tryIdentity):
+        (JSC::B3::Air::LowerToAir::tryReturn):
+        (JSC::B3::Air::LowerToAir::immOrTmp): Deleted.
+        * b3/B3LoweringMatcher.patterns:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::bitAndConstant):
+        (JSC::B3::Value::bitOrConstant):
+        * b3/B3Value.h:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testReturnConst64):
+        (JSC::B3::testBitAndArgs):
+        (JSC::B3::testBitAndSameArg):
+        (JSC::B3::testBitAndImms):
+        (JSC::B3::testBitAndArgImm):
+        (JSC::B3::testBitAndImmArg):
+        (JSC::B3::testBitAndBitAndArgImmImm):
+        (JSC::B3::testBitAndImmBitAndArgImm):
+        (JSC::B3::testBitAndArgs32):
+        (JSC::B3::testBitAndSameArg32):
+        (JSC::B3::testBitAndImms32):
+        (JSC::B3::testBitAndArgImm32):
+        (JSC::B3::testBitAndImmArg32):
+        (JSC::B3::testBitAndBitAndArgImmImm32):
+        (JSC::B3::testBitAndImmBitAndArgImm32):
+        (JSC::B3::testBitOrArgs):
+        (JSC::B3::testBitOrSameArg):
+        (JSC::B3::testBitOrImms):
+        (JSC::B3::testBitOrArgImm):
+        (JSC::B3::testBitOrImmArg):
+        (JSC::B3::testBitOrBitOrArgImmImm):
+        (JSC::B3::testBitOrImmBitOrArgImm):
+        (JSC::B3::testBitOrArgs32):
+        (JSC::B3::testBitOrSameArg32):
+        (JSC::B3::testBitOrImms32):
+        (JSC::B3::testBitOrArgImm32):
+        (JSC::B3::testBitOrImmArg32):
+        (JSC::B3::testBitOrBitOrArgImmImm32):
+        (JSC::B3::testBitOrImmBitOrArgImm32):
+        (JSC::B3::run):
+
 2015-11-03  Saam barati  <sbarati@apple.com>
 
         Rewrite "const" as "var" for iTunes/iBooks on the Mac

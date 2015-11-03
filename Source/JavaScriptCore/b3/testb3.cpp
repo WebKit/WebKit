@@ -120,6 +120,17 @@ void testArg(int argument)
     CHECK(compileAndRun<int>(proc, argument) == argument);
 }
 
+void testReturnConst64(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const64Value>(proc, Origin(), value));
+
+    CHECK(compileAndRun<int64_t>(proc) == value);
+}
+
 void testAddArgs(int a, int b)
 {
     Procedure proc;
@@ -270,6 +281,461 @@ void testSubImmArg32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
 
     CHECK(compileAndRun<int>(proc, b) == a - b);
+}
+
+void testBitAndArgs(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int64_t>(proc, a, b) == (a & b));
+}
+
+void testBitAndSameArg(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            argument,
+            argument));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == a);
+}
+
+void testBitAndImms(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc) == (a & b));
+}
+
+void testBitAndArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == (a & b));
+}
+
+void testBitAndImmArg(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(compileAndRun<int64_t>(proc, b) == (a & b));
+}
+
+void testBitAndBitAndArgImmImm(int64_t a, int64_t b, int64_t c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitAnd = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), b));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            innerBitAnd,
+            root->appendNew<Const64Value>(proc, Origin(), c)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == ((a & b) & c));
+}
+
+void testBitAndImmBitAndArgImm(int64_t a, int64_t b, int64_t c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitAnd = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), c));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            innerBitAnd));
+
+    CHECK(compileAndRun<int64_t>(proc, b) == (a & (b & c)));
+}
+
+void testBitAndArgs32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+    CHECK(compileAndRun<int>(proc, a, b) == (a & b));
+}
+
+void testBitAndSameArg32(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            argument,
+            argument));
+
+    CHECK(compileAndRun<int>(proc, a) == a);
+}
+
+void testBitAndImms32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            root->appendNew<Const32Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc) == (a & b));
+}
+
+void testBitAndArgImm32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Const32Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc, a) == (a & b));
+}
+
+void testBitAndImmArg32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+    CHECK(compileAndRun<int>(proc, b) == (a & b));
+}
+
+void testBitAndBitAndArgImmImm32(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitAnd = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<Const32Value>(proc, Origin(), b));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            innerBitAnd,
+            root->appendNew<Const32Value>(proc, Origin(), c)));
+
+    CHECK(compileAndRun<int>(proc, a) == ((a & b) & c));
+}
+
+void testBitAndImmBitAndArgImm32(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitAnd = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<Const32Value>(proc, Origin(), c));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            innerBitAnd));
+
+    CHECK(compileAndRun<int>(proc, b) == (a & (b & c)));
+}
+
+void testBitOrArgs(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int64_t>(proc, a, b) == (a | b));
+}
+
+void testBitOrSameArg(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            argument,
+            argument));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == a);
+}
+
+void testBitOrImms(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc) == (a | b));
+}
+
+void testBitOrArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == (a | b));
+}
+
+void testBitOrImmArg(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(compileAndRun<int64_t>(proc, b) == (a | b));
+}
+
+void testBitOrBitOrArgImmImm(int64_t a, int64_t b, int64_t c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitOr = root->appendNew<Value>(
+        proc, BitOr, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), b));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            innerBitOr,
+            root->appendNew<Const64Value>(proc, Origin(), c)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == ((a | b) | c));
+}
+
+void testBitOrImmBitOrArgImm(int64_t a, int64_t b, int64_t c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitOr = root->appendNew<Value>(
+        proc, BitOr, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), c));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            innerBitOr));
+
+    CHECK(compileAndRun<int64_t>(proc, b) == (a | (b | c)));
+}
+
+void testBitOrArgs32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+    CHECK(compileAndRun<int>(proc, a, b) == (a | b));
+}
+
+void testBitOrSameArg32(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            argument,
+            argument));
+
+    CHECK(compileAndRun<int>(proc, a) == a);
+}
+
+void testBitOrImms32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            root->appendNew<Const32Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc) == (a | b));
+}
+
+void testBitOrArgImm32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Const32Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc, a) == (a | b));
+}
+
+void testBitOrImmArg32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+    CHECK(compileAndRun<int>(proc, b) == (a | b));
+}
+
+void testBitOrBitOrArgImmImm32(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitOr = root->appendNew<Value>(
+        proc, BitOr, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<Const32Value>(proc, Origin(), b));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            innerBitOr,
+            root->appendNew<Const32Value>(proc, Origin(), c)));
+
+    CHECK(compileAndRun<int>(proc, a) == ((a | b) | c));
+}
+
+void testBitOrImmBitOrArgImm32(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitOr = root->appendNew<Value>(
+        proc, BitOr, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<Const32Value>(proc, Origin(), c));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            innerBitOr));
+
+    CHECK(compileAndRun<int>(proc, b) == (a | (b | c)));
 }
 
 void testStore(int value)
@@ -1250,6 +1716,8 @@ void run(const char* filter)
     RUN(test42());
     RUN(testLoad42());
     RUN(testArg(43));
+    RUN(testReturnConst64(5));
+    RUN(testReturnConst64(-42));
 
     RUN(testAddArgs(1, 1));
     RUN(testAddArgs(1, 2));
@@ -1288,6 +1756,112 @@ void run(const char* filter)
     RUN(testSubImmArg32(1, 2));
     RUN(testSubImmArg32(13, -42));
     RUN(testSubImmArg32(-13, 42));
+
+    RUN(testBitAndArgs(43, 43));
+    RUN(testBitAndArgs(43, 0));
+    RUN(testBitAndArgs(10, 3));
+    RUN(testBitAndArgs(42, 0xffffffffffffffff));
+    RUN(testBitAndSameArg(43));
+    RUN(testBitAndSameArg(0));
+    RUN(testBitAndSameArg(3));
+    RUN(testBitAndSameArg(0xffffffffffffffff));
+    RUN(testBitAndImms(43, 43));
+    RUN(testBitAndImms(43, 0));
+    RUN(testBitAndImms(10, 3));
+    RUN(testBitAndImms(42, 0xffffffffffffffff));
+    RUN(testBitAndArgImm(43, 43));
+    RUN(testBitAndArgImm(43, 0));
+    RUN(testBitAndArgImm(10, 3));
+    RUN(testBitAndArgImm(42, 0xffffffffffffffff));
+    RUN(testBitAndImmArg(43, 43));
+    RUN(testBitAndImmArg(43, 0));
+    RUN(testBitAndImmArg(10, 3));
+    RUN(testBitAndImmArg(42, 0xffffffffffffffff));
+    RUN(testBitAndBitAndArgImmImm(2, 7, 3));
+    RUN(testBitAndBitAndArgImmImm(1, 6, 6));
+    RUN(testBitAndBitAndArgImmImm(0xffff, 24, 7));
+    RUN(testBitAndImmBitAndArgImm(7, 2, 3));
+    RUN(testBitAndImmBitAndArgImm(6, 1, 6));
+    RUN(testBitAndImmBitAndArgImm(24, 0xffff, 7));
+    RUN(testBitAndArgs32(43, 43));
+    RUN(testBitAndArgs32(43, 0));
+    RUN(testBitAndArgs32(10, 3));
+    RUN(testBitAndArgs32(42, 0xffffffff));
+    RUN(testBitAndSameArg32(43));
+    RUN(testBitAndSameArg32(0));
+    RUN(testBitAndSameArg32(3));
+    RUN(testBitAndSameArg32(0xffffffff));
+    RUN(testBitAndImms32(43, 43));
+    RUN(testBitAndImms32(43, 0));
+    RUN(testBitAndImms32(10, 3));
+    RUN(testBitAndImms32(42, 0xffffffff));
+    RUN(testBitAndArgImm32(43, 43));
+    RUN(testBitAndArgImm32(43, 0));
+    RUN(testBitAndArgImm32(10, 3));
+    RUN(testBitAndArgImm32(42, 0xffffffff));
+    RUN(testBitAndImmArg32(43, 43));
+    RUN(testBitAndImmArg32(43, 0));
+    RUN(testBitAndImmArg32(10, 3));
+    RUN(testBitAndImmArg32(42, 0xffffffff));
+    RUN(testBitAndBitAndArgImmImm32(2, 7, 3));
+    RUN(testBitAndBitAndArgImmImm32(1, 6, 6));
+    RUN(testBitAndBitAndArgImmImm32(0xffff, 24, 7));
+    RUN(testBitAndImmBitAndArgImm32(7, 2, 3));
+    RUN(testBitAndImmBitAndArgImm32(6, 1, 6));
+    RUN(testBitAndImmBitAndArgImm32(24, 0xffff, 7));
+
+    RUN(testBitOrArgs(43, 43));
+    RUN(testBitOrArgs(43, 0));
+    RUN(testBitOrArgs(10, 3));
+    RUN(testBitOrArgs(42, 0xffffffffffffffff));
+    RUN(testBitOrSameArg(43));
+    RUN(testBitOrSameArg(0));
+    RUN(testBitOrSameArg(3));
+    RUN(testBitOrSameArg(0xffffffffffffffff));
+    RUN(testBitOrImms(43, 43));
+    RUN(testBitOrImms(43, 0));
+    RUN(testBitOrImms(10, 3));
+    RUN(testBitOrImms(42, 0xffffffffffffffff));
+    RUN(testBitOrArgImm(43, 43));
+    RUN(testBitOrArgImm(43, 0));
+    RUN(testBitOrArgImm(10, 3));
+    RUN(testBitOrArgImm(42, 0xffffffffffffffff));
+    RUN(testBitOrImmArg(43, 43));
+    RUN(testBitOrImmArg(43, 0));
+    RUN(testBitOrImmArg(10, 3));
+    RUN(testBitOrImmArg(42, 0xffffffffffffffff));
+    RUN(testBitOrBitOrArgImmImm(2, 7, 3));
+    RUN(testBitOrBitOrArgImmImm(1, 6, 6));
+    RUN(testBitOrBitOrArgImmImm(0xffff, 24, 7));
+    RUN(testBitOrImmBitOrArgImm(7, 2, 3));
+    RUN(testBitOrImmBitOrArgImm(6, 1, 6));
+    RUN(testBitOrImmBitOrArgImm(24, 0xffff, 7));
+    RUN(testBitOrArgs32(43, 43));
+    RUN(testBitOrArgs32(43, 0));
+    RUN(testBitOrArgs32(10, 3));
+    RUN(testBitOrArgs32(42, 0xffffffff));
+    RUN(testBitOrSameArg32(43));
+    RUN(testBitOrSameArg32(0));
+    RUN(testBitOrSameArg32(3));
+    RUN(testBitOrSameArg32(0xffffffff));
+    RUN(testBitOrImms32(43, 43));
+    RUN(testBitOrImms32(43, 0));
+    RUN(testBitOrImms32(10, 3));
+    RUN(testBitOrImms32(42, 0xffffffff));
+    RUN(testBitOrArgImm32(43, 43));
+    RUN(testBitOrArgImm32(43, 0));
+    RUN(testBitOrArgImm32(10, 3));
+    RUN(testBitOrArgImm32(42, 0xffffffff));
+    RUN(testBitOrImmArg32(43, 43));
+    RUN(testBitOrImmArg32(43, 0));
+    RUN(testBitOrImmArg32(10, 3));
+    RUN(testBitOrImmArg32(42, 0xffffffff));
+    RUN(testBitOrBitOrArgImmImm32(2, 7, 3));
+    RUN(testBitOrBitOrArgImmImm32(1, 6, 6));
+    RUN(testBitOrBitOrArgImmImm32(0xffff, 24, 7));
+    RUN(testBitOrImmBitOrArgImm32(7, 2, 3));
+    RUN(testBitOrImmBitOrArgImm32(6, 1, 6));
+    RUN(testBitOrImmBitOrArgImm32(24, 0xffff, 7));
 
     RUN(testStore(44));
     RUN(testStoreConstant(49));

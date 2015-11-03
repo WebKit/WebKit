@@ -1052,6 +1052,11 @@ public:
             m_assembler.xchgq_rr(reg1, reg2);
     }
 
+    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.mov_i32r(imm.m_value, dest);
+    }
+
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
     {
         m_assembler.movsxd_rr(src, dest);
