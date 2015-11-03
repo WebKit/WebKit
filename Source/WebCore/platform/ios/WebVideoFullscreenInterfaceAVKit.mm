@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS)
 
-#if HAVE(AVKIT)
-
 #import "WebVideoFullscreenInterfaceAVKit.h"
+
+#if HAVE(AVKIT)
 
 #import "AVKitSPI.h"
 #import "GeometryUtilities.h"
