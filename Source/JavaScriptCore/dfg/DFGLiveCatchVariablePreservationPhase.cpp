@@ -118,7 +118,7 @@ public:
                             variableAccessData = newVariableAccessData(operand);
 
                         insertionSet.insertNode(i, SpecNone, 
-                            PhantomLocal, node->origin, OpInfo(variableAccessData));
+                            Flush, node->origin, OpInfo(variableAccessData));
                     }
                 }
 
@@ -127,10 +127,10 @@ public:
             }
         }
 
-        // Insert PhantomLocals for everything at the end of the block.
+        // Insert Flush for everything at the end of the block.
         {
             NodeOrigin origin = block->at(block->size() - 1)->origin;
-            auto insertPhantomLocalAtEnd = [&] (VirtualRegister operand, bool alwaysInsert) {
+            auto preserveLivenessAtEndOfBlock = [&] (VirtualRegister operand, bool alwaysInsert) {
                 if ((operand.isLocal() && m_currentBlockLiveness.get(operand.toLocal())) 
                     || operand.isArgument()
                     || alwaysInsert) {
@@ -141,14 +141,14 @@ public:
                     currentBlockAccessData.operand(operand) = accessData;
 
                     insertionSet.insertNode(block->size(), SpecNone, 
-                        PhantomLocal, origin, OpInfo(accessData));
+                        Flush, origin, OpInfo(accessData));
                 }
             };
             for (unsigned local = 0; local < block->variablesAtTail.numberOfLocals(); local++)
-                insertPhantomLocalAtEnd(virtualRegisterForLocal(local), false);
+                preserveLivenessAtEndOfBlock(virtualRegisterForLocal(local), false);
             for (InlineCallFrame* inlineCallFrame : seenInlineCallFrames)
-                insertPhantomLocalAtEnd(VirtualRegister(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset()), true);
-            insertPhantomLocalAtEnd(VirtualRegister(CallFrame::thisArgumentOffset()), true);
+                preserveLivenessAtEndOfBlock(VirtualRegister(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset()), true);
+            preserveLivenessAtEndOfBlock(VirtualRegister(CallFrame::thisArgumentOffset()), true);
         }
     }
 

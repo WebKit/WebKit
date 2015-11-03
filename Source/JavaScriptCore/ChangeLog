@@ -1,3 +1,28 @@
+2015-11-02  Saam barati  <sbarati@apple.com>
+
+        Wrong value recovery for DFG try/catch with a getter that throws during an IC miss
+        https://bugs.webkit.org/show_bug.cgi?id=150760
+
+        Reviewed by Geoffrey Garen.
+
+        This is related to using PhantomLocal instead of Flush as 
+        the liveness preservation mechanism for live catch variables. 
+        I'm temporarily switching things back to Flush. This will be a
+        performance hit for try/catch in the DFG. Landing this patch,
+        though, will allow me to land try/catch in the FTL. It also
+        makes try/catch in the DFG sound. I have opened another
+        bug to further investigate using PhantomLocal as the
+        liveness preservation mechanism: https://bugs.webkit.org/show_bug.cgi?id=150824
+
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlock):
+        * tests/stress/dfg-try-catch-wrong-value-recovery-on-ic-miss.js: Added.
+        (assert):
+        (let.oThrow.get f):
+        (let.o2.get f):
+        (foo):
+        (f):
+
 2015-11-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add tvOS and watchOS to SUPPORTED_PLATFORMS
