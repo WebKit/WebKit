@@ -1702,6 +1702,10 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 webkit.org/b/146903 accessibility/aria-table-hierarchy.html [ Skip ]
 webkit.org/b/146903 accessibility/roles-table-and-cell.html [ Skip ]
 
+# Skip aria-modal tests for win
+webkit.org/b/138566 accessibility/aria-modal.html [ Skip ]
+webkit.org/b/138566 accessibility/aria-modal-multiple-dialogs.html [ Skip ]
+
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################
