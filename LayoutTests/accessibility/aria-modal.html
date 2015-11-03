@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<div id="bg">
+<p id="bgContent">Other page content with <a href="#">a dummy focusable element</a></p>
+<p><a onclick="toggleDialog('show'); return false;" href="#" role="button" id="displayBtn">Display a dialog</a></p>
+</div>
+
+<div role="dialog" aria-modal="true" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1">
+    <h3 id="myDialog">Just an example.</h3>
+    <button id="ok" onclick="toggleDialog('hide');" class="close-button">OK</button>
+    <button onclick="toggleDialog('hide');" class="close-button">Cancel</button>
+</div>
+
+
+<script>
+
+    description("This tests that aria-modal on dialog makes other elements inert.");
+
+    if (window.accessibilityController) {
+        // Background should be unaccessible after loading, since the 
+        // dialog is displayed and aria-modal=true.
+        shouldBeFalse("backgroundAccessible()");
+        
+        // Close the dialog, background should be accessible.
+        document.getElementById("ok").click();
+        shouldBeTrue("backgroundAccessible()");
+        
+        // Click the display button, dialog shows and background becomes unaccessible.
+        document.getElementById("displayBtn").click();
+        shouldBeFalse("backgroundAccessible()");
+        var okBtn = accessibilityController.accessibleElementById("ok");
+        shouldBeFalse("okBtn.isIgnored");
+        
+        // Test the case that aria-modal=true when dialog is hidden won't affect other objects.
+        // 1. Dialog not rendered
+        document.getElementById("ok").click();
+        document.getElementById("box").setAttribute("aria-modal", "true");
+        shouldBeTrue("backgroundAccessible()");
+        // 2. Dialog is aria hidden
+        document.getElementById("displayBtn").click();
+        document.getElementById("box").setAttribute("aria-hidden", "true");
+        shouldBeTrue("backgroundAccessible()");
+        document.getElementById("box").setAttribute("aria-hidden", "false");
+        shouldBeFalse("backgroundAccessible()");
+        
+        // Test modal dialog is removed from DOM tree.
+        var dialog = document.getElementById("box");
+        dialog.parentNode.removeChild(dialog);
+        shouldBeTrue("backgroundAccessible()");
+    }
+    
+    function backgroundAccessible() {
+        var displayBtn = accessibilityController.accessibleElementById("displayBtn");
+        var bgContent = accessibilityController.accessibleElementById("bgContent");
+        
+        if (!displayBtn || !bgContent)
+            return false;
+        
+        return !displayBtn.isIgnored && !bgContent.isIgnored;
+    }
+    
+    function toggleDialog(sh) {
+        dialog = document.getElementById("box");
+    if (sh == "show") {
+        // show the dialog 
+        dialog.style.display = 'block';
+        dialog.setAttribute("aria-modal", "true");
+    } else {
+        dialog.style.display = 'none';
+        dialog.setAttribute("aria-modal", "false"); 
+    }
+}
+
+</script>
+
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

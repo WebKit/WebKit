@@ -631,6 +631,10 @@ public:
     const AtomicString& roleDescription() const;
     AccessibilityARIACurrentState ariaCurrentState() const;
     
+    // This function checks if the object should be ignored when there's a modal dialog displayed.
+    bool ignoredFromARIAModalPresence() const;
+    bool isAriaModalDescendant(Node*) const;
+    
     bool supportsARIASetSize() const;
     bool supportsARIAPosInSet() const;
     int ariaSetSize() const;

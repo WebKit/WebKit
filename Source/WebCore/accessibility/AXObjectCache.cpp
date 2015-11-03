@@ -142,7 +142,9 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired)
     , m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
+    , m_currentAriaModalNode(nullptr)
 {
+    findAriaModalNodes();
 }
 
 AXObjectCache::~AXObjectCache()
@@ -155,6 +157,91 @@ AXObjectCache::~AXObjectCache()
         object->detach(CacheDestroyed);
         removeAXID(object.get());
     }
+}
+
+void AXObjectCache::findAriaModalNodes()
+{
+    // Traverse the DOM tree to look for the aria-modal=true nodes.
+    for (Element* element = ElementTraversal::firstWithin(document().rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
+        
+        // Must have dialog or alertdialog role
+        if (!nodeHasRole(element, "dialog") && !nodeHasRole(element, "alertdialog"))
+            continue;
+        if (!equalIgnoringCase(element->fastGetAttribute(aria_modalAttr), "true"))
+            continue;
+        
+        m_ariaModalNodesSet.add(element);
+    }
+    
+    // Set the current valid aria-modal node if possible.
+    updateCurrentAriaModalNode();
+}
+
+void AXObjectCache::updateCurrentAriaModalNode()
+{
+    // There might be multiple nodes with aria-modal=true set.
+    // We use this function to pick the one we want.
+    m_currentAriaModalNode = nullptr;
+    if (m_ariaModalNodesSet.isEmpty())
+        return;
+    
+    // We only care about the nodes which are visible.
+    ListHashSet<RefPtr<Node>> visibleNodes;
+    for (auto& object : m_ariaModalNodesSet) {
+        if (isNodeVisible(object))
+            visibleNodes.add(object);
+    }
+    
+    if (visibleNodes.isEmpty())
+        return;
+    
+    // If any of the node are keyboard focused, we want to pick that.
+    Node* focusedNode = document().focusedElement();
+    for (auto& object : visibleNodes) {
+        if (focusedNode != nullptr && focusedNode->isDescendantOf(object.get())) {
+            m_currentAriaModalNode = object.get();
+            break;
+        }
+    }
+    
+    // If none of the nodes are focused, we want to pick the last dialog in the DOM.
+    if (!m_currentAriaModalNode)
+        m_currentAriaModalNode = visibleNodes.last().get();
+}
+
+bool AXObjectCache::isNodeVisible(Node* node) const
+{
+    if (!is<Element>(node))
+        return false;
+    
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return false;
+    const RenderStyle& style = renderer->style();
+    if (style.display() == NONE || style.visibility() != VISIBLE)
+        return false;
+    
+    // We also need to consider aria hidden status.
+    if (!isNodeAriaVisible(node))
+        return false;
+    
+    return true;
+}
+
+Node* AXObjectCache::ariaModalNode()
+{
+    // This function returns the valid aria modal node.
+    if (m_ariaModalNodesSet.isEmpty())
+        return nullptr;
+    
+    // Check the current valid aria modal node first.
+    // Usually when one dialog sets aria-modal=true, that dialog is the one we want.
+    if (isNodeVisible(m_currentAriaModalNode))
+        return m_currentAriaModalNode;
+    
+    // Recompute the valid aria modal node when m_currentAriaModalNode is null or hidden.
+    updateCurrentAriaModalNode();
+    return isNodeVisible(m_currentAriaModalNode) ? m_currentAriaModalNode : nullptr;
 }
 
 AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* areaElement)
@@ -571,6 +658,12 @@ void AXObjectCache::remove(Node* node)
     remove(axID);
     m_nodeObjectMapping.remove(node);
 
+    // Cleanup for aria modal nodes.
+    if (m_currentAriaModalNode == node)
+        m_currentAriaModalNode = nullptr;
+    if (m_ariaModalNodesSet.contains(node))
+        m_ariaModalNodesSet.remove(node);
+    
     if (node->renderer()) {
         remove(node->renderer());
         return;
@@ -1248,8 +1341,32 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
         childrenChanged(element->parentNode(), element);
     else if (attrName == aria_invalidAttr)
         postNotification(element, AXObjectCache::AXInvalidStatusChanged);
+    else if (attrName == aria_modalAttr)
+        handleAriaModalChange(element);
     else
         postNotification(element, AXObjectCache::AXAriaAttributeChanged);
+}
+
+void AXObjectCache::handleAriaModalChange(Node* node)
+{
+    if (!is<Element>(node))
+        return;
+    
+    if (!nodeHasRole(node, "dialog") && !nodeHasRole(node, "alertdialog"))
+        return;
+    
+    stopCachingComputedObjectAttributes();
+    if (equalIgnoringCase(downcast<Element>(*node).fastGetAttribute(aria_modalAttr), "true")) {
+        // Add the newly modified node to the modal nodes set, and set it to be the current valid aria modal node.
+        // We will recompute the current valid aria modal node in ariaModalNode() when this node is not visible.
+        m_ariaModalNodesSet.add(node);
+        m_currentAriaModalNode = node;
+    } else {
+        // Remove the node from the modal nodes set. There might be other visible modal nodes, so we recompute here.
+        m_ariaModalNodesSet.remove(node);
+        updateCurrentAriaModalNode();
+    }
+    startCachingComputedObjectAttributesUntilTreeMutates();
 }
 
 void AXObjectCache::labelChanged(Element* element)

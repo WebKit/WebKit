@@ -35,6 +35,7 @@
 #include "AccessibilityTable.h"
 #include "DOMTokenList.h"
 #include "Editor.h"
+#include "ElementIterator.h"
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -1846,6 +1847,45 @@ AccessibilityARIACurrentState AccessibilityObject::ariaCurrentState() const
     return ARIACurrentTrue;
 }
 
+bool AccessibilityObject::isAriaModalDescendant(Node* ariaModalNode) const
+{
+    if (!ariaModalNode || !this->element())
+        return false;
+    
+    if (this->element() == ariaModalNode)
+        return true;
+    
+    // ARIA 1.1 aria-modal, indicates whether an element is modal when displayed.
+    // For the decendants of the modal object, they should also be considered as aria-modal=true.
+    for (auto& ancestor : elementAncestors(this->element())) {
+        if (&ancestor == ariaModalNode)
+            return true;
+    }
+    return false;
+}
+
+bool AccessibilityObject::ignoredFromARIAModalPresence() const
+{
+    // We shouldn't ignore the top node.
+    if (!node() || !node()->parentNode())
+        return false;
+    
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return false;
+    
+    // ariaModalNode is the current displayed modal dialog.
+    Node* ariaModalNode = cache->ariaModalNode();
+    if (!ariaModalNode)
+        return false;
+    
+    // We only want to ignore the objects within the same frame as the modal dialog.
+    if (ariaModalNode->document().frame() != this->frame())
+        return false;
+    
+    return !isAriaModalDescendant(ariaModalNode);
+}
+
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
 {
     Node* node = this->node();
@@ -2784,6 +2824,9 @@ bool AccessibilityObject::isDOMHidden() const
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 {
     if (isARIAHidden())
+        return IgnoreObject;
+    
+    if (ignoredFromARIAModalPresence())
         return IgnoreObject;
     
     if (isPresentationalChildOfAriaRole())

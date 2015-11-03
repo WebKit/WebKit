@@ -128,6 +128,9 @@ public:
     void handleScrolledToAnchor(const Node* anchorNode);
     void handleAriaExpandedChange(Node*);
     void handleScrollbarUpdate(ScrollView*);
+    
+    void handleAriaModalChange(Node*);
+    Node* ariaModalNode();
 
     void handleAttributeChanged(const QualifiedName& attrName, Element*);
     void recomputeIsIgnored(RenderObject* renderer);
@@ -271,6 +274,11 @@ private:
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
+    
+    // aria-modal related
+    void findAriaModalNodes();
+    void updateCurrentAriaModalNode();
+    bool isNodeVisible(Node*) const;
 
     Document& m_document;
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
@@ -293,6 +301,9 @@ private:
     
     Timer m_liveRegionChangedPostTimer;
     ListHashSet<RefPtr<AccessibilityObject>> m_liveRegionObjectsSet;
+    
+    Node* m_currentAriaModalNode;
+    ListHashSet<Node*> m_ariaModalNodesSet;
 
     AXTextStateChangeIntent m_textSelectionIntent;
     bool m_isSynchronizingSelection { false };
@@ -348,6 +359,7 @@ inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityOb
 inline void AXObjectCache::handleActiveDescendantChanged(Node*) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
 inline void AXObjectCache::handleAriaRoleChanged(Node*) { }
+inline void AXObjectCache::handleAriaModalChange(Node*) { }
 inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element*) { }
