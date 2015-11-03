@@ -98,17 +98,7 @@ bool HTMLOptionElement::isFocusable() const
 
 String HTMLOptionElement::text() const
 {
-    String text;
-
-    // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (!document().inQuirksMode())
-        text = fastGetAttribute(labelAttr);
-
-    // FIXME: The following treats an element with the label attribute set to
-    // the empty string the same as an element with no label attribute at all.
-    // Is that correct? If it is, then should the label function work the same way?
-    if (text.isEmpty())
-        text = collectOptionInnerText();
+    String text = collectOptionInnerText();
 
     // FIXME: Is displayStringModifiedByEncoding helpful here?
     // If it's correct here, then isn't it needed in the value and label functions too?
@@ -300,8 +290,8 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     ContainerNode* parent = parentNode();
     if (is<HTMLOptGroupElement>(parent))
-        return "    " + text();
-    return text();
+        return "    " + label();
+    return label();
 }
 
 bool HTMLOptionElement::isDisabledFormControl() const

@@ -118,7 +118,7 @@ LayoutRect AccessibilityMenuListOption::elementRect() const
 
 String AccessibilityMenuListOption::stringValue() const
 {
-    return downcast<HTMLOptionElement>(*m_element).text();
+    return downcast<HTMLOptionElement>(*m_element).label();
 }
 
 } // namespace WebCore

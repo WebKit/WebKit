@@ -1,3 +1,15 @@
+2015-11-03  Keith Rollin  <krollin@apple.com>
+
+        HTMLOptionElement.text should never return the value of label
+        https://bugs.webkit.org/show_bug.cgi?id=148862
+        rdar://problem/22589226
+
+        Reviewed by Darin Adler.
+
+        Rebaseline tests to reflect new behavior of option.text.
+
+        * web-platform-tests/html/semantics/forms/the-option-element/option-text-label-expected.txt:
+
 2015-10-28  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Support IDBDatabase.transaction() (and transaction scheduling in general).

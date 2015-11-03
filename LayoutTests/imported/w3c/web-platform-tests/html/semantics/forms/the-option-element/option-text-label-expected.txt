@@ -1,4 +1,4 @@
 
-FAIL Option with non-empty label. assert_equals: expected "text" but got "label"
+PASS Option with non-empty label. 
 PASS Option with empty label. 
 
