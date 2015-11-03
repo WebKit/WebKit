@@ -146,8 +146,8 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame; codeOrigin = codeOrigin->inlineCallFrame->getCallerSkippingDeadFrames()) {
         InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
         CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(*codeOrigin);
-        CodeOrigin* trueCaller = inlineCallFrame->getCallerSkippingDeadFrames();
-        void* trueReturnPC = nullptr;
+        InlineCallFrame::Kind trueCallerCallKind;
+        CodeOrigin* trueCaller = inlineCallFrame->getCallerSkippingDeadFrames(&trueCallerCallKind);
         GPRReg callerFrameGPR = GPRInfo::callFrameRegister;
 
         if (!trueCaller) {
@@ -161,7 +161,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             unsigned callBytecodeIndex = trueCaller->bytecodeIndex;
             void* jumpTarget = nullptr;
 
-            switch (inlineCallFrame->kind) {
+            switch (trueCallerCallKind) {
             case InlineCallFrame::Call:
             case InlineCallFrame::Construct:
             case InlineCallFrame::CallVarargs:
@@ -182,22 +182,14 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
                     baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
                 RELEASE_ASSERT(stubInfo);
 
-                switch (inlineCallFrame->kind) {
-                case InlineCallFrame::GetterCall:
-                    jumpTarget = jit.vm()->getCTIStub(baselineGetterReturnThunkGenerator).code().executableAddress();
-                    break;
-                case InlineCallFrame::SetterCall:
-                    jumpTarget = jit.vm()->getCTIStub(baselineSetterReturnThunkGenerator).code().executableAddress();
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                    break;
-                }
-
-                trueReturnPC = stubInfo->callReturnLocation.labelAtOffset(
+                jumpTarget = stubInfo->callReturnLocation.labelAtOffset(
                     stubInfo->patch.deltaCallToDone).executableAddress();
                 break;
-            } }
+            }
+
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
 
             if (trueCaller->inlineCallFrame) {
                 jit.addPtr(
@@ -210,9 +202,6 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
         }
 
-        if (trueReturnPC)
-            jit.storePtr(AssemblyHelpers::TrustedImmPtr(trueReturnPC), AssemblyHelpers::addressFor(inlineCallFrame->stackOffset + virtualRegisterForArgument(inlineCallFrame->arguments.size()).offset()));
-                         
         jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CodeBlock)));
 
         // Restore the inline call frame's callee save registers.

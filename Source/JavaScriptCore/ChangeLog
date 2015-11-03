@@ -1,3 +1,32 @@
+2015-11-02  Michael Saboff  <msaboff@apple.com>
+
+        WebInspector crashed while viewing Timeline when refreshing cnn.com while it was already loading
+        https://bugs.webkit.org/show_bug.cgi?id=150745
+
+        Reviewed by Geoffrey Garen.
+
+        During OSR exit, reifyInlinedCallFrames() was using the call kind from a tail call to
+        find the CallLinkInfo / StubInfo to find the return PC.  Instead we need to get the call
+        type of the true caller, that is the function we'll be returning to.
+
+        This can be found by remembering the last call type we find while walking up the inlined
+        frames in InlineCallFrame::getCallerSkippingDeadFrames().
+
+        We can also return directly back to a getter or setter callsite without using a thunk.
+
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::computeCallerSkippingDeadFrames):
+        (JSC::InlineCallFrame::getCallerSkippingDeadFrames):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id): Need to eliminate the stack pointer check, as it is wrong
+        for reified inlined frames created during OSR exit. 
+        * jit/ThunkGenerators.cpp:
+        (JSC::baselineGetterReturnThunkGenerator): Deleted.
+        (JSC::baselineSetterReturnThunkGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+
 2015-11-02  Saam barati  <sbarati@apple.com>
 
         Wrong value recovery for DFG try/catch with a getter that throws during an IC miss

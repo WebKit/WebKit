@@ -561,7 +561,6 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 
     emitValueProfilingSite();
     emitPutVirtualRegister(resultVReg);
-    assertStackPointerOffset();
 }
 
 void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

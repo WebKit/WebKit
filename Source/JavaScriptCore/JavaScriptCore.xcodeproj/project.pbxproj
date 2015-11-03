@@ -3199,7 +3199,7 @@
 		70B0A9D01A9B66200001306A /* RuntimeFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeFlags.h; sourceTree = "<group>"; };
 		70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorPrototype.cpp; sourceTree = "<group>"; };
 		70DC3E081B2DF2C700054299 /* IteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorPrototype.h; sourceTree = "<group>"; };
-		70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntAssembly.h; path = LLIntAssembly.h; sourceTree = "<group>"; };
+		70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntAssembly.h; sourceTree = "<group>"; };
 		70EC0EBC1AA0D7DA00B6AAFA /* JSStringIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringIterator.cpp; sourceTree = "<group>"; };
 		70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringIterator.h; sourceTree = "<group>"; };
 		70EC0EC01AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringIteratorPrototype.cpp; sourceTree = "<group>"; };

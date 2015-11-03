@@ -49,9 +49,6 @@ MacroAssemblerCodeRef nativeTailCallGenerator(VM*);
 MacroAssemblerCodeRef arityFixupGenerator(VM*);
 MacroAssemblerCodeRef unreachableGenerator(VM*);
 
-MacroAssemblerCodeRef baselineGetterReturnThunkGenerator(VM* vm);
-MacroAssemblerCodeRef baselineSetterReturnThunkGenerator(VM* vm);
-
 MacroAssemblerCodeRef charCodeAtThunkGenerator(VM*);
 MacroAssemblerCodeRef charAtThunkGenerator(VM*);
 MacroAssemblerCodeRef clz32ThunkGenerator(VM*);

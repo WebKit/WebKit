@@ -146,23 +146,30 @@ struct InlineCallFrame {
         return isTail(static_cast<Kind>(kind));
     }
 
-    static CodeOrigin* computeCallerSkippingDeadFrames(InlineCallFrame* inlineCallFrame)
+    static CodeOrigin* computeCallerSkippingDeadFrames(InlineCallFrame* inlineCallFrame, Kind* callerCallKind = nullptr)
     {
         CodeOrigin* codeOrigin;
         bool tailCallee;
+        int callKind;
         do {
             tailCallee = inlineCallFrame->isTail();
+            callKind = inlineCallFrame->kind;
             codeOrigin = &inlineCallFrame->directCaller;
             inlineCallFrame = codeOrigin->inlineCallFrame;
         } while (inlineCallFrame && tailCallee);
+
         if (tailCallee)
             return nullptr;
+
+        if (callerCallKind)
+            *callerCallKind = static_cast<Kind>(callKind);
+
         return codeOrigin;
     }
 
-    CodeOrigin* getCallerSkippingDeadFrames()
+    CodeOrigin* getCallerSkippingDeadFrames(Kind* callerCallKind = nullptr)
     {
-        return computeCallerSkippingDeadFrames(this);
+        return computeCallerSkippingDeadFrames(this, callerCallKind);
     }
 
     InlineCallFrame* getCallerInlineFrameSkippingDeadFrames()
