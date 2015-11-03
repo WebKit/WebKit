@@ -41,7 +41,6 @@ StoreSubLoad = Store(Add(left, right), address)
 StoreAndLoad = Store(BitAnd(left, right), address)
 Store = Store(value, address)
 
-TruncArgumentReg = Trunc(argumentReg = ArgumentReg())
 Trunc = Trunc(value)
 
 ZExt32 = ZExt32(value)

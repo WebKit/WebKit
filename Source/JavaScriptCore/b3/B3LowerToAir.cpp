@@ -120,11 +120,56 @@ public:
         insertionSet.execute(code[0]);
     }
 
+    bool highBitsAreZero(Value* value)
+    {
+        switch (value->opcode()) {
+        case Const32:
+            // We will use a Move immediate instruction, which may sign extend.
+            return value->asInt32() >= 0;
+        case Trunc:
+            // Trunc is copy-propagated, so the value may have garbage in the high bits.
+            return false;
+        case CCall:
+            // Calls are allowed to have garbage in their high bits.
+            return false;
+        case Patchpoint:
+            // For now, we assume that patchpoints may return garbage in the high bits. This simplifies
+            // the interface. We may revisit for performance reasons later.
+            return false;
+        case Phi:
+            // FIXME: We could do this right.
+            // https://bugs.webkit.org/show_bug.cgi?id=150845
+            return false;
+        default:
+            // All other operations that return Int32 should lower to something that zero extends.
+            return value->type() == Int32;
+        }
+    }
+
+    // NOTE: This entire mechanism could be done over Air, if we felt that this would be fast enough.
+    // For now we're assuming that it's faster to do this here, since analyzing B3 is so cheap.
+    bool shouldCopyPropagate(Value* value)
+    {
+        switch (value->opcode()) {
+        case Trunc:
+        case Identity:
+            return true;
+        case ZExt32:
+            return highBitsAreZero(value->child(0));
+        default:
+            return false;
+        }
+    }
+
     Tmp tmp(Value* value)
     {
         Tmp& tmp = valueToTmp[value];
-        if (!tmp)
+        if (!tmp) {
+            while (shouldCopyPropagate(value))
+                value = value->child(0);
             tmp = code.newTmp(isInt(value->type()) ? Arg::GP : Arg::FP);
+            valueToTmp[value] = tmp;
+        }
         return tmp;
     }
 
@@ -664,27 +709,19 @@ public:
         return true;
     }
 
-    bool tryTruncArgumentReg(Value* argumentReg)
-    {
-        prologue.append(Inst(
-            Move, currentValue,
-            Tmp(argumentReg->as<ArgumentRegValue>()->argumentReg()),
-            tmp(currentValue)));
-        return true;
-    }
-
     bool tryTrunc(Value* value)
     {
-        // FIXME: This could just be a copy propagation rule.
-        // https://bugs.webkit.org/show_bug.cgi?id=150775
-        append(Move, tmp(value), tmp(currentValue));
+        ASSERT_UNUSED(value, tmp(value) == tmp(currentValue));
         return true;
     }
 
     bool tryZExt32(Value* value)
     {
-        // FIXME: This could just be a copy propagation rule, with caveats. ;-)
-        // https://bugs.webkit.org/show_bug.cgi?id=150775
+        if (highBitsAreZero(value)) {
+            ASSERT(tmp(value) == tmp(currentValue));
+            return true;
+        }
+        
         append(Move32, tmp(value), tmp(currentValue));
         return true;
     }
@@ -839,7 +876,7 @@ public:
 
     bool tryIdentity(Value* value)
     {
-        append(relaxedMoveForType(value->type()), immOrTmp(value), tmp(currentValue));
+        ASSERT_UNUSED(value, tmp(value) == tmp(currentValue));
         return true;
     }
     

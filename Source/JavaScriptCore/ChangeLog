@@ -1,3 +1,47 @@
+2015-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::LowerToAir should do copy propagation
+        https://bugs.webkit.org/show_bug.cgi?id=150775
+
+        Reviewed by Geoffrey Garen.
+
+        What we are trying to do is remove the unnecessary Move's and Move32's from Trunc and ZExt32.
+        You could think of this as an Air optimization, and indeed, Air is powerful enough that we
+        could write a phase that does copy propagation through Move's and Move32's. For Move32's it
+        would only copy-propagate if it proved that the value was already zero-extended. We could
+        know this by just adding a Def32 role to Air.
+
+        But this patch takes a different approach: we ensure that we don't generate such redundant
+        Move's and Move32's to begin with. The reason is that it's much cheaper to do analysis over
+        B3 than over Air. So, whenever possible, and optimization should be implemented in B3. In
+        this case the optimization can't quite be implemented in B3 because you cannot remove a Trunc
+        or ZExt32 without violating the B3 type system. So, the best place to do this optimization is
+        during lowering: we can use B3 for our analysis and we can use Air to express the
+        transformation.
+
+        Copy propagating during B3->Air lowering is natural because we are creating "SSA-like" Tmps
+        from the B3 Values. They are SSA-like in the sense that except the tmp for a Phi, we know
+        that the Tmp will be assigned once and that the assignment will dominate all uses. So, if we
+        see an operation like Trunc that is semantically just a Move, we can skip the Move and just
+        claim that the Trunc has the same Tmp as its child. We do something similar for ZExt32,
+        except with that one we have to analyze IR to ensure that the value will actually be zero
+        extended. Note that this kind of reasoning about how Tmps work in Air is only possible in the
+        B3->Air lowering, since at that point we know for sure which Tmps behave this way. If we
+        wanted to do anything like this as a later Air phase, we'd have to do more analysis to first
+        prove that Tmps behave in this way.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::highBitsAreZero):
+        (JSC::B3::Air::LowerToAir::shouldCopyPropagate):
+        (JSC::B3::Air::LowerToAir::tmp):
+        (JSC::B3::Air::LowerToAir::tryStore):
+        (JSC::B3::Air::LowerToAir::tryTrunc):
+        (JSC::B3::Air::LowerToAir::tryZExt32):
+        (JSC::B3::Air::LowerToAir::tryIdentity):
+        (JSC::B3::Air::LowerToAir::tryTruncArgumentReg): Deleted.
+        * b3/B3LoweringMatcher.patterns:
+
 2015-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move ScriptDebugServer::Task to WorkerScriptDebugServer where it is actually used
