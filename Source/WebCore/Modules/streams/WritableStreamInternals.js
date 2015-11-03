@@ -39,20 +39,20 @@ function syncWritableStreamStateWithQueue(stream)
     "use strict";
 
     if (stream.@state === @streamClosing)
-        return undefined;
+        return;
 
     // FIXME
     // assert(stream.@state === @streamWritable || stream.@state === @streamWaiting);
 
-    if (stream.@queue.size > stream.@strategy.highWaterMark) {
+    const shouldApplyBackpressure = stream.@queue.size > stream.@strategy.highWaterMark;
+    if (shouldApplyBackpressure && stream.@state === @streamWritable) {
         stream.@state = @streamWaiting;
         stream.@readyPromiseCapability = @newPromiseCapability(Promise);
-    } else {
+    }
+    if (!shouldApplyBackpressure && stream.@state === @streamWaiting) {
         stream.@state = @streamWritable;
         stream.@readyPromiseCapability.@resolve.@call(undefined, undefined);
     }
-
-    return undefined;
 }
 
 function errorWritableStream(e)

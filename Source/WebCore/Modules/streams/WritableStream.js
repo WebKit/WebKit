@@ -43,7 +43,7 @@ function initializeWritableStream(underlyingSink, strategy)
 
     this.@underlyingSink = underlyingSink;
     this.@closedPromiseCapability = @newPromiseCapability(Promise);
-    this.@readyPromiseCapability = { @promise: Promise.resolve(undefined), @resolve: function() {}, @reject: function() {} };
+    this.@readyPromiseCapability = { @promise: Promise.resolve(undefined) };
     this.@queue = @newQueue();
     this.@state = @streamWritable;
     this.@started = false;

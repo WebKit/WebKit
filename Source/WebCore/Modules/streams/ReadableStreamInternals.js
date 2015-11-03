@@ -48,13 +48,13 @@ function privateInitializeReadableStreamReader(stream)
     if (stream.@state === @streamClosed) {
         this.@ownerReadableStream = null;
         this.@storedError = undefined;
-        this.@closedPromiseCapability = { @promise: Promise.resolve(undefined), @resolve: function() {}, @reject: function() {} };
+        this.@closedPromiseCapability = { @promise: Promise.resolve(undefined) };
         return this;
     }
     // FIXME: ASSERT(stream.@state === @streamErrored);
     this.@ownerReadableStream = null;
     this.@storedError = stream.@storedError;
-    this.@closedPromiseCapability = { @promise: Promise.reject(stream.@storedError), @resolve: function() {}, @reject: function() {} };
+    this.@closedPromiseCapability = { @promise: Promise.reject(stream.@storedError) };
 
     return this;
 }
