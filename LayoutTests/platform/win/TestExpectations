@@ -3297,4 +3297,4 @@ webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/the-inp
 webkit.org/b/150684 editing/input/reveal-caret-of-multiline-contenteditable.html [ Pass Failure ]
 webkit.org/b/150684 editing/input/reveal-caret-of-multiline-input.html [ Pass Failure ]
 
-webkit.org/b/150808 fast/text/multiple-feature-properties.html [ Pass Failure ]
+webkit.org/b/150808 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
