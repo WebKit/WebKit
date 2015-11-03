@@ -137,19 +137,10 @@ struct _WebKitWebSrcPrivate {
     GThreadSafeMainLoopSource seekSource;
 
     GRefPtr<GstBuffer> buffer;
-
-    // icecast stuff
-    gchar* iradioName;
-    gchar* iradioGenre;
-    gchar* iradioUrl;
-    gchar* iradioTitle;
 };
 
 enum {
-    PROP_IRADIO_NAME = 1,
-    PROP_IRADIO_GENRE,
-    PROP_IRADIO_URL,
-    PROP_IRADIO_TITLE,
+    PROP_0,
     PROP_LOCATION,
     PROP_KEEP_ALIVE,
     PROP_EXTRA_HEADERS,
@@ -207,40 +198,6 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
                                        gst_static_pad_template_get(&srcTemplate));
     gst_element_class_set_metadata(eklass, "WebKit Web source element", "Source", "Handles HTTP/HTTPS uris",
                                "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
-
-    // icecast stuff
-    g_object_class_install_property(oklass,
-                                    PROP_IRADIO_NAME,
-                                    g_param_spec_string("iradio-name",
-                                                        "iradio-name",
-                                                        "Name of the stream",
-                                                        0,
-                                                        (GParamFlags) (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
-
-    g_object_class_install_property(oklass,
-                                    PROP_IRADIO_GENRE,
-                                    g_param_spec_string("iradio-genre",
-                                                        "iradio-genre",
-                                                        "Genre of the stream",
-                                                        0,
-                                                        (GParamFlags) (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
-
-    g_object_class_install_property(oklass,
-                                    PROP_IRADIO_URL,
-                                    g_param_spec_string("iradio-url",
-                                                        "iradio-url",
-                                                        "Homepage URL for radio stream",
-                                                        0,
-                                                        (GParamFlags) (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
-
-    g_object_class_install_property(oklass,
-                                    PROP_IRADIO_TITLE,
-                                    g_param_spec_string("iradio-title",
-                                                        "iradio-title",
-                                                        "Name of currently playing song",
-                                                        0,
-                                                        (GParamFlags) (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
-
 
     /* Allows setting the uri using the 'location' property, which is used
      * for example by gst_element_make_from_uri() */
@@ -380,18 +337,6 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
     switch (propID) {
-    case PROP_IRADIO_NAME:
-        g_value_set_string(value, priv->iradioName);
-        break;
-    case PROP_IRADIO_GENRE:
-        g_value_set_string(value, priv->iradioGenre);
-        break;
-    case PROP_IRADIO_URL:
-        g_value_set_string(value, priv->iradioUrl);
-        break;
-    case PROP_IRADIO_TITLE:
-        g_value_set_string(value, priv->iradioTitle);
-        break;
     case PROP_LOCATION:
         g_value_set_string(value, priv->uri);
         break;
@@ -450,18 +395,6 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
     }
 
     priv->paused = FALSE;
-
-    g_free(priv->iradioName);
-    priv->iradioName = 0;
-
-    g_free(priv->iradioGenre);
-    priv->iradioGenre = 0;
-
-    g_free(priv->iradioUrl);
-    priv->iradioUrl = 0;
-
-    g_free(priv->iradioTitle);
-    priv->iradioTitle = 0;
 
     priv->offset = 0;
     priv->seekable = FALSE;
@@ -982,41 +915,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     priv->size = length >= 0 ? length : 0;
     priv->seekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField(HTTPHeaderName::AcceptRanges).utf8().data());
 
-    // Wait until we unlock to send notifications
-    g_object_freeze_notify(G_OBJECT(src));
-
-    GstTagList* tags = gst_tag_list_new_empty();
-    String value = response.httpHeaderField(HTTPHeaderName::IcyName);
-    if (!value.isEmpty()) {
-        g_free(priv->iradioName);
-        priv->iradioName = g_strdup(value.utf8().data());
-        g_object_notify(G_OBJECT(src), "iradio-name");
-        gst_tag_list_add(tags, GST_TAG_MERGE_REPLACE, GST_TAG_ORGANIZATION, priv->iradioName, NULL);
-    }
-    value = response.httpHeaderField(HTTPHeaderName::IcyGenre);
-    if (!value.isEmpty()) {
-        g_free(priv->iradioGenre);
-        priv->iradioGenre = g_strdup(value.utf8().data());
-        g_object_notify(G_OBJECT(src), "iradio-genre");
-        gst_tag_list_add(tags, GST_TAG_MERGE_REPLACE, GST_TAG_GENRE, priv->iradioGenre, NULL);
-    }
-    value = response.httpHeaderField(HTTPHeaderName::IcyURL);
-    if (!value.isEmpty()) {
-        g_free(priv->iradioUrl);
-        priv->iradioUrl = g_strdup(value.utf8().data());
-        g_object_notify(G_OBJECT(src), "iradio-url");
-        gst_tag_list_add(tags, GST_TAG_MERGE_REPLACE, GST_TAG_LOCATION, priv->iradioUrl, NULL);
-    }
-    value = response.httpHeaderField(HTTPHeaderName::IcyTitle);
-    if (!value.isEmpty()) {
-        g_free(priv->iradioTitle);
-        priv->iradioTitle = g_strdup(value.utf8().data());
-        g_object_notify(G_OBJECT(src), "iradio-title");
-        gst_tag_list_add(tags, GST_TAG_MERGE_REPLACE, GST_TAG_TITLE, priv->iradioTitle, NULL);
-    }
-
     locker.unlock();
-    g_object_thaw_notify(G_OBJECT(src));
 
     // notify size/duration
     if (length > 0) {
@@ -1024,25 +923,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     } else
         gst_app_src_set_size(priv->appsrc, -1);
 
-    // icecast stuff
-    value = response.httpHeaderField(HTTPHeaderName::IcyMetaInt);
-    if (!value.isEmpty()) {
-        gchar* endptr = 0;
-        gint64 icyMetaInt = g_ascii_strtoll(value.utf8().data(), &endptr, 10);
-
-        if (endptr && *endptr == '\0' && icyMetaInt > 0) {
-            GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, (gint) icyMetaInt, NULL));
-
-            gst_app_src_set_caps(priv->appsrc, caps.get());
-        }
-    } else
-        gst_app_src_set_caps(priv->appsrc, 0);
-
-    // notify tags
-    if (gst_tag_list_is_empty(tags))
-        gst_tag_list_unref(tags);
-    else
-        gst_pad_push_event(priv->srcpad, gst_event_new_tag(tags));
+    gst_app_src_set_caps(priv->appsrc, 0);
 }
 
 void StreamingClient::handleDataReceived(const char* data, int length)
