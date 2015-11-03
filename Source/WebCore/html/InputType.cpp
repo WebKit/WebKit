@@ -1062,7 +1062,7 @@ void InputType::stepUpFromRenderer(int n)
     //   * If 0 is in-range, but not matched to step value
     //     - The value should be the larger matched value nearest to 0 if n > 0
     //       e.g. <input type=number min=-100 step=3> -> 2
-    //     - The value should be the smaler matched value nearest to 0 if n < 0
+    //     - The value should be the smaller matched value nearest to 0 if n < 0
     //       e.g. <input type=number min=-100 step=3> -> -1
     //   As for date/datetime-local/month/time/week types, the current value is assumed as "the current local date/time".
     //   As for datetime type, the current value is assumed as "the current date/time in UTC".
@@ -1077,7 +1077,7 @@ void InputType::stepUpFromRenderer(int n)
     // If the current value is not matched to step value:
     // - The value should be the larger matched value nearest to 0 if n > 0
     //   e.g. <input type=number value=3 min=-100 step=3> -> 5
-    // - The value should be the smaler matched value nearest to 0 if n < 0
+    // - The value should be the smaller matched value nearest to 0 if n < 0
     //   e.g. <input type=number value=3 min=-100 step=3> -> 2
     //
     // n is assumed as -n if step < 0.

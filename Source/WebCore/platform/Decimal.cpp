@@ -824,6 +824,7 @@ Decimal Decimal::fromString(const String& str)
             }
 
             HandleCharAndBreak('0', StateZero);
+            HandleCharAndBreak('.', StateDot);
             return nan();
 
         case StateStart:
@@ -874,7 +875,7 @@ Decimal Decimal::fromString(const String& str)
     if (state == StateZero)
         return zero(sign);
 
-    if (state == StateDigit || state == StateEDigit || state == StateDotDigit) {
+    if (state == StateDigit || state == StateDot || state == StateDotDigit || state == StateEDigit) {
         int resultExponent = exponent * (exponentSign == Negative ? -1 : 1) - numberOfDigitsAfterDot + numberOfExtraDigits;
         if (resultExponent < ExponentMin)
             return zero(Positive);

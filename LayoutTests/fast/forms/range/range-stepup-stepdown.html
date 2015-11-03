@@ -63,6 +63,8 @@ debug('function arguments are (min, max, step, value, [stepCount])');
 debug('Using the default values');
 shouldBe('stepUpExplicitBounds(null, null, null, "")', '"51"');
 shouldBe('stepDownExplicitBounds(null, null, null, "")', '"49"');
+
+debug('');
 debug('Non-number arguments (stepCount)');
 shouldBe('stepUpExplicitBounds(null, null, null, "0", "0")', '"0"');
 shouldBe('stepDownExplicitBounds(null, null, null, "0", "0")', '"0"');
@@ -70,6 +72,8 @@ shouldBe('stepUpExplicitBounds(null, null, null, "0", "foo")', '"0"');
 shouldBe('stepDownExplicitBounds(null, null, null, "0", "foo")', '"0"');
 shouldBe('stepUpExplicitBounds(null, null, null, "0", null)', '"0"');
 shouldBe('stepDownExplicitBounds(null, null, null, "0", null)', '"0"');
+
+debug('');
 debug('Normal cases');
 shouldBe('stepUpExplicitBounds(null, null, null, "0")', '"1"');
 shouldBe('stepUpExplicitBounds(null, null, null, "1", 2)', '"3"');
@@ -77,9 +81,139 @@ shouldBe('stepUpExplicitBounds(null, null, null, "3", -1)', '"2"');
 shouldBe('stepDownExplicitBounds("-100", null, null, "2")', '"1"');
 shouldBe('stepDownExplicitBounds("-100", null, null, "1", 2)', '"-1"');
 shouldBe('stepDownExplicitBounds("-100", null, null, "-1", -1)', '"0"');
+
+debug('');
+debug('Fractional cases')
+// "When the element is suffering from a step mismatch, the user agent must
+// round the element's value to the nearest number for which the element would
+// not suffer from a step mismatch, and which is greater than or equal to the
+// minimum, and, if the maximum is not less than the minimum, which is less
+// than or equal to the maximum, if there is a number that matches these
+// constraints. If two numbers match these constraints, then user agents must
+// use the one nearest to positive infinity.""
+
+// Base/model/template tests
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "0.1")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "0.2")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "1.0")', '"2"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "1.1")', '"2"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "1.2")', '"2"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "2.0")', '"3"');
+
+// Same as above, but with negative numbers.
+debug('');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-0.1")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-0.2")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-1.0")', '"0"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-1.1")', '"0"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-1.2")', '"0"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-2.0")', '"-1"');
+
+// Same as above, but stepping down rather than up.
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "0.1")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "0.2")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "1.0")', '"0"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "1.1")', '"0"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "1.2")', '"0"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "2.0")', '"1"');
+
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-0.1")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-0.2")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-1.0")', '"-2"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-1.1")', '"-2"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-1.2")', '"-2"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-2.0")', '"-3"');
+
+// Same as above, but with leading/trailing zeros removed.
+debug('');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, ".1")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, ".2")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "1.")', '"2"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "2.")', '"3"');
+
+debug('');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-.1")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-.2")', '"1"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-1.")', '"0"');
+shouldBe('stepUpExplicitBounds(-10, 10, 1, "-2.")', '"-1"');
+
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, ".1")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, ".2")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "1.")', '"0"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "2.")', '"1"');
+
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-.1")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-.2")', '"-1"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-1.")', '"-2"');
+shouldBe('stepDownExplicitBounds(-10, 10, 1, "-2.")', '"-3"');
+
+// Same as above, but stepping by .1 rather than 1.
+debug('');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "0.1")', '"0.2"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "0.2")', '"0.3"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "1.0")', '"1.1"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "1.1")', '"1.2"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "1.2")', '"1.3"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "2.0")', '"2.1"');
+
+debug('');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-0.1")', '"0"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-0.2")', '"-0.1"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-1.0")', '"-0.9"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-1.1")', '"-1"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-1.2")', '"-1.1"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-2.0")', '"-1.9"');
+
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "0.1")', '"0"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "0.2")', '"0.1"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "1.0")', '"0.9"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "1.1")', '"1"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "1.2")', '"1.1"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "2.0")', '"1.9"');
+
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-0.1")', '"-0.2"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-0.2")', '"-0.3"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-1.0")', '"-1.1"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-1.1")', '"-1.2"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-1.2")', '"-1.3"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-2.0")', '"-2.1"');
+
+debug('');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, ".1")', '"0.2"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, ".2")', '"0.3"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "1.")', '"1.1"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "2.")', '"2.1"');
+
+debug('');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-.1")', '"0"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-.2")', '"-0.1"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-1.")', '"-0.9"');
+shouldBe('stepUpExplicitBounds(-10, 10, .1, "-2.")', '"-1.9"');
+
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, ".1")', '"0"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, ".2")', '"0.1"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "1.")', '"0.9"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "2.")', '"1.9"');
+
+debug('');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-.1")', '"-0.2"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-.2")', '"-0.3"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-1.")', '"-1.1"');
+shouldBe('stepDownExplicitBounds(-10, 10, .1, "-2.")', '"-2.1"');
+
+debug('');
 debug('Extra arguments');
 shouldBe('setInputAttributes(null, null, null, "0"); input.stepUp(1,2); input.value', '"1"');
 shouldBe('setInputAttributes(null, null, null, "1"); input.stepDown(1,3); input.value', '"0"');
+
+debug('');
 debug('Invalid step value');
 shouldBe('stepUpExplicitBounds(null, null, "foo", "0")', '"1"');
 shouldBe('stepUpExplicitBounds(null, null, "0", "1")', '"2"');
@@ -87,9 +221,13 @@ shouldBe('stepUpExplicitBounds(null, null, "-1", "2")', '"3"');
 shouldBe('stepDownExplicitBounds(null, null, "foo", "1")', '"0"');
 shouldBe('stepDownExplicitBounds(null, null, "0", "2")', '"1"');
 shouldBe('stepDownExplicitBounds(null, null, "-1", "3")', '"2"');
+
+debug('');
 debug('Step=any');
 shouldThrow('stepUpExplicitBounds(null, null, "any", "1")', invalidStateErr);
 shouldThrow('stepDownExplicitBounds(null, null, "any", "1")', invalidStateErr);
+
+debug('');
 debug('Overflow/underflow');
 shouldBe('stepUpExplicitBounds(null, "100", "1", "99")', '"100"');
 shouldThrow('stepUpExplicitBounds(null, "100", "1", "100")', invalidStateErr);
@@ -107,16 +245,24 @@ shouldThrow('stepUpExplicitBounds(null, 0, 1, 0)', invalidStateErr);
 shouldThrow('stepUpExplicitBounds(-100, 0, 1, -1, 2)', invalidStateErr);
 shouldBe('input.value', '"-1"');
 shouldThrow('stepUpExplicitBounds(null, null, "3.40282346e+38", "1", "2")', invalidStateErr);
+
+debug('');
 debug('stepDown()/stepUp() for stepMismatch values');
 shouldBe('stepUpExplicitBounds(null, null, 2, 1)', '"4"');
 shouldBe('input.stepDown(); input.value', '"2"');
 shouldBe('stepUpExplicitBounds(0, null, 10, 9, 9)', '"100"');
 shouldBe('stepDownExplicitBounds(0, null, 10, 19)', '"10"');
+
+debug('');
 debug('value + step is <= max, but rounded result would be > max.');
 shouldThrow('stepUpExplicitBounds(null, 99, 10, 89)', invalidStateErr);
+
+debug('');
 debug('Huge value and small step');
 shouldBe('stepUpExplicitBounds(0, 1e38, 1, 1e38, 999999)', '"1e+38"');
 shouldBe('stepDownExplicitBounds(0, 1e38, 1, 1e38, 999999)', '"1e+38"');
+
+debug('');
 debug('Fractional numbers');
 shouldBe('stepUpExplicitBounds(null, null, 0.33333333333333333, 0, 3)', '"1"');
 shouldBe('stepUpExplicitBounds(null, null, 0.1, 1)', '"1.1"');
@@ -127,6 +273,8 @@ shouldBe('stepUpExplicitBounds(0, 1, 0.003921568627450980, 0, 255)', '"1"');
 shouldBe('for (var i = 0; i < 255; i++) { input.stepDown(); }; input.value', '"0"');
 shouldBe('stepDownExplicitBounds(null, null, 0.1, 1, 8)', '"0.2"');
 shouldBe('stepDownExplicitBounds(null, null, 0.1, 1)', '"0.9"');
+
+debug('');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
