@@ -110,7 +110,7 @@ public:
 
     WEBCORE_EXPORT virtual void setFrameRect(const IntRect&);
     WEBCORE_EXPORT IntRect frameRect() const;
-    WEBCORE_EXPORT IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
+    IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
 
     void resize(int w, int h) { setFrameRect(IntRect(x(), y(), w, h)); }
     void resize(const IntSize& s) { setFrameRect(IntRect(location(), s)); }
