@@ -1,3 +1,9 @@
+2015-11-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build after r191922.
+
+        * PlatformMac.cmake:
+
 2015-11-02  Andy Estes  <aestes@apple.com>
 
         Try again to fix the iOS build.
