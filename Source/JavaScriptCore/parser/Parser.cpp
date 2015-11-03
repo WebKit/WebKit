@@ -250,14 +250,12 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
         parseFunctionParameters(context, parseMode, functionInfo);
         m_parameters = functionInfo.parameters;
 
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
         if (parseMode == SourceParseMode::ArrowFunctionMode && !hasError()) {
             // The only way we could have an error wile reparsing is if we run out of stack space.
             RELEASE_ASSERT(match(ARROWFUNCTION));
             next();
             isArrowFunctionBodyExpression = !match(OPENBRACE);
         }
-#endif
     }
 
     if (!calleeName.isNull())

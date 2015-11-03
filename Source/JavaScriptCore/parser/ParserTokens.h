@@ -118,9 +118,7 @@ enum JSTokenType {
     XOREQUAL,
     OREQUAL,
     DOTDOTDOT,
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     ARROWFUNCTION,
-#endif
     LastUntaggedToken,
 
     // Begin tagged tokens

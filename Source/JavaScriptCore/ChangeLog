@@ -1,3 +1,23 @@
+2015-11-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Clean up ENABLE(ES6_ARROWFUNCTION_SYNTAX) ifdefs and keep minimal set of them
+        https://bugs.webkit.org/show_bug.cgi?id=150793
+
+        Reviewed by Darin Adler.
+
+        Fix the !ENABLE(ES6_ARROWFUNCTION_SYNTAX) build after r191875.
+        This patch drops many ENABLE(ES6_ARROWFUNCTION_SYNTAX) ifdefs and keep only one of them;
+        the ifdef in parseAssignmentExpression.
+        This prevents functionality of parsing arrow function syntax.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner): Deleted.
+        * parser/Parser.h:
+        (JSC::Parser::isArrowFunctionParamters): Deleted.
+        * parser/ParserTokens.h:
+
 2015-11-02  Michael Saboff  <msaboff@apple.com>
 
         WebInspector crashed while viewing Timeline when refreshing cnn.com while it was already loading

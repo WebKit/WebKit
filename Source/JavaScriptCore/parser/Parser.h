@@ -961,7 +961,6 @@ private:
     
     ALWAYS_INLINE bool isArrowFunctionParamters()
     {
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
         bool isArrowFunction = false;
         
         if (match(EOFTOK))
@@ -992,9 +991,6 @@ private:
         restoreSavePoint(saveArrowFunctionPoint);
         
         return isArrowFunction;
-#else
-        return false;
-#endif
     }
     
     ALWAYS_INLINE unsigned tokenStart()

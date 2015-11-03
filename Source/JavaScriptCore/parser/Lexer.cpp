@@ -1850,7 +1850,6 @@ start:
         token = GT;
         break;
     case CharacterEqual: {
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
         if (peek(1) == '>') {
             token = ARROWFUNCTION;
             tokenData->line = lineNumber();
@@ -1861,7 +1860,7 @@ start:
             shift();
             break;
         }
-#endif
+
         shift();
         if (m_current == '=') {
             shift();
