@@ -91,12 +91,12 @@ private:
 
     // Attr wraps either an element/name, or a name/value pair (when it's a standalone Node.)
     // Note that m_name is always set, but m_element/m_standaloneValue may be null.
-    Element* m_element;
+    Element* m_element { nullptr };
     QualifiedName m_name;
     AtomicString m_standaloneValue;
 
     RefPtr<MutableStyleProperties> m_style;
-    unsigned m_ignoreChildrenChanged;
+    unsigned m_ignoreChildrenChanged { 0 };
 };
 
 } // namespace WebCore

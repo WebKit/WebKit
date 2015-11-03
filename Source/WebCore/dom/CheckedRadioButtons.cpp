@@ -100,7 +100,7 @@ void RadioButtonGroup::updateCheckedState(HTMLInputElement* button)
         setCheckedButton(button);
     else {
         if (m_checkedButton == button)
-            m_checkedButton = 0;
+            m_checkedButton = nullptr;
     }
     if (wasValid != isValid())
         updateValidityForAllButtons();
@@ -221,7 +221,7 @@ HTMLInputElement* CheckedRadioButtons::checkedButtonForGroup(const AtomicString&
         return 0;
     m_nameToGroupMap->checkConsistency();
     RadioButtonGroup* group = m_nameToGroupMap->get(name.impl());
-    return group ? group->checkedButton() : 0;
+    return group ? group->checkedButton() : nullptr;
 }
 
 bool CheckedRadioButtons::isInRequiredGroup(HTMLInputElement* element) const

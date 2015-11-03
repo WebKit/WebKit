@@ -64,7 +64,7 @@ namespace WebCore {
 static void dispatchChildInsertionEvents(Node&);
 static void dispatchChildRemovalEvents(Node&);
 
-ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot = 0;
+ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot;
 
 #ifndef NDEBUG
 unsigned NoEventDispatchAssertion::s_count = 0;
@@ -584,9 +584,9 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     if (m_lastChild == &oldChild)
         m_lastChild = previousChild;
 
-    oldChild.setPreviousSibling(0);
-    oldChild.setNextSibling(0);
-    oldChild.setParentNode(0);
+    oldChild.setPreviousSibling(nullptr);
+    oldChild.setNextSibling(nullptr);
+    oldChild.setParentNode(nullptr);
 
     document().adoptIfNeeded(&oldChild);
 }

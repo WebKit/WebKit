@@ -106,7 +106,7 @@ namespace WebCore {
         RefPtr<MessagePortQueue> m_outgoingQueue;
 
         // The port we are connected to (the remote port) - this is the port that is notified when new messages arrive.
-        MessagePort* m_remotePort;
+        MessagePort* m_remotePort { nullptr };
     };
 
 } // namespace WebCore

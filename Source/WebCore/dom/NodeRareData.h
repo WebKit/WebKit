@@ -195,7 +195,7 @@ public:
         m_cachedCollections.remove(namedCollectionKey(collection->type(), name));
     }
 
-    void invalidateCaches(const QualifiedName* attrName = 0);
+    void invalidateCaches(const QualifiedName* attrName = nullptr);
     bool isEmpty() const
     {
         return m_atomicNameCaches.isEmpty() && m_cachedCollections.isEmpty() && m_tagCollectionCacheNS.isEmpty();

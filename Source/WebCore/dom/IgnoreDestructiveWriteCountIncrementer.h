@@ -34,7 +34,7 @@ class IgnoreDestructiveWriteCountIncrementer {
     WTF_MAKE_NONCOPYABLE(IgnoreDestructiveWriteCountIncrementer);
 public:
     explicit IgnoreDestructiveWriteCountIncrementer(Document* document)
-        : m_count(document ? &document->m_ignoreDestructiveWriteCount : 0)
+        : m_count(document ? &document->m_ignoreDestructiveWriteCount : nullptr)
     {
         if (!m_count)
             return;

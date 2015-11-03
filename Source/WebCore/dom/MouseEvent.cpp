@@ -43,7 +43,6 @@ MouseEventInit::MouseEventInit()
     , shiftKey(false)
     , metaKey(false)
     , button(0)
-    , relatedTarget(0)
 {
 }
 
@@ -243,7 +242,7 @@ PassRefPtr<Event> MouseEvent::cloneFor(HTMLIFrameElement* iframe) const
     ASSERT(iframe);
     RefPtr<MouseEvent> clonedMouseEvent = MouseEvent::create();
     Frame* frame = iframe->document().frame();
-    FrameView* frameView = frame ? frame->view() : 0;
+    FrameView* frameView = frame ? frame->view() : nullptr;
     clonedMouseEvent->initMouseEvent(type(), bubbles(), cancelable(),
         iframe->document().defaultView(),
         detail(), screenX(), screenY(),

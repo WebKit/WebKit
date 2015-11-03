@@ -286,7 +286,7 @@ void restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& resu
         result.maximumScale = result.minimumScale = result.initialScale;
 }
 
-static float numericPrefix(const String& keyString, const String& valueString, Document* document, bool* ok = 0)
+static float numericPrefix(const String& keyString, const String& valueString, Document* document, bool* ok = nullptr)
 {
     size_t parsedLength;
     float value;

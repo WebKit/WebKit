@@ -28,14 +28,12 @@
 namespace WebCore {
 
 UIEventInit::UIEventInit()
-    : view(0)
-    , detail(0)
+    : detail(0)
 {
 }
 
 UIEventInit::UIEventInit(bool bubbles, bool cancelable)
     : EventInit(bubbles, cancelable)
-    , view(0)
     , detail(0)
 {
 }

@@ -93,7 +93,7 @@ public:
     Node* fromElement() const;
 
     // FIXME: These functions can be merged if m_dataTransfer is only initialized for drag events.
-    DataTransfer* dataTransfer() const { return isDragEvent() ? m_dataTransfer.get() : 0; }
+    DataTransfer* dataTransfer() const { return isDragEvent() ? m_dataTransfer.get() : nullptr; }
     virtual DataTransfer* internalDataTransfer() const override { return m_dataTransfer.get(); }
 
     virtual EventInterface eventInterface() const override;

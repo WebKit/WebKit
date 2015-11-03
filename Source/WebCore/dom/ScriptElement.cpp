@@ -57,18 +57,10 @@ namespace WebCore {
 
 ScriptElement::ScriptElement(Element& element, bool parserInserted, bool alreadyStarted)
     : m_element(element)
-    , m_cachedScript(0)
     , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
     , m_parserInserted(parserInserted)
-    , m_isExternalScript(false)
     , m_alreadyStarted(alreadyStarted)
-    , m_haveFiredLoad(false)
-    , m_willBeParserExecuted(false)
-    , m_readyToBeParserExecuted(false)
-    , m_willExecuteWhenDocumentFinishedParsing(false)
     , m_forceAsync(!parserInserted)
-    , m_willExecuteInOrder(false)
-    , m_requestUsesAccessControl(false)
 {
     if (parserInserted && m_element.document().scriptableDocumentParser() && !m_element.document().isInDocumentWrite())
         m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
@@ -315,7 +307,7 @@ void ScriptElement::stopLoadRequest()
     if (m_cachedScript) {
         if (!m_willBeParserExecuted)
             m_cachedScript->removeClient(this);
-        m_cachedScript = 0;
+        m_cachedScript = nullptr;
     }
 }
 
@@ -356,7 +348,7 @@ void ScriptElement::notifyFinished(CachedResource* resource)
     else
         m_element.document().scriptRunner()->notifyScriptReady(this, ScriptRunner::ASYNC_EXECUTION);
 
-    m_cachedScript = 0;
+    m_cachedScript = nullptr;
 }
 
 bool ScriptElement::ignoresLoadRequest() const

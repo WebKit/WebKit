@@ -142,7 +142,7 @@ void MessagePort::contextDestroyed()
     // Must be closed before blowing away the cached context, to ensure that we get no more calls to messageAvailable().
     // ScriptExecutionContext::closeMessagePorts() takes care of that.
     ASSERT(m_closed);
-    m_scriptExecutionContext = 0;
+    m_scriptExecutionContext = nullptr;
 }
 
 void MessagePort::dispatchMessages()
@@ -179,7 +179,7 @@ bool MessagePort::hasPendingActivity()
 
 MessagePort* MessagePort::locallyEntangledPort()
 {
-    return m_entangledChannel ? m_entangledChannel->locallyEntangledPort(m_scriptExecutionContext) : 0;
+    return m_entangledChannel ? m_entangledChannel->locallyEntangledPort(m_scriptExecutionContext) : nullptr;
 }
 
 std::unique_ptr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessagePortArray* ports, ExceptionCode& ec)

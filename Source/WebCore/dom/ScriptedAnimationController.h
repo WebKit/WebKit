@@ -57,7 +57,7 @@ public:
         return adoptRef(*new ScriptedAnimationController(document, displayID));
     }
     ~ScriptedAnimationController();
-    void clearDocumentPointer() { m_document = 0; }
+    void clearDocumentPointer() { m_document = nullptr; }
 
     typedef int CallbackId;
 

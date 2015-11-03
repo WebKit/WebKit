@@ -195,7 +195,7 @@ bool EventTarget::fireEventListeners(Event* event)
     if (!d)
         return true;
 
-    EventListenerVector* legacyListenersVector = 0;
+    EventListenerVector* legacyListenersVector = nullptr;
     const AtomicString& legacyTypeName = legacyType(event);
     if (!legacyTypeName.isEmpty())
         legacyListenersVector = d->eventListenerMap.find(legacyTypeName);

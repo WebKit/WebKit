@@ -197,17 +197,7 @@ void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarge
         copyListenersNotCreatedFromMarkupToTarget(entry.first, entry.second.get(), target);
 }
 
-EventListenerIterator::EventListenerIterator()
-    : m_map(0)
-    , m_entryIndex(0)
-    , m_index(0)
-{
-}
-
 EventListenerIterator::EventListenerIterator(EventTarget* target)
-    : m_map(0)
-    , m_entryIndex(0)
-    , m_index(0)
 {
     ASSERT(target);
     EventTargetData* data = target->eventTargetData();

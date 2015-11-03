@@ -41,16 +41,13 @@ Attr::Attr(Element* element, const QualifiedName& name)
     : ContainerNode(element->document())
     , m_element(element)
     , m_name(name)
-    , m_ignoreChildrenChanged(0)
 {
 }
 
 Attr::Attr(Document& document, const QualifiedName& name, const AtomicString& standaloneValue)
     : ContainerNode(document)
-    , m_element(0)
     , m_name(name)
     , m_standaloneValue(standaloneValue)
-    , m_ignoreChildrenChanged(0)
 {
 }
 
@@ -209,7 +206,7 @@ void Attr::detachFromElementWithValue(const AtomicString& value)
     ASSERT(m_element);
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
-    m_element = 0;
+    m_element = nullptr;
 }
 
 void Attr::attachToElement(Element* element)

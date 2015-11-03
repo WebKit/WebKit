@@ -83,7 +83,7 @@ void MessagePortChannel::disentangle()
 {
     RefPtr<PlatformMessagePortChannel> remote = m_channel->entangledChannel();
     if (remote)
-        remote->setRemotePort(0);
+        remote->setRemotePort(nullptr);
 }
 
 void MessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
@@ -154,7 +154,6 @@ Ref<PlatformMessagePortChannel> PlatformMessagePortChannel::create(PassRefPtr<Me
 PlatformMessagePortChannel::PlatformMessagePortChannel(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing)
     : m_incomingQueue(incoming)
     , m_outgoingQueue(outgoing)
-    , m_remotePort(0)
 {
 }
 

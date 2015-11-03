@@ -46,8 +46,7 @@ COMPILE_ASSERT(sizeof(StyledElement) == sizeof(Element), styledelement_should_re
 using namespace HTMLNames;
 
 struct PresentationAttributeCacheKey {
-    PresentationAttributeCacheKey() : tagName(0) { }
-    AtomicStringImpl* tagName;
+    AtomicStringImpl* tagName { nullptr };
     // Only the values need refcounting.
     Vector<std::pair<AtomicStringImpl*, AtomicString>, 3> attributesAndValues;
 };
@@ -267,7 +266,7 @@ void StyledElement::removeAllInlineStyleProperties()
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
-    if (const StyleProperties* inlineStyle = elementData() ? elementData()->inlineStyle() : 0)
+    if (const StyleProperties* inlineStyle = elementData() ? elementData()->inlineStyle() : nullptr)
         inlineStyle->addSubresourceStyleURLs(urls, &document().elementSheet().contents());
 }
 
@@ -341,7 +340,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
     UniqueElementData& elementData = ensureUniqueElementData();
 
     elementData.setPresentationAttributeStyleIsDirty(false);
-    elementData.m_presentationAttributeStyle = style->isEmpty() ? 0 : style;
+    elementData.m_presentationAttributeStyle = style->isEmpty() ? nullptr : style;
 
     if (!cacheHash || cacheIterator->value)
         return;

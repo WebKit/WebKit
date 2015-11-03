@@ -36,13 +36,6 @@ namespace WebCore {
 // Conversion to/from Position is O(n) in the offset.
 class PositionIterator {
 public:
-    PositionIterator()
-        : m_anchorNode(0)
-        , m_nodeAfterPositionInAnchor(0)
-        , m_offsetInAnchor(0)
-    {
-    }
-
     PositionIterator(const Position& pos)
         : m_anchorNode(pos.anchorNode())
         , m_nodeAfterPositionInAnchor(m_anchorNode->traverseToChildAt(pos.deprecatedEditingOffset()))
@@ -64,9 +57,9 @@ public:
     bool isCandidate() const;
 
 private:
-    Node* m_anchorNode;
-    Node* m_nodeAfterPositionInAnchor; // If this is non-null, m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode;
-    int m_offsetInAnchor;
+    Node* m_anchorNode { nullptr };
+    Node* m_nodeAfterPositionInAnchor { nullptr }; // If this is non-null, m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode;
+    int m_offsetInAnchor { 0 };
 };
 
 } // namespace WebCore

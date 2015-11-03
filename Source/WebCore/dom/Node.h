@@ -698,14 +698,13 @@ private:
     int m_refCount;
     mutable uint32_t m_nodeFlags;
 
-    ContainerNode* m_parentNode;
-    TreeScope* m_treeScope;
-    Node* m_previous;
-    Node* m_next;
+    ContainerNode* m_parentNode { nullptr };
+    TreeScope* m_treeScope { nullptr };
+    Node* m_previous { nullptr };
+    Node* m_next { nullptr };
     // When a node has rare data we move the renderer into the rare data.
     union DataUnion {
-        DataUnion() : m_renderer(0) { }
-        RenderObject* m_renderer;
+        RenderObject* m_renderer { nullptr };
         NodeRareDataBase* m_rareData;
     } m_data;
 

@@ -74,7 +74,6 @@ TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, TextEven
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
     , m_inputType(inputType)
     , m_data(data)
-    , m_pastingFragment(0)
     , m_shouldSmartReplace(false)
     , m_shouldMatchStyle(false)
     , m_mailBlockquoteHandling(MailBlockquoteHandling::RespectBlockquote)

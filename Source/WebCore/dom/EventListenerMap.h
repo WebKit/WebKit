@@ -86,9 +86,9 @@ public:
     EventListener* nextListener();
 
 private:
-    EventListenerMap* m_map;
-    unsigned m_entryIndex;
-    unsigned m_index;
+    EventListenerMap* m_map { nullptr };
+    unsigned m_entryIndex { 0 };
+    unsigned m_index { 0 };
 };
 
 #ifdef NDEBUG

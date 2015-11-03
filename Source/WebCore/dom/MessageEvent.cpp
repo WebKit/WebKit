@@ -52,7 +52,7 @@ MessageEvent::MessageEvent(const AtomicString& type, const MessageEventInit& ini
     , m_dataAsScriptValue(initializer.data)
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
-    , m_source(isValidSource(initializer.source.get()) ? initializer.source : 0)
+    , m_source(isValidSource(initializer.source.get()) ? initializer.source : nullptr)
     , m_ports(std::make_unique<MessagePortArray>(initializer.ports))
 {
 }

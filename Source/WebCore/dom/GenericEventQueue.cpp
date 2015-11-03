@@ -51,7 +51,7 @@ void GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
         return;
 
     if (event->target() == &m_owner)
-        event->setTarget(0);
+        event->setTarget(nullptr);
 
     m_pendingEvents.append(event);
 

@@ -130,7 +130,7 @@ void ChildListMutationAccumulator::enqueueMutationRecord()
     RefPtr<NodeList> removedNodes = StaticNodeList::adopt(m_removedNodes);
     RefPtr<MutationRecord> record = MutationRecord::createChildList(m_target, addedNodes.release(), removedNodes.release(), m_previousSibling.release(), m_nextSibling.release());
     m_observers->enqueueMutationRecord(record.release());
-    m_lastAdded = 0;
+    m_lastAdded = nullptr;
     ASSERT(isEmpty());
 }
 

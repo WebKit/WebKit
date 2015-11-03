@@ -265,10 +265,7 @@ void Node::trackForDebugging()
 Node::Node(Document& document, ConstructionType type)
     : m_refCount(1)
     , m_nodeFlags(type)
-    , m_parentNode(nullptr)
     , m_treeScope(&document)
-    , m_previous(nullptr)
-    , m_next(nullptr)
 {
     ASSERT(isMainThread());
 
@@ -853,7 +850,7 @@ void Node::invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName*
 
 NodeListsNodeData* Node::nodeLists()
 {
-    return hasRareData() ? rareData()->nodeLists() : 0;
+    return hasRareData() ? rareData()->nodeLists() : nullptr;
 }
 
 void Node::clearNodeLists()
@@ -1086,7 +1083,7 @@ Node* Node::nonBoundaryShadowTreeRootNode()
 ContainerNode* Node::nonShadowBoundaryParentNode() const
 {
     ContainerNode* parent = parentNode();
-    return parent && !parent->isShadowRoot() ? parent : 0;
+    return parent && !parent->isShadowRoot() ? parent : nullptr;
 }
 
 Element* Node::parentOrShadowHostElement() const

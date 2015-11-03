@@ -42,16 +42,7 @@ EventInit::EventInit(bool b, bool c)
 }
 
 Event::Event()
-    : m_canBubble(false)
-    , m_cancelable(false)
-    , m_propagationStopped(false)
-    , m_immediatePropagationStopped(false)
-    , m_defaultPrevented(false)
-    , m_defaultHandled(false)
-    , m_cancelBubble(false)
-    , m_eventPhase(0)
-    , m_currentTarget(0)
-    , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
+    : m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
 
@@ -60,13 +51,6 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
     , m_type(eventType)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
-    , m_propagationStopped(false)
-    , m_immediatePropagationStopped(false)
-    , m_defaultPrevented(false)
-    , m_defaultHandled(false)
-    , m_cancelBubble(false)
-    , m_eventPhase(0)
-    , m_currentTarget(0)
     , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
@@ -76,13 +60,6 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
     , m_type(eventType)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
-    , m_propagationStopped(false)
-    , m_immediatePropagationStopped(false)
-    , m_defaultPrevented(false)
-    , m_defaultHandled(false)
-    , m_cancelBubble(false)
-    , m_eventPhase(0)
-    , m_currentTarget(0)
     , m_createTime(convertSecondsToDOMTimeStamp(timestamp))
 {
 }
@@ -92,13 +69,6 @@ Event::Event(const AtomicString& eventType, const EventInit& initializer)
     , m_type(eventType)
     , m_canBubble(initializer.bubbles)
     , m_cancelable(initializer.cancelable)
-    , m_propagationStopped(false)
-    , m_immediatePropagationStopped(false)
-    , m_defaultPrevented(false)
-    , m_defaultHandled(false)
-    , m_cancelBubble(false)
-    , m_eventPhase(0)
-    , m_currentTarget(0)
     , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }

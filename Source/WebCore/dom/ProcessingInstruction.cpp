@@ -42,14 +42,6 @@ namespace WebCore {
 inline ProcessingInstruction::ProcessingInstruction(Document& document, const String& target, const String& data)
     : CharacterData(document, data, CreateOther)
     , m_target(target)
-    , m_cachedSheet(0)
-    , m_loading(false)
-    , m_alternate(false)
-    , m_createdByParser(false)
-    , m_isCSS(false)
-#if ENABLE(XSLT)
-    , m_isXSL(false)
-#endif
 {
 }
 
@@ -135,7 +127,7 @@ void ProcessingInstruction::checkStyleSheet()
         } else {
             if (m_cachedSheet) {
                 m_cachedSheet->removeClient(this);
-                m_cachedSheet = 0;
+                m_cachedSheet = nullptr;
             }
             
             String url = document().completeURL(href).string();
@@ -232,7 +224,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
 
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
-    m_cachedSheet = 0;
+    m_cachedSheet = nullptr;
 
     m_loading = false;
 

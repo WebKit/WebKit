@@ -60,14 +60,12 @@ private:
     static const int invalidOffset = -1;
 
     RefPtr<Node> m_containerNode;
-    mutable int m_offsetInContainer;
+    mutable int m_offsetInContainer { 0 };
     RefPtr<Node> m_childBeforeBoundary;
 };
 
 inline RangeBoundaryPoint::RangeBoundaryPoint(PassRefPtr<Node> container)
     : m_containerNode(container)
-    , m_offsetInContainer(0)
-    , m_childBeforeBoundary(0)
 {
     ASSERT(m_containerNode);
 }

@@ -40,9 +40,7 @@ class IdTargetObserverRegistry {
     WTF_MAKE_FAST_ALLOCATED;
     friend class IdTargetObserver;
 public:
-    IdTargetObserverRegistry()
-        : m_notifyingObserversInSet(0)
-    { }
+    IdTargetObserverRegistry() { }
 
     void notifyObservers(const AtomicString& id);
     void notifyObservers(const AtomicStringImpl& id);
@@ -55,7 +53,7 @@ private:
     typedef HashSet<IdTargetObserver*> ObserverSet;
     typedef HashMap<const AtomicStringImpl*, std::unique_ptr<ObserverSet>> IdToObserverSetMap;
     IdToObserverSetMap m_registry;
-    ObserverSet* m_notifyingObserversInSet;
+    ObserverSet* m_notifyingObserversInSet { nullptr };
 };
 
 inline void IdTargetObserverRegistry::notifyObservers(const AtomicString& id)

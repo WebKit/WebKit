@@ -620,7 +620,7 @@ public:
     
     WEBCORE_EXPORT DocumentLoader* loader() const;
 
-    void open(Document* ownerDocument = 0);
+    void open(Document* ownerDocument = nullptr);
     void implicitOpen();
 
     // close() is the DOM API document.close()
@@ -634,9 +634,9 @@ public:
 
     void cancelParsing();
 
-    void write(const SegmentedString& text, Document* ownerDocument = 0);
-    void write(const String& text, Document* ownerDocument = 0);
-    void writeln(const String& text, Document* ownerDocument = 0);
+    void write(const SegmentedString& text, Document* ownerDocument = nullptr);
+    void write(const String& text, Document* ownerDocument = nullptr);
+    void writeln(const String& text, Document* ownerDocument = nullptr);
 
     bool wellFormed() const { return m_wellFormed; }
 
@@ -788,7 +788,7 @@ public:
     void setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
     void setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
     EventListener* getWindowAttributeEventListener(const AtomicString& eventType);
-    WEBCORE_EXPORT void dispatchWindowEvent(PassRefPtr<Event>, PassRefPtr<EventTarget> = 0);
+    WEBCORE_EXPORT void dispatchWindowEvent(PassRefPtr<Event>, PassRefPtr<EventTarget> = nullptr);
     void dispatchWindowLoadEvent();
 
     RefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
@@ -948,7 +948,7 @@ public:
     ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
     JSModuleLoader* moduleLoader() { return m_moduleLoader.get(); }
 
-    HTMLScriptElement* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : 0; }
+    HTMLScriptElement* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : nullptr; }
     void pushCurrentScript(PassRefPtr<HTMLScriptElement>);
     void popCurrentScript();
 
@@ -1135,7 +1135,7 @@ public:
 
     // W3C API
     bool webkitFullscreenEnabled() const;
-    Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.last().get() : 0; }
+    Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.last().get() : nullptr; }
     void webkitExitFullscreen();
 #endif
 
@@ -1346,7 +1346,7 @@ private:
     virtual void refScriptExecutionContext() override final { ref(); }
     virtual void derefScriptExecutionContext() override final { deref(); }
 
-    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override final;
+    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) override final;
 
     virtual double minimumTimerInterval() const override final;
 

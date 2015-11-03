@@ -119,7 +119,7 @@ void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
         return;
 
     if (node.document().cssTarget() == &node)
-        node.document().setCSSTarget(0);
+        node.document().setCSSTarget(nullptr);
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         if (!node.inDocument() && root->host() == &node)

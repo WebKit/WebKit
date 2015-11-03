@@ -41,7 +41,7 @@ public:
     }
 
     const Element* host() const { return m_host; }
-    void clearHost() { m_host = 0; }
+    void clearHost() { m_host = nullptr; }
 
 private:
     TemplateContentDocumentFragment(Document& document, const Element* host)

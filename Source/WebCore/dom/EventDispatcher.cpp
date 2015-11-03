@@ -92,7 +92,7 @@ public:
 
     bool hasEventListeners(const AtomicString& eventType) const;
 
-    EventContext* lastContextIfExists() { return m_path.isEmpty() ? 0 : m_path.last().get(); }
+    EventContext* lastContextIfExists() { return m_path.isEmpty() ? nullptr : m_path.last().get(); }
 
 private:
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
@@ -355,7 +355,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     // Ensure that after event dispatch, the event's target object is the
     // outermost shadow DOM boundary.
     event->setTarget(windowEventContext.target());
-    event->setCurrentTarget(0);
+    event->setCurrentTarget(nullptr);
 
     return !event->defaultPrevented();
 }

@@ -180,14 +180,12 @@ private:
 
     void willRemoveChild(Node& child);
 
-    Node* m_firstChild;
-    Node* m_lastChild;
+    Node* m_firstChild { nullptr };
+    Node* m_lastChild { nullptr };
 };
 
 inline ContainerNode::ContainerNode(Document& document, ConstructionType type)
     : Node(document, type)
-    , m_firstChild(0)
-    , m_lastChild(0)
 {
 }
 

@@ -97,16 +97,16 @@ private:
     Element& m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;
     WTF::OrdinalNumber m_startLineNumber;
-    bool m_parserInserted : 1;
-    bool m_isExternalScript : 1;
-    bool m_alreadyStarted : 1;
-    bool m_haveFiredLoad : 1;
-    bool m_willBeParserExecuted : 1; // Same as "The parser will handle executing the script."
-    bool m_readyToBeParserExecuted : 1;
-    bool m_willExecuteWhenDocumentFinishedParsing : 1;
-    bool m_forceAsync : 1;
-    bool m_willExecuteInOrder : 1;
-    bool m_requestUsesAccessControl : 1;
+    bool m_parserInserted { false };
+    bool m_isExternalScript { false };
+    bool m_alreadyStarted  { false };
+    bool m_haveFiredLoad  { false };
+    bool m_willBeParserExecuted { false }; // Same as "The parser will handle executing the script."
+    bool m_readyToBeParserExecuted { false };
+    bool m_willExecuteWhenDocumentFinishedParsing { false };
+    bool m_forceAsync { false };
+    bool m_willExecuteInOrder { false };
+    bool m_requestUsesAccessControl { false };
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
 };

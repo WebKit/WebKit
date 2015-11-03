@@ -1181,7 +1181,7 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
         // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
         // will write into the ElementData.
         // FIXME: Refactor this so it makes some sense.
-        if (RefPtr<Attr> attrNode = inSynchronizationOfLazyAttribute ? 0 : attrIfExists(attributeName))
+        if (RefPtr<Attr> attrNode = inSynchronizationOfLazyAttribute ? nullptr : attrIfExists(attributeName))
             attrNode->setValue(newValue);
         else
             ensureUniqueElementData().attributeAt(index).setValue(newValue);
@@ -1628,7 +1628,7 @@ void Element::unregisterNamedFlowContentElement()
 
 ShadowRoot* Element::shadowRoot() const
 {
-    return hasRareData() ? elementRareData()->shadowRoot() : 0;
+    return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
 }
 
 
@@ -2279,7 +2279,7 @@ void Element::blur()
         if (Frame* frame = document().frame())
             frame->page()->focusController().setFocusedElement(0, frame);
         else
-            document().setFocusedElement(0);
+            document().setFocusedElement(nullptr);
     }
 }
 
@@ -2670,12 +2670,12 @@ void Element::normalizeAttributes()
 
 PseudoElement* Element::beforePseudoElement() const
 {
-    return hasRareData() ? elementRareData()->beforePseudoElement() : 0;
+    return hasRareData() ? elementRareData()->beforePseudoElement() : nullptr;
 }
 
 PseudoElement* Element::afterPseudoElement() const
 {
-    return hasRareData() ? elementRareData()->afterPseudoElement() : 0;
+    return hasRareData() ? elementRareData()->afterPseudoElement() : nullptr;
 }
 
 void Element::setBeforePseudoElement(Ref<PseudoElement>&& element)
