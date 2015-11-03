@@ -1,3 +1,42 @@
+2015-11-03  Michael Saboff  <msaboff@apple.com>
+
+        Rename InlineCallFrame:: getCallerSkippingDeadFrames to something more descriptive
+        https://bugs.webkit.org/show_bug.cgi?id=150832
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed InlineCallFrame::getCallerSkippingDeadFrames() to getCallerSkippingTailCalls().
+        Did similar renaming to helper InlineCallFrame::computeCallerSkippingTailCalls() and
+        InlineCallFrame::getCallerInlineFrameSkippingTailCalls().
+
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::computeCallerSkippingTailCalls):
+        (JSC::InlineCallFrame::getCallerSkippingTailCalls):
+        (JSC::InlineCallFrame::getCallerInlineFrameSkippingTailCalls):
+        (JSC::InlineCallFrame::computeCallerSkippingDeadFrames): Deleted.
+        (JSC::InlineCallFrame::getCallerSkippingDeadFrames): Deleted.
+        (JSC::InlineCallFrame::getCallerInlineFrameSkippingDeadFrames): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::allInlineFramesAreTailCalls):
+        (JSC::DFG::ByteCodeParser::currentCodeOrigin):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::codeOriginDescriptionOfCallSite):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::gotoNextFrame):
+
 2015-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         B3/Air should use bubble sort for their insertion sets, because it's faster than std::stable_sort

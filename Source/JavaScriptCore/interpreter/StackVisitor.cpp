@@ -59,7 +59,7 @@ void StackVisitor::gotoNextFrame()
 #if ENABLE(DFG_JIT)
     if (m_frame.isInlinedFrame()) {
         InlineCallFrame* inlineCallFrame = m_frame.inlineCallFrame();
-        CodeOrigin* callerCodeOrigin = inlineCallFrame->getCallerSkippingDeadFrames();
+        CodeOrigin* callerCodeOrigin = inlineCallFrame->getCallerSkippingTailCalls();
         if (!callerCodeOrigin) {
             while (inlineCallFrame) {
                 readInlinedFrame(m_frame.callFrame(), &inlineCallFrame->directCaller);

@@ -762,7 +762,7 @@ public:
             for (VirtualRegister reg = exclusionStart; reg < exclusionEnd; reg += 1)
                 functor(reg);
             
-            codeOriginPtr = inlineCallFrame->getCallerSkippingDeadFrames();
+            codeOriginPtr = inlineCallFrame->getCallerSkippingTailCalls();
 
             // The first inline call frame could be an inline tail call
             if (!codeOriginPtr)

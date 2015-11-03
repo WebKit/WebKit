@@ -652,7 +652,7 @@ private:
 
     bool allInlineFramesAreTailCalls()
     {
-        return !inlineCallFrame() || !inlineCallFrame()->getCallerSkippingDeadFrames();
+        return !inlineCallFrame() || !inlineCallFrame()->getCallerSkippingTailCalls();
     }
 
     CodeOrigin currentCodeOrigin()
@@ -815,7 +815,7 @@ private:
                         prediction = SpecFullTop;
                         break;
                     }
-                    CodeOrigin* codeOrigin = inlineCallFrame()->getCallerSkippingDeadFrames();
+                    CodeOrigin* codeOrigin = inlineCallFrame()->getCallerSkippingTailCalls();
                     if (!codeOrigin) {
                         prediction = SpecFullTop;
                         break;

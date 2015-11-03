@@ -146,7 +146,7 @@ struct InlineCallFrame {
         return isTail(static_cast<Kind>(kind));
     }
 
-    static CodeOrigin* computeCallerSkippingDeadFrames(InlineCallFrame* inlineCallFrame, Kind* callerCallKind = nullptr)
+    static CodeOrigin* computeCallerSkippingTailCalls(InlineCallFrame* inlineCallFrame, Kind* callerCallKind = nullptr)
     {
         CodeOrigin* codeOrigin;
         bool tailCallee;
@@ -167,14 +167,14 @@ struct InlineCallFrame {
         return codeOrigin;
     }
 
-    CodeOrigin* getCallerSkippingDeadFrames(Kind* callerCallKind = nullptr)
+    CodeOrigin* getCallerSkippingTailCalls(Kind* callerCallKind = nullptr)
     {
-        return computeCallerSkippingDeadFrames(this, callerCallKind);
+        return computeCallerSkippingTailCalls(this, callerCallKind);
     }
 
-    InlineCallFrame* getCallerInlineFrameSkippingDeadFrames()
+    InlineCallFrame* getCallerInlineFrameSkippingTailCalls()
     {
-        CodeOrigin* caller = getCallerSkippingDeadFrames();
+        CodeOrigin* caller = getCallerSkippingTailCalls();
         return caller ? caller->inlineCallFrame : nullptr;
     }
     

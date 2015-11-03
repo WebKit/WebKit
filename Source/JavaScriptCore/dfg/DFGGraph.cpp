@@ -1000,7 +1000,7 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
             && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->arguments.size())
             return true;
         
-        codeOriginPtr = inlineCallFrame->getCallerSkippingDeadFrames();
+        codeOriginPtr = inlineCallFrame->getCallerSkippingTailCalls();
 
         // The first inline call frame could be an inline tail call
         if (!codeOriginPtr)

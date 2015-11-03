@@ -143,11 +143,11 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
 
     const CodeOrigin* codeOrigin;
-    for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame; codeOrigin = codeOrigin->inlineCallFrame->getCallerSkippingDeadFrames()) {
+    for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame; codeOrigin = codeOrigin->inlineCallFrame->getCallerSkippingTailCalls()) {
         InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
         CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(*codeOrigin);
         InlineCallFrame::Kind trueCallerCallKind;
-        CodeOrigin* trueCaller = inlineCallFrame->getCallerSkippingDeadFrames(&trueCallerCallKind);
+        CodeOrigin* trueCaller = inlineCallFrame->getCallerSkippingTailCalls(&trueCallerCallKind);
         GPRReg callerFrameGPR = GPRInfo::callFrameRegister;
 
         if (!trueCaller) {

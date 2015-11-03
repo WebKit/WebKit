@@ -8744,7 +8744,7 @@ private:
             // to baz and baz is inlined in bar. And then baz makes a tail-call to jaz,
             // and jaz is inlined in baz. We want the callframe for jaz to appear to 
             // have caller be bar.
-            codeOrigin = *codeOrigin.inlineCallFrame->getCallerSkippingDeadFrames();
+            codeOrigin = *codeOrigin.inlineCallFrame->getCallerSkippingTailCalls();
         }
 
         return codeOrigin;
