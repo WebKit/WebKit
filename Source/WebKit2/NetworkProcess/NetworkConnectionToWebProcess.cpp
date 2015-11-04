@@ -30,6 +30,7 @@
 
 #include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
@@ -202,10 +203,10 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
     // FIXME: Do something here.
     notImplemented();
 #else
-    networkProcess.downloadManager().convertHandleToDownload(downloadID, loader->handle(), request, response);
+    networkProcess.downloadManager().convertHandleToDownload(downloadID, loader->networkLoad()->handle(), request, response);
 
     // Unblock the URL connection operation queue.
-    loader->handle()->continueDidReceiveResponse();
+    loader->networkLoad()->handle()->continueDidReceiveResponse();
     
     loader->didConvertHandleToDownload();
 #endif

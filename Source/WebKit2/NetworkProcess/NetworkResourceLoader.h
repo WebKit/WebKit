@@ -31,31 +31,17 @@
 #include "MessageSender.h"
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkLoadClient.h"
 #include "NetworkResourceLoadParameters.h"
 #include "ShareableResource.h"
 #include <WebCore/CacheValidation.h>
-#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/ResourceResponse.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/Timer.h>
-#include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
-
-#if USE(NETWORK_SESSION)
-#include "NetworkSession.h"
-#else
-#include <WebCore/ResourceHandleClient.h>
-#endif
-
-typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
+#include <wtf/Optional.h>
 
 namespace WebCore {
 class BlobDataFileReference;
-#if !USE(NETWORK_SESSION)
-class ResourceHandle;
-#endif
 class ResourceRequest;
 }
 
@@ -63,16 +49,12 @@ namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 class NetworkResourceLoadParameters;
-class RemoteNetworkingContext;
+class NetworkLoad;
 class SandboxExtension;
 
 class NetworkResourceLoader
     : public RefCounted<NetworkResourceLoader>
-#if USE(NETWORK_SESSION)
-    , public NetworkSessionTaskClient
-#else
-    , public WebCore::ResourceHandleClient
-#endif
+    , public NetworkLoadClient
     , public IPC::MessageSender {
 public:
     static Ref<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
@@ -88,12 +70,8 @@ public:
 
     const WebCore::ResourceRequest& originalRequest() const { return m_parameters.request; }
 
-    // Changes with redirects.
-    WebCore::ResourceRequest& currentRequest() { return m_currentRequest; }
+    NetworkLoad* networkLoad() const { return m_networkLoad.get(); }
 
-#if !USE(NETWORK_SESSION)
-    WebCore::ResourceHandle* handle() const { return m_handle.get(); }
-#endif
     void didConvertHandleToDownload();
 
     void start();
@@ -103,7 +81,9 @@ public:
 
 #if PLATFORM(COCOA)
     static size_t fileBackedResourceMinimumSize();
+    virtual void willCacheResponseAsync(CFCachedURLResponseRef) override;
 #endif
+
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::MessageDecoder&);
 
@@ -126,6 +106,16 @@ public:
 
     struct SynchronousLoadData;
 
+    // NetworkLoadClient.
+    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
+    virtual void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override;
+    virtual bool isSynchronous() const override;
+    virtual void willSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
+    virtual ShouldContinueDidReceiveResponse didReceiveResponse(const WebCore::ResourceResponse&) override;
+    virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
+    virtual void didFinishLoading(double finishTime) override;
+    virtual void didFailLoading(const WebCore::ResourceError&) override;
+
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
 
@@ -133,63 +123,12 @@ private:
     virtual IPC::Connection* messageSenderConnection() override;
     virtual uint64_t messageSenderDestinationID() override { return m_parameters.identifier; }
 
-    enum ShouldContinueDidReceiveResponse {
-        Yes,
-        No
-    };
-    ShouldContinueDidReceiveResponse sharedDidReceiveResponse(const WebCore::ResourceResponse&);
-        void sharedWillSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-    void sharedDidReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength);
-    void sharedDidFail(const WebCore::ResourceError&);
-    void sharedDidFinishLoading(double finishTime);
-
-#if USE(NETWORK_SESSION)
-    // NetworkSessionTaskClient.
-    virtual void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, std::function<void(const WebCore::ResourceRequest&)>) final override;
-    virtual void didReceiveChallenge(const WebCore::AuthenticationChallenge&, std::function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>) final override;
-    virtual void didReceiveResponse(const WebCore::ResourceResponse&, std::function<void(ResponseDisposition)>) final override;
-    virtual void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) final override;
-    virtual void didCompleteWithError(const WebCore::ResourceError&) final override;
-#else
-    // ResourceHandleClient
-    virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) override;
-    virtual void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-    virtual void didReceiveResponseAsync(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) override;
-    virtual void didReceiveData(WebCore::ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
-    virtual void didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer>, int encodedDataLength) override;
-    virtual void didFinishLoading(WebCore::ResourceHandle*, double finishTime) override;
-    virtual void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) override;
-    virtual void wasBlocked(WebCore::ResourceHandle*) override;
-    virtual void cannotShowURL(WebCore::ResourceHandle*) override;
-    virtual bool shouldUseCredentialStorage(WebCore::ResourceHandle*) override;
-    virtual void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
-    virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
-    virtual void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
-    virtual bool usesAsyncCallbacks() override { return true; }
-    virtual bool loadingSynchronousXHR() override { return isSynchronous(); }
-
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) override;
-#endif
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    virtual bool supportsDataArray() override;
-    virtual void didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef) override;
-#endif
-#if PLATFORM(COCOA)
-#if USE(CFNETWORK)
-    virtual void willCacheResponseAsync(WebCore::ResourceHandle*, CFCachedURLResponseRef) override;
-#else
-    virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) override;
-#endif
-#endif
-#endif // USE(NETWORK_SESSION)
-
 #if ENABLE(NETWORK_CACHE)
     void didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void validateCacheEntry(std::unique_ptr<NetworkCache::Entry>);
 #endif
 
-    void startNetworkLoad();
+    void startNetworkLoad(const Optional<WebCore::ResourceRequest>& updatedRequest = { });
     void continueDidReceiveResponse();
 
     void cleanup();
@@ -200,8 +139,6 @@ private:
     void bufferingTimerFired();
     bool sendBufferMaybeAborting(const WebCore::SharedBuffer&, size_t encodedDataLength);
 
-    bool isSynchronous() const;
-
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
@@ -211,14 +148,8 @@ private:
 
     RefPtr<NetworkConnectionToWebProcess> m_connection;
 
-    RefPtr<RemoteNetworkingContext> m_networkingContext;
-#if USE(NETWORK_SESSION)
-    RefPtr<NetworkDataTask> m_task;
-#else
-    RefPtr<WebCore::ResourceHandle> m_handle;
-#endif
+    std::unique_ptr<NetworkLoad> m_networkLoad;
 
-    WebCore::ResourceRequest m_currentRequest;
     WebCore::ResourceResponse m_response;
 
     size_t m_bytesReceived;
