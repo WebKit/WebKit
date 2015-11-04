@@ -1689,6 +1689,8 @@ void RenderThemeMac::adjustSearchFieldStyle(StyleResolver& styleResolver, Render
 
 bool RenderThemeMac::paintSearchFieldCancelButton(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
+    if (!o.node())
+        return false;
     Element* input = o.node()->shadowHost();
     if (!input)
         input = downcast<Element>(o.node());
@@ -1771,6 +1773,8 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&,
 
 bool RenderThemeMac::paintSearchFieldResultsDecorationPart(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
+    if (!o.node())
+        return false;
     Node* input = o.node()->shadowHost();
     if (!input)
         input = o.node();
