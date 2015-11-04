@@ -845,6 +845,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
     if (!_highlightView) {
         _highlightView = adoptNS([[_UIHighlightView alloc] initWithFrame:CGRectZero]);
+        [_highlightView setUserInteractionEnabled:NO];
         [_highlightView setOpaque:NO];
         [_highlightView setCornerRadius:minimumTapHighlightRadius];
     }
