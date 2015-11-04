@@ -1049,10 +1049,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_positionInformation.touchCalloutEnabled)
         return nil;
 
-    if (equalIgnoringCase(_positionInformation.clickableElementName, "IMG"))
+    if (_positionInformation.isImage)
         return @selector(_showImageSheet);
 
-    if (equalIgnoringCase(_positionInformation.clickableElementName, "A")) {
+    if (_positionInformation.isLink) {
         NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
         if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
             return @selector(_showDataDetectorsSheet);
@@ -1094,7 +1094,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             // This is a different node than the assisted one.
             // Prevent the gesture if there is no node.
             // Allow the gesture if it is a node that wants highlight or if there is an action for it.
-            if (_positionInformation.clickableElementName.isNull())
+            if (!_positionInformation.isClickableElement)
                 return NO;
             return [self _actionForLongPress] != nil;
         } else {
@@ -1208,7 +1208,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
-        if (_highlightLongPressCanClick && !_positionInformation.clickableElementName.isEmpty()) {
+        if (_highlightLongPressCanClick && _positionInformation.isClickableElement) {
             [self _attemptClickAtLocation:[gestureRecognizer startPoint]];
             [self _finishInteraction];
         } else
@@ -3434,11 +3434,11 @@ static bool isAssistableInputType(InputType type)
         return NO;
 
     [self ensurePositionInformationIsUpToDate:position];
-    if (equalIgnoringCase(_positionInformation.clickableElementName, "A") && equalIgnoringCase(_positionInformation.clickableElementName, "IMG"))
+    if (!_positionInformation.isLink && !_positionInformation.isImage)
         return NO;
     
     String absoluteLinkURL = _positionInformation.url;
-    if (equalIgnoringCase(_positionInformation.clickableElementName, "A")) {
+    if (_positionInformation.isLink) {
         if (absoluteLinkURL.isEmpty())
             return NO;
         if (WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
@@ -3457,8 +3457,8 @@ static bool isAssistableInputType(InputType type)
 
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     BOOL supportsImagePreview = [uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)];
-    BOOL canShowImagePreview = equalIgnoringCase(_positionInformation.clickableElementName, "IMG") && supportsImagePreview;
-    BOOL canShowLinkPreview = equalIgnoringCase(_positionInformation.clickableElementName, "A") || canShowImagePreview;
+    BOOL canShowImagePreview = _positionInformation.isImage && supportsImagePreview;
+    BOOL canShowLinkPreview = _positionInformation.isLink || canShowImagePreview;
     BOOL useImageURLForLink = NO;
 
     if (canShowImagePreview && _positionInformation.isAnimatedImage) {

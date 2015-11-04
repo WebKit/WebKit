@@ -39,8 +39,10 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
     encoder << isSelectable;
     encoder << isNearMarkedText;
     encoder << touchCalloutEnabled;
+    encoder << isLink;
+    encoder << isImage;
     encoder << isAnimatedImage;
-    encoder << clickableElementName;
+    encoder << isClickableElement;
     encoder << url;
     encoder << imageURL;
     encoder << title;
@@ -70,10 +72,16 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
     if (!decoder.decode(result.touchCalloutEnabled))
         return false;
 
+    if (!decoder.decode(result.isLink))
+        return false;
+
+    if (!decoder.decode(result.isImage))
+        return false;
+
     if (!decoder.decode(result.isAnimatedImage))
         return false;
     
-    if (!decoder.decode(result.clickableElementName))
+    if (!decoder.decode(result.isClickableElement))
         return false;
 
     if (!decoder.decode(result.url))

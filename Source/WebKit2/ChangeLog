@@ -1,3 +1,39 @@
+2015-11-04  Beth Dakin  <bdakin@apple.com>
+
+        Link preview doesn't work on XHTML pages with Content-Type header as 
+        `application/xhtml+xml`
+        https://bugs.webkit.org/show_bug.cgi?id=150740
+        -and corresponding-
+        rdar://problem/23063585
+
+        Reviewed by Darin Adler.
+
+        My original fix for this bug was incorrect in the presence of non-HTML 
+        elements that happen to have the same local name as HTML elements. Since it 
+        seems silly to have all of this logic in the UI process to determine whether 
+        to treat something as a link or an image, this patch fixes the bug by adding 
+        isLink and isImage to InteractionInformationAtPosition in order to simplify 
+        everything. The only remaining uses of clickableElementName just use it to 
+        compare against isNull and isEmpty, so that can be a bool too.
+
+        Add isLink and isImage, and turn clickableElementName into isClickableElement
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h:
+
+        Use the new isLink, isImage, and isClickableElement
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _actionForLongPress]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+
+        Set everything correctly.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2015-11-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix crashing fast-clicking WK2 tests on iOS

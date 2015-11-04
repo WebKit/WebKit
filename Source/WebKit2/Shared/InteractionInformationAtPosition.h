@@ -43,8 +43,10 @@ struct InteractionInformationAtPosition {
     bool isSelectable { false };
     bool isNearMarkedText { false };
     bool touchCalloutEnabled { true };
+    bool isLink { false };
+    bool isImage { false };
     bool isAnimatedImage { false };
-    String clickableElementName;
+    bool isClickableElement { false };
     String url;
     String imageURL;
     String title;
