@@ -45,16 +45,6 @@ JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context
 {
 }
 
-void JSGlobalObjectDebuggerAgent::startListeningScriptDebugServer()
-{
-    scriptDebugServer().addListener(this);
-}
-
-void JSGlobalObjectDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDestroyed)
-{
-    scriptDebugServer().removeListener(this, isBeingDestroyed);
-}
-
 InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& error, const int* executionContextId)
 {
     if (executionContextId) {

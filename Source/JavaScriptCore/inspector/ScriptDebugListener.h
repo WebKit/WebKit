@@ -31,7 +31,6 @@
 #define ScriptDebugListener_h
 
 #include "debugger/Debugger.h"
-#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace Deprecated {
@@ -44,26 +43,16 @@ struct ScriptBreakpointAction;
 
 class ScriptDebugListener {
 public:
-    class Script {
-    public:
-        Script()
-            : startLine(0)
-            , startColumn(0)
-            , endLine(0)
-            , endColumn(0)
-            , isContentScript(false)
-        {
-        }
-
+    struct Script {
         String url;
         String source;
         String sourceURL;
         String sourceMappingURL;
-        int startLine;
-        int startColumn;
-        int endLine;
-        int endColumn;
-        bool isContentScript;
+        int startLine {0};
+        int startColumn {0};
+        int endLine {0};
+        int endColumn {0};
+        bool isContentScript {false};
     };
 
     virtual ~ScriptDebugListener() { }

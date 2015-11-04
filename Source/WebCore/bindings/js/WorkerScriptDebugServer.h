@@ -52,13 +52,12 @@ public:
 
     virtual void recompileAllJSFunctions() override;
 
-    void addListener(Inspector::ScriptDebugListener*);
-    void removeListener(Inspector::ScriptDebugListener*, bool skipRecompile);
-
     void interruptAndRunTask(std::unique_ptr<Task>);
 
 private:
-    virtual ListenerSet& getListeners() override { return m_listeners; }
+    virtual void attachDebugger() override;
+    virtual void detachDebugger(bool isBeingDestroyed) override;
+
     virtual void didPause(JSC::JSGlobalObject*) override { }
     virtual void didContinue(JSC::JSGlobalObject*) override { }
     virtual void runEventLoopWhilePaused() override;
@@ -66,7 +65,6 @@ private:
     virtual void reportException(JSC::ExecState*, JSC::Exception*) const override;
 
     WorkerGlobalScope& m_workerGlobalScope;
-    ListenerSet m_listeners;
     String m_debuggerTaskMode;
 };
 

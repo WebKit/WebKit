@@ -87,7 +87,7 @@ void InspectorDebuggerAgent::enable()
         return;
 
     scriptDebugServer().setBreakpointsActivated(true);
-    startListeningScriptDebugServer();
+    scriptDebugServer().addListener(this);
 
     if (m_listener)
         m_listener->debuggerWasEnabled();
@@ -100,7 +100,7 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     if (!m_enabled)
         return;
 
-    stopListeningScriptDebugServer(isBeingDestroyed);
+    scriptDebugServer().removeListener(this, isBeingDestroyed);
     clearInspectorBreakpointState();
 
     ASSERT(m_javaScriptBreakpoints.isEmpty());

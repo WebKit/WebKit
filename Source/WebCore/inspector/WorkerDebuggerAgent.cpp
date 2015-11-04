@@ -106,16 +106,6 @@ void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* th
         agent->m_scriptDebugServer.interruptAndRunTask(std::make_unique<RunInspectorCommandsTask>(thread, &agent->m_inspectedWorkerGlobalScope));
 }
 
-void WorkerDebuggerAgent::startListeningScriptDebugServer()
-{
-    scriptDebugServer().addListener(this);
-}
-
-void WorkerDebuggerAgent::stopListeningScriptDebugServer(bool isBeingDestroyed)
-{
-    scriptDebugServer().removeListener(this, isBeingDestroyed);
-}
-
 void WorkerDebuggerAgent::breakpointActionLog(JSC::ExecState*, const String& message)
 {
     m_inspectedWorkerGlobalScope.addConsoleMessage(MessageSource::JS, MessageLevel::Log, message);

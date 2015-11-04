@@ -116,8 +116,6 @@ protected:
     InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
 
-    virtual void startListeningScriptDebugServer() = 0;
-    virtual void stopListeningScriptDebugServer(bool skipRecompile) = 0;
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
 

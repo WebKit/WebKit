@@ -64,8 +64,6 @@ protected:
     virtual String sourceMapURLForScript(const Script&) override;
 
 private:
-    virtual void startListeningScriptDebugServer() override;
-    virtual void stopListeningScriptDebugServer(bool isBeingDestroyed) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
 

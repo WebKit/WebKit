@@ -1,3 +1,48 @@
+2015-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove duplication among ScriptDebugServer subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=150860
+
+        Reviewed by Timothy Hatcher.
+
+        ScriptDebugServer expects a list of listeners to dispatch events to.
+        However each of its subclasses had their own implementation of the
+        list because of different handling when the first was added or when
+        the last was removed. Extract common code into ScriptDebugServer
+        which simplifies things.
+
+        Subclasses now only implement a virtual methods "attachDebugger"
+        and "detachDebugger" which is the unique work done when the first
+        listener is added or last is removed.
+
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        (Inspector::JSGlobalObjectScriptDebugServer::attachDebugger):
+        (Inspector::JSGlobalObjectScriptDebugServer::detachDebugger):
+        (Inspector::JSGlobalObjectScriptDebugServer::addListener): Deleted.
+        (Inspector::JSGlobalObjectScriptDebugServer::removeListener): Deleted.
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionLog):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionSound):
+        (Inspector::ScriptDebugServer::dispatchBreakpointActionProbe):
+        (Inspector::ScriptDebugServer::sourceParsed):
+        (Inspector::ScriptDebugServer::dispatchFunctionToListeners):
+        (Inspector::ScriptDebugServer::addListener):
+        (Inspector::ScriptDebugServer::removeListener):
+        * inspector/ScriptDebugServer.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::enable):
+        (Inspector::InspectorDebuggerAgent::disable):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        (Inspector::JSGlobalObjectDebuggerAgent::startListeningScriptDebugServer): Deleted.
+        (Inspector::JSGlobalObjectDebuggerAgent::stopListeningScriptDebugServer): Deleted.
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+
+        * inspector/ScriptDebugListener.h:
+        (Inspector::ScriptDebugListener::Script::Script):
+        Drive-by convert Script to a struct, it has public fields and is used as such.
+
 2015-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         B3::LowerToAir should recognize Neg (i.e. Sub($0, value))

@@ -57,32 +57,17 @@ PageScriptDebugServer::PageScriptDebugServer(Page& page)
 {
 }
 
-void PageScriptDebugServer::addListener(ScriptDebugListener* listener)
+void PageScriptDebugServer::attachDebugger()
 {
-    if (!listener)
-        return;
-
-    bool wasEmpty = m_listeners.isEmpty();
-    m_listeners.add(listener);
-
-    if (wasEmpty) {
-        m_page.setDebugger(this);
-        recompileAllJSFunctions();
-    }
+    m_page.setDebugger(this);
+    recompileAllJSFunctions();
 }
 
-void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, bool isBeingDestroyed)
+void PageScriptDebugServer::detachDebugger(bool isBeingDestroyed)
 {
-    if (!listener)
-        return;
-
-    m_listeners.remove(listener);
-
-    if (m_listeners.isEmpty()) {
-        m_page.setDebugger(nullptr);
-        if (!isBeingDestroyed)
-            recompileAllJSFunctions();
-    }
+    m_page.setDebugger(nullptr);
+    if (!isBeingDestroyed)
+        recompileAllJSFunctions();
 }
 
 void PageScriptDebugServer::recompileAllJSFunctions()

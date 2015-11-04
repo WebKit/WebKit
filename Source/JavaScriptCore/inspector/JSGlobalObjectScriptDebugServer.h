@@ -27,7 +27,6 @@
 #define JSGlobalObjectScriptDebugServer_h
 
 #include "ScriptDebugServer.h"
-#include <wtf/Forward.h>
 
 namespace Inspector {
 
@@ -37,13 +36,12 @@ public:
     JSGlobalObjectScriptDebugServer(JSC::JSGlobalObject&);
     virtual ~JSGlobalObjectScriptDebugServer() { }
 
-    void addListener(ScriptDebugListener*);
-    void removeListener(ScriptDebugListener*, bool isBeingDestroyed);
-
     JSC::JSGlobalObject& globalObject() const { return m_globalObject; }
 
 private:
-    virtual ListenerSet& getListeners() override { return m_listeners; }
+    virtual void attachDebugger() override;
+    virtual void detachDebugger(bool isBeingDestroyed) override;
+
     virtual void didPause(JSC::JSGlobalObject*) override { }
     virtual void didContinue(JSC::JSGlobalObject*) override { }
     virtual void runEventLoopWhilePaused() override;
@@ -54,7 +52,6 @@ private:
     // or some other async operation in a pure JSContext) we can ignore exceptions reported here.
     virtual void reportException(JSC::ExecState*, JSC::Exception*) const override { }
 
-    ListenerSet m_listeners;
     JSC::JSGlobalObject& m_globalObject;
 };
 

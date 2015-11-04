@@ -42,8 +42,6 @@ public:
 
     virtual JSGlobalObjectScriptDebugServer& scriptDebugServer() override { return m_scriptDebugServer; }
 
-    virtual void startListeningScriptDebugServer() override;
-    virtual void stopListeningScriptDebugServer(bool isBeingDestroyed) override;
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     virtual void breakpointActionLog(JSC::ExecState*, const String&) override;

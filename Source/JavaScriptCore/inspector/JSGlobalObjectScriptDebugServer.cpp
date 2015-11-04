@@ -40,34 +40,17 @@ JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer(JSGlobalObject&
 {
 }
 
-void JSGlobalObjectScriptDebugServer::addListener(ScriptDebugListener* listener)
+void JSGlobalObjectScriptDebugServer::attachDebugger()
 {
-    if (!listener)
-        return;
-
-    bool wasEmpty = m_listeners.isEmpty();
-    m_listeners.add(listener);
-
-    // First listener. Attach the debugger to the JSGlobalObject.
-    if (wasEmpty) {
-        attach(&m_globalObject);
-        recompileAllJSFunctions();
-    }
+    attach(&m_globalObject);
+    recompileAllJSFunctions();
 }
 
-void JSGlobalObjectScriptDebugServer::removeListener(ScriptDebugListener* listener, bool isBeingDestroyed)
+void JSGlobalObjectScriptDebugServer::detachDebugger(bool isBeingDestroyed)
 {
-    if (!listener)
-        return;
-
-    m_listeners.remove(listener);
-
-    // Last listener. Detach the debugger from the JSGlobalObject.
-    if (m_listeners.isEmpty()) {
-        detach(&m_globalObject, isBeingDestroyed ? Debugger::GlobalObjectIsDestructing : Debugger::TerminatingDebuggingSession);
-        if (!isBeingDestroyed)
-            recompileAllJSFunctions();
-    }
+    detach(&m_globalObject, isBeingDestroyed ? Debugger::GlobalObjectIsDestructing : Debugger::TerminatingDebuggingSession);
+    if (!isBeingDestroyed)
+        recompileAllJSFunctions();
 }
 
 void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
@@ -81,4 +64,3 @@ void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
 }
 
 } // namespace Inspector
-

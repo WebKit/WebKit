@@ -36,9 +36,6 @@
 #include "debugger/Debugger.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -59,6 +56,9 @@ public:
 
     const BreakpointActions& getActionsForBreakpoint(JSC::BreakpointID);
 
+    void addListener(ScriptDebugListener*);
+    void removeListener(ScriptDebugListener*, bool isBeingDestroyed);
+
 protected:
     typedef HashSet<ScriptDebugListener*> ListenerSet;
     typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);
@@ -66,7 +66,9 @@ protected:
     ScriptDebugServer(JSC::VM&, bool isInWorkerThread = false);
     ~ScriptDebugServer();
 
-    virtual ListenerSet& getListeners() = 0;
+    virtual void attachDebugger() = 0;
+    virtual void detachDebugger(bool isBeingDestroyed) = 0;
+
     virtual void didPause(JSC::JSGlobalObject*) = 0;
     virtual void didContinue(JSC::JSGlobalObject*) = 0;
     virtual void runEventLoopWhilePaused() = 0;
@@ -99,9 +101,10 @@ private:
 
     Deprecated::ScriptValue exceptionOrCaughtValue(JSC::ExecState*);
 
-    bool m_callingListeners {false};
-
     BreakpointIDToActionsMap m_breakpointIDToActions;
+
+    ListenerSet m_listeners;
+    bool m_callingListeners {false};
 
     unsigned m_nextProbeSampleId {1};
     unsigned m_currentProbeBatchId {0};

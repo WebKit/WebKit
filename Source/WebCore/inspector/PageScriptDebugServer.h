@@ -28,7 +28,6 @@
 #define PageScriptDebugServer_h
 
 #include <inspector/ScriptDebugServer.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -43,13 +42,12 @@ public:
     PageScriptDebugServer(Page&);
     virtual ~PageScriptDebugServer() { }
 
-    void addListener(Inspector::ScriptDebugListener*);
-    void removeListener(Inspector::ScriptDebugListener*, bool isBeingDestroyed);
-
     virtual void recompileAllJSFunctions() override;
 
 private:
-    virtual ListenerSet& getListeners() override { return m_listeners; }
+    virtual void attachDebugger() override;
+    virtual void detachDebugger(bool isBeingDestroyed) override;
+
     virtual void didPause(JSC::JSGlobalObject*) override;
     virtual void didContinue(JSC::JSGlobalObject*) override;
     virtual void runEventLoopWhilePaused() override;
@@ -63,7 +61,6 @@ private:
     void setJavaScriptPaused(Frame*, bool paused);
     void setJavaScriptPaused(FrameView*, bool paused);
 
-    ListenerSet m_listeners;
     Page& m_page;
 };
 

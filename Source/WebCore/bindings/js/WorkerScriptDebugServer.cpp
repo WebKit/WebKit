@@ -51,33 +51,18 @@ WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope& context, con
 {
 }
 
-void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
+void WorkerScriptDebugServer::attachDebugger()
 {
-    if (!listener)
-        return;
-
-    bool wasEmpty = m_listeners.isEmpty();
-    m_listeners.add(listener);
-
-    if (wasEmpty) {
-        m_workerGlobalScope.script()->attachDebugger(this);
-        recompileAllJSFunctions();
-    }
+    m_workerGlobalScope.script()->attachDebugger(this);
+    recompileAllJSFunctions();
 }
 
-void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener, bool skipRecompile)
+void WorkerScriptDebugServer::detachDebugger(bool skipRecompile)
 {
-    if (!listener)
-        return;
-
-    m_listeners.remove(listener);
-
-    if (m_listeners.isEmpty()) {
-        if (m_workerGlobalScope.script())
-            m_workerGlobalScope.script()->detachDebugger(this);
-        if (!skipRecompile)
-            recompileAllJSFunctions();
-    }
+    if (m_workerGlobalScope.script())
+        m_workerGlobalScope.script()->detachDebugger(this);
+    if (!skipRecompile)
+        recompileAllJSFunctions();
 }
 
 void WorkerScriptDebugServer::recompileAllJSFunctions()
