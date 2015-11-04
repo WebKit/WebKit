@@ -84,6 +84,7 @@ bool Settings::gUsesOverlayScrollbars = false;
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
     
+bool Settings::gShouldRewriteConstAsVar = false;
 bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
 bool Settings::gLowPowerVideoAudioBufferSizeEnabled = false;
 

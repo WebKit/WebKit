@@ -1,3 +1,18 @@
+2015-11-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Provide a way to turn off const in WebKit2.
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2015-11-03  Alex Christensen  <achristensen@webkit.org>
 
         Create a NetworkSession for each SessionID

@@ -107,6 +107,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << shouldUseFontSmoothing;
     encoder << fontWhitelist;
     encoder << iconDatabaseEnabled;
+    encoder << shouldRewriteConstAsVar;
     encoder << terminationTimeout;
     encoder << languages;
     encoder << textCheckerState;
@@ -238,6 +239,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.fontWhitelist))
         return false;
     if (!decoder.decode(parameters.iconDatabaseEnabled))
+        return false;
+    if (!decoder.decode(parameters.shouldRewriteConstAsVar))
         return false;
     if (!decoder.decode(parameters.terminationTimeout))
         return false;

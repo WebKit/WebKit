@@ -44,6 +44,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <sys/param.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -173,6 +174,10 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.shouldEnableJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCJITEnabledDefaultsKey];
     parameters.shouldEnableFTLJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];
     parameters.shouldEnableMemoryPressureReliefLogging = [[NSUserDefaults standardUserDefaults] boolForKey:@"LogMemoryJetsamDetails"];
+
+#if PLATFORM(MAC)
+    parameters.shouldRewriteConstAsVar = applicationIsIBooks();
+#endif
 
 #if HAVE(HOSTED_CORE_ANIMATION)
 #if !PLATFORM(IOS)
