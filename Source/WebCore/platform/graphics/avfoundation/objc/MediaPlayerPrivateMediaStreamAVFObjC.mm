@@ -122,7 +122,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 
     m_mediaStreamPrivate = &stream;
     m_mediaStreamPrivate->addObserver(*this);
-    m_mediaStreamPrivate->startProducingData();
 
     m_previewLayer = nullptr;
     m_ended = !m_mediaStreamPrivate->active();
@@ -453,6 +452,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setReadyState(MediaPlayer::ReadyState
         return;
 
     m_readyState = readyState;
+    characteristicsChanged();
 
     m_player->readyStateChanged();
 }

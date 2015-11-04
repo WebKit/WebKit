@@ -63,8 +63,6 @@ public:
         virtual void sourceStopped() = 0;
         virtual void sourceMutedChanged() = 0;
         virtual void sourceStatesChanged() = 0;
-        virtual void sourceProducingDataChanged() = 0;
-        virtual void sourceEnabledChanged() = 0;
 
         // Observer state queries.
         virtual bool preventSourceFromStopping() = 0;
@@ -101,16 +99,12 @@ public:
     virtual bool remote() const { return m_remote; }
     virtual void setRemote(bool remote) { m_remote = remote; }
 
-    virtual void setEnabled(bool);
-    virtual bool enabled() const { return m_enabled; }
-
     void addObserver(Observer*);
     void removeObserver(Observer*);
 
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
     virtual bool isProducingData() const { return false; }
-    virtual void isProducingDataDidChange();
 
     void stop(Observer* callingObserver = nullptr);
     void requestStop(Observer* callingObserver = nullptr);
@@ -137,7 +131,6 @@ private:
     bool m_muted;
     bool m_readonly;
     bool m_remote;
-    bool m_enabled { true };
     
     unsigned m_fitnessScore;
 };

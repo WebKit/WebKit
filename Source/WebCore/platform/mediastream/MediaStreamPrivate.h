@@ -103,7 +103,6 @@ private:
     void trackEnded(MediaStreamTrackPrivate&) override { }
     void trackMutedChanged(MediaStreamTrackPrivate&) override;
     void trackStatesChanged(MediaStreamTrackPrivate&) override;
-    void trackProducingDataChanged(MediaStreamTrackPrivate&) override;
     void trackEnabledChanged(MediaStreamTrackPrivate&) override;
 
     void characteristicsChanged();

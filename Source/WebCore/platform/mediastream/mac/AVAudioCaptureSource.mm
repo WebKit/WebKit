@@ -164,7 +164,7 @@ static bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBa
 
 void AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)
 {
-    if (!enabled())
+    if (muted())
         return;
 
     CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);

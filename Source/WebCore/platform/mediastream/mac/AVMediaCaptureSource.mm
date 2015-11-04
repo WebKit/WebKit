@@ -210,7 +210,6 @@ void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
             return;
 
         m_isRunning = state;
-        isProducingDataDidChange();
     });
 }
 

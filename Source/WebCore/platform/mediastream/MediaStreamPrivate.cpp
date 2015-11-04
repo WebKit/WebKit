@@ -273,13 +273,6 @@ void MediaStreamPrivate::trackEnabledChanged(MediaStreamTrackPrivate&)
     });
 }
 
-void MediaStreamPrivate::trackProducingDataChanged(MediaStreamTrackPrivate&)
-{
-    scheduleDeferredTask([this] {
-        characteristicsChanged();
-    });
-}
-
 void MediaStreamPrivate::scheduleDeferredTask(std::function<void()> function)
 {
     ASSERT(function);

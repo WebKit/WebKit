@@ -278,7 +278,7 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
 {
     // Ignore frames delivered when the session is not running, we want to hang onto the last image
     // delivered before it stopped.
-    if (m_lastImage && (!isProducingData() || !enabled()))
+    if (m_lastImage && (!isProducingData() || muted()))
         return;
 
     CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer.get());

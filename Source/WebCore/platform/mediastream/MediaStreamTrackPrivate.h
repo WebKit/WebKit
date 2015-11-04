@@ -48,7 +48,6 @@ public:
         virtual void trackEnded(MediaStreamTrackPrivate&) = 0;
         virtual void trackMutedChanged(MediaStreamTrackPrivate&) = 0;
         virtual void trackStatesChanged(MediaStreamTrackPrivate&) = 0;
-        virtual void trackProducingDataChanged(MediaStreamTrackPrivate&) = 0;
         virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
     };
     
@@ -101,9 +100,7 @@ private:
     void sourceStopped() override final;
     void sourceMutedChanged() override final;
     void sourceStatesChanged() override final;
-    void sourceProducingDataChanged() override final;
     bool preventSourceFromStopping() override final;
-    void sourceEnabledChanged() override final;
 
     Vector<Observer*> m_observers;
     RefPtr<RealtimeMediaSource> m_source;

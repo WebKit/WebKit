@@ -178,18 +178,6 @@ void MediaStreamTrackPrivate::sourceStatesChanged()
         observer->trackStatesChanged(*this);
 }
 
-void MediaStreamTrackPrivate::sourceProducingDataChanged()
-{
-    for (auto& observer : m_observers)
-        observer->trackProducingDataChanged(*this);
-}
-
-void MediaStreamTrackPrivate::sourceEnabledChanged()
-{
-    for (auto& observer : m_observers)
-        observer->trackEnabledChanged(*this);
-}
-
 bool MediaStreamTrackPrivate::preventSourceFromStopping()
 {
     return !m_isEnded;
