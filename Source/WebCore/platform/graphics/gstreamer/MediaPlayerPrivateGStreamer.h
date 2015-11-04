@@ -33,6 +33,7 @@
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Forward.h>
+#include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/glib/GThreadSafeMainLoopSource.h>
 
@@ -188,6 +189,8 @@ private:
     MediaTime totalFrameDelay() override { return MediaTime::zeroTime(); }
 #endif
 
+    void readyTimerFired();
+
     WeakPtrFactory<MediaPlayerPrivateGStreamer> m_weakPtrFactory;
 
     GRefPtr<GstElement> m_source;
@@ -229,7 +232,7 @@ private:
     GThreadSafeMainLoopSource m_textTimerHandler;
     GThreadSafeMainLoopSource m_videoTimerHandler;
     GThreadSafeMainLoopSource m_videoCapsTimerHandler;
-    GThreadSafeMainLoopSource m_readyTimerHandler;
+    RunLoop::Timer<MediaPlayerPrivateGStreamer> m_readyTimerHandler;
     mutable unsigned long long m_totalBytes;
     URL m_url;
     bool m_preservesPitch;
