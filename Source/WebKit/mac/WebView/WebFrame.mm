@@ -807,7 +807,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // directly in the document DOM, so serialization is problematic. Our solution is
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
-    return TextIterator::rangeFromLocationAndLength(_private->coreFrame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
+    Element* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
+    if (!element)
+        return nil;
+    return TextIterator::rangeFromLocationAndLength(element, nsrange.location, nsrange.length);
 }
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange

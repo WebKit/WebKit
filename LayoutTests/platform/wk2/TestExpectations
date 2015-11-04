@@ -101,6 +101,7 @@ editing/mac/input/range-for-empty-document.html
 editing/mac/input/replace-invalid-range.html
 editing/mac/input/secure-input.html
 editing/mac/input/text-input-controller.html
+editing/mac/input/text-input-controller-no-editable-no-crash.html
 editing/mac/input/wrapped-line-char-rect.html
 editing/mac/input/NSBackgroundColor-transparent.html
 editing/mac/pasteboard/paste-and-match-style-selector-event.html

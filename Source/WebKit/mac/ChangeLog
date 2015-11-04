@@ -1,3 +1,16 @@
+2015-11-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WK1] Null dereference loading Blink layout test editing/input/text-input-controller-no-editable-no-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=149484
+        <rdar://problem/22811338>
+
+        Reviewed by Darin Adler.
+
+        firstRectForCharacterRange(): don't fall over in an editable-less frame.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _convertToDOMRange:]):
+
 2015-11-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add tvOS and watchOS to SUPPORTED_PLATFORMS
