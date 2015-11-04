@@ -61,7 +61,11 @@ const String& deviceName()
     static LazyNeverDestroyed<String> deviceName;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+#if TARGET_OS_IOS
         auto cfDeviceName = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr)));
+#else
+        auto cfDeviceName = retainPtr(CFSTR("iPhone"));
+#endif
         ASSERT(!cfDeviceName || CFGetTypeID(cfDeviceName.get()) == CFStringGetTypeID());
         deviceName.construct(cfDeviceName.get());
     });
