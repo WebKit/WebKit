@@ -220,6 +220,11 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _processPool->setDownloadClient(std::make_unique<WebKit::DownloadClient>(downloadDelegate));
 }
 
+- (void)_warmInitialProcess
+{
+    _processPool->warmInitialProcess();
+}
+
 @end
 
 #endif // WK_API_ENABLED
