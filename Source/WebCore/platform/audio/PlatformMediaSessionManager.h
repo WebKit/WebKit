@@ -51,6 +51,7 @@ public:
     bool has(PlatformMediaSession::MediaType) const;
     int count(PlatformMediaSession::MediaType) const;
     bool activeAudioSessionRequired() const;
+    bool canProduceAudio() const;
 
     bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
     void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }
@@ -91,6 +92,7 @@ public:
     PlatformMediaSession* currentSession();
 
     void sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession&);
+    void sessionCanProduceAudioChanged(PlatformMediaSession&);
 
 protected:
     friend class PlatformMediaSession;

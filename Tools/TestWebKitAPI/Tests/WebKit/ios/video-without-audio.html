@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    function go() {
+        var video = document.getElementsByTagName('video')[0];
+        video.addEventListener('playing', function() {
+            window.location = 'callback:playing';
+        });
+        video.play();
+    }
+    </script>
+</head>
+<body onload="go()">
+    <video src="video-without-audio.mp4" webkit-playsinline></video>
+</body>
+</html>

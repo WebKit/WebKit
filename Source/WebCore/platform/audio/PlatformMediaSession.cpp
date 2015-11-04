@@ -257,6 +257,24 @@ PlatformMediaSession::DisplayType PlatformMediaSession::displayType() const
     return m_client.displayType();
 }
 
+bool PlatformMediaSession::activeAudioSessionRequired()
+{
+    if (mediaType() == PlatformMediaSession::None)
+        return false;
+    if (state() != PlatformMediaSession::State::Playing)
+        return false;
+    return m_canProduceAudio;
+}
+
+void PlatformMediaSession::setCanProduceAudio(bool canProduceAudio)
+{
+    if (m_canProduceAudio == canProduceAudio)
+        return;
+    m_canProduceAudio = canProduceAudio;
+
+    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged(*this);
+}
+
 String PlatformMediaSessionClient::mediaSessionTitle() const
 {
     return String();
@@ -271,5 +289,6 @@ double PlatformMediaSessionClient::mediaSessionCurrentTime() const
 {
     return MediaPlayer::invalidTime();
 }
+
 }
 #endif

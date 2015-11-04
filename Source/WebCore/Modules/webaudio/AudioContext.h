@@ -316,12 +316,12 @@ private:
     void derefUnfinishedSourceNodes();
 
     // PlatformMediaSessionClient
-    virtual PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::WebAudio; }
-    virtual PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::WebAudio; }
-    virtual void mayResumePlayback(bool shouldResume) override;
-    virtual void suspendPlayback() override;
-    virtual bool canReceiveRemoteControlCommands() const override { return false; }
-    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override { }
+    PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::WebAudio; }
+    PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::WebAudio; }
+    void mayResumePlayback(bool shouldResume) override;
+    void suspendPlayback() override;
+    bool canReceiveRemoteControlCommands() const override { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override { }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
 
     // EventTarget

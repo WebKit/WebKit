@@ -80,10 +80,20 @@ bool PlatformMediaSessionManager::has(PlatformMediaSession::MediaType type) cons
 bool PlatformMediaSessionManager::activeAudioSessionRequired() const
 {
     for (auto* session : m_sessions) {
-        if (session->mediaType() != PlatformMediaSession::None && session->state() == PlatformMediaSession::State::Playing)
+        if (session->activeAudioSessionRequired())
             return true;
     }
     
+    return false;
+}
+
+bool PlatformMediaSessionManager::canProduceAudio() const
+{
+    for (auto* session : m_sessions) {
+        if (session->canProduceAudio())
+            return true;
+    }
+
     return false;
 }
 
@@ -311,6 +321,11 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
 
     if (session.state() != PlatformMediaSession::Interrupted)
         session.beginInterruption(PlatformMediaSession::EnteringBackground);
+}
+
+void PlatformMediaSessionManager::sessionCanProduceAudioChanged(PlatformMediaSession&)
+{
+    updateSessionState();
 }
 
 #if !PLATFORM(COCOA)

@@ -60,8 +60,12 @@ void PlatformMediaSessionManager::updateSessionState()
     if (!Settings::shouldManageAudioSessionCategory())
         return;
 
-    if (has(PlatformMediaSession::Video) || has(PlatformMediaSession::Audio))
-        AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
+    if (has(PlatformMediaSession::Video) || has(PlatformMediaSession::Audio)) {
+        if (canProduceAudio())
+            AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
+        else
+            AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
+    }
     else if (has(PlatformMediaSession::WebAudio))
         AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
 #endif

@@ -725,16 +725,16 @@ private:
 #endif
 
     // PlatformMediaSessionClient Overrides
-    virtual PlatformMediaSession::MediaType mediaType() const override;
-    virtual PlatformMediaSession::MediaType presentationType() const override;
-    virtual PlatformMediaSession::DisplayType displayType() const override;
-    virtual void suspendPlayback() override;
-    virtual void mayResumePlayback(bool shouldResume) override;
-    virtual String mediaSessionTitle() const override;
-    virtual double mediaSessionDuration() const override { return duration(); }
-    virtual double mediaSessionCurrentTime() const override { return currentTime(); }
-    virtual bool canReceiveRemoteControlCommands() const override { return true; }
-    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override;
+    PlatformMediaSession::MediaType mediaType() const override;
+    PlatformMediaSession::MediaType presentationType() const override;
+    PlatformMediaSession::DisplayType displayType() const override;
+    void suspendPlayback() override;
+    void mayResumePlayback(bool shouldResume) override;
+    String mediaSessionTitle() const override;
+    double mediaSessionDuration() const override { return duration(); }
+    double mediaSessionCurrentTime() const override { return currentTime(); }
+    bool canReceiveRemoteControlCommands() const override { return true; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override;
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
 
     virtual void pageMutedStateDidChange() override;

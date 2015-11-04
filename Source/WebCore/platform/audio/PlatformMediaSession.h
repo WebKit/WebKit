@@ -133,6 +133,10 @@ public:
     virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
 #endif
 
+    bool activeAudioSessionRequired();
+    bool canProduceAudio() const { return m_canProduceAudio; }
+    void setCanProduceAudio(bool);
+
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
 
@@ -147,6 +151,7 @@ private:
     int m_interruptionCount { 0 };
     bool m_notifyingClient;
     bool m_isPlayingToWirelessPlaybackTarget { false };
+    bool m_canProduceAudio { false };
 
     friend class PlatformMediaSessionManager;
 };
