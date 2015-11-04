@@ -1,3 +1,30 @@
+2015-11-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: WebInspector.Color should support #rgba and #rrggbbaa syntax
+        https://bugs.webkit.org/show_bug.cgi?id=150894
+
+        Reviewed by Timothy Hatcher.
+
+        Support for hex with alpha color syntax.
+
+        * UserInterface/Models/Color.js:
+        (WebInspector.Color.fromString):
+        (WebInspector.Color.prototype.nextFormat):
+        (WebInspector.Color.prototype.copy):
+        (WebInspector.Color.prototype.toString):
+        (WebInspector.Color.prototype._toShortHEXAlphaString):
+        (WebInspector.Color.prototype._toHEXAlphaString):
+        Add support for new hex syntax. Address some minor issues
+        like case insensitivity and extra comma separate values.
+
+        * UserInterface/Views/CodeMirrorTextMarkers.js:
+        This prevent trailing hex characters from showing up
+        when cycling through color variants.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        When CodeMirror stops treating the new values as error
+        this will give them our hex-color styles.
+
 2015-11-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r191612): Storage sidebar panel tree outline is broken

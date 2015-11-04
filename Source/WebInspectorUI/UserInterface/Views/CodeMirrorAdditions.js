@@ -253,7 +253,7 @@
 
     function extendedCSSToken(stream, state)
     {
-        var hexColorRegex = /#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g;
+        var hexColorRegex = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b/g;
 
         if (state._urlTokenize) {
             // Call the link tokenizer instead.

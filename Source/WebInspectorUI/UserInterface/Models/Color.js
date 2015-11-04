@@ -55,28 +55,46 @@ WebInspector.Color = class Color
         }
 
         // Simple - #hex, rgb(), nickname, hsl()
-        var simple = /^(?:#([0-9a-f]{3,6})|rgb\(([^)]+)\)|(\w+)|hsl\(([^)]+)\))$/i;
+        var simple = /^(?:#([0-9a-f]{3,8})|rgb\(([^)]+)\)|(\w+)|hsl\(([^)]+)\))$/i;
         var match = colorString.match(simple);
         if (match) {
             if (match[1]) { // hex
                 var hex = match[1].toUpperCase();
-                if (hex.length === 3) {
+                var len = hex.length;
+                if (len === 3) {
                     return new WebInspector.Color(WebInspector.Color.Format.ShortHEX, [
                         parseInt(hex.charAt(0) + hex.charAt(0), 16),
                         parseInt(hex.charAt(1) + hex.charAt(1), 16),
                         parseInt(hex.charAt(2) + hex.charAt(2), 16),
                         1
                     ]);
-                } else {
+                } else if (len === 6) {
                     return new WebInspector.Color(WebInspector.Color.Format.HEX, [
                         parseInt(hex.substring(0, 2), 16),
                         parseInt(hex.substring(2, 4), 16),
                         parseInt(hex.substring(4, 6), 16),
                         1
                     ]);
-                }
+                } else if (len === 4) {
+                    return new WebInspector.Color(WebInspector.Color.Format.ShortHEXAlpha, [
+                        parseInt(hex.charAt(0) + hex.charAt(0), 16),
+                        parseInt(hex.charAt(1) + hex.charAt(1), 16),
+                        parseInt(hex.charAt(2) + hex.charAt(2), 16),
+                        parseInt(hex.charAt(3) + hex.charAt(3), 16) / 255
+                    ]);
+                } else if (len === 8) {
+                    return new WebInspector.Color(WebInspector.Color.Format.HEXAlpha, [
+                        parseInt(hex.substring(0, 2), 16),
+                        parseInt(hex.substring(2, 4), 16),
+                        parseInt(hex.substring(4, 6), 16),
+                        parseInt(hex.substring(6, 8), 16) / 255
+                    ]);
+                } else
+                    return null;
             } else if (match[2]) { // rgb
                 var rgb = match[2].split(/\s*,\s*/);
+                if (rgb.length !== 3)
+                    return null;
                 return new WebInspector.Color(WebInspector.Color.Format.RGB, [
                     parseInt(rgb[0]),
                     parseInt(rgb[1]),
@@ -94,6 +112,8 @@ WebInspector.Color = class Color
                     return null;
             } else if (match[4]) { // hsl
                 var hsl = match[4].replace(/%/g, "").split(/\s*,\s*/);
+                if (hsl.length !== 3)
+                    return null;
                 return new WebInspector.Color(WebInspector.Color.Format.HSL, [
                     parseInt(hsl[0]),
                     parseInt(hsl[1]),
@@ -104,11 +124,13 @@ WebInspector.Color = class Color
         }
 
         // Advanced - rgba(), hsla()
-        var advanced = /^(?:rgba\(([^)]+)\)|hsla\(([^)]+)\))$/;
+        var advanced = /^(?:rgba\(([^)]+)\)|hsla\(([^)]+)\))$/i;
         match = colorString.match(advanced);
         if (match) {
             if (match[1]) { // rgba
                 var rgba = match[1].split(/\s*,\s*/);
+                if (rgba.length !== 4)
+                    return null;
                 return new WebInspector.Color(WebInspector.Color.Format.RGBA, [
                     parseInt(rgba[0]),
                     parseInt(rgba[1]),
@@ -117,6 +139,8 @@ WebInspector.Color = class Color
                 ]);
             } else if (match[2]) { // hsla
                 var hsla = match[2].replace(/%/g, "").split(/\s*,\s*/);
+                if (hsla.length !== 4)
+                    return null;
                 return new WebInspector.Color(WebInspector.Color.Format.HSLA, [
                     parseInt(hsla[0]),
                     parseInt(hsla[1]),
@@ -222,20 +246,22 @@ WebInspector.Color = class Color
                 return WebInspector.Color.Format.Nickname;
             if (this.simple)
                 return this._canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEX : WebInspector.Color.Format.HEX;
-            else
-                return WebInspector.Color.Format.Original;
+            return this._canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEXAlpha : WebInspector.Color.Format.HEXAlpha;
 
         case WebInspector.Color.Format.ShortHEX:
             return WebInspector.Color.Format.HEX;
 
+        case WebInspector.Color.Format.ShortHEXAlpha:
+            return WebInspector.Color.Format.HEXAlpha;
+
         case WebInspector.Color.Format.HEX:
+        case WebInspector.Color.Format.HEXAlpha:
             return WebInspector.Color.Format.Original;
 
         case WebInspector.Color.Format.Nickname:
             if (this.simple)
                 return this._canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEX : WebInspector.Color.Format.HEX;
-            else
-                return WebInspector.Color.Format.Original;
+            return this._canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEXAlpha : WebInspector.Color.Format.HEXAlpha;
 
         default:
             console.error("Unknown color format.");
@@ -287,6 +313,8 @@ WebInspector.Color = class Color
         case WebInspector.Color.Format.RGB:
         case WebInspector.Color.Format.HEX:
         case WebInspector.Color.Format.ShortHEX:
+        case WebInspector.Color.Format.HEXAlpha:
+        case WebInspector.Color.Format.ShortHEXAlpha:
         case WebInspector.Color.Format.Nickname:
         case WebInspector.Color.Format.RGBA:
             return new WebInspector.Color(this.format, this.rgba);
@@ -316,6 +344,10 @@ WebInspector.Color = class Color
             return this._toHEXString();
         case WebInspector.Color.Format.ShortHEX:
             return this._toShortHEXString();
+        case WebInspector.Color.Format.HEXAlpha:
+            return this._toHEXAlphaString();
+        case WebInspector.Color.Format.ShortHEXAlpha:
+            return this._toShortHEXAlphaString();
         case WebInspector.Color.Format.Nickname:
             return this._toNicknameString();
         }
@@ -382,6 +414,31 @@ WebInspector.Color = class Color
         var b = this._componentToHexValue(rgba[2]);
 
         return "#" + r + g + b;
+    }
+
+    _toShortHEXAlphaString()
+    {
+        let rgba = this.rgba;
+        let r = this._componentToHexValue(rgba[0]);
+        let g = this._componentToHexValue(rgba[1]);
+        let b = this._componentToHexValue(rgba[2]);
+        let a = this._componentToHexValue(Math.round(rgba[3] * 255));
+
+        if (r[0] === r[1] && g[0] === g[1] && b[0] === b[1] && a[0] === a[1])
+            return "#" + r[0] + g[0] + b[0] + a[0];
+        else
+            return "#" + r + g + b + a;
+    }
+
+    _toHEXAlphaString()
+    {
+        let rgba = this.rgba;
+        let r = this._componentToHexValue(rgba[0]);
+        let g = this._componentToHexValue(rgba[1]);
+        let b = this._componentToHexValue(rgba[2]);
+        let a = this._componentToHexValue(Math.round(rgba[3] * 255));
+
+        return "#" + r + g + b + a;
     }
 
     _toRGBString()
@@ -524,6 +581,8 @@ WebInspector.Color.Format = {
     Nickname: "color-format-nickname",
     HEX: "color-format-hex",
     ShortHEX: "color-format-short-hex",
+    HEXAlpha: "color-format-hex-alpha",
+    ShortHEXAlpha: "color-format-short-hex-alpha",
     RGB: "color-format-rgb",
     RGBA: "color-format-rgba",
     HSL: "color-format-hsl",
