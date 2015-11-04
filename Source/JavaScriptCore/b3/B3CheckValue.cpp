@@ -34,9 +34,23 @@ CheckValue::~CheckValue()
 {
 }
 
-void CheckValue::dumpMeta(PrintStream& out) const
+// Use this form for CheckAdd, CheckSub, and CheckMul.
+CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left, Value* right)
+    : StackmapValue(index, opcode, left->type(), origin)
 {
-    out.print("stackmap = ", stackmap);
+    ASSERT(B3::isInt(type()));
+    ASSERT(left->type() == right->type());
+    ASSERT(opcode == CheckAdd || opcode == CheckSub || opcode == CheckMul);
+    append(ConstrainedValue(left, ValueRep::SomeRegister));
+    append(ConstrainedValue(right, ValueRep::SomeRegister));
+}
+
+// Use this form for Check.
+CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* predicate)
+    : StackmapValue(index, opcode, Void, origin)
+{
+    ASSERT(opcode == Check);
+    append(predicate);
 }
 
 } } // namespace JSC::B3

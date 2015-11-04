@@ -23,38 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "B3ControlValue.h"
+#ifndef B3ConstrainedValue_h
+#define B3ConstrainedValue_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlock.h"
+#include "B3ValueRep.h"
 
 namespace JSC { namespace B3 {
 
-ControlValue::~ControlValue()
-{
-}
+class Value;
 
-void ControlValue::convertToJump(const FrequentedBlock& destination)
-{
-    unsigned index = this->index();
-    Origin origin = this->origin();
-    BasicBlock* owner = this->owner;
+class ConstrainedValue {
+public:
+    ConstrainedValue()
+    {
+    }
 
-    this->ControlValue::~ControlValue();
+    ConstrainedValue(Value* value)
+        : m_value(value)
+        , m_rep(ValueRep::Any)
+    {
+    }
 
-    new (this) ControlValue(index, Jump, origin, destination);
+    ConstrainedValue(Value* value, const ValueRep& rep)
+        : m_value(value)
+        , m_rep(rep)
+    {
+    }
 
-    this->owner = owner;
-}
+    explicit operator bool() const { return m_value || m_rep; }
 
-void ControlValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
-{
-    for (FrequentedBlock successor : m_successors)
-        out.print(comma, successor);
-}
+    Value* value() const { return m_value; }
+    const ValueRep& rep() const { return m_rep; }
+
+    void dump(PrintStream& out) const;
+
+private:
+    Value* m_value;
+    ValueRep m_rep;
+};
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3ConstrainedValue_h
+

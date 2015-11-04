@@ -88,7 +88,7 @@ public:
     void convertToJump(const FrequentedBlock& destination);
 
 protected:
-    JS_EXPORT_PRIVATE void dumpMeta(PrintStream&) const override;
+    JS_EXPORT_PRIVATE void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
     // Use this for subclasses.
     template<typename... Arguments>

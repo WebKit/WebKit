@@ -55,10 +55,12 @@ void SwitchValue::appendCase(const SwitchCase& switchCase)
     m_values.append(switchCase.caseValue());
 }
 
-void SwitchValue::dumpMeta(PrintStream& out) const
+void SwitchValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     // This destructively overrides ControlValue's dumpMeta().
-    out.print(listDump(*this), ", fallThrough = ", fallThrough());
+    for (SwitchCase switchCase : *this)
+        out.print(comma, switchCase);
+    out.print(comma, "fallThrough = ", fallThrough());
 }
 
 SwitchValue::SwitchValue(unsigned index, Origin origin, const FrequentedBlock& fallThrough)

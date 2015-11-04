@@ -24,37 +24,20 @@
  */
 
 #include "config.h"
-#include "B3ControlValue.h"
+#include "B3ConstrainedValue.h"
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlock.h"
+#include "B3Value.h"
 
 namespace JSC { namespace B3 {
 
-ControlValue::~ControlValue()
+void ConstrainedValue::dump(PrintStream& out) const
 {
-}
-
-void ControlValue::convertToJump(const FrequentedBlock& destination)
-{
-    unsigned index = this->index();
-    Origin origin = this->origin();
-    BasicBlock* owner = this->owner;
-
-    this->ControlValue::~ControlValue();
-
-    new (this) ControlValue(index, Jump, origin, destination);
-
-    this->owner = owner;
-}
-
-void ControlValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
-{
-    for (FrequentedBlock successor : m_successors)
-        out.print(comma, successor);
+    out.print(pointerDump(m_value), ":", m_rep);
 }
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

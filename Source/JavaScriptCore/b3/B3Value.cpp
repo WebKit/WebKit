@@ -78,25 +78,24 @@ void Value::dump(PrintStream& out) const
     out.print(dumpPrefix, m_index);
 }
 
+void Value::dumpChildren(CommaPrinter& comma, PrintStream& out) const
+{
+    for (Value* child : children())
+        out.print(comma, pointerDump(child));
+}
+
 void Value::deepDump(PrintStream& out) const
 {
     out.print(m_type, " ", *this, " = ", m_opcode);
 
     out.print("(");
     CommaPrinter comma;
-    for (Value* child : children())
-        out.print(comma, pointerDump(child));
+    dumpChildren(comma, out);
 
     if (m_origin)
         out.print(comma, m_origin);
 
-    {
-        StringPrintStream stringOut;
-        dumpMeta(stringOut);
-        CString string = stringOut.toCString();
-        if (string.length())
-            out.print(comma, string);
-    }
+    dumpMeta(comma, out);
 
     {
         CString string = toCString(effects());
@@ -294,7 +293,7 @@ void Value::performSubstitution()
     }
 }
 
-void Value::dumpMeta(PrintStream&) const
+void Value::dumpMeta(CommaPrinter&, PrintStream&) const
 {
 }
 

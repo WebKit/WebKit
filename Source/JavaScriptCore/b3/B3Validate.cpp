@@ -308,16 +308,17 @@ public:
 private:
     void validateStackmap(Value* value)
     {
-        Stackmap* stackmap = value->stackmap();
-        VALIDATE(value->numChildren() >= stackmap->reps().size(), ("At ", *value));
+        StackmapValue* stackmap = value->as<StackmapValue>();
+        VALIDATE(stackmap, ("At ", *value));
+        VALIDATE(stackmap->numChildren() >= stackmap->reps().size(), ("At ", *stackmap));
         for (unsigned i = 0; i < stackmap->reps().size(); ++i) {
             const ValueRep& rep = stackmap->reps()[i];
             if (rep.kind() != ValueRep::Register)
                 continue;
             if (rep.reg().isGPR())
-                VALIDATE(isInt(value->child(i)->type()), ("At ", *value));
+                VALIDATE(isInt(stackmap->child(i)->type()), ("At ", *stackmap));
             else
-                VALIDATE(isFloat(value->child(i)->type()), ("At ", *value));
+                VALIDATE(isFloat(stackmap->child(i)->type()), ("At ", *stackmap));
         }
     }
 

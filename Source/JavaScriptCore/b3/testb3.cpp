@@ -1673,15 +1673,11 @@ void testSimplePatchpoint()
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
-    Value::AdjacencyList children;
-    children.append(arg1);
-    children.append(arg2);
-    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(
-        proc, Int32, Origin(), WTF::move(children));
-    patchpoint->stackmap.appendConstraint(ValueRep::SomeRegister);
-    patchpoint->stackmap.appendConstraint(ValueRep::SomeRegister);
-    patchpoint->stackmap.setGenerator(
-        [&] (CCallHelpers& jit, const Stackmap::GenerationParams& params) {
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isGPR());
             CHECK(params.reps[1].isGPR());

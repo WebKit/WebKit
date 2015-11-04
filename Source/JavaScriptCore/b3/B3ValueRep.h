@@ -121,6 +121,29 @@ public:
 
     Kind kind() const { return m_kind; }
 
+    bool operator==(const ValueRep& other) const
+    {
+        if (kind() != other.kind())
+            return false;
+        switch (kind()) {
+        case Register:
+            return u.reg == other.u.reg;
+        case Stack:
+            return u.offsetFromFP == other.u.offsetFromFP;
+        case StackArgument:
+            return u.offsetFromSP == other.u.offsetFromSP;
+        case Constant:
+            return u.value == other.u.value;
+        default:
+            return true;
+        }
+    }
+
+    bool operator!=(const ValueRep& other) const
+    {
+        return !(*this == other);
+    }
+
     explicit operator bool() const { return kind() != Any; }
 
     bool isAny() const { return kind() == Any; }

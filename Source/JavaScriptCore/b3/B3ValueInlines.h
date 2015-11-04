@@ -178,15 +178,6 @@ inline T Value::asNumber() const
     }
 }
 
-inline Stackmap* Value::stackmap()
-{
-    if (CheckValue* check = as<CheckValue>())
-        return &check->stackmap;
-    if (PatchpointValue* patchpoint = as<PatchpointValue>())
-        return &patchpoint->stackmap;
-    return nullptr;
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

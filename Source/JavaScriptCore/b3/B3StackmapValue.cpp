@@ -24,27 +24,63 @@
  */
 
 #include "config.h"
-#include "B3Stackmap.h"
+#include "B3StackmapValue.h"
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/ListDump.h>
-
 namespace JSC { namespace B3 {
 
-Stackmap::Stackmap()
+StackmapValue::~StackmapValue()
 {
 }
 
-Stackmap::~Stackmap()
+void StackmapValue::append(const ConstrainedValue& constrainedValue)
 {
+    if (constrainedValue.rep() == ValueRep(ValueRep::Any)) {
+        children().append(constrainedValue.value());
+        return;
+    }
+
+    while (m_reps.size() < numChildren())
+        m_reps.append(ValueRep::Any);
+
+    children().append(constrainedValue.value());
+    m_reps.append(constrainedValue.rep());
 }
 
-void Stackmap::dump(PrintStream& out) const
+void StackmapValue::setConstrainedChild(unsigned index, const ConstrainedValue& constrainedValue)
+{
+    child(index) = constrainedValue.value();
+    setConstraint(index, constrainedValue.rep());
+}
+
+void StackmapValue::setConstraint(unsigned index, const ValueRep& rep)
+{
+    if (rep == ValueRep(ValueRep::Any))
+        return;
+
+    while (m_reps.size() <= index)
+        m_reps.append(ValueRep::Any);
+
+    m_reps[index] = rep;
+}
+
+void StackmapValue::dumpChildren(CommaPrinter& comma, PrintStream& out) const
+{
+    for (ConstrainedValue value : constrainedChildren())
+        out.print(comma, value);
+}
+
+void StackmapValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(
-        "{reps = ", listDump(m_reps), ", generator = ", RawPointer(m_generator.get()),
-        ", clobbered = ", m_clobbered, ", usedRegisters = ", m_usedRegisters, "}");
+        comma, "generator = ", RawPointer(m_generator.get()), ", clobbered = ", m_clobbered,
+        ", usedRegisters = ", m_usedRegisters);
+}
+
+StackmapValue::StackmapValue(unsigned index, Opcode opcode, Type type, Origin origin)
+    : Value(index, opcode, type, origin)
+{
 }
 
 } } // namespace JSC::B3

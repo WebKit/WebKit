@@ -75,8 +75,9 @@ Value* ConstDoubleValue::notEqualConstant(Procedure& proc, Value* other) const
     return proc.add<Const32Value>(origin(), m_value != other->asDouble());
 }
 
-void ConstDoubleValue::dumpMeta(PrintStream& out) const
+void ConstDoubleValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
+    out.print(comma);
     out.printf("%le", m_value);
 }
 

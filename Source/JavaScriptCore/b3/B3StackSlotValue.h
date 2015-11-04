@@ -57,7 +57,7 @@ public:
     }
 
 protected:
-    void dumpMeta(PrintStream&) const override;
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
 private:
     friend class Air::StackSlot;

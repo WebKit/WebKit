@@ -34,14 +34,14 @@ UpsilonValue::~UpsilonValue()
 {
 }
 
-void UpsilonValue::dumpMeta(PrintStream& out) const
+void UpsilonValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     if (m_phi)
-        out.print("^", m_phi->index());
+        out.print(comma, "^", m_phi->index());
     else {
         // We want to have a dump for when the Phi isn't set yet, since although such IR won't pass
         // validation, we may have such IR as an intermediate step.
-        out.print("^(null)");
+        out.print(comma, "^(null)");
     }
 }
 

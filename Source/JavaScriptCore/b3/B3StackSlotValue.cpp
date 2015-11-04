@@ -34,9 +34,9 @@ StackSlotValue::~StackSlotValue()
 {
 }
 
-void StackSlotValue::dumpMeta(PrintStream& out) const
+void StackSlotValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print("byteSize = ", m_byteSize, ", kind = ", m_kind);
+    out.print(comma, "byteSize = ", m_byteSize, ", kind = ", m_kind);
 }
 
 } } // namespace JSC::B3

@@ -84,9 +84,8 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
 CCallHelpers::Jump PatchpointSpecial::generate(
     Inst& inst, CCallHelpers& jit, GenerationContext& context)
 {
-    Value* value = inst.origin;
-    Stackmap* stackmap = value->stackmap();
-    ASSERT(stackmap);
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
 
     Vector<ValueRep> reps;
     unsigned offset = 1;
@@ -94,13 +93,12 @@ CCallHelpers::Jump PatchpointSpecial::generate(
         reps.append(repForArg(*context.code, inst.args[offset++]));
     appendRepsImpl(context, offset, inst, reps);
     
-    Stackmap::GenerationParams params;
+    StackmapGenerationParams params;
     params.value = value;
-    params.stackmap = stackmap;
     params.reps = reps;
-    params.usedRegisters = stackmap->m_usedRegisters;
+    params.usedRegisters = value->m_usedRegisters;
 
-    stackmap->m_generator->run(jit, params);
+    value->m_generator->run(jit, params);
 
     return CCallHelpers::Jump();
 }

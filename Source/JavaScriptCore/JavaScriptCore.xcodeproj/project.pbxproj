@@ -280,6 +280,10 @@
 		0F300B7C18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F300B7A18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h */; };
 		0F32BD101BB34F190093A57F /* HeapHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */; };
 		0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */; };
+		0F338DF11BE93AD10013C88F /* B3StackmapValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */; };
+		0F338DF21BE93AD10013C88F /* B3StackmapValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF01BE93AD10013C88F /* B3StackmapValue.h */; };
+		0F338DF51BE93D550013C88F /* B3ConstrainedValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DF31BE93D550013C88F /* B3ConstrainedValue.cpp */; };
+		0F338DF61BE93D550013C88F /* B3ConstrainedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */; };
 		0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */; };
 		0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; };
 		0F38B01117CF078000B144D3 /* LLIntEntrypoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */; };
@@ -737,8 +741,6 @@
 		0FEC852B1BDACDAC0080FF74 /* B3Procedure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84E11BDACDAC0080FF74 /* B3Procedure.cpp */; };
 		0FEC852C1BDACDAC0080FF74 /* B3Procedure.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84E21BDACDAC0080FF74 /* B3Procedure.h */; };
 		0FEC852D1BDACDAC0080FF74 /* B3ProcedureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84E31BDACDAC0080FF74 /* B3ProcedureInlines.h */; };
-		0FEC852E1BDACDAC0080FF74 /* B3Stackmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84E41BDACDAC0080FF74 /* B3Stackmap.cpp */; };
-		0FEC852F1BDACDAC0080FF74 /* B3Stackmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84E51BDACDAC0080FF74 /* B3Stackmap.h */; };
 		0FEC85301BDACDAC0080FF74 /* B3StackmapSpecial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84E61BDACDAC0080FF74 /* B3StackmapSpecial.cpp */; };
 		0FEC85311BDACDAC0080FF74 /* B3StackmapSpecial.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84E71BDACDAC0080FF74 /* B3StackmapSpecial.h */; };
 		0FEC85321BDACDAC0080FF74 /* B3StackSlotKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC84E81BDACDAC0080FF74 /* B3StackSlotKind.cpp */; };
@@ -2299,6 +2301,10 @@
 		0F300B7A18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGIntegerCheckCombiningPhase.h; path = dfg/DFGIntegerCheckCombiningPhase.h; sourceTree = "<group>"; };
 		0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapHelperPool.cpp; sourceTree = "<group>"; };
 		0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapHelperPool.h; sourceTree = "<group>"; };
+		0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackmapValue.cpp; path = b3/B3StackmapValue.cpp; sourceTree = "<group>"; };
+		0F338DF01BE93AD10013C88F /* B3StackmapValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackmapValue.h; path = b3/B3StackmapValue.h; sourceTree = "<group>"; };
+		0F338DF31BE93D550013C88F /* B3ConstrainedValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ConstrainedValue.cpp; path = b3/B3ConstrainedValue.cpp; sourceTree = "<group>"; };
+		0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ConstrainedValue.h; path = b3/B3ConstrainedValue.h; sourceTree = "<group>"; };
 		0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGUseKind.cpp; path = dfg/DFGUseKind.cpp; sourceTree = "<group>"; };
 		0F34B14816D4200E001CDA5A /* DFGUseKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUseKind.h; path = dfg/DFGUseKind.h; sourceTree = "<group>"; };
 		0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoint.cpp; path = llint/LLIntEntrypoint.cpp; sourceTree = "<group>"; };
@@ -2769,8 +2775,6 @@
 		0FEC84E11BDACDAC0080FF74 /* B3Procedure.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Procedure.cpp; path = b3/B3Procedure.cpp; sourceTree = "<group>"; };
 		0FEC84E21BDACDAC0080FF74 /* B3Procedure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Procedure.h; path = b3/B3Procedure.h; sourceTree = "<group>"; };
 		0FEC84E31BDACDAC0080FF74 /* B3ProcedureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ProcedureInlines.h; path = b3/B3ProcedureInlines.h; sourceTree = "<group>"; };
-		0FEC84E41BDACDAC0080FF74 /* B3Stackmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Stackmap.cpp; path = b3/B3Stackmap.cpp; sourceTree = "<group>"; };
-		0FEC84E51BDACDAC0080FF74 /* B3Stackmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Stackmap.h; path = b3/B3Stackmap.h; sourceTree = "<group>"; };
 		0FEC84E61BDACDAC0080FF74 /* B3StackmapSpecial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackmapSpecial.cpp; path = b3/B3StackmapSpecial.cpp; sourceTree = "<group>"; };
 		0FEC84E71BDACDAC0080FF74 /* B3StackmapSpecial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackmapSpecial.h; path = b3/B3StackmapSpecial.h; sourceTree = "<group>"; };
 		0FEC84E81BDACDAC0080FF74 /* B3StackSlotKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackSlotKind.cpp; path = b3/B3StackSlotKind.cpp; sourceTree = "<group>"; };
@@ -4408,6 +4412,8 @@
 				0FEC84C71BDACDAC0080FF74 /* B3ConstDoubleValue.cpp */,
 				0FEC84C81BDACDAC0080FF74 /* B3ConstDoubleValue.h */,
 				0FEC85B21BDED9570080FF74 /* B3ConstPtrValue.h */,
+				0F338DF31BE93D550013C88F /* B3ConstrainedValue.cpp */,
+				0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */,
 				0FEC84C91BDACDAC0080FF74 /* B3ControlValue.cpp */,
 				0FEC84CA1BDACDAC0080FF74 /* B3ControlValue.h */,
 				0FEC85C41BE16F5A0080FF74 /* B3Effects.cpp */,
@@ -4444,10 +4450,10 @@
 				0FEC84E31BDACDAC0080FF74 /* B3ProcedureInlines.h */,
 				0FEC85B71BE1462F0080FF74 /* B3ReduceStrength.cpp */,
 				0FEC85B81BE1462F0080FF74 /* B3ReduceStrength.h */,
-				0FEC84E41BDACDAC0080FF74 /* B3Stackmap.cpp */,
-				0FEC84E51BDACDAC0080FF74 /* B3Stackmap.h */,
 				0FEC84E61BDACDAC0080FF74 /* B3StackmapSpecial.cpp */,
 				0FEC84E71BDACDAC0080FF74 /* B3StackmapSpecial.h */,
+				0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */,
+				0F338DF01BE93AD10013C88F /* B3StackmapValue.h */,
 				0FEC84E81BDACDAC0080FF74 /* B3StackSlotKind.cpp */,
 				0FEC84E91BDACDAC0080FF74 /* B3StackSlotKind.h */,
 				0FEC84EA1BDACDAC0080FF74 /* B3StackSlotValue.cpp */,
@@ -6597,7 +6603,6 @@
 				0FEC852C1BDACDAC0080FF74 /* B3Procedure.h in Headers */,
 				0FEC852D1BDACDAC0080FF74 /* B3ProcedureInlines.h in Headers */,
 				0FEC85BD1BE1462F0080FF74 /* B3ReduceStrength.h in Headers */,
-				0FEC852F1BDACDAC0080FF74 /* B3Stackmap.h in Headers */,
 				0FEC85311BDACDAC0080FF74 /* B3StackmapSpecial.h in Headers */,
 				0FEC85331BDACDAC0080FF74 /* B3StackSlotKind.h in Headers */,
 				0FEC85351BDACDAC0080FF74 /* B3StackSlotValue.h in Headers */,
@@ -6818,6 +6823,7 @@
 				79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */,
 				A7D89CFC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h in Headers */,
 				0FF0F19B16B729FA005DF95B /* DFGLongLivedState.h in Headers */,
+				0F338DF21BE93AD10013C88F /* B3StackmapValue.h in Headers */,
 				A767B5B617A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h in Headers */,
 				79F8FC1F1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h in Headers */,
 				0F5874EE194FEB1200AAB2C1 /* DFGMayExit.h in Headers */,
@@ -7018,6 +7024,7 @@
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
 				A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */,
 				A5EA710719F6DE780098F5EC /* generate_objc_conversion_helpers.py in Headers */,
+				0F338DF61BE93D550013C88F /* B3ConstrainedValue.h in Headers */,
 				A5EA710819F6DE7A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py in Headers */,
 				A5EA710919F6DE7C0098F5EC /* generate_objc_header.py in Headers */,
 				A5EA710A19F6DE7E0098F5EC /* generate_objc_internal_header.py in Headers */,
@@ -8165,7 +8172,6 @@
 				0FEC85291BDACDAC0080FF74 /* B3PhaseScope.cpp in Sources */,
 				0FEC852B1BDACDAC0080FF74 /* B3Procedure.cpp in Sources */,
 				0FEC85BC1BE1462F0080FF74 /* B3ReduceStrength.cpp in Sources */,
-				0FEC852E1BDACDAC0080FF74 /* B3Stackmap.cpp in Sources */,
 				0FEC85301BDACDAC0080FF74 /* B3StackmapSpecial.cpp in Sources */,
 				0FEC85321BDACDAC0080FF74 /* B3StackSlotKind.cpp in Sources */,
 				0FEC85341BDACDAC0080FF74 /* B3StackSlotValue.cpp in Sources */,
@@ -8442,6 +8448,7 @@
 				0F485329187DFDEC0083B687 /* FTLRecoveryOpcode.cpp in Sources */,
 				0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */,
 				0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */,
+				0F338DF11BE93AD10013C88F /* B3StackmapValue.cpp in Sources */,
 				0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */,
 				0F9D339A1803ADB70073C2BC /* FTLStackMaps.cpp in Sources */,
 				0FEA0A161706BB9000BB722C /* FTLState.cpp in Sources */,
@@ -8765,6 +8772,7 @@
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				0F8F2B9E17306C8D007DBDA5 /* SourceCode.cpp in Sources */,
 				0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */,
+				0F338DF51BE93D550013C88F /* B3ConstrainedValue.cpp in Sources */,
 				E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */,
 				0F0CD4C415F6B6BB0032F1C0 /* SparseArrayValueMap.cpp in Sources */,
 				0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */,

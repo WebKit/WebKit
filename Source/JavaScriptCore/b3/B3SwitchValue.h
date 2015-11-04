@@ -114,7 +114,7 @@ public:
     void appendCase(const SwitchCase&);
 
 protected:
-    void dumpMeta(PrintStream&) const override;
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
 private:
     friend class Procedure;

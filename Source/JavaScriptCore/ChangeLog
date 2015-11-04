@@ -1,3 +1,129 @@
+2015-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::Stackmap should be a superclass of B3::PatchpointValue and B3::CheckValue rather than being one of their members
+        https://bugs.webkit.org/show_bug.cgi?id=150831
+
+        Rubber stamped by Benjamin Poulain.
+
+        Previously, Stackmap was a value that PatchpointValue and CheckValue would hold as a field.
+        We'd have convenient ways of getting this field, like via Value::stackmap(). But this was a
+        bit ridiculous, since Stackmap is logically just a common supertype for Patchpointvalue and
+        CheckValue. This patch makes this reality by replacing Stackmap with StackmapValue. This makes
+        the code a lot more reasonable.
+
+        I also needed to make dumping a bit more customizable, so I changed dumpMeta() to take a
+        CommaPrinter&. This gives subclasses better control over whether or not to emit a comma. Also
+        it's now possible for subclasses of Value to customize how children are printed. StackmapValue
+        uses this to print the children and their reps together like:
+
+            Int32 @2 = Patchpoint(@0:SomeRegister, @1:SomeRegister, generator = 0x1107ec010, clobbered = [], usedRegisters = [], ExitsSideways|ControlDependent|Writes:Top|Reads:Top)
+
+        This has no behavior change, it's just a big refactoring. You can see how much simpler this
+        makes things by looking at the testSimplePatchpoint() test.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ArgumentRegValue.cpp:
+        (JSC::B3::ArgumentRegValue::~ArgumentRegValue):
+        (JSC::B3::ArgumentRegValue::dumpMeta):
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::generate):
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::~CheckValue):
+        (JSC::B3::CheckValue::CheckValue):
+        (JSC::B3::CheckValue::dumpMeta): Deleted.
+        * b3/B3CheckValue.h:
+        (JSC::B3::CheckValue::accepts):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::notEqualConstant):
+        (JSC::B3::Const32Value::dumpMeta):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::notEqualConstant):
+        (JSC::B3::Const64Value::dumpMeta):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::notEqualConstant):
+        (JSC::B3::ConstDoubleValue::dumpMeta):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstrainedValue.cpp: Added.
+        (JSC::B3::ConstrainedValue::dump):
+        * b3/B3ConstrainedValue.h: Added.
+        (JSC::B3::ConstrainedValue::ConstrainedValue):
+        (JSC::B3::ConstrainedValue::operator bool):
+        (JSC::B3::ConstrainedValue::value):
+        (JSC::B3::ConstrainedValue::rep):
+        * b3/B3ControlValue.cpp:
+        (JSC::B3::ControlValue::convertToJump):
+        (JSC::B3::ControlValue::dumpMeta):
+        * b3/B3ControlValue.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tryPatchpoint):
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::accessByteSize):
+        (JSC::B3::MemoryValue::dumpMeta):
+        * b3/B3MemoryValue.h:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::generate):
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::~PatchpointValue):
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        (JSC::B3::PatchpointValue::dumpMeta): Deleted.
+        * b3/B3PatchpointValue.h:
+        (JSC::B3::PatchpointValue::accepts):
+        * b3/B3StackSlotValue.cpp:
+        (JSC::B3::StackSlotValue::~StackSlotValue):
+        (JSC::B3::StackSlotValue::dumpMeta):
+        * b3/B3StackSlotValue.h:
+        * b3/B3Stackmap.cpp: Removed.
+        * b3/B3Stackmap.h: Removed.
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::reportUsedRegisters):
+        (JSC::B3::StackmapSpecial::extraClobberedRegs):
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        (JSC::B3::StackmapSpecial::admitsStackImpl):
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.cpp: Added.
+        (JSC::B3::StackmapValue::~StackmapValue):
+        (JSC::B3::StackmapValue::append):
+        (JSC::B3::StackmapValue::setConstrainedChild):
+        (JSC::B3::StackmapValue::setConstraint):
+        (JSC::B3::StackmapValue::dumpChildren):
+        (JSC::B3::StackmapValue::dumpMeta):
+        (JSC::B3::StackmapValue::StackmapValue):
+        * b3/B3StackmapValue.h: Added.
+        * b3/B3SwitchValue.cpp:
+        (JSC::B3::SwitchValue::appendCase):
+        (JSC::B3::SwitchValue::dumpMeta):
+        (JSC::B3::SwitchValue::SwitchValue):
+        * b3/B3SwitchValue.h:
+        * b3/B3UpsilonValue.cpp:
+        (JSC::B3::UpsilonValue::~UpsilonValue):
+        (JSC::B3::UpsilonValue::dumpMeta):
+        * b3/B3UpsilonValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::dump):
+        (JSC::B3::Value::dumpChildren):
+        (JSC::B3::Value::deepDump):
+        (JSC::B3::Value::performSubstitution):
+        (JSC::B3::Value::dumpMeta):
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::asNumber):
+        (JSC::B3::Value::stackmap): Deleted.
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::kind):
+        (JSC::B3::ValueRep::operator==):
+        (JSC::B3::ValueRep::operator!=):
+        (JSC::B3::ValueRep::operator bool):
+        (JSC::B3::ValueRep::isAny):
+        * b3/air/AirInstInlines.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpoint):
+
 2015-11-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add Air lowering for BitOr and impove BitAnd

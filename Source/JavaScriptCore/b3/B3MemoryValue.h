@@ -65,7 +65,7 @@ public:
     size_t accessByteSize() const;
 
 protected:
-    void dumpMeta(PrintStream&) const override;
+    void dumpMeta(CommaPrinter& comma, PrintStream&) const override;
 
 private:
     friend class Procedure;

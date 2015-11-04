@@ -92,6 +92,7 @@ set(JavaScriptCore_SOURCES
     b3/B3BasicBlock.cpp
     b3/B3CheckSpecial.cpp
     b3/B3CheckValue.cpp
+    b3/B3ConstrainedValue.cpp
     b3/B3Common.cpp
     b3/B3Commutativity.cpp
     b3/B3Const32Value.cpp
@@ -112,8 +113,8 @@ set(JavaScriptCore_SOURCES
     b3/B3PhaseScope.cpp
     b3/B3Procedure.cpp
     b3/B3ReduceStrength.cpp
-    b3/B3Stackmap.cpp
     b3/B3StackmapSpecial.cpp
+    b3/B3StackmapValue.cpp
     b3/B3StackSlotKind.cpp
     b3/B3StackSlotValue.cpp
     b3/B3SwitchCase.cpp

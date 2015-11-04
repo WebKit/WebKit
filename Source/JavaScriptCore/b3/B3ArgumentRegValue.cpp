@@ -34,9 +34,9 @@ ArgumentRegValue::~ArgumentRegValue()
 {
 }
 
-void ArgumentRegValue::dumpMeta(PrintStream& out) const
+void ArgumentRegValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(m_reg);
+    out.print(comma, m_reg);
 }
 
 } } // namespace JSC::B3

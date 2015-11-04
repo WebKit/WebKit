@@ -101,7 +101,8 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     CCallHelpers::Jump fail = hiddenBranch(inst).generate(jit, context);
     ASSERT(fail.isSet());
 
-    Value* value = inst.origin;
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
 
     Vector<ValueRep> reps;
     if (isCheckMath(value->opcode())) {
@@ -124,16 +125,12 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
             [=] (CCallHelpers& jit, GenerationContext&) {
                 fail.link(&jit);
                 
-                Stackmap* stackmap = value->stackmap();
-                ASSERT(stackmap);
-
-                Stackmap::GenerationParams params;
+                StackmapGenerationParams params;
                 params.value = value;
-                params.stackmap = stackmap;
                 params.reps = reps;
-                params.usedRegisters = stackmap->m_usedRegisters;
+                params.usedRegisters = value->m_usedRegisters;
 
-                stackmap->m_generator->run(jit, params);
+                value->m_generator->run(jit, params);
             }));
 
     return CCallHelpers::Jump(); // As far as Air thinks, we are not a terminal.

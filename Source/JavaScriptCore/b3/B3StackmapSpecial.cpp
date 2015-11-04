@@ -46,21 +46,21 @@ StackmapSpecial::~StackmapSpecial()
 
 void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSet& usedRegisters)
 {
-    Value* value = inst.origin;
-    Stackmap* stackmap = value->stackmap();
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
 
     // FIXME: If the Inst that uses the StackmapSpecial gets duplicated, then we end up merging used
     // register sets from multiple places. This currently won't happen since Air doesn't have taildup
     // or things like that. But maybe eventually it could be a problem.
-    stackmap->m_usedRegisters.merge(usedRegisters);
+    value->m_usedRegisters.merge(usedRegisters);
 }
 
 const RegisterSet& StackmapSpecial::extraClobberedRegs(Inst& inst)
 {
-    Value* value = inst.origin;
-    Stackmap* stackmap = value->stackmap();
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
 
-    return stackmap->clobbered();
+    return value->clobbered();
 }
 
 void StackmapSpecial::forEachArgImpl(
@@ -86,15 +86,12 @@ bool StackmapSpecial::isValidImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
     Inst& inst)
 {
-    Value* value = inst.origin;
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
 
     // Check that insane things have not happened.
     ASSERT(inst.args.size() >= numIgnoredAirArgs);
     ASSERT(value->children().size() >= numIgnoredB3Args);
-
-    Stackmap* stackmap = value->stackmap();
-
-    ASSERT(stackmap);
 
     // For the Inst to be valid, it needs to have the right number of arguments.
     if (inst.args.size() - numIgnoredAirArgs != value->children().size() - numIgnoredB3Args)
@@ -130,11 +127,11 @@ bool StackmapSpecial::isValidImpl(
     }
 
     // The number of constraints has to be no greater than the number of B3 children.
-    ASSERT(stackmap->m_reps.size() <= value->children().size());
+    ASSERT(value->m_reps.size() <= value->children().size());
 
     // Verify any explicitly supplied constraints.
-    for (unsigned i = numIgnoredB3Args; i < stackmap->m_reps.size(); ++i) {
-        ValueRep& rep = stackmap->m_reps[i];
+    for (unsigned i = numIgnoredB3Args; i < value->m_reps.size(); ++i) {
+        ValueRep& rep = value->m_reps[i];
         Arg& arg = inst.args[i - numIgnoredB3Args + numIgnoredAirArgs];
 
         switch (rep.kind()) {
@@ -171,19 +168,19 @@ bool StackmapSpecial::admitsStackImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
     Inst& inst, unsigned argIndex)
 {
-    Value* value = inst.origin;
-    Stackmap* stackmap = value->stackmap();
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
 
     unsigned stackmapArgIndex = argIndex - numIgnoredAirArgs + numIgnoredB3Args;
 
-    if (stackmapArgIndex >= stackmap->m_reps.size()) {
+    if (stackmapArgIndex >= value->m_reps.size()) {
         // This means that there was no constraint.
         return true;
     }
     
     // We only admit stack for Any's, since Stack is not a valid input constraint, and StackArgument
     // translates to a CallArg in Air.
-    if (stackmap->m_reps[stackmapArgIndex].kind() == ValueRep::Any)
+    if (value->m_reps[stackmapArgIndex].kind() == ValueRep::Any)
         return true;
 
     return false;

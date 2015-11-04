@@ -50,7 +50,7 @@ public:
     Value* notEqualConstant(Procedure&, Value* other) const override;
 
 protected:
-    JS_EXPORT_PRIVATE void dumpMeta(PrintStream&) const override;
+    JS_EXPORT_PRIVATE void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
     friend class Procedure;
 

@@ -50,7 +50,7 @@ public:
     Value* notEqualConstant(Procedure&, Value* other) const override;
 
 protected:
-    void dumpMeta(PrintStream&) const override;
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
     friend class Procedure;
 

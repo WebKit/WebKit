@@ -33,6 +33,7 @@
 #include "B3Opcode.h"
 #include "B3Origin.h"
 #include "B3Type.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
@@ -40,7 +41,6 @@ namespace JSC { namespace B3 {
 
 class BasicBlock;
 class Procedure;
-class Stackmap;
 
 class JS_EXPORT_PRIVATE Value {
     WTF_MAKE_NONCOPYABLE(Value);
@@ -151,15 +151,14 @@ public:
     
     Effects effects() const;
 
-    Stackmap* stackmap();
-
     // Makes sure that none of the children are Identity's. If a child points to Identity, this will
     // repoint it at the Identity's child. For simplicity, this will follow arbitrarily long chains
     // of Identity's.
     void performSubstitution();
 
 protected:
-    virtual void dumpMeta(PrintStream&) const;
+    virtual void dumpChildren(CommaPrinter&, PrintStream&) const;
+    virtual void dumpMeta(CommaPrinter&, PrintStream&) const;
     
 private:
     friend class Procedure;

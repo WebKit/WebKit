@@ -791,26 +791,22 @@ public:
         if (patchpointValue->type() != Void)
             inst.args.append(tmp(patchpointValue));
 
-        for (unsigned i = 0; i < patchpointValue->numChildren(); ++i) {
-            ValueRep rep;
-            if (i < patchpointValue->stackmap.reps().size())
-                rep = patchpointValue->stackmap.reps()[i];
-
+        for (ConstrainedValue value : patchpointValue->constrainedChildren()) {
             Arg arg;
-            switch (rep.kind()) {
+            switch (value.rep().kind()) {
             case ValueRep::Any:
-                arg = immOrTmp(patchpointValue->child(i));
+                arg = immOrTmp(value.value());
                 break;
             case ValueRep::SomeRegister:
-                arg = tmp(patchpointValue->child(i));
+                arg = tmp(value.value());
                 break;
             case ValueRep::Register:
-                arg = Tmp(rep.reg());
-                append(Move, immOrTmp(patchpointValue->child(i)), arg);
+                arg = Tmp(value.rep().reg());
+                append(Move, immOrTmp(value.value()), arg);
                 break;
             case ValueRep::StackArgument:
-                arg = Arg::callArg(rep.offsetFromSP());
-                appendStore(patchpointValue->child(i), arg);
+                arg = Arg::callArg(value.rep().offsetFromSP());
+                appendStore(value.value(), arg);
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();

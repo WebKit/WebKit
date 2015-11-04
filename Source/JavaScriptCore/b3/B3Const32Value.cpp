@@ -89,9 +89,9 @@ Value* Const32Value::notEqualConstant(Procedure& proc, Value* other) const
     return proc.add<Const32Value>(origin(), m_value != other->asInt32());
 }
 
-void Const32Value::dumpMeta(PrintStream& out) const
+void Const32Value::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(m_value);
+    out.print(comma, m_value);
 }
 
 } } // namespace JSC::B3

@@ -31,7 +31,6 @@
 #include "AirInst.h"
 #include "AirOpcodeUtils.h"
 #include "AirSpecial.h"
-#include "B3Stackmap.h"
 #include "B3Value.h"
 
 namespace JSC { namespace B3 { namespace Air {

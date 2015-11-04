@@ -58,10 +58,10 @@ size_t MemoryValue::accessByteSize() const
     }
 }
 
-void MemoryValue::dumpMeta(PrintStream& out) const
+void MemoryValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     if (m_offset)
-        out.print("offset = ", m_offset);
+        out.print(comma, "offset = ", m_offset);
 }
 
 } } // namespace JSC::B3

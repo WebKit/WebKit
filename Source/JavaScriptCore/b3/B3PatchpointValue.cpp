@@ -34,9 +34,9 @@ PatchpointValue::~PatchpointValue()
 {
 }
 
-void PatchpointValue::dumpMeta(PrintStream& out) const
+PatchpointValue::PatchpointValue(unsigned index, Type type, Origin origin)
+    : StackmapValue(index, Patchpoint, type, origin)
 {
-    out.print("stackmap = ", stackmap);
 }
 
 } } // namespace JSC::B3

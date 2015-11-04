@@ -28,37 +28,20 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3Stackmap.h"
-#include "B3Value.h"
+#include "B3StackmapValue.h"
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE PatchpointValue : public Value {
+class PatchpointValue : public StackmapValue {
 public:
     static bool accepts(Opcode opcode) { return opcode == Patchpoint; }
 
     ~PatchpointValue();
 
-    Stackmap stackmap;
-
-protected:
-    void dumpMeta(PrintStream&) const override;
-
 private:
     friend class Procedure;
 
-    template<typename ListType>
-    PatchpointValue(unsigned index, Type type, Origin origin, ListType&& children)
-        : Value(index, Patchpoint, type, origin, std::forward<ListType>(children))
-    {
-    }
-
-    // It's totally fine to create a PatchpointValue without any children, and then append the
-    // children as you build up the stackmap.
-    PatchpointValue(unsigned index, Type type, Origin origin)
-        : Value(index, Patchpoint, type, origin, AdjacencyList())
-    {
-    }
+    JS_EXPORT_PRIVATE PatchpointValue(unsigned index, Type, Origin);
 };
 
 } } // namespace JSC::B3

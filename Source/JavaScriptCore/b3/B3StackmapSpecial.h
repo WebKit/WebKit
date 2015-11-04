@@ -29,7 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirSpecial.h"
-#include "B3Stackmap.h"
+#include "B3ValueRep.h"
 
 namespace JSC { namespace B3 {
 

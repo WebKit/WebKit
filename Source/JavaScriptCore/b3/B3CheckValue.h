@@ -28,12 +28,11 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3Stackmap.h"
-#include "B3Value.h"
+#include "B3StackmapValue.h"
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE CheckValue : public Value {
+class CheckValue : public StackmapValue {
 public:
     static bool accepts(Opcode opcode)
     {
@@ -50,29 +49,14 @@ public:
 
     ~CheckValue();
 
-    Stackmap stackmap;
-
-protected:
-    void dumpMeta(PrintStream&) const override;
-
 private:
     friend class Procedure;
 
     // Use this form for CheckAdd, CheckSub, and CheckMul.
-    CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left, Value* right)
-        : Value(index, opcode, left->type(), origin, left, right)
-    {
-        ASSERT(B3::isInt(type()));
-        ASSERT(left->type() == right->type());
-        ASSERT(opcode == CheckAdd || opcode == CheckSub || opcode == CheckMul);
-    }
+    JS_EXPORT_PRIVATE CheckValue(unsigned index, Opcode, Origin, Value* left, Value* right);
 
     // Use this form for Check.
-    CheckValue(unsigned index, Opcode opcode, Origin origin, Value* predicate)
-        : Value(index, opcode, Void, origin, predicate)
-    {
-        ASSERT(opcode == Check);
-    }
+    JS_EXPORT_PRIVATE CheckValue(unsigned index, Opcode, Origin, Value* predicate);
 };
 
 } } // namespace JSC::B3
