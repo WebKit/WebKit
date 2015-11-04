@@ -96,7 +96,12 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
         setLocation("about:srcdoc");
     else if (name == srcAttr && !fastHasAttribute(srcdocAttr))
         setLocation(stripLeadingAndTrailingHTMLSpaces(value));
-    else if (name == nameAttr) {
+    else if (name == idAttr) {
+        HTMLFrameOwnerElement::parseAttribute(name, value);
+        // Falling back to using the 'id' attribute is not standard but some content relies on this behavior.
+        if (!hasAttribute(nameAttr))
+            m_frameName = value;
+    } else if (name == nameAttr) {
         m_frameName = value;
         // FIXME: If we are already attached, this doesn't actually change the frame's name.
         // FIXME: If we are already attached, this doesn't check for frame name
@@ -121,6 +126,9 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
 void HTMLFrameElementBase::setNameAndOpenURL()
 {
     m_frameName = getNameAttribute();
+    // Falling back to using the 'id' attribute is not standard but some content relies on this behavior.
+    if (m_frameName.isNull())
+        m_frameName = getIdAttribute();
     openURL();
 }
 
