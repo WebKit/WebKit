@@ -1,3 +1,15 @@
+2015-11-04  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Remove bogus global internal functions for properties and prototype retrieval
+        https://bugs.webkit.org/show_bug.cgi?id=150892
+
+        Reviewed by Darin Adler.
+
+        Global @getOwnPropertyNames and @getPrototypeOf point to the floor function, so it is bogus dead code.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Removed global @getOwnPropertyNames and @getPrototypeOf.
+
 2015-11-03  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add B3-to-Air lowering for BitXor
