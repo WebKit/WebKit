@@ -1,0 +1,96 @@
+diff --git a/runner/resources/animometer.js b/runner/resources/animometer.js
+index e567681..ba0ab0f 100644
+--- a/runner/resources/animometer.js
++++ b/runner/resources/animometer.js
+@@ -41,14 +41,62 @@ window.benchmarkRunnerClient = {
+         this._resultsDashboard.push(suitesSamplers);
+     },
+     
++    _computeTestReport: function(testName, testResults)
++    {
++        return [testResults[Strings["JSON_SCORE"][0]]];
++    },
++
++    _computeSuiteReports: function(suiteName, suiteResults)
++    {
++        var testsReports = {};
++
++        for (var testName in suiteResults[Strings["JSON_RESULTS"][2]]) {
++            var testReports = this._computeTestReport(testName, suiteResults[Strings["JSON_RESULTS"][2]][testName]);
++            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
++        }
++
++        return testsReports;
++    },
++
++    _computeIterationReports: function(iterationResults)
++    {
++        var suitesReports = {};
++
++        for (var suiteName in iterationResults[Strings["JSON_RESULTS"][1]]) {
++            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings["JSON_RESULTS"][1]][suiteName]);
++            suitesReports[suiteName] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
++        }
++
++        return suitesReports;
++    },
++
++    computeResultsReports: function()
++    {
++        var json = this._resultsDashboard.toJSON(false, false);
++        var iterationReports = this._computeIterationReports(json[Strings["JSON_RESULTS"][0]][0])
++        return {"Animometer": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports } };
++    },
++
+     didFinishLastIteration: function ()
+     {
+-        var json = this._resultsDashboard.toJSON(true, true);
+-        this.score = json[Strings["JSON_SCORE"]];
+-        this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]]);
+-        sectionsManager.showJSON("json", json[Strings["JSON_RESULTS"][0]][0]);
+-        suitesManager.updateLocalStorageFromJSON(json[Strings["JSON_RESULTS"][0]][0]);
+-        benchmarkController.showResults();
++        // submit result to server
++        var results = JSON.stringify(this.computeResultsReports());
++        var xhr = new XMLHttpRequest();
++        xhr.open("POST", "/report");
++
++        xhr.setRequestHeader("Content-type", "application/json");
++        xhr.setRequestHeader("Content-length", results.length);
++        xhr.setRequestHeader("Connection", "close");
++
++        xhr.onreadystatechange = function() {
++            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                closeRequest = new XMLHttpRequest();
++                closeRequest.open("GET", "/shutdown");
++                closeRequest.send()
++            }
++        }
++
++        xhr.send(results);
+     }
+ }
+ 
+@@ -307,6 +355,10 @@ window.suitesManager =
+ 
+             suite.tests.forEach(function(test) {
+                 var testElement = this._createTestElement(listElement, test, suiteCheckbox);
++                if (index < 4) {
++                    var testCheckbox = this._checkboxElement(testElement);
++                    testCheckbox.checked = true;
++                }
+             }, this);
+         }, this);
+     },
+@@ -408,10 +460,8 @@ window.benchmarkController =
+     initialize: function()
+     {
+         sectionsManager.setupSectionStyle();
+-        optionsManager.updateUIFromLocalStorage();
+         suitesManager.createElements();
+-        suitesManager.updateUIFromLocalStorage();
+-        suitesManager.updateEditsElementsState();
++        setTimeout(this.startTest.bind(this), 3000);
+     },
+ 
+     onChangeAdaptiveTestCheckbox: function()

@@ -1,3 +1,15 @@
+2015-11-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add graphics benchmark to performance bot
+        https://bugs.webkit.org/show_bug.cgi?id=150450
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/Animometer.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/animometer.plan: Added.
+        Add a patch and a plan to set the defaults of the benchmark, run it,
+        collect the result and report it to the benchmark runner.
+
 2015-11-03  Jason Marcell  <jmarcell@apple.com>
 
         run-webkit-test should look in --root directory for LayoutTestRelay
