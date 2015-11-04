@@ -30,7 +30,9 @@
 
 #include "DOMRequestState.h"
 #include "IDBBindingUtilities.h"
+#include "IDBDatabaseException.h"
 #include "IDBError.h"
+#include "IDBIndexImpl.h"
 #include "IDBKey.h"
 #include "IDBKeyRangeData.h"
 #include "IDBRequestImpl.h"
@@ -339,14 +341,87 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* contex
     return adoptRef(request.leakRef());
 }
 
-RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext*, const String&, const IDBKeyPath&, bool, bool, ExceptionCode&)
+RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (m_deleted) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::InvalidStateError);
+        return nullptr;
+    }
+
+    if (!m_transaction->isVersionChange()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::InvalidStateError);
+        return nullptr;
+    }
+
+    if (!m_transaction->isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    if (!keyPath.isValid()) {
+        ec = IDBDatabaseException::SyntaxError;
+        return nullptr;
+    }
+
+    if (name.isNull()) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    if (m_info.hasIndex(name)) {
+        ec = IDBDatabaseException::ConstraintError;
+        return nullptr;
+    }
+
+    if (keyPath.type() == IndexedDB::KeyPathType::Array && multiEntry) {
+        ec = IDBDatabaseException::InvalidAccessError;
+        return nullptr;
+    }
+
+    // Install the new Index into the ObjectStore's info.
+    IDBIndexInfo info = m_info.createNewIndex(name, keyPath, unique, multiEntry);
+    m_transaction->database().didCreateIndexInfo(info);
+
+    // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.
+    Ref<IDBIndex> index = m_transaction->createIndex(*this, info);
+    return WTF::move(index);
 }
 
-RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String&, ExceptionCode&)
+RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::index");
+
+    if (indexName.isEmpty()) {
+        ec = NOT_FOUND_ERR;
+        return nullptr;
+    }
+
+    if (m_deleted) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    auto iterator = m_referencedIndexes.find(indexName);
+    if (iterator != m_referencedIndexes.end())
+        return iterator->value;
+
+    auto* info = m_info.infoForExistingIndex(indexName);
+    if (!info) {
+        ec = NOT_FOUND_ERR;
+        return nullptr;
+    }
+
+    auto index = IDBIndex::create(*info, *this);
+    m_referencedIndexes.set(indexName, &index.get());
+
+    return WTF::move(index);
 }
 
 void IDBObjectStore::deleteIndex(const String&, ExceptionCode&)

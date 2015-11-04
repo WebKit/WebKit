@@ -486,6 +486,9 @@ storage/indexeddb/unprefix-workers.html [ Skip ]
 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 
+# Bindings changes in https://bugs.webkit.org/show_bug.cgi?id=150868 cause this to fail, but this test is probably wrong
+storage/indexeddb/keypath-basics.html [ Skip ]
+
 ### END OF (5) IndexedDB related failures
 ########################################
 

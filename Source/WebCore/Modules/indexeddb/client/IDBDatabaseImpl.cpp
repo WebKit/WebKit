@@ -334,6 +334,13 @@ void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)
     scriptExecutionContext()->eventQueue().enqueueEvent(adoptRef(&event.leakRef()));
 }
 
+void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)
+{
+    auto* objectStore = m_info.infoForExistingObjectStore(info.objectStoreIdentifier());
+    ASSERT(objectStore);
+    objectStore->addExistingIndex(info);
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

@@ -55,6 +55,7 @@ public:
     void didCreateObjectStore(const IDBResultData&);
     void didDeleteObjectStore(const IDBResultData&);
     void didClearObjectStore(const IDBResultData&);
+    void didCreateIndex(const IDBResultData&);
     void didPutOrAdd(const IDBResultData&);
     void didGetRecord(const IDBResultData&);
     void didGetCount(const IDBResultData&);

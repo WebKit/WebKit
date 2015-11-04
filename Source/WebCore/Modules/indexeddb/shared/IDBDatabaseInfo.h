@@ -49,6 +49,8 @@ public:
     bool hasObjectStore(const String& name) const;
     IDBObjectStoreInfo createNewObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
+    IDBObjectStoreInfo* infoForExistingObjectStore(uint64_t objectStoreIdentifier);
+    IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);
     const IDBObjectStoreInfo* infoForExistingObjectStore(uint64_t objectStoreIdentifier) const;
     const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
 
@@ -58,6 +60,9 @@ public:
 
 private:
     IDBDatabaseInfo();
+
+    IDBObjectStoreInfo* getInfoForExistingObjectStore(const String& objectStoreName);
+    IDBObjectStoreInfo* getInfoForExistingObjectStore(uint64_t objectStoreIdentifier);
 
     String m_name;
     uint64_t m_version { 0 };

@@ -77,7 +77,7 @@ void IDBDatabaseInfo::addExistingObjectStore(const IDBObjectStoreInfo& info)
     m_objectStoreMap.set(info.identifier(), info);
 }
 
-const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t objectStoreIdentifier) const
+IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(uint64_t objectStoreIdentifier)
 {
     auto iterator = m_objectStoreMap.find(objectStoreIdentifier);
     if (iterator == m_objectStoreMap.end())
@@ -86,7 +86,7 @@ const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t o
     return &iterator->value;
 }
 
-const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name) const
+IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(const String& name)
 {
     for (auto& objectStore : m_objectStoreMap.values()) {
         if (objectStore.name() == name)
@@ -94,6 +94,26 @@ const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const Stri
     }
 
     return nullptr;
+}
+
+const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t objectStoreIdentifier) const
+{
+    return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(objectStoreIdentifier);
+}
+
+IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t objectStoreIdentifier)
+{
+    return getInfoForExistingObjectStore(objectStoreIdentifier);
+}
+
+const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name) const
+{
+    return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(name);
+}
+
+IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name)
+{
+    return getInfoForExistingObjectStore(name);
 }
 
 Vector<String> IDBDatabaseInfo::objectStoreNames() const

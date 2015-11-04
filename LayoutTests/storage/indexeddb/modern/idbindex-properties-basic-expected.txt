@@ -1,0 +1,90 @@
+ALERT: Initial upgrade needed: Old version - 0 New version - 1
+ALERT: TestIndex1
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: false
+ALERT: false
+ALERT: TestIndex2
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: false
+ALERT: false
+ALERT: TestIndex3
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: false
+ALERT: true
+ALERT: TestIndex4
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: true
+ALERT: false
+ALERT: TestIndex5
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: true
+ALERT: true
+ALERT: TestIndex6
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: [object DOMStringList]
+ALERT: false
+ALERT: false
+ALERT: TestIndex7
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: [object DOMStringList]
+ALERT: false
+ALERT: false
+ALERT: Initial upgrade versionchange transaction complete
+ALERT: TestIndex1
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: false
+ALERT: false
+ALERT: TestIndex2
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: false
+ALERT: false
+ALERT: TestIndex3
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: false
+ALERT: true
+ALERT: TestIndex4
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: true
+ALERT: false
+ALERT: TestIndex5
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: foo
+ALERT: true
+ALERT: true
+ALERT: TestIndex6
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: [object DOMStringList]
+ALERT: false
+ALERT: false
+ALERT: TestIndex7
+ALERT: [object IDBObjectStore]
+ALERT: TestObjectStore
+ALERT: [object DOMStringList]
+ALERT: false
+ALERT: false
+ALERT: readonly transaction complete
+ALERT: Done
+This tests getting basic properties on an IDBIndex.
+

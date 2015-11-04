@@ -66,6 +66,26 @@ void MemoryBackingStoreTransaction::addNewObjectStore(MemoryObjectStore& objectS
     addExistingObjectStore(objectStore);
 }
 
+void MemoryBackingStoreTransaction::addNewIndex(MemoryIndex& index)
+{
+    LOG(IndexedDB, "MemoryBackingStoreTransaction::addNewIndex()");
+
+    ASSERT(isVersionChange());
+    m_versionChangeAddedIndexes.add(&index);
+
+    addExistingIndex(index);
+}
+
+void MemoryBackingStoreTransaction::addExistingIndex(MemoryIndex& index)
+{
+    LOG(IndexedDB, "MemoryBackingStoreTransaction::addExistingIndex");
+
+    ASSERT(isWriting());
+
+    ASSERT(!m_indexes.contains(&index));
+    m_indexes.add(&index);
+}
+
 void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& objectStore)
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::addExistingObjectStore");

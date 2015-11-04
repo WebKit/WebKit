@@ -35,14 +35,21 @@ namespace WebCore {
 
 class IDBIndexInfo {
 public:
+    IDBIndexInfo();
+    IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
+
+    IDBIndexInfo isolatedCopy() const;
+
+    uint64_t identifier() const { return m_identifier; }
+    uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
     const String& name() const { return m_name; }
     const IDBKeyPath& keyPath() const { return m_keyPath; }
     bool unique() const { return m_unique; }
     bool multiEntry() const { return m_multiEntry; }
 
 private:
-    IDBIndexInfo();
-
+    uint64_t m_identifier { 0 };
+    uint64_t m_objectStoreIdentifier { 0 };
     String m_name;
     IDBKeyPath m_keyPath;
     bool m_unique { true };

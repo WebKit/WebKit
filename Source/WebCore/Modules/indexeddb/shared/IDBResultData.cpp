@@ -104,6 +104,11 @@ IDBResultData IDBResultData::clearObjectStoreSuccess(const IDBResourceIdentifier
     return { IDBResultType::ClearObjectStoreSuccess, requestIdentifier };
 }
 
+IDBResultData IDBResultData::createIndexSuccess(const IDBResourceIdentifier& requestIdentifier)
+{
+    return { IDBResultType::CreateIndexSuccess, requestIdentifier };
+}
+
 IDBResultData IDBResultData::putOrAddSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBKeyData& resultKey)
 {
     IDBResultData result(IDBResultType::PutOrAddSuccess, requestIdentifier);

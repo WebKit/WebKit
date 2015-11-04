@@ -42,9 +42,51 @@ IDBObjectStoreInfo::IDBObjectStoreInfo(uint64_t identifier, const String& name, 
 {
 }
 
+IDBIndexInfo IDBObjectStoreInfo::createNewIndex(const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+{
+    IDBIndexInfo info(++m_maxIndexID, m_identifier, name, keyPath, unique, multiEntry);
+    m_indexMap.set(info.identifier(), info);
+    return info;
+}
+
+void IDBObjectStoreInfo::addExistingIndex(const IDBIndexInfo& info)
+{
+    ASSERT(!m_indexMap.contains(info.identifier()));
+
+    if (info.identifier() > m_maxIndexID)
+        m_maxIndexID = info.identifier();
+
+    m_indexMap.set(info.identifier(), info);
+}
+
+bool IDBObjectStoreInfo::hasIndex(const String& name) const
+{
+    for (auto& index : m_indexMap.values()) {
+        if (index.name() == name)
+            return true;
+    }
+
+    return false;
+}
+
+IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(const String& name)
+{
+    for (auto& index : m_indexMap.values()) {
+        if (index.name() == name)
+            return &index;
+    }
+
+    return nullptr;
+}
+
 IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const
 {
-    return { m_identifier, m_name.isolatedCopy(), m_keyPath.isolatedCopy(), m_autoIncrement };
+    IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), m_keyPath.isolatedCopy(), m_autoIncrement };
+
+    for (auto& iterator : m_indexMap)
+        result.m_indexMap.set(iterator.key, iterator.value.isolatedCopy());
+
+    return result;
 }
 
 } // namespace WebCore

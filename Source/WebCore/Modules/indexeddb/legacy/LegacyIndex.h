@@ -56,7 +56,7 @@ public:
 
     // Implement the IDL
     virtual const String& name() const override final { return m_metadata.name; }
-    virtual RefPtr<IDBObjectStore> objectStore() const override final { return m_objectStore; }
+    virtual RefPtr<IDBObjectStore> objectStore() override final { return m_objectStore; }
     LegacyObjectStore* legacyObjectStore() const { return m_objectStore.get(); }
     virtual RefPtr<IDBAny> keyPathAny() const override final { return LegacyAny::create(m_metadata.keyPath); }
     virtual const IDBKeyPath& keyPath() const override final { return m_metadata.keyPath; }

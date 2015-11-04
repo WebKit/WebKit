@@ -140,6 +140,21 @@ void IDBConnectionToServer::didClearObjectStore(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
+void IDBConnectionToServer::createIndex(TransactionOperation& operation, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::createIndex");
+
+    saveOperation(operation);
+
+    m_delegate->createIndex(IDBRequestData(operation), info);
+}
+
+void IDBConnectionToServer::didCreateIndex(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didCreateIndex");
+    completeOperation(resultData);
+}
+
 void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, RefPtr<IDBKey>& key, RefPtr<SerializedScriptValue>& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");

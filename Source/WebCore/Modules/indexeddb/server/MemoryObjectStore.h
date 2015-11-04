@@ -30,12 +30,14 @@
 
 #include "IDBKeyData.h"
 #include "IDBObjectStoreInfo.h"
+#include "MemoryIndex.h"
 #include "ThreadSafeDataBuffer.h"
 #include <set>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
+class IDBError;
 class IDBKeyData;
 
 struct IDBKeyRangeData;
@@ -55,6 +57,8 @@ public:
 
     void writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
+
+    IDBError createIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
 
     bool containsRecord(const IDBKeyData&);
     void deleteRecord(const IDBKeyData&);
@@ -86,6 +90,11 @@ private:
 
     std::unique_ptr<KeyValueMap> m_keyValueStore;
     std::unique_ptr<std::set<IDBKeyData>> m_orderedKeys;
+
+    void registerIndex(std::unique_ptr<MemoryIndex>&&);
+    void unregisterIndex(MemoryIndex&);
+    HashMap<uint64_t, std::unique_ptr<MemoryIndex>> m_indexesByIdentifier;
+    HashMap<String, MemoryIndex*> m_indexesByName;
 };
 
 } // namespace IDBServer

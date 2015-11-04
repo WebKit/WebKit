@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBIndexImpl.h"
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreInfo.h"
 #include "IndexedDB.h"
@@ -91,6 +92,8 @@ private:
     Ref<IDBTransaction> m_transaction;
 
     bool m_deleted { false };
+
+    HashMap<String, RefPtr<IDBIndex>> m_referencedIndexes;
 };
 
 } // namespace IDBClient

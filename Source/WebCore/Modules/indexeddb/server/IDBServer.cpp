@@ -191,6 +191,18 @@ void IDBServer::clearObjectStore(const IDBRequestData& requestData, uint64_t obj
     transaction->clearObjectStore(requestData, objectStoreIdentifier);
 }
 
+void IDBServer::createIndex(const IDBRequestData& requestData, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "IDBServer::createIndex");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    ASSERT(transaction->isVersionChange());
+    transaction->createIndex(requestData, info);
+}
+
 void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBServer::putOrAdd");

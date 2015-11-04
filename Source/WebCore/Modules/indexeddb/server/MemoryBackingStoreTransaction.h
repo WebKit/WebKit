@@ -39,6 +39,7 @@ namespace WebCore {
 namespace IDBServer {
 
 class MemoryIDBBackingStore;
+class MemoryIndex;
 class MemoryObjectStore;
 
 typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
@@ -62,6 +63,9 @@ public:
     void objectStoreDeleted(std::unique_ptr<MemoryObjectStore>);
     void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&);
 
+    void addNewIndex(MemoryIndex&);
+    void addExistingIndex(MemoryIndex&);
+
     void abort();
     void commit();
 
@@ -80,6 +84,8 @@ private:
 
     HashSet<MemoryObjectStore*> m_objectStores;
     HashSet<MemoryObjectStore*> m_versionChangeAddedObjectStores;
+    HashSet<MemoryIndex*> m_indexes;
+    HashSet<MemoryIndex*> m_versionChangeAddedIndexes;
 
     HashMap<MemoryObjectStore*, uint64_t> m_originalKeyGenerators;
     HashMap<String, std::unique_ptr<MemoryObjectStore>> m_deletedObjectStores;

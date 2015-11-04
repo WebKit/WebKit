@@ -48,6 +48,7 @@
 #include "IDBDatabaseMetadata.h"
 #include "IDBError.h"
 #include "IDBGetResult.h"
+#include "IDBIndexInfo.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBObjectStoreInfo.h"
@@ -165,6 +166,11 @@ CrossThreadCopierBase<false, false, IDBError>::Type CrossThreadCopierBase<false,
 }
 
 CrossThreadCopierBase<false, false, IDBObjectStoreInfo>::Type CrossThreadCopierBase<false, false, IDBObjectStoreInfo>::copy(const IDBObjectStoreInfo& info)
+{
+    return info.isolatedCopy();
+}
+
+CrossThreadCopierBase<false, false, IDBIndexInfo>::Type CrossThreadCopierBase<false, false, IDBIndexInfo>::copy(const IDBIndexInfo& info)
 {
     return info.isolatedCopy();
 }

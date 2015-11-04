@@ -233,6 +233,12 @@ namespace WebCore {
         static Type copy(const IDBObjectStoreInfo&);
     };
 
+    class IDBIndexInfo;
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBIndexInfo> {
+        typedef IDBIndexInfo Type;
+        static Type copy(const IDBIndexInfo&);
+    };
+
 #endif
 
     template<typename T>

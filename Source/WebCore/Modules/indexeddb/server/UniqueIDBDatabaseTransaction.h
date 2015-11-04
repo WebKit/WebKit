@@ -37,6 +37,7 @@ namespace WebCore {
 
 class IDBDatabaseInfo;
 class IDBError;
+class IDBIndexInfo;
 class IDBKeyData;
 class IDBObjectStoreInfo;
 class IDBRequestData;
@@ -67,6 +68,7 @@ public:
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
     void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier);
+    void createIndex(const IDBRequestData&, const IDBIndexInfo&);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
     void getCount(const IDBRequestData&, const IDBKeyRangeData&);

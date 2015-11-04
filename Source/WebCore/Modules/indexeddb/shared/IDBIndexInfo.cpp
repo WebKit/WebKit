@@ -30,6 +30,25 @@
 
 namespace WebCore {
 
+IDBIndexInfo::IDBIndexInfo()
+{
+}
+
+IDBIndexInfo::IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+    : m_identifier(identifier)
+    , m_objectStoreIdentifier(objectStoreIdentifier)
+    , m_name(name)
+    , m_keyPath(keyPath)
+    , m_unique(unique)
+    , m_multiEntry(multiEntry)
+{
+}
+
+IDBIndexInfo IDBIndexInfo::isolatedCopy() const
+{
+    return { m_identifier, m_objectStoreIdentifier, m_name.isolatedCopy(), m_keyPath.isolatedCopy(), m_unique, m_multiEntry };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

@@ -35,33 +35,48 @@
 namespace WebCore {
 namespace IDBClient {
 
+class IDBObjectStore;
+
 class IDBIndex : public WebCore::IDBIndex {
 public:
+    static Ref<IDBIndex> create(const IDBIndexInfo&, IDBObjectStore&);
+
     virtual ~IDBIndex();
 
     // Implement the IDL
     virtual const String& name() const override final;
-    virtual RefPtr<IDBObjectStore> objectStore() const override final;
-    virtual RefPtr<IDBAny> keyPathAny() const override final;
+    virtual RefPtr<WebCore::IDBObjectStore> objectStore() override final;
+    virtual RefPtr<WebCore::IDBAny> keyPathAny() const override final;
     virtual const IDBKeyPath& keyPath() const override final;
     virtual bool unique() const override final;
     virtual bool multiEntry() const override final;
 
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec) override final { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openCursor(context, key, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
 
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openKeyCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openKeyCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<WebCore::IDBRequest> openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec) override final { return openKeyCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<WebCore::IDBRequest> openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openKeyCursor(context, key, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<WebCore::IDBRequest> openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
+
+    virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
 private:
+    IDBIndex(const IDBIndexInfo&, IDBObjectStore&);
+
     IDBIndexInfo m_info;
+    Ref<IDBObjectStore> m_objectStore;
 };
 
 } // namespace IDBClient

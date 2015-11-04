@@ -153,6 +153,13 @@ void UniqueIDBDatabaseConnection::didClearObjectStore(const IDBResultData& resul
     m_connectionToClient.didClearObjectStore(resultData);
 }
 
+void UniqueIDBDatabaseConnection::didCreateIndex(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseConnection::didCreateIndex");
+
+    m_connectionToClient.didCreateIndex(resultData);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

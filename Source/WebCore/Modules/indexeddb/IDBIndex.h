@@ -49,7 +49,7 @@ public:
 
     // Implement the IDL
     virtual const String& name() const = 0;
-    virtual RefPtr<IDBObjectStore> objectStore() const = 0;
+    virtual RefPtr<IDBObjectStore> objectStore() = 0;
     virtual RefPtr<IDBAny> keyPathAny() const = 0;
     virtual const IDBKeyPath& keyPath() const = 0;
     virtual bool unique() const = 0;

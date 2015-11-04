@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBIndexInfo.h"
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
 #include "MemoryObjectStore.h"
@@ -181,6 +182,21 @@ IDBError MemoryIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
     objectStore->clear();
 
     return IDBError();
+}
+
+IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::createIndex");
+
+    auto rawTransaction = m_transactions.get(transactionIdentifier);
+    ASSERT(rawTransaction);
+    ASSERT(rawTransaction->isVersionChange());
+
+    auto* objectStore = m_objectStoresByIdentifier.get(info.objectStoreIdentifier());
+    if (!objectStore)
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    return objectStore->createIndex(*rawTransaction, info);
 }
 
 void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore)

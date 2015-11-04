@@ -84,6 +84,8 @@ public:
 
     IDBConnectionToServer& serverConnection() { return m_serverConnection.get(); }
 
+    void didCreateIndexInfo(const IDBIndexInfo&);
+
 private:
     IDBDatabase(ScriptExecutionContext&, IDBConnectionToServer&, const IDBResultData&);
 

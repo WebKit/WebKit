@@ -378,6 +378,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
     ASSERT(isVersionChange());
 
     Ref<IDBObjectStore> objectStore = IDBObjectStore::create(info, *this);
+    m_referencedObjectStores.set(info.name(), &objectStore.get());
 
     auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateObjectStoreOnServer, &IDBTransaction::createObjectStoreOnServer, info);
     scheduleOperation(WTF::move(operation));
@@ -399,6 +400,35 @@ void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultDat
     LOG(IndexedDB, "IDBTransaction::didCreateObjectStoreOnServer");
 
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess);
+}
+
+Ref<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStore, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "IDBTransaction::createIndex");
+    ASSERT(isVersionChange());
+
+    Ref<IDBIndex> index = IDBIndex::create(info, objectStore);
+
+    auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateIndexOnServer, &IDBTransaction::createIndexOnServer, info);
+    scheduleOperation(WTF::move(operation));
+
+    return WTF::move(index);
+}
+
+void IDBTransaction::createIndexOnServer(TransactionOperation& operation, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "IDBTransaction::createIndexOnServer");
+
+    ASSERT(isVersionChange());
+
+    m_database->serverConnection().createIndex(operation, info);
+}
+
+void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didCreateIndexOnServer");
+
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateIndexSuccess);
 }
 
 Ref<IDBRequest> IDBTransaction::requestGetRecord(ScriptExecutionContext& context, IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData)

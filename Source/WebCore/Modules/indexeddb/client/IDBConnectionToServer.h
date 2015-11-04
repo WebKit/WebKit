@@ -70,6 +70,9 @@ public:
     void clearObjectStore(TransactionOperation&, uint64_t objectStoreIdentifier);
     void didClearObjectStore(const IDBResultData&);
 
+    void createIndex(TransactionOperation&, const IDBIndexInfo&);
+    void didCreateIndex(const IDBResultData&);
+
     void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
     void didPutOrAdd(const IDBResultData&);
 

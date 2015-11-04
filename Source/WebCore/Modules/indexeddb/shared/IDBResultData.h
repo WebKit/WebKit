@@ -51,6 +51,7 @@ enum class IDBResultType {
     GetRecordSuccess,
     GetCountSuccess,
     DeleteRecordSuccess,
+    CreateIndexSuccess,
 };
 
 namespace IDBServer {
@@ -66,6 +67,7 @@ public:
     static IDBResultData createObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData deleteObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData clearObjectStoreSuccess(const IDBResourceIdentifier&);
+    static IDBResultData createIndexSuccess(const IDBResourceIdentifier&);
     static IDBResultData putOrAddSuccess(const IDBResourceIdentifier&, const IDBKeyData&);
     static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const ThreadSafeDataBuffer& valueData);
     static IDBResultData getCountSuccess(const IDBResourceIdentifier&, uint64_t count);

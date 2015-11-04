@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseException.h"
+#include "IDBError.h"
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
 #include "MemoryBackingStoreTransaction.h"
@@ -64,6 +66,24 @@ void MemoryObjectStore::writeTransactionFinished(MemoryBackingStoreTransaction& 
 
     ASSERT_UNUSED(transaction, m_writeTransaction == &transaction);
     m_writeTransaction = nullptr;
+}
+
+IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transaction, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "MemoryObjectStore::createIndex");
+
+    if (!m_writeTransaction || m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    ASSERT(!m_indexesByIdentifier.contains(info.identifier()));
+    auto index = MemoryIndex::create(info);
+
+    m_info.addExistingIndex(info);
+
+    transaction.addNewIndex(*index);
+    registerIndex(WTF::move(index));
+
+    return { };
 }
 
 bool MemoryObjectStore::containsRecord(const IDBKeyData& key)
@@ -218,6 +238,25 @@ IDBKeyData MemoryObjectStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& 
     }
 
     return *lowestInRange;
+}
+
+void MemoryObjectStore::registerIndex(std::unique_ptr<MemoryIndex>&& index)
+{
+    ASSERT(index);
+    ASSERT(!m_indexesByIdentifier.contains(index->info().identifier()));
+    ASSERT(!m_indexesByName.contains(index->info().name()));
+
+    m_indexesByName.set(index->info().name(), index.get());
+    m_indexesByIdentifier.set(index->info().identifier(), WTF::move(index));
+}
+
+void MemoryObjectStore::unregisterIndex(MemoryIndex& index)
+{
+    ASSERT(m_indexesByIdentifier.contains(index.info().identifier()));
+    ASSERT(m_indexesByName.contains(index.info().name()));
+
+    m_indexesByName.remove(index.info().name());
+    m_indexesByIdentifier.remove(index.info().identifier());
 }
 
 } // namespace IDBServer

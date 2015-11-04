@@ -102,11 +102,19 @@ JSValue JSIDBObjectStore::createIndex(ExecState& state)
     if (state.argumentCount() < 2)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
 
-    String name = state.argument(0).toString(&state)->value(&state);
+    String name;
+    JSValue nameValue = state.argument(0);
+    if (!nameValue.isUndefinedOrNull())
+        name = nameValue.toString(&state)->value(&state);
+
     if (state.hadException())
         return jsUndefined();
 
-    IDBKeyPath keyPath = idbKeyPathFromValue(&state, state.argument(1));
+    IDBKeyPath keyPath;
+    JSValue keyPathValue = state.argument(1);
+    if (!keyPathValue.isUndefinedOrNull())
+        keyPath = idbKeyPathFromValue(&state, state.argument(1));
+
     if (state.hadException())
         return jsUndefined();
 

@@ -69,6 +69,7 @@ public:
     void didCreateObjectStore(const IDBResultData&);
     void didDeleteObjectStore(const IDBResultData&);
     void didClearObjectStore(const IDBResultData&);
+    void didCreateIndex(const IDBResultData&);
 
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, IDBConnectionToClient&);

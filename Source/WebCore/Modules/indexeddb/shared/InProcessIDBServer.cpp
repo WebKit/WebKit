@@ -143,6 +143,14 @@ void InProcessIDBServer::didClearObjectStore(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didCreateIndex(const IDBResultData& resultData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData] {
+        m_connectionToServer->didCreateIndex(resultData);
+    });
+}
+
 void InProcessIDBServer::didPutOrAdd(const IDBResultData& resultData)
 {
     RefPtr<InProcessIDBServer> self(this);
@@ -212,6 +220,14 @@ void InProcessIDBServer::clearObjectStore(const IDBRequestData& requestData, uin
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, requestData, objectStoreIdentifier] {
         m_server->clearObjectStore(requestData, objectStoreIdentifier);
+    });
+}
+
+void InProcessIDBServer::createIndex(const IDBRequestData& resultData, const IDBIndexInfo& info)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData, info] {
+        m_server->createIndex(resultData, info);
     });
 }
 

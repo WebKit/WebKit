@@ -28,7 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBIndexInfo.h"
 #include "IDBKeyPath.h"
+#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,11 +49,20 @@ public:
 
     IDBObjectStoreInfo isolatedCopy() const;
 
+    IDBIndexInfo createNewIndex(const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
+    void addExistingIndex(const IDBIndexInfo&);
+    bool hasIndex(const String& name) const;
+    IDBIndexInfo* infoForExistingIndex(const String& name);
+
 private:
     uint64_t m_identifier { 0 };
     String m_name;
     IDBKeyPath m_keyPath;
     bool m_autoIncrement { false };
+    uint64_t m_maxIndexID { 0 };
+
+    HashMap<uint64_t, IDBIndexInfo> m_indexMap;
+
 };
 
 } // namespace WebCore

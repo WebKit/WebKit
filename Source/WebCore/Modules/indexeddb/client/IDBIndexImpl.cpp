@@ -28,8 +28,22 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBAnyImpl.h"
+#include "IDBObjectStoreImpl.h"
+
 namespace WebCore {
 namespace IDBClient {
+
+Ref<IDBIndex> IDBIndex::create(const IDBIndexInfo& info, IDBObjectStore& objectStore)
+{
+    return adoptRef(*new IDBIndex(info, objectStore));
+}
+
+IDBIndex::IDBIndex(const IDBIndexInfo& info, IDBObjectStore& objectStore)
+    : m_info(info)
+    , m_objectStore(objectStore)
+{
+}
 
 IDBIndex::~IDBIndex()
 {
@@ -40,14 +54,14 @@ const String& IDBIndex::name() const
     return m_info.name();
 }
 
-RefPtr<IDBObjectStore> IDBIndex::objectStore() const
+RefPtr<WebCore::IDBObjectStore> IDBIndex::objectStore()
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return &m_objectStore.get();
 }
 
-RefPtr<IDBAny> IDBIndex::keyPathAny() const
+RefPtr<WebCore::IDBAny> IDBIndex::keyPathAny() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return IDBAny::create(m_info.keyPath());
 }
 
 const IDBKeyPath& IDBIndex::keyPath() const
@@ -65,52 +79,57 @@ bool IDBIndex::multiEntry() const
     return m_info.multiEntry();
 }
 
-RefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext*, IDBKeyRange*, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext*, IDBKeyRange*, const String&, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue&, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue&, const String&, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext*, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue&, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String&, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue&, const String&, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
