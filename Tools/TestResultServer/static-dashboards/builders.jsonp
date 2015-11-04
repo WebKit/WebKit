@@ -6,6 +6,11 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "layout-tests": {
                 "builders": [
+                    "Apple El Capitan (Leaks)", 
+                    "Apple El Capitan Debug WK1 (Tests)", 
+                    "Apple El Capitan Debug WK2 (Tests)", 
+                    "Apple El Capitan Release WK1 (Tests)", 
+                    "Apple El Capitan Release WK2 (Tests)", 
                     "Apple Mavericks Debug WK1 (Tests)", 
                     "Apple Mavericks Debug WK2 (Tests)", 
                     "Apple Mavericks Release WK1 (Tests)", 
@@ -17,11 +22,8 @@ LOAD_BUILDBOT_DATA([
                     "Apple Yosemite Debug WK2 (Tests)", 
                     "Apple Yosemite Release WK1 (Tests)", 
                     "Apple Yosemite Release WK2 (Tests)", 
-                    "Apple El Capitan (Leaks)", 
-                    "Apple El Capitan Debug WK1 (Tests)", 
-                    "Apple El Capitan Debug WK2 (Tests)", 
-                    "Apple El Capitan Release WK1 (Tests)", 
-                    "Apple El Capitan Release WK2 (Tests)", 
+                    "Apple iOS 9 Simulator Release WK1 (Tests)", 
+                    "Apple iOS 9 Simulator Release WK2 (Tests)", 
                     "EFL Linux 64-bit Release WK2", 
                     "GTK Linux 64-bit Debug (Tests)", 
                     "GTK Linux 64-bit Release (Tests)"
