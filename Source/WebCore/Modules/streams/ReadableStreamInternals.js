@@ -42,19 +42,19 @@ function privateInitializeReadableStreamReader(stream)
         this.@ownerReadableStream = stream;
         this.@storedError = undefined;
         stream.@reader = this;
-        this.@closedPromiseCapability = @newPromiseCapability(Promise);
+        this.@closedPromiseCapability = @newPromiseCapability(@Promise);
         return this;
     }
     if (stream.@state === @streamClosed) {
         this.@ownerReadableStream = null;
         this.@storedError = undefined;
-        this.@closedPromiseCapability = { @promise: Promise.resolve(undefined) };
+        this.@closedPromiseCapability = { @promise: @Promise.resolve(undefined) };
         return this;
     }
     // FIXME: ASSERT(stream.@state === @streamErrored);
     this.@ownerReadableStream = null;
     this.@storedError = stream.@storedError;
-    this.@closedPromiseCapability = { @promise: Promise.reject(stream.@storedError) };
+    this.@closedPromiseCapability = { @promise: @Promise.reject(stream.@storedError) };
 
     return this;
 }
@@ -275,9 +275,9 @@ function cancelReadableStream(stream, reason)
     "use strict";
 
     if (stream.@state === @streamClosed)
-        return Promise.resolve();
+        return @Promise.resolve();
     if (stream.@state === @streamErrored)
-        return Promise.reject(stream.@storedError);
+        return @Promise.reject(stream.@storedError);
     stream.@queue = @newQueue();
     @finishClosingReadableStream(stream);
     return @promiseInvokeOrNoop(stream.@underlyingSource, "cancel", [reason]).then(function() { });
@@ -354,9 +354,9 @@ function readFromReadableStreamReader(reader)
     "use strict";
 
     if (reader.@state === @streamClosed)
-        return Promise.resolve({value: undefined, done: true});
+        return @Promise.resolve({value: undefined, done: true});
     if (reader.@state === @streamErrored)
-        return Promise.reject(reader.@storedError);
+        return @Promise.reject(reader.@storedError);
     // FIXME: ASSERT(!!reader.@ownerReadableStream);
     // FIXME: ASSERT(reader.@ownerReadableStream.@state === @streamReadable);
     var stream = reader.@ownerReadableStream;
@@ -366,9 +366,9 @@ function readFromReadableStreamReader(reader)
             @requestReadableStreamPull(stream);
         else if (!stream.@queue.content.length)
             @finishClosingReadableStream(stream);
-        return Promise.resolve({value: chunk, done: false});
+        return @Promise.resolve({value: chunk, done: false});
     }
-    var readPromiseCapability = @newPromiseCapability(Promise);
+    var readPromiseCapability = @newPromiseCapability(@Promise);
     reader.@readRequests.push(readPromiseCapability);
     @requestReadableStreamPull(stream);
     return readPromiseCapability.@promise;

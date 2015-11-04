@@ -1,0 +1,3 @@
+
+PASS Streams can be built even if Promise constructor is replaced 
+

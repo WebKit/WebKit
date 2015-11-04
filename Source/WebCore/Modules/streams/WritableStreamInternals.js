@@ -47,7 +47,7 @@ function syncWritableStreamStateWithQueue(stream)
     const shouldApplyBackpressure = stream.@queue.size > stream.@strategy.highWaterMark;
     if (shouldApplyBackpressure && stream.@state === @streamWritable) {
         stream.@state = @streamWaiting;
-        stream.@readyPromiseCapability = @newPromiseCapability(Promise);
+        stream.@readyPromiseCapability = @newPromiseCapability(@Promise);
     }
     if (!shouldApplyBackpressure && stream.@state === @streamWaiting) {
         stream.@state = @streamWritable;

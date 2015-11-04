@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+test(function() {
+    Promise = function() { throw new Error("nasty things"); };
+
+    const rs = new ReadableStream(); // Does not throw.
+    const ws = new WritableStream(); // Does not throw.
+}, 'Streams can be built even if Promise constructor is replaced');
+</script>
