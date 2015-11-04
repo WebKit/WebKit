@@ -1,3 +1,16 @@
+2015-11-03  Tim Horton  <timothy_horton@apple.com>
+
+        Duplicate validateUserInterfaceItem in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=150873
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView changeFont:]):
+        (-[WKWebView startSpeaking:]):
+        (-[WKWebView validateUserInterfaceItem:]):
+        (-[WKWebView goBack:]):
+
 2015-11-03  Geoffrey Garen  <ggaren@apple.com>
 
         Provide a way to turn off const in WebKit2.

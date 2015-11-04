@@ -2061,11 +2061,6 @@ WEBCORE_COMMAND(yankAndSelect)
     _impl->changeFontFromFontPanel();
 }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
-{
-    return _impl->validateUserInterfaceItem(item);
-}
-
 - (IBAction)startSpeaking:(id)sender
 {
     _impl->startSpeaking();
@@ -4073,7 +4068,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return YES;
     }
 
-    return NO;
+    return _impl->validateUserInterfaceItem(item);
 }
 
 - (IBAction)goBack:(id)sender
