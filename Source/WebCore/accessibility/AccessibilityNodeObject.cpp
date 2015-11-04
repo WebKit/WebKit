@@ -1687,12 +1687,6 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
     if (is<Text>(node))
         return downcast<Text>(*node).wholeText();
 
-    // The render tree should be stable before going ahead. Otherwise, further uses of the
-    // TextIterator will force a layout update, potentially altering the accessibility tree
-    // and leading to crashes in the loop that computes the result text from the children.
-    ASSERT(!document()->renderView()->layoutState());
-    ASSERT(!document()->childNeedsStyleRecalc());
-
     StringBuilder builder;
     for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
         if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
