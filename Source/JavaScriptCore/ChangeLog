@@ -1,5 +1,21 @@
 2015-11-03  Mark Lam  <mark.lam@apple.com>
 
+        Add op_add tests to compare behavior of JIT generated code to the LLINT's.
+        https://bugs.webkit.org/show_bug.cgi?id=150864
+
+        Reviewed by Saam Barati.
+
+        * tests/stress/op_add.js: Added.
+        (o1.valueOf):
+        (generateScenarios):
+        (printScenarios):
+        (testCases.func):
+        (func):
+        (initializeTestCases):
+        (runTest):
+
+2015-11-03  Mark Lam  <mark.lam@apple.com>
+
         Rename DFG's compileAdd to compileArithAdd.
         https://bugs.webkit.org/show_bug.cgi?id=150866
 
