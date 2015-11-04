@@ -708,6 +708,21 @@ public:
         }
     }
 
+    bool tryXor(Value* left, Value* right)
+    {
+        switch (left->type()) {
+        case Int32:
+            appendBinOp<Xor32, Commutative>(left, right);
+            return true;
+        case Int64:
+            appendBinOp<Xor64, Commutative>(left, right);
+            return true;
+        default:
+            // FIXME: Implement more types!
+            return false;
+        }
+    }
+
     bool tryShl(Value* value, Value* amount)
     {
         Air::Opcode opcode = value->type() == Int32 ? Lshift32 : Lshift64;

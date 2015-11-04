@@ -418,9 +418,9 @@ public:
     void xor32(TrustedImm32 imm, RegisterID dest)
     {
         if (imm.m_value == -1)
-        m_assembler.notl_r(dest);
+            m_assembler.notl_r(dest);
         else
-        m_assembler.xorl_ir(imm.m_value, dest);
+            m_assembler.xorl_ir(imm.m_value, dest);
     }
 
     void xor32(RegisterID src, Address dest)

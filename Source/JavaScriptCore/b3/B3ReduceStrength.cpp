@@ -191,13 +191,13 @@ private:
 
             // Turn this: BitOr(constant1, constant2)
             // Into this: constant1 | constant2
-            if (Value* constantBitAnd = m_value->child(0)->bitOrConstant(m_proc, m_value->child(1))) {
-                replaceWithNewValue(constantBitAnd);
+            if (Value* constantBitOr = m_value->child(0)->bitOrConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constantBitOr);
                 break;
             }
 
-            // Turn this: BitAnd(BitAnd(value, constant1), constant2)
-            // Into this: BitAnd(value, constant1 & constant2).
+            // Turn this: BitOr(BitOr(value, constant1), constant2)
+            // Into this: BitOr(value, constant1 & constant2).
             if (m_value->child(0)->opcode() == BitOr) {
                 Value* newConstant = m_value->child(1)->bitOrConstant(m_proc, m_value->child(0)->child(1));
                 if (newConstant) {
@@ -229,6 +229,54 @@ private:
             if ((m_value->type() == Int64 && m_value->child(1)->isInt(0xffffffffffffffff))
                 || (m_value->type() == Int32 && m_value->child(1)->isInt(0xffffffff))) {
                 m_value->replaceWithIdentity(m_value->child(1));
+                m_changed = true;
+                break;
+            }
+
+            break;
+
+        case BitXor:
+            handleCommutativity();
+
+            // Turn this: BitXor(constant1, constant2)
+            // Into this: constant1 ^ constant2
+            if (Value* constantBitXor = m_value->child(0)->bitXorConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constantBitXor);
+                break;
+            }
+
+            // Turn this: BitXor(BitXor(value, constant1), constant2)
+            // Into this: BitXor(value, constant1 ^ constant2).
+            if (m_value->child(0)->opcode() == BitXor) {
+                Value* newConstant = m_value->child(1)->bitXorConstant(m_proc, m_value->child(0)->child(1));
+                if (newConstant) {
+                    m_insertionSet.insertValue(m_index, newConstant);
+                    m_value->child(0) = m_value->child(0)->child(0);
+                    m_value->child(1) = newConstant;
+                    m_changed = true;
+                }
+            }
+
+            // Turn this: BitXor(valueX, valueX)
+            // Into this: zero-constant.
+            if (m_value->child(0) == m_value->child(1)) {
+                Value* zeroConstant;
+                if (m_value->type() == Int32)
+                    zeroConstant = m_proc.add<Const32Value>(m_value->origin(), 0);
+                else if (m_value->type() == Int64)
+                    zeroConstant = m_proc.add<Const64Value>(m_value->origin(), 0);
+                else {
+                    RELEASE_ASSERT(m_value->type() == Double);
+                    zeroConstant = m_proc.add<ConstDoubleValue>(m_value->origin(), 0);
+                }
+                replaceWithNewValue(zeroConstant);
+                break;
+            }
+
+            // Turn this: BitXor(value, zero-constant)
+            // Into this: value.
+            if (m_value->child(1)->isInt(0)) {
+                m_value->replaceWithIdentity(m_value->child(0));
                 m_changed = true;
                 break;
             }

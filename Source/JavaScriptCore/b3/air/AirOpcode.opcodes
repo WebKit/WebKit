@@ -125,6 +125,18 @@ Or64 U:G, UD:G
     Tmp, Tmp
     Imm, Tmp
 
+Xor32 U:G, UD:G
+    Tmp, Tmp
+    Imm, Tmp
+    Tmp, Addr
+    Addr, Tmp
+    Imm, Addr
+
+Xor64 U:G, UD:G
+    Tmp, Tmp
+    Tmp, Addr
+    Imm, Tmp
+
 Lshift64 U:G, UD:G
     Tmp*, Tmp
     Imm, Tmp

@@ -75,6 +75,13 @@ Value* Const32Value::bitOrConstant(Procedure& proc, Value* other) const
     return proc.add<Const32Value>(origin(), m_value | other->asInt32());
 }
 
+Value* Const32Value::bitXorConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), m_value ^ other->asInt32());
+}
+
 Value* Const32Value::equalConstant(Procedure& proc, Value* other) const
 {
     if (!other->hasInt32())

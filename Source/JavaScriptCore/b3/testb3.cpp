@@ -738,6 +738,234 @@ void testBitOrImmBitOrArgImm32(int a, int b, int c)
     CHECK(compileAndRun<int>(proc, b) == (a | (b | c)));
 }
 
+void testBitXorArgs(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int64_t>(proc, a, b) == (a ^ b));
+}
+
+void testBitXorSameArg(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            argument,
+            argument));
+
+    CHECK(!compileAndRun<int64_t>(proc, a));
+}
+
+void testBitXorImms(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc) == (a ^ b));
+}
+
+void testBitXorArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == (a ^ b));
+}
+
+void testBitXorImmArg(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(compileAndRun<int64_t>(proc, b) == (a ^ b));
+}
+
+void testBitXorBitXorArgImmImm(int64_t a, int64_t b, int64_t c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitXor = root->appendNew<Value>(
+        proc, BitXor, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), b));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            innerBitXor,
+            root->appendNew<Const64Value>(proc, Origin(), c)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == ((a ^ b) ^ c));
+}
+
+void testBitXorImmBitXorArgImm(int64_t a, int64_t b, int64_t c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitXor = root->appendNew<Value>(
+        proc, BitXor, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Const64Value>(proc, Origin(), c));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            innerBitXor));
+
+    CHECK(compileAndRun<int64_t>(proc, b) == (a ^ (b ^ c)));
+}
+
+void testBitXorArgs32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+    CHECK(compileAndRun<int>(proc, a, b) == (a ^ b));
+}
+
+void testBitXorSameArg32(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            argument,
+            argument));
+
+    CHECK(!compileAndRun<int>(proc, a));
+}
+
+void testBitXorImms32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            root->appendNew<Const32Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc) == (a ^ b));
+}
+
+void testBitXorArgImm32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Const32Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc, a) == (a ^ b));
+}
+
+void testBitXorImmArg32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+    CHECK(compileAndRun<int>(proc, b) == (a ^ b));
+}
+
+void testBitXorBitXorArgImmImm32(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitXor = root->appendNew<Value>(
+        proc, BitXor, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<Const32Value>(proc, Origin(), b));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            innerBitXor,
+            root->appendNew<Const32Value>(proc, Origin(), c)));
+
+    CHECK(compileAndRun<int>(proc, a) == ((a ^ b) ^ c));
+}
+
+void testBitXorImmBitXorArgImm32(int a, int b, int c)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* innerBitXor = root->appendNew<Value>(
+        proc, BitXor, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<Const32Value>(proc, Origin(), c));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            innerBitXor));
+
+    CHECK(compileAndRun<int>(proc, b) == (a ^ (b ^ c)));
+}
+
 void testStore(int value)
 {
     Procedure proc;
@@ -1936,6 +2164,59 @@ void run(const char* filter)
     RUN(testBitOrImmBitOrArgImm32(7, 2, 3));
     RUN(testBitOrImmBitOrArgImm32(6, 1, 6));
     RUN(testBitOrImmBitOrArgImm32(24, 0xffff, 7));
+
+    RUN(testBitXorArgs(43, 43));
+    RUN(testBitXorArgs(43, 0));
+    RUN(testBitXorArgs(10, 3));
+    RUN(testBitXorArgs(42, 0xffffffffffffffff));
+    RUN(testBitXorSameArg(43));
+    RUN(testBitXorSameArg(0));
+    RUN(testBitXorSameArg(3));
+    RUN(testBitXorSameArg(0xffffffffffffffff));
+    RUN(testBitXorImms(43, 43));
+    RUN(testBitXorImms(43, 0));
+    RUN(testBitXorImms(10, 3));
+    RUN(testBitXorImms(42, 0xffffffffffffffff));
+    RUN(testBitXorArgImm(43, 43));
+    RUN(testBitXorArgImm(43, 0));
+    RUN(testBitXorArgImm(10, 3));
+    RUN(testBitXorArgImm(42, 0xffffffffffffffff));
+    RUN(testBitXorImmArg(43, 43));
+    RUN(testBitXorImmArg(43, 0));
+    RUN(testBitXorImmArg(10, 3));
+    RUN(testBitXorImmArg(42, 0xffffffffffffffff));
+    RUN(testBitXorBitXorArgImmImm(2, 7, 3));
+    RUN(testBitXorBitXorArgImmImm(1, 6, 6));
+    RUN(testBitXorBitXorArgImmImm(0xffff, 24, 7));
+    RUN(testBitXorImmBitXorArgImm(7, 2, 3));
+    RUN(testBitXorImmBitXorArgImm(6, 1, 6));
+    RUN(testBitXorImmBitXorArgImm(24, 0xffff, 7));
+    RUN(testBitXorArgs32(43, 43));
+    RUN(testBitXorArgs32(43, 0));
+    RUN(testBitXorArgs32(10, 3));
+    RUN(testBitXorArgs32(42, 0xffffffff));
+    RUN(testBitXorSameArg32(43));
+    RUN(testBitXorSameArg32(0));
+    RUN(testBitXorSameArg32(3));
+    RUN(testBitXorSameArg32(0xffffffff));
+    RUN(testBitXorImms32(43, 43));
+    RUN(testBitXorImms32(43, 0));
+    RUN(testBitXorImms32(10, 3));
+    RUN(testBitXorImms32(42, 0xffffffff));
+    RUN(testBitXorArgImm32(43, 43));
+    RUN(testBitXorArgImm32(43, 0));
+    RUN(testBitXorArgImm32(10, 3));
+    RUN(testBitXorArgImm32(42, 0xffffffff));
+    RUN(testBitXorImmArg32(43, 43));
+    RUN(testBitXorImmArg32(43, 0));
+    RUN(testBitXorImmArg32(10, 3));
+    RUN(testBitXorImmArg32(42, 0xffffffff));
+    RUN(testBitXorBitXorArgImmImm32(2, 7, 3));
+    RUN(testBitXorBitXorArgImmImm32(1, 6, 6));
+    RUN(testBitXorBitXorArgImmImm32(0xffff, 24, 7));
+    RUN(testBitXorImmBitXorArgImm32(7, 2, 3));
+    RUN(testBitXorImmBitXorArgImm32(6, 1, 6));
+    RUN(testBitXorImmBitXorArgImm32(24, 0xffff, 7));
 
     RUN(testStore(44));
     RUN(testStoreConstant(49));

@@ -34,6 +34,7 @@ Add = Add(left, right)
 Sub = Sub(left, right)
 And = BitAnd(left, right)
 Or = BitOr(left, right)
+Xor = BitXor(left, right)
 
 Shl = Shl(value, amount)
 

@@ -142,6 +142,11 @@ Value* Value::bitOrConstant(Procedure&, Value*) const
     return nullptr;
 }
 
+Value* Value::bitXorConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::equalConstant(Procedure&, Value*) const
 {
     return nullptr;
