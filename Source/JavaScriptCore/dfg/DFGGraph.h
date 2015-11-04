@@ -318,6 +318,8 @@ public:
             && negate->canSpeculateInt52(pass);
     }
 
+    bool canOptimizeStringObjectAccess(const CodeOrigin&);
+
     bool roundShouldSpeculateInt32(Node* arithRound, PredictionPass pass)
     {
         ASSERT(arithRound->op() == ArithRound);
@@ -913,7 +915,9 @@ public:
     bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };
 private:
-    
+
+    bool isStringPrototypeMethodSane(JSObject* stringPrototype, Structure* stringPrototypeStructure, UniquedStringImpl*);
+
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
     
     AddSpeculationMode addImmediateShouldSpeculateInt32(Node* add, bool variableShouldSpeculateInt32, Node* operand, Node*immediate, RareCaseProfilingSource source)

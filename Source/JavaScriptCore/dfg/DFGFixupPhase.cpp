@@ -1447,7 +1447,7 @@ private:
     {
         ASSERT(arrayMode == ArrayMode(Array::Generic));
         
-        if (!canOptimizeStringObjectAccess(node->origin.semantic))
+        if (!m_graph.canOptimizeStringObjectAccess(node->origin.semantic))
             return;
         
         createToString<useKind>(node, node->child1());
@@ -1529,14 +1529,14 @@ private:
         }
         
         if (node->child1()->shouldSpeculateStringObject()
-            && canOptimizeStringObjectAccess(node->origin.semantic)) {
+            && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
             fixEdge<StringObjectUse>(node->child1());
             node->convertToToString();
             return;
         }
         
         if (node->child1()->shouldSpeculateStringOrStringObject()
-            && canOptimizeStringObjectAccess(node->origin.semantic)) {
+            && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
             fixEdge<StringOrStringObjectUse>(node->child1());
             node->convertToToString();
             return;
@@ -1552,13 +1552,13 @@ private:
         }
         
         if (node->child1()->shouldSpeculateStringObject()
-            && canOptimizeStringObjectAccess(node->origin.semantic)) {
+            && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
             fixEdge<StringObjectUse>(node->child1());
             return;
         }
         
         if (node->child1()->shouldSpeculateStringOrStringObject()
-            && canOptimizeStringObjectAccess(node->origin.semantic)) {
+            && m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
             fixEdge<StringOrStringObjectUse>(node->child1());
             return;
         }
@@ -1577,7 +1577,7 @@ private:
             [&] (Edge& edge) {
                 if (edge->shouldSpeculateString())
                     return;
-                if (canOptimizeStringObjectAccess(node->origin.semantic)) {
+                if (m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
                     if (edge->shouldSpeculateStringObject())
                         return;
                     if (edge->shouldSpeculateStringOrStringObject())
@@ -1595,7 +1595,7 @@ private:
                     convertStringAddUse<StringUse>(node, edge);
                     return;
                 }
-                ASSERT(canOptimizeStringObjectAccess(node->origin.semantic));
+                ASSERT(m_graph.canOptimizeStringObjectAccess(node->origin.semantic));
                 if (edge->shouldSpeculateStringObject()) {
                     convertStringAddUse<StringObjectUse>(node, edge);
                     return;
@@ -1610,65 +1610,7 @@ private:
         convertToMakeRope(node);
         return true;
     }
-    
-    bool isStringPrototypeMethodSane(
-        JSObject* stringPrototype, Structure* stringPrototypeStructure, UniquedStringImpl* uid)
-    {
-        unsigned attributesUnused;
-        PropertyOffset offset =
-            stringPrototypeStructure->getConcurrently(uid, attributesUnused);
-        if (!isValidOffset(offset))
-            return false;
-        
-        JSValue value = m_graph.tryGetConstantProperty(
-            stringPrototype, stringPrototypeStructure, offset);
-        if (!value)
-            return false;
-        
-        JSFunction* function = jsDynamicCast<JSFunction*>(value);
-        if (!function)
-            return false;
-        
-        if (function->executable()->intrinsicFor(CodeForCall) != StringPrototypeValueOfIntrinsic)
-            return false;
-        
-        return true;
-    }
-    
-    bool canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
-    {
-        if (m_graph.hasExitSite(codeOrigin, NotStringObject))
-            return false;
-        
-        Structure* stringObjectStructure = m_graph.globalObjectFor(codeOrigin)->stringObjectStructure();
-        m_graph.registerStructure(stringObjectStructure);
-        ASSERT(stringObjectStructure->storedPrototype().isObject());
-        ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo() == StringPrototype::info());
 
-        FrozenValue* stringPrototypeObjectValue =
-            m_graph.freeze(stringObjectStructure->storedPrototype());
-        StringPrototype* stringPrototypeObject =
-            stringPrototypeObjectValue->dynamicCast<StringPrototype*>();
-        Structure* stringPrototypeStructure = stringPrototypeObjectValue->structure();
-        if (m_graph.registerStructure(stringPrototypeStructure) != StructureRegisteredAndWatched)
-            return false;
-        
-        if (stringPrototypeStructure->isDictionary())
-            return false;
-        
-        // We're being conservative here. We want DFG's ToString on StringObject to be
-        // used in both numeric contexts (that would call valueOf()) and string contexts
-        // (that would call toString()). We don't want the DFG to have to distinguish
-        // between the two, just because that seems like it would get confusing. So we
-        // just require both methods to be sane.
-        if (!isStringPrototypeMethodSane(stringPrototypeObject, stringPrototypeStructure, vm().propertyNames->valueOf.impl()))
-            return false;
-        if (!isStringPrototypeMethodSane(stringPrototypeObject, stringPrototypeStructure, vm().propertyNames->toString.impl()))
-            return false;
-        
-        return true;
-    }
-    
     void fixupGetAndSetLocalsInBlock(BasicBlock* block)
     {
         if (!block)

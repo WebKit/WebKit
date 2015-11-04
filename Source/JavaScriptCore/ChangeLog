@@ -1,3 +1,61 @@
+2015-10-30  Keith Miller  <keith_miller@apple.com>
+
+        Fix endless OSR exits when creating a rope that contains an object that ToPrimitive's to a number.
+        https://bugs.webkit.org/show_bug.cgi?id=150583
+
+        Reviewed by Benjamin Poulain.
+
+        Before we assumed that the result of ToPrimitive on any object was a string.
+        This had a couple of negative effects. First, the result ToPrimitive on an
+        object can be overridden to be any primitive type. In fact, as of ES6, ToPrimitive,
+        when part of a addition expression, will type hint a number value. Second, even after
+        repeatedly exiting with a bad type we would continue to think that the result
+        of ToPrimitive would be a string so we continue to convert StrCats into MakeRope.
+
+        The fix is to make Prediction Propagation match the behavior of Fixup and move
+        canOptimizeStringObjectAccess to DFGGraph.
+
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToForceStringArrayModeByToStringConversion):
+        (JSC::DFG::FixupPhase::fixupToPrimitive):
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        (JSC::DFG::FixupPhase::isStringPrototypeMethodSane): Deleted.
+        (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isStringPrototypeMethodSane):
+        (JSC::DFG::Graph::canOptimizeStringObjectAccess):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::resultOfToPrimitive):
+        (JSC::DFG::resultOfToPrimitive): Deleted.
+
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToForceStringArrayModeByToStringConversion):
+        (JSC::DFG::FixupPhase::fixupToPrimitive):
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        (JSC::DFG::FixupPhase::isStringPrototypeMethodSane): Deleted.
+        (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isStringPrototypeMethodSane):
+        (JSC::DFG::Graph::canOptimizeStringObjectAccess):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::resultOfToPrimitive):
+        (JSC::DFG::resultOfToPrimitive): Deleted.
+        * tests/stress/string-rope-with-custom-valueof.js: Added.
+        (catNumber):
+        (number.valueOf):
+        (catBool):
+        (bool.valueOf):
+        (catUndefined):
+        (undef.valueOf):
+        (catRandom):
+        (random.valueOf):
+
 2015-11-04  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Remove bogus global internal functions for properties and prototype retrieval

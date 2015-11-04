@@ -1479,6 +1479,59 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* node)
     return MethodOfGettingAValueProfile();
 }
 
+bool Graph::isStringPrototypeMethodSane(JSObject* stringPrototype, Structure* stringPrototypeStructure, UniquedStringImpl* uid)
+{
+    unsigned attributesUnused;
+    PropertyOffset offset = stringPrototypeStructure->getConcurrently(uid, attributesUnused);
+    if (!isValidOffset(offset))
+        return false;
+
+    JSValue value = tryGetConstantProperty(stringPrototype, stringPrototypeStructure, offset);
+    if (!value)
+        return false;
+
+    JSFunction* function = jsDynamicCast<JSFunction*>(value);
+    if (!function)
+        return false;
+
+    if (function->executable()->intrinsicFor(CodeForCall) != StringPrototypeValueOfIntrinsic)
+        return false;
+    
+    return true;
+}
+
+bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
+{
+    if (hasExitSite(codeOrigin, NotStringObject))
+        return false;
+
+    Structure* stringObjectStructure = globalObjectFor(codeOrigin)->stringObjectStructure();
+    registerStructure(stringObjectStructure);
+    ASSERT(stringObjectStructure->storedPrototype().isObject());
+    ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo() == StringPrototype::info());
+
+    FrozenValue* stringPrototypeObjectValue = freeze(stringObjectStructure->storedPrototype());
+    StringPrototype* stringPrototypeObject = stringPrototypeObjectValue->dynamicCast<StringPrototype*>();
+    Structure* stringPrototypeStructure = stringPrototypeObjectValue->structure();
+    if (registerStructure(stringPrototypeStructure) != StructureRegisteredAndWatched)
+        return false;
+
+    if (stringPrototypeStructure->isDictionary())
+        return false;
+
+    // We're being conservative here. We want DFG's ToString on StringObject to be
+    // used in both numeric contexts (that would call valueOf()) and string contexts
+    // (that would call toString()). We don't want the DFG to have to distinguish
+    // between the two, just because that seems like it would get confusing. So we
+    // just require both methods to be sane.
+    if (!isStringPrototypeMethodSane(stringPrototypeObject, stringPrototypeStructure, m_vm.propertyNames->valueOf.impl()))
+        return false;
+    if (!isStringPrototypeMethodSane(stringPrototypeObject, stringPrototypeStructure, m_vm.propertyNames->toString.impl()))
+        return false;
+
+    return true;
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

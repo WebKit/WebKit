@@ -34,17 +34,6 @@
 
 namespace JSC { namespace DFG {
 
-SpeculatedType resultOfToPrimitive(SpeculatedType type)
-{
-    if (type & SpecObject) {
-        // Objects get turned into strings. So if the input has hints of objectness,
-        // the output will have hinsts of stringiness.
-        return mergeSpeculations(type & ~SpecObject, SpecString);
-    }
-    
-    return type;
-}
-
 class PredictionPropagationPhase : public Phase {
 public:
     PredictionPropagationPhase(Graph& graph)
@@ -907,6 +896,20 @@ private:
     {
         for (unsigned i = 0; i < m_graph.m_argumentPositions.size(); ++i)
             m_changed |= m_graph.m_argumentPositions[i].mergeArgumentPredictionAwareness();
+    }
+
+    SpeculatedType resultOfToPrimitive(SpeculatedType type)
+    {
+        if (type & SpecObject) {
+            // We try to be optimistic here about StringObjects since it's unlikely that
+            // someone overrides the valueOf or toString methods.
+            if (type & SpecStringObject && m_graph.canOptimizeStringObjectAccess(m_currentNode->origin.semantic))
+                return mergeSpeculations(type & ~SpecObject, SpecString);
+
+            return mergeSpeculations(type & ~SpecObject, SpecPrimitive);
+        }
+
+        return type;
     }
     
     Node* m_currentNode;
