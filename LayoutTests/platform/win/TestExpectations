@@ -3298,3 +3298,5 @@ webkit.org/b/150684 editing/input/reveal-caret-of-multiline-contenteditable.html
 webkit.org/b/150684 editing/input/reveal-caret-of-multiline-input.html [ Pass Failure ]
 
 webkit.org/b/150808 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
+
+webkit.org/b/150867 streams/reference-implementation/writable-stream-abort.html [ Pass Failure ]
