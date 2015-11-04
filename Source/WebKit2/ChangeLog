@@ -1,3 +1,12 @@
+2015-11-03  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Adopt WKWebViewAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=150885
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
 2015-11-03  Tim Horton  <timothy_horton@apple.com>
 
         Duplicate validateUserInterfaceItem in WKWebView
