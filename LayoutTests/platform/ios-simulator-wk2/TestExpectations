@@ -6,13 +6,11 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-css3/touch-action [ Pass ]
 fast/harness/ui-side-scripts.html [ Pass ]
 fast/harness/concurrent-ui-side-scripts.html [ Pass ]
 fast/zooming/ios [ Pass ]
 fast/viewport/ios [ Pass ]
 fast/events/ios [ Pass ]
-fast/events/touch/ios [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -647,7 +645,6 @@ fast/events/mouseenterleave-on-subframe.html [ Failure ]
 fast/events/mouseout-dead-node.html [ Failure ]
 fast/events/mouseover-mouseout.html [ Failure ]
 fast/events/mouseup-outside-document.html [ Failure ]
-fast/events/touch/gesture/gesture-scrollbar.html [ Failure ]
 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 fast/forms/25153.html [ Failure ]
@@ -972,22 +969,6 @@ fast/events/popup-blocking-timers5.html
 fast/events/popup-blocking-timers6.html
 fast/events/popup-when-select-change.html
 fast/events/related-target-focusevent.html
-
-fast/events/touch/basic-single-touch-events.html [ Skip ]
-fast/events/touch/multi-touch-grouped-targets.html [ Skip ]
-fast/events/touch/multi-touch-inside-iframes.html [ Skip ]
-fast/events/touch/multi-touch-inside-nested-iframes.html [ Skip ]
-fast/events/touch/send-oncancel-event.html [ Skip ]
-fast/events/touch/tap-highlight-color.html [ Skip ]
-fast/events/touch/touch-active-state.html [ Skip ]
-fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Skip ]
-fast/events/touch/touch-inside-iframe.html [ Skip ]
-fast/events/touch/touch-scaled-scrolled.html [ Skip ]
-fast/events/touch/touch-slider-no-js-touch-listener.html [ Skip ]
-fast/events/touch/touch-slider.html [ Skip ]
-fast/events/touch/touch-stale-node-crash.html [ Skip ]
-fast/events/touch/touch-target-limited.html [ Skip ]
-fast/events/touch/touch-target.html [ Skip ]
 
 fast/filter-image/filter-image-animation.html
 fast/forms/formmethod-attribute-input-2.html
@@ -1457,18 +1438,6 @@ platform/ios-simulator/ios/fast/coordinates/mouse-event.html
 # iOS-specific tests that time out or fail in WebKitTestRunner due to missing DRT-specific functionality:
 platform/ios-simulator/ios/fast/coordinates/touch-event-zoomed.html
 platform/ios-simulator/ios/fast/coordinates/touch-event.html
-
-fast/events/touch/input-touch-target.html
-fast/events/touch/inserted-fragment-touch-target.html
-fast/events/touch/moved-touch-target.html
-fast/events/touch/multi-touch-some-without-handlers.html
-fast/events/touch/ontouchstart-active-selector.html
-fast/events/touch/removed-fragment-touch-target.html
-fast/events/touch/removed-touch-target.html
-fast/events/touch/text-node-touch-target.html
-fast/events/touch/textarea-touch-target.html
-fast/events/touch/touch-event-frames.html
-fast/events/touch/touch-event-pageXY.html
 
 platform/ios-simulator/ios/fast/forms/range-input-container-touches.html
 platform/ios-simulator/ios/fast/forms/range-input-readonly-and-disabled.html

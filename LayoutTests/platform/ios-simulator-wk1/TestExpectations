@@ -818,7 +818,6 @@ fast/events/fire-scroll-event.html [ Failure ]
 fast/events/mousedown-in-subframe-scrollbar.html [ Failure ]
 fast/events/no-blur-on-page-leave.html [ Failure ]
 fast/events/scale-and-scroll-window.html [ Failure ]
-fast/events/touch/gesture/gesture-scrollbar.html [ Failure ]
 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 fast/forms/date/date-interactive-validation-required.html [ Failure ]
 fast/forms/datetime/datetime-interactive-validation-required.html [ Failure ]
@@ -889,7 +888,6 @@ js/large-expressions.html [ Failure ]
 platform/ios-simulator/ios/scrolling/scrollTo-at-page-load.html [ Failure ]
 platform/ios-simulator/ios/scrolling/overflow-div-scrolling.html [ Failure ]
 platform/ios-simulator/ios/storage/domstorage/5mb-quota.html [ Failure ]
-platform/ios-simulator/ios/touch/touch-handler-on-window.html [ Failure ]
 
 # LayoutTests/fast test that time out:
 fast/block/positioning/vertical-rl/001.html

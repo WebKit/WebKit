@@ -199,6 +199,8 @@ fast/events/mouse-force-up.html [ Skip ]
 # AutoFill button is not supported
 fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
 
+fast/events/touch [ Skip ]
+
 ###
 # Known failures
 ##
@@ -1636,32 +1638,6 @@ fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
 fast/events/tab-focus-link-in-canvas.html [ Failure ]
 fast/events/tabindex-focus-blur-all.html [ Failure ]
 
-fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
-fast/events/touch/basic-multi-touch-events.html [ Failure ]
-fast/events/touch/basic-single-touch-events.html [ Failure ]
-fast/events/touch/document-create-touch-list.html [ Failure ]
-fast/events/touch/document-create-touch.html [ Failure ]
-fast/events/touch/frame-hover-update.html [ Failure ]
-fast/events/touch/gesture/pad-gesture-cancel.html [ Failure ]
-fast/events/touch/gesture/touch-gesture-scroll-div-not-propagated.html [ Failure ]
-fast/events/touch/gesture/touch-gesture-scroll-div-propagated.html [ Failure ]
-fast/events/touch/gesture/touch-gesture-scroll-div-twice-propagated.html [ Failure ]
-fast/events/touch/gesture/touch-gesture-scroll-iframe-editable.html [ Failure ]
-fast/events/touch/gesture/touch-gesture-scroll-page-not-propagated.html [ Failure ]
-fast/events/touch/gesture/touch-gesture-scroll-page-propagated.html [ Failure ]
-fast/events/touch/gesture/touch-gesture-scroll-sideways.html [ Failure ]
-fast/events/touch/multi-touch-grouped-targets.html [ Failure ]
-fast/events/touch/multi-touch-inside-iframes.html [ Failure ]
-fast/events/touch/multi-touch-inside-nested-iframes.html [ Failure ]
-fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Failure ]
-fast/events/touch/touch-before-pressing-spin-button.html [ Failure ]
-fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Failure ]
-fast/events/touch/touch-input-element-change-documents.html [ Failure ]
-fast/events/touch/touch-scaled-scrolled.html [ Failure ]
-fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
-fast/events/touch/touch-slider.html [ Failure ]
-fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
-
 # Ref-test imported from W3C that is failing because type=image input elements have rounded corners on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html [ ImageOnlyFailure ]
 # Ref-test imported form W3C that is failing because the test is off by a couple of pixels on iOS.
@@ -2314,10 +2290,6 @@ fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
 fast/workers/worker-storagequota-query-usage.html [ Failure ]
 fast/xsl/sort-locale.xml [ Failure ]
 
-# <rdar://problem/12073352> PEP Web Tools: emulator touch tests cause DRT to timeout
-fast/events/touch/emulate-touch-events.html
-fast/events/touch/emulated-touch-iframe.html
-
 # iOS does not support window resizing or window.resizeTo().
 fast/dynamic/window-resize-scrollbars-test.html [ Skip ]
 fast/images/animated-gif-window-resizing.html [ Skip ]
@@ -2352,14 +2324,6 @@ fast/events/mouse-cursor-image-set.html
 fast/events/recorded-keydown-event.html
 fast/events/remove-child-onscroll.html
 fast/events/resize-subframe.html
-fast/events/touch/gesture/gesture-click.html
-fast/events/touch/gesture/gesture-dblclick.html
-fast/events/touch/gesture/gesture-scroll.html
-fast/events/touch/gesture/gesture-tap-active-state-iframe.html
-fast/events/touch/gesture/long-press-on-draggable-element-in-iframe-triggers-drag.html
-fast/events/touch/gesture/long-press-on-draggable-element-in-nested-iframes-triggers-drag.html
-fast/events/touch/page-scaled-touch-gesture-click.html
-fast/events/touch/touch-inside-iframe-scrolled.html
 fast/events/wheelevent-in-text-node.html
 fast/events/will-reveal-edges-body-attributes.html
 fast/events/will-reveal-edges-event-listeners.html
@@ -2556,6 +2520,8 @@ platform/ios-simulator/ios/scrolling/scrollbar-hiding.html [ Failure ]
 platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport.html [ Failure ]
 platform/ios-simulator/ios/scrolling/textarea-scroll-touch.html [ Failure ]
 platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
+platform/ios-simulator/ios/touch [ Skip ]
+fast/events/ios/focused-input-should-assist-on-touch.html [ Skip ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
