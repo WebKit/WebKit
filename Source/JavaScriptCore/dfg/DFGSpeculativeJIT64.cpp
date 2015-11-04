@@ -2318,7 +2318,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case ArithAdd:
-        compileAdd(node);
+        compileArithAdd(node);
         break;
 
     case ArithClz32:

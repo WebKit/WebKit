@@ -1,3 +1,25 @@
+2015-11-03  Mark Lam  <mark.lam@apple.com>
+
+        Rename DFG's compileAdd to compileArithAdd.
+        https://bugs.webkit.org/show_bug.cgi?id=150866
+
+        Reviewed by Benjamin Poulain.
+
+        The function is only supposed to generate code to do arithmetic addition on
+        numeric types.  Naming it compileArithAdd() is more accurate, and is consistent
+        with the name of the node it emits code for (i.e. ArithAdd) as well as other
+        compiler functions for analogous operations e.g. compileArithSub.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileArithAdd):
+        (JSC::DFG::SpeculativeJIT::compileAdd): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2015-11-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove duplication among ScriptDebugServer subclasses

@@ -2207,7 +2207,7 @@ public:
     void compileValueToInt32(Node*);
     void compileUInt32ToNumber(Node*);
     void compileDoubleAsInt32(Node*);
-    void compileAdd(Node*);
+    void compileArithAdd(Node*);
     void compileMakeRope(Node*);
     void compileArithClz32(Node*);
     void compileArithSub(Node*);

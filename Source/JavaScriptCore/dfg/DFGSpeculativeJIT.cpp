@@ -2782,7 +2782,7 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
     blessedBooleanResult(scratchReg, node);
 }
 
-void SpeculativeJIT::compileAdd(Node* node)
+void SpeculativeJIT::compileArithAdd(Node* node)
 {
     switch (node->binaryUseKind()) {
     case Int32Use: {
