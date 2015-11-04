@@ -209,6 +209,18 @@ InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const LayoutPoint& poin
     return closestLeaf ? closestLeaf : lastLeaf;
 }
 
+bool SVGRootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
+{
+    for (InlineBox* leaf = firstLeafChild(); leaf; leaf = leaf->nextLeafChild()) {
+        if (!leaf->isSVGInlineTextBox())
+            continue;
+        if (leaf->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction))
+            return true;
+    }
+
+    return false;
+}
+
 static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes* firstAttributes, SVGTextLayoutAttributes* lastAttributes, unsigned firstPosition, unsigned lastPosition)
 {
     SVGCharacterDataMap::iterator itFirst = firstAttributes->characterDataMap().find(firstPosition + 1);
