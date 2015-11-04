@@ -1,5 +1,36 @@
 2015-11-03  Filip Pizlo  <fpizlo@apple.com>
 
+        B3::LowerToAir should recognize Neg (i.e. Sub($0, value))
+        https://bugs.webkit.org/show_bug.cgi?id=150759
+
+        Reviewed by Benjamin Poulain.
+
+        Adds various forms of Sub(0, value) and compiles them as Neg. Also fixes a bug in
+        StoreSubLoad. This bug was correctness-benign, so I couldn't add a test for it.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::immOrTmp):
+        (JSC::B3::Air::LowerToAir::appendUnOp):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreUnOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::trySub):
+        (JSC::B3::Air::LowerToAir::tryStoreSubLoad):
+        * b3/B3LoweringMatcher.patterns:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testAdd1Ptr):
+        (JSC::B3::testNeg32):
+        (JSC::B3::testNegPtr):
+        (JSC::B3::testStoreAddLoad):
+        (JSC::B3::testStoreAddAndLoad):
+        (JSC::B3::testStoreNegLoad32):
+        (JSC::B3::testStoreNegLoadPtr):
+        (JSC::B3::testAdd1Uncommuted):
+        (JSC::B3::run):
+
+2015-11-03  Filip Pizlo  <fpizlo@apple.com>
+
         B3::Values that have effects should allow specification of custom HeapRanges
         https://bugs.webkit.org/show_bug.cgi?id=150535
 

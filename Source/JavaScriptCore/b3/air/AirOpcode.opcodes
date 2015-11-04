@@ -89,6 +89,13 @@ Sub64 U:G, UD:G
     Tmp, Tmp
     Imm, Tmp
 
+Neg32 UD:G
+    Tmp
+    Addr
+
+Neg64 UD:G
+    Tmp
+
 Lea UA:G, D:G
     Addr, Tmp
 

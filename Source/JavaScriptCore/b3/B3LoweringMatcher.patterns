@@ -38,7 +38,7 @@ Or = BitOr(left, right)
 Shl = Shl(value, amount)
 
 StoreAddLoad = Store(Add(left, right), address)
-StoreSubLoad = Store(Add(left, right), address)
+StoreSubLoad = Store(Sub(left, right), address)
 StoreAndLoad = Store(BitAnd(left, right), address)
 Store = Store(value, address)
 

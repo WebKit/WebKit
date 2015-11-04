@@ -277,6 +277,25 @@ public:
         return tmp(value);
     }
 
+    template<Air::Opcode opcode>
+    void appendUnOp(Value* value)
+    {
+        Tmp result = tmp(currentValue);
+
+        // Two operand forms like:
+        //     Op a, b
+        // mean something like:
+        //     b = Op a
+
+        if (isValidForm(opcode, Arg::Tmp, Arg::Tmp)) {
+            append(opcode, tmp(value), result);
+            return;
+        }
+
+        append(relaxedMoveForType(currentValue->type()), tmp(value), result);
+        append(opcode, result);
+    }
+
     template<Air::Opcode opcode, Commutativity commutativity = NotCommutative>
     void appendBinOp(Value* left, Value* right)
     {
@@ -350,6 +369,20 @@ public:
 
         append(relaxedMoveForType(currentValue->type()), tmp(left), result);
         append(opcode, tmp(right), result);
+    }
+
+    template<Air::Opcode opcode>
+    bool tryAppendStoreUnOp(Value* value)
+    {
+        Arg storeAddr = addr(currentValue);
+        ASSERT(storeAddr);
+
+        if (loadAddr(value) != storeAddr)
+            return false;
+
+        commitInternal(value);
+        append(opcode, storeAddr);
+        return true;
     }
 
     template<Air::Opcode opcode, Commutativity commutativity = NotCommutative>
@@ -628,10 +661,16 @@ public:
     {
         switch (left->type()) {
         case Int32:
-            appendBinOp<Sub32>(left, right);
+            if (left->isInt32(0))
+                appendUnOp<Neg32>(right);
+            else
+                appendBinOp<Sub32>(left, right);
             return true;
         case Int64:
-            appendBinOp<Sub64>(left, right);
+            if (left->isInt64(0))
+                appendUnOp<Neg64>(right);
+            else
+                appendBinOp<Sub64>(left, right);
             return true;
         default:
             // FIXME: Implement more types!
@@ -700,6 +739,8 @@ public:
     {
         switch (left->type()) {
         case Int32:
+            if (left->isInt32(0))
+                return tryAppendStoreUnOp<Neg32>(right);
             return tryAppendStoreBinOp<Sub32, NotCommutative>(left, right);
         default:
             // FIXME: Implement more types!

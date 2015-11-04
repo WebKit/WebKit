@@ -835,6 +835,36 @@ void testAdd1Ptr(intptr_t value)
     CHECK(compileAndRun<intptr_t>(proc, value) == value + 1);
 }
 
+void testNeg32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), 0),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+    CHECK(compileAndRun<int32_t>(proc, value) == -value);
+}
+
+void testNegPtr(intptr_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), 0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(compileAndRun<intptr_t>(proc, value) == -value);
+}
+
 void testStoreAddLoad(int amount)
 {
     Procedure proc;
@@ -929,6 +959,54 @@ void testStoreAddAndLoad(int amount, int mask)
 
     CHECK(!compileAndRun<int>(proc));
     CHECK(slot == ((37 + amount) & mask));
+}
+
+void testStoreNegLoad32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    int32_t slot = value;
+
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), 0),
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr)),
+        slotPtr);
+    
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int32_t>(proc));
+    CHECK(slot == -value);
+}
+
+void testStoreNegLoadPtr(intptr_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    intptr_t slot = value;
+
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), 0),
+            root->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), slotPtr)),
+        slotPtr);
+    
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int32_t>(proc));
+    CHECK(slot == -value);
 }
 
 void testAdd1Uncommuted(int value)
@@ -1866,11 +1944,15 @@ void run(const char* filter)
     RUN(testAdd1(45));
     RUN(testAdd1Ptr(51));
     RUN(testAdd1Ptr(bitwise_cast<intptr_t>(vm)));
+    RUN(testNeg32(52));
+    RUN(testNegPtr(53));
     RUN(testStoreAddLoad(46));
     RUN(testStoreSubLoad(46));
     RUN(testStoreAddLoadInterference(52));
     RUN(testStoreAddAndLoad(47, 0xffff));
     RUN(testStoreAddAndLoad(470000, 0xffff));
+    RUN(testStoreNegLoad32(54));
+    RUN(testStoreNegLoadPtr(55));
     RUN(testAdd1Uncommuted(48));
     RUN(testLoadOffset());
     RUN(testLoadOffsetNotConstant());
