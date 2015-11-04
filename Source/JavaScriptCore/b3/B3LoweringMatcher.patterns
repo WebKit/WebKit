@@ -56,6 +56,7 @@ StackSlot = StackSlot()
 FramePointer = FramePointer()
 
 Patchpoint = Patchpoint()
+Check = Check(value)
 
 Upsilon = Upsilon(value)
 Phi = Phi()

@@ -1996,6 +1996,33 @@ void testSimplePatchpoint()
     CHECK(compileAndRun<int>(proc, 1, 2) == 3);
 }
 
+void testSimpleCheck()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    CheckValue* check = root->appendNew<CheckValue>(proc, Check, Origin(), arg);
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 1);
+            CHECK(params.reps[0].isConstant());
+            CHECK(params.reps[0].value() == 1);
+
+            // This should always work because a function this simple should never have callee
+            // saves.
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    MacroAssemblerCodeRef code = compile(proc);
+    
+    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(code, 1) == 42);
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -2271,6 +2298,7 @@ void run(const char* filter)
     RUN(testComplex(4, 384));
 
     RUN(testSimplePatchpoint());
+    RUN(testSimpleCheck());
 
     if (!didRun)
         usage();

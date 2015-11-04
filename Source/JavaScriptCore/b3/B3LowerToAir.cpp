@@ -35,6 +35,7 @@
 #include "B3AddressMatcher.h"
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3CheckSpecial.h"
 #include "B3Commutativity.h"
 #include "B3IndexMap.h"
 #include "B3IndexSet.h"
@@ -462,11 +463,43 @@ public:
         insts.last().append(Inst(opcode, currentValue, std::forward<Arguments>(arguments)...));
     }
 
-    template<typename T>
-    void ensureSpecial(T*& field)
+    template<typename T, typename... Arguments>
+    T* ensureSpecial(T*& field, Arguments&&... arguments)
     {
-        if (!field)
-            field = static_cast<T*>(code.addSpecial(std::make_unique<T>()));
+        if (!field) {
+            field = static_cast<T*>(
+                code.addSpecial(std::make_unique<T>(std::forward<Arguments>(arguments)...)));
+        }
+        return field;
+    }
+
+    void fillStackmap(Inst& inst, StackmapValue* stackmap, unsigned numSkipped)
+    {
+        for (unsigned i = numSkipped; i < stackmap->numChildren(); ++i) {
+            ConstrainedValue value = stackmap->constrainedChild(i);
+
+            Arg arg;
+            switch (value.rep().kind()) {
+            case ValueRep::Any:
+                arg = immOrTmp(value.value());
+                break;
+            case ValueRep::SomeRegister:
+                arg = tmp(value.value());
+                break;
+            case ValueRep::Register:
+                arg = Tmp(value.rep().reg());
+                append(Move, immOrTmp(value.value()), arg);
+                break;
+            case ValueRep::StackArgument:
+                arg = Arg::callArg(value.rep().offsetFromSP());
+                appendStore(value.value(), arg);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            inst.args.append(arg);
+        }
     }
     
     IndexSet<Value> locked; // These are values that will have no Tmp in Air.
@@ -482,8 +515,6 @@ public:
     B3::BasicBlock* currentBlock;
     unsigned currentIndex;
     Value* currentValue;
-
-    PatchpointSpecial* patchpointSpecial { 0 };
 
     // The address selector will match any pattern where the input operands are available as Tmps.
     // It doesn't care about sharing. It will happily emit the same address expression over and over
@@ -837,6 +868,7 @@ public:
         return true;
     }
 
+    PatchpointSpecial* patchpointSpecial { nullptr };
     bool tryPatchpoint()
     {
         PatchpointValue* patchpointValue = currentValue->as<PatchpointValue>();
@@ -847,30 +879,43 @@ public:
         if (patchpointValue->type() != Void)
             inst.args.append(tmp(patchpointValue));
 
-        for (ConstrainedValue value : patchpointValue->constrainedChildren()) {
-            Arg arg;
-            switch (value.rep().kind()) {
-            case ValueRep::Any:
-                arg = immOrTmp(value.value());
-                break;
-            case ValueRep::SomeRegister:
-                arg = tmp(value.value());
-                break;
-            case ValueRep::Register:
-                arg = Tmp(value.rep().reg());
-                append(Move, immOrTmp(value.value()), arg);
-                break;
-            case ValueRep::StackArgument:
-                arg = Arg::callArg(value.rep().offsetFromSP());
-                appendStore(value.value(), arg);
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-            inst.args.append(arg);
-        }
+        fillStackmap(inst, patchpointValue, 0);
         
+        insts.last().append(WTF::move(inst));
+        return true;
+    }
+
+    CheckSpecial* checkBranchTest32Special { nullptr };
+    CheckSpecial* checkBranchTest64Special { nullptr };
+    bool tryCheck(Value* value)
+    {
+        if (!isInt(value->type())) {
+            // FIXME: Implement double branches.
+            // https://bugs.webkit.org/show_bug.cgi?id=150727
+            return false;
+        }
+
+        CheckSpecial* special;
+        switch (value->type()) {
+        case Int32:
+            special = ensureSpecial(checkBranchTest32Special, BranchTest32, 3);
+            break;
+        case Int64:
+            special = ensureSpecial(checkBranchTest64Special, BranchTest64, 3);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        CheckValue* checkValue = currentValue->as<CheckValue>();
+
+        Inst inst(
+            Patch, checkValue, Arg::special(special),
+            Arg::resCond(MacroAssembler::NonZero), tmp(value), Arg::imm(-1));
+
+        fillStackmap(inst, checkValue, 1);
+
         insts.last().append(WTF::move(inst));
         return true;
     }

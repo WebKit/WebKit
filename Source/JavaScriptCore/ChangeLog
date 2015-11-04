@@ -1,3 +1,35 @@
+2015-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile a Check
+        https://bugs.webkit.org/show_bug.cgi?id=150878
+
+        Reviewed by Saam Barati.
+
+        The Check opcode in B3 is going to be our main OSR exit mechanism. It is a stackmap
+        value, so you can pass it any number of additional arguments, and you will get to find
+        out how those arguments are represented at the point that the value lands in the machine
+        code. Unlike a Patchpoint, a Check branches on a value, with the goal of supporting full
+        compare/branch fusion. The stackmap's generator runs in an out-of-line path to which
+        that branch is linked.
+
+        This change fills in the glue necessary to compile a Check and it includes a simple
+        test of this functionality. That test also happens to check that such simple code will
+        never use callee-saves, which I think is sensible.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::append):
+        (JSC::B3::Air::LowerToAir::ensureSpecial):
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::tryStackSlot):
+        (JSC::B3::Air::LowerToAir::tryPatchpoint):
+        (JSC::B3::Air::LowerToAir::tryCheck):
+        (JSC::B3::Air::LowerToAir::tryUpsilon):
+        * b3/B3LoweringMatcher.patterns:
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpoint):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::run):
+
 2015-10-30  Keith Miller  <keith_miller@apple.com>
 
         Fix endless OSR exits when creating a rope that contains an object that ToPrimitive's to a number.
