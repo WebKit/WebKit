@@ -82,6 +82,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/SubimageCacheWithTimer.cpp
     platform/graphics/cg/TransformationMatrixCG.cpp
 
+    platform/graphics/opentype/OpenTypeCG.cpp
+
     platform/graphics/win/FontCGWin.cpp
     platform/graphics/win/FontCustomPlatformData.cpp
     platform/graphics/win/FontPlatformDataCGWin.cpp

@@ -28,6 +28,7 @@
 #import "CoreGraphicsSPI.h"
 #import "DynamicLinkerSPI.h"
 #import "FontMetrics.h"
+#import "OpenTypeCG.h"
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -93,6 +94,19 @@ FontServicesIOS::FontServicesIOS(CTFontRef font)
             // Courier New was substituted for Courier by WebKit.
             ascent = (scaleEmToUnits(1705, 2048) * pointSize);
             descent = (scaleEmToUnits(615, 2048) * pointSize);
+        }
+    }
+    // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
+    // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
+    // On iOS, we only apply this rule in the important case of fonts with a MATH table.
+    if (OpenType::fontHasMathTable(font)) {
+        short typoAscent, typoDescent, typoLineGap;
+        if (OpenType::tryGetTypoMetrics(cgFont.get(), typoAscent, typoDescent, typoLineGap)) {
+            unsigned unitsPerEm = CGFontGetUnitsPerEm(cgFont.get());
+            float pointSize = CTFontGetSize(font);
+            ascent = scaleEmToUnits(typoAscent, unitsPerEm) * pointSize;
+            descent = -scaleEmToUnits(typoDescent, unitsPerEm) * pointSize;
+            lineGap = scaleEmToUnits(typoLineGap, unitsPerEm) * pointSize;
         }
     }
     CGFloat adjustment = (shouldUseAdjustment(font, isiOS7OrLater)) ? ceil((ascent + descent) * kLineHeightAdjustment) : 0;

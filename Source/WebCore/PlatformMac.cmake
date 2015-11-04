@@ -442,6 +442,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
     platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
+    platform/graphics/opentype/OpenTypeCG.cpp
     platform/graphics/opentype/OpenTypeMathData.cpp
 
     platform/mac/BlockExceptions.mm

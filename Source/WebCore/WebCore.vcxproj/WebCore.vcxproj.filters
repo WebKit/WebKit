@@ -7128,6 +7128,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLRenderingContextBase.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\opentype\OpenTypeCG.cpp">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeMathData.cpp">
       <Filter>platform\graphics\opentype</Filter>
     </ClCompile>

@@ -4995,6 +4995,8 @@
 		B2C3DA6B0D006CD600EF6F26 /* FontSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA5A0D006CD600EF6F26 /* FontSelector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA6C0D006CD600EF6F26 /* GlyphBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA5B0D006CD600EF6F26 /* GlyphBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C96D8D0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */; };
+		B2D3DA640D006CD600EF6F3A /* OpenTypeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */; };
+		B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2D3DA640D006CD600EF6F27 /* OpenTypeMathData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */; };
 		B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12729,6 +12731,8 @@
 		B2C3DA5A0D006CD600EF6F26 /* FontSelector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontSelector.h; sourceTree = "<group>"; };
 		B2C3DA5B0D006CD600EF6F26 /* GlyphBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlyphBuffer.h; sourceTree = "<group>"; };
 		B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCustom.cpp; sourceTree = "<group>"; };
+		B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OpenTypeCG.cpp; sourceTree = "<group>"; };
+		B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeCG.h; sourceTree = "<group>"; };
 		B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OpenTypeMathData.cpp; sourceTree = "<group>"; };
 		B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeMathData.h; sourceTree = "<group>"; };
 		B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeTypes.h; sourceTree = "<group>"; };
@@ -16286,6 +16290,8 @@
 		3721493318F0B6D600156EDC /* opentype */ = {
 			isa = PBXGroup;
 			children = (
+				B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */,
+				B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */,
 				B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */,
 				B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */,
 				B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */,
@@ -26761,6 +26767,7 @@
 				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
+				B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */,
 				B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */,
 				B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */,
 				CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */,
@@ -30401,6 +30408,7 @@
 				FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */,
 				FDA9325D16703B2A008982DC /* OfflineAudioContext.cpp in Sources */,
 				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
+				B2D3DA640D006CD600EF6F3A /* OpenTypeCG.cpp in Sources */,
 				B2D3DA640D006CD600EF6F27 /* OpenTypeMathData.cpp in Sources */,
 				CDE7FC44181904B1002BBB77 /* OrderIterator.cpp in Sources */,
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,

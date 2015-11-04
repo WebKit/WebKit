@@ -8462,6 +8462,12 @@
     <ClCompile Include="..\platform\graphics\win\IntRectWin.cpp" />
     <ClCompile Include="..\platform\graphics\win\IntSizeWin.cpp" />
     <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateFullscreenWindow.cpp" />
+    <ClCompile Include="..\platform\graphics\opentype\OpenTypeCG.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeMathData.cpp" />
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeUtilities.cpp" />
     <ClCompile Include="..\platform\graphics\opentype\OpenTypeVerticalData.cpp" />

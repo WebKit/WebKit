@@ -58,7 +58,7 @@
 #endif
 
 #if USE(APPKIT)
-#include "OpenTypeTypes.h"
+#import "OpenTypeCG.h"
 #endif
 
 namespace WebCore {
@@ -77,18 +77,6 @@ static bool fontHasVerticalGlyphs(CTFontRef ctFont)
 }
 
 #if USE(APPKIT)
-static bool fontHasMathTable(CTFontRef ctFont)
-{
-    RetainPtr<CFArrayRef> tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
-    CFIndex numTables = CFArrayGetCount(tableTags.get());
-    for (CFIndex index = 0; index < numTables; ++index) {
-        CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
-        if (tag == 'MATH')
-            return true;
-    }
-    return false;
-}
-
 static NSString *webFallbackFontFamily(void)
 {
     static NSString *webFallbackFontFamily = [[[NSFont systemFontOfSize:16.0f] familyName] retain];
@@ -188,25 +176,13 @@ void Font::platformInit()
 
     // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
     // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
-    // We only apply this rule in the important case of fonts with a MATH table.
-    if (fontHasMathTable(m_platformData.ctFont())) {
-        if (CFDataRef os2Table = CGFontCopyTableForTag(m_platformData.cgFont(), kCTFontTableOS2)) {
-            // For the structure of the OS/2 table, see
-            // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6OS2.html
-            const CFIndex fsSelectionOffset = 16 * 2 + 10 + 4 * 4 + 4 * 1;
-            const CFIndex sTypoAscenderOffset = fsSelectionOffset + 3 * 2;
-            const CFIndex sTypoDescenderOffset = sTypoAscenderOffset + 2;
-            const CFIndex sTypoLineGapOffset = sTypoDescenderOffset + 2;
-            if (CFDataGetLength(os2Table) >= sTypoLineGapOffset + 2) {
-                const UInt8* os2Data = CFDataGetBytePtr(os2Table);
-                const unsigned short useTypoMetricsMask = 1 << 7;
-                if (*(reinterpret_cast<const OpenType::UInt16*>(os2Data + fsSelectionOffset)) & useTypoMetricsMask) {
-                    ascent = scaleEmToUnits(*(reinterpret_cast<const OpenType::Int16*>(os2Data + sTypoAscenderOffset)), unitsPerEm) * pointSize;
-                    descent = -scaleEmToUnits(*(reinterpret_cast<const OpenType::Int16*>(os2Data + sTypoDescenderOffset)), unitsPerEm) * pointSize;
-                    lineGap = scaleEmToUnits(*(reinterpret_cast<const OpenType::Int16*>(os2Data + sTypoLineGapOffset)), unitsPerEm) * pointSize;
-                }
-            }
-            CFRelease(os2Table);
+    // On OS X, we only apply this rule in the important case of fonts with a MATH table.
+    if (OpenType::fontHasMathTable(m_platformData.ctFont())) {
+        short typoAscent, typoDescent, typoLineGap;
+        if (OpenType::tryGetTypoMetrics(m_platformData.cgFont(), typoAscent, typoDescent, typoLineGap)) {
+            ascent = scaleEmToUnits(typoAscent, unitsPerEm) * pointSize;
+            descent = -scaleEmToUnits(typoDescent, unitsPerEm) * pointSize;
+            lineGap = scaleEmToUnits(typoLineGap, unitsPerEm) * pointSize;
         }
     }
 
