@@ -1,3 +1,21 @@
+2015-11-03  Dean Jackson  <dino@apple.com>
+
+        Accept 8 and 4 value hex colors (#RRGGBBAA)
+        https://bugs.webkit.org/show_bug.cgi?id=150853
+        <rdar://problem/23380930>
+
+        Reviewed by Simon Fraser.
+
+        Delete these tests. The have been updated in the original repository,
+        so we'll get the new versions soon. Meanwhile, they are covered by
+        other tests.
+
+        * canvas/2d.fillStyle.parse.invalid.hex4-expected.txt: Removed.
+        * canvas/2d.fillStyle.parse.invalid.hex4.html: Removed.
+        * canvas/2d.fillStyle.parse.invalid.hex8-expected.txt: Removed.
+        * canvas/2d.fillStyle.parse.invalid.hex8.html: Removed.
+        * css/css-color-3/t421-rgb-hex-parsing-f.xht:
+
 2015-11-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Implement support for the autocomplete attribute

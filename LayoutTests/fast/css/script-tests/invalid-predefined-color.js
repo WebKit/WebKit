@@ -11,7 +11,7 @@ for (var i=1;i<=5;i++)
     shouldBe("getComputedStyle(div, null).color", "red");
 }
 
-for (var i=1;i<=5;i++)
+for (var i=1;i<=4;i++)
 {
     var div = document.getElementById("invalid"+i);
     shouldBe("getComputedStyle(div, null).color", "black");

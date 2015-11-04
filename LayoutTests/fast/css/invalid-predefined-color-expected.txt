@@ -12,7 +12,6 @@ PASS getComputedStyle(div, null).color is black
 PASS getComputedStyle(div, null).color is black
 PASS getComputedStyle(div, null).color is black
 PASS getComputedStyle(div, null).color is black
-PASS getComputedStyle(div, null).color is black
 PASS successfullyParsed is true
 
 TEST COMPLETE
@@ -25,4 +24,3 @@ This style is "color: #red"
 This style is "color: #yellow"
 This style is "color: #green"
 This style is "color: #FFAALL"
-This style is "color: #FF000000"

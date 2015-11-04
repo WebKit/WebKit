@@ -128,7 +128,7 @@ RGBA32 makeRGBAFromCMYKA(float c, float m, float y, float k, float a)
 template <typename CharacterType>
 static inline bool parseHexColorInternal(const CharacterType* name, unsigned length, RGBA32& rgb)
 {
-    if (length != 3 && length != 6)
+    if (length != 3 && length != 4 && length != 6 && length != 8)
         return false;
     unsigned value = 0;
     for (unsigned i = 0; i < length; ++i) {
@@ -139,6 +139,20 @@ static inline bool parseHexColorInternal(const CharacterType* name, unsigned len
     }
     if (length == 6) {
         rgb = 0xFF000000 | value;
+        return true;
+    }
+    if (length == 8) {
+        // We parsed the values into RGBA order, but the RGBA32 type
+        // expects them to be in ARGB order, so we right rotate eight bits.
+        rgb = value << 24 | value >> 8;
+        return true;
+    }
+    if (length == 4) {
+        // #abcd converts to ddaabbcc in RGBA32.
+        rgb = (value & 0xF) << 28 | (value & 0xF) << 24
+            | (value & 0xF000) << 8 | (value & 0xF000) << 4
+            | (value & 0xF00) << 4 | (value & 0xF00)
+            | (value & 0xF0) | (value & 0xF0) >> 4;
         return true;
     }
     // #abc converts to #aabbcc

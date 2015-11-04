@@ -163,7 +163,6 @@ Failed to parse: #sdf
 Failed to parse: #
 Failed to parse: #f
 Failed to parse: #ff
-Failed to parse: #ffff
 Failed to parse: #fffff
 Failed to parse: #fffffff
 Failed to parse: green,
@@ -177,7 +176,9 @@ Failed to parse: 'logical'
 Failed to parse: 'visual'
 Parsed as rgb(0,10,20): rgb(0, 10, 20)
 Parsed as rgb(255,255,255): #fff
+Parsed as rgb(255,255,255): #ffff
 Parsed as rgb(255,255,255): #ffffff
+Parsed as rgb(255,255,255): #ffffffff
 Parsed as rgb(255,255,255): #FFF
 Parsed as rgb(255,255,255): #FFFFFF
 Parsed as rgb(0,128,0):  green
