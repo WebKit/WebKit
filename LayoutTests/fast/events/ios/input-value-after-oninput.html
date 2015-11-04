@@ -24,7 +24,7 @@
         }
 
         function handleValueChanged(value) {
-            document.getElementById("console").textContent = "Successfully handled oninput, value is now \"" + value + "\"";
+            document.getElementById("console").textContent = "Successfully handled oninput, value is now \"" + value.toLowerCase() + "\"";
             testRunner.notifyDone();
         }
 

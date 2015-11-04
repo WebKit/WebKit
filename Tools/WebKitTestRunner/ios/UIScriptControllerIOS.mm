@@ -157,6 +157,19 @@ void UIScriptController::platformSetDidHideKeyboardCallback()
     };
 }
 
+void UIScriptController::platformClearAllCallbacks()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    m_didEndZoomingCallback = 0;
+    m_willBeginZoomingCallback = 0;
+    m_didHideKeyboardCallback = 0;
+    m_didShowKeyboardCallback = 0;
+    webView.didEndZoomingCallback = nil;
+    webView.willBeginZoomingCallback = nil;
+    webView.didHideKeyboardCallback = nil;
+    webView.didShowKeyboardCallback = nil;
+}
+
 }
 
 #endif // PLATFORM(IOS)

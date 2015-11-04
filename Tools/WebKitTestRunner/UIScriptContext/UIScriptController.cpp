@@ -149,11 +149,16 @@ void UIScriptController::platformSetDidShowKeyboardCallback()
 void UIScriptController::platformSetDidHideKeyboardCallback()
 {
 }
+
+void UIScriptController::platformClearAllCallbacks()
+{
+}
 #endif
 
 void UIScriptController::uiScriptComplete(JSStringRef result)
 {
     m_context.uiScriptComplete(result);
+    platformClearAllCallbacks();
 }
 
 }

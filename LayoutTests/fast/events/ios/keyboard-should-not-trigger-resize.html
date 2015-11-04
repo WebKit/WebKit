@@ -8,10 +8,10 @@
     <script id="ui-script" type="text/plain">
         (function() {
             uiController.didShowKeyboardCallback = function() {
+                uiController.didHideKeyboardCallback = function() {
+                    uiController.uiScriptComplete();
+                }
                 uiController.typeCharacterUsingHardwareKeyboard("a", function() { });
-            }
-            uiController.didHideKeyboardCallback = function() {
-                uiController.uiScriptComplete();
             }
             uiController.singleTapAtPoint(50, 25, function() {});
         })();
@@ -30,7 +30,6 @@
 
         function runTest()
         {
-            debug("Before showing the keyboard, window.innerHeight = " + window.innerHeight);
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 

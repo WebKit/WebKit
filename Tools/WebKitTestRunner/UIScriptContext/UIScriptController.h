@@ -77,6 +77,7 @@ private:
     void platformSetDidEndZoomingCallback();
     void platformSetDidShowKeyboardCallback();
     void platformSetDidHideKeyboardCallback();
+    void platformClearAllCallbacks();
 
     virtual JSClassRef wrapperClass() override;
 
