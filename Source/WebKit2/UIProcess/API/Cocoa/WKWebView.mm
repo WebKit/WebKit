@@ -4162,7 +4162,7 @@ static constexpr std::chrono::milliseconds didFinishLoadingTimeout = std::chrono
 @end
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKWebViewAdditions.mm>
 #endif
 
