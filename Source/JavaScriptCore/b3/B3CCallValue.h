@@ -23,36 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "B3CheckValue.h"
+#ifndef B3CCallValue_h
+#define B3CCallValue_h
 
 #if ENABLE(B3_JIT)
 
+#include "B3Effects.h"
+#include "B3Value.h"
+
 namespace JSC { namespace B3 {
 
-CheckValue::~CheckValue()
-{
-}
+class JS_EXPORT_PRIVATE CCallValue : public Value {
+public:
+    static bool accepts(Opcode opcode) { return opcode == CCall; }
 
-// Use this form for CheckAdd, CheckSub, and CheckMul.
-CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left, Value* right)
-    : StackmapValue(index, CheckedOpcode, opcode, left->type(), origin)
-{
-    ASSERT(B3::isInt(type()));
-    ASSERT(left->type() == right->type());
-    ASSERT(opcode == CheckAdd || opcode == CheckSub || opcode == CheckMul);
-    append(ConstrainedValue(left, ValueRep::SomeRegister));
-    append(ConstrainedValue(right, ValueRep::SomeRegister));
-}
+    ~CCallValue();
 
-// Use this form for Check.
-CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* predicate)
-    : StackmapValue(index, CheckedOpcode, opcode, Void, origin)
-{
-    ASSERT(opcode == Check);
-    append(predicate);
-}
+    Effects effects;
+
+private:
+    friend class Procedure;
+
+    template<typename... Arguments>
+    CCallValue(unsigned index, Type type, Origin origin, Arguments... arguments)
+        : Value(index, CheckedOpcode, CCall, type, origin, arguments...)
+        , effects(Effects::forCall())
+    {
+    }
+};
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3CCallValue_h
+

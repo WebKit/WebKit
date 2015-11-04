@@ -1,5 +1,46 @@
 2015-11-03  Filip Pizlo  <fpizlo@apple.com>
 
+        B3::Values that have effects should allow specification of custom HeapRanges
+        https://bugs.webkit.org/show_bug.cgi?id=150535
+
+        Reviewed by Benjamin Poulain.
+
+        Add a Effects field to calls and patchpoints. Add a HeapRange to MemoryValues.
+
+        In the process, I created a class for the CCall opcode, so that it has somewhere to put
+        the Effects field.
+
+        While doing this, I realized that we didn't have a good way of ensuring that an opcode
+        that requires a specific subclass was actually created with that subclass. So, I added
+        assertions for this.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3CCallValue.cpp: Added.
+        * b3/B3CCallValue.h: Added.
+        * b3/B3CheckValue.h:
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.h:
+        (JSC::B3::ConstDoubleValue::ConstDoubleValue):
+        * b3/B3ControlValue.h:
+        * b3/B3Effects.h:
+        (JSC::B3::Effects::forCall):
+        (JSC::B3::Effects::mustExecute):
+        * b3/B3MemoryValue.h:
+        * b3/B3PatchpointValue.h:
+        * b3/B3StackSlotValue.h:
+        * b3/B3UpsilonValue.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::dumpMeta):
+        (JSC::B3::Value::checkOpcode):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+
+2015-11-03  Filip Pizlo  <fpizlo@apple.com>
+
         B3::Stackmap should be a superclass of B3::PatchpointValue and B3::CheckValue rather than being one of their members
         https://bugs.webkit.org/show_bug.cgi?id=150831
 

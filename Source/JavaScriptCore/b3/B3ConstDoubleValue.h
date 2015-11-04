@@ -54,7 +54,7 @@ private:
     friend class Procedure;
 
     ConstDoubleValue(unsigned index, Origin origin, double value)
-        : Value(index, ConstDouble, Double, origin)
+        : Value(index, CheckedOpcode, ConstDouble, Double, origin)
         , m_value(value)
     {
     }

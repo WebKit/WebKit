@@ -176,7 +176,7 @@ protected:
     void dumpChildren(CommaPrinter&, PrintStream&) const override;
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-    StackmapValue(unsigned index, Opcode, Type, Origin);
+    StackmapValue(unsigned index, CheckedOpcodeTag, Opcode, Type, Origin);
 
 private:
     friend class CheckSpecial;

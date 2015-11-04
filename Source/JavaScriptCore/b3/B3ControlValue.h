@@ -95,6 +95,7 @@ protected:
     ControlValue(unsigned index, Opcode opcode, Type type, Origin origin, Arguments... arguments)
         : Value(index, opcode, type, origin, arguments...)
     {
+        ASSERT(accepts(opcode));
     }
 
     // Subclasses will populate this.
@@ -105,21 +106,21 @@ private:
 
     // Use this for Oops.
     ControlValue(unsigned index, Opcode opcode, Origin origin)
-        : Value(index, opcode, Void, origin)
+        : Value(index, CheckedOpcode, opcode, Void, origin)
     {
         ASSERT(opcode == Oops);
     }
 
     // Use this for Return.
     ControlValue(unsigned index, Opcode opcode, Origin origin, Value* result)
-        : Value(index, opcode, Void, origin, result)
+        : Value(index, CheckedOpcode, opcode, Void, origin, result)
     {
         ASSERT(opcode == Return);
     }
 
     // Use this for Jump.
     ControlValue(unsigned index, Opcode opcode, Origin origin, const FrequentedBlock& target)
-        : Value(index, opcode, Void, origin)
+        : Value(index, CheckedOpcode, opcode, Void, origin)
     {
         ASSERT(opcode == Jump);
         m_successors.append(target);
@@ -129,7 +130,7 @@ private:
     ControlValue(
         unsigned index, Opcode opcode, Origin origin, Value* predicate,
         const FrequentedBlock& yes, const FrequentedBlock& no)
-        : Value(index, opcode, Void, origin, predicate)
+        : Value(index, CheckedOpcode, opcode, Void, origin, predicate)
     {
         ASSERT(opcode == Branch);
         m_successors.append(yes);

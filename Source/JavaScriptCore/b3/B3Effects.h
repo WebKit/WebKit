@@ -55,6 +55,16 @@ struct Effects {
     HeapRange writes;
     HeapRange reads;
 
+    static Effects forCall()
+    {
+        Effects result;
+        result.exitsSideways = true;
+        result.controlDependent = true;
+        result.writes = HeapRange::top();
+        result.reads = HeapRange::top();
+        return result;
+    }
+
     bool mustExecute() const
     {
         return terminal || exitsSideways || writesSSAState || writes;

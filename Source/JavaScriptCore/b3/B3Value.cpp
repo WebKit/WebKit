@@ -28,6 +28,12 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3ArgumentRegValue.h"
+#include "B3CCallValue.h"
+#include "B3ControlValue.h"
+#include "B3MemoryValue.h"
+#include "B3StackSlotValue.h"
+#include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
@@ -241,26 +247,21 @@ Effects Value::effects() const
     case Load16S:
     case LoadFloat:
     case Load:
-        // FIXME: MemoryValue should have a HeapRange.
-        // https://bugs.webkit.org/show_bug.cgi?id=150535
-        result.reads = HeapRange::top();
+        result.reads = as<MemoryValue>()->range();
         result.controlDependent = true;
         break;
     case Store8:
     case Store16:
     case StoreFloat:
     case Store:
-        // FIXME: MemoryValue should have a HeapRange.
-        // https://bugs.webkit.org/show_bug.cgi?id=150535
-        result.writes = HeapRange::top();
+        result.writes = as<MemoryValue>()->range();
         result.controlDependent = true;
         break;
     case CCall:
+        result = as<CCallValue>()->effects;
+        break;
     case Patchpoint:
-        result.reads = HeapRange::top();
-        result.writes = HeapRange::top();
-        result.exitsSideways = true;
-        result.controlDependent = true;
+        result = as<PatchpointValue>()->effects;
         break;
     case CheckAdd:
     case CheckSub:
@@ -296,6 +297,23 @@ void Value::performSubstitution()
 void Value::dumpMeta(CommaPrinter&, PrintStream&) const
 {
 }
+
+#if !ASSERT_DISABLED
+void Value::checkOpcode(Opcode opcode)
+{
+    ASSERT(!ArgumentRegValue::accepts(opcode));
+    ASSERT(!CCallValue::accepts(opcode));
+    ASSERT(!CheckValue::accepts(opcode));
+    ASSERT(!Const32Value::accepts(opcode));
+    ASSERT(!Const64Value::accepts(opcode));
+    ASSERT(!ConstDoubleValue::accepts(opcode));
+    ASSERT(!ControlValue::accepts(opcode));
+    ASSERT(!MemoryValue::accepts(opcode));
+    ASSERT(!PatchpointValue::accepts(opcode));
+    ASSERT(!StackSlotValue::accepts(opcode));
+    ASSERT(!UpsilonValue::accepts(opcode));
+}
+#endif // !ASSERT_DISABLED
 
 Type Value::typeFor(Opcode opcode, Value* firstChild)
 {

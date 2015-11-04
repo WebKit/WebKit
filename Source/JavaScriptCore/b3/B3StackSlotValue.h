@@ -64,7 +64,7 @@ private:
     friend class Procedure;
 
     StackSlotValue(unsigned index, Origin origin, unsigned byteSize, StackSlotKind kind)
-        : Value(index, StackSlot, pointerType(), origin)
+        : Value(index, CheckedOpcode, StackSlot, pointerType(), origin)
         , m_byteSize(byteSize)
         , m_kind(kind)
         , m_offsetFromFP(0)

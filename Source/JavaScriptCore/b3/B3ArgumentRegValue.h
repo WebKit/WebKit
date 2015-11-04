@@ -48,7 +48,7 @@ private:
     friend class Procedure;
 
     ArgumentRegValue(unsigned index, Origin origin, Reg reg)
-        : Value(index, ArgumentReg, reg.isGPR() ? pointerType() : Double, origin)
+        : Value(index, CheckedOpcode, ArgumentReg, reg.isGPR() ? pointerType() : Double, origin)
         , m_reg(reg)
     {
         ASSERT(reg.isSet());

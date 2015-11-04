@@ -280,6 +280,8 @@
 		0F300B7C18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F300B7A18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h */; };
 		0F32BD101BB34F190093A57F /* HeapHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */; };
 		0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */; };
+		0F338DF91BE96AA80013C88F /* B3CCallValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */; };
+		0F338DFA1BE96AA80013C88F /* B3CCallValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF81BE96AA80013C88F /* B3CCallValue.h */; };
 		0F338DF11BE93AD10013C88F /* B3StackmapValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */; };
 		0F338DF21BE93AD10013C88F /* B3StackmapValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF01BE93AD10013C88F /* B3StackmapValue.h */; };
 		0F338DF51BE93D550013C88F /* B3ConstrainedValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DF31BE93D550013C88F /* B3ConstrainedValue.cpp */; };
@@ -2301,6 +2303,8 @@
 		0F300B7A18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGIntegerCheckCombiningPhase.h; path = dfg/DFGIntegerCheckCombiningPhase.h; sourceTree = "<group>"; };
 		0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapHelperPool.cpp; sourceTree = "<group>"; };
 		0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapHelperPool.h; sourceTree = "<group>"; };
+		0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3CCallValue.cpp; path = b3/B3CCallValue.cpp; sourceTree = "<group>"; };
+		0F338DF81BE96AA80013C88F /* B3CCallValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3CCallValue.h; path = b3/B3CCallValue.h; sourceTree = "<group>"; };
 		0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackmapValue.cpp; path = b3/B3StackmapValue.cpp; sourceTree = "<group>"; };
 		0F338DF01BE93AD10013C88F /* B3StackmapValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackmapValue.h; path = b3/B3StackmapValue.h; sourceTree = "<group>"; };
 		0F338DF31BE93D550013C88F /* B3ConstrainedValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ConstrainedValue.cpp; path = b3/B3ConstrainedValue.cpp; sourceTree = "<group>"; };
@@ -4397,6 +4401,8 @@
 				0FEC84B81BDACDAC0080FF74 /* B3BasicBlockInlines.h */,
 				0FEC84B91BDACDAC0080FF74 /* B3BasicBlockUtils.h */,
 				0FEC84BA1BDACDAC0080FF74 /* B3BlockWorklist.h */,
+				0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */,
+				0F338DF81BE96AA80013C88F /* B3CCallValue.h */,
 				0FEC84BB1BDACDAC0080FF74 /* B3CheckSpecial.cpp */,
 				0FEC84BC1BDACDAC0080FF74 /* B3CheckSpecial.h */,
 				0FEC84BD1BDACDAC0080FF74 /* B3CheckValue.cpp */,
@@ -6521,6 +6527,7 @@
 				0FEC856E1BDACDC70080FF74 /* AirAllocateStack.h in Headers */,
 				0FEC85701BDACDC70080FF74 /* AirArg.h in Headers */,
 				0FEC85721BDACDC70080FF74 /* AirBasicBlock.h in Headers */,
+				0F338DFA1BE96AA80013C88F /* B3CCallValue.h in Headers */,
 				0FEC85741BDACDC70080FF74 /* AirCCallSpecial.h in Headers */,
 				0FEC85761BDACDC70080FF74 /* AirCode.h in Headers */,
 				0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */,
@@ -8836,6 +8843,7 @@
 				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
 				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
 				A7CA3AE317DA41AE006538AF /* WeakMapConstructor.cpp in Sources */,
+				0F338DF91BE96AA80013C88F /* B3CCallValue.cpp in Sources */,
 				A7CA3AEB17DA5168006538AF /* WeakMapData.cpp in Sources */,
 				A7CA3AE517DA41AE006538AF /* WeakMapPrototype.cpp in Sources */,
 				14E84FA014EE1ACC00D6D5D4 /* WeakSet.cpp in Sources */,

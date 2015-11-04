@@ -159,15 +159,24 @@ public:
 protected:
     virtual void dumpChildren(CommaPrinter&, PrintStream&) const;
     virtual void dumpMeta(CommaPrinter&, PrintStream&) const;
-    
+
 private:
     friend class Procedure;
 
+    // Checks that this opcode is valid for use with B3::Value.
+#if ASSERT_DISABLED
+    static void checkOpcode(Opcode) { }
+#else
+    static void checkOpcode(Opcode);
+#endif
+
 protected:
+    enum CheckedOpcodeTag { CheckedOpcode };
+    
     // Instantiate values via Procedure.
     // This form requires specifying the type explicitly:
     template<typename... Arguments>
-    explicit Value(unsigned index, Opcode opcode, Type type, Origin origin, Value* firstChild, Arguments... arguments)
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, Value* firstChild, Arguments... arguments)
         : m_index(index)
         , m_opcode(opcode)
         , m_type(type)
@@ -176,7 +185,7 @@ protected:
     {
     }
     // This form is for specifying the type explicitly when the opcode has no children:
-    explicit Value(unsigned index, Opcode opcode, Type type, Origin origin)
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin)
         : m_index(index)
         , m_opcode(opcode)
         , m_type(type)
@@ -185,7 +194,7 @@ protected:
     }
     // This form is for those opcodes that can infer their type from the opcode and first child:
     template<typename... Arguments>
-    explicit Value(unsigned index, Opcode opcode, Origin origin, Value* firstChild, Arguments... arguments)
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild, Arguments... arguments)
         : m_index(index)
         , m_opcode(opcode)
         , m_type(typeFor(opcode, firstChild))
@@ -195,7 +204,7 @@ protected:
     }
     // This form is for those opcodes that can infer their type from the opcode alone, and that don't
     // take any arguments:
-    explicit Value(unsigned index, Opcode opcode, Origin origin)
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin)
         : m_index(index)
         , m_opcode(opcode)
         , m_type(typeFor(opcode, nullptr))
@@ -203,7 +212,7 @@ protected:
     {
     }
     // Use this form for varargs.
-    explicit Value(unsigned index, Opcode opcode, Type type, Origin origin, const AdjacencyList& children)
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, const AdjacencyList& children)
         : m_index(index)
         , m_opcode(opcode)
         , m_type(type)
@@ -211,13 +220,22 @@ protected:
         , m_children(children)
     {
     }
-    explicit Value(unsigned index, Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin, AdjacencyList&& children)
         : m_index(index)
         , m_opcode(opcode)
         , m_type(type)
         , m_origin(origin)
         , m_children(WTF::move(children))
     {
+    }
+
+    // This is the constructor you end up actually calling, if you're instantiating Value
+    // directly.
+    template<typename... Arguments>
+    explicit Value(unsigned index, Opcode opcode, Arguments&&... arguments)
+        : Value(index, CheckedOpcode, opcode, std::forward<Arguments>(arguments)...)
+    {
+        checkOpcode(opcode);
     }
 
 private:

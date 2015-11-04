@@ -55,7 +55,7 @@ protected:
     friend class Procedure;
 
     Const32Value(unsigned index, Origin origin, int32_t value)
-        : Value(index, Const32, Int32, origin)
+        : Value(index, CheckedOpcode, Const32, Int32, origin)
         , m_value(value)
     {
     }

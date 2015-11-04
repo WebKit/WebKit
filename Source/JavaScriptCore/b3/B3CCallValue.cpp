@@ -24,35 +24,17 @@
  */
 
 #include "config.h"
-#include "B3CheckValue.h"
+#include "B3CCallValue.h"
 
 #if ENABLE(B3_JIT)
 
 namespace JSC { namespace B3 {
 
-CheckValue::~CheckValue()
+CCallValue::~CCallValue()
 {
-}
-
-// Use this form for CheckAdd, CheckSub, and CheckMul.
-CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left, Value* right)
-    : StackmapValue(index, CheckedOpcode, opcode, left->type(), origin)
-{
-    ASSERT(B3::isInt(type()));
-    ASSERT(left->type() == right->type());
-    ASSERT(opcode == CheckAdd || opcode == CheckSub || opcode == CheckMul);
-    append(ConstrainedValue(left, ValueRep::SomeRegister));
-    append(ConstrainedValue(right, ValueRep::SomeRegister));
-}
-
-// Use this form for Check.
-CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* predicate)
-    : StackmapValue(index, CheckedOpcode, opcode, Void, origin)
-{
-    ASSERT(opcode == Check);
-    append(predicate);
 }
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

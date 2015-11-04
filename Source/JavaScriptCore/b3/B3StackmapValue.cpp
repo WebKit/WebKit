@@ -78,9 +78,10 @@ void StackmapValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
         ", usedRegisters = ", m_usedRegisters);
 }
 
-StackmapValue::StackmapValue(unsigned index, Opcode opcode, Type type, Origin origin)
-    : Value(index, opcode, type, origin)
+StackmapValue::StackmapValue(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin)
+    : Value(index, CheckedOpcode, opcode, type, origin)
 {
+    ASSERT(accepts(opcode));
 }
 
 } } // namespace JSC::B3

@@ -28,13 +28,10 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3HeapRange.h"
 #include "B3Value.h"
 
 namespace JSC { namespace B3 {
-
-// FIXME: Add alias analysis to these by allowing the client to associate an integer range to the
-// value. Two operations may access the same memory if their ranges overlaps.
-// https://bugs.webkit.org/show_bug.cgi?id=150535
 
 class JS_EXPORT_PRIVATE MemoryValue : public Value {
 public:
@@ -62,6 +59,9 @@ public:
     int32_t offset() const { return m_offset; }
     void setOffset(int32_t offset) { m_offset = offset; }
 
+    const HeapRange& range() const { return m_range; }
+    void setRange(const HeapRange& range) { m_range = range; }
+
     size_t accessByteSize() const;
 
 protected:
@@ -75,8 +75,9 @@ private:
     MemoryValue(
         unsigned index, Opcode opcode, Type type, Origin origin, Value* pointer,
         int32_t offset = 0)
-        : Value(index, opcode, type, origin, pointer)
+        : Value(index, CheckedOpcode, opcode, type, origin, pointer)
         , m_offset(offset)
+        , m_range(HeapRange::top())
     {
         if (!ASSERT_DISABLED) {
             switch (opcode) {
@@ -113,8 +114,9 @@ private:
     MemoryValue(
         unsigned index, Opcode opcode, Origin origin, Value* value, Value* pointer,
         int32_t offset = 0)
-        : Value(index, opcode, Void, origin, value, pointer)
+        : Value(index, CheckedOpcode, opcode, Void, origin, value, pointer)
         , m_offset(offset)
+        , m_range(HeapRange::top())
     {
         if (!ASSERT_DISABLED) {
             switch (opcode) {
@@ -131,6 +133,7 @@ private:
     }
 
     int32_t m_offset { 0 };
+    HeapRange m_range;
 };
 
 } } // namespace JSC::B3

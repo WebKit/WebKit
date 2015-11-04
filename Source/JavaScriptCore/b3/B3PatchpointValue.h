@@ -28,7 +28,9 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Effects.h"
 #include "B3StackmapValue.h"
+#include "B3Value.h"
 
 namespace JSC { namespace B3 {
 
@@ -37,6 +39,8 @@ public:
     static bool accepts(Opcode opcode) { return opcode == Patchpoint; }
 
     ~PatchpointValue();
+
+    Effects effects;
 
 private:
     friend class Procedure;
