@@ -337,7 +337,7 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataT
     }));
 
     if (websiteDataTypes & WebsiteDataTypeCookies) {
-        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
             getHostnamesWithCookies(*networkStorageSession, callbackAggregator->m_websiteData.hostNamesWithCookies);
     }
 
@@ -352,13 +352,13 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteData
 {
 #if PLATFORM(COCOA)
     if (websiteDataTypes & WebsiteDataTypeHSTSCache) {
-        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
             clearHSTSCache(*networkStorageSession, modifiedSince);
     }
 #endif
 
     if (websiteDataTypes & WebsiteDataTypeCookies) {
-        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
             deleteAllCookiesModifiedSince(*networkStorageSession, modifiedSince);
     }
 
@@ -418,7 +418,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
 void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes & WebsiteDataTypeCookies) {
-        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+        if (auto* networkStorageSession = SessionTracker::storageSession(sessionID))
             deleteCookiesForHostnames(*networkStorageSession, cookieHostNames);
     }
 

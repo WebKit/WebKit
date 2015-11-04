@@ -213,7 +213,7 @@ private:
 
     RefPtr<RemoteNetworkingContext> m_networkingContext;
 #if USE(NETWORK_SESSION)
-    RefPtr<NetworkingDataTask> m_task;
+    RefPtr<NetworkDataTask> m_task;
 #else
     RefPtr<WebCore::ResourceHandle> m_handle;
 #endif

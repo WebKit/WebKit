@@ -168,9 +168,9 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 static NetworkStorageSession& storageSession(SessionID sessionID)
 {
     if (sessionID.isEphemeral()) {
-        NetworkStorageSession* privateSession = SessionTracker::session(sessionID);
-        if (privateSession)
-            return *privateSession;
+        NetworkStorageSession* privateStorageSession = SessionTracker::storageSession(sessionID);
+        if (privateStorageSession)
+            return *privateStorageSession;
         // Some requests with private browsing mode requested may still be coming shortly after NetworkProcess was told to destroy its session.
         // FIXME: Find a way to track private browsing sessions more rigorously.
         LOG_ERROR("Private browsing was requested, but there was no session for it. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");

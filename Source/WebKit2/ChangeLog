@@ -1,3 +1,78 @@
+2015-11-03  Alex Christensen  <achristensen@webkit.org>
+
+        Create a NetworkSession for each SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=150857
+
+        Reviewed by Anders Carlsson.
+
+        This patch renames SessionTracker::session to storageSession and makes a parallel
+        structure for NetworkSessions.  NetworkSession and NetworkStorageSession should eventually
+        become the same class in WebCore.  Because not everybody uses NetworkSessions yet,
+        we keep them separate but created, destroyed, and managed together.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::abort):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient):
+        (WebKit::NetworkDataTask::client):
+        (WebKit::NetworkDataTask::clearClient):
+        (WebKit::NetworkingDataTask::client): Deleted.
+        (WebKit::NetworkingDataTask::clearClient): Deleted.
+        (WebKit::NetworkSession::~NetworkSession): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForType):
+        (WebKit::defaultNetworkSession):
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::createDataTaskWithRequest):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        (WebKit::NetworkDataTask::cancel):
+        (WebKit::NetworkDataTask::resume):
+        (WebKit::NetworkDataTask::taskIdentifier):
+        (WebKit::NetworkSession::create): Deleted.
+        (WebKit::NetworkSession::singleton): Deleted.
+        (WebKit::NetworkingDataTask::NetworkingDataTask): Deleted.
+        (WebKit::NetworkingDataTask::~NetworkingDataTask): Deleted.
+        (WebKit::NetworkingDataTask::suspend): Deleted.
+        (WebKit::NetworkingDataTask::resume): Deleted.
+        (WebKit::NetworkingDataTask::taskIdentifier): Deleted.
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::storageSession):
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        * Shared/SessionTracker.cpp:
+        (WebKit::staticStorageSessionMap):
+        (WebKit::identifierBase):
+        (WebKit::SessionTracker::storageSessionMap):
+        (WebKit::SessionTracker::getIdentifierBase):
+        (WebKit::SessionTracker::storageSession):
+        (WebKit::staticSessionMap):
+        (WebKit::SessionTracker::networkSession):
+        (WebKit::SessionTracker::sessionID):
+        (WebKit::SessionTracker::setSession):
+        (WebKit::SessionTracker::destroySession):
+        (WebKit::SessionTracker::sessionMap): Deleted.
+        (WebKit::SessionTracker::session): Deleted.
+        * Shared/SessionTracker.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+
 2015-11-03  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics] invisible webview should not paint the content

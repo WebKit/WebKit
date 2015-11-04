@@ -38,6 +38,7 @@
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "RemoteNetworkingContext.h"
+#include "SessionTracker.h"
 #include "ShareableResource.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
@@ -189,7 +190,7 @@ void NetworkResourceLoader::startNetworkLoad()
     bool shouldSniff = m_parameters.contentSniffingPolicy == SniffContent;
 #if USE(NETWORK_SESSION)
     UNUSED_PARAM(shouldSniff); // FIXME: Use this.
-    m_task = NetworkSession::singleton()->createDataTaskWithRequest(m_currentRequest, *this);
+    m_task = SessionTracker::networkSession(sessionID())->createDataTaskWithRequest(m_currentRequest, *this);
     m_task->resume();
 #else
     m_handle = ResourceHandle::create(m_networkingContext.get(), m_currentRequest, this, m_defersLoading, shouldSniff);
@@ -252,7 +253,7 @@ void NetworkResourceLoader::abort()
 
 #if USE(NETWORK_SESSION)
     if (m_task)
-        m_task->suspend();
+        m_task->cancel();
     // FIXME: Do something with the network cache here.
     notImplemented();
 #else

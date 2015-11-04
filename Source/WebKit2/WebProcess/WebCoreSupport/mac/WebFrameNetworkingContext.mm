@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebFrameNetworkingContext.h"
 
+#include "NetworkSession.h"
 #include "SessionTracker.h"
 #include "WebCookieManager.h"
 #include "WebPage.h"
@@ -47,7 +48,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
 {
     ASSERT(sessionID.isEphemeral());
 
-    if (SessionTracker::session(sessionID))
+    if (SessionTracker::storageSession(sessionID))
         return;
 
     String base;
@@ -56,7 +57,11 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
     else
         base = SessionTracker::getIdentifierBase();
 
-    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID.sessionID())));
+    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID.sessionID()))
+#if USE(NETWORK_SESSION)
+        , std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID)
+#endif
+    );
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)
@@ -66,7 +71,7 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAc
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
         WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
 
-    for (const auto& session : SessionTracker::sessionMap().values()) {
+    for (const auto& session : SessionTracker::storageSessionMap().values()) {
         if (session)
             WKSetHTTPCookieAcceptPolicy(session->cookieStorage().get(), policy);
     }
@@ -110,8 +115,8 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(RunLoop::isMain());
     if (frame()) {
-        if (NetworkStorageSession* session = SessionTracker::session(frame()->page()->sessionID()))
-            return *session;
+        if (auto* storageSession = SessionTracker::storageSession(frame()->page()->sessionID()))
+            return *storageSession;
         // Some requests may still be coming shortly after WebProcess was told to destroy its session.
         LOG_ERROR("Invalid session ID. Please file a bug unless you just disabled private browsing, in which case it's an expected race.");
     }
