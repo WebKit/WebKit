@@ -56,7 +56,7 @@ function initializeReadableStream(underlyingSource, strategy)
 
     var result = @invokeOrNoop(underlyingSource, "start", [this.@controller]);
     var _this = this;
-    @Promise.resolve(result).then(function() {
+    @Promise.@resolve(result).then(function() {
         _this.@started = true;
         @requestReadableStreamPull(_this);
     }, function(error) {
@@ -72,10 +72,10 @@ function cancel(reason)
     "use strict";
 
     if (!@isReadableStream(this))
-        return @Promise.reject(new @TypeError("Function should be called on a ReadableStream"));
+        return @Promise.@reject(new @TypeError("Function should be called on a ReadableStream"));
 
     if (@isReadableStreamLocked(this))
-        return @Promise.reject(new @TypeError("ReadableStream is locked"));
+        return @Promise.@reject(new @TypeError("ReadableStream is locked"));
 
     return @cancelReadableStream(this, reason);
 }

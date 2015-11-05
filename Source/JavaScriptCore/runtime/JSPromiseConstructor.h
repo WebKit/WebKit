@@ -52,6 +52,8 @@ protected:
 private:
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
+
+    void addOwnInternalSlots(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

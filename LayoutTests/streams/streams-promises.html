@@ -2,10 +2,43 @@
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
 <script>
-test(function() {
-    Promise = function() { throw new Error("nasty things"); };
 
-    const rs = new ReadableStream(); // Does not throw.
-    const ws = new WritableStream(); // Does not throw.
-}, 'Streams can be built even if Promise constructor is replaced');
+test(function() {
+    const PromiseBackup = Promise;
+
+    try {
+        Promise = function() { assert_unreached("streams should not use this Promise object"); };
+
+        new ReadableStream();
+        new WritableStream();
+    } finally {
+        Promise = PromiseBackup;
+    }
+}, 'Streams implementation is not affected if Promise constructor is replaced');
+
+test(function() {
+    const PromiseResolveBackup = Promise.resolve;
+
+    try {
+        Promise.resolve = function() { assert_unreached("streams should not use this Promise.resolve method"); };
+
+        new ReadableStream();
+        new WritableStream();
+    } finally {
+        Promise.resolve = PromiseResolveBackup;
+    }
+}, 'Streams implementation is not affected if Promise.resolve is replaced');
+
+test(function() {
+    const PromiseRejectBackup = Promise.reject;
+
+    try {
+        Promise.reject = function() { assert_unreached("streams should not use this Promise.reject method"); };
+
+        ReadableStream.prototype.cancel.call({}, "reason");
+        WritableStream.prototype.abort.call({}, "reason");
+    } finally {
+        Promise.reject = PromiseRejectBackup;
+    }
+}, 'Streams implementation is not affected if Promise.reject is replaced');
 </script>

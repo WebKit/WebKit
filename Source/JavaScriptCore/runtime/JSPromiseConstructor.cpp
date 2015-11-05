@@ -33,6 +33,7 @@
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
+#include "JSFunction.h"
 #include "JSPromise.h"
 #include "JSPromisePrototype.h"
 #include "Lookup.h"
@@ -64,6 +65,7 @@ JSPromiseConstructor* JSPromiseConstructor::create(VM& vm, Structure* structure,
 {
     JSPromiseConstructor* constructor = new (NotNull, allocateCell<JSPromiseConstructor>(vm.heap)) JSPromiseConstructor(vm, structure);
     constructor->finishCreation(vm, promisePrototype);
+    constructor->addOwnInternalSlots(vm, structure->globalObject());
     return constructor;
 }
 
@@ -82,6 +84,12 @@ void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePro
     Base::finishCreation(vm, ASCIILiteral("Promise"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, promisePrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+}
+
+void JSPromiseConstructor::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)
+{
+    JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().resolvePrivateName(), promiseConstructorResolveCodeGenerator, DontEnum | DontDelete | ReadOnly);
+    JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().rejectPrivateName(), promiseConstructorRejectCodeGenerator, DontEnum | DontDelete | ReadOnly);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)

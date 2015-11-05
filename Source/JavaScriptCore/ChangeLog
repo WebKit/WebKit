@@ -1,3 +1,19 @@
+2015-11-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Shield implementation from user mangling Promise.reject and resolve methods
+        https://bugs.webkit.org/show_bug.cgi?id=150895
+
+        Reviewed by Youenn Fablet.
+
+        Keep Promise.resolve and reject also as internal slots for the Promise constructor given that there is no way to
+        retrieve the former implementation if the user decides to replace it. This allows to safely create vended
+        promises even if the user changes the constructor methods.
+
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::addOwnInternalSlots): Added to include @reject and @resolve.
+        (JSC::JSPromiseConstructor::create): Call addOwnInternalSlots.
+
 2015-11-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add B3-to-Air lowering for the shift opcodes

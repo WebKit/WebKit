@@ -44,12 +44,12 @@ function promiseInvokeOrNoop(object, key, args)
     try {
         var method = object[key];
         if (typeof method === "undefined")
-            return @Promise.resolve();
+            return @Promise.@resolve();
         var result = method.@apply(object, args);
-        return @Promise.resolve(result);
+        return @Promise.@resolve(result);
     }
     catch(error) {
-        return @Promise.reject(error);
+        return @Promise.@reject(error);
     }
 
 }
@@ -63,10 +63,10 @@ function promiseInvokeOrFallbackOrNoop(object, key1, args1, key2, args2)
         if (typeof method === "undefined")
             return @promiseInvokeOrNoop(object, key2, args2);
         const result = method.@apply(object, args1);
-        return @Promise.resolve(result);
+        return @Promise.@resolve(result);
     }
     catch(error) {
-        return @Promise.reject(error);
+        return @Promise.@reject(error);
     }
 }
 
