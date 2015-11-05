@@ -92,8 +92,9 @@ TEST_F(SharedBufferTest, copyBufferCreatedWithContentsOfExistingFile)
     RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     RefPtr<SharedBuffer> copy = buffer->copy();
+    EXPECT_GT(buffer->size(), 0U);
     EXPECT_TRUE(buffer->size() == copy->size());
-    EXPECT_TRUE(strnstr(buffer->data(), copy->data(), buffer->size()));
+    EXPECT_TRUE(!memcmp(buffer->data(), copy->data(), buffer->size()));
 }
 
 TEST_F(SharedBufferTest, clearBufferCreatedWithContentsOfExistingFile)
@@ -105,14 +106,13 @@ TEST_F(SharedBufferTest, clearBufferCreatedWithContentsOfExistingFile)
     EXPECT_TRUE(!buffer->data());
 }
 
-
 TEST_F(SharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
 {
     RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     buffer->append("a", 1);
     EXPECT_TRUE(buffer->size() == (strlen(SharedBufferTestData) + 1));
-    EXPECT_TRUE(strnstr(buffer->data(), SharedBufferTestData, strlen(SharedBufferTestData)));
+    EXPECT_TRUE(!memcmp(buffer->data(), SharedBufferTestData, strlen(SharedBufferTestData)));
     EXPECT_EQ('a', buffer->data()[strlen(SharedBufferTestData)]);
 }
 
