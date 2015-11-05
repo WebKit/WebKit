@@ -177,6 +177,11 @@ void DeleteSelectionCommand::initializePositionData()
     Position start, end;
     initializeStartEnd(start, end);
     
+    if (!isEditablePosition(start, ContentIsEditable))
+        start = firstEditablePositionAfterPositionInRoot(start, highestEditableRoot(start));
+    if (!isEditablePosition(end, ContentIsEditable))
+        end = lastEditablePositionBeforePositionInRoot(end, highestEditableRoot(start));
+
     m_upstreamStart = start.upstream();
     m_downstreamStart = start.downstream();
     m_upstreamEnd = end.upstream();
