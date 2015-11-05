@@ -111,18 +111,13 @@ static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
     encoder->_objectStream->elements()[position] = encodedObject.release();
 }
 
-static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invocation)
+static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocation *invocation, NSUInteger firstArgument)
 {
     NSMethodSignature *methodSignature = invocation.methodSignature;
-    [encoder encodeObject:methodSignature._typeString forKey:typeStringKey];
-    [encoder encodeObject:NSStringFromSelector(invocation.selector) forKey:selectorKey];
-
     NSUInteger argumentCount = methodSignature.numberOfArguments;
 
-    // The invocation should always have have self and _cmd arguments.
-    ASSERT(argumentCount >= 2);
+    ASSERT(firstArgument <= argumentCount);
 
-    // We ignore self and _cmd.
     for (NSUInteger i = 2; i < argumentCount; ++i) {
         const char* type = [methodSignature getArgumentTypeAtIndex:i];
 
@@ -212,6 +207,15 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s'", type];
         }
     }
+}
+
+static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invocation)
+{
+    NSMethodSignature *methodSignature = invocation.methodSignature;
+    [encoder encodeObject:methodSignature._typeString forKey:typeStringKey];
+    [encoder encodeObject:NSStringFromSelector(invocation.selector) forKey:selectorKey];
+
+    encodeInvocationArguments(encoder, invocation, 2);
 }
 
 static void encodeString(WKRemoteObjectEncoder *encoder, NSString *string)

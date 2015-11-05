@@ -1,3 +1,14 @@
+2015-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Move invocation argument encoding out to a separate function
+        https://bugs.webkit.org/show_bug.cgi?id=150950
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocationArguments):
+        (encodeInvocation):
+
 2015-11-05  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Clean up / Modernize NetworkResourceLoader
