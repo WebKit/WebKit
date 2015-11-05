@@ -210,10 +210,10 @@ void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(uint64_t backingStor
 
 void DrawingAreaProxyImpl::willEnterAcceleratedCompositingMode(uint64_t backingStoreStateID)
 {
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
-    if (backingStoreStateID < m_currentBackingStoreStateID)
-        return;
-
+    // WillEnterAcceleratedCompositingMode message is sent when the LayerTreeHost is created in the Web Process.
+    // This can happen while there's still a DidUpdateBackingStoreState pending, in which case we are receiving
+    // here the new backingStoreStateID, but m_currentBackingStoreStateID hasn't been updated yet.
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_nextBackingStoreStateID);
     m_webPageProxy.willEnterAcceleratedCompositingMode();
 }
 

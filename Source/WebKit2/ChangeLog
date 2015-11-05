@@ -1,3 +1,22 @@
+2015-11-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Epiphany with Debug mode compiled WebKitGtk+ 2.10.3 hits ASSERT_ARG on willEnterAcceleratedCompositingMode
+        https://bugs.webkit.org/show_bug.cgi?id=150620
+
+        Reviewed by Mario Sanchez Prada.
+
+        WillEnterAcceleratedCompositingMode message is sent when the
+        LayerTreeHost is created in the Web Process. This can happen while
+        there's still a DidUpdateBackingStoreState pending, in which case
+        we are receiving the new backingStoreStateID, but the current one
+        hasn't been updated yet.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::willEnterAcceleratedCompositingMode):
+        Fix the ASSERT to check the given ID is alt least the next one,
+        and remove the early return since it's valid to not enter AC mode
+        in the end after the WillEnter message.
+
 2015-11-04  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r191499): 100% repro crash under _prepareForMoveToWindow:
