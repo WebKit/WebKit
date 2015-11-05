@@ -285,6 +285,8 @@ webkit.org/b/150736 http/tests/notifications/legacy/events.html [ Pass Crash ]
 
 webkit.org/b/150577 http/tests/contentextensions/async-xhr-onerror.html [ Pass Failure ]
 
+webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
