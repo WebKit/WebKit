@@ -40,7 +40,6 @@ public:
 
     virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
 
-    virtual JSC::VM& globalVM() override;
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     // NOTE: JavaScript inspector does not yet need to mute a console because no messages

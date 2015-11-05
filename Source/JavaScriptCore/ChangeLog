@@ -1,3 +1,74 @@
+2015-11-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Put ScriptDebugServer into InspectorEnvironment and cleanup duplicate references
+        https://bugs.webkit.org/show_bug.cgi?id=150869
+
+        Reviewed by Brian Burg.
+
+        ScriptDebugServer (JSC::Debugger) is being used by more and more agents
+        for instrumentation into JavaScriptCore. Currently the ScriptDebugServer
+        is owned by DebuggerAgent subclasses that make their own ScriptDebugServer
+        subclass. As more agents want to use it there was added boilerplate.
+        Instead, put the ScriptDebugServer in the InspectorEnvironment (Controllers).
+        Then each agent can access it during construction through the environment.
+
+        Do the same clean up for RuntimeAgent::globalVM, which is now just a
+        duplication of InspectorEnvironment::vm.
+
+        * inspector/InspectorEnvironment.h:
+        Add scriptDebugServer().
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::scriptDebugServer):
+        Own the JSGlobalObjectScriptDebugServer.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (Inspector::InspectorDebuggerAgent::enable):
+        (Inspector::InspectorDebuggerAgent::disable):
+        (Inspector::InspectorDebuggerAgent::setBreakpointsActive):
+        (Inspector::InspectorDebuggerAgent::isPaused):
+        (Inspector::InspectorDebuggerAgent::setSuppressAllPauses):
+        (Inspector::InspectorDebuggerAgent::handleConsoleAssert):
+        (Inspector::InspectorDebuggerAgent::removeBreakpoint):
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        (Inspector::InspectorDebuggerAgent::resolveBreakpoint):
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::cancelPauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::resume):
+        (Inspector::InspectorDebuggerAgent::stepOver):
+        (Inspector::InspectorDebuggerAgent::stepInto):
+        (Inspector::InspectorDebuggerAgent::stepOut):
+        (Inspector::InspectorDebuggerAgent::setPauseOnExceptions):
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (Inspector::InspectorDebuggerAgent::scriptExecutionBlockedByCSP):
+        (Inspector::InspectorDebuggerAgent::didPause):
+        (Inspector::InspectorDebuggerAgent::breakProgram):
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (Inspector::setPauseOnExceptionsState):
+        (Inspector::InspectorRuntimeAgent::parse):
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::InspectorRuntimeAgent::setTypeProfilerEnabledState):
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks):
+        Use VM and ScriptDebugServer passed during construction.
+
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        (Inspector::JSGlobalObjectDebuggerAgent::injectedScriptForEval):
+        (Inspector::JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent): Deleted.
+        One special case needed by this subclass as a convenience to access the global object.
+
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        (Inspector::JSGlobalObjectRuntimeAgent::globalVM): Deleted.
+        This virtual method is no longer needed, the base class has everything now.
+
 2015-11-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Shield implementation from user mangling Promise.reject and resolve methods

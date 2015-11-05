@@ -67,7 +67,6 @@ public:
     void didCreateMainWorldContext(Frame&);
 
 private:
-    virtual JSC::VM& globalVM() override;
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;

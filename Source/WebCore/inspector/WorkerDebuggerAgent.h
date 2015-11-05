@@ -33,7 +33,6 @@
 #define WorkerDebuggerAgent_h
 
 #include "WebDebuggerAgent.h"
-#include "WorkerScriptDebugServer.h"
 
 namespace WebCore {
 
@@ -50,7 +49,6 @@ public:
     static const char* debuggerTaskMode;
     static void interruptAndDispatchInspectorCommands(WorkerThread*);
 
-    virtual WorkerScriptDebugServer& scriptDebugServer() override;
     virtual Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
     virtual void muteConsole() override;
     virtual void unmuteConsole() override;
@@ -58,7 +56,6 @@ public:
     virtual void breakpointActionLog(JSC::ExecState*, const String&) override;
 
 private:
-    WorkerScriptDebugServer m_scriptDebugServer;
     WorkerGlobalScope& m_inspectedWorkerGlobalScope;
 };
 

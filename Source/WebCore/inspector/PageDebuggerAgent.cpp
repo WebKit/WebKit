@@ -56,7 +56,6 @@ PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context, InspectorPageAge
     , m_page(context.inspectedPage)
     , m_pageAgent(pageAgent)
     , m_overlay(overlay)
-    , m_scriptDebugServer(m_page)
 {
 }
 
@@ -91,11 +90,6 @@ String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
     }
 
     return InspectorDebuggerAgent::sourceMapURLForScript(script);
-}
-
-PageScriptDebugServer& PageDebuggerAgent::scriptDebugServer()
-{
-    return m_scriptDebugServer;
 }
 
 void PageDebuggerAgent::muteConsole()

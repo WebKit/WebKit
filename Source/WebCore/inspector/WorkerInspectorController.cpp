@@ -83,6 +83,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     , m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_executionStopwatch(Stopwatch::create())
+    , m_scriptDebugServer(workerGlobalScope, WorkerDebuggerAgent::debuggerTaskMode)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
@@ -112,7 +113,6 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
 
     auto debuggerAgent = std::make_unique<WorkerDebuggerAgent>(workerContext);
-    m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(WTF::move(debuggerAgent));
 
     m_agents.append(std::make_unique<InspectorTimelineAgent>(workerContext, nullptr, InspectorTimelineAgent::WorkerInspector));
@@ -197,9 +197,14 @@ Ref<Stopwatch> WorkerInspectorController::executionStopwatch()
     return m_executionStopwatch.copyRef();
 }
 
+WorkerScriptDebugServer& WorkerInspectorController::scriptDebugServer()
+{
+    return m_scriptDebugServer;
+}
+
 VM& WorkerInspectorController::vm()
 {
-    return JSDOMWindowBase::commonVM();
+    return m_workerGlobalScope.vm();
 }
 
 } // namespace WebCore

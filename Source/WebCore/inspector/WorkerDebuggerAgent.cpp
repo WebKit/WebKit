@@ -33,6 +33,7 @@
 #include "WorkerDebuggerAgent.h"
 
 #include "WorkerGlobalScope.h"
+#include "WorkerScriptDebugServer.h"
 #include "WorkerThread.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
@@ -83,7 +84,6 @@ const char* WorkerDebuggerAgent::debuggerTaskMode = "debugger";
 
 WorkerDebuggerAgent::WorkerDebuggerAgent(WorkerAgentContext& context)
     : WebDebuggerAgent(context)
-    , m_scriptDebugServer(context.workerGlobalScope, WorkerDebuggerAgent::debuggerTaskMode)
     , m_inspectedWorkerGlobalScope(context.workerGlobalScope)
 {
     std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
@@ -102,18 +102,15 @@ void WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(WorkerThread* th
 {
     std::lock_guard<StaticLock> lock(workerDebuggerAgentsMutex);
 
-    if (WorkerDebuggerAgent* agent = workerDebuggerAgents().get(thread))
-        agent->m_scriptDebugServer.interruptAndRunTask(std::make_unique<RunInspectorCommandsTask>(thread, &agent->m_inspectedWorkerGlobalScope));
+    if (WorkerDebuggerAgent* agent = workerDebuggerAgents().get(thread)) {
+        WorkerScriptDebugServer& workerScriptDebugServer = static_cast<WorkerScriptDebugServer&>(agent->scriptDebugServer());
+        workerScriptDebugServer.interruptAndRunTask(std::make_unique<RunInspectorCommandsTask>(thread, &agent->m_inspectedWorkerGlobalScope));
+    }
 }
 
 void WorkerDebuggerAgent::breakpointActionLog(JSC::ExecState*, const String& message)
 {
     m_inspectedWorkerGlobalScope.addConsoleMessage(MessageSource::JS, MessageLevel::Log, message);
-}
-
-WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
-{
-    return m_scriptDebugServer;
 }
 
 InjectedScript WorkerDebuggerAgent::injectedScriptForEval(ErrorString& error, const int* executionContextId)

@@ -40,8 +40,6 @@ public:
     JSGlobalObjectDebuggerAgent(JSAgentContext&, InspectorConsoleAgent*);
     virtual ~JSGlobalObjectDebuggerAgent() { }
 
-    virtual JSGlobalObjectScriptDebugServer& scriptDebugServer() override { return m_scriptDebugServer; }
-
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     virtual void breakpointActionLog(JSC::ExecState*, const String&) override;
@@ -52,7 +50,6 @@ public:
     virtual void unmuteConsole() override { }
 
 private:
-    JSGlobalObjectScriptDebugServer m_scriptDebugServer;
     InspectorConsoleAgent* m_consoleAgent { nullptr };
 };
 

@@ -108,11 +108,6 @@ void PageRuntimeAgent::didCreateMainWorldContext(Frame& frame)
     notifyContextCreated(frameId, scriptState, nullptr, true);
 }
 
-JSC::VM& PageRuntimeAgent::globalVM()
-{
-    return JSDOMWindowBase::commonVM();
-}
-
 InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (!executionContextId) {

@@ -66,6 +66,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     : m_globalObject(globalObject)
     , m_injectedScriptManager(std::make_unique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
     , m_executionStopwatch(Stopwatch::create())
+    , m_scriptDebugServer(globalObject)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
@@ -85,21 +86,17 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(context);
     auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(context);
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, consoleAgent.get());
-    auto heapAgent = std::make_unique<InspectorHeapAgent>(context);
 
     m_inspectorAgent = inspectorAgent.get();
     m_debuggerAgent = debuggerAgent.get();
-    m_heapAgent = heapAgent.get();
     m_consoleAgent = consoleAgent.get();
     m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
-
-    runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
 
     m_agents.append(WTF::move(inspectorAgent));
     m_agents.append(WTF::move(runtimeAgent));
     m_agents.append(WTF::move(consoleAgent));
     m_agents.append(WTF::move(debuggerAgent));
-    m_agents.append(WTF::move(heapAgent));
+    m_agents.append(std::make_unique<InspectorHeapAgent>(context));
 
     m_executionStopwatch->start();
 }
@@ -283,6 +280,11 @@ void JSGlobalObjectInspectorController::frontendInitialized()
 Ref<Stopwatch> JSGlobalObjectInspectorController::executionStopwatch()
 {
     return m_executionStopwatch.copyRef();
+}
+
+JSGlobalObjectScriptDebugServer& JSGlobalObjectInspectorController::scriptDebugServer()
+{
+    return m_scriptDebugServer;
 }
 
 VM& JSGlobalObjectInspectorController::vm()

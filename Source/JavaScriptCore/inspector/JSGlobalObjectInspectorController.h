@@ -29,6 +29,7 @@
 #include "InspectorAgentRegistry.h"
 #include "InspectorEnvironment.h"
 #include "InspectorFrontendRouter.h"
+#include "JSGlobalObjectScriptDebugServer.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -36,10 +37,6 @@
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 #include "AugmentableInspectorController.h"
 #endif
-
-namespace WTF {
-class Stopwatch;
-}
 
 namespace JSC {
 class ConsoleClient;
@@ -97,6 +94,7 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
     virtual void frontendInitialized() override;
     virtual Ref<WTF::Stopwatch> executionStopwatch() override;
+    virtual JSGlobalObjectScriptDebugServer& scriptDebugServer() override;
     virtual JSC::VM& vm() override;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -115,12 +113,12 @@ private:
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
     Ref<WTF::Stopwatch> m_executionStopwatch;
+    JSGlobalObjectScriptDebugServer m_scriptDebugServer;
 
     AgentRegistry m_agents;
     InspectorAgent* m_inspectorAgent { nullptr };
     InspectorConsoleAgent* m_consoleAgent { nullptr };
     InspectorDebuggerAgent* m_debuggerAgent { nullptr };
-    InspectorHeapAgent* m_heapAgent { nullptr };
 
     Ref<FrontendRouter> m_frontendRouter;
     Ref<BackendDispatcher> m_backendDispatcher;

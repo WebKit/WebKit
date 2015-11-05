@@ -40,6 +40,7 @@ class VM;
 
 namespace Inspector {
 
+class ScriptDebugServer;
 typedef JSC::JSValue (*InspectorFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
 typedef JSC::JSValue (*InspectorEvaluateHandler)(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
@@ -54,6 +55,7 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) = 0;
     virtual void frontendInitialized() = 0;
     virtual Ref<WTF::Stopwatch> executionStopwatch() = 0;
+    virtual ScriptDebugServer& scriptDebugServer() = 0;
     virtual JSC::VM& vm() = 0;
 };
 

@@ -266,7 +266,7 @@ InspectorNetworkAgent::~InspectorNetworkAgent()
 
 double InspectorNetworkAgent::timestamp()
 {
-    return m_instrumentingAgents.inspectorEnvironment().executionStopwatch()->elapsedTime();
+    return m_environment.executionStopwatch()->elapsedTime();
 }
 
 void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader& loader, ResourceRequest& request, const ResourceResponse& redirectResponse)

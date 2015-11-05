@@ -51,7 +51,6 @@ class Event;
 class FloatQuad;
 class Frame;
 class InspectorPageAgent;
-class PageScriptDebugServer;
 class RenderObject;
 class RunLoopObserver;
 
@@ -105,8 +104,6 @@ public:
     virtual void stop(ErrorString&) override;
 
     int id() const { return m_id; }
-
-    void setPageScriptDebugServer(PageScriptDebugServer*);
 
     void didCommitLoad();
 
@@ -198,8 +195,6 @@ private:
     std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
     InspectorPageAgent* m_pageAgent;
-
-    PageScriptDebugServer* m_scriptDebugServer { nullptr };
 
     Vector<TimelineRecordEntry> m_recordStack;
     int m_id { 1 };

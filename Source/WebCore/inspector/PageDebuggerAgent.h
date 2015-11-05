@@ -32,7 +32,6 @@
 #ifndef PageDebuggerAgent_h
 #define PageDebuggerAgent_h
 
-#include "PageScriptDebugServer.h"
 #include "WebDebuggerAgent.h"
 
 namespace WebCore {
@@ -40,7 +39,6 @@ namespace WebCore {
 class InspectorOverlay;
 class InspectorPageAgent;
 class Page;
-class PageScriptDebugServer;
 
 class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
@@ -54,8 +52,6 @@ public:
     void mainFrameStartedLoading();
     void mainFrameStoppedLoading();
     void mainFrameNavigated();
-
-    virtual PageScriptDebugServer& scriptDebugServer() override;
 
 protected:
     virtual void enable() override;
@@ -76,7 +72,6 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     InspectorOverlay* m_overlay { nullptr };
-    PageScriptDebugServer m_scriptDebugServer;
 };
 
 } // namespace WebCore

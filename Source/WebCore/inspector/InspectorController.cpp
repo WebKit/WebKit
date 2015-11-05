@@ -91,6 +91,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_overlay(std::make_unique<InspectorOverlay>(page, inspectorClient))
     , m_executionStopwatch(Stopwatch::create())
+    , m_scriptDebugServer(page)
     , m_page(page)
     , m_inspectorClient(inspectorClient)
 {
@@ -180,9 +181,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
             , databaseAgent
         );
     }
-
-    runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
-    m_timelineAgent->setPageScriptDebugServer(&debuggerAgent->scriptDebugServer());
 }
 
 InspectorController::~InspectorController()
@@ -469,6 +467,11 @@ void InspectorController::frontendInitialized()
 Ref<Stopwatch> InspectorController::executionStopwatch()
 {
     return m_executionStopwatch.copyRef();
+}
+
+PageScriptDebugServer& InspectorController::scriptDebugServer()
+{
+    return m_scriptDebugServer;
 }
 
 JSC::VM& InspectorController::vm()

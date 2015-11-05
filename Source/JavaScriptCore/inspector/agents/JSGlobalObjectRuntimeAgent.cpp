@@ -46,11 +46,6 @@ void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendRouter*, Ba
 {
 }
 
-VM& JSGlobalObjectRuntimeAgent::globalVM()
-{
-    return m_globalObject.vm();
-}
-
 InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     ASSERT_UNUSED(executionContextId, !executionContextId);

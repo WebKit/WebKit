@@ -89,11 +89,6 @@ void WorkerRuntimeAgent::run(ErrorString&)
     m_paused = false;
 }
 
-JSC::VM& WorkerRuntimeAgent::globalVM()
-{
-    return JSDOMWindowBase::commonVM();
-}
-
 void WorkerRuntimeAgent::pauseWorkerGlobalScope(WorkerGlobalScope* context)
 {
     m_paused = true;

@@ -61,6 +61,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(std::make_unique<DebuggerFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(DebuggerBackendDispatcher::create(context.backendDispatcher, this))
+    , m_scriptDebugServer(context.environment.scriptDebugServer())
     , m_continueToLocationBreakpointID(JSC::noBreakpointID)
 {
     // FIXME: make breakReason optional so that there was no need to init it with "other".
@@ -86,8 +87,8 @@ void InspectorDebuggerAgent::enable()
     if (m_enabled)
         return;
 
-    scriptDebugServer().setBreakpointsActivated(true);
-    scriptDebugServer().addListener(this);
+    m_scriptDebugServer.setBreakpointsActivated(true);
+    m_scriptDebugServer.addListener(this);
 
     if (m_listener)
         m_listener->debuggerWasEnabled();
@@ -100,7 +101,7 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     if (!m_enabled)
         return;
 
-    scriptDebugServer().removeListener(this, isBeingDestroyed);
+    m_scriptDebugServer.removeListener(this, isBeingDestroyed);
     clearInspectorBreakpointState();
 
     ASSERT(m_javaScriptBreakpoints.isEmpty());
@@ -124,19 +125,19 @@ void InspectorDebuggerAgent::disable(ErrorString&)
 void InspectorDebuggerAgent::setBreakpointsActive(ErrorString&, bool active)
 {
     if (active)
-        scriptDebugServer().activateBreakpoints();
+        m_scriptDebugServer.activateBreakpoints();
     else
-        scriptDebugServer().deactivateBreakpoints();
+        m_scriptDebugServer.deactivateBreakpoints();
 }
 
 bool InspectorDebuggerAgent::isPaused()
 {
-    return scriptDebugServer().isPaused();
+    return m_scriptDebugServer.isPaused();
 }
 
 void InspectorDebuggerAgent::setSuppressAllPauses(bool suppress)
 {
-    scriptDebugServer().setSuppressAllPauses(suppress);
+    m_scriptDebugServer.setSuppressAllPauses(suppress);
 }
 
 static RefPtr<InspectorObject> buildAssertPauseReason(const String& message)
@@ -183,7 +184,7 @@ RefPtr<InspectorObject> InspectorDebuggerAgent::buildExceptionPauseReason(const 
 
 void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
 {
-    if (scriptDebugServer().pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
+    if (m_scriptDebugServer.pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
         breakProgram(DebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message));
 }
 
@@ -388,18 +389,18 @@ void InspectorDebuggerAgent::removeBreakpoint(ErrorString&, const String& breakp
     for (JSC::BreakpointID breakpointID : m_breakpointIdentifierToDebugServerBreakpointIDs.take(breakpointIdentifier)) {
         m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier.remove(breakpointID);
 
-        const BreakpointActions& breakpointActions = scriptDebugServer().getActionsForBreakpoint(breakpointID);
+        const BreakpointActions& breakpointActions = m_scriptDebugServer.getActionsForBreakpoint(breakpointID);
         for (auto& action : breakpointActions)
             m_injectedScriptManager.releaseObjectGroup(objectGroupForBreakpointAction(action));
 
-        scriptDebugServer().removeBreakpoint(breakpointID);
+        m_scriptDebugServer.removeBreakpoint(breakpointID);
     }
 }
 
 void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const InspectorObject& location)
 {
     if (m_continueToLocationBreakpointID != JSC::noBreakpointID) {
-        scriptDebugServer().removeBreakpoint(m_continueToLocationBreakpointID);
+        m_scriptDebugServer.removeBreakpoint(m_continueToLocationBreakpointID);
         m_continueToLocationBreakpointID = JSC::noBreakpointID;
     }
 
@@ -410,7 +411,7 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const 
         return;
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, "", false, 0);
-    m_continueToLocationBreakpointID = scriptDebugServer().setBreakpoint(sourceID, breakpoint, &lineNumber, &columnNumber);
+    m_continueToLocationBreakpointID = m_scriptDebugServer.setBreakpoint(sourceID, breakpoint, &lineNumber, &columnNumber);
     resume(errorString);
 }
 
@@ -425,7 +426,7 @@ RefPtr<Inspector::Protocol::Debugger::Location> InspectorDebuggerAgent::resolveB
 
     unsigned actualLineNumber;
     unsigned actualColumnNumber;
-    JSC::BreakpointID debugServerBreakpointID = scriptDebugServer().setBreakpoint(sourceID, breakpoint, &actualLineNumber, &actualColumnNumber);
+    JSC::BreakpointID debugServerBreakpointID = m_scriptDebugServer.setBreakpoint(sourceID, breakpoint, &actualLineNumber, &actualColumnNumber);
     if (debugServerBreakpointID == JSC::noBreakpointID)
         return nullptr;
 
@@ -486,7 +487,7 @@ void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispat
 
     m_breakReason = breakReason;
     m_breakAuxData = WTF::move(data);
-    scriptDebugServer().setPauseOnNextStatement(true);
+    m_scriptDebugServer.setPauseOnNextStatement(true);
 }
 
 void InspectorDebuggerAgent::cancelPauseOnNextStatement()
@@ -495,7 +496,7 @@ void InspectorDebuggerAgent::cancelPauseOnNextStatement()
         return;
 
     clearBreakDetails();
-    scriptDebugServer().setPauseOnNextStatement(false);
+    m_scriptDebugServer.setPauseOnNextStatement(false);
 }
 
 void InspectorDebuggerAgent::pause(ErrorString&)
@@ -510,7 +511,7 @@ void InspectorDebuggerAgent::resume(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    scriptDebugServer().continueProgram();
+    m_scriptDebugServer.continueProgram();
 }
 
 void InspectorDebuggerAgent::stepOver(ErrorString& errorString)
@@ -518,7 +519,7 @@ void InspectorDebuggerAgent::stepOver(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    scriptDebugServer().stepOverStatement();
+    m_scriptDebugServer.stepOverStatement();
 }
 
 void InspectorDebuggerAgent::stepInto(ErrorString& errorString)
@@ -526,7 +527,7 @@ void InspectorDebuggerAgent::stepInto(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    scriptDebugServer().stepIntoStatement();
+    m_scriptDebugServer.stepIntoStatement();
 
     if (m_listener)
         m_listener->stepInto();
@@ -537,7 +538,7 @@ void InspectorDebuggerAgent::stepOut(ErrorString& errorString)
     if (!assertPaused(errorString))
         return;
 
-    scriptDebugServer().stepOutOfFunction();
+    m_scriptDebugServer.stepOutOfFunction();
 }
 
 void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, const String& stringPauseState)
@@ -554,8 +555,8 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, cons
         return;
     }
 
-    scriptDebugServer().setPauseOnExceptionsState(static_cast<JSC::Debugger::PauseOnExceptionsState>(pauseState));
-    if (scriptDebugServer().pauseOnExceptionsState() != pauseState)
+    m_scriptDebugServer.setPauseOnExceptionsState(static_cast<JSC::Debugger::PauseOnExceptionsState>(pauseState));
+    if (m_scriptDebugServer.pauseOnExceptionsState() != pauseState)
         errorString = ASCIILiteral("Internal error. Could not change pause on exceptions state");
 }
 
@@ -567,10 +568,10 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
         return;
     }
 
-    JSC::Debugger::PauseOnExceptionsState previousPauseOnExceptionsState = scriptDebugServer().pauseOnExceptionsState();
+    JSC::Debugger::PauseOnExceptionsState previousPauseOnExceptionsState = m_scriptDebugServer.pauseOnExceptionsState();
     if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
         if (previousPauseOnExceptionsState != JSC::Debugger::DontPauseOnExceptions)
-            scriptDebugServer().setPauseOnExceptionsState(JSC::Debugger::DontPauseOnExceptions);
+            m_scriptDebugServer.setPauseOnExceptionsState(JSC::Debugger::DontPauseOnExceptions);
         muteConsole();
     }
 
@@ -578,8 +579,8 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
 
     if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
         unmuteConsole();
-        if (scriptDebugServer().pauseOnExceptionsState() != previousPauseOnExceptionsState)
-            scriptDebugServer().setPauseOnExceptionsState(previousPauseOnExceptionsState);
+        if (m_scriptDebugServer.pauseOnExceptionsState() != previousPauseOnExceptionsState)
+            m_scriptDebugServer.setPauseOnExceptionsState(previousPauseOnExceptionsState);
     }
 }
 
@@ -589,7 +590,7 @@ void InspectorDebuggerAgent::setOverlayMessage(ErrorString&, const String*)
 
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
 {
-    if (scriptDebugServer().pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
+    if (m_scriptDebugServer.pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
         breakProgram(DebuggerFrontendDispatcher::Reason::CSPViolation, buildCSPViolationPauseReason(directiveText));
 }
 
@@ -670,9 +671,9 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const Depreca
 
     // If a high level pause pause reason is not already set, try to infer a reason from the debugger.
     if (m_breakReason == DebuggerFrontendDispatcher::Reason::Other) {
-        switch (scriptDebugServer().reasonForPause()) {
+        switch (m_scriptDebugServer.reasonForPause()) {
         case JSC::Debugger::PausedForBreakpoint: {
-            JSC::BreakpointID debuggerBreakpointId = scriptDebugServer().pausingBreakpointID();
+            JSC::BreakpointID debuggerBreakpointId = m_scriptDebugServer.pausingBreakpointID();
             if (debuggerBreakpointId != m_continueToLocationBreakpointID) {
                 m_breakReason = DebuggerFrontendDispatcher::Reason::Breakpoint;
                 m_breakAuxData = buildBreakpointPauseReason(debuggerBreakpointId);
@@ -710,7 +711,7 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const Depreca
     m_javaScriptPauseScheduled = false;
 
     if (m_continueToLocationBreakpointID != JSC::noBreakpointID) {
-        scriptDebugServer().removeBreakpoint(m_continueToLocationBreakpointID);
+        m_scriptDebugServer.removeBreakpoint(m_continueToLocationBreakpointID);
         m_continueToLocationBreakpointID = JSC::noBreakpointID;
     }
 
@@ -764,7 +765,7 @@ void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason bre
 {
     m_breakReason = breakReason;
     m_breakAuxData = WTF::move(data);
-    scriptDebugServer().breakProgram();
+    m_scriptDebugServer.breakProgram();
 }
 
 void InspectorDebuggerAgent::clearInspectorBreakpointState()
@@ -782,7 +783,7 @@ void InspectorDebuggerAgent::clearInspectorBreakpointState()
 
 void InspectorDebuggerAgent::clearDebuggerBreakpointState()
 {
-    scriptDebugServer().clearBreakpoints();
+    m_scriptDebugServer.clearBreakpoints();
 
     m_pausedScriptState = nullptr;
     m_currentCallStack = Deprecated::ScriptValue();
@@ -794,7 +795,7 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
     m_javaScriptPauseScheduled = false;
     m_hasExceptionValue = false;
 
-    scriptDebugServer().continueProgram();
+    m_scriptDebugServer.continueProgram();
 }
 
 void InspectorDebuggerAgent::didClearGlobalObject()

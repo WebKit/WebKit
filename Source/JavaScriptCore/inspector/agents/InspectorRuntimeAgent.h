@@ -73,8 +73,6 @@ public:
     virtual void enableTypeProfiler(ErrorString&) override;
     virtual void disableTypeProfiler(ErrorString&) override;
     virtual void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
-    
-    void setScriptDebugServer(ScriptDebugServer* scriptDebugServer) { m_scriptDebugServer = scriptDebugServer; }
 
     bool enabled() const { return m_enabled; }
 
@@ -83,7 +81,6 @@ protected:
 
     InjectedScriptManager& injectedScriptManager() { return m_injectedScriptManager; }
 
-    virtual JSC::VM& globalVM() = 0;
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
 
     virtual void muteConsole() = 0;
@@ -93,9 +90,10 @@ private:
     void setTypeProfilerEnabledState(bool);
 
     InjectedScriptManager& m_injectedScriptManager;
-    ScriptDebugServer* m_scriptDebugServer { nullptr };
-    bool m_enabled { false };
-    bool m_isTypeProfilingEnabled { false };
+    ScriptDebugServer& m_scriptDebugServer;
+    JSC::VM& m_vm;
+    bool m_enabled {false};
+    bool m_isTypeProfilingEnabled {false};
 };
 
 } // namespace Inspector

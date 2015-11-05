@@ -40,7 +40,6 @@ namespace Inspector {
 
 JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context, InspectorConsoleAgent* consoleAgent)
     : InspectorDebuggerAgent(context)
-    , m_scriptDebugServer(context.inspectedGlobalObject)
     , m_consoleAgent(consoleAgent)
 {
 }
@@ -52,7 +51,7 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& e
         return InjectedScript();
     }
 
-    ExecState* exec = m_scriptDebugServer.globalObject().globalExec();
+    ExecState* exec = static_cast<JSGlobalObjectScriptDebugServer&>(scriptDebugServer()).globalObject().globalExec();
     return injectedScriptManager().injectedScriptFor(exec);
 }
 

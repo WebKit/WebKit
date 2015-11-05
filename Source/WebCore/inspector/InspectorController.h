@@ -33,6 +33,7 @@
 #define InspectorController_h
 
 #include "InspectorOverlay.h"
+#include "PageScriptDebugServer.h"
 #include <inspector/InspectorAgentRegistry.h>
 #include <inspector/InspectorEnvironment.h>
 #include <wtf/Forward.h>
@@ -124,6 +125,7 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
     virtual void frontendInitialized() override;
     virtual Ref<WTF::Stopwatch> executionStopwatch() override;
+    virtual PageScriptDebugServer& scriptDebugServer() override;
     virtual JSC::VM& vm() override;
 
     WEBCORE_EXPORT void didComposite(Frame&);
@@ -137,6 +139,7 @@ private:
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     std::unique_ptr<InspectorOverlay> m_overlay;
     Ref<WTF::Stopwatch> m_executionStopwatch;
+    PageScriptDebugServer m_scriptDebugServer;
     Inspector::AgentRegistry m_agents;
 
     Page& m_page;

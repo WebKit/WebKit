@@ -72,10 +72,12 @@ protected:
     InspectorAgentBase(const String& name, WebAgentContext& context)
         : Inspector::InspectorAgentBase(name)
         , m_instrumentingAgents(context.instrumentingAgents)
+        , m_environment(context.environment)
     {
     }
 
     InstrumentingAgents& m_instrumentingAgents;
+    Inspector::InspectorEnvironment& m_environment;
 };
     
 } // namespace WebCore

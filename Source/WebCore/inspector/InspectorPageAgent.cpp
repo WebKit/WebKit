@@ -351,7 +351,7 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 
 double InspectorPageAgent::timestamp()
 {
-    return m_instrumentingAgents.inspectorEnvironment().executionStopwatch()->elapsedTime();
+    return m_environment.executionStopwatch()->elapsedTime();
 }
 
 void InspectorPageAgent::enable(ErrorString&)
@@ -359,7 +359,7 @@ void InspectorPageAgent::enable(ErrorString&)
     m_enabled = true;
     m_instrumentingAgents.setInspectorPageAgent(this);
 
-    auto stopwatch = m_instrumentingAgents.inspectorEnvironment().executionStopwatch();
+    auto stopwatch = m_environment.executionStopwatch();
     stopwatch->reset();
     stopwatch->start();
 
@@ -804,7 +804,7 @@ void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
 void InspectorPageAgent::frameStartedLoading(Frame& frame)
 {
     if (frame.isMainFrame()) {
-        auto stopwatch = m_instrumentingAgents.inspectorEnvironment().executionStopwatch();
+        auto stopwatch = m_environment.executionStopwatch();
         stopwatch->reset();
         stopwatch->start();
     }

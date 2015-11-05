@@ -34,12 +34,11 @@
 
 #include "InspectorInstrumentationCookie.h"
 #include "InspectorWebAgentBase.h"
+#include "WorkerScriptDebugServer.h"
 #include <inspector/InspectorAgentRegistry.h>
 #include <inspector/InspectorEnvironment.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -75,6 +74,7 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
     virtual void frontendInitialized() override { }
     virtual Ref<WTF::Stopwatch> executionStopwatch() override;
+    virtual WorkerScriptDebugServer& scriptDebugServer() override;
     virtual JSC::VM& vm() override;
 
 private:
@@ -87,6 +87,7 @@ private:
     Inspector::AgentRegistry m_agents;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
     Ref<WTF::Stopwatch> m_executionStopwatch;
+    WorkerScriptDebugServer m_scriptDebugServer;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
