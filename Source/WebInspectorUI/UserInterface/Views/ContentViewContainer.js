@@ -225,8 +225,10 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
 
         // Replace all occurrences of oldContentView with newContentView in the back/forward list.
         for (var i = 0; i < this._backForwardList.length; ++i) {
-            if (this._backForwardList[i].contentView === oldContentView)
-                this._backForwardList[i].contentView = newContentView;
+            if (this._backForwardList[i].contentView === oldContentView) {
+                let currentCookie = this._backForwardList[i].cookie;
+                this._backForwardList[i] = new WebInspector.BackForwardEntry(newContentView, currentCookie);
+            }
         }
 
         // Re-show the current entry, because its content view instance was replaced.

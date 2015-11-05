@@ -1,3 +1,16 @@
+2015-11-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Uncaught Exception opening inspector - TypeError: Attempted to assign to readonly property.
+        https://bugs.webkit.org/show_bug.cgi?id=150913
+
+        Reviewed by Timothy Hatcher.
+
+        Fix invalid call to BackForwardEntry.prototype.contentView set.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.replaceContentView):
+        Replace each BackForwardEntry matching the old content view with a new entry.
+
 2015-11-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Uncaught exception mousing over CSS resource
