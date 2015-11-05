@@ -54,7 +54,9 @@ public:
 
     PageOverlay& overlay() { return *m_overlay; }
 
-    void draw(GraphicsContext&);
+#if PLATFORM(COCOA)
+    void platformDraw(CGContextRef);
+#endif
 
 private:
     void pageOverlayDestroyed(PageOverlay&) override { }
@@ -79,7 +81,7 @@ private:
     RetainPtr<CALayer> m_layer;
 #endif
 
-    static const int normalWidth = 500;
+    static const int normalWidth = 550;
     static const int normalHeight = 130;
 };
 

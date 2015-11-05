@@ -28,10 +28,10 @@
 
 #if ENABLE(RESOURCE_USAGE_OVERLAY)
 
-#include "GraphicsContext.h"
 #include "JSDOMWindow.h"
 #include "MachVMSPI.h"
 #include "PlatformCALayer.h"
+#include <CoreGraphics/CGContext.h>
 #include <QuartzCore/CALayer.h>
 #include <QuartzCore/CATransaction.h>
 #include <array>
@@ -62,25 +62,14 @@ using namespace WebCore;
 
 - (void)drawInContext:(CGContextRef)context
 {
-    GraphicsContext gc(context);
-    m_overlay->draw(gc);
+    m_overlay->platformDraw(context);
 }
 
 @end
 
 namespace WebCore {
 
-static const RGBA32 colorForJITCode    = 0xFFFF60FF;
-static const RGBA32 colorForImages     = 0xFFFFFF00;
-static const RGBA32 colorForLayers     = 0xFF00FFFF;
-static const RGBA32 colorForGCHeap     = 0xFFA0A0FF;
-static const RGBA32 colorForLibcMalloc = 0xFF00FF00;
-static const RGBA32 colorForFastMalloc = 0xFFFF6060;
-static const RGBA32 colorForOther      = 0xFFC0FF00;
-static const RGBA32 colorForGCOwned    = 0xFFFFC060;
-static const RGBA32 colorForLabels     = 0xFFE0E0E0;
-
-template<typename T, size_t size = 50>
+template<typename T, size_t size = 70>
 class RingBuffer {
 public:
     RingBuffer()
@@ -94,7 +83,7 @@ public:
         incrementIndex(m_current);
     }
 
-    T last() const
+    T& last()
     {
         unsigned index = m_current;
         decrementIndex(index);
@@ -129,22 +118,67 @@ private:
     unsigned m_current { 0 };
 };
 
+namespace MemoryCategory {
+static const unsigned bmalloc = 0;
+static const unsigned LibcMalloc = 1;
+static const unsigned JSJIT = 2;
+static const unsigned Images = 3;
+static const unsigned GCHeap = 4;
+static const unsigned GCOwned = 5;
+static const unsigned Other = 6;
+static const unsigned Layers = 7;
+static const unsigned NumberOfCategories = 8;
+}
+
+struct MemoryCategoryInfo {
+    MemoryCategoryInfo() { } // Needed for std::array.
+
+    MemoryCategoryInfo(unsigned category, RGBA32 rgba, String name, bool subcategory = false)
+        : name(WTF::move(name))
+        , isSubcategory(subcategory)
+        , type(category)
+    {
+        float r, g, b, a;
+        Color(rgba).getRGBA(r, g, b, a);
+        color = adoptCF(CGColorCreateGenericRGB(r, g, b, a));
+    }
+
+    String name;
+    RetainPtr<CGColorRef> color;
+    RingBuffer<size_t> history;
+    bool isSubcategory { false };
+    unsigned type { MemoryCategory::NumberOfCategories };
+};
+
 struct ResourceUsageData {
+    ResourceUsageData();
+
     Lock lock;
+
+    RingBuffer<size_t> totalDirty;
+    std::array<MemoryCategoryInfo, MemoryCategory::NumberOfCategories> categories;
+
     RingBuffer<float> cpuHistory;
     RingBuffer<size_t> gcHeapSizeHistory;
-    RingBuffer<size_t> gcHeapCapacityHistory;
-    size_t layers { 0 };
-    size_t images { 0 };
-    size_t jitCode { 0 };
-    size_t gcOwned { 0 };
-    size_t libcMalloc { 0 };
-    size_t bmalloc { 0 };
-    size_t sumDirty { 0 };
 
     HashSet<CALayer *> overlayLayers;
     JSC::VM* vm { nullptr };
 };
+
+ResourceUsageData::ResourceUsageData()
+{
+    // VM tag categories.
+    categories[MemoryCategory::JSJIT] = MemoryCategoryInfo(MemoryCategory::JSJIT, 0xFFFF60FF, "JS JIT");
+    categories[MemoryCategory::Images] = MemoryCategoryInfo(MemoryCategory::Images, 0xFFFFFF00, "Images");
+    categories[MemoryCategory::Layers] = MemoryCategoryInfo(MemoryCategory::Layers, 0xFF00FFFF, "Layers");
+    categories[MemoryCategory::LibcMalloc] = MemoryCategoryInfo(MemoryCategory::LibcMalloc, 0xFF00FF00, "libc malloc");
+    categories[MemoryCategory::bmalloc] = MemoryCategoryInfo(MemoryCategory::bmalloc, 0xFFFF6060, "bmalloc");
+    categories[MemoryCategory::Other] = MemoryCategoryInfo(MemoryCategory::Other, 0xFFC0FF00, "Other");
+
+    // Sub categories (e.g breakdown of bmalloc tag.)
+    categories[MemoryCategory::GCHeap] = MemoryCategoryInfo(MemoryCategory::GCHeap, 0xFFA0A0FF, "GC heap", true);
+    categories[MemoryCategory::GCOwned] = MemoryCategoryInfo(MemoryCategory::GCOwned, 0xFFFFC060, "GC owned", true);
+}
 
 static ResourceUsageData& sharedData()
 {
@@ -184,14 +218,40 @@ void ResourceUsageOverlay::platformDestroy()
     data.overlayLayers.remove(m_layer.get());
 }
 
-static void drawCpuHistory(GraphicsContext& gc, float x1, float y1, float y2, RingBuffer<float>& history)
+static void showText(CGContextRef context, float x, float y, CGColorRef color, const String& text)
 {
-    Ref<Gradient> gradient = Gradient::create(FloatPoint(0, y1), FloatPoint(0, y2));
-    gradient->addColorStop(0.0, Color(255, 0, 0));
-    gradient->addColorStop(0.5, Color(255, 255, 0));
-    gradient->addColorStop(1.0, Color(0, 255, 0));
-    gc.setStrokeGradient(WTF::move(gradient));
-    gc.setStrokeThickness(1);
+    CGContextSetTextDrawingMode(context, kCGTextFill);
+    CGContextSetFillColorWithColor(context, color);
+
+    CGContextSaveGState(context);
+
+    CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+
+    // FIXME: Don't use deprecated APIs.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    CGContextSelectFont(context, "Menlo", 11, kCGEncodingMacRoman);
+    CString cstr = text.ascii();
+    CGContextShowTextAtPoint(context, x, y, cstr.data(), cstr.length());
+#pragma clang diagnostic pop
+
+    CGContextRestoreGState(context);
+}
+
+static void drawGraphLabel(CGContextRef context, float x, float y, const String& text)
+{
+    static CGColorRef black = CGColorCreateGenericRGB(0, 0, 0, 1);
+    showText(context, x + 5, y - 3, black, text);
+    static CGColorRef white = CGColorCreateGenericRGB(1, 1, 1, 1);
+    showText(context, x + 4, y - 4, white, text);
+}
+
+static void drawCpuHistory(CGContextRef context, float x1, float y1, float y2, RingBuffer<float>& history)
+{
+    static CGColorRef cpuColor = CGColorCreateGenericRGB(0, 1, 0, 1);
+
+    CGContextSetStrokeColorWithColor(context, cpuColor);
+    CGContextSetLineWidth(context, 1);
 
     int i = 0;
 
@@ -199,104 +259,128 @@ static void drawCpuHistory(GraphicsContext& gc, float x1, float y1, float y2, Ri
         float cpu = c / 100;
         float yScale = y2 - y1;
 
-        Path path;
-        path.moveTo(FloatPoint(x1 + i, y2));
-        path.addLineTo(FloatPoint(x1 + i, y2 - (yScale * cpu)));
-        gc.strokePath(path);
+        CGContextBeginPath(context);
+        CGContextMoveToPoint(context, x1 + i, y2);
+        CGContextAddLineToPoint(context, x1 + i, y2 - (yScale * cpu));
+        CGContextStrokePath(context);
         i++;
     });
+
+    drawGraphLabel(context, x1, y2, "CPU");
 }
 
-static void drawGCHistory(GraphicsContext& gc, float x1, float y1, float y2, RingBuffer<size_t>& sizeHistory, RingBuffer<size_t>& capacityHistory)
+static void drawGCHistory(CGContextRef context, float x1, float y1, float y2, RingBuffer<size_t>& sizeHistory, RingBuffer<size_t>& capacityHistory)
 {
+    float yScale = y2 - y1;
+
     size_t peak = 0;
     capacityHistory.forEach([&](size_t m) {
         if (m > peak)
             peak = m;
     });
 
-    gc.setStrokeThickness(1);
+    CGContextSetLineWidth(context, 1);
 
-    Ref<Gradient> capacityGradient = Gradient::create(FloatPoint(0, y1), FloatPoint(0, y2));
-    capacityGradient->addColorStop(0.0, Color(0xFF, 0x00, 0x00));
-    capacityGradient->addColorStop(0.5, Color(0xFF, 0x00, 0x33));
-    capacityGradient->addColorStop(1.0, Color(0xCC, 0x00, 0x33));
-    gc.setStrokeGradient(WTF::move(capacityGradient));
+    static CGColorRef capacityColor = CGColorCreateGenericRGB(1, 0, 0.3, 1);
+    CGContextSetStrokeColorWithColor(context, capacityColor);
 
     size_t i = 0;
 
     capacityHistory.forEach([&](size_t m) {
         float mem = (float)m / (float)peak;
-        float yScale = y2 - y1;
-
-        Path path;
-        path.moveTo(FloatPoint(x1 + i, y2));
-        path.addLineTo(FloatPoint(x1 + i, y2 - (yScale * mem)));
-        gc.strokePath(path);
+        CGContextBeginPath(context);
+        CGContextMoveToPoint(context, x1 + i, y2);
+        CGContextAddLineToPoint(context, x1 + i, y2 - (yScale * mem));
+        CGContextStrokePath(context);
         i++;
     });
 
-    Ref<Gradient> sizeGradient = Gradient::create(FloatPoint(0, y1), FloatPoint(0, y2));
-    sizeGradient->addColorStop(0.0, Color(0x96, 0xB1, 0xD2));
-    sizeGradient->addColorStop(0.5, Color(0x47, 0x71, 0xA5));
-    sizeGradient->addColorStop(1.0, Color(0x29, 0x56, 0x8F));
-    gc.setStrokeGradient(WTF::move(sizeGradient));
+    static CGColorRef sizeColor = CGColorCreateGenericRGB(0.6, 0.5, 0.9, 1);
+    CGContextSetStrokeColorWithColor(context, sizeColor);
 
     i = 0;
 
     sizeHistory.forEach([&](size_t m) {
         float mem = (float)m / (float)peak;
-        float yScale = y2 - y1;
-
-        Path path;
-        path.moveTo(FloatPoint(x1 + i, y2));
-        path.addLineTo(FloatPoint(x1 + i, y2 - (yScale * mem)));
-        gc.strokePath(path);
+        CGContextBeginPath(context);
+        CGContextMoveToPoint(context, x1 + i, y2);
+        CGContextAddLineToPoint(context, x1 + i, y2 - (yScale * mem));
+        CGContextStrokePath(context);
         i++;
     });
+
+    drawGraphLabel(context, x1, y2, "GC");
+}
+
+static void drawMemHistory(CGContextRef context, float x1, float y1, float y2, ResourceUsageData& data)
+{
+    float yScale = y2 - y1;
+
+    size_t peak = 0;
+    data.totalDirty.forEach([&](size_t m) {
+        if (m > peak)
+            peak = m;
+    });
+
+    CGContextSetLineWidth(context, 1);
+
+    struct ColorAndSize {
+        CGColorRef color;
+        size_t size;
+    };
+
+    std::array<std::array<ColorAndSize, MemoryCategory::NumberOfCategories>, 70> columns;
+
+    for (auto& category : data.categories) {
+        unsigned x = 0;
+        category.history.forEach([&](size_t m) {
+            columns[x][category.type] = { category.color.get(), m };
+            ++x;
+        });
+    }
+
+    unsigned i = 0;
+    for (auto& column : columns) {
+        float currentY2 = y2;
+        for (auto& colorAndSize : column) {
+            float chunk = (float)colorAndSize.size / (float)peak;
+            float nextY2 = currentY2 - (yScale * chunk);
+            CGContextBeginPath(context);
+            CGContextMoveToPoint(context, x1 + i, currentY2);
+            CGContextAddLineToPoint(context, x1 + i, nextY2);
+            CGContextSetStrokeColorWithColor(context, colorAndSize.color);
+            CGContextStrokePath(context);
+            currentY2 = nextY2;
+        }
+        ++i;
+    }
+
+    drawGraphLabel(context, x1, y2, "Mem");
 }
 
 static const float fullCircleInRadians = piFloat * 2;
 
-static void drawSlice(GraphicsContext& context, FloatPoint center, float& angle, size_t sliceSize, size_t totalSize, Color color)
+static void drawSlice(CGContextRef context, FloatPoint center, float& angle, float radius, size_t sliceSize, size_t totalSize, CGColorRef color)
 {
-    Path path;
-    path.moveTo(center);
     float part = (float)sliceSize / (float)totalSize;
-    path.addArc(center, 30, angle, angle + part * fullCircleInRadians, false);
-    context.setFillColor(color, ColorSpaceDeviceRGB);
-    context.fillPath(path);
+
+    CGContextBeginPath(context);
+    CGContextMoveToPoint(context, center.x(), center.y());
+    CGContextAddArc(context, center.x(), center.y(), radius, angle, angle + part * fullCircleInRadians, false);
+    CGContextSetFillColorWithColor(context, color);
+    CGContextFillPath(context);
     angle += part * fullCircleInRadians;
 }
 
-static void drawPlate(GraphicsContext& context, FloatPoint center, float& angle, Color color)
+static void drawMemoryPie(CGContextRef context, FloatRect& rect, ResourceUsageData& data)
 {
-    Path path;
-    path.moveTo(center);
-    path.addArc(center, 30, angle, fullCircleInRadians, false);
-    context.setFillColor(color, ColorSpaceDeviceRGB);
-    context.fillPath(path);
-}
-
-static void drawMemoryPie(GraphicsContext& context, float x, float y, ResourceUsageData& data)
-{
-    GraphicsContextStateSaver saver(context);
-
-    context.setShouldAntialias(true);
-
-    FloatPoint center(x - 15, y + 60);
-
-    size_t bmallocWithDeductions = data.bmalloc - data.gcHeapCapacityHistory.last() - data.gcOwned;
+    float radius = rect.width() / 2;
+    FloatPoint center = rect.center();
+    size_t totalDirty = data.totalDirty.last();
 
     float angle = 0;
-    drawSlice(context, center, angle, bmallocWithDeductions, data.sumDirty, colorForFastMalloc);
-    drawSlice(context, center, angle, data.libcMalloc, data.sumDirty, colorForLibcMalloc);
-    drawSlice(context, center, angle, data.gcHeapCapacityHistory.last(), data.sumDirty, colorForGCHeap);
-    drawSlice(context, center, angle, data.gcOwned, data.sumDirty, colorForGCOwned);
-    drawSlice(context, center, angle, data.layers, data.sumDirty, colorForLayers);
-    drawSlice(context, center, angle, data.images, data.sumDirty, colorForImages);
-    drawSlice(context, center, angle, data.jitCode, data.sumDirty, colorForJITCode);
-    drawPlate(context, center, angle, colorForOther);
+    for (auto& category : data.categories)
+        drawSlice(context, center, angle, radius, category.history.last(), totalDirty, category.color.get());
 }
 
 static String formatByteNumber(size_t number)
@@ -310,61 +394,34 @@ static String formatByteNumber(size_t number)
     return String::format("%lu", number);
 }
 
-static FontCascade& fontCascade()
-{
-    static NeverDestroyed<FontCascade> font;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        FontCascadeDescription fontDescription;
-        fontDescription.setFamilies({ "Menlo" });
-        fontDescription.setSpecifiedSize(11);
-        fontDescription.setComputedSize(11);
-        font.get() = FontCascade(fontDescription, 0, 0);
-        font.get().update(nullptr);
-    });
-    return font;
-}
-
-static void showText(GraphicsContext& gc, float x, float y, Color color, const String& text)
-{
-    gc.setShouldSmoothFonts(false);
-    gc.setTextDrawingMode(TextModeFill);
-    gc.setFillColor(color, ColorSpaceDeviceRGB);
-    gc.drawText(fontCascade(), TextRun(text), FloatPoint(x, y));
-}
-
-void ResourceUsageOverlay::draw(GraphicsContext& context)
+void ResourceUsageOverlay::platformDraw(CGContextRef context)
 {
     auto& data = sharedData();
     LockHolder locker(data.lock);
 
-    size_t gcHeapSize = data.gcHeapSizeHistory.last();
-    size_t gcHeapCapacity = data.gcHeapCapacityHistory.last();
+    CGContextSetShouldAntialias(context, false);
+    CGContextSetShouldSmoothFonts(context, false);
 
-    context.setShouldAntialias(false);
-    context.setShouldSmoothFonts(false);
-
-    context.clearRect(m_overlay->bounds());
     CGRect viewBounds = m_overlay->bounds();
+    CGContextClearRect(context, viewBounds);
 
-    size_t bmallocWithDeductions = data.bmalloc - gcHeapCapacity - data.gcOwned;
-    size_t footprintWithDeductions = data.sumDirty - data.bmalloc - data.layers - data.images - data.libcMalloc - data.jitCode;
+    static CGColorRef colorForLabels = CGColorCreateGenericRGB(0.9, 0.9, 0.9, 1);
+    showText(context, 10, 20, colorForLabels, String::format("        CPU: %g", data.cpuHistory.last()));
+    showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(data.totalDirty.last()));
 
-    showText(context, 10,  20, colorForLabels, String::format("        CPU: %g", data.cpuHistory.last()));
-    showText(context, 10,  30, colorForLabels,     "  Footprint: " + formatByteNumber(data.sumDirty));
+    float y = 50;
+    for (auto& category : data.categories) {
+        // FIXME: Show size/capacity of GC heap.
+        showText(context, 10, y, category.color.get(), String::format("% 11s: %s", category.name.ascii().data(), formatByteNumber(category.history.last()).ascii().data()));
+        y += 10;
+    }
 
-    showText(context, 10,  50, colorForFastMalloc, "    bmalloc: " + formatByteNumber(bmallocWithDeductions));
-    showText(context, 10,  60, colorForLibcMalloc, "libc malloc: " + formatByteNumber(data.libcMalloc));
-    showText(context, 10,  70, colorForImages,     "     Images: " + formatByteNumber(data.images));
-    showText(context, 10,  80, colorForLayers,     "     Layers: " + formatByteNumber(data.layers));
-    showText(context, 10,  90, colorForJITCode,    "     JS JIT: " + formatByteNumber(data.jitCode));
-    showText(context, 10, 100, colorForGCHeap,     "    GC heap: " + formatByteNumber(gcHeapSize) + " (" + formatByteNumber(gcHeapCapacity) + ")");
-    showText(context, 10, 110, colorForGCOwned,    "   GC owned: " + formatByteNumber(data.gcOwned));
-    showText(context, 10, 120, colorForOther,      "      Other: " + formatByteNumber(footprintWithDeductions));
+    drawCpuHistory(context, viewBounds.size.width - 70, 0, viewBounds.size.height, data.cpuHistory);
+    drawGCHistory(context, viewBounds.size.width - 140, 0, viewBounds.size.height, data.gcHeapSizeHistory, data.categories[MemoryCategory::GCHeap].history);
+    drawMemHistory(context, viewBounds.size.width - 210, 0, viewBounds.size.height, data);
 
-    drawCpuHistory(context, m_overlay->frame().width() - 50, 0, viewBounds.size.height, data.cpuHistory);
-    drawGCHistory(context, m_overlay->frame().width() - 100, 0, viewBounds.size.height, data.gcHeapSizeHistory, data.gcHeapCapacityHistory);
-    drawMemoryPie(context, m_overlay->frame().width() - 150, 0, data);
+    FloatRect pieRect(viewBounds.size.width - 330, 0, 100, viewBounds.size.height);
+    drawMemoryPie(context, pieRect, data);
 }
 
 static std::array<size_t, 256> dirtyPagesPerVMTag()
@@ -416,6 +473,31 @@ static float cpuUsage()
     return usage;
 }
 
+static unsigned categoryForVMTag(unsigned tag)
+{
+    switch (tag) {
+    case VM_MEMORY_IOKIT:
+    case VM_MEMORY_LAYERKIT:
+        return MemoryCategory::Layers;
+    case VM_MEMORY_IMAGEIO:
+    case VM_MEMORY_CGIMAGE:
+        return MemoryCategory::Images;
+    case VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR:
+        return MemoryCategory::JSJIT;
+    case VM_MEMORY_MALLOC:
+    case VM_MEMORY_MALLOC_HUGE:
+    case VM_MEMORY_MALLOC_LARGE:
+    case VM_MEMORY_MALLOC_SMALL:
+    case VM_MEMORY_MALLOC_TINY:
+    case VM_MEMORY_MALLOC_NANO:
+        return MemoryCategory::LibcMalloc;
+    case VM_MEMORY_TCMALLOC:
+        return MemoryCategory::bmalloc;
+    default:
+        return MemoryCategory::Other;
+    }
+};
+
 NO_RETURN void runSamplerThread(void*)
 {
     static size_t vmPageSize = getpagesize();
@@ -428,27 +510,34 @@ NO_RETURN void runSamplerThread(void*)
         {
             LockHolder locker(data.lock);
             data.cpuHistory.append(cpu);
-            data.layers = (dirtyPages[VM_MEMORY_IOKIT] + dirtyPages[VM_MEMORY_LAYERKIT]) * vmPageSize;
-            data.images = (dirtyPages[VM_MEMORY_IMAGEIO] + dirtyPages[VM_MEMORY_CGIMAGE]) * vmPageSize;
-            data.jitCode = dirtyPages[VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR] * vmPageSize;
-            data.libcMalloc = vmPageSize *
-                (dirtyPages[VM_MEMORY_MALLOC]
-                + dirtyPages[VM_MEMORY_MALLOC_HUGE]
-                + dirtyPages[VM_MEMORY_MALLOC_LARGE]
-                + dirtyPages[VM_MEMORY_MALLOC_SMALL]
-                + dirtyPages[VM_MEMORY_MALLOC_TINY]
-                + dirtyPages[VM_MEMORY_MALLOC_NANO]);
-            data.bmalloc = vmPageSize * dirtyPages[VM_MEMORY_TCMALLOC];
 
-            data.sumDirty = 0;
-            for (auto dirty : dirtyPages)
-                data.sumDirty += dirty;
-            data.sumDirty *= vmPageSize;
+            std::array<size_t, MemoryCategory::NumberOfCategories> dirtyPagesPerCategory;
+            dirtyPagesPerCategory.fill(0);
+
+            size_t totalDirtyPages = 0;
+            for (unsigned i = 0; i < 256; ++i) {
+                dirtyPagesPerCategory[categoryForVMTag(i)] += dirtyPages[i];
+                totalDirtyPages += dirtyPages[i];
+            }
+
+            for (auto& category : data.categories) {
+                if (category.isSubcategory) // Only do automatic tallying for top-level categories.
+                    continue;
+                category.history.append(dirtyPagesPerCategory[category.type] * vmPageSize);
+            }
+            data.totalDirty.append(totalDirtyPages * vmPageSize);
 
             copyToVector(data.overlayLayers, layers);
 
-            data.gcHeapCapacityHistory.append(data.vm->heap.blockBytesAllocated());
-            data.gcOwned = data.vm->heap.extraMemorySize();
+            size_t currentGCHeapCapacity = data.vm->heap.blockBytesAllocated();
+            size_t currentGCOwned = data.vm->heap.extraMemorySize();
+
+            data.categories[MemoryCategory::GCHeap].history.append(currentGCHeapCapacity);
+            data.categories[MemoryCategory::GCOwned].history.append(currentGCOwned);
+
+            // Subtract known subchunks from the bmalloc bucket.
+            // FIXME: Handle running with bmalloc disabled.
+            data.categories[MemoryCategory::bmalloc].history.last() -= currentGCHeapCapacity + currentGCOwned;
         }
 
         [CATransaction begin];
