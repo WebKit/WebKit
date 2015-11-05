@@ -1,3 +1,15 @@
+2015-11-05  Daniel Bates  <dabates@apple.com>
+
+        Teach Makefile to build LayoutTestRelay when building for iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=150849
+
+        Reviewed by Alexey Proskuryakov.
+
+        * LayoutTestRelay/Makefile: Temporarily override SDKROOT when it is iphonesimulator so
+        that we build with the default SDK. We assume that the default SDK is the OS X SDK.
+        * Makefile: Append LayoutTestRelay to the list of modules to build when building with
+        SDK iphonesimulator.
+
 2015-11-05  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Add try_close API to handle beforeunload event
