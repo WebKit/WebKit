@@ -52,6 +52,8 @@ public:
     
     bool isResponsive() { return m_isResponsive; }
 
+    void processTerminated();
+
 private:
     void timerFired();
 

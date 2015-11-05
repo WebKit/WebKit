@@ -1,3 +1,23 @@
+2015-11-05  Geoffrey Garen  <ggaren@apple.com>
+
+        _WKObservablePageState's _webProcessIsResponsive property isn't set to YES when an unresponsive page is reloaded
+        https://bugs.webkit.org/show_bug.cgi?id=150953
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::processTerminated): Call stop() to
+        indicate that we are responsive again. This gives the client a chance
+        to remove the SPOD cursor, among other things.
+
+        * UIProcess/ResponsivenessTimer.h:
+        (WebKit::ResponsivenessTimer::processTerminated): Anders told me to do this!
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited): Be sure to reset
+        the responsiveness timer too, or it will continue thinking we are
+        unresponsive after a crash or a forced load or reload.
+
 2015-11-05  Anders Carlsson  <andersca@apple.com>
 
         Move invocation argument encoding out to a separate function

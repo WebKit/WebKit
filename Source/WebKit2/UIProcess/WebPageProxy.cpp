@@ -5079,6 +5079,8 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     PageLoadState::Transaction transaction = m_pageLoadState.transaction();
     m_pageLoadState.reset(transaction);
+
+    m_process->responsivenessTimer().processTerminated();
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters()

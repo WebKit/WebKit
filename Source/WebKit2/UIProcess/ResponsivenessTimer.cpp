@@ -81,4 +81,10 @@ void ResponsivenessTimer::stop()
     m_timer.stop();
 }
 
+void ResponsivenessTimer::processTerminated()
+{
+    // Since there is no web process, we must not be waiting for it anymore.
+    stop();
+}
+
 } // namespace WebKit
