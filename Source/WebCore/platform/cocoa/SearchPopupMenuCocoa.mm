@@ -112,11 +112,11 @@ static RetainPtr<NSDictionary> typeCheckedRecentSearchesRemovingRecentSearchesAd
 
         RetainPtr<NSMutableArray> entriesToRemove = adoptNS([[NSMutableArray alloc] init]);
         for (NSDictionary *recentSearch in recentSearches) {
-            NSDate *date = typeCheckedDateInRecentSearch(recentSearch);
-            if (!date)
+            NSDate *dateAdded = typeCheckedDateInRecentSearch(recentSearch);
+            if (!dateAdded)
                 return nil;
 
-            if ([date compare:date] == NSOrderedDescending)
+            if ([dateAdded compare:date] == NSOrderedDescending)
                 [entriesToRemove addObject:recentSearch];
         }
 
