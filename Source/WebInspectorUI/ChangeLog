@@ -1,3 +1,62 @@
+2015-11-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Convert TimelineRuler to View base class
+        https://bugs.webkit.org/show_bug.cgi?id=150703
+
+        Reviewed by Brian Burg.
+
+        Convert TimelineRuler to View base class. Ruler markers and selection elements
+        can be updated independent from its main layout. The logic for these additional
+        layouts is implemented as an override of View.prototype.needsLayout, and remains
+        largely unchanged.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        Add ruler as a subview.
+        (WebInspector.OverviewTimelineView.prototype.layout): Deleted.
+        Separate ruler layout no longer needed.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.set allowsClippedLabels):
+        (WebInspector.TimelineRuler.prototype.set formatLabelCallback):
+        (WebInspector.TimelineRuler.prototype.set allowsTimeRangeSelection):
+        (WebInspector.TimelineRuler.prototype.set zeroTime):
+        (WebInspector.TimelineRuler.prototype.set startTime):
+        (WebInspector.TimelineRuler.prototype.set duration):
+        (WebInspector.TimelineRuler.prototype.get endTime):
+        (WebInspector.TimelineRuler.prototype.set endTime):
+        (WebInspector.TimelineRuler.prototype.get secondsPerPixel):
+        (WebInspector.TimelineRuler.prototype.set secondsPerPixel):
+        (WebInspector.TimelineRuler.prototype.updateLayoutIfNeeded):
+        (WebInspector.TimelineRuler.prototype.needsLayout):
+        (WebInspector.TimelineRuler.prototype.layout):
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout):
+        (WebInspector.TimelineRuler.prototype._needsSelectionLayout):
+        (WebInspector.TimelineRuler.prototype._recalculate):
+        (WebInspector.TimelineRuler.prototype._updateMarkers):
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+        (WebInspector.TimelineRuler.prototype._handleMouseDown):
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        (WebInspector.TimelineRuler.prototype._handleMouseUp):
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseDown):
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseMove):
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseUp):
+        Renamed methods to match new View.prototype methods and cleaned up
+        some code to use let, for...of.
+        (WebInspector.TimelineRuler.prototype.get element): Deleted.
+        No longer needed.
+        (WebInspector.TimelineRuler.prototype.updateLayout): Deleted.
+        Renamed to layout, overrides View.prototype.layout.
+        (WebInspector.TimelineRuler.prototype._needsLayout): Deleted.
+        Renamed to needsLayout, overrides View.prototype.needsLayout.
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout.update): Deleted.
+        (WebInspector.TimelineRuler.prototype._needsSelectionLayout.update): Deleted.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View.prototype.get isLayoutPending):
+        Added getter to check for pending layout.
+
 2015-11-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ⌥⌘C sometimes ends ups up opening inspector without console prompt focused
