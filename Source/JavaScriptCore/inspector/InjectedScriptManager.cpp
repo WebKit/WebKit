@@ -189,7 +189,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ExecState* inspectedExec
     return result;
 }
 
-void InjectedScriptManager::didCreateInjectedScript(InjectedScript)
+void InjectedScriptManager::didCreateInjectedScript(const InjectedScript&)
 {
     // Intentionally empty. This allows for subclasses to inject additional scripts.
 }

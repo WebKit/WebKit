@@ -37,15 +37,15 @@ using namespace Inspector;
 
 namespace WebCore {
 
-CommandLineAPIModule::CommandLineAPIModule()
-    : InjectedScriptModule(ASCIILiteral("CommandLineAPI"))
-{
-}
-
-void CommandLineAPIModule::injectIfNeeded(InjectedScriptManager* injectedScriptManager, InjectedScript injectedScript)
+void CommandLineAPIModule::injectIfNeeded(InjectedScriptManager* injectedScriptManager, const InjectedScript& injectedScript)
 {
     CommandLineAPIModule module;
     module.ensureInjected(injectedScriptManager, injectedScript);
+}
+
+CommandLineAPIModule::CommandLineAPIModule()
+    : InjectedScriptModule(ASCIILiteral("CommandLineAPI"))
+{
 }
 
 String CommandLineAPIModule::source() const

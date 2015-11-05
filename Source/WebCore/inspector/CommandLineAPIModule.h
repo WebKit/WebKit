@@ -36,9 +36,8 @@ public:
 
     virtual String source() const override;
     virtual JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const override;
-    virtual bool returnsObject() const override { return false; }
 
-    static void injectIfNeeded(Inspector::InjectedScriptManager*, Inspector::InjectedScript);
+    static void injectIfNeeded(Inspector::InjectedScriptManager*, const Inspector::InjectedScript&);
 };
 
 } // namespace WebCore

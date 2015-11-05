@@ -54,7 +54,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
     ensureInjected(injectedScriptManager, injectedScript);
 }
 
-void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, InjectedScript injectedScript)
+void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, const InjectedScript& injectedScript)
 {
     ASSERT(!injectedScript.hasNoValue());
     if (injectedScript.hasNoValue())
@@ -73,15 +73,10 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         function.appendArgument(source());
         function.appendArgument(host(injectedScriptManager, injectedScript.scriptState()));
         resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
-        if (hadException || (returnsObject() && (resultValue.hasNoValue() || !resultValue.isObject()))) {
+        if (hadException) {
             ASSERT_NOT_REACHED();
             return;
         }
-    }
-
-    if (returnsObject()) {
-        Deprecated::ScriptObject moduleObject(injectedScript.scriptState(), resultValue);
-        initialize(moduleObject, &injectedScriptManager->inspectorEnvironment());
     }
 }
 

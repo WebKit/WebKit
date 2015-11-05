@@ -60,7 +60,6 @@ protected:
 
     InspectorEnvironment* inspectorEnvironment() const { return m_environment; }
 
-    void initialize(Deprecated::ScriptObject, InspectorEnvironment*);
     bool hasAccessToInspectedScriptState() const;
 
     const Deprecated::ScriptObject& injectedScriptObject() const;

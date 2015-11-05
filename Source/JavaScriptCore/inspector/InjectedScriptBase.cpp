@@ -58,12 +58,6 @@ InjectedScriptBase::~InjectedScriptBase()
 {
 }
 
-void InjectedScriptBase::initialize(Deprecated::ScriptObject injectedScriptObject, InspectorEnvironment* environment)
-{
-    m_injectedScriptObject = injectedScriptObject;
-    m_environment = environment;
-}
-
 bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {
     return m_environment && m_environment->canAccessInspectedScriptState(m_injectedScriptObject.scriptState());

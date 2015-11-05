@@ -67,7 +67,7 @@ public:
     void clearExceptionValue();
 
 protected:
-    virtual void didCreateInjectedScript(InjectedScript);
+    virtual void didCreateInjectedScript(const InjectedScript&);
 
     HashMap<int, InjectedScript> m_idToInjectedScript;
     HashMap<JSC::ExecState*, int> m_scriptStateToId;
