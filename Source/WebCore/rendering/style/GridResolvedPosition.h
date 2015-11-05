@@ -138,6 +138,7 @@ public:
     static GridUnresolvedSpan unresolvedSpanFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
     static unsigned explicitGridColumnCount(const RenderStyle&);
     static unsigned explicitGridRowCount(const RenderStyle&);
+    static bool isNonExistentNamedLineOrArea(const String& lineName, const RenderStyle&, GridPositionSide);
 
 private:
     unsigned m_integerPosition;

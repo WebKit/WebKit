@@ -1,0 +1,18 @@
+This test checks that positioned items shouldn't take up space or otherwise participate in the layout of the grid.
+
+Absolutely positioned:
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+Fixed positioned:
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

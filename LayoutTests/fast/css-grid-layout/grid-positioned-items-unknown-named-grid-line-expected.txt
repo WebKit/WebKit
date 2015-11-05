@@ -1,0 +1,3 @@
+This test checks that grid placement properties of absolutely positioned items using unknown named grid lines are treated as "auto".
+
+PASS

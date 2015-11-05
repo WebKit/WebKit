@@ -21,10 +21,22 @@
     -webkit-grid-row: 1;
 }
 
+.onlyFirstRowOnlyFirstColumn {
+    background-color: blue;
+    -webkit-grid-column: 1 / 2;
+    -webkit-grid-row: 1 / 2;
+}
+
 .firstRowSecondColumn {
     background-color: lime;
     -webkit-grid-column: 2;
     -webkit-grid-row: 1;
+}
+
+.onlyFirstRowOnlySecondColumn {
+    background-color: lime;
+    -webkit-grid-column: 2 / 3;
+    -webkit-grid-row: 1 / 2;
 }
 
 .firstRowThirdColumn {
@@ -45,10 +57,28 @@
     -webkit-grid-row: 2;
 }
 
+.onlySecondRowOnlyFirstColumn {
+    background-color: purple;
+    -webkit-grid-column: 1 / 2;
+    -webkit-grid-row: 2 / 3;
+}
+
 .secondRowSecondColumn {
     background-color: orange;
     -webkit-grid-column: 2;
     -webkit-grid-row: 2;
+}
+
+.onlySecondRowOnlySecondColumn {
+    background-color: orange;
+    -webkit-grid-column: 2 / 3;
+    -webkit-grid-row: 2 / 3;
+}
+
+.endSecondRowEndSecondColumn {
+    background-color: orange;
+    -webkit-grid-column-end: 3;
+    -webkit-grid-row-end: 3;
 }
 
 .secondRowThirdColumn {

@@ -322,6 +322,8 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
 
+    clearGrid();
+
     computeOverflow(oldClientAfterEdge);
     statePusher.pop();
 
@@ -1050,6 +1052,9 @@ void RenderGrid::placeItemsOnGrid()
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+
         auto unresolvedRowPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *child, ForRows);
         auto unresolvedColumnPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *child, ForColumns);
 
@@ -1082,6 +1087,9 @@ void RenderGrid::populateExplicitGridAndOrderIterator()
     unsigned maximumColumnIndex = std::max<unsigned>(1, GridResolvedPosition::explicitGridColumnCount(style()));
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+
         populator.collectChild(*child);
 
         auto unresolvedRowPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), *child, ForRows);
@@ -1286,6 +1294,11 @@ void RenderGrid::layoutGridItems()
     populateGridPositions(sizingData);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned()) {
+            prepareChildForPositionedLayout(*child);
+            continue;
+        }
+
         // Because the grid area cannot be styled, we don't need to adjust
         // the grid breadth to account for 'box-sizing'.
         Optional<LayoutUnit> oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
@@ -1336,8 +1349,96 @@ void RenderGrid::layoutGridItems()
         height = std::max(height, minHeight);
     }
     setLogicalHeight(height);
+}
 
-    clearGrid();
+void RenderGrid::prepareChildForPositionedLayout(RenderBox& child)
+{
+    ASSERT(child.isOutOfFlowPositioned());
+    child.containingBlock()->insertPositionedObject(child);
+
+    RenderLayer* childLayer = child.layer();
+    childLayer->setStaticInlinePosition(borderAndPaddingStart());
+    childLayer->setStaticBlockPosition(borderAndPaddingBefore());
+}
+
+void RenderGrid::layoutPositionedObject(RenderBox& child, bool relayoutChildren, bool fixedPositionObjectsOnly)
+{
+    bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
+    // FIXME: Properly support orthogonal writing mode.
+    if (!hasOrthogonalWritingMode) {
+        LayoutUnit columnOffset = LayoutUnit();
+        LayoutUnit columnBreadth = LayoutUnit();
+        offsetAndBreadthForPositionedChild(child, ForColumns, columnOffset, columnBreadth);
+        LayoutUnit rowOffset = LayoutUnit();
+        LayoutUnit rowBreadth = LayoutUnit();
+        offsetAndBreadthForPositionedChild(child, ForRows, rowOffset, rowBreadth);
+
+        child.setOverrideContainingBlockContentLogicalWidth(columnBreadth);
+        child.setOverrideContainingBlockContentLogicalHeight(rowBreadth);
+        child.setExtraInlineOffset(columnOffset);
+        child.setExtraBlockOffset(rowOffset);
+    }
+
+    RenderBlock::layoutPositionedObject(child, relayoutChildren, fixedPositionObjectsOnly);
+}
+
+void RenderGrid::offsetAndBreadthForPositionedChild(const RenderBox& child, GridTrackSizingDirection direction, LayoutUnit& offset, LayoutUnit& breadth)
+{
+    ASSERT(child.isHorizontalWritingMode() == isHorizontalWritingMode());
+
+    auto unresolvedPositions = GridResolvedPosition::unresolvedSpanFromStyle(style(), child, direction);
+    if (unresolvedPositions.requiresAutoPlacement()) {
+        offset = LayoutUnit();
+        breadth = (direction == ForColumns) ? clientLogicalWidth() : clientLogicalHeight();
+        return;
+    }
+
+    GridPosition startPosition = (direction == ForColumns) ? child.style().gridItemColumnStart() : child.style().gridItemRowStart();
+    GridPosition endPosition = (direction == ForColumns) ? child.style().gridItemColumnEnd() : child.style().gridItemRowEnd();
+    size_t lastTrackIndex = (direction == ForColumns ? gridColumnCount() : gridRowCount()) - 1;
+
+    GridSpan positions = GridResolvedPosition::resolveGridPositionsFromStyle(unresolvedPositions, style());
+    bool startIsAuto = startPosition.isAuto()
+        || (startPosition.isNamedGridArea() && GridResolvedPosition::isNonExistentNamedLineOrArea(startPosition.namedGridLine(), style(), (direction == ForColumns) ? ColumnStartSide : RowStartSide))
+        || (positions.resolvedInitialPosition.toInt() > lastTrackIndex);
+    bool endIsAuto = endPosition.isAuto()
+        || (endPosition.isNamedGridArea() && GridResolvedPosition::isNonExistentNamedLineOrArea(endPosition.namedGridLine(), style(), (direction == ForColumns) ? ColumnEndSide : RowEndSide))
+        || (positions.resolvedFinalPosition.toInt() > lastTrackIndex);
+
+    GridResolvedPosition firstPosition = GridResolvedPosition(0);
+    GridResolvedPosition initialPosition = startIsAuto ? firstPosition : positions.resolvedInitialPosition;
+    GridResolvedPosition lastPosition = GridResolvedPosition(lastTrackIndex);
+    GridResolvedPosition finalPosition = endIsAuto ? lastPosition : positions.resolvedFinalPosition;
+
+    // Positioned children do not grow the grid, so we need to clamp the positions to avoid ending up outside of it.
+    initialPosition = std::min<GridResolvedPosition>(initialPosition, lastPosition);
+    finalPosition = std::min<GridResolvedPosition>(finalPosition, lastPosition);
+
+    LayoutUnit start = startIsAuto ? LayoutUnit() : (direction == ForColumns) ?  m_columnPositions[initialPosition.toInt()] : m_rowPositions[initialPosition.toInt()];
+    LayoutUnit end = endIsAuto ? (direction == ForColumns) ? logicalWidth() : logicalHeight() : (direction == ForColumns) ?  m_columnPositions[finalPosition.next().toInt()] : m_rowPositions[finalPosition.next().toInt()];
+
+    breadth = end - start;
+
+    if (startIsAuto)
+        breadth -= (direction == ForColumns) ? borderStart() : borderBefore();
+    else
+        start -= ((direction == ForColumns) ? borderStart() : borderBefore());
+
+    if (endIsAuto) {
+        breadth -= (direction == ForColumns) ? borderEnd() : borderAfter();
+        breadth -= scrollbarLogicalWidth();
+    }
+
+    offset = start;
+
+    if (child.parent() == this && !startIsAuto) {
+        // If column/row start is "auto" the static position has been already set in prepareChildForPositionedLayout().
+        RenderLayer* childLayer = child.layer();
+        if (direction == ForColumns)
+            childLayer->setStaticInlinePosition(borderStart() + offset);
+        else
+            childLayer->setStaticBlockPosition(borderBefore() + offset);
+    }
 }
 
 GridCoordinate RenderGrid::cachedGridCoordinate(const RenderBox& gridItem) const

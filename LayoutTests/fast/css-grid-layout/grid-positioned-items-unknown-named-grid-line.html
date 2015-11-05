@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+
+.grid {
+    -webkit-grid-template-columns: 100px 200px;
+    -webkit-grid-template-rows: 50px 150px;
+    width: 500px;
+    height: 300px;
+    border: 5px solid black;
+    margin: 30px;
+    padding: 15px;
+    /* Ensures that the grid container is the containing block of the absolutely positioned grid children. */
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.startUnknownLine {
+    background-color: blue;
+    -webkit-grid-column: foo / 3;
+    -webkit-grid-row: bar / 3;
+}
+
+.endUnknownLine {
+    background-color: orange;
+    -webkit-grid-column: 1 / foo;
+    -webkit-grid-row: 1 / bar;
+}
+
+.startAndEndUnknownLines {
+    background-color: green;
+    -webkit-grid-column: foo / bar;
+    -webkit-grid-row: foo / bar;
+}
+
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid')">
+
+<p>This test checks that grid placement properties of absolutely positioned items using unknown named grid lines are treated as "auto".</p>
+
+<div class="grid">
+    <div class="absolute sizedToGridArea startAndEndUnknownLines"
+        data-offset-x="15" data-offset-y="15" data-expected-width="530" data-expected-height="330">
+    </div>
+    <div class="absolute sizedToGridArea endUnknownLine"
+        data-offset-x="15" data-offset-y="15" data-expected-width="515" data-expected-height="315">
+    </div>
+    <div class="absolute sizedToGridArea startUnknownLine"
+        data-offset-x="15" data-offset-y="15" data-expected-width="315" data-expected-height="215">
+    </div>
+</div>
+
+</body>

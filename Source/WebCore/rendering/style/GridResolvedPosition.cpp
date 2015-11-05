@@ -58,7 +58,7 @@ static const String implicitNamedGridLineForSide(const String& lineName, GridPos
     return lineName + (isStartSide(side) ? "-start" : "-end");
 }
 
-static bool isNonExistentNamedLineOrArea(const String& lineName, const RenderStyle& style, GridPositionSide side)
+bool GridResolvedPosition::isNonExistentNamedLineOrArea(const String& lineName, const RenderStyle& style, GridPositionSide side)
 {
     const NamedGridLinesMap& gridLineNames = gridLinesForSide(style, side);
     return !gridLineNames.contains(implicitNamedGridLineForSide(lineName, side)) && !gridLineNames.contains(lineName);
@@ -81,10 +81,10 @@ void GridUnresolvedSpan::adjustGridPositionsFromStyle(const RenderStyle& gridCon
     // Try to early detect the case of non existing named grid lines. This way we could assume later that
     // GridResolvedPosition::resolveGrisPositionFromStyle() won't require the autoplacement to run, i.e., it'll always return a
     // valid resolved position.
-    if (m_initialPosition.isNamedGridArea() && isNonExistentNamedLineOrArea(m_initialPosition.namedGridLine(), gridContainerStyle, m_initialPositionSide))
+    if (m_initialPosition.isNamedGridArea() && GridResolvedPosition::isNonExistentNamedLineOrArea(m_initialPosition.namedGridLine(), gridContainerStyle, m_initialPositionSide))
         m_initialPosition.setAutoPosition();
 
-    if (m_finalPosition.isNamedGridArea() && isNonExistentNamedLineOrArea(m_finalPosition.namedGridLine(), gridContainerStyle, m_finalPositionSide))
+    if (m_finalPosition.isNamedGridArea() && GridResolvedPosition::isNonExistentNamedLineOrArea(m_finalPosition.namedGridLine(), gridContainerStyle, m_finalPositionSide))
         m_finalPosition.setAutoPosition();
 
     // If the grid item has an automatic position and a grid span for a named line in a given dimension, instead treat the grid span as one.
@@ -272,7 +272,7 @@ static GridResolvedPosition resolveGridPositionFromStyle(const RenderStyle& grid
         // ''<custom-ident>-start (for grid-*-start) / <custom-ident>-end'' (for grid-*-end), contributes the first such
         // line to the grid item's placement.
         String namedGridLine = position.namedGridLine();
-        ASSERT(!isNonExistentNamedLineOrArea(namedGridLine, gridContainerStyle, side));
+        ASSERT(!GridResolvedPosition::isNonExistentNamedLineOrArea(namedGridLine, gridContainerStyle, side));
 
         const NamedGridLinesMap& gridLineNames = gridLinesForSide(gridContainerStyle, side);
         auto implicitLine = gridLineNames.find(implicitNamedGridLineForSide(namedGridLine, side));

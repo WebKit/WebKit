@@ -59,15 +59,13 @@ RenderBox* OrderIterator::next()
             continue;
         }
 
+        if (m_orderIndex != cInvalidIndex)
+            ++m_orderIndex;
+        else
+            m_orderIndex = 0;
+
         if (m_orderIndex == endIndex)
             return nullptr;
-
-        if (m_orderIndex != cInvalidIndex) {
-            ++m_orderIndex;
-            if (m_orderIndex == endIndex)
-                return nullptr;
-        } else
-            m_orderIndex = 0;
 
         m_currentChild = m_containerBox.firstChildBox();
     } while (!m_currentChild || m_currentChild->style().order() != m_orderValues[m_orderIndex]);

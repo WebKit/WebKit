@@ -1,0 +1,4 @@
+This test checks that grid placement properties of absolutely positioned items using implicit grid lines are treated as "auto".
+
+PASS
+PASS

@@ -313,7 +313,7 @@ protected:
     virtual void layout() override;
 
     void layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly = false);
-    void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly);
+    virtual void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly);
     
     void markFixedPositionObjectForLayoutIfNeeded(RenderObject& child);
 

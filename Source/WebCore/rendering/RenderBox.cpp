@@ -95,6 +95,8 @@ static OverrideSizeMap* gOverrideWidthMap = nullptr;
 typedef WTF::HashMap<const RenderBox*, Optional<LayoutUnit>> OverrideOptionalSizeMap;
 static OverrideOptionalSizeMap* gOverrideContainingBlockLogicalHeightMap = nullptr;
 static OverrideOptionalSizeMap* gOverrideContainingBlockLogicalWidthMap = nullptr;
+static OverrideSizeMap* gExtraInlineOffsetMap = nullptr;
+static OverrideSizeMap* gExtraBlockOffsetMap = nullptr;
 #endif
 
 // Size of border belt for autoscroll. When mouse pointer in border belt,
@@ -141,6 +143,7 @@ RenderBox::~RenderBox()
     clearOverrideSize();
 #if ENABLE(CSS_GRID_LAYOUT)
     clearContainingBlockOverrideSize();
+    clearExtraInlineAndBlockOffests();
 #endif
 
     RenderBlock::removePercentHeightDescendantIfNeeded(*this);
@@ -1136,6 +1139,38 @@ void RenderBox::clearOverrideContainingBlockContentLogicalHeight()
 {
     if (gOverrideContainingBlockLogicalHeightMap)
         gOverrideContainingBlockLogicalHeightMap->remove(this);
+}
+
+LayoutUnit RenderBox::extraInlineOffset() const
+{
+    return gExtraInlineOffsetMap ? gExtraInlineOffsetMap->get(this) : LayoutUnit();
+}
+
+LayoutUnit RenderBox::extraBlockOffset() const
+{
+    return gExtraBlockOffsetMap ? gExtraBlockOffsetMap->get(this) : LayoutUnit();
+}
+
+void RenderBox::setExtraInlineOffset(LayoutUnit inlineOffest)
+{
+    if (!gExtraInlineOffsetMap)
+        gExtraInlineOffsetMap = new OverrideSizeMap;
+    gExtraInlineOffsetMap->set(this, inlineOffest);
+}
+
+void RenderBox::setExtraBlockOffset(LayoutUnit blockOffest)
+{
+    if (!gExtraBlockOffsetMap)
+        gExtraBlockOffsetMap = new OverrideSizeMap;
+    gExtraBlockOffsetMap->set(this, blockOffest);
+}
+
+void RenderBox::clearExtraInlineAndBlockOffests()
+{
+    if (gExtraInlineOffsetMap)
+        gExtraInlineOffsetMap->remove(this);
+    if (gExtraBlockOffsetMap)
+        gExtraBlockOffsetMap->remove(this);
 }
 #endif // ENABLE(CSS_GRID_LAYOUT)
 
@@ -3170,6 +3205,13 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (hasOverrideContainingBlockLogicalWidth()) {
+        if (auto overrideLogicalWidth = overrideContainingBlockContentLogicalWidth())
+            return overrideLogicalWidth.value();
+    }
+#endif
+
     if (is<RenderBox>(*containingBlock)) {
         bool isFixedPosition = style().position() == FixedPosition;
 
@@ -3232,6 +3274,13 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
 {
     if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, nullptr, false);
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (hasOverrideContainingBlockLogicalHeight()) {
+        if (auto overrideLogicalHeight = overrideContainingBlockContentLogicalHeight())
+            return overrideLogicalHeight.value();
+    }
+#endif
 
     if (containingBlock->isBox()) {
         bool isFixedPosition = style().position() == FixedPosition;
@@ -3430,6 +3479,11 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
             computedValues.m_margins.m_end = minValues.m_margins.m_end;
         }
     }
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (!style().hasStaticInlinePosition(isHorizontal))
+        computedValues.m_position += extraInlineOffset();
+#endif
 
     computedValues.m_extent += bordersPlusPadding;
     
@@ -3749,6 +3803,11 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
             computedValues.m_margins.m_after = minValues.m_margins.m_after;
         }
     }
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (!style().hasStaticBlockPosition(isHorizontalWritingMode()))
+        computedValues.m_position += extraBlockOffset();
+#endif
 
     // Set final height value.
     computedValues.m_extent += bordersPlusPadding;

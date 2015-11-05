@@ -1,0 +1,7 @@
+This test checks the behavior of the absolutely positioned elements with a grid container as containing block.
+
+PASS
+PASS
+PASS
+PASS
+PASS

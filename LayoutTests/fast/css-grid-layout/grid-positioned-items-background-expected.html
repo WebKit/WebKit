@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<style>
+.grid {
+    width: 400px;
+    height: 300px;
+    border: 5px solid black;
+    margin: 30px;
+    padding: 15px;
+    background-color: grey;
+}
+
+.container {
+    position: relative;
+    float: left;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.green {
+    background-color: green;
+}
+</style>
+<body>
+
+<p>This test checks that the background of positioned items is painted in the right position.</p>
+
+<p>The test passes if you see 4 green boxes and no red.</p>
+
+<div class="container">
+    <div class="grid"></div>
+    <div class="absolute green" style="left: 55px; top: 50px; width: 100px; height: 50px"></div>
+    <div class="absolute green" style="left: 290px; top: 50px; width: 50px; height: 20px"></div>
+    <div class="absolute green" style="left: 50px; top: 115px; width: 50px; height: 30px"></div>
+    <div class="absolute green" style="left: 175px; top: 135px; width: 145px; height: 75px"></div>
+</div>
+
+</body>

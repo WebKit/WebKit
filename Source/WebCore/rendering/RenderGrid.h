@@ -88,6 +88,9 @@ private:
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
 
     void layoutGridItems();
+    void prepareChildForPositionedLayout(RenderBox&);
+    void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly) override;
+    void offsetAndBreadthForPositionedChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& offset, LayoutUnit& breadth);
     void populateGridPositions(GridSizingData&);
     void clearGrid();
 
