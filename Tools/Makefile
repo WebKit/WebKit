@@ -4,9 +4,6 @@ ifneq (,$(SDKROOT))
 	ifeq (,$(findstring macosx,$(SDKROOT)))
 		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 	endif
-	ifeq ($(findstring iphonesimulator,$(SDKROOT)),iphonesimulator)
-		MODULES += LayoutTestRelay
-	endif
 endif
 
 all:

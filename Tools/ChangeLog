@@ -1,3 +1,18 @@
+2015-11-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r192073.
+        https://bugs.webkit.org/show_bug.cgi?id=150962
+
+        "Broke the internal iOS build; will investigate offline"
+        (Requested by dydz on #webkit).
+
+        Reverted changeset:
+
+        "Teach Makefile to build LayoutTestRelay when building for iOS
+        Simulator"
+        https://bugs.webkit.org/show_bug.cgi?id=150849
+        http://trac.webkit.org/changeset/192073
+
 2015-11-05  Daniel Bates  <dabates@apple.com>
 
         Teach Makefile to build LayoutTestRelay when building for iOS Simulator
