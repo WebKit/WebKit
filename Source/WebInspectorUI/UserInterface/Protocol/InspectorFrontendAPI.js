@@ -74,15 +74,18 @@ InspectorFrontendAPI = {
         // If the page is still loading, focus the quick console again after tabindex autofocus.
         if (document.readyState !== "complete")
             document.addEventListener("readystatechange", this);
+        if (document.visibilityState !== "visible")
+            document.addEventListener("visibilitychange", this);  
     },
 
     handleEvent: function(event)
     {
-        console.assert(event.type === "readystatechange");
+        console.assert(event.type === "readystatechange" || event.type === "visibilitychange");
 
-        if (document.readyState === "complete") {
+        if (document.readyState === "complete" && document.visibilityState === "visible") {
             WebInspector.quickConsole.prompt.focus();
             document.removeEventListener("readystatechange", this);
+            document.removeEventListener("visibilitychange", this);
         }
     },
 

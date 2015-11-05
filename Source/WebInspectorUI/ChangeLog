@@ -1,5 +1,23 @@
 2015-11-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: ⌥⌘C sometimes ends ups up opening inspector without console prompt focused
+        https://bugs.webkit.org/show_bug.cgi?id=150916
+
+        Reviewed by Timothy Hatcher.
+
+        When first opening the inspector we hide the window until the document
+        is mostly ready / loaded. However once displaying the window WK2 would
+        set the initial focus, clearing what we already had and focusing the
+        first natural element (tabindex dictates the toolbar). Workaround this
+        by detecting when the document becomes visible and then focusing the
+        console prompt.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showConsole):
+        (InspectorFrontendAPI.handleEvent):
+
+2015-11-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Toolbar "Inspect Node" button not highlighting when active
         https://bugs.webkit.org/show_bug.cgi?id=150938
 
