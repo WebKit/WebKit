@@ -30,6 +30,11 @@ matcher LoweringMatcher
 
 Load = Load(address)
 
+Load8S = Load8S(address)
+Load8Z = Load8Z(address)
+Load16S = Load16S(address)
+Load16Z = Load16Z(address)
+
 Add = Add(left, right)
 Sub = Sub(left, right)
 And = BitAnd(left, right)
@@ -56,6 +61,18 @@ Const64 = Const64()
 
 StackSlot = StackSlot()
 FramePointer = FramePointer()
+
+# These patterns delegate to the comparison matcher.
+Equal = Equal()
+NotEqual = NotEqual()
+LessThan = LessThan()
+GreaterThan = GreaterThan()
+LessEqual = LessEqual()
+GreaterEqual = GreaterEqual()
+Above = Above()
+Below = Below()
+AboveEqual = AboveEqual()
+BelowEqual = BelowEqual()
 
 Patchpoint = Patchpoint()
 Check = Check(value)

@@ -57,11 +57,27 @@ unsigned numB3Args(Inst& inst)
 
 } // anonymous namespace
 
+CheckSpecial::Key::Key(const Inst& inst)
+{
+    m_opcode = inst.opcode;
+    m_numArgs = inst.args.size();
+}
+
+void CheckSpecial::Key::dump(PrintStream& out) const
+{
+    out.print(m_opcode, "(", m_numArgs, ")");
+}
+
 CheckSpecial::CheckSpecial(Air::Opcode opcode, unsigned numArgs)
     : m_checkOpcode(opcode)
     , m_numCheckArgs(numArgs)
 {
     ASSERT(isTerminal(opcode));
+}
+
+CheckSpecial::CheckSpecial(const CheckSpecial::Key& key)
+    : CheckSpecial(key.opcode(), key.numArgs())
+{
 }
 
 CheckSpecial::~CheckSpecial()

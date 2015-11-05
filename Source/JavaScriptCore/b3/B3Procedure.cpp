@@ -52,6 +52,38 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
+Value* Procedure::addIntConstant(Type type, int64_t value)
+{
+    switch (type) {
+    case Int32:
+        return add<Const32Value>(Origin(), static_cast<int32_t>(value));
+    case Int64:
+        return add<Const64Value>(Origin(), value);
+    case Double:
+        return add<ConstDoubleValue>(Origin(), static_cast<double>(value));
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
+Value* Procedure::addBoolConstant(TriState triState)
+{
+    int32_t value = 0;
+    switch (triState) {
+    case FalseTriState:
+        value = 0;
+        break;
+    case TrueTriState:
+        value = 1;
+        break;
+    case MixedTriState:
+        return nullptr;
+    }
+
+    return addIntConstant(Int32, value);
+}
+
 void Procedure::resetValueOwners()
 {
     for (BasicBlock* block : *this) {

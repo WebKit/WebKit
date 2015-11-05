@@ -61,18 +61,46 @@ Value* ConstDoubleValue::subConstant(Procedure& proc, Value* other) const
     return proc.add<ConstDoubleValue>(origin(), m_value - other->asDouble());
 }
 
-Value* ConstDoubleValue::equalConstant(Procedure& proc, Value* other) const
+TriState ConstDoubleValue::equalConstant(Value* other) const
 {
     if (!other->hasDouble())
-        return nullptr;
-    return proc.add<Const32Value>(origin(), m_value == other->asDouble());
+        return MixedTriState;
+    return triState(m_value == other->asDouble());
 }
 
-Value* ConstDoubleValue::notEqualConstant(Procedure& proc, Value* other) const
+TriState ConstDoubleValue::notEqualConstant(Value* other) const
 {
     if (!other->hasDouble())
-        return nullptr;
-    return proc.add<Const32Value>(origin(), m_value != other->asDouble());
+        return MixedTriState;
+    return triState(m_value != other->asDouble());
+}
+
+TriState ConstDoubleValue::lessThanConstant(Value* other) const
+{
+    if (!other->hasDouble())
+        return MixedTriState;
+    return triState(m_value < other->asDouble());
+}
+
+TriState ConstDoubleValue::greaterThanConstant(Value* other) const
+{
+    if (!other->hasDouble())
+        return MixedTriState;
+    return triState(m_value > other->asDouble());
+}
+
+TriState ConstDoubleValue::lessEqualConstant(Value* other) const
+{
+    if (!other->hasDouble())
+        return MixedTriState;
+    return triState(m_value <= other->asDouble());
+}
+
+TriState ConstDoubleValue::greaterEqualConstant(Value* other) const
+{
+    if (!other->hasDouble())
+        return MixedTriState;
+    return triState(m_value >= other->asDouble());
 }
 
 void ConstDoubleValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const

@@ -32,6 +32,7 @@
 #include "B3CCallValue.h"
 #include "B3ControlValue.h"
 #include "B3MemoryValue.h"
+#include "B3ProcedureInlines.h"
 #include "B3StackSlotValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
@@ -162,13 +163,62 @@ Value* Value::zShrConstant(Procedure&, Value*) const
     return nullptr;
 }
 
-Value* Value::equalConstant(Procedure&, Value*) const
+TriState Value::equalConstant(Value*) const
 {
-    return nullptr;
+    return MixedTriState;
 }
 
-Value* Value::notEqualConstant(Procedure&, Value*) const
+TriState Value::notEqualConstant(Value*) const
 {
+    return MixedTriState;
+}
+
+TriState Value::lessThanConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+TriState Value::greaterThanConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+TriState Value::lessEqualConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+TriState Value::greaterEqualConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+TriState Value::aboveConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+TriState Value::belowConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+TriState Value::aboveEqualConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+TriState Value::belowEqualConstant(Value*) const
+{
+    return MixedTriState;
+}
+
+Value* Value::invertedCompare(Procedure& proc) const
+{
+    if (!numChildren())
+        return nullptr;
+    if (Optional<Opcode> invertedOpcode = B3::invertedCompare(opcode(), child(0)->type()))
+        return proc.add<Value>(*invertedOpcode, type(), origin(), children());
     return nullptr;
 }
 

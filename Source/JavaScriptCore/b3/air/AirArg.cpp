@@ -33,6 +33,34 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+bool Arg::isRepresentableAs(Width width, Signedness signedness) const
+{
+    switch (signedness) {
+    case Signed:
+        switch (width) {
+        case Width8:
+            return isRepresentableAs<int8_t>();
+        case Width16:
+            return isRepresentableAs<int16_t>();
+        case Width32:
+            return isRepresentableAs<int32_t>();
+        case Width64:
+            return isRepresentableAs<int64_t>();
+        }
+    case Unsigned:
+        switch (width) {
+        case Width8:
+            return isRepresentableAs<uint8_t>();
+        case Width16:
+            return isRepresentableAs<uint16_t>();
+        case Width32:
+            return isRepresentableAs<uint32_t>();
+        case Width64:
+            return isRepresentableAs<uint64_t>();
+        }
+    }
+}
+
 void Arg::dump(PrintStream& out) const
 {
     switch (m_kind) {
@@ -89,5 +117,123 @@ void Arg::dump(PrintStream& out) const
 }
 
 } } } // namespace JSC::B3::Air
+
+namespace WTF {
+
+using namespace JSC::B3::Air;
+
+void printInternal(PrintStream& out, Arg::Kind kind)
+{
+    switch (kind) {
+    case Arg::Invalid:
+        out.print("Invalid");
+        return;
+    case Arg::Tmp:
+        out.print("Tmp");
+        return;
+    case Arg::Imm:
+        out.print("Imm");
+        return;
+    case Arg::Imm64:
+        out.print("Imm64");
+        return;
+    case Arg::Addr:
+        out.print("Addr");
+        return;
+    case Arg::Stack:
+        out.print("Stack");
+        return;
+    case Arg::CallArg:
+        out.print("CallArg");
+        return;
+    case Arg::Index:
+        out.print("Index");
+        return;
+    case Arg::RelCond:
+        out.print("RelCond");
+        return;
+    case Arg::ResCond:
+        out.print("ResCond");
+        return;
+    case Arg::DoubleCond:
+        out.print("DoubleCond");
+        return;
+    case Arg::Special:
+        out.print("Special");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void printInternal(PrintStream& out, Arg::Role role)
+{
+    switch (role) {
+    case Arg::Use:
+        out.print("Use");
+        return;
+    case Arg::Def:
+        out.print("Def");
+        return;
+    case Arg::UseDef:
+        out.print("UseDef");
+        return;
+    case Arg::UseAddr:
+        out.print("UseAddr");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void printInternal(PrintStream& out, Arg::Type type)
+{
+    switch (type) {
+    case Arg::GP:
+        out.print("GP");
+        return;
+    case Arg::FP:
+        out.print("FP");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void printInternal(PrintStream& out, Arg::Width width)
+{
+    switch (width) {
+    case Arg::Width8:
+        out.print("Width8");
+        return;
+    case Arg::Width16:
+        out.print("Width16");
+        return;
+    case Arg::Width32:
+        out.print("Width32");
+        return;
+    case Arg::Width64:
+        out.print("Width64");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void printInternal(PrintStream& out, Arg::Signedness signedness)
+{
+    switch (signedness) {
+    case Arg::Signed:
+        out.print("Signed");
+        return;
+    case Arg::Unsigned:
+        out.print("Unsigned");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)

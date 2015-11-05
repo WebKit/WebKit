@@ -167,10 +167,9 @@ public:
             return DoubleGreaterThanOrEqual;
         case DoubleLessThanOrEqualOrUnordered:
             return DoubleGreaterThan;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return DoubleEqual; // make compiler happy
         }
+        RELEASE_ASSERT_NOT_REACHED();
+        return DoubleEqual; // make compiler happy
     }
     
     static bool isInvertible(ResultCondition cond)
@@ -194,6 +193,72 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return Zero; // Make compiler happy for release builds.
+        }
+    }
+
+    static RelationalCondition flip(RelationalCondition cond)
+    {
+        switch (cond) {
+        case Equal:
+        case NotEqual:
+            return cond;
+        case Above:
+            return Below;
+        case AboveOrEqual:
+            return BelowOrEqual;
+        case Below:
+            return Above;
+        case BelowOrEqual:
+            return AboveOrEqual;
+        case GreaterThan:
+            return LessThan;
+        case GreaterThanOrEqual:
+            return LessThanOrEqual;
+        case LessThan:
+            return GreaterThan;
+        case LessThanOrEqual:
+            return GreaterThanOrEqual;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return Equal;
+    }
+
+    // True if this:
+    //     branch8(cond, value, value)
+    // Is the same as this:
+    //     branch32(cond, signExt8(value), signExt8(value))
+    static bool isSigned(RelationalCondition cond)
+    {
+        switch (cond) {
+        case Equal:
+        case NotEqual:
+        case GreaterThan:
+        case GreaterThanOrEqual:
+        case LessThan:
+        case LessThanOrEqual:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    // True if this:
+    //     branch8(cond, value, value)
+    // Is the same as this:
+    //     branch32(cond, zeroExt8(value), zeroExt8(value))
+    static bool isUnsigned(RelationalCondition cond)
+    {
+        switch (cond) {
+        case Equal:
+        case NotEqual:
+        case Above:
+        case AboveOrEqual:
+        case Below:
+        case BelowOrEqual:
+            return true;
+        default:
+            return false;
         }
     }
 #endif

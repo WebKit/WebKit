@@ -1,3 +1,213 @@
+2015-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        B3->Air lowering should have a story for compare-branch fusion
+        https://bugs.webkit.org/show_bug.cgi?id=150721
+
+        Reviewed by Geoffrey Garen.
+
+        This adds comprehensive support for compares and compare/branch fusion to B3. The fusion is
+        super aggressive. It can even handle things like Branch(LessThan(Load8S(...), constant)). It
+        can even handle flipping the operands to the branch, and flipping the comparison condition,
+        if it enables a more efficient instruction. This happens when there is asymmetry in the
+        admitted argument kinds. For example, Branch32 will only accept an Imm as a second operand.
+        If we do a LessThan(constant, load) then we will generate it as:
+
+            Branch32 GreaterThan, (addr), $imm
+
+        This also supports compiling and fusing tests, and to some extent, compiling and fusing
+        double compares. Though we cannot test doubles yet because we don't have enough support for
+        that.
+
+        This also supports fusing compare/branches in Checks. We basically get that for free.
+
+        Because I wanted to fuse comparisons with sub-32-bit loads, I added support for those loads
+        directly, too.
+
+        The tests are now getting super big, so I made testb3 run tests in parallel.
+
+        Finally, this slightly changes the semantics of Branch and Check. Previously they would have
+        accepted a double to branch on. I found that this is awkward. It's especially awkward since
+        we want to be explicit about when a double zero constant is materialized. So, from now on, we
+        require that to branch on a double being non-zero, you have to do Branch(NotEqual(value, 0)).
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::invert):
+        (JSC::MacroAssembler::isInvertible):
+        (JSC::MacroAssembler::flip):
+        (JSC::MacroAssembler::isSigned):
+        (JSC::MacroAssembler::isUnsigned):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::test32):
+        (JSC::MacroAssemblerX86Common::invert):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::dump):
+        (JSC::B3::CheckSpecial::CheckSpecial):
+        (JSC::B3::CheckSpecial::~CheckSpecial):
+        * b3/B3CheckSpecial.h:
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::operator==):
+        (JSC::B3::CheckSpecial::Key::operator!=):
+        (JSC::B3::CheckSpecial::Key::operator bool):
+        (JSC::B3::CheckSpecial::Key::opcode):
+        (JSC::B3::CheckSpecial::Key::numArgs):
+        (JSC::B3::CheckSpecial::Key::isHashTableDeletedValue):
+        (JSC::B3::CheckSpecial::Key::hash):
+        (JSC::B3::CheckSpecialKeyHash::hash):
+        (JSC::B3::CheckSpecialKeyHash::equal):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::zShrConstant):
+        (JSC::B3::Const32Value::equalConstant):
+        (JSC::B3::Const32Value::notEqualConstant):
+        (JSC::B3::Const32Value::lessThanConstant):
+        (JSC::B3::Const32Value::greaterThanConstant):
+        (JSC::B3::Const32Value::lessEqualConstant):
+        (JSC::B3::Const32Value::greaterEqualConstant):
+        (JSC::B3::Const32Value::aboveConstant):
+        (JSC::B3::Const32Value::belowConstant):
+        (JSC::B3::Const32Value::aboveEqualConstant):
+        (JSC::B3::Const32Value::belowEqualConstant):
+        (JSC::B3::Const32Value::dumpMeta):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::zShrConstant):
+        (JSC::B3::Const64Value::equalConstant):
+        (JSC::B3::Const64Value::notEqualConstant):
+        (JSC::B3::Const64Value::lessThanConstant):
+        (JSC::B3::Const64Value::greaterThanConstant):
+        (JSC::B3::Const64Value::lessEqualConstant):
+        (JSC::B3::Const64Value::greaterEqualConstant):
+        (JSC::B3::Const64Value::aboveConstant):
+        (JSC::B3::Const64Value::belowConstant):
+        (JSC::B3::Const64Value::aboveEqualConstant):
+        (JSC::B3::Const64Value::belowEqualConstant):
+        (JSC::B3::Const64Value::dumpMeta):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::subConstant):
+        (JSC::B3::ConstDoubleValue::equalConstant):
+        (JSC::B3::ConstDoubleValue::notEqualConstant):
+        (JSC::B3::ConstDoubleValue::lessThanConstant):
+        (JSC::B3::ConstDoubleValue::greaterThanConstant):
+        (JSC::B3::ConstDoubleValue::lessEqualConstant):
+        (JSC::B3::ConstDoubleValue::greaterEqualConstant):
+        (JSC::B3::ConstDoubleValue::dumpMeta):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::shouldCopyPropagate):
+        (JSC::B3::Air::LowerToAir::ArgPromise::ArgPromise):
+        (JSC::B3::Air::LowerToAir::ArgPromise::tmp):
+        (JSC::B3::Air::LowerToAir::ArgPromise::operator bool):
+        (JSC::B3::Air::LowerToAir::ArgPromise::kind):
+        (JSC::B3::Air::LowerToAir::ArgPromise::peek):
+        (JSC::B3::Air::LowerToAir::ArgPromise::consume):
+        (JSC::B3::Air::LowerToAir::tmp):
+        (JSC::B3::Air::LowerToAir::tmpPromise):
+        (JSC::B3::Air::LowerToAir::canBeInternal):
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::loadPromise):
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreUnOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::createBranch):
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::tryLoad):
+        (JSC::B3::Air::LowerToAir::tryLoad8S):
+        (JSC::B3::Air::LowerToAir::tryLoad8Z):
+        (JSC::B3::Air::LowerToAir::tryLoad16S):
+        (JSC::B3::Air::LowerToAir::tryLoad16Z):
+        (JSC::B3::Air::LowerToAir::tryAdd):
+        (JSC::B3::Air::LowerToAir::tryStackSlot):
+        (JSC::B3::Air::LowerToAir::tryEqual):
+        (JSC::B3::Air::LowerToAir::tryNotEqual):
+        (JSC::B3::Air::LowerToAir::tryLessThan):
+        (JSC::B3::Air::LowerToAir::tryGreaterThan):
+        (JSC::B3::Air::LowerToAir::tryLessEqual):
+        (JSC::B3::Air::LowerToAir::tryGreaterEqual):
+        (JSC::B3::Air::LowerToAir::tryAbove):
+        (JSC::B3::Air::LowerToAir::tryBelow):
+        (JSC::B3::Air::LowerToAir::tryAboveEqual):
+        (JSC::B3::Air::LowerToAir::tryBelowEqual):
+        (JSC::B3::Air::LowerToAir::tryPatchpoint):
+        (JSC::B3::Air::LowerToAir::tryCheck):
+        (JSC::B3::Air::LowerToAir::tryBranch):
+        (JSC::B3::Air::LowerToAir::loadAddr): Deleted.
+        * b3/B3LoweringMatcher.patterns:
+        * b3/B3Opcode.cpp:
+        (JSC::B3::invertedCompare):
+        * b3/B3Opcode.h:
+        (JSC::B3::isCheckMath):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::addIntConstant):
+        (JSC::B3::Procedure::addBoolConstant):
+        (JSC::B3::Procedure::resetValueOwners):
+        * b3/B3Procedure.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::zShrConstant):
+        (JSC::B3::Value::equalConstant):
+        (JSC::B3::Value::notEqualConstant):
+        (JSC::B3::Value::lessThanConstant):
+        (JSC::B3::Value::greaterThanConstant):
+        (JSC::B3::Value::lessEqualConstant):
+        (JSC::B3::Value::greaterEqualConstant):
+        (JSC::B3::Value::aboveConstant):
+        (JSC::B3::Value::belowConstant):
+        (JSC::B3::Value::aboveEqualConstant):
+        (JSC::B3::Value::belowEqualConstant):
+        (JSC::B3::Value::invertedCompare):
+        * b3/B3Value.h:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        (JSC::B3::Air::Arg::dump):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isUse):
+        (JSC::B3::Air::Arg::typeForB3Type):
+        (JSC::B3::Air::Arg::widthForB3Type):
+        (JSC::B3::Air::Arg::Arg):
+        (JSC::B3::Air::Arg::value):
+        (JSC::B3::Air::Arg::isRepresentableAs):
+        (JSC::B3::Air::Arg::asNumber):
+        (JSC::B3::Air::Arg::pointerValue):
+        (JSC::B3::Air::Arg::asDoubleCondition):
+        (JSC::B3::Air::Arg::inverted):
+        (JSC::B3::Air::Arg::flipped):
+        (JSC::B3::Air::Arg::isSignedCond):
+        (JSC::B3::Air::Arg::isUnsignedCond):
+        * b3/air/AirInst.h:
+        (JSC::B3::Air::Inst::Inst):
+        (JSC::B3::Air::Inst::operator bool):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (hiddenTruthBecauseNoReturnIsStupid):
+        (JSC::B3::testStoreLoadStackSlot):
+        (JSC::B3::modelLoad):
+        (JSC::B3::testLoad):
+        (JSC::B3::testBranch):
+        (JSC::B3::testComplex):
+        (JSC::B3::testSimplePatchpoint):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::genericTestCompare):
+        (JSC::B3::modelCompare):
+        (JSC::B3::testCompareLoad):
+        (JSC::B3::testCompareImpl):
+        (JSC::B3::testCompare):
+        (JSC::B3::run):
+        (main):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+
 2015-11-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clean up InjectedScript uses

@@ -30,8 +30,13 @@
 
 #include "AirOpcode.h"
 #include "B3StackmapSpecial.h"
+#include <wtf/HashMap.h>
 
 namespace JSC { namespace B3 {
+
+namespace Air {
+struct Inst;
+}
 
 // We want to lower Check instructions to a branch, but then we want to route that branch to our
 // out-of-line code instead of doing anything else. For this reason, a CheckSpecial will remember
@@ -46,7 +51,65 @@ namespace JSC { namespace B3 {
 
 class CheckSpecial : public StackmapSpecial {
 public:
+    // Support for hash consing these things.
+    class Key {
+    public:
+        Key()
+            : m_opcode(Air::Nop)
+            , m_numArgs(0)
+        {
+        }
+        
+        Key(Air::Opcode opcode, unsigned numArgs)
+            : m_opcode(opcode)
+            , m_numArgs(numArgs)
+        {
+        }
+
+        explicit Key(const Air::Inst&);
+
+        bool operator==(const Key& other) const
+        {
+            return m_opcode == other.m_opcode
+                && m_numArgs == other.m_numArgs;
+        }
+
+        bool operator!=(const Key& other) const
+        {
+            return !(*this == other);
+        }
+
+        explicit operator bool() const { return *this != Key(); }
+
+        Air::Opcode opcode() const { return m_opcode; }
+        unsigned numArgs() const { return m_numArgs; }
+
+        void dump(PrintStream& out) const;
+
+        Key(WTF::HashTableDeletedValueType)
+            : m_opcode(Air::Nop)
+            , m_numArgs(1)
+        {
+        }
+
+        bool isHashTableDeletedValue() const
+        {
+            return *this == Key(WTF::HashTableDeletedValue);
+        }
+
+        unsigned hash() const
+        {
+            // Seriously, we don't need to be smart here. It just doesn't matter.
+            return m_opcode + m_numArgs;
+        }
+        
+    private:
+        Air::Opcode m_opcode;
+        unsigned m_numArgs;
+    };
+    
     CheckSpecial(Air::Opcode, unsigned numArgs);
+    CheckSpecial(const Key&);
     ~CheckSpecial();
 
 protected:
@@ -70,7 +133,28 @@ private:
     unsigned m_numCheckArgs;
 };
 
+struct CheckSpecialKeyHash {
+    static unsigned hash(const CheckSpecial::Key& key) { return key.hash(); }
+    static bool equal(const CheckSpecial::Key& a, const CheckSpecial::Key& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
 } } // namespace JSC::B3
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::B3::CheckSpecial::Key> {
+    typedef JSC::B3::CheckSpecialKeyHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::B3::CheckSpecial::Key> : SimpleClassHashTraits<JSC::B3::CheckSpecial::Key> {
+    // I don't want to think about this very hard, it's not worth it. I'm a be conservative.
+    static const bool emptyValueIsZero = false;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)
 

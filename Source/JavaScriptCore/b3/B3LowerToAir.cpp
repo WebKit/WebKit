@@ -57,6 +57,8 @@ using namespace Air;
 
 namespace {
 
+const bool verbose = false;
+
 class LowerToAir {
 public:
     LowerToAir(Procedure& procedure, Code& code)
@@ -86,6 +88,9 @@ public:
             currentBlock = block;
             // Reset some state.
             insts.resize(0);
+
+            if (verbose)
+                dataLog("Lowering Block ", *block, ":\n");
             
             // Process blocks in reverse order so we see uses before defs. That's what allows us
             // to match patterns effectively.
@@ -95,10 +100,16 @@ public:
                 if (locked.contains(currentValue))
                     continue;
                 insts.append(Vector<Inst>());
+                if (verbose)
+                    dataLog("Lowering ", deepDump(currentValue), ":\n");
                 bool result = runLoweringMatcher(currentValue, *this);
                 if (!result) {
                     dataLog("FATAL: could not lower ", deepDump(currentValue), "\n");
                     RELEASE_ASSERT_NOT_REACHED();
+                }
+                if (verbose) {
+                    for (Inst& inst : insts.last())
+                        dataLog("    ", inst, "\n");
                 }
             }
 
@@ -162,16 +173,145 @@ public:
         }
     }
 
+    class ArgPromise {
+    public:
+        ArgPromise() { }
+
+        ArgPromise(const Arg& arg, Value* valueToLock = nullptr)
+            : m_arg(arg)
+            , m_value(valueToLock)
+        {
+        }
+
+        static ArgPromise tmp(Value* value)
+        {
+            ArgPromise result;
+            result.m_value = value;
+            return result;
+        }
+
+        explicit operator bool() const { return m_arg || m_value; }
+
+        Arg::Kind kind() const
+        {
+            if (!m_arg && m_value)
+                return Arg::Tmp;
+            return m_arg.kind();
+        }
+
+        const Arg& peek() const
+        {
+            return m_arg;
+        }
+
+        Arg consume(LowerToAir& lower) const
+        {
+            if (!m_arg && m_value)
+                return lower.tmp(m_value);
+            if (m_value)
+                lower.commitInternal(m_value);
+            return m_arg;
+        }
+        
+    private:
+        // Three forms:
+        // Everything null: invalid.
+        // Arg non-null, value null: just use the arg, nothing special.
+        // Arg null, value non-null: it's a tmp, pin it when necessary.
+        // Arg non-null, value non-null: use the arg, lock the value.
+        Arg m_arg;
+        Value* m_value;
+    };
+
+    // Consider using tmpPromise() in cases where you aren't sure that you want to pin the value yet.
+    // Here are three canonical ways of using tmp() and tmpPromise():
+    //
+    // Idiom #1: You know that you want a tmp() and you know that it will be valid for the
+    // instruction you're emitting.
+    //
+    //     append(Foo, tmp(bar));
+    //
+    // Idiom #2: You don't know if you want to use a tmp() because you haven't determined if the
+    // instruction will accept it, so you query first. Note that the call to tmp() happens only after
+    // you are sure that you will use it.
+    //
+    //     if (isValidForm(Foo, Arg::Tmp))
+    //         append(Foo, tmp(bar))
+    //
+    // Idiom #3: Same as Idiom #2, but using tmpPromise. Notice that this calls consume() only after
+    // it's sure it will use the tmp. That's deliberate.
+    //
+    //     ArgPromise promise = tmpPromise(bar);
+    //     if (isValidForm(Foo, promise.kind()))
+    //         append(Foo, promise.consume(*this))
+    //
+    // In both idiom #2 and idiom #3, we don't pin the value to a temporary except when we actually
+    // emit the instruction. Both tmp() and tmpPromise().consume(*this) will pin it. Pinning means
+    // that we will henceforth require that the value of 'bar' is generated as a separate
+    // instruction. We don't want to pin the value to a temporary if we might change our minds, and
+    // pass an address operand representing 'bar' to Foo instead.
+    //
+    // Because tmp() pins, the following is not an idiom you should use:
+    //
+    //     Tmp tmp = this->tmp(bar);
+    //     if (isValidForm(Foo, tmp.kind()))
+    //         append(Foo, tmp);
+    //
+    // That's because if isValidForm() returns false, you will have already pinned the 'bar' to a
+    // temporary. You might later want to try to do something like loadPromise(), and that will fail.
+    // This arises in operations that have both a Addr,Tmp and Tmp,Addr forms. The following code
+    // seems right, but will actually fail to ever match the Tmp,Addr form because by then, the right
+    // value is already pinned.
+    //
+    //     auto tryThings = [this] (const Arg& left, const Arg& right) {
+    //         if (isValidForm(Foo, left.kind(), right.kind()))
+    //             return Inst(Foo, currentValue, left, right);
+    //         return Inst();
+    //     };
+    //     if (Inst result = tryThings(loadAddr(left), tmp(right)))
+    //         return result;
+    //     if (Inst result = tryThings(tmp(left), loadAddr(right))) // this never succeeds.
+    //         return result;
+    //     return Inst(Foo, currentValue, tmp(left), tmp(right));
+    //
+    // If you imagine that loadAddr(value) is just loadPromise(value).consume(*this), then this code
+    // will run correctly - it will generate OK code - but the second form is never matched.
+    // loadAddr(right) will never succeed because it will observe that 'right' is already pinned.
+    // Of course, it's exactly because of the risky nature of such code that we don't have a
+    // loadAddr() helper and require you to balance ArgPromise's in code like this. Such code will
+    // work fine if written as:
+    //
+    //     auto tryThings = [this] (const ArgPromise& left, const ArgPromise& right) {
+    //         if (isValidForm(Foo, left.kind(), right.kind()))
+    //             return Inst(Foo, currentValue, left.consume(*this), right.consume(*this));
+    //         return Inst();
+    //     };
+    //     if (Inst result = tryThings(loadPromise(left), tmpPromise(right)))
+    //         return result;
+    //     if (Inst result = tryThings(tmpPromise(left), loadPromise(right)))
+    //         return result;
+    //     return Inst(Foo, currentValue, tmp(left), tmp(right));
+    //
+    // Notice that we did use tmp in the fall-back case at the end, because by then, we know for sure
+    // that we want a tmp. But using tmpPromise in the tryThings() calls ensures that doing so
+    // doesn't prevent us from trying loadPromise on the same value.
     Tmp tmp(Value* value)
     {
         Tmp& tmp = valueToTmp[value];
         if (!tmp) {
             while (shouldCopyPropagate(value))
                 value = value->child(0);
-            tmp = code.newTmp(isInt(value->type()) ? Arg::GP : Arg::FP);
-            valueToTmp[value] = tmp;
+            Tmp& realTmp = valueToTmp[value];
+            if (!realTmp)
+                realTmp = code.newTmp(Arg::typeForB3Type(value->type()));
+            tmp = realTmp;
         }
         return tmp;
+    }
+
+    ArgPromise tmpPromise(Value* value)
+    {
+        return ArgPromise::tmp(value);
     }
 
     bool canBeInternal(Value* value)
@@ -253,15 +393,20 @@ public:
         return effectiveAddr(value->lastChild(), value);
     }
 
-    Arg loadAddr(Value* loadValue)
+    ArgPromise loadPromise(Value* loadValue, B3::Opcode loadOpcode)
     {
-        if (loadValue->opcode() != Load)
+        if (loadValue->opcode() != loadOpcode)
             return Arg();
         if (!canBeInternal(loadValue))
             return Arg();
         if (crossesInterference(loadValue))
             return Arg();
-        return addr(loadValue);
+        return ArgPromise(addr(loadValue), loadValue);
+    }
+
+    ArgPromise loadPromise(Value* loadValue)
+    {
+        return loadPromise(loadValue, Load);
     }
 
     Arg imm(Value* value)
@@ -340,20 +485,18 @@ public:
         // over three operand forms.
         
         if (commutativity == Commutative) {
-            Arg leftAddr = loadAddr(left);
+            ArgPromise leftAddr = loadPromise(left);
             if (isValidForm(opcode, leftAddr.kind(), Arg::Tmp)) {
-                commitInternal(left);
                 append(relaxedMoveForType(currentValue->type()), tmp(right), result);
-                append(opcode, leftAddr, result);
+                append(opcode, leftAddr.consume(*this), result);
                 return;
             }
         }
 
-        Arg rightAddr = loadAddr(right);
+        ArgPromise rightAddr = loadPromise(right);
         if (isValidForm(opcode, rightAddr.kind(), Arg::Tmp)) {
-            commitInternal(right);
             append(relaxedMoveForType(currentValue->type()), tmp(left), result);
-            append(opcode, rightAddr, result);
+            append(opcode, rightAddr.consume(*this), result);
             return;
         }
 
@@ -378,10 +521,11 @@ public:
         Arg storeAddr = addr(currentValue);
         ASSERT(storeAddr);
 
-        if (loadAddr(value) != storeAddr)
+        ArgPromise loadPromise = this->loadPromise(value);
+        if (loadPromise.peek() != storeAddr)
             return false;
 
-        commitInternal(value);
+        loadPromise.consume(*this);
         append(opcode, storeAddr);
         return true;
     }
@@ -392,19 +536,23 @@ public:
         Arg storeAddr = addr(currentValue);
         ASSERT(storeAddr);
 
-        Value* loadValue;
-        Value* otherValue;
-        if (loadAddr(left) == storeAddr) {
-            loadValue = left;
+        ArgPromise loadPromise;
+        Value* otherValue = nullptr;
+        
+        loadPromise = this->loadPromise(left);
+        if (loadPromise.peek() == storeAddr)
             otherValue = right;
-        } else if (commutativity == Commutative && loadAddr(right) == storeAddr) {
-            loadValue = right;
-            otherValue = left;
-        } else
+        else if (commutativity == Commutative) {
+            loadPromise = this->loadPromise(right);
+            if (loadPromise.peek() == storeAddr)
+                otherValue = left;
+        }
+
+        if (!otherValue)
             return false;
 
         if (isValidForm(opcode, Arg::Imm, storeAddr.kind()) && imm(otherValue)) {
-            commitInternal(loadValue);
+            loadPromise.consume(*this);
             append(opcode, imm(otherValue), storeAddr);
             return true;
         }
@@ -412,7 +560,7 @@ public:
         if (!isValidForm(opcode, Arg::Tmp, storeAddr.kind()))
             return false;
 
-        commitInternal(loadValue);
+        loadPromise.consume(*this);
         append(opcode, tmp(otherValue), storeAddr);
         return true;
     }
@@ -622,6 +770,396 @@ public:
     };
     AddressSelector addressSelector;
 
+    // Create an Inst to do the comparison specified by the given value.
+    template<typename CompareFunctor, typename TestFunctor, typename CompareDoubleFunctor>
+    Inst createGenericCompare(
+        Value* value,
+        const CompareFunctor& compare, // Signature: (Arg::Width, Arg relCond, Arg, Arg) -> Inst
+        const TestFunctor& test, // Signature: (Arg::Width, Arg resCond, Arg, Arg) -> Inst
+        const CompareDoubleFunctor& compareDouble, // Signature: (Arg doubleCond, Arg, Arg) -> Inst
+        bool inverted = false)
+    {
+        // Chew through any negations. It's not strictly necessary for this to be a loop, but we like
+        // to follow the rule that the instruction selector reduces strength whenever it doesn't
+        // require making things more complicated.
+        for (;;) {
+            if (!canBeInternal(value) && value != currentValue)
+                break;
+            bool shouldInvert =
+                (value->opcode() == BitXor && value->child(1)->isInt(1) && value->child(0)->returnsBool())
+                || (value->opcode() == Equal && value->child(1)->isInt(0));
+            if (!shouldInvert)
+                break;
+            value = value->child(0);
+            inverted = !inverted;
+            commitInternal(value);
+        }
+
+        auto createRelCond = [&] (
+            MacroAssembler::RelationalCondition relationalCondition,
+            MacroAssembler::DoubleCondition doubleCondition) {
+            Arg relCond = Arg::relCond(relationalCondition).inverted(inverted);
+            Arg doubleCond = Arg::doubleCond(doubleCondition).inverted(inverted);
+            Value* left = value->child(0);
+            Value* right = value->child(1);
+
+            if (isInt(value->child(0)->type())) {
+                Arg leftImm = imm(left);
+                Arg rightImm = imm(right);
+
+                auto tryCompare = [&] (
+                    Arg::Width width, const ArgPromise& left, const ArgPromise& right) -> Inst {
+                    if (Inst result = compare(width, relCond, left, right))
+                        return result;
+                    if (Inst result = compare(width, relCond.flipped(), right, left))
+                        return result;
+                    return Inst();
+                };
+
+                auto tryCompareLoadImm = [&] (
+                    Arg::Width width, B3::Opcode loadOpcode, Arg::Signedness signedness) -> Inst {
+                    if (rightImm && rightImm.isRepresentableAs(width, signedness)) {
+                        if (Inst result = tryCompare(width, loadPromise(left, loadOpcode), rightImm)) {
+                            commitInternal(left);
+                            return result;
+                        }
+                    }
+                    if (leftImm && leftImm.isRepresentableAs(width, signedness)) {
+                        if (Inst result = tryCompare(width, leftImm, loadPromise(right, loadOpcode))) {
+                            commitInternal(right);
+                            return result;
+                        }
+                    }
+                    return Inst();
+                };
+
+                // First handle compares that involve fewer bits than B3's type system supports.
+                // This is pretty important. For example, we want this to be a single instruction:
+                //
+                //     @1 = Load8S(...)
+                //     @2 = Const32(...)
+                //     @3 = LessThan(@1, @2)
+                //     Branch(@3)
+                
+                if (relCond.isSignedCond()) {
+                    if (Inst result = tryCompareLoadImm(Arg::Width8, Load8S, Arg::Signed))
+                        return result;
+                }
+                
+                if (relCond.isUnsignedCond()) {
+                    if (Inst result = tryCompareLoadImm(Arg::Width8, Load8Z, Arg::Unsigned))
+                        return result;
+                }
+
+                if (relCond.isSignedCond()) {
+                    if (Inst result = tryCompareLoadImm(Arg::Width16, Load16S, Arg::Signed))
+                        return result;
+                }
+                
+                if (relCond.isUnsignedCond()) {
+                    if (Inst result = tryCompareLoadImm(Arg::Width16, Load16Z, Arg::Unsigned))
+                        return result;
+                }
+
+                // Now handle compares that involve a load and an immediate.
+
+                Arg::Width width = Arg::widthForB3Type(value->child(0)->type());
+                if (Inst result = tryCompareLoadImm(width, Load, Arg::Signed))
+                    return result;
+
+                // Now handle compares that involve a load. It's not obvious that it's better to
+                // handle this before the immediate cases or not. Probably doesn't matter.
+
+                if (Inst result = tryCompare(width, loadPromise(left), tmpPromise(right))) {
+                    commitInternal(left);
+                    return result;
+                }
+                
+                if (Inst result = tryCompare(width, tmpPromise(left), loadPromise(right))) {
+                    commitInternal(right);
+                    return result;
+                }
+
+                // Now handle compares that involve an immediate and a tmp.
+                
+                if (leftImm && leftImm.isRepresentableAs<int32_t>()) {
+                    if (Inst result = tryCompare(width, leftImm, tmpPromise(right)))
+                        return result;
+                }
+                
+                if (rightImm && rightImm.isRepresentableAs<int32_t>()) {
+                    if (Inst result = tryCompare(width, tmpPromise(left), rightImm))
+                        return result;
+                }
+
+                // Finally, handle comparison between tmps.
+                return tryCompare(width, tmpPromise(left), tmpPromise(right));
+            }
+
+            // Double comparisons can't really do anything smart.
+            return compareDouble(doubleCond, tmpPromise(left), tmpPromise(right));
+        };
+
+        Arg::Width width = Arg::widthForB3Type(value->type());
+        Arg resCond = Arg::resCond(MacroAssembler::NonZero).inverted(inverted);
+        
+        auto attemptFused = [&] () -> Inst {
+            switch (value->opcode()) {
+            case NotEqual:
+                return createRelCond(MacroAssembler::NotEqual, MacroAssembler::DoubleNotEqualOrUnordered);
+            case Equal:
+                return createRelCond(MacroAssembler::Equal, MacroAssembler::DoubleEqual);
+            case LessThan:
+                return createRelCond(MacroAssembler::LessThan, MacroAssembler::DoubleLessThan);
+            case GreaterThan:
+                return createRelCond(MacroAssembler::GreaterThan, MacroAssembler::DoubleGreaterThan);
+            case LessEqual:
+                return createRelCond(MacroAssembler::LessThanOrEqual, MacroAssembler::DoubleLessThanOrEqual);
+            case GreaterEqual:
+                return createRelCond(MacroAssembler::GreaterThanOrEqual, MacroAssembler::DoubleGreaterThanOrEqual);
+            case Above:
+                // We use a bogus double condition because these integer comparisons won't got down that
+                // path anyway.
+                return createRelCond(MacroAssembler::Above, MacroAssembler::DoubleEqual);
+            case Below:
+                return createRelCond(MacroAssembler::Below, MacroAssembler::DoubleEqual);
+            case AboveEqual:
+                return createRelCond(MacroAssembler::AboveOrEqual, MacroAssembler::DoubleEqual);
+            case BelowEqual:
+                return createRelCond(MacroAssembler::BelowOrEqual, MacroAssembler::DoubleEqual);
+            case BitAnd: {
+                Value* left = value->child(0);
+                Value* right = value->child(1);
+
+                Arg leftImm = imm(left);
+                Arg rightImm = imm(right);
+                
+                auto tryTest = [&] (
+                    Arg::Width width, const ArgPromise& left, const ArgPromise& right) -> Inst {
+                    if (Inst result = test(width, resCond, left, right))
+                        return result;
+                    if (Inst result = test(width, resCond, right, left))
+                        return result;
+                    return Inst();
+                };
+
+                auto tryTestLoadImm = [&] (Arg::Width width, B3::Opcode loadOpcode) -> Inst {
+                    if (rightImm && rightImm.isRepresentableAs(width, Arg::Unsigned)) {
+                        if (Inst result = tryTest(width, loadPromise(left, loadOpcode), rightImm)) {
+                            commitInternal(left);
+                            return result;
+                        }
+                    }
+                    if (leftImm && leftImm.isRepresentableAs(width, Arg::Unsigned)) {
+                        if (Inst result = tryTest(width, leftImm, loadPromise(right, loadOpcode))) {
+                            commitInternal(right);
+                            return result;
+                        }
+                    }
+                    return Inst();
+                };
+
+                // First handle test's that involve fewer bits than B3's type system supports.
+
+                if (Inst result = tryTestLoadImm(Arg::Width8, Load8Z))
+                    return result;
+
+                if (Inst result = tryTestLoadImm(Arg::Width8, Load8S))
+                    return result;
+
+                if (Inst result = tryTestLoadImm(Arg::Width16, Load16Z))
+                    return result;
+
+                if (Inst result = tryTestLoadImm(Arg::Width16, Load16S))
+                    return result;
+
+                // Now handle test's that involve a load and an immediate. Note that immediates are
+                // 32-bit, and we want zero-extension. Hence, the immediate form is compiled as a
+                // 32-bit test. Note that this spits on the grave of inferior endians, such as the
+                // big one.
+                
+                if (Inst result = tryTestLoadImm(Arg::Width32, Load))
+                    return result;
+
+                // Now handle test's that involve a load.
+
+                Arg::Width width = Arg::widthForB3Type(value->child(0)->type());
+                if (Inst result = tryTest(width, loadPromise(left), tmpPromise(right))) {
+                    commitInternal(left);
+                    return result;
+                }
+
+                if (Inst result = tryTest(width, tmpPromise(left), loadPromise(right))) {
+                    commitInternal(right);
+                    return result;
+                }
+
+                // Now handle test's that involve an immediate and a tmp.
+
+                if (leftImm && leftImm.isRepresentableAs<uint32_t>()) {
+                    if (Inst result = tryTest(Arg::Width32, leftImm, tmpPromise(right)))
+                        return result;
+                }
+
+                if (rightImm && rightImm.isRepresentableAs<uint32_t>()) {
+                    if (Inst result = tryTest(Arg::Width32, tmpPromise(left), rightImm))
+                        return result;
+                }
+
+                // Finally, just do tmp's.
+                return tryTest(width, tmpPromise(left), tmpPromise(right));
+            }
+            default:
+                return Inst();
+            }
+        };
+
+        if (canBeInternal(value) || value == currentValue) {
+            if (Inst result = attemptFused()) {
+                commitInternal(value);
+                return result;
+            }
+        }
+
+        if (Inst result = test(width, resCond, tmpPromise(value), Arg::imm(-1)))
+            return result;
+        
+        // Sometimes this is the only form of test available. We prefer not to use this because
+        // it's less canonical.
+        return test(width, resCond, tmpPromise(value), tmpPromise(value));
+    }
+
+    Inst createBranch(Value* value, bool inverted = false)
+    {
+        return createGenericCompare(
+            value,
+            [this] (
+                Arg::Width width, const Arg& relCond,
+                const ArgPromise& left, const ArgPromise& right) -> Inst {
+                switch (width) {
+                case Arg::Width8:
+                    if (isValidForm(Branch8, Arg::RelCond, left.kind(), right.kind())) {
+                        return Inst(
+                            Branch8, currentValue, relCond,
+                            left.consume(*this), right.consume(*this));
+                    }
+                    return Inst();
+                case Arg::Width16:
+                    return Inst();
+                case Arg::Width32:
+                    if (isValidForm(Branch32, Arg::RelCond, left.kind(), right.kind())) {
+                        return Inst(
+                            Branch32, currentValue, relCond,
+                            left.consume(*this), right.consume(*this));
+                    }
+                    return Inst();
+                case Arg::Width64:
+                    if (isValidForm(Branch64, Arg::RelCond, left.kind(), right.kind())) {
+                        return Inst(
+                            Branch64, currentValue, relCond,
+                            left.consume(*this), right.consume(*this));
+                    }
+                    return Inst();
+                }
+            },
+            [this] (
+                Arg::Width width, const Arg& resCond,
+                const ArgPromise& left, const ArgPromise& right) -> Inst {
+                switch (width) {
+                case Arg::Width8:
+                    if (isValidForm(BranchTest8, Arg::ResCond, left.kind(), right.kind())) {
+                        return Inst(
+                            BranchTest8, currentValue, resCond,
+                            left.consume(*this), right.consume(*this));
+                    }
+                    return Inst();
+                case Arg::Width16:
+                    return Inst();
+                case Arg::Width32:
+                    if (isValidForm(BranchTest32, Arg::ResCond, left.kind(), right.kind())) {
+                        return Inst(
+                            BranchTest32, currentValue, resCond,
+                            left.consume(*this), right.consume(*this));
+                    }
+                    return Inst();
+                case Arg::Width64:
+                    if (isValidForm(BranchTest64, Arg::ResCond, left.kind(), right.kind())) {
+                        return Inst(
+                            BranchTest64, currentValue, resCond,
+                            left.consume(*this), right.consume(*this));
+                    }
+                    return Inst();
+                }
+            },
+            [this] (Arg doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
+                if (isValidForm(BranchDouble, Arg::DoubleCond, left.kind(), right.kind())) {
+                    return Inst(
+                        BranchDouble, currentValue, doubleCond,
+                        left.consume(*this), right.consume(*this));
+                }
+                return Inst();
+            },
+            inverted);
+    }
+
+    Inst createCompare(Value* value, bool inverted = false)
+    {
+        return createGenericCompare(
+            value,
+            [this] (
+                Arg::Width width, const Arg& relCond,
+                const ArgPromise& left, const ArgPromise& right) -> Inst {
+                switch (width) {
+                case Arg::Width8:
+                case Arg::Width16:
+                    return Inst();
+                case Arg::Width32:
+                    if (isValidForm(Compare32, Arg::RelCond, left.kind(), right.kind(), Arg::Tmp)) {
+                        return Inst(
+                            Compare32, currentValue, relCond,
+                            left.consume(*this), right.consume(*this), tmp(currentValue));
+                    }
+                    return Inst();
+                case Arg::Width64:
+                    if (isValidForm(Compare64, Arg::RelCond, left.kind(), right.kind(), Arg::Tmp)) {
+                        return Inst(
+                            Compare64, currentValue, relCond,
+                            left.consume(*this), right.consume(*this), tmp(currentValue));
+                    }
+                    return Inst();
+                }
+            },
+            [this] (
+                Arg::Width width, const Arg& resCond,
+                const ArgPromise& left, const ArgPromise& right) -> Inst {
+                switch (width) {
+                case Arg::Width8:
+                case Arg::Width16:
+                    return Inst();
+                case Arg::Width32:
+                    if (isValidForm(Test32, Arg::ResCond, left.kind(), right.kind(), Arg::Tmp)) {
+                        return Inst(
+                            Test32, currentValue, resCond,
+                            left.consume(*this), right.consume(*this), tmp(currentValue));
+                    }
+                    return Inst();
+                case Arg::Width64:
+                    if (isValidForm(Test64, Arg::ResCond, left.kind(), right.kind(), Arg::Tmp)) {
+                        return Inst(
+                            Test64, currentValue, resCond,
+                            left.consume(*this), right.consume(*this), tmp(currentValue));
+                    }
+                    return Inst();
+                }
+            },
+            [this] (const Arg&, const ArgPromise&, const ArgPromise&) -> Inst {
+                // FIXME: Implement this.
+                // https://bugs.webkit.org/show_bug.cgi?id=150903
+                return Inst();
+            },
+            inverted);
+    }
+
     // Below is the code for a lowering selector, so that we can pass *this to runLoweringMatcher.
     // This will match complex multi-value expressions, but only if there is no sharing. For example,
     // it won't match a Load twice and cause the generated code to do two loads when the original
@@ -670,6 +1208,30 @@ public:
         append(
             moveForType(currentValue->type()),
             effectiveAddr(address, currentValue), tmp(currentValue));
+        return true;
+    }
+
+    bool tryLoad8S(Value* address)
+    {
+        append(Load8SignedExtendTo32, effectiveAddr(address, currentValue), tmp(currentValue));
+        return true;
+    }
+    
+    bool tryLoad8Z(Value* address)
+    {
+        append(Load8, effectiveAddr(address, currentValue), tmp(currentValue));
+        return true;
+    }
+    
+    bool tryLoad16S(Value* address)
+    {
+        append(Load16SignedExtendTo32, effectiveAddr(address, currentValue), tmp(currentValue));
+        return true;
+    }
+    
+    bool tryLoad16Z(Value* address)
+    {
+        append(Load16, effectiveAddr(address, currentValue), tmp(currentValue));
         return true;
     }
     
@@ -886,6 +1448,66 @@ public:
         return true;
     }
 
+    bool tryEqual()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryNotEqual()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryLessThan()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryGreaterThan()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryLessEqual()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryGreaterEqual()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryAbove()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryBelow()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryAboveEqual()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
+    bool tryBelowEqual()
+    {
+        insts.last().append(createCompare(currentValue));
+        return true;
+    }
+
     PatchpointSpecial* patchpointSpecial { nullptr };
     bool tryPatchpoint()
     {
@@ -903,34 +1525,19 @@ public:
         return true;
     }
 
-    CheckSpecial* checkBranchTest32Special { nullptr };
-    CheckSpecial* checkBranchTest64Special { nullptr };
+    HashMap<CheckSpecial::Key, CheckSpecial*> checkSpecials;
     bool tryCheck(Value* value)
     {
-        if (!isInt(value->type())) {
-            // FIXME: Implement double branches.
-            // https://bugs.webkit.org/show_bug.cgi?id=150727
-            return false;
-        }
+        Inst branch = createBranch(value);
 
-        CheckSpecial* special;
-        switch (value->type()) {
-        case Int32:
-            special = ensureSpecial(checkBranchTest32Special, BranchTest32, 3);
-            break;
-        case Int64:
-            special = ensureSpecial(checkBranchTest64Special, BranchTest64, 3);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        CheckSpecial::Key key(branch);
+        auto result = checkSpecials.add(key, nullptr);
+        Special* special = ensureSpecial(result.iterator->value, key);
 
         CheckValue* checkValue = currentValue->as<CheckValue>();
 
-        Inst inst(
-            Patch, checkValue, Arg::special(special),
-            Arg::resCond(MacroAssembler::NonZero), tmp(value), Arg::imm(-1));
+        Inst inst(Patch, checkValue, Arg::special(special));
+        inst.args.appendVector(branch.args);
 
         fillStackmap(inst, checkValue, 1);
 
@@ -955,46 +1562,7 @@ public:
 
     bool tryBranch(Value* value)
     {
-        // FIXME: Implement branch fusion by delegating to a pattern matcher for comparisons.
-        // https://bugs.webkit.org/show_bug.cgi?id=150721
-
-        // In B3 it's possible to branch on any value. The semantics of:
-        //
-        //     Branch(value)
-        //
-        // Are guaranteed to be identical to:
-        //
-        //     Branch(NotEqual(value, 0))
-
-        if (!isInt(value->type())) {
-            // FIXME: Implement double branches.
-            // https://bugs.webkit.org/show_bug.cgi?id=150727
-            return false;
-        }
-
-        Air::Opcode opcode;
-        switch (value->type()) {
-        case Int32:
-            opcode = BranchTest32;
-            break;
-        case Int64:
-            opcode = BranchTest64;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-
-        Arg resCond = Arg::resCond(MacroAssembler::NonZero);
-
-        Arg addr = loadAddr(value);
-        if (isValidForm(opcode, resCond.kind(), addr.kind(), Arg::Imm)) {
-            commitInternal(value);
-            append(opcode, resCond, addr, Arg::imm(-1));
-            return true;
-        }
-
-        append(opcode, resCond, tmp(value), Arg::imm(-1));
+        insts.last().append(createBranch(value));
         return true;
     }
 

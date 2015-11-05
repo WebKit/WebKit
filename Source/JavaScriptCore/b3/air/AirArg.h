@@ -110,6 +110,18 @@ public:
 
     static const unsigned numTypes = 2;
 
+    enum Width : int8_t {
+        Width8,
+        Width16,
+        Width32,
+        Width64
+    };
+
+    enum Signedness : int8_t {
+        Signed,
+        Unsigned
+    };
+
     // Returns true if the Role implies that the Inst will Use the Arg. It's deliberately false for
     // UseAddr, since isUse() for an Arg::addr means that we are loading from the address.
     static bool isUse(Role role)
@@ -151,6 +163,20 @@ public:
         }
         ASSERT_NOT_REACHED();
         return GP;
+    }
+
+    static Width widthForB3Type(B3::Type type)
+    {
+        switch (type) {
+        case Void:
+            ASSERT_NOT_REACHED();
+            return Width8;
+        case Int32:
+            return Width32;
+        case Int64:
+        case Double:
+            return Width64;
+        }
     }
 
     Arg()
@@ -374,6 +400,20 @@ public:
     {
         ASSERT(kind() == Imm || kind() == Imm64);
         return m_offset;
+    }
+
+    template<typename T>
+    bool isRepresentableAs() const
+    {
+        return B3::isRepresentableAs<T>(value());
+    }
+
+    bool isRepresentableAs(Width, Signedness) const;
+
+    template<typename T>
+    T asNumber() const
+    {
+        return static_cast<T>(value());
     }
 
     void* pointerValue() const
@@ -684,6 +724,41 @@ public:
         return static_cast<MacroAssembler::DoubleCondition>(m_offset);
     }
 
+    // This is valid for condition arguments. It will invert them.
+    Arg inverted(bool inverted = true) const
+    {
+        if (!inverted)
+            return *this;
+        switch (kind()) {
+        case RelCond:
+            return relCond(MacroAssembler::invert(asRelationalCondition()));
+        case ResCond:
+            return resCond(MacroAssembler::invert(asResultCondition()));
+        case DoubleCond:
+            return doubleCond(MacroAssembler::invert(asDoubleCondition()));
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return Arg();
+        }
+    }
+
+    Arg flipped(bool flipped = true) const
+    {
+        if (!flipped)
+            return Arg();
+        return relCond(MacroAssembler::flip(asRelationalCondition()));
+    }
+
+    bool isSignedCond() const
+    {
+        return isRelCond() && MacroAssembler::isSigned(asRelationalCondition());
+    }
+
+    bool isUnsignedCond() const
+    {
+        return isRelCond() && MacroAssembler::isUnsigned(asRelationalCondition());
+    }
+
     void dump(PrintStream&) const;
 
     Arg(WTF::HashTableDeletedValueType)
@@ -720,6 +795,12 @@ struct ArgHash {
 } } } // namespace JSC::B3::Air
 
 namespace WTF {
+
+void printInternal(PrintStream&, JSC::B3::Air::Arg::Kind);
+void printInternal(PrintStream&, JSC::B3::Air::Arg::Role);
+void printInternal(PrintStream&, JSC::B3::Air::Arg::Type);
+void printInternal(PrintStream&, JSC::B3::Air::Arg::Width);
+void printInternal(PrintStream&, JSC::B3::Air::Arg::Signedness);
 
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<JSC::B3::Air::Arg> {

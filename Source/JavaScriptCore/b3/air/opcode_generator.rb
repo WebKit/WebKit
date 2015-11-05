@@ -410,7 +410,7 @@ def matchForms(outp, speed, forms, columnIndex, columnGetter, filter, callback)
     end
 
     if columnIndex >= forms[0].kinds.length
-        raise unless forms.length == 1
+        raise "Did not reduce to one form: #{forms.inspect}" unless forms.length == 1
         callback[forms[0]]
         return
     end

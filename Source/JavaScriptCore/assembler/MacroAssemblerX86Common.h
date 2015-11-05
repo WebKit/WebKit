@@ -1474,6 +1474,12 @@ public:
         set32(x86Condition(cond), dest);
     }
 
+    void test32(ResultCondition cond, RegisterID reg, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.testl_rr(reg, mask);
+        set32(x86Condition(cond), dest);
+    }
+
     // Invert a relational condition, e.g. == becomes !=, < becomes >=, etc.
     static RelationalCondition invert(RelationalCondition cond)
     {

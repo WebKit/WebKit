@@ -28,11 +28,13 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Type.h"
 #include "PureNaN.h"
 #include <wtf/Bag.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/TriState.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
@@ -52,6 +54,11 @@ public:
     
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);
+
+    Value* addIntConstant(Type, int64_t value);
+
+    // Returns null for MixedTriState.
+    Value* addBoolConstant(TriState);
 
     void resetValueOwners();
     void resetReachability();

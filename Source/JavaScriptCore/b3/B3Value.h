@@ -118,8 +118,23 @@ public:
     virtual Value* shlConstant(Procedure&, Value* other) const;
     virtual Value* sShrConstant(Procedure&, Value* other) const;
     virtual Value* zShrConstant(Procedure&, Value* other) const;
-    virtual Value* equalConstant(Procedure&, Value* other) const;
-    virtual Value* notEqualConstant(Procedure&, Value* other) const;
+    
+    virtual TriState equalConstant(Value* other) const;
+    virtual TriState notEqualConstant(Value* other) const;
+    virtual TriState lessThanConstant(Value* other) const;
+    virtual TriState greaterThanConstant(Value* other) const;
+    virtual TriState lessEqualConstant(Value* other) const;
+    virtual TriState greaterEqualConstant(Value* other) const;
+    virtual TriState aboveConstant(Value* other) const;
+    virtual TriState belowConstant(Value* other) const;
+    virtual TriState aboveEqualConstant(Value* other) const;
+    virtual TriState belowEqualConstant(Value* other) const;
+
+    // If the value is a comparison then this returns the inverted form of that comparison, if
+    // possible. It can be impossible for double comparisons, where for example LessThan and
+    // GreaterEqual behave differently. If this returns a value, it is a new value, which must be
+    // either inserted into some block or deleted.
+    Value* invertedCompare(Procedure&) const;
 
     bool hasInt32() const;
     int32_t asInt32() const;

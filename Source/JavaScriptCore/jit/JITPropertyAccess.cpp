@@ -1458,13 +1458,13 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
     
     switch (elementSize(type)) {
     case 1:
-        if (isSigned(type))
+        if (JSC::isSigned(type))
             load8SignedExtendTo32(BaseIndex(scratch, property, TimesOne), resultPayload);
         else
             load8(BaseIndex(scratch, property, TimesOne), resultPayload);
         break;
     case 2:
-        if (isSigned(type))
+        if (JSC::isSigned(type))
             load16SignedExtendTo32(BaseIndex(scratch, property, TimesTwo), resultPayload);
         else
             load16(BaseIndex(scratch, property, TimesTwo), resultPayload);
@@ -1596,7 +1596,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
     
     if (isClamped(type)) {
         ASSERT(elementSize(type) == 1);
-        ASSERT(!isSigned(type));
+        ASSERT(!JSC::isSigned(type));
         Jump inBounds = branch32(BelowOrEqual, earlyScratch, TrustedImm32(0xff));
         Jump tooBig = branch32(GreaterThan, earlyScratch, TrustedImm32(0xff));
         xor32(earlyScratch, earlyScratch);

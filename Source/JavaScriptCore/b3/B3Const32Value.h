@@ -50,8 +50,17 @@ public:
     Value* shlConstant(Procedure&, Value* other) const override;
     Value* sShrConstant(Procedure&, Value* other) const override;
     Value* zShrConstant(Procedure&, Value* other) const override;
-    Value* equalConstant(Procedure&, Value* other) const override;
-    Value* notEqualConstant(Procedure&, Value* other) const override;
+
+    TriState equalConstant(Value* other) const override;
+    TriState notEqualConstant(Value* other) const override;
+    TriState lessThanConstant(Value* other) const override;
+    TriState greaterThanConstant(Value* other) const override;
+    TriState lessEqualConstant(Value* other) const override;
+    TriState greaterEqualConstant(Value* other) const override;
+    TriState aboveConstant(Value* other) const override;
+    TriState belowConstant(Value* other) const override;
+    TriState aboveEqualConstant(Value* other) const override;
+    TriState belowEqualConstant(Value* other) const override;
 
 protected:
     JS_EXPORT_PRIVATE void dumpMeta(CommaPrinter&, PrintStream&) const override;

@@ -28,6 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Type.h"
+#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace B3 {
@@ -166,7 +168,7 @@ enum Opcode : int16_t {
     CheckMul,
 
     // Check that side-exits. Use the CheckValue class. Like CheckAdd and friends, this has a
-    // stackmap with a generation callback. This takes an Int32 argument that this branches on, with
+    // stackmap with a generation callback. This takes an int argument that this branches on, with
     // full branch fusion in the instruction selector. A true value jumps to the generator's slow
     // path.
     Check,
@@ -178,7 +180,7 @@ enum Opcode : int16_t {
     // Jump. Uses the ControlValue class.
     Jump,
     
-    // Polymorphic branch, usable with any value type. Branches if not equal to zero. Uses the
+    // Polymorphic branch, usable with any integer type. Branches if not equal to zero. Uses the
     // ControlValue class, with the 0-index successor being the true successor.
     Branch,
 
@@ -204,6 +206,8 @@ inline bool isCheckMath(Opcode opcode)
         return false;
     }
 }
+
+Optional<Opcode> invertedCompare(Opcode, Type);
 
 } } // namespace JSC::B3
 

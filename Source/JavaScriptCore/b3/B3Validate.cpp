@@ -279,6 +279,9 @@ public:
                 validateStackmap(value);
                 break;
             case Check:
+                VALIDATE(value->numChildren() >= 1, ("At ", *value));
+                VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
+                VALIDATE(value->as<StackmapValue>()->constrainedChild(0).rep() == ValueRep::Any, ("At ", *value));
                 validateStackmap(value);
                 break;
             case Upsilon:
@@ -291,11 +294,11 @@ public:
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() != Void, ("At ", *value));
                 break;
-            case Branch:
             case Return:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
                 break;
+            case Branch:
             case Switch:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(isInt(value->child(0)->type()), ("At ", *value));

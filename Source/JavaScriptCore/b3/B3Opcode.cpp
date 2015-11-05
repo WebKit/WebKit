@@ -30,6 +30,46 @@
 
 #include <wtf/PrintStream.h>
 
+namespace JSC { namespace B3 {
+
+Optional<Opcode> invertedCompare(Opcode opcode, Type type)
+{
+    switch (opcode) {
+    case Equal:
+        return NotEqual;
+    case NotEqual:
+        return Equal;
+    case LessThan:
+        if (isInt(type))
+            return GreaterEqual;
+        return Nullopt;
+    case GreaterThan:
+        if (isInt(type))
+            return LessEqual;
+        return Nullopt;
+    case LessEqual:
+        if (isInt(type))
+            return GreaterThan;
+        return Nullopt;
+    case GreaterEqual:
+        if (isInt(type))
+            return LessThan;
+        return Nullopt;
+    case Above:
+        return BelowEqual;
+    case Below:
+        return AboveEqual;
+    case AboveEqual:
+        return Below;
+    case BelowEqual:
+        return Above;
+    default:
+        return Nullopt;
+    }
+}
+
+} } // namespace JSC::B3
+
 namespace WTF {
 
 using namespace JSC::B3;

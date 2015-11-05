@@ -41,6 +41,9 @@
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "VM.h"
+#include <wtf/Lock.h>
+#include <wtf/NumberOfCores.h>
+#include <wtf/Threading.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
 static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
@@ -1706,6 +1709,107 @@ void testStoreLoadStackSlot(int value)
     CHECK(compileAndRun<int>(proc, value) == value);
 }
 
+template<typename T>
+int32_t modelLoad(int32_t value)
+{
+    union {
+        int32_t original;
+        T loaded;
+    } u;
+
+    u.original = value;
+    if (std::is_signed<T>::value)
+        return static_cast<int32_t>(u.loaded);
+    return static_cast<int32_t>(static_cast<uint32_t>(u.loaded));
+}
+
+template<typename T>
+void testLoad(B3::Opcode opcode, int32_t value)
+{
+    // Simple load from an absolute address.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, opcode, Int32, Origin(),
+                root->appendNew<ConstPtrValue>(proc, Origin(), &value)));
+
+        CHECK(compileAndRun<int32_t>(proc) == modelLoad<T>(value));
+    }
+    
+    // Simple load from an address in a register.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, opcode, Int32, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+        CHECK(compileAndRun<int32_t>(proc, &value) == modelLoad<T>(value));
+    }
+    
+    // Simple load from an address in a register, at an offset.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, opcode, Int32, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                sizeof(int32_t)));
+
+        CHECK(compileAndRun<int32_t>(proc, &value - 1) == modelLoad<T>(value));
+    }
+
+    // Load from a simple base-index with various scales.
+    for (unsigned logScale = 0; logScale <= 3; ++logScale) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, opcode, Int32, Origin(),
+                root->appendNew<Value>(
+                    proc, Add, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                    root->appendNew<Value>(
+                        proc, Shl, Origin(),
+                        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                        root->appendNew<Const32Value>(proc, Origin(), logScale)))));
+
+        CHECK(compileAndRun<int32_t>(proc, &value - 2, (sizeof(int32_t) * 2) >> logScale) == modelLoad<T>(value));
+    }
+
+    // Load from a simple base-index with various scales, but commuted.
+    for (unsigned logScale = 0; logScale <= 3; ++logScale) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<MemoryValue>(
+                proc, opcode, Int32, Origin(),
+                root->appendNew<Value>(
+                    proc, Add, Origin(),
+                    root->appendNew<Value>(
+                        proc, Shl, Origin(),
+                        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                        root->appendNew<Const32Value>(proc, Origin(), logScale)),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+        CHECK(compileAndRun<int32_t>(proc, &value - 2, (sizeof(int32_t) * 2) >> logScale) == modelLoad<T>(value));
+    }
+}
+
 void testBranch()
 {
     Procedure proc;
@@ -2246,7 +2350,7 @@ void testComplex(unsigned numVars, unsigned numConstructs)
     compile(proc);
 
     double after = monotonicallyIncreasingTimeMS();
-    dataLog("    That took ", after - before, " ms.\n");
+    dataLog(toCString("    That took ", after - before, " ms.\n"));
 }
 
 void testSimplePatchpoint()
@@ -2299,13 +2403,263 @@ void testSimpleCheck()
     CHECK(invoke<int>(code, 1) == 42);
 }
 
+template<typename LeftFunctor, typename RightFunctor>
+void genericTestCompare(
+    B3::Opcode opcode, const LeftFunctor& leftFunctor, const RightFunctor& rightFunctor,
+    int left, int right, int result)
+{
+    // Using a compare.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, NotEqual, Origin(),
+                root->appendNew<Value>(
+                    proc, opcode, Origin(), leftFunctor(root, proc), rightFunctor(root, proc)),
+                root->appendNew<Const32Value>(proc, Origin(), 0)));
+
+        CHECK(compileAndRun<int>(proc, left, right) == result);
+    }
+    
+    // Using a branch.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        BasicBlock* thenCase = proc.addBlock();
+        BasicBlock* elseCase = proc.addBlock();
+
+        root->appendNew<ControlValue>(
+            proc, Branch, Origin(),
+            root->appendNew<Value>(
+                proc, opcode, Origin(), leftFunctor(root, proc), rightFunctor(root, proc)),
+            FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+        // We use a patchpoint on the then case to ensure that this doesn't get if-converted.
+        PatchpointValue* patchpoint = thenCase->appendNew<PatchpointValue>(proc, Int32, Origin());
+        patchpoint->setGenerator(
+            [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                CHECK(params.reps.size() == 1);
+                CHECK(params.reps[0].isGPR());
+                jit.move(CCallHelpers::TrustedImm32(1), params.reps[0].gpr());
+            });
+        thenCase->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+        elseCase->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+        CHECK(compileAndRun<int>(proc, left, right) == result);
+    }
+}
+
+int modelCompare(B3::Opcode opcode, int left, int right)
+{
+    switch (opcode) {
+    case Equal:
+        return left == right;
+    case NotEqual:
+        return left != right;
+    case LessThan:
+        return left < right;
+    case GreaterThan:
+        return left > right;
+    case LessEqual:
+        return left <= right;
+    case GreaterEqual:
+        return left >= right;
+    case Above:
+        return static_cast<unsigned>(left) > static_cast<unsigned>(right);
+    case Below:
+        return static_cast<unsigned>(left) < static_cast<unsigned>(right);
+    case AboveEqual:
+        return static_cast<unsigned>(left) >= static_cast<unsigned>(right);
+    case BelowEqual:
+        return static_cast<unsigned>(left) <= static_cast<unsigned>(right);
+    case BitAnd:
+        return !!(left & right);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+template<typename T>
+void testCompareLoad(B3::Opcode opcode, B3::Opcode loadOpcode, int left, int right)
+{
+    int result = modelCompare(opcode, modelLoad<T>(left), right);
+    
+    // Test addr-to-tmp
+    int slot = left;
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<MemoryValue>(
+                proc, loadOpcode, Int32, Origin(),
+                block->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Value>(
+                proc, Trunc, Origin(),
+                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        },
+        left, right, result);
+
+    // Test addr-to-imm
+    slot = left;
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<MemoryValue>(
+                proc, loadOpcode, Int32, Origin(),
+                block->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const32Value>(proc, Origin(), right);
+        },
+        left, right, result);
+
+    result = modelCompare(opcode, left, modelLoad<T>(right));
+    
+    // Test tmp-to-addr
+    slot = right;
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Value>(
+                proc, Trunc, Origin(),
+                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<MemoryValue>(
+                proc, loadOpcode, Int32, Origin(),
+                block->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+        },
+        left, right, result);
+
+    // Test imm-to-addr
+    slot = right;
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const32Value>(proc, Origin(), left);
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<MemoryValue>(
+                proc, loadOpcode, Int32, Origin(),
+                block->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+        },
+        left, right, result);
+}
+
+void testCompareImpl(B3::Opcode opcode, int left, int right)
+{
+    int result = modelCompare(opcode, left, right);
+    
+    // Test tmp-to-tmp.
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Value>(
+                proc, Trunc, Origin(),
+                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Value>(
+                proc, Trunc, Origin(),
+                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        },
+        left, right, result);
+
+    // Test imm-to-tmp.
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const32Value>(proc, Origin(), left);
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Value>(
+                proc, Trunc, Origin(),
+                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        },
+        left, right, result);
+
+    // Test tmp-to-imm.
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Value>(
+                proc, Trunc, Origin(),
+                block->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const32Value>(proc, Origin(), right);
+        },
+        left, right, result);
+
+    // Test imm-to-imm.
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const32Value>(proc, Origin(), left);
+        },
+        [&] (BasicBlock* block, Procedure& proc) {
+            return block->appendNew<Const32Value>(proc, Origin(), right);
+        },
+        left, right, result);
+
+    testCompareLoad<int32_t>(opcode, Load, left, right);
+    testCompareLoad<int8_t>(opcode, Load8S, left, right);
+    testCompareLoad<uint8_t>(opcode, Load8Z, left, right);
+    testCompareLoad<int16_t>(opcode, Load16S, left, right);
+    testCompareLoad<uint16_t>(opcode, Load16Z, left, right);
+}
+
+void testCompare(B3::Opcode opcode, int left, int right)
+{
+    auto variants = [&] (int left, int right) {
+        testCompareImpl(opcode, left, right);
+        testCompareImpl(opcode, left, right + 1);
+        testCompareImpl(opcode, left, right - 1);
+
+        auto multipliedTests = [&] (int factor) {
+            testCompareImpl(opcode, left * factor, right);
+            testCompareImpl(opcode, left * factor, right + 1);
+            testCompareImpl(opcode, left * factor, right - 1);
+        
+            testCompareImpl(opcode, left, right * factor);
+            testCompareImpl(opcode, left, (right + 1) * factor);
+            testCompareImpl(opcode, left, (right - 1) * factor);
+        
+            testCompareImpl(opcode, left * factor, right * factor);
+            testCompareImpl(opcode, left * factor, (right + 1) * factor);
+            testCompareImpl(opcode, left * factor, (right - 1) * factor);
+        };
+
+        multipliedTests(10);
+        multipliedTests(100);
+        multipliedTests(1000);
+        multipliedTests(100000);
+    };
+
+    variants(left, right);
+    variants(-left, right);
+    variants(left, -right);
+    variants(-left, -right);
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
-        dataLog(#test ":\n");                   \
-        test;                                   \
-        dataLog("    OK!\n");                   \
-        didRun++;                               \
+        tasks.append(                           \
+            createSharedTask<void()>(           \
+                [&] () {                        \
+                    dataLog(#test "...\n");     \
+                    test;                       \
+                    dataLog(#test ": OK!\n");   \
+                }));                            \
     } while (false);
 
 void run(const char* filter)
@@ -2313,10 +2667,11 @@ void run(const char* filter)
     JSC::initializeThreading();
     vm = &VM::create(LargeHeap).leakRef();
 
+    Deque<RefPtr<SharedTask<void()>>> tasks;
+
     auto shouldRun = [&] (const char* testName) -> bool {
-        return !!strcasestr(testName, filter);
+        return !filter || !!strcasestr(testName, filter);
     };
-    unsigned didRun = 0;
 
     RUN(test42());
     RUN(testLoad42());
@@ -2670,6 +3025,7 @@ void run(const char* filter)
     RUN(testStackSlot());
     RUN(testLoadFromFramePointer());
     RUN(testStoreLoadStackSlot(50));
+    
     RUN(testBranch());
     RUN(testBranchPtr());
     RUN(testDiamond());
@@ -2699,8 +3055,92 @@ void run(const char* filter)
     RUN(testSimplePatchpoint());
     RUN(testSimpleCheck());
 
-    if (!didRun)
+    RUN(testCompare(Equal, 42, 42));
+    RUN(testCompare(NotEqual, 42, 42));
+    RUN(testCompare(LessThan, 42, 42));
+    RUN(testCompare(GreaterThan, 42, 42));
+    RUN(testCompare(LessEqual, 42, 42));
+    RUN(testCompare(GreaterEqual, 42, 42));
+    RUN(testCompare(Below, 42, 42));
+    RUN(testCompare(Above, 42, 42));
+    RUN(testCompare(BelowEqual, 42, 42));
+    RUN(testCompare(AboveEqual, 42, 42));
+
+    RUN(testCompare(BitAnd, 42, 42));
+    RUN(testCompare(BitAnd, 42, 0));
+
+    RUN(testLoad<int32_t>(Load, 60));
+    RUN(testLoad<int32_t>(Load, -60));
+    RUN(testLoad<int32_t>(Load, 1000));
+    RUN(testLoad<int32_t>(Load, -1000));
+    RUN(testLoad<int32_t>(Load, 1000000));
+    RUN(testLoad<int32_t>(Load, -1000000));
+    RUN(testLoad<int32_t>(Load, 1000000000));
+    RUN(testLoad<int32_t>(Load, -1000000000));
+    
+    RUN(testLoad<int8_t>(Load8S, 60));
+    RUN(testLoad<int8_t>(Load8S, -60));
+    RUN(testLoad<int8_t>(Load8S, 1000));
+    RUN(testLoad<int8_t>(Load8S, -1000));
+    RUN(testLoad<int8_t>(Load8S, 1000000));
+    RUN(testLoad<int8_t>(Load8S, -1000000));
+    RUN(testLoad<int8_t>(Load8S, 1000000000));
+    RUN(testLoad<int8_t>(Load8S, -1000000000));
+    
+    RUN(testLoad<uint8_t>(Load8Z, 60));
+    RUN(testLoad<uint8_t>(Load8Z, -60));
+    RUN(testLoad<uint8_t>(Load8Z, 1000));
+    RUN(testLoad<uint8_t>(Load8Z, -1000));
+    RUN(testLoad<uint8_t>(Load8Z, 1000000));
+    RUN(testLoad<uint8_t>(Load8Z, -1000000));
+    RUN(testLoad<uint8_t>(Load8Z, 1000000000));
+    RUN(testLoad<uint8_t>(Load8Z, -1000000000));
+
+    RUN(testLoad<int16_t>(Load16S, 60));
+    RUN(testLoad<int16_t>(Load16S, -60));
+    RUN(testLoad<int16_t>(Load16S, 1000));
+    RUN(testLoad<int16_t>(Load16S, -1000));
+    RUN(testLoad<int16_t>(Load16S, 1000000));
+    RUN(testLoad<int16_t>(Load16S, -1000000));
+    RUN(testLoad<int16_t>(Load16S, 1000000000));
+    RUN(testLoad<int16_t>(Load16S, -1000000000));
+    
+    RUN(testLoad<uint16_t>(Load16Z, 60));
+    RUN(testLoad<uint16_t>(Load16Z, -60));
+    RUN(testLoad<uint16_t>(Load16Z, 1000));
+    RUN(testLoad<uint16_t>(Load16Z, -1000));
+    RUN(testLoad<uint16_t>(Load16Z, 1000000));
+    RUN(testLoad<uint16_t>(Load16Z, -1000000));
+    RUN(testLoad<uint16_t>(Load16Z, 1000000000));
+    RUN(testLoad<uint16_t>(Load16Z, -1000000000));
+
+    if (tasks.isEmpty())
         usage();
+
+    Lock lock;
+
+    Vector<ThreadIdentifier> threads;
+    for (unsigned i = filter ? 1 : WTF::numberOfProcessorCores(); i--;) {
+        threads.append(
+            createThread(
+                "testb3 thread",
+                [&] () {
+                    for (;;) {
+                        RefPtr<SharedTask<void()>> task;
+                        {
+                            LockHolder locker(lock);
+                            if (tasks.isEmpty())
+                                return;
+                            task = tasks.takeFirst();
+                        }
+
+                        task->run();
+                    }
+                }));
+    }
+
+    for (ThreadIdentifier thread : threads)
+        waitForThreadCompletion(thread);
 }
 
 } // anonymous namespace
@@ -2716,7 +3156,7 @@ static void run(const char*)
 
 int main(int argc, char** argv)
 {
-    const char* filter = "";
+    const char* filter = nullptr;
     switch (argc) {
     case 1:
         break;

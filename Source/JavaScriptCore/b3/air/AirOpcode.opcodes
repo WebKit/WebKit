@@ -197,12 +197,68 @@ Move64ToDouble U:G, D:F
 MoveDoubleTo64 U:F, D:G
     Tmp, Tmp
 
+Load8 U:G, D:G
+    Addr, Tmp
+    Index, Tmp
+
+Load8SignedExtendTo32 U:G, D:G
+    Addr, Tmp
+    Index, Tmp
+
+Load16 U:G, D:G
+    Addr, Tmp
+    Index, Tmp
+
+Load16SignedExtendTo32 U:G, D:G
+    Addr, Tmp
+    Index, Tmp
+
+Compare32 U:G, U:G, U:G, D:G
+    RelCond, Tmp, Tmp, Tmp
+    RelCond, Tmp, Imm, Tmp
+
+Compare64 U:G, U:G, U:G, D:G
+    RelCond, Tmp, Imm, Tmp
+    RelCond, Tmp, Tmp, Tmp
+
+Test32 U:G, U:G, U:G, D:G
+    ResCond, Addr, Imm, Tmp
+    ResCond, Tmp, Tmp, Tmp
+
+Test64 U:G, U:G, U:G, D:G
+    ResCond, Tmp, Imm, Tmp
+    ResCond, Tmp, Tmp, Tmp
+
+Branch8 U:G, U:G, U:G /branch
+    RelCond, Addr, Imm
+    RelCond, Index, Imm
+
+Branch32 U:G, U:G, U:G /branch
+    RelCond, Addr, Imm
+    RelCond, Tmp, Tmp
+    RelCond, Tmp, Imm
+    RelCond, Tmp, Addr
+    RelCond, Addr, Tmp
+    RelCond, Index, Imm
+
+Branch64 U:G, U:G, U:G /branch
+    RelCond, Tmp, Tmp
+    RelCond, Tmp, Addr
+    RelCond, Addr, Tmp
+    RelCond, Index, Tmp
+
+BranchTest8 U:G, U:G, U:G /branch
+    ResCond, Addr, Imm
+    ResCond, Index, Imm
+
 BranchTest32 U:G, U:G, U:G /branch
     ResCond, Tmp, Tmp
     ResCond, Tmp, Imm
     ResCond, Addr, Imm
     ResCond, Index, Imm
 
+# Warning: forms that take an immediate will sign-extend their immediate. You probably want
+# BranchTest32 in most cases where you use an immediate.
 BranchTest64 U:G, U:G, U:G /branch
     ResCond, Tmp, Tmp
     ResCond, Tmp, Imm
