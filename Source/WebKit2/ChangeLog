@@ -1,3 +1,21 @@
+2015-11-05  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Add try_close API to handle beforeunload event
+        https://bugs.webkit.org/show_bug.cgi?id=150705
+
+        Reviewed by Gyuyoung Kim.
+
+        This patch adds ewk_view_try_close to have a chance to call confirm callback
+        for beforeunload event while destryoing webview.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_try_close):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (EWK2ViewTest::beforeUnloadCallback):
+        (EWK2ViewTest::windowCloseCallback):
+        (TEST_F): Added test case for ewk_view_try_close.
+
 2015-11-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Epiphany with Debug mode compiled WebKitGtk+ 2.10.3 hits ASSERT_ARG on willEnterAcceleratedCompositingMode

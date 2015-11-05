@@ -32,6 +32,7 @@ extern EWK2UnitTestEnvironment* environment;
 static bool fullScreenCallbackCalled;
 static bool obtainedPageContents = false;
 static bool scriptExecuteCallbackCalled;
+static bool windowCloseCallbackCalled = false;
 
 static const int scrollBarWidth = 10;
 
@@ -248,6 +249,16 @@ public:
         Ewk_Focus_Direction* result = static_cast<Ewk_Focus_Direction*>(userData);
         *result = *direction;
     }
+
+    static Eina_Bool beforeUnloadCallback(Ewk_View_Smart_Data*, const char*)
+    {
+        return true;
+    }
+
+    static void windowCloseCallback(Ewk_View_Smart_Data *sd)
+    {
+        windowCloseCallbackCalled = true;
+    }
 };
 
 TEST_F(EWK2ViewTest, ewk_view_type_check)
@@ -265,6 +276,19 @@ TEST_F(EWK2ViewTest, ewk_view_add)
 
     EXPECT_TRUE(ewk_view_stop(view));
     evas_object_del(view);
+}
+
+TEST_F(EWK2ViewTest, ewk_view_try_close)
+{
+    ewkViewClass()->run_javascript_confirm = beforeUnloadCallback;
+    ewkViewClass()->window_close = windowCloseCallback;
+
+    const char content[] = "<!doctype html><html><body onbeforeunload='return func();'><script>function func() { return 'beforeunload message'; }</script></body></html>";
+    ewk_view_html_string_load(webView(), content, 0, 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    ewk_view_try_close(webView());
+    ASSERT_TRUE(waitUntilTrue(windowCloseCallbackCalled));
 }
 
 TEST_F(EWK2ViewTest, ewk_view_url_get)

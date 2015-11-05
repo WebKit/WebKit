@@ -2031,7 +2031,8 @@ on_home_button_clicked(void *user_data, Evas_Object *home_button, void *event_in
 static void
 on_window_deletion(void *user_data, Evas_Object *elm_window, void *event_info)
 {
-    window_close(window_find_with_elm_window(elm_window));
+    Browser_Window *window = (Browser_Window *)user_data;
+    ewk_view_try_close(window->ewk_view);
 }
 
 static Evas_Object *
@@ -2067,7 +2068,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Create window */
     window->elm_window = elm_win_add(NULL, "minibrowser-window", ELM_WIN_BASIC);
     elm_win_title_set(window->elm_window, APP_NAME);
-    evas_object_smart_callback_add(window->elm_window, "delete,request", on_window_deletion, &window);
+    evas_object_smart_callback_add(window->elm_window, "delete,request", on_window_deletion, window);
 
     /* Create window background */
     Evas_Object *bg = elm_bg_add(window->elm_window);

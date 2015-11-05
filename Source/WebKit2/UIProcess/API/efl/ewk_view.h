@@ -364,6 +364,17 @@ EAPI Evas_Object *ewk_view_add(Evas *e);
 EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
 
 /**
+ * Tries to close this view.
+ *
+ * If current web page in @a o contains onbeforeunload event, this will fire
+ * run_javascript_confirm callback in smart class.
+ * If not, this will fire window_close callback in smart class.
+ *
+ * @param o the view object to try to close.
+ */
+EAPI void ewk_view_try_close(Evas_Object *o);
+
+/**
  * Gets the Ewk_Context of this view.
  *
  * @param o the view object to get the Ewk_Context

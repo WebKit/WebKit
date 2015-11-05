@@ -126,6 +126,13 @@ Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
     return EWKViewCreate(ewkContext->wkContext(), 0, canvas, 0);
 }
 
+void ewk_view_try_close(Evas_Object* ewkView)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
+
+    WKPageTryClose(impl->wkPage());
+}
+
 Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, nullptr);
