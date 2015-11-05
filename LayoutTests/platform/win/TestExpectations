@@ -2139,6 +2139,8 @@ fast/forms/state-restore-to-non-autocomplete-form.html [ Skip ]
 fast/forms/state-restore-to-non-edited-controls.html [ Skip ]
 fast/forms/state-save-of-detached-control.html [ Skip ]
 fast/forms/textarea/textarea-state-restore.html [ Skip ]
+
+webkit.org/b/150909 fast/forms/HTMLOptionElement_label03.html [ ImageOnlyFailure ]
 ################################################################################
 #################          End Forms Issues              #######################
 ################################################################################
