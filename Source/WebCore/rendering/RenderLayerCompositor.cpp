@@ -685,7 +685,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (m_renderView.needsLayout())
         return false;
 
-    if ((m_forceCompositingMode || m_renderView.frame().mainFrame().pageOverlayController().overlayCount()) && !m_compositing)
+    if (!m_compositing && (m_forceCompositingMode || (isMainFrameCompositor() && m_renderView.frame().mainFrame().pageOverlayController().overlayCount())))
         enableCompositingMode(true);
 
     if (!m_reevaluateCompositingAfterLayout && !m_compositing)
