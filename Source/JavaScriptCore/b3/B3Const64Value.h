@@ -47,6 +47,9 @@ public:
     Value* bitAndConstant(Procedure&, Value* other) const override;
     Value* bitOrConstant(Procedure&, Value* other) const override;
     Value* bitXorConstant(Procedure&, Value* other) const override;
+    Value* shlConstant(Procedure&, Value* other) const override;
+    Value* sShrConstant(Procedure&, Value* other) const override;
+    Value* zShrConstant(Procedure&, Value* other) const override;
     Value* equalConstant(Procedure&, Value* other) const override;
     Value* notEqualConstant(Procedure&, Value* other) const override;
 

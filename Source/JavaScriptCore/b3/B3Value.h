@@ -115,6 +115,9 @@ public:
     virtual Value* bitAndConstant(Procedure&, Value* other) const;
     virtual Value* bitOrConstant(Procedure&, Value* other) const;
     virtual Value* bitXorConstant(Procedure&, Value* other) const;
+    virtual Value* shlConstant(Procedure&, Value* other) const;
+    virtual Value* sShrConstant(Procedure&, Value* other) const;
+    virtual Value* zShrConstant(Procedure&, Value* other) const;
     virtual Value* equalConstant(Procedure&, Value* other) const;
     virtual Value* notEqualConstant(Procedure&, Value* other) const;
 

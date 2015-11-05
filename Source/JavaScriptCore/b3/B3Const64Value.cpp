@@ -82,6 +82,27 @@ Value* Const64Value::bitXorConstant(Procedure& proc, Value* other) const
     return proc.add<Const64Value>(origin(), m_value ^ other->asInt64());
 }
 
+Value* Const64Value::shlConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), m_value << (other->asInt32() & 63));
+}
+
+Value* Const64Value::sShrConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), m_value >> (other->asInt32() & 63));
+}
+
+Value* Const64Value::zShrConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), static_cast<int64_t>(static_cast<uint64_t>(m_value) >> (other->asInt32() & 63)));
+}
+
 Value* Const64Value::equalConstant(Procedure& proc, Value* other) const
 {
     if (!other->hasInt64())

@@ -37,6 +37,8 @@ Or = BitOr(left, right)
 Xor = BitXor(left, right)
 
 Shl = Shl(value, amount)
+SShr = SShr(value, amount)
+ZShr = ZShr(value, amount)
 
 StoreAddLoad = Store(Add(left, right), address)
 StoreSubLoad = Store(Sub(left, right), address)

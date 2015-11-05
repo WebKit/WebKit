@@ -754,19 +754,37 @@ public:
         }
     }
 
-    bool tryShl(Value* value, Value* amount)
+    void appendShift(Air::Opcode opcode, Value* value, Value* amount)
     {
-        Air::Opcode opcode = value->type() == Int32 ? Lshift32 : Lshift64;
-
         if (imm(amount)) {
             append(Move, tmp(value), tmp(currentValue));
             append(opcode, imm(amount), tmp(currentValue));
-            return true;
+            return;
         }
 
         append(Move, tmp(value), tmp(currentValue));
         append(Move, tmp(amount), Tmp(X86Registers::ecx));
         append(opcode, Tmp(X86Registers::ecx), tmp(currentValue));
+    }
+
+    bool tryShl(Value* value, Value* amount)
+    {
+        Air::Opcode opcode = value->type() == Int32 ? Lshift32 : Lshift64;
+        appendShift(opcode, value, amount);
+        return true;
+    }
+
+    bool trySShr(Value* value, Value* amount)
+    {
+        Air::Opcode opcode = value->type() == Int32 ? Rshift32 : Rshift64;
+        appendShift(opcode, value, amount);
+        return true;
+    }
+
+    bool tryZShr(Value* value, Value* amount)
+    {
+        Air::Opcode opcode = value->type() == Int32 ? Urshift32 : Urshift64;
+        appendShift(opcode, value, amount);
         return true;
     }
     

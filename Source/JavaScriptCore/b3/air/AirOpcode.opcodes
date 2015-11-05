@@ -114,6 +114,26 @@ Lshift32 U:G, UD:G
     Tmp*, Tmp
     Imm, Tmp
 
+Lshift64 U:G, UD:G
+    Tmp*, Tmp
+    Imm, Tmp
+
+Rshift32 U:G, UD:G
+    Tmp*, Tmp
+    Imm, Tmp
+
+Rshift64 U:G, UD:G
+    Tmp*, Tmp
+    Imm, Tmp
+
+Urshift32 U:G, UD:G
+    Tmp*, Tmp
+    Imm, Tmp
+
+Urshift64 U:G, UD:G
+    Tmp*, Tmp
+    Imm, Tmp
+
 Or32 U:G, UD:G
     Tmp, Tmp
     Imm, Tmp
@@ -135,10 +155,6 @@ Xor32 U:G, UD:G
 Xor64 U:G, UD:G
     Tmp, Tmp
     Tmp, Addr
-    Imm, Tmp
-
-Lshift64 U:G, UD:G
-    Tmp*, Tmp
     Imm, Tmp
 
 Mul32 U:G, UD:G

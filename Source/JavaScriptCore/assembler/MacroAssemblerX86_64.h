@@ -347,12 +347,40 @@ public:
     {
         m_assembler.sarq_i8r(imm.m_value, dest);
     }
-    
+
+    void rshift64(RegisterID src, RegisterID dest)
+    {
+        ASSERT(src != dest);
+
+        if (src == X86Registers::ecx)
+            m_assembler.sarq_CLr(dest);
+        else {
+            // Can only shift by ecx, so we do some swapping if we see anything else.
+            swap(src, X86Registers::ecx);
+            m_assembler.sarq_CLr(dest);
+            swap(src, X86Registers::ecx);
+        }
+    }
+
     void urshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shrq_i8r(imm.m_value, dest);
     }
-    
+
+    void urshift64(RegisterID src, RegisterID dest)
+    {
+        ASSERT(src != dest);
+
+        if (src == X86Registers::ecx)
+            m_assembler.shrq_CLr(dest);
+        else {
+            // Can only shift by ecx, so we do some swapping if we see anything else.
+            swap(src, X86Registers::ecx);
+            m_assembler.shrq_CLr(dest);
+            swap(src, X86Registers::ecx);
+        }
+    }
+
     void mul64(RegisterID src, RegisterID dest)
     {
         m_assembler.imulq_rr(src, dest);

@@ -147,6 +147,21 @@ Value* Value::bitXorConstant(Procedure&, Value*) const
     return nullptr;
 }
 
+Value* Value::shlConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::sShrConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::zShrConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::equalConstant(Procedure&, Value*) const
 {
     return nullptr;

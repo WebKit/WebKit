@@ -901,6 +901,11 @@ public:
         }
     }
 
+    void shrq_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_SHR, dst);
+    }
+
     void shlq_i8r(int imm, RegisterID dst)
     {
         if (imm == 1)

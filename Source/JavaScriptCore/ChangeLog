@@ -1,3 +1,66 @@
+2015-11-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add B3-to-Air lowering for the shift opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=150919
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::rshift64):
+        (JSC::MacroAssemblerX86_64::urshift64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::shrq_CLr):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::shlConstant):
+        (JSC::B3::Const32Value::sShrConstant):
+        (JSC::B3::Const32Value::zShrConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::shlConstant):
+        (JSC::B3::Const64Value::sShrConstant):
+        (JSC::B3::Const64Value::zShrConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendShift):
+        (JSC::B3::Air::LowerToAir::tryShl):
+        (JSC::B3::Air::LowerToAir::trySShr):
+        (JSC::B3::Air::LowerToAir::tryZShr):
+        * b3/B3LoweringMatcher.patterns:
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::shlConstant):
+        (JSC::B3::Value::sShrConstant):
+        (JSC::B3::Value::zShrConstant):
+        * b3/B3Value.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::isShiftValid):
+        (JSC::B3::Air::isRshift32Valid):
+        (JSC::B3::Air::isRshift64Valid):
+        (JSC::B3::Air::isUrshift32Valid):
+        (JSC::B3::Air::isUrshift64Valid):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testShlArgs):
+        (JSC::B3::testShlImms):
+        (JSC::B3::testShlArgImm):
+        (JSC::B3::testShlArgs32):
+        (JSC::B3::testShlImms32):
+        (JSC::B3::testShlArgImm32):
+        (JSC::B3::testSShrArgs):
+        (JSC::B3::testSShrImms):
+        (JSC::B3::testSShrArgImm):
+        (JSC::B3::testSShrArgs32):
+        (JSC::B3::testSShrImms32):
+        (JSC::B3::testSShrArgImm32):
+        (JSC::B3::testZShrArgs):
+        (JSC::B3::testZShrImms):
+        (JSC::B3::testZShrArgImm):
+        (JSC::B3::testZShrArgs32):
+        (JSC::B3::testZShrImms32):
+        (JSC::B3::testZShrArgImm32):
+        (JSC::B3::run):
+
 2015-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile a Check

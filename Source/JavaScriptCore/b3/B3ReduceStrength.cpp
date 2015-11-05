@@ -283,6 +283,45 @@ private:
 
             break;
 
+        case Shl:
+            // Turn this: Shl(constant1, constant2)
+            // Into this: constant1 << constant2
+            if (Value* constant = m_value->child(0)->shlConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            if (handleShiftByZero())
+                break;
+
+            break;
+
+        case SShr:
+            // Turn this: SShr(constant1, constant2)
+            // Into this: constant1 >> constant2
+            if (Value* constant = m_value->child(0)->sShrConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            if (handleShiftByZero())
+                break;
+
+            break;
+
+        case ZShr:
+            // Turn this: ZShr(constant1, constant2)
+            // Into this: (unsigned)constant1 >> constant2
+            if (Value* constant = m_value->child(0)->zShrConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            if (handleShiftByZero())
+                break;
+
+            break;
+
         case Load8Z:
         case Load8S:
         case Load16Z:
@@ -476,6 +515,17 @@ private:
         m_insertionSet.insertValue(m_index, newValue);
         m_value->replaceWithIdentity(newValue);
         m_changed = true;
+    }
+
+    bool handleShiftByZero()
+    {
+        // Shift anything by zero is identity.
+        if (m_value->child(1)->isInt(0)) {
+            m_value->replaceWithIdentity(m_value->child(0));
+            m_changed = true;
+            return true;
+        }
+        return false;
     }
 
     void killDeadCode()

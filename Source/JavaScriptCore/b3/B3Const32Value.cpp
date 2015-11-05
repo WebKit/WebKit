@@ -82,6 +82,27 @@ Value* Const32Value::bitXorConstant(Procedure& proc, Value* other) const
     return proc.add<Const32Value>(origin(), m_value ^ other->asInt32());
 }
 
+Value* Const32Value::shlConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), m_value << (other->asInt32() & 31));
+}
+
+Value* Const32Value::sShrConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), m_value >> (other->asInt32() & 31));
+}
+
+Value* Const32Value::zShrConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), static_cast<int32_t>(static_cast<uint32_t>(m_value) >> (other->asInt32() & 31)));
+}
+
 Value* Const32Value::equalConstant(Procedure& proc, Value* other) const
 {
     if (!other->hasInt32())

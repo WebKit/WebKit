@@ -76,8 +76,8 @@ enum Opcode : int16_t {
     BitOr,
     BitXor,
     Shl,
-    SShr,
-    ZShr,
+    SShr, // Arithmetic Shift.
+    ZShr, // Logical Shift.
 
     // Casts and such.
     // Takes and returns Int32:
