@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,10 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "MessageSender.h"
-#include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoadClient.h"
 #include "NetworkResourceLoadParameters.h"
 #include "ShareableResource.h"
-#include <WebCore/CacheValidation.h>
-#include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Timer.h>
 #include <wtf/Optional.h>
 
@@ -48,25 +44,20 @@ class ResourceRequest;
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
-class NetworkResourceLoadParameters;
 class NetworkLoad;
 class SandboxExtension;
 
-class NetworkResourceLoader
-    : public RefCounted<NetworkResourceLoader>
-    , public NetworkLoadClient
-    , public IPC::MessageSender {
+namespace NetworkCache {
+class Entry;
+}
+
+class NetworkResourceLoader final : public RefCounted<NetworkResourceLoader>, public NetworkLoadClient, public IPC::MessageSender {
 public:
-    static Ref<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
+    static Ref<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply = nullptr)
     {
-        return adoptRef(*new NetworkResourceLoader(parameters, connection, nullptr));
+        return adoptRef(*new NetworkResourceLoader(parameters, connection, WTF::move(reply)));
     }
-    
-    static Ref<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
-    {
-        return adoptRef(*new NetworkResourceLoader(parameters, connection, reply));
-    }    
-    ~NetworkResourceLoader();
+    virtual ~NetworkResourceLoader();
 
     const WebCore::ResourceRequest& originalRequest() const { return m_parameters.request; }
 
@@ -100,7 +91,7 @@ public:
     WebCore::SharedBuffer* bufferedData() { return m_bufferedData.get(); }
     const WebCore::ResourceResponse& response() const { return m_response; }
 
-    NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
+    NetworkConnectionToWebProcess& connectionToWebProcess() { return m_connection; }
     WebCore::SessionID sessionID() const { return m_parameters.sessionID; }
     ResourceLoadIdentifier identifier() const { return m_parameters.identifier; }
 
@@ -117,7 +108,7 @@ public:
     virtual void didFailLoading(const WebCore::ResourceError&) override;
 
 private:
-    NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
+    NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess&, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
 
     // IPC::MessageSender
     virtual IPC::Connection* messageSenderConnection() override;
@@ -137,7 +128,7 @@ private:
 
     void startBufferingTimerIfNeeded();
     void bufferingTimerFired();
-    bool sendBufferMaybeAborting(const WebCore::SharedBuffer&, size_t encodedDataLength);
+    bool sendBufferMaybeAborting(WebCore::SharedBuffer&, size_t encodedDataLength);
 
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
@@ -146,22 +137,22 @@ private:
 
     const NetworkResourceLoadParameters m_parameters;
 
-    RefPtr<NetworkConnectionToWebProcess> m_connection;
+    Ref<NetworkConnectionToWebProcess> m_connection;
 
     std::unique_ptr<NetworkLoad> m_networkLoad;
 
     WebCore::ResourceResponse m_response;
 
-    size_t m_bytesReceived;
-    size_t m_bufferedDataEncodedDataLength;
+    size_t m_bytesReceived { 0 };
+    size_t m_bufferedDataEncodedDataLength { 0 };
     RefPtr<WebCore::SharedBuffer> m_bufferedData;
 
     std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
 
-    bool m_didConvertHandleToDownload;
-    bool m_didConsumeSandboxExtensions;
-    bool m_defersLoading;
+    bool m_didConvertHandleToDownload { false };
+    bool m_didConsumeSandboxExtensions { false };
+    bool m_defersLoading { false };
 
     WebCore::Timer m_bufferingTimer;
 #if ENABLE(NETWORK_CACHE)

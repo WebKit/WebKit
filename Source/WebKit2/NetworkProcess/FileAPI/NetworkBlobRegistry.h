@@ -57,7 +57,7 @@ public:
 
     void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
 
-    Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(NetworkConnectionToWebProcess*, const WebCore::URL&);
+    Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(NetworkConnectionToWebProcess&, const WebCore::URL&);
 
 private:
     ~NetworkBlobRegistry();

@@ -54,7 +54,7 @@ private:
     virtual IPC::Connection* messageSenderConnection() override;
     virtual uint64_t messageSenderDestinationID() override;
 
-    RefPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
+    Ref<NetworkConnectionToWebProcess> m_connectionToWebProcess;
 };
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,11 +34,7 @@
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoad.h"
-#include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
-#include "NetworkResourceLoadParameters.h"
-#include "ShareableResource.h"
-#include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebResourceLoaderMessages.h"
 #include <WebCore/BlobDataFileReference.h>
@@ -48,25 +44,25 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SynchronousLoaderClient.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
 struct NetworkResourceLoader::SynchronousLoadData {
-    SynchronousLoadData(PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
-        : delayedReply(reply)
+    SynchronousLoadData(RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply)
+        : delayedReply(WTF::move(reply))
     {
         ASSERT(delayedReply);
     }
-    WebCore::ResourceRequest currentRequest;
+    ResourceRequest currentRequest;
     RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> delayedReply;
-    WebCore::ResourceResponse response;
-    WebCore::ResourceError error;
+    ResourceResponse response;
+    ResourceError error;
 };
 
-static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoadData& data, const WebCore::SharedBuffer* buffer)
+static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoadData& data, const SharedBuffer* buffer)
 {
     ASSERT(data.delayedReply);
     ASSERT(!data.response.isNull() || !data.error.isNull());
@@ -79,13 +75,9 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
     data.delayedReply = nullptr;
 }
 
-NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> synchronousReply)
+NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& synchronousReply)
     : m_parameters(parameters)
     , m_connection(connection)
-    , m_bytesReceived(0)
-    , m_bufferedDataEncodedDataLength(0)
-    , m_didConvertHandleToDownload(false)
-    , m_didConsumeSandboxExtensions(false)
     , m_defersLoading(parameters.defersLoading)
     , m_bufferingTimer(*this, &NetworkResourceLoader::bufferingTimerFired)
 {
@@ -95,7 +87,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     ASSERT((m_parameters.webPageID && m_parameters.webFrameID) || m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials);
 
     if (originalRequest().httpBody()) {
-        for (const FormDataElement& element : originalRequest().httpBody()->elements()) {
+        for (const auto& element : originalRequest().httpBody()->elements()) {
             if (element.m_type == FormDataElement::Type::EncodedBlob)
                 m_fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(connection, element.m_url));
         }
@@ -107,7 +99,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     }
 
     if (synchronousReply)
-        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(synchronousReply);
+        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTF::move(synchronousReply));
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
@@ -165,11 +157,11 @@ void NetworkResourceLoader::startNetworkLoad(const Optional<ResourceRequest>& up
     consumeSandboxExtensions();
 
     if (isSynchronous() || m_parameters.maximumBufferingTime > 0_ms)
-        m_bufferedData = WebCore::SharedBuffer::create();
+        m_bufferedData = SharedBuffer::create();
 
 #if ENABLE(NETWORK_CACHE)
     if (NetworkCache::singleton().isEnabled())
-        m_bufferedDataForCache = WebCore::SharedBuffer::create();
+        m_bufferedDataForCache = SharedBuffer::create();
 #endif
 
     NetworkLoadParameters parameters = m_parameters;
@@ -275,9 +267,8 @@ auto NetworkResourceLoader::didReceiveResponse(const ResourceResponse& receivedR
 #if ENABLE(NETWORK_CACHE)
     shouldContinueDidReceiveResponse = shouldContinueDidReceiveResponse || m_cacheEntryForValidation;
 #endif
-    if (!shouldContinueDidReceiveResponse)
-        return ShouldContinueDidReceiveResponse::No;
-    return ShouldContinueDidReceiveResponse::Yes;
+
+    return shouldContinueDidReceiveResponse ? ShouldContinueDidReceiveResponse::Yes : ShouldContinueDidReceiveResponse::No;
 }
 
 void NetworkResourceLoader::didReceiveBuffer(RefPtr<SharedBuffer>&& buffer, int reportedEncodedDataLength)
@@ -319,18 +310,18 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
             return;
         }
         bool allowStale = originalRequest().cachePolicy() >= ReturnCacheDataElseLoad;
-        bool hasCacheableRedirect = m_response.isHTTP() && WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus, allowStale ? WebCore::ReuseExpiredRedirection : WebCore::DoNotReuseExpiredRedirection);
+        bool hasCacheableRedirect = m_response.isHTTP() && redirectChainAllowsReuse(m_redirectChainCacheStatus, allowStale ? ReuseExpiredRedirection : DoNotReuseExpiredRedirection);
         if (hasCacheableRedirect && m_redirectChainCacheStatus.status == RedirectChainCacheStatus::CachedRedirection) {
             // Maybe we should cache the actual redirects instead of the end result?
             auto now = std::chrono::system_clock::now();
-            auto responseEndOfValidity = now + WebCore::computeFreshnessLifetimeForHTTPFamily(m_response, now) - WebCore::computeCurrentAge(m_response, now);
+            auto responseEndOfValidity = now + computeFreshnessLifetimeForHTTPFamily(m_response, now) - computeCurrentAge(m_response, now);
             hasCacheableRedirect = responseEndOfValidity <= m_redirectChainCacheStatus.endOfValidity;
         }
 
-        bool isPrivate = sessionID().isEphemeral();
-        if (m_bufferedDataForCache && hasCacheableRedirect && !isPrivate) {
+        bool isPrivateSession = sessionID().isEphemeral();
+        if (m_bufferedDataForCache && hasCacheableRedirect && !isPrivateSession) {
             // Keep the connection alive.
-            RefPtr<NetworkConnectionToWebProcess> connection(connectionToWebProcess());
+            RefPtr<NetworkConnectionToWebProcess> connection(&connectionToWebProcess());
             RefPtr<NetworkResourceLoader> loader(this);
             NetworkCache::singleton().store(originalRequest(), m_response, WTF::move(m_bufferedDataForCache), [loader, connection](NetworkCache::MappedBody& mappedBody) {
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -350,7 +341,7 @@ void NetworkResourceLoader::didFinishLoading(double finishTime)
     if (isSynchronous())
         sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get());
     else {
-        if (m_bufferedData && m_bufferedData->size()) {
+        if (m_bufferedData && !m_bufferedData->isEmpty()) {
             // FIXME: Pass a real value or remove the encoded data size feature.
             bool shouldContinue = sendBufferMaybeAborting(*m_bufferedData, -1);
             if (!shouldContinue)
@@ -382,7 +373,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 void NetworkResourceLoader::willSendRedirectedRequest(const ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
 #if ENABLE(NETWORK_CACHE)
-    WebCore::updateRedirectChainStatus(m_redirectChainCacheStatus, redirectResponse);
+    updateRedirectChainStatus(m_redirectChainCacheStatus, redirectResponse);
 #endif
 
     if (isSynchronous()) {
@@ -434,25 +425,25 @@ void NetworkResourceLoader::bufferingTimerFired()
     ASSERT(m_bufferedData);
     ASSERT(m_networkLoad);
 
-    if (!m_bufferedData->size())
+    if (m_bufferedData->isEmpty())
         return;
 
     IPC::SharedBufferDataReference dataReference(m_bufferedData.get());
     size_t encodedLength = m_bufferedDataEncodedDataLength;
 
-    m_bufferedData = WebCore::SharedBuffer::create();
+    m_bufferedData = SharedBuffer::create();
     m_bufferedDataEncodedDataLength = 0;
 
     sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedLength));
 }
 
-bool NetworkResourceLoader::sendBufferMaybeAborting(const WebCore::SharedBuffer& buffer, size_t encodedDataLength)
+bool NetworkResourceLoader::sendBufferMaybeAborting(SharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(!isSynchronous());
 
 #if PLATFORM(COCOA)
     ShareableResource::Handle shareableResourceHandle;
-    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, const_cast<WebCore::SharedBuffer&>(buffer));
+    NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
     if (!shareableResourceHandle.isNull()) {
         send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
         abort();
@@ -460,7 +451,7 @@ bool NetworkResourceLoader::sendBufferMaybeAborting(const WebCore::SharedBuffer&
     }
 #endif
 
-    IPC::SharedBufferDataReference dataReference(&const_cast<WebCore::SharedBuffer&>(buffer));
+    IPC::SharedBufferDataReference dataReference(&buffer);
     return sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 
@@ -507,12 +498,12 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
     // and we should not overwrite the existing conditional headers.
     ResourceRequest revalidationRequest = originalRequest();
     if (!revalidationRequest.isConditional()) {
-        String eTag = entry->response().httpHeaderField(WebCore::HTTPHeaderName::ETag);
-        String lastModified = entry->response().httpHeaderField(WebCore::HTTPHeaderName::LastModified);
+        String eTag = entry->response().httpHeaderField(HTTPHeaderName::ETag);
+        String lastModified = entry->response().httpHeaderField(HTTPHeaderName::LastModified);
         if (!eTag.isEmpty())
-            revalidationRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfNoneMatch, eTag);
+            revalidationRequest.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
         if (!lastModified.isEmpty())
-            revalidationRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfModifiedSince, lastModified);
+            revalidationRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
     }
 
     m_cacheEntryForValidation = WTF::move(entry);
@@ -523,7 +514,7 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
 
 IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 {
-    return connectionToWebProcess()->connection();
+    return connectionToWebProcess().connection();
 }
 
 void NetworkResourceLoader::consumeSandboxExtensions()
@@ -551,11 +542,11 @@ void NetworkResourceLoader::invalidateSandboxExtensions()
             extension->revoke();
         for (auto& fileReference : m_fileReferences)
             fileReference->revokeFileAccess();
+
+        m_didConsumeSandboxExtensions = false;
     }
 
     m_fileReferences.clear();
-
-    m_didConsumeSandboxExtensions = false;
 }
 
 template<typename T>

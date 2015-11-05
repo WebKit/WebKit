@@ -1,5 +1,41 @@
 2015-11-05  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] Clean up / Modernize NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=150922
+
+        Reviewed by Andreas Kling.
+
+        Clean up / Modernize NetworkResourceLoader.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::filesInBlob):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::SynchronousLoadData::SynchronousLoadData):
+        (WebKit::sendReplyToSynchronousRequest):
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::sendBufferMaybeAborting):
+        (WebKit::NetworkResourceLoader::validateCacheEntry):
+        (WebKit::NetworkResourceLoader::messageSenderConnection):
+        (WebKit::NetworkResourceLoader::invalidateSandboxExtensions):
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader): Deleted.
+        (WebKit::NetworkResourceLoader::didReceiveBuffer): Deleted.
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry): Deleted.
+        (WebKit::NetworkResourceLoader::consumeSandboxExtensions): Deleted.
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.h:
+
+2015-11-05  Chris Dumez  <cdumez@apple.com>
+
         Regression(r192038): Safari cannot load any pages
         https://bugs.webkit.org/show_bug.cgi?id=150937
         <rdar://problem/23413859>

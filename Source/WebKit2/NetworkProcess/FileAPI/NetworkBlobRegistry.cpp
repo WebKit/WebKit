@@ -131,9 +131,9 @@ void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebP
     m_blobsForConnection.remove(connection);
 }
 
-Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(NetworkConnectionToWebProcess* connection, const WebCore::URL& url)
+Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(NetworkConnectionToWebProcess& connection, const WebCore::URL& url)
 {
-    if (!m_blobsForConnection.contains(connection) || !m_blobsForConnection.find(connection)->value.contains(url))
+    if (!m_blobsForConnection.contains(&connection) || !m_blobsForConnection.find(&connection)->value.contains(url))
         return Vector<RefPtr<BlobDataFileReference>>();
 
     ASSERT(blobRegistry().isBlobRegistryImpl());

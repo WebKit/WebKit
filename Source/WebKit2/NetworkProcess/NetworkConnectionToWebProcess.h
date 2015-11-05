@@ -71,7 +71,7 @@ private:
     void didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     
     void scheduleResourceLoad(const NetworkResourceLoadParameters&);
-    void performSynchronousLoad(const NetworkResourceLoadParameters&, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
+    void performSynchronousLoad(const NetworkResourceLoadParameters&, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
     void loadPing(const NetworkResourceLoadParameters&);
     void prefetchDNS(const String&);
 
