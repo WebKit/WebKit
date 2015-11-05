@@ -184,7 +184,10 @@ void NetworkResourceLoader::setDefersLoading(bool defers)
         return;
     m_defersLoading = defers;
 
-    m_networkLoad->setDefersLoading(defers);
+    if (m_networkLoad) {
+        m_networkLoad->setDefersLoading(defers);
+        return;
+    }
 
     if (!m_defersLoading)
         start();
@@ -524,6 +527,8 @@ IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 
 void NetworkResourceLoader::consumeSandboxExtensions()
 {
+    ASSERT(!m_didConsumeSandboxExtensions);
+
     for (auto& extension : m_parameters.requestBodySandboxExtensions)
         extension->consume();
 
