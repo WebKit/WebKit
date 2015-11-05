@@ -77,6 +77,11 @@ enum class ObjectStoreOverwriteMode {
     NoOverwrite,
 };
 
+enum class IndexRecordType {
+    Key,
+    Value,
+};
+
 // In order of the least to the highest precedent in terms of sort order.
 enum KeyType {
     Max = -1,

@@ -36,6 +36,11 @@
 namespace WebCore {
 namespace IDBClient {
 
+IDBAny::IDBAny(IDBAny::Type type)
+    : m_type(type)
+{
+}
+
 IDBAny::IDBAny(Ref<IDBDatabase>&& database)
     : m_type(IDBAny::Type::IDBDatabase)
     , m_database(adoptRef(&database.leakRef()))
@@ -44,7 +49,13 @@ IDBAny::IDBAny(Ref<IDBDatabase>&& database)
 
 IDBAny::IDBAny(Ref<IDBObjectStore>&& objectStore)
     : m_type(IDBAny::Type::IDBObjectStore)
-    , m_objectStore(adoptRef(&objectStore.leakRef()))
+    , m_objectStore(WTF::move(objectStore))
+{
+}
+
+IDBAny::IDBAny(Ref<IDBIndex>&& index)
+    : m_type(IDBAny::Type::IDBIndex)
+    , m_index(WTF::move(index))
 {
 }
 
@@ -104,6 +115,12 @@ IDBObjectStore* IDBAny::modernIDBObjectStore()
 {
     ASSERT(m_type == IDBAny::Type::IDBObjectStore);
     return m_objectStore.get();
+}
+
+IDBIndex* IDBAny::modernIDBIndex()
+{
+    ASSERT(m_type == IDBAny::Type::IDBIndex);
+    return m_index.get();
 }
 
 RefPtr<WebCore::IDBTransaction> IDBAny::idbTransaction()

@@ -33,6 +33,10 @@
 
 namespace WebCore {
 
+namespace IndexedDB {
+enum class IndexRecordType;
+}
+
 namespace IDBClient {
 class IDBConnectionToServer;
 class IDBOpenDBRequest;
@@ -50,6 +54,8 @@ public:
     IDBResourceIdentifier requestIdentifier() const;
     IDBResourceIdentifier transactionIdentifier() const;
     uint64_t objectStoreIdentifier() const;
+    uint64_t indexIdentifier() const;
+    IndexedDB::IndexRecordType indexRecordType() const;
 
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
     uint64_t requestedVersion() const;
@@ -61,6 +67,8 @@ private:
     std::unique_ptr<IDBResourceIdentifier> m_requestIdentifier;
     std::unique_ptr<IDBResourceIdentifier> m_transactionIdentifier;
     uint64_t m_objectStoreIdentifier { 0 };
+    uint64_t m_indexIdentifier { 0 };
+    IndexedDB::IndexRecordType m_indexRecordType;
 
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_requestedVersion { 0 };

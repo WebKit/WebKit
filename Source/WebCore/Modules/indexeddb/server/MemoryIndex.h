@@ -31,6 +31,15 @@
 #include "IDBIndexInfo.h"
 
 namespace WebCore {
+
+class ThreadSafeDataBuffer;
+
+struct IDBKeyRangeData;
+
+namespace IndexedDB {
+enum class IndexRecordType;
+}
+
 namespace IDBServer {
 
 class MemoryIndex {
@@ -42,6 +51,9 @@ public:
 
     const IDBIndexInfo& info() const { return m_info; }
 
+    ThreadSafeDataBuffer valueForKeyRange(IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
+    uint64_t countForKeyRange(const IDBKeyRangeData&);
+    
 private:
     MemoryIndex(const IDBIndexInfo&);
 

@@ -72,7 +72,7 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
 {
     LOG(IndexedDB, "MemoryObjectStore::createIndex");
 
-    if (!m_writeTransaction || m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
+    if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
         return IDBError(IDBExceptionCode::ConstraintError);
 
     ASSERT(!m_indexesByIdentifier.contains(info.identifier()));
@@ -175,9 +175,15 @@ void MemoryObjectStore::setKeyValue(const IDBKeyData& keyData, const ThreadSafeD
         m_orderedKeys->insert(keyData);
 }
 
-uint64_t MemoryObjectStore::countForKeyRange(const IDBKeyRangeData& inRange) const
+uint64_t MemoryObjectStore::countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData& inRange) const
 {
     LOG(IndexedDB, "MemoryObjectStore::countForKeyRange");
+
+    if (indexIdentifier) {
+        auto* index = m_indexesByIdentifier.get(indexIdentifier);
+        ASSERT(index);
+        return index->countForKeyRange(inRange);
+    }
 
     if (!m_keyValueStore)
         return 0;
@@ -207,6 +213,15 @@ ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& 
 
     ASSERT(m_keyValueStore);
     return m_keyValueStore->get(key);
+}
+
+ThreadSafeDataBuffer MemoryObjectStore::indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range) const
+{
+    LOG(IndexedDB, "MemoryObjectStore::indexValueForKeyRange");
+
+    auto* index = m_indexesByIdentifier.get(indexIdentifier);
+    ASSERT(index);
+    return index->valueForKeyRange(recordType, range);
 }
 
 IDBKeyData MemoryObjectStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& keyRangeData) const

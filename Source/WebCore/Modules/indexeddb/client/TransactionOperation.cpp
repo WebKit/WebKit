@@ -35,6 +35,9 @@ TransactionOperation::TransactionOperation(IDBTransaction& transaction, IDBReque
     : TransactionOperation(transaction)
 {
     m_objectStoreIdentifier = request.sourceObjectStoreIdentifier();
+    m_indexIdentifier = request.sourceIndexIdentifier();
+    if (m_indexIdentifier)
+        m_indexRecordType = request.requestedIndexRecordType();
 }
 
 } // namespace IDBClient

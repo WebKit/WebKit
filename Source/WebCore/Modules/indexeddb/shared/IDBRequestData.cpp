@@ -46,12 +46,17 @@ IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
     , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(operation.identifier()))
     , m_transactionIdentifier(std::make_unique<IDBResourceIdentifier>(operation.transactionIdentifier()))
     , m_objectStoreIdentifier(operation.objectStoreIdentifier())
+    , m_indexIdentifier(operation.indexIdentifier())
 {
+    if (m_indexIdentifier)
+        m_indexRecordType = operation.indexRecordType();
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& other)
     : m_serverConnectionIdentifier(other.m_serverConnectionIdentifier)
     , m_objectStoreIdentifier(other.m_objectStoreIdentifier)
+    , m_indexIdentifier(other.m_indexIdentifier)
+    , m_indexRecordType(other.m_indexRecordType)
     , m_databaseIdentifier(other.m_databaseIdentifier)
     , m_requestedVersion(other.m_requestedVersion)
 {
@@ -81,8 +86,20 @@ IDBResourceIdentifier IDBRequestData::transactionIdentifier() const
 
 uint64_t IDBRequestData::objectStoreIdentifier() const
 {
-    RELEASE_ASSERT(m_objectStoreIdentifier);
+    ASSERT(m_objectStoreIdentifier);
     return m_objectStoreIdentifier;
+}
+
+uint64_t IDBRequestData::indexIdentifier() const
+{
+    ASSERT(m_objectStoreIdentifier || m_indexIdentifier);
+    return m_indexIdentifier;
+}
+
+IndexedDB::IndexRecordType IDBRequestData::indexRecordType() const
+{
+    ASSERT(m_indexIdentifier);
+    return m_indexRecordType;
 }
 
 uint64_t IDBRequestData::requestedVersion() const

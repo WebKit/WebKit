@@ -33,6 +33,9 @@
 #include "IDBIndexInfo.h"
 
 namespace WebCore {
+
+struct IDBKeyRangeData;
+
 namespace IDBClient {
 
 class IDBObjectStore;
@@ -72,11 +75,19 @@ public:
     virtual RefPtr<WebCore::IDBRequest> getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
+    const IDBIndexInfo& info() const { return m_info; }
+
 private:
     IDBIndex(const IDBIndexInfo&, IDBObjectStore&);
 
+    RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCode&);
+    RefPtr<WebCore::IDBRequest> doGet(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCode&);
+    RefPtr<WebCore::IDBRequest> doGetKey(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCode&);
+
     IDBIndexInfo m_info;
     Ref<IDBObjectStore> m_objectStore;
+
+    bool m_deleted { false };
 };
 
 } // namespace IDBClient

@@ -50,6 +50,7 @@ struct IDBKeyRangeData;
 namespace IDBClient {
 
 class IDBDatabase;
+class IDBIndex;
 class TransactionOperation;
 
 class IDBTransaction : public WebCore::IDBTransaction {
@@ -97,6 +98,9 @@ public:
     Ref<IDBRequest> requestDeleteRecord(ScriptExecutionContext&, IDBObjectStore&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestClearObjectStore(ScriptExecutionContext&, IDBObjectStore&);
     Ref<IDBRequest> requestCount(ScriptExecutionContext&, IDBObjectStore&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestCount(ScriptExecutionContext&, IDBIndex&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestGetValue(ScriptExecutionContext&, IDBIndex&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestGetKey(ScriptExecutionContext&, IDBIndex&, const IDBKeyRangeData&);
 
     void deleteObjectStore(const String& objectStoreName);
 
@@ -125,6 +129,8 @@ private:
     void fireOnComplete();
     void fireOnAbort();
     void enqueueEvent(Ref<Event>);
+
+    Ref<IDBRequest> requestIndexRecord(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
 
     void commitOnServer(TransactionOperation&);
     void abortOnServer(TransactionOperation&);

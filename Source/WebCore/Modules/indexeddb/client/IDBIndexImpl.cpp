@@ -28,8 +28,13 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMRequestState.h"
 #include "IDBAnyImpl.h"
+#include "IDBBindingUtilities.h"
+#include "IDBKeyRangeData.h"
 #include "IDBObjectStoreImpl.h"
+#include "IDBTransactionImpl.h"
+#include "Logging.h"
 
 namespace WebCore {
 namespace IDBClient {
@@ -89,19 +94,69 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext*, const 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBIndex::count");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    IDBKeyRangeData range;
+    range.isNull = false;
+    return doCount(*context, range, ec);}
+
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCode& ec)
+{
+    LOG(IndexedDB, "IDBIndex::count");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    return doCount(*context, IDBKeyRangeData(range), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBIndex::count");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    return doCount(*context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    if (m_deleted || m_objectStore->isDeleted()) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (range.isNull) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    auto& transaction = m_objectStore->modernTransaction();
+    if (!transaction.isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    return transaction.requestCount(context, *this, range);
 }
 
 RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String&, ExceptionCode&)
@@ -114,24 +169,108 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext*, con
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBIndex::get");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    return doGet(*context, IDBKeyRangeData(range), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBIndex::get");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    return doGet(*context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    if (m_deleted || m_objectStore->isDeleted()) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (range.isNull) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    auto& transaction = m_objectStore->modernTransaction();
+    if (!transaction.isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    return transaction.requestGetValue(context, *this, range);
 }
 
-RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBIndex::getKey");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    return doGetKey(*context, IDBKeyRangeData(range), ec);
+}
+
+RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+{
+    LOG(IndexedDB, "IDBIndex::getKey");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    return doGetKey(*context, IDBKeyRangeData(idbKey.get()), ec);
+}
+
+RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCode& ec)
+{
+    if (m_deleted || m_objectStore->isDeleted()) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (range.isNull) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    auto& transaction = m_objectStore->modernTransaction();
+    if (!transaction.isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    return transaction.requestGetKey(context, *this, range);
 }
 
 } // namespace IDBClient

@@ -36,6 +36,10 @@ namespace WebCore {
 
 class IDBResultData;
 
+namespace IndexedDB {
+enum class IndexRecordType;
+}
+
 namespace IDBClient {
 
 class TransactionOperation : public RefCounted<TransactionOperation> {
@@ -54,7 +58,9 @@ public:
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
     IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }
     uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
+    uint64_t indexIdentifier() const { return m_indexIdentifier; }
     IDBTransaction& transaction() { return m_transaction.get(); }
+    IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }
 
 protected:
     TransactionOperation(IDBTransaction& transaction)
@@ -68,6 +74,8 @@ protected:
     Ref<IDBTransaction> m_transaction;
     IDBResourceIdentifier m_identifier;
     uint64_t m_objectStoreIdentifier { 0 };
+    uint64_t m_indexIdentifier { 0 };
+    IndexedDB::IndexRecordType m_indexRecordType;
     std::function<void ()> m_performFunction;
     std::function<void (const IDBResultData&)> m_completeFunction;
 };

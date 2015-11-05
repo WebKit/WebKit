@@ -30,6 +30,7 @@
 
 #include "IDBAny.h"
 #include "IDBDatabaseImpl.h"
+#include "IDBIndexImpl.h"
 #include "IDBObjectStoreImpl.h"
 
 namespace WebCore {
@@ -47,6 +48,11 @@ public:
         return adoptRef(new IDBAny(WTF::move(objectStore)));
     }
 
+    static RefPtr<IDBAny> create(Ref<IDBIndex>&& index)
+    {
+        return adoptRef(new IDBAny(WTF::move(index)));
+    }
+
     static RefPtr<IDBAny> create(const IDBKeyPath& keyPath)
     {
         return adoptRef(new IDBAny(keyPath));
@@ -55,6 +61,11 @@ public:
     static RefPtr<IDBAny> create(const Deprecated::ScriptValue& value)
     {
         return adoptRef(new IDBAny(value));
+    }
+
+    static RefPtr<IDBAny> createUndefined()
+    {
+        return adoptRef(new IDBAny(IDBAny::Type::Undefined));
     }
 
     virtual ~IDBAny();
@@ -74,16 +85,20 @@ public:
     virtual const IDBKeyPath& keyPath() override final;
 
     IDBObjectStore* modernIDBObjectStore();
+    IDBIndex* modernIDBIndex();
 
 private:
+    explicit IDBAny(IDBAny::Type);
     explicit IDBAny(Ref<IDBDatabase>&&);
     explicit IDBAny(Ref<IDBObjectStore>&&);
+    explicit IDBAny(Ref<IDBIndex>&&);
     explicit IDBAny(const IDBKeyPath&);
     explicit IDBAny(const Deprecated::ScriptValue&);
 
     IDBAny::Type m_type { IDBAny::Type::Undefined };
     RefPtr<IDBDatabase> m_database;
     RefPtr<IDBObjectStore> m_objectStore;
+    RefPtr<IDBIndex> m_index;
 
     const IDBKeyPath m_idbKeyPath;
     const Deprecated::ScriptValue m_scriptValue;

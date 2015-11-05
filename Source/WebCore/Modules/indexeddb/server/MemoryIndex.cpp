@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ThreadSafeDataBuffer.h"
+
 namespace WebCore {
 namespace IDBServer {
 
@@ -43,6 +45,20 @@ MemoryIndex::MemoryIndex(const IDBIndexInfo& info)
 
 MemoryIndex::~MemoryIndex()
 {
+}
+
+ThreadSafeDataBuffer MemoryIndex::valueForKeyRange(IndexedDB::IndexRecordType, const IDBKeyRangeData&) const
+{
+    // FIXME: Once indexes actually index, we'll return something real.
+    // https://bugs.webkit.org/show_bug.cgi?id=150939
+    return { };
+}
+
+uint64_t MemoryIndex::countForKeyRange(const IDBKeyRangeData&)
+{
+    // FIXME: Once indexes actually index, we'll return something real.
+    // https://bugs.webkit.org/show_bug.cgi?id=150939
+    return 0;
 }
 
 } // namespace IDBServer

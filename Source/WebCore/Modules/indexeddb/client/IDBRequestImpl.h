@@ -41,6 +41,9 @@ class IDBKeyData;
 class IDBResultData;
 class ThreadSafeDataBuffer;
 
+namespace IndexedDB {
+enum class IndexRecordType;
+}
 
 namespace IDBClient {
 
@@ -49,6 +52,8 @@ class IDBConnectionToServer;
 class IDBRequest : public WebCore::IDBOpenDBRequest, public RefCounted<IDBRequest> {
 public:
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
+    static Ref<IDBRequest> createCount(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
+    static Ref<IDBRequest> createGet(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
     const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
 
@@ -62,6 +67,8 @@ public:
     virtual const String& readyState() const override;
 
     uint64_t sourceObjectStoreIdentifier() const;
+    uint64_t sourceIndexIdentifier() const;
+    IndexedDB::IndexRecordType requestedIndexRecordType() const;
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const override;
@@ -85,6 +92,8 @@ public:
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
+    IDBRequest(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
+    IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
     // ActiveDOMObject.
     virtual const char* activeDOMObjectName() const override final;
@@ -109,6 +118,7 @@ private:
     IDBResourceIdentifier m_resourceIdentifier;
     RefPtr<IDBAny> m_source;
     bool m_hasPendingActivity { true };
+    IndexedDB::IndexRecordType m_requestedIndexRecordType;
 };
 
 } // namespace IDBClient

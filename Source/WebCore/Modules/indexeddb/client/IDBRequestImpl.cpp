@@ -47,6 +47,16 @@ Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBObjectSto
     return adoptRef(*new IDBRequest(context, objectStore, transaction));
 }
 
+Ref<IDBRequest> IDBRequest::createCount(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
+{
+    return adoptRef(*new IDBRequest(context, index, transaction));
+}
+
+Ref<IDBRequest> IDBRequest::createGet(ScriptExecutionContext& context, IDBIndex& index, IndexedDB::IndexRecordType requestedRecordType, IDBTransaction& transaction)
+{
+    return adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
+}
+
 IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context)
     : IDBOpenDBRequest(context)
     , m_connection(connection)
@@ -60,9 +70,25 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_transaction(&transaction)
     , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
-    , m_source(adoptRef(*IDBAny::create(objectStore).leakRef()))
+    , m_source(IDBAny::create(objectStore))
 {
     suspendIfNeeded();
+}
+
+IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
+    : IDBOpenDBRequest(&context)
+    , m_transaction(&transaction)
+    , m_connection(transaction.serverConnection())
+    , m_resourceIdentifier(transaction.serverConnection())
+    , m_source(IDBAny::create(index))
+{
+    suspendIfNeeded();
+}
+
+IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IndexedDB::IndexRecordType requestedRecordType, IDBTransaction& transaction)
+    : IDBRequest(context, index, transaction)
+{
+    m_requestedIndexRecordType = requestedRecordType;
 }
 
 IDBRequest::~IDBRequest()
@@ -104,12 +130,42 @@ uint64_t IDBRequest::sourceObjectStoreIdentifier() const
 {
     if (!m_source)
         return 0;
-    if (m_source->type() != IDBAny::Type::IDBObjectStore)
+
+    if (m_source->type() == IDBAny::Type::IDBObjectStore) {
+        auto* objectStore = m_source->modernIDBObjectStore();
+        if (!objectStore)
+            return 0;
+        return objectStore->info().identifier();
+    }
+
+    if (m_source->type() == IDBAny::Type::IDBIndex) {
+        auto* index = m_source->modernIDBIndex();
+        if (!index)
+            return 0;
+        return index->info().objectStoreIdentifier();
+    }
+
+    return 0;
+}
+
+uint64_t IDBRequest::sourceIndexIdentifier() const
+{
+    if (!m_source)
         return 0;
-    if (!m_source->modernIDBObjectStore())
+    if (m_source->type() != IDBAny::Type::IDBIndex)
+        return 0;
+    if (!m_source->modernIDBIndex())
         return 0;
 
-    return m_source->modernIDBObjectStore()->info().identifier();
+    return m_source->modernIDBIndex()->info().identifier();
+}
+
+IndexedDB::IndexRecordType IDBRequest::requestedIndexRecordType() const
+{
+    ASSERT(m_source);
+    ASSERT(m_source->type() == IDBAny::Type::IDBIndex);
+
+    return m_requestedIndexRecordType;
 }
 
 EventTargetInterface IDBRequest::eventTargetInterface() const
@@ -204,13 +260,7 @@ void IDBRequest::setResultToStructuredClone(const ThreadSafeDataBuffer& valueDat
 
 void IDBRequest::setResultToUndefined()
 {
-    auto context = scriptExecutionContext();
-    if (!context)
-        return;
-
-    DOMRequestState state(context);
-    if (auto* execState = state.exec())
-        m_result = IDBAny::create(Deprecated::ScriptValue(execState->vm(), JSC::jsUndefined()));
+    m_result = IDBAny::createUndefined();
 }
 
 void IDBRequest::requestCompleted(const IDBResultData& resultData)
