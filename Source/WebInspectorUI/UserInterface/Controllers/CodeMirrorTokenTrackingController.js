@@ -559,9 +559,9 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
         };
     }
 
-    _processMarkedToken()
+    _processMarkedToken(tokenInfo)
     {
-        return this._processNonSymbolToken();
+        return this._processNonSymbolToken(tokenInfo);
     }
 
     _resetTrackingStates()
