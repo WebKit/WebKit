@@ -173,6 +173,7 @@ void NetworkResourceLoader::startNetworkLoad(const Optional<ResourceRequest>& up
 #endif
 
     NetworkLoadParameters parameters = m_parameters;
+    parameters.defersLoading = m_defersLoading;
     if (updatedRequest)
         parameters.request = updatedRequest.value();
     m_networkLoad = std::make_unique<NetworkLoad>(*this, parameters);
