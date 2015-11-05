@@ -1139,7 +1139,11 @@ Some other editing-related methods still unimplemented:
 
 - (void)_prepareForMoveToWindow:(NSWindow *)targetWindow withCompletionHandler:(void(^)(void))completionHandler
 {
-    _data->_impl->prepareForMoveToWindow(targetWindow, completionHandler);
+    auto copiedCompletionHandler = Block_copy(completionHandler);
+    _data->_impl->prepareForMoveToWindow(targetWindow, [copiedCompletionHandler] {
+        copiedCompletionHandler();
+        Block_release(copiedCompletionHandler);
+    });
 }
 
 - (BOOL)isDeferringViewInWindowChanges
