@@ -148,12 +148,25 @@ void RunLoop::TimerBase::setPriority(int priority)
 
 void RunLoop::TimerBase::updateReadyTime()
 {
-    g_source_set_ready_time(m_source.get(), m_fireInterval.count() ? g_get_monotonic_time() + m_fireInterval.count() : 0);
+    if (!m_fireInterval.count()) {
+        g_source_set_ready_time(m_source.get(), 0);
+        return;
+    }
+
+    gint64 currentTime = g_get_monotonic_time();
+    gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, m_fireInterval.count());
+    ASSERT(targetTime >= currentTime);
+    g_source_set_ready_time(m_source.get(), targetTime);
 }
 
 void RunLoop::TimerBase::start(double fireInterval, bool repeat)
 {
-    m_fireInterval = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(fireInterval));
+    auto intervalDuration = std::chrono::duration<double>(fireInterval);
+    auto safeDuration = std::chrono::microseconds::max();
+    if (intervalDuration < safeDuration)
+        safeDuration = std::chrono::duration_cast<std::chrono::microseconds>(intervalDuration);
+
+    m_fireInterval = safeDuration;
     m_isRepeating = repeat;
     updateReadyTime();
 }

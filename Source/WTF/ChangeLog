@@ -1,3 +1,24 @@
+2015-11-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Avoid gint64, std::chrono::microseconds overflows in RunLoop::TimerBase
+        https://bugs.webkit.org/show_bug.cgi?id=150930
+
+        Reviewed by Carlos Garcia Campos.
+
+        In RunLoop::TimerBase::start(), avoid overflowing the std::chrono::microseconds
+        value in case the passed-in fire interval (in seconds) is too large (e.g. when
+        std::chrono::microseconds::max() is used as the desired interval). This is
+        achieved by using the passed-in fire interval, converted in microseconds, only
+        if the value of this interval is smaller than std::chrono::microseconds::max().
+
+        In RunLoop::TimerBase::updateReadyTime(), the zero-delay is still considered a
+        short cut, but we use G_MAXINT64 in case the sum of the current time and the
+        desired fire interval (now in microseconds) would overflow.
+
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::TimerBase::updateReadyTime):
+        (WTF::RunLoop::TimerBase::start):
+
 2015-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         B3/Air should use bubble sort for their insertion sets, because it's faster than std::stable_sort
