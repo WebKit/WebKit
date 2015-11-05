@@ -1,5 +1,26 @@
 2015-11-04  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Load markers persist in timeline ruler after resetting recording
+        https://bugs.webkit.org/show_bug.cgi?id=150918
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype._recordingReset):
+        Clears ruler markers on recording reset. Adds current time marker back.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype._recordingReset):
+        Clears ruler markers on recording reset. Adds current time marker back.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.clearMarkers):
+        Added method to clear markers and marker elements.
+
+2015-11-04  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Uncaught Exception opening inspector - TypeError: Attempted to assign to readonly property.
         https://bugs.webkit.org/show_bug.cgi?id=150913
 

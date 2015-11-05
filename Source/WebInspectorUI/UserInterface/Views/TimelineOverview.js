@@ -33,6 +33,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineAdded, this._timelineAdded, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
+        this._recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
 
         this._element = document.createElement("div");
         this._element.classList.add("timeline-overview", identifier);
@@ -542,6 +543,12 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this.secondsPerPixel = this._defaultSettingsValues.durationPerPixel;
         this.selectionStartTime = this._defaultSettingsValues.selectionStartValue;
         this.selectionDuration = this._defaultSettingsValues.selectionDuration;
+    }
+
+    _recordingReset(event)
+    {
+        this._timelineRuler.clearMarkers();
+        this._timelineRuler.addMarker(this._currentTimeMarker);
     }
 };
 

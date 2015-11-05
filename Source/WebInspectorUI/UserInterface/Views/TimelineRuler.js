@@ -329,6 +329,14 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         this._needsMarkerLayout();
     }
 
+    clearMarkers()
+    {
+        for (let markerElement of this._markerElementMap.values())
+            markerElement.remove();
+
+        this._markerElementMap.clear();
+    }
+
     elementForMarker(marker)
     {
         return this._markerElementMap.get(marker) || null;
