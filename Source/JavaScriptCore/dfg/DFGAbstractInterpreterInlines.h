@@ -1825,7 +1825,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, *m_graph.freeze(value));
             break;
         }
-        forNode(node).makeHeapTop();
+        forNode(node).makeBytecodeTop();
         break;
             
     case PutClosureVar:
