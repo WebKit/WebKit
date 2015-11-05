@@ -1,3 +1,21 @@
+2015-11-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Pretty print falsely triggers on some JS that wasn't minified
+        https://bugs.webkit.org/show_bug.cgi?id=150876
+
+        Change the minification detection heuristic. Look for the ratio of whitespace to
+        non-whitespace characters in the first 5000 characters.
+
+        The previous heuristic looked for lines longer than 500 characters. Not only it was
+        slower on large unminified files, it also had a false positive on unminified codemirror.js.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._contentWillPopulate):
+        (WebInspector.SourceCodeTextEditor.prototype._isLikelyMinified):
+        Exit early if whitespace to non-whitespace ratio drops below 5%.
+
 2015-11-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Convert TimelineRuler to View base class

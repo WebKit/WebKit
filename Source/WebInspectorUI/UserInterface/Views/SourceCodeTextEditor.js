@@ -388,27 +388,30 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
         // Automatically format the content if it looks minified and it can be formatted.
         console.assert(!this.formatted);
-        if (this.canBeFormatted()) {
-            var lastNewlineIndex = 0;
-            while (true) {
-                var nextNewlineIndex = content.indexOf("\n", lastNewlineIndex);
-                if (nextNewlineIndex === -1) {
-                    if (content.length - lastNewlineIndex > WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength) {
-                        this.autoFormat = true;
-                        this._isProbablyMinified = true;
-                    }
-                    break;
-                }
+        if (this.canBeFormatted() && this._isLikelyMinified(content)) {
+            this.autoFormat = true;
+            this._isProbablyMinified = true;
+        }
+    }
 
-                if (nextNewlineIndex - lastNewlineIndex > WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength) {
-                    this.autoFormat = true;
-                    this._isProbablyMinified = true;
-                    break;
-                }
+    _isLikelyMinified(content)
+    {
+        let whiteSpaceCount = 0;
+        let ratio = 0;
 
-                lastNewlineIndex = nextNewlineIndex + 1;
+        for (let i = 0, size = Math.min(5000, content.length); i < size; i++) {
+            let char = content[i];
+            if (char === " " || char === "\n" || char === "\t")
+                whiteSpaceCount++;
+
+            if (i >= 500) {
+                ratio = whiteSpaceCount / i;
+                if (ratio < 0.05)
+                    return true;
             }
         }
+
+        return ratio < 0.1;
     }
 
     _contentDidPopulate()
@@ -1795,7 +1798,6 @@ WebInspector.SourceCodeTextEditor.HoveredExpressionHighlightStyleClassName = "ho
 WebInspector.SourceCodeTextEditor.DurationToMouseOverTokenToMakeHoveredToken = 500;
 WebInspector.SourceCodeTextEditor.DurationToMouseOutOfHoveredTokenToRelease = 1000;
 WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling = 100;
-WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength = 500;
 WebInspector.SourceCodeTextEditor.WidgetContainsMultipleIssuesSymbol = Symbol("source-code-widget-contains-multiple-issues");
 
 WebInspector.SourceCodeTextEditor.Event = {
