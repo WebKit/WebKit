@@ -49,11 +49,15 @@ public:
     Key& operator=(const Key&);
     Key& operator=(Key&&) = default;
 
+    Key(WTF::HashTableDeletedValueType);
+    bool isHashTableDeletedValue() const { return m_identifier.isHashTableDeletedValue(); }
+
     bool isNull() const { return m_identifier.isNull(); }
 
     const String& partition() const { return m_partition; }
     const String& identifier() const { return m_identifier; }
     const String& type() const { return m_type; }
+    const String& range() const { return m_range; }
 
     HashType hash() const { return m_hash; }
 
@@ -80,6 +84,37 @@ private:
 
 }
 }
+
+namespace WTF {
+
+struct NetworkCacheKeyHash {
+    static unsigned hash(const WebKit::NetworkCache::Key& key)
+    {
+        static_assert(SHA1::hashSize >= sizeof(unsigned), "Hash size must be greater than sizeof(unsigned)");
+        return *reinterpret_cast<const unsigned*>(key.hash().data());
+    }
+
+    static bool equal(const WebKit::NetworkCache::Key& a, const WebKit::NetworkCache::Key& b)
+    {
+        return a == b;
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<WebKit::NetworkCache::Key> {
+    typedef NetworkCacheKeyHash Hash;
+};
+
+template<> struct HashTraits<WebKit::NetworkCache::Key> : SimpleClassHashTraits<WebKit::NetworkCache::Key> {
+    static const bool emptyValueIsZero = false;
+
+    static const bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const WebKit::NetworkCache::Key& key) { return key.isNull(); }
+};
+
+} // namespace WTF
 
 #endif
 #endif

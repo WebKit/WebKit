@@ -54,6 +54,11 @@ Key::Key(const String& partition, const String& type, const String& range, const
 {
 }
 
+Key::Key(WTF::HashTableDeletedValueType)
+    : m_identifier(WTF::HashTableDeletedValue)
+{
+}
+
 Key& Key::operator=(const Key& other)
 {
     m_partition = other.m_partition.isolatedCopy();

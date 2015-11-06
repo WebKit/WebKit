@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#ifndef NetworkCacheSpeculativeLoader_h
+#define NetworkCacheSpeculativeLoader_h
 
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX WebKit2Log
-#endif
+#include "NetworkCacheStorage.h"
+#include <WebCore/ResourceRequest.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
-#define WEBKIT2_LOG_CHANNELS(M) \
-    M(ContextMenu) \
-    M(IDB) \
-    M(IconDatabase) \
-    M(InspectorServer) \
-    M(KeyHandling) \
-    M(Network) \
-    M(NetworkCache) \
-    M(NetworkCacheStorage) \
-    M(NetworkCacheSpeculativePreloading) \
-    M(NetworkScheduling) \
-    M(Plugins) \
-    M(Printing) \
-    M(RemoteLayerTree) \
-    M(Resize) \
-    M(SessionState) \
-    M(StorageAPI) \
-    M(TextInput) \
-    M(ViewGestures) \
+namespace NetworkCache {
 
-#define DECLARE_LOG_CHANNEL(name) \
-    extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+class SpeculativeLoader {
+public:
+    explicit SpeculativeLoader(Storage&);
+    ~SpeculativeLoader();
 
-WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+    void registerLoad(uint64_t webPageID, uint64_t webFrameID, const WebCore::ResourceRequest&, const Key& resourceKey);
 
-#undef DECLARE_LOG_CHANNEL
+private:
+    Storage& m_storage;
 
-void initializeLogChannelsIfNecessary(void);
-String logLevelString();
+    class PendingFrameLoad;
+    using GlobalFrameID = std::pair<uint64_t /*webPageID*/, uint64_t /*webFrameID*/>;
+    HashMap<GlobalFrameID, std::unique_ptr<PendingFrameLoad>> m_pendingFrameLoads;
+};
+
+} // namespace NetworkCache
 
 } // namespace WebKit
 
-#endif // !LOG_DISABLED
+#endif // ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
-#endif // Logging_h
+#endif // NetworkCacheSpeculativeLoader_h

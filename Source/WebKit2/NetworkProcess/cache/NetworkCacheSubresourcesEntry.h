@@ -23,72 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheEntry_h
-#define NetworkCacheEntry_h
+#ifndef NetworkCacheSubresourcesEntry_h
+#define NetworkCacheSubresourcesEntry_h
 
-#if ENABLE(NETWORK_CACHE)
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
 #include "NetworkCacheStorage.h"
-#include "ShareableResource.h"
-#include <WebCore/ResourceResponse.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class ResourceRequest;
-class SharedBuffer;
-}
 
 namespace WebKit {
 namespace NetworkCache {
 
-class Entry {
-    WTF_MAKE_NONCOPYABLE(Entry); WTF_MAKE_FAST_ALLOCATED;
+class SubresourcesEntry {
+    WTF_MAKE_NONCOPYABLE(SubresourcesEntry); WTF_MAKE_FAST_ALLOCATED;
 public:
-    Entry(const Key&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, const Vector<std::pair<String, String>>& varyingRequestHeaders);
-    explicit Entry(const Storage::Record&);
+    SubresourcesEntry(const Key&, Vector<Key>&& subresourceKeys);
+    explicit SubresourcesEntry(const Storage::Record&);
 
     Storage::Record encodeAsStorageRecord() const;
-    static std::unique_ptr<Entry> decodeStorageRecord(const Storage::Record&);
+    static std::unique_ptr<SubresourcesEntry> decodeStorageRecord(const Storage::Record&);
 
     const Key& key() const { return m_key; }
     std::chrono::system_clock::time_point timeStamp() const { return m_timeStamp; }
-    const WebCore::ResourceResponse& response() const { return m_response; }
-    const Vector<std::pair<String, String>>& varyingRequestHeaders() const { return m_varyingRequestHeaders; }
-
-    WebCore::SharedBuffer* buffer() const;
-#if ENABLE(SHAREABLE_RESOURCE)
-    ShareableResource::Handle& shareableResourceHandle() const;
-#endif
-
-    bool needsValidation() const;
-    void setNeedsValidation();
-
-    const Storage::Record& sourceStorageRecord() const { return m_sourceStorageRecord; }
-
-    void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
+    const Vector<Key>& subresourceKeys() const { return m_subresourceKeys; }
 
 private:
-    void initializeBufferFromStorageRecord() const;
-#if ENABLE(SHAREABLE_RESOURCE)
-    void initializeShareableResourceHandleFromStorageRecord() const;
-#endif
-
     Key m_key;
     std::chrono::system_clock::time_point m_timeStamp;
-    WebCore::ResourceResponse m_response;
-    Vector<std::pair<String, String>> m_varyingRequestHeaders;
-
-    mutable RefPtr<WebCore::SharedBuffer> m_buffer;
-#if ENABLE(SHAREABLE_RESOURCE)
-    mutable ShareableResource::Handle m_shareableResourceHandle;
-#endif
-
-    Storage::Record m_sourceStorageRecord { };
+    Storage::Record m_sourceStorageRecord;
+    Vector<Key> m_subresourceKeys;
 };
 
-}
-}
+} // namespace WebKit
+} // namespace NetworkCache
 
-#endif
-#endif
+#endif // ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+#endif // NetworkCacheSubresourcesEntry_h

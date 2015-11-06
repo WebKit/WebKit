@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "Logging.h"
+#include "NetworkCacheSpeculativeLoader.h"
 #include "NetworkCacheStatistics.h"
 #include "NetworkCacheStorage.h"
 #include <WebCore/CacheValidation.h>
@@ -71,11 +72,16 @@ static void dumpFileChanged(Cache* cache)
 }
 #endif
 
-bool Cache::initialize(const String& cachePath, bool enableEfficacyLogging)
+bool Cache::initialize(const String& cachePath, const Parameters& parameters)
 {
     m_storage = Storage::open(cachePath);
 
-    if (enableEfficacyLogging)
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    if (parameters.enableNetworkCacheSpeculativeRevalidation)
+        m_speculativeLoader = std::make_unique<SpeculativeLoader>(*m_storage);
+#endif
+
+    if (parameters.enableEfficacyLogging)
         m_statistics = Statistics::open(cachePath);
 
 #if PLATFORM(COCOA)
@@ -337,7 +343,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     return StoreDecision::Yes;
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t webPageID, uint64_t webFrameID, std::function<void (std::unique_ptr<Entry>)> completionHandler)
 {
     ASSERT(isEnabled());
     ASSERT(originalRequest.url().protocolIsInHTTPFamily());
@@ -348,6 +354,14 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
         m_statistics->recordRetrievalRequest(webPageID);
 
     Key storageKey = makeCacheKey(originalRequest);
+
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    if (m_speculativeLoader)
+        m_speculativeLoader->registerLoad(webPageID, webFrameID, originalRequest, storageKey);
+#else
+    UNUSED_PARAM(webFrameID);
+#endif
+
     auto retrieveDecision = makeRetrieveDecision(originalRequest);
     if (retrieveDecision != RetrieveDecision::Yes) {
         if (m_statistics)

@@ -44,6 +44,7 @@ namespace WebKit {
 namespace NetworkCache {
 
 class Cache;
+class SpeculativeLoader;
 class Statistics;
 
 Cache& singleton();
@@ -87,13 +88,19 @@ class Cache {
     WTF_MAKE_NONCOPYABLE(Cache);
     friend class WTF::NeverDestroyed<Cache>;
 public:
-    bool initialize(const String& cachePath, bool enableEfficacyLogging);
+    struct Parameters {
+        bool enableEfficacyLogging;
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+        bool enableNetworkCacheSpeculativeRevalidation;
+#endif
+    };
+    bool initialize(const String& cachePath, const Parameters&);
     void setCapacity(size_t);
 
     bool isEnabled() const { return !!m_storage; }
 
     // Completion handler may get called back synchronously on failure.
-    void retrieve(const WebCore::ResourceRequest&, uint64_t webPageID, std::function<void (std::unique_ptr<Entry>)>);
+    void retrieve(const WebCore::ResourceRequest&, uint64_t webPageID, uint64_t webFrameID, std::function<void (std::unique_ptr<Entry>)>);
     void store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
     void update(const WebCore::ResourceRequest&, uint64_t webPageID, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
@@ -116,6 +123,9 @@ private:
     void deleteDumpFile();
 
     std::unique_ptr<Storage> m_storage;
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    std::unique_ptr<SpeculativeLoader> m_speculativeLoader;
+#endif
     std::unique_ptr<Statistics> m_statistics;
 };
 

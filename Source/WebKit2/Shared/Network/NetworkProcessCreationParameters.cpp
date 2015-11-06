@@ -51,6 +51,9 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
 #if ENABLE(NETWORK_CACHE)
     encoder << shouldEnableNetworkCache;
     encoder << shouldEnableNetworkCacheEfficacyLogging;
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
+#endif
 #endif
 #if ENABLE(SECCOMP_FILTERS)
     encoder << cookieStorageDirectory;
@@ -104,6 +107,10 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
         return false;
     if (!decoder.decode(result.shouldEnableNetworkCacheEfficacyLogging))
         return false;
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    if (!decoder.decode(result.shouldEnableNetworkCacheSpeculativeRevalidation))
+        return false;
+#endif
 #endif
 #if ENABLE(SECCOMP_FILTERS)
     if (!decoder.decode(result.cookieStorageDirectory))

@@ -79,7 +79,7 @@ Storage::Record Entry::encodeAsStorageRecord() const
 
 std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storageEntry)
 {
-    std::unique_ptr<Entry> entry(new Entry(storageEntry));
+    auto entry = std::make_unique<Entry>(storageEntry);
 
     Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
     if (!decoder.decode(entry->m_response))

@@ -60,6 +60,9 @@ struct NetworkProcessCreationParameters {
 #if ENABLE(NETWORK_CACHE)
     bool shouldEnableNetworkCache;
     bool shouldEnableNetworkCacheEfficacyLogging;
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+    bool shouldEnableNetworkCacheSpeculativeRevalidation;
+#endif
 #endif
 #if ENABLE(SECCOMP_FILTERS)
     String cookieStorageDirectory;

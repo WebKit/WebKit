@@ -1,5 +1,85 @@
 2015-11-06  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][SpeculativeRevalidation] Save to disk cache relationship between resources
+        https://bugs.webkit.org/show_bug.cgi?id=150951
+        <rdar://problem/23092196>
+
+        Reviewed by Darin Adler.
+
+        This patch is a first step towards speculative revalidation support in
+        the WebKit network cache. It maps sub-resources to the main resource
+        that caused them to be requested. We then write this information to the
+        network cache, as a list of subresource keys for each main resource,
+        even if the main resource is not cacheable.
+
+        To map sub-resources to main resources, we track the loads happening
+        in each frame and store the key of the main resource for the frame,
+        as well as the key of each sub-resource later loaded in the frame. We
+        use a HysteresisActivity to detect when loads settle down in each frame
+        (no loads happen for a while) and we then write the information to the
+        disk. If a new main resource is loaded in a frame where we were already
+        tracking a load, we save the data to disk before tracking the new load,
+        instead of waiting for the HysteresisActivity to detect the end of the
+        load.
+
+        The feature is currently behind a compile-time flag that is enabled on
+        Mac and iOS only. It is also behind a runtime flag (NSUserDefaults)
+        that is disabled by default.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        Pass frameID in addition to the pageID. We need to globally identify
+        frames (using <pageID, frameID> pair) to be able to track loads in
+        each frame.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::initialize):
+        Only initialize the SpeculativeLoader if the
+        enableNetworkCacheSpeculativeRevalidation run-time flag is set.
+
+        (WebKit::NetworkCache::Cache::retrieve):
+        Register the load with the SpeculativeLoader.
+
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCache::Key::Key):
+        (WebKit::NetworkCache::Key::isHashTableDeletedValue):
+        (WebKit::NetworkCache::Key::range):
+        (WTF::NetworkCacheKeyHash::hash):
+        (WTF::NetworkCacheKeyHash::equal):
+        (WTF::HashTraits<WebKit::NetworkCache::Key>::isEmptyValue):
+        Add needed HashTraits for NetworkCache::Key so it can be used as key in
+        HashMap / HashSet.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoader.cpp: Added.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoader.h: Added.
+        Add new NetworkCacheSpeculativeLoader class that takes care of tracking
+        loads in each frame to map subresources to main resources and then write
+        this information to the network disk cache. In the future, this class we
+        also take care of triggering speculative revalidations, thus the naming.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        Add new NetworkProcess parameter to control at runtime if speculative loading
+        should be enabled or not. It is disabled by default.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files to XCode project.
+
+        * config.h:
+        Add ENABLE_NETWORK_CACHE_SPECULATIVE_REVALIDATION build flag for the new
+        feature that is enable by default on COCOA.
+
+2015-11-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, remove empty #if block landed by mistake in r192038.
 
         * NetworkProcess/NetworkLoad.cpp:
