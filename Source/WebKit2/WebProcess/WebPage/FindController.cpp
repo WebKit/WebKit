@@ -180,7 +180,14 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
                 m_foundStringMatchIndex -= matchCount;
         }
 
-        m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchCount, m_foundStringMatchIndex));
+        m_findMatches.clear();
+        Vector<IntRect> matchRects;
+        if (auto range = m_webPage->corePage()->selection().firstRange()) {
+            range->absoluteTextRects(matchRects);
+            m_findMatches.append(range);
+        }
+
+        m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchRects, matchCount, m_foundStringMatchIndex));
 
         if (!(options & FindOptionsShowFindIndicator) || !selectedFrame || !updateFindIndicator(*selectedFrame, shouldShowOverlay))
             hideFindIndicator();
@@ -221,12 +228,14 @@ void FindController::findString(const String& string, FindOptions options, unsig
             if (fs.selectionBounds().isEmpty()) {
                 m_findMatches.clear();
                 int indexForSelection;
-                m_webPage->corePage()->findStringMatchingRanges(string, core(options), maxMatchCount, m_findMatches, indexForSelection);
+                m_webPage->corePage()->findStringMatchingRanges(string, coreOptions, maxMatchCount, m_findMatches, indexForSelection);
                 m_foundStringMatchIndex = indexForSelection;
                 foundStringStartsAfterSelection = true;
             }
         }
     }
+
+    m_findMatches.clear();
 
     bool found;
     if (pluginView)

@@ -232,6 +232,10 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 @end
 
+#if !TARGET_OS_IPHONE
+@interface WKWebView (WKNSTextFinderClient) <NSTextFinderClient>
+@end
+#endif
 
 @interface WKWebView (WKTesting)
 

@@ -31,6 +31,7 @@
 #import "APIFormClient.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
+#import "AppKitSPI.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
@@ -144,6 +145,7 @@ enum class DynamicViewportUpdateMode {
 #endif
 
 #if PLATFORM(MAC)
+#import "WKTextFinderClient.h"
 #import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
 
@@ -235,6 +237,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 #endif
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
+    RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
 }
 
@@ -419,6 +422,10 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 - (void)dealloc
 {
+#if PLATFORM(MAC)
+    [_textFinderClient willDestroyView:self];
+#endif
+
 #if PLATFORM(IOS)
     if (_remoteObjectRegistry)
         _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
@@ -2643,6 +2650,33 @@ WEBCORE_COMMAND(yankAndSelect)
     _impl->rotateWithEvent(event);
 }
 #endif
+
+- (WKTextFinderClient *)_ensureTextFinderClient
+{
+    if (!_textFinderClient)
+        _textFinderClient = adoptNS([[WKTextFinderClient alloc] initWithPage:*_page view:self]);
+    return _textFinderClient.get();
+}
+
+- (void)findMatchesForString:(NSString *)targetString relativeToMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector
+{
+    [[self _ensureTextFinderClient] findMatchesForString:targetString relativeToMatch:relativeMatch findOptions:findOptions maxResults:maxResults resultCollector:resultCollector];
+}
+
+- (NSView *)documentContainerView
+{
+    return self;
+}
+
+- (void)getSelectedText:(void (^)(NSString *selectedTextString))completionHandler
+{
+    [[self _ensureTextFinderClient] getSelectedText:completionHandler];
+}
+
+- (void)selectFindMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)findMatch completionHandler:(void (^)(void))completionHandler
+{
+    [[self _ensureTextFinderClient] selectFindMatch:findMatch completionHandler:completionHandler];
+}
 
 - (NSTextInputContext *)_web_superInputContext
 {

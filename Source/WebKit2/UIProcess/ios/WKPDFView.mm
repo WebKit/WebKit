@@ -607,7 +607,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
                 _currentFindMatchIndex = 0;
                 for (const auto& knownMatch : _cachedFindMatches) {
                     if (match.stringRange.location == [knownMatch stringRange].location && match.stringRange.length == [knownMatch stringRange].length) {
-                        page->findClient().didFindString(page.get(), string, _cachedFindMatches.size(), _currentFindMatchIndex);
+                        page->findClient().didFindString(page.get(), string, { }, _cachedFindMatches.size(), _currentFindMatchIndex);
                         break;
                     }
                     _currentFindMatchIndex++;

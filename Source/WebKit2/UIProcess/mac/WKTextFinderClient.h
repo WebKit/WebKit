@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIFindClient_h
-#define APIFindClient_h
+#ifndef WKTextFinderClient_h
+#define WKTextFinderClient_h
 
-#include <wtf/text/WTFString.h>
+#import <WebKit/WKFoundation.h>
 
-namespace WebCore {
-class IntRect;
-}
+#if PLATFORM(MAC) && WK_API_ENABLED
+
+OBJC_CLASS NSView;
 
 namespace WebKit {
 class WebPageProxy;
 }
 
-namespace API {
+@interface WKTextFinderClient : NSObject
 
-class FindClient {
-public:
-    virtual ~FindClient() { }
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view;
+- (void)willDestroyView:(NSView *)view;
 
-    virtual void didCountStringMatches(WebKit::WebPageProxy*, const WTF::String&, uint32_t) { }
-    virtual void didFindString(WebKit::WebPageProxy*, const WTF::String&, const Vector<WebCore::IntRect>& matchRects, uint32_t, int32_t) { }
-    virtual void didFailToFindString(WebKit::WebPageProxy*, const WTF::String&) { }
-};
+@end
 
-} // namespace API
+#endif // PLATFORM(MAC)
 
-#endif // APIFindClient_h
+#endif // WKTextFinderClient_h

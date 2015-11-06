@@ -73,7 +73,9 @@ static WKWebViewConfiguration *defaultConfiguration()
     self.window.title = @"WebEditor [WK2]";
 
     _textFinder = [[NSTextFinder alloc] init];
-    _textFinder.client = (id<NSTextFinderClient>)_webView;
+    _textFinder.incrementalSearchingEnabled = YES;
+    _textFinder.incrementalSearchingShouldDimContentView = YES;
+    _textFinder.client = _webView;
     _textFinder.findBarContainer = self;
 }
 
@@ -100,6 +102,11 @@ static WKWebViewConfiguration *defaultConfiguration()
     _findBarVisible = YES;
     [containerView addSubview:_textFindBarView];
     [self layout];
+}
+
+- (NSView *)contentView
+{
+    return _webView;
 }
 
 - (BOOL)isFindBarVisible

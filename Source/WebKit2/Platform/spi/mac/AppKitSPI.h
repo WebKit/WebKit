@@ -23,15 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if USE(APPKIT)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSAccessibilityRemoteUIElement.h>
+#import <AppKit/NSTextFinder_Private.h>
 
 #else
 
 @interface NSAccessibilityRemoteUIElement : NSObject
 
 + (void)setRemoteUIApp:(BOOL)flag;
+
+@end
+
+typedef enum : NSUInteger {
+    NSTextFinderAsynchronousDocumentFindOptionsBackwards = 1 << 0,
+    NSTextFinderAsynchronousDocumentFindOptionsWrap = 1 << 1,
+    NSTextFinderAsynchronousDocumentFindOptionsCaseInsensitive = 1 << 2,
+    NSTextFinderAsynchronousDocumentFindOptionsStartsWith = 1 << 3,
+} NSTextFinderAsynchronousDocumentFindOptions;
+
+@protocol NSTextFinderAsynchronousDocumentFindMatch <NSObject>
+@required
+@property (retain, nonatomic, readonly) NSView *containingView;
+@property (retain, nonatomic, readonly) NSArray *textRects;
+- (void)generateTextImage:(void (^)(NSImage *))completionHandler;
+@end
+
+@interface NSObject ()
+
+- (void)findMatchesForString:(NSString *)targetString relativeToMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector;
+- (NSView *)documentContainerView;
+- (void)getSelectedText:(void (^)(NSString *selectedTextString))completionHandler;
+- (void)selectFindMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)findMatch completionHandler:(void (^)(void))completionHandler;
 
 @end
 
@@ -43,3 +69,5 @@
 - (void)_setCurrentEvent:(NSEvent *)event;
 
 @end
+
+#endif // PLATFORM(MAC)

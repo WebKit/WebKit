@@ -31,7 +31,7 @@
 #import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-@interface WK1WebDocumentController()
+@interface WK1WebDocumentController () <WebUIDelegate>
 @property (nonatomic, strong) WebView *webView;
 @end
 

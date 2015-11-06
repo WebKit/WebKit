@@ -1,3 +1,69 @@
+2015-11-06  Tim Horton  <timothy_horton@apple.com>
+
+        Add preliminary (SPI) support for NSTextFinder on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=150907
+        <rdar://problem/19171624>
+
+        Reviewed by Darin Adler.
+
+        New API test: WebKit2.FindInPage
+
+        * Platform/spi/mac/AppKitSPI.h:
+        Add some SPI.
+
+        * UIProcess/API/APIFindClient.h:
+        (API::FindClient::didFindString):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFindClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindString):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/Cocoa/FindClient.h:
+        * UIProcess/Cocoa/FindClient.mm:
+        (WebKit::FindClient::didFindString):
+        Make didFindString return the match rects like didFindStringMatches does.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::findString):
+        Keep the most recent find match around for incremental find just like we do
+        for the non-incremental version. This way, getImageForFindMatch and selectFindMatch
+        will work for incremental find too!
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _ensureTextFinderClient]):
+        (-[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]):
+        (-[WKWebView documentContainerView]):
+        (-[WKWebView getSelectedText:]):
+        (-[WKWebView selectFindMatch:completionHandler:]):
+        Implement NSTextFinder's async client protocol and forward to the new WKTextFinderClient.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Privately note our conformance to the aformentioned protocol.
+
+        * UIProcess/mac/WKTextFinderClient.h: Added.
+        * UIProcess/mac/WKTextFinderClient.mm: Added.
+        (WebKit::TextFinderFindClient::TextFinderFindClient):
+        (-[WKTextFinderMatch initWithClient:view:index:rects:]):
+        (-[WKTextFinderMatch containingView]):
+        (-[WKTextFinderMatch textRects]):
+        (-[WKTextFinderMatch generateTextImage:]):
+        (-[WKTextFinderMatch index]):
+        (-[WKTextFinderClient initWithPage:view:]):
+        (-[WKTextFinderClient willDestroyView:]):
+        (-[WKTextFinderClient findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]):
+        (-[WKTextFinderClient getSelectedText:]):
+        (-[WKTextFinderClient selectFindMatch:completionHandler:]):
+        (-[WKTextFinderClient didFindStringMatches:rects:index:]):
+        (-[WKTextFinderClient didGetImageForMatchResult:index:]):
+        (-[WKTextFinderClient didFindString:rects:index:]):
+        (-[WKTextFinderClient didFailToFindString:]):
+        (-[WKTextFinderClient getImageForMatchResult:completionHandler:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add WKTextFinderClient. It installs itself as the FindClient and FindMatchesClient,
+        so you can only use one mechanism or the other.
+
 2015-11-06  Chris Dumez  <cdumez@apple.com>
 
         [WK2][SpeculativeRevalidation] Save to disk cache relationship between resources

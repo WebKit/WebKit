@@ -1,3 +1,23 @@
+2015-11-06  Tim Horton  <timothy_horton@apple.com>
+
+        Add preliminary (SPI) support for NSTextFinder on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=150907
+        <rdar://problem/19171624>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FindInPage.mm: Added.
+        (-[FindInPageNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+        Add an API test.
+
+        * WebEditingTester/WK1WebDocumentController.m:
+        * WebEditingTester/WK2WebDocumentController.m:
+        (-[WK2WebDocumentController awakeFromNib]):
+        (-[WK2WebDocumentController contentView]):
+        Use incremental find, and show the overlay/indicator.
+
 2015-11-06  Alexey Proskuryakov  <ap@apple.com>
 
         iOS test results are not visible on the flakiness dashboard
