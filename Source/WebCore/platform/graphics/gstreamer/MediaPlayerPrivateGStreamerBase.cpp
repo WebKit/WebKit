@@ -102,40 +102,11 @@ static int greatestCommonDivisor(int a, int b)
     return ABS(a);
 }
 
-static void mediaPlayerPrivateVolumeChangedCallback(GObject*, GParamSpec*, MediaPlayerPrivateGStreamerBase* player)
-{
-    // This is called when m_volumeElement receives the notify::volume signal.
-    LOG_MEDIA_MESSAGE("Volume changed to: %f", player->volume());
-    player->volumeChanged();
-}
-
-static void mediaPlayerPrivateMuteChangedCallback(GObject*, GParamSpec*, MediaPlayerPrivateGStreamerBase* player)
-{
-    // This is called when m_volumeElement receives the notify::mute signal.
-    player->muteChanged();
-}
-
-static void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstSample* sample, MediaPlayerPrivateGStreamerBase* playerPrivate)
-{
-    playerPrivate->triggerRepaint(sample);
-}
-
-#if USE(GSTREAMER_GL)
-static gboolean mediaPlayerPrivateDrawCallback(GstElement*, GstContext*, GstSample* sample, MediaPlayerPrivateGStreamerBase* playerPrivate)
-{
-    playerPrivate->triggerRepaint(sample);
-    return TRUE;
-}
-#endif
-
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
     : m_player(player)
     , m_fpsSink(0)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
-    , m_repaintHandler(0)
-    , m_volumeSignalHandler(0)
-    , m_muteSignalHandler(0)
     , m_usingFallbackVideoSink(false)
 {
     g_mutex_init(&m_sampleMutex);
@@ -147,24 +118,15 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
-    if (m_repaintHandler) {
-        g_signal_handler_disconnect(m_videoSink.get(), m_repaintHandler);
-        m_repaintHandler = 0;
-    }
+    m_notifier.cancelPendingNotifications();
+
+    g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
     g_mutex_clear(&m_sampleMutex);
 
     m_player = 0;
 
-    if (m_volumeSignalHandler) {
-        g_signal_handler_disconnect(m_volumeElement.get(), m_volumeSignalHandler);
-        m_volumeSignalHandler = 0;
-    }
-
-    if (m_muteSignalHandler) {
-        g_signal_handler_disconnect(m_volumeElement.get(), m_muteSignalHandler);
-        m_muteSignalHandler = 0;
-    }
+    g_signal_handlers_disconnect_matched(m_volumeElement.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
 #if USE(GSTREAMER_GL)
     g_cond_clear(&m_drawCondition);
@@ -353,10 +315,12 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange()
     m_player->volumeChanged(static_cast<float>(volume));
 }
 
-void MediaPlayerPrivateGStreamerBase::volumeChanged()
+void MediaPlayerPrivateGStreamerBase::volumeChangedCallback(MediaPlayerPrivateGStreamerBase* player)
 {
-    m_volumeTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::volumeChanged",
-        std::function<void()>([this] { notifyPlayerOfVolumeChange(); }));
+    // This is called when m_volumeElement receives the notify::volume signal.
+    LOG_MEDIA_MESSAGE("Volume changed to: %f", player->volume());
+
+    player->m_notifier.notify(MainThreadNotification::VolumeChanged, [player] { player->notifyPlayerOfVolumeChange(); });
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateGStreamerBase::networkState() const
@@ -402,10 +366,10 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute()
     m_player->muteChanged(static_cast<bool>(muted));
 }
 
-void MediaPlayerPrivateGStreamerBase::muteChanged()
+void MediaPlayerPrivateGStreamerBase::muteChangedCallback(MediaPlayerPrivateGStreamerBase* player)
 {
-    m_muteTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamerBase::muteChanged",
-        std::function<void()>([this] { notifyPlayerOfMute(); }));
+    // This is called when m_volumeElement receives the notify::mute signal.
+    player->m_notifier.notify(MainThreadNotification::MuteChanged, [player] { player->notifyPlayerOfMute(); });
 }
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
@@ -492,6 +456,19 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 
     m_player->repaint();
 }
+
+void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreamerBase* player, GstSample* sample)
+{
+    player->triggerRepaint(sample);
+}
+
+#if USE(GSTREAMER_GL)
+gboolean MediaPlayerPrivateGStreamerBase::drawCallback(MediaPlayerPrivateGStreamerBase* player, GstContext*, GstSample* sample)
+{
+    player->triggerRepaint(sample);
+    return TRUE;
+}
+#endif
 
 void MediaPlayerPrivateGStreamerBase::setSize(const IntSize& size)
 {
@@ -592,7 +569,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
     if (webkitGstCheckVersion(1, 5, 0)) {
         m_videoSink = gst_element_factory_make("glimagesink", nullptr);
         if (m_videoSink) {
-            m_repaintHandler = g_signal_connect(m_videoSink.get(), "client-draw", G_CALLBACK(mediaPlayerPrivateDrawCallback), this);
+            g_signal_connect_swapped(m_videoSink.get(), "client-draw", G_CALLBACK(drawCallback), this);
             videoSink = m_videoSink.get();
         }
     }
@@ -601,7 +578,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
     if (!m_videoSink) {
         m_usingFallbackVideoSink = true;
         m_videoSink = webkitVideoSinkNew();
-        m_repaintHandler = g_signal_connect(m_videoSink.get(), "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
+        g_signal_connect_swapped(m_videoSink.get(), "repaint-requested", G_CALLBACK(repaintCallback), this);
     }
 
     m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
@@ -647,8 +624,8 @@ void MediaPlayerPrivateGStreamerBase::setStreamVolumeElement(GstStreamVolume* vo
     LOG_MEDIA_MESSAGE("Setting stream muted %d",  m_player->muted());
     g_object_set(m_volumeElement.get(), "mute", m_player->muted(), NULL);
 
-    m_volumeSignalHandler = g_signal_connect(m_volumeElement.get(), "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
-    m_muteSignalHandler = g_signal_connect(m_volumeElement.get(), "notify::mute", G_CALLBACK(mediaPlayerPrivateMuteChangedCallback), this);
+    g_signal_connect_swapped(m_volumeElement.get(), "notify::volume", G_CALLBACK(volumeChangedCallback), this);
+    g_signal_connect_swapped(m_volumeElement.get(), "notify::mute", G_CALLBACK(muteChangedCallback), this);
 }
 
 unsigned MediaPlayerPrivateGStreamerBase::decodedFrameCount() const

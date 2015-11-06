@@ -25,10 +25,9 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
+#include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"
-
 #include <glib.h>
-
 #include <wtf/Forward.h>
 #include <wtf/glib/GThreadSafeMainLoopSource.h>
 
@@ -60,8 +59,6 @@ public:
 
     void setVolume(float);
     float volume() const;
-    void volumeChanged();
-    void notifyPlayerOfVolumeChange();
 
 #if USE(GSTREAMER_GL)
     bool ensureGstGLContext();
@@ -70,8 +67,6 @@ public:
     bool supportsMuting() const { return true; }
     void setMuted(bool);
     bool muted() const;
-    void muteChanged();
-    void notifyPlayerOfMute();
 
     MediaPlayer::NetworkState networkState() const;
     MediaPlayer::ReadyState readyState() const;
@@ -80,7 +75,6 @@ public:
     void setSize(const IntSize&);
     void sizeChanged();
 
-    void triggerRepaint(GstSample*);
     void paint(GraphicsContext&, const FloatRect&);
 
     virtual bool hasSingleSecurityOrigin() const { return true; }
@@ -122,6 +116,31 @@ protected:
 
     virtual bool handleSyncMessage(GstMessage*);
 
+    void triggerRepaint(GstSample*);
+
+    static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
+#if USE(GSTREAMER_GL)
+    static gboolean drawCallback(MediaPlayerPrivateGStreamerBase*, GstContext*, GstSample*);
+#endif
+
+    void notifyPlayerOfVolumeChange();
+    void notifyPlayerOfMute();
+
+    static void volumeChangedCallback(MediaPlayerPrivateGStreamerBase*);
+    static void muteChangedCallback(MediaPlayerPrivateGStreamerBase*);
+
+    enum MainThreadNotification {
+        VideoChanged = 1 << 0,
+        VideoCapsChanged = 1 << 1,
+        AudioChanged = 1 << 2,
+        VolumeChanged = 1 << 3,
+        MuteChanged = 1 << 4,
+#if ENABLE(VIDEO_TRACK)
+        TextChanged = 1 << 5,
+#endif
+    };
+
+    MainThreadNotifier<MainThreadNotification> m_notifier;
     MediaPlayer* m_player;
     GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstStreamVolume> m_volumeElement;
@@ -132,16 +151,11 @@ protected:
     IntSize m_size;
     mutable GMutex m_sampleMutex;
     GRefPtr<GstSample> m_sample;
-    GThreadSafeMainLoopSource m_volumeTimerHandler;
-    GThreadSafeMainLoopSource m_muteTimerHandler;
 #if USE(GSTREAMER_GL)
     GThreadSafeMainLoopSource m_drawTimerHandler;
     GCond m_drawCondition;
     GMutex m_drawMutex;
 #endif
-    unsigned long m_repaintHandler;
-    unsigned long m_volumeSignalHandler;
-    unsigned long m_muteSignalHandler;
     mutable FloatSize m_videoSize;
     bool m_usingFallbackVideoSink;
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
