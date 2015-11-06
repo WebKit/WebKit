@@ -3305,8 +3305,6 @@ webkit.org/b/150808 fast/text/multiple-feature-properties.html [ ImageOnlyFailur
 
 webkit.org/b/147933 streams/reference-implementation/writable-stream-abort.html [ Pass Failure ]
 
-webkit.org/b/150944 [ Debug ] accessibility/win/linked-elements.html [ Crash ]
-
 webkit.org/b/150946 [ Debug ] scrollbars/custom-scrollbar-appearance-property.html [ Crash ]
 
 webkit.org/b/150948 [ Debug ] imported/blink/transitions/unprefixed-transform.html [ Pass Failure ]
