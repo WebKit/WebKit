@@ -717,12 +717,15 @@ void RenderBlockFlow::computeInlineDirectionPositionsForLine(RootInlineBox* line
 
 static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlow& block, InlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, ETextAlign textAlign, bool isAfterExpansion)
 {
+    // Tatechuyoko is modeled as the Object Replacement Character (U+FFFC), which can never have expansion opportunities inside nor intrinsically adjacent to it.
+    if (textBox.renderer().style().textCombine() == TextCombineHorizontal)
+        return ForbidLeadingExpansion | ForbidTrailingExpansion;
+
     ExpansionBehavior result = 0;
     bool setLeadingExpansion = false;
     bool setTrailingExpansion = false;
     if (textAlign == JUSTIFY) {
-        // If the next box is ruby, and we're justifying, and the first box in the ruby base has a leading expansion, and we are a text box, then
-        // force a trailing expansion.
+        // If the next box is ruby, and we're justifying, and the first box in the ruby base has a leading expansion, and we are a text box, then force a trailing expansion.
         if (nextRun && is<RenderRubyRun>(nextRun->renderer()) && downcast<RenderRubyRun>(nextRun->renderer()).rubyBase() && nextRun->renderer().style().collapseWhiteSpace()) {
             auto& rubyBase = *downcast<RenderRubyRun>(nextRun->renderer()).rubyBase();
             if (rubyBase.firstRootBox() && !rubyBase.firstRootBox()->nextRootBox()) {
