@@ -1,3 +1,13 @@
+2015-11-06  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK] Fails to link libwebkit2gtkinjectedbundle.so on OSX
+        https://bugs.webkit.org/show_bug.cgi?id=144785
+
+        Reviewed by Philippe Normand.
+
+        * PlatformGTK.cmake: Add missing WebKit2 library to list of
+        libraries to link with. Required for OSX build.
+
 2015-11-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Add runtime and compile time flags for enabling Web Animations API and model.
