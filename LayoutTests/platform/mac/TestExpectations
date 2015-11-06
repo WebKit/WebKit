@@ -1263,7 +1263,7 @@ http/tests/media/video-served-as-text.html [ Failure ]
 http/tests/media/video-throttled-load-metadata.html [ Failure ]
 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
-[ Yosemite ] fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]
+webkit.org/b/150978 fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]
 
 webkit.org/b/147763 [ Mavericks Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]
 
