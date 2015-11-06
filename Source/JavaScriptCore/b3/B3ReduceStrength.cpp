@@ -470,6 +470,9 @@ private:
             break;
 
         case LessThan:
+            // FIXME: We could do a better job of canonicalizing integer comparisons.
+            // https://bugs.webkit.org/show_bug.cgi?id=150958
+
             replaceWithNewValue(
                 m_proc.addBoolConstant(m_value->child(0)->lessThanConstant(m_value->child(1))));
             break;

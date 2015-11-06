@@ -804,6 +804,10 @@ public:
             Value* right = value->child(1);
 
             if (isInt(value->child(0)->type())) {
+                // FIXME: We wouldn't have to worry about leftImm if we canonicalized integer
+                // comparisons.
+                // https://bugs.webkit.org/show_bug.cgi?id=150958
+                
                 Arg leftImm = imm(left);
                 Arg rightImm = imm(right);
 
@@ -930,6 +934,9 @@ public:
             case BitAnd: {
                 Value* left = value->child(0);
                 Value* right = value->child(1);
+
+                // FIXME: We don't actually have to worry about leftImm.
+                // https://bugs.webkit.org/show_bug.cgi?id=150954
 
                 Arg leftImm = imm(left);
                 Arg rightImm = imm(right);
