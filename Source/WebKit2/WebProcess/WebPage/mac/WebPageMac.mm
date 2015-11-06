@@ -519,7 +519,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 void WebPage::performDictionaryLookupForSelection(Frame* frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
     NSDictionary *options = nil;
-    RefPtr<Range> selectedRange = DictionaryLookup::rangeForSelection(selection, { }, &options);
+    RefPtr<Range> selectedRange = DictionaryLookup::rangeForSelection(selection, &options);
     if (selectedRange)
         performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
 }
