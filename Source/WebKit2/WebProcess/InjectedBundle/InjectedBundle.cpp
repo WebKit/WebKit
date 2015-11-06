@@ -178,6 +178,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
 #endif
 
+#if ENABLE(WEB_ANIMATIONS)
+    if (preference == "WebKitWebAnimationsEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
+#endif
+
 #if ENABLE(CSS_REGIONS)
     if (preference == "WebKitCSSRegionsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);
@@ -561,6 +566,15 @@ void InjectedBundle::setCSSAnimationTriggersEnabled(bool enabled)
 {
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     RuntimeEnabledFeatures::sharedFeatures().setAnimationTriggersEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void InjectedBundle::setWebAnimationsEnabled(bool enabled)
+{
+#if ENABLE(WEB_ANIMATIONS)
+    RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

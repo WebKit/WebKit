@@ -489,6 +489,16 @@ bool WKPreferencesGetCSSAnimationTriggersEnabled(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->cssAnimationTriggersEnabled();
 }
 
+void WKPreferencesSetWebAnimationsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setWebAnimationsEnabled(flag);
+}
+
+bool WKPreferencesGetWebAnimationsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webAnimationsEnabled();
+}
+
 void WKPreferencesSetCSSRegionsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setCSSRegionsEnabled(flag);

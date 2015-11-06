@@ -201,6 +201,11 @@ public:
     bool animationTriggersEnabled() const { return m_areAnimationTriggersEnabled; }
 #endif
 
+#if ENABLE(WEB_ANIMATIONS)
+    void setWebAnimationsEnabled(bool areEnabled) { m_areWebAnimationsEnabled = areEnabled; }
+    bool webAnimationsEnabled() const { return m_areWebAnimationsEnabled; }
+#endif
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -278,6 +283,10 @@ private:
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     bool m_areAnimationTriggersEnabled;
+#endif
+
+#if ENABLE(WEB_ANIMATIONS)
+    bool m_areWebAnimationsEnabled;
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

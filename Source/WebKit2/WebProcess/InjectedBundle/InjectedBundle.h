@@ -156,6 +156,7 @@ public:
     void setTabKeyCyclesThroughElements(WebPage*, bool enabled);
     void setSerialLoadingEnabled(bool);
     void setCSSAnimationTriggersEnabled(bool);
+    void setWebAnimationsEnabled(bool);
     void setCSSRegionsEnabled(bool);
     void setCSSCompositingEnabled(bool);
     void dispatchPendingLoadRequests();
