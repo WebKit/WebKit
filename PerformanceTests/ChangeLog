@@ -1,3 +1,33 @@
+2015-11-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Initialize the graphics benchmark's Kalman filter with estimated 60 FPS
+        https://bugs.webkit.org/show_bug.cgi?id=150965
+
+        Reviewed by Darin Adler.
+
+        This should give the benchmark more accurate reading at warmup time. And
+        hence we can safely reduce the test running time to be 10 seconds.
+
+        * Animometer/runner/animometer.html:
+        Add "defer" back when loading resources/animometer.js since this script
+        depends on many other scripts and we need to wait till the page is parsed.
+        Also change the default test interval to be 10 seconds.
+        
+        * Animometer/runner/resources/graph.js:
+        (graph): Make the test results curves smoother.
+        
+        * Animometer/tests/resources/main.js:
+        (Animator): Initialize the Kalman filter with 60 FPS which should be true
+        if the test page is empty.
+        
+        (Animator.prototype.animate):
+        * Animometer/tests/resources/math.js:
+        (KalmanEstimator): Fix the initial value of _vecX_est.
+            _vecX_est[0] = current FPS (= 60FPS when the test page is empty)
+            _vecX_est[1] = first time derivative of FPS (=0; FPS has been constant).
+            _vecX_est[2] = second time derivative of FPS (=0; since _vecX_est[1]=0).
+        (KalmanEstimator.prototype.estimate): Add some comments.
+
 2015-11-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove "defer" from the scripts' references in the graphics benchmark home page 

@@ -7,7 +7,7 @@
     <script src="../resources/extensions.js"></script>
     <script src="resources/tests.js"></script>
     <script src="resources/benchmark-runner.js"></script>
-    <script src="resources/animometer.js"></script>
+    <script src="resources/animometer.js" defer></script>
     <script src="resources/d3.min.js"></script>
     <script src="resources/graph.js"></script>
 </head>
@@ -27,7 +27,7 @@
             </suites>
             <options>
                 <h2>Options:</h2>
-                <label>Test interval: <input id="test-interval" type="number" value="30"> seconds</label><br>
+                <label>Test interval: <input id="test-interval" type="number" value="10"> seconds</label><br>
                 <label>Frame rate: <input id="frame-rate" type="number" value="50"> fps</label><br>
                 <label><input id="estimated-frame-rate" type="checkbox" checked> Estimated Frame Rate</label><br>
                 <label><input id="fix-test-complexity" type="checkbox"> Fix test complexity after warmup</label><br>

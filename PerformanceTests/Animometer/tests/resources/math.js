@@ -233,42 +233,55 @@ PIDController.prototype =
     }
 }
 
-function KalmanEstimator()
+function KalmanEstimator(initX)
 {
+    // Initialize state transition matrix
     this._matA = Matrix3.identity();
+    this._matA[Matrix3.pos(0, 2)] = 1;
     
+    // Initialize measurement matrix
     this._vecH = Vector3.zeros();
     this._vecH[0] = 1;
     
     this._matQ = Matrix3.identity();
     this._R = 1000;
     
-    this._vecX_est = Vector3.ones();
+    // Initial state conditions
+    this._vecX_est = Vector3.zeros();
+    this._vecX_est[0] = initX;
     this._matP_est = Matrix3.zeros();
 }
 
 KalmanEstimator.prototype =
 {
-    estimate: function(timeDelta, current)
+    estimate: function(current)
     {
-        // Update the transition matrix.
-        this._matA[Matrix3.pos(0, 2)] = 1;
-
-        // Predicted state and covariance.
+        // Project the state ahead
+        //  X_prd(k) = A * X_est(k-1)
         var vecX_prd = Matrix3.multiplyVector3(this._matA, this._vecX_est);
+        
+        // Project the error covariance ahead
+        //  P_prd(k) = A * P_est(k-1) * A' + Q
         var matP_prd = Matrix3.add(Matrix3.multiplyMatrix3(Matrix3.multiplyMatrix3(this._matA, this._matP_est), Matrix3.transpose(this._matA)), this._matQ);
 
-        // Estimation.
+        // Compute Kalman gain
+        //  B = H * P_prd(k)';
+        //  S = B * H' + R;
+        //  K(k) = (S \ B)';
         var vecB = Vector3.multiplyMatrix3(this._vecH, Matrix3.transpose(matP_prd));
         var S = Vector3.multiplyVector3(vecB, this._vecH) + this._R;
-
         var vecGain = Vector3.scale(1/S, vecB);
         
-        // Estimated state and covariance.
+        // Update the estimate via z(k)
+        //  X_est(k) = x_prd + K(k) * (z(k) - H * X_prd(k));
         this._vecX_est = Vector3.add(vecX_prd, Vector3.scale(current - Vector3.multiplyVector3(this._vecH, vecX_prd), vecGain));
+        
+        // Update the error covariance
+        //  P_est(k) = P_prd(k) - K(k) * H * P_prd(k);
         this._matP_est = Matrix3.subtract(matP_prd, Matrix3.scale(Vector3.multiplyVector3(vecGain, this._vecH), matP_prd));
 
         // Compute the estimated measurement.
+        //  y = H * X_est(k);
         return Vector3.multiplyVector3(this._vecH,  this._vecX_est);
     }
 }

@@ -67,7 +67,7 @@ function Animator(benchmark)
     this._measureFrameCount = 3; 
     this._referenceTime = 0;
     this._currentTimeOffset = 0;
-    this._estimator = new KalmanEstimator();
+    this._estimator = new KalmanEstimator(60);
 }
 
 Animator.prototype =
@@ -110,7 +110,7 @@ Animator.prototype =
          
         // Use Kalman filter to get a more non-fluctuating frame rate.
         if (this._benchmark.options["estimated-frame-rate"])
-            currentFrameRate = this._estimator.estimate(measureTimeDelta, currentFrameRate);
+            currentFrameRate = this._estimator.estimate(currentFrameRate);
         
         // Adjust the test to reach the desired FPS.
         var result = this._benchmark.update(this._currentTimeOffset, this.timeDelta(), currentFrameRate);
