@@ -346,10 +346,6 @@ void NetworkLoad::receivedCancellation(ResourceHandle* handle, const Authenticat
 
 #endif // !USE(NETWORK_SESSION)
 
-#if PLATFORM(COCOA)
-
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

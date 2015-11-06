@@ -1,3 +1,9 @@
+2015-11-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, remove empty #if block landed by mistake in r192038.
+
+        * NetworkProcess/NetworkLoad.cpp:
+
 2015-11-06  Philip Chimento  <philip.chimento@gmail.com>
 
         [GTK] Fails to link libwebkit2gtkinjectedbundle.so on OSX
