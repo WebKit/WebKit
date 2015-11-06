@@ -34,6 +34,7 @@
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirReportUsedRegisters.h"
+#include "AirSimplifyCFG.h"
 #include "AirSpillEverything.h"
 #include "AirValidate.h"
 #include "B3Common.h"
@@ -78,6 +79,10 @@ void generate(Code& code, CCallHelpers& jit)
     // this by first-fit allocating stack slots. It should be pretty darn close to optimal, so we
     // shouldn't have to worry about this very much.
     allocateStack(code);
+
+    // If we coalesced moves then we can unbreak critical edges. This is the main reason for this
+    // phase.
+    simplifyCFG(code);
 
     // FIXME: We should really have a code layout optimization here.
     // https://bugs.webkit.org/show_bug.cgi?id=150478

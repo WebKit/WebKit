@@ -57,6 +57,8 @@ public:
 
             for (size_t blockIndex = code.size(); blockIndex--;) {
                 BasicBlock* block = code.at(blockIndex);
+                if (!block)
+                    continue;
                 LocalCalc localCalc(*this, block);
                 for (size_t instIndex = block->size(); instIndex--;)
                     localCalc.execute(block->at(instIndex));

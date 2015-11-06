@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3BasicBlockInlines.h"
 #include "B3ControlValue.h"
 #include "B3IndexSet.h"
 #include "B3InsertionSetInlines.h"
@@ -90,13 +91,17 @@ public:
     bool run()
     {
         bool result = false;
+        bool first = true;
         unsigned index = 0;
         do {
             m_changed = false;
             m_changedCFG = false;
+            ++index;
 
-            if (verbose) {
-                dataLog("Reduce strength IR before iteration #", ++index, "\n");
+            if (first)
+                first = false;
+            else if (verbose) {
+                dataLog("B3 after iteration #", index - 1, " of reduceStrength:\n");
                 dataLog(m_proc);
             }
 
@@ -107,6 +112,8 @@ public:
                     process();
                 m_insertionSet.execute(m_block);
             }
+
+            simplifyCFG();
 
             if (m_changedCFG) {
                 m_proc.resetReachability();
@@ -545,6 +552,7 @@ private:
             // Turn this: Branch(0, then, else)
             // Into this: Jump(else)
             if (triState == FalseTriState) {
+                branch->taken().block()->removePredecessor(m_block);
                 branch->convertToJump(branch->notTaken());
                 m_changedCFG = true;
                 break;
@@ -553,6 +561,7 @@ private:
             // Turn this: Branch(not 0, then, else)
             // Into this: Jump(then)
             if (triState == TrueTriState) {
+                branch->notTaken().block()->removePredecessor(m_block);
                 branch->convertToJump(branch->taken());
                 m_changedCFG = true;
                 break;
@@ -618,6 +627,118 @@ private:
             return true;
         }
         return false;
+    }
+
+    void simplifyCFG()
+    {
+        // We have three easy simplification rules:
+        //
+        // 1) If a successor is a block that just jumps to another block, then jump directly to
+        //    that block.
+        //
+        // 2) If all successors are the same and the operation has no effects, then use a jump
+        //    instead.
+        //
+        // 3) If you jump to a block that is not you and has one predecessor, then merge.
+        //
+        // Note that because of the first rule, this phase may introduce critical edges. That's fine.
+        // If you need broken critical edges, then you have to break them yourself.
+
+        // Note that this relies on predecessors being at least conservatively correct. It's fine for
+        // predecessors to mention a block that isn't actually a predecessor. It's *not* fine for a
+        // predecessor to be omitted. We assert as much in the loop. In practice, we precisely preserve
+        // predecessors during strength reduction since that minimizes the total number of fixpoint
+        // iterations needed to kill a lot of code.
+
+        for (BasicBlock* block : m_proc) {
+            checkPredecessorValidity();
+
+            // We don't care about blocks that don't have successors.
+            if (!block->numSuccessors())
+                continue;
+
+            // First check if any of the successors of this block can be forwarded over.
+            for (BasicBlock*& successor : block->successorBlocks()) {
+                if (successor != block
+                    && successor->size() == 1
+                    && successor->last()->opcode() == Jump) {
+                    BasicBlock* newSuccessor = successor->successorBlock(0);
+                    if (newSuccessor != successor) {
+                        newSuccessor->replacePredecessor(successor, block);
+                        successor = newSuccessor;
+                        m_changedCFG = true;
+                    }
+                }
+            }
+
+            // Now check if the block's terminal can be replaced with a jump.
+            if (block->numSuccessors() > 1) {
+                // The terminal must not have weird effects.
+                Effects effects = block->last()->effects();
+                effects.terminal = false;
+                if (!effects.mustExecute()) {
+                    // All of the successors must be the same.
+                    bool allSame = true;
+                    FrequentedBlock firstSuccessor = block->successor(0);
+                    for (unsigned i = 1; i < block->numSuccessors(); ++i) {
+                        if (block->successorBlock(i) != firstSuccessor.block()) {
+                            allSame = false;
+                            break;
+                        }
+                    }
+                    if (allSame) {
+                        block->last()->as<ControlValue>()->convertToJump(firstSuccessor);
+                        m_changedCFG = true;
+                    }
+                }
+            }
+
+            // Finally handle jumps to a block with one predecessor.
+            if (block->numSuccessors() == 1) {
+                BasicBlock* successor = block->successorBlock(0);
+                if (successor != block && successor->numPredecessors() == 1) {
+                    RELEASE_ASSERT(successor->predecessor(0) == block);
+                    
+                    // We can merge the two blocks, because the predecessor only jumps to the successor
+                    // and the successor is only reachable from the predecessor.
+                    
+                    // Remove the terminal.
+                    Value* value = block->values().takeLast();
+                    Origin jumpOrigin = value->origin();
+                    RELEASE_ASSERT(value->as<ControlValue>());
+                    m_proc.deleteValue(value);
+                    
+                    // Append the full contents of the successor to the predecessor.
+                    block->values().appendVector(successor->values());
+                    
+                    // Make sure that the successor has nothing left in it. Make sure that the block
+                    // has a terminal so that nobody chokes when they look at it.
+                    successor->values().resize(0);
+                    successor->appendNew<ControlValue>(m_proc, Oops, jumpOrigin);
+                    
+                    // Ensure that predecessors of block's new successors know what's up.
+                    for (BasicBlock* newSuccessor : block->successorBlocks())
+                        newSuccessor->replacePredecessor(successor, block);
+                    m_changedCFG = true;
+                }
+            }
+        }
+
+        if (m_changedCFG && verbose) {
+            dataLog("B3 after simplifyCFG:\n");
+            dataLog(m_proc);
+        }
+    }
+
+    void checkPredecessorValidity()
+    {
+        if (!shouldValidateIRAtEachPhase())
+            return;
+
+        for (BasicBlock* block : m_proc) {
+            for (BasicBlock* successor : block->successorBlocks())
+                RELEASE_ASSERT(successor->containsPredecessor(block));
+        }
     }
 
     void killDeadCode()

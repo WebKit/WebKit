@@ -48,6 +48,7 @@ enum AbortReason {
     AHTagTypeNumberNotInPlace                         = 130,
     AHTypeInfoInlineTypeFlagsAreValid                 = 140,
     AHTypeInfoIsValid                                 = 150,
+    B3Oops                                            = 155,
     DFGBailedAtTopOfBlock                             = 161,
     DFGBailedAtEndOfNode                              = 162,
     DFGBasicStorageAllocatorZeroSize                  = 170,

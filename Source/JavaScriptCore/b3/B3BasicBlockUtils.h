@@ -64,14 +64,11 @@ bool removePredecessor(BasicBlock* block, BasicBlock* predecessor)
 template<typename BasicBlock>
 bool replacePredecessor(BasicBlock* block, BasicBlock* from, BasicBlock* to)
 {
-    auto& predecessors = block->predecessors();
-    for (unsigned i = 0; i < predecessors.size(); ++i) {
-        if (predecessors[i] == from) {
-            predecessors[i] = to;
-            return true;
-        }
-    }
-    return false;
+    bool changed = false;
+    // We do it this way because 'to' may already be a predecessor of 'block'.
+    changed |= removePredecessor(block, from);
+    changed |= addPredecessor(block, to);
+    return changed;
 }
 
 // This recomputes predecessors and removes blocks that aren't reachable.
@@ -80,8 +77,10 @@ void resetReachability(
     Vector<std::unique_ptr<BasicBlock>>& blocks, const DeleteFunctor& deleteFunctor)
 {
     // Clear all predecessor lists first.
-    for (auto& block : blocks)
-        block->predecessors().resize(0);
+    for (auto& block : blocks) {
+        if (block)
+            block->predecessors().resize(0);
+    }
 
     GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> worklist;
     worklist.push(blocks[0].get());
@@ -93,6 +92,8 @@ void resetReachability(
     }
 
     for (unsigned i = 1; i < blocks.size(); ++i) {
+        if (!blocks[i])
+            continue;
         if (blocks[i]->predecessors().isEmpty()) {
             deleteFunctor(blocks[i].get());
             blocks[i] = nullptr;

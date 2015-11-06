@@ -472,6 +472,11 @@ public:
         return condition;
     }
 
+    void oops()
+    {
+        abortWithReason(B3Oops);
+    }
+
     static const unsigned BlindingModulus = 64;
     bool shouldConsiderBlinding()
     {

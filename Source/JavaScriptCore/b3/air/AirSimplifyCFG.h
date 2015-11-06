@@ -23,38 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirInst.h"
+#ifndef AirSimplifyCFG_h
+#define AirSimplifyCFG_h
 
 #if ENABLE(B3_JIT)
 
-#include "AirInstInlines.h"
-#include "B3Value.h"
-#include <wtf/ListDump.h>
-
 namespace JSC { namespace B3 { namespace Air {
 
-bool Inst::hasArgEffects()
-{
-    bool result = false;
-    forEachArg(
-        [&] (Arg&, Arg::Role role, Arg::Type) {
-            if (Arg::isDef(role))
-                result = true;
-        });
-    return result;
-}
+class Code;
 
-void Inst::dump(PrintStream& out) const
-{
-    out.print(opcode, " ", listDump(args));
-    if (origin) {
-        if (args.size())
-            out.print(", ");
-        out.print(*origin);
-    }
-}
+// Simplifies the control flow graph by removing jump-only blocks and merging jumps.
+
+bool simplifyCFG(Code&);
 
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirSimplifyCFG_h
+

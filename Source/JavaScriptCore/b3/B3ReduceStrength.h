@@ -32,8 +32,8 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Does strength reduction, constant folding, and canonicalization. In the future we may also have it
-// do CSE.
+// Does strength reduction, constant folding, canonicalization, CFG simplification, and DCE. In the
+// future we may also have it do CSE.
 
 bool reduceStrength(Procedure&);
 

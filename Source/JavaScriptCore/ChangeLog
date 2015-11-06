@@ -1,3 +1,50 @@
+2015-11-06  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 and Air should simplify CFGs
+        https://bugs.webkit.org/show_bug.cgi?id=150960
+
+        Reviewed by Geoffrey Garen.
+
+        This adds CFG simplification to both B3 and Air.
+
+        In B3, the simplification is done inside the B3::reduceStrength() fixpoint because we expect
+        that it will help to reveal more optimization opportunities. This is going to be particularly
+        true when we add Phi elimination.
+
+        In Air, the simplification is its own phase. We expect it to produce most of its benefits once
+        we have coalescing. Then, CFG simplification in Air will unbreak critial edges.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbortReason.h:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::oops): Reveal this as a method so that we can have an Oops instruction.
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::predecessor):
+        (JSC::B3::BasicBlock::predecessors):
+        (JSC::B3::BasicBlock::containsPredecessor):
+        * b3/B3BasicBlockUtils.h: Bunch of fixes for blocks being killed.
+        (JSC::B3::replacePredecessor):
+        (JSC::B3::resetReachability):
+        * b3/B3ReduceStrength.cpp: Implement B3 CFG simplification.
+        * b3/B3ReduceStrength.h:
+        * b3/air/AirBasicBlock.h:
+        (JSC::B3::Air::BasicBlock::resize):
+        (JSC::B3::Air::BasicBlock::insts):
+        (JSC::B3::Air::BasicBlock::appendInst):
+        (JSC::B3::Air::BasicBlock::containsPredecessor):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::hasArgEffects):
+        (JSC::B3::Air::Inst::dump):
+        * b3/air/AirInst.h:
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::Liveness::Liveness): Fix for when blocks were killed.
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirSimplifyCFG.cpp: Added.
+        (JSC::B3::Air::simplifyCFG):
+        * b3/air/AirSimplifyCFG.h: Added.
+
 2015-11-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Add runtime and compile time flags for enabling Web Animations API and model.

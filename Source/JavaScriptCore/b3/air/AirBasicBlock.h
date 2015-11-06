@@ -65,6 +65,9 @@ public:
 
     void resize(unsigned size) { m_insts.resize(size); }
 
+    const InstList& insts() const { return m_insts; }
+    InstList& insts() { return m_insts; }
+
     template<typename Inst>
     void appendInst(Inst&& inst)
     {
@@ -105,6 +108,7 @@ public:
     bool addPredecessor(BasicBlock*);
     bool removePredecessor(BasicBlock*);
     bool replacePredecessor(BasicBlock* from, BasicBlock* to);
+    bool containsPredecessor(BasicBlock* predecessor) const { return m_predecessors.contains(predecessor); }
 
     void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;

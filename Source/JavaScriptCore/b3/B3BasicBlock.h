@@ -88,6 +88,7 @@ public:
     BasicBlock*& predecessor(unsigned index) { return m_predecessors[index]; }
     const PredecessorList& predecessors() const { return m_predecessors; }
     PredecessorList& predecessors() { return m_predecessors; }
+    bool containsPredecessor(BasicBlock* block) { return m_predecessors.contains(block); }
 
     bool addPredecessor(BasicBlock*);
     bool removePredecessor(BasicBlock*);
