@@ -65,7 +65,7 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
     return selectedRange->contains(position);
 }
 
-PassRefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& selection, NSDictionary **options)
+PassRefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& selection, const VisiblePosition& hitPosition, NSDictionary **options)
 {
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
@@ -82,12 +82,23 @@ PassRefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& se
     int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
     NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
 
-    String fullPlainTextString = plainText(makeRange(paragraphStart, paragraphEnd).get());
+    RefPtr<Range> fullRange = makeRange(paragraphStart, paragraphEnd);
+    if (!fullRange)
+        return nullptr;
+
+    String fullPlainTextString = plainText(fullRange.get());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     // Since we already have the range we want, we just need to grab the returned options.
-    if (Class luLookupDefinitionModule = getLULookupDefinitionModuleClass())
-        [luLookupDefinitionModule tokenRangeForString:fullPlainTextString range:rangeToPass options:options];
+    if (Class luLookupDefinitionModule = getLULookupDefinitionModuleClass()) {
+        NSRange extractedRange = [luLookupDefinitionModule tokenRangeForString:fullPlainTextString range:rangeToPass options:options];
+        if (extractedRange.location == NSNotFound)
+            return nullptr;
+
+        RefPtr<Range> lookupRange = TextIterator::subrange(fullRange.get(), extractedRange.location, extractedRange.length);
+        if (!lookupRange || (hitPosition.isNotNull() && !lookupRange->contains(hitPosition)))
+            return nullptr;
+    }
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return selectedRange.release();
@@ -118,8 +129,10 @@ PassRefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hi
 
     // If we hit the selection, use that instead of letting Lookup decide the range.
     VisibleSelection selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
-    if (selectionContainsPosition(position, selection))
-        return DictionaryLookup::rangeForSelection(selection, options);
+    if (selectionContainsPosition(position, selection)) {
+        if (auto rangeForSelection = DictionaryLookup::rangeForSelection(selection, position, options))
+            return rangeForSelection;
+    }
 
     VisibleSelection selectionAccountingForLineRules = VisibleSelection(position);
     selectionAccountingForLineRules.expandUsingGranularity(WordGranularity);
