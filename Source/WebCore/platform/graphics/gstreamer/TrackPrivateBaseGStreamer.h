@@ -29,9 +29,9 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
 #include "GRefPtrGStreamer.h"
+#include "MainThreadNotifier.h"
 #include <wtf/Lock.h>
 #include <wtf/ThreadingPrimitives.h>
-#include <wtf/glib/GThreadSafeMainLoopSource.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,15 +50,20 @@ public:
 
     void setIndex(int index) { m_index =  index; }
 
-    void activeChanged();
-    void tagsChanged();
+protected:
+    TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
 
     void notifyTrackOfActiveChanged();
     void notifyTrackOfTagsChanged();
 
-protected:
-    TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
+    enum MainThreadNotification {
+        ActiveChanged = 1 << 0,
+        TagsChanged = 1 << 1,
+        NewSample = 1 << 2,
+        StreamChanged = 1 << 3
+    };
 
+    MainThreadNotifier<MainThreadNotification> m_notifier;
     gint m_index;
     AtomicString m_label;
     AtomicString m_language;
@@ -70,10 +75,12 @@ private:
     template<class StringType>
     bool getTag(GstTagList* tags, const gchar* tagName, StringType& value);
 
-    TrackPrivateBase* m_owner;
-    GThreadSafeMainLoopSource m_activeTimerHandler;
-    GThreadSafeMainLoopSource m_tagTimerHandler;
+    static void activeChangedCallback(TrackPrivateBaseGStreamer*);
+    static void tagsChangedCallback(TrackPrivateBaseGStreamer*);
 
+    void tagsChanged();
+
+    TrackPrivateBase* m_owner;
     Lock m_tagMutex;
     GRefPtr<GstTagList> m_tags;
 };

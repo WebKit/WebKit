@@ -43,16 +43,6 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 
 namespace WebCore {
 
-static void trackPrivateActiveChangedCallback(GObject*, GParamSpec*, TrackPrivateBaseGStreamer* track)
-{
-    track->activeChanged();
-}
-
-static void trackPrivateTagsChangedCallback(GObject*, GParamSpec*, TrackPrivateBaseGStreamer* track)
-{
-    track->tagsChanged();
-}
-
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad> pad)
     : m_index(index)
     , m_pad(pad)
@@ -60,8 +50,8 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
 {
     ASSERT(m_pad);
 
-    g_signal_connect(m_pad.get(), "notify::active", G_CALLBACK(trackPrivateActiveChangedCallback), this);
-    g_signal_connect(m_pad.get(), "notify::tags", G_CALLBACK(trackPrivateTagsChangedCallback), this);
+    g_signal_connect_swapped(m_pad.get(), "notify::active", G_CALLBACK(activeChangedCallback), this);
+    g_signal_connect_swapped(m_pad.get(), "notify::tags", G_CALLBACK(tagsChangedCallback), this);
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged()
     // to setup m_tags.
@@ -78,37 +68,33 @@ void TrackPrivateBaseGStreamer::disconnect()
     if (!m_pad)
         return;
 
-    g_signal_handlers_disconnect_by_func(m_pad.get(),
-        reinterpret_cast<gpointer>(trackPrivateActiveChangedCallback), this);
-    g_signal_handlers_disconnect_by_func(m_pad.get(),
-        reinterpret_cast<gpointer>(trackPrivateTagsChangedCallback), this);
-
-    m_activeTimerHandler.cancel();
-    m_tagTimerHandler.cancel();
+    m_notifier.cancelPendingNotifications();
+    g_signal_handlers_disconnect_matched(m_pad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
     m_pad.clear();
     m_tags.clear();
 }
 
-void TrackPrivateBaseGStreamer::activeChanged()
+void TrackPrivateBaseGStreamer::activeChangedCallback(TrackPrivateBaseGStreamer* track)
 {
-    m_activeTimerHandler.schedule("[WebKit] TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged",
-        std::function<void()>([this] { notifyTrackOfActiveChanged(); }));
+    track->m_notifier.notify(MainThreadNotification::ActiveChanged, [track] { track->notifyTrackOfActiveChanged(); });
+}
+
+void TrackPrivateBaseGStreamer::tagsChangedCallback(TrackPrivateBaseGStreamer* track)
+{
+    track->tagsChanged();
 }
 
 void TrackPrivateBaseGStreamer::tagsChanged()
 {
-    m_tagTimerHandler.cancel();
-
     GRefPtr<GstTagList> tags;
-    g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
+    g_object_get(m_pad.get(), "tags", &tags.outPtr(), nullptr);
     {
         LockHolder lock(m_tagMutex);
         m_tags.swap(tags);
     }
 
-    m_tagTimerHandler.schedule("[WebKit] TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged",
-        std::function<void()>([this] { notifyTrackOfTagsChanged(); }));
+    m_notifier.notify(MainThreadNotification::TagsChanged, [this] { notifyTrackOfTagsChanged(); });
 }
 
 void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
