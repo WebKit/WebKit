@@ -657,6 +657,10 @@ webkit.org/b/140970 sputnik/Unicode/Unicode_410/S7.6_A3.1.html [ Skip ]  # Crash
 
 sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.2/S15.2.2.1_A2_T5.html [ Failure ]
 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html [ Pass Timeout ]
+
+webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Pass Timeout ]
+webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Pass Timeout ]
+webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html [ Pass Timeout ]
 ################################################################################
 ##############               End Sputnik Errors                 ################
 ################################################################################
