@@ -47,7 +47,6 @@ public:
 private:
     explicit HTMLFormControlsCollection(ContainerNode&);
 
-    virtual HTMLElement* namedItem(const AtomicString& name) const override;
     virtual void invalidateCache(Document&) override;
     virtual void updateNamedElementCache() const override;
 

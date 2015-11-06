@@ -98,41 +98,6 @@ HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) co
     return nullptr;
 }
 
-static HTMLElement* firstNamedItem(const Vector<FormAssociatedElement*>& elementsArray,
-    const Vector<HTMLImageElement*>* imageElementsArray, const QualifiedName& attrName, const String& name)
-{
-    ASSERT(attrName == idAttr || attrName == nameAttr);
-
-    for (auto& entry : elementsArray) {
-        HTMLElement& element = entry->asHTMLElement();
-        if (entry->isEnumeratable() && element.fastGetAttribute(attrName) == name)
-            return &element;
-    }
-
-    if (!imageElementsArray)
-        return 0;
-
-    for (auto& element : *imageElementsArray) {
-        if (element->fastGetAttribute(attrName) == name)
-            return element;
-    }
-
-    return nullptr;
-}
-
-HTMLElement* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
-{
-    // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
-    // This method first searches for an object with a matching id
-    // attribute. If a match is not found, the method then searches for an
-    // object with a matching name attribute, but only on those elements
-    // that are allowed a name attribute.
-    auto* imageElements = is<HTMLFieldSetElement>(ownerNode()) ? nullptr : &formImageElements();
-    if (HTMLElement* item = firstNamedItem(formControlElements(), imageElements, idAttr, name))
-        return item;
-    return firstNamedItem(formControlElements(), imageElements, nameAttr, name);
-}
-
 void HTMLFormControlsCollection::updateNamedElementCache() const
 {
     if (hasNamedElementCache())
