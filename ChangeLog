@@ -1,3 +1,16 @@
+2015-11-06  Philip Chimento  <philip.chimento@gmail.com> and Michael Catanzaro <mcatanzaro@igalia.com>
+
+        [GTK] Re-enable Quartz backend on cmake build system
+        https://bugs.webkit.org/show_bug.cgi?id=144561
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/FindGTK3.cmake: Set GTK3_SUPPORTS_QUARTZ based on
+        the presence of of gtk+-quartz-3.0 module.
+        * Source/cmake/OptionsGTK.cmake: Reintroduce the
+        ENABLE_QUARTZ_TARGET option to the CMake build, for building the
+        GTK+ Quartz backend on OS X.
+
 2015-11-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Add runtime and compile time flags for enabling Web Animations API and model.

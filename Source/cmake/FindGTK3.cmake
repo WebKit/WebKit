@@ -5,6 +5,7 @@
 #  GTK3_INCLUDE_DIRS - the GTK+ 3. include directories
 #  GTK3_LIBRARIES - link these to use GTK+ 3.
 #  GTK3_SUPPORTS_GESTURES - GTK+ supports gestures (GTK+ >= 3.14)
+#  GTK3_SUPPORTS_QUARTZ - GTK+ supports Quartz backend
 #  GTK3_SUPPORTS_X11 - GTK+ supports X11 backend
 #  GTK3_SUPPORTS_WAYLAND - GTK+ supports Wayland backend
 #
@@ -49,6 +50,11 @@ if (GTK3_VERSION)
 endif ()
 
 if (GTK3_VERSION AND VERSION_OK)
+    pkg_check_modules(GTK3_QUARTZ gtk+-quartz-3.0)
+    if ("${GTK3_QUARTZ_VERSION}" VERSION_EQUAL "${GTK3_VERSION}")
+        set(GTK3_SUPPORTS_QUARTZ TRUE)
+    endif ()
+
     pkg_check_modules(GTK3_X11 gtk+-x11-3.0)
     if ("${GTK3_X11_VERSION}" VERSION_EQUAL "${GTK3_VERSION}")
         set(GTK3_SUPPORTS_X11 TRUE)
