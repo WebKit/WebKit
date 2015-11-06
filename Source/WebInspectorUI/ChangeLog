@@ -1,3 +1,23 @@
+2015-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Search Results tab causes jump to Resources tab on reload
+        https://bugs.webkit.org/show_bug.cgi?id=150817
+
+        Reviewed by Brian Burg.
+
+        Remove the "search on reload" behavior from the Search Results tab. It often didn't find everything
+        on large pages, since it only searched after 500ms of the main resource changing. The bug here
+        was caused by performSearch selecting the first result, even if it was a background tab. We now
+        avoid doing unnecessary search work in the background when the Search Results tab isn't visible.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel): Deleted.
+        (WebInspector.SearchSidebarPanel.prototype._mainResourceDidChange): Remove children from the
+        sidebar since performSearch isn't doing it now and ScriptTreeElements were not being removed.
+        ResourceTreeElements were already being removed by NavigationSidebarPanel's prune behavior.
+        Removed the call to performSearch and related code.
+        (WebInspector.SearchSidebarPanel.prototype._mainResourceDidChange.delayedWork): Deleted.
+
 2015-11-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Convert remaining ContentViews to View base class
