@@ -1,3 +1,19 @@
+2015-11-05  Jason Marcell  <jmarcell@apple.com>
+
+        run-webkit-test should look in --root directory for LayoutTestRelay
+        https://bugs.webkit.org/show_bug.cgi?id=150859
+
+        Reviewed by Daniel Bates.
+
+        For iOS run-webkit-tests, use LayoutTestRelay specified by --root; otherwise find
+        LayoutTestRelay in the Mac build directory when --root is unspecified.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._build_path): Use '_cached_root' instead of 'root' so that we don't overwrite the
+        argument that was passed in via the --root argument.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.relay_path):
+
 2015-11-05  David Kilzer  <ddkilzer@apple.com>
 
         TestWebKitAPI crashed in TestWebKitAPI: TestWebKitAPI::SharedBufferTest_copyBufferCreatedWithContentsOfExistingFile_Test::TestBody

@@ -1133,18 +1133,22 @@ class Port(object):
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_file_name)
 
     def _build_path(self, *comps):
-        root_directory = self.get_option('root')
+        root_directory = self.get_option('_cached_root') or self.get_option('root')
         if not root_directory:
             build_directory = self.get_option('build_directory')
             if build_directory:
                 root_directory = self._filesystem.join(build_directory, self.get_option('configuration'))
             else:
                 root_directory = self._config.build_directory(self.get_option('configuration'))
-            # Set --root so that we can pass this to subprocesses and avoid making the
-            # slow call to config.build_directory() N times in each worker.
-            # FIXME: This is like @memoized, but more annoying and fragile; there should be another
-            # way to propagate values without mutating the options list.
-            self.set_option_default('root', root_directory)
+            # We take advantage of the behavior that self._options is passed by reference to worker
+            # subprocesses to use it as data store to cache the computed root directory path. This
+            # avoids making each worker subprocess compute this path again which is slow because of
+            # the call to config.build_directory().
+            #
+            # FIXME: This is like decorating this function with @memoized, but more annoying and fragile;
+            # there should be another way to propagate precomputed values to workers without modifying
+            # the options list.
+            self.set_option('_cached_root', root_directory)
         return self._filesystem.join(self._filesystem.abspath(root_directory), *comps)
 
     def _path_to_driver(self, configuration=None):
