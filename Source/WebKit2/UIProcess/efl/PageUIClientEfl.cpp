@@ -195,7 +195,7 @@ void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* client
 
 bool PageUIClientEfl::runBeforeUnloadConfirmPanel(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
-    return toPageUIClientEfl(clientInfo)->m_view->requestJSConfirmPopup(WKEinaSharedString(message));
+    return toPageUIClientEfl(clientInfo)->m_view->requestJSBeforeUnloadConfirmPopup(WKEinaSharedString(message));
 }
 
 unsigned long long PageUIClientEfl::exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void* clientInfo)

@@ -1530,6 +1530,12 @@ on_javascript_prompt(Ewk_View_Smart_Data *smartData, const char *message, const 
     return prompt_text;
 }
 
+static Eina_Bool
+on_javascript_before_unload_confirm(Ewk_View_Smart_Data *smartData, const char *message)
+{
+    return on_javascript_confirm(smartData, "Will you leave this page?");
+}
+
 static void
 on_popup_menu_item_clicked(void *user_data, Evas_Object *obj, void *event_info)
 {
@@ -2245,6 +2251,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     ewkViewClass->run_javascript_alert = on_javascript_alert;
     ewkViewClass->run_javascript_confirm = on_javascript_confirm;
     ewkViewClass->run_javascript_prompt = on_javascript_prompt;
+    ewkViewClass->run_javascript_before_unload_confirm = on_javascript_before_unload_confirm;
     ewkViewClass->window_geometry_get = on_window_geometry_get;
     ewkViewClass->window_geometry_set = on_window_geometry_set;
     ewkViewClass->fullscreen_enter = on_fullscreen_enter;

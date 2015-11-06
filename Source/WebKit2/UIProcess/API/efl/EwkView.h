@@ -178,6 +178,7 @@ public:
     void requestJSAlertPopup(const WKEinaSharedString& message);
     bool requestJSConfirmPopup(const WKEinaSharedString& message);
     WKEinaSharedString requestJSPromptPopup(const WKEinaSharedString& message, const WKEinaSharedString& defaultValue);
+    bool requestJSBeforeUnloadConfirmPopup(const WKEinaSharedString& message);
 
     template<EwkViewCallbacks::CallbackType callbackType>
     EwkViewCallbacks::CallBack<callbackType> smartCallback() const

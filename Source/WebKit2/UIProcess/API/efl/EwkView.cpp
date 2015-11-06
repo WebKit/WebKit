@@ -1049,6 +1049,21 @@ WKEinaSharedString EwkView::requestJSPromptPopup(const WKEinaSharedString& messa
 
 /**
  * @internal
+ * Calls a smart member function for javascript beforeUnloadConfirm() and returns a value from the function. Returns true by default.
+ */
+bool EwkView::requestJSBeforeUnloadConfirmPopup(const WKEinaSharedString& message)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (!sd->api->run_javascript_before_unload_confirm)
+        return true;
+
+    return sd->api->run_javascript_before_unload_confirm(sd, message);
+}
+
+/**
+ * @internal
  * Calls exceeded_database_quota callback or falls back to default behavior returns default database quota.
  */
 unsigned long long EwkView::informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage)

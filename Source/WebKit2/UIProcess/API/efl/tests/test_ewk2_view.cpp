@@ -280,7 +280,7 @@ TEST_F(EWK2ViewTest, ewk_view_add)
 
 TEST_F(EWK2ViewTest, ewk_view_try_close)
 {
-    ewkViewClass()->run_javascript_confirm = beforeUnloadCallback;
+    ewkViewClass()->run_javascript_before_unload_confirm = beforeUnloadCallback;
     ewkViewClass()->window_close = windowCloseCallback;
 
     const char content[] = "<!doctype html><html><body onbeforeunload='return func();'><script>function func() { return 'beforeunload message'; }</script></body></html>";

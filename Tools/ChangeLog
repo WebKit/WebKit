@@ -1,3 +1,14 @@
+2015-11-05  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Separate beforeunload confirm callback from confirm callback
+        https://bugs.webkit.org/show_bug.cgi?id=150964
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (on_javascript_before_unload_confirm):
+        (window_create):
+
 2015-11-05  Jason Marcell  <jmarcell@apple.com>
 
         run-webkit-test should look in --root directory for LayoutTestRelay

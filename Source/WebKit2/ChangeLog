@@ -1,3 +1,23 @@
+2015-11-05  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Separate beforeunload confirm callback from confirm callback
+        https://bugs.webkit.org/show_bug.cgi?id=150964
+
+        Reviewed by Gyuyoung Kim.
+
+        Browser may need to distinguish between beforeunload confirm panel and general confirm panel.
+        For example, browser may want to modify the message or show different buttons from confirm panel
+        such as "Stay Page | Leave Page".
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::requestJSBeforeUnloadConfirmPopup):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::runBeforeUnloadConfirmPanel):
+
 2015-11-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r192089.
