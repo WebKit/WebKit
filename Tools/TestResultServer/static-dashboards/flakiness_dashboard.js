@@ -362,6 +362,8 @@ function determineBuilderPlatform(builderNameUpperCase)
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAVERICKS');
     if (string.contains(builderNameUpperCase, 'LION'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_LION');
+    if (string.contains(builderNameUpperCase, ' IOS ') && string.contains(builderNameUpperCase, 'SIMULATOR'))
+        return determineWKPlatform(builderNameUpperCase, 'APPLE_IOS_SIMULATOR');
     if (string.contains(builderNameUpperCase, 'GTK LINUX'))
         return determineWKPlatform(builderNameUpperCase, 'GTK_LINUX');
     if (string.contains(builderNameUpperCase, 'EFL'))

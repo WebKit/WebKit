@@ -1,3 +1,14 @@
+2015-11-06  Alexey Proskuryakov  <ap@apple.com>
+
+        iOS test results are not visible on the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=150884
+
+        Reviewed by Darin Adler.
+
+        One more change was needed for the minimal fix.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2015-11-06  Daniel Bates  <dabates@apple.com>
 
         Teach Makefile to build LayoutTestRelay when building for iOS Simulator
