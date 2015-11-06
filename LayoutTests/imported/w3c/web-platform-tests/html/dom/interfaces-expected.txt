@@ -221,6 +221,7 @@ CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'dateTime' on 
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'alt' on a non-HTMLImageElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'src' on a non-HTMLImageElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'srcset' on a non-HTMLImageElement object.
+CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'sizes' on a non-HTMLImageElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'crossOrigin' on a non-HTMLImageElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'useMap' on a non-HTMLImageElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'isMap' on a non-HTMLImageElement object.
@@ -2721,7 +2722,9 @@ FAIL HTMLImageElement interface: attribute src assert_throws: getting property o
 FAIL HTMLImageElement interface: attribute srcset assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-FAIL HTMLImageElement interface: attribute sizes assert_true: The prototype object must have a property "sizes" expected true got false
+FAIL HTMLImageElement interface: attribute sizes assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
 FAIL HTMLImageElement interface: attribute crossOrigin assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2773,7 +2776,7 @@ PASS Stringification of document.createElement("img")
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "alt" with the proper type (0) 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "src" with the proper type (1) 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "srcset" with the proper type (2) 
-FAIL HTMLImageElement interface: document.createElement("img") must inherit property "sizes" with the proper type (3) assert_inherits: property "sizes" not found in prototype chain
+PASS HTMLImageElement interface: document.createElement("img") must inherit property "sizes" with the proper type (3) 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "crossOrigin" with the proper type (4) 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "useMap" with the proper type (5) 
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "isMap" with the proper type (6) 
@@ -2795,7 +2798,7 @@ PASS Stringification of new Image()
 PASS HTMLImageElement interface: new Image() must inherit property "alt" with the proper type (0) 
 PASS HTMLImageElement interface: new Image() must inherit property "src" with the proper type (1) 
 PASS HTMLImageElement interface: new Image() must inherit property "srcset" with the proper type (2) 
-FAIL HTMLImageElement interface: new Image() must inherit property "sizes" with the proper type (3) assert_inherits: property "sizes" not found in prototype chain
+PASS HTMLImageElement interface: new Image() must inherit property "sizes" with the proper type (3) 
 PASS HTMLImageElement interface: new Image() must inherit property "crossOrigin" with the proper type (4) 
 PASS HTMLImageElement interface: new Image() must inherit property "useMap" with the proper type (5) 
 PASS HTMLImageElement interface: new Image() must inherit property "isMap" with the proper type (6) 
