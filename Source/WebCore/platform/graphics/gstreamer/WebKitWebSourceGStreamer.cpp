@@ -26,6 +26,7 @@
 #include "GStreamerUtilities.h"
 #include "GUniquePtrGStreamer.h"
 #include "HTTPHeaderNames.h"
+#include "MainThreadNotifier.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "PlatformMediaResourceLoader.h"
@@ -42,7 +43,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/glib/GMutexLocker.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/GThreadSafeMainLoopSource.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -105,6 +105,14 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         RefPtr<ResourceHandle> m_resource;
 };
 
+enum MainThreadSourceNotification {
+    Start = 1 << 0,
+    Stop = 1 << 1,
+    NeedData = 1 << 2,
+    EnoughData = 1 << 3,
+    Seek = 1 << 4
+};
+
 #define WEBKIT_WEB_SRC_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SRC, WebKitWebSrcPrivate))
 struct _WebKitWebSrcPrivate {
     GstAppSrc* appsrc;
@@ -126,16 +134,11 @@ struct _WebKitWebSrcPrivate {
     guint64 size;
     gboolean seekable;
     gboolean paused;
+    bool isSeeking;
 
     guint64 requestedOffset;
 
-    gboolean pendingStart;
-    GThreadSafeMainLoopSource startSource;
-    GThreadSafeMainLoopSource stopSource;
-    GThreadSafeMainLoopSource needDataSource;
-    GThreadSafeMainLoopSource enoughDataSource;
-    GThreadSafeMainLoopSource seekSource;
-
+    MainThreadNotifier<MainThreadSourceNotification> notifier;
     GRefPtr<GstBuffer> buffer;
 };
 
@@ -166,15 +169,61 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement*, GstStateChange)
 
 static gboolean webKitWebSrcQueryWithParent(GstPad*, GstObject*, GstQuery*);
 
-static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData);
-static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData);
-static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer userData);
+static void webKitWebSrcNeedData(WebKitWebSrc*);
+static void webKitWebSrcEnoughData(WebKitWebSrc*);
+static void webKitWebSrcSeek(WebKitWebSrc*);
 
 static GstAppSrcCallbacks appsrcCallbacks = {
-    webKitWebSrcNeedDataCb,
-    webKitWebSrcEnoughDataCb,
-    webKitWebSrcSeekDataCb,
-    { 0 }
+    // need_data
+    [](GstAppSrc*, guint, gpointer userData) {
+        WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
+        WebKitWebSrcPrivate* priv = src->priv;
+
+        {
+            WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
+            if (!priv->paused)
+                return;
+        }
+
+        GRefPtr<WebKitWebSrc> protector(src);
+        priv->notifier.notify(MainThreadSourceNotification::NeedData, [protector] { webKitWebSrcNeedData(protector.get()); });
+    },
+    // enough_data
+    [](GstAppSrc*, gpointer userData) {
+        WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
+        WebKitWebSrcPrivate* priv = src->priv;
+
+        {
+            WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
+            if (priv->paused)
+                return;
+        }
+
+        GRefPtr<WebKitWebSrc> protector(src);
+        priv->notifier.notify(MainThreadSourceNotification::EnoughData, [protector] { webKitWebSrcEnoughData(protector.get()); });
+    },
+    // seek_data
+    [](GstAppSrc*, guint64 offset, gpointer userData) -> gboolean {
+        WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
+        WebKitWebSrcPrivate* priv = src->priv;
+
+        {
+            WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
+            if (offset == priv->offset && priv->requestedOffset == priv->offset)
+                return TRUE;
+
+            if (!priv->seekable)
+                return FALSE;
+
+            priv->isSeeking = true;
+            priv->requestedOffset = offset;
+        }
+
+        GRefPtr<WebKitWebSrc> protector(src);
+        priv->notifier.notify(MainThreadSourceNotification::Seek, [protector] { webKitWebSrcSeek(protector.get()); });
+        return TRUE;
+    },
+    { nullptr }
 };
 
 #define webkit_web_src_parent_class parent_class
@@ -358,17 +407,6 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
     }
 }
 
-static void removeTimeoutSources(WebKitWebSrc* src)
-{
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    if (!priv->pendingStart)
-        priv->startSource.cancel();
-    priv->needDataSource.cancel();
-    priv->enoughDataSource.cancel();
-    priv->seekSource.cancel();
-}
-
 static void webKitWebSrcStop(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
@@ -377,9 +415,9 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
 
-    bool seeking = priv->seekSource.isActive();
+    bool wasSeeking = std::exchange(priv->isSeeking, false);
 
-    removeTimeoutSources(src);
+    priv->notifier.cancelPendingNotifications(MainThreadSourceNotification::NeedData | MainThreadSourceNotification::EnoughData | MainThreadSourceNotification::Seek);
 
     if (priv->client) {
         delete priv->client;
@@ -399,7 +437,7 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
     priv->offset = 0;
     priv->seekable = FALSE;
 
-    if (!seeking) {
+    if (!wasSeeking) {
         priv->size = 0;
         priv->requestedOffset = 0;
         priv->player = 0;
@@ -409,7 +447,7 @@ static void webKitWebSrcStop(WebKitWebSrc* src)
 
     if (priv->appsrc) {
         gst_app_src_set_caps(priv->appsrc, 0);
-        if (!seeking)
+        if (!wasSeeking)
             gst_app_src_set_size(priv->appsrc, -1);
     }
 
@@ -475,7 +513,6 @@ static void webKitWebSrcStart(WebKitWebSrc* src)
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
 
-    priv->pendingStart = FALSE;
     priv->didPassAccessControlCheck = false;
 
     if (!priv->uri) {
@@ -591,26 +628,20 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
         return ret;
     }
 
-    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
     switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
     {
         GST_DEBUG_OBJECT(src, "READY->PAUSED");
-        priv->pendingStart = TRUE;
         GRefPtr<WebKitWebSrc> protector(src);
-        priv->startSource.schedule("[WebKit] webKitWebSrcStart",
-            std::function<void()>([protector] { webKitWebSrcStart(protector.get()); }));
+        priv->notifier.notify(MainThreadSourceNotification::Start, [protector] { webKitWebSrcStart(protector.get()); });
         break;
     }
     case GST_STATE_CHANGE_PAUSED_TO_READY:
     {
         GST_DEBUG_OBJECT(src, "PAUSED->READY");
-        priv->pendingStart = FALSE;
-        // cancel pending sources
-        removeTimeoutSources(src);
+        priv->notifier.cancelPendingNotifications();
         GRefPtr<WebKitWebSrc> protector(src);
-        priv->stopSource.schedule("[WebKit] webKitWebSrcStop",
-            std::function<void()>([protector] { webKitWebSrcStop(protector.get()); }));
+        priv->notifier.notify(MainThreadSourceNotification::Stop, [protector] { webKitWebSrcStop(protector.get()); });
         break;
     }
     default:
@@ -737,15 +768,18 @@ static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
 
 // appsrc callbacks
 
-static void webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
+static void webKitWebSrcNeedData(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
     ASSERT(isMainThread());
 
-    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    priv->paused = FALSE;
-    locker.unlock();
+    GST_DEBUG_OBJECT(src, "Need more data");
+
+    {
+        WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
+        priv->paused = FALSE;
+    }
 
     if (priv->client)
         priv->client->setDefersLoading(false);
@@ -753,31 +787,18 @@ static void webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
         priv->loader->setDefersLoading(false);
 }
 
-static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
-{
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    GST_DEBUG_OBJECT(src, "Need more data: %u", length);
-
-    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    if (priv->needDataSource.isScheduled() || !priv->paused)
-        return;
-
-    GRefPtr<WebKitWebSrc> protector(src);
-    priv->needDataSource.schedule("[WebKit] webKitWebSrcNeedDataMainCb",
-        std::function<void()>([protector] { webKitWebSrcNeedDataMainCb(protector.get()); }));
-}
-
-static void webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
+static void webKitWebSrcEnoughData(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
     ASSERT(isMainThread());
 
-    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    priv->paused = TRUE;
-    locker.unlock();
+    GST_DEBUG_OBJECT(src, "Have enough data");
+
+    {
+        WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
+        priv->paused = TRUE;
+    }
 
     if (priv->client)
         priv->client->setDefersLoading(true);
@@ -785,50 +806,14 @@ static void webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
         priv->loader->setDefersLoading(true);
 }
 
-static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData)
-{
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    GST_DEBUG_OBJECT(src, "Have enough data");
-
-    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    if (priv->enoughDataSource.isScheduled() || priv->paused)
-        return;
-
-    GRefPtr<WebKitWebSrc> protector(src);
-    priv->enoughDataSource.schedule("[WebKit] webKitWebSrcEnoughDataMainCb",
-        std::function<void()>([protector] { webKitWebSrcEnoughDataMainCb(protector.get()); }));
-}
-
-static void webKitWebSrcSeekMainCb(WebKitWebSrc* src)
+static void webKitWebSrcSeek(WebKitWebSrc* src)
 {
     ASSERT(isMainThread());
 
+    GST_DEBUG_OBJECT(src, "Seeking to offset: %" G_GUINT64_FORMAT, src->priv->requestedOffset);
+
     webKitWebSrcStop(src);
     webKitWebSrcStart(src);
-}
-
-static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer userData)
-{
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(userData);
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    GST_DEBUG_OBJECT(src, "Seeking to offset: %" G_GUINT64_FORMAT, offset);
-    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    if (offset == priv->offset && priv->requestedOffset == priv->offset)
-        return TRUE;
-
-    if (!priv->seekable)
-        return FALSE;
-
-    GST_DEBUG_OBJECT(src, "Doing range-request seek");
-    priv->requestedOffset = offset;
-
-    GRefPtr<WebKitWebSrc> protector(src);
-    priv->seekSource.schedule("[WebKit] webKitWebSrcSeekMainCb",
-        std::function<void()>([protector] { webKitWebSrcSeekMainCb(WEBKIT_WEB_SRC(protector.get())); }));
-    return TRUE;
 }
 
 void webKitWebSrcSetMediaPlayer(WebKitWebSrc* src, WebCore::MediaPlayer* player)
@@ -888,7 +873,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
 
-    if (priv->seekSource.isActive()) {
+    if (priv->isSeeking) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring response");
         return;
     }
@@ -940,7 +925,7 @@ void StreamingClient::handleDataReceived(const char* data, int length)
     if (priv->buffer)
         unmapGstBuffer(priv->buffer.get());
 
-    if (priv->seekSource.isActive()) {
+    if (priv->isSeeking) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring data");
         priv->buffer.clear();
         return;
@@ -1001,7 +986,7 @@ void StreamingClient::handleNotifyFinished()
     GST_DEBUG_OBJECT(src, "Have EOS");
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
-    if (!priv->seekSource.isActive()) {
+    if (!priv->isSeeking) {
         locker.unlock();
         gst_app_src_end_of_stream(priv->appsrc);
     }
