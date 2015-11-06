@@ -73,9 +73,8 @@ static Vector<String> sortLocaleData(const String& locale, const String& key)
         UEnumeration* enumeration = ucol_getKeywordValuesForLocale("collation", locale.utf8().data(), TRUE, &status);
         if (U_SUCCESS(status)) {
             const char* keywordValue;
-            int32_t length;
-            while ((keywordValue = uenum_next(enumeration, &length, &status)) && U_SUCCESS(status)) {
-                String collation(keywordValue, length);
+            while ((keywordValue = uenum_next(enumeration, nullptr, &status)) && U_SUCCESS(status)) {
+                String collation(keywordValue);
 
                 // 10.2.3 "The values "standard" and "search" must not be used as elements in any [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co array."
                 if (collation == "standard" || collation == "search")

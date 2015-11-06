@@ -2453,8 +2453,6 @@ webkit.org/b/140947 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip
 
 # The following fails due to DOM exception 18.
 js/dom/callback-function-with-handle-event.html [ Skip ] #  [ Timeout ]
-
-webkit.org/b/150943 [ Debug ] js/intl-collator.html [ Crash ]
 ################################################################################
 #################        End JavaScript Issues           #######################
 ################################################################################

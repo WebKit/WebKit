@@ -1,3 +1,17 @@
+2015-11-05  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Layout Test js/intl-collator.html is crashing on win 7 debug
+        https://bugs.webkit.org/show_bug.cgi?id=150943
+
+        Reviewed by Geoffrey Garen.
+
+        The string length returned by ICU's uenum_next seems to be unreliable
+        on an old version of ICU. Since uenum_next returns a null-terminated
+        string anyway, this patch removes the use of the length.
+
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::sortLocaleData):
+
 2015-11-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add FIXMEs referencing https://bugs.webkit.org/show_bug.cgi?id=150958 and
