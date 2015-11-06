@@ -1,3 +1,15 @@
+2015-11-06  Daniel Bates  <dabates@apple.com>
+
+        Teach Makefile to build LayoutTestRelay when building for iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=150849
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for overriding the user-provided arguments SDKROOT and ARCHS
+        on a per Makefile basis.
+
+        * Makefile.shared:
+
 2015-11-06  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r192095.

@@ -4,12 +4,27 @@ SET_COLOR_DIAGNOSTICS_ARG = if [[ -t 1 ]]; then COLOR_DIAGNOSTICS_ARG="COLOR_DIA
 XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
 
 ifneq (,$(SDKROOT))
-	XCODE_OPTIONS += SDKROOT=$(SDKROOT)
+	ifneq (,$(OVERRIDE_SDKROOT))
+		ifneq (default,$(OVERRIDE_SDKROOT))
+			XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(OVERRIDE_SDKROOT)
+		endif
+		OVERRIDE_SDKROOT =
+	else
+		XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(SDKROOT)
+	endif
 endif
 
 ifneq (,$(ARCHS))
-	XCODE_OPTIONS += ARCHS="$(ARCHS)"
-	XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+	ifneq (,$(OVERRIDE_ARCHS))
+		ifneq (default,$(OVERRIDE_ARCHS))
+			XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(OVERRIDE_ARCHS)"
+			XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+		endif
+		OVERRIDE_ARCHS =
+	else
+		XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(ARCHS)"
+		XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+	endif
 endif
 
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")

@@ -1,3 +1,15 @@
+2015-11-06  Daniel Bates  <dabates@apple.com>
+
+        Teach Makefile to build LayoutTestRelay when building for iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=150849
+
+        Reviewed by Alexey Proskuryakov.
+
+        Override the user-specified arguments SDKROOT and ARCHS to use the default SDK
+        and default ARCHS since LayoutTestRelay is a Mac command line tool.
+
+        * LayoutTestRelay/Makefile: Define OVERWRITE_SDKROOT and OVERWRITE_ARCHS.
+
 2015-11-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Add runtime and compile time flags for enabling Web Animations API and model.
