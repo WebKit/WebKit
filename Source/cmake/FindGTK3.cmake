@@ -53,6 +53,8 @@ if (GTK3_VERSION AND VERSION_OK)
     pkg_check_modules(GTK3_QUARTZ gtk+-quartz-3.0)
     if ("${GTK3_QUARTZ_VERSION}" VERSION_EQUAL "${GTK3_VERSION}")
         set(GTK3_SUPPORTS_QUARTZ TRUE)
+    else ()
+        set(GTK3_SUPPORTS_QUARTZ FALSE)
     endif ()
 
     pkg_check_modules(GTK3_X11 gtk+-x11-3.0)
