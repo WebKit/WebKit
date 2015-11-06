@@ -2068,7 +2068,7 @@ css3/flexbox/flexitem.html [ Failure ]
 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
-webkit.org/b/150949 imported/blink/fast/css/transformed-overflow-hidden-clips-fixed.html [ ImageOnlyFailure]
+webkit.org/b/150949 imported/blink/fast/css/transformed-overflow-hidden-clips-fixed.html [ ImageOnlyFailure ]
 ################################################################################
 #################            End CSS Issues              #######################
 ################################################################################
