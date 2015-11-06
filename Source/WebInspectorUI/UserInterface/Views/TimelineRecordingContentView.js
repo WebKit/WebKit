@@ -46,11 +46,13 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._renderingFrameTimelineOverview.addEventListener(WebInspector.TimelineOverview.Event.RecordSelected, this._recordSelected, this);
 
         this._currentTimelineOverview = this._linearTimelineOverview;
+
+        // FIXME: use View.prototype.addSubview once <https://webkit.org/b/149190> is fixed.
         this.element.appendChild(this._currentTimelineOverview.element);
 
         this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
-        this.element.appendChild(this._contentViewContainer.element);
+        this.addSubview(this._contentViewContainer);
 
         this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), "Images/NavigationItemTrash.svg", 15, 15);
         this._clearTimelineNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
@@ -210,12 +212,6 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._contentViewContainer.goForward();
     }
 
-    updateLayout()
-    {
-        this._currentTimelineOverview.updateLayoutForResize();
-        this._contentViewContainer.updateLayout();
-    }
-
     saveToCookie(cookie)
     {
         cookie.type = WebInspector.ContentViewCookieType.Timelines;
@@ -324,6 +320,13 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         return true;
     }
 
+    // Protected
+
+    layout()
+    {
+        this._currentTimelineOverview.updateLayoutForResize();
+    }
+
     // Private
 
     _currentContentViewDidChange(event)
@@ -338,6 +341,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (newTimelineOverview !== this._currentTimelineOverview) {
             this._currentTimelineOverview.hidden();
 
+            // FIXME: use View.prototype.replaceSubview once <https://webkit.org/b/149190> is fixed.
             this.element.insertBefore(newTimelineOverview.element, this._currentTimelineOverview.element);
             this.element.removeChild(this._currentTimelineOverview.element);
 

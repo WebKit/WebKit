@@ -35,7 +35,7 @@ WebInspector.TextContentView = class TextContentView extends WebInspector.Conten
         this._textEditor.addEventListener(WebInspector.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
         this._textEditor.addEventListener(WebInspector.TextEditor.Event.FormattingDidChange, this._textEditorFormattingDidChange, this);
 
-        this.element.appendChild(this._textEditor.element);
+        this.addSubview(this._textEditor);
 
         this._textEditor.readOnly = true;
         this._textEditor.mimeType = mimeType;
@@ -145,11 +145,6 @@ WebInspector.TextContentView = class TextContentView extends WebInspector.Conten
     revealNextSearchResult(changeFocus)
     {
         this._textEditor.revealNextSearchResult(changeFocus);
-    }
-
-    updateLayout()
-    {
-        this._textEditor.updateLayout();
     }
 
     // Private

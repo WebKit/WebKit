@@ -86,7 +86,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
         this.element.classList.add("network-grid");
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         var networkTimeline = WebInspector.timelineManager.persistentNetworkTimeline;
         networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
@@ -136,33 +136,25 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._dataGrid.closed();
     }
 
-    updateLayout()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            delete this._scheduledLayoutUpdateIdentifier;
-        }
-
-        this._dataGrid.updateLayout();
-
-        this._processPendingRecords();
-    }
-
     needsLayout()
     {
         if (!this._networkSidebarPanel.visible)
             return;
 
-        if (this._scheduledLayoutUpdateIdentifier)
-            return;
-
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
+        super.needsLayout();
     }
 
     reset()
     {
         this._contentTreeOutline.removeChildren();
         this._dataGrid.reset();
+    }
+
+    // Protected
+
+    layout()
+    {
+        this._processPendingRecords();
     }
 
     // Private

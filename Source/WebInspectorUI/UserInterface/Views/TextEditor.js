@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextEditor = class TextEditor extends WebInspector.Object
+WebInspector.TextEditor = class TextEditor extends WebInspector.View
 {
     constructor(element, mimeType, delegate)
     {
-        super();
+        super(element);
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add("text-editor", WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.classList.add("text-editor", WebInspector.SyntaxHighlightedStyleClassName);
 
         // FIXME: <https://webkit.org/b/149120> Web Inspector: Preferences for Text Editor behavior
         this._codeMirror = CodeMirror(this.element, {
@@ -71,11 +70,6 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
     }
 
     // Public
-
-    get element()
-    {
-        return this._element;
-    }
 
     get visible()
     {
@@ -505,15 +499,6 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
         this._codeMirror.operation(revealAndHighlightLine.bind(this));
     }
 
-    updateLayout(force)
-    {
-        // FIXME: <https://webkit.org/b/146256> Web Inspector: Nested ContentBrowsers / ContentViewContainers cause too many ContentView updates
-        // Ideally we would not get an updateLayout call if we are not visible. We should restructure ContentView
-        // show/hide restoration to reduce duplicated work and solve this in the process.
-        if (this._visible)
-            this._codeMirror.refresh();
-    }
-
     shown()
     {
         this._visible = true;
@@ -723,6 +708,17 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
     }
 
     // Protected
+
+    layout()
+    {
+        // FIXME: <https://webkit.org/b/146256> Web Inspector: Nested ContentBrowsers / ContentViewContainers cause too many ContentView updates
+        // Ideally we would not get an updateLayout call if we are not visible. We should restructure ContentView
+        // show/hide restoration to reduce duplicated work and solve this in the process.
+
+        // FIXME: visible check can be removed once <https://webkit.org/b/150741> is fixed.
+        if (this._visible)
+            this._codeMirror.refresh();
+    }
 
     prettyPrint(pretty)
     {
@@ -937,7 +933,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
         var coordinates = this._codeMirror.cursorCoords(true, "page");
 
         // Adjust the coordinates to be based in the text editor's space.
-        var textEditorRect = this._element.getBoundingClientRect();
+        let textEditorRect = this.element.getBoundingClientRect();
         coordinates.top -= textEditorRect.top;
         coordinates.left -= textEditorRect.left;
 
@@ -945,7 +941,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
         this._bouncyHighlightElement.textContent = textContent;
         this._bouncyHighlightElement.style.top = coordinates.top + "px";
         this._bouncyHighlightElement.style.left = coordinates.left + "px";
-        this._element.appendChild(this._bouncyHighlightElement);
+        this.element.appendChild(this._bouncyHighlightElement);
 
         function animationEnded()
         {

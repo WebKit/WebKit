@@ -33,6 +33,7 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
 
         this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("database-table-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+        this._messageTextViewElement = null;
 
         this.update();
     }
@@ -82,27 +83,40 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
         // It would be nice to do better than creating a new data grid each time the table is updated, but the table updating
         // doesn't happen very frequently. Additionally, using DataGrid's createSortableDataGrid makes our code much cleaner and it knows
         // how to sort arbitrary columns.
-        this.element.removeChildren();
+        if (this._dataGrid) {
+            this.removeSubview(this._dataGrid);
+            this._dataGrid = null;
+        }
 
-        this._dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
-        if (!this._dataGrid || !this._dataGrid.element) {
-            this._dataGrid = undefined;
+        if (this._messageTextViewElement)
+            this._messageTextViewElement.remove();
 
-            // If the DataGrid is empty, then we were returned a table with no columns. This can happen when a table has
-            // no data, the SELECT query only returns column names when there is data.
-            this.element.removeChildren();
-            this.element.appendChild(WebInspector.createMessageTextView(WebInspector.UIString("The “%s”\ntable is empty.").format(this.representedObject.name), false));
+        if (columnNames.length) {
+            this._dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
+
+            this.addSubview(this._dataGrid);
+            this.updateLayout();
             return;
         }
 
-        this.element.appendChild(this._dataGrid.element);
-        this._dataGrid.updateLayout();
+        // We were returned a table with no columns. This can happen when a table has
+        // no data, the SELECT query only returns column names when there is data.
+        this._messageTextViewElement = WebInspector.createMessageTextView(WebInspector.UIString("The “%s”\ntable is empty.").format(this.representedObject.name), false);
+        this.element.appendChild(this._messageTextViewElement);
     }
 
     _queryError(error)
     {
-        this.element.removeChildren();
-        this.element.appendChild(WebInspector.createMessageTextView(WebInspector.UIString("An error occured trying to\nread the “%s” table.").format(this.representedObject.name), true));
+        if (this._dataGrid) {
+            this.removeSubview(this._dataGrid);
+            this._dataGrid = null;
+        }
+
+        if (this._messageTextViewElement)
+            this._messageTextViewElement.remove();
+
+        this._messageTextViewElement = WebInspector.createMessageTextView(WebInspector.UIString("An error occured trying to\nread the “%s” table.").format(this.representedObject.name), true);
+        this.element.appendChild(this._messageTextViewElement);
     }
 
     _refreshButtonClicked()

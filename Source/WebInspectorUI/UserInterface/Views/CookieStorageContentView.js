@@ -78,12 +78,6 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         PageAgent.getCookies(callback.bind(this));
     }
 
-    updateLayout()
-    {
-        if (this._dataGrid)
-            this._dataGrid.updateLayout();
-    }
-
     saveToCookie(cookie)
     {
         cookie.type = WebInspector.ContentViewCookieType.CookieStorage;
@@ -144,7 +138,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
             this._dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCallback.bind(this));
             this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
-            this.element.appendChild(this._dataGrid.element);
+            this.addSubview(this._dataGrid);
             this._dataGrid.updateLayout();
         }
 

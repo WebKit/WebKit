@@ -1,3 +1,67 @@
+2015-11-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Convert remaining ContentViews to View base class
+        https://bugs.webkit.org/show_bug.cgi?id=150729
+
+        Reviewed by Brian Burg.
+
+        Refactor content views to reuse View features: remove updateLayout and
+        element getters, and use View.prototype.addSubview and removeSubview
+        where appropriate.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype._createDataGrid):
+        * UserInterface/Views/ClusterContentView.js:
+        (WebInspector.ClusterContentView):
+        (WebInspector.ClusterContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        (WebInspector.CookieStorageContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView):
+        (WebInspector.DOMStorageContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype.layout):
+        (WebInspector.DOMTreeContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView):
+        (WebInspector.DatabaseTableContentView.prototype._queryFinished):
+        (WebInspector.DatabaseTableContentView.prototype._queryError):
+        * UserInterface/Views/FontResourceContentView.js:
+        (WebInspector.FontResourceContentView.prototype.layout):
+        (WebInspector.FontResourceContentView):
+        (WebInspector.FontResourceContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WebInspector.IndexedDatabaseObjectStoreContentView):
+        (WebInspector.IndexedDatabaseObjectStoreContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.layout):
+        (WebInspector.LogContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype.needsLayout):
+        (WebInspector.NetworkGridContentView.prototype.layout):
+        (WebInspector.NetworkGridContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype.layout): Deleted.
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView.prototype._contentWillPopulate):
+        (WebInspector.ScriptContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/TextContentView.js:
+        (WebInspector.TextContentView):
+        (WebInspector.TextContentView.prototype.updateLayout): Deleted.
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.layout):
+        (WebInspector.TextEditor.prototype.get element): Deleted.
+        (WebInspector.TextEditor.prototype.updateLayout): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype.layout):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype.updateLayout): Deleted.
+
 2015-11-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Pretty print falsely triggers on some JS that wasn't minified

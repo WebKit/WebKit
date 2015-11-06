@@ -112,11 +112,6 @@ WebInspector.FontResourceContentView = class FontResourceContentView extends Web
         this.sizeToFit();
     }
 
-    updateLayout()
-    {
-        this.sizeToFit();
-    }
-
     shown()
     {
         // Add the style element since it is removed when hidden.
@@ -139,6 +134,13 @@ WebInspector.FontResourceContentView = class FontResourceContentView extends Web
         // the object URL to be resolved again.
         if (this._fontObjectURL)
             URL.revokeObjectURL(this._fontObjectURL);
+    }
+
+    // Protected
+
+    layout()
+    {
+        this.sizeToFit();
     }
 }
 
