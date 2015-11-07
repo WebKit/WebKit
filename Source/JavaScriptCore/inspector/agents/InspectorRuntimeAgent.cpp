@@ -356,6 +356,7 @@ void InspectorRuntimeAgent::getBasicBlocks(ErrorString& errorString, const Strin
             .setStartOffset(block.m_startOffset)
             .setEndOffset(block.m_endOffset)
             .setHasExecuted(block.m_hasExecuted)
+            .setExecutionCount(block.m_executionCount)
             .release();
         basicBlocks->addItem(WTF::move(location));
     }

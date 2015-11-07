@@ -76,31 +76,33 @@ Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceID(intptr_t 
     const BlockLocationCache& cache = bucketFindResult->value;
     for (const BasicBlockLocation* block : cache.values()) {
         bool hasExecuted = block->hasExecuted();
+        size_t executionCount = block->executionCount();
         const Vector<BasicBlockLocation::Gap>& blockRanges = block->getExecutedRanges();
         for (BasicBlockLocation::Gap gap : blockRanges) {
             BasicBlockRange range;
             range.m_hasExecuted = hasExecuted;
+            range.m_executionCount = executionCount;
             range.m_startOffset = gap.first;
             range.m_endOffset = gap.second;
             result.append(range);
         }
     }
 
-    const Vector<std::tuple<bool, unsigned, unsigned>>& unexecutedFunctionRanges = vm.functionHasExecutedCache()->getFunctionRanges(sourceID);
-    for (const auto& functionRange : unexecutedFunctionRanges) {
+    const Vector<std::tuple<bool, unsigned, unsigned>>& functionRanges = vm.functionHasExecutedCache()->getFunctionRanges(sourceID);
+    for (const auto& functionRange : functionRanges) {
         BasicBlockRange range;
         range.m_hasExecuted = std::get<0>(functionRange);
         range.m_startOffset = static_cast<int>(std::get<1>(functionRange));
         range.m_endOffset = static_cast<int>(std::get<2>(functionRange));
+        range.m_executionCount = range.m_hasExecuted ? 1 : 0; // This is a hack. We don't actually count this.
         result.append(range);
     }
 
     return result;
 }
 
-bool ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted(int offset, intptr_t sourceID, VM& vm)
+static BasicBlockRange findBasicBlockAtTextOffset(int offset, const Vector<BasicBlockRange>& blocks)
 {
-    const Vector<BasicBlockRange>& blocks = getBasicBlocksForSourceID(sourceID, vm);
     int bestDistance = INT_MAX;
     BasicBlockRange bestRange;
     bestRange.m_startOffset = bestRange.m_endOffset = -1;
@@ -115,7 +117,21 @@ bool ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted(int offset, intp
     }
 
     RELEASE_ASSERT(bestRange.m_startOffset != -1 && bestRange.m_endOffset != -1);
-    return bestRange.m_hasExecuted;
+    return bestRange;
+}
+
+bool ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted(int offset, intptr_t sourceID, VM& vm)
+{
+    const Vector<BasicBlockRange>& blocks = getBasicBlocksForSourceID(sourceID, vm);
+    BasicBlockRange range = findBasicBlockAtTextOffset(offset, blocks);
+    return range.m_hasExecuted;
+}
+
+size_t ControlFlowProfiler::basicBlockExecutionCountAtTextOffset(int offset, intptr_t sourceID, VM& vm)
+{
+    const Vector<BasicBlockRange>& blocks = getBasicBlocksForSourceID(sourceID, vm);
+    BasicBlockRange range = findBasicBlockAtTextOffset(offset, blocks);
+    return range.m_executionCount;
 }
 
 } // namespace JSC

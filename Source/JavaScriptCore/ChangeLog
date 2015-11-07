@@ -1,3 +1,70 @@
+2015-11-06  Saam barati  <sbarati@apple.com>
+
+        Control Flow Profiler should keep execution counts of basic blocks
+        https://bugs.webkit.org/show_bug.cgi?id=146099
+
+        Reviewed by Mark Lam.
+
+        This patch changes the control flow profiler to now
+        keep track of execution counts for each basic block
+        instead of a boolean indicating if the basic block has 
+        executed at all.  This has the consequence of us having to 
+        always compile all op_profile_control_flows in the baseline and DFG.
+
+        This patch adds a new "executionCount" field to the inspector protocol
+        corresponding to the execution of a basic block. This patch, for now,
+        still maintains the previous field of "hasExecuted" even though this is
+        redundant with "executionCount".
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks):
+        * inspector/protocol/Runtime.json:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_profile_control_flow):
+        (JSC::JIT::emit_op_create_direct_arguments):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionHasBasicBlockExecuted):
+        (functionBasicBlockExecutionCount):
+        (functionEnableExceptionFuzz):
+        (functionDrainMicrotasks):
+        (functionIs32BitPlatform):
+        (functionLoadWebAssembly):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/BasicBlockLocation.cpp:
+        (JSC::BasicBlockLocation::BasicBlockLocation):
+        (JSC::BasicBlockLocation::dumpData):
+        (JSC::BasicBlockLocation::emitExecuteCode):
+        * runtime/BasicBlockLocation.h:
+        (JSC::BasicBlockLocation::endOffset):
+        (JSC::BasicBlockLocation::setStartOffset):
+        (JSC::BasicBlockLocation::setEndOffset):
+        (JSC::BasicBlockLocation::hasExecuted):
+        (JSC::BasicBlockLocation::executionCount):
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::getBasicBlocksForSourceID):
+        (JSC::findBasicBlockAtTextOffset):
+        (JSC::ControlFlowProfiler::hasBasicBlockAtTextOffsetBeenExecuted):
+        (JSC::ControlFlowProfiler::basicBlockExecutionCountAtTextOffset):
+        * runtime/ControlFlowProfiler.h:
+        (JSC::ControlFlowProfiler::dummyBasicBlock):
+        * tests/controlFlowProfiler/execution-count.js: Added.
+        (noop):
+        (foo):
+        (a):
+        (b):
+        (baz):
+        (jaz):
+        (testWhile):
+        (is32BitPlatform.testMax):
+        (is32BitPlatform):
+
 2015-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         B3 and Air should simplify CFGs

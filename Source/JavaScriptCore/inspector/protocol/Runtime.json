@@ -188,7 +188,8 @@
             "properties": [
                 { "name": "startOffset", "type": "integer", "description": "Start offset of the basic block." },
                 { "name": "endOffset", "type": "integer", "description": "End offset of the basic block." },
-                { "name": "hasExecuted", "type": "boolean", "description": "Indicates if the basic block has executed before." }
+                { "name": "hasExecuted", "type": "boolean", "description": "Indicates if the basic block has executed before." },
+                { "name": "executionCount", "type": "integer", "description": "Indicates how many times the basic block has executed." }
             ]
         }
     ],

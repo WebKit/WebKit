@@ -2284,6 +2284,13 @@ _llint_op_profile_type:
 .opProfileTypeDone:
     dispatch(6)
 
+_llint_op_profile_control_flow:
+    traceExecution()
+    loadpFromInstruction(1, t0)
+    addq 1, BasicBlockLocation::m_executionCount[t0]
+    dispatch(2)
+
+
 _llint_op_load_arrowfunction_this:
     traceExecution()
     loadp Callee[cfr], t0

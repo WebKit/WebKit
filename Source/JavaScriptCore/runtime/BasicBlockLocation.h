@@ -47,12 +47,17 @@ public:
     int endOffset() const { return m_endOffset; }
     void setStartOffset(int startOffset) { m_startOffset = startOffset; }
     void setEndOffset(int endOffset) { m_endOffset = endOffset; }
-    bool hasExecuted() const { return m_hasExecuted; }
+    bool hasExecuted() const { return m_executionCount > 0; }
+    size_t executionCount() const { return m_executionCount; }
     void insertGap(int, int);
     Vector<Gap> getExecutedRanges() const;
     JS_EXPORT_PRIVATE void dumpData() const;
 #if ENABLE(JIT)
-    void emitExecuteCode(CCallHelpers&, MacroAssembler::RegisterID) const;
+#if USE(JSVALUE64)
+    void emitExecuteCode(CCallHelpers&) const;
+#else
+    void emitExecuteCode(CCallHelpers&, MacroAssembler::RegisterID scratch) const;
+#endif
 #endif
 
 private:
@@ -60,7 +65,7 @@ private:
 
     int m_startOffset;
     int m_endOffset;
-    bool m_hasExecuted;
+    size_t m_executionCount;
     Vector<Gap> m_gaps;
 };
 

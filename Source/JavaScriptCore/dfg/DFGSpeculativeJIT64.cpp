@@ -4813,10 +4813,7 @@ void SpeculativeJIT::compile(Node* node)
     }
     case ProfileControlFlow: {
         BasicBlockLocation* basicBlockLocation = node->basicBlockLocation();
-        if (!basicBlockLocation->hasExecuted()) {
-            GPRTemporary scratch1(this);
-            basicBlockLocation->emitExecuteCode(m_jit, scratch1.gpr());
-        }
+        basicBlockLocation->emitExecuteCode(m_jit);
         noResult(node);
         break;
     }

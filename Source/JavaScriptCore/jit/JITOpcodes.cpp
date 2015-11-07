@@ -1368,8 +1368,11 @@ void JIT::emit_op_to_index_string(Instruction* currentInstruction)
 void JIT::emit_op_profile_control_flow(Instruction* currentInstruction)
 {
     BasicBlockLocation* basicBlockLocation = currentInstruction[1].u.basicBlockLocation;
-    if (!basicBlockLocation->hasExecuted())
-        basicBlockLocation->emitExecuteCode(*this, regT1);
+#if USE(JSVALUE64)
+    basicBlockLocation->emitExecuteCode(*this);
+#else
+    basicBlockLocation->emitExecuteCode(*this, regT0);
+#endif
 }
 
 void JIT::emit_op_create_direct_arguments(Instruction* currentInstruction)

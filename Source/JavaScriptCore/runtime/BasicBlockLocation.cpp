@@ -36,7 +36,7 @@ namespace JSC {
 BasicBlockLocation::BasicBlockLocation(int startOffset, int endOffset)
     : m_startOffset(startOffset)
     , m_endOffset(endOffset)
-    , m_hasExecuted(false)
+    , m_executionCount(0)
 {
 }
 
@@ -75,15 +75,26 @@ void BasicBlockLocation::dumpData() const
 {
     Vector<Gap> executedRanges = getExecutedRanges();
     for (Gap gap : executedRanges)
-        dataLogF("\tBasicBlock: [%d, %d] hasExecuted: %s\n", gap.first, gap.second, hasExecuted() ? "true" : "false");
+        dataLogF("\tBasicBlock: [%d, %d] hasExecuted: %s, executionCount:%zu\n", gap.first, gap.second, hasExecuted() ? "true" : "false", m_executionCount);
 }
 
 #if ENABLE(JIT)
-void BasicBlockLocation::emitExecuteCode(CCallHelpers& jit, MacroAssembler::RegisterID ptrReg) const
+#if USE(JSVALUE64)
+void BasicBlockLocation::emitExecuteCode(CCallHelpers& jit) const
 {
-    jit.move(CCallHelpers::TrustedImmPtr(&m_hasExecuted), ptrReg);
-    jit.store8(CCallHelpers::TrustedImm32(true), CCallHelpers::Address(ptrReg, 0));
+    static_assert(sizeof(size_t) == 8, "Assuming size_t is 64 bits on 64 bit platforms.");
+    jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(&m_executionCount));
 }
+#else
+void BasicBlockLocation::emitExecuteCode(CCallHelpers& jit, MacroAssembler::RegisterID scratch) const
+{
+    static_assert(sizeof(size_t) == 4, "Assuming size_t is 32 bits on 32 bit platforms.");
+    jit.load32(&m_executionCount, scratch);
+    CCallHelpers::Jump done = jit.branchAdd32(CCallHelpers::Zero, scratch, CCallHelpers::TrustedImm32(1), scratch);
+    jit.store32(scratch, bitwise_cast<void*>(&m_executionCount));
+    done.link(&jit);
+}
+#endif // USE(JSVALUE64)
 #endif // ENABLE(JIT)
 
 } // namespace JSC

@@ -2410,6 +2410,18 @@ _llint_op_profile_type:
 .opProfileTypeDone:
     dispatch(6)
 
+
+_llint_op_profile_control_flow:
+    traceExecution()
+    loadpFromInstruction(1, t0)
+    loadi BasicBlockLocation::m_executionCount[t0], t1
+    addi 1, t1
+    bieq t1, 0, .done # We overflowed.
+    storei t1, BasicBlockLocation::m_executionCount[t0]
+.done:
+    dispatch(2)
+
+
 _llint_op_load_arrowfunction_this:
     traceExecution()
     loadi Callee + PayloadOffset[cfr], t0

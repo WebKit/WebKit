@@ -544,8 +544,10 @@ static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpBasicBlockExecutionRanges(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionBasicBlockExecutionCount(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*);
 #if ENABLE(WEBASSEMBLY)
 static EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState*);
 #endif
@@ -724,10 +726,13 @@ protected:
 
         addFunction(vm, "dumpBasicBlockExecutionRanges", functionDumpBasicBlockExecutionRanges , 0);
         addFunction(vm, "hasBasicBlockExecuted", functionHasBasicBlockExecuted, 2);
+        addFunction(vm, "basicBlockExecutionCount", functionBasicBlockExecutionCount, 2);
 
         addFunction(vm, "enableExceptionFuzz", functionEnableExceptionFuzz, 0);
 
         addFunction(vm, "drainMicrotasks", functionDrainMicrotasks, 0);
+
+        addFunction(vm, "is32BitPlatform", functionIs32BitPlatform, 0);
 
 #if ENABLE(WEBASSEMBLY)
         addFunction(vm, "loadWebAssembly", functionLoadWebAssembly, 3);
@@ -1505,6 +1510,24 @@ EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState* exec)
     return JSValue::encode(jsBoolean(hasExecuted));
 }
 
+EncodedJSValue JSC_HOST_CALL functionBasicBlockExecutionCount(ExecState* exec)
+{
+    RELEASE_ASSERT(exec->vm().controlFlowProfiler());
+
+    JSValue functionValue = exec->argument(0);
+    RELEASE_ASSERT(functionValue.isFunction());
+    FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
+
+    RELEASE_ASSERT(exec->argument(1).isString());
+    String substring = exec->argument(1).getString(exec);
+    String sourceCodeText = executable->source().toString();
+    RELEASE_ASSERT(sourceCodeText.contains(substring));
+    int offset = sourceCodeText.find(substring) + executable->source().startOffset();
+    
+    size_t executionCount = exec->vm().controlFlowProfiler()->basicBlockExecutionCountAtTextOffset(offset, executable->sourceID(), exec->vm());
+    return JSValue::encode(JSValue(executionCount));
+}
+
 EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*)
 {
     Options::useExceptionFuzz() = true;
@@ -1515,6 +1538,15 @@ EncodedJSValue JSC_HOST_CALL functionDrainMicrotasks(ExecState* exec)
 {
     exec->vm().drainMicrotasks();
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionIs32BitPlatform(ExecState*)
+{
+#if USE(JSVALUE64)
+    return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
+#else
+    return JSValue::encode(JSValue(JSC::JSValue::JSTrue));
+#endif
 }
 
 #if ENABLE(WEBASSEMBLY)
