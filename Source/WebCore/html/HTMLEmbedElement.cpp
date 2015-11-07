@@ -183,6 +183,9 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
 
 bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
 {
+    if (!fastHasAttribute(typeAttr) && !fastHasAttribute(srcAttr))
+        return false;
+
     if (isImageType())
         return HTMLPlugInImageElement::rendererIsNeeded(style);
 
