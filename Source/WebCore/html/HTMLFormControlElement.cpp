@@ -39,6 +39,7 @@
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "ValidationMessage.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
