@@ -1,3 +1,21 @@
+2015-11-06  Daniel Bates  <dabates@apple.com>
+
+        Do not build LayoutTestRelay when --root is specified to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=150989
+
+        Reviewed by Alexey Proskuryakov.
+
+        The script run-webkit-tests should only check if LayoutTestRelay exists when invoked with
+        --root and exit with an error if it does not exist. That is, we should not build LayoutTestRelay
+        when it does not exist and an explicit directory of built executables was specified via --root.
+        This will make the criterion for building LayoutTestRelay match the criterion for building
+        DumpRenderTree/WebKitTestRunner.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._check_port_build): Moved logic from IOSSimulatorPort.{_check_build_relay, check_build} to here.
+        (IOSSimulatorPort._check_build_relay): Deleted.
+        (IOSSimulatorPort.check_build): Deleted.
+
 2015-11-06  Tim Horton  <timothy_horton@apple.com>
 
         Add preliminary (SPI) support for NSTextFinder on WKWebView

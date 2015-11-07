@@ -144,16 +144,12 @@ class IOSSimulatorPort(Port):
             return False
         return True
 
-    def _check_build_relay(self):
-        if self.get_option('build') and not self._build_relay():
+    def _check_port_build(self):
+        if not self._root_was_set and self.get_option('build') and not self._build_relay():
             return False
         if not self._check_relay():
             return False
         return True
-
-    def check_build(self, needs_http):
-        needs_driver = super(IOSSimulatorPort, self).check_build(needs_http)
-        return needs_driver and self._check_build_relay()
 
     def _build_relay(self):
         environment = self.host.copy_current_environment()
