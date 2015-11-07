@@ -1827,11 +1827,11 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
 
 void ArgumentCoder<IDBGetResult>::encode(ArgumentEncoder& encoder, const IDBGetResult& result)
 {
-    bool nullData = !result.valueBuffer;
+    bool nullData = !result.valueBuffer.data();
     encoder << nullData;
 
     if (!nullData)
-        encoder << DataReference(reinterpret_cast<const uint8_t*>(result.valueBuffer->data()), result.valueBuffer->size());
+        encoder << DataReference(result.valueBuffer.data()->data(), result.valueBuffer.data()->size());
 
     encoder << result.keyData << result.keyPath;
 }
@@ -1843,13 +1843,15 @@ bool ArgumentCoder<IDBGetResult>::decode(ArgumentDecoder& decoder, IDBGetResult&
         return false;
 
     if (nullData)
-        result.valueBuffer = nullptr;
+        result.valueBuffer = { };
     else {
         DataReference data;
         if (!decoder.decode(data))
             return false;
 
-        result.valueBuffer = SharedBuffer::create(data.data(), data.size());
+        Vector<uint8_t> vector(data.size());
+        memcpy(vector.data(), data.data(), data.size());
+        result.valueBuffer = ThreadSafeDataBuffer::adoptVector(vector);
     }
 
     if (!decoder.decode(result.keyData))

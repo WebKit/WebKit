@@ -149,11 +149,11 @@ uint64_t UniqueIDBDatabase::storeCallback(KeyDataCallback callback)
     return identifier;
 }
 
-uint64_t UniqueIDBDatabase::storeCallback(ValueDataCallback callback)
+uint64_t UniqueIDBDatabase::storeCallback(GetResultCallback callback)
 {
     uint64_t identifier = generateUniqueCallbackIdentifier();
-    ASSERT(!m_valueDataCallbacks.contains(identifier));
-    m_valueDataCallbacks.add(identifier, callback);
+    ASSERT(!m_getResultCallbacks.contains(identifier));
+    m_getResultCallbacks.add(identifier, callback);
     return identifier;
 }
 
@@ -447,7 +447,7 @@ void UniqueIDBDatabase::didPerformPutOrAdd(uint64_t callbackIdentifier, const ID
     performKeyDataCallback(callbackIdentifier, error, resultKey);
 }
 
-void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range, ValueDataCallback callback)
+void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range, GetResultCallback callback)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getRecord");
@@ -480,18 +480,18 @@ void UniqueIDBDatabase::performGetIndexRecord(uint64_t callbackIdentifier, const
 
     ASSERT(m_backingStore);
 
-    ThreadSafeDataBuffer valueData;
-    IDBError error = m_backingStore->getIndexRecord(transactionIdentifier, objectStoreIdentifier, indexIdentifier, recordType, range, valueData);
+    IDBGetResult result;
+    IDBError error = m_backingStore->getIndexRecord(transactionIdentifier, objectStoreIdentifier, indexIdentifier, recordType, range, result);
 
-    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformGetRecord, callbackIdentifier, error, valueData));
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformGetRecord, callbackIdentifier, error, result));
 }
 
-void UniqueIDBDatabase::didPerformGetRecord(uint64_t callbackIdentifier, const IDBError& error, const ThreadSafeDataBuffer& resultData)
+void UniqueIDBDatabase::didPerformGetRecord(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& result)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformGetRecord");
 
-    performValueDataCallback(callbackIdentifier, error, resultData);
+    performGetResultCallback(callbackIdentifier, error, result);
 }
 
 void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& range, CountCallback callback)
@@ -815,9 +815,9 @@ void UniqueIDBDatabase::performKeyDataCallback(uint64_t callbackIdentifier, cons
     callback(error, resultKey);
 }
 
-void UniqueIDBDatabase::performValueDataCallback(uint64_t callbackIdentifier, const IDBError& error, const ThreadSafeDataBuffer& resultData)
+void UniqueIDBDatabase::performGetResultCallback(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& resultData)
 {
-    auto callback = m_valueDataCallbacks.take(callbackIdentifier);
+    auto callback = m_getResultCallbacks.take(callbackIdentifier);
     ASSERT(callback);
     callback(error, resultData);
 }

@@ -51,7 +51,6 @@ IDBResultData::IDBResultData(const IDBResultData& other)
     , m_error(other.m_error)
     , m_databaseConnectionIdentifier(other.m_databaseConnectionIdentifier)
     , m_resultInteger(other.m_resultInteger)
-    , m_resultData(other.m_resultData)
 {
     if (other.m_databaseInfo)
         m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*other.m_databaseInfo);
@@ -59,6 +58,8 @@ IDBResultData::IDBResultData(const IDBResultData& other)
         m_transactionInfo = std::make_unique<IDBTransactionInfo>(*other.m_transactionInfo);
     if (other.m_resultKey)
         m_resultKey = std::make_unique<IDBKeyData>(*other.m_resultKey);
+    if (other.m_getResult)
+        m_getResult = std::make_unique<IDBGetResult>(*other.m_getResult);
 }
 
 IDBResultData IDBResultData::error(const IDBResourceIdentifier& requestIdentifier, const IDBError& error)
@@ -116,10 +117,10 @@ IDBResultData IDBResultData::putOrAddSuccess(const IDBResourceIdentifier& reques
     return result;
 }
 
-IDBResultData IDBResultData::getRecordSuccess(const IDBResourceIdentifier& requestIdentifier, const ThreadSafeDataBuffer& valueData)
+IDBResultData IDBResultData::getRecordSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
 {
     IDBResultData result(IDBResultType::GetRecordSuccess, requestIdentifier);
-    result.m_resultData = valueData;
+    result.m_getResult = std::make_unique<IDBGetResult>(getResult);
     return result;
 }
 
@@ -145,6 +146,12 @@ const IDBTransactionInfo& IDBResultData::transactionInfo() const
 {
     RELEASE_ASSERT(m_transactionInfo);
     return *m_transactionInfo;
+}
+
+const IDBGetResult& IDBResultData::getResult() const
+{
+    RELEASE_ASSERT(m_getResult);
+    return *m_getResult;
 }
 
 } // namespace WebCore

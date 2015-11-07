@@ -490,8 +490,8 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
         else
             request.setResultToUndefined();
     } else {
-        if (resultData.resultData().data())
-            request.setResultToStructuredClone(resultData.resultData());
+        if (resultData.getResult().valueBuffer.data())
+            request.setResultToStructuredClone(resultData.getResult().valueBuffer);
         else
             request.setResultToUndefined();
     }

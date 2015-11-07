@@ -78,7 +78,7 @@ public:
     void replaceKeyValueStore(std::unique_ptr<KeyValueMap>&&);
 
     ThreadSafeDataBuffer valueForKeyRange(const IDBKeyRangeData&) const;
-    ThreadSafeDataBuffer indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
+    IDBGetResult indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
     uint64_t countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData&) const;
 
     const IDBObjectStoreInfo& info() const { return m_info; }

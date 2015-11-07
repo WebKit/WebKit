@@ -215,7 +215,7 @@ ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& 
     return m_keyValueStore->get(key);
 }
 
-ThreadSafeDataBuffer MemoryObjectStore::indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range) const
+IDBGetResult MemoryObjectStore::indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range) const
 {
     LOG(IndexedDB, "MemoryObjectStore::indexValueForKeyRange");
 

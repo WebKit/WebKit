@@ -30,6 +30,7 @@
 
 #include "IDBDatabaseInfo.h"
 #include "IDBError.h"
+#include "IDBGetResult.h"
 #include "IDBKeyData.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionInfo.h"
@@ -69,7 +70,7 @@ public:
     static IDBResultData clearObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData createIndexSuccess(const IDBResourceIdentifier&);
     static IDBResultData putOrAddSuccess(const IDBResourceIdentifier&, const IDBKeyData&);
-    static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const ThreadSafeDataBuffer& valueData);
+    static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
     static IDBResultData getCountSuccess(const IDBResourceIdentifier&, uint64_t count);
     static IDBResultData deleteRecordSuccess(const IDBResourceIdentifier&);
 
@@ -85,8 +86,9 @@ public:
     const IDBTransactionInfo& transactionInfo() const;
 
     const IDBKeyData* resultKey() const { return m_resultKey.get(); }
-    const ThreadSafeDataBuffer& resultData() const { return m_resultData; }
     uint64_t resultInteger() const { return m_resultInteger; }
+
+    const IDBGetResult& getResult() const;
 
 private:
     IDBResultData(const IDBResourceIdentifier&);
@@ -100,8 +102,8 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBTransactionInfo> m_transactionInfo;
     std::unique_ptr<IDBKeyData> m_resultKey;
+    std::unique_ptr<IDBGetResult> m_getResult;
     uint64_t m_resultInteger { 0 };
-    ThreadSafeDataBuffer m_resultData;
 };
 
 } // namespace WebCore

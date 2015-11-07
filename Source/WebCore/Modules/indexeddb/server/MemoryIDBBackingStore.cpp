@@ -279,7 +279,7 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     return IDBError();
 }
 
-IDBError MemoryIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range, ThreadSafeDataBuffer& outValue)
+IDBError MemoryIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range, IDBGetResult& outValue)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::getIndexRecord");
 

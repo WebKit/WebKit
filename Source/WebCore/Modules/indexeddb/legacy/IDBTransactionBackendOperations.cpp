@@ -100,16 +100,17 @@ void GetOperation::perform(std::function<void()> completionCallback)
         if (error)
             m_callbacks->onError(error);
         else {
-            if (!result.valueBuffer) {
+            if (!result.valueBuffer.data()) {
                 if (result.keyData.isNull())
                     m_callbacks->onSuccess();
                 else
                     m_callbacks->onSuccess(result.keyData.maybeCreateIDBKey());
             } else {
+                auto valueBuffer = SharedBuffer::create(result.valueBuffer.data()->data(), result.valueBuffer.data()->size());
                 if (!result.keyData.isNull())
-                    m_callbacks->onSuccess(result.valueBuffer, result.keyData.maybeCreateIDBKey(), result.keyPath);
+                    m_callbacks->onSuccess(valueBuffer, result.keyData.maybeCreateIDBKey(), result.keyPath);
                 else
-                    m_callbacks->onSuccess(result.valueBuffer.get());
+                    m_callbacks->onSuccess(valueBuffer);
             }
         }
 

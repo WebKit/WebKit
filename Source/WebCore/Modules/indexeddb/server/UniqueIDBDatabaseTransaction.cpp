@@ -188,11 +188,11 @@ void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, 
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().getRecord(requestData, keyRangeData, [this, self, requestData](const IDBError& error, const ThreadSafeDataBuffer& valueData) {
+    m_databaseConnection->database().getRecord(requestData, keyRangeData, [this, self, requestData](const IDBError& error, const IDBGetResult& result) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getRecord (callback)");
 
         if (error.isNull())
-            m_databaseConnection->connectionToClient().didGetRecord(IDBResultData::getRecordSuccess(requestData.requestIdentifier(), valueData));
+            m_databaseConnection->connectionToClient().didGetRecord(IDBResultData::getRecordSuccess(requestData.requestIdentifier(), result));
         else
             m_databaseConnection->connectionToClient().didGetRecord(IDBResultData::error(requestData.requestIdentifier(), error));
     });

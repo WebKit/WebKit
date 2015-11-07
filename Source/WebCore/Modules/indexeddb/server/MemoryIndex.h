@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBGetResult.h"
 #include "IDBIndexInfo.h"
 
 namespace WebCore {
@@ -51,7 +52,7 @@ public:
 
     const IDBIndexInfo& info() const { return m_info; }
 
-    ThreadSafeDataBuffer valueForKeyRange(IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
+    IDBGetResult valueForKeyRange(IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
     uint64_t countForKeyRange(const IDBKeyRangeData&);
     
 private:

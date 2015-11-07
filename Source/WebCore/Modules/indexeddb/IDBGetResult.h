@@ -32,6 +32,7 @@
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
 #include "SharedBuffer.h"
+#include "ThreadSafeDataBuffer.h"
 
 namespace WebCore {
 
@@ -41,6 +42,12 @@ struct IDBGetResult {
     }
 
     IDBGetResult(PassRefPtr<SharedBuffer> buffer)
+    {
+        if (buffer)
+            dataFromBuffer(*buffer);
+    }
+
+    IDBGetResult(const ThreadSafeDataBuffer& buffer)
         : valueBuffer(buffer)
     {
     }
@@ -56,24 +63,31 @@ struct IDBGetResult {
     }
 
     IDBGetResult(PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> key, const IDBKeyPath& path)
-        : valueBuffer(buffer)
-        , keyData(key.get())
+        : keyData(key.get())
         , keyPath(path)
     {
+        if (buffer)
+            dataFromBuffer(*buffer);
+    }
+
+    void dataFromBuffer(SharedBuffer& buffer)
+    {
+        Vector<uint8_t> data(buffer.size());
+        memcpy(data.data(), buffer.data(), buffer.size());
+
+        valueBuffer = ThreadSafeDataBuffer::adoptVector(data);
     }
 
     IDBGetResult isolatedCopy() const
     {
         IDBGetResult result;
-        if (valueBuffer)
-            result.valueBuffer = valueBuffer->copy();
-
+        result.valueBuffer = valueBuffer;
         result.keyData = keyData.isolatedCopy();
         result.keyPath = keyPath.isolatedCopy();
         return result;
     }
 
-    RefPtr<SharedBuffer> valueBuffer;
+    ThreadSafeDataBuffer valueBuffer;
     IDBKeyData keyData;
     IDBKeyPath keyPath;
 };
