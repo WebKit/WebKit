@@ -39,18 +39,21 @@ namespace WebCore {
 struct _PlatformRSAKeyGnuTLS {
 };
 
-CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
+CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
     : CryptoKey(identifier, type, extractable, usage)
     , m_platformKey(platformKey)
-    , m_restrictedToSpecificHash(false)
+    , m_restrictedToSpecificHash(hasHash)
+    , m_hash(hash)
 {
     notImplemented();
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, const CryptoKeyDataRSAComponents& keyData, bool extractable, CryptoKeyUsage usage)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents& keyData, bool extractable, CryptoKeyUsage usage)
 {
     notImplemented();
     UNUSED_PARAM(identifier);
+    UNUSED_PARAM(hash);
+    UNUSED_PARAM(hasHash);
     UNUSED_PARAM(keyData);
     UNUSED_PARAM(extractable);
     UNUSED_PARAM(usage);
@@ -61,12 +64,6 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
 CryptoKeyRSA::~CryptoKeyRSA()
 {
     notImplemented();
-}
-
-void CryptoKeyRSA::restrictToHash(CryptoAlgorithmIdentifier identifier)
-{
-    m_restrictedToSpecificHash = true;
-    m_hash = identifier;
 }
 
 bool CryptoKeyRSA::isRestrictedToHash(CryptoAlgorithmIdentifier& identifier) const
@@ -98,12 +95,14 @@ std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
     return nullptr;
 }
 
-void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage usage, KeyPairCallback callback, VoidCallback failureCallback)
+void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage usage, KeyPairCallback callback, VoidCallback failureCallback)
 {
     notImplemented();
     failureCallback();
 
     UNUSED_PARAM(algorithm);
+    UNUSED_PARAM(hash);
+    UNUSED_PARAM(hasHash);
     UNUSED_PARAM(modulusLength);
     UNUSED_PARAM(publicExponent);
     UNUSED_PARAM(extractable);

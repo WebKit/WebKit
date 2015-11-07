@@ -193,7 +193,7 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_512);
     } else if (m_jwkAlgorithmName == "RSA1_5") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5);
-        parameters = std::make_unique<CryptoAlgorithmParameters>();
+        parameters = std::make_unique<CryptoAlgorithmRsaKeyParamsWithHash>();
     } else if (m_jwkAlgorithmName == "RSA-OAEP") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSA_OAEP);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_1);

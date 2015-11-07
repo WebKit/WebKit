@@ -35,10 +35,17 @@ namespace WebCore {
 
 class CryptoAlgorithmRsaKeyGenParams final : public CryptoAlgorithmParameters {
 public:
+    CryptoAlgorithmRsaKeyGenParams()
+        : hasHash(false)
+    {
+    }
     // The length, in bits, of the RSA modulus.
     unsigned modulusLength;
     // The RSA public exponent, encoded as BigInteger.
     Vector<uint8_t> publicExponent;
+    // The hash algorith identifier
+    bool hasHash;
+    CryptoAlgorithmIdentifier hash;
 
     virtual Class parametersClass() const override { return Class::RsaKeyGenParams; }
 };

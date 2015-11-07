@@ -2023,9 +2023,7 @@ private:
 
         if (type == CryptoKeyAsymmetricTypeSubtag::Public) {
             auto keyData = CryptoKeyDataRSAComponents::createPublic(modulus, exponent);
-            auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
-            if (isRestrictedToHash)
-                key->restrictToHash(hash);
+            auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
             result = WTF::move(key);
             return true;
         }
@@ -2040,9 +2038,7 @@ private:
 
         if (!primeCount) {
             auto keyData = CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
-            auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
-            if (isRestrictedToHash)
-                key->restrictToHash(hash);
+            auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
             result = WTF::move(key);
             return true;
         }
@@ -2074,9 +2070,7 @@ private:
         }
 
         auto keyData = CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos);
-        auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
-        if (isRestrictedToHash)
-            key->restrictToHash(hash);
+        auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
         result = WTF::move(key);
         return true;
     }

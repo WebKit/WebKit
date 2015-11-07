@@ -49,26 +49,25 @@ class PromiseWrapper;
 
 class CryptoKeyRSA final : public CryptoKey {
 public:
-    static Ref<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
+    static Ref<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
     {
-        return adoptRef(*new CryptoKeyRSA(identifier, type, platformKey, extractable, usage));
+        return adoptRef(*new CryptoKeyRSA(identifier, hash, hasHash, type, platformKey, extractable, usage));
     }
-    static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, const CryptoKeyDataRSAComponents&, bool extractable, CryptoKeyUsage);
+    static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents&, bool extractable, CryptoKeyUsage);
     virtual ~CryptoKeyRSA();
 
-    void restrictToHash(CryptoAlgorithmIdentifier);
     bool isRestrictedToHash(CryptoAlgorithmIdentifier&) const;
 
     size_t keySizeInBits() const;
 
     typedef std::function<void(CryptoKeyPair&)> KeyPairCallback;
     typedef std::function<void()> VoidCallback;
-    static void generatePair(CryptoAlgorithmIdentifier, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, KeyPairCallback, VoidCallback failureCallback);
+    static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, KeyPairCallback, VoidCallback failureCallback);
 
     PlatformRSAKey platformKey() const { return m_platformKey; }
 
 private:
-    CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoKeyType, PlatformRSAKey, bool extractable, CryptoKeyUsage);
+    CryptoKeyRSA(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType, PlatformRSAKey, bool extractable, CryptoKeyUsage);
 
     virtual CryptoKeyClass keyClass() const override { return CryptoKeyClass::RSA; }
 
