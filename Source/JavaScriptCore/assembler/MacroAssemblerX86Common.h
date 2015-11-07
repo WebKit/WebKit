@@ -1046,6 +1046,54 @@ public:
         m_assembler.movq_i64r(imm.m_value, dest);
     }
 
+    void moveConditionally(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
+    {
+        m_assembler.cmpq_rr(right, left);
+        m_assembler.cmovq_rr(x86Condition(cond), src, dest);
+    }
+
+    void moveConditionallyTest(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
+    {
+        m_assembler.testq_rr(testReg, mask);
+        m_assembler.cmovq_rr(x86Condition(cond), src, dest);
+    }
+    
+    void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+
+        if (cond & DoubleConditionBitInvert)
+            m_assembler.ucomisd_rr(left, right);
+        else
+            m_assembler.ucomisd_rr(right, left);
+
+        if (cond == DoubleEqual) {
+            if (left == right) {
+                m_assembler.cmovnpq_rr(src, dest);
+                return;
+            }
+
+            Jump isUnordered(m_assembler.jp());
+            m_assembler.cmoveq_rr(src, dest);
+            isUnordered.link(this);
+            return;
+        }
+
+        if (cond == DoubleNotEqualOrUnordered) {
+            if (left == right) {
+                m_assembler.cmovpq_rr(src, dest);
+                return;
+            }
+
+            m_assembler.cmovpq_rr(src, dest);
+            m_assembler.cmovneq_rr(src, dest);
+            return;
+        }
+
+        ASSERT(!(cond & DoubleConditionBitSpecial));
+        m_assembler.cmovq_rr(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), src, dest);
+    }
+    
     void swap(RegisterID reg1, RegisterID reg2)
     {
         if (reg1 != reg2)
@@ -1076,6 +1124,54 @@ public:
     void move(TrustedImmPtr imm, RegisterID dest)
     {
         m_assembler.movl_i32r(imm.asIntptr(), dest);
+    }
+
+    void moveConditionally(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
+    {
+        m_assembler.cmpl_rr(right, left);
+        m_assembler.cmovl_rr(x86Condition(cond), src, dest);
+    }
+
+    void moveConditionallyTest(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
+    {
+        m_assembler.testl_rr(testReg, mask);
+        m_assembler.cmovl_rr(x86Condition(cond), src, dest);
+    }
+
+    void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+
+        if (cond & DoubleConditionBitInvert)
+            m_assembler.ucomisd_rr(left, right);
+        else
+            m_assembler.ucomisd_rr(right, left);
+
+        if (cond == DoubleEqual) {
+            if (left == right) {
+                m_assembler.cmovnpl_rr(src, dest);
+                return;
+            }
+
+            Jump isUnordered(m_assembler.jp());
+            m_assembler.cmovel_rr(src, dest);
+            isUnordered.link(this);
+            return;
+        }
+
+        if (cond == DoubleNotEqualOrUnordered) {
+            if (left == right) {
+                m_assembler.cmovpl_rr(src, dest);
+                return;
+            }
+
+            m_assembler.cmovpl_rr(src, dest);
+            m_assembler.cmovnel_rr(src, dest);
+            return;
+        }
+
+        ASSERT(!(cond & DoubleConditionBitSpecial));
+        m_assembler.cmovl_rr(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), src, dest);
     }
 
     void swap(RegisterID reg1, RegisterID reg2)

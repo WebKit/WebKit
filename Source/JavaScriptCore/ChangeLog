@@ -1,3 +1,33 @@
+2015-11-07  Michael Saboff  <msaboff@apple.com>
+
+        Add conditional moves to the MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=150761
+
+        Reviewed by Filip Pizlo.
+
+        Added moveConditionally, moveConditionallyTest & moveConditionallyDouble to X86 macro assemblers.
+        Bench tested correct opcodes and operations on X86-64 and X86 for a select number of comparisons.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::moveConditionally):
+        (JSC::MacroAssemblerX86Common::moveConditionallyTest):
+        (JSC::MacroAssemblerX86Common::moveConditionallyDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmovcc):
+        (JSC::X86Assembler::cmovl_rr):
+        (JSC::X86Assembler::cmovl_mr):
+        (JSC::X86Assembler::cmovel_rr):
+        (JSC::X86Assembler::cmovnel_rr):
+        (JSC::X86Assembler::cmovpl_rr):
+        (JSC::X86Assembler::cmovnpl_rr):
+        (JSC::X86Assembler::cmovq_rr):
+        (JSC::X86Assembler::cmovq_mr):
+        (JSC::X86Assembler::cmoveq_rr):
+        (JSC::X86Assembler::cmovneq_rr):
+        (JSC::X86Assembler::cmovpq_rr):
+        (JSC::X86Assembler::cmovnpq_rr):
+        (JSC::X86Assembler::X86InstructionFormatter::twoByteOp64):
+
 2015-11-06  Saam barati  <sbarati@apple.com>
 
         Control Flow Profiler should keep execution counts of basic blocks
