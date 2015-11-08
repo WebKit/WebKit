@@ -1,3 +1,118 @@
+2015-11-06  Filip Pizlo  <fpizlo@apple.com>
+
+        B3->Air lowering should do pattern matching the old fashioned way
+        https://bugs.webkit.org/show_bug.cgi?id=150994
+
+        Reviewed by Geoffrey Garen.
+
+        When I first wrote the B3->Air lowering prototype, I was convinced that the patterns would get
+        so gnarly that we'd want a pattern language to write them in. So I made one, and that's what
+        the lowering has used. But as we've worked with the IR, we've found that it's very easy to
+        pattern match in C++ using the B3 API, and we've also found that most of the patterns we wrote
+        using the pattern language were mostly trivial. So this change removes the pattern match code
+        generator and the patterns files, and redoes the lowering using good old fashioned switch
+        statements. This actually reduces the total code of the lowering.
+
+        I also took the opportunity to refactoring UnOp and BinOp lowering. We had a lot of repetetive
+        code for 32-vs-64-bit opcode selection, so I factored that out into a helper. This also saves a
+        lot of code.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * b3/B3AddressMatcher.patterns: Removed.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::highBitsAreZero):
+        (JSC::B3::Air::LowerToAir::tmp):
+        (JSC::B3::Air::LowerToAir::canBeInternal):
+        (JSC::B3::Air::LowerToAir::commitInternal):
+        (JSC::B3::Air::LowerToAir::crossesInterference):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::loadPromise):
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::immForMove):
+        (JSC::B3::Air::LowerToAir::immOrTmpForMove):
+        (JSC::B3::Air::LowerToAir::tryOpcodeForType):
+        (JSC::B3::Air::LowerToAir::opcodeForType):
+        (JSC::B3::Air::LowerToAir::appendUnOp):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::appendShift):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreUnOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::append):
+        (JSC::B3::Air::LowerToAir::ensureSpecial):
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::createBranch):
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::lower):
+        (JSC::B3::Air::LowerToAir::immOrTmp): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::AddressSelector): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptRoot): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptRootLate): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptInternals): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptInternalsLate): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptOperands): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptOperandsLate): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryAddShift1): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryAddShift2): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryAdd): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryFramePointer): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryStackSlot): Deleted.
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryDirect): Deleted.
+        (JSC::B3::Air::LowerToAir::acceptRoot): Deleted.
+        (JSC::B3::Air::LowerToAir::acceptRootLate): Deleted.
+        (JSC::B3::Air::LowerToAir::acceptInternals): Deleted.
+        (JSC::B3::Air::LowerToAir::acceptInternalsLate): Deleted.
+        (JSC::B3::Air::LowerToAir::acceptOperands): Deleted.
+        (JSC::B3::Air::LowerToAir::acceptOperandsLate): Deleted.
+        (JSC::B3::Air::LowerToAir::tryLoad): Deleted.
+        (JSC::B3::Air::LowerToAir::tryLoad8S): Deleted.
+        (JSC::B3::Air::LowerToAir::tryLoad8Z): Deleted.
+        (JSC::B3::Air::LowerToAir::tryLoad16S): Deleted.
+        (JSC::B3::Air::LowerToAir::tryLoad16Z): Deleted.
+        (JSC::B3::Air::LowerToAir::tryAdd): Deleted.
+        (JSC::B3::Air::LowerToAir::trySub): Deleted.
+        (JSC::B3::Air::LowerToAir::tryAnd): Deleted.
+        (JSC::B3::Air::LowerToAir::tryOr): Deleted.
+        (JSC::B3::Air::LowerToAir::tryXor): Deleted.
+        (JSC::B3::Air::LowerToAir::tryShl): Deleted.
+        (JSC::B3::Air::LowerToAir::trySShr): Deleted.
+        (JSC::B3::Air::LowerToAir::tryZShr): Deleted.
+        (JSC::B3::Air::LowerToAir::tryStoreAddLoad): Deleted.
+        (JSC::B3::Air::LowerToAir::tryStoreSubLoad): Deleted.
+        (JSC::B3::Air::LowerToAir::tryStoreAndLoad): Deleted.
+        (JSC::B3::Air::LowerToAir::tryStore): Deleted.
+        (JSC::B3::Air::LowerToAir::tryTrunc): Deleted.
+        (JSC::B3::Air::LowerToAir::tryZExt32): Deleted.
+        (JSC::B3::Air::LowerToAir::tryArgumentReg): Deleted.
+        (JSC::B3::Air::LowerToAir::tryConst32): Deleted.
+        (JSC::B3::Air::LowerToAir::tryConst64): Deleted.
+        (JSC::B3::Air::LowerToAir::tryFramePointer): Deleted.
+        (JSC::B3::Air::LowerToAir::tryStackSlot): Deleted.
+        (JSC::B3::Air::LowerToAir::tryEqual): Deleted.
+        (JSC::B3::Air::LowerToAir::tryNotEqual): Deleted.
+        (JSC::B3::Air::LowerToAir::tryLessThan): Deleted.
+        (JSC::B3::Air::LowerToAir::tryGreaterThan): Deleted.
+        (JSC::B3::Air::LowerToAir::tryLessEqual): Deleted.
+        (JSC::B3::Air::LowerToAir::tryGreaterEqual): Deleted.
+        (JSC::B3::Air::LowerToAir::tryAbove): Deleted.
+        (JSC::B3::Air::LowerToAir::tryBelow): Deleted.
+        (JSC::B3::Air::LowerToAir::tryAboveEqual): Deleted.
+        (JSC::B3::Air::LowerToAir::tryBelowEqual): Deleted.
+        (JSC::B3::Air::LowerToAir::tryPatchpoint): Deleted.
+        (JSC::B3::Air::LowerToAir::tryCheck): Deleted.
+        (JSC::B3::Air::LowerToAir::tryUpsilon): Deleted.
+        (JSC::B3::Air::LowerToAir::tryPhi): Deleted.
+        (JSC::B3::Air::LowerToAir::tryBranch): Deleted.
+        (JSC::B3::Air::LowerToAir::tryJump): Deleted.
+        (JSC::B3::Air::LowerToAir::tryIdentity): Deleted.
+        (JSC::B3::Air::LowerToAir::tryReturn): Deleted.
+        * b3/B3LoweringMatcher.patterns: Removed.
+        * b3/generate_pattern_matcher.rb: Removed.
+
 2015-11-07  Michael Saboff  <msaboff@apple.com>
 
         Add conditional moves to the MacroAssembler
