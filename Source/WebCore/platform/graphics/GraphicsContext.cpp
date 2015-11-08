@@ -640,7 +640,7 @@ std::unique_ptr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const Float
     AffineTransform transform = getCTM(DefinitelyIncludeDeviceScale);
     FloatSize scaledSize(static_cast<int>(ceil(size.width() * transform.xScale())), static_cast<int>(ceil(size.height() * transform.yScale())));
 
-    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceDeviceRGB, *this, hasAlpha);
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(scaledSize, 1, ColorSpaceSRGB, *this, hasAlpha);
     if (!buffer)
         return nullptr;
 

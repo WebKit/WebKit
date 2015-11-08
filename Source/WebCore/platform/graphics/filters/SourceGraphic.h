@@ -45,7 +45,7 @@ private:
     SourceGraphic(Filter& filter)
         : FilterEffect(filter)
     {
-        setOperatingColorSpace(ColorSpaceDeviceRGB);
+        setOperatingColorSpace(ColorSpaceSRGB);
     }
 };
 

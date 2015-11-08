@@ -141,7 +141,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
 
     if (shouldCreateClipperMaskImage && !repaintRect.isEmpty()) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
-        clipperMaskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, ColorSpaceDeviceRGB, Unaccelerated);
+        clipperMaskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, ColorSpaceSRGB, Unaccelerated);
         if (!clipperMaskImage)
             return false;
 

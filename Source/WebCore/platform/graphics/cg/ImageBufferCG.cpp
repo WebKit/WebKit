@@ -312,7 +312,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     // Make a copy of the source to ensure the bits don't change before being drawn
     IntSize sourceCopySize(sourceRect.width(), sourceRect.height());
     // FIXME (149431): Should this ImageBuffer be unconditionally unaccelerated? Making it match the context seems to break putData().
-    std::unique_ptr<ImageBuffer> sourceCopy = ImageBuffer::create(sourceCopySize, Unaccelerated, 1, ColorSpaceDeviceRGB);
+    std::unique_ptr<ImageBuffer> sourceCopy = ImageBuffer::create(sourceCopySize, Unaccelerated, 1, ColorSpaceSRGB);
     if (!sourceCopy)
         return;
 
