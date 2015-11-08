@@ -101,12 +101,10 @@ public:
     typedef PropertyListNode* PropertyList;
     typedef ElementNode* ElementList;
     typedef ArgumentListNode* ArgumentsList;
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     typedef TemplateExpressionListNode* TemplateExpressionList;
     typedef TemplateStringNode* TemplateString;
     typedef TemplateStringListNode* TemplateStringList;
     typedef TemplateLiteralNode* TemplateLiteral;
-#endif
     typedef FunctionParameters* FormalParameterList;
     typedef FunctionMetadataNode* FunctionBody;
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -258,7 +256,6 @@ public:
         return node;
     }
 
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     TemplateStringNode* createTemplateString(const JSTokenLocation& location, const Identifier& cooked, const Identifier& raw)
     {
         return new (m_parserArena) TemplateStringNode(location, cooked, raw);
@@ -300,7 +297,6 @@ public:
         setExceptionLocation(node, start, divot, end);
         return node;
     }
-#endif
 
     ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, const JSTextPosition& start)
     {

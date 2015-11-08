@@ -1,3 +1,30 @@
+2015-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Minimize ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=150998
+
+        Reviewed by Geoffrey Garen.
+
+        This patch minimizes ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX ifdefs.
+        It only keeps 2 ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX in Parser.cpp, one for
+        template literals and one for tagged templates.
+        This change makes difference minimal between the enabled and disabled configurations;
+        reducing accidental build breaks of the disabled configuration.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        * parser/ASTBuilder.h:
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer): Deleted.
+        (JSC::Lexer<T>::lex): Deleted.
+        * parser/Lexer.h:
+        * parser/NodeConstructors.h:
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+
 2015-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         B3->Air lowering should do pattern matching the old fashioned way

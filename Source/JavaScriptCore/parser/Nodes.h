@@ -448,7 +448,6 @@ namespace JSC {
         uint16_t m_subexpressionLineStartOffset;
     };
 
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     class TemplateExpressionListNode : public ParserArenaFreeable {
     public:
         TemplateExpressionListNode(ExpressionNode*);
@@ -516,7 +515,6 @@ namespace JSC {
         ExpressionNode* m_tag;
         TemplateLiteralNode* m_templateLiteral;
     };
-#endif
 
     class RegExpNode : public ExpressionNode, public ThrowableExpressionData {
     public:

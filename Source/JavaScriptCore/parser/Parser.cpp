@@ -3250,7 +3250,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseFunctionExpr
     return context.createFunctionExpr(location, functionInfo);
 }
 
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
 template <typename LexerType>
 template <class TreeBuilder> typename TreeBuilder::TemplateString Parser<LexerType>::parseTemplateString(TreeBuilder& context, bool isTemplateHead, typename LexerType::RawStringsBuildMode rawStringsBuildMode, bool& elementIsTail)
 {
@@ -3308,7 +3307,6 @@ template <class TreeBuilder> typename TreeBuilder::TemplateLiteral Parser<LexerT
 
     return context.createTemplateLiteral(location, templateStringList, templateExpressionList);
 }
-#endif
 
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpression(TreeBuilder& context)

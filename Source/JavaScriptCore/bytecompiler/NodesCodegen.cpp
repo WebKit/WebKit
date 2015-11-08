@@ -218,7 +218,6 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     return result;
 }
 
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
 // ------------------------------ TemplateStringNode -----------------------------------
 
 RegisterID* TemplateStringNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -324,7 +323,6 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
 
     return generator.emitCall(generator.finalDestination(dst, tag.get()), tag.get(), expectedFunction, callArguments, divot(), divotStart(), divotEnd());
 }
-#endif
 
 // ------------------------------ ArrayNode ------------------------------------
 

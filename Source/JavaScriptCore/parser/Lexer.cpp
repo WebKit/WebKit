@@ -190,11 +190,7 @@ static const unsigned short typesOfLatin1Characters[256] = {
 /*  93 - ]                  */ CharacterCloseBracket,
 /*  94 - ^                  */ CharacterXor,
 /*  95 - _                  */ CharacterIdentifierStart,
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
 /*  96 - `                  */ CharacterBackQuote,
-#else
-/*  96 - `                  */ CharacterInvalid,
-#endif
 /*  97 - a                  */ CharacterIdentifierStart,
 /*  98 - b                  */ CharacterIdentifierStart,
 /*  99 - c                  */ CharacterIdentifierStart,
@@ -1326,7 +1322,6 @@ template <bool shouldBuildStrings> auto Lexer<T>::parseStringSlowCase(JSTokenDat
     return StringParsedSuccessfully;
 }
 
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
 // While the lexer accepts <LF><CR> (not <CR><LF>) sequence
 // as one line terminator and increments one line number,
 // TemplateLiteral considers it as two line terminators <LF> and <CR>.
@@ -1504,7 +1499,6 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
 
     return StringParsedSuccessfully;
 }
-#endif
 
 template <typename T>
 ALWAYS_INLINE void Lexer<T>::parseHex(double& returnValue)
@@ -2208,7 +2202,6 @@ inNumberAfterDecimalPoint:
         token = STRING;
         break;
         }
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     case CharacterBackQuote: {
         // Skip backquote.
         shift();
@@ -2225,7 +2218,6 @@ inNumberAfterDecimalPoint:
         token = TEMPLATE;
         break;
         }
-#endif
     case CharacterIdentifierStart:
         ASSERT(isIdentStart(m_current));
         FALLTHROUGH;
@@ -2427,7 +2419,6 @@ bool Lexer<T>::skipRegExp()
     return true;
 }
 
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
 template <typename T>
 JSTokenType Lexer<T>::scanTrailingTemplateString(JSToken* tokenRecord, RawStringsBuildMode rawStringsBuildMode)
 {
@@ -2459,7 +2450,6 @@ JSTokenType Lexer<T>::scanTrailingTemplateString(JSToken* tokenRecord, RawString
     tokenRecord->m_endPosition = currentPosition();
     return token;
 }
-#endif
 
 template <typename T>
 void Lexer<T>::clear()

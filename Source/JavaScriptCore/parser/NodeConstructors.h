@@ -100,7 +100,6 @@ namespace JSC {
     {
     }
 
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     inline TemplateExpressionListNode::TemplateExpressionListNode(ExpressionNode* node)
         : m_node(node)
     {
@@ -150,7 +149,6 @@ namespace JSC {
         , m_templateLiteral(templateLiteral)
     {
     }
-#endif
 
     inline RegExpNode::RegExpNode(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags)
         : ExpressionNode(location)

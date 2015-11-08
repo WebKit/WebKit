@@ -116,12 +116,10 @@ public:
     typedef int PropertyList;
     typedef int ElementList;
     typedef int ArgumentsList;
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     typedef int TemplateExpressionList;
     typedef int TemplateString;
     typedef int TemplateStringList;
     typedef int TemplateLiteral;
-#endif
     typedef int FormalParameterList;
     typedef int FunctionBody;
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -194,7 +192,6 @@ public:
     int createArguments() { return ArgumentsResult; }
     int createArguments(int) { return ArgumentsResult; }
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return SpreadExpr; }
-#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     TemplateString createTemplateString(const JSTokenLocation&, const Identifier&, const Identifier&) { return TemplateStringResult; }
     TemplateStringList createTemplateStringList(TemplateString) { return TemplateStringListResult; }
     TemplateStringList createTemplateStringList(TemplateStringList, TemplateString) { return TemplateStringListResult; }
@@ -203,7 +200,6 @@ public:
     TemplateLiteral createTemplateLiteral(const JSTokenLocation&, TemplateStringList) { return TemplateExpr; }
     TemplateLiteral createTemplateLiteral(const JSTokenLocation&, TemplateStringList, TemplateExpressionList) { return TemplateExpr; }
     ExpressionType createTaggedTemplate(const JSTokenLocation&, ExpressionType, TemplateLiteral, int, int, int) { return TaggedTemplateExpr; }
-#endif
 
     int createArgumentsList(const JSTokenLocation&, int) { return ArgumentsListResult; }
     int createArgumentsList(const JSTokenLocation&, int, int) { return ArgumentsListResult; }
