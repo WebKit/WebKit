@@ -1,3 +1,17 @@
+2015-11-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Use StringView::upconvertedCharacters() to make a 16-bit copy in String.prototype.normalize
+        https://bugs.webkit.org/show_bug.cgi?id=151005
+
+        Reviewed by Michael Saboff.
+
+        The ICU's unorm_normalize function used by String.prototype.normalize
+        requires a 16-bit string. This patch uses StringView::upconvertedCharacters()
+        to make a 16-bit copy of a string.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncNormalize):
+
 2015-11-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         generate-js-builtins.js should support @internal annotation

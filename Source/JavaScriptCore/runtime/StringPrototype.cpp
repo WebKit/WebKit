@@ -1822,7 +1822,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    String source = thisValue.toString(exec)->value(exec);
+    StringView source = thisValue.toString(exec)->view(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1845,14 +1845,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
             return throwVMError(exec, createRangeError(exec, ASCIILiteral("argument does not match any normalization form")));
     }
 
-    if (!source.is8Bit())
-        return JSValue::encode(normalize(exec, source.characters16(), source.length(), form));
-
-    Vector<UChar, 16> utf16Vector;
-    utf16Vector.resize(source.length());
-    const LChar* characters8 = source.characters8();
-    std::copy(characters8, characters8 + source.length(), utf16Vector.data());
-    return JSValue::encode(normalize(exec, utf16Vector.data(), utf16Vector.size(), form));
+    return JSValue::encode(normalize(exec, source.upconvertedCharacters(), source.length(), form));
 }
 
 } // namespace JSC
