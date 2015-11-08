@@ -927,6 +927,6 @@ void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloa
     font.update(nullptr);
 
     GraphicsContext cg(context);
-    cg.setFillColor(Color::black, ColorSpaceDeviceRGB);
+    cg.setFillColor(Color::black);
     cg.drawText(font, TextRun(text), IntPoint(x, y));
 }
