@@ -526,7 +526,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, cachedCGColor(Color::white, ColorSpaceDeviceRGB));
+            CGContextSetFillColorWithColor(cgContext, cachedCGColor(Color::white));
             WKRectFill(cgContext, rect);
 #endif
         }
@@ -538,7 +538,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
             NSRectFill(rect);
 #else
             CGContextRef cgContext = WKGetCurrentGraphicsContext();
-            CGContextSetFillColorWithColor(cgContext, cachedCGColor(Color::cyan, ColorSpaceDeviceRGB));
+            CGContextSetFillColorWithColor(cgContext, cachedCGColor(Color::cyan));
             WKRectFill(cgContext, rect);
 #endif
         }

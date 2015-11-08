@@ -128,7 +128,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         }
 
         if (shadow) {
-            m_paintInfo->context().setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->radius(), shadow->color(), style.colorSpace());
+            m_paintInfo->context().setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->radius(), shadow->color());
             m_paintInfo->context().beginTransparencyLayer(1);
             m_renderingFlags |= EndShadowLayer;
         }
@@ -361,7 +361,7 @@ bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBu
             return false;
     }
 
-    m_paintInfo->context().drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, boundingBox);
+    m_paintInfo->context().drawImageBuffer(*imageBuffer, boundingBox);
     return true;
 }
 

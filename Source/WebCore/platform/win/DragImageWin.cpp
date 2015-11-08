@@ -192,7 +192,7 @@ DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderi
     static const Color backgroundColor(140, 140, 140);
     static const IntSize radii(DragLabelRadius, DragLabelRadius);
     IntRect rect(0, 0, imageSize.width(), imageSize.height());
-    context.fillRoundedRect(FloatRoundedRect(rect, radii, radii, radii, radii), backgroundColor, ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(rect, radii, radii, radii, radii), backgroundColor);
  
     // Draw the text
     static const Color topColor(0, 0, 0, 255); // original alpha = 0.75

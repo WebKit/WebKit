@@ -1198,11 +1198,11 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     if (isImage()) {
         if (RefPtr<Image> markerImage = m_image->image(this, marker.size()))
-            context.drawImage(*markerImage, style().colorSpace(), marker);
+            context.drawImage(*markerImage, marker);
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
-            context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor(), style().colorSpace());
+            context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor());
         }
         return;
     }
@@ -1210,14 +1210,14 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (selectionState() != SelectionNone) {
         LayoutRect selRect = localSelectionRect();
         selRect.moveBy(boxOrigin);
-        context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor(), style().colorSpace());
+        context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor());
     }
 
     const Color color(style().visitedDependentColor(CSSPropertyColor));
-    context.setStrokeColor(color, style().colorSpace());
+    context.setStrokeColor(color);
     context.setStrokeStyle(SolidStroke);
     context.setStrokeThickness(1.0f);
-    context.setFillColor(color, style().colorSpace());
+    context.setFillColor(color);
 
     EListStyleType type = style().listStyleType();
     switch (type) {
@@ -1225,7 +1225,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             context.drawEllipse(marker);
             return;
         case Circle:
-            context.setFillColor(Color::transparent, ColorSpaceDeviceRGB);
+            context.setFillColor(Color::transparent);
             context.drawEllipse(marker);
             return;
         case Square:

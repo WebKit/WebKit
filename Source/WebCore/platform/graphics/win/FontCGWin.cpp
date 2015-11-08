@@ -183,17 +183,15 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     FloatSize shadowOffset;
     float shadowBlur;
     Color shadowColor;
-    ColorSpace shadowColorSpace;
-    graphicsContext.getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
+    graphicsContext.getShadow(shadowOffset, shadowBlur, shadowColor);
 
     bool hasSimpleShadow = graphicsContext.textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && (!graphicsContext.shadowsIgnoreTransforms() || graphicsContext.getCTM().isIdentityOrTranslationOrFlipped());
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         graphicsContext.clearShadow();
         Color fillColor = graphicsContext.fillColor();
-        ColorSpace fillColorSpace = graphicsContext.fillColorSpace();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
-        graphicsContext.setFillColor(shadowFillColor, shadowColorSpace);
+        graphicsContext.setFillColor(shadowFillColor);
         float shadowTextX = point.x() + translation.width() + shadowOffset.width();
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + translation.height() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
@@ -203,7 +201,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
             CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowOffset.width() + font.syntheticBoldOffset(), point.y() + translation.height() + shadowOffset.height());
             CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
         }
-        graphicsContext.setFillColor(fillColor, fillColorSpace);
+        graphicsContext.setFillColor(fillColor);
     }
 
     CGContextSetTextPosition(cgContext, point.x() + translation.width(), point.y() + translation.height());
@@ -214,7 +212,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     }
 
     if (hasSimpleShadow)
-        graphicsContext.setShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
+        graphicsContext.setShadow(shadowOffset, shadowBlur, shadowColor);
 
     wkRestoreFontSmoothingStyle(cgContext, oldFontSmoothingStyle);
 }

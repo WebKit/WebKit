@@ -185,7 +185,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     if (imageBuffer) {
         GraphicsContext& graphicsContext = imageBuffer->context();
         if (image)
-            graphicsContext.drawImage(*image, ColorSpaceDeviceRGB, IntRect(IntPoint(), imageRect.size()));
+            graphicsContext.drawImage(*image, IntRect(IntPoint(), imageRect.size()));
 
         RefPtr<Uint8ClampedArray> pixelArray = imageBuffer->getUnmultipliedImageData(IntRect(IntPoint(), imageRect.size()));
         unsigned pixelArrayLength = pixelArray->length();

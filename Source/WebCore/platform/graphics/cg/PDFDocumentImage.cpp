@@ -179,7 +179,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     }
 }
 
-void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode, ImageOrientationDescription)
+void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, ImageOrientationDescription)
 {
     if (!m_document || !m_hasPage)
         return;
@@ -191,7 +191,7 @@ void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, 
         context.setCompositeOperation(op);
 
         if (m_cachedImageBuffer)
-            context.drawImageBuffer(*m_cachedImageBuffer, ColorSpaceDeviceRGB, dstRect);
+            context.drawImageBuffer(*m_cachedImageBuffer, dstRect);
         else {
             transformContextForPainting(context, dstRect, srcRect);
             drawPDFPage(context);

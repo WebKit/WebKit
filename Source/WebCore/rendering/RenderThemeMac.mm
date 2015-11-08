@@ -1156,7 +1156,7 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
         paintInfo.context().scale(FloatSize(-1, 1));
     }
 
-    paintInfo.context().drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, inflatedRect.location());
+    paintInfo.context().drawImageBuffer(*imageBuffer, inflatedRect.location());
     return false;
 }
 
@@ -1301,7 +1301,7 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
-    paintInfo.context().setFillColor(renderer.style().visitedDependentColor(CSSPropertyColor), renderer.style().colorSpace());
+    paintInfo.context().setFillColor(renderer.style().visitedDependentColor(CSSPropertyColor));
     paintInfo.context().setStrokeStyle(NoStroke);
 
     FloatPoint arrow1[3];
@@ -1330,11 +1330,11 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
     // Draw the separator to the left of the arrows
     paintInfo.context().setStrokeThickness(1); // Deliberately ignores zoom since it looks nicer if it stays thin.
     paintInfo.context().setStrokeStyle(SolidStroke);
-    paintInfo.context().setStrokeColor(leftSeparatorColor, ColorSpaceDeviceRGB);
+    paintInfo.context().setStrokeColor(leftSeparatorColor);
     paintInfo.context().drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator, bounds.maxY()));
 
-    paintInfo.context().setStrokeColor(rightSeparatorColor, ColorSpaceDeviceRGB);
+    paintInfo.context().setStrokeColor(rightSeparatorColor);
     paintInfo.context().drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.maxY()));
     return false;
@@ -1914,7 +1914,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer,
     if (alignedPluginRect.width() <= 0 || alignedPluginRect.height() <= 0)
         return true;
 
-    context.drawImage(*snapshot, plugInRenderer.style().colorSpace(), alignedPluginRect, CompositeSourceOver);
+    context.drawImage(*snapshot, alignedPluginRect, CompositeSourceOver);
     return false;
 }
 
@@ -2184,7 +2184,7 @@ static NSColor *titleTextColorForAttachment(const RenderAttachment& attachment)
     if (attachment.selectionState() != RenderObject::SelectionNone) {
         if (attachment.frame().selection().isFocusedAndActive())
             return [NSColor alternateSelectedControlTextColor];    
-        return (NSColor *)cachedCGColor(attachmentTitleInactiveTextColor(), ColorSpaceDeviceRGB);
+        return (NSColor *)cachedCGColor(attachmentTitleInactiveTextColor());
     }
 
     return [NSColor blackColor];
@@ -2294,7 +2294,7 @@ void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, attachmentSubtitleFontSize, language));
     NSDictionary *textAttributes = @{
         (id)kCTFontAttributeName: (id)font.get(),
-        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(attachmentSubtitleTextColor(), ColorSpaceDeviceRGB)
+        (id)kCTForegroundColorAttributeName: (NSColor *)cachedCGColor(attachmentSubtitleTextColor())
     };
     RetainPtr<NSAttributedString> attributedSubtitleText = adoptNS([[NSAttributedString alloc] initWithString:subtitleText attributes:textAttributes]);
     subtitleLine = adoptCF(CTLineCreateWithAttributedString((CFAttributedStringRef)attributedSubtitleText.get()));
@@ -2355,7 +2355,7 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
     if (paintBorder)
         backgroundRect.inflate(-attachmentIconSelectionBorderThickness);
 
-    context.fillRoundedRect(FloatRoundedRect(backgroundRect, FloatRoundedRect::Radii(attachmentIconBackgroundRadius)), attachmentIconBackgroundColor(), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(backgroundRect, FloatRoundedRect::Radii(attachmentIconBackgroundRadius)), attachmentIconBackgroundColor());
 
     if (paintBorder) {
         FloatRect borderRect = layout.iconBackgroundRect;
@@ -2364,7 +2364,7 @@ static void paintAttachmentIconBackground(const RenderAttachment&, GraphicsConte
         FloatSize iconBackgroundRadiusSize(attachmentIconBackgroundRadius, attachmentIconBackgroundRadius);
         Path borderPath;
         borderPath.addRoundedRect(borderRect, iconBackgroundRadiusSize);
-        context.setStrokeColor(attachmentIconBorderColor(), ColorSpaceDeviceRGB);
+        context.setStrokeColor(attachmentIconBorderColor());
         context.setStrokeThickness(attachmentIconSelectionBorderThickness);
         context.strokePath(borderPath);
     }
@@ -2397,7 +2397,7 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
     else
         backgroundColor = attachmentTitleInactiveBackgroundColor();
 
-    context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
+    context.setFillColor(backgroundColor);
 
     Path backgroundPath = PathUtilities::pathWithShrinkWrappedRects(backgroundRects, attachmentTitleBackgroundRadius);
     context.fillPath(backgroundPath);
@@ -2447,7 +2447,7 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
     backgroundRect.inflate(-attachmentProgressBarBorderWidth / 2);
 
     FloatRoundedRect backgroundRoundedRect(backgroundRect, FloatRoundedRect::Radii(backgroundRect.height() / 2));
-    context.fillRoundedRect(backgroundRoundedRect, attachmentProgressBarBackgroundColor(), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(backgroundRoundedRect, attachmentProgressBarBackgroundColor());
 
     {
         GraphicsContextStateSaver clipSaver(context);
@@ -2457,13 +2457,13 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
         progressRect.setWidth(progressRect.width() * progress);
         progressRect = encloseRectToDevicePixels(progressRect, attachment.document().deviceScaleFactor());
 
-        context.fillRect(progressRect, attachmentProgressBarFillColor(), ColorSpaceDeviceRGB);
+        context.fillRect(progressRect, attachmentProgressBarFillColor());
     }
 
     Path borderPath;
     float borderRadius = borderRect.height() / 2;
     borderPath.addRoundedRect(borderRect, FloatSize(borderRadius, borderRadius));
-    context.setStrokeColor(attachmentProgressBarBorderColor(), ColorSpaceDeviceRGB);
+    context.setStrokeColor(attachmentProgressBarBorderColor());
     context.setStrokeThickness(attachmentProgressBarBorderWidth);
     context.strokePath(borderPath);
 }

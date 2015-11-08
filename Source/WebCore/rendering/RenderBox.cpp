@@ -1545,7 +1545,7 @@ void RenderBox::paintClippingMask(PaintInfo& paintInfo, const LayoutPoint& paint
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
-    paintInfo.context().fillRect(snappedIntRect(paintRect), Color::black, style().colorSpace());
+    paintInfo.context().fillRect(snappedIntRect(paintRect), Color::black);
 }
 
 void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& paintRect)

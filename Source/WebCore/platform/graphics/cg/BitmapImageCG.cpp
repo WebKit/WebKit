@@ -203,7 +203,7 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
     return adoptCF(array);
 }
 
-void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
+void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
 #if PLATFORM(IOS)
     startAnimation(DoNotCatchUp);
@@ -226,7 +226,7 @@ void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const F
         return;
     
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(ctxt, destRect, solidColor(), styleColorSpace, compositeOp);
+        fillWithSolidColor(ctxt, destRect, solidColor(), compositeOp);
         return;
     }
 
@@ -245,7 +245,7 @@ void BitmapImage::draw(GraphicsContext& ctxt, const FloatRect& destRect, const F
     if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
-    ctxt.drawNativeImage(image.get(), imageSize, styleColorSpace, destRect, scaledSrcRect, compositeOp, blendMode, orientation);
+    ctxt.drawNativeImage(image.get(), imageSize, destRect, scaledSrcRect, compositeOp, blendMode, orientation);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

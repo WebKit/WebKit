@@ -1,3 +1,18 @@
+2015-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ColorSpace argument to all the drawing calls
+        https://bugs.webkit.org/show_bug.cgi?id=150967
+
+        Reviewed by Darin Adler.
+
+        Since the -webkit-color-correction CSS property was removed in r188202, and ColorSpaceDeviceRGB
+        and ColorSpaceSRGB are functionally equivalent, we can remove all the ColorSpace arguments passed
+        to drawing functions, and remove RenderStyle::colorSpace(), which was hardcoded to return ColorSpaceSRGB.
+
+        * WebView/WebPDFViewIOS.mm:
+        (-[WebPDFView drawPage:]):
+        * WebView/WebPlainWhiteView.mm:
+
 2015-11-02  Andy Estes  <aestes@apple.com>
 
         Fixed the iOS build after r191904.

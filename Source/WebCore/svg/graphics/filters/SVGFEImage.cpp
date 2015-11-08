@@ -135,7 +135,7 @@ void FEImage::platformApplySoftware()
         return;
     }
 
-    resultImage->context().drawImage(*m_image, ColorSpaceDeviceRGB, destRect, srcRect);
+    resultImage->context().drawImage(*m_image, destRect, srcRect);
 }
 
 void FEImage::dump()

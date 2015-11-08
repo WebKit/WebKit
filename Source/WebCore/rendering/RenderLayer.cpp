@@ -1821,7 +1821,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
 #endif
 
 #ifdef REVEAL_TRANSPARENCY_LAYERS
-        context->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f), ColorSpaceDeviceRGB);
+        context->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f));
         context->fillRect(pixelSnappedClipRect);
 #endif
     }
@@ -3608,9 +3608,6 @@ void RenderLayer::paintOverflowControls(GraphicsContext& context, const IntPoint
 
 void RenderLayer::paintScrollCorner(GraphicsContext& context, const IntPoint& paintOffset, const IntRect& damageRect)
 {
-    RenderBox* box = renderBox();
-    ASSERT(box);
-
     IntRect absRect = scrollCornerRect();
     absRect.moveBy(paintOffset);
     if (!absRect.intersects(damageRect))
@@ -3629,7 +3626,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext& context, const IntPoint& pa
     // We don't want to paint white if we have overlay scrollbars, since we need
     // to see what is behind it.
     if (!hasOverlayScrollbars())
-        context.fillRect(absRect, Color::white, box->style().colorSpace());
+        context.fillRect(absRect, Color::white);
 }
 
 void RenderLayer::drawPlatformResizerImage(GraphicsContext& context, const LayoutRect& resizerCornerRect)
@@ -3652,7 +3649,7 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext& context, const Layou
         context.translate(resizerCornerRect.x() + cornerResizerSize.width(), resizerCornerRect.y() + resizerCornerRect.height() - cornerResizerSize.height());
         context.scale(FloatSize(-1.0, 1.0));
         if (resizeCornerImage)
-            context.drawImage(*resizeCornerImage, renderer().style().colorSpace(), FloatRect(FloatPoint(), cornerResizerSize));
+            context.drawImage(*resizeCornerImage, FloatRect(FloatPoint(), cornerResizerSize));
         context.restore();
         return;
     }
@@ -3660,7 +3657,7 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext& context, const Layou
     if (!resizeCornerImage)
         return;
     FloatRect imageRect = snapRectToDevicePixels(LayoutRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize), renderer().document().deviceScaleFactor());
-    context.drawImage(*resizeCornerImage, renderer().style().colorSpace(), imageRect);
+    context.drawImage(*resizeCornerImage, imageRect);
 }
 
 void RenderLayer::paintResizer(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& damageRect)
@@ -3695,9 +3692,9 @@ void RenderLayer::paintResizer(GraphicsContext& context, const LayoutPoint& pain
         context.clip(absRect);
         LayoutRect largerCorner = absRect;
         largerCorner.setSize(LayoutSize(largerCorner.width() + LayoutUnit::fromPixel(1), largerCorner.height() + LayoutUnit::fromPixel(1)));
-        context.setStrokeColor(Color(makeRGB(217, 217, 217)), ColorSpaceDeviceRGB);
+        context.setStrokeColor(Color(makeRGB(217, 217, 217)));
         context.setStrokeThickness(1.0f);
-        context.setFillColor(Color::transparent, ColorSpaceDeviceRGB);
+        context.setFillColor(Color::transparent);
         context.drawRect(snappedIntRect(largerCorner));
     }
 }

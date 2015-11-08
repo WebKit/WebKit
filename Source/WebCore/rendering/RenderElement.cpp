@@ -1820,7 +1820,6 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
     if (borderStyle == DOUBLE && (thickness * deviceScaleFactor) < 3)
         borderStyle = SOLID;
 
-    const RenderStyle& style = this->style();
     switch (borderStyle) {
     case BNONE:
     case BHIDDEN:
@@ -1830,7 +1829,7 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
         bool wasAntialiased = graphicsContext.shouldAntialias();
         StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
         graphicsContext.setShouldAntialias(antialias);
-        graphicsContext.setStrokeColor(color, style.colorSpace());
+        graphicsContext.setStrokeColor(color);
         graphicsContext.setStrokeThickness(thickness);
         graphicsContext.setStrokeStyle(borderStyle == DASHED ? DashedStroke : DottedStroke);
         graphicsContext.drawLine(roundPointToDevicePixels(LayoutPoint(x1, y1), deviceScaleFactor), roundPointToDevicePixels(LayoutPoint(x2, y2), deviceScaleFactor));
@@ -1845,7 +1844,7 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
         if (!adjacentWidth1 && !adjacentWidth2) {
             StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
             graphicsContext.setStrokeStyle(NoStroke);
-            graphicsContext.setFillColor(color, style.colorSpace());
+            graphicsContext.setFillColor(color);
 
             bool wasAntialiased = graphicsContext.shouldAntialias();
             graphicsContext.setShouldAntialias(antialias);
@@ -1996,7 +1995,7 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
             // Turn off antialiasing to match the behavior of drawConvexPolygon();
             // this matters for rects in transformed contexts.
             graphicsContext.setStrokeStyle(NoStroke);
-            graphicsContext.setFillColor(color, style.colorSpace());
+            graphicsContext.setFillColor(color);
             bool wasAntialiased = graphicsContext.shouldAntialias();
             graphicsContext.setShouldAntialias(antialias);
             graphicsContext.drawRect(snapRectToDevicePixels(x1, y1, x2 - x1, y2 - y1, deviceScaleFactor));
@@ -2040,7 +2039,7 @@ void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const F
         }
 
         graphicsContext.setStrokeStyle(NoStroke);
-        graphicsContext.setFillColor(color, style.colorSpace());
+        graphicsContext.setFillColor(color);
         graphicsContext.drawConvexPolygon(4, quad, antialias);
         graphicsContext.setStrokeStyle(oldStrokeStyle);
         break;
@@ -2108,7 +2107,7 @@ void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRe
             path.addRect(outer);
             path.addRect(inner);
             graphicsContext.setFillRule(RULE_EVENODD);
-            graphicsContext.setFillColor(outlineColor, styleToUse.colorSpace());
+            graphicsContext.setFillColor(outlineColor);
             graphicsContext.fillPath(path);
             return;
         }

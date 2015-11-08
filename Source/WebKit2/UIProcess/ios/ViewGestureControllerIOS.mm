@@ -188,7 +188,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
             [m_snapshotView layer].contents = snapshot->asLayerContents();
         Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
-            backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(coreColor, ColorSpaceDeviceRGB)]);
+            backgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(coreColor)]);
     }
 
     [m_snapshotView setBackgroundColor:backgroundColor.get()];

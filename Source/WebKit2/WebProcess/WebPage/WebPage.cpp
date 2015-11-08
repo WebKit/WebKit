@@ -1780,7 +1780,7 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
 
     Color documentBackgroundColor = frameView->documentBackgroundColor();
     Color backgroundColor = (coreFrame->settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView->baseBackgroundColor();
-    graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor, ColorSpaceDeviceRGB);
+    graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor);
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
         double deviceScaleFactor = corePage()->deviceScaleFactor();
@@ -1803,7 +1803,7 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
 
     if (options & SnapshotOptionsPaintSelectionRectangle) {
         FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection().selectionBounds();
-        graphicsContext->setStrokeColor(Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
+        graphicsContext->setStrokeColor(Color(0xFF, 0, 0));
         graphicsContext->strokeRect(selectionRectangle, 1);
     }
     

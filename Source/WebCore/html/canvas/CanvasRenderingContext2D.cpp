@@ -1154,7 +1154,7 @@ void CanvasRenderingContext2D::clearRect(float x, float y, float width, float he
     if (shouldDrawShadows()) {
         context->save();
         saved = true;
-        context->setLegacyShadow(FloatSize(), 0, Color::transparent, ColorSpaceDeviceRGB);
+        context->setLegacyShadow(FloatSize(), 0, Color::transparent);
     }
     if (state().globalAlpha != 1) {
         if (!saved) {
@@ -1319,9 +1319,9 @@ void CanvasRenderingContext2D::applyShadow()
     if (shouldDrawShadows()) {
         float width = state().shadowOffset.width();
         float height = state().shadowOffset.height();
-        c->setLegacyShadow(FloatSize(width, -height), state().shadowBlur, state().shadowColor, ColorSpaceDeviceRGB);
+        c->setLegacyShadow(FloatSize(width, -height), state().shadowBlur, state().shadowColor);
     } else
-        c->setLegacyShadow(FloatSize(), 0, Color::transparent, ColorSpaceDeviceRGB);
+        c->setLegacyShadow(FloatSize(), 0, Color::transparent);
 }
 
 bool CanvasRenderingContext2D::shouldDrawShadows() const
@@ -1448,17 +1448,17 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* imageElement, const F
     }
 
     if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(op)) {
-        fullCanvasCompositedDrawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
+        fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op);
         didDrawEntireCanvas();
     } else if (op == CompositeCopy) {
         clearCanvas();
-        c->drawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDrawEntireCanvas();
     } else {
-        c->drawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDraw(normalizedDstRect);
     }
     
@@ -1536,17 +1536,17 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
 #endif
 
     if (rectContainsCanvas(dstRect)) {
-        c->drawImageBuffer(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
-        fullCanvasCompositedDrawImage(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().globalComposite);
+        fullCanvasCompositedDrawImage(*buffer, dstRect, srcRect, state().globalComposite);
         didDrawEntireCanvas();
     } else if (state().globalComposite == CompositeCopy) {
         clearCanvas();
-        c->drawImageBuffer(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
         didDrawEntireCanvas();
     } else {
-        c->drawImageBuffer(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
         didDraw(dstRect);
     }
 }
@@ -1612,7 +1612,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
 
 #if USE(CG)
     if (PassNativeImagePtr image = video->nativeImageForCurrentTime()) {
-        c->drawNativeImage(image, FloatSize(video->videoWidth(), video->videoHeight()), ColorSpaceDeviceRGB, dstRect, srcRect);
+        c->drawNativeImage(image, FloatSize(video->videoWidth(), video->videoHeight()), dstRect, srcRect);
         if (rectContainsCanvas(dstRect))
             didDrawEntireCanvas();
         else
@@ -1726,21 +1726,21 @@ void CanvasRenderingContext2D::compositeBuffer(ImageBuffer& buffer, const IntRec
     c->clipOut(bufferRect);
     c->clearRect(canvasRect);
     c->restore();
-    c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, bufferRect.location(), state().globalComposite);
+    c->drawImageBuffer(buffer, bufferRect.location(), state().globalComposite);
     c->restore();
 }
 
-static void drawImageToContext(Image& image, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
-    context.drawImage(image, styleColorSpace, dest, src, op);
+    context.drawImage(image, dest, src, op);
 }
 
-static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
-    context.drawImageBuffer(imageBuffer, styleColorSpace, dest, src, op);
+    context.drawImageBuffer(imageBuffer, dest, src, op);
 }
 
-template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(T& image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+template<class T> void CanvasRenderingContext2D::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
     ASSERT(isFullCanvasCompositeMode(op));
 
@@ -1766,7 +1766,7 @@ template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(
     buffer->context().translate(-transformedAdjustedRect.location().x(), -transformedAdjustedRect.location().y());
     buffer->context().translate(croppedOffset.width(), croppedOffset.height());
     buffer->context().concatCTM(effectiveTransform);
-    drawImageToContext(image, buffer->context(), styleColorSpace, adjustedDest, src, CompositeSourceOver);
+    drawImageToContext(image, buffer->context(), adjustedDest, src, CompositeSourceOver);
 
     compositeBuffer(*buffer, bufferRect, op);
 }
@@ -2440,8 +2440,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
             FloatSize shadowOffset;
             float shadowRadius;
             Color shadowColor;
-            ColorSpace shadowColorSpace;
-            c->getShadow(shadowOffset, shadowRadius, shadowColor, shadowColorSpace);
+            c->getShadow(shadowOffset, shadowRadius, shadowColor);
 
             FloatRect shadowRect(maskRect);
             shadowRect.inflate(shadowRadius * 1.4);
@@ -2450,12 +2449,12 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
             shadowOffset += offset;
 
-            c->setLegacyShadow(shadowOffset, shadowRadius, shadowColor, shadowColorSpace);
+            c->setLegacyShadow(shadowOffset, shadowRadius, shadowColor);
 
             if (fill)
-                c->setFillColor(Color::black, ColorSpaceDeviceRGB);
+                c->setFillColor(Color::black);
             else
-                c->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
+                c->setStrokeColor(Color::black);
 
             fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
         }
@@ -2467,9 +2466,9 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         GraphicsContext& maskImageContext = maskImage->context();
 
         if (fill)
-            maskImageContext.setFillColor(Color::black, ColorSpaceDeviceRGB);
+            maskImageContext.setFillColor(Color::black);
         else {
-            maskImageContext.setStrokeColor(Color::black, ColorSpaceDeviceRGB);
+            maskImageContext.setStrokeColor(Color::black);
             maskImageContext.setStrokeThickness(c->strokeThickness());
         }
 

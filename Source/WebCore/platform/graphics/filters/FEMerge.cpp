@@ -52,7 +52,7 @@ void FEMerge::platformApplySoftware()
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
         if (ImageBuffer* inBuffer = in->asImageBuffer())
-            filterContext.drawImageBuffer(*inBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+            filterContext.drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
     }
 }
 

@@ -209,20 +209,18 @@ void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* rend
     if (!image)
         return;
 
-    ColorSpace colorSpace = style.colorSpace();
-
     for (ImagePiece piece = MinPiece; piece < MaxPiece; ++piece) {
         if ((piece == MiddlePiece && !fill()) || isEmptyPieceRect(piece, destinationRects, sourceRects))
             continue;
 
         if (isCornerPiece(piece)) {
-            graphicsContext.drawImage(*image, colorSpace, destinationRects[piece], sourceRects[piece], op);
+            graphicsContext.drawImage(*image, destinationRects[piece], sourceRects[piece], op);
             continue;
         }
 
         Image::TileRule hRule = isHorizontalPiece(piece) ? static_cast<Image::TileRule>(horizontalRule()) : Image::StretchTile;
         Image::TileRule vRule = isVerticalPiece(piece) ? static_cast<Image::TileRule>(verticalRule()) : Image::StretchTile;
-        graphicsContext.drawTiledImage(*image, colorSpace, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, op);
+        graphicsContext.drawTiledImage(*image, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, op);
     }
 }
 

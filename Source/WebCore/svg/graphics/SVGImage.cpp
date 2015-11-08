@@ -139,7 +139,7 @@ IntSize SVGImage::containerSize() const
 }
 
 void SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float zoom, const FloatRect& dstRect,
-    const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp, BlendMode blendMode)
+    const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode)
 {
     if (!m_page)
         return;
@@ -161,7 +161,7 @@ void SVGImage::drawForContainer(GraphicsContext& context, const FloatSize contai
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
 
-    draw(context, dstRect, scaledSrc, colorSpace, compositeOp, blendMode, ImageOrientationDescription());
+    draw(context, dstRect, scaledSrc, compositeOp, blendMode, ImageOrientationDescription());
 
     setImageObserver(observer);
 }
@@ -179,7 +179,7 @@ PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()
     if (!buffer) // failed to allocate image
         return 0;
 
-    draw(buffer->context(), rect(), rect(), ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
+    draw(buffer->context(), rect(), rect(), CompositeSourceOver, BlendModeNormal, ImageOrientationDescription());
 
     // FIXME: WK(Bug 113657): We should use DontCopyBackingStore here.
     return buffer->copyImage(CopyBackingStore)->nativeImageForCurrentFrame();
@@ -187,7 +187,7 @@ PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()
 #endif
 
 void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize& containerSize, float zoom, const FloatRect& srcRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerSize);
     zoomedContainerRect.scale(zoom);
@@ -204,7 +204,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(imageBufferSize.size()), 1, ColorSpaceSRGB, context, true);
     if (!buffer) // Failed to allocate buffer.
         return;
-    drawForContainer(buffer->context(), containerSize, zoom, imageBufferSize, zoomedContainerRect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+    drawForContainer(buffer->context(), containerSize, zoom, imageBufferSize, zoomedContainerRect, CompositeSourceOver, BlendModeNormal);
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
@@ -219,10 +219,10 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     context.setDrawLuminanceMask(false);
-    image->drawPattern(context, scaledSrcRect, unscaledPatternTransform, phase, spacing, colorSpace, compositeOp, dstRect, blendMode);
+    image->drawPattern(context, scaledSrcRect, unscaledPatternTransform, phase, spacing, compositeOp, dstRect, blendMode);
 }
 
-void SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
+void SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
 {
     if (!m_page)
         return;

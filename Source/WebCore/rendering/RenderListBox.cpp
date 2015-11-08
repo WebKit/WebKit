@@ -396,8 +396,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
             textColor = theme().inactiveListBoxSelectionForegroundColor();
     }
 
-    ColorSpace colorSpace = itemStyle.colorSpace();
-    paintInfo.context().setFillColor(textColor, colorSpace);
+    paintInfo.context().setFillColor(textColor);
 
     TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle.direction(), isOverride(itemStyle.unicodeBidi()), true, TextRun::NoRounding);
     FontCascade itemFont = style().fontCascade();
@@ -432,10 +431,9 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
 
     // Draw the background for this list box item
     if (itemStyle.visibility() != HIDDEN) {
-        ColorSpace colorSpace = itemStyle.colorSpace();
         LayoutRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
         itemRect.intersect(controlClipRect(paintOffset));
-        paintInfo.context().fillRect(snappedIntRect(itemRect), backColor, colorSpace);
+        paintInfo.context().fillRect(snappedIntRect(itemRect), backColor);
     }
 }
 

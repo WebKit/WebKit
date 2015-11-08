@@ -197,7 +197,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (drawSelectionTint) {
         LayoutRect selectionPaintingRect = localSelectionRect();
         selectionPaintingRect.moveBy(adjustedPaintOffset);
-        paintInfo.context().fillRect(snappedIntRect(selectionPaintingRect), selectionBackgroundColor(), style().colorSpace());
+        paintInfo.context().fillRect(snappedIntRect(selectionPaintingRect), selectionBackgroundColor());
     }
 }
 

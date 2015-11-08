@@ -1,3 +1,25 @@
+2015-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ColorSpace argument to all the drawing calls
+        https://bugs.webkit.org/show_bug.cgi?id=150967
+
+        Reviewed by Darin Adler.
+
+        Since the -webkit-color-correction CSS property was removed in r188202, and ColorSpaceDeviceRGB
+        and ColorSpaceSRGB are functionally equivalent, we can remove all the ColorSpace arguments passed
+        to drawing functions, and remove RenderStyle::colorSpace(), which was hardcoded to return ColorSpaceSRGB.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]):
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView _layoutForNodeHighlight:parent:]):
+        (-[WebNodeHighlightView _layoutForRectsHighlight:parent:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _bodyBackgroundColor]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView drawRect:]):
+        * WebView/WebIndicateLayer.mm:
+
 2015-11-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Add runtime and compile time flags for enabling Web Animations API and model.

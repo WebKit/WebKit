@@ -1183,7 +1183,7 @@ void ScrollView::paintPanScrollIcon(GraphicsContext& context)
     IntPoint iconGCPoint = m_panScrollIconPoint;
     if (parent())
         iconGCPoint = parent()->windowToContents(iconGCPoint);
-    context.drawImage(*panScrollIcon, ColorSpaceDeviceRGB, iconGCPoint);
+    context.drawImage(*panScrollIcon, iconGCPoint);
 }
 
 void ScrollView::paint(GraphicsContext& context, const IntRect& rect)

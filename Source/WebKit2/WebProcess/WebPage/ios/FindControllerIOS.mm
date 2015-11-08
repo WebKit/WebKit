@@ -79,11 +79,11 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     Vector<FloatRect> textRectsInBoundingRectCoordinates = m_textIndicator->textRectsInBoundingRectCoordinates();
     Vector<Path> paths = PathUtilities::pathsWithShrinkWrappedRects(textRectsInBoundingRectCoordinates, cornerRadius);
 
-    context.setFillColor(highlightColor(), ColorSpaceDeviceRGB);
+    context.setFillColor(highlightColor());
     for (const auto& path : paths)
         context.fillPath(path);
 
-    context.drawImage(*indicatorImage, ColorSpaceDeviceRGB, overlay.bounds());
+    context.drawImage(*indicatorImage, overlay.bounds());
 }
 
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)

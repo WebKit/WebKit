@@ -986,8 +986,7 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
         if (!newImage)
             return;
 
-        // Check to see if the image changed; we have to do this because the call to
-        // CGImageCreateCopyWithColorSpace() below can create a new image every time.
+        // FIXME: probably don't need m_uncorrectedContentsImage at all now.
         if (m_uncorrectedContentsImage && m_uncorrectedContentsImage.get() == newImage)
             return;
         

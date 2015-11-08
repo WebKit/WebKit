@@ -39,16 +39,15 @@ class ShadowData;
 struct PaintInfo;
 
 struct TextPaintStyle {
-    TextPaintStyle(ColorSpace);
-    TextPaintStyle(Color, ColorSpace);
+    TextPaintStyle() { }
+    TextPaintStyle(const Color&);
 
-    ColorSpace colorSpace;
     Color fillColor;
     Color strokeColor;
     Color emphasisMarkColor;
-    float strokeWidth;
+    float strokeWidth { 0 };
 #if ENABLE(LETTERPRESS)
-    bool useLetterpressEffect;
+    bool useLetterpressEffect { false };
 #endif
 };
 

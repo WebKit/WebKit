@@ -42,9 +42,9 @@
 namespace WebCore {
 
 void Image::drawPattern(GraphicsContext& context, const FloatRect& tileRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, ColorSpace colorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
-    context.drawPattern(*this, tileRect, patternTransform, phase, spacing, colorSpace, op, destRect, blendMode);
+    context.drawPattern(*this, tileRect, patternTransform, phase, spacing, op, destRect, blendMode);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

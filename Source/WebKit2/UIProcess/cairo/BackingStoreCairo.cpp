@@ -109,7 +109,7 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
             if (color.hasAlpha())
                 graphicsContext.clearRect(srcRect);
             if (color.alpha() > 0)
-                graphicsContext.fillRect(srcRect, color, ColorSpaceDeviceRGB);
+                graphicsContext.fillRect(srcRect, color);
         }
 #endif
         bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);

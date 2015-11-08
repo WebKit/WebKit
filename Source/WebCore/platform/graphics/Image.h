@@ -28,7 +28,6 @@
 #define Image_h
 
 #include "Color.h"
-#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
@@ -154,7 +153,6 @@ public:
     virtual CGImageRef getCGImageRef() { return 0; }
     virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) { return 0; }
     virtual RetainPtr<CFArrayRef> getCGImageArray() { return 0; }
-    static RetainPtr<CGImageRef> imageWithColorSpace(CGImageRef originalImage, ColorSpace);
 #endif
 
 #if PLATFORM(WIN)
@@ -171,7 +169,7 @@ public:
 #endif
 
     virtual void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform,
-        const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
+        const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     FloatRect adjustSourceRectForDownSampling(const FloatRect& srcRect, const IntSize& scaledSize) const;
@@ -186,16 +184,14 @@ public:
 protected:
     Image(ImageObserver* = nullptr);
 
-    static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, ColorSpace styleColorSpace, CompositeOperator);
+    static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
 
-    // The ColorSpace parameter will only be used for untagged images.
 #if PLATFORM(WIN)
-    virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, ColorSpace styleColorSpace, CompositeOperator) { }
+    virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) { }
 #endif
-    virtual void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) = 0;
-    void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, ColorSpace styleColorSpace,
-        CompositeOperator , BlendMode);
-    void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ColorSpace styleColorSpace, CompositeOperator);
+    virtual void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) = 0;
+    void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, CompositeOperator, BlendMode);
+    void drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, CompositeOperator);
 
     // Supporting tiled drawing
     virtual bool mayFillWithSolidColor() { return false; }

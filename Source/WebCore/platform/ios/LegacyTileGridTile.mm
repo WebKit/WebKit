@@ -117,7 +117,7 @@ void LegacyTileGridTile::showBorder(bool flag)
 {
     LegacyTileLayer* layer = m_tileLayer.get();
     if (flag) {
-        [layer setBorderColor:cachedCGColor(m_tileGrid->tileCache().colorForGridTileBorder(m_tileGrid), ColorSpaceDeviceRGB)];
+        [layer setBorderColor:cachedCGColor(m_tileGrid->tileCache().colorForGridTileBorder(m_tileGrid))];
         [layer setBorderWidth:0.5f];
     } else {
         [layer setBorderColor:nil];

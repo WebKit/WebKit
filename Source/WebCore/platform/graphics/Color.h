@@ -216,7 +216,7 @@ int differenceSquared(const Color&, const Color&);
 uint16_t fastDivideBy255(uint16_t);
 
 #if USE(CG)
-WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&, ColorSpace);
+WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
 #endif
 
 inline RGBA::RGBA()

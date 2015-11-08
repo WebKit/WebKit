@@ -129,7 +129,7 @@ void PlatformCALayerWinInternal::drawRepaintCounters(CACFLayerRef caLayer, CGCon
     if (borderWidth > 0)
         backgroundColor = CACFLayerGetBorderColor(caLayer);
     else
-        backgroundColor = cachedCGColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+        backgroundColor = cachedCGColor(Color(255, 0, 0));
 
     PlatformCALayer::drawRepaintIndicator(context, owner(), drawCount, backgroundColor);
 }

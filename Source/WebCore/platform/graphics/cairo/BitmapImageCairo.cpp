@@ -64,7 +64,7 @@ BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver*
     checkForSolidColor();
 }
 
-void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op,
+void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const FloatRect& src, CompositeOperator op,
     BlendMode blendMode, ImageOrientationDescription description)
 {
     if (!dst.width() || !dst.height() || !src.width() || !src.height())
@@ -77,7 +77,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& dst, const Flo
         return;
 
     if (mayFillWithSolidColor()) {
-        fillWithSolidColor(context, dst, solidColor(), styleColorSpace, op);
+        fillWithSolidColor(context, dst, solidColor(), op);
         return;
     }
 

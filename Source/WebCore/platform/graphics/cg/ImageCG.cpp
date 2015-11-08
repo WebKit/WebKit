@@ -45,35 +45,13 @@
 
 namespace WebCore {
 
-RetainPtr<CGImageRef> Image::imageWithColorSpace(CGImageRef originalImage, ColorSpace colorSpace)
-{
-    CGColorSpaceRef originalColorSpace = CGImageGetColorSpace(originalImage);
-
-    // If the image already has a (non-device) color space, we don't want to
-    // override it, so return.
-    if (!originalColorSpace || !CFEqual(originalColorSpace, deviceRGBColorSpaceRef()))
-        return originalImage;
-
-    switch (colorSpace) {
-    case ColorSpaceDeviceRGB:
-        return originalImage;
-    case ColorSpaceSRGB:
-        return adoptCF(CGImageCreateCopyWithColorSpace(originalImage, sRGBColorSpaceRef()));
-    case ColorSpaceLinearRGB:
-        return adoptCF(CGImageCreateCopyWithColorSpace(originalImage, linearRGBColorSpaceRef()));
-    }
-
-    ASSERT_NOT_REACHED();
-    return originalImage;
-}
-
 void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     if (!nativeImageForCurrentFrame())
         return;
 
-    ctxt.drawPattern(*this, tileRect, patternTransform, phase, spacing, styleColorSpace, op, destRect, blendMode);
+    ctxt.drawPattern(*this, tileRect, patternTransform, phase, spacing, op, destRect, blendMode);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

@@ -632,18 +632,18 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
 
         // Draw the background for this menu item
         if (itemStyle.isVisible())
-            context.fillRect(itemRect, optionBackgroundColor, ColorSpaceDeviceRGB);
+            context.fillRect(itemRect, optionBackgroundColor);
 
         if (client()->itemIsSeparator(index)) {
             IntRect separatorRect(itemRect.x() + separatorPadding, itemRect.y() + (itemRect.height() - separatorHeight) / 2, itemRect.width() - 2 * separatorPadding, separatorHeight);
-            context.fillRect(separatorRect, optionTextColor, ColorSpaceDeviceRGB);
+            context.fillRect(separatorRect, optionTextColor);
             continue;
         }
 
         String itemText = client()->itemText(index);
 
         TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
-        context.setFillColor(optionTextColor, ColorSpaceDeviceRGB);
+        context.setFillColor(optionTextColor);
         
         FontCascade itemFont = client()->menuStyle().font();
         if (client()->itemIsLabel(index)) {

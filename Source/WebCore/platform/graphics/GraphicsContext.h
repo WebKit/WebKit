@@ -27,7 +27,6 @@
 #ifndef GraphicsContext_h
 #define GraphicsContext_h
 
-#include "ColorSpace.h"
 #include "DashArray.h"
 #include "FloatRect.h"
 #include "FontCascade.h"
@@ -148,10 +147,6 @@ struct GraphicsContextState {
     StrokeStyle strokeStyle { SolidStroke };
     WindRule fillRule { RULE_NONZERO };
 
-    ColorSpace strokeColorSpace { ColorSpaceDeviceRGB };
-    ColorSpace fillColorSpace { ColorSpaceDeviceRGB };
-    ColorSpace shadowColorSpace { ColorSpaceDeviceRGB };
-
     float alpha { 1 };
     CompositeOperator compositeOperator { CompositeSourceOver };
     BlendMode blendMode { BlendModeNormal };
@@ -214,9 +209,8 @@ public:
     void setStrokeStyle(StrokeStyle);
     StrokeStyle strokeStyle() const { return m_state.strokeStyle; }
 
-    WEBCORE_EXPORT void setStrokeColor(const Color&, ColorSpace);
+    WEBCORE_EXPORT void setStrokeColor(const Color&);
     Color strokeColor() const { return m_state.strokeColor; }
-    ColorSpace strokeColorSpace() const { return m_state.strokeColorSpace; }
 
     void setStrokePattern(Ref<Pattern>&&);
     Pattern* strokePattern() const { return m_state.strokePattern.get(); }
@@ -227,9 +221,8 @@ public:
     void setFillRule(WindRule fillRule) { m_state.fillRule = fillRule; }
     WindRule fillRule() const { return m_state.fillRule; }
 
-    WEBCORE_EXPORT void setFillColor(const Color&, ColorSpace);
+    WEBCORE_EXPORT void setFillColor(const Color&);
     Color fillColor() const { return m_state.fillColor; }
-    ColorSpace fillColorSpace() const { return m_state.fillColorSpace; }
 
     void setFillPattern(Ref<Pattern>&&);
     Pattern* fillPattern() const { return m_state.fillPattern.get(); }
@@ -261,7 +254,7 @@ public:
     void applyFillPattern();
     void drawPath(const Path&);
 
-    WEBCORE_EXPORT void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
+    WEBCORE_EXPORT void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
 
     void clipToNativeImage(PassNativeImagePtr, const FloatRect& destRect, const FloatSize& bufferSize);
     
@@ -288,7 +281,7 @@ public:
 #endif
 
     void drawEllipse(const FloatRect&);
-    void drawRaisedEllipse(const FloatRect&, const Color& ellipseColor, ColorSpace ellipseColorSpace, const Color& shadowColor, ColorSpace shadowColorSpace);
+    void drawRaisedEllipse(const FloatRect&, const Color& ellipseColor, const Color& shadowColor);
     void drawConvexPolygon(size_t numPoints, const FloatPoint*, bool shouldAntialias = false);
 
     WEBCORE_EXPORT void fillPath(const Path&);
@@ -298,29 +291,29 @@ public:
     void strokeEllipse(const FloatRect&);
 
     WEBCORE_EXPORT void fillRect(const FloatRect&);
-    WEBCORE_EXPORT void fillRect(const FloatRect&, const Color&, ColorSpace);
+    WEBCORE_EXPORT void fillRect(const FloatRect&, const Color&);
     void fillRect(const FloatRect&, Gradient&);
-    void fillRect(const FloatRect&, const Color&, ColorSpace, CompositeOperator, BlendMode = BlendModeNormal);
-    void fillRoundedRect(const FloatRoundedRect&, const Color&, ColorSpace, BlendMode = BlendModeNormal);
-    void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&, ColorSpace);
+    void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode = BlendModeNormal);
+    void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode = BlendModeNormal);
+    void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&);
 
     WEBCORE_EXPORT void clearRect(const FloatRect&);
 
     WEBCORE_EXPORT void strokeRect(const FloatRect&, float lineWidth);
 
-    WEBCORE_EXPORT void drawImage(Image&, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-    WEBCORE_EXPORT void drawImage(Image&, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-    void drawImage(Image&, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
+    WEBCORE_EXPORT void drawImage(Image&, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+    WEBCORE_EXPORT void drawImage(Image&, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+    void drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
-    void drawTiledImage(Image&, ColorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = ImagePaintingOptions());
-    void drawTiledImage(Image&, ColorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
+    void drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = ImagePaintingOptions());
+    void drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
         Image::TileRule, Image::TileRule, const ImagePaintingOptions& = ImagePaintingOptions());
 
-    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-    void drawImageBuffer(ImageBuffer&, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-    void drawImageBuffer(ImageBuffer&, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
+    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+    void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+    void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
-    void drawPattern(Image&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
+    void drawPattern(Image&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
 
     WEBCORE_EXPORT void setImageInterpolationQuality(InterpolationQuality);
     InterpolationQuality imageInterpolationQuality() const { return m_state.imageInterpolationQuality; }
@@ -376,13 +369,13 @@ public:
     WEBCORE_EXPORT void endTransparencyLayer();
     bool isInTransparencyLayer() const { return (m_transparencyCount > 0) && supportsTransparencyLayers(); }
 
-    WEBCORE_EXPORT void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
+    WEBCORE_EXPORT void setShadow(const FloatSize&, float blur, const Color&);
     // Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.
     // It has different treatment of radii > 8px.
-    void setLegacyShadow(const FloatSize&, float blur, const Color&, ColorSpace);
+    void setLegacyShadow(const FloatSize&, float blur, const Color&);
 
     WEBCORE_EXPORT void clearShadow();
-    bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
+    bool getShadow(FloatSize&, float&, Color&) const;
 
     bool hasVisibleShadow() const { return m_state.shadowColor.isValid() && m_state.shadowColor.alpha(); }
     bool hasShadow() const { return hasVisibleShadow() && (m_state.shadowBlur || m_state.shadowOffset.width() || m_state.shadowOffset.height()); }
@@ -463,8 +456,8 @@ public:
     void drawFrameControl(const IntRect& rect, unsigned type, unsigned state);
     void drawFocusRect(const IntRect& rect);
     void paintTextField(const IntRect& rect, unsigned state);
-    void drawBitmap(SharedBitmap*, const IntRect& dstRect, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode);
-    void drawBitmapPattern(SharedBitmap*, const FloatRect& tileRectIn, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, const IntSize& origSourceSize);
+    void drawBitmap(SharedBitmap*, const IntRect& dstRect, const IntRect& srcRect, CompositeOperator, BlendMode);
+    void drawBitmapPattern(SharedBitmap*, const FloatRect& tileRectIn, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator, const FloatRect& destRect, const IntSize& origSourceSize);
     void drawIcon(HICON icon, const IntRect& dstRect, UINT flags);
     void drawRoundCorner(bool newClip, RECT clipRect, RECT rectWin, HDC dc, int width, int height);
 #else
@@ -529,17 +522,17 @@ private:
 
     void setPlatformTextDrawingMode(TextDrawingModeFlags);
 
-    void setPlatformStrokeColor(const Color&, ColorSpace);
+    void setPlatformStrokeColor(const Color&);
     void setPlatformStrokeStyle(StrokeStyle);
     void setPlatformStrokeThickness(float);
 
-    void setPlatformFillColor(const Color&, ColorSpace);
+    void setPlatformFillColor(const Color&);
 
     void setPlatformShouldAntialias(bool);
     void setPlatformShouldSmoothFonts(bool);
     void setPlatformImageInterpolationQuality(InterpolationQuality);
 
-    void setPlatformShadow(const FloatSize&, float blur, const Color&, ColorSpace);
+    void setPlatformShadow(const FloatSize&, float blur, const Color&);
     void clearPlatformShadow();
 
     void setPlatformAlpha(float);
@@ -555,7 +548,7 @@ private:
     void platformFillEllipse(const FloatRect&);
     void platformStrokeEllipse(const FloatRect&);
 
-    void platformFillRoundedRect(const FloatRoundedRect&, const Color&, ColorSpace);
+    void platformFillRoundedRect(const FloatRoundedRect&, const Color&);
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing, bool& shouldAntialias, Color&);
 

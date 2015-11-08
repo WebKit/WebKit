@@ -97,7 +97,7 @@ void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned
     float alpha = animatedColor.alpha();
     m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromColor.alpha(), toColor.alpha(), toAtEndOfDurationColor.alpha(), alpha);
 
-    animatedColor = { { roundAndClampColorChannel(red), roundAndClampColorChannel(green), roundAndClampColorChannel(blue), roundAndClampColorChannel(alpha) }, ColorSpaceSRGB };
+    animatedColor = { roundAndClampColorChannel(red), roundAndClampColorChannel(green), roundAndClampColorChannel(blue), roundAndClampColorChannel(alpha) };
 }
 
 float SVGAnimatedColorAnimator::calculateDistance(const String& fromString, const String& toString)

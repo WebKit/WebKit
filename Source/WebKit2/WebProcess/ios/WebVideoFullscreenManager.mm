@@ -427,7 +427,7 @@ void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     [CATransaction setDisableActions:YES];
 
     [videoLayer setPosition:CGPointMake(0, 0)];
-    [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent, WebCore::ColorSpaceDeviceRGB)];
+    [videoLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
 
     // Set a scale factor here to make convertRect:toLayer:nil take scale factor into account. <rdar://problem/18316542>.
     // This scale factor is inverted in the hosting process.

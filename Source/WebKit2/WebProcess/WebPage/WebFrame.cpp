@@ -848,7 +848,7 @@ PassRefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     auto graphicsContext = sharedSnapshot->createGraphicsContext();
     float deviceScaleFactor = coreFrame()->page()->deviceScaleFactor();
     graphicsContext->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
-    graphicsContext->drawImageBuffer(*snapshot, ColorSpaceDeviceRGB, FloatPoint());
+    graphicsContext->drawImageBuffer(*snapshot, FloatPoint());
 
     return sharedSnapshot.release();
 }

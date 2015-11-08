@@ -1036,7 +1036,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     }
     Ref<HTMLCollection> options = dataList->options();
     GraphicsContextStateSaver stateSaver(paintInfo.context());
-    paintInfo.context().setFillColor(o.style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    paintInfo.context().setFillColor(o.style().visitedDependentColor(CSSPropertyColor));
     for (unsigned i = 0; Node* node = options->item(i); i++) {
         ASSERT(is<HTMLOptionElement>(*node));
         HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);

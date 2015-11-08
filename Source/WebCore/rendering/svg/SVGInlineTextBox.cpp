@@ -225,8 +225,8 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
         if (!fragmentTransform.isIdentity())
             paintInfo.context().concatCTM(fragmentTransform);
 
-        paintInfo.context().setFillColor(backgroundColor, style.colorSpace());
-        paintInfo.context().fillRect(selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, &style), backgroundColor, style.colorSpace());
+        paintInfo.context().setFillColor(backgroundColor);
+        paintInfo.context().fillRect(selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, &style), backgroundColor);
 
         m_paintingResourceMode = ApplyToDefaultMode;
     }

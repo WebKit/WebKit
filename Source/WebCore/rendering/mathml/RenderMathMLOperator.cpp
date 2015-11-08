@@ -1889,7 +1889,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
         return;
 
     GraphicsContextStateSaver stateSaver(info.context());
-    info.context().setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
+    info.context().setFillColor(style().visitedDependentColor(CSSPropertyColor));
 
     if (m_stretchyData.mode() == DrawSizeVariant) {
         ASSERT(m_stretchyData.variant().glyph);

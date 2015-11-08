@@ -1029,7 +1029,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #if !PLATFORM(IOS)
     return nsColor(color);
 #else
-    return cachedCGColor(color, ColorSpaceDeviceRGB);
+    return cachedCGColor(color);
 #endif
 }
 

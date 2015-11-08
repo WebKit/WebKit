@@ -224,7 +224,6 @@ void GraphicsContext::restorePlatformState()
     platformContext()->shadowBlur().setShadowValues(FloatSize(m_state.shadowBlur, m_state.shadowBlur),
                                                     m_state.shadowOffset,
                                                     m_state.shadowColor,
-                                                    m_state.shadowColorSpace,
                                                     m_state.shadowsIgnoreTransforms);
 }
 
@@ -451,7 +450,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     shadowAndFillCurrentCairoPath(*this);
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace)
+void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
 {
     if (paintingDisabled())
         return;
@@ -724,13 +723,13 @@ void GraphicsContext::translate(float x, float y)
     m_data->translate(x, y);
 }
 
-void GraphicsContext::setPlatformFillColor(const Color&, ColorSpace)
+void GraphicsContext::setPlatformFillColor(const Color&)
 {
     // Cairo contexts can't hold separate fill and stroke colors
     // so we set them just before we actually fill or stroke
 }
 
-void GraphicsContext::setPlatformStrokeColor(const Color&, ColorSpace)
+void GraphicsContext::setPlatformStrokeColor(const Color&)
 {
     // Cairo contexts can't hold separate fill and stroke colors
     // so we set them just before we actually fill or stroke
@@ -798,7 +797,7 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     m_data->setCTM(transform);
 }
 
-void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&, ColorSpace)
+void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&)
 {
     if (paintingDisabled())
         return;
@@ -813,7 +812,6 @@ void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color cons
     platformContext()->shadowBlur().setShadowValues(FloatSize(m_state.shadowBlur, m_state.shadowBlur),
                                                     m_state.shadowOffset,
                                                     m_state.shadowColor,
-                                                    m_state.shadowColorSpace,
                                                     m_state.shadowsIgnoreTransforms);
 }
 
@@ -1019,7 +1017,7 @@ void GraphicsContext::clipOut(const FloatRect& r)
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, const Color& color, ColorSpace)
+void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, const Color& color)
 {
     if (paintingDisabled())
         return;
@@ -1037,7 +1035,7 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, cons
     cairo_restore(cr);
 }
 
-void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color, ColorSpace)
+void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
 {
     if (paintingDisabled() || !color.isValid())
         return;
@@ -1059,7 +1057,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     cairo_restore(cr);
 }
 
-void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, ColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
+void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, CompositeOperator op, const FloatRect& destRect, BlendMode)
 {
     RefPtr<cairo_surface_t> surface = image.nativeImageForCurrentFrame();
     if (!surface) // If it's too early we won't have an image yet.

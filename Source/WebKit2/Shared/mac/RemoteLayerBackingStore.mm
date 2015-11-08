@@ -275,7 +275,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 
 #ifndef NDEBUG
     if (m_isOpaque)
-        context.fillRect(scaledLayerBounds, Color(255, 0, 0), ColorSpaceDeviceRGB);
+        context.fillRect(scaledLayerBounds, Color(255, 0, 0));
 #endif
 
     CGContextRef cgContext = context.platformContext();

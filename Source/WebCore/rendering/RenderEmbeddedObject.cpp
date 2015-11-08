@@ -219,7 +219,7 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-    context.drawImage(image, style().colorSpace(), alignedRect, ImagePaintingOptions(orientationDescription, useLowQualityScaling));
+    context.drawImage(image, alignedRect, ImagePaintingOptions(orientationDescription, useLowQualityScaling));
 }
 
 void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -312,7 +312,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
 
     GraphicsContextStateSaver stateSaver(context);
     context.clip(contentRect);
-    context.setFillColor(m_unavailablePluginIndicatorIsPressed ? replacementTextRoundedRectPressedColor() : replacementTextRoundedRectColor(), style().colorSpace());
+    context.setFillColor(m_unavailablePluginIndicatorIsPressed ? replacementTextRoundedRectPressedColor() : replacementTextRoundedRectColor());
     context.fillPath(background);
 
     Path strokePath;
@@ -320,21 +320,21 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     strokeRect.inflate(1);
     strokePath.addRoundedRect(strokeRect, FloatSize(replacementTextRoundedRectRadius + 1, replacementTextRoundedRectRadius + 1));
 
-    context.setStrokeColor(unavailablePluginBorderColor(), style().colorSpace());
+    context.setStrokeColor(unavailablePluginBorderColor());
     context.setStrokeThickness(2);
     context.strokePath(strokePath);
 
     const FontMetrics& fontMetrics = font.fontMetrics();
     float labelX = roundf(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
     float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent() + replacementTextRoundedRectTopTextMargin);
-    context.setFillColor(replacementTextColor(), style().colorSpace());
+    context.setFillColor(replacementTextColor());
     context.drawBidiText(font, run, FloatPoint(labelX, labelY));
 
     if (shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason)) {
         arrowRect.inflate(-replacementArrowCirclePadding);
 
         context.beginTransparencyLayer(1.0);
-        context.setFillColor(replacementTextColor(), style().colorSpace());
+        context.setFillColor(replacementTextColor());
         context.fillEllipse(arrowRect);
 
         context.setCompositeOperation(CompositeClear);

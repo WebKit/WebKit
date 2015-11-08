@@ -235,7 +235,7 @@ void MediaStreamPrivate::paintCurrentFrameInContext(GraphicsContext& context, co
         context.translate(rect.x(), rect.y() + rect.height());
         context.scale(FloatSize(1, -1));
         IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-        context.fillRect(paintRect, Color::black, ColorSpaceDeviceRGB);
+        context.fillRect(paintRect, Color::black);
     }
 }
 

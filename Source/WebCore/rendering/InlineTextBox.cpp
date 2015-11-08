@@ -697,7 +697,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
     GraphicsContextStateSaver stateSaver(context);
-    updateGraphicsContext(context, TextPaintStyle(c, style.colorSpace())); // Don't draw text at all!
+    updateGraphicsContext(context, TextPaintStyle(c)); // Don't draw text at all!
     
     // If the text is truncated, let the thing being painted in the truncation
     // draw its own highlight.
@@ -724,7 +724,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, m_logicalWidth, selectionHeight);
     font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c, style.colorSpace());
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), c);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(boxOrigin);
@@ -745,13 +745,13 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const F
 
     GraphicsContextStateSaver stateSaver(context);
     Color compositionColor = Color::compositionFill;
-    updateGraphicsContext(context, TextPaintStyle(compositionColor, style.colorSpace())); // Don't draw text at all!
+    updateGraphicsContext(context, TextPaintStyle(compositionColor)); // Don't draw text at all!
 
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
     TextRun textRun = constructTextRun(style, font);
     font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor, style.colorSpace());
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor);
 }
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
@@ -949,7 +949,6 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
         setClip = true;
     }
 
-    ColorSpace colorSpace = renderer().style().colorSpace();
     bool setShadow = false;
 
     do {
@@ -961,7 +960,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             }
             int shadowX = isHorizontal() ? shadow->x() : shadow->y();
             int shadowY = isHorizontal() ? shadow->y() : -shadow->x();
-            context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius(), shadow->color(), colorSpace);
+            context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius(), shadow->color());
             setShadow = true;
             shadow = shadow->next();
         }
@@ -970,7 +969,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
 
         // These decorations should match the visual overflows computed in visualOverflowForDecorations()
         if (decoration & TextDecorationUnderline) {
-            context.setStrokeColor(underlineColor, colorSpace);
+            context.setStrokeColor(underlineColor);
             context.setStrokeStyle(textDecorationStyleToStrokeStyle(underlineStyle));
             const int underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), this, textDecorationThickness);
 
@@ -994,7 +993,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             }
         }
         if (decoration & TextDecorationOverline) {
-            context.setStrokeColor(overlineColor, colorSpace);
+            context.setStrokeColor(overlineColor);
             context.setStrokeStyle(textDecorationStyleToStrokeStyle(overlineStyle));
             switch (overlineStyle) {
             case TextDecorationStyleWavy: {
@@ -1015,7 +1014,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             }
         }
         if (decoration & TextDecorationLineThrough) {
-            context.setStrokeColor(linethroughColor, colorSpace);
+            context.setStrokeColor(linethroughColor);
             context.setStrokeStyle(textDecorationStyleToStrokeStyle(linethroughStyle));
             switch (linethroughStyle) {
             case TextDecorationStyleWavy: {
@@ -1127,7 +1126,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
 
     Color color = marker.activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
     GraphicsContextStateSaver stateSaver(context);
-    updateGraphicsContext(context, TextPaintStyle(color, style.colorSpace())); // Don't draw text at all!
+    updateGraphicsContext(context, TextPaintStyle(color)); // Don't draw text at all!
 
     // Use same y positioning and height as for selection, so that when the selection and this highlight are on
     // the same word there are no pieces sticking out.
@@ -1142,7 +1141,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
     if (selectionRect.isEmpty())
         return;
 
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color, style.colorSpace());
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color);
 }
     
 void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, bool background)
@@ -1261,7 +1260,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const Fl
     start += 1;
     width -= 2;
 
-    context.setStrokeColor(underline.color, renderer().style().colorSpace());
+    context.setStrokeColor(underline.color);
     context.setStrokeThickness(lineThickness);
     context.drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());
 }

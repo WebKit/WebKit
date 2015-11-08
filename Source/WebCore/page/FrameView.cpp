@@ -3735,7 +3735,7 @@ void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& corne
 
     if (m_scrollCorner) {
         if (frame().isMainFrame())
-            context.fillRect(cornerRect, baseBackgroundColor(), ColorSpaceDeviceRGB);
+            context.fillRect(cornerRect, baseBackgroundColor());
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
     }
@@ -3748,7 +3748,7 @@ void FrameView::paintScrollbar(GraphicsContext& context, Scrollbar& bar, const I
     if (bar.isCustomScrollbar() && frame().isMainFrame()) {
         IntRect toFill = bar.frameRect();
         toFill.intersect(rect);
-        context.fillRect(toFill, baseBackgroundColor(), ColorSpaceDeviceRGB);
+        context.fillRect(toFill, baseBackgroundColor());
     }
 
     ScrollView::paintScrollbar(context, bar, rect);
@@ -4016,7 +4016,7 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
         fillWithRed = true;
     
     if (fillWithRed)
-        context.fillRect(dirtyRect, Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
+        context.fillRect(dirtyRect, Color(0xFF, 0, 0));
 #endif
 
     if (m_layoutPhase == InViewSizeAdjust)

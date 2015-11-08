@@ -149,7 +149,7 @@ void FEColorMatrix::platformApplySoftware()
 
     ImageBuffer* inBuffer = in->asImageBuffer();
     if (inBuffer)
-        resultImage->context().drawImageBuffer(*inBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+        resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
 
     IntRect imageRect(IntPoint(), resultImage->logicalSize());
     RefPtr<Uint8ClampedArray> pixelArray = resultImage->getUnmultipliedImageData(imageRect);

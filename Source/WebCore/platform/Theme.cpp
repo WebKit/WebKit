@@ -64,7 +64,7 @@ void Theme::drawNamedImage(const String& name, GraphicsContext& context, const F
         return;
 
     GraphicsContextStateSaver stateSaver(context);
-    context.setFillColor(Color::black, ColorSpaceDeviceRGB);
+    context.setFillColor(Color::black);
 
     // Draw a generic Wireless Playback icon.
 

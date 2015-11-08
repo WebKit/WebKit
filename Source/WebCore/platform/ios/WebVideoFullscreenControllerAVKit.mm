@@ -165,7 +165,7 @@ void WebVideoFullscreenControllerContext::didSetupFullscreen()
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
     RetainPtr<CALayer> videoFullscreenLayer = [m_videoFullscreenView layer];
     WebThreadRun([strongThis, this, videoFullscreenLayer] {
-        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent, WebCore::ColorSpaceDeviceRGB)];
+        [videoFullscreenLayer setBackgroundColor:cachedCGColor(WebCore::Color::transparent)];
         m_model->setVideoFullscreenLayer(videoFullscreenLayer.get());
         dispatch_async(dispatch_get_main_queue(), [strongThis, this] {
             m_interface->enterFullscreen();

@@ -88,7 +88,7 @@ void FEOffset::platformApplySoftware()
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
     Filter& filter = this->filter();
     drawingRegion.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
-    resultImage->context().drawImageBuffer(*inBuffer, ColorSpaceDeviceRGB, drawingRegion);
+    resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
 }
 
 void FEOffset::dump()

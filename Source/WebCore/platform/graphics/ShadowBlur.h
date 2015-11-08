@@ -51,11 +51,11 @@ public:
         BlurShadow
     };
 
-    ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, ColorSpace);
+    ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&);
     ShadowBlur(const GraphicsContextState&);
     ShadowBlur();
 
-    void setShadowValues(const FloatSize&, const FloatSize& , const Color&, ColorSpace, bool ignoreTransforms = false);
+    void setShadowValues(const FloatSize&, const FloatSize& , const Color&, bool ignoreTransforms = false);
 
     void setShadowsIgnoreTransforms(bool ignoreTransforms) { m_shadowsIgnoreTransforms = ignoreTransforms; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
@@ -104,7 +104,6 @@ private:
     ShadowType m_type;
 
     Color m_color;
-    ColorSpace m_colorSpace;
     FloatSize m_blurRadius;
     FloatSize m_offset;
 

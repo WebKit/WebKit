@@ -262,7 +262,7 @@ int ScrollbarThemeComposite::trackLength(Scrollbar& scrollbar)
 
 void ScrollbarThemeComposite::paintScrollCorner(ScrollView*, GraphicsContext& context, const IntRect& cornerRect)
 {
-    context.fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
+    context.fillRect(cornerRect, Color::white);
 }
 
 IntRect ScrollbarThemeComposite::thumbRect(Scrollbar& scrollbar)
@@ -281,11 +281,11 @@ IntRect ScrollbarThemeComposite::thumbRect(Scrollbar& scrollbar)
 
 void ScrollbarThemeComposite::paintOverhangAreas(ScrollView&, GraphicsContext& context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
 {    
-    context.setFillColor(Color::white, ColorSpaceDeviceRGB);
+    context.setFillColor(Color::white);
     if (!horizontalOverhangRect.isEmpty())
         context.fillRect(intersection(horizontalOverhangRect, dirtyRect));
 
-    context.setFillColor(Color::white, ColorSpaceDeviceRGB);
+    context.setFillColor(Color::white);
     if (!verticalOverhangRect.isEmpty())
         context.fillRect(intersection(verticalOverhangRect, dirtyRect));
 }

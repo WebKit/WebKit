@@ -70,7 +70,7 @@ void FETile::platformApplySoftware()
 
     GraphicsContext& tileImageContext = tileImage->context();
     tileImageContext.translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
-    tileImageContext.drawImageBuffer(*inBuffer, ColorSpaceDeviceRGB, in->absolutePaintRect().location());
+    tileImageContext.drawImageBuffer(*inBuffer, in->absolutePaintRect().location());
 
     auto tileImageCopy = tileImage->copyImage(CopyBackingStore);
     if (!tileImageCopy)

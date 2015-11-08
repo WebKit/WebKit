@@ -1,5 +1,44 @@
 2015-11-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove ColorSpace argument to all the drawing calls
+        https://bugs.webkit.org/show_bug.cgi?id=150967
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateFromCGImage):
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeImage):
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateScrollViewBackground]):
+        * UIProcess/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView _layoutForNodeHighlight:offset:]):
+        (-[WKInspectorHighlightView _layoutForRectsHighlight:]):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateTapHighlight]):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSelectionSnapshot):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotAtSize):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindIndicatorOverlayClientIOS::drawRect):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+
+2015-11-07  Simon Fraser  <simon.fraser@apple.com>
+
         Use ColorSpaceSRGB for image buffers everywhere
         https://bugs.webkit.org/show_bug.cgi?id=150990
 

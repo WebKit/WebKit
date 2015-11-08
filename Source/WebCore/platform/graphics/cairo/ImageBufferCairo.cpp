@@ -165,19 +165,19 @@ void ImageBuffer::clip(GraphicsContext& context, const FloatRect& maskRect) cons
     context.platformContext()->pushImageMask(m_data.m_surface.get(), maskRect);
 }
 
-void ImageBuffer::draw(GraphicsContext& destinationContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
+void ImageBuffer::draw(GraphicsContext& destinationContext, const FloatRect& destRect, const FloatRect& srcRect,
     CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     BackingStoreCopy copyMode = &destinationContext == &context() ? CopyBackingStore : DontCopyBackingStore;
     RefPtr<Image> image = copyImage(copyMode);
-    destinationContext.drawImage(*image, styleColorSpace, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription(), useLowQualityScale));
+    destinationContext.drawImage(*image, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription(), useLowQualityScale));
 }
 
 void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode)
 {
     if (RefPtr<Image> image = copyImage(DontCopyBackingStore))
-        image->drawPattern(context, srcRect, patternTransform, phase, spacing, styleColorSpace, op, destRect);
+        image->drawPattern(context, srcRect, patternTransform, phase, spacing, op, destRect);
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)

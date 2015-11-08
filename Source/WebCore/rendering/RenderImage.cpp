@@ -392,8 +392,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
             // Draw an outline rect where the image should be.
             context.setStrokeStyle(SolidStroke);
-            context.setStrokeColor(Color::lightGray, style().colorSpace());
-            context.setFillColor(Color::transparent, style().colorSpace());
+            context.setStrokeColor(Color::lightGray);
+            context.setFillColor(Color::transparent);
             context.drawRect(snapRectToDevicePixels(LayoutRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight), deviceScaleFactor), borderWidth);
 
             bool errorPictureDrawn = false;
@@ -424,13 +424,13 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 #if ENABLE(CSS_IMAGE_ORIENTATION)
                 orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-                context.drawImage(*image, style().colorSpace(), snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
+                context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
                 errorPictureDrawn = true;
             }
 
             if (!m_altText.isEmpty()) {
                 String text = document().displayStringModifiedByEncoding(m_altText);
-                context.setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
+                context.setFillColor(style().visitedDependentColor(CSSPropertyColor));
                 const FontCascade& font = style().fontCascade();
                 const FontMetrics& fontMetrics = font.fontMetrics();
                 LayoutUnit ascent = fontMetrics.ascent();
@@ -553,7 +553,7 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-    context.drawImage(*img, style().colorSpace(), rect,
+    context.drawImage(*img, rect,
         ImagePaintingOptions(compositeOperator, BlendModeNormal, orientationDescription, useLowQualityScaling));
 }
 

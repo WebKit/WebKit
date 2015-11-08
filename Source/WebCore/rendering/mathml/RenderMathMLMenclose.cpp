@@ -117,7 +117,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
         GraphicsContextStateSaver stateSaver(info.context());
         info.context().setStrokeThickness(1);
         info.context().setStrokeStyle(SolidStroke);
-        info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+        info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
         // TODO add support for notation value updiagonalarrow https://bugs.webkit.org/show_bug.cgi?id=127466
         for (size_t i = 0; i < notationalValueSize; i++) {
             if (notationValues[i] == "updiagonalstrike")
@@ -129,7 +129,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
             else if (notationValues[i] == "horizontalstrike")
                 info.context().drawLine(IntPoint(left, top + halfboxHeight), IntPoint(left + boxWidth, top + halfboxHeight));
             else if (notationValues[i] == "circle") {
-                info.context().setFillColor(Color::transparent, ColorSpaceDeviceRGB);
+                info.context().setFillColor(Color::transparent);
                 info.context().drawEllipse(rect);
             } else if (notationValues[i] == "longdiv")
                 isDefaultLongDiv = true;

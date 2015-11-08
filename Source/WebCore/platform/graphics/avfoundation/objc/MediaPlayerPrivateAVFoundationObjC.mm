@@ -670,7 +670,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 
     m_videoLayer = adoptNS([allocAVPlayerLayerInstance() init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
-    [m_videoLayer setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
+    [m_videoLayer setBackgroundColor:cachedCGColor(Color::black)];
 #ifndef NDEBUG
     [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
 #endif
@@ -2347,7 +2347,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
     FloatRect transformedOutputRect = videoTransform.inverse().mapRect(outputRect);
 
     context.concatCTM(videoTransform);
-    context.drawNativeImage(m_lastImage.get(), imageRect.size(), ColorSpaceDeviceRGB, transformedOutputRect, imageRect);
+    context.drawNativeImage(m_lastImage.get(), imageRect.size(), transformedOutputRect, imageRect);
 
     // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
     // video frame, destroy it now that it is no longer needed.

@@ -1570,7 +1570,6 @@ void CaretBase::paintCaret(Node* node, GraphicsContext& context, const LayoutPoi
         return;
 
     Color caretColor = Color::black;
-    ColorSpace colorSpace = ColorSpaceDeviceRGB;
     Element* element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
     Element* rootEditableElement = node->rootEditableElement();
 
@@ -1583,17 +1582,14 @@ void CaretBase::paintCaret(Node* node, GraphicsContext& context, const LayoutPoi
             auto elementBGColor = elementStyle.visitedDependentColor(CSSPropertyBackgroundColor);
             if (disappearsIntoBackground(elementBGColor, rootEditableBGColor)) {
                 caretColor = rootEditableStyle.visitedDependentColor(CSSPropertyColor);
-                colorSpace = rootEditableStyle.colorSpace();
                 setToRootEditableElement = true;
             }
         }
-        if (!setToRootEditableElement) {
+        if (!setToRootEditableElement)
             caretColor = element->renderer()->style().visitedDependentColor(CSSPropertyColor);
-            colorSpace = element->renderer()->style().colorSpace();
-        }
     }
 
-    context.fillRect(caret, caretColor, colorSpace);
+    context.fillRect(caret, caretColor);
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);

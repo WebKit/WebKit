@@ -120,7 +120,7 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
     CGContextSaveGState(context);
     CGFloat height = WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_FLIPPED_SHADOWS) ? 2.0f : -2.0f;
     CGContextSetShadowWithColor(context, CGSizeMake(0.0f, height), 3.0f, [[self class] shadowColor]);
-    CGContextSetFillColorWithColor(context, cachedCGColor(Color::white, ColorSpaceDeviceRGB));
+    CGContextSetFillColorWithColor(context, cachedCGColor(Color::white));
     CGContextFillRect(context, pageRect);
     CGContextRestoreGState(context);    
     

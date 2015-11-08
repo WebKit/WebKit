@@ -85,8 +85,8 @@ void GraphicsContext::platformInit(HDC dc, bool hasAlpha)
     m_data->m_hdc = dc;
     if (platformContext()->cr()) {
         // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor(), fillColorSpace());
-        setPlatformStrokeColor(strokeColor(), strokeColorSpace());
+        setPlatformFillColor(fillColor());
+        setPlatformStrokeColor(strokeColor());
     }
     if (cr)
         cairo_destroy(cr);

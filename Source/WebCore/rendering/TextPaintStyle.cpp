@@ -39,27 +39,13 @@
 
 namespace WebCore {
 
-TextPaintStyle::TextPaintStyle(ColorSpace colorSpace)
-    : colorSpace(colorSpace)
-    , strokeWidth(0)
-#if ENABLE(LETTERPRESS)
-    , useLetterpressEffect(false)
-#endif
-{
-}
-
-TextPaintStyle::TextPaintStyle(Color color, ColorSpace colorSpace)
-    : colorSpace(colorSpace)
-    , fillColor(color)
+TextPaintStyle::TextPaintStyle(const Color& color)
+    : fillColor(color)
     , strokeColor(color)
-    , strokeWidth(0)
-#if ENABLE(LETTERPRESS)
-    , useLetterpressEffect(false)
-#endif
 {
 }
 
-static Color adjustColorForVisibilityOnBackground(Color textColor, Color backgroundColor)
+static Color adjustColorForVisibilityOnBackground(const Color& textColor, const Color& backgroundColor)
 {
     int d = differenceSquared(textColor, backgroundColor);
     // Semi-arbitrarily chose 65025 (255^2) value here after a few tests.
@@ -76,7 +62,7 @@ static Color adjustColorForVisibilityOnBackground(Color textColor, Color backgro
 
 TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
-    TextPaintStyle paintStyle(lineStyle.colorSpace());
+    TextPaintStyle paintStyle;
 
 #if ENABLE(LETTERPRESS)
     paintStyle.useLetterpressEffect = lineStyle.textDecorationsInEffect() & TextDecorationLetterpress;
@@ -198,12 +184,12 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
     }
 
     Color fillColor = fillColorType == UseEmphasisMarkColor ? paintStyle.emphasisMarkColor : paintStyle.fillColor;
-    if (mode & TextModeFill && (fillColor != context.fillColor() || paintStyle.colorSpace != context.fillColorSpace()))
-        context.setFillColor(fillColor, paintStyle.colorSpace);
+    if (mode & TextModeFill && (fillColor != context.fillColor()))
+        context.setFillColor(fillColor);
 
     if (mode & TextModeStroke) {
         if (paintStyle.strokeColor != context.strokeColor())
-            context.setStrokeColor(paintStyle.strokeColor, paintStyle.colorSpace);
+            context.setStrokeColor(paintStyle.strokeColor);
         if (paintStyle.strokeWidth != context.strokeThickness())
             context.setStrokeThickness(paintStyle.strokeWidth);
     }

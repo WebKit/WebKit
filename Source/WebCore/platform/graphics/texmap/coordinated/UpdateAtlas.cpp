@@ -43,7 +43,7 @@ public:
     {
         if (m_supportsAlpha) {
             context.setCompositeOperation(CompositeCopy);
-            context.fillRect(IntRect(IntPoint::zero(), m_size), Color::transparent, ColorSpaceDeviceRGB);
+            context.fillRect(IntRect(IntPoint::zero(), m_size), Color::transparent);
             context.setCompositeOperation(CompositeSourceOver);
         }
 

@@ -888,7 +888,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if !PLATFORM(IOS)
     _private->backgroundColor = [[NSColor colorWithDeviceWhite:1 alpha:1] retain];
 #else
-    _private->backgroundColor = CGColorRetain(cachedCGColor(Color::white, ColorSpaceDeviceRGB));
+    _private->backgroundColor = CGColorRetain(cachedCGColor(Color::white));
 #endif
     _private->includesFlattenedCompositingLayersWhenDrawingToBitmap = YES;
 
@@ -1187,7 +1187,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->preferences = [preferences retain];
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
-    _private->backgroundColor = CGColorRetain(cachedCGColor(Color::white, ColorSpaceDeviceRGB));
+    _private->backgroundColor = CGColorRetain(cachedCGColor(Color::white));
 
     WebFrameView *frameView = nil;
     frameView = [[WebFrameView alloc] initWithFrame: CGRectMake(0,0,frame.size.width,frame.size.height)];

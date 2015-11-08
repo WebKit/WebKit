@@ -280,10 +280,10 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     FloatQuad paddingQuad = highlight->quads[2];
     FloatQuad contentQuad = highlight->quads[3];
 
-    marginLayer.fillColor = cachedCGColor(highlight->marginColor, ColorSpaceDeviceRGB);
-    borderLayer.fillColor = cachedCGColor(highlight->borderColor, ColorSpaceDeviceRGB);
-    paddingLayer.fillColor = cachedCGColor(highlight->paddingColor, ColorSpaceDeviceRGB);
-    contentLayer.fillColor = cachedCGColor(highlight->contentColor, ColorSpaceDeviceRGB);
+    marginLayer.fillColor = cachedCGColor(highlight->marginColor);
+    borderLayer.fillColor = cachedCGColor(highlight->borderColor);
+    paddingLayer.fillColor = cachedCGColor(highlight->paddingColor);
+    contentLayer.fillColor = cachedCGColor(highlight->contentColor);
 
     layerPathWithHole(marginLayer, marginQuad, borderQuad);
     layerPathWithHole(borderLayer, borderQuad, paddingQuad);
@@ -301,7 +301,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
     [self _attach:parentLayer numLayers:numLayers];
 
-    CGColorRef contentColor = cachedCGColor(highlight->contentColor, ColorSpaceDeviceRGB);
+    CGColorRef contentColor = cachedCGColor(highlight->contentColor);
     for (NSUInteger i = 0; i < numLayers; ++i) {
         CAShapeLayer *layer = [_layers objectAtIndex:i];
         layer.fillColor = contentColor;

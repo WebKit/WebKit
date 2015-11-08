@@ -133,7 +133,7 @@ void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& pain
 
     info.context().setStrokeThickness(gRadicalLineThicknessEms * style().fontSize());
     info.context().setStrokeStyle(SolidStroke);
-    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
     info.context().setLineJoin(MiterJoin);
     info.context().setMiterLimit(style().fontSize());
 

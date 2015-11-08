@@ -333,9 +333,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     FloatSize shadowOffset;
     float shadowBlur;
     Color shadowColor;
-    ColorSpace shadowColorSpace;
-    ColorSpace fillColorSpace = context.fillColorSpace();
-    context.getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
+    context.getShadow(shadowOffset, shadowBlur, shadowColor);
 
     AffineTransform contextCTM = context.getCTM();
     float syntheticBoldOffset = font.syntheticBoldOffset();
@@ -352,14 +350,14 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         context.clearShadow();
         Color fillColor = context.fillColor();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
-        context.setFillColor(shadowFillColor, shadowColorSpace);
+        context.setFillColor(shadowFillColor);
         float shadowTextX = point.x() + shadowOffset.width();
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + shadowOffset.height() * (context.shadowsIgnoreTransforms() ? -1 : 1);
         showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
         if (syntheticBoldOffset)
             showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
-        context.setFillColor(fillColor, fillColorSpace);
+        context.setFillColor(fillColor);
     }
 
     if (useLetterpressEffect)
@@ -370,7 +368,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
 
     if (hasSimpleShadow)
-        context.setShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
+        context.setShadow(shadowOffset, shadowBlur, shadowColor);
 
 #if !PLATFORM(IOS)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100

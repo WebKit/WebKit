@@ -57,8 +57,8 @@ static void paintDebugBorders(GraphicsContext& context, LayoutRect borderRect, c
     if (snappedRect.isEmpty())
         return;
     GraphicsContextStateSaver stateSaver(context);
-    context.setStrokeColor(Color(0, 255, 0), ColorSpaceDeviceRGB);
-    context.setFillColor(Color::transparent, ColorSpaceDeviceRGB);
+    context.setStrokeColor(Color(0, 255, 0));
+    context.setFillColor(Color::transparent);
     context.drawRect(snappedRect);
 }
 

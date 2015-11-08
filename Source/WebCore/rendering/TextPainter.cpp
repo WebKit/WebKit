@@ -100,7 +100,7 @@ ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow,
     }
 
     if (!m_avoidDrawingShadow)
-        context.setShadow(shadowOffset, shadowRadius, shadowColor, context.fillColorSpace());
+        context.setShadow(shadowOffset, shadowRadius, shadowColor);
 }
 
 ShadowApplier::~ShadowApplier()
@@ -118,11 +118,10 @@ static void paintTextWithShadows(GraphicsContext& context, const FontCascade& fo
     const ShadowData* shadow, bool stroked, bool horizontal)
 {
     Color fillColor = context.fillColor();
-    ColorSpace fillColorSpace = context.fillColorSpace();
     bool opaque = !fillColor.hasAlpha();
     bool lastShadowIterationShouldDrawText = !stroked && opaque;
     if (!opaque)
-        context.setFillColor(Color::black, fillColorSpace);
+        context.setFillColor(Color::black);
 
     do {
         ShadowApplier shadowApplier(context, shadow, boxRect, lastShadowIterationShouldDrawText, opaque, horizontal ? Horizontal : Vertical);
@@ -133,7 +132,7 @@ static void paintTextWithShadows(GraphicsContext& context, const FontCascade& fo
 
         IntSize extraOffset = roundedIntSize(shadowApplier.extraOffset());
         if (!shadow && !opaque)
-            context.setFillColor(fillColor, fillColorSpace);
+            context.setFillColor(fillColor);
 
         if (startOffset <= endOffset)
             drawTextOrEmphasisMarks(context, font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + extraOffset, startOffset, endOffset);

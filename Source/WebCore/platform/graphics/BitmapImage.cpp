@@ -607,13 +607,13 @@ void BitmapImage::resetAnimation()
 }
 
 void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& transform,
-    const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     if (tileRect.isEmpty())
         return;
 
     if (!ctxt.drawLuminanceMask()) {
-        Image::drawPattern(ctxt, tileRect, transform, phase, spacing, styleColorSpace, op, destRect, blendMode);
+        Image::drawPattern(ctxt, tileRect, transform, phase, spacing, op, destRect, blendMode);
         return;
     }
     if (!m_cachedImage) {
@@ -627,7 +627,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, 
         // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
         setImageObserver(nullptr);
 
-        draw(buffer->context(), tileRect, tileRect, styleColorSpace, op, blendMode, ImageOrientationDescription());
+        draw(buffer->context(), tileRect, tileRect, op, blendMode, ImageOrientationDescription());
 
         setImageObserver(observer);
         buffer->convertToLuminanceMask();
@@ -638,7 +638,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, 
     }
 
     ctxt.setDrawLuminanceMask(false);
-    m_cachedImage->drawPattern(ctxt, tileRect, transform, phase, spacing, styleColorSpace, op, destRect, blendMode);
+    m_cachedImage->drawPattern(ctxt, tileRect, transform, phase, spacing, op, destRect, blendMode);
 }
 
 

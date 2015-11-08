@@ -692,7 +692,7 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
             LocalCurrentGraphicsContext localContext(imageBuffer->context());
             needsRepaint = drawCellOrFocusRingIntoRectWithView(cell, imageBufferDrawRect, view, drawButtonCell, drawFocusRing);
         }
-        context.drawImageBuffer(*imageBuffer, ColorSpaceSRGB, rect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
+        context.drawImageBuffer(*imageBuffer, rect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
         return needsRepaint;
     }
     if (drawButtonCell)

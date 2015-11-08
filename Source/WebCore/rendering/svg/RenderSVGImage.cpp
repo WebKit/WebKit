@@ -169,7 +169,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo)
 
     imageElement().preserveAspectRatio().transformRect(destRect, srcRect);
 
-    paintInfo.context().drawImage(*image, ColorSpaceDeviceRGB, destRect, srcRect);
+    paintInfo.context().drawImage(*image, destRect, srcRect);
 }
 
 void RenderSVGImage::invalidateBufferedForeground()

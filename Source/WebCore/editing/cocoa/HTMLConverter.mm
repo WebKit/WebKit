@@ -873,7 +873,7 @@ static NSBundle *_webKitBundle()
 
 static inline UIColor *_platformColor(Color color)
 {
-    return [getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color, WebCore::ColorSpaceDeviceRGB)];
+    return [getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
 }
 #else
 static inline NSColor *_platformColor(Color color)

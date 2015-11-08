@@ -160,13 +160,13 @@ static CGFunctionRef getSharedFunctionRef(IOSGradientRef gradient, Interpolation
 
 static void drawAxialGradient(CGContextRef context, IOSGradientRef gradient, const FloatPoint& startPoint, const FloatPoint& stopPoint, Interpolation interpolation)
 {
-    RetainPtr<CGShadingRef> shading = adoptCF(CGShadingCreateAxial(deviceRGBColorSpaceRef(), startPoint, stopPoint, getSharedFunctionRef(gradient, interpolation), false, false));
+    RetainPtr<CGShadingRef> shading = adoptCF(CGShadingCreateAxial(sRGBColorSpaceRef(), startPoint, stopPoint, getSharedFunctionRef(gradient, interpolation), false, false));
     CGContextDrawShading(context, shading.get());
 }
 
 static void drawRadialGradient(CGContextRef context, IOSGradientRef gradient, const FloatPoint& startPoint, float startRadius, const FloatPoint& stopPoint, float stopRadius, Interpolation interpolation)
 {
-    RetainPtr<CGShadingRef> shading = adoptCF(CGShadingCreateRadial(deviceRGBColorSpaceRef(), startPoint, startRadius, stopPoint, stopRadius, getSharedFunctionRef(gradient, interpolation), false, false));
+    RetainPtr<CGShadingRef> shading = adoptCF(CGShadingCreateRadial(deviceRGBColorSpaceRef() /* FIXME */, startPoint, startRadius, stopPoint, stopRadius, getSharedFunctionRef(gradient, interpolation), false, false));
     CGContextDrawShading(context, shading.get());
 }
 
@@ -392,12 +392,12 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
         };
 
         paintInfo.context().setStrokeThickness(lineWidth);
-        paintInfo.context().setStrokeColor(Color(0.0f, 0.0f, 0.0f, 0.7f), ColorSpaceDeviceRGB);
+        paintInfo.context().setStrokeColor(Color(0.0f, 0.0f, 0.0f, 0.7f));
 
         paintInfo.context().drawJoinedLines(shadow, 3, true, kCGLineCapSquare);
 
         paintInfo.context().setStrokeThickness(std::min(clip.width(), clip.height()) * thicknessRatio);
-        paintInfo.context().setStrokeColor(Color(1.0f, 1.0f, 1.0f, 240 / 255.0f), ColorSpaceDeviceRGB);
+        paintInfo.context().setStrokeColor(Color(1.0f, 1.0f, 1.0f, 240 / 255.0f));
 
         paintInfo.context().drawJoinedLines(line, 3, true);
     } else {
@@ -458,7 +458,7 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
         clip.inflateX(-clip.width() * InnerInverseRatio);
         clip.inflateY(-clip.height() * InnerInverseRatio);
 
-        paintInfo.context().drawRaisedEllipse(clip, Color::white, ColorSpaceDeviceRGB, shadowColor(), ColorSpaceDeviceRGB);
+        paintInfo.context().drawRaisedEllipse(clip, Color::white, shadowColor());
 
         FloatSize radius(clip.width() / 2.0f, clip.height() / 2.0f);
         paintInfo.context().clipRoundedRect(FloatRoundedRect(clip, radius, radius, radius, radius));
@@ -648,7 +648,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
             FloatSize(0, 0), FloatSize(valueForLength(style.borderTopRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderTopRightRadius().height(), rect.height()) - style.borderTopWidth()),
             FloatSize(0, 0), FloatSize(valueForLength(style.borderBottomRightRadius().width(), rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height(), rect.height()) - style.borderBottomWidth())));
 
-        paintInfo.context().fillRect(buttonClip, style.visitedDependentColor(CSSPropertyBorderTopColor), style.colorSpace());
+        paintInfo.context().fillRect(buttonClip, style.visitedDependentColor(CSSPropertyBorderTopColor));
 
         drawAxialGradient(cgContext, gradientWithName(isFocused(box) && !isReadOnlyControl(box) ? ConcaveGradient : ConvexGradient), buttonClip.location(), FloatPoint(buttonClip.x(), buttonClip.maxY()), LinearInterpolation);
     }
@@ -663,7 +663,7 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         FloatRect ellipse(buttonClip.x() + (buttonClip.width() - count * (size + padding) + padding) / 2.0, buttonClip.maxY() - 10.0, size, size);
 
         for (int i = 0; i < count; ++i) {
-            paintInfo.context().drawRaisedEllipse(ellipse, Color::white, ColorSpaceDeviceRGB, Color(0.0f, 0.0f, 0.0f, 0.5f), ColorSpaceDeviceRGB);
+            paintInfo.context().drawRaisedEllipse(ellipse, Color::white, Color(0.0f, 0.0f, 0.0f, 0.5f));
             ellipse.move(size + padding, 0);
         }
     }  else {
@@ -682,12 +682,12 @@ bool RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         shadow[2] = FloatPoint(arrow[2].x(), arrow[2].y() + 1.0f);
 
         float opacity = isReadOnlyControl(box) ? 0.2 : 0.5;
-        paintInfo.context().setStrokeColor(Color(0.0f, 0.0f, 0.0f, opacity), ColorSpaceDeviceRGB);
-        paintInfo.context().setFillColor(Color(0.0f, 0.0f, 0.0f, opacity), ColorSpaceDeviceRGB);
+        paintInfo.context().setStrokeColor(Color(0.0f, 0.0f, 0.0f, opacity));
+        paintInfo.context().setFillColor(Color(0.0f, 0.0f, 0.0f, opacity));
         paintInfo.context().drawConvexPolygon(3, shadow, true);
 
-        paintInfo.context().setStrokeColor(Color::white, ColorSpaceDeviceRGB);
-        paintInfo.context().setFillColor(Color::white, ColorSpaceDeviceRGB);
+        paintInfo.context().setStrokeColor(Color::white);
+        paintInfo.context().setFillColor(Color::white);
         paintInfo.context().drawConvexPolygon(3, arrow, true);
     }
 
@@ -772,9 +772,9 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
 
         CGContextRef cgContext = paintInfo.context().platformContext();
         if (readonly)
-            paintInfo.context().setStrokeColor(Color(178, 178, 178), ColorSpaceDeviceRGB);
+            paintInfo.context().setStrokeColor(Color(178, 178, 178));
         else
-            paintInfo.context().setStrokeColor(Color(76, 76, 76), ColorSpaceDeviceRGB);
+            paintInfo.context().setStrokeColor(Color(76, 76, 76));
 
         RetainPtr<CGMutablePathRef> roundedRectPath = adoptCF(CGPathCreateMutable());
         CGPathAddRoundedRect(roundedRectPath.get(), 0, trackClip, cornerWidth, cornerHeight);
@@ -859,8 +859,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     strokeGradient->addColorStop(1.0, Color(0x8d, 0x8d, 0x8d));
     context.setStrokeGradient(strokeGradient.releaseNonNull());
 
-    ColorSpace colorSpace = renderer.style().colorSpace();
-    context.setFillColor(Color(255, 255, 255), colorSpace);
+    context.setFillColor(Color(255, 255, 255));
 
     Path trackPath;
     FloatRect trackRect(rect.x() + 0.25, verticalRenderingPosition + 0.25, rect.width() - 0.5, progressBarHeight - 0.5);
@@ -1024,8 +1023,8 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
 
         // Background picture frame and simple background icon with a gradient matching the button.
         Color backgroundImageColor = Color(buttonRenderer.style().visitedDependentColor(CSSPropertyBackgroundColor).rgb());
-        paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor, ColorSpaceDeviceRGB);
-        paintInfo.context().fillRect(thumbnailRect, backgroundImageColor, ColorSpaceDeviceRGB);
+        paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
+        paintInfo.context().fillRect(thumbnailRect, backgroundImageColor);
         {
             GraphicsContextStateSaver stateSaver2(paintInfo.context());
             CGContextRef cgContext = paintInfo.context().platformContext();
@@ -1045,7 +1044,7 @@ bool RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
     }
 
     // Foreground picture frame and icon.
-    paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor, ColorSpaceDeviceRGB);
+    paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
     icon->paint(paintInfo.context(), thumbnailRect);
 
     return false;

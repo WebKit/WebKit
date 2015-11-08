@@ -241,7 +241,7 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context) const
         return;
     switch (m_type) {
     case RGBA:
-        context->setStrokeColor(m_rgba, ColorSpaceDeviceRGB);
+        context->setStrokeColor(m_rgba);
         break;
     case CMYKA: {
         // FIXME: Do this through platform-independent GraphicsContext API.
@@ -249,7 +249,7 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context) const
 #if USE(CG)
         CGContextSetCMYKStrokeColor(context->platformContext(), m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
 #else
-        context->setStrokeColor(m_cmyka->rgba, ColorSpaceDeviceRGB);
+        context->setStrokeColor(m_cmyka->rgba);
 #endif
         break;
     }
@@ -273,7 +273,7 @@ void CanvasStyle::applyFillColor(GraphicsContext* context) const
         return;
     switch (m_type) {
     case RGBA:
-        context->setFillColor(m_rgba, ColorSpaceDeviceRGB);
+        context->setFillColor(m_rgba);
         break;
     case CMYKA: {
         // FIXME: Do this through platform-independent GraphicsContext API.
@@ -281,7 +281,7 @@ void CanvasStyle::applyFillColor(GraphicsContext* context) const
 #if USE(CG)
         CGContextSetCMYKFillColor(context->platformContext(), m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
 #else
-        context->setFillColor(m_cmyka->rgba, ColorSpaceDeviceRGB);
+        context->setFillColor(m_cmyka->rgba);
 #endif
         break;
     }

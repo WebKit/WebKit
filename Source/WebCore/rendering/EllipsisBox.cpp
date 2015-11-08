@@ -46,11 +46,11 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     const RenderStyle& lineStyle = this->lineStyle();
     Color textColor = lineStyle.visitedDependentColor(CSSPropertyWebkitTextFillColor);
     if (textColor != context.fillColor())
-        context.setFillColor(textColor, lineStyle.colorSpace());
+        context.setFillColor(textColor);
     bool setShadow = false;
     if (lineStyle.textShadow()) {
         context.setShadow(LayoutSize(lineStyle.textShadow()->x(), lineStyle.textShadow()->y()),
-            lineStyle.textShadow()->radius(), lineStyle.textShadow()->color(), lineStyle.colorSpace());
+            lineStyle.textShadow()->radius(), lineStyle.textShadow()->color());
         setShadow = true;
     }
 
@@ -61,7 +61,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
         // Select the correct color for painting the text.
         Color foreground = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : blockFlow().selectionForegroundColor();
         if (foreground.isValid() && foreground != textColor)
-            context.setFillColor(foreground, lineStyle.colorSpace());
+            context.setFillColor(foreground);
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
@@ -69,7 +69,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
 
     // Restore the regular fill color.
     if (textColor != context.fillColor())
-        context.setFillColor(textColor, lineStyle.colorSpace());
+        context.setFillColor(textColor);
 
     if (setShadow)
         context.clearShadow();
@@ -137,7 +137,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
     LayoutRect selectionRect = LayoutRect(x() + paintOffset.x(), y() + paintOffset.y() + rootBox.selectionTop(), 0, rootBox.selectionHeight());
     TextRun run = RenderBlock::constructTextRun(&blockFlow(), font, m_str, style, AllowTrailingExpansion);
     font.adjustSelectionRectForText(run, selectionRect, 0, -1);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c, style.colorSpace());
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)

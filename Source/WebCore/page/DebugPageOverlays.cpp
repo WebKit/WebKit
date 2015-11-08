@@ -190,7 +190,7 @@ void RegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, const IntRe
         return;
     
     GraphicsContextStateSaver saver(context);
-    context.setFillColor(m_color, ColorSpaceSRGB);
+    context.setFillColor(m_color);
     for (auto rect : m_region->rects()) {
     
         if (rect.intersects(dirtyRect))

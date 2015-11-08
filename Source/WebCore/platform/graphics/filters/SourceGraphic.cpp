@@ -56,7 +56,7 @@ void SourceGraphic::platformApplySoftware()
     if (!resultImage || !sourceImage)
         return;
 
-    resultImage->context().drawImageBuffer(*sourceImage, ColorSpaceDeviceRGB, IntPoint());
+    resultImage->context().drawImageBuffer(*sourceImage, IntPoint());
 }
 
 void SourceGraphic::dump()

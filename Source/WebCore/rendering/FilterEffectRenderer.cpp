@@ -429,10 +429,8 @@ void FilterEffectRendererHelper::applyFilterEffect(GraphicsContext& destinationC
     LayoutRect destRect = filter->outputRect();
     destRect.move(m_paintOffset.x(), m_paintOffset.y());
 
-    if (ImageBuffer* outputBuffer = filter->output()) {
-        destinationContext.drawImageBuffer(*outputBuffer, m_renderLayer->renderer().style().colorSpace(),
-            snapRectToDevicePixels(destRect, m_renderLayer->renderer().document().deviceScaleFactor()));
-    }
+    if (ImageBuffer* outputBuffer = filter->output())
+        destinationContext.drawImageBuffer(*outputBuffer, snapRectToDevicePixels(destRect, m_renderLayer->renderer().document().deviceScaleFactor()));
 
     filter->clearIntermediateResults();
 }

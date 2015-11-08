@@ -56,9 +56,9 @@ public:
         m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
     }
 
-    virtual void draw(GraphicsContext&, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
+    virtual void draw(GraphicsContext&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 
-    virtual void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ColorSpace, CompositeOperator, const FloatRect&, BlendMode) override;
+    virtual void drawPattern(GraphicsContext&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, CompositeOperator, const FloatRect&, BlendMode) override;
 
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() override { return false; }

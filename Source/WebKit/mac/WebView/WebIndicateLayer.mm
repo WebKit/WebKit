@@ -50,7 +50,7 @@ using namespace WebCore;
 
     // Blue highlight color.
     static Color highlightColor(111.0f / 255.0f, 168.0f / 255.0f, 220.0f / 255.0f, 0.66f);
-    self.backgroundColor = cachedCGColor(highlightColor, ColorSpaceDeviceRGB);
+    self.backgroundColor = cachedCGColor(highlightColor);
 
     return self;
 }

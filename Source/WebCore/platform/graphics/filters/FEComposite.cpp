@@ -281,8 +281,8 @@ void FEComposite::platformApplySoftware()
 
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext.drawImageBuffer(*imageBuffer2, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
         break;
     case FECOMPOSITE_OPERATOR_IN: {
         // Applies only to the intersected region.
@@ -294,21 +294,21 @@ void FEComposite::platformApplySoftware()
         IntRect adjustedDestinationRect = destinationRect - absolutePaintRect().location();
         IntRect sourceRect = destinationRect - in->absolutePaintRect().location();
         IntRect source2Rect = destinationRect - in2->absolutePaintRect().location();
-        filterContext.drawImageBuffer(*imageBuffer2, ColorSpaceDeviceRGB, adjustedDestinationRect, source2Rect);
-        filterContext.drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, adjustedDestinationRect, sourceRect, CompositeSourceIn);
+        filterContext.drawImageBuffer(*imageBuffer2, adjustedDestinationRect, source2Rect);
+        filterContext.drawImageBuffer(*imageBuffer, adjustedDestinationRect, sourceRect, CompositeSourceIn);
         break;
     }
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext.drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer2, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()), IntRect(IntPoint(), imageBuffer2->logicalSize()), CompositeDestinationOut);
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()), IntRect(IntPoint(), imageBuffer2->logicalSize()), CompositeDestinationOut);
         break;
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext.drawImageBuffer(*imageBuffer2, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeSourceAtop);
+        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeSourceAtop);
         break;
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext.drawImageBuffer(*imageBuffer2, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
-        filterContext.drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeXOR);
+        filterContext.drawImageBuffer(*imageBuffer2, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), CompositeXOR);
         break;
     default:
         break;

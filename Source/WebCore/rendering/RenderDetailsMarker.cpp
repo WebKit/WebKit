@@ -130,10 +130,10 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
 
     const Color color(style().visitedDependentColor(CSSPropertyColor));
-    paintInfo.context().setStrokeColor(color, style().colorSpace());
+    paintInfo.context().setStrokeColor(color);
     paintInfo.context().setStrokeStyle(SolidStroke);
     paintInfo.context().setStrokeThickness(1.0f);
-    paintInfo.context().setFillColor(color, style().colorSpace());
+    paintInfo.context().setFillColor(color);
 
     boxOrigin.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
     paintInfo.context().fillPath(getPath(boxOrigin));

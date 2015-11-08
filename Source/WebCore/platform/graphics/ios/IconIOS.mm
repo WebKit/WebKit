@@ -68,7 +68,7 @@ void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
     FloatRect srcRect(FloatPoint(), size);
 
     context.setImageInterpolationQuality(InterpolationHigh);
-    context.drawNativeImage(m_cgImage.get(), size, ColorSpaceDeviceRGB, destRect, srcRect);
+    context.drawNativeImage(m_cgImage.get(), size, destRect, srcRect);
 }
 
 }

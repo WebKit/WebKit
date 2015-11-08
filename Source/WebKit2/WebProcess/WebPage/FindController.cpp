@@ -469,13 +469,13 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     Vector<IntRect> rects = rectsForTextMatchesInRect(borderInflatedDirtyRect);
 
     // Draw the background.
-    graphicsContext.fillRect(dirtyRect, overlayBackgroundColor, ColorSpaceSRGB);
+    graphicsContext.fillRect(dirtyRect, overlayBackgroundColor);
 
     {
         GraphicsContextStateSaver stateSaver(graphicsContext);
 
-        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color(0.0f, 0.0f, 0.0f, shadowColorAlpha), ColorSpaceSRGB);
-        graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
+        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color(0.0f, 0.0f, 0.0f, shadowColorAlpha));
+        graphicsContext.setFillColor(Color::white);
 
         // Draw white frames around the holes.
         for (auto& rect : rects) {

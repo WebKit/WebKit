@@ -579,7 +579,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
         Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
-            backgroundColor = cachedCGColor(coreColor, ColorSpaceDeviceRGB);
+            backgroundColor = cachedCGColor(coreColor);
         m_currentSwipeSnapshot = snapshot;
     }
 

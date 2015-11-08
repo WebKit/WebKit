@@ -332,7 +332,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
     info.context().setStrokeThickness(m_ruleThickness);
     info.context().setStrokeStyle(SolidStroke);
-    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
 
     // The preferred width of the radical is sometimes incorrect, so we draw a slightly longer line to ensure it touches the radical symbol (https://bugs.webkit.org/show_bug.cgi?id=130326).
     LayoutUnit sizeError = radical->trailingSpaceError();

@@ -31,7 +31,6 @@
 #include "CanvasRenderingContext.h"
 #include "CanvasStyle.h"
 #include "Color.h"
-#include "ColorSpace.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
@@ -367,7 +366,7 @@ private:
 
     void inflateStrokeRect(FloatRect&) const;
 
-    template<class T> void fullCanvasCompositedDrawImage(T&, ColorSpace, const FloatRect&, const FloatRect&, CompositeOperator);
+    template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
     void prepareGradientForDashboard(CanvasGradient& gradient) const;
 

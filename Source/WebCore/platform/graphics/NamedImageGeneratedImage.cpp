@@ -40,7 +40,7 @@ NamedImageGeneratedImage::NamedImageGeneratedImage(String name, const FloatSize&
     setContainerSize(size);
 }
 
-void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
+void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
 {
 #if USE(NEW_THEME)
     GraphicsContextStateSaver stateSaver(context);
@@ -61,7 +61,7 @@ void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& d
 #endif
 }
 
-void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
 #if USE(NEW_THEME)
     std::unique_ptr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(size(), true);
@@ -72,14 +72,13 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
     platformTheme()->drawNamedImage(m_name, graphicsContext, FloatRect(0, 0, size().width(), size().height()));
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(context, srcRect, patternTransform, phase, spacing, styleColorSpace, compositeOp, dstRect, blendMode);
+    imageBuffer->drawPattern(context, srcRect, patternTransform, phase, spacing, compositeOp, dstRect, blendMode);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(srcRect);
     UNUSED_PARAM(patternTransform);
     UNUSED_PARAM(phase);
     UNUSED_PARAM(spacing);
-    UNUSED_PARAM(styleColorSpace);
     UNUSED_PARAM(dstRect);
     UNUSED_PARAM(compositeOp);
     UNUSED_PARAM(blendMode);

@@ -589,9 +589,9 @@ static void applyBoxShadowForBackground(GraphicsContext& context, RenderStyle* s
 
     FloatSize shadowOffset(boxShadow->x(), boxShadow->y());
     if (!boxShadow->isWebkitBoxShadow())
-        context.setShadow(shadowOffset, boxShadow->radius(), boxShadow->color(), style->colorSpace());
+        context.setShadow(shadowOffset, boxShadow->radius(), boxShadow->color());
     else
-        context.setLegacyShadow(shadowOffset, boxShadow->radius(), boxShadow->color(), style->colorSpace());
+        context.setLegacyShadow(shadowOffset, boxShadow->radius(), boxShadow->color());
 }
 
 void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const IntRect& maskRect, InlineFlowBox* box, const LayoutRect& scrolledPaintRect)
@@ -680,15 +680,15 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             FloatRoundedRect pixelSnappedBorder = backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize,
                 includeLeftEdge, includeRightEdge).pixelSnappedRoundedRectForPainting(deviceScaleFactor);
             if (pixelSnappedBorder.isRenderable())
-                context.fillRoundedRect(pixelSnappedBorder, bgColor, style().colorSpace());
+                context.fillRoundedRect(pixelSnappedBorder, bgColor);
             else {
                 context.save();
                 clipRoundedInnerRect(context, pixelSnappedRect, pixelSnappedBorder);
-                context.fillRect(pixelSnappedBorder.rect(), bgColor, style().colorSpace());
+                context.fillRect(pixelSnappedBorder.rect(), bgColor);
                 context.restore();
             }
         } else
-            context.fillRect(pixelSnappedRect, bgColor, style().colorSpace());
+            context.fillRect(pixelSnappedRect, bgColor);
 
         return;
     }
@@ -817,10 +817,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 if (!baseBgColorOnly && bgColor.alpha())
                     baseColor = baseColor.blend(bgColor);
 
-                context.fillRect(backgroundRectForPainting, baseColor, style().colorSpace(), CompositeCopy);
+                context.fillRect(backgroundRectForPainting, baseColor, CompositeCopy);
             } else if (!baseBgColorOnly && bgColor.alpha()) {
                 CompositeOperator operation = shouldClearBackground ? CompositeCopy : context.compositeOperation();
-                context.fillRect(backgroundRectForPainting, bgColor, style().colorSpace(), operation);
+                context.fillRect(backgroundRectForPainting, bgColor, operation);
             } else if (shouldClearBackground)
                 context.clearRect(backgroundRectForPainting);
         }
@@ -835,12 +835,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             context.setDrawLuminanceMask(bgLayer->maskSourceType() == MaskLuminance);
             bool useLowQualityScaling = shouldPaintAtLowQuality(context, *image, bgLayer, geometry.tileSize());
-            context.drawTiledImage(*image, style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+            context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
         }
     }
 
     if (maskImage && bgLayer->clip() == TextFillBox) {
-        context.drawImageBuffer(*maskImage, ColorSpaceDeviceRGB, maskRect, CompositeDestinationIn);
+        context.drawImageBuffer(*maskImage, maskRect, CompositeDestinationIn);
         context.endTransparencyLayer();
     }
 }
@@ -1691,7 +1691,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                 path.addRect(pixelSnappedInnerBorder.rect());
             
             graphicsContext.setFillRule(RULE_EVENODD);
-            graphicsContext.setFillColor(edges[firstVisibleEdge].color(), style.colorSpace());
+            graphicsContext.setFillColor(edges[firstVisibleEdge].color());
             graphicsContext.fillPath(path);
             return;
         } 
@@ -1708,7 +1708,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             }
 
             graphicsContext.setFillRule(RULE_NONZERO);
-            graphicsContext.setFillColor(edges[firstVisibleEdge].color(), style.colorSpace());
+            graphicsContext.setFillColor(edges[firstVisibleEdge].color());
             graphicsContext.fillPath(path);
             return;
         }
@@ -1752,7 +1752,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         return;
     case DOTTED:
     case DASHED: {
-        graphicsContext.setStrokeColor(color, style.colorSpace());
+        graphicsContext.setStrokeColor(color);
 
         // The stroke is doubled here because the provided path is the 
         // outside edge of the border so half the stroke is clipped off. 
@@ -1880,7 +1880,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
     }
 
     graphicsContext.setStrokeStyle(NoStroke);
-    graphicsContext.setFillColor(color, style.colorSpace());
+    graphicsContext.setFillColor(color);
     graphicsContext.drawRect(snapRectToDevicePixels(borderRect, document().deviceScaleFactor()));
 }
 
@@ -2265,9 +2265,9 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             fillRect.move(extraOffset);
 
             if (shadow->isWebkitBoxShadow())
-                context.setLegacyShadow(shadowOffset, shadowRadius, shadowColor, style.colorSpace());
+                context.setLegacyShadow(shadowOffset, shadowRadius, shadowColor);
             else
-                context.setShadow(shadowOffset, shadowRadius, shadowColor, style.colorSpace());
+                context.setShadow(shadowOffset, shadowRadius, shadowColor);
 
             FloatRoundedRect rectToClipOut = border.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
             FloatRoundedRect pixelSnappedFillRect = fillRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
@@ -2285,12 +2285,12 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 influenceRect.expandRadii(2 * shadowPaintingExtent + shadowSpread);
 
                 if (allCornersClippedOut(influenceRect, info.rect))
-                    context.fillRect(pixelSnappedFillRect.rect(), Color::black, style.colorSpace());
+                    context.fillRect(pixelSnappedFillRect.rect(), Color::black);
                 else {
                     pixelSnappedFillRect.expandRadii(shadowSpread);
                     if (!pixelSnappedFillRect.isRenderable())
                         pixelSnappedFillRect.adjustRadii();
-                    context.fillRoundedRect(pixelSnappedFillRect, Color::black, style.colorSpace());
+                    context.fillRoundedRect(pixelSnappedFillRect, Color::black);
                 }
             } else {
                 // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
@@ -2307,7 +2307,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
                 if (!rectToClipOut.isEmpty())
                     context.clipOut(rectToClipOut.rect());
-                context.fillRect(pixelSnappedFillRect.rect(), Color::black, style.colorSpace());
+                context.fillRect(pixelSnappedFillRect.rect(), Color::black);
             }
         } else {
             // Inset shadow.
@@ -2317,9 +2317,9 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
             if (pixelSnappedHoleRect.isEmpty()) {
                 if (hasBorderRadius)
-                    context.fillRoundedRect(pixelSnappedBorderRect, shadowColor, style.colorSpace());
+                    context.fillRoundedRect(pixelSnappedBorderRect, shadowColor);
                 else
-                    context.fillRect(pixelSnappedBorderRect.rect(), shadowColor, style.colorSpace());
+                    context.fillRect(pixelSnappedBorderRect.rect(), shadowColor);
                 continue;
             }
 
@@ -2356,11 +2356,11 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             shadowOffset -= extraOffset;
 
             if (shadow->isWebkitBoxShadow())
-                context.setLegacyShadow(shadowOffset, shadowRadius, shadowColor, style.colorSpace());
+                context.setLegacyShadow(shadowOffset, shadowRadius, shadowColor);
             else
-                context.setShadow(shadowOffset, shadowRadius, shadowColor, style.colorSpace());
+                context.setShadow(shadowOffset, shadowRadius, shadowColor);
 
-            context.fillRectWithRoundedHole(pixelSnappedOuterRect, pixelSnappedRoundedHole, fillColor, style.colorSpace());
+            context.fillRectWithRoundedHole(pixelSnappedOuterRect, pixelSnappedRoundedHole, fillColor);
         }
     }
 }

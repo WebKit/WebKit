@@ -58,7 +58,7 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
     }
 
     GraphicsContextStateSaver stateSaver(context);
-    context.setFillColor(Color::black, ColorSpaceDeviceRGB);
+    context.setFillColor(Color::black);
 
     FloatSize wirelessPlaybackSrcSize(32, 24.016);
     fitContextToBox(context, wirelessPlaybackSrcSize, rect.size());

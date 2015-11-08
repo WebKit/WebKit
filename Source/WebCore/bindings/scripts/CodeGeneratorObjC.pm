@@ -1347,7 +1347,7 @@ sub GenerateImplementation
             } elsif ($idlType eq "Color") {
                 if ($shouldUseCGColor) {
                     $getterContentHead = "WebCore::cachedCGColor($getterContentHead";
-                    $getterContentTail .= ", WebCore::ColorSpaceDeviceRGB)";
+                    $getterContentTail .= ")";
                 } else {
                     $getterContentHead = "WebCore::nsColor($getterContentHead";
                     $getterContentTail .= ")";
