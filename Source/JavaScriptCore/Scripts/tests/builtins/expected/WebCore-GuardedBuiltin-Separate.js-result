@@ -119,38 +119,6 @@ inline void GuardedBuiltinBuiltinsWrapper::exportNames()
 #undef EXPORT_FUNCTION_NAME
 }
 
-class GuardedBuiltinBuiltinFunctions {
-public:
-    explicit GuardedBuiltinBuiltinFunctions(JSC::VM& vm) : m_vm(vm) { }
-
-    void init(JSC::JSGlobalObject&);
-    void visit(JSC::SlotVisitor&);
-
-public:
-    JSC::VM& m_vm;
-
-#define DECLARE_BUILTIN_SOURCE_MEMBERS(functionName) \
-    JSC::WriteBarrier<JSC::JSFunction> m_##functionName##Function;
-    WEBCORE_FOREACH_GUARDEDBUILTIN_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_SOURCE_MEMBERS)
-#undef DECLARE_BUILTIN_SOURCE_MEMBERS
-};
-
-inline void GuardedBuiltinBuiltinFunctions::init(JSC::JSGlobalObject& globalObject)
-{
-#define EXPORT_FUNCTION(codeName, functionName, length)\
-    m_##functionName##Function.set(m_vm, &globalObject, JSC::JSFunction::createBuiltinFunction(m_vm, codeName##Generator(m_vm), &globalObject));
-    WEBCORE_FOREACH_GUARDEDBUILTIN_BUILTIN_CODE(EXPORT_FUNCTION)
-#undef EXPORT_FUNCTION
-}
-
-inline void GuardedBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
-{
-#define VISIT_FUNCTION(name) visitor.append(&m_##name##Function);
-    WEBCORE_FOREACH_GUARDEDBUILTIN_BUILTIN_FUNCTION_NAME(VISIT_FUNCTION)
-#undef VISIT_FUNCTION
-}
-
-
 } // namespace WebCore
 
 #endif // ENABLE(STREAMS_API)

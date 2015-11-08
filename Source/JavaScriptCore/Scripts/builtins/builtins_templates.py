@@ -184,9 +184,10 @@ inline void ${objectName}BuiltinsWrapper::exportNames()
 #define EXPORT_FUNCTION_NAME(name) m_vm.propertyNames->appendExternalName(name##PublicName(), name##PrivateName());
     ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_FUNCTION_NAME(EXPORT_FUNCTION_NAME)
 #undef EXPORT_FUNCTION_NAME
-}
+}""")
 
-class ${objectName}BuiltinFunctions {
+    SeparateHeaderInternalFunctionsBoilerplate = (
+    """class ${objectName}BuiltinFunctions {
 public:
     explicit ${objectName}BuiltinFunctions(JSC::VM& vm) : m_vm(vm) { }
 

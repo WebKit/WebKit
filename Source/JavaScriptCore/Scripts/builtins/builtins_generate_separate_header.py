@@ -74,6 +74,8 @@ class BuiltinsSeparateHeaderGenerator(BuiltinsGenerator):
         sections.append(Template(Templates.SeparateHeaderStaticMacros).substitute(args))
         if self.model().framework is Frameworks.WebCore:
             sections.append(Template(Templates.SeparateHeaderWrapperBoilerplate).substitute(args))
+            if self.object.annotations.get('internal'):
+                sections.append(Template(Templates.SeparateHeaderInternalFunctionsBoilerplate).substitute(args))
         sections.append(Template(Templates.NamespaceBottom).substitute(args))
         if conditional_guard is not None:
             sections.append("#endif // %s" % conditional_guard)

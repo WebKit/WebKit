@@ -25,7 +25,7 @@
  */
 
 // @conditional=ENABLE(STREAMS_API)
-// @internals
+// @internal
 
 function privateInitializeReadableStreamReader(stream)
 {

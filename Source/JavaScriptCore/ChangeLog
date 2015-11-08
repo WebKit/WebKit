@@ -1,3 +1,17 @@
+2015-11-08  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        generate-js-builtins.js should support @internal annotation
+        https://bugs.webkit.org/show_bug.cgi?id=150929
+
+        Reviewed by Darin Adler.
+
+        * Scripts/builtins/builtins_generate_separate_header.py:
+        (BuiltinsSeparateHeaderGenerator.generate_output): Generate internal boilerplate code only if @internal annotation is available.
+        * Scripts/builtins/builtins_templates.py: Split boilerplate in two templates (one that is used for all built-ins and one dedicated to internals).
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result: Removed internal boilerplate.
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result: Ditto.
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result: Ditto.
+
 2015-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Minimize ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX ifdefs
