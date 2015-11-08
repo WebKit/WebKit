@@ -118,7 +118,7 @@ HUDButton::HUDButton(HUDButtonType type, const IntPoint& position)
 void HUDButton::draw(GraphicsContext& context)
 {
     Image* image = (m_showAltButton && m_buttonImageAlt) ? m_buttonImageAlt.get() : m_buttonImage.get();
-    context.drawImage(*image, ColorSpaceDeviceRGB, m_rect.location());
+    context.drawImage(*image, m_rect.location());
 }
 
 HUDSlider::HUDSlider(HUDSliderButtonShape shape, int buttonSize, const IntRect& rect)
@@ -134,11 +134,11 @@ void HUDSlider::draw(GraphicsContext& context)
 {
     // Draw gutter
     IntSize radius(m_rect.height() / 2, m_rect.height() / 2);
-    context.fillRoundedRect(FloatRoundedRect(m_rect, radius, radius, radius, radius), Color(sliderGutterColor), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(m_rect, radius, radius, radius, radius), Color(sliderGutterColor));
 
     // Draw button
-    context.setStrokeColor(Color(sliderButtonColor), ColorSpaceDeviceRGB);
-    context.setFillColor(Color(sliderButtonColor), ColorSpaceDeviceRGB);
+    context.setStrokeColor(Color(sliderButtonColor));
+    context.setFillColor(Color(sliderButtonColor));
 
     if (m_buttonShape == RoundButton) {
         context.drawEllipse(IntRect(m_rect.location().x() + m_buttonPosition, m_rect.location().y() - (m_buttonSize - m_rect.height()) / 2, m_buttonSize, m_buttonSize));
@@ -490,9 +490,9 @@ void FullscreenVideoController::draw()
     IntSize innerRadius(borderRadius - borderThickness, borderRadius - borderThickness);
     IntRect innerRect(borderThickness, borderThickness, windowWidth - borderThickness * 2, windowHeight - borderThickness * 2);
 
-    context.fillRoundedRect(FloatRoundedRect(outerRect, outerRadius, outerRadius, outerRadius, outerRadius), Color(borderColor), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(outerRect, outerRadius, outerRadius, outerRadius, outerRadius), Color(borderColor));
     context.setCompositeOperation(CompositeCopy);
-    context.fillRoundedRect(FloatRoundedRect(innerRect, innerRadius, innerRadius, innerRadius, innerRadius), Color(backgroundColor), ColorSpaceDeviceRGB);
+    context.fillRoundedRect(FloatRoundedRect(innerRect, innerRadius, innerRadius, innerRadius, innerRadius), Color(backgroundColor));
 
     // Draw the widgets
     m_playPauseButton.draw(context);
@@ -526,13 +526,13 @@ void FullscreenVideoController::draw()
     s = timeToString(currentTime());
     int fontHeight = font.fontMetrics().height();
     TextRun leftText(s);
-    context.setFillColor(Color(textColor), ColorSpaceDeviceRGB);
+    context.setFillColor(Color(textColor));
     context.drawText(font, leftText, IntPoint(windowWidth / 2 - timeSliderWidth / 2 - margin - font.width(leftText), windowHeight - margin - sliderHeight / 2 + fontHeight / 4));
 
     // Right string
     s = timeToString(currentTime() - duration());
     TextRun rightText(s);
-    context.setFillColor(Color(textColor), ColorSpaceDeviceRGB);
+    context.setFillColor(Color(textColor));
     context.drawText(font, rightText, IntPoint(windowWidth / 2 + timeSliderWidth / 2 + margin, windowHeight - margin - sliderHeight / 2 + fontHeight / 4));
 
     // Copy to the window

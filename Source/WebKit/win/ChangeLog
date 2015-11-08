@@ -1,3 +1,14 @@
+2015-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Windows build after r192140.
+
+        * FullscreenVideoController.cpp:
+        (HUDButton::draw):
+        (HUDSlider::draw):
+        (FullscreenVideoController::draw):
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::paintMissingPluginIcon):
+
 2015-11-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Rename JSDOMWrapper.impl to JSDOMWrapper.wrapped
