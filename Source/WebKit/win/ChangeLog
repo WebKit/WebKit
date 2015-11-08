@@ -1,5 +1,12 @@
 2015-11-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Another Windows build fix.
+
+        * WebView.cpp:
+        (WebView::paintIntoBackingStore):
+
+2015-11-08  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the Windows build after r192140.
 
         * FullscreenVideoController.cpp:

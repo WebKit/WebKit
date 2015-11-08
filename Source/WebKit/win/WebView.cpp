@@ -1245,7 +1245,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
         frameView->paint(gc, logicalDirtyRect);
         gc.restore();
         if (m_shouldInvertColors)
-            gc.fillRect(logicalDirtyRect, Color::white, ColorSpaceDeviceRGB, CompositeDifference);
+            gc.fillRect(logicalDirtyRect, Color::white, CompositeDifference);
     }
     gc.restore();
 }
