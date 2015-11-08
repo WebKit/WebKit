@@ -1,3 +1,17 @@
+2015-11-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [Regression] [Mavericks] Toolbar is too dark while docked
+        https://bugs.webkit.org/show_bug.cgi?id=150977
+
+        Set the toolbar color of the docked inspector to be the same as on OS X 10.10+.
+        Undocked toolbar color on Mavericks is unnaffected.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Toolbar.css:
+        (body.mavericks.docked .toolbar):
+        (body:not(.mavericks) .toolbar): Added.
+
 2015-11-06  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Search Results tab causes jump to Resources tab on reload
