@@ -1,3 +1,16 @@
+2015-11-07  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Windows EWS bot after r192087
+        (https://bugs.webkit.org/show_bug.cgi?id=150859)
+
+        Following r192087 Port._build_path() stores the computed root directory path in option
+        _cached_root instead of overwriting option root. We need to teach the Windows-specific
+        logic to make use of option _cached_root instead of option root when computing its adjusted
+        path and to cache its adjusted in _cached_root instead of root.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._build_path):
+
 2015-11-06  Daniel Bates  <dabates@apple.com>
 
         Do not build LayoutTestRelay when --root is specified to run-webkit-tests
