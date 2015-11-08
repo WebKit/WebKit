@@ -336,6 +336,8 @@ public:
 
     void forceReload(bool endToEnd);
 
+    void enableAutoSizeMode(bool enabled, int minimumWidth, int minimumHeight, int maximumWidth, int maximumHeight);
+
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     void initializeMockCDM();
 #endif

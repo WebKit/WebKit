@@ -329,6 +329,8 @@ enum MediaControlEvent {
 
     void forceReload(boolean endToEnd);
 
+    void enableAutoSizeMode(boolean enabled, long minimumWidth, long minimumHeight, long maximumWidth, long maximumHeight);
+
     [Conditional=VIDEO] void simulateAudioInterruption(Node node);
     [Conditional=VIDEO, RaisesException] boolean mediaElementHasCharacteristic(Node node, DOMString characteristic);
 
