@@ -120,10 +120,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::load(%p)", this);
 
+    m_previewLayer = nullptr;
+    m_intrinsicSize = FloatSize();
+
     m_mediaStreamPrivate = &stream;
     m_mediaStreamPrivate->addObserver(*this);
-
-    m_previewLayer = nullptr;
     m_ended = !m_mediaStreamPrivate->active();
 
     scheduleDeferredTask([this] {
@@ -358,16 +359,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::createPreviewLayers()
         return;
 
     m_videoBackgroundLayer = adoptNS([[CALayer alloc] init]);
-#ifndef NDEBUG
     m_videoBackgroundLayer.get().name = @"MediaPlayerPrivateMediaStreamAVFObjC preview background layer";
-#endif
 
     m_previewLayer = m_mediaStreamPrivate->platformLayer();
     m_previewLayer.get().contentsGravity = kCAGravityResize;
     m_previewLayer.get().anchorPoint = CGPointZero;
-#if !PLATFORM(IOS)
-    m_previewLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
-#endif
     if (!m_playing)
         m_previewLayer.get().hidden = true;
 

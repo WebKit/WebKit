@@ -2302,7 +2302,10 @@ set(WebCore_SOURCES
     platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationClientMock.cpp
     platform/mock/MediaConstraintsMock.cpp
+    platform/mock/MockRealtimeAudioSource.cpp
+    platform/mock/MockRealtimeMediaSource.cpp
     platform/mock/MockRealtimeMediaSourceCenter.cpp
+    platform/mock/MockRealtimeVideoSource.cpp
     platform/mock/RTCDTMFSenderHandlerMock.cpp
     platform/mock/RTCDataChannelHandlerMock.cpp
     platform/mock/RTCNotifiersMock.cpp

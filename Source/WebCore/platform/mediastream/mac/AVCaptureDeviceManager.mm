@@ -141,7 +141,7 @@ static void refreshCaptureDeviceList()
 {
     Vector<CaptureDevice>& devices = captureDeviceList();
     
-    for (AVCaptureDeviceType *device in [AVCaptureDevice devices]) {
+    for (AVCaptureDeviceType *device in [getAVCaptureDeviceClass() devices]) {
         CaptureDevice source;
 
         if (![device isConnected])
@@ -254,7 +254,7 @@ CaptureDevice* AVCaptureDeviceManager::bestDeviceForFacingMode(RealtimeMediaSour
     
     size_t count = devices.size();
     for (size_t i = 0; i < count; ++i) {
-        AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:devices[i].m_captureDeviceID];
+        AVCaptureDeviceType *device = [getAVCaptureDeviceClass() deviceWithUniqueID:devices[i].m_captureDeviceID];
         ASSERT(device);
         
         if (device && deviceSupportsFacingMode(device, facingMode))
@@ -428,7 +428,7 @@ RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::sourceWithUID(const String& 
         if (type == RealtimeMediaSource::Video && captureDevice.m_videoSourceId.isEmpty())
             continue;
 
-        AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:captureDevice.m_captureDeviceID];
+        AVCaptureDeviceType *device = [getAVCaptureDeviceClass() deviceWithUniqueID:captureDevice.m_captureDeviceID];
         ASSERT(device);
 
         RefPtr<AVMediaCaptureSource> captureSource;
