@@ -1,3 +1,20 @@
+2015-11-09  Pranjal Jumde  <pjumde@apple.com>
+
+        Fixed crash loading Mozilla layout test editor/libeditor/crashtests/431086-1.xhtml.
+        https://bugs.webkit.org/show_bug.cgi?id=150252
+        <rdar://problem/23149470>
+
+        Reviewed by Brent Fulgham.
+
+        * Source/WebCore/editing/ios/EditorIOS.mm
+        * Source/WebCore/editing/mac/EditorMac.mm
+          In Editor::fontForSelection moved the node removal code, so that the
+          node is only removed if style is not NULL.
+        * LayoutTests/editing/execCommand/150252.xhtml
+        * LayoutTests/editing/execCommand/150252_minimal.xhtml
+        * LayoutTests/editing/execCommand/150252-expected.txt
+        * LayoutTests/editing/execCommand/150252_minimal-expected.txt
+
 2015-11-06  Daniel Bates  <dabates@apple.com>
 
         Teach Makefile to build LayoutTestRelay when building for iOS Simulator
