@@ -1,3 +1,16 @@
+2015-11-09  Isaac Devine  <isaac@devinesystems.co.nz>
+
+        Fresh checkout fails to build on windows, DumpRenderTree can't find cairo_win.h
+        https://bugs.webkit.org/show_bug.cgi?id=151013
+
+        Use the variable defined in the CMake scripts to determine the cairo include location, rather
+        than relying on a environment variable to be set correctly. Otherwise the DumpRenderTreeLib.vcxproj will
+        contain "\include\cairo" rather than the fully qualified path to the cairo include location.
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/PlatformWin.cmake:
+
 2015-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix the gst-plugins-bad jhbuild module build on Ubuntu 15.10
