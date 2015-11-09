@@ -1,3 +1,11 @@
+2015-11-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Allow , in the builder name.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * public/api/report.php:
+
 2015-08-10  Dana Burkart  <dburkart@apple.com>
 
         Fix flakiness dashboard stability and performance issues.

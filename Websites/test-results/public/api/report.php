@@ -38,7 +38,7 @@ function store_results($db, $master, $builder_name, $build_number, $start_time, 
 function main() {
     require_existence_of($_POST, array(
         'master' => '/[A-Za-z0-9\.]+/',
-        'builder_name' => '/^[A-Za-z0-9 \(\)\-_]+$/',
+        'builder_name' => '/^[A-Za-z0-9 \(\)\-_,]+$/',
         'build_number' => '/^[0-9]+?$/',
         'build_slave' => '/^[A-Za-z0-9\-_]+$/',
         'revisions' => '/^.+?$/',
