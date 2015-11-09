@@ -29,13 +29,11 @@
 #include "EwkView.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
-#include "WebKitVersion.h"
+#include "UserAgentEfl.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
 #include "WebView.h"
 #include "WebsiteDataStore.h"
-
-#include <sys/utsname.h>
 
 namespace WebKit {
 
@@ -45,28 +43,7 @@ void WebPageProxy::platformInitialize()
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    String platform;
-    String version;
-    String osVersion;
-    String standardUserAgentString;
-
-#if PLATFORM(X11)
-    platform = "X11";
-#else
-    platform = "Unknown";
-#endif
-
-    version = String::number(WEBKIT_MAJOR_VERSION) + '.' + String::number(WEBKIT_MINOR_VERSION) + '+';
-    struct utsname name;
-    if (uname(&name) != -1)
-        osVersion = WTF::String(name.sysname) + " " + WTF::String(name.machine);
-    else
-        osVersion = "Unknown";
-
-    standardUserAgentString = "Mozilla/5.0 (" + platform + "; " + osVersion + ") AppleWebKit/" + version
-        + " (KHTML, like Gecko) Version/8.0 Safari/" + version;
-
-    return applicationNameForUserAgent.isEmpty() ? standardUserAgentString : standardUserAgentString + ' ' + applicationNameForUserAgent;
+    return WebCore::standardUserAgent(applicationNameForUserAgent);
 }
 
 void WebPageProxy::getEditorCommandsForKeyEvent(Vector<WTF::String>& /*commandsList*/)

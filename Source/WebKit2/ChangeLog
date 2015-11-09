@@ -1,3 +1,16 @@
+2015-11-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Add UserAgentEFl.cpp|h
+        https://bugs.webkit.org/show_bug.cgi?id=151007
+
+        Reviewed by Darin Adler.
+
+        As other ports EFL port starts to have UserAgentEfl class in order to support more detailed
+        UA.
+
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::standardUserAgent): Call WebCore::standardUserAgent().
+
 2015-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ColorSpace argument to all the drawing calls

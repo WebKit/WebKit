@@ -123,6 +123,7 @@ list(APPEND WebCore_SOURCES
     platform/efl/ScrollbarThemeEfl.cpp
     platform/efl/SoundEfl.cpp
     platform/efl/TemporaryLinkStubs.cpp
+    platform/efl/UserAgentEfl.cpp
     platform/efl/WidgetEfl.cpp
 
     platform/geoclue/GeolocationProviderGeoclue1.cpp
