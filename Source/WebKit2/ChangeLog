@@ -1,3 +1,9 @@
+2015-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative CMake buildfix after r192111.
+
+        * CMakeLists.txt: New files added.
+
 2015-11-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Add UserAgentEFl.cpp|h
