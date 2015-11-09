@@ -115,14 +115,22 @@ void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
     LOG(IndexedDB, "MemoryObjectStore::deleteRecord");
 
     ASSERT(m_writeTransaction);
-    m_writeTransaction->recordValueChanged(*this, key);
 
-    if (!m_keyValueStore)
+    if (!m_keyValueStore) {
+        m_writeTransaction->recordValueChanged(*this, key, nullptr);
         return;
+    }
 
     ASSERT(m_orderedKeys);
 
-    m_keyValueStore->remove(key);
+    auto iterator = m_keyValueStore->find(key);
+    if (iterator == m_keyValueStore->end()) {
+        m_writeTransaction->recordValueChanged(*this, key, nullptr);
+        return;
+    }
+
+    m_writeTransaction->recordValueChanged(*this, key, &iterator->value);
+    m_keyValueStore->remove(iterator);
     m_orderedKeys->erase(key);
 }
 
@@ -150,20 +158,15 @@ void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
     }
 }
 
-void MemoryObjectStore::putRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+void MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
 {
-    LOG(IndexedDB, "MemoryObjectStore::putRecord");
+    LOG(IndexedDB, "MemoryObjectStore::addRecord");
 
     ASSERT(m_writeTransaction);
     ASSERT_UNUSED(transaction, m_writeTransaction == &transaction);
+    ASSERT(!m_keyValueStore || !m_keyValueStore->contains(keyData));
+    ASSERT(!m_orderedKeys || m_orderedKeys->find(keyData) == m_orderedKeys->end());
 
-    m_writeTransaction->recordValueChanged(*this, keyData);
-
-    setKeyValue(keyData, value);
-}
-
-void MemoryObjectStore::setKeyValue(const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
-{
     if (!m_keyValueStore) {
         ASSERT(!m_orderedKeys);
         m_keyValueStore = std::make_unique<KeyValueMap>();

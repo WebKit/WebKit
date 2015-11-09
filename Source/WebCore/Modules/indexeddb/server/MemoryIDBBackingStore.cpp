@@ -244,9 +244,9 @@ IDBError MemoryIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     return IDBError();
 }
 
-IDBError MemoryIDBBackingStore::putRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+IDBError MemoryIDBBackingStore::addRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
 {
-    LOG(IndexedDB, "MemoryIDBBackingStore::putRecord");
+    LOG(IndexedDB, "MemoryIDBBackingStore::addRecord");
 
     ASSERT(objectStoreIdentifier);
 
@@ -258,7 +258,7 @@ IDBError MemoryIDBBackingStore::putRecord(const IDBResourceIdentifier& transacti
     if (!objectStore)
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found to put record"));
 
-    objectStore->putRecord(*transaction, keyData, value);
+    objectStore->addRecord(*transaction, keyData, value);
     return IDBError();
 }
 

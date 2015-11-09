@@ -67,9 +67,7 @@ public:
     bool containsRecord(const IDBKeyData&);
     void deleteRecord(const IDBKeyData&);
     void deleteRange(const IDBKeyRangeData&);
-    void putRecord(MemoryBackingStoreTransaction&, const IDBKeyData&, const ThreadSafeDataBuffer& value);
-
-    void setKeyValue(const IDBKeyData&, const ThreadSafeDataBuffer& value);
+    void addRecord(MemoryBackingStoreTransaction&, const IDBKeyData&, const ThreadSafeDataBuffer& value);
 
     uint64_t currentKeyGeneratorValue() const { return m_keyGeneratorValue; }
     void setKeyGeneratorValue(uint64_t value) { m_keyGeneratorValue = value; }

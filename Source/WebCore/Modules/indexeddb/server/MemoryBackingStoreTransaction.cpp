@@ -132,7 +132,7 @@ void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& object
     addResult.iterator->value = WTF::move(keyValueMap);
 }
 
-void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& objectStore, const IDBKeyData& key)
+void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& objectStore, const IDBKeyData& key, ThreadSafeDataBuffer* value)
 {
     ASSERT(m_objectStores.contains(&objectStore));
 
@@ -154,7 +154,8 @@ void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& object
     if (!addResult.isNewEntry)
         return;
 
-    addResult.iterator->value = objectStore.valueForKeyRange(IDBKeyRangeData(key));
+    if (value)
+        addResult.iterator->value = *value;
 }
 
 void MemoryBackingStoreTransaction::abort()
@@ -197,7 +198,7 @@ void MemoryBackingStoreTransaction::abort()
 
         for (auto entry : *keyValueMap) {
             objectStore->deleteRecord(entry.key);
-            objectStore->setKeyValue(entry.key, entry.value);
+            objectStore->addRecord(*this, entry.key, entry.value);
         }
     }
 

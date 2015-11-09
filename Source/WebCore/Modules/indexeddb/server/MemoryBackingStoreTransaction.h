@@ -59,7 +59,8 @@ public:
 
     void addNewObjectStore(MemoryObjectStore&);
     void addExistingObjectStore(MemoryObjectStore&);
-    void recordValueChanged(MemoryObjectStore&, const IDBKeyData&);
+    
+    void recordValueChanged(MemoryObjectStore&, const IDBKeyData&, ThreadSafeDataBuffer*);
     void objectStoreDeleted(std::unique_ptr<MemoryObjectStore>);
     void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&);
 
