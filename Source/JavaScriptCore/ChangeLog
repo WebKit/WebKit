@@ -1,3 +1,16 @@
+2015-11-09  Michael Saboff  <msaboff@apple.com>
+
+        Need a function that will provide Nth argument register
+        https://bugs.webkit.org/show_bug.cgi?id=151041
+
+        Reviewed by Filip Pizlo.
+
+        For 64 bit platforms, return the Nth architected argument register, otherwise InvalidGPRReg.
+
+        * jit/GPRInfo.h:
+        (JSC::argumentRegisterFor): Added to return the Nth architected argument register if defined
+        for a platform or InvalidGPRReg if not.
+
 2015-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [FTL] Fix the build with LLVM 3.7
