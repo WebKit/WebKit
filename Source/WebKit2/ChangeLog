@@ -1,5 +1,17 @@
 2015-11-09  Anders Carlsson  <andersca@apple.com>
 
+        Introspect reply block types as well
+        https://bugs.webkit.org/show_bug.cgi?id=151048
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (initializeMethod):
+        (initializeMethods):
+        (-[_WKRemoteObjectInterface debugDescription]):
+
+2015-11-09  Anders Carlsson  <andersca@apple.com>
+
         Implement -[_WKRemoteObjectInterface debugDescription] and have it look like the NSXPCInterface equivalent
         https://bugs.webkit.org/show_bug.cgi?id=151044
 

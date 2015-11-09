@@ -1,3 +1,15 @@
+2015-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Introspect reply block types as well
+        https://bugs.webkit.org/show_bug.cgi?id=151048
+
+        Reviewed by Tim Horton.
+
+        Fix operator-> implementation.
+
+        * wtf/Optional.h:
+        (WTF::Optional::operator->):
+
 2015-11-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Add runtime and compile time flags for enabling Web Animations API and model.

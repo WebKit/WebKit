@@ -136,13 +136,13 @@ public:
     const T* operator->() const
     {
         ASSERT(m_isEngaged);
-        return asPtr()->operator->();
+        return asPtr();
     }
 
     T* operator->()
     {
         ASSERT(m_isEngaged);
-        return asPtr()->operator->();
+        return asPtr();
     }
 
     const T& operator*() const { return value(); }

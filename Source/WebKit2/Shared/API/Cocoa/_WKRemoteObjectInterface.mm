@@ -31,6 +31,7 @@
 #import <objc/runtime.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
@@ -39,13 +40,20 @@ extern "C"
 const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequiredMethod, BOOL isInstanceMethod);
 
 @interface NSMethodSignature ()
+- (NSMethodSignature *)_signatureForBlockAtArgumentIndex:(NSInteger)idx;
 - (Class)_classForObjectAtArgumentIndex:(NSInteger)idx;
+- (NSString *)_typeString;
 @end
 
 struct MethodInfo {
     Vector<HashSet<Class>> allowedArgumentClasses;
 
-    // FIXME: This should have allowed reply argument classes too.
+    struct ReplyInfo {
+        NSUInteger replyPosition;
+        CString replySignature;
+        Vector<HashSet<Class>> allowedReplyClasses;
+    };
+    Optional<ReplyInfo> replyInfo;
 };
 
 @implementation _WKRemoteObjectInterface {
@@ -77,13 +85,14 @@ static HashSet<Class>& propertyListClasses()
     return propertyListClasses;
 }
 
-static void initializeMethod(MethodInfo& methodInfo, NSMethodSignature *methodSignature, bool forReplyBlock)
+static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL selector, NSMethodSignature *methodSignature, bool forReplyBlock)
 {
     Vector<HashSet<Class>> allowedClasses;
 
     NSUInteger firstArgument = forReplyBlock ? 1 : 2;
     NSUInteger argumentCount = methodSignature.numberOfArguments;
 
+    bool foundBlock = false;
     for (NSUInteger i = firstArgument; i < argumentCount; ++i) {
         const char* argumentType = [methodSignature getArgumentTypeAtIndex:i];
 
@@ -91,6 +100,23 @@ static void initializeMethod(MethodInfo& methodInfo, NSMethodSignature *methodSi
             // This is a non-object type; we won't allow any classes to be decoded for it.
             allowedClasses.uncheckedAppend({ });
             continue;
+        }
+
+        if (*(argumentType + 1) == '?') {
+            if (forReplyBlock)
+                [NSException raise:NSInvalidArgumentException format:@"Blocks as arguments to the reply block of method (%s / %s) are not allowed", protocol_getName(protocol), sel_getName(selector)];
+
+            if (foundBlock)
+                [NSException raise:NSInvalidArgumentException format:@"Only one reply block is allowed per method (%s / %s)", protocol_getName(protocol), sel_getName(selector)];
+            foundBlock = true;
+            NSMethodSignature *blockSignature = [methodSignature _signatureForBlockAtArgumentIndex:i];
+            ASSERT(blockSignature._typeString);
+
+            methodInfo.replyInfo = MethodInfo::ReplyInfo();
+            methodInfo.replyInfo->replyPosition = i;
+            methodInfo.replyInfo->replySignature = blockSignature._typeString.UTF8String;
+
+            initializeMethod(methodInfo, protocol, selector, blockSignature, true);
         }
 
         Class objectClass = [methodSignature _classForObjectAtArgumentIndex:i];
@@ -108,7 +134,10 @@ static void initializeMethod(MethodInfo& methodInfo, NSMethodSignature *methodSi
         allowedClasses.append({ objectClass });
     }
 
-    methodInfo.allowedArgumentClasses = WTF::move(allowedClasses);
+    if (forReplyBlock)
+        methodInfo.replyInfo->allowedReplyClasses = WTF::move(allowedClasses);
+    else
+        methodInfo.allowedArgumentClasses = WTF::move(allowedClasses);
 }
 
 static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *protocol, bool requiredMethods)
@@ -128,7 +157,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 
         NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:methodTypeEncoding];
 
-        initializeMethod(methodInfo, methodSignature, false);
+        initializeMethod(methodInfo, protocol, selector, methodSignature, false);
     }
 
     free(methods);
@@ -220,8 +249,12 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
         return result.autorelease();
     };
 
-    for (auto& selectorAndMethod : _methods)
+    for (auto& selectorAndMethod : _methods) {
         [result appendFormat:@" selector = %s\n  argument classes = %@\n", sel_getName(selectorAndMethod.key), descriptionForClasses(selectorAndMethod.value.allowedArgumentClasses)];
+
+        if (auto replyInfo = selectorAndMethod.value.replyInfo)
+            [result appendFormat:@"  reply block = (argument #%lu '%s') %@\n", static_cast<unsigned long>(replyInfo->replyPosition), replyInfo->replySignature.data(), descriptionForClasses(replyInfo->allowedReplyClasses)];
+    }
 
     [result appendString:@">\n"];
     return result.autorelease();
