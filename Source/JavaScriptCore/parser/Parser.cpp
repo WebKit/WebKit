@@ -1908,7 +1908,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     return context.createFuncDeclStatement(location, functionInfo);
 }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
 template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclaration(TreeBuilder& context, ExportType exportType)
 {
@@ -2086,7 +2085,6 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     return classExpression;
 }
-#endif
 
 struct LabelInfo {
     LabelInfo(const Identifier* ident, const JSTextPosition& start, const JSTextPosition& end)

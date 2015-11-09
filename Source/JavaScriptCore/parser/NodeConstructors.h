@@ -920,7 +920,6 @@ namespace JSC {
     {
     }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
     inline ClassDeclNode::ClassDeclNode(const JSTokenLocation& location, ExpressionNode* classDeclaration)
         : StatementNode(location)
         , m_classDeclaration(classDeclaration)
@@ -937,7 +936,6 @@ namespace JSC {
         , m_staticMethods(staticMethods)
     {
     }
-#endif
 
     inline CaseClauseNode::CaseClauseNode(ExpressionNode* expr, SourceElements* statements)
         : m_expr(expr)

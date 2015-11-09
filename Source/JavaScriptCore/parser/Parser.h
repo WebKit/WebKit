@@ -70,9 +70,7 @@ class SourceCode;
 #define TreeArguments typename TreeBuilder::Arguments
 #define TreeArgumentsList typename TreeBuilder::ArgumentsList
 #define TreeFunctionBody typename TreeBuilder::FunctionBody
-#if ENABLE(ES6_CLASS_SYNTAX)
 #define TreeClassExpression typename TreeBuilder::ClassExpression
-#endif
 #define TreeProperty typename TreeBuilder::Property
 #define TreePropertyList typename TreeBuilder::PropertyList
 #define TreeDestructuringPattern typename TreeBuilder::DestructuringPattern
@@ -460,18 +458,10 @@ struct Scope {
     void setNeedsFullActivation() { m_needsFullActivation = true; }
     bool needsFullActivation() const { return m_needsFullActivation; }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
     bool hasDirectSuper() { return m_hasDirectSuper; }
-#else
-    bool hasDirectSuper() { return false; }
-#endif
     void setHasDirectSuper() { m_hasDirectSuper = true; }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
     bool needsSuperBinding() { return m_needsSuperBinding; }
-#else
-    bool needsSuperBinding() { return false; }
-#endif
     void setNeedsSuperBinding() { m_needsSuperBinding = true; }
 
     void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
@@ -1126,9 +1116,7 @@ private:
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
     enum class ExportType { Exported, NotExported };
-#if ENABLE(ES6_CLASS_SYNTAX)
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&, ExportType = ExportType::NotExported);
-#endif
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported);
     template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType, ExportType = ExportType::NotExported);
     template <class TreeBuilder> TreeStatement parseDoWhileStatement(TreeBuilder&);
@@ -1188,9 +1176,7 @@ private:
     
     template <class TreeBuilder> NEVER_INLINE int parseFunctionParameters(TreeBuilder&, SourceParseMode, ParserFunctionInfo<TreeBuilder>&);
 
-#if ENABLE(ES6_CLASS_SYNTAX)
     template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements, ParserClassInfo<TreeBuilder>&);
-#endif
 
     template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::TemplateString parseTemplateString(TreeBuilder& context, bool isTemplateHead, typename LexerType::RawStringsBuildMode, bool& elementIsTail);
     template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::TemplateLiteral parseTemplateLiteral(TreeBuilder&, typename LexerType::RawStringsBuildMode);

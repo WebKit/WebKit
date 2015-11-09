@@ -279,11 +279,7 @@ namespace JSC {
         const CommonIdentifiers& propertyNames() const { return *m_vm->propertyNames; }
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
-#if ENABLE(ES6_CLASS_SYNTAX)
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
-#else
-        ConstructorKind constructorKind() const { return ConstructorKind::None; }
-#endif
 
         ParserError generate();
 

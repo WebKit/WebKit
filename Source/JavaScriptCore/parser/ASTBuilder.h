@@ -107,9 +107,7 @@ public:
     typedef TemplateLiteralNode* TemplateLiteral;
     typedef FunctionParameters* FormalParameterList;
     typedef FunctionMetadataNode* FunctionBody;
-#if ENABLE(ES6_CLASS_SYNTAX)
     typedef ClassExprNode* ClassExpression;
-#endif
     typedef ModuleNameNode* ModuleName;
     typedef ImportSpecifierNode* ImportSpecifier;
     typedef ImportSpecifierListNode* ImportSpecifierList;
@@ -347,13 +345,11 @@ public:
         return new (m_parserArena) YieldExprNode(location, argument, delegate);
     }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
     ClassExprNode* createClassExpr(const JSTokenLocation& location, const Identifier& name, VariableEnvironment& classEnvironment, ExpressionNode* constructor,
         ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
     {
         return new (m_parserArena) ClassExprNode(location, name, classEnvironment, constructor, parentClass, instanceMethods, staticMethods);
     }
-#endif
 
     ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
     {
@@ -458,7 +454,6 @@ public:
         return decl;
     }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
     StatementNode* createClassDeclStatement(const JSTokenLocation& location, ClassExprNode* classExpression,
         const JSTextPosition& classStart, const JSTextPosition& classEnd, unsigned startLine, unsigned endLine)
     {
@@ -467,7 +462,6 @@ public:
         decl->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
         return decl;
     }
-#endif
 
     StatementNode* createBlockStatement(const JSTokenLocation& location, JSC::SourceElements* elements, int startLine, int endLine, VariableEnvironment& lexicalVariables)
     {

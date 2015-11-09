@@ -1,3 +1,35 @@
+2015-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Minimize ES6_CLASS_SYNTAX ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=151006
+
+        Reviewed by Darin Adler.
+
+        This patch minimizes ENABLE_ES6_CLASS_SYNTAX ifdefs.
+        It keeps several ENABLE_ES6_CLASS_SYNTAX ifdefs in Parser.cpp.
+
+        - super meta property
+        - class declaration parsing
+        - class expression parsing
+        - class with import declaration
+
+        This change makes difference minimal between the enabled and disabled configurations;
+        reducing accidental build breaks of the disabled configuration.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::constructorKind): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        * parser/ASTBuilder.h:
+        * parser/NodeConstructors.h:
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        * parser/Parser.h:
+        (JSC::Scope::hasDirectSuper): Deleted.
+        (JSC::Scope::needsSuperBinding): Deleted.
+        * parser/ParserFunctionInfo.h:
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+
 2015-11-08  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Use StringView::upconvertedCharacters() to make a 16-bit copy in String.prototype.normalize

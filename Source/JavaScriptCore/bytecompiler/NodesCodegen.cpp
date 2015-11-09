@@ -3007,7 +3007,6 @@ RegisterID* YieldExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     return generator.emitLoad(dst, jsUndefined());
 }
 
-#if ENABLE(ES6_CLASS_SYNTAX)
 // ------------------------------ ClassDeclNode ---------------------------------
 
 void ClassDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -3096,7 +3095,6 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
     return generator.moveToDestinationIfNeeded(dst, constructor.get());
 }
-#endif
 
 // ------------------------------ ImportDeclarationNode -----------------------
 
