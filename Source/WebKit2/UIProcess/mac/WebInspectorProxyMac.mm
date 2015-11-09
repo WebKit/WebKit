@@ -468,7 +468,7 @@ bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
         return false;
 
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
-    if ([inspectedView isKindOfClass:[WKView class]])
+    if ([inspectedView isKindOfClass:[WKView class]] || [inspectedView isKindOfClass:[WKWebView class]])
         return webProcessCanAttach;
 
     static const float minimumAttachedHeight = 250;

@@ -1,3 +1,14 @@
+2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION: 2nd level inspector should not be able to dock to first
+        https://bugs.webkit.org/show_bug.cgi?id=151050
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        Check now that the inspected view can be a WKWebView.
+
 2015-11-09  Anders Carlsson  <andersca@apple.com>
 
         Introspect reply block types as well
