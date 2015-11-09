@@ -412,7 +412,6 @@
     macro(LLVMValueRef, BuildSwitch, (LLVMBuilderRef, LLVMValueRef V, LLVMBasicBlockRef Else, unsigned NumCases)) \
     macro(LLVMValueRef, BuildIndirectBr, (LLVMBuilderRef B, LLVMValueRef Addr, unsigned NumDests)) \
     macro(LLVMValueRef, BuildInvoke, (LLVMBuilderRef, LLVMValueRef Fn, LLVMValueRef *Args, unsigned NumArgs, LLVMBasicBlockRef Then, LLVMBasicBlockRef Catch, const char *Name)) \
-    macro(LLVMValueRef, BuildLandingPad, (LLVMBuilderRef B, LLVMTypeRef Ty, LLVMValueRef PersFn, unsigned NumClauses, const char *Name)) \
     macro(LLVMValueRef, BuildResume, (LLVMBuilderRef B, LLVMValueRef Exn)) \
     macro(LLVMValueRef, BuildUnreachable, (LLVMBuilderRef)) \
     macro(void, AddCase, (LLVMValueRef Switch, LLVMValueRef OnVal, LLVMBasicBlockRef Dest)) \
