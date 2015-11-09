@@ -781,8 +781,10 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         // a request is in progress because we need to keep the listeners alive,
         // and they are referenced by the JavaScript wrapper.
         setPendingActivity(this);
-        if (!m_loader)
+        if (!m_loader) {
+            m_timeoutTimer.stop();
             m_networkErrorTimer.startOneShot(0);
+        }
     } else {
         InspectorInstrumentation::willLoadXHRSynchronously(scriptExecutionContext());
         ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, *this, options);
@@ -829,8 +831,7 @@ bool XMLHttpRequest::internalAbort()
 
     m_decoder = nullptr;
 
-    if (m_timeoutTimer.isActive())
-        m_timeoutTimer.stop();
+    m_timeoutTimer.stop();
 
     if (!m_loader)
         return true;
@@ -1121,8 +1122,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
     m_responseEncoding = String();
     m_decoder = nullptr;
 
-    if (m_timeoutTimer.isActive())
-        m_timeoutTimer.stop();
+    m_timeoutTimer.stop();
 
     if (hadLoader)
         dropProtection();
