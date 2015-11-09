@@ -33,12 +33,8 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
 
         this.element.classList.add("storage-view", "query", "monospace");
 
-        this._promptElement = document.createElement("div");
-        this._promptElement.classList.add("database-query-prompt");
-        this.element.appendChild(this._promptElement);
-
-        this.prompt = new WebInspector.ConsolePrompt(this, "text/x-sql");
-        this._promptElement.appendChild(this.prompt.element);
+        this._prompt = new WebInspector.ConsolePrompt(this, "text/x-sql");
+        this.addSubview(this._prompt);
 
         this.element.addEventListener("click", this._messagesClicked.bind(this), true);
     }
@@ -47,19 +43,8 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
 
     shown()
     {
-        this.prompt.shown();
-    }
-
-    updateLayout()
-    {
-        this.prompt.updateLayout();
-
-        var results = this.element.querySelectorAll(".database-query-result");
-        for (var i = 0; i < results.length; ++i) {
-            var resultElement = results[i];
-            if (resultElement.dataGrid)
-                resultElement.dataGrid.updateLayout();
-        }
+        // FIXME: remove once <https://webkit.org/b/150741> is fixed.
+        this._prompt.shown();
     }
 
     saveToCookie(cookie)
@@ -71,16 +56,15 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
 
     consolePromptCompletionsNeeded(prompt, defaultCompletions, base, prefix, suffix)
     {
-        var results = [];
+        let results = [];
 
         prefix = prefix.toLowerCase();
 
         function accumulateMatches(textArray)
         {
-            for (var i = 0; i < textArray.length; ++i) {
-                var lowerCaseText = textArray[i].toLowerCase();
-                if (lowerCaseText.startsWith(prefix))
-                    results.push(textArray[i]);
+            for (let text of textArray) {
+                if (text.toLowerCase().startsWith(prefix))
+                    results.push(text);
             }
         }
 
@@ -89,7 +73,7 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
             accumulateMatches(tableNames);
             accumulateMatches(["SELECT", "FROM", "WHERE", "LIMIT", "DELETE FROM", "CREATE", "DROP", "TABLE", "INDEX", "UPDATE", "INSERT INTO", "VALUES"]);
 
-            this.prompt.updateCompletions(results, " ");
+            this._prompt.updateCompletions(results, " ");
         }
 
         this.database.getTableNames(tableNamesCallback.bind(this));
@@ -104,19 +88,19 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
 
     _messagesClicked()
     {
-        this.prompt.focus();
+        this._prompt.focus();
     }
 
     _queryFinished(query, columnNames, values)
     {
-        var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
-        var trimmedQuery = query.trim();
+        let trimmedQuery = query.trim();
+        let queryView = new WebInspector.DatabaseUserQuerySuccessView(trimmedQuery, columnNames, values);
+        this.insertSubviewBefore(queryView, this._prompt);
 
-        if (dataGrid) {
-            dataGrid.element.classList.add("inline");
-            this._appendViewQueryResult(trimmedQuery, dataGrid);
-            dataGrid.autoSizeColumns(5);
-        }
+        if (queryView.dataGrid)
+            queryView.dataGrid.autoSizeColumns(5);
+
+        this._prompt.element.scrollIntoView(false);
 
         if (trimmedQuery.match(/^create /i) || trimmedQuery.match(/^drop table /i))
             this.dispatchEventToListeners(WebInspector.DatabaseContentView.Event.SchemaUpdated, this.database);
@@ -124,51 +108,17 @@ WebInspector.DatabaseContentView = class DatabaseContentView extends WebInspecto
 
     _queryError(query, error)
     {
+        let message;
         if (error.message)
-            var message = error.message;
+            message = error.message;
         else if (error.code === 2)
-            var message = WebInspector.UIString("Database no longer has expected version.");
+            message = WebInspector.UIString("Database no longer has expected version.");
         else
-            var message = WebInspector.UIString("An unexpected error %s occurred.").format(error.code);
+            message = WebInspector.UIString("An unexpected error %s occurred.").format(error.code);
 
-        this._appendErrorQueryResult(query, message);
-    }
-
-    _appendViewQueryResult(query, view)
-    {
-        var resultElement = this._appendQueryResult(query);
-
-        // Add our DataGrid with the results to the database query result div.
-        resultElement.dataGrid = view;
-        resultElement.appendChild(view.element);
-
-        this._promptElement.scrollIntoView(false);
-    }
-
-    _appendErrorQueryResult(query, errorText)
-    {
-        var resultElement = this._appendQueryResult(query);
-        resultElement.classList.add("error");
-        resultElement.textContent = errorText;
-
-        this._promptElement.scrollIntoView(false);
-    }
-
-    _appendQueryResult(query)
-    {
-        var element = document.createElement("div");
-        element.className = "database-user-query";
-        this.element.insertBefore(element, this._promptElement);
-
-        var commandTextElement = document.createElement("span");
-        commandTextElement.className = "database-query-text";
-        commandTextElement.textContent = query;
-        element.appendChild(commandTextElement);
-
-        var resultElement = document.createElement("div");
-        resultElement.className = "database-query-result";
-        element.appendChild(resultElement);
-        return resultElement;
+        let queryView = new WebInspector.DatabaseUserQueryErrorView(query, message);
+        this.insertSubviewBefore(queryView, this._prompt);
+        this._prompt.element.scrollIntoView(false);
     }
 };
 

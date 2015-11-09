@@ -1,3 +1,72 @@
+2015-11-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Convert DatabaseContentView to use View base class
+        https://bugs.webkit.org/show_bug.cgi?id=150959
+
+        Reviewed by Timothy Hatcher.
+
+        Update DatabaseContentView to inherit from View. This required that query results be
+        promoted to a first-class view object, and that ConsolePrompt's DOM element not be wrapped
+        inside a container element.
+
+        Two new query result view classes (and their base class) wrap up DOM element creation
+        which was being performed by DatabaseContentView.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        Removed unused parameter.
+
+        * UserInterface/Views/DatabaseContentView.css:
+        (.storage-view):
+        (.storage-view > .console-prompt):
+        (.storage-view > .console-prompt::before):
+        (:matches(.database-user-query, .database-query-result)::before):
+        (.database-query-result.no-results):
+        (.database-query-prompt): Deleted.
+        (:matches(.database-user-query, .database-query-prompt, .database-query-result)::before): Deleted.
+        (.database-query-prompt::before): Deleted.
+        Modified styles to create prompt without needing a wrapper element.
+
+        * UserInterface/Views/DatabaseContentView.js:
+        (WebInspector.DatabaseContentView):
+        (WebInspector.DatabaseContentView.prototype.shown):
+        (WebInspector.DatabaseContentView.prototype.consolePromptCompletionsNeeded.accumulateMatches):
+        (WebInspector.DatabaseContentView.prototype.consolePromptCompletionsNeeded.tableNamesCallback):
+        (WebInspector.DatabaseContentView.prototype.consolePromptCompletionsNeeded):
+        (WebInspector.DatabaseContentView.prototype._messagesClicked):
+        (WebInspector.DatabaseContentView.prototype._queryFinished):
+        (WebInspector.DatabaseContentView.prototype._queryError):
+        (WebInspector.DatabaseContentView.prototype.updateLayout): Deleted.
+        No longer needed.
+        (WebInspector.DatabaseContentView.prototype._appendViewQueryResult): Deleted.
+        (WebInspector.DatabaseContentView.prototype._appendErrorQueryResult): Deleted.
+        (WebInspector.DatabaseContentView.prototype._appendQueryResult): Deleted.
+        Removed methods subsumed under DatabaseUserQueryView.
+
+        * UserInterface/Views/DatabaseUserQueryErrorView.js: Added.
+        (WebInspector.DatabaseUserQueryErrorView):
+        Displays supplied error message.
+
+        * UserInterface/Views/DatabaseUserQuerySuccessView.js: Added.
+        (WebInspector.DatabaseUserQuerySuccessView):
+        Creates data grid if results exist, otherwise displays "no results" message.
+        (WebInspector.DatabaseUserQuerySuccessView.prototype.get dataGrid):
+        External access to view's data grid for autosizing columns, etc.
+        (WebInspector.DatabaseUserQuerySuccessView.prototype.layout):
+        Update grid layout manually, since the grid's parent in the DOM isn't the view's root element.
+
+        * UserInterface/Views/DatabaseUserQueryViewBase.js: Added.
+        Base class for success and error message views.
+        (WebInspector.DatabaseUserQueryViewBase):
+        Creates DOM common to subclasses.
+        (WebInspector.DatabaseUserQueryViewBase.prototype.get resultElement):
+        Protected getter exposing the content root for both subclasses.
+
 2015-11-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [Regression] [Mavericks] Toolbar is too dark while docked
