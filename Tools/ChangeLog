@@ -1,3 +1,12 @@
+2015-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix the gst-plugins-bad jhbuild module build on Ubuntu 15.10
+        https://bugs.webkit.org/show_bug.cgi?id=150928
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+
 2015-11-07  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Windows EWS bot after r192087
