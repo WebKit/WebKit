@@ -100,6 +100,10 @@ public:
     // FIXME: navigation with transforms should be smarter.
     WEBCORE_EXPORT int lineDirectionPointForBlockDirectionNavigation() const;
 
+    // This is a tentative enhancement of operator== to account for affinity.
+    // FIXME: Combine this function with operator==
+    bool equals(const VisiblePosition&) const;
+
 #if ENABLE(TREE_DEBUGGING)
     void debugPosition(const char* msg = "") const;
     void formatForDebugger(char* buffer, unsigned length) const;

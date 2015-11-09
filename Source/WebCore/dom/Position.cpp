@@ -1453,6 +1453,102 @@ void Position::showTreeForThis() const
 
 #endif
 
+bool Position::equals(const Position& other) const
+{
+    if (!m_anchorNode)
+        return !m_anchorNode == !other.m_anchorNode;
+    if (!other.m_anchorNode)
+        return false;
+
+    switch (anchorType()) {
+    case PositionIsBeforeChildren:
+        ASSERT(!m_anchorNode->isTextNode());
+        switch (other.anchorType()) {
+        case PositionIsBeforeChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode;
+        case PositionIsAfterChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode && !m_anchorNode->hasChildNodes();
+        case PositionIsOffsetInAnchor:
+            return m_anchorNode == other.m_anchorNode && !other.m_offset;
+        case PositionIsBeforeAnchor:
+            return m_anchorNode->firstChild() == other.m_anchorNode;
+        case PositionIsAfterAnchor:
+            return false;
+        }
+        break;
+    case PositionIsAfterChildren:
+        ASSERT(!m_anchorNode->isTextNode());
+        switch (other.anchorType()) {
+        case PositionIsBeforeChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode && !m_anchorNode->hasChildNodes();
+        case PositionIsAfterChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode;
+        case PositionIsOffsetInAnchor:
+            return m_anchorNode == other.m_anchorNode && m_anchorNode->countChildNodes() == static_cast<unsigned>(m_offset);
+        case PositionIsBeforeAnchor:
+            return false;
+        case PositionIsAfterAnchor:
+            return m_anchorNode->lastChild() == other.m_anchorNode;
+        }
+        break;
+    case PositionIsOffsetInAnchor:
+        switch (other.anchorType()) {
+        case PositionIsBeforeChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode && !m_offset;
+        case PositionIsAfterChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode && m_offset == static_cast<int>(other.m_anchorNode->countChildNodes());
+        case PositionIsOffsetInAnchor:
+            return m_anchorNode == other.m_anchorNode && m_offset == other.m_offset;
+        case PositionIsBeforeAnchor:
+            return m_anchorNode->traverseToChildAt(m_offset) == other.m_anchorNode;
+        case PositionIsAfterAnchor:
+            return m_offset && m_anchorNode->traverseToChildAt(m_offset - 1) == other.m_anchorNode;
+        }
+        break;
+    case PositionIsBeforeAnchor:
+        switch (other.anchorType()) {
+        case PositionIsBeforeChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode->firstChild();
+        case PositionIsAfterChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return false;
+        case PositionIsOffsetInAnchor:
+            return m_anchorNode == other.m_anchorNode->traverseToChildAt(other.m_offset);
+        case PositionIsBeforeAnchor:
+            return m_anchorNode == other.m_anchorNode;
+        case PositionIsAfterAnchor:
+            return m_anchorNode->previousSibling() == other.m_anchorNode;
+        }
+        break;
+    case PositionIsAfterAnchor:
+        switch (other.anchorType()) {
+        case PositionIsBeforeChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return false;
+        case PositionIsAfterChildren:
+            ASSERT(!other.m_anchorNode->isTextNode());
+            return m_anchorNode == other.m_anchorNode->lastChild();
+        case PositionIsOffsetInAnchor:
+            return other.m_offset && m_anchorNode == other.m_anchorNode->traverseToChildAt(other.m_offset - 1);
+        case PositionIsBeforeAnchor:
+            return m_anchorNode->nextSibling() == other.m_anchorNode;
+        case PositionIsAfterAnchor:
+            return m_anchorNode == other.m_anchorNode;
+        }
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

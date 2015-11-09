@@ -743,6 +743,11 @@ bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const N
     return next.isNull() || !next.deepEquivalent().deprecatedNode()->isDescendantOf(node);
 }
 
+bool VisiblePosition::equals(const VisiblePosition& other) const
+{
+    return m_affinity == other.m_affinity && m_deepPosition.equals(other.m_deepPosition);
+}
+
 }  // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

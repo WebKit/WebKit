@@ -1120,7 +1120,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
 void CompositeEditCommand::cleanupAfterDeletion(VisiblePosition destination)
 {
     VisiblePosition caretAfterDelete = endingSelection().visibleStart();
-    if (caretAfterDelete != destination && isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
+    if (!caretAfterDelete.equals(destination) && isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
         // Note: We want the rightmost candidate.
         Position position = caretAfterDelete.deepEquivalent().downstream();
         Node* node = position.deprecatedNode();
