@@ -1567,6 +1567,12 @@ _llint_op_push_with_scope:
     dispatch(4)
 
 
+_llint_op_assert:
+    traceExecution()
+    callSlowPath(_slow_path_assert)
+    dispatch(3)
+
+
 _llint_op_create_lexical_environment:
     traceExecution()
     callSlowPath(_slow_path_create_lexical_environment)

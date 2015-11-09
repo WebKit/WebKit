@@ -2283,6 +2283,14 @@ RegisterID* BytecodeGenerator::emitPutByIndex(RegisterID* base, unsigned index, 
     return value;
 }
 
+RegisterID* BytecodeGenerator::emitAssert(RegisterID* condition, int line)
+{
+    emitOpcode(op_assert);
+    instructions().append(condition->index());
+    instructions().append(line);
+    return condition;
+}
+
 RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
     size_t begin = instructions().size();

@@ -774,6 +774,19 @@ RegisterID* BytecodeIntrinsicNode::emitBytecode(BytecodeGenerator& generator, Re
     return (this->*m_emitter)(generator, dst);
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_assert(BytecodeGenerator& generator, RegisterID* dst)
+{
+#ifndef NDEBUG
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> condition = generator.emitNode(node);
+    generator.emitAssert(condition.get(), node->firstLine());
+    return dst;
+#else
+    UNUSED_PARAM(generator);
+    return dst;
+#endif
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByValDirect(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;

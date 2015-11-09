@@ -51,7 +51,7 @@ function privateInitializeReadableStreamReader(stream)
         this.@closedPromiseCapability = { @promise: @Promise.@resolve() };
         return this;
     }
-    // FIXME: ASSERT(stream.@state === @streamErrored);
+    @assert(stream.@state === @streamErrored);
     this.@ownerReadableStream = null;
     this.@storedError = stream.@storedError;
     this.@closedPromiseCapability = { @promise: @Promise.@reject(stream.@storedError) };

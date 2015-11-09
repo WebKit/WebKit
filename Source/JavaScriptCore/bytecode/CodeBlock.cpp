@@ -1488,7 +1488,14 @@ void CodeBlock::dumpBytecode(
             int debugHookID = (++it)->u.operand;
             int hasBreakpointFlag = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "debug");
-            out.printf("%s %d", debugHookName(debugHookID), hasBreakpointFlag);
+            out.printf("%s, %d", debugHookName(debugHookID), hasBreakpointFlag);
+            break;
+        }
+        case op_assert: {
+            int condition = (++it)->u.operand;
+            int line = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "assert");
+            out.printf("%s, %d", registerName(condition).data(), line);
             break;
         }
         case op_profile_will_call: {

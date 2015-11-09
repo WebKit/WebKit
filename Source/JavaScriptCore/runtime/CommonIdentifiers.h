@@ -264,6 +264,7 @@
     macro(toStringTag)
 
 #define JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(macro) \
+    macro(assert) \
     macro(putByValDirect) \
     macro(toString)
 

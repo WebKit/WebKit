@@ -492,6 +492,7 @@ namespace JSC {
         void emit_op_create_scoped_arguments(Instruction*);
         void emit_op_create_out_of_band_arguments(Instruction*);
         void emit_op_check_tdz(Instruction*);
+        void emit_op_assert(Instruction*);
         void emit_op_debug(Instruction*);
         void emit_op_del_by_id(Instruction*);
         void emit_op_div(Instruction*);

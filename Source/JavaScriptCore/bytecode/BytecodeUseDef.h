@@ -43,6 +43,7 @@ void computeUsesForBytecodeOffset(
     case op_new_regexp:
     case op_new_array_buffer:
     case op_throw_static_error:
+    case op_assert:
     case op_debug:
     case op_jneq_ptr:
     case op_loop_hint:
@@ -252,6 +253,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_profile_did_call:
     case op_throw:
     case op_throw_static_error:
+    case op_assert:
     case op_debug:
     case op_ret:
     case op_jmp:

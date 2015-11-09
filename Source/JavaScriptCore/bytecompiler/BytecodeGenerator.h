@@ -531,6 +531,8 @@ namespace JSC {
         RegisterID* emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
         RegisterID* emitPutByIndex(RegisterID* base, unsigned index, RegisterID* value);
 
+        RegisterID* emitAssert(RegisterID* condition, int line);
+
         void emitPutGetterById(RegisterID* base, const Identifier& property, unsigned propertyDescriptorOptions, RegisterID* getter);
         void emitPutSetterById(RegisterID* base, const Identifier& property, unsigned propertyDescriptorOptions, RegisterID* setter);
         void emitPutGetterSetter(RegisterID* base, const Identifier& property, unsigned attributes, RegisterID* getter, RegisterID* setter);

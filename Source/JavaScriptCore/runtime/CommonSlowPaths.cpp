@@ -637,6 +637,13 @@ SLOW_PATH_DECL(slow_path_profile_type_clear_log)
     END();
 }
 
+SLOW_PATH_DECL(slow_path_assert)
+{
+    BEGIN();
+    ASSERT_WITH_MESSAGE(OP(1).jsValue().asBoolean(), "JS assertion failed at line %d in:\n%s\n", pc[2].u.operand, exec->codeBlock()->sourceCodeForTools().data());
+    END();
+}
+
 SLOW_PATH_DECL(slow_path_create_lexical_environment)
 {
     BEGIN();

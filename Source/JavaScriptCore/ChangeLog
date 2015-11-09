@@ -1,3 +1,41 @@
+2015-11-09  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        JS Built-ins functions should be able to assert
+        https://bugs.webkit.org/show_bug.cgi?id=150333
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduced @assert to enable asserting in JS built-ins.
+        Adding a new bytecode 'assert' to implement it.
+        In debug builds, @assert generates 'assert' bytecodes.
+        In release builds, no byte code is produced for @assert.
+
+        In case assert is false, the JS built-in and the line number are dumped.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitAssert):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp: Generating op_assert bytecode for @assert for Debug builds.
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_assert):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_assert):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_assert):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonIdentifiers.h: Adding @assert identifier as intrinsic.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+
 2015-11-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Minimize ES6_CLASS_SYNTAX ifdefs

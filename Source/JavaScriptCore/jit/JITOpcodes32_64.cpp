@@ -834,6 +834,12 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
     emitStore(thrownValue, regT1, regT0);
 }
 
+void JIT::emit_op_assert(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_assert);
+    slowPathCall.call();
+}
+
 void JIT::emit_op_create_lexical_environment(Instruction* currentInstruction)
 {
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_lexical_environment);
