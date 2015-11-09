@@ -1,5 +1,11 @@
 2015-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed CMake buildfix after r192113.
+
+        * PlatformMac.cmake: New file added.
+
+2015-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed speculative CMake buildfix after r192111.
 
         * CMakeLists.txt: New files added.

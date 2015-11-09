@@ -240,6 +240,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/mac/WKImmediateActionController.mm
     UIProcess/mac/WKPrintingView.mm
     UIProcess/mac/WKSharingServicePickerDelegate.mm
+    UIProcess/mac/WKTextFinderClient.mm
     UIProcess/mac/WKTextInputWindowController.mm
     UIProcess/mac/WKViewLayoutStrategy.mm
     UIProcess/mac/WebColorPickerMac.mm
