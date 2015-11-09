@@ -358,7 +358,7 @@ static NSString *escapeKey(NSString *key)
     const API::Array* _objectStream;
     size_t _objectStreamPosition;
 
-    NSSet *_allowedClasses;
+    const HashSet<Class>* _allowedClasses;
 }
 
 - (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const API::Dictionary*)rootObjectDictionary
@@ -381,7 +381,7 @@ static NSString *escapeKey(NSString *key)
     switch (*type) {
     // int
     case 'i':
-        *static_cast<int*>(data) = [decodeObjectFromObjectStream(self, [NSSet setWithObject:[NSNumber class]]) intValue];
+        *static_cast<int*>(data) = [decodeObjectFromObjectStream(self, { [NSNumber class] }) intValue];
         break;
 
     default:
@@ -404,9 +404,9 @@ static NSString *escapeKey(NSString *key)
     return [self decodeObjectOfClasses:nil forKey:key];
 }
 
-static id decodeObject(WKRemoteObjectDecoder *, const API::Dictionary*, NSSet *allowedClasses);
+static id decodeObject(WKRemoteObjectDecoder *, const API::Dictionary*, const HashSet<Class>& allowedClasses);
 
-static id decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, NSSet *allowedClasses)
+static id decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, const HashSet<Class>& allowedClasses)
 {
     if (!decoder->_objectStream)
         return nil;
@@ -421,15 +421,19 @@ static id decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, NSSet *al
 
 static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
 {
-    NSSet *allowedClasses = decoder->_allowedClasses;
+    auto* allowedClasses = decoder->_allowedClasses;
+    if (!allowedClasses)
+        return;
 
-    // Check if the class or any of its superclasses are in the allowed classes set.
-    for (Class cls = objectClass; cls; cls = class_getSuperclass(cls)) {
-        if ([allowedClasses containsObject:cls])
+    if (allowedClasses->contains(objectClass))
+        return;
+
+    for (Class superclass = class_getSuperclass(objectClass); superclass; superclass = class_getSuperclass(superclass)) {
+        if (allowedClasses->contains(superclass))
             return;
     }
 
-    [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" is not allowed. Allowed classes are \"%@\"", objectClass, allowedClasses];
+    [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" is not allowed. Allowed classes are \"%@\"", objectClass, decoder.allowedClasses];
 }
 
 static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
@@ -445,7 +449,7 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
     [decoder validateClassSupportsSecureCoding:objectClass];
 }
 
-static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<RetainPtr<NSSet>>& allowedArgumentClasses)
+static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<HashSet<Class>>& allowedArgumentClasses)
 {
     NSMethodSignature *methodSignature = invocation.methodSignature;
     NSUInteger argumentCount = methodSignature.numberOfArguments;
@@ -460,63 +464,63 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         switch (*type) {
         // double
         case 'd': {
-            double value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) doubleValue];
+            double value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) doubleValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // float
         case 'f': {
-            float value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) floatValue];
+            float value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) floatValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // int
         case 'i': {
-            int value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) intValue];
+            int value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) intValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // unsigned
         case 'I': {
-            unsigned value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) unsignedIntValue];
+            unsigned value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) unsignedIntValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // char
         case 'c': {
-            char value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) charValue];
+            char value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) charValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // bool
         case 'B': {
-            bool value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) boolValue];
+            bool value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) boolValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // long
         case 'q': {
-            long value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) longValue];
+            long value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) longValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
 
         // unsigned long
         case 'Q': {
-            unsigned long value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) unsignedLongValue];
+            unsigned long value = [decodeObjectFromObjectStream(decoder, { [NSNumber class] }) unsignedLongValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }
             
         // Objective-C object
         case '@': {
-            NSSet *allowedClasses = allowedArgumentClasses[i - 2].get();
+            auto& allowedClasses = allowedArgumentClasses[i - 2];
 
             id value = decodeObjectFromObjectStream(decoder, allowedClasses);
             [invocation setArgument:&value atIndex:i];
@@ -608,7 +612,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder)
     return [result autorelease];
 }
 
-static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* dictionary, NSSet *allowedClasses)
+static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* dictionary, const HashSet<Class>& allowedClasses)
 {
     if (!dictionary)
         return nil;
@@ -616,10 +620,10 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
     TemporaryChange<const API::Dictionary*> dictionaryChange(decoder->_currentDictionary, dictionary);
 
     // If no allowed classes were listed, just use the currently allowed classes.
-    if (!allowedClasses)
+    if (allowedClasses.isEmpty())
         return decodeObject(decoder);
 
-    TemporaryChange<NSSet *> allowedClassesChange(decoder->_allowedClasses, allowedClasses);
+    TemporaryChange<const HashSet<Class>*> allowedClassesChange(decoder->_allowedClasses, &allowedClasses);
     return decodeObject(decoder);
 }
 
@@ -695,12 +699,23 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (id)decodeObjectOfClasses:(NSSet *)classes forKey:(NSString *)key
 {
-    return decodeObject(self, _currentDictionary->get<API::Dictionary>(escapeKey(key)), classes);
+    HashSet<Class> allowedClasses;
+    for (Class allowedClass in classes)
+        allowedClasses.add(allowedClass);
+
+    return decodeObject(self, _currentDictionary->get<API::Dictionary>(escapeKey(key)), allowedClasses);
 }
 
 - (NSSet *)allowedClasses
 {
-    return _allowedClasses;
+    if (!_allowedClasses)
+        return [NSSet set];
+
+    auto result = adoptNS([[NSMutableSet alloc] init]);
+    for (Class allowedClass : *_allowedClasses)
+        [result addObject:allowedClass];
+
+    return result.autorelease();
 }
 
 @end

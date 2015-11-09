@@ -1,3 +1,35 @@
+2015-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Rework the way allowed argument classes are stored
+        https://bugs.webkit.org/show_bug.cgi?id=150992
+
+        Reviewed by Darin Adler.
+
+        Add a separate MethodInfo class so we have someplace to store the reply block arguments.
+        Use HashSet<Class> instead of NSSet. No functionality change intended.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectDecoder decodeValueOfObjCType:at:]):
+        (decodeObjectFromObjectStream):
+        (checkIfClassIsAllowed):
+        (decodeInvocationArguments):
+        (decodeObject):
+        (-[WKRemoteObjectDecoder decodeObjectOfClasses:forKey:]):
+        (-[WKRemoteObjectDecoder allowedClasses]):
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (isContainerClass):
+        (propertyListClasses):
+        (initializeMethod):
+        (initializeMethods):
+        (-[_WKRemoteObjectInterface initWithProtocol:identifier:]):
+        (classesForSelectorArgument):
+        (-[_WKRemoteObjectInterface classesForSelector:argumentIndex:]):
+        (-[_WKRemoteObjectInterface setClasses:forSelector:argumentIndex:]):
+        (-[_WKRemoteObjectInterface _allowedArgumentClassesForSelector:]):
+        (allowedArgumentClassesForMethod): Deleted.
+        (initializeAllowedArgumentClasses): Deleted.
+        * Shared/API/Cocoa/_WKRemoteObjectInterfaceInternal.h:
+
 2015-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed CMake buildfix after r192113.

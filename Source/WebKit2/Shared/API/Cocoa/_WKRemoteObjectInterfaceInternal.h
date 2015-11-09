@@ -28,12 +28,14 @@
 #if WK_API_ENABLED
 
 #import <wtf/Forward.h>
+#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 @interface _WKRemoteObjectInterface ()
 
 - (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector;
-- (const Vector<RetainPtr<NSSet>>&)_allowedArgumentClassesForSelector:(SEL)selector;
+- (const Vector<HashSet<Class>>&)_allowedArgumentClassesForSelector:(SEL)selector;
 
 @end
 
