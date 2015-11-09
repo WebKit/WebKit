@@ -26,10 +26,12 @@
 #include "config.h"
 #include "JSPromisePrototype.h"
 
+#include "BuiltinNames.h"
 #include "Error.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSPromise.h"
 #include "Microtask.h"
@@ -58,6 +60,7 @@ JSPromisePrototype* JSPromisePrototype::create(VM& vm, JSGlobalObject*, Structur
 {
     JSPromisePrototype* object = new (NotNull, allocateCell<JSPromisePrototype>(vm.heap)) JSPromisePrototype(vm, structure);
     object->finishCreation(vm, structure);
+    object->addOwnInternalSlots(vm, structure->globalObject());
     return object;
 }
 
@@ -75,6 +78,12 @@ void JSPromisePrototype::finishCreation(VM& vm, Structure*)
 {
     Base::finishCreation(vm);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Promise"), DontEnum | ReadOnly);
+}
+
+void JSPromisePrototype::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)
+{
+    JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().thenPrivateName(), promisePrototypeThenCodeGenerator, DontEnum | DontDelete | ReadOnly);
+    JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().catchPrivateName(), promisePrototypeCatchCodeGenerator, DontEnum | DontDelete | ReadOnly);
 }
 
 bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

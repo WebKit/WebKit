@@ -106,7 +106,7 @@ function teeReadableStream(stream, shouldClone)
     let branch1 = new ReadableStream(underlyingSource1);
     let branch2 = new ReadableStream(underlyingSource2);
 
-    reader.closed.catch(function(e) {
+    reader.closed.@catch(function(e) {
         if (teeState.closedOrErrored)
             return;
         @errorReadableStream(branch1, e);
@@ -124,7 +124,7 @@ function teeReadableStream(stream, shouldClone)
 function teeReadableStreamPullFunction(teeState, reader, shouldClone)
 {
     return function() {
-        reader.read().then(function(result) {
+        reader.read().@then(function(result) {
             if (result.done && !teeState.closedOrErrored) {
                 @closeReadableStream(teeState.branch1);
                 @closeReadableStream(teeState.branch2);
@@ -237,7 +237,7 @@ function requestReadableStreamPull(stream)
     stream.@pulling = true;
 
     var promise = @promiseInvokeOrNoop(stream.@underlyingSource, "pull", [stream.@controller]);
-    promise.then(function() {
+    promise.@then(function() {
         stream.@pulling = false;
         if (stream.@pullAgain) {
             stream.@pullAgain = false;
@@ -280,7 +280,7 @@ function cancelReadableStream(stream, reason)
         return @Promise.@reject(stream.@storedError);
     stream.@queue = @newQueue();
     @finishClosingReadableStream(stream);
-    return @promiseInvokeOrNoop(stream.@underlyingSource, "cancel", [reason]).then(function() { });
+    return @promiseInvokeOrNoop(stream.@underlyingSource, "cancel", [reason]).@then(function() { });
 }
 
 function finishClosingReadableStream(stream)

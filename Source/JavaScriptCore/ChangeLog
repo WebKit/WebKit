@@ -1,3 +1,18 @@
+2015-11-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Shield implementation from mangling then and catch promise methods
+        https://bugs.webkit.org/show_bug.cgi?id=150934
+
+        Reviewed by Youenn Fablet.
+
+        Since the prototype is not deletable and readonly we only have to care about ensuring that it has the right
+        @then and @catch internal methods.
+
+        * runtime/JSPromisePrototype.h:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::addOwnInternalSlots): Added to create the proper @then and @catch internal slots.
+        (JSC::JSPromisePrototype::create): Call addOwnInternalSlots.
+
 2015-11-09  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         JS Built-ins functions should be able to assert

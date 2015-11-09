@@ -45,6 +45,9 @@ public:
 protected:
     void finishCreation(VM&, Structure*);
     JSPromisePrototype(VM&, Structure*);
+
+private:
+    void addOwnInternalSlots(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

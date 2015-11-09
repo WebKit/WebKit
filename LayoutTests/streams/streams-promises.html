@@ -2,7 +2,6 @@
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
 <script>
-
 test(function() {
     const PromiseBackup = Promise;
 
@@ -14,7 +13,7 @@ test(function() {
     } finally {
         Promise = PromiseBackup;
     }
-}, 'Streams implementation is not affected if Promise constructor is replaced');
+}, 'Streams and promises: replace Promise constructor');
 
 test(function() {
     const PromiseResolveBackup = Promise.resolve;
@@ -27,7 +26,7 @@ test(function() {
     } finally {
         Promise.resolve = PromiseResolveBackup;
     }
-}, 'Streams implementation is not affected if Promise.resolve is replaced');
+}, 'Streams and promises: replace Promise.resolve');
 
 test(function() {
     const PromiseRejectBackup = Promise.reject;
@@ -40,5 +39,51 @@ test(function() {
     } finally {
         Promise.reject = PromiseRejectBackup;
     }
-}, 'Streams implementation is not affected if Promise.reject is replaced');
+}, 'Streams and promises: replace Promise.reject');
+
+test(function() {
+    function createMangledPromise() {
+        const promise = Promise.resolve();
+        Object.setPrototypeOf(promise, { constructor: Promise, then: function() { assert_unreached("streams should not use this promise then method"); } });
+        return promise;
+    }
+    new ReadableStream({ start: function() { return createMangledPromise(); } })
+    new WritableStream({ start: function() { return createMangledPromise(); } })
+}, 'Streams and promises: replace prototype of a promise object');
+
+test(function() {
+    const PromiseThenBackup = Promise.prototype.then;
+
+    try {
+        Promise.prototype.then = function() { assert_unreached("streams should not use this Promise.prototype.then method"); };
+
+        new ReadableStream();
+        new WritableStream();
+    } finally {
+        Promise.prototype.then = PromiseThenBackup;
+    }
+}, 'Streams and promises: replace then method in Promise prototype');
+
+test(function() {
+    const PromiseCatchBackup = Promise.prototype.catch;
+
+    try {
+        Promise.prototype.catch = function() { assert_unreached("streams should not use this Promise.prototype.catch method"); };
+
+        const rs = new ReadableStream();
+        rs.tee();
+    } finally {
+        Promise.prototype.catch = PromiseCatchBackup;
+    }
+}, 'Streams and promises: replace catch method in Promise prototype');
+
+test(function() {
+    function createMangledPromise() {
+        const promise = Promise.resolve();
+        promise.then = function() { assert_unreached("streams should not use this promise then method"); };
+        return promise;
+    }
+    new ReadableStream({ start: function() { return createMangledPromise(); } })
+    new WritableStream({ start: function() { return createMangledPromise(); } })
+}, 'Streams and promises: replace then method in promise object');
 </script>

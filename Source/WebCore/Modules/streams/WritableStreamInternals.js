@@ -77,7 +77,7 @@ function errorWritableStream(e)
 function callOrScheduleWritableStreamAdvanceQueue(stream)
 {
     if (!stream.@started)
-        stream.@startedPromise.then(function() { @writableStreamAdvanceQueue(stream); });
+        stream.@startedPromise.@then(function() { @writableStreamAdvanceQueue(stream); });
     else
         @writableStreamAdvanceQueue(stream);
 
@@ -101,7 +101,7 @@ function writableStreamAdvanceQueue(stream)
     }
 
     stream.@writing = true;
-    @promiseInvokeOrNoop(stream.@underlyingSink, "write", [writeRecord.chunk]).then(
+    @promiseInvokeOrNoop(stream.@underlyingSink, "write", [writeRecord.chunk]).@then(
         function() {
             if (stream.@state === @streamErrored)
                 return;
@@ -123,7 +123,7 @@ function closeWritableStream(stream)
 {
     // FIXME
     // assert(stream.@state === @streamClosing);
-    @promiseInvokeOrNoop(stream.@underlyingSink, "close").then(
+    @promiseInvokeOrNoop(stream.@underlyingSink, "close").@then(
         function() {
             if (stream.@state === @streamErrored)
                 return;
