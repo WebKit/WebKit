@@ -1,0 +1,19 @@
+This test checks that fr tracks are properly sized whenever grid have intrinsic sizes.
+
+XXX XXX
+PASS
+XXX XXX
+FAIL:
+Expected 30 for width, but got 70. 
+
+<div class="container">
+  <div class="grid minContent" data-expected-width="30" data-expected-height="10">
+    <div>XXX XXX</div>
+  </div>
+</div>
+XXX XXX
+PASS
+XXX XXX
+PASS
+XXX XXX
+PASS

@@ -67,10 +67,11 @@ private:
     virtual bool isRenderGrid() const override { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
+    Optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, Optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const override;
+
     class GridIterator;
     class GridSizingData;
-    void computeUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&);
-    bool gridElementIsShrinkToFit();
+    void computeUsedBreadthOfGridTracks(GridTrackSizingDirection, GridSizingData&, LayoutUnit& baseSizesWithoutMaximization, LayoutUnit& growthLimitsWithoutMaximization);
     LayoutUnit computeUsedBreadthOfMinLength(const GridLength&, LayoutUnit maxSize) const;
     LayoutUnit computeUsedBreadthOfMaxLength(const GridLength&, LayoutUnit usedBreadth, LayoutUnit maxSize) const;
     void resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection, GridSizingData&);
@@ -87,10 +88,15 @@ private:
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
 
-    void layoutGridItems();
     void prepareChildForPositionedLayout(RenderBox&);
     void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly) override;
     void offsetAndBreadthForPositionedChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& offset, LayoutUnit& breadth);
+
+    void computeIntrinsicLogicalHeight(GridSizingData&);
+    LayoutUnit computeTrackBasedLogicalHeight(const GridSizingData&) const;
+    void computeTrackSizesForDirection(GridTrackSizingDirection, GridSizingData&, LayoutUnit freeSpace);
+
+    void layoutGridItems(GridSizingData&);
     void populateGridPositions(GridSizingData&);
     void clearGrid();
 
@@ -155,7 +161,7 @@ private:
     void updateAutoMarginsInRowAxisIfNeeded(RenderBox&);
 
 #ifndef NDEBUG
-    bool tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection, const Vector<GridTrack>&);
+    bool tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection, GridSizingData&);
 #endif
 
     bool gridWasPopulated() const { return !m_grid.isEmpty() && !m_grid[0].isEmpty(); }
@@ -180,6 +186,9 @@ private:
     Vector<LayoutUnit> m_rowPositions;
     HashMap<const RenderBox*, GridCoordinate> m_gridItemCoordinate;
     OrderIterator m_orderIterator;
+
+    Optional<LayoutUnit> m_minContentHeight;
+    Optional<LayoutUnit> m_maxContentHeight;
 };
 
 } // namespace WebCore
