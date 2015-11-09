@@ -133,6 +133,11 @@ public:
         return GridResolvedPosition(m_integerPosition + 1);
     }
 
+    GridResolvedPosition prev() const
+    {
+        return m_integerPosition ? m_integerPosition - 1 : 0;
+    }
+
     static GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, const GridResolvedPosition&);
     static GridSpan resolveGridPositionsFromStyle(const GridUnresolvedSpan&, const RenderStyle&);
     static GridUnresolvedSpan unresolvedSpanFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
