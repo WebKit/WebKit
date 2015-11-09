@@ -120,7 +120,7 @@ private:
     LayoutUnit currentItemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
 
     typedef struct GridItemsSpanGroupRange GridItemsSpanGroupRange;
-    void resolveContentBasedTrackSizingFunctionsForNonSpanningItems(GridTrackSizingDirection, const GridCoordinate&, RenderBox& gridItem, GridTrack&, Vector<GridTrack>& columnTracks);
+    void resolveContentBasedTrackSizingFunctionsForNonSpanningItems(GridTrackSizingDirection, const GridSpan&, RenderBox& gridItem, GridTrack&, Vector<GridTrack>& columnTracks);
     template <TrackSizeComputationPhase> void resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizingDirection, GridSizingData&, const GridItemsSpanGroupRange&);
     template <TrackSizeComputationPhase> void distributeSpaceToTracks(Vector<GridTrack*>&, const Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& availableLogicalSpace);
 
@@ -140,7 +140,7 @@ private:
     LayoutUnit rowAxisOffsetForChild(const RenderBox&) const;
     ContentAlignmentData computeContentPositionAndDistributionOffset(GridTrackSizingDirection, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const;
     LayoutPoint findChildLogicalPosition(const RenderBox&) const;
-    GridCoordinate cachedGridCoordinate(const RenderBox&) const;
+    GridSpan cachedGridSpan(const RenderBox&, GridTrackSizingDirection) const;
 
 
     LayoutUnit gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection, const Vector<GridTrack>&) const;
@@ -166,7 +166,7 @@ private:
 
     bool gridWasPopulated() const { return !m_grid.isEmpty() && !m_grid[0].isEmpty(); }
 
-    bool spanningItemCrossesFlexibleSizedTracks(const GridCoordinate&, GridTrackSizingDirection) const;
+    bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&, GridTrackSizingDirection) const;
 
     unsigned gridColumnCount() const
     {
