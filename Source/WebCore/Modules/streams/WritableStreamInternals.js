@@ -41,8 +41,7 @@ function syncWritableStreamStateWithQueue(stream)
     if (stream.@state === @streamClosing)
         return;
 
-    // FIXME
-    // assert(stream.@state === @streamWritable || stream.@state === @streamWaiting);
+    @assert(stream.@state === @streamWritable || stream.@state === @streamWaiting);
 
     const shouldApplyBackpressure = stream.@queue.size > stream.@strategy.highWaterMark;
     if (shouldApplyBackpressure && stream.@state === @streamWritable) {
@@ -91,11 +90,9 @@ function writableStreamAdvanceQueue(stream)
 
     const writeRecord = @peekQueueValue(stream.@queue);
     if (writeRecord === "close") {
-        // FIXME
-        // assert(stream.@state === @streamClosing);
+        @assert(stream.@state === @streamClosing);
         @dequeueValue(stream.@queue);
-        // FIXME
-        // assert(stream.@queue.content.length === 0);
+        @assert(stream.@queue.content.length === 0);
         @closeWritableStream(stream);
         return undefined;
     }
@@ -121,14 +118,12 @@ function writableStreamAdvanceQueue(stream)
 
 function closeWritableStream(stream)
 {
-    // FIXME
-    // assert(stream.@state === @streamClosing);
+    @assert(stream.@state === @streamClosing);
     @promiseInvokeOrNoop(stream.@underlyingSink, "close").@then(
         function() {
             if (stream.@state === @streamErrored)
                 return;
-            // FIXME
-            // assert(stream.@state === @streamClosing);
+            @assert(stream.@state === @streamClosing);
             stream.@closedPromiseCapability.@resolve.@call(undefined, undefined);
             stream.@state = @streamClosed;
         },

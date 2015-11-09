@@ -121,8 +121,7 @@ function write(chunk)
     if (this.@state === @streamErrored)
         return @Promise.@reject(this.@storedError);
 
-    // FIXME
-    // assert(this.@state === @streamWritable || this.@state === @streamWaiting);
+    @assert(this.@state === @streamWritable || this.@state === @streamWaiting);
 
     let chunkSize = 1;
     if (this.@strategy.size !== undefined) {
@@ -188,8 +187,5 @@ function state()
         return "writable";
     }
 
-    // FIXME
-    // assert_not_reached();
-
-    return undefined;
+    @assert(false);
 }

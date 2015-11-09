@@ -38,8 +38,8 @@ function cancel(reason)
     if (this.@state === @streamErrored)
         return @Promise.@reject(this.@storedError);
 
-    // FIXME: ASSERT(@isReadableStream(this.@ownerReadableStream));
-    // FIXME: ASSERT(this.@ownerReadableStream.@state === @streamReadable);
+    @assert(@isReadableStream(this.@ownerReadableStream));
+    @assert(this.@ownerReadableStream.@state === @streamReadable);
     return @cancelReadableStream(this.@ownerReadableStream, reason);
 }
 

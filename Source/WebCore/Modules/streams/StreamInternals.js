@@ -117,8 +117,7 @@ function enqueueValueWithSize(queue, value, size)
 
 function peekQueueValue(queue)
 {
-    // FIXME
-    // assert(queue.content.length > 0);
+    @assert(queue.content.length > 0);
 
     return queue.content[0].value;
 }

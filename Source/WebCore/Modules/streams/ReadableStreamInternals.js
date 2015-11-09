@@ -76,8 +76,8 @@ function teeReadableStream(stream, shouldClone)
 {
     "use strict";
 
-    // TODO: Assert: IsReadableStream(stream) is true.
-    // TODO: Assert: Type(shouldClone) is Boolean.
+    @assert(@isReadableStream(stream));
+    @assert(typeof(shouldClone) === "boolean");
 
     let reader = stream.getReader();
 
@@ -133,11 +133,11 @@ function teeReadableStreamPullFunction(teeState, reader, shouldClone)
             if (teeState.closedOrErrored)
                 return;
             if (!teeState.canceled1) {
-                // TODO: Implement cloning if shouldClone is true
+                // FIXME: Implement cloning if shouldClone is true
                 @enqueueInReadableStream(teeState.branch1, result.value);
             }
             if (!teeState.canceled2) {
-                // TODO: Implement cloning if shouldClone is true
+                // FIXME: Implement cloning if shouldClone is true
                 @enqueueInReadableStream(teeState.branch2, result.value);
             }
         });
@@ -195,7 +195,7 @@ function errorReadableStream(stream, error)
 {
     "use strict";
 
-    // FIXME: ASSERT(stream.@state === @streamReadable);
+    @assert(stream.@state === @streamReadable);
     stream.@queue = @newQueue();
     stream.@storedError = error;
     stream.@state = @streamErrored;
@@ -244,7 +244,8 @@ function requestReadableStreamPull(stream)
             @requestReadableStreamPull(stream);
         }
     }, function(error) {
-        @errorReadableStream(stream, error);
+        if (stream.@state === @streamReadable)
+            @errorReadableStream(stream, error);
     });
 }
 
@@ -287,7 +288,7 @@ function finishClosingReadableStream(stream)
 {
     "use strict";
 
-    // FIXME: ASSERT(stream.@state ===  @streamReadable);
+    @assert(stream.@state ===  @streamReadable);
     stream.@state = @streamClosed;
     var reader = stream.@reader;
     if (reader)
@@ -298,8 +299,8 @@ function closeReadableStream(stream)
 {
     "use strict";
 
-    // FIXME: ASSERT(!stream.@closeRequested);
-    // FIXME: ASSERT(stream.@state !== @streamErrored);
+    @assert(!stream.@closeRequested);
+    @assert(stream.@state !== @streamErrored);
     if (stream.@state === @streamClosed)
         return; 
     stream.@closeRequested = true;
@@ -324,8 +325,8 @@ function enqueueInReadableStream(stream, chunk)
 {
     "use strict";
 
-    // FIXME: ASSERT(!stream.@closeRequested);
-    // FIXME: ASSERT(stream.@state !== @streamErrored);
+    @assert(!stream.@closeRequested);
+    @assert(stream.@state !== @streamErrored);
     if (stream.@state === @streamClosed)
         return undefined;
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
@@ -357,8 +358,8 @@ function readFromReadableStreamReader(reader)
         return @Promise.@resolve({value: undefined, done: true});
     if (reader.@state === @streamErrored)
         return @Promise.@reject(reader.@storedError);
-    // FIXME: ASSERT(!!reader.@ownerReadableStream);
-    // FIXME: ASSERT(reader.@ownerReadableStream.@state === @streamReadable);
+    @assert(!!reader.@ownerReadableStream);
+    @assert(reader.@ownerReadableStream.@state === @streamReadable);
     var stream = reader.@ownerReadableStream;
     if (stream.@queue.content.length) {
         var chunk = @dequeueValue(stream.@queue);
