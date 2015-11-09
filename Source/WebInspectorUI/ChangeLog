@@ -1,3 +1,13 @@
+2015-11-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [Regression] [Mavericks] Top border of selected tab matches the background when Web Inspector is undocked
+        https://bugs.webkit.org/show_bug.cgi?id=150981
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.css:
+        (body.mavericks .tab-bar > .item:not(.disabled).selected): Added.
+
 2015-11-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Convert DatabaseContentView to use View base class
