@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input id="timeinput" type="time" aria-label="(Between: 07:00 AM-09:00 AM)" min="07:00" max="09:00" step="300" placeholder="00:00 AM">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that input type: time is accessible on iOS.");
+
+    if (window.accessibilityController) {
+
+        var timeinput = accessibilityController.accessibleElementById("timeinput");
+        shouldBe("timeinput.description", "'AXLabel: (Between: 07:00 AM-09:00 AM)'");
+        shouldBeFalse("timeinput.isIgnored");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -2553,9 +2553,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             return RadioButtonRole;
         if (input.isTextButton())
             return buttonRoleType();
-        // On iOS, the date field is a popup button. On other platforms this is a text field.
+        // On iOS, the date field and time field are popup buttons. On other platforms they are text fields.
 #if PLATFORM(IOS)
-        if (input.isDateField())
+        if (input.isDateField() || input.isTimeField())
             return PopUpButtonRole;
 #endif
         
