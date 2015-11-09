@@ -33,11 +33,12 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/text/CString.h>
 
 extern "C"
 const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequiredMethod, BOOL isInstanceMethod);
 
-@interface NSMethodSignature (WKDetails)
+@interface NSMethodSignature ()
 - (Class)_classForObjectAtArgumentIndex:(NSInteger)idx;
 @end
 
@@ -176,9 +177,54 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
     return _identifier.get();
 }
 
-- (NSString *)description
+- (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\">", NSStringFromClass(self.class), self, _identifier.get(), NSStringFromProtocol(_protocol)];
+    auto result = adoptNS([[NSMutableString alloc] initWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\"\n", NSStringFromClass(self.class), self, _identifier.get(), NSStringFromProtocol(_protocol)]);
+
+    auto descriptionForClasses = [](const Vector<HashSet<Class>>& allowedClasses) {
+        auto result = adoptNS([[NSMutableString alloc] initWithString:@"["]);
+        bool needsComma = false;
+
+        auto descriptionForArgument = [](const HashSet<Class>& allowedArgumentClasses) {
+            auto result = adoptNS([[NSMutableString alloc] initWithString:@"{"]);
+
+            Vector<Class> orderedArgumentClasses;
+            copyToVector(allowedArgumentClasses, orderedArgumentClasses);
+
+            std::sort(orderedArgumentClasses.begin(), orderedArgumentClasses.end(), [](Class a, Class b) {
+                return CString(class_getName(a)) < CString(class_getName(b));
+            });
+
+            bool needsComma = false;
+            for (auto& argumentClass : orderedArgumentClasses) {
+                if (needsComma)
+                    [result appendString:@", "];
+
+                [result appendFormat:@"%s", class_getName(argumentClass)];
+                needsComma = true;
+            }
+
+            [result appendString:@"}"];
+            return result.autorelease();
+        };
+
+        for (auto& argumentClasses : allowedClasses) {
+            if (needsComma)
+                [result appendString:@", "];
+
+            [result appendString:descriptionForArgument(argumentClasses)];
+            needsComma = true;
+        }
+
+        [result appendString:@"]"];
+        return result.autorelease();
+    };
+
+    for (auto& selectorAndMethod : _methods)
+        [result appendFormat:@" selector = %s\n  argument classes = %@\n", sel_getName(selectorAndMethod.key), descriptionForClasses(selectorAndMethod.value.allowedArgumentClasses)];
+
+    [result appendString:@">\n"];
+    return result.autorelease();
 }
 
 static HashSet<Class>& classesForSelectorArgument(_WKRemoteObjectInterface *interface, SEL selector, NSUInteger argumentIndex)
