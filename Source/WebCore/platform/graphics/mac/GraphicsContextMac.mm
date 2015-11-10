@@ -292,10 +292,9 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     CGContextRestoreGState(context);
 }
 
-#if !PLATFORM(IOS)
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
-    static CGColorSpaceRef linearSRGBSpace = 0;
+    static CGColorSpaceRef linearSRGBSpace = nullptr;
 
     if (linearSRGBSpace)
         return linearSRGBSpace;
@@ -312,6 +311,5 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 
     return linearSRGBSpace;
 }
-#endif
 
 }

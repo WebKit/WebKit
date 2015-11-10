@@ -51,10 +51,6 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
-#if PLATFORM(IOS)
-#include <wtf/HashMap.h>
-#endif
-
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;
 
@@ -93,7 +89,7 @@ CGColorSpaceRef sRGBColorSpaceRef()
     return sRGBSpace;
 }
 
-#if PLATFORM(WIN) || PLATFORM(IOS)
+#if PLATFORM(WIN)
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
     // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
