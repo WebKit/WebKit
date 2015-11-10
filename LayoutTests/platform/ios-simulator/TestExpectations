@@ -2466,6 +2466,7 @@ tables/mozilla_expected_failures/other/test4.html [ Failure ]
 editing/selection/extend-selection-home-end.html
 editing/spelling/spellcheck-async.html
 editing/style/style-text-node-without-editable-parent.html
+editing/selection/minimal-user-select-crash.html
 
 # Editing tests that fail:
 editing/deleting/delete-emoji.html [ Failure ]
