@@ -1,3 +1,13 @@
+2015-11-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        XMLHttpRequestUpload should support ontimeout event handler
+        https://bugs.webkit.org/show_bug.cgi?id=128531
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt: Rebasing as test is passing.
+        * web-platform-tests/XMLHttpRequest/send-timeout-events-expected.txt: Ditto.
+
 2015-11-07  Chris Dumez  <cdumez@apple.com>
 
         embed element without src and type attributes should represent nothing

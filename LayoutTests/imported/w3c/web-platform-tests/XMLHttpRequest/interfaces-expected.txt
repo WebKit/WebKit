@@ -37,7 +37,7 @@ PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inh
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onabort" with the proper type (2) 
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onerror" with the proper type (3) 
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onload" with the proper type (4) 
-FAIL XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "ontimeout" with the proper type (5) assert_inherits: property "ontimeout" not found in prototype chain
+PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "ontimeout" with the proper type (5) 
 PASS XMLHttpRequestEventTarget interface: (new XMLHttpRequest()).upload must inherit property "onloadend" with the proper type (6) 
 PASS EventTarget interface: (new XMLHttpRequest()).upload must inherit property "addEventListener" with the proper type (0) 
 FAIL EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on (new XMLHttpRequest()).upload with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {

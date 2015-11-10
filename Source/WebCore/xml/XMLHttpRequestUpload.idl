@@ -37,6 +37,7 @@
     attribute EventHandler onloadend;
     attribute EventHandler onloadstart;
     attribute EventHandler onprogress;
+    attribute EventHandler ontimeout;
 
     // EventTarget interface
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
