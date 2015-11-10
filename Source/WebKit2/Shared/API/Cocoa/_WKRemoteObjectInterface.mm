@@ -98,7 +98,7 @@ static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL sel
 
         if (*argumentType != '@') {
             // This is a non-object type; we won't allow any classes to be decoded for it.
-            allowedClasses.uncheckedAppend({ });
+            allowedClasses.append({ });
             continue;
         }
 
