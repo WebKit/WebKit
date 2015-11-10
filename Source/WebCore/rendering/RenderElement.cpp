@@ -925,7 +925,7 @@ void RenderElement::handleDynamicFloatPositionChange()
 void RenderElement::removeAnonymousWrappersForInlinesIfNecessary()
 {
     RenderBlock& parentBlock = downcast<RenderBlock>(*parent());
-    if (!parentBlock.canCollapseAnonymousBlockChild())
+    if (!parentBlock.canDropAnonymousBlockChild())
         return;
 
     // We have changed to floated or out-of-flow positioning so maybe all our parent's
@@ -944,7 +944,7 @@ void RenderElement::removeAnonymousWrappersForInlinesIfNecessary()
     for (current = parent()->firstChild(); current; current = next) {
         next = current->nextSibling();
         if (current->isAnonymousBlock())
-            parentBlock.collapseAnonymousBoxChild(parentBlock, downcast<RenderBlock>(current));
+            parentBlock.dropAnonymousBoxChild(parentBlock, downcast<RenderBlock>(*current));
     }
 }
 

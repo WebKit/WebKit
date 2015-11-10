@@ -45,7 +45,7 @@ public:
     virtual const char* renderName() const override;
 
     virtual bool avoidsFloats() const override final { return true; }
-    virtual bool canCollapseAnonymousBlockChild() const override final { return false; }
+    virtual bool canDropAnonymousBlockChild() const override final { return false; }
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override final;
 
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;

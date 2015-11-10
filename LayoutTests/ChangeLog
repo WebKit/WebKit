@@ -1,3 +1,15 @@
+2015-10-26  Zalan Bujtas  <zalan@apple.com>
+
+        Floating box is misplaced after content change.
+        https://bugs.webkit.org/show_bug.cgi?id=150271
+
+        Reviewed by David Hyatt.
+
+        Collapse anonymous block when as the result of a sibling removal only floating siblings are left.
+
+        * fast/block/collapse-anon-block-with-float-siblings-only-expected.html: Added.
+        * fast/block/collapse-anon-block-with-float-siblings-only.html: Added.
+
 2015-10-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test editing/execCommand/crash-replacing-list-by-list.html
