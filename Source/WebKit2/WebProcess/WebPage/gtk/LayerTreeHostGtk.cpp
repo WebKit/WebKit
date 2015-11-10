@@ -171,7 +171,7 @@ void LayerTreeHostGtk::initialize()
     // The non-composited contents are a child of the root layer.
     m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
     m_nonCompositedContentLayer->setDrawsContent(true);
-    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground());
     m_nonCompositedContentLayer->setSize(m_webPage->size());
     if (m_webPage->corePage()->settings().acceleratedDrawingEnabled())
         m_nonCompositedContentLayer->setAcceleratesDrawing(true);
@@ -399,7 +399,7 @@ void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 
 void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
 {
-    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground());
 }
 
 void LayerTreeHostGtk::cancelPendingLayerFlush()

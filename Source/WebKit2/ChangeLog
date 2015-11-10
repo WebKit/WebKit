@@ -1,3 +1,11 @@
+2015-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r192184.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+        (WebKit::LayerTreeHostGtk::pageBackgroundTransparencyChanged):
+
 2015-11-09  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Add a mock AppleTV device for testing
