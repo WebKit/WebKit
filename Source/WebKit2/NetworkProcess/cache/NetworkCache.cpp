@@ -29,7 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "Logging.h"
-#include "NetworkCacheSpeculativeLoader.h"
+#include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkCacheStatistics.h"
 #include "NetworkCacheStorage.h"
 #include <WebCore/CacheValidation.h>
@@ -78,7 +78,7 @@ bool Cache::initialize(const String& cachePath, const Parameters& parameters)
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (parameters.enableNetworkCacheSpeculativeRevalidation)
-        m_speculativeLoader = std::make_unique<SpeculativeLoader>(*m_storage);
+        m_speculativeLoadManager = std::make_unique<SpeculativeLoadManager>(*m_storage);
 #endif
 
     if (parameters.enableEfficacyLogging)
@@ -356,8 +356,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
     Key storageKey = makeCacheKey(originalRequest);
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (m_speculativeLoader)
-        m_speculativeLoader->registerLoad(webPageID, webFrameID, originalRequest, storageKey);
+    if (m_speculativeLoadManager)
+        m_speculativeLoadManager->registerLoad(webPageID, webFrameID, originalRequest, storageKey);
 #else
     UNUSED_PARAM(webFrameID);
 #endif

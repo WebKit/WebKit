@@ -1180,8 +1180,8 @@
 		83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */; };
 		8310428B1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 831042891BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h */; };
 		8310428C1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8310428A1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp */; };
-		832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.h */; };
-		832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.cpp */; };
+		832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */; };
+		832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */; };
 		834B250F1A831A8D00CFB150 /* NetworkCacheFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */; };
 		834B25121A842C8700CFB150 /* NetworkCacheStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */; };
 		8360349F1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */; };
@@ -3420,8 +3420,8 @@
 		83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessThrottlerClient.h; sourceTree = "<group>"; };
 		831042891BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSubresourcesEntry.h; sourceTree = "<group>"; };
 		8310428A1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSubresourcesEntry.cpp; sourceTree = "<group>"; };
-		832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSpeculativeLoader.h; sourceTree = "<group>"; };
-		832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSpeculativeLoader.cpp; sourceTree = "<group>"; };
+		832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheSpeculativeLoadManager.h; sourceTree = "<group>"; };
+		832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheSpeculativeLoadManager.cpp; sourceTree = "<group>"; };
 		834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheFileSystem.h; sourceTree = "<group>"; };
 		834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheStatistics.h; sourceTree = "<group>"; };
 		8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
@@ -7587,8 +7587,8 @@
 				E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */,
 				E4436EC01A0CFDB200EAD204 /* NetworkCacheKey.cpp */,
 				E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */,
-				832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.cpp */,
-				832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.h */,
+				832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */,
+				832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */,
 				83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */,
 				834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */,
 				E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */,
@@ -7732,7 +7732,7 @@
 				75A8D2E1187DEC1A00C39C9E /* APISession.h in Headers */,
 				1AFDE6621954E9B100C48FFA /* APISessionState.h in Headers */,
 				1A4D664818A2D91A00D82E21 /* APIUIClient.h in Headers */,
-				832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.h in Headers */,
+				832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */,
 				BCDB86C11200FB97007254BE /* APIURL.h in Headers */,
 				BCE2315D122C30CA00D5C35A /* APIURLRequest.h in Headers */,
 				BC90A1D2122DD55E00CC8C50 /* APIURLResponse.h in Headers */,
@@ -9546,7 +9546,7 @@
 				7C89D2971A6753B2003A5FDE /* APIPageConfiguration.cpp in Sources */,
 				1A3A73CF1A48C7F1007231B3 /* APIPageGroupHandle.cpp in Sources */,
 				1AC1336E18565D2B00F3EC05 /* APIPageHandle.cpp in Sources */,
-				832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoader.cpp in Sources */,
+				832AE2531BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp in Sources */,
 				7CE4D21F1A4914CA00C7F152 /* APIProcessPoolConfiguration.cpp in Sources */,
 				FED3C1DC1B447EAC00E0EB7F /* APISerializedScriptValueCocoa.mm in Sources */,
 				A182D5B41BE6BD250087A7CC /* AccessibilityIOS.mm in Sources */,

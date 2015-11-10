@@ -1,3 +1,30 @@
+2015-11-10  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Rename SpeculativeLoader to SpeculativeLoadManager
+        https://bugs.webkit.org/show_bug.cgi?id=151110
+
+        Reviewed by Alex Christensen.
+
+        Rename SpeculativeLoader to SpeculativeLoadManager for clarity, as it
+        manages all speculative loads.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::initialize):
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp: Renamed from Source/WebKit2/NetworkProcess/cache/NetworkCacheSpeculativeLoader.cpp.
+        (WebKit::NetworkCache::subresourcesType):
+        (WebKit::NetworkCache::makeSubresourcesKey):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::PendingFrameLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::registerSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::encodeAsSubresourcesRecord):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::markAsCompleted):
+        (WebKit::NetworkCache::SpeculativeLoadManager::SpeculativeLoadManager):
+        (WebKit::NetworkCache::SpeculativeLoadManager::~SpeculativeLoadManager):
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h: Renamed from Source/WebKit2/NetworkProcess/cache/NetworkCacheSpeculativeLoader.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-11-10  Tim Horton  <timothy_horton@apple.com>
 
         Add WKWebViewConfiguration SPI for a variety of different ex-preferences

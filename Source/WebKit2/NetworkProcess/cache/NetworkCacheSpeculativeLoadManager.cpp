@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-#include "NetworkCacheSpeculativeLoader.h"
+#include "NetworkCacheSpeculativeLoadManager.h"
 
 #include "Logging.h"
 #include "NetworkCacheSubresourcesEntry.h"
@@ -52,7 +52,7 @@ static inline Key makeSubresourcesKey(const Key& resourceKey)
     return Key(resourceKey.partition(), subresourcesType(), resourceKey.range(), resourceKey.identifier());
 }
 
-class SpeculativeLoader::PendingFrameLoad {
+class SpeculativeLoadManager::PendingFrameLoad {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PendingFrameLoad(const Key& mainResourceKey, std::function<void()> completionHandler)
@@ -100,16 +100,16 @@ private:
     HysteresisActivity m_loadHysteresisActivity;
 };
 
-SpeculativeLoader::SpeculativeLoader(Storage& storage)
+SpeculativeLoadManager::SpeculativeLoadManager(Storage& storage)
     : m_storage(storage)
 {
 }
 
-SpeculativeLoader::~SpeculativeLoader()
+SpeculativeLoadManager::~SpeculativeLoadManager()
 {
 }
 
-void SpeculativeLoader::registerLoad(uint64_t webPageID, uint64_t webFrameID, const ResourceRequest& request, const Key& resourceKey)
+void SpeculativeLoadManager::registerLoad(uint64_t webPageID, uint64_t webFrameID, const ResourceRequest& request, const Key& resourceKey)
 {
     ASSERT(RunLoop::isMain());
 

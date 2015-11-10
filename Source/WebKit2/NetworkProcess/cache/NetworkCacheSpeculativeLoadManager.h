@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheSpeculativeLoader_h
-#define NetworkCacheSpeculativeLoader_h
+#ifndef NetworkCacheSpeculativeLoadManager_h
+#define NetworkCacheSpeculativeLoadManager_h
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
@@ -36,10 +36,10 @@ namespace WebKit {
 
 namespace NetworkCache {
 
-class SpeculativeLoader {
+class SpeculativeLoadManager {
 public:
-    explicit SpeculativeLoader(Storage&);
-    ~SpeculativeLoader();
+    explicit SpeculativeLoadManager(Storage&);
+    ~SpeculativeLoadManager();
 
     void registerLoad(uint64_t webPageID, uint64_t webFrameID, const WebCore::ResourceRequest&, const Key& resourceKey);
 
@@ -57,4 +57,4 @@ private:
 
 #endif // ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
-#endif // NetworkCacheSpeculativeLoader_h
+#endif // NetworkCacheSpeculativeLoadManager_h
