@@ -1,3 +1,14 @@
+2015-11-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test editing/execCommand/delete-hidden-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=149289
+        <rdar://problem/22746352>
+
+        Reviewed by Enrica Casucci.
+
+        * editing/execCommand/delete-hidden-crash-expected.txt: Added.
+        * editing/execCommand/delete-hidden-crash.html: Added.
+
 2015-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Ruby base ending in tatechuyoko forces a line break before the tatechuyoko
