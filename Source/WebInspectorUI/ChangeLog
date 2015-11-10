@@ -1,5 +1,21 @@
 2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Support Gesture Events to zoom in / out of the Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=151071
+
+        Reviewed by Timothy Hatcher.
+
+        Adjust the Timeline's secondsPerPixel value by the gesture event's scale factor.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        (WebInspector.TimelineOverview._handleGestureStart):
+        (WebInspector.TimelineOverview.prototype._handleGestureChange):
+        (WebInspector.TimelineOverview.prototype._handleGestureEnd):
+
+2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught exception creating TimelineRecord alternate subtitles
         https://bugs.webkit.org/show_bug.cgi?id=151046
 
