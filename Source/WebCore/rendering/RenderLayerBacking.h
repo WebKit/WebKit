@@ -243,7 +243,7 @@ public:
     LayoutSize devicePixelFractionFromRenderer() const { return m_devicePixelFractionFromRenderer; }
 
 private:
-    FloatRect backgroundBoxForPainting() const;
+    FloatRect backgroundBoxForSimpleContainerPainting() const;
 
     void createPrimaryGraphicsLayer();
     void destroyGraphicsLayers();
@@ -300,7 +300,7 @@ private:
     
     bool isMainFrameRenderViewLayer() const;
     
-    bool paintsBoxDecorations() const;
+    bool paintsNonDirectCompositedBoxDecoration() const;
     bool paintsChildren() const;
 
     // Returns true if this compositing layer has no visible content.

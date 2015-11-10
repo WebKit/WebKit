@@ -1,3 +1,16 @@
+2015-10-28  Zalan Bujtas  <zalan@apple.com>
+
+        Should never be reached failure in WebCore::backgroundRectForBox
+        https://bugs.webkit.org/show_bug.cgi?id=150232
+
+        Reviewed by Simon Fraser.
+
+        We should never end up with simple container for composited layer when background-clip: text is present.
+        (not even when the box has no decoration to paint)
+
+        * fast/backgrounds/background-clip-text-with-simple-container-expected.txt: Added.
+        * fast/backgrounds/background-clip-text-with-simple-container.html: Added.
+
 2015-10-27  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [Cairo] Incorrect dashed and dotted border painting after r177686.
