@@ -20,12 +20,12 @@
 #ifndef WebKitContextMenuActionsPrivate_h
 #define WebKitContextMenuActionsPrivate_h
 
+#include "WebContextMenuItemGtk.h"
 #include "WebKitContextMenuActions.h"
-#include <WebCore/ContextMenuItem.h>
 
 bool webkitContextMenuActionIsCheckable(WebKitContextMenuAction);
 WebCore::ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction);
-WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(WebCore::ContextMenuItem*);
+WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKit::WebContextMenuItemGtk&);
 String webkitContextMenuActionGetLabel(WebKitContextMenuAction);
 
 #endif // WebKitPrintOperationPrivate_h

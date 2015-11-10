@@ -2027,52 +2027,6 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChoose
     g_signal_emit(webView, signals[RUN_FILE_CHOOSER], 0, request, &returnValue);
 }
 
-static bool webkitWebViewShouldShowInputMethodsMenu(WebKitWebView* webView)
-{
-    GtkSettings* settings = gtk_widget_get_settings(GTK_WIDGET(webView));
-    if (!settings)
-        return true;
-
-    gboolean showInputMethodMenu;
-    g_object_get(settings, "gtk-show-input-method-menu", &showInputMethodMenu, NULL);
-    return showInputMethodMenu;
-}
-
-static int getUnicodeMenuItemPosition(WebKitContextMenu* contextMenu)
-{
-    GList* items = webkit_context_menu_get_items(contextMenu);
-    GList* iter;
-    int i = 0;
-    for (iter = items, i = 0; iter; iter = g_list_next(iter), ++i) {
-        WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(iter->data);
-
-        if (webkit_context_menu_item_is_separator(item))
-            continue;
-        if (webkit_context_menu_item_get_stock_action(item) == WEBKIT_CONTEXT_MENU_ACTION_UNICODE)
-            return i;
-    }
-    return -1;
-}
-
-static void webkitWebViewCreateAndAppendInputMethodsMenuItem(WebKitWebView* webView, WebKitContextMenu* contextMenu)
-{
-    if (!webkitWebViewShouldShowInputMethodsMenu(webView))
-        return;
-
-    // Place the im context menu item right before the unicode menu item
-    // if it's present.
-    int unicodeMenuItemPosition = getUnicodeMenuItemPosition(contextMenu);
-    if (unicodeMenuItemPosition == -1)
-        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
-
-    GtkIMContext* imContext = webkitWebViewBaseGetIMContext(WEBKIT_WEB_VIEW_BASE(webView));
-    GtkMenu* imContextMenu = GTK_MENU(gtk_menu_new());
-    gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(imContext), GTK_MENU_SHELL(imContextMenu));
-    WebKitContextMenuItem* menuItem = webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS);
-    webkitContextMenuItemSetSubMenuFromGtkMenu(menuItem, imContextMenu);
-    webkit_context_menu_insert(contextMenu, menuItem, unicodeMenuItemPosition);
-}
-
 static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
 {
     g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
@@ -2085,21 +2039,17 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     ASSERT(contextMenuProxy);
 
     GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
-    if (hitTestResultData.isContentEditable)
-        webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenu.get());
-
-    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
-    GUniquePtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
-
     if (userData)
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
 
+    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
+    GUniquePtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
     gboolean returnValue;
     g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), contextMenuEvent.get(), hitTestResult.get(), &returnValue);
     if (returnValue)
         return;
 
-    Vector<ContextMenuItem> contextMenuItems;
+    Vector<WebContextMenuItemGtk> contextMenuItems;
     webkitContextMenuPopulate(contextMenu.get(), contextMenuItems);
     contextMenuProxy->populate(contextMenuItems);
 

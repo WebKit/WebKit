@@ -93,17 +93,6 @@ public:
         return 0;
     }
 
-    bool shouldShowInputMethodsMenu()
-    {
-        GtkSettings* settings = gtk_widget_get_settings(GTK_WIDGET(m_webView));
-        if (!settings)
-            return true;
-
-        gboolean showInputMethodMenu;
-        g_object_get(settings, "gtk-show-input-method-menu", &showInputMethodMenu, NULL);
-        return showInputMethodMenu;
-    }
-
     void checkActionState(GtkAction* action, unsigned state)
     {
         if (state & Visible)
@@ -348,8 +337,6 @@ public:
             iter = checkCurrentItemIsSeparatorAndGetNext(iter);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL, Visible | Enabled);
             iter = checkCurrentItemIsSeparatorAndGetNext(iter);
-            if (shouldShowInputMethodsMenu())
-                iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
             break;
         case Selection:

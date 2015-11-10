@@ -135,9 +135,9 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
     return ContextMenuItemBaseApplicationTag;
 }
 
-WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(ContextMenuItem* menuItem)
+WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKit::WebContextMenuItemGtk& menuItem)
 {
-    switch (menuItem->action()) {
+    switch (menuItem.action()) {
     case ContextMenuItemTagNoAction:
         return WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION;
     case ContextMenuItemTagOpenLink:
@@ -203,10 +203,10 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(ContextMenu
     case ContextMenuItemTagInspectElement:
         return WEBKIT_CONTEXT_MENU_ACTION_INSPECT_ELEMENT;
     case ContextMenuItemTagOpenMediaInNewWindow:
-        return menuItem->title() == contextMenuItemTagOpenVideoInNewWindow() ?
+        return menuItem.title() == contextMenuItemTagOpenVideoInNewWindow() ?
             WEBKIT_CONTEXT_MENU_ACTION_OPEN_VIDEO_IN_NEW_WINDOW : WEBKIT_CONTEXT_MENU_ACTION_OPEN_AUDIO_IN_NEW_WINDOW;
     case ContextMenuItemTagCopyMediaLinkToClipboard:
-        return menuItem->title() == contextMenuItemTagCopyVideoLinkToClipboard() ?
+        return menuItem.title() == contextMenuItemTagCopyVideoLinkToClipboard() ?
             WEBKIT_CONTEXT_MENU_ACTION_COPY_VIDEO_LINK_TO_CLIPBOARD : WEBKIT_CONTEXT_MENU_ACTION_COPY_AUDIO_LINK_TO_CLIPBOARD;
     case ContextMenuItemTagToggleMediaControls:
         return WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS;
@@ -215,12 +215,12 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(ContextMenu
     case ContextMenuItemTagEnterVideoFullscreen:
         return WEBKIT_CONTEXT_MENU_ACTION_ENTER_VIDEO_FULLSCREEN;
     case ContextMenuItemTagMediaPlayPause:
-        return menuItem->title() == contextMenuItemTagMediaPlay() ?
+        return menuItem.title() == contextMenuItemTagMediaPlay() ?
             WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY : WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PAUSE;
     case ContextMenuItemTagMediaMute:
         return WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE;
     case ContextMenuItemTagDownloadMediaToDisk:
-        return menuItem->title() == contextMenuItemTagDownloadVideoToDisk() ?
+        return menuItem.title() == contextMenuItemTagDownloadVideoToDisk() ?
             WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK : WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK;
     case ContextMenuItemBaseApplicationTag:
         return WEBKIT_CONTEXT_MENU_ACTION_CUSTOM;

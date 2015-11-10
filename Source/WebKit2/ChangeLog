@@ -1,3 +1,74 @@
+2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use CROSS_PLATFORM_CONTEXT_MENUS
+        https://bugs.webkit.org/show_bug.cgi?id=150642
+
+        Reviewed by Martin Robinson.
+
+        Use CROSS_PLATFORM_CONTEXT_MENUS. Since we can't just use
+        WebContextMenuItemData, because we need to bind a GtkAction to the
+        menu items, this patch adds WebContextMenuItemGtk that derives
+        from WebContextMenuItemData and adds the GtkAction and its own
+        handling of submenu items. WebKitContextMenu and
+        WebKitContextMenuItem no longer deal with the widgets (GtkMenu and
+        GtkMenuItem), that are now created by WebContextMenuProxy when
+        building the popup menu.
+        This patch also removes the support for input methods submenu,
+        since it has been deprecated (and disabled by default) in GTK+ for
+        long time, it has never actually worked (because the menu items
+        don't have a GtkAction associated) and it makes the code more
+        complicated for no benefit.
+
+        * PlatformGTK.cmake:
+        * Shared/gtk/WebContextMenuItemGtk.cpp: Added.
+        (WebKit::gtkStockIDFromContextMenuAction):
+        (WebKit::WebContextMenuItemGtk::WebContextMenuItemGtk):
+        (WebKit::WebContextMenuItemGtk::~WebContextMenuItemGtk):
+        (WebKit::WebContextMenuItemGtk::createGtkActionIfNeeded):
+        * Shared/gtk/WebContextMenuItemGtk.h: Copied from Source/WebKit2/UIProcess/gtk/WebContextMenuProxyGtk.h.
+        (WebKit::WebContextMenuItemGtk::gtkAction):
+        (WebKit::WebContextMenuItemGtk::submenuItems):
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        (webkitContextMenuPopulate):
+        (webkitContextMenuCreate): Deleted.
+        (webkitContextMenuSetParentItem): Deleted.
+        * UIProcess/API/gtk/WebKitContextMenuActions.cpp:
+        (webkitContextMenuActionGetForContextMenuItem):
+        * UIProcess/API/gtk/WebKitContextMenuActionsPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemSetSubMenu):
+        (webkitContextMenuItemCreate):
+        (webkitContextMenuItemToWebContextMenuItemGtk):
+        (webkitContextMenuItemToWebContextMenuItemData):
+        (webkit_context_menu_item_new):
+        (webkit_context_menu_item_new_from_stock_action):
+        (webkit_context_menu_item_new_from_stock_action_with_label):
+        (webkit_context_menu_item_new_with_submenu):
+        (webkit_context_menu_item_new_separator):
+        (webkit_context_menu_item_get_action):
+        (webkit_context_menu_item_get_stock_action):
+        (webkit_context_menu_item_is_separator): Deleted.
+        * UIProcess/API/gtk/WebKitContextMenuItemPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenuPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPopulateContextMenu):
+        (contextMenuDismissed): Deleted.
+        (webkitWebViewSubmitFormRequest): Deleted.
+        (webkitWebViewHandleAuthenticationChallenge): Deleted.
+        (webkitWebViewInsecureContentDetected): Deleted.
+        (webkitWebViewEmitRunColorChooser): Deleted.
+        (webkitWebViewRequestInstallMissingMediaPlugins): Deleted.
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::contextMenuItemActivatedCallback):
+        (WebKit::WebContextMenuProxyGtk::append):
+        (WebKit::WebContextMenuProxyGtk::populate):
+        (WebKit::WebContextMenuProxyGtk::show):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        (WebKit::WebContextMenuProxyGtk::gtkMenu):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+
 2015-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r192184.

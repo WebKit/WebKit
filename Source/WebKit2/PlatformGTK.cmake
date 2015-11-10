@@ -70,6 +70,7 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/NativeWebWheelEventGtk.cpp
     Shared/gtk/PrintInfoGtk.cpp
     Shared/gtk/ProcessExecutablePathGtk.cpp
+    Shared/gtk/WebContextMenuItemGtk.cpp
     Shared/gtk/WebEventFactory.cpp
 
     Shared/linux/WebMemorySamplerLinux.cpp

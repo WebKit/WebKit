@@ -20,13 +20,12 @@
 #ifndef WebKitContextMenuPrivate_h
 #define WebKitContextMenuPrivate_h
 
-#include "WebContextMenuItemData.h"
+#include "WebContextMenuItemGtk.h"
 #include "WebKitContextMenu.h"
 #include "WebKitPrivate.h"
 
 WebKitContextMenu* webkitContextMenuCreate(const Vector<WebKit::WebContextMenuItemData>&);
-WebKitContextMenu* webkitContextMenuCreate(const Vector<WebCore::ContextMenuItem>&);
-void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebCore::ContextMenuItem>&);
+void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemGtk>&);
 void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemData>&);
 void webkitContextMenuSetParentItem(WebKitContextMenu*, WebKitContextMenuItem*);
 WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu*);

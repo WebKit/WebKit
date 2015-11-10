@@ -1,3 +1,14 @@
+2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use CROSS_PLATFORM_CONTEXT_MENUS
+        https://bugs.webkit.org/show_bug.cgi?id=150642
+
+        Reviewed by Martin Robinson.
+
+        Remove test for input methods submenu.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+
 2015-11-09  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed, add myself to the committers list.

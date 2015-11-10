@@ -20,13 +20,12 @@
 #ifndef WebKitContextMenuItemPrivate_h
 #define WebKitContextMenuItemPrivate_h
 
-#include "WebContextMenuItemData.h"
+#include "WebContextMenuItemGtk.h"
 #include "WebKitContextMenuItem.h"
 #include "WebKitPrivate.h"
 
 WebKitContextMenuItem* webkitContextMenuItemCreate(const WebKit::WebContextMenuItemData&);
-WebKitContextMenuItem* webkitContextMenuItemCreate(const WebCore::ContextMenuItem&);
-GtkMenuItem* webkitContextMenuItemRelease(WebKitContextMenuItem*);
-void webkitContextMenuItemSetSubMenuFromGtkMenu(WebKitContextMenuItem*, GtkMenu*);
+WebKit::WebContextMenuItemGtk webkitContextMenuItemToWebContextMenuItemGtk(WebKitContextMenuItem*);
+WebKit::WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitContextMenuItem*);
 
 #endif // WebKitContextMenuItemPrivate_h

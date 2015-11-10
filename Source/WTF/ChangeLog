@@ -1,3 +1,14 @@
+2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use CROSS_PLATFORM_CONTEXT_MENUS
+        https://bugs.webkit.org/show_bug.cgi?id=150642
+
+        Reviewed by Martin Robinson.
+
+        Enable CROSS_PLATFORM_CONTEXT_MENUS for GTK+ port.
+
+        * wtf/Platform.h:
+
 2015-11-09  Anders Carlsson  <andersca@apple.com>
 
         Introspect reply block types as well

@@ -28,8 +28,8 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "WebContextMenuItemGtk.h"
 #include "WebContextMenuProxy.h"
-#include <WebCore/ContextMenu.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/HashMap.h>
 
@@ -44,18 +44,18 @@ public:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
     ~WebContextMenuProxyGtk();
 
-    void populate(Vector<WebCore::ContextMenuItem>&);
-    GtkMenu* gtkMenu() const { return m_menu.platformDescription(); }
+    void populate(Vector<WebContextMenuItemGtk>&);
+    GtkMenu* gtkMenu() const { return m_menu; }
 
 private:
     virtual void show() override;
-    void append(WebCore::ContextMenuItem&);
+    void append(GtkMenu*, const WebContextMenuItemGtk&);
     void populate(const Vector<RefPtr<WebContextMenuItem>>&);
     static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, WebContextMenuProxyGtk*);
 
     GtkWidget* m_webView;
     WebPageProxy* m_page;
-    WebCore::ContextMenu m_menu;
+    GtkMenu* m_menu;
     WebCore::IntPoint m_popupPosition;
     HashMap<unsigned long, GtkAction*> m_signalHandlers;
 };

@@ -241,8 +241,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/graphics/gtk/ImageBufferGtk.cpp
     platform/graphics/gtk/ImageGtk.cpp
 
-    platform/gtk/ContextMenuGtk.cpp
-    platform/gtk/ContextMenuItemGtk.cpp
     platform/gtk/CursorGtk.cpp
     platform/gtk/DataObjectGtk.cpp
     platform/gtk/DragDataGtk.cpp

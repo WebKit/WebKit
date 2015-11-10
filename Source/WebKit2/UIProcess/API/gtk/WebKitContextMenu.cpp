@@ -68,33 +68,23 @@ static void webkit_context_menu_class_init(WebKitContextMenuClass* listClass)
     gObjectClass->dispose = webkitContextMenuDispose;
 }
 
-void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<ContextMenuItem>& contextMenuItems)
-{
-    for (GList* item = menu->priv->items; item; item = g_list_next(item)) {
-        WebKitContextMenuItem* menuItem = WEBKIT_CONTEXT_MENU_ITEM(item->data);
-        contextMenuItems.append(ContextMenuItem(webkitContextMenuItemRelease(menuItem)));
-    }
-}
-
 void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<WebContextMenuItemData>& contextMenuItems)
 {
     for (GList* item = menu->priv->items; item; item = g_list_next(item)) {
         WebKitContextMenuItem* menuItem = WEBKIT_CONTEXT_MENU_ITEM(item->data);
-        contextMenuItems.append(WebContextMenuItemData(ContextMenuItem(webkitContextMenuItemRelease(menuItem))));
+        contextMenuItems.append(webkitContextMenuItemToWebContextMenuItemData(menuItem));
+    }
+}
+
+void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<WebContextMenuItemGtk>& contextMenuItems)
+{
+    for (GList* item = menu->priv->items; item; item = g_list_next(item)) {
+        WebKitContextMenuItem* menuItem = WEBKIT_CONTEXT_MENU_ITEM(item->data);
+        contextMenuItems.append(webkitContextMenuItemToWebContextMenuItemGtk(menuItem));
     }
 }
 
 WebKitContextMenu* webkitContextMenuCreate(const Vector<WebContextMenuItemData>& items)
-{
-    WebKitContextMenu* menu = webkit_context_menu_new();
-    for (const auto& item : items)
-        webkit_context_menu_prepend(menu, webkitContextMenuItemCreate(item));
-    menu->priv->items = g_list_reverse(menu->priv->items);
-
-    return menu;
-}
-
-WebKitContextMenu* webkitContextMenuCreate(const Vector<ContextMenuItem>& items)
 {
     WebKitContextMenu* menu = webkit_context_menu_new();
     for (const auto& item : items)
