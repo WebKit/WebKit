@@ -1320,7 +1320,6 @@ http/tests/xmlhttprequest/failed-auth.html [ Failure ]
 http/tests/xmlhttprequest/head-redirection.html [ Failure ]
 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
-http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Failure ]
 
 # DeviceMotion tests that time out:
 fast/dom/DeviceMotion/no-page-cache.html

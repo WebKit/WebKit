@@ -555,18 +555,6 @@ transitions/blendmode-transitions.html [ Skip ]
 # Backdrop Filters do not work on Windows
 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ] 
 
-# TODO Not supported in CFNetwork yet. https://bugs.webkit.org/show_bug.cgi?id=100349
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html [ Skip ]
-webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html [ Skip ]
-
 # TODO CSS3_TEXT is disabled on Windows
 fast/css3-text/ [ Skip ]
 
