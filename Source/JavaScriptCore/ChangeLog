@@ -1,5 +1,16 @@
 2015-11-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Remove create_hash_table options and simplify build system
+        https://bugs.webkit.org/show_bug.cgi?id=151081
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt: Merged native and builtin object sources and removed create_hash_table options.
+        * DerivedSources.make: Ditto.
+        * create_hash_table: Removed -b and -i options.
+
+2015-11-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         create_hash_table should know whether a function is JSBuiltin or not.
         https://bugs.webkit.org/show_bug.cgi?id=151016
 

@@ -25,15 +25,6 @@
 use strict;
 use Getopt::Long qw(:config pass_through);
 
-my $includeLookup = 0;
-my $activateBuiltin = 0;
-my $includeBuiltin = 0;
-
-GetOptions('i|lookup' => \$includeLookup,    # Include "Lookup.h".
-           'b|builtin' => \$activateBuiltin,  # Include JSCBuiltins.h and builtins support if needed.
-)
-or die("Unable to process command line options.");
-
 my $file = shift @ARGV or die("Must provide source file as final argument.");
 
 print STDERR "Creating hashtable for $file\n";
@@ -48,6 +39,7 @@ my @links = ();
 
 my $hasSetter = "false";
 
+my $includeBuiltin = 0;
 my $inside = 0;
 my $name;
 my $pefectHashSize;
@@ -94,7 +86,7 @@ while (<IN>) {
         push(@keys, $key);
         push(@attrs, length($att) > 0 ? $att : "0");
 
-        if ($activateBuiltin && $val eq "JSBuiltin") {
+        if ($val eq "JSBuiltin") {
             $includeBuiltin = 1;
         }
 
@@ -266,7 +258,7 @@ sub output() {
 
     print "\n";
     print "#include \"JSCBuiltins.h\"\n" if ($includeBuiltin);
-    print "#include \"Lookup.h\"\n" if ($includeLookup);
+    print "#include \"Lookup.h\"\n";
     print "\n";
     print "namespace JSC {\n";
     print "\n";
@@ -320,7 +312,7 @@ sub output() {
             $intrinsic = "RegExpTestIntrinsic" if ($key eq "test");
         }
 
-        if ($values[$i]{"type"} eq "Function" && $activateBuiltin && $firstValue eq "JSBuiltin")  {
+        if ($values[$i]{"type"} eq "Function" && $firstValue eq "JSBuiltin")  {
             my $tableHead = $name;
             $tableHead =~ s/Table$//;
             print "   { \"$key\", (($attrs[$i]) & ~Function) | Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
