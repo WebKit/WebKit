@@ -53,10 +53,9 @@ function initializeWritableStream(underlyingSink, strategy)
 
     @syncWritableStreamStateWithQueue(this);
 
-    var error = @errorWritableStream.bind(this);
-    var startResult = @invokeOrNoop(underlyingSink, "start", [error]);
-    this.@startedPromise = @Promise.@resolve(startResult);
-    var _this = this;
+    const error = @errorWritableStream.bind(this);
+    this.@startedPromise = @Promise.@resolve(@invokeOrNoop(underlyingSink, "start", [error]));
+    const _this = this;
     @Promise.prototype.@then.@call(this.@startedPromise, function() {
         _this.@started = true;
         _this.@startedPromise = undefined;
@@ -78,7 +77,7 @@ function abort(reason)
     if (this.@state === @streamErrored)
         return @Promise.@reject(this.@storedError);
 
-    @errorWritableStream.@apply(this, [reason]);
+    @errorWritableStream.@call(this, reason);
 
     const sinkAbortPromise = @promiseInvokeOrFallbackOrNoop(this.@underlyingSink, "abort", [reason], "close", []);
 
@@ -99,7 +98,7 @@ function close()
         return @Promise.@reject(this.@storedError);
 
     if (this.@state === @streamWaiting)
-        this.@readyPromiseCapability.@resolve.@call(undefined, undefined);
+        this.@readyPromiseCapability.@resolve.@call();
 
     this.@state = @streamClosing;
     @enqueueValueWithSize(this.@queue, "close", 0);

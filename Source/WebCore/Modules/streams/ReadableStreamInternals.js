@@ -79,9 +79,9 @@ function teeReadableStream(stream, shouldClone)
     @assert(@isReadableStream(stream));
     @assert(typeof(shouldClone) === "boolean");
 
-    let reader = stream.getReader();
+    const reader = stream.getReader();
 
-    let teeState = {
+    const teeState = {
         closedOrErrored: false,
         canceled1: false,
         canceled2: false,
@@ -91,20 +91,16 @@ function teeReadableStream(stream, shouldClone)
 
     teeState.cancelPromiseCapability = @newPromiseCapability(@InternalPromise);
 
-    let pullFunction = @teeReadableStreamPullFunction(teeState, reader, shouldClone);
+    const pullFunction = @teeReadableStreamPullFunction(teeState, reader, shouldClone);
 
-    let underlyingSource1 = {
+    const branch1 = new ReadableStream({
         "pull": pullFunction,
         "cancel": @teeReadableStreamBranch1CancelFunction(teeState, stream)
-    };
-
-    let underlyingSource2 = {
+    });
+    const branch2 = new ReadableStream({
         "pull": pullFunction,
         "cancel": @teeReadableStreamBranch2CancelFunction(teeState, stream)
-    };
-
-    let branch1 = new ReadableStream(underlyingSource1);
-    let branch2 = new ReadableStream(underlyingSource2);
+    });
 
     @Promise.prototype.@catch.@call(reader.closed, function(e) {
         if (teeState.closedOrErrored)
@@ -123,6 +119,8 @@ function teeReadableStream(stream, shouldClone)
 
 function teeReadableStreamPullFunction(teeState, reader, shouldClone)
 {
+    "use strict";
+
     return function() {
         @Promise.prototype.@then.@call(reader.read(), function(result) {
             if (result.done && !teeState.closedOrErrored) {
@@ -146,6 +144,8 @@ function teeReadableStreamPullFunction(teeState, reader, shouldClone)
 
 function teeReadableStreamBranch1CancelFunction(teeState, stream)
 {
+    "use strict";
+
     return function(r) {
         teeState.canceled1 = true;
         teeState.reason1 = r;
@@ -160,6 +160,8 @@ function teeReadableStreamBranch1CancelFunction(teeState, stream)
 
 function teeReadableStreamBranch2CancelFunction(teeState, stream)
 {
+    "use strict";
+
     return function(r) {
         teeState.canceled2 = true;
         teeState.reason2 = r;
@@ -204,10 +206,10 @@ function errorReadableStream(stream, error)
 
     if (!stream.@reader)
         return;
-    var reader = stream.@reader;
+    const reader = stream.@reader;
 
-    var requests = reader.@readRequests;
-    for (var index = 0, length = requests.length; index < length; ++index)
+    const requests = reader.@readRequests;
+    for (let index = 0, length = requests.length; index < length; ++index)
         requests[index].@reject.@call(undefined, error);
     reader.@readRequests = [];
 
@@ -238,7 +240,7 @@ function requestReadableStreamPull(stream)
 
     stream.@pulling = true;
 
-    var promise = @promiseInvokeOrNoop(stream.@underlyingSource, "pull", [stream.@controller]);
+    const promise = @promiseInvokeOrNoop(stream.@underlyingSource, "pull", [stream.@controller]);
     @Promise.prototype.@then.@call(promise, function() {
         stream.@pulling = false;
         if (stream.@pullAgain) {
@@ -292,7 +294,7 @@ function finishClosingReadableStream(stream)
 
     @assert(stream.@state ===  @streamReadable);
     stream.@state = @streamClosed;
-    var reader = stream.@reader;
+    const reader = stream.@reader;
     if (reader)
         @closeReadableStreamReader(reader);
 }
@@ -314,13 +316,13 @@ function closeReadableStreamReader(reader)
 {
     "use strict";
 
-    var requests = reader.@readRequests;
-    for (var index = 0, length = requests.length; index < length; ++index)
+    const requests = reader.@readRequests;
+    for (let index = 0, length = requests.length; index < length; ++index)
         requests[index].@resolve.@call(undefined, {value:undefined, done: true});
     reader.@readRequests = [];
     @releaseReadableStreamReader(reader);
     reader.@state = @streamClosed;
-    reader.@closedPromiseCapability.@resolve.@call(undefined);
+    reader.@closedPromiseCapability.@resolve.@call();
 }
 
 function enqueueInReadableStream(stream, chunk)
@@ -330,18 +332,18 @@ function enqueueInReadableStream(stream, chunk)
     @assert(!stream.@closeRequested);
     @assert(stream.@state !== @streamErrored);
     if (stream.@state === @streamClosed)
-        return undefined;
+        return;
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
         stream.@reader.@readRequests.shift().@resolve.@call(undefined, {value: chunk, done: false});
         @requestReadableStreamPull(stream);
         return;
     }
     try {
-        var size = 1;
+        let size = 1;
         if (stream.@strategy.size) {
             size = Number(stream.@strategy.size(chunk));
             if (Number.isNaN(size) || size === +Infinity || size < 0)
-                throw new RangeError("Chunk size is not valid");
+                throw new @RangeError("Chunk size is not valid");
         }
         @enqueueValueWithSize(stream.@queue, chunk, size);
     }
@@ -362,16 +364,16 @@ function readFromReadableStreamReader(reader)
         return @Promise.@reject(reader.@storedError);
     @assert(!!reader.@ownerReadableStream);
     @assert(reader.@ownerReadableStream.@state === @streamReadable);
-    var stream = reader.@ownerReadableStream;
+    const stream = reader.@ownerReadableStream;
     if (stream.@queue.content.length) {
-        var chunk = @dequeueValue(stream.@queue);
+        const chunk = @dequeueValue(stream.@queue);
         if (!stream.@closeRequested)
             @requestReadableStreamPull(stream);
         else if (!stream.@queue.content.length)
             @finishClosingReadableStream(stream);
         return @Promise.@resolve({value: chunk, done: false});
     }
-    var readPromiseCapability = @newPromiseCapability(@Promise);
+    const readPromiseCapability = @newPromiseCapability(@Promise);
     reader.@readRequests.push(readPromiseCapability);
     @requestReadableStreamPull(stream);
     return readPromiseCapability.@promise;

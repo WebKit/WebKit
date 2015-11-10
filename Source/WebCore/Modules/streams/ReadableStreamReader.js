@@ -64,7 +64,7 @@ function releaseLock()
          return;
 
     if (this.@readRequests.length)
-        throw new @TypeError();
+        throw new @TypeError("There are still pending read requests, cannot release the lock");
 
     @closeReadableStreamReader(this);
 }

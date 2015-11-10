@@ -31,7 +31,7 @@ function invokeOrNoop(object, key, args)
 {
     "use strict";
 
-    var method = object[key];
+    const method = object[key];
     if (typeof method === "undefined")
         return;
     return method.@apply(object, args);
@@ -42,11 +42,10 @@ function promiseInvokeOrNoop(object, key, args)
     "use strict";
 
     try {
-        var method = object[key];
+        const method = object[key];
         if (typeof method === "undefined")
             return @Promise.@resolve();
-        var result = method.@apply(object, args);
-        return @Promise.@resolve(result);
+        return @Promise.@resolve(method.@apply(object, args));
     }
     catch(error) {
         return @Promise.@reject(error);
@@ -62,8 +61,7 @@ function promiseInvokeOrFallbackOrNoop(object, key1, args1, key2, args2)
         const method = object[key1];
         if (typeof method === "undefined")
             return @promiseInvokeOrNoop(object, key2, args2);
-        const result = method.@apply(object, args1);
-        return @Promise.@resolve(result);
+        return @Promise.@resolve(method.@apply(object, args1));
     }
     catch(error) {
         return @Promise.@reject(error);
@@ -77,7 +75,7 @@ function validateAndNormalizeQueuingStrategy(size, highWaterMark)
     if (size !== undefined && typeof size !== "function")
         throw new @TypeError("size parameter must be a function");
 
-    var normalizedStrategy = { };
+    const normalizedStrategy = { };
 
     normalizedStrategy.size = size;
     normalizedStrategy.highWaterMark = Number(highWaterMark);
@@ -92,6 +90,8 @@ function validateAndNormalizeQueuingStrategy(size, highWaterMark)
 
 function newQueue()
 {
+    "use strict";
+
     return { content: [], size: 0 };
 }
 
@@ -99,24 +99,26 @@ function dequeueValue(queue)
 {
     "use strict";
 
-    var record = queue.content.shift();
+    const record = queue.content.shift();
     queue.size -= record.size;
     return record.value;
 }
 
 function enqueueValueWithSize(queue, value, size)
 {
+    "use strict";
+
     size = Number(size);
     if (Number.isNaN(size) || !Number.isFinite(size) || size < 0)
         throw new @RangeError("size has an incorrect value");
     queue.content.push({ value: value, size: size });
     queue.size += size;
-
-    return undefined;
 }
 
 function peekQueueValue(queue)
 {
+    "use strict";
+
     @assert(queue.content.length > 0);
 
     return queue.content[0].value;
