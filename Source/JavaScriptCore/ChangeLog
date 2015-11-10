@@ -1,3 +1,22 @@
+2015-11-09  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Built-in generator should check that there are no duplicate in JS built-in internal functions
+        https://bugs.webkit.org/show_bug.cgi?id=151018
+
+        Reviewed by Brian Burg.
+
+        Added @internal to corresponding JS built-in files.
+        Added check in built-in generator so that clashing names result in an error.
+
+        * Scripts/builtins/builtins_generate_combined_header.py:
+        (generate_section_for_code_name_macro):
+        * Scripts/builtins/builtins_model.py:
+        (BuiltinsCollection.all_internal_functions):
+        * builtins/GlobalObject.js:
+        * builtins/Operations.Promise.js:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-error: Added.
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result: Added.
+
 2015-11-09  Saam barati  <sbarati@apple.com>
 
         DFG::PutStackSinkingPhase should not treat the stack variables written by LoadVarargs/ForwardVarargs as being live

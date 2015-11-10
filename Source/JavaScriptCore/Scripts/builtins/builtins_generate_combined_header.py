@@ -149,6 +149,10 @@ extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;""" % function
             'macroPrefix': self.model().framework.setting('macro_prefix'),
         }
 
+        internal_function_names = [function.function_name for function in self.model().all_internal_functions()]
+        if len(internal_function_names) != len(set(internal_function_names)):
+            log.error("There are several internal functions with the same name. Private identifiers may clash.")
+
         lines = []
         lines.append("#define %(macroPrefix)s_FOREACH_BUILTIN_FUNCTION_NAME(macro) \\" % args)
         unique_names = list(set([function.function_name for function in self.model().all_functions()]))

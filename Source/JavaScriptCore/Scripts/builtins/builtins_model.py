@@ -185,6 +185,14 @@ class BuiltinsCollection:
         result.sort()
         return result
 
+    def all_internal_functions(self):
+        result = []
+        for object in [o for o in self.objects if 'internal' in o.annotations]:
+            result.extend(object.functions)
+
+        result.sort()
+        return result
+
     # Private methods.
 
     def _parse_copyright_lines(self, text):
