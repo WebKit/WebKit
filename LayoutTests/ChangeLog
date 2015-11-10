@@ -1,3 +1,23 @@
+2015-11-04  Antoine Quint  <graouts@apple.com>
+
+        SVG: hit testing region for <text> elements is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=150838
+
+        Reviewed by Dean Jackson.
+
+        * svg/hittest/text-dominant-baseline-hanging-expected.svg: Added.
+        * svg/hittest/text-dominant-baseline-hanging.svg: Added.
+        * svg/hittest/text-multiple-dx-values-expected.svg: Added.
+        * svg/hittest/text-multiple-dx-values.svg: Added.
+        * svg/hittest/text-with-multiple-tspans-expected.svg: Added.
+        * svg/hittest/text-with-multiple-tspans.svg: Added.
+        * svg/hittest/text-with-text-node-and-content-elements-expected.svg: Added.
+        * svg/hittest/text-with-text-node-and-content-elements.svg: Added.
+        * svg/hittest/text-with-text-node-only-expected.svg: Added.
+        * svg/hittest/text-with-text-node-only.svg: Added.
+        * svg/hittest/text-with-text-path-expected.svg: Added.
+        * svg/hittest/text-with-text-path.svg: Added.
+
 2015-11-03  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test scrollbars/custom-scrollbar-appearance-property.html

@@ -47,6 +47,8 @@ public:
 
     InlineBox* closestLeafChildForPosition(const LayoutPoint&);
 
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override final;
+
 private:
     virtual bool isSVGRootInlineBox() const override { return true; }
     void reorderValueLists(Vector<SVGTextLayoutAttributes*>&);
