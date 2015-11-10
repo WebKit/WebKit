@@ -1,3 +1,37 @@
+2015-11-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add WKWebViewConfiguration SPI for a variety of different ex-preferences
+        https://bugs.webkit.org/show_bug.cgi?id=151070
+        <rdar://problem/23020454>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setRespectsImageOrientation:]):
+        (-[WKWebViewConfiguration _respectsImageOrientation]):
+        (-[WKWebViewConfiguration _setPrintsBackgrounds:]):
+        (-[WKWebViewConfiguration _printsBackgrounds]):
+        (-[WKWebViewConfiguration _setIncrementalRenderingSuppressionTimeout:]):
+        (-[WKWebViewConfiguration _incrementalRenderingSuppressionTimeout]):
+        (-[WKWebViewConfiguration _setAllowsJavaScriptMarkup:]):
+        (-[WKWebViewConfiguration _allowsJavaScriptMarkup]):
+        (-[WKWebViewConfiguration _setConvertsPositionStyleOnCopy:]):
+        (-[WKWebViewConfiguration _convertsPositionStyleOnCopy]):
+        (-[WKWebViewConfiguration _setAllowsMetaRefresh:]):
+        (-[WKWebViewConfiguration _allowsMetaRefresh]):
+        (-[WKWebViewConfiguration _setShowsURLsInToolTips:]):
+        (-[WKWebViewConfiguration _showsURLsInToolTips]):
+        (-[WKWebViewConfiguration _setServiceControlsEnabled:]):
+        (-[WKWebViewConfiguration _serviceControlsEnabled]):
+        (-[WKWebViewConfiguration _setImageControlsEnabled:]):
+        (-[WKWebViewConfiguration _imageControlsEnabled]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        Plumb some configuration SPI for various clients.
+
 2015-11-10  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Update WebContent sandbox profile to allow loading injected bundles again

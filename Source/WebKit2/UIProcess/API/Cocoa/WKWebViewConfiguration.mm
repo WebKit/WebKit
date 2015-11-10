@@ -91,6 +91,12 @@ private:
     BOOL _treatsSHA1SignedCertificatesAsInsecure;
     RetainPtr<NSString> _groupIdentifier;
     LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
+    BOOL _respectsImageOrientation;
+    BOOL _printsBackgrounds;
+    CGFloat _incrementalRenderingSuppressionTimeout;
+    BOOL _allowsJavaScriptMarkup;
+    BOOL _convertsPositionStyleOnCopy;
+    BOOL _allowsMetaRefresh;
 
 #if PLATFORM(IOS)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
@@ -98,6 +104,11 @@ private:
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _mediaDataLoadsAutomatically;
+#endif
+#if PLATFORM(MAC)
+    BOOL _showsURLsInToolTips;
+    BOOL _serviceControlsEnabled;
+    BOOL _imageControlsEnabled;
 #endif
 }
 
@@ -112,11 +123,26 @@ private:
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
+    _respectsImageOrientation = YES;
+    _printsBackgrounds = YES;
+#endif
+
+#if PLATFORM(MAC)
+    _printsBackgrounds = NO;
+    _respectsImageOrientation = NO;
+    _showsURLsInToolTips = NO;
+    _serviceControlsEnabled = NO;
+    _imageControlsEnabled = NO;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     _allowsAirPlayForMediaPlayback = YES;
 #endif
+
+    _incrementalRenderingSuppressionTimeout = 5;
+    _allowsJavaScriptMarkup = YES;
+    _convertsPositionStyleOnCopy = NO;
+    _allowsMetaRefresh = YES;
 
     return self;
 }
@@ -145,6 +171,13 @@ private:
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
     configuration.applicationNameForUserAgent = self.applicationNameForUserAgent;
 
+    configuration->_respectsImageOrientation = self->_respectsImageOrientation;
+    configuration->_printsBackgrounds = self->_printsBackgrounds;
+    configuration->_incrementalRenderingSuppressionTimeout = self->_incrementalRenderingSuppressionTimeout;
+    configuration->_allowsJavaScriptMarkup = self->_allowsJavaScriptMarkup;
+    configuration->_convertsPositionStyleOnCopy = self->_convertsPositionStyleOnCopy;
+    configuration->_allowsMetaRefresh = self->_allowsMetaRefresh;
+
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
@@ -153,6 +186,11 @@ private:
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_requiresUserActionForMediaPlayback = self->_requiresUserActionForMediaPlayback;
     configuration->_selectionGranularity = self->_selectionGranularity;
+#endif
+#if PLATFORM(MAC)
+    configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
+    configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
+    configuration->_imageControlsEnabled = self->_imageControlsEnabled;
 #endif
 #if ENABLE(WIRELESS_TARGET_PLAYBACK)
     configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
@@ -334,6 +372,66 @@ static NSString *defaultApplicationNameForUserAgent()
     _treatsSHA1SignedCertificatesAsInsecure = insecure;
 }
 
+- (BOOL)_respectsImageOrientation
+{
+    return _respectsImageOrientation;
+}
+
+- (void)_setRespectsImageOrientation:(BOOL)respectsImageOrientation
+{
+    _respectsImageOrientation = respectsImageOrientation;
+}
+
+- (BOOL)_printsBackgrounds
+{
+    return _printsBackgrounds;
+}
+
+- (void)_setPrintsBackgrounds:(BOOL)printsBackgrounds
+{
+    _printsBackgrounds = printsBackgrounds;
+}
+
+- (CGFloat)_incrementalRenderingSuppressionTimeout
+{
+    return _incrementalRenderingSuppressionTimeout;
+}
+
+- (void)_setIncrementalRenderingSuppressionTimeout:(CGFloat)incrementalRenderingSuppressionTimeout
+{
+    _incrementalRenderingSuppressionTimeout = incrementalRenderingSuppressionTimeout;
+}
+
+- (BOOL)_allowsJavaScriptMarkup
+{
+    return _allowsJavaScriptMarkup;
+}
+
+- (void)_setAllowsJavaScriptMarkup:(BOOL)allowsJavaScriptMarkup
+{
+    _allowsJavaScriptMarkup = allowsJavaScriptMarkup;
+}
+
+- (BOOL)_convertsPositionStyleOnCopy
+{
+    return _convertsPositionStyleOnCopy;
+}
+
+- (void)_setConvertsPositionStyleOnCopy:(BOOL)convertsPositionStyleOnCopy
+{
+    _convertsPositionStyleOnCopy = convertsPositionStyleOnCopy;
+}
+
+- (BOOL)_allowsMetaRefresh
+{
+    return _allowsMetaRefresh;
+}
+
+- (void)_setAllowsMetaRefresh:(BOOL)allowsMetaRefresh
+{
+    _allowsMetaRefresh = allowsMetaRefresh;
+}
+
 #if PLATFORM(IOS)
 - (BOOL)_alwaysRunsAtForegroundPriority
 {
@@ -364,7 +462,39 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     _mediaDataLoadsAutomatically = mediaDataLoadsAutomatically;
 }
-#endif
+#endif // PLATFORM(IOS)
+
+#if PLATFORM(MAC)
+- (BOOL)_showsURLsInToolTips
+{
+    return _showsURLsInToolTips;
+}
+
+- (void)_setShowsURLsInToolTips:(BOOL)showsURLsInToolTips
+{
+    _showsURLsInToolTips = showsURLsInToolTips;
+}
+
+- (BOOL)_serviceControlsEnabled
+{
+    return _serviceControlsEnabled;
+}
+
+- (void)_setServiceControlsEnabled:(BOOL)serviceControlsEnabled
+{
+    _serviceControlsEnabled = serviceControlsEnabled;
+}
+
+- (BOOL)_imageControlsEnabled
+{
+    return _imageControlsEnabled;
+}
+
+- (void)_setImageControlsEnabled:(BOOL)imageControlsEnabled
+{
+    _imageControlsEnabled = imageControlsEnabled;
+}
+#endif // PLATFORM(MAC)
 
 @end
 
