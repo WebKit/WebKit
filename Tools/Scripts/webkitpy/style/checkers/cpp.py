@@ -1240,7 +1240,7 @@ class _EnumState(object):
         # and identifiers for the value of the enumerator, but do not accept any other constant
         # expressions. However, this is sufficient for now (11/27/2012).
         expr_all_uppercase = r'\s*[A-Z0-9_]+\s*(?:=\s*[a-zA-Z0-9]+\s*)?,?\s*$'
-        expr_starts_lowercase = r'\s*[a-z]'
+        expr_starts_lowercase = r'\s*[a-jl-z]'
         expr_enum_end = r'}\s*(?:[a-zA-Z0-9]+\s*(?:=\s*[a-zA-Z0-9]+)?)?\s*;\s*'
         expr_enum_start = r'\s*(?:enum(?:\s+class)?(?:\s+[a-zA-Z0-9]+)?)\s*\{?\s*'
         if self.in_enum_decl:
@@ -2131,7 +2131,7 @@ def check_enum_casing(clean_lines, line_number, enum_state, error):
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
     if not enum_state.process_clean_line(line):
         error(line_number, 'readability/enum_casing', 4,
-              'enum members should use InterCaps with an initial capital letter.')
+              'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.')
 
 def check_directive_indentation(clean_lines, line_number, file_state, error):
     """Looks for indentation of preprocessor directives.

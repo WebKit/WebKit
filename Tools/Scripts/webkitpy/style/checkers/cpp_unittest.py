@@ -3446,7 +3446,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 enum {
                     FOO_ONE
                 };''',
-            ['enum members should use InterCaps with an initial capital letter.  [readability/enum_casing] [4]'] * 5)
+            ['enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]'] * 5)
 
         self.assert_multi_line_lint(
             '''\
@@ -3454,7 +3454,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                     fooOne = 1,
                     FooTwo = 2
                 };''',
-            'enum members should use InterCaps with an initial capital letter.  [readability/enum_casing] [4]')
+            'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
 
         self.assert_multi_line_lint(
             '''\
@@ -3482,7 +3482,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 enum class Foo {
                     FOO_ONE
                 };''',
-            ['enum members should use InterCaps with an initial capital letter.  [readability/enum_casing] [4]'] * 5)
+            ['enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]'] * 5)
 
         self.assert_multi_line_lint(
             '''\
@@ -3490,7 +3490,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                     fooOne = 1,
                     FooTwo = 2
                 };''',
-            'enum members should use InterCaps with an initial capital letter.  [readability/enum_casing] [4]')
+            'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
 
         self.assert_multi_line_lint(
             '''\
@@ -3501,6 +3501,30 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 enum class Enum123 {
                     FooOne,
                     FooTwo = FooOne,
+                };''',
+            '')
+
+        self.assert_lint(
+            '''enum { aOne = 1, zTwo = 2 };''',
+            'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum {
+                    aOne = 1,
+                    zTwo = 2
+                };''',
+            ['enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]'] * 2)
+
+        self.assert_lint(
+            '''enum { kOne = 1, kTwo = 2 };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum {
+                    kOne = 1,
+                    kTwo = 2
                 };''',
             '')
 

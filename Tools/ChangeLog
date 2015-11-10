@@ -1,3 +1,18 @@
+2015-11-10  David Kilzer  <ddkilzer@apple.com>
+
+        [check-webkit-style] False positive (readability/enum_casing) on CF-styled enum members
+        <http://webkit.org/b/104417>
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_EnumState.process_clean_line): Allow 'k' to start enums.
+        (check_enum_casing): Update error message to discuss 'k'.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (NoNonVirtualDestructorsTest.test_enum_casing): Update error
+        messages, and add new tests for enums that start with lowercase
+        letters.
+
 2015-11-10  Geoffrey Garen  <ggaren@apple.com>
 
         run-jsc-benchmarks doesn't work with internal benchmarks
