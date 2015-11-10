@@ -385,9 +385,6 @@ public:
     bool drawsBackground() const { return m_drawsBackground; }
     void setDrawsBackground(bool);
 
-    bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
-    void setDrawsTransparentBackground(bool);
-
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
 
@@ -1599,7 +1596,6 @@ private:
     LayerHostingMode m_layerHostingMode;
 
     bool m_drawsBackground;
-    bool m_drawsTransparentBackground;
 
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;

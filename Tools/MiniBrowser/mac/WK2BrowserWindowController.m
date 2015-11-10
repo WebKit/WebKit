@@ -345,11 +345,12 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     preferences._resourceUsageOverlayVisible = settings.resourceUsageOverlayVisible;
 
     BOOL useTransparentWindows = settings.useTransparentWindows;
-    if (useTransparentWindows != _webView._drawsTransparentBackground) {
+    if (useTransparentWindows != !_webView._drawsBackground) {
         [self.window setOpaque:!useTransparentWindows];
+        [self.window setBackgroundColor:[NSColor clearColor]];
         [self.window setHasShadow:!useTransparentWindows];
 
-        _webView._drawsTransparentBackground = useTransparentWindows;
+        _webView._drawsBackground = !useTransparentWindows;
 
         [self.window display];
     }

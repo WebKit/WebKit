@@ -122,8 +122,6 @@ public:
 
     void setDrawsBackground(bool);
     bool drawsBackground() const;
-    void setDrawsTransparentBackground(bool);
-    bool drawsTransparentBackground() const;
     bool isOpaque() const;
 
     bool acceptsFirstMouse(NSEvent *);

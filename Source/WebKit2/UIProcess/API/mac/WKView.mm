@@ -99,12 +99,12 @@ using namespace WebCore;
 
 - (void)setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
 {
-    _data->_impl->setDrawsTransparentBackground(drawsTransparentBackground);
+    _data->_impl->setDrawsBackground(!drawsTransparentBackground);
 }
 
 - (BOOL)drawsTransparentBackground
 {
-    return _data->_impl->drawsTransparentBackground();
+    return !_data->_impl->drawsBackground();
 }
 
 - (BOOL)acceptsFirstResponder

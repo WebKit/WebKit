@@ -40,7 +40,6 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << pageGroupData;
     encoder << drawsBackground;
     encoder << isEditable;
-    encoder << drawsTransparentBackground;
     encoder << underlayColor;
     encoder << useFixedLayout;
     encoder << fixedLayoutSize;
@@ -101,8 +100,6 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.drawsBackground))
         return false;
     if (!decoder.decode(parameters.isEditable))
-        return false;
-    if (!decoder.decode(parameters.drawsTransparentBackground))
         return false;
     if (!decoder.decode(parameters.underlayColor))
         return false;

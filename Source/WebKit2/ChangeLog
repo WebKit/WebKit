@@ -1,3 +1,60 @@
+2015-11-09  Tim Horton  <timothy_horton@apple.com>
+
+        Add drawsBackground SPI to WKWebView, and get rid of drawsTransparentBackground from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=151054
+        <rdar://problem/22907994>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode): Deleted.
+        (WebKit::WebPageCreationParameters::decode): Deleted.
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setDrawsTransparentBackground:]):
+        (-[WKView drawsTransparentBackground]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateLayer):
+        (WebKit::WebViewImpl::setDrawsTransparentBackground): Deleted.
+        (WebKit::WebViewImpl::drawsTransparentBackground): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Deleted.
+        (WebKit::WebPageProxy::setDrawsTransparentBackground): Deleted.
+        (WebKit::WebPageProxy::creationParameters): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::drawsTransparentBackground): Deleted.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Deleted.
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents): Deleted.
+        (WebKit::WebPage::setDrawsTransparentBackground): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::drawsTransparentBackground): Deleted.
+        * WebProcess/WebPage/WebPage.messages.in:
+        Get rid of drawsTransparentBackground. It doesn't seem like there's any observable
+        difference in a layer-backed world. WKView's (set)drawsTransparentBackground
+        will just forward to drawsBackground (inverted).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webProcessIsResponsive]):
+        Move _webProcessIsResponsive up with the other cross-platform SPI methods, instead
+        of below all of the platform-specific SPI methods.
+
+        (-[WKWebView _drawsBackground]):
+        (-[WKWebView _setDrawsBackground:]):
+        Added.
+
+        (-[WKWebView _drawsTransparentBackground]):
+        (-[WKWebView _setDrawsTransparentBackground:]):
+        Deleted.
+        
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Replace drawsTransparentBackground with drawsBackground.
+
 2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION: 2nd level inspector should not be able to dock to first

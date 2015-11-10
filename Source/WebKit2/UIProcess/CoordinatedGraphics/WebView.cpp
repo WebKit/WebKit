@@ -173,12 +173,12 @@ bool WebView::drawsBackground() const
 
 void WebView::setDrawsTransparentBackground(bool transparentBackground)
 {
-    m_page->setDrawsTransparentBackground(transparentBackground);
+    m_page->setDrawsBackground(!transparentBackground);
 }
 
 bool WebView::drawsTransparentBackground() const
 {
-    return m_page->drawsTransparentBackground();
+    return !m_page->drawsBackground();
 }
 
 void WebView::suspendActiveDOMObjectsAndAnimations()

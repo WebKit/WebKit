@@ -361,7 +361,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_topContentInset(0)
     , m_layerHostingMode(LayerHostingMode::InProcess)
     , m_drawsBackground(true)
-    , m_drawsTransparentBackground(false)
     , m_useFixedLayout(false)
     , m_suppressScrollbarAnimations(false)
     , m_paginationMode(Pagination::Unpaginated)
@@ -1243,17 +1242,6 @@ void WebPageProxy::setDrawsBackground(bool drawsBackground)
 
     if (isValid())
         m_process->send(Messages::WebPage::SetDrawsBackground(drawsBackground), m_pageID);
-}
-
-void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground)
-{
-    if (m_drawsTransparentBackground == drawsTransparentBackground)
-        return;
-
-    m_drawsTransparentBackground = drawsTransparentBackground;
-
-    if (isValid())
-        m_process->send(Messages::WebPage::SetDrawsTransparentBackground(drawsTransparentBackground), m_pageID);
 }
 
 void WebPageProxy::setTopContentInset(float contentInset)
@@ -5094,7 +5082,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
     parameters.isEditable = m_isEditable;
-    parameters.drawsTransparentBackground = m_drawsTransparentBackground;
     parameters.underlayColor = m_underlayColor;
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;

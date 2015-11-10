@@ -3522,6 +3522,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #endif
 }
 
+- (BOOL)_webProcessIsResponsive
+{
+    return _page->process().responsivenessTimer().isResponsive();
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
@@ -3940,14 +3945,14 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #pragma mark - OS X-specific methods
 
-- (BOOL)_drawsTransparentBackground
+- (BOOL)_drawsBackground
 {
-    return _impl->drawsTransparentBackground();
+    return _impl->drawsBackground();
 }
 
-- (void)_setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
+- (void)_setDrawsBackground:(BOOL)drawsBackground
 {
-    _impl->setDrawsTransparentBackground(drawsTransparentBackground);
+    _impl->setDrawsBackground(drawsBackground);
 }
 
 #if WK_API_ENABLED
@@ -4030,11 +4035,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 }
 
 #endif
-
-- (BOOL)_webProcessIsResponsive
-{
-    return _page->process().responsivenessTimer().isResponsive();
-}
 
 @end
 

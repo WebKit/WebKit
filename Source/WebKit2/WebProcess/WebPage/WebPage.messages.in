@@ -28,7 +28,6 @@ messages -> WebPage LegacyReceiver {
     SetSessionID(WebCore::SessionID sessionID)
 
     SetDrawsBackground(bool drawsBackground)
-    SetDrawsTransparentBackground(bool drawsTransparentBackground)
 
     SetTopContentInset(float contentInset)
 

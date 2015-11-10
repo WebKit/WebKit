@@ -1,3 +1,21 @@
+2015-11-09  Tim Horton  <timothy_horton@apple.com>
+
+        Add drawsBackground SPI to WKWebView, and get rid of drawsTransparentBackground from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=151054
+        <rdar://problem/22907994>
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+        Use drawsBackground instead, and make sure to set the window background color,
+        otherwise it might end up being gray anyway!
+
+        WebKit1 still doesn't work unless you turn off toolbar blurring, but at least
+        WebKit2 is working now!
+
 2015-11-09  Isaac Devine  <isaac@devinesystems.co.nz>
 
         Fresh checkout fails to build on windows, DumpRenderTree can't find cairo_win.h

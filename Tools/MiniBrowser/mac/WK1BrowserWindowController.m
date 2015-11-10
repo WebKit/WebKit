@@ -264,6 +264,7 @@
     BOOL useTransparentWindows = settings.useTransparentWindows;
     if (useTransparentWindows != !self.window.isOpaque) {
         [self.window setOpaque:!useTransparentWindows];
+        [self.window setBackgroundColor:[NSColor clearColor]];
         [self.window setHasShadow:!useTransparentWindows];
 
         [_webView setBackgroundColor:useTransparentWindows ? [NSColor clearColor] : [NSColor whiteColor]];

@@ -169,7 +169,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 #else
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
-@property (nonatomic, setter=_setDrawsTransparentBackground:) BOOL _drawsTransparentBackground;
+@property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground;
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

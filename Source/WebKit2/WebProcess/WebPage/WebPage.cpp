@@ -261,7 +261,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_hasSeenPlugin(false)
     , m_useFixedLayout(false)
     , m_drawsBackground(true)
-    , m_drawsTransparentBackground(false)
     , m_isInRedo(false)
     , m_isClosed(false)
     , m_tabToLinks(false)
@@ -436,7 +435,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setUseFixedLayout(parameters.useFixedLayout);
 
     setDrawsBackground(parameters.drawsBackground);
-    setDrawsTransparentBackground(parameters.drawsTransparentBackground);
 
     setUnderlayColor(parameters.underlayColor);
 
@@ -2258,23 +2256,6 @@ void WebPage::setDrawsBackground(bool drawsBackground)
     for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
         if (FrameView* view = coreFrame->view())
             view->setTransparent(!drawsBackground);
-    }
-
-    m_drawingArea->pageBackgroundTransparencyChanged();
-    m_drawingArea->setNeedsDisplay();
-}
-
-void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
-{
-    if (m_drawsTransparentBackground == drawsTransparentBackground)
-        return;
-
-    m_drawsTransparentBackground = drawsTransparentBackground;
-
-    Color backgroundColor = drawsTransparentBackground ? Color::transparent : Color::white;
-    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
-        if (FrameView* view = coreFrame->view())
-            view->setBaseBackgroundColor(backgroundColor);
     }
 
     m_drawingArea->pageBackgroundTransparencyChanged();
