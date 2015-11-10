@@ -1486,9 +1486,9 @@ RenderLayer* RenderLayer::enclosingScrollableLayer(LayoutRect* rect) const
     return nullptr;
 }
 
-IntRect RenderLayer::scrollableAreaBoundingBox() const
+IntRect RenderLayer::scrollableAreaBoundingBox(bool* isInsideFixed) const
 {
-    return renderer().absoluteBoundingBoxRect();
+    return renderer().absoluteBoundingBoxRect(/* useTransforms */ true, isInsideFixed);
 }
 
 bool RenderLayer::isRubberBandInProgress() const

@@ -743,7 +743,7 @@ ScrollableArea* PDFPlugin::enclosingScrollableArea() const
     return nullptr;
 }
 
-IntRect PDFPlugin::scrollableAreaBoundingBox() const
+IntRect PDFPlugin::scrollableAreaBoundingBox(bool*) const
 {
     return pluginView()->frameRect();
 }

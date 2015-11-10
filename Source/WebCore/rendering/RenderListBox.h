@@ -133,7 +133,7 @@ private:
     virtual ScrollableArea* enclosingScrollableArea() const override;
     virtual bool isScrollableOrRubberbandable() override;
     virtual bool hasScrollableOrRubberbandableAncestor() override;
-    virtual IntRect scrollableAreaBoundingBox() const override;
+    virtual IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int newOffset);

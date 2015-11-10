@@ -427,13 +427,6 @@ LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
     return clientLogicalHeight();
 }
 
-#if PLATFORM(IOS)
-static inline LayoutSize fixedPositionOffset(const FrameView& frameView)
-{
-    return frameView.useCustomFixedPositionLayoutRect() ? (frameView.customFixedPositionLayoutRect().location() - LayoutPoint()) : frameView.scrollOffset();
-}
-#endif
-
 void RenderView::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
 {
     // If a container was specified, and was not nullptr or the RenderView,
@@ -448,11 +441,7 @@ void RenderView::mapLocalToContainer(const RenderLayerModelObject* repaintContai
     }
     
     if (mode & IsFixed)
-#if PLATFORM(IOS)
-        transformState.move(fixedPositionOffset(m_frameView));
-#else
-        transformState.move(frameView().scrollOffsetForFixedPosition());
-#endif
+        transformState.move(frameView().scrollOffsetRespectingCustomFixedPosition());
 }
 
 const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -461,11 +450,7 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
     // then we should have found it by now.
     ASSERT_ARG(ancestorToStopAt, !ancestorToStopAt || ancestorToStopAt == this);
 
-#if PLATFORM(IOS)
-    LayoutSize scrollOffset = fixedPositionOffset(frameView());
-#else
-    LayoutSize scrollOffset = frameView().scrollOffsetForFixedPosition();
-#endif
+    LayoutSize scrollOffset = frameView().scrollOffsetRespectingCustomFixedPosition();
 
     if (!ancestorToStopAt && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
@@ -480,11 +465,7 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
 void RenderView::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
     if (mode & IsFixed)
-#if PLATFORM(IOS)
-        transformState.move(fixedPositionOffset(frameView()));
-#else
-        transformState.move(frameView().scrollOffsetForFixedPosition());
-#endif
+        transformState.move(frameView().scrollOffsetRespectingCustomFixedPosition());
 
     if (mode & UseTransforms && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
@@ -716,11 +697,7 @@ LayoutRect RenderView::computeRectForRepaint(const LayoutRect& rect, const Rende
     }
 
     if (fixed) {
-#if PLATFORM(IOS)
-        adjustedRect.move(fixedPositionOffset(frameView()));
-#else
-        adjustedRect.move(frameView().scrollOffsetForFixedPosition());
-#endif
+        adjustedRect.move(frameView().scrollOffsetRespectingCustomFixedPosition());
     }
         
     // Apply our transform if we have one (because of full page zooming).

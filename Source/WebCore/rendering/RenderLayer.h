@@ -874,7 +874,7 @@ private:
     virtual IntPoint lastKnownMousePosition() const override;
     virtual bool isHandlingWheelEvent() const override;
     virtual bool shouldSuspendScrollAnimations() const override;
-    virtual IntRect scrollableAreaBoundingBox() const override;
+    virtual IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const override;
     virtual bool isRubberBandInProgress() const override;
     virtual bool updatesScrollLayerPositionOnMainThread() const override { return true; }
     virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;

@@ -1185,14 +1185,6 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
     return nullptr;
 }
 
-#if PLATFORM(IOS)
-// FIXME: Share with RenderView.
-static inline LayoutSize fixedPositionOffset(const FrameView& frameView)
-{
-    return frameView.useCustomFixedPositionLayoutRect() ? (frameView.customFixedPositionLayoutRect().location() - LayoutPoint()) : frameView.scrollOffset();
-}
-#endif
-
 void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
 {
     if (extent.extentComputed)
@@ -1224,20 +1216,7 @@ void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const Re
         else
             viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
 
-#if PLATFORM(IOS)
-        LayoutSize scrollPosition = fixedPositionOffset(m_renderView.frameView());
-#else
-        LayoutSize scrollPosition = m_renderView.frameView().scrollOffsetForFixedPosition();
-#endif
-
-        LayoutPoint minimumScrollPosition = m_renderView.frameView().minimumScrollPosition();
-        LayoutPoint maximumScrollPosition = m_renderView.frameView().maximumScrollPosition();
-        
-        LayoutSize topLeftExpansion = scrollPosition - toLayoutSize(minimumScrollPosition);
-        LayoutSize bottomRightExpansion = toLayoutSize(maximumScrollPosition) - scrollPosition;
-
-        extent.bounds.setLocation(extent.bounds.location() - topLeftExpansion);
-        extent.bounds.setSize(extent.bounds.size() + topLeftExpansion + bottomRightExpansion);
+        extent.bounds = m_renderView.frameView().fixedScrollableAreaBoundsInflatedForScrolling(extent.bounds);
     }
 
     extent.extentComputed = true;

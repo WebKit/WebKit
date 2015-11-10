@@ -495,6 +495,9 @@ public:
     WEBCORE_EXPORT GraphicsLayer* setWantsLayerForBottomOverHangArea(bool) const;
 #endif
 
+    LayoutRect fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const;
+    LayoutSize scrollOffsetRespectingCustomFixedPosition() const;
+
     virtual int headerHeight() const override { return m_headerHeight; }
     WEBCORE_EXPORT void setHeaderHeight(int);
     virtual int footerHeight() const override { return m_footerHeight; }
@@ -624,7 +627,7 @@ private:
     virtual void scrollTo(const IntSize&) override;
     virtual void setVisibleScrollerThumbRect(const IntRect&) override;
     virtual ScrollableArea* enclosingScrollableArea() const override;
-    virtual IntRect scrollableAreaBoundingBox() const override;
+    virtual IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
     virtual bool scrollAnimatorEnabled() const override;
     virtual GraphicsLayer* layerForScrolling() const override;
     virtual GraphicsLayer* layerForHorizontalScrollbar() const override;

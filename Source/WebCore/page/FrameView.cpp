@@ -1076,6 +1076,25 @@ void FrameView::scheduleLayerFlushAllowingThrottling()
     view->compositor().scheduleLayerFlush(true /* canThrottle */);
 }
 
+LayoutRect FrameView::fixedScrollableAreaBoundsInflatedForScrolling(const LayoutRect& uninflatedBounds) const
+{
+    LayoutSize scrollPosition = scrollOffsetRespectingCustomFixedPosition();
+
+    LayoutSize topLeftExpansion = scrollPosition - toLayoutSize(minimumScrollPosition());
+    LayoutSize bottomRightExpansion = toLayoutSize(maximumScrollPosition()) - scrollPosition;
+
+    return LayoutRect(uninflatedBounds.location() - topLeftExpansion, uninflatedBounds.size() + topLeftExpansion + bottomRightExpansion);
+}
+
+LayoutSize FrameView::scrollOffsetRespectingCustomFixedPosition() const
+{
+#if PLATFORM(IOS)
+    return useCustomFixedPositionLayoutRect() ? customFixedPositionLayoutRect().location() - LayoutPoint() : scrollOffset();
+#else
+    return scrollOffsetForFixedPosition();
+#endif
+}
+
 void FrameView::setHeaderHeight(int headerHeight)
 {
     if (frame().page())
@@ -3543,7 +3562,7 @@ ScrollableArea* FrameView::enclosingScrollableArea() const
     return nullptr;
 }
 
-IntRect FrameView::scrollableAreaBoundingBox() const
+IntRect FrameView::scrollableAreaBoundingBox(bool*) const
 {
     RenderWidget* ownerRenderer = frame().ownerRenderer();
     if (!ownerRenderer)

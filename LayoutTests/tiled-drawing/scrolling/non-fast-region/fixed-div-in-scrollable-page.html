@@ -1,0 +1,42 @@
+<html>
+<head>
+    <script src="resources/wheel-handler-region-helper.js"></script>
+    <style>
+    body {
+        margin: 0;
+    }
+
+    .fixed {
+        background: #fff;
+        position: fixed;
+        width: 100px;
+        height: 100px;
+        overflow: scroll;
+    }
+
+    .tall {
+        height: 2000px;
+    }
+
+    .wide {
+        width: 2000px;
+    }
+    </style>
+    <script>
+    function dumpRegion()
+    {
+        if (window.internals) {
+            var rects = window.internals.nonFastScrollableRects();
+            document.getElementById('output').textContent = rectsAsString(rects);
+        }
+    }
+    </script>
+</head>
+<body onload="dumpRegion()">
+    <div class="fixed">
+        <div class="tall"></div>
+    </div>
+    <div class="tall wide"></div>
+    <pre id="output"></pre>
+</body>
+</html>
