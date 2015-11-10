@@ -525,6 +525,7 @@
     <ClCompile Include="..\ftl\FTLDataSection.cpp" />
     <ClCompile Include="..\ftl\FTLDWARFDebugLineInfo.cpp" />
     <ClCompile Include="..\ftl\FTLDWARFRegister.cpp" />
+    <ClCompile Include="..\ftl\FTLExceptionHandlerManager.cpp" />
     <ClCompile Include="..\ftl\FTLExitArgument.cpp" />
     <ClCompile Include="..\ftl\FTLExitArgumentForOperand.cpp" />
     <ClCompile Include="..\ftl\FTLExitPropertyValue.cpp" />
@@ -1290,6 +1291,7 @@
     <ClInclude Include="..\ftl\FTLDataSection.h" />
     <ClInclude Include="..\ftl\FTLDWARFDebugLineInfo.h" />
     <ClInclude Include="..\ftl\FTLDWARFRegister.h" />
+    <ClInclude Include="..\ftl\FTLExceptionHandlerManager.h" />
     <ClInclude Include="..\ftl\FTLExitArgument.h" />
     <ClInclude Include="..\ftl\FTLExitArgumentForOperand.h" />
     <ClInclude Include="..\ftl\FTLStackmapArgumentList.h" />

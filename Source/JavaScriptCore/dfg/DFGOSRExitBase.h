@@ -45,7 +45,6 @@ struct OSRExitBase {
         , m_count(0)
         , m_codeOrigin(origin)
         , m_codeOriginForExitProfile(originForProfile)
-        , m_exceptionHandlerCallSiteIndex(std::numeric_limits<unsigned>::max())
         , m_isExceptionHandler(false)
     {
         ASSERT(m_codeOrigin.isSet());

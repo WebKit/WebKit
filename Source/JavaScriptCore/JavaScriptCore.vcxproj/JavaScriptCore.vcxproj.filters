@@ -1563,6 +1563,9 @@
     <ClCompile Include="..\ftl\FTLDWARFRegister.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
+    <ClCompile Include="..\ftl\FTLExceptionHandlerManager.cpp">
+      <Filter>ftl</Filter>
+    </ClCompile>
     <ClCompile Include="..\ftl\FTLExitArgument.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
@@ -4118,6 +4121,9 @@
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLDWARFRegister.h">
+      <Filter>ftl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ftl\FTLExceptionHandlerManager.h">
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLExitArgument.h">

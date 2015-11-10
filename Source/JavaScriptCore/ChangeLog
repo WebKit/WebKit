@@ -1,3 +1,36 @@
+2015-11-10  Saam barati  <sbarati@apple.com>
+
+        Create an FTLExceptionHandlerManager abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=151079
+
+        Reviewed by Mark Lam.
+
+        Before, we used to manage the {stackmapRecordIndex => OSRExit} relationship
+        for exception handlers with a locally allocated HashMap and a few different
+        lambdas and random checks. It's cleaner and more manageable to just create 
+        a class that handles this abstraction for us. This class provides nice helper 
+        functions for everything we need. This abstraction makes reading the code easier.
+        And it will also makes hacking on the code in the future easier.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExceptionHandlerManager.cpp: Added.
+        (JSC::FTL::ExceptionHandlerManager::ExceptionHandlerManager):
+        (JSC::FTL::ExceptionHandlerManager::addNewExit):
+        (JSC::FTL::ExceptionHandlerManager::getOrPutByIdCallOperationExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::lazySlowPathExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::getByIdOSRExit):
+        (JSC::FTL::ExceptionHandlerManager::getCallOSRExitCommon):
+        (JSC::FTL::ExceptionHandlerManager::getCallOSRExit):
+        (JSC::FTL::ExceptionHandlerManager::procureCallSiteIndex):
+        * ftl/FTLExceptionHandlerManager.h: Added.
+
 2015-11-10  Michael Saboff  <msaboff@apple.com>
 
         X86_64 support for compareDouble(DoubleCondition, FPRegisterID left, FPRegisterID right, RegisterID dest)

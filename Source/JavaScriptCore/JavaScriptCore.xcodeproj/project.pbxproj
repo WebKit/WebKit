@@ -1206,6 +1206,8 @@
 		797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79C4B15D1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */; };
 		79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		79DF66B01BF26A570001CF11 /* FTLExceptionHandlerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */; };
+		79DF66B11BF26A570001CF11 /* FTLExceptionHandlerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79F8FC1E1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */; };
@@ -3252,6 +3254,8 @@
 		797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalLexicalEnvironment.h; sourceTree = "<group>"; };
 		79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLiveCatchVariablePreservationPhase.cpp; path = dfg/DFGLiveCatchVariablePreservationPhase.cpp; sourceTree = "<group>"; };
 		79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLiveCatchVariablePreservationPhase.h; path = dfg/DFGLiveCatchVariablePreservationPhase.h; sourceTree = "<group>"; };
+		79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExceptionHandlerManager.cpp; path = ftl/FTLExceptionHandlerManager.cpp; sourceTree = "<group>"; };
+		79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExceptionHandlerManager.h; path = ftl/FTLExceptionHandlerManager.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
 		79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMaximalFlushInsertionPhase.cpp; path = dfg/DFGMaximalFlushInsertionPhase.cpp; sourceTree = "<group>"; };
@@ -4338,6 +4342,8 @@
 				2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */,
 				0F9C5E5C18E35F5E00D431C3 /* FTLDWARFRegister.cpp */,
 				0F9C5E5D18E35F5E00D431C3 /* FTLDWARFRegister.h */,
+				79DF66AE1BF26A570001CF11 /* FTLExceptionHandlerManager.cpp */,
+				79DF66AF1BF26A570001CF11 /* FTLExceptionHandlerManager.h */,
 				0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */,
 				0F235BBE17178E1C00690C7F /* FTLExitArgument.h */,
 				0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */,
@@ -6582,6 +6588,7 @@
 				0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */,
 				0FEC85771BDACDC70080FF74 /* AirFrequentedBlock.h in Headers */,
 				0FEC85791BDACDC70080FF74 /* AirGenerate.h in Headers */,
+				79DF66B11BF26A570001CF11 /* FTLExceptionHandlerManager.h in Headers */,
 				0FEC857A1BDACDC70080FF74 /* AirGenerationContext.h in Headers */,
 				0FEC857C1BDACDC70080FF74 /* AirHandleCalleeSaves.h in Headers */,
 				0FEC857E1BDACDC70080FF74 /* AirInsertionSet.h in Headers */,
@@ -8700,6 +8707,7 @@
 				0F2B66FE17B6B5AB00A7AE3F /* JSTypedArrays.cpp in Sources */,
 				534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */,
 				DEA7E2441BBC677200D78440 /* JSTypedArrayViewPrototype.cpp in Sources */,
+				79DF66B01BF26A570001CF11 /* FTLExceptionHandlerManager.cpp in Sources */,
 				86E3C61A167BABEE006D760A /* JSValue.mm in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
 				86E3C61C167BABEE006D760A /* JSVirtualMachine.mm in Sources */,

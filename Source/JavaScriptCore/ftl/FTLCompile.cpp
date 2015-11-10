@@ -37,6 +37,7 @@
 #include "DFGOperations.h"
 #include "DataView.h"
 #include "Disassembler.h"
+#include "FTLExceptionHandlerManager.h"
 #include "FTLExitThunkGenerator.h"
 #include "FTLInlineCacheSize.h"
 #include "FTLJITCode.h"
@@ -466,7 +467,7 @@ static RegisterSet usedRegistersFor(const StackMaps::Record& record)
 }
 
 template<typename CallType>
-void adjustCallICsForStackmaps(Vector<CallType>& calls, StackMaps::RecordMap& recordMap, std::function<CallSiteIndex (uint32_t recordIndex, CodeOrigin origin)> generateCallSiteIndexFunction, std::function<OSRExit* (uint32_t recordIndex)> getCorrespondingOSRExit)
+void adjustCallICsForStackmaps(Vector<CallType>& calls, StackMaps::RecordMap& recordMap, ExceptionHandlerManager& exceptionHandlerManager)
 {
     // Handling JS calls is weird: we need to ensure that we sort them by the PC in LLVM
     // generated code. That implies first pruning the ones that LLVM didn't generate.
@@ -484,8 +485,8 @@ void adjustCallICsForStackmaps(Vector<CallType>& calls, StackMaps::RecordMap& re
         for (unsigned j = 0; j < iter->value.size(); ++j) {
             CallType copy = call;
             copy.m_instructionOffset = iter->value[j].record.instructionOffset;
-            copy.setCallSiteIndex(generateCallSiteIndexFunction(iter->value[j].index, copy.callSiteDescriptionOrigin()));
-            copy.setCorrespondingGenericUnwindOSRExit(getCorrespondingOSRExit(iter->value[j].index));
+            copy.setCallSiteIndex(exceptionHandlerManager.procureCallSiteIndex(iter->value[j].index, copy));
+            copy.setCorrespondingGenericUnwindOSRExit(exceptionHandlerManager.getCallOSRExit(iter->value[j].index, copy));
 
             calls.append(copy);
         }
@@ -502,29 +503,7 @@ static void fixFunctionBasedOnStackMaps(
     VM& vm = graph.m_vm;
     StackMaps& stackmaps = jitCode->stackmaps;
 
-    // We fill this when generating OSR exits that will be executed via genericUnwind()
-    // or lazy slow path exception checks.
-    // That way, when we assign a CallSiteIndex to the Call/GetById/PutById/LazySlowPath, we assign
-    // it the proper CallSiteIndex that corresponds to the OSRExit exception handler.
-    HashMap<uint32_t, size_t, WTF::IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> recordIndexToGenericUnwindOrLazySlowPathOSRExit;
-    auto generateOrGetAlreadyGeneratedCallSiteIndex = [&] (uint32_t recordIndex, CodeOrigin origin) -> CallSiteIndex {
-        auto findResult = recordIndexToGenericUnwindOrLazySlowPathOSRExit.find(recordIndex);
-        if (findResult == recordIndexToGenericUnwindOrLazySlowPathOSRExit.end())
-            return state.jitCode->common.addUniqueCallSiteIndex(origin);
-        size_t osrExitIndex = findResult->value;
-        return state.jitCode->osrExit[osrExitIndex].m_exceptionHandlerCallSiteIndex;
-    };
-    auto jsCallOSRExitForRecordIndex = [&] (uint32_t recordIndex) -> OSRExit* {
-        auto findResult = recordIndexToGenericUnwindOrLazySlowPathOSRExit.find(recordIndex);
-        if (findResult == recordIndexToGenericUnwindOrLazySlowPathOSRExit.end())
-            return nullptr;
-
-        size_t osrExitIndex = findResult->value;
-        OSRExit& exit = state.jitCode->osrExit[osrExitIndex];
-        if (!exit.m_descriptor.m_isExceptionFromJSCall)
-            return nullptr;
-        return &exit;
-    };
+    ExceptionHandlerManager exceptionHandlerManager(state);
     
     int localsOffset = offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
     int varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
@@ -610,7 +589,7 @@ static void fixFunctionBasedOnStackMaps(
                 RELEASE_ASSERT(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader.isSet());
                 CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader);
                 exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
-                recordIndexToGenericUnwindOrLazySlowPathOSRExit.add(iter->value[j].index, state.jitCode->osrExit.size() - 1);
+                exceptionHandlerManager.addNewExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
 
                 if (exitDescriptor.m_isExceptionFromJSCall)
                     exit.gatherRegistersToSpillForCallIfException(stackmaps, record);
@@ -683,16 +662,11 @@ static void fixFunctionBasedOnStackMaps(
 
         Vector<std::pair<CCallHelpers::JumpList, CodeLocationLabel>> exceptionJumpsToLink;
         auto addNewExceptionJumpIfNecessary = [&] (uint32_t recordIndex) {
-            auto findResult = recordIndexToGenericUnwindOrLazySlowPathOSRExit.find(recordIndex);
-            if (findResult == recordIndexToGenericUnwindOrLazySlowPathOSRExit.end())
+            CodeLocationLabel exceptionTarget = exceptionHandlerManager.getOrPutByIdCallOperationExceptionTarget(recordIndex);
+            if (!exceptionTarget)
                 return false;
-
-            size_t osrExitIndex = findResult->value;
-            RELEASE_ASSERT(state.jitCode->osrExit[osrExitIndex].m_descriptor.m_willArriveAtOSRExitFromGenericUnwind);
-            OSRExitCompilationInfo& info = state.finalizer->osrExit[osrExitIndex];
-            RELEASE_ASSERT(info.m_getAndPutByIdCallOperationExceptionOSRExitEntrance.isSet());
             exceptionJumpsToLink.append(
-                std::make_pair(CCallHelpers::JumpList(), state.finalizer->exitThunksLinkBuffer->locationOf(info.m_getAndPutByIdCallOperationExceptionOSRExitEntrance)));
+                std::make_pair(CCallHelpers::JumpList(), exceptionTarget));
             return true;
         };
         
@@ -718,7 +692,7 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg base = record.locations[1].directGPR();
                 
                 JITGetByIdGenerator gen(
-                    codeBlock, codeOrigin, generateOrGetAlreadyGeneratedCallSiteIndex(iter->value[i].index, codeOrigin), usedRegisters, JSValueRegs(base),
+                    codeBlock, codeOrigin, exceptionHandlerManager.procureCallSiteIndex(iter->value[i].index, codeOrigin), usedRegisters, JSValueRegs(base),
                     JSValueRegs(result));
                 
                 bool addedUniqueExceptionJump = addNewExceptionJumpIfNecessary(iter->value[i].index);
@@ -733,13 +707,8 @@ static void fixFunctionBasedOnStackMaps(
                     // register that we would like to do value recovery on. We combat this situation from ever
                     // taking place by ensuring we spill the original base value and then recover it from
                     // the spill slot as the first step in OSR exit.
-                    auto findResult = recordIndexToGenericUnwindOrLazySlowPathOSRExit.find(iter->value[i].index);
-                    if (findResult != recordIndexToGenericUnwindOrLazySlowPathOSRExit.end()) {
-                        size_t osrExitIndex = findResult->value;
-                        OSRExit& exit = state.jitCode->osrExit[osrExitIndex];
-                        RELEASE_ASSERT(exit.m_descriptor.m_isExceptionFromGetById);
-                        exit.spillRegistersToSpillSlot(slowPathJIT, jsCallThatMightThrowSpillOffset);
-                    }
+                    if (OSRExit* exit = exceptionHandlerManager.getByIdOSRExit(iter->value[i].index))
+                        exit->spillRegistersToSpillSlot(slowPathJIT, jsCallThatMightThrowSpillOffset);
                 }
                 MacroAssembler::Call call = callOperation(
                     state, usedRegisters, slowPathJIT, codeOrigin, addedUniqueExceptionJump ? &exceptionJumpsToLink.last().first : &exceptionTarget,
@@ -775,7 +744,7 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg value = record.locations[1].directGPR();
                 
                 JITPutByIdGenerator gen(
-                    codeBlock, codeOrigin, generateOrGetAlreadyGeneratedCallSiteIndex(iter->value[i].index, codeOrigin), usedRegisters, JSValueRegs(base),
+                    codeBlock, codeOrigin, exceptionHandlerManager.procureCallSiteIndex(iter->value[i].index, codeOrigin), usedRegisters, JSValueRegs(base),
                     JSValueRegs(value), GPRInfo::patchpointScratchRegister, putById.ecmaMode(), putById.putKind());
                 
                 bool addedUniqueExceptionJump = addNewExceptionJumpIfNecessary(iter->value[i].index);
@@ -883,18 +852,12 @@ static void fixFunctionBasedOnStackMaps(
                 char* startOfIC =
                     bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
                 CodeLocationLabel patchpoint((MacroAssemblerCodePtr(startOfIC)));
-                CodeLocationLabel exceptionTarget;
-                auto findResult = recordIndexToGenericUnwindOrLazySlowPathOSRExit.find(iter->value[i].index);
-                if (findResult != recordIndexToGenericUnwindOrLazySlowPathOSRExit.end()) {
-                    size_t osrExitIndex = findResult->value;
-                    OSRExitCompilationInfo& info = state.finalizer->osrExit[osrExitIndex];
-                    RELEASE_ASSERT(state.jitCode->osrExit[osrExitIndex].m_descriptor.m_isExceptionFromLazySlowPath);
-                    exceptionTarget = state.finalizer->exitThunksLinkBuffer->locationOf(info.m_thunkLabel);
-                } else
+                CodeLocationLabel exceptionTarget = exceptionHandlerManager.lazySlowPathExceptionTarget(iter->value[i].index);
+                if (!exceptionTarget)
                     exceptionTarget = state.finalizer->handleExceptionsLinkBuffer->entrypoint();
 
                 std::unique_ptr<LazySlowPath> lazySlowPath = std::make_unique<LazySlowPath>(
-                    patchpoint, exceptionTarget, usedRegisters, generateOrGetAlreadyGeneratedCallSiteIndex(iter->value[i].index, codeOrigin),
+                    patchpoint, exceptionTarget, usedRegisters, exceptionHandlerManager.procureCallSiteIndex(iter->value[i].index, codeOrigin),
                     descriptor.m_linker->run(locations));
 
                 CCallHelpers::Label begin = slowPathJIT.label();
@@ -952,7 +915,7 @@ static void fixFunctionBasedOnStackMaps(
             state.finalizer->sideCodeLinkBuffer->link(pair.first, pair.second);
     }
     
-    adjustCallICsForStackmaps(state.jsCalls, recordMap, generateOrGetAlreadyGeneratedCallSiteIndex, jsCallOSRExitForRecordIndex);
+    adjustCallICsForStackmaps(state.jsCalls, recordMap, exceptionHandlerManager);
     
     for (unsigned i = state.jsCalls.size(); i--;) {
         JSCall& call = state.jsCalls[i];
@@ -967,7 +930,7 @@ static void fixFunctionBasedOnStackMaps(
         });
     }
     
-    adjustCallICsForStackmaps(state.jsCallVarargses, recordMap, generateOrGetAlreadyGeneratedCallSiteIndex, jsCallOSRExitForRecordIndex);
+    adjustCallICsForStackmaps(state.jsCallVarargses, recordMap, exceptionHandlerManager);
     
     for (unsigned i = state.jsCallVarargses.size(); i--;) {
         JSCallVarargs& call = state.jsCallVarargses[i];
@@ -983,9 +946,7 @@ static void fixFunctionBasedOnStackMaps(
         });
     }
 
-    // FIXME: We shouldn't generate CallSite indices for tail calls.
-    // https://bugs.webkit.org/show_bug.cgi?id=151079
-    adjustCallICsForStackmaps(state.jsTailCalls, recordMap, generateOrGetAlreadyGeneratedCallSiteIndex, jsCallOSRExitForRecordIndex);
+    adjustCallICsForStackmaps(state.jsTailCalls, recordMap, exceptionHandlerManager);
 
     for (unsigned i = state.jsTailCalls.size(); i--;) {
         JSTailCall& call = state.jsTailCalls[i];

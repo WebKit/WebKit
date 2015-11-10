@@ -985,6 +985,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLDWARFDebugLineInfo.cpp
         ftl/FTLDWARFRegister.cpp
         ftl/FTLDataSection.cpp
+        ftl/FTLExceptionHandlerManager.cpp
         ftl/FTLExitArgument.cpp
         ftl/FTLExitArgumentForOperand.cpp
         ftl/FTLExitPropertyValue.cpp
