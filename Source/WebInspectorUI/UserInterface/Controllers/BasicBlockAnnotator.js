@@ -67,7 +67,17 @@ WebInspector.BasicBlockAnnotator = class BasicBlockAnnotator extends WebInspecto
 
             var {startOffset, endOffset} = this.sourceCodeTextEditor.visibleRangeOffsets();
             basicBlocks = basicBlocks.filter(function(block) {
-                return (block.startOffset >= startOffset && block.startOffset <= endOffset) || (block.startOffset <= startOffset && block.endOffset >= endOffset);
+                // Viewport: [--]
+                // Block:         [--]
+                if (block.startOffset > endOffset)
+                    return false;
+
+                // Viewport:      [--]
+                // Block:    [--]
+                if (block.endOffset < startOffset)
+                    return false;
+
+                return true;
             });
 
             for (var block of basicBlocks) {
