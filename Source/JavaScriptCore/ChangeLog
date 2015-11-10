@@ -1,5 +1,29 @@
 2015-11-09  Filip Pizlo  <fpizlo@apple.com>
 
+        [B3] Add more tests for Check and fix bugs this found
+        https://bugs.webkit.org/show_bug.cgi?id=151073
+
+        Reviewed by Saam Barati.
+
+        Adds tests for compare/Check fusion. The "MegaCombo" test found a bug in our implementation
+        of forEachArg: Air::spillEverything() was expecting that the Arg& to point to the actual Arg
+        so that it can mutate it. But this wasn't the case in B3::CheckSpecial. This fixes that bug.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::Air::numB3Args):
+        (JSC::B3::CheckSpecial::hiddenBranch):
+        (JSC::B3::CheckSpecial::commitHiddenBranch):
+        (JSC::B3::CheckSpecial::forEachArg):
+        * b3/B3CheckSpecial.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCheckLessThan):
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::genericTestCompare):
+        (JSC::B3::run):
+
+2015-11-09  Filip Pizlo  <fpizlo@apple.com>
+
         [B3] Add a test for CCall with double arguments and results
         https://bugs.webkit.org/show_bug.cgi?id=151064
 

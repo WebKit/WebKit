@@ -2401,6 +2401,95 @@ void testSimpleCheck()
     CHECK(invoke<int>(*code, 1) == 42);
 }
 
+void testCheckLessThan()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    CheckValue* check = root->appendNew<CheckValue>(
+        proc, Check, Origin(),
+        root->appendNew<Value>(
+            proc, LessThan, Origin(), arg,
+            root->appendNew<Const32Value>(proc, Origin(), 42)));
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 1);
+            CHECK(params.reps[0].isConstant());
+            CHECK(params.reps[0].value() == 1);
+
+            // This should always work because a function this simple should never have callee
+            // saves.
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    
+    CHECK(invoke<int>(*code, 42) == 0);
+    CHECK(invoke<int>(*code, 1000) == 0);
+    CHECK(invoke<int>(*code, 41) == 42);
+    CHECK(invoke<int>(*code, 0) == 42);
+    CHECK(invoke<int>(*code, -1) == 42);
+}
+
+void testCheckMegaCombo()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* index = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    Value* ptr = root->appendNew<Value>(
+        proc, Add, Origin(), base,
+        root->appendNew<Value>(
+            proc, Shl, Origin(), index,
+            root->appendNew<Const32Value>(proc, Origin(), 1)));
+    
+    CheckValue* check = root->appendNew<CheckValue>(
+        proc, Check, Origin(),
+        root->appendNew<Value>(
+            proc, LessThan, Origin(),
+            root->appendNew<MemoryValue>(proc, Load8S, Origin(), ptr),
+            root->appendNew<Const32Value>(proc, Origin(), 42)));
+    check->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 1);
+            CHECK(params.reps[0].isConstant());
+            CHECK(params.reps[0].value() == 1);
+
+            // This should always work because a function this simple should never have callee
+            // saves.
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+
+    int8_t value;
+    value = 42;
+    CHECK(invoke<int>(*code, &value - 2, 1) == 0);
+    value = 127;
+    CHECK(invoke<int>(*code, &value - 2, 1) == 0);
+    value = 41;
+    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    value = 0;
+    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+    value = -1;
+    CHECK(invoke<int>(*code, &value - 2, 1) == 42);
+}
+
 template<typename LeftFunctor, typename RightFunctor>
 void genericTestCompare(
     B3::Opcode opcode, const LeftFunctor& leftFunctor, const RightFunctor& rightFunctor,
@@ -3151,6 +3240,8 @@ void run(const char* filter)
 
     RUN(testSimplePatchpoint());
     RUN(testSimpleCheck());
+    RUN(testCheckLessThan());
+    RUN(testCheckMegaCombo());
 
     RUN(testCompare(Equal, 42, 42));
     RUN(testCompare(NotEqual, 42, 42));
