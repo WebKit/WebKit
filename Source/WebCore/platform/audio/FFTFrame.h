@@ -31,16 +31,16 @@
 
 #include "AudioArray.h"
 
-#if OS(DARWIN)
-#include <Accelerate/Accelerate.h>
-#endif
-
 #if USE(WEBAUDIO_GSTREAMER)
 #include <glib.h>
 G_BEGIN_DECLS
 #include <gst/fft/gstfftf32.h>
 G_END_DECLS
 #endif // USE(WEBAUDIO_GSTREAMER)
+
+#if USE(ACCELERATE)
+#include <Accelerate/Accelerate.h>
+#endif
 
 #include <memory>
 #include <wtf/Forward.h>
@@ -90,7 +90,7 @@ private:
 
     void interpolateFrequencyComponents(const FFTFrame& frame1, const FFTFrame& frame2, double x);
 
-#if OS(DARWIN)
+#if USE(ACCELERATE)
     DSPSplitComplex& dspSplitComplex() { return m_frame; }
     DSPSplitComplex dspSplitComplex() const { return m_frame; }
 

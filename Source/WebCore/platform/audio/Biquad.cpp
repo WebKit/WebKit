@@ -37,7 +37,7 @@
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 
-#if OS(DARWIN)
+#if USE(ACCELERATE)
 // Work around a bug where VForce.h forward declares std::complex in a way that's incompatible with libc++ complex.
 #define __VFORCE_H
 #include <Accelerate/Accelerate.h>
@@ -45,13 +45,13 @@
 
 namespace WebCore {
 
-#if OS(DARWIN)
+#if USE(ACCELERATE)
 const int kBufferSize = 1024;
 #endif
 
 Biquad::Biquad()
 {
-#if OS(DARWIN)
+#if USE(ACCELERATE)
     // Allocate two samples more for filter history
     m_inputBuffer.allocate(kBufferSize + 2);
     m_outputBuffer.allocate(kBufferSize + 2);
@@ -69,7 +69,7 @@ Biquad::~Biquad()
 
 void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
 {
-#if OS(DARWIN)
+#if USE(ACCELERATE)
     // Use vecLib if available
     processFast(sourceP, destP, framesToProcess);
 
@@ -118,7 +118,7 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
 #endif
 }
 
-#if OS(DARWIN)
+#if USE(ACCELERATE)
 
 // Here we have optimized version using Accelerate.framework
 
@@ -172,12 +172,12 @@ void Biquad::processSliceFast(double* sourceP, double* destP, double* coefficien
     destP[1] = destP[framesToProcess - 1 + 2];
 }
 
-#endif // OS(DARWIN)
+#endif // USE(ACCELERATE)
 
 
 void Biquad::reset()
 {
-#if OS(DARWIN)
+#if USE(ACCELERATE)
     // Two extra samples for filter history
     double* inputP = m_inputBuffer.data();
     inputP[0] = 0;

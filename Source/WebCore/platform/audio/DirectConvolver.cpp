@@ -73,7 +73,7 @@ void DirectConvolver::process(AudioFloatArray* convolutionKernel, const float* s
     // Copy samples to 2nd half of input buffer.
     memcpy(inputP, sourceP, sizeof(float) * framesToProcess);
 
-#if OS(DARWIN)
+#if USE(ACCELERATE)
 #if defined(__ppc__) || defined(__i386__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -352,7 +352,7 @@ void DirectConvolver::process(AudioFloatArray* convolutionKernel, const float* s
         }
         destP[i++] = sum;
     }
-#endif // OS(DARWIN)
+#endif // USE(ACCELERATE)
 
     // Copy 2nd half of input buffer to 1st half.
     memcpy(m_buffer.data(), inputP, sizeof(float) * framesToProcess);
