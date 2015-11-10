@@ -66,10 +66,17 @@ float RenderCombineText::width(unsigned from, unsigned length, const FontCascade
     return RenderText::width(from, length, font, xPosition, fallbackFonts, glyphOverflow);
 }
 
-void RenderCombineText::adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const
+Optional<FloatPoint> RenderCombineText::computeTextOrigin(const FloatRect& boxRect) const
 {
-    if (m_isCombined)
-        textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextSize.width()) / 2, boxRect.width() + (boxRect.width() - m_combinedTextSize.height()) / 2);
+    if (!m_isCombined)
+        return Nullopt;
+
+    // Visually center m_combinedTextWidth/Ascent/Descent within boxRect
+    FloatPoint result = boxRect.minXMaxYCorner();
+    FloatSize combinedTextSize(m_combinedTextWidth, m_combinedTextAscent + m_combinedTextDescent);
+    result.move((boxRect.size().transposedSize() - combinedTextSize) / 2);
+    result.move(0, m_combinedTextAscent);
+    return result;
 }
 
 void RenderCombineText::getStringToRender(int start, String& string, int& length) const
@@ -147,7 +154,9 @@ void RenderCombineText::combineText()
     if (m_isCombined) {
         static NeverDestroyed<String> objectReplacementCharacterString(&objectReplacementCharacter, 1);
         RenderText::setRenderedText(objectReplacementCharacterString.get());
-        m_combinedTextSize = FloatSize(combinedTextWidth, glyphOverflow.bottom + glyphOverflow.top);
+        m_combinedTextWidth = combinedTextWidth;
+        m_combinedTextAscent = glyphOverflow.top;
+        m_combinedTextDescent = glyphOverflow.bottom;
     }
 }
 
