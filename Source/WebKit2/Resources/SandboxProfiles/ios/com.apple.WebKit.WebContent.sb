@@ -80,6 +80,9 @@
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
 
+;; Allow loading injected bundles.
+(allow file-map-executable)
+
 ;; AWD logging
 (awd-log-directory "com.apple.WebKit.WebContent")
 

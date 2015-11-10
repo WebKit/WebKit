@@ -1,3 +1,15 @@
+2015-11-10  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Update WebContent sandbox profile to allow loading injected bundles again
+        https://bugs.webkit.org/show_bug.cgi?id=151102
+        <rdar://problem/23442311>
+
+        Reviewed by Dan Bernstein.
+
+        Update WebContent sandbox profile to allow loading injected bundles again.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [UNIX] Environment variable should take precedence over directories in plugin search path
