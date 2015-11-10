@@ -1,3 +1,17 @@
+2015-10-27  Keith Rollin  <krollin@apple.com>
+
+        Do not sanitize user input for input[type=url]
+        https://bugs.webkit.org/show_bug.cgi?id=150346
+        <rdar://problem/23243240>
+
+        Reviewed by Darin Adler.
+
+        Test the sanitization of text-based input fields when the user enters
+        text.
+
+        * fast/forms/input-user-input-sanitization-expected.txt: Added.
+        * fast/forms/input-user-input-sanitization.html: Added.
+
 2015-10-26  Zalan Bujtas  <zalan@apple.com>
 
         Floating box is misplaced after content change.

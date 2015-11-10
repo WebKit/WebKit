@@ -497,8 +497,17 @@ void TextFieldInputType::subtreeHasChanged()
     // We don't need to call sanitizeUserInputValue() function here because
     // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
     // sanitizeUserInputValue().
+    // ---
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
-    element().setValueFromRenderer(sanitizeValue(convertFromVisibleValue(element().innerTextValue())));
+    // ---
+    // Input types that support the selection API do *not* sanitize their
+    // user input in order to retain parity between what's in the model and
+    // what's on the screen. Otherwise, we retain the sanitization process for
+    // backward compatibility. https://bugs.webkit.org/show_bug.cgi?id=150346
+    String innerText = convertFromVisibleValue(element().innerTextValue());
+    if (!supportsSelectionAPI())
+        innerText = sanitizeValue(innerText);
+    element().setValueFromRenderer(innerText);
     element().updatePlaceholderVisibility();
     // Recalc for :invalid change.
     element().setNeedsStyleRecalc();
