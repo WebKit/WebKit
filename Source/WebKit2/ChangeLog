@@ -1,5 +1,12 @@
 2015-11-09  Anders Carlsson  <andersca@apple.com>
 
+        Fix 32-bit build.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::callReplyBlock):
+
+2015-11-09  Anders Carlsson  <andersca@apple.com>
+
         Add reply blocks to _WKRemoteObjectInterface similar to NSXPCConnection
         https://bugs.webkit.org/show_bug.cgi?id=151056
         rdar://problem/23222609

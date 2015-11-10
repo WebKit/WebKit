@@ -63,7 +63,9 @@ void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation
 
 void RemoteObjectRegistry::callReplyBlock(uint64_t replyID, const UserData& blockInvocation)
 {
+#if WK_API_ENABLED
     [m_remoteObjectRegistry _callReplyWithID:replyID blockInvocation:blockInvocation];
+#endif
 }
 
 } // namespace WebKit
