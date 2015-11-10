@@ -26,7 +26,7 @@
 #ifndef Attachment_h
 #define Attachment_h
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
 #include <mach/mach_init.h>
 #include <mach/mach_traps.h>
 #endif
@@ -42,38 +42,37 @@ public:
 
     enum Type {
         Uninitialized,
-#if OS(DARWIN)
-        MachPortType,
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS)
         SocketType,
-        MappedMemoryType
+        MappedMemoryType,
+#elif OS(DARWIN)
+        MachPortType
 #endif
     };
 
-#if OS(DARWIN)
-    Attachment(mach_port_name_t port, mach_msg_type_name_t disposition);
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS)
     Attachment(Attachment&&);
     Attachment& operator=(Attachment&&);
     Attachment(int fileDescriptor, size_t);
     Attachment(int fileDescriptor);
     ~Attachment();
+#elif OS(DARWIN)
+    Attachment(mach_port_name_t, mach_msg_type_name_t disposition);
 #endif
 
     Type type() const { return m_type; }
 
-#if OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS)
+    size_t size() const { return m_size; }
+
+    int releaseFileDescriptor() { int temp = m_fileDescriptor; m_fileDescriptor = -1; return temp; }
+    int fileDescriptor() const { return m_fileDescriptor; }
+#elif OS(DARWIN)
     void release();
 
     // MachPortType
     mach_port_name_t port() const { return m_port; }
     mach_msg_type_name_t disposition() const { return m_disposition; }
-
-#elif USE(UNIX_DOMAIN_SOCKETS)
-    size_t size() const { return m_size; }
-
-    int releaseFileDescriptor() { int temp = m_fileDescriptor; m_fileDescriptor = -1; return temp; }
-    int fileDescriptor() const { return m_fileDescriptor; }
 #endif
 
     void encode(ArgumentEncoder&) const;
@@ -82,12 +81,12 @@ public:
 private:
     Type m_type;
 
-#if OS(DARWIN)
-    mach_port_name_t m_port;
-    mach_msg_type_name_t m_disposition;
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS)
     int m_fileDescriptor { -1 };
     size_t m_size;
+#elif OS(DARWIN)
+    mach_port_name_t m_port;
+    mach_msg_type_name_t m_disposition;
 #endif
 };
 

@@ -74,11 +74,11 @@ public:
 #endif
     private:
         friend class SharedMemory;
-#if OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS)
+        mutable IPC::Attachment m_attachment;
+#elif OS(DARWIN)
         mutable mach_port_t m_port;
         size_t m_size;
-#elif USE(UNIX_DOMAIN_SOCKETS)
-        mutable IPC::Attachment m_attachment;
 #endif
     };
 
@@ -112,11 +112,11 @@ private:
     void* m_data;
     Protection m_protection;
 
-#if OS(DARWIN)
-    mach_port_t m_port;
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS)
     int m_fileDescriptor;
     bool m_isWrappingMap { false };
+#elif OS(DARWIN)
+    mach_port_t m_port;
 #endif
 };
 

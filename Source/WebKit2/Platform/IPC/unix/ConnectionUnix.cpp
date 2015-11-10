@@ -43,7 +43,7 @@
 #include <glib.h>
 #endif
 
-#ifdef SOCK_SEQPACKET
+#if defined(SOCK_SEQPACKET)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
 #if PLATFORM(GTK)

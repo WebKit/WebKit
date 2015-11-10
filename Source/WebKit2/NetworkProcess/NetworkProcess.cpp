@@ -233,7 +233,15 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
 
 void NetworkProcess::createNetworkConnectionToWebProcess()
 {
-#if OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
+
+    RefPtr<NetworkConnectionToWebProcess> connection = NetworkConnectionToWebProcess::create(socketPair.server);
+    m_webProcessConnections.append(connection.release());
+
+    IPC::Attachment clientSocket(socketPair.client);
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientSocket), 0);
+#elif OS(DARWIN)
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -244,14 +252,6 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort), 0);
-#elif USE(UNIX_DOMAIN_SOCKETS)
-    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-
-    RefPtr<NetworkConnectionToWebProcess> connection = NetworkConnectionToWebProcess::create(socketPair.server);
-    m_webProcessConnections.append(connection.release());
-
-    IPC::Attachment clientSocket(socketPair.client);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientSocket), 0);
 #else
     notImplemented();
 #endif

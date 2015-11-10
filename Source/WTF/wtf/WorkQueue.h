@@ -34,7 +34,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !PLATFORM(GTK)
 #include <dispatch/dispatch.h>
 #endif
 
@@ -73,14 +73,14 @@ public:
 
     WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void (size_t index)>&);
 
-#if OS(DARWIN)
-    dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
     void registerSocketEventHandler(int, std::function<void ()>, std::function<void ()>);
     void unregisterSocketEventHandler(int);
 #elif PLATFORM(EFL)
     void registerSocketEventHandler(int, std::function<void ()>);
     void unregisterSocketEventHandler(int);
+#elif OS(DARWIN)
+    dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
 #endif
 
 private:
@@ -102,16 +102,16 @@ private:
     static DWORD WINAPI unregisterWaitAndDestroyItemCallback(void* context);
 #endif
 
-#if OS(DARWIN)
-    static void executeFunction(void*);
-    dispatch_queue_t m_dispatchQueue;
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
     ThreadIdentifier m_workQueueThread;
     GRefPtr<GMainContext> m_eventContext;
     GRefPtr<GMainLoop> m_eventLoop;
     GMainLoopSource m_socketEventSource;
 #elif PLATFORM(EFL)
     RefPtr<DispatchQueue> m_dispatchQueue;
+#elif OS(DARWIN)
+    static void executeFunction(void*);
+    dispatch_queue_t m_dispatchQueue;
 #elif OS(WINDOWS)
     volatile LONG m_isWorkThreadRegistered;
 
