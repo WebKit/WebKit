@@ -56,14 +56,14 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
 
 /* Source for ReflectObject.lut.h
 @begin reflectObjectTable
-    apply                    reflectObjectApply                    DontEnum|Function 3
+    apply                    JSBuiltin                             DontEnum|Function 3
     defineProperty           reflectObjectDefineProperty           DontEnum|Function 3
-    deleteProperty           reflectObjectDeleteProperty           DontEnum|Function 2
+    deleteProperty           JSBuiltin                             DontEnum|Function 2
     enumerate                reflectObjectEnumerate                DontEnum|Function 1
     get                      reflectObjectGet                      DontEnum|Function 2
     getOwnPropertyDescriptor reflectObjectGetOwnPropertyDescriptor DontEnum|Function 2
     getPrototypeOf           reflectObjectGetPrototypeOf           DontEnum|Function 1
-    has                      reflectObjectHas                      DontEnum|Function 2
+    has                      JSBuiltin                             DontEnum|Function 2
     isExtensible             reflectObjectIsExtensible             DontEnum|Function 1
     ownKeys                  reflectObjectOwnKeys                  DontEnum|Function 1
     preventExtensions        reflectObjectPreventExtensions        DontEnum|Function 1

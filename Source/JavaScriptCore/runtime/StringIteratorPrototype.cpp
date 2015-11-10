@@ -46,7 +46,7 @@ const ClassInfo StringIteratorPrototype::s_info = { "String Iterator", &Base::s_
 
 /* Source for StringIteratorPrototype.lut.h
 @begin stringIteratorPrototypeTable
-  next      stringIteratorPrototypeFuncNext  DontEnum|Function 0
+  next      JSBuiltin    DontEnum|Function 0
 @end
 */
 

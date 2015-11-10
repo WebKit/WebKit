@@ -53,9 +53,6 @@ extern const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility
     macro(every, builtinPrototypeEvery, 1) \
     macro(forEach, builtinPrototypeForEach, 1) \
 
-#define JSC_BUILTIN_BUILTINPROTOTYPE_EVERY 1
-#define JSC_BUILTIN_BUILTINPROTOTYPE_FOREACH 1
-
 #define JSC_FOREACH_BUILTIN_CODE(macro) \
     macro(builtinPrototypeEveryCode, every, s_builtinPrototypeEveryCodeLength) \
     macro(builtinPrototypeForEachCode, forEach, s_builtinPrototypeForEachCodeLength) \
@@ -69,8 +66,6 @@ extern const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility
 
 JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
-
-#define JSC_BUILTIN_EXISTS(object, func) defined JSC_BUILTIN_ ## object ## _ ## func
 
 } // namespace JSC
 

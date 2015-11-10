@@ -80,8 +80,6 @@ extern const JSC::ConstructAbility s_xmlCasingTestUrlCasingTestCodeConstructAbil
 WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
 
-#define WEBCORE_BUILTIN_XMLCASINGTEST_EXISTS(object, func) defined WEBCORE_BUILTIN_ ## object ## _ ## func
-
 class xmlCasingTestBuiltinsWrapper : private JSC::WeakHandleOwner {
 public:
     explicit xmlCasingTestBuiltinsWrapper(JSC::VM* vm)

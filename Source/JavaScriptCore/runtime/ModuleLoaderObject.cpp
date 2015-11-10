@@ -65,30 +65,30 @@ const ClassInfo ModuleLoaderObject::s_info = { "ModuleLoader", &Base::s_info, &m
 
 /* Source for ModuleLoaderObject.lut.h
 @begin moduleLoaderObjectTable
-    setStateToMax                  moduleLoaderObjectSetStateToMax                  DontEnum|Function 2
-    newRegistryEntry               moduleLoaderObjectNewRegistryEntry               DontEnum|Function 1
-    ensureRegistered               moduleLoaderObjectEnsureRegistered               DontEnum|Function 1
-    forceFulfillPromise            moduleLoaderObjectForceFulfillPromise            DontEnum|Function 2
-    fulfillFetch                   moduleLoaderObjectFulfillFetch                   DontEnum|Function 2
-    fulfillTranslate               moduleLoaderObjectFulfillTranslate               DontEnum|Function 2
-    fulfillInstantiate             moduleLoaderObjectFulfillInstantiate             DontEnum|Function 2
-    commitInstantiated             moduleLoaderObjectCommitInstantiated             DontEnum|Function 3
-    instantiation                  moduleLoaderObjectInstantiation                  DontEnum|Function 3
-    requestFetch                   moduleLoaderObjectRequestFetch                   DontEnum|Function 1
-    requestTranslate               moduleLoaderObjectRequestTranslate               DontEnum|Function 1
-    requestInstantiate             moduleLoaderObjectRequestInstantiate             DontEnum|Function 1
-    requestResolveDependencies     moduleLoaderObjectRequestResolveDependencies     DontEnum|Function 1
-    requestInstantiateAll          moduleLoaderObjectRequestInstantiateAll          DontEnum|Function 1
-    requestLink                    moduleLoaderObjectRequestLink                    DontEnum|Function 1
-    requestReady                   moduleLoaderObjectRequestReady                   DontEnum|Function 1
-    link                           moduleLoaderObjectLink                           DontEnum|Function 1
+    setStateToMax                  JSBuiltin                                        DontEnum|Function 2
+    newRegistryEntry               JSBuiltin                                        DontEnum|Function 1
+    ensureRegistered               JSBuiltin                                        DontEnum|Function 1
+    forceFulfillPromise            JSBuiltin                                        DontEnum|Function 2
+    fulfillFetch                   JSBuiltin                                        DontEnum|Function 2
+    fulfillTranslate               JSBuiltin                                        DontEnum|Function 2
+    fulfillInstantiate             JSBuiltin                                        DontEnum|Function 2
+    commitInstantiated             JSBuiltin                                        DontEnum|Function 3
+    instantiation                  JSBuiltin                                        DontEnum|Function 3
+    requestFetch                   JSBuiltin                                        DontEnum|Function 1
+    requestTranslate               JSBuiltin                                        DontEnum|Function 1
+    requestInstantiate             JSBuiltin                                        DontEnum|Function 1
+    requestResolveDependencies     JSBuiltin                                        DontEnum|Function 1
+    requestInstantiateAll          JSBuiltin                                        DontEnum|Function 1
+    requestLink                    JSBuiltin                                        DontEnum|Function 1
+    requestReady                   JSBuiltin                                        DontEnum|Function 1
+    link                           JSBuiltin                                        DontEnum|Function 1
     moduleDeclarationInstantiation moduleLoaderObjectModuleDeclarationInstantiation DontEnum|Function 2
-    moduleEvaluation               moduleLoaderObjectModuleEvaluation               DontEnum|Function 2
+    moduleEvaluation               JSBuiltin                                        DontEnum|Function 2
     evaluate                       moduleLoaderObjectEvaluate                       DontEnum|Function 2
-    provide                        moduleLoaderObjectProvide                        DontEnum|Function 3
-    loadAndEvaluateModule          moduleLoaderObjectLoadAndEvaluateModule          DontEnum|Function 2
-    loadModule                     moduleLoaderObjectLoadModule                     DontEnum|Function 2
-    linkAndEvaluateModule          moduleLoaderObjectLinkAndEvaluateModule          DontEnum|Function 1
+    provide                        JSBuiltin                                        DontEnum|Function 3
+    loadAndEvaluateModule          JSBuiltin                                        DontEnum|Function 2
+    loadModule                     JSBuiltin                                        DontEnum|Function 2
+    linkAndEvaluateModule          JSBuiltin                                        DontEnum|Function 1
     parseModule                    moduleLoaderObjectParseModule                    DontEnum|Function 2
     requestedModules               moduleLoaderObjectRequestedModules               DontEnum|Function 1
     resolve                        moduleLoaderObjectResolve                        DontEnum|Function 1

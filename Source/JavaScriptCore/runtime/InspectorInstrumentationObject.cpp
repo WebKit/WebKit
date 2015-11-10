@@ -47,8 +47,8 @@ const ClassInfo InspectorInstrumentationObject::s_info = { "InspectorInstrumenta
 /* Source for InspectorInstrumentationObject.lut.h
 @begin inspectorInstrumentationObjectTable
     log               inspectorInstrumentationObjectLog              DontEnum|Function 1
-    promiseFulfilled  inspectorInstrumentationObjectPromiseFulfilled DontEnum|Function 3
-    promiseRejected   inspectorInstrumentationObjectPromiseRejected  DontEnum|Function 3
+    promiseFulfilled  JSBuiltin                                      DontEnum|Function 3
+    promiseRejected   JSBuiltin                                      DontEnum|Function 3
 @end
 */
 

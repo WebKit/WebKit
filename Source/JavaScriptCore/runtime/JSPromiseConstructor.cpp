@@ -54,10 +54,10 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &Base::s_info, &pro
 
 /* Source for JSPromiseConstructor.lut.h
 @begin promiseConstructorTable
-  resolve         JSPromiseConstructorFuncResolve             DontEnum|Function 1
-  reject          JSPromiseConstructorFuncReject              DontEnum|Function 1
-  race            JSPromiseConstructorFuncRace                DontEnum|Function 1
-  all             JSPromiseConstructorFuncAll                 DontEnum|Function 1
+  resolve         JSBuiltin             DontEnum|Function 1
+  reject          JSBuiltin             DontEnum|Function 1
+  race            JSBuiltin             DontEnum|Function 1
+  all             JSBuiltin             DontEnum|Function 1
 @end
 */
 

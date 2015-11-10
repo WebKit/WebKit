@@ -46,7 +46,7 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 @begin stringConstructorTable
   fromCharCode          stringFromCharCode         DontEnum|Function 1
   fromCodePoint         stringFromCodePoint        DontEnum|Function 1
-  raw                   stringRaw                  DontEnum|Function 1
+  raw                   JSBuiltin                  DontEnum|Function 1
 @end
 */
 

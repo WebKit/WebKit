@@ -26,10 +26,11 @@ use strict;
 use Getopt::Long qw(:config pass_through);
 
 my $includeLookup = 0;
+my $activateBuiltin = 0;
 my $includeBuiltin = 0;
 
 GetOptions('i|lookup' => \$includeLookup,    # Include "Lookup.h".
-           'b|builtin' => \$includeBuiltin,  # Include JSCBuiltins.h and builtins support.
+           'b|builtin' => \$activateBuiltin,  # Include JSCBuiltins.h and builtins support if needed.
 )
 or die("Unable to process command line options.");
 
@@ -81,6 +82,7 @@ while (<IN>) {
         @hashes = ();
         @table = ();
         @links = ();
+        $includeBuiltin = 0;
 
         $inside = 0;
     } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
@@ -91,6 +93,10 @@ while (<IN>) {
 
         push(@keys, $key);
         push(@attrs, length($att) > 0 ? $att : "0");
+
+        if ($activateBuiltin && $val eq "JSBuiltin") {
+            $includeBuiltin = 1;
+        }
 
         if ($att =~ m/Function/) {
             push(@values, { "type" => "Function", "function" => $val, "params" => (length($param) ? $param : "") });
@@ -314,16 +320,13 @@ sub output() {
             $intrinsic = "RegExpTestIntrinsic" if ($key eq "test");
         }
 
-        if ($values[$i]{"type"} eq "Function" && $includeBuiltin)  {
+        if ($values[$i]{"type"} eq "Function" && $activateBuiltin && $firstValue eq "JSBuiltin")  {
             my $tableHead = $name;
             $tableHead =~ s/Table$//;
-            print " #if JSC_BUILTIN_EXISTS(" . uc($tableHead) . ", " . uc($key) .")\n";
             print "   { \"$key\", (($attrs[$i]) & ~Function) | Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
-            print " #else\n"
         }
-        print "   { \"$key\", $attrs[$i], $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
-        if ($values[$i]{"type"} eq "Function" && $includeBuiltin)  {
-            print " #endif\n";
+        else {
+            print "   { \"$key\", $attrs[$i], $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
         }
         $i++;
     }

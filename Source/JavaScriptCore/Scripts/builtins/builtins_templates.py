@@ -75,18 +75,14 @@ THE POSSIBILITY OF SUCH DAMAGE.
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
 
 ${macroPrefix}_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
-#undef DECLARE_BUILTIN_GENERATOR
-
-#define ${macroPrefix}_BUILTIN_EXISTS(object, func) defined ${macroPrefix}_BUILTIN_ ## object ## _ ## func""")
+#undef DECLARE_BUILTIN_GENERATOR""")
 
     SeparateHeaderStaticMacros = (
     """#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \\
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
 
 ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
-#undef DECLARE_BUILTIN_GENERATOR
-
-#define ${macroPrefix}_BUILTIN_${objectMacro}_EXISTS(object, func) defined ${macroPrefix}_BUILTIN_ ## object ## _ ## func""")
+#undef DECLARE_BUILTIN_GENERATOR""")
 
     CombinedJSCImplementationStaticMacros = (
     """

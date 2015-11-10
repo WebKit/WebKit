@@ -66,8 +66,6 @@ extern const JSC::ConstructAbility s_guardedBuiltinIsReadableStreamLockedCodeCon
 WEBCORE_FOREACH_GUARDEDBUILTIN_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
 
-#define WEBCORE_BUILTIN_GUARDEDBUILTIN_EXISTS(object, func) defined WEBCORE_BUILTIN_ ## object ## _ ## func
-
 class GuardedBuiltinBuiltinsWrapper : private JSC::WeakHandleOwner {
 public:
     explicit GuardedBuiltinBuiltinsWrapper(JSC::VM* vm)

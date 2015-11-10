@@ -51,8 +51,8 @@ const ClassInfo JSPromisePrototype::s_info = { "PromisePrototype", &Base::s_info
 
 /* Source for JSPromisePrototype.lut.h
 @begin promisePrototypeTable
-  then         JSPromisePrototypeFuncThen             DontEnum|Function 2
-  catch        JSPromisePrototypeFuncCatch            DontEnum|Function 1
+  then         JSBuiltin            DontEnum|Function 2
+  catch        JSBuiltin            DontEnum|Function 1
 @end
 */
 

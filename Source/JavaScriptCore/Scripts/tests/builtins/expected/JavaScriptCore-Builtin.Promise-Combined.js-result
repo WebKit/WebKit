@@ -52,9 +52,6 @@ extern const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAb
     macro(rejectPromise, builtinPromiseRejectPromise, 2) \
     macro(fulfillPromise, builtinPromiseFulfillPromise, 2) \
 
-#define JSC_BUILTIN_BUILTINPROMISE_REJECTPROMISE 1
-#define JSC_BUILTIN_BUILTINPROMISE_FULFILLPROMISE 1
-
 #define JSC_FOREACH_BUILTIN_CODE(macro) \
     macro(builtinPromiseRejectPromiseCode, rejectPromise, s_builtinPromiseRejectPromiseCodeLength) \
     macro(builtinPromiseFulfillPromiseCode, fulfillPromise, s_builtinPromiseFulfillPromiseCodeLength) \
@@ -68,8 +65,6 @@ extern const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAb
 
 JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
-
-#define JSC_BUILTIN_EXISTS(object, func) defined JSC_BUILTIN_ ## object ## _ ## func
 
 } // namespace JSC
 

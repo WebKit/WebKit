@@ -66,8 +66,6 @@ extern const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLo
 WEBCORE_FOREACH_ARBITRARYCONDITIONALGUARD_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
 
-#define WEBCORE_BUILTIN_ARBITRARYCONDITIONALGUARD_EXISTS(object, func) defined WEBCORE_BUILTIN_ ## object ## _ ## func
-
 class ArbitraryConditionalGuardBuiltinsWrapper : private JSC::WeakHandleOwner {
 public:
     explicit ArbitraryConditionalGuardBuiltinsWrapper(JSC::VM* vm)

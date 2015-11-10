@@ -69,8 +69,6 @@ extern const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility
 JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
 
-#define JSC_BUILTIN_BUILTIN.PROTOTYPE_EXISTS(object, func) defined JSC_BUILTIN_ ## object ## _ ## func
-
 } // namespace JSC
 
 #endif // BuiltinPrototypeBuiltins_h

@@ -80,8 +80,6 @@ enum class ConstructAbility : unsigned;
         lines.extend(self.generate_externs_for_object(object))
         lines.append("")
         lines.extend(self.generate_macros_for_object(object))
-        lines.append("")
-        lines.extend(self.generate_defines_for_object(object))
         return '\n'.join(lines)
 
     def generate_externs_for_object(self, object):
@@ -114,18 +112,6 @@ extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;""" % function
             }
 
             lines.append("    macro(%(funcName)s, %(mangledName)s, %(paramCount)d) \\" % function_args)
-        return lines
-
-    def generate_defines_for_object(self, object):
-        lines = []
-        for function in object.functions:
-            args = {
-                'macroPrefix': self.model().framework.setting('macro_prefix'),
-                'objectMacro': object.object_name.replace('.', '').upper(),
-                'functionMacro': function.function_name.upper(),
-            }
-            lines.append("#define %(macroPrefix)s_BUILTIN_%(objectMacro)s_%(functionMacro)s 1" % args)
-
         return lines
 
     def generate_section_for_code_table_macro(self):

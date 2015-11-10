@@ -64,8 +64,6 @@ extern const JSC::ConstructAbility s_unguardedBuiltinIsReadableStreamLockedCodeC
 WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
 
-#define WEBCORE_BUILTIN_UNGUARDEDBUILTIN_EXISTS(object, func) defined WEBCORE_BUILTIN_ ## object ## _ ## func
-
 class UnguardedBuiltinBuiltinsWrapper : private JSC::WeakHandleOwner {
 public:
     explicit UnguardedBuiltinBuiltinsWrapper(JSC::VM* vm)

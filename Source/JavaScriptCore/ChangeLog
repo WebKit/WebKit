@@ -1,3 +1,50 @@
+2015-11-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        create_hash_table should know whether a function is JSBuiltin or not.
+        https://bugs.webkit.org/show_bug.cgi?id=151016
+
+        Reviewed by Darin Adler.
+
+        lut description information can explicitly state that a function is to be implemented as a JS built-in.
+        To do so, the field used to give the C++ function must be set to "JSBuiltin".
+        Updated create_hash_table script to handle that.
+        create_hash_table only includes JSCBuiltins.h if at least one function is set to "JSBuiltin".
+
+        Updated builtin generator to remove XX_BUILTIN_EXIST macro.
+        A further patch should simplify the build system by removing create_hash_table -b option.
+
+        Changes to the builtin generator are covered by rebased expectations.
+
+        Moved all lut information to using JSBuiltin whenever needed.
+
+        * Scripts/builtins/builtins_generate_combined_header.py:
+        (generate_section_for_object): Deleted.
+        (generate_section_for_code_table_macro): Deleted.
+        * Scripts/builtins/builtins_templates.py:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * create_hash_table:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/InspectorInstrumentationObject.cpp:
+        * runtime/JSInternalPromiseConstructor.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/ModuleLoaderObject.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ReflectObject.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringIteratorPrototype.cpp:
+
 2015-11-09  Saam barati  <sbarati@apple.com>
 
         Implement try/catch in the FTL

@@ -43,7 +43,7 @@ const ClassInfo JSInternalPromiseConstructor::s_info = { "Function", &Base::s_in
 
 /* Source for JSInternalPromiseConstructor.lut.h
 @begin internalPromiseConstructorTable
-  internalAll  JSInternalPromiseConstructorFuncInternalAll DontEnum|Function 1
+  internalAll  JSBuiltin DontEnum|Function 1
 @end
 */
 

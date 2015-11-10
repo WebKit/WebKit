@@ -80,7 +80,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   isFrozen                  objectConstructorIsFrozen                   DontEnum|Function 1
   isExtensible              objectConstructorIsExtensible               DontEnum|Function 1
   is                        objectConstructorIs                         DontEnum|Function 2
-  assign                    objectConstructorAssign                     DontEnum|Function 2
+  assign                    JSBuiltin                                   DontEnum|Function 2
 @end
 */
 

@@ -52,9 +52,6 @@ extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
     macro(of, builtinConstructorOf, 0) \
     macro(from, builtinConstructorFrom, 1) \
 
-#define JSC_BUILTIN_BUILTINCONSTRUCTOR_OF 1
-#define JSC_BUILTIN_BUILTINCONSTRUCTOR_FROM 1
-
 #define JSC_FOREACH_BUILTIN_CODE(macro) \
     macro(builtinConstructorOfCode, of, s_builtinConstructorOfCodeLength) \
     macro(builtinConstructorFromCode, from, s_builtinConstructorFromCodeLength) \
@@ -68,8 +65,6 @@ extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
 
 JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
-
-#define JSC_BUILTIN_EXISTS(object, func) defined JSC_BUILTIN_ ## object ## _ ## func
 
 } // namespace JSC
 
