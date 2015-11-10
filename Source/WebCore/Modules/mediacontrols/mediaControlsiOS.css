@@ -53,7 +53,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     width: inherit;
     height: inherit;
     position: relative;
-    display: -webkit-flex;
+    display: -webkit-flex !important;
     -webkit-align-items: stretch;
     -webkit-justify-content: flex-end;
     -webkit-flex-direction: column;
