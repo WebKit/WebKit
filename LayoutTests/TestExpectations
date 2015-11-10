@@ -120,7 +120,6 @@ webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Failure ]
 webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
 
 # These tests will be rewritten, just skip them until that time.
-webkit.org/b/148036 http/tests/inspector/console/ [ Skip ]
 webkit.org/b/148036 http/tests/inspector/css/ [ Skip ]
 webkit.org/b/148036 http/tests/inspector/page/ [ Skip ]
 webkit.org/b/148036 http/tests/inspector/replay/ [ Skip ]

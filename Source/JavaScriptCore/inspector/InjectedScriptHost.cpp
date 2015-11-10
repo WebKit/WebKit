@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedScriptHost.h"
 
+#include "JSCInlines.h"
 #include "JSInjectedScriptHost.h"
 
 using namespace JSC;
@@ -36,44 +37,23 @@ InjectedScriptHost::~InjectedScriptHost()
 {
 }
 
-JSValue InjectedScriptHost::jsWrapper(ExecState* exec, JSGlobalObject* globalObject)
+JSValue InjectedScriptHost::wrapper(ExecState* exec, JSGlobalObject* globalObject)
 {
-    auto key = std::make_pair(exec, globalObject);
-    auto it = m_wrappers.find(key);
-    if (it != m_wrappers.end())
-        return it->value.get();
+    JSValue value = m_wrappers.getWrapper(globalObject);
+    if (value)
+        return value;
 
-    JSValue jsValue = toJS(exec, globalObject, this);
-    if (!jsValue.isObject())
-        return jsValue;
+    JSObject* prototype = JSInjectedScriptHost::createPrototype(exec->vm(), globalObject);
+    Structure* structure = JSInjectedScriptHost::createStructure(exec->vm(), globalObject, prototype);
+    JSInjectedScriptHost* injectedScriptHost = JSInjectedScriptHost::create(exec->vm(), structure, Ref<InjectedScriptHost>(*this));
+    m_wrappers.addWrapper(globalObject, injectedScriptHost);
 
-    JSObject* jsObject = jsValue.toObject(exec, globalObject);
-    Strong<JSObject> wrapper(exec->vm(), jsObject);
-    m_wrappers.add(key, wrapper);
-
-    return jsValue;
-}
-
-static void clearWrapperFromValue(JSValue value)
-{
-    JSInjectedScriptHost* jsInjectedScriptHost = toJSInjectedScriptHost(value);
-    ASSERT(jsInjectedScriptHost);
-    if (jsInjectedScriptHost)
-        jsInjectedScriptHost->releaseImpl();
-}
-
-void InjectedScriptHost::clearWrapper(ExecState* exec, JSGlobalObject* globalObject)
-{
-    auto key = std::make_pair(exec, globalObject);
-    clearWrapperFromValue(m_wrappers.take(key).get());
+    return injectedScriptHost;
 }
 
 void InjectedScriptHost::clearAllWrappers()
 {
-    for (auto& wrapper : m_wrappers)
-        clearWrapperFromValue(wrapper.value.get());
-
-    m_wrappers.clear();
+    m_wrappers.clearAllWrappers();
 }
 
 } // namespace Inspector

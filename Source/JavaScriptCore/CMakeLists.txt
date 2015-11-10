@@ -398,6 +398,7 @@ set(JavaScriptCore_SOURCES
     inspector/JSJavaScriptCallFrame.cpp
     inspector/JSJavaScriptCallFramePrototype.cpp
     inspector/JavaScriptCallFrame.cpp
+    inspector/PerGlobalObjectWrapperWorld.cpp
     inspector/ScriptArguments.cpp
     inspector/ScriptCallFrame.cpp
     inspector/ScriptCallStack.cpp

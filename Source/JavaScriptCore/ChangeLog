@@ -1,3 +1,57 @@
+2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: $0 stops working after navigating to a different domain
+        https://bugs.webkit.org/show_bug.cgi?id=147962
+
+        Reviewed by Brian Burg.
+
+        Extract the per-GlobalObject cache of JSValue wrappers for
+        InjectedScriptHost objects to be reused by WebCore for its
+        CommandLineAPIHost objects injected into multiple contexts.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * inspector/PerGlobalObjectWrapperWorld.h:
+        * inspector/PerGlobalObjectWrapperWorld.cpp:
+        (Inspector::PerGlobalObjectWrapperWorld::getWrapper):
+        (Inspector::PerGlobalObjectWrapperWorld::addWrapper):
+        (Inspector::PerGlobalObjectWrapperWorld::clearAllWrappers):
+        Hold a bunch of per-global-object wrappers for an object
+        that will outlive the global object. This inspector does this
+        for host objects that it exposes into scripts it injects into
+        each execution context created by the page.
+
+        * inspector/InjectedScriptHost.cpp:
+        (Inspector::InjectedScriptHost::wrapper):
+        (Inspector::InjectedScriptHost::clearAllWrappers):
+        (Inspector::InjectedScriptHost::jsWrapper): Deleted.
+        (Inspector::clearWrapperFromValue): Deleted.
+        (Inspector::InjectedScriptHost::clearWrapper): Deleted.
+        Extract and simplify the Per-GlobalObject wrapping into a class.
+        Simplify object construction as well.
+
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        (Inspector::InjectedScriptManager::discardInjectedScripts):
+        Make discarding virtual so subclasses may also discard injected scripts.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::JSInjectedScriptHost):
+        (Inspector::JSInjectedScriptHost::releaseImpl): Deleted.
+        (Inspector::JSInjectedScriptHost::~JSInjectedScriptHost): Deleted.
+        (Inspector::toJS): Deleted.
+        (Inspector::toJSInjectedScriptHost): Deleted.
+        * inspector/JSInjectedScriptHost.h:
+        (Inspector::JSInjectedScriptHost::create):
+        (Inspector::JSInjectedScriptHost::impl):
+        Update this code originally copied from older generated bindings to
+        be more like new generated bindings and remove some now unused code.
+
 2015-11-08  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile a program with a double constant

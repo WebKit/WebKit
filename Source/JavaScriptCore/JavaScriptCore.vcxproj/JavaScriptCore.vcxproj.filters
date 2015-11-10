@@ -1731,6 +1731,9 @@
     <ClCompile Include="..\inspector\JSJavaScriptCallFramePrototype.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
+    <ClCompile Include="..\inspector\PerGlobalObjectWrapperWorld.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
     <ClCompile Include="..\profiler\ProfilerJettisonReason.cpp">
       <Filter>profiler</Filter>
     </ClCompile>
@@ -4325,6 +4328,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\JSJavaScriptCallFrame.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\PerGlobalObjectWrapperWorld.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSCInlines.h">

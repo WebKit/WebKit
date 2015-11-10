@@ -20435,6 +20435,7 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorProtocolObjects.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorProtocolTypes.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorValues.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\PerGlobalObjectWrapperWorld.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\ScriptArguments.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\ScriptBreakpoint.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\ScriptCallFrame.h" />

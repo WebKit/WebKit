@@ -11782,6 +11782,9 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\InspectorValues.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\inspector\PerGlobalObjectWrapperWorld.h">
+      <Filter>ForwardingHeaders\inspector</Filter>
+    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\ScriptArguments.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
