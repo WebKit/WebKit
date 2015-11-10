@@ -1,0 +1,12 @@
+<script>
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+}
+
+window.onunload = function() {
+	prompt("FAIL: This prompt should have been ignored.");
+}
+
+setTimeout(function() { window.location = "resources/prompt-landing-page.html" }, 0);
+</script>

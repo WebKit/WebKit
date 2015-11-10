@@ -138,6 +138,9 @@ fast/encoding/idn-security.html
 # WebKitTestRunner needs testRunner.abortModal
 # <https://bugs.webkit.org/show_bug.cgi?id=69548>
 fast/events/show-modal-dialog-onblur-onfocus.html
+fast/events/beforeunload-showModalDialog.html
+fast/events/pagehide-showModalDialog.html
+fast/events/unload-showModalDialog.html
 
 # WebKitTestRunner needs testRunner.setWillSendRequestClearHeader
 # <https://bugs.webkit.org/show_bug.cgi?id=42699>
