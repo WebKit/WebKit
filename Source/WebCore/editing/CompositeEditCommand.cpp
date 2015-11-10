@@ -1161,6 +1161,9 @@ void CompositeEditCommand::cleanupAfterDeletion(VisiblePosition destination)
 
 void CompositeEditCommand::moveParagraphWithClones(const VisiblePosition& startOfParagraphToMove, const VisiblePosition& endOfParagraphToMove, Element* blockElement, Node* outerNode)
 {
+    if (startOfParagraphToMove.isNull() || endOfParagraphToMove.isNull())
+        return;
+    
     ASSERT(outerNode);
     ASSERT(blockElement);
 

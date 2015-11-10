@@ -1,3 +1,14 @@
+2015-10-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test editing/execCommand/indent-no-visible-contents-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=149292
+        <rdar://problem/22746530>
+
+        Reviewed by Alex Christensen.
+
+        * editing/execCommand/indent-no-visible-contents-crash-expected.txt: Added.
+        * editing/execCommand/indent-no-visible-contents-crash.html: Added.
+
 2015-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         Incorrect repeated background-size behavior in keyframes
