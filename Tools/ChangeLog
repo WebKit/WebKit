@@ -1,3 +1,13 @@
+2015-11-10  Geoffrey Garen  <ggaren@apple.com>
+
+        run-jsc-benchmarks doesn't work with internal benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=151047
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-jsc-benchmarks: Use Pathname so we get a "/" inserted when
+        we concatenate.
+
 2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use CROSS_PLATFORM_CONTEXT_MENUS
