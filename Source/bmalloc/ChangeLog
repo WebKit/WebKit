@@ -1,3 +1,41 @@
+2015-10-29  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: AsyncTask should handle destruction
+        https://bugs.webkit.org/show_bug.cgi?id=150648
+
+        Reviewed by Mark Lam.
+
+        So we can use it in more places.
+
+        * bmalloc/AsyncTask.h: Use std::thread instead of pthread because it
+        should be more portable.
+
+        (bmalloc::Function>::AsyncTask): Renamed Signaled to RunRequested for
+        clarity. Added an ExitRequested state.
+
+        (bmalloc::Function>::~AsyncTask): Wait for our child thread to exit
+        before destroying ourselves because our child thread will modify our
+        data (and might modify our client's data). Note that we only need to
+        wait for the last child thread since any prior child thread, having
+        reached the Exited condition, is guaranteed not to read or write any
+        data.
+
+        (bmalloc::Function>::run):
+        (bmalloc::Function>::runSlowCase): Updated for interface changes. Also
+        changed to use our WebKit style for condition signal: Hold the lock
+        during the signal and always notify all. Technically, neither is necessary,
+        but it is easier to understand the code this way, and harder to make
+        mistakes.
+
+        (bmalloc::Function>::threadEntryPoint):
+        (bmalloc::Function>::threadRunLoop): Handle the new ExitRequested state.
+        Technically, this state has no meaningful difference from the Exited
+        state, but it is nice to be explicit.
+
+        (bmalloc::Function>::join): Deleted.
+        (bmalloc::Function>::pthreadEntryPoint): Deleted.
+        (bmalloc::Function>::entryPoint): Deleted.
+
 2015-10-15  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: per-thread cache data structure should be smaller
