@@ -686,6 +686,13 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
                 // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
                 if (frame->document() != nodeDocument)
                     return String();
+
+                // The render tree should be stable before going ahead. Otherwise, further uses of the
+                // TextIterator will force a layout update, potentially altering the accessibility tree
+                // and leading to crashes in the loop that computes the result text from the children.
+                ASSERT(!nodeDocument->renderView()->layoutState());
+                ASSERT(!nodeDocument->childNeedsStyleRecalc());
+
                 return plainText(textRange.get(), textIteratorBehaviorForTextRange());
             }
         }
