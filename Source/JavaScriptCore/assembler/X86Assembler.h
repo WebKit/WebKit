@@ -1277,6 +1277,16 @@ public:
         setne_r(dst);
     }
 
+    void setnp_r(RegisterID dst)
+    {
+        m_formatter.twoByteOp8(setccOpcode(ConditionNP), (GroupOpcodeID)0, dst);
+    }
+
+    void setp_r(RegisterID dst)
+    {
+        m_formatter.twoByteOp8(setccOpcode(ConditionP), (GroupOpcodeID)0, dst);
+    }
+
     // Various move ops:
 
     void cdq()

@@ -1,3 +1,23 @@
+2015-11-10  Michael Saboff  <msaboff@apple.com>
+
+        X86_64 support for compareDouble(DoubleCondition, FPRegisterID left, FPRegisterID right, RegisterID dest)
+        https://bugs.webkit.org/show_bug.cgi?id=151009
+
+        Reviewed by Filip Pizlo.
+
+        Added compareDouble() macro assembler function and the supporting setnp_r() and setp_r() X86 assembler functions.
+        Hand tested.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::compare64):
+        (JSC::MacroAssemblerX86_64::compareDouble):
+        (JSC::MacroAssemblerX86_64::branch64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::setnz_r):
+        (JSC::X86Assembler::setnp_r):
+        (JSC::X86Assembler::setp_r):
+        (JSC::X86Assembler::cdq):
+
 2015-11-10  Saam barati  <sbarati@apple.com>
 
         Rename FTL's ExitArgumentList to something more indicative of what it is
