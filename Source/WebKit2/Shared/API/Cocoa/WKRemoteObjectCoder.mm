@@ -33,6 +33,7 @@
 #import "APIDictionary.h"
 #import "APINumber.h"
 #import "APIString.h"
+#import "NSInvocationSPI.h"
 #import "_WKRemoteObjectInterfaceInternal.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -45,6 +46,7 @@ static const char* const stringKey = "$string";
 
 static NSString * const selectorKey = @"selector";
 static NSString * const typeStringKey = @"typeString";
+static NSString * const isReplyBlockKey = @"isReplyBlock";
 
 static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 
@@ -118,7 +120,7 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
 
     ASSERT(firstArgument <= argumentCount);
 
-    for (NSUInteger i = 2; i < argumentCount; ++i) {
+    for (NSUInteger i = firstArgument; i < argumentCount; ++i) {
         const char* type = [methodSignature getArgumentTypeAtIndex:i];
 
         switch (*type) {
@@ -213,9 +215,14 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
 {
     NSMethodSignature *methodSignature = invocation.methodSignature;
     [encoder encodeObject:methodSignature._typeString forKey:typeStringKey];
-    [encoder encodeObject:NSStringFromSelector(invocation.selector) forKey:selectorKey];
 
-    encodeInvocationArguments(encoder, invocation, 2);
+    if ([invocation isKindOfClass:[NSBlockInvocation class]]) {
+        [encoder encodeBool:YES forKey:isReplyBlockKey];
+        encodeInvocationArguments(encoder, invocation, 1);
+    } else {
+        [encoder encodeObject:NSStringFromSelector(invocation.selector) forKey:selectorKey];
+        encodeInvocationArguments(encoder, invocation, 2);
+    }
 }
 
 static void encodeString(WKRemoteObjectEncoder *encoder, NSString *string)
@@ -355,13 +362,15 @@ static NSString *escapeKey(NSString *key)
     const API::Dictionary* _rootDictionary;
     const API::Dictionary* _currentDictionary;
 
+    SEL _replyToSelector;
+
     const API::Array* _objectStream;
     size_t _objectStreamPosition;
 
     const HashSet<Class>* _allowedClasses;
 }
 
-- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const API::Dictionary*)rootObjectDictionary
+- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const API::Dictionary*)rootObjectDictionary replyToSelector:(SEL)replyToSelector
 {
     if (!(self = [super init]))
         return nil;
@@ -370,6 +379,8 @@ static NSString *escapeKey(NSString *key)
 
     _rootDictionary = rootObjectDictionary;
     _currentDictionary = _rootDictionary;
+
+    _replyToSelector = replyToSelector;
 
     _objectStream = _rootDictionary->get<API::Array>(objectStreamKey);
 
@@ -442,23 +453,21 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
 
     checkIfClassIsAllowed(decoder, objectClass);
 
-    // NSInvocation doesn't support NSSecureCoding, but we allow it anyway.
-    if (objectClass == [NSInvocation class])
+    // NSInvocation and NSBlockInvocation don't support NSSecureCoding, but we allow them anyway.
+    if (objectClass == [NSInvocation class] || objectClass == [NSBlockInvocation class])
         return;
 
     [decoder validateClassSupportsSecureCoding:objectClass];
 }
 
-static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<HashSet<Class>>& allowedArgumentClasses)
+static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<HashSet<Class>>& allowedArgumentClasses, NSUInteger firstArgument)
 {
     NSMethodSignature *methodSignature = invocation.methodSignature;
     NSUInteger argumentCount = methodSignature.numberOfArguments;
 
-    // The invocation should always have have self and _cmd arguments.
-    ASSERT(argumentCount >= 2);
+    ASSERT(firstArgument <= argumentCount);
 
-    // We ignore self and _cmd.
-    for (NSUInteger i = 2; i < argumentCount; ++i) {
+    for (NSUInteger i = firstArgument; i < argumentCount; ++i) {
         const char* type = [methodSignature getArgumentTypeAtIndex:i];
 
         switch (*type) {
@@ -520,7 +529,7 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
             
         // Objective-C object
         case '@': {
-            auto& allowedClasses = allowedArgumentClasses[i - 2];
+            auto& allowedClasses = allowedArgumentClasses[i - firstArgument];
 
             id value = decodeObjectFromObjectStream(decoder, allowedClasses);
             [invocation setArgument:&value atIndex:i];
@@ -537,31 +546,52 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
 
 static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
 {
-    NSString *selectorString = [decoder decodeObjectOfClass:[NSString class] forKey:selectorKey];
-    if (!selectorString)
-        [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no selector"];
+    SEL selector = nullptr;
+    NSMethodSignature *localMethodSignature = nil;
 
-    SEL selector = NSSelectorFromString(selectorString);
-    ASSERT(selector);
+    BOOL isReplyBlock = [decoder decodeBoolForKey:isReplyBlockKey];
 
-    NSMethodSignature *localMethodSignature = [decoder->_interface _methodSignatureForSelector:selector];
-    if (!localMethodSignature)
-        [NSException raise:NSInvalidUnarchiveOperationException format:@"Selector \"%@\" is not defined in the local interface", selectorString];
+    if (isReplyBlock) {
+        if (!decoder->_replyToSelector)
+            [NSException raise:NSInvalidUnarchiveOperationException format:@"%@: Received unknown reply block", decoder];
+
+        localMethodSignature = [decoder->_interface _methodSignatureForReplyBlockOfSelector:decoder->_replyToSelector];
+        if (!localMethodSignature)
+            [NSException raise:NSInvalidUnarchiveOperationException format:@"Reply block for selector \"%s\" is not defined in the local interface", sel_getName(decoder->_replyToSelector)];
+    } else {
+        NSString *selectorString = [decoder decodeObjectOfClass:[NSString class] forKey:selectorKey];
+        if (!selectorString)
+            [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no selector"];
+
+        selector = NSSelectorFromString(selectorString);
+        ASSERT(selector);
+
+        localMethodSignature = [decoder->_interface _methodSignatureForSelector:selector];
+        if (!localMethodSignature)
+            [NSException raise:NSInvalidUnarchiveOperationException format:@"Selector \"%@\" is not defined in the local interface", selectorString];
+    }
 
     NSString *typeSignature = [decoder decodeObjectOfClass:[NSString class] forKey:typeStringKey];
     if (!typeSignature)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no type signature"];
 
     NSMethodSignature *remoteMethodSignature = [NSMethodSignature signatureWithObjCTypes:typeSignature.UTF8String];
+    localMethodSignature = remoteMethodSignature;
     if (![localMethodSignature isEqual:remoteMethodSignature])
-        [NSException raise:NSInvalidUnarchiveOperationException format:@"Local and remote method signatures are not equal for method \"%@\"", selectorString];
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Local and remote method signatures are not equal for method \"%s\"", selector ? sel_getName(selector) : "(no selector)"];
 
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:localMethodSignature];
 
-    const auto& allowedClasses = [decoder->_interface _allowedArgumentClassesForSelector:selector];
-    decodeInvocationArguments(decoder, invocation, allowedClasses);
+    if (isReplyBlock) {
+        const auto& allowedClasses = [decoder->_interface _allowedArgumentClassesForReplyBlockOfSelector:decoder->_replyToSelector];
+        decodeInvocationArguments(decoder, invocation, allowedClasses, 1);
+    } else {
+        const auto& allowedClasses = [decoder->_interface _allowedArgumentClassesForSelector:selector];
+        decodeInvocationArguments(decoder, invocation, allowedClasses, 2);
 
-    [invocation setArgument:&selector atIndex:1];
+        [invocation setArgument:&selector atIndex:1];
+    }
+
     return invocation;
 }
 
@@ -588,7 +618,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder)
 
     validateClass(decoder, objectClass);
 
-    if (objectClass == [NSInvocation class])
+    if (objectClass == [NSInvocation class] || objectClass == [NSBlockInvocation class])
         return decodeInvocation(decoder);
 
     if (objectClass == [NSString class])

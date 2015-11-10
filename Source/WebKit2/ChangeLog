@@ -1,3 +1,86 @@
+2015-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Add reply blocks to _WKRemoteObjectInterface similar to NSXPCConnection
+        https://bugs.webkit.org/show_bug.cgi?id=151056
+        rdar://problem/23222609
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/Cocoa/NSInvocationSPI.h:
+        Add NSBlockInvocation declaration.
+
+        * Shared/API/Cocoa/RemoteObjectInvocation.mm:
+        (WebKit::RemoteObjectInvocation::encode):
+        Encode true if we have a reply ID.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        Add new members.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.messages.in:
+        Add new CallReplyBlock message.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm:
+        (WebKit::RemoteObjectRegistry::sendReplyBlock):
+        Just send the CallReplyBlock message.
+
+        (WebKit::RemoteObjectRegistry::callReplyBlock):
+        Call through to _WKRemoteObjectRegistry.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.h:
+        Pass an optional reply selector.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocationArguments):
+        Don't hard-code the first argument index.
+
+        (encodeInvocation):
+        Encode block invocations.
+
+        (-[WKRemoteObjectDecoder initWithInterface:rootObjectDictionary:replyToSelector:]):
+        Initialize _replyToSelector.
+
+        (validateClass):
+        NSBlockInvocation doesn't need to conform to NSSecureCoding.
+
+        (decodeInvocationArguments):
+        Don't hard-code the first argument, take it as a parameter instead.
+
+        (decodeInvocation):
+        Decode NSBlockInvocations (reply block invocations).
+
+        (decodeObject):
+        Check for NSBlockInvocation.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (-[_WKRemoteObjectInterface _methodSignatureForSelector:]):
+        Return null if we can't find the method.
+
+        (-[_WKRemoteObjectInterface _methodSignatureForReplyBlockOfSelector:]):
+        Look up the reply block signature and return it.
+
+        (-[_WKRemoteObjectInterface _allowedArgumentClassesForReplyBlockOfSelector:]):
+        Look up the allowed reply argument classes and return them.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterfaceInternal.h:
+        Add new methods.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (PendingReply::PendingReply):
+        Add new object that represents a pending reply.
+
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]):
+        If the invocation has a reply block, add a pending reply to our map.
+
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+        If the method we're about to invoke has a reply block, construct a special reply block that calls us back with an invocation.
+        Encode this invocation and send it back across the wire.
+
+        (-[_WKRemoteObjectRegistry _callReplyWithID:blockInvocation:]):
+        Find the pending reply, decode the reply block invocation and call it.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistryInternal.h:
+        Add new methods.
+
 2015-11-09  Tim Horton  <timothy_horton@apple.com>
 
         Add drawsBackground SPI to WKWebView, and get rid of drawsTransparentBackground from WebKit2

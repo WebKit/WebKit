@@ -64,8 +64,7 @@
 
 - (void)sayHello:(NSString *)hello completionHandler:(void (^)(NSString *))completionHandler
 {
-    // FIXME: Actually call this.
-    // completionHandler([NSString stringWithFormat:@"Your string was '%@'", hello]);
+    completionHandler([NSString stringWithFormat:@"Your string was '%@'", hello]);
 }
 
 @end

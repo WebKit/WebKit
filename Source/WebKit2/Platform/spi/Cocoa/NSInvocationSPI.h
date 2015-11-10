@@ -34,3 +34,6 @@
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+@interface NSBlockInvocation : NSInvocation
+@end

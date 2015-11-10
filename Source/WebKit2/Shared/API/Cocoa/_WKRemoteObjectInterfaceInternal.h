@@ -35,7 +35,9 @@
 @interface _WKRemoteObjectInterface ()
 
 - (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector;
+- (NSMethodSignature *)_methodSignatureForReplyBlockOfSelector:(SEL)selector;
 - (const Vector<HashSet<Class>>&)_allowedArgumentClassesForSelector:(SEL)selector;
+- (const Vector<HashSet<Class>>&)_allowedArgumentClassesForReplyBlockOfSelector:(SEL)selector;
 
 @end
 

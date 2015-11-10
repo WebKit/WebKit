@@ -33,22 +33,48 @@
 #import "Connection.h"
 #import "RemoteObjectInvocation.h"
 #import "RemoteObjectRegistry.h"
+#import "UserData.h"
 #import "WKConnectionRef.h"
 #import "WKRemoteObject.h"
 #import "WKRemoteObjectCoder.h"
 #import "WKSharedAPICast.h"
-#import "WebConnection.h"
 #import "_WKRemoteObjectInterface.h"
+#import <objc/runtime.h>
+
+extern "C" id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(NSInvocation *inv));
+
+static const void* replyBlockKey = &replyBlockKey;
+
+@interface NSMethodSignature ()
+- (NSString *)_typeString;
+@end
 
 NSString * const invocationKey = @"invocation";
 
 using namespace WebKit;
+
+struct PendingReply {
+    PendingReply() = default;
+
+    PendingReply(_WKRemoteObjectInterface* interface, SEL selector, id block)
+        : interface(interface)
+        , selector(selector)
+        , block(adoptNS([block copy]))
+    {
+    }
+
+    RetainPtr<_WKRemoteObjectInterface> interface;
+    SEL selector { nullptr };
+    RetainPtr<id> block;
+};
 
 @implementation _WKRemoteObjectRegistry {
     std::unique_ptr<RemoteObjectRegistry> _remoteObjectRegistry;
 
     RetainPtr<NSMapTable> _remoteObjectProxies;
     HashMap<String, std::pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>> _exportedObjects;
+
+    HashMap<uint64_t, PendingReply> _pendingReplies;
 }
 
 - (void)registerExportedObject:(id)object interface:(_WKRemoteObjectInterface *)interface
@@ -116,12 +142,12 @@ static uint64_t generateReplyIdentifier()
         if (replyInfo)
             [NSException raise:NSInvalidArgumentException format:@"Only one reply block is allowed per message send. (%s)", sel_getName(invocation.selector)];
 
-        id block = nullptr;
-        [invocation getArgument:&block atIndex:i];
-        if (!block)
+        id replyBlock = nullptr;
+        [invocation getArgument:&replyBlock atIndex:i];
+        if (!replyBlock)
             [NSException raise:NSInvalidArgumentException format:@"A NULL reply block was passed into a message. (%s)", sel_getName(invocation.selector)];
 
-        const char* replyBlockSignature = _Block_signature(block);
+        const char* replyBlockSignature = _Block_signature(replyBlock);
 
         if (strcmp([NSMethodSignature signatureWithObjCTypes:replyBlockSignature].methodReturnType, "v"))
             [NSException raise:NSInvalidArgumentException format:@"Return value of block argument must be 'void'. (%s)", sel_getName(invocation.selector)];
@@ -131,6 +157,9 @@ static uint64_t generateReplyIdentifier()
         // Replace the block object so we won't try to encode it.
         id null = nullptr;
         [invocation setArgument:&null atIndex:i];
+
+        ASSERT(!_pendingReplies.contains(replyInfo->replyID));
+        _pendingReplies.add(replyInfo->replyID, PendingReply(interface, invocation.selector, replyBlock));
     }
 
     RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
@@ -159,7 +188,9 @@ static uint64_t generateReplyIdentifier()
         return;
     }
 
-    RetainPtr<WKRemoteObjectDecoder> decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:interfaceAndObject.second.get() rootObjectDictionary:encodedInvocation]);
+    RetainPtr<_WKRemoteObjectInterface> interface = interfaceAndObject.second;
+
+    auto decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:interface.get() rootObjectDictionary:encodedInvocation replyToSelector:nullptr]);
 
     NSInvocation *invocation = nil;
 
@@ -169,6 +200,38 @@ static uint64_t generateReplyIdentifier()
         NSLog(@"Exception caught during decoding of message: %@", exception);
     }
 
+    if (auto* replyInfo = remoteObjectInvocation.replyInfo()) {
+        NSMethodSignature *methodSignature = invocation.methodSignature;
+
+        // Look for the block argument.
+        for (NSUInteger i = 0, count = methodSignature.numberOfArguments; i < count; ++i) {
+            const char *type = [methodSignature getArgumentTypeAtIndex:i];
+
+            if (strcmp(type, "@?"))
+                continue;
+
+            // We found the block.
+            // FIXME: Validate the signature.
+            NSMethodSignature *wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()];
+
+            RetainPtr<_WKRemoteObjectRegistry> remoteObjectRegistry = self;
+            uint64_t replyID = replyInfo->replyID;
+            id replyBlock = __NSMakeSpecialForwardingCaptureBlock(wireBlockSignature._typeString.UTF8String, [interface, remoteObjectRegistry, replyID](NSInvocation *invocation) {
+
+                auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
+                [encoder encodeObject:invocation forKey:invocationKey];
+
+                remoteObjectRegistry->_remoteObjectRegistry->sendReplyBlock(replyID, UserData([encoder rootObjectDictionary]));
+            });
+
+            [invocation setArgument:&replyBlock atIndex:i];
+
+            // Make sure that the block won't be destroyed before the invocation.
+            objc_setAssociatedObject(invocation, replyBlockKey, replyBlock, OBJC_ASSOCIATION_RETAIN);
+            break;
+        }
+    }
+
     invocation.target = interfaceAndObject.first.get();
 
     @try {
@@ -176,6 +239,34 @@ static uint64_t generateReplyIdentifier()
     } @catch (NSException *exception) {
         NSLog(@"%@: Warning: Exception caught during invocation of received message, dropping incoming message .\nException: %@", self, exception);
     }
+}
+
+- (void)_callReplyWithID:(uint64_t)replyID blockInvocation:(const WebKit::UserData&)blockInvocation
+{
+    auto encodedInvocation = blockInvocation.object();
+    if (!encodedInvocation || encodedInvocation->type() != API::Object::Type::Dictionary)
+        return;
+
+    auto it = _pendingReplies.find(replyID);
+    if (it == _pendingReplies.end())
+        return;
+
+    auto pendingReply = it->value;
+    _pendingReplies.remove(it);
+
+    auto decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:pendingReply.interface.get() rootObjectDictionary:static_cast<API::Dictionary*>(encodedInvocation) replyToSelector:pendingReply.selector]);
+
+    NSInvocation *replyInvocation = nil;
+
+    @try {
+        replyInvocation = [decoder decodeObjectOfClass:[NSInvocation class] forKey:invocationKey];
+    } @catch (NSException *exception) {
+        NSLog(@"Exception caught during decoding of reply: %@", exception);
+        return;
+    }
+
+    [replyInvocation setTarget:pendingReply.block.get()];
+    [replyInvocation invoke];
 }
 
 @end

@@ -1,3 +1,18 @@
+2015-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Add reply blocks to _WKRemoteObjectInterface similar to NSXPCConnection
+        https://bugs.webkit.org/show_bug.cgi?id=151056
+        rdar://problem/23222609
+
+        Reviewed by Tim Horton.
+
+        Update test.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn sayHello:completionHandler:]):
+
 2015-11-09  Tim Horton  <timothy_horton@apple.com>
 
         Add drawsBackground SPI to WKWebView, and get rid of drawsTransparentBackground from WebKit2

@@ -60,9 +60,14 @@ TEST(WebKit2, RemoteObjectRegistry)
         }];
         TestWebKitAPI::Util::run(&isDone);
 
-        [object sayHello:@"Hello Again!" completionHandler:^(NSString *) {
-            // FIXME: Check the string here.
+        isDone = false;
+        [object sayHello:@"Hello Again!" completionHandler:^(NSString *result) {
+            EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+            EXPECT_WK_STREQ(result, @"Your string was 'Hello Again!'");
+            isDone = true;
         }];
+
+        TestWebKitAPI::Util::run(&isDone);
     }
 }
 

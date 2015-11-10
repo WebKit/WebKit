@@ -37,6 +37,7 @@ class MessageSender;
 namespace WebKit {
 
 class RemoteObjectInvocation;
+class UserData;
 
 class RemoteObjectRegistry final : public IPC::MessageReceiver {
 public:
@@ -44,6 +45,7 @@ public:
     ~RemoteObjectRegistry();
 
     void sendInvocation(const RemoteObjectInvocation&);
+    void sendReplyBlock(uint64_t replyID, const UserData& blockInvocation);
 
 private:
     // IPC::MessageReceiver
@@ -51,6 +53,7 @@ private:
 
     // Message handlers
     void invokeMethod(const RemoteObjectInvocation&);
+    void callReplyBlock(uint64_t replyID, const UserData& blockInvocation);
 
     _WKRemoteObjectRegistry *m_remoteObjectRegistry;
     IPC::MessageSender& m_messageSender;

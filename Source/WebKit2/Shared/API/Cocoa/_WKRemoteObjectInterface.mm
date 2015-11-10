@@ -311,6 +311,9 @@ static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL
 
 - (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector
 {
+    if (!_methods.contains(selector))
+        return nil;
+
     const char* types = methodArgumentTypeEncodingForSelector(_protocol, selector);
     if (!types)
         return nil;
@@ -318,11 +321,31 @@ static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL
     return [NSMethodSignature signatureWithObjCTypes:types];
 }
 
+- (NSMethodSignature *)_methodSignatureForReplyBlockOfSelector:(SEL)selector
+{
+    auto it = _methods.find(selector);
+    if (it  == _methods.end())
+        return nil;
+
+    auto& methodInfo = it->value;
+    if (!methodInfo.replyInfo)
+        return nil;
+
+    return [NSMethodSignature signatureWithObjCTypes:methodInfo.replyInfo->replySignature.data()];
+}
+
 - (const Vector<HashSet<Class>>&)_allowedArgumentClassesForSelector:(SEL)selector
 {
     ASSERT(_methods.contains(selector));
 
     return _methods.find(selector)->value.allowedArgumentClasses;
+}
+
+- (const Vector<HashSet<Class>>&)_allowedArgumentClassesForReplyBlockOfSelector:(SEL)selector
+{
+    ASSERT(_methods.contains(selector));
+
+    return _methods.find(selector)->value.replyInfo->allowedReplyClasses;
 }
 
 @end

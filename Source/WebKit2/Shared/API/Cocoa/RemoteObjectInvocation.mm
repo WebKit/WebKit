@@ -51,6 +51,7 @@ void RemoteObjectInvocation::encode(IPC::ArgumentEncoder& encoder) const
         return;
     }
 
+    encoder << true;
     encoder << m_replyInfo->replyID;
     encoder << m_replyInfo->blockSignature;
 }

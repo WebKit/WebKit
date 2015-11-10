@@ -29,6 +29,7 @@
 #import "MessageSender.h"
 #import "RemoteObjectInvocation.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "UserData.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 
 namespace WebKit {
@@ -48,11 +49,21 @@ void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocati
     m_messageSender.send(Messages::RemoteObjectRegistry::InvokeMethod(invocation));
 }
 
+void RemoteObjectRegistry::sendReplyBlock(uint64_t replyID, const UserData& blockInvocation)
+{
+    m_messageSender.send(Messages::RemoteObjectRegistry::CallReplyBlock(replyID, blockInvocation));
+}
+
 void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation)
 {
 #if WK_API_ENABLED
     [m_remoteObjectRegistry _invokeMethod:invocation];
 #endif
+}
+
+void RemoteObjectRegistry::callReplyBlock(uint64_t replyID, const UserData& blockInvocation)
+{
+    [m_remoteObjectRegistry _callReplyWithID:replyID blockInvocation:blockInvocation];
 }
 
 } // namespace WebKit
