@@ -980,6 +980,9 @@ void RenderThemeGtk::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&,
 
 static IntRect centerRectVerticallyInParentInputElement(const RenderObject& renderObject, const IntRect& rect)
 {
+    if (!renderObject.node())
+        return IntRect();
+
     // Get the renderer of <input> element.
     Node* input = renderObject.node()->shadowHost();
     if (!input)
