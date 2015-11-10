@@ -38,6 +38,7 @@
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebContextMenuProxy.h"
+#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 
 #if ENABLE(FULLSCREEN_API)
@@ -48,17 +49,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebView::WebView(WebProcessPool* context, WebPageGroup* pageGroup)
+WebView::WebView(WebProcessPool* context, API::PageConfiguration& pageConfiguration)
     : m_focused(false)
     , m_visible(false)
     , m_opacity(1.0)
 {
-    auto pageConfiguration = API::PageConfiguration::create();
-    pageConfiguration->setProcessPool(context);
-    pageConfiguration->setPageGroup(pageGroup);
-
     // Need to call createWebPage after other data members, specifically m_visible, are initialized.
-    m_page = context->createWebPage(*this, WTF::move(pageConfiguration));
+    m_page = context->createWebPage(*this, pageConfiguration.copy());
 
     m_page->pageGroup().preferences().setAcceleratedCompositingEnabled(true);
     m_page->pageGroup().preferences().setForceCompositingMode(true);

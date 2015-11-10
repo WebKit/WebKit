@@ -1,6 +1,7 @@
 /*
    Copyright (C) 2011 Samsung Electronics
    Copyright (C) 2012 Intel Corporation. All rights reserved.
+   Copyright (C) 2015 Naver Corp. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -80,6 +81,7 @@
 #include "ewk_touch.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"
+#include "ewk_view_configuration.h"
 #include "ewk_window_features.h"
 #include <Evas.h>
 
@@ -166,7 +168,7 @@ struct Ewk_View_Smart_Class {
 
     // window creation and closing:
     //   - Create a new window with specified features and close window.
-    Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, const Ewk_Window_Features *window_features);
+    Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, Ewk_View_Configuration* configuration, const Ewk_Window_Features *window_features);
     void (*window_close)(Ewk_View_Smart_Data *sd);
 };
 
@@ -342,8 +344,28 @@ EAPI Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class *api);
  * @param pageGroup Ewk_Page_Group object which is used for initializing
  *
  * @return view object on success or @c NULL on failure
+ *
+ * @see ewk_view_add_with_configuration
  */
 EAPI Evas_Object *ewk_view_smart_add(Evas *e, Evas_Smart *smart, Ewk_Context *context, Ewk_Page_Group *pageGroup);
+
+/**
+ * Creates a new EFL WebKit view object with Ewk_View_Configuration
+ *
+ * @note The Evas_Object which inherits the ewk_view should create its
+ *       Evas_Object using this API instead of evas_object_smart_add()
+ *       because the default initialization for ewk_view is done in this API.
+ *
+ * @param e canvas object where to create the view object
+ * @param smart Evas_Smart object. Its type should be EWK_VIEW_TYPE_STR
+ * @param configuration Ewk_View_Configuration object which is used for initializing or @c NULL to use default configuration
+ *
+ * @return view object on success or @c NULL on failure
+ *
+ * @see window_create
+ * @see ewk_view_configuration_new
+ */
+EAPI Evas_Object *ewk_view_add_with_configuration(Evas *e, Evas_Smart *smart, Ewk_View_Configuration *configuration);
 
 /**
  * Creates a new EFL WebKit view object.
@@ -351,6 +373,8 @@ EAPI Evas_Object *ewk_view_smart_add(Evas *e, Evas_Smart *smart, Ewk_Context *co
  * @param e canvas object where to create the view object
  *
  * @return view object on success or @c NULL on failure
+ *
+ * @see ewk_view_add_with_configuration
  */
 EAPI Evas_Object *ewk_view_add(Evas *e);
 
@@ -361,6 +385,8 @@ EAPI Evas_Object *ewk_view_add(Evas *e);
  * @param context Ewk_Context object to declare process model
  *
  * @return view object on success or @c NULL on failure
+ *
+ * @see ewk_view_add_with_configuration
  */
 EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
 

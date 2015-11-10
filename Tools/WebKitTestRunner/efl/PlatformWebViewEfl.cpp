@@ -62,8 +62,7 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     m_window = initEcoreEvas();
 
     WKContextRef context = WKPageConfigurationGetContext(configuration);
-    WKPageGroupRef pageGroup = WKPageConfigurationGetPageGroup(configuration);
-    m_view = EWKViewCreate(context, pageGroup, ecore_evas_get(m_window), /* smart */ 0);
+    m_view = EWKViewCreate(context, configuration, ecore_evas_get(m_window), /* smart */ 0);
 
     WKPageSetUseFixedLayout(WKViewGetPage(EWKViewGetWKView(m_view)), m_usingFixedLayout);
 

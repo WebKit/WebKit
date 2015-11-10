@@ -28,13 +28,14 @@
 #include "ewk_context_private.h"
 #include "ewk_main_private.h"
 #include "ewk_page_group_private.h"
+#include "ewk_view_configuration_private.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKAPICast.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKEinaSharedString.h>
 #include <WebKit/WKFindOptions.h>
 #include <WebKit/WKInspector.h>
-#include <WebKit/WKPageGroup.h>
+#include <WebKit/WKPageConfigurationRef.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
 #include <WebKit/WKString.h>
@@ -78,14 +79,14 @@ Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class* api)
     return EwkView::initSmartClassInterface(*api);
 }
 
-Evas_Object* EWKViewCreate(WKContextRef context, WKPageGroupRef pageGroup, Evas* canvas, Evas_Smart* smart)
+Evas_Object* EWKViewCreate(WKContextRef context, WKPageConfigurationRef pageConfiguration, Evas* canvas, Evas_Smart* smart)
 {
     if (!EwkMain::singleton().isInitialized()) {
         EINA_LOG_CRIT("EWebKit has not been initialized. You must call ewk_init() before creating view.");
         return nullptr;
     }
 
-    WKRetainPtr<WKViewRef> wkView = adoptWK(WKViewCreate(context, pageGroup));
+    WKRetainPtr<WKViewRef> wkView = adoptWK(WKViewCreate(context, pageConfiguration));
     if (EwkView* ewkView = EwkView::create(wkView.get(), canvas, smart))
         return ewkView->evasObject();
 
@@ -109,7 +110,28 @@ Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* co
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkPageGroup, nullptr);
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkPageGroup->wkPageGroup(), nullptr);
 
-    return EWKViewCreate(ewkContext->wkContext(), ewkPageGroup->wkPageGroup(), canvas, smart);
+    WKRetainPtr<WKPageConfigurationRef> pageConfiguration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(pageConfiguration.get(), ewkContext->wkContext());
+    WKPageConfigurationSetPageGroup(pageConfiguration.get(), ewkPageGroup->wkPageGroup());
+
+    return EWKViewCreate(ewkContext->wkContext(), pageConfiguration.get(), canvas, smart);
+}
+
+Evas_Object* ewk_view_add_with_configuration(Evas* canvas, Evas_Smart* smart, Ewk_View_Configuration* configuration)
+{
+    if (!configuration)
+        configuration = ewk_view_configuration_new();
+
+    EwkViewConfiguration* ewkViewConfiguration = ewk_object_cast<EwkViewConfiguration*>(configuration);
+
+    WKContextRef context = WKPageConfigurationGetContext(ewkViewConfiguration->wkPageConfiguration());
+    if (!context) {
+        EwkContext* ewkContext = ewk_object_cast<EwkContext*>(ewk_context_default_get());
+        context = ewkContext->wkContext();
+        WKPageConfigurationSetContext(ewkViewConfiguration->wkPageConfiguration(), context);
+    }
+
+    return EWKViewCreate(context, ewkViewConfiguration->wkPageConfiguration(), canvas, smart);
 }
 
 Evas_Object* ewk_view_add(Evas* canvas)
@@ -123,7 +145,10 @@ Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, nullptr);
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext->wkContext(), nullptr);
 
-    return EWKViewCreate(ewkContext->wkContext(), 0, canvas, 0);
+    WKRetainPtr<WKPageConfigurationRef> pageConfiguration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(pageConfiguration.get(), ewkContext->wkContext());
+
+    return EWKViewCreate(ewkContext->wkContext(), pageConfiguration.get(), canvas, 0);
 }
 
 void ewk_view_try_close(Evas_Object* ewkView)

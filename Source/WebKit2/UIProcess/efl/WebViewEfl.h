@@ -63,7 +63,7 @@ public:
     void setViewBackgroundColor(const WebCore::Color&);
     WebCore::Color viewBackgroundColor();
 private:
-    WebViewEfl(WebProcessPool*, WebPageGroup*);
+    WebViewEfl(WebProcessPool*, API::PageConfiguration&);
 
     void setCursor(const WebCore::Cursor&) override;
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;

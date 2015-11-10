@@ -116,6 +116,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_url_request.cpp
     UIProcess/API/efl/ewk_url_response.cpp
     UIProcess/API/efl/ewk_url_scheme_request.cpp
+    UIProcess/API/efl/ewk_view_configuration.cpp
     UIProcess/API/efl/ewk_view.cpp
     UIProcess/API/efl/ewk_window_features.cpp
 

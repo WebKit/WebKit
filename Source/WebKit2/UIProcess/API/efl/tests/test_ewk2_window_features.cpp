@@ -34,7 +34,7 @@ using namespace WebCore;
 
 class EWK2WindowFeaturesTest : public EWK2UnitTestBase {
 public:
-    static Evas_Object* createDefaultWindow(Ewk_View_Smart_Data* smartData, const Ewk_Window_Features* windowFeatures)
+    static Evas_Object* createDefaultWindow(Ewk_View_Smart_Data* smartData, Ewk_View_Configuration* configuration, const Ewk_Window_Features* windowFeatures)
     {
         // default values of WebCore:WindowFeatures()
         // - menuBarVisible(true)
@@ -65,7 +65,7 @@ public:
         return 0;
     }
 
-    static Evas_Object* createWindow(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *windowFeatures)
+    static Evas_Object* createWindow(Ewk_View_Smart_Data *smartData, Ewk_View_Configuration* configuration, const Ewk_Window_Features *windowFeatures)
     {
         EXPECT_FALSE(ewk_window_features_toolbar_visible_get(windowFeatures));
         EXPECT_TRUE(ewk_window_features_statusbar_visible_get(windowFeatures));

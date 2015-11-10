@@ -68,7 +68,11 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 {
     m_window = createEcoreEvas();
 
-    m_view = EWKViewCreate(contextRef, pageGroupRef, ecore_evas_get(m_window), /* smart */ 0);
+    WKRetainPtr<WKPageConfigurationRef> pageConfiguration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(pageConfiguration.get(), contextRef);
+    WKPageConfigurationSetPageGroup(pageConfiguration.get(), pageGroupRef);
+
+    m_view = EWKViewCreate(contextRef, pageConfiguration.get(), ecore_evas_get(m_window), /* smart */ 0);
 
     WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(DEFAULT_THEME_DIR "/default.edj"));
     WKViewSetThemePath(EWKViewGetWKView(m_view), wkTheme.get());

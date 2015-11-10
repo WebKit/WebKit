@@ -36,6 +36,7 @@
 #include <WebCore/EflInspectorUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <WebKit/WKPage.h>
+#include <WebKit/WKPageConfigurationRef.h>
 #include <WebKit/WKPageGroup.h>
 #include <WebKit/WKString.h>
 #include <WebKit/WKViewEfl.h>
@@ -109,7 +110,11 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     WKRetainPtr<WKStringRef> wkGroupIdentifier = adoptWK(WKStringCreateWithUTF8CString(inspectorPageGroupIdentifier().utf8().data()));
     WKPageGroupRef wkPageGroup = WKPageGroupCreateWithIdentifier(wkGroupIdentifier.get());
 
-    m_inspectorView = EWKViewCreate(wkContext, wkPageGroup, ecore_evas_get(m_inspectorWindow), /* smart */ 0);
+    WKRetainPtr<WKPageConfigurationRef> wkPageConfiguration = adoptWK(WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(wkPageConfiguration.get(), wkContext);
+    WKPageConfigurationSetPageGroup(wkPageConfiguration.get(), wkPageGroup);
+
+    m_inspectorView = EWKViewCreate(wkContext, wkPageConfiguration.get(), ecore_evas_get(m_inspectorWindow), /* smart */ 0);
     WKViewRef wkView = EWKViewGetWKView(m_inspectorView);
 
     WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(DEFAULT_THEME_DIR "/default.edj"));

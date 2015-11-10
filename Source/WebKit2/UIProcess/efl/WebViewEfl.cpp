@@ -55,13 +55,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebView> WebView::create(WebProcessPool* processPool, WebPageGroup* pageGroup)
+Ref<WebView> WebView::create(WebProcessPool* processPool, API::PageConfiguration& pageConfiuration)
 {
-    return adoptRef(*new WebViewEfl(processPool, pageGroup));
+    return adoptRef(*new WebViewEfl(processPool, pageConfiuration));
 }
 
-WebViewEfl::WebViewEfl(WebProcessPool* processPool, WebPageGroup* pageGroup)
-    : WebView(processPool, pageGroup)
+WebViewEfl::WebViewEfl(WebProcessPool* processPool, API::PageConfiguration& pageConfiuration)
+    : WebView(processPool, pageConfiuration)
     , m_ewkView(0)
     , m_hasRequestedFullScreen(false)
 {

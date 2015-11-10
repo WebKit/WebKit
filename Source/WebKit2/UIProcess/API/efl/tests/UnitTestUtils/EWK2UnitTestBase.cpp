@@ -199,14 +199,19 @@ static void onTitleChanged(void* userData, Evas_Object* webView, void*)
 
 bool EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds)
 {
+    waitUntilTitleChangedTo(m_webView, expectedTitle, timeoutSeconds);
+}
+
+bool EWK2UnitTestBase::waitUntilTitleChangedTo(Evas_Object* webView, const char* expectedTitle, double timeoutSeconds)
+{
     CallbackDataExpectedValue<CString> data(expectedTitle, timeoutSeconds);
 
-    evas_object_smart_callback_add(m_webView, "title,changed", onTitleChanged, &data);
+    evas_object_smart_callback_add(webView, "title,changed", onTitleChanged, &data);
 
     while (!data.isDone())
         ecore_main_loop_iterate();
 
-    evas_object_smart_callback_del(m_webView, "title,changed", onTitleChanged);
+    evas_object_smart_callback_del(webView, "title,changed", onTitleChanged);
 
     return !data.didTimeOut();
 }
@@ -240,6 +245,16 @@ bool EWK2UnitTestBase::waitUntilTrue(bool &flag, double timeoutSeconds)
     CallbackDataExpectedValue<bool> data(true, timeoutSeconds);
 
     while (!data.isDone() && !flag)
+        ecore_main_loop_iterate();
+
+    return !data.didTimeOut();
+}
+
+bool EWK2UnitTestBase::waitUntilNotNull(Evas_Object** rawPointer, double timeoutSeconds)
+{
+    CallbackDataExpectedValue<bool> data(true, timeoutSeconds);
+
+    while (!data.isDone() && !*rawPointer)
         ecore_main_loop_iterate();
 
     return !data.didTimeOut();

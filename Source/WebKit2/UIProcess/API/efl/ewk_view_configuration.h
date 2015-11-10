@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Intel Corporation. All rights reserved.
+ * Copyright (C) 2015 Naver Corp. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_view_private_h
-#define ewk_view_private_h
+/**
+ * @file    ewk_view_configuration.h
+ * @brief   Describes the Ewk_View_Configuration API.
+ */
+
+#ifndef ewk_view_configuration_h
+#define ewk_view_configuration_h
 
 #include <Evas.h>
-#include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-EAPI Evas_Object* EWKViewCreate(WKContextRef, WKPageConfigurationRef, Evas*, Evas_Smart*);
-EAPI WKViewRef EWKViewGetWKView(Evas_Object*);
+/**
+ * Declare Ewk_View_Configuration as Ewk_Object.
+ *
+ * Ewk_View_Configuration is a collection of properties used to initialize a ewk_view.
+ * 
+ * @see Ewk_Object
+ * @see ewk_view_add_with_configuration
+ */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_View_Configuration;
+#else
+typedef struct EwkObject Ewk_View_Configuration;
+#endif
+
+/**
+ * Creates a new Ewk_View_Configuration.
+ *
+ * The returned Ewk_View_Configuration object @b should be unref'ed after use.
+ *
+ * @return Ewk_View_Configuration object on success or @c NULL on failure
+ *
+ * @see ewk_object_unref
+ */
+EAPI Ewk_View_Configuration *ewk_view_configuration_new(void);
 
 #ifdef __cplusplus
 }
 #endif
-#endif // ewk_view_private_h
+
+#endif

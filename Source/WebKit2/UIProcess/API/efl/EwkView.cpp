@@ -62,6 +62,7 @@
 #include "ewk_popup_menu_private.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_settings_private.h"
+#include "ewk_view_configuration_private.h"
 #include "ewk_window_features_private.h"
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -1131,9 +1132,13 @@ WKPageRef EwkView::createNewPage(PassRefPtr<EwkUrlRequest>, WKDictionaryRef wind
     if (!sd->api->window_create)
         return 0;
 
+    WKPageRef wkPageRef = wkPage();
     RefPtr<EwkWindowFeatures> ewkWindowFeatures = EwkWindowFeatures::create(windowFeatures, this);
+    WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageCopyPageConfiguration(wkPageRef));
+    WKPageConfigurationSetRelatedPage(configuration.get(), wkPageRef);
+    Ref<EwkViewConfiguration> ewkViewConfiguration = EwkViewConfiguration::create(configuration.get());
 
-    Evas_Object* newEwkView = sd->api->window_create(sd, ewkWindowFeatures.get());
+    Evas_Object* newEwkView = sd->api->window_create(sd, &ewkViewConfiguration.get(), ewkWindowFeatures.get());
     if (!newEwkView)
         return 0;
 

@@ -33,12 +33,15 @@
 #include "DefaultUndoController.h"
 #include "PageClient.h"
 #include "WebFullScreenManagerProxy.h"
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebViewClient.h"
 #include <WebCore/TransformationMatrix.h>
+
+namespace API {
+class PageConfiguration;
+}
 
 namespace WebKit {
 class CoordinatedGraphicsScene;
@@ -51,7 +54,7 @@ class WebView : public API::ObjectImpl<API::Object::Type::View>, public PageClie
 public:
     virtual ~WebView();
 
-    static Ref<WebView> create(WebProcessPool*, WebPageGroup*);
+    static Ref<WebView> create(WebProcessPool*, API::PageConfiguration&);
 
     void initialize();
 
@@ -116,7 +119,7 @@ public:
     double opacity() const { return m_opacity; }
 
 protected:
-    WebView(WebProcessPool*, WebPageGroup*);
+    WebView(WebProcessPool*, API::PageConfiguration&);
     CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
     void updateViewportSize();

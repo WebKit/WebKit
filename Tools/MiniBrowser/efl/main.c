@@ -201,7 +201,7 @@ static const Ecore_Getopt options = {
 };
 
 static Eina_Stringshare *show_file_entry_dialog(Browser_Window *window, const char *label_tag, const char *default_text);
-static Browser_Window *window_create(Evas_Object* opener, int width, int height);
+static Browser_Window *window_create(Ewk_View_Configuration* configuration, int width, int height);
 
 static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window)
 {
@@ -1711,7 +1711,7 @@ static Eina_Bool on_fullscreen_exit(Ewk_View_Smart_Data *sd)
 }
 
 static Evas_Object *
-on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *window_features)
+on_window_create(Ewk_View_Smart_Data *smartData, Ewk_View_Configuration* configuration, const Ewk_Window_Features *window_features)
 {
     int x = 0;
     int y = 0;
@@ -1726,7 +1726,7 @@ on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *wind
     if (!height)
         height = window_height;
 
-    Browser_Window *window = window_create(smartData->self, width, height);
+    Browser_Window *window = window_create(configuration, width, height);
     Evas_Object *new_view = window->ewk_view;
 
     windows = eina_list_append(windows, window);
@@ -2057,7 +2057,7 @@ create_toolbar_button(Evas_Object *elm_window, const char *icon_name)
     return button;
 }
 
-static Browser_Window *window_create(Evas_Object *opener, int width, int height)
+static Browser_Window *window_create(Ewk_View_Configuration* configuration, int width, int height)
 {
     Browser_Window *window = calloc(1, sizeof(Browser_Window));
     if (!window) {
@@ -2267,17 +2267,9 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
 
     Evas *evas = evas_object_evas_get(window->elm_window);
     Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
-    Ewk_Context *context;
-    if (opener)
-        context = ewk_view_context_get(opener);
-    else if (extensions_path)
-        context = ewk_context_new_with_extensions_path(extensions_path);
-    else
-        context = ewk_context_default_get();
+    window->ewk_view = ewk_view_add_with_configuration(evas, smart, configuration);
 
-    Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create("");
-    window->ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup);
-
+    Ewk_Context *context = ewk_view_context_get(window->ewk_view);
     ewk_favicon_database_icon_change_callback_add(ewk_context_favicon_database_get(context), on_icon_changed_cb, window);
 
     ewk_view_theme_set(window->ewk_view, DEFAULT_THEME_DIR "/default.edj");
@@ -2301,7 +2293,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     /* Set the zoom level to default */
     window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
 
-    Ewk_Settings *settings = ewk_page_group_settings_get(pageGroup);
+    Ewk_Settings *settings = ewk_page_group_settings_get(ewk_view_page_group_get(window->ewk_view));
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
     ewk_settings_encoding_detector_enabled_set(settings, encoding_detector_enabled);
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);

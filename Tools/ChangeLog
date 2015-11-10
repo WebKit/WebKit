@@ -1,3 +1,20 @@
+2015-11-09  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Crash while opening child webview with EWK_PROCESS_MODEL_MULTIPLE_SECONDARY
+        https://bugs.webkit.org/show_bug.cgi?id=145924
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (on_window_create):
+        (window_create):
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewUserViewportToContents.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2015-11-09  Anders Carlsson  <andersca@apple.com>
 
         Add reply blocks to _WKRemoteObjectInterface similar to NSXPCConnection

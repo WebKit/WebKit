@@ -51,8 +51,10 @@ protected:
     bool loadUrlSync(const char* url, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilLoadFinished(double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds = defaultTimeoutSeconds);
+    bool waitUntilTitleChangedTo(Evas_Object* webView, const char* expectedTitle, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilURLChangedTo(const char* expectedURL, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilTrue(bool &flag, double timeoutSeconds = defaultTimeoutSeconds);
+    bool waitUntilNotNull(Evas_Object** rawPointer, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilDirectionChanged(Ewk_Focus_Direction &direction, double timeoutSeconds = defaultTimeoutSeconds);
     Eina_List* waitUntilSpellingLanguagesLoaded(unsigned expectedLanguageCount, double timeoutValue = defaultTimeoutSeconds);
 

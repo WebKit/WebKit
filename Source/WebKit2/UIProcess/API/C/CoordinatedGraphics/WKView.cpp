@@ -23,15 +23,16 @@
 
 #include "WKView.h"
 
+#include "APIPageConfiguration.h"
 #include "WKAPICast.h"
 #include "WebView.h"
 
 using namespace WebCore;
 using namespace WebKit;
 
-WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+WKViewRef WKViewCreate(WKContextRef context, WKPageConfigurationRef pageConfiguration)
 {
-    RefPtr<WebView> webView = WebView::create(toImpl(contextRef), toImpl(pageGroupRef));
+    RefPtr<WebView> webView = WebView::create(toImpl(context), *toImpl(pageConfiguration));
     return toAPI(webView.release().leakRef());
 }
 

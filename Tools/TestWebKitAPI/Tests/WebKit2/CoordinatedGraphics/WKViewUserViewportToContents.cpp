@@ -38,7 +38,10 @@ TEST(WebKit2, DISABLED_WKViewUserViewportToContents)
     // conversion math is right.
 
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKRetainPtr<WKViewRef> webView(AdoptWK, WKViewCreate(context.get(), 0));
+    WKRetainPtr<WKPageConfigurationRef> configuration(AdoptWK, WKPageConfigurationCreate());
+    WKPageConfigurationSetContext(configuration.get(), context.get());
+
+    WKRetainPtr<WKViewRef> webView(AdoptWK, WKViewCreate(context.get(), configuration.get()));
 
     WKViewInitialize(webView.get());
     WKPageSetUseFixedLayout(WKViewGetPage(webView.get()), false);

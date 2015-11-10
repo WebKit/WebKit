@@ -1,3 +1,59 @@
+2015-11-09  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Crash while opening child webview with EWK_PROCESS_MODEL_MULTIPLE_SECONDARY
+        https://bugs.webkit.org/show_bug.cgi?id=145924
+
+        Reviewed by Gyuyoung Kim.
+
+        There are some crashes when we clicked the link that opens child window
+        via window.open or <a> tag with _blank target if process model is multiple
+        secondary.
+
+        It's because multiple secondary process model tries to assign new webprocess
+        if related page is null. In order to keep the child window in same process
+        with opener, we should pass related page when we create WebPageProxy.
+
+        This patch adds ewk_view_configuration object and ewk_view_add_configuration()
+        to pass related page to WebPageProxy.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewCreate):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/efl/EWebKit2.h.in:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::createNewPage):
+        * UIProcess/API/efl/ewk_view_configuration.cpp: Added.
+        * UIProcess/API/efl/ewk_view_configuration.h: Added.
+        * UIProcess/API/efl/ewk_view_configuration_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (EWKViewCreate):
+        (ewk_view_smart_add):
+        (ewk_view_add_with_configuration): Added to pass configuration.
+        (ewk_view_add_with_context):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilTitleChangedTo):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilNotNull):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Added test cases to test window_create smart method.
+        (windowCreateCallback):
+        (TEST_F):
+        (EWK2ViewTestNewWindowWithMultipleProcesses::EWK2ViewTestNewWindowWithMultipleProcesses):
+        * UIProcess/API/efl/tests/test_ewk2_window_features.cpp:
+        (EWK2WindowFeaturesTest::createDefaultWindow):
+        (EWK2WindowFeaturesTest::createWindow):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebView::create):
+        (WebKit::WebViewEfl::WebViewEfl):
+        * UIProcess/efl/WebViewEfl.h:
+
 2015-11-09  Anders Carlsson  <andersca@apple.com>
 
         Don't call Vector::uncheckedAppend on a vector that we haven't reserved the capacity for

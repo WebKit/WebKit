@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Intel Corporation. All rights reserved.
+ * Copyright (C) 2015 Naver Corp. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_view_private_h
-#define ewk_view_private_h
+#ifndef ewk_view_configuration_private_h
+#define ewk_view_configuration_private_h
 
-#include <Evas.h>
+#include "ewk_object_private.h"
 #include <WebKit/WKBase.h>
+#include <WebKit/WKPageConfigurationRef.h>
+#include <WebKit/WKRetainPtr.h>
+#include <wtf/RefPtr.h>
 
-#ifdef __cplusplus
-extern "C" {
+class EwkViewConfiguration : public EwkObject {
+public:
+    EWK_OBJECT_DECLARE(EwkViewConfiguration);
+
+    static Ref<EwkViewConfiguration> create(WKPageConfigurationRef);
+
+    WKPageConfigurationRef wkPageConfiguration() const { return m_pageConfiguration.get(); }
+
+private:
+    explicit EwkViewConfiguration(WKPageConfigurationRef);
+
+    WKRetainPtr<WKPageConfigurationRef> m_pageConfiguration;
+};
+
 #endif
-
-EAPI Evas_Object* EWKViewCreate(WKContextRef, WKPageConfigurationRef, Evas*, Evas_Smart*);
-EAPI WKViewRef EWKViewGetWKView(Evas_Object*);
-
-#ifdef __cplusplus
-}
-#endif
-#endif // ewk_view_private_h

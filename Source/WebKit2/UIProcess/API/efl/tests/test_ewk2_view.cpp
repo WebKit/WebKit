@@ -720,6 +720,81 @@ TEST_F(EWK2ViewTest, ewk_view_run_javascript_prompt)
     EXPECT_FALSE(promptCallbackData.called);
 }
 
+static Evas_Object* s_newWindowObject;
+
+static Evas_Object* windowCreateCallback(Ewk_View_Smart_Data* smartData, Ewk_View_Configuration* configuration, const Ewk_Window_Features*)
+{
+    s_newWindowObject = ewk_view_add_with_configuration(
+        evas_object_evas_get(smartData->self),
+        evas_smart_class_new(&smartData->api->sc),
+        configuration);
+
+    evas_object_move(s_newWindowObject, 0, 0);
+    evas_object_resize(s_newWindowObject, environment->defaultWidth(), environment->defaultHeight());
+    evas_object_show(s_newWindowObject);
+    return s_newWindowObject;
+}
+
+TEST_F(EWK2ViewTest, ewk_view_create_window)
+{
+    s_newWindowObject = nullptr;
+    ewkViewClass()->window_create = windowCreateCallback;
+
+    Eina_Stringshare* createHTML = eina_stringshare_printf("<!DOCTYPE HTML><body onload=\"window.open('%s');\"></body>", environment->urlForResource("Page1.html").data());
+    ewk_view_html_string_load(webView(), createHTML, "file:///", nullptr);
+    ASSERT_TRUE(waitUntilNotNull(&s_newWindowObject));
+    if (!ewk_view_title_get(s_newWindowObject), "Page1")
+        waitUntilTitleChangedTo(s_newWindowObject, "Page1");
+    eina_stringshare_del(createHTML);
+    evas_object_del(s_newWindowObject);
+    s_newWindowObject = nullptr;
+
+    createHTML = eina_stringshare_printf("<!DOCTYPE HTML><body><a href=\"%s\" target=\"_blank\"><div style=\"width:100px;height:100px;\">XXXXXX</div></a></body>", environment->urlForResource("Page2.html").data());
+
+    ewk_view_html_string_load(webView(), createHTML, "file:///", nullptr);
+    waitUntilLoadFinished();
+    mouseClick(50, 50);
+    ASSERT_TRUE(waitUntilNotNull(&s_newWindowObject));
+    if (!ewk_view_title_get(s_newWindowObject), "Page2")
+        waitUntilTitleChangedTo(s_newWindowObject, "Page2");
+
+    eina_stringshare_del(createHTML);
+}
+
+class EWK2ViewTestNewWindowWithMultipleProcesses : public EWK2UnitTestBase {
+protected:
+    EWK2ViewTestNewWindowWithMultipleProcesses()
+    {
+        m_multipleProcesses = true;
+    }
+};
+
+TEST_F(EWK2ViewTestNewWindowWithMultipleProcesses, ewk_view_create_window_with_multiprocesses)
+{
+    s_newWindowObject = nullptr;
+    ewkViewClass()->window_create = windowCreateCallback;
+
+    Eina_Stringshare* createHTML = eina_stringshare_printf("<!DOCTYPE HTML><body onload=\"window.open('%s');\"></body>", environment->urlForResource("Page1.html").data());
+    ewk_view_html_string_load(webView(), createHTML, "file:///", nullptr);
+    ASSERT_TRUE(waitUntilNotNull(&s_newWindowObject));
+    if (!ewk_view_title_get(s_newWindowObject), "Page1")
+        waitUntilTitleChangedTo(s_newWindowObject, "Page1");
+    eina_stringshare_del(createHTML);
+    evas_object_del(s_newWindowObject);
+    s_newWindowObject = nullptr;
+
+    createHTML = eina_stringshare_printf("<!DOCTYPE HTML><body><a href=\"%s\" target=\"_blank\"><div style=\"width:100px;height:100px;\">XXXXXX</div></a></body>", environment->urlForResource("Page2.html").data());
+
+    ewk_view_html_string_load(webView(), createHTML, "file:///", nullptr);
+    waitUntilLoadFinished();
+    mouseClick(50, 50);
+    ASSERT_TRUE(waitUntilNotNull(&s_newWindowObject));
+    if (!ewk_view_title_get(s_newWindowObject), "Page2")
+        waitUntilTitleChangedTo(s_newWindowObject, "Page2");
+
+    eina_stringshare_del(createHTML);
+}
+
 TEST_F(EWK2ViewTest, ewk_view_context_get)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
