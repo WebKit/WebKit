@@ -191,6 +191,9 @@ MoveDouble U:F, D:F
     Tmp, Addr as storeDouble
     Tmp, Index as storeDouble
 
+MoveZeroToDouble D:F
+    Tmp
+
 Move64ToDouble U:G, D:F
     Tmp, Tmp
 

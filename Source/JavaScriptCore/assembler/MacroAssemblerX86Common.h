@@ -940,6 +940,11 @@ public:
         failureCases.append(m_assembler.jne());
     }
 
+    void moveZeroToDouble(FPRegisterID reg)
+    {
+        m_assembler.xorpd_rr(reg, reg);
+    }
+
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
         ASSERT(isSSE2Present());

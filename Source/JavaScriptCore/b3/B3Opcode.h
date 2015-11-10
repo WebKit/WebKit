@@ -209,6 +209,13 @@ inline bool isCheckMath(Opcode opcode)
 
 Optional<Opcode> invertedCompare(Opcode, Type);
 
+inline Opcode constPtrOpcode()
+{
+    if (is64Bit())
+        return Const64;
+    return Const32;
+}
+
 } } // namespace JSC::B3
 
 namespace WTF {

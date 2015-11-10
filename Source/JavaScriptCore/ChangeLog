@@ -1,3 +1,147 @@
+2015-11-08  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile a program with a double constant
+        https://bugs.webkit.org/show_bug.cgi?id=151002
+
+        Reviewed by Benjamin Poulain.
+
+        This implements a bunch of annoying stuff that is necessary to support constants that need a
+        data section, such as double constants on X86_64:
+
+        - B3::Procedure can now tell you what to keep alive in addition to the MacroAssemblerCodeRef.
+          We call this the B3::OpaqueByproducts. It's the client's responsibility to keep this alive
+          after calling B3::generate().
+
+        - Added a new helper for compiling B3 code, called B3::Compilation. Constructing a
+          Compilation runs the compiler. Then you can pass around a Compilation the way you would
+          have passed around a MacroAssemblerCodeRef.
+
+        - Added a constant motion phase, called moveConstants(). This does very simple constant
+          hoisting/sinking: it makes sure that each constant is only materialized in one place in
+          each basic block. It uses a DataSection, which is a kind of OpaqueByproduct, to store
+          double constants.
+
+        - The way I wanted to do constant motion is to basically track what constants are of interest
+          and then recreate them as needed, so the original Values become irrelevant in the process.
+          To do that, I needed an abstraction that is almost identical to the DFG PureValue
+          abstraction that we use for CSE. So, I created such a thing, and called it ValueKey. It
+          can be used to compare and hash pure Values, and to recreate them as needed.
+
+        - Fixed the lowering's handling of constants so that we don't perturb the placement of the
+          constant materializations.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::moveZeroToDouble):
+        (JSC::MacroAssemblerX86Common::branchDoubleNonZero):
+        * b3/B3Common.h:
+        (JSC::B3::isIdentical):
+        (JSC::B3::isRepresentableAsImpl):
+        * b3/B3Compilation.cpp: Added.
+        (JSC::B3::Compilation::Compilation):
+        (JSC::B3::Compilation::~Compilation):
+        * b3/B3Compilation.h: Added.
+        (JSC::B3::Compilation::code):
+        * b3/B3ConstDoubleValue.h:
+        (JSC::B3::ConstDoubleValue::accepts): Deleted.
+        * b3/B3DataSection.cpp: Added.
+        (JSC::B3::DataSection::DataSection):
+        (JSC::B3::DataSection::~DataSection):
+        (JSC::B3::DataSection::dump):
+        * b3/B3DataSection.h: Added.
+        (JSC::B3::DataSection::data):
+        (JSC::B3::DataSection::size):
+        * b3/B3Generate.cpp:
+        (JSC::B3::generate):
+        (JSC::B3::generateToAir):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::immOrTmp):
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::lower):
+        (JSC::B3::Air::LowerToAir::immForMove): Deleted.
+        (JSC::B3::Air::LowerToAir::immOrTmpForMove): Deleted.
+        * b3/B3MoveConstants.cpp: Added.
+        (JSC::B3::moveConstants):
+        * b3/B3MoveConstants.h: Added.
+        * b3/B3OpaqueByproduct.h: Added.
+        (JSC::B3::OpaqueByproduct::OpaqueByproduct):
+        (JSC::B3::OpaqueByproduct::~OpaqueByproduct):
+        * b3/B3OpaqueByproducts.cpp: Added.
+        (JSC::B3::OpaqueByproducts::OpaqueByproducts):
+        (JSC::B3::OpaqueByproducts::~OpaqueByproducts):
+        (JSC::B3::OpaqueByproducts::add):
+        (JSC::B3::OpaqueByproducts::dump):
+        * b3/B3OpaqueByproducts.h: Added.
+        (JSC::B3::OpaqueByproducts::count):
+        * b3/B3Opcode.h:
+        (JSC::B3::constPtrOpcode):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        (JSC::B3::Procedure::dump):
+        (JSC::B3::Procedure::blocksInPreOrder):
+        (JSC::B3::Procedure::deleteValue):
+        (JSC::B3::Procedure::addDataSection):
+        (JSC::B3::Procedure::addValueIndex):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::lastPhaseName):
+        (JSC::B3::Procedure::byproducts):
+        (JSC::B3::Procedure::takeByproducts):
+        * b3/B3Type.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::performSubstitution):
+        * b3/B3Value.h:
+        * b3/B3ValueKey.cpp: Added.
+        (JSC::B3::ValueKey::dump):
+        (JSC::B3::ValueKey::materialize):
+        * b3/B3ValueKey.h: Added.
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::opcode):
+        (JSC::B3::ValueKey::type):
+        (JSC::B3::ValueKey::childIndex):
+        (JSC::B3::ValueKey::value):
+        (JSC::B3::ValueKey::doubleValue):
+        (JSC::B3::ValueKey::operator==):
+        (JSC::B3::ValueKey::operator!=):
+        (JSC::B3::ValueKey::hash):
+        (JSC::B3::ValueKey::operator bool):
+        (JSC::B3::ValueKey::canMaterialize):
+        (JSC::B3::ValueKey::isHashTableDeletedValue):
+        (JSC::B3::ValueKeyHash::hash):
+        (JSC::B3::ValueKeyHash::equal):
+        * b3/B3ValueKeyInlines.h: Added.
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::child):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::proc):
+        (JSC::B3::Air::Code::lastPhaseName):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::compile):
+        (JSC::B3::invoke):
+        (JSC::B3::compileAndRun):
+        (JSC::B3::test42):
+        (JSC::B3::testBranch):
+        (JSC::B3::testBranchPtr):
+        (JSC::B3::testDiamond):
+        (JSC::B3::testBranchNotEqual):
+        (JSC::B3::testBranchNotEqualCommute):
+        (JSC::B3::testBranchNotEqualNotEqual):
+        (JSC::B3::testBranchEqual):
+        (JSC::B3::testBranchEqualEqual):
+        (JSC::B3::testBranchEqualCommute):
+        (JSC::B3::testBranchEqualEqual1):
+        (JSC::B3::testBranchFold):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCompare):
+        (JSC::B3::testReturnDouble):
+        (JSC::B3::run):
+
 2015-11-09  Michael Saboff  <msaboff@apple.com>
 
         Need a function that will provide Nth argument register

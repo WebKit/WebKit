@@ -36,6 +36,7 @@
 #include "B3StackSlotValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
+#include "B3ValueKeyInlines.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 
@@ -354,6 +355,61 @@ Effects Value::effects() const
         break;
     }
     return result;
+}
+
+ValueKey Value::key() const
+{
+    switch (opcode()) {
+    case FramePointer:
+        return ValueKey(opcode(), type());
+    case Identity:
+    case SExt8:
+    case SExt16:
+    case SExt32:
+    case ZExt32:
+    case Trunc:
+    case FRound:
+    case IToD:
+    case DToI32:
+    case Check:
+        return ValueKey(opcode(), type(), child(0));
+    case Add:
+    case Sub:
+    case Mul:
+    case ChillDiv:
+    case Mod:
+    case BitAnd:
+    case BitOr:
+    case BitXor:
+    case Shl:
+    case SShr:
+    case ZShr:
+    case Equal:
+    case NotEqual:
+    case LessThan:
+    case GreaterThan:
+    case Above:
+    case Below:
+    case AboveEqual:
+    case BelowEqual:
+    case Div:
+    case CheckAdd:
+    case CheckSub:
+    case CheckMul:
+        return ValueKey(opcode(), type(), child(0), child(1));
+    case Const32:
+        return ValueKey(Const32, type(), static_cast<int64_t>(asInt32()));
+    case Const64:
+        return ValueKey(Const64, type(), asInt64());
+    case ConstDouble:
+        return ValueKey(ConstDouble, type(), asDouble());
+    case ArgumentReg:
+        return ValueKey(
+            ArgumentReg, type(),
+            static_cast<int64_t>(as<ArgumentRegValue>()->argumentReg().index()));
+    default:
+        return ValueKey();
+    }
 }
 
 void Value::performSubstitution()

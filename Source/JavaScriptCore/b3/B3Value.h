@@ -33,6 +33,7 @@
 #include "B3Opcode.h"
 #include "B3Origin.h"
 #include "B3Type.h"
+#include "B3ValueKey.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -167,8 +168,13 @@ public:
     TriState asTriState() const;
     bool isLikeZero() const { return asTriState() == FalseTriState; }
     bool isLikeNonZero() const { return asTriState() == TrueTriState; }
-    
+
     Effects effects() const;
+
+    // This returns a ValueKey that describes that this Value returns when it executes. Returns an
+    // empty ValueKey if this Value is impure. Note that an operation that returns Void could still
+    // have a non-empty ValueKey. This happens for example with Check operations.
+    ValueKey key() const;
 
     // Makes sure that none of the children are Identity's. If a child points to Identity, this will
     // repoint it at the Identity's child. For simplicity, this will follow arbitrarily long chains

@@ -23,53 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3ConstDoubleValue_h
-#define B3ConstDoubleValue_h
+#include "config.h"
+#include "B3OpaqueByproducts.h"
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
-
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE ConstDoubleValue : public Value {
-public:
-    static bool accepts(Opcode opcode) { return opcode == ConstDouble; }
-    
-    ~ConstDoubleValue();
-    
-    double value() const { return m_value; }
+OpaqueByproducts::OpaqueByproducts()
+{
+}
 
-    Value* negConstant(Procedure& proc) const override;
-    Value* addConstant(Procedure& proc, int32_t other) const override;
-    Value* addConstant(Procedure& proc, Value* other) const override;
-    Value* subConstant(Procedure& proc, Value* other) const override;
+OpaqueByproducts::~OpaqueByproducts()
+{
+}
 
-    TriState equalConstant(Value* other) const override;
-    TriState notEqualConstant(Value* other) const override;
-    TriState lessThanConstant(Value* other) const override;
-    TriState greaterThanConstant(Value* other) const override;
-    TriState lessEqualConstant(Value* other) const override;
-    TriState greaterEqualConstant(Value* other) const override;
+void OpaqueByproducts::add(std::unique_ptr<OpaqueByproduct> byproduct)
+{
+    m_byproducts.append(WTF::move(byproduct));
+}
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-private:
-    friend class Procedure;
-
-    ConstDoubleValue(unsigned index, Origin origin, double value)
-        : Value(index, CheckedOpcode, ConstDouble, Double, origin)
-        , m_value(value)
-    {
+void OpaqueByproducts::dump(PrintStream& out) const
+{
+    out.print("Byproducts:\n");
+    if (m_byproducts.isEmpty()) {
+        out.print("    <empty>\n");
+        return;
     }
-    
-    double m_value;
-};
+    for (auto& byproduct : m_byproducts)
+        out.print("    ", *byproduct, "\n");
+}
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3ConstDoubleValue_h
 

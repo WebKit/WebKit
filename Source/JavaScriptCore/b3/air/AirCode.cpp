@@ -34,8 +34,9 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-Code::Code()
-    : m_lastPhaseName("initial")
+Code::Code(Procedure& proc)
+    : m_proc(proc)
+    , m_lastPhaseName("initial")
 {
 }
 

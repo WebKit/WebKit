@@ -31,12 +31,15 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BasicBlockUtils.h"
 #include "B3BlockWorklist.h"
+#include "B3DataSection.h"
+#include "B3OpaqueByproducts.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 
 Procedure::Procedure()
     : m_lastPhaseName("initial")
+    , m_byproducts(std::make_unique<OpaqueByproducts>())
 {
 }
 
@@ -107,6 +110,8 @@ void Procedure::dump(PrintStream& out) const
 {
     for (BasicBlock* block : *this)
         out.print(deepDump(block));
+    if (m_byproducts->count())
+        out.print(*m_byproducts);
 }
 
 Vector<BasicBlock*> Procedure::blocksInPreOrder()
@@ -124,6 +129,16 @@ void Procedure::deleteValue(Value* value)
     ASSERT(m_values[value->index()].get() == value);
     m_valueIndexFreeList.append(value->index());
     m_values[value->index()] = nullptr;
+}
+
+void* Procedure::addDataSection(size_t size)
+{
+    if (!size)
+        return nullptr;
+    std::unique_ptr<DataSection> dataSection = std::make_unique<DataSection>(size);
+    void* result = dataSection->data();
+    m_byproducts->add(WTF::move(dataSection));
+    return result;
 }
 
 size_t Procedure::addValueIndex()

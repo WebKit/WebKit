@@ -23,53 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3ConstDoubleValue_h
-#define B3ConstDoubleValue_h
+#ifndef B3MoveConstants_h
+#define B3MoveConstants_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3Value.h"
-
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE ConstDoubleValue : public Value {
-public:
-    static bool accepts(Opcode opcode) { return opcode == ConstDouble; }
-    
-    ~ConstDoubleValue();
-    
-    double value() const { return m_value; }
+class Procedure;
 
-    Value* negConstant(Procedure& proc) const override;
-    Value* addConstant(Procedure& proc, int32_t other) const override;
-    Value* addConstant(Procedure& proc, Value* other) const override;
-    Value* subConstant(Procedure& proc, Value* other) const override;
+// Moves large constants around, with the goal of placing them in the optimal points in the program.
 
-    TriState equalConstant(Value* other) const override;
-    TriState notEqualConstant(Value* other) const override;
-    TriState lessThanConstant(Value* other) const override;
-    TriState greaterThanConstant(Value* other) const override;
-    TriState lessEqualConstant(Value* other) const override;
-    TriState greaterEqualConstant(Value* other) const override;
-
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-private:
-    friend class Procedure;
-
-    ConstDoubleValue(unsigned index, Origin origin, double value)
-        : Value(index, CheckedOpcode, ConstDouble, Double, origin)
-        , m_value(value)
-    {
-    }
-    
-    double m_value;
-};
+void moveConstants(Procedure&);
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3ConstDoubleValue_h
+#endif // B3MoveConstants_h
 

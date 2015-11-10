@@ -50,8 +50,10 @@ class Code {
     WTF_MAKE_NONCOPYABLE(Code);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Code();
+    Code(Procedure&);
     ~Code();
+
+    Procedure& proc() { return m_proc; }
 
     BasicBlock* addBlock(double frequency = PNaN);
 
@@ -293,6 +295,7 @@ public:
     const char* lastPhaseName() const { return m_lastPhaseName; }
 
 private:
+    Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
     Vector<std::unique_ptr<StackSlot>> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     Vector<std::unique_ptr<Special>> m_specials;

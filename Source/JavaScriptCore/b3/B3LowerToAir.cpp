@@ -440,22 +440,14 @@ private:
 
     Arg imm(Value* value)
     {
-        if (value->representableAs<int32_t>())
+        if (value->hasInt() && value->representableAs<int32_t>())
             return Arg::imm(value->asNumber<int32_t>());
         return Arg();
     }
 
-    Arg immForMove(Value* value) {
-        if (Arg result = imm(value))
-            return result;
-        if (value->hasInt64())
-            return Arg::imm64(value->asInt64());
-        return Arg();
-    }
-
-    Arg immOrTmpForMove(Value* value)
+    Arg immOrTmp(Value* value)
     {
-        if (Arg result = immForMove(value))
+        if (Arg result = imm(value))
             return result;
         return tmp(value);
     }
@@ -731,14 +723,21 @@ private:
             Arg arg;
             switch (value.rep().kind()) {
             case ValueRep::Any:
-                arg = immOrTmpForMove(value.value());
+                if (imm(value.value()))
+                    arg = imm(value.value());
+                else if (value.value()->hasInt64())
+                    arg = Arg::imm64(value.value()->asInt64());
+                else if (value.value()->hasDouble())
+                    arg = Arg::imm64(bitwise_cast<int64_t>(value.value()->asDouble()));
+                else
+                    arg = tmp(value.value());
                 break;
             case ValueRep::SomeRegister:
                 arg = tmp(value.value());
                 break;
             case ValueRep::Register:
                 arg = Tmp(value.rep().reg());
-                append(Move, immOrTmpForMove(value.value()), arg);
+                append(Move, immOrTmp(value.value()), arg);
                 break;
             case ValueRep::StackArgument:
                 arg = Arg::callArg(value.rep().offsetFromSP());
@@ -1152,7 +1151,13 @@ private:
     void lower()
     {
         switch (m_value->opcode()) {
-        case Load:{
+        case B3::Nop: {
+            // Yes, we will totally see Nop's because some phases will replaceWithNop() instead of
+            // properly removing things.
+            return;
+        }
+            
+        case Load: {
             append(
                 moveForType(m_value->type()),
                 addr(m_value), tmp(m_value));
@@ -1285,9 +1290,22 @@ private:
             return;
         }
 
-        case Const32:
+        case Const32: {
+            append(Move, imm(m_value), tmp(m_value));
+            return;
+        }
         case Const64: {
-            append(Move, immForMove(m_value), tmp(m_value));
+            if (imm(m_value))
+                append(Move, imm(m_value), tmp(m_value));
+            else
+                append(Move, Arg::imm64(m_value->asInt64()), tmp(m_value));
+            return;
+        }
+
+        case ConstDouble: {
+            // We expect that the moveConstants() phase has run.
+            RELEASE_ASSERT(isIdentical(m_value->asDouble(), 0.0));
+            append(MoveZeroToDouble, tmp(m_value));
             return;
         }
 
@@ -1354,7 +1372,7 @@ private:
         case Upsilon: {
             Value* value = m_value->child(0);
             append(
-                relaxedMoveForType(value->type()), immOrTmpForMove(value),
+                relaxedMoveForType(value->type()), immOrTmp(value),
                 tmp(m_value->as<UpsilonValue>()->phi()));
             return;
         }
@@ -1381,9 +1399,16 @@ private:
 
         case Return: {
             Value* value = m_value->child(0);
-            append(
-                relaxedMoveForType(value->type()), immOrTmpForMove(value),
-                Tmp(GPRInfo::returnValueGPR));
+            Air::Opcode move;
+            Tmp dest;
+            if (isInt(value->type())) {
+                move = Move;
+                dest = Tmp(GPRInfo::returnValueGPR);
+            } else {
+                move = MoveDouble;
+                dest = Tmp(FPRInfo::returnValueFPR);
+            }
+            append(move, immOrTmp(value), dest);
             append(Ret);
             return;
         }

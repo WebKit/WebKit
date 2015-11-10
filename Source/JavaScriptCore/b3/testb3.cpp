@@ -27,10 +27,10 @@
 
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3Compilation.h"
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
 #include "B3ControlValue.h"
-#include "B3Generate.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
@@ -67,16 +67,13 @@ namespace {
 
 VM* vm;
 
-MacroAssemblerCodeRef compile(Procedure& procedure)
+std::unique_ptr<Compilation> compile(Procedure& procedure)
 {
-    CCallHelpers jit(vm);
-    generate(procedure, jit);
-    LinkBuffer linkBuffer(*vm, jit, nullptr);
-    return FINALIZE_CODE(linkBuffer, ("testb3"));
+    return std::make_unique<Compilation>(*vm, procedure);
 }
 
 template<typename T, typename... Arguments>
-T invoke(const MacroAssemblerCodeRef& code, Arguments... arguments)
+T invoke(const Compilation& code, Arguments... arguments)
 {
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(code.code().executableAddress());
     return function(arguments...);
@@ -85,7 +82,7 @@ T invoke(const MacroAssemblerCodeRef& code, Arguments... arguments)
 template<typename T, typename... Arguments>
 T compileAndRun(Procedure& procedure, Arguments... arguments)
 {
-    return invoke<T>(compile(procedure), arguments...);
+    return invoke<T>(*compile(procedure), arguments...);
 }
 
 void test42()
@@ -1833,8 +1830,8 @@ void testBranch()
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchPtr()
@@ -1858,8 +1855,8 @@ void testBranchPtr()
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, static_cast<intptr_t>(42)) == 1);
-    CHECK(invoke<int>(code, static_cast<intptr_t>(0)) == 0);
+    CHECK(invoke<int>(*code, static_cast<intptr_t>(42)) == 1);
+    CHECK(invoke<int>(*code, static_cast<intptr_t>(0)) == 0);
 }
 
 void testDiamond()
@@ -1891,8 +1888,8 @@ void testDiamond()
     done->appendNew<ControlValue>(proc, Return, Origin(), phi);
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchNotEqual()
@@ -1921,8 +1918,8 @@ void testBranchNotEqual()
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchNotEqualCommute()
@@ -1951,8 +1948,8 @@ void testBranchNotEqualCommute()
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchNotEqualNotEqual()
@@ -1984,8 +1981,8 @@ void testBranchNotEqualNotEqual()
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchEqual()
@@ -2014,8 +2011,8 @@ void testBranchEqual()
         elseCase->appendNew<Const32Value>(proc, Origin(), 1));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchEqualEqual()
@@ -2047,8 +2044,8 @@ void testBranchEqualEqual()
         elseCase->appendNew<Const32Value>(proc, Origin(), 0));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchEqualCommute()
@@ -2077,8 +2074,8 @@ void testBranchEqualCommute()
         elseCase->appendNew<Const32Value>(proc, Origin(), 1));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchEqualEqual1()
@@ -2110,8 +2107,8 @@ void testBranchEqualEqual1()
         elseCase->appendNew<Const32Value>(proc, Origin(), 1));
 
     auto code = compile(proc);
-    CHECK(invoke<int>(code, 42) == 1);
-    CHECK(invoke<int>(code, 0) == 0);
+    CHECK(invoke<int>(*code, 42) == 1);
+    CHECK(invoke<int>(*code, 0) == 0);
 }
 
 void testBranchFold(int value)
@@ -2397,10 +2394,10 @@ void testSimpleCheck()
     root->appendNew<ControlValue>(
         proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
 
-    MacroAssemblerCodeRef code = compile(proc);
+    auto code = compile(proc);
     
-    CHECK(invoke<int>(code, 0) == 0);
-    CHECK(invoke<int>(code, 1) == 42);
+    CHECK(invoke<int>(*code, 0) == 0);
+    CHECK(invoke<int>(*code, 1) == 42);
 }
 
 template<typename LeftFunctor, typename RightFunctor>
@@ -2648,6 +2645,17 @@ void testCompare(B3::Opcode opcode, int left, int right)
     variants(-left, right);
     variants(left, -right);
     variants(-left, -right);
+}
+
+void testReturnDouble(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<ConstDoubleValue>(proc, Origin(), value));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), value));
 }
 
 #define RUN(test) do {                          \
@@ -3113,6 +3121,10 @@ void run(const char* filter)
     RUN(testLoad<uint16_t>(Load16Z, -1000000));
     RUN(testLoad<uint16_t>(Load16Z, 1000000000));
     RUN(testLoad<uint16_t>(Load16Z, -1000000000));
+
+    RUN(testReturnDouble(0.0));
+    RUN(testReturnDouble(-0.0));
+    RUN(testReturnDouble(42.5));
 
     if (tasks.isEmpty())
         usage();

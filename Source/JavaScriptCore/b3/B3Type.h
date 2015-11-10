@@ -33,7 +33,7 @@
 
 namespace JSC { namespace B3 {
 
-enum Type {
+enum Type : int8_t {
     Void,
     Int32,
     Int64,
