@@ -28,9 +28,9 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLExitArgumentList.h"
 #include "FTLExitValue.h"
 #include "FTLJSCallBase.h"
+#include "FTLStackmapArgumentList.h"
 
 namespace JSC {
 

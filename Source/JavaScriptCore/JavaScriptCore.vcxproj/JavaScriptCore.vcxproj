@@ -1292,7 +1292,7 @@
     <ClInclude Include="..\ftl\FTLDWARFRegister.h" />
     <ClInclude Include="..\ftl\FTLExitArgument.h" />
     <ClInclude Include="..\ftl\FTLExitArgumentForOperand.h" />
-    <ClInclude Include="..\ftl\FTLExitArgumentList.h" />
+    <ClInclude Include="..\ftl\FTLStackmapArgumentList.h" />
     <ClInclude Include="..\ftl\FTLExitPropertyValue.h" />
     <ClInclude Include="..\ftl\FTLExitThunkGenerator.h" />
     <ClInclude Include="..\ftl\FTLExitTimeObjectMaterialization.h" />

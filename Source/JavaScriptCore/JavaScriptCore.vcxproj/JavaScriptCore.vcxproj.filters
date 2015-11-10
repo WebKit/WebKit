@@ -4126,7 +4126,7 @@
     <ClInclude Include="..\ftl\FTLExitArgumentForOperand.h">
       <Filter>ftl</Filter>
     </ClInclude>
-    <ClInclude Include="..\ftl\FTLExitArgumentList.h">
+    <ClInclude Include="..\ftl\FTLStackmapArgumentList.h">
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLExitThunkGenerator.h">

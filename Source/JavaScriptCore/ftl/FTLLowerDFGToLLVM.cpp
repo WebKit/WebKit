@@ -2361,7 +2361,7 @@ private:
         if (verboseCompilationEnabled())
             dataLog("    Emitting PutById patchpoint with stackmap #", stackmapID, "\n");
         
-        ExitArgumentList arguments;
+        StackmapArgumentList arguments;
         arguments.append(base); 
         arguments.append(value);
 
@@ -4579,7 +4579,7 @@ private:
         unsigned padding = alignedFrameSize - frameSize;
         // Documentation about stackmap and patchpoint intrinsics:
         // http://llvm.org/docs/StackMaps.html
-        ExitArgumentList arguments;
+        StackmapArgumentList arguments;
         arguments.append(jsCallee); // callee -> %rax
         arguments.append(getUndef(m_out.int64)); // code block
         arguments.append(jsCallee); // callee -> stack
@@ -4607,7 +4607,7 @@ private:
     void compileTailCall()
     {
         int numArgs = m_node->numChildren() - 1;
-        ExitArgumentList exitArguments;
+        StackmapArgumentList exitArguments;
         exitArguments.reserveCapacity(numArgs + 6);
 
         unsigned stackmapID = m_stackmapIDs++;
@@ -4665,7 +4665,7 @@ private:
         
         unsigned stackmapID = m_stackmapIDs++;
         
-        ExitArgumentList arguments;
+        StackmapArgumentList arguments;
         arguments.append(jsCallee);
         if (jsArguments)
             arguments.append(jsArguments);
@@ -5062,7 +5062,7 @@ private:
         
         OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
         
-        ExitArgumentList arguments;
+        StackmapArgumentList arguments;
         
         buildExitArguments(exitDescriptor, arguments, FormattedValue(), exitDescriptor.m_codeOrigin);
         callStackmap(exitDescriptor, arguments);
@@ -6238,7 +6238,7 @@ private:
         if (Options::verboseCompilation())
             dataLog("    Emitting GetById patchpoint with stackmap #", stackmapID, "\n");
         
-        ExitArgumentList arguments;
+        StackmapArgumentList arguments;
         arguments.append(base);
 
         appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, LLVMAnyRegCallConv, 2, false, true); // 2 arguments show up in the stackmap locations: the result and the base.
@@ -7589,7 +7589,7 @@ private:
     {
         unsigned stackmapID = m_stackmapIDs++;
 
-        ExitArgumentList arguments;
+        StackmapArgumentList arguments;
         arguments.append(m_out.constInt64(stackmapID));
         arguments.append(m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         arguments.append(constNull(m_out.ref8));
@@ -8845,7 +8845,7 @@ private:
         m_out.appendTo(continuation);
     }
 
-    void appendOSRExitArgumentsForPatchpointIfWillCatchException(ExitArgumentList& arguments, LCallConv callingConvention, unsigned offsetOfExitArguments, bool isLazySlowPath = false, bool isGetBydId = false)
+    void appendOSRExitArgumentsForPatchpointIfWillCatchException(StackmapArgumentList& arguments, LCallConv callingConvention, unsigned offsetOfExitArguments, bool isLazySlowPath = false, bool isGetBydId = false)
     {
         CodeOrigin opCatchOrigin;
         HandlerInfo* exceptionHandler;
@@ -8864,7 +8864,7 @@ private:
         exitDescriptor.m_baselineExceptionHandler = *exceptionHandler;
         exitDescriptor.m_stackmapID = m_stackmapIDs - 1;
 
-        ExitArgumentList freshList;
+        StackmapArgumentList freshList;
         buildExitArguments(exitDescriptor, freshList, noValue(), exitDescriptor.m_codeOrigin);
         arguments.appendVector(freshList);
 
@@ -8964,7 +8964,7 @@ private:
     
     void emitOSRExitCall(OSRExitDescriptor& exitDescriptor, FormattedValue lowValue)
     {
-        ExitArgumentList arguments;
+        StackmapArgumentList arguments;
         
         CodeOrigin codeOrigin = exitDescriptor.m_codeOrigin;
         
@@ -8974,7 +8974,7 @@ private:
     }
     
     void buildExitArguments(
-        OSRExitDescriptor& exitDescriptor, ExitArgumentList& arguments, FormattedValue lowValue,
+        OSRExitDescriptor& exitDescriptor, StackmapArgumentList& arguments, FormattedValue lowValue,
         CodeOrigin codeOrigin)
     {
         if (!!lowValue)
@@ -9032,7 +9032,7 @@ private:
         }
     }
     
-    void callStackmap(OSRExitDescriptor& exitDescriptor, ExitArgumentList& arguments)
+    void callStackmap(OSRExitDescriptor& exitDescriptor, StackmapArgumentList& arguments)
     {
         exitDescriptor.m_stackmapID = m_stackmapIDs++;
         arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
@@ -9042,7 +9042,7 @@ private:
     }
     
     ExitValue exitValueForAvailability(
-        ExitArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
+        StackmapArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
         Availability availability)
     {
         FlushedAt flush = availability.flushedAt();
@@ -9077,7 +9077,7 @@ private:
     }
     
     ExitValue exitValueForNode(
-        ExitArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
+        StackmapArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
         Node* node)
     {
         ASSERT(node->shouldGenerate());
@@ -9144,14 +9144,14 @@ private:
         return ExitValue::dead();
     }
 
-    ExitValue exitArgument(ExitArgumentList& arguments, DataFormat format, LValue value)
+    ExitValue exitArgument(StackmapArgumentList& arguments, DataFormat format, LValue value)
     {
         ExitValue result = ExitValue::exitArgument(ExitArgument(format, arguments.size()));
         arguments.append(value);
         return result;
     }
 
-    ExitValue exitValueForTailCall(ExitArgumentList& arguments, Node* node)
+    ExitValue exitValueForTailCall(StackmapArgumentList& arguments, Node* node)
     {
         ASSERT(node->shouldGenerate());
         ASSERT(node->hasResult());

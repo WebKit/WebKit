@@ -1,3 +1,39 @@
+2015-11-10  Saam barati  <sbarati@apple.com>
+
+        Rename FTL's ExitArgumentList to something more indicative of what it is
+        https://bugs.webkit.org/show_bug.cgi?id=151078
+
+        Reviewed by Geoffrey Garen.
+
+        New name is: StackmapArgumentList
+        We use this to build patchpoint and stackmap intrinsics in FTLLowerDFGToLLVM.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLExitArgumentList.h: Removed.
+        * ftl/FTLJSTailCall.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callStackmap):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForAvailability):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitArgument):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForTailCall):
+        * ftl/FTLOSRExit.cpp:
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLStackmapArgumentList.h: Copied from Source/JavaScriptCore/ftl/FTLExitArgumentList.h.
+
 2015-11-09  Filip Pizlo  <fpizlo@apple.com>
 
         [B3] Add more tests for Check and fix bugs this found

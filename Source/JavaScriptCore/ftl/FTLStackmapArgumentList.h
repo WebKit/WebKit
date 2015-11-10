@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLExitArgumentList_h
-#define FTLExitArgumentList_h
+#ifndef FTLStackmapArgumentList_h
+#define FTLStackmapArgumentList_h
 
 #if ENABLE(FTL_JIT)
 
@@ -33,11 +33,11 @@
 
 namespace JSC { namespace FTL {
 
-typedef Vector<LValue, 16> ExitArgumentList;
+typedef Vector<LValue, 16> StackmapArgumentList;
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLExitArgumentList_h
+#endif // FTLStackmapArgumentList_h
 

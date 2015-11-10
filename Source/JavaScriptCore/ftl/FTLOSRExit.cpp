@@ -32,7 +32,6 @@
 #include "DFGBasicBlock.h"
 #include "DFGNode.h"
 #include "FTLExitArgument.h"
-#include "FTLExitArgumentList.h"
 #include "FTLJITCode.h"
 #include "FTLLocation.h"
 #include "JSCInlines.h"

@@ -131,7 +131,7 @@
 		0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BBE17178E1C00690C7F /* FTLExitArgument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */; };
 		0F235BD617178E1C00690C7F /* FTLExitArgumentForOperand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC017178E1C00690C7F /* FTLExitArgumentForOperand.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F235BD717178E1C00690C7F /* FTLExitArgumentList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC117178E1C00690C7F /* FTLExitArgumentList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F235BD717178E1C00690C7F /* FTLStackmapArgumentList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BD817178E1C00690C7F /* FTLExitThunkGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BC217178E1C00690C7F /* FTLExitThunkGenerator.cpp */; };
 		0F235BD917178E1C00690C7F /* FTLExitThunkGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BC317178E1C00690C7F /* FTLExitThunkGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BDA17178E1C00690C7F /* FTLExitValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BC417178E1C00690C7F /* FTLExitValue.cpp */; };
@@ -2172,7 +2172,7 @@
 		0F235BBE17178E1C00690C7F /* FTLExitArgument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitArgument.h; path = ftl/FTLExitArgument.h; sourceTree = "<group>"; };
 		0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitArgumentForOperand.cpp; path = ftl/FTLExitArgumentForOperand.cpp; sourceTree = "<group>"; };
 		0F235BC017178E1C00690C7F /* FTLExitArgumentForOperand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitArgumentForOperand.h; path = ftl/FTLExitArgumentForOperand.h; sourceTree = "<group>"; };
-		0F235BC117178E1C00690C7F /* FTLExitArgumentList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitArgumentList.h; path = ftl/FTLExitArgumentList.h; sourceTree = "<group>"; };
+		0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLStackmapArgumentList.h; path = ftl/FTLStackmapArgumentList.h; sourceTree = "<group>"; };
 		0F235BC217178E1C00690C7F /* FTLExitThunkGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitThunkGenerator.cpp; path = ftl/FTLExitThunkGenerator.cpp; sourceTree = "<group>"; };
 		0F235BC317178E1C00690C7F /* FTLExitThunkGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitThunkGenerator.h; path = ftl/FTLExitThunkGenerator.h; sourceTree = "<group>"; };
 		0F235BC417178E1C00690C7F /* FTLExitValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitValue.cpp; path = ftl/FTLExitValue.cpp; sourceTree = "<group>"; };
@@ -4342,7 +4342,7 @@
 				0F235BBE17178E1C00690C7F /* FTLExitArgument.h */,
 				0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */,
 				0F235BC017178E1C00690C7F /* FTLExitArgumentForOperand.h */,
-				0F235BC117178E1C00690C7F /* FTLExitArgumentList.h */,
+				0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */,
 				0F2B9CEE19D0BAC100B1D1B5 /* FTLExitPropertyValue.cpp */,
 				0F2B9CEF19D0BAC100B1D1B5 /* FTLExitPropertyValue.h */,
 				0F235BC217178E1C00690C7F /* FTLExitThunkGenerator.cpp */,
@@ -7006,7 +7006,7 @@
 				0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */,
 				0F338E0C1BF0276C0013C88F /* B3Compilation.h in Headers */,
 				0F235BD617178E1C00690C7F /* FTLExitArgumentForOperand.h in Headers */,
-				0F235BD717178E1C00690C7F /* FTLExitArgumentList.h in Headers */,
+				0F235BD717178E1C00690C7F /* FTLStackmapArgumentList.h in Headers */,
 				0F2B9CF519D0BAC100B1D1B5 /* FTLExitPropertyValue.h in Headers */,
 				0F235BD917178E1C00690C7F /* FTLExitThunkGenerator.h in Headers */,
 				0F2B9CF719D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.h in Headers */,
