@@ -32,6 +32,7 @@
 #include "DFGOSRExitPreparation.h"
 #include "FTLExitArgumentForOperand.h"
 #include "FTLJITCode.h"
+#include "FTLLocation.h"
 #include "FTLOSRExit.h"
 #include "FTLOperations.h"
 #include "FTLState.h"
@@ -178,12 +179,12 @@ static void compileStub(
 {
     StackMaps::Record* record = &jitCode->stackmaps.records[exit.m_stackmapRecordIndex];
     RELEASE_ASSERT(record->patchpointID == exit.m_descriptor.m_stackmapID);
-    
+
     // This code requires framePointerRegister is the same as callFrameRegister
     static_assert(MacroAssembler::framePointerRegister == GPRInfo::callFrameRegister, "MacroAssembler::framePointerRegister and GPRInfo::callFrameRegister must be the same");
 
     CCallHelpers jit(vm, codeBlock);
-    
+
     // We need scratch space to save all registers, to build up the JS stack, to deal with unwind
     // fixup, pointers to all of the objects we materialize, and the elements inside those objects
     // that we materialize.
@@ -426,15 +427,26 @@ static void compileStub(
 
     RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
     RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
+    RegisterAtOffsetList* vmCalleeSaves = vm->getAllCalleeSaveRegisterOffsets();
+    RegisterSet vmCalleeSavesToSkip = RegisterSet::stackRegisters();
+    if (exit.m_isExceptionHandler)
+        jit.move(CCallHelpers::TrustedImmPtr(vm->calleeSaveRegistersBuffer), GPRInfo::regT1);
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!allFTLCalleeSaves.get(reg))
+        if (!allFTLCalleeSaves.get(reg)) {
+            if (exit.m_isExceptionHandler)
+                RELEASE_ASSERT(!vmCalleeSaves->find(reg));
             continue;
+        }
         unsigned unwindIndex = codeBlock->calleeSaveRegisters()->indexOf(reg);
         RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
+        RegisterAtOffset* vmCalleeSave = nullptr; 
+        if (exit.m_isExceptionHandler)
+            vmCalleeSave = vmCalleeSaves->find(reg);
 
         if (reg.isGPR()) {
             GPRReg regToLoad = baselineRegisterOffset ? GPRInfo::regT0 : reg.gpr();
+            RELEASE_ASSERT(regToLoad != GPRInfo::regT1);
 
             if (unwindIndex == UINT_MAX) {
                 // The FTL compilation didn't preserve this register. This means that it also
@@ -452,6 +464,8 @@ static void compileStub(
 
             if (baselineRegisterOffset)
                 jit.store64(regToLoad, MacroAssembler::Address(MacroAssembler::framePointerRegister, baselineRegisterOffset->offset()));
+            if (vmCalleeSave && !vmCalleeSavesToSkip.get(vmCalleeSave->reg()))
+                jit.store64(regToLoad, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
         } else {
             FPRReg fpRegToLoad = baselineRegisterOffset ? FPRInfo::fpRegT0 : reg.fpr();
 
@@ -462,7 +476,17 @@ static void compileStub(
 
             if (baselineRegisterOffset)
                 jit.storeDouble(fpRegToLoad, MacroAssembler::Address(MacroAssembler::framePointerRegister, baselineRegisterOffset->offset()));
+            if (vmCalleeSave && !vmCalleeSavesToSkip.get(vmCalleeSave->reg()))
+                jit.storeDouble(fpRegToLoad, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
         }
+    }
+
+    if (exit.m_isExceptionHandler) {
+        RegisterAtOffset* vmCalleeSave = vmCalleeSaves->find(GPRInfo::tagTypeNumberRegister);
+        jit.store64(GPRInfo::tagTypeNumberRegister, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
+
+        vmCalleeSave = vmCalleeSaves->find(GPRInfo::tagMaskRegister);
+        jit.store64(GPRInfo::tagMaskRegister, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
     }
 
     size_t baselineVirtualRegistersForCalleeSaves = baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters();
@@ -481,7 +505,7 @@ static void compileStub(
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
-    adjustAndJumpToTarget(jit, exit, false);
+    adjustAndJumpToTarget(jit, exit, exit.m_isExceptionHandler);
     
     LinkBuffer patchBuffer(*vm, jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(
@@ -520,6 +544,11 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("    Origin: ", exit.m_codeOrigin, "\n");
         if (exit.m_codeOriginForExitProfile != exit.m_codeOrigin)
             dataLog("    Origin for exit profile: ", exit.m_codeOriginForExitProfile, "\n");
+        dataLog("    Exit stackmap ID: ", exit.m_descriptor.m_stackmapID, "\n");
+        dataLog("    Current call site index: ", exec->callSiteIndex().bits(), "\n");
+        dataLog("    Exit is exception handler: ", exit.m_isExceptionHandler,
+            " will arrive at exit from genericUnwind(): ", exit.m_descriptor.m_willArriveAtOSRExitFromGenericUnwind, 
+            " will arrive at exit from lazy slow path: ", exit.m_descriptor.m_isExceptionFromLazySlowPath, "\n");
         dataLog("    Exit values: ", exit.m_descriptor.m_values, "\n");
         if (!exit.m_descriptor.m_materializations.isEmpty()) {
             dataLog("    Materializations:\n");
@@ -531,7 +560,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
     
     compileStub(exitID, jitCode, exit, vm, codeBlock);
-    
+
     MacroAssembler::repatchJump(
         exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));
     

@@ -63,6 +63,18 @@ struct NodeOrigin {
         return result;
     }
 
+    NodeOrigin withForExitAndExitOK(CodeOrigin forExit, bool exitOK) const
+    {
+        if (!isSet())
+            return NodeOrigin();
+        
+        NodeOrigin result = *this;
+        if (forExit.isSet())
+            result.forExit = forExit;
+        result.exitOK = exitOK;
+        return result;
+    }
+
     NodeOrigin withExitOK(bool value) const
     {
         NodeOrigin result = *this;

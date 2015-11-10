@@ -170,8 +170,9 @@ public:
             m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.capturedStackmapID),
             m_out.int32Zero, capturedAlloca);
         
-        // If we have any CallVarargs then we nee to have a spill slot for it.
+        // If we have any CallVarargs then we need to have a spill slot for it.
         bool hasVarargs = false;
+        size_t maxNumberOfCatchSpills = 0;
         for (BasicBlock* block : preOrder) {
             for (Node* node : *block) {
                 switch (node->op()) {
@@ -188,6 +189,43 @@ public:
                 default:
                     break;
                 }
+
+                if (m_graph.m_hasExceptionHandlers) {
+                    switch (node->op()) {
+                    case Call:
+                    case CallVarargs:
+                    case CallForwardVarargs:
+                    case Construct:
+                    case ConstructVarargs:
+                    case ConstructForwardVarargs:
+                    case TailCallInlinedCaller:
+                    case TailCallVarargsInlinedCaller:
+                    case TailCallForwardVarargsInlinedCaller: {
+                        CodeOrigin opCatchOrigin;
+                        HandlerInfo* exceptionHandler;
+                        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(node->origin.forExit, opCatchOrigin, exceptionHandler);
+                        if (willCatchException)
+                            maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, m_graph.localsLiveInBytecode(opCatchOrigin).bitCount());
+                        break;
+                    }
+                    case GetById:
+                    case GetByIdFlush: {
+                        // We may have to flush one thing for GetByIds when the base and result
+                        // are assigned the same register. For a more comprehensive overview, look
+                        // at the comment in FTLCompile.cpp
+                        CodeOrigin opCatchOrigin;
+                        HandlerInfo* exceptionHandler;
+                        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(node->origin.forExit, opCatchOrigin, exceptionHandler);
+                        if (willCatchException) {
+                            static const size_t numberOfGetByIdSpills = 1;
+                            maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, numberOfGetByIdSpills);
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                }
             }
         }
         if (hasVarargs) {
@@ -197,6 +235,18 @@ public:
             m_out.call(
                 m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.varargsSpillSlotsStackmapID),
                 m_out.int32Zero, varargsSpillSlots);
+        }
+
+        if (m_graph.m_hasExceptionHandlers && maxNumberOfCatchSpills) {
+            RegisterSet volatileRegisters = RegisterSet::volatileRegistersForJSCall();
+            maxNumberOfCatchSpills = std::min(volatileRegisters.numberOfSetRegisters(), maxNumberOfCatchSpills);
+
+            LValue exceptionHandlingVolatileRegistersSpillSlots = m_out.alloca(
+                arrayType(m_out.int64, maxNumberOfCatchSpills));
+            m_ftlState.exceptionHandlingSpillSlotStackmapID = m_stackmapIDs++;
+            m_out.call(
+                m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.exceptionHandlingSpillSlotStackmapID),
+                m_out.int32Zero, exceptionHandlingVolatileRegistersSpillSlots);
         }
         
         // We should not create any alloca's after this point, since they will cease to
@@ -2311,10 +2361,18 @@ private:
         if (verboseCompilationEnabled())
             dataLog("    Emitting PutById patchpoint with stackmap #", stackmapID, "\n");
         
-        LValue call = m_out.call(
-            m_out.patchpointVoidIntrinsic(),
-            m_out.constInt64(stackmapID), m_out.constInt32(sizeOfPutById()),
-            constNull(m_out.ref8), m_out.constInt32(2), base, value);
+        ExitArgumentList arguments;
+        arguments.append(base); 
+        arguments.append(value);
+
+        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, LLVMAnyRegCallConv, 2); // 2 arguments show up in the stackmap locations: the base and the value.
+
+        arguments.insert(0, m_out.constInt32(2)); 
+        arguments.insert(0, constNull(m_out.ref8)); 
+        arguments.insert(0, m_out.constInt32(sizeOfPutById()));
+        arguments.insert(0, m_out.constInt64(stackmapID));
+
+        LValue call = m_out.call(m_out.patchpointVoidIntrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
         m_ftlState.putByIds.append(PutByIdDescriptor(
@@ -4519,12 +4577,9 @@ private:
         unsigned frameSize = JSStack::CallFrameHeaderSize + numArgs;
         unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
         unsigned padding = alignedFrameSize - frameSize;
-
-        Vector<LValue> arguments;
-        arguments.append(m_out.constInt64(stackmapID));
-        arguments.append(m_out.constInt32(sizeOfCall()));
-        arguments.append(constNull(m_out.ref8));
-        arguments.append(m_out.constInt32(1 + alignedFrameSize - JSStack::CallerFrameAndPCSize));
+        // Documentation about stackmap and patchpoint intrinsics:
+        // http://llvm.org/docs/StackMaps.html
+        ExitArgumentList arguments;
         arguments.append(jsCallee); // callee -> %rax
         arguments.append(getUndef(m_out.int64)); // code block
         arguments.append(jsCallee); // callee -> stack
@@ -4533,6 +4588,13 @@ private:
             arguments.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
         for (unsigned i = 0; i < padding; ++i)
             arguments.append(getUndef(m_out.int64));
+
+        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, LLVMWebKitJSCallConv, 0); // No call arguments show up in the stackmap locations.
+
+        arguments.insert(0, m_out.constInt32(1 + alignedFrameSize - JSStack::CallerFrameAndPCSize));
+        arguments.insert(0, constNull(m_out.ref8));
+        arguments.insert(0, m_out.constInt32(sizeOfCall()));
+        arguments.insert(0, m_out.constInt64(stackmapID));
         
         LValue call = m_out.call(m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMWebKitJSCallConv);
@@ -4603,16 +4665,19 @@ private:
         
         unsigned stackmapID = m_stackmapIDs++;
         
-        Vector<LValue> arguments;
-        arguments.append(m_out.constInt64(stackmapID));
-        arguments.append(m_out.constInt32(sizeOfICFor(m_node)));
-        arguments.append(constNull(m_out.ref8));
-        arguments.append(m_out.constInt32(2 + !!jsArguments));
+        ExitArgumentList arguments;
         arguments.append(jsCallee);
         if (jsArguments)
             arguments.append(jsArguments);
         ASSERT(thisArg);
         arguments.append(thisArg);
+
+        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, LLVMCCallConv, 0); // No call arguments show up in stackmap locations.
+
+        arguments.insert(0, m_out.constInt32(2 + !!jsArguments));
+        arguments.insert(0, constNull(m_out.ref8));
+        arguments.insert(0, m_out.constInt32(sizeOfICFor(m_node)));
+        arguments.insert(0, m_out.constInt64(stackmapID));
         
         LValue call = m_out.call(m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMCCallConv);
@@ -6173,10 +6238,17 @@ private:
         if (Options::verboseCompilation())
             dataLog("    Emitting GetById patchpoint with stackmap #", stackmapID, "\n");
         
-        LValue call = m_out.call(
-            m_out.patchpointInt64Intrinsic(),
-            m_out.constInt64(stackmapID), m_out.constInt32(sizeOfGetById()),
-            constNull(m_out.ref8), m_out.constInt32(1), base);
+        ExitArgumentList arguments;
+        arguments.append(base);
+
+        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, LLVMAnyRegCallConv, 2, false, true); // 2 arguments show up in the stackmap locations: the result and the base.
+
+        arguments.insert(0, m_out.constInt32(1)); 
+        arguments.insert(0, constNull(m_out.ref8));
+        arguments.insert(0, m_out.constInt32(sizeOfGetById()));
+        arguments.insert(0, m_out.constInt64(stackmapID)); 
+
+        LValue call = m_out.call(m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
         m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->origin.semantic, uid));
@@ -7517,12 +7589,15 @@ private:
     {
         unsigned stackmapID = m_stackmapIDs++;
 
-        Vector<LValue> arguments;
+        ExitArgumentList arguments;
         arguments.append(m_out.constInt64(stackmapID));
         arguments.append(m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         arguments.append(constNull(m_out.ref8));
         arguments.append(m_out.constInt32(userArguments.size()));
         arguments.appendVector(userArguments);
+
+        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, LLVMAnyRegCallConv, userArguments.size() + 1, true); // All the arguments plus the result show up in the stackmap locations.
+
         LValue call = m_out.call(m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
@@ -7537,7 +7612,7 @@ private:
     void speculate(
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
     {
-        appendOSRExit(kind, lowValue, highValue, failCondition);
+        appendOSRExit(kind, lowValue, highValue, failCondition, m_origin);
     }
     
     void terminate(ExitKind kind)
@@ -7565,7 +7640,7 @@ private:
         if (!m_interpreter.needsTypeCheck(highValue, typesPassedThrough))
             return;
         ASSERT(mayHaveTypeCheck(highValue.useKind()));
-        appendOSRExit(BadType, lowValue, highValue.node(), failCondition);
+        appendOSRExit(BadType, lowValue, highValue.node(), failCondition, m_origin);
         m_interpreter.filter(highValue, typesPassedThrough);
     }
     
@@ -8722,9 +8797,9 @@ private:
 
     void callPreflight(CodeOrigin codeOrigin)
     {
+        CallSiteIndex callSiteIndex = m_ftlState.jitCode->common.addCodeOrigin(codeOrigin);
         m_out.store32(
-            m_out.constInt32(
-                m_ftlState.jitCode->common.addCodeOrigin(codeOrigin).bits()),
+            m_out.constInt32(callSiteIndex.bits()),
             tagFor(JSStack::ArgumentCount));
     }
 
@@ -8755,23 +8830,81 @@ private:
         if (Options::useExceptionFuzz())
             m_out.call(m_out.operation(operationExceptionFuzz), m_callFrame);
         
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Exception check continuation"));
-        
         LValue exception = m_out.load64(m_out.absolute(vm().addressOfException()));
-        
+        LValue hadException = m_out.notZero64(exception);
+
+        bool emittedExceptionHandlingCodeForOSRExit = emitBranchToOSRExitIfWillCatchException(hadException);
+        if (emittedExceptionHandlingCodeForOSRExit) // It already took care of exception handling logic.
+            return;
+
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Exception check continuation"));
+
         m_out.branch(
-            m_out.notZero64(exception), rarely(m_handleExceptions), usually(continuation));
-        
+            hadException, rarely(m_handleExceptions), usually(continuation));
+
         m_out.appendTo(continuation);
+    }
+
+    void appendOSRExitArgumentsForPatchpointIfWillCatchException(ExitArgumentList& arguments, LCallConv callingConvention, unsigned offsetOfExitArguments, bool isLazySlowPath = false, bool isGetBydId = false)
+    {
+        CodeOrigin opCatchOrigin;
+        HandlerInfo* exceptionHandler;
+        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_origin.forExit, opCatchOrigin, exceptionHandler);
+        if (!willCatchException)
+            return;
+
+        appendOSRExitDescriptor(Uncountable, noValue(), nullptr, m_origin.withForExitAndExitOK(opCatchOrigin, true));
+        OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
+        exitDescriptor.m_semanticCodeOriginForCallFrameHeader = codeOriginDescriptionOfCallSite();
+        exitDescriptor.m_isExceptionHandler = true;
+        exitDescriptor.m_willArriveAtOSRExitFromGenericUnwind = !isLazySlowPath;
+        exitDescriptor.m_isExceptionFromLazySlowPath = isLazySlowPath;
+        exitDescriptor.m_isExceptionFromJSCall = callingConvention == LLVMWebKitJSCallConv || callingConvention == LLVMCCallConv;
+        exitDescriptor.m_isExceptionFromGetById = isGetBydId;
+        exitDescriptor.m_baselineExceptionHandler = *exceptionHandler;
+        exitDescriptor.m_stackmapID = m_stackmapIDs - 1;
+
+        ExitArgumentList freshList;
+        buildExitArguments(exitDescriptor, freshList, noValue(), exitDescriptor.m_codeOrigin);
+        arguments.appendVector(freshList);
+
+        if (offsetOfExitArguments) {
+            for (size_t i = 0; i < exitDescriptor.m_values.size(); i++) {
+                if (exitDescriptor.m_values[i].hasIndexInStackmapLocations())
+                    exitDescriptor.m_values[i].adjustStackmapLocationsIndexByOffset(offsetOfExitArguments);
+            }
+        }
+    }
+
+    bool emitBranchToOSRExitIfWillCatchException(LValue hadException)
+    {
+        CodeOrigin opCatchOrigin;
+        HandlerInfo* exceptionHandler;
+        bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_origin.forExit, opCatchOrigin, exceptionHandler); 
+        if (!willCatchException)
+            return false;
+
+        appendOSRExit(Uncountable, noValue(), nullptr, hadException, m_origin.withForExitAndExitOK(opCatchOrigin, true), true);
+        return true;
     }
     
     LBasicBlock lowBlock(BasicBlock* block)
     {
         return m_blocks.get(block);
     }
+
+    void appendOSRExitDescriptor(ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin)
+    {
+        m_ftlState.jitCode->osrExitDescriptors.append(OSRExitDescriptor(
+            kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
+            origin.forExit, origin.semantic,
+            availabilityMap().m_locals.numberOfArguments(),
+            availabilityMap().m_locals.numberOfLocals()));
+    }
     
     void appendOSRExit(
-        ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
+        ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition, 
+        NodeOrigin origin, bool isExceptionHandler = false)
     {
         if (verboseCompilationEnabled()) {
             dataLog("    OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap(), "\n");
@@ -8779,9 +8912,9 @@ private:
                 dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
         }
 
-        DFG_ASSERT(m_graph, m_node, m_origin.exitOK);
+        DFG_ASSERT(m_graph, m_node, origin.exitOK);
         
-        if (doOSRExitFuzzing()) {
+        if (doOSRExitFuzzing() && !isExceptionHandler) {
             LValue numberOfFuzzChecks = m_out.add(
                 m_out.load32(m_out.absolute(&g_numberOfOSRExitFuzzChecks)),
                 m_out.int32One);
@@ -8803,13 +8936,9 @@ private:
         if (failCondition == m_out.booleanFalse)
             return;
 
-        m_ftlState.jitCode->osrExitDescriptors.append(OSRExitDescriptor(
-            kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
-            m_origin.forExit, m_origin.semantic,
-            availabilityMap().m_locals.numberOfArguments(),
-            availabilityMap().m_locals.numberOfLocals()));
-
+        appendOSRExitDescriptor(kind, lowValue, highValue, origin);
         OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
+        exitDescriptor.m_isExceptionHandler = isExceptionHandler;
 
         if (failCondition == m_out.booleanTrue) {
             emitOSRExitCall(exitDescriptor, lowValue);
@@ -8977,7 +9106,6 @@ private:
             AvailableRecovery recovery = m_availableRecoveries[i];
             if (recovery.node() != node)
                 continue;
-            
             ExitValue result = ExitValue::recovery(
                 recovery.opcode(), arguments.size(), arguments.size() + 1,
                 recovery.format());

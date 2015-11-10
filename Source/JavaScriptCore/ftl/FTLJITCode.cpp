@@ -144,10 +144,14 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
         exit.m_descriptor.validateReferences(trackedReferences);
 }
 
-RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex)
+RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
 {
-    // FIXME: implement this when FTL implements try/catch.
-    // https://bugs.webkit.org/show_bug.cgi?id=149409
+    for (OSRExit& exit : osrExit) {
+        if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
+            RELEASE_ASSERT(exit.m_isExceptionHandler);
+            return stackmaps.records[exit.m_stackmapRecordIndex].usedRegisterSet();
+        }
+    }
     return RegisterSet();
 }
 

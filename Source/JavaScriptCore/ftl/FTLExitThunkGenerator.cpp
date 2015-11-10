@@ -46,21 +46,41 @@ ExitThunkGenerator::~ExitThunkGenerator()
 {
 }
 
-void ExitThunkGenerator::emitThunk(unsigned index)
+void ExitThunkGenerator::emitThunk(unsigned index, int32_t osrExitFromGenericUnwindStackSpillSlot)
 {
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[index];
+    OSRExit& exit = m_state.jitCode->osrExit[index];
     
     info.m_thunkLabel = label();
+
+    if (exit.m_descriptor.m_willArriveAtOSRExitFromGenericUnwind) {
+        restoreCalleeSavesFromVMCalleeSavesBuffer();
+        loadPtr(vm()->addressOfCallFrameForCatch(), framePointerRegister);
+        addPtr(TrustedImm32(- static_cast<int64_t>(m_state.jitCode->stackmaps.stackSizeForLocals())), 
+            framePointerRegister, stackPointerRegister);
+
+        if (exit.m_descriptor.m_isExceptionFromJSCall)
+            exit.recoverRegistersFromSpillSlot(*this, osrExitFromGenericUnwindStackSpillSlot);
+
+        Jump skipGetAndPutByIdSlowPathEntrance = jump();
+
+        info.m_getAndPutByIdCallOperationExceptionOSRExitEntrance = label();
+        if (exit.m_descriptor.m_isExceptionFromGetById)
+            exit.recoverRegistersFromSpillSlot(*this, osrExitFromGenericUnwindStackSpillSlot);
+        
+        skipGetAndPutByIdSlowPathEntrance.link(this);
+    }
+
     pushToSaveImmediateWithoutTouchingRegisters(TrustedImm32(index));
     info.m_thunkJump = patchableJump();
     
     m_didThings = true;
 }
 
-void ExitThunkGenerator::emitThunks()
+void ExitThunkGenerator::emitThunks(int32_t osrExitFromGenericUnwindStackSpillSlot)
 {
     for (unsigned i = 0; i < m_state.finalizer->osrExit.size(); ++i)
-        emitThunk(i);
+        emitThunk(i, osrExitFromGenericUnwindStackSpillSlot);
 }
 
 } } // namespace JSC::FTL

@@ -828,6 +828,11 @@ public:
     void ensurePrePostNumbering();
     void ensureNaturalLoops();
 
+    // This function only makes sense to call after bytecode parsing
+    // because it queries the m_hasExceptionHandlers boolean whose value
+    // is only fully determined after bytcode parsing.
+    bool willCatchExceptionInMachineFrame(CodeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut);
+
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;

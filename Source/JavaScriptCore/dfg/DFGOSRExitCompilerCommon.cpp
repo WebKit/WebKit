@@ -235,10 +235,10 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     // Don't need to set the toplevel code origin if we only did inline tail calls
     if (codeOrigin) {
 #if USE(JSVALUE64)
-    uint32_t locationBits = CallSiteIndex(codeOrigin->bytecodeIndex).bits();
+        uint32_t locationBits = CallSiteIndex(codeOrigin->bytecodeIndex).bits();
 #else
-    Instruction* instruction = jit.baselineCodeBlock()->instructions().begin() + codeOrigin->bytecodeIndex;
-    uint32_t locationBits = CallSiteIndex(instruction).bits();
+        Instruction* instruction = jit.baselineCodeBlock()->instructions().begin() + codeOrigin->bytecodeIndex;
+        uint32_t locationBits = CallSiteIndex(instruction).bits();
 #endif
         jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor((VirtualRegister)(JSStack::ArgumentCount)));
     }

@@ -49,7 +49,7 @@ public:
     
     static unsigned numSpillSlotsNeeded();
     
-    void emit(CCallHelpers&, State&, int32_t spillSlotsOffset);
+    void emit(CCallHelpers&, State&, int32_t spillSlotsOffset, int32_t osrExitFromGenericUnwindSpillSlots);
     void link(VM&, LinkBuffer&, CodeLocationLabel exceptionHandler);
     
     unsigned stackmapID() const { return m_stackmapID; }
@@ -58,6 +58,10 @@ public:
     {
         return m_instructionOffset < other.m_instructionOffset;
     }
+    
+    void setCallSiteIndex(CallSiteIndex callSiteIndex) { m_callBase.setCallSiteIndex(callSiteIndex); }
+    CodeOrigin callSiteDescriptionOrigin() const { return m_callBase.callSiteDescriptionOrigin(); }
+    void setCorrespondingGenericUnwindOSRExit(OSRExit* exit) { m_callBase.setCorrespondingGenericUnwindOSRExit(exit); }
     
 private:
     unsigned m_stackmapID;

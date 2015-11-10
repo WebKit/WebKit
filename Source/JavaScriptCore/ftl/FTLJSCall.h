@@ -43,7 +43,7 @@ public:
     JSCall();
     JSCall(unsigned stackmapID, DFG::Node*, CodeOrigin callSiteDescriptionOrigin);
 
-    void emit(CCallHelpers&, State&);
+    void emit(CCallHelpers&, State&, int32_t osrExitFromGenericUnwindSpillSlots);
     
     unsigned stackmapID() const { return m_stackmapID; }
     

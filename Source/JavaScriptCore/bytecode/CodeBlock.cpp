@@ -2953,7 +2953,7 @@ HandlerInfo* CodeBlock::handlerForIndex(unsigned index, RequiredHandler required
 CallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite)
 {
 #if ENABLE(DFG_JIT)
-    RELEASE_ASSERT(jitType() == JITCode::DFGJIT); // FIXME: When implementing FTL try/catch we should include that JITType here as well: https://bugs.webkit.org/show_bug.cgi?id=149409
+    RELEASE_ASSERT(JITCode::isOptimizingJIT(jitType()));
     RELEASE_ASSERT(canGetCodeOrigin(originalCallSite));
     ASSERT(!!handlerForIndex(originalCallSite.bits()));
     CodeOrigin originalOrigin = codeOrigin(originalCallSite);

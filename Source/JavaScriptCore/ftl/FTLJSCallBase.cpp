@@ -39,6 +39,7 @@ using namespace DFG;
 JSCallBase::JSCallBase()
     : m_type(CallLinkInfo::None)
     , m_callLinkInfo(nullptr)
+    , m_correspondingGenericUnwindOSRExit(nullptr)
 {
 }
 
@@ -50,10 +51,14 @@ JSCallBase::JSCallBase(CallLinkInfo::CallType type, CodeOrigin semantic, CodeOri
 {
 }
 
-void JSCallBase::emit(CCallHelpers& jit, State& state)
+void JSCallBase::emit(CCallHelpers& jit, State& /*state*/, int32_t osrExitFromGenericUnwindStackSpillSlot)
 {
-    CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(m_callSiteDescriptionOrigin);
-    jit.store32(CCallHelpers::TrustedImm32(callSiteIndex.bits()), CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+    RELEASE_ASSERT(!!m_callSiteIndex);
+    
+    if (m_correspondingGenericUnwindOSRExit)
+        m_correspondingGenericUnwindOSRExit->spillRegistersToSpillSlot(jit, osrExitFromGenericUnwindStackSpillSlot);
+
+    jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex.bits()), CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
 
     m_callLinkInfo = jit.codeBlock()->addCallLinkInfo();
     

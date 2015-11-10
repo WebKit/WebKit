@@ -74,7 +74,7 @@ public:
     {
         return ExitArgument(format, argument());
     }
-    
+
     ExitArgumentRepresentation representation() const { return m_representation; }
     
     void dump(PrintStream&) const;

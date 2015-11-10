@@ -49,6 +49,7 @@ State::State(Graph& graph)
     , handleExceptionStackmapID(UINT_MAX)
     , capturedStackmapID(UINT_MAX)
     , varargsSpillSlotsStackmapID(UINT_MAX)
+    , exceptionHandlingSpillSlotStackmapID(UINT_MAX)
     , unwindDataSection(0)
     , unwindDataSectionSize(0)
 {

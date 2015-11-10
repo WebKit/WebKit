@@ -21,8 +21,15 @@ function allocate() {
 function hello() { return 20; }
 noInline(hello);
 
+let __jaz = {};
+function jazzy() {
+    return __jaz;
+}
+noInline(jazzy);
+
 function foo(o) {
     let baz = hello();
+    let jaz = jazzy();
     let v;
     try {
         v = o.f;
@@ -30,6 +37,7 @@ function foo(o) {
         v = o.f;
     } catch(e) {
         assert(baz === 20);
+        assert(jaz === __jaz);
         assert(v === 2); // Really flagCount.
     }
     return v;

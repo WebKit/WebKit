@@ -1532,6 +1532,31 @@ bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
     return true;
 }
 
+bool Graph::willCatchExceptionInMachineFrame(CodeOrigin codeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut)
+{
+    if (!m_hasExceptionHandlers)
+        return false;
+
+    unsigned bytecodeIndexToCheck = codeOrigin.bytecodeIndex;
+    while (1) {
+        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
+        CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
+        if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
+            opCatchOriginOut = CodeOrigin(handler->target, inlineCallFrame);
+            catchHandlerOut = handler;
+            return true;
+        }
+
+        if (!inlineCallFrame)
+            return false;
+
+        bytecodeIndexToCheck = inlineCallFrame->directCaller.bytecodeIndex;
+        codeOrigin = codeOrigin.inlineCallFrame->directCaller;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

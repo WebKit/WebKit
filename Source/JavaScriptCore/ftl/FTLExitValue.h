@@ -157,6 +157,7 @@ public:
     bool isArgument() const { return kind() == ExitValueArgument; }
     bool isRecovery() const { return kind() == ExitValueRecovery; }
     bool isObjectMaterialization() const { return kind() == ExitValueMaterializeNewObject; }
+    bool hasIndexInStackmapLocations() const { return isArgument() || isRecovery(); }
     
     ExitArgument exitArgument() const
     {
@@ -174,6 +175,18 @@ public:
     {
         ASSERT(isRecovery());
         return u.recovery.rightArgument;
+    }
+
+    void adjustStackmapLocationsIndexByOffset(unsigned offset)
+    {
+        ASSERT(hasIndexInStackmapLocations());
+        if (isArgument())
+            u.argument.argument += offset;
+        else {
+            ASSERT(isRecovery());
+            u.recovery.rightArgument += offset;
+            u.recovery.leftArgument += offset;
+        }
     }
     
     DataFormat recoveryFormat() const

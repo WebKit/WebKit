@@ -527,7 +527,7 @@ public:
                         dataLog("Creating Upsilon for ", operand, " at ", pointerDump(block), "->", pointerDump(successorBlock), "\n");
                     FlushFormat format = deferredAtHead[successorBlock].operand(operand);
                     DFG_ASSERT(m_graph, nullptr, isConcrete(format));
-                    UseKind useKind = useKindFor(format);
+                    UseKind useKind = uncheckedUseKindFor(format);
                     
                     // We need to get a value for the stack slot. This phase doesn't really have a
                     // good way of determining if a stack location got clobbered. It just knows if

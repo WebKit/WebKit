@@ -36,8 +36,11 @@
 #include "FTLExitTimeObjectMaterialization.h"
 #include "FTLExitValue.h"
 #include "FTLFormattedValue.h"
+#include "FTLStackMaps.h"
+#include "HandlerInfo.h"
 #include "MethodOfGettingAValueProfile.h"
 #include "Operands.h"
+#include "Reg.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
 
@@ -142,6 +145,7 @@ struct OSRExitDescriptor {
     ExitKind m_kind;
     CodeOrigin m_codeOrigin;
     CodeOrigin m_codeOriginForExitProfile;
+    CodeOrigin m_semanticCodeOriginForCallFrameHeader;
     
     // The first argument to the exit call may be a value we wish to profile.
     // If that's the case, the format will be not Invalid and we'll have a
@@ -155,7 +159,13 @@ struct OSRExitDescriptor {
     Bag<ExitTimeObjectMaterialization> m_materializations;
     
     uint32_t m_stackmapID;
-    bool m_isInvalidationPoint;
+    HandlerInfo m_baselineExceptionHandler;
+    bool m_isInvalidationPoint : 1;
+    bool m_isExceptionHandler : 1;
+    bool m_willArriveAtOSRExitFromGenericUnwind : 1;
+    bool m_isExceptionFromJSCall : 1;
+    bool m_isExceptionFromGetById : 1;
+    bool m_isExceptionFromLazySlowPath : 1;
     
     void validateReferences(const TrackedReferences&);
 };
@@ -170,11 +180,17 @@ struct OSRExit : public DFG::OSRExitBase {
     // Offset within Stackmap::records
     uint32_t m_stackmapRecordIndex;
 
+    RegisterSet registersToPreserveForCallThatMightThrow;
+
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
     }
+
+    void gatherRegistersToSpillForCallIfException(StackMaps&, StackMaps::Record&);
+    void spillRegistersToSpillSlot(CCallHelpers&, int32_t stackSpillSlot);
+    void recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot);
 };
 
 } } // namespace JSC::FTL

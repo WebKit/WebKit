@@ -561,28 +561,6 @@ void JITCompiler::appendExceptionHandlingOSRExit(unsigned eventStreamIndex, Code
     m_exceptionHandlerOSRExitCallSites.append(ExceptionHandlingOSRExitInfo { exitInfo, *exceptionHandler, callSite });
 }
 
-bool JITCompiler::willCatchExceptionInMachineFrame(CodeOrigin codeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut)
-{
-    unsigned bytecodeIndexToCheck = codeOrigin.bytecodeIndex;
-    while (1) {
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
-        CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
-        if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
-            opCatchOriginOut = CodeOrigin(handler->target, inlineCallFrame);
-            catchHandlerOut = handler;
-            return true;
-        }
-
-        if (!inlineCallFrame)
-            return false;
-
-        bytecodeIndexToCheck = inlineCallFrame->directCaller.bytecodeIndex;
-        codeOrigin = codeOrigin.inlineCallFrame->directCaller;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 void JITCompiler::exceptionCheck()
 {
     // It's important that we use origin.forExit here. Consider if we hoist string
@@ -607,7 +585,7 @@ void JITCompiler::exceptionCheck()
     // }
     CodeOrigin opCatchOrigin;
     HandlerInfo* exceptionHandler;
-    bool willCatchException = willCatchExceptionInMachineFrame(m_speculative->m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler); 
+    bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_speculative->m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler); 
     if (willCatchException) {
         unsigned streamIndex = m_speculative->m_outOfLineStreamIndex != UINT_MAX ? m_speculative->m_outOfLineStreamIndex : m_speculative->m_stream->size();
         MacroAssembler::Jump hadException = emitNonPatchableExceptionCheck();
@@ -621,7 +599,7 @@ CallSiteIndex JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNe
 {
     CodeOrigin opCatchOrigin;
     HandlerInfo* exceptionHandler;
-    bool willCatchException = willCatchExceptionInMachineFrame(callSiteCodeOrigin, opCatchOrigin, exceptionHandler);
+    bool willCatchException = m_graph.willCatchExceptionInMachineFrame(callSiteCodeOrigin, opCatchOrigin, exceptionHandler);
     CallSiteIndex callSite = addCallSite(callSiteCodeOrigin);
     if (willCatchException)
         appendExceptionHandlingOSRExit(eventStreamIndex, opCatchOrigin, exceptionHandler, callSite);

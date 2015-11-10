@@ -31,6 +31,7 @@
 #include "CCallHelpers.h"
 #include "CallLinkInfo.h"
 #include "CodeOrigin.h"
+#include "FTLOSRExit.h"
 
 namespace JSC {
 
@@ -49,17 +50,25 @@ public:
     JSCallBase();
     JSCallBase(CallLinkInfo::CallType, CodeOrigin semantic, CodeOrigin callSiteDescription);
     
-    void emit(CCallHelpers&, State&);
+    void emit(CCallHelpers&, State&, int32_t osrExitFromGenericUnwindSpillSlots);
     void link(VM&, LinkBuffer&);
+
+    void setCallSiteIndex(CallSiteIndex callSiteIndex) { m_callSiteIndex = callSiteIndex; }
+    CodeOrigin callSiteDescriptionOrigin() const { return m_callSiteDescriptionOrigin; }
+
+    void setCorrespondingGenericUnwindOSRExit(OSRExit* exit) { m_correspondingGenericUnwindOSRExit = exit; }
     
 protected:
     CallLinkInfo::CallType m_type;
     CodeOrigin m_semanticeOrigin;
     CodeOrigin m_callSiteDescriptionOrigin; // These two code origins may be different with tail calls under some circumstances of inlining. See relevant comment in LowerDFGToLLVM.
+    CallSiteIndex m_callSiteIndex;
     CCallHelpers::DataLabelPtr m_targetToCheck;
     CCallHelpers::Call m_fastCall;
     CCallHelpers::Call m_slowCall;
     CallLinkInfo* m_callLinkInfo;
+public:
+    OSRExit* m_correspondingGenericUnwindOSRExit;
 };
 
 } } // namespace JSC::FTL

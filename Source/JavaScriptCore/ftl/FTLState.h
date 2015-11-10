@@ -75,6 +75,7 @@ public:
     unsigned handleExceptionStackmapID;
     unsigned capturedStackmapID;
     unsigned varargsSpillSlotsStackmapID;
+    unsigned exceptionHandlingSpillSlotStackmapID;
     SegmentedVector<GetByIdDescriptor> getByIds;
     SegmentedVector<PutByIdDescriptor> putByIds;
     SegmentedVector<CheckInDescriptor> checkIns;

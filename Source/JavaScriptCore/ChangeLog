@@ -1,3 +1,237 @@
+2015-11-09  Saam barati  <sbarati@apple.com>
+
+        Implement try/catch in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=149409
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements try/catch in the FTL in a similar
+        way to how it's implemented in the DFG. The main idea is
+        this: anytime an exception is thrown in a try block, 
+        we OSR exit into the baseline JIT's corresponding catch
+        block. We compile OSR exits in a few forms:
+        1) Explicit exception checks that check VM's exception
+        pointer. This is modeled explicitly in LLVM IR.
+        2) OSR exits that are arrived at from genericUnwind 
+        caused by an exception being thrown in a JS call (including
+        getters and setters).
+        3) Exception from lazy slow paths.
+        4) Exception from when an IC misses and makes a slow path C Call.
+
+        All stackmaps associated with the above types of exits all 
+        take arguments that correspond to variables that are 
+        bytecode-live in the catch block.
+
+        1) Item 1 is the simplest implementation. When inside
+        a try block, exception checks will emit a branch to
+        an OSR exit stackmap intrinsic. This stackmap intrinsic
+        takes as arguments the live catch variables.
+
+        2) All forms of calls and GetByIds and PutByIds are implemented
+        as patchpoints in LLVM. As a patchpoint, they have a stackmap ID.
+        We use the same stackmap ID for the OSR exit. The OSR exit arguments
+        are appended to the end of the normal arguments for the patchpoint. These
+        types of OSR exits are only reached indirectly via genericUnwind.
+        Therefore, the LLVM IR we generate never has a direct branch to them.
+        These are the OSR exits we store in the CodeBlock's exception handling
+        table. The exception handlers' code locations point to the beginning
+        of the corresponding OSR exit. There is an interesting story here
+        about how we preserve registers. LLVM patchpoints assume late clobber,
+        i.e, they assume we use the patchpoint arguments before we clobber them.
+        Therefore, it's sound for LLVM to pass us arguments in volatile registers.
+        We must take care to store the arguments in volatile registers to the
+        stack before making a call. We ensure we have stack space for these
+        by using LLVM's alloca instruction. Then, when making a call inside
+        a try block, we spill the needed registers, and if that call throws,
+        we make sure the OSR exit fills the corresponding registers.
+
+        3) Exceptions from lazy slow paths are similar to (2) except they
+        don't go through generic unwind. These OSR Exits are arrived at from explicit
+        exception checks in the generated lazy slow path. Therefore, the callframe
+        is intact when arriving at the OSR exit. We make sure such lazy slow
+        paths exception check are linked to the OSR exit's code location.
+
+        4) This has a really interesting register preservation story.
+        We may have a GetById that has an IC miss and therefore goes
+        through the FTL's callOperation machinery. LLVM may also
+        ask for the result to be placed in the same register as the
+        base. Therefore, after the call, when storing to the result,
+        we overwrite the base. This can't fly with exceptions because
+        operationGetByIdOptimize may throw an exception and return "undefined". What
+        we really want is the original base value for OSR exit value
+        recovery. In this case, we take special care to flush the base 
+        value to the stack before the callOperation GetById slow path. 
+        Like call OSR exits, these types of exits will recover the base 
+        value from the stack when necessary.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::newExceptionHandlingCallSiteIndex):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::canOptimizeStringObjectAccess):
+        (JSC::DFG::Graph::willCatchExceptionInMachineFrame):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::appendExceptionHandlingOSRExit):
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        (JSC::DFG::JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded):
+        (JSC::DFG::JITCompiler::willCatchExceptionInMachineFrame): Deleted.
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGNodeOrigin.h:
+        (JSC::DFG::NodeOrigin::withSemantic):
+        (JSC::DFG::NodeOrigin::withForExitAndExitOK):
+        (JSC::DFG::NodeOrigin::withExitOK):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExitArgument.h:
+        (JSC::FTL::ExitArgument::withFormat):
+        (JSC::FTL::ExitArgument::representation):
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::~ExitThunkGenerator):
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        (JSC::FTL::ExitThunkGenerator::emitThunks):
+        * ftl/FTLExitThunkGenerator.h:
+        (JSC::FTL::ExitThunkGenerator::didThings):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::isArgument):
+        (JSC::FTL::ExitValue::isRecovery):
+        (JSC::FTL::ExitValue::isObjectMaterialization):
+        (JSC::FTL::ExitValue::hasIndexInStackmapLocations):
+        (JSC::FTL::ExitValue::exitArgument):
+        (JSC::FTL::ExitValue::rightRecoveryArgument):
+        (JSC::FTL::ExitValue::adjustStackmapLocationsIndexByOffset):
+        (JSC::FTL::ExitValue::recoveryFormat):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::validateReferences):
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::JSCall):
+        (JSC::FTL::JSCall::emit):
+        * ftl/FTLJSCall.h:
+        (JSC::FTL::JSCall::stackmapID):
+        * ftl/FTLJSCallBase.cpp:
+        (JSC::FTL::JSCallBase::JSCallBase):
+        (JSC::FTL::JSCallBase::emit):
+        * ftl/FTLJSCallBase.h:
+        (JSC::FTL::JSCallBase::setCallSiteIndex):
+        (JSC::FTL::JSCallBase::callSiteDescriptionOrigin):
+        (JSC::FTL::JSCallBase::setCorrespondingGenericUnwindOSRExit):
+        * ftl/FTLJSCallVarargs.cpp:
+        (JSC::FTL::JSCallVarargs::numSpillSlotsNeeded):
+        (JSC::FTL::JSCallVarargs::emit):
+        * ftl/FTLJSCallVarargs.h:
+        (JSC::FTL::JSCallVarargs::stackmapID):
+        (JSC::FTL::JSCallVarargs::operator<):
+        (JSC::FTL::JSCallVarargs::setCallSiteIndex):
+        (JSC::FTL::JSCallVarargs::callSiteDescriptionOrigin):
+        (JSC::FTL::JSCallVarargs::setCorrespondingGenericUnwindOSRExit):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculate):
+        (JSC::FTL::DFG::LowerDFGToLLVM::terminate):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendTypeCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callPreflight):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBranchToOSRExitIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForNode):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::gatherRegistersToSpillForCallIfException):
+        (JSC::FTL::OSRExit::spillRegistersToSpillSlot):
+        (JSC::FTL::OSRExit::recoverRegistersFromSpillSlot):
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExit::considerAddingAsFrequentExitSite):
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLState.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::findExceptionHandler):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::specialRegisters):
+        (JSC::RegisterSet::volatileRegistersForJSCall):
+        (JSC::RegisterSet::stubUnavailableRegisters):
+        * jit/RegisterSet.h:
+        * tests/stress/ftl-try-catch-getter-ic-fail-to-call-operation-throw-error.js: Added.
+        (assert):
+        (let.oThrow.get f):
+        (let.o2.get f):
+        (foo):
+        (f):
+        * tests/stress/ftl-try-catch-getter-throw.js: Added.
+        (assert):
+        (random):
+        (foo):
+        (f):
+        (let.o2.get f):
+        * tests/stress/ftl-try-catch-oom-error-lazy-slow-path.js: Added.
+        (assert):
+        (a):
+        (b):
+        (c):
+        (d):
+        (e):
+        (f):
+        (g):
+        (foo):
+        (blah):
+        * tests/stress/ftl-try-catch-patchpoint-with-volatile-registers.js: Added.
+        (assert):
+        (o1.get f):
+        (a):
+        (b):
+        (c):
+        (d):
+        (e):
+        (f):
+        (g):
+        (o2.get f):
+        (foo):
+        * tests/stress/ftl-try-catch-setter-throw.js: Added.
+        (foo):
+        (assert):
+        (f):
+        (let.o2.set f):
+        * tests/stress/ftl-try-catch-tail-call-inilned-caller.js: Added.
+        (value):
+        (assert):
+        (validate):
+        (bar):
+        (baz):
+        (jaz):
+        * tests/stress/ftl-try-catch-varargs-call-throws.js: Added.
+        (foo):
+        (f):
+        * tests/stress/try-catch-stub-routine-replaced.js:
+        (hello):
+        (foo):
+
 2015-11-09  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Built-in generator should check that there are no duplicate in JS built-in internal functions

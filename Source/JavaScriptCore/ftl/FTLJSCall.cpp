@@ -50,9 +50,9 @@ JSCall::JSCall(unsigned stackmapID, Node* node, CodeOrigin callSiteDescriptionOr
     ASSERT(node->op() == Call || node->op() == Construct || node->op() == TailCallInlinedCaller);
 }
 
-void JSCall::emit(CCallHelpers& jit, State& state)
+void JSCall::emit(CCallHelpers& jit, State& state, int32_t osrExitFromGenericUnwindSpillSlots)
 {
-    JSCallBase::emit(jit, state);
+    JSCallBase::emit(jit, state, osrExitFromGenericUnwindSpillSlots);
 
     jit.addPtr(CCallHelpers::TrustedImm32(- static_cast<int64_t>(state.jitCode->stackmaps.stackSizeForLocals())), CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
 }

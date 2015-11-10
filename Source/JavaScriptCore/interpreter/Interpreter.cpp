@@ -595,10 +595,10 @@ ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, Co
 
     CallFrame* callFrame = visitor->callFrame();
     unsigned exceptionHandlerIndex;
-    if (codeBlock->jitType() != JITCode::DFGJIT)
-        exceptionHandlerIndex = callFrame->bytecodeOffset();
-    else
+    if (JITCode::isOptimizingJIT(codeBlock->jitType()))
         exceptionHandlerIndex = callFrame->callSiteIndex().bits();
+    else
+        exceptionHandlerIndex = callFrame->bytecodeOffset();
 
     return codeBlock->handlerForIndex(exceptionHandlerIndex, requiredHandler);
 }

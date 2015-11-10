@@ -69,7 +69,7 @@ unsigned JSCallVarargs::numSpillSlotsNeeded()
     return 4;
 }
 
-void JSCallVarargs::emit(CCallHelpers& jit, State& state, int32_t spillSlotsOffset)
+void JSCallVarargs::emit(CCallHelpers& jit, State& state, int32_t spillSlotsOffset, int32_t osrExitFromGenericUnwindSpillSlots)
 {
     // We are passed three pieces of information:
     // - The callee.
@@ -205,7 +205,8 @@ void JSCallVarargs::emit(CCallHelpers& jit, State& state, int32_t spillSlotsOffs
     // stack frame to already be set up, which it is.
     jit.store64(GPRInfo::regT0, CCallHelpers::calleeFrameSlot(JSStack::Callee));
 
-    m_callBase.emit(jit, state);
+    m_callBase.emit(jit, state, osrExitFromGenericUnwindSpillSlots);
+
     
     // Undo the damage we've done.
     if (isARM64()) {

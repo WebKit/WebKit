@@ -40,8 +40,8 @@ public:
     ExitThunkGenerator(State& state);
     ~ExitThunkGenerator();
     
-    void emitThunk(unsigned index);
-    void emitThunks();
+    void emitThunk(unsigned index, int32_t osrExitFromGenericUnwindStackSpillSlot);
+    void emitThunks(int32_t osrExitFromGenericUnwindStackSpillSlot);
     
     bool didThings() const { return m_didThings; }
 

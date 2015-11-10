@@ -34,6 +34,7 @@
 #include "FTLExitArgument.h"
 #include "FTLExitArgumentList.h"
 #include "FTLJITCode.h"
+#include "FTLLocation.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace FTL {
@@ -52,6 +53,11 @@ OSRExitDescriptor::OSRExitDescriptor(
     , m_valueProfile(valueProfile)
     , m_values(numberOfArguments, numberOfLocals)
     , m_isInvalidationPoint(false)
+    , m_isExceptionHandler(false)
+    , m_willArriveAtOSRExitFromGenericUnwind(false)
+    , m_isExceptionFromJSCall(false)
+    , m_isExceptionFromGetById(false)
+    , m_isExceptionFromLazySlowPath(false)
 {
 }
 
@@ -70,6 +76,7 @@ OSRExit::OSRExit(OSRExitDescriptor& descriptor, uint32_t stackmapRecordIndex)
     , m_descriptor(descriptor)
     , m_stackmapRecordIndex(stackmapRecordIndex)
 {
+    m_isExceptionHandler = descriptor.m_isExceptionHandler;
 }
 
 CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
@@ -78,6 +85,76 @@ CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
         reinterpret_cast<char*>(
             ftlCodeBlock->jitCode()->ftl()->exitThunks().dataLocation()) +
         m_patchableCodeOffset);
+}
+
+void OSRExit::gatherRegistersToSpillForCallIfException(StackMaps& stackmaps, StackMaps::Record& record)
+{
+    RELEASE_ASSERT(m_descriptor.m_isExceptionFromJSCall);
+
+    RegisterSet volatileRegisters = RegisterSet::volatileRegistersForJSCall();
+
+    auto addNeededRegisters = [&] (const ExitValue& exitValue) {
+        auto handleLocation = [&] (const FTL::Location& location) {
+            if (location.involvesGPR() && volatileRegisters.get(location.gpr()))
+                this->registersToPreserveForCallThatMightThrow.set(location.gpr());
+            else if (location.isFPR() && volatileRegisters.get(location.fpr()))
+                this->registersToPreserveForCallThatMightThrow.set(location.fpr());
+        };
+
+        switch (exitValue.kind()) {
+        case ExitValueArgument:
+            handleLocation(FTL::Location::forStackmaps(&stackmaps, record.locations[exitValue.exitArgument().argument()]));
+            break;
+        case ExitValueRecovery:
+            handleLocation(FTL::Location::forStackmaps(&stackmaps, record.locations[exitValue.rightRecoveryArgument()]));
+            handleLocation(FTL::Location::forStackmaps(&stackmaps, record.locations[exitValue.leftRecoveryArgument()]));
+            break;
+        default:
+            break;
+        }
+    };
+    for (ExitTimeObjectMaterialization* materialization : m_descriptor.m_materializations) {
+        for (unsigned propertyIndex = materialization->properties().size(); propertyIndex--;)
+            addNeededRegisters(materialization->properties()[propertyIndex].value());
+    }
+    for (unsigned index = m_descriptor.m_values.size(); index--;)
+        addNeededRegisters(m_descriptor.m_values[index]);
+}
+
+void OSRExit::spillRegistersToSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
+{
+    RELEASE_ASSERT(m_descriptor.m_isExceptionFromJSCall || m_descriptor.m_isExceptionFromGetById);
+    unsigned count = 0;
+    for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
+        if (registersToPreserveForCallThatMightThrow.get(reg)) {
+            jit.store64(reg, CCallHelpers::addressFor(stackSpillSlot + count));
+            count++;
+        }
+    }
+    for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
+        if (registersToPreserveForCallThatMightThrow.get(reg)) {
+            jit.storeDouble(reg, CCallHelpers::addressFor(stackSpillSlot + count));
+            count++;
+        }
+    }
+}
+
+void OSRExit::recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
+{
+    RELEASE_ASSERT(m_descriptor.m_isExceptionFromJSCall || m_descriptor.m_isExceptionFromGetById);
+    unsigned count = 0;
+    for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
+        if (registersToPreserveForCallThatMightThrow.get(reg)) {
+            jit.load64(CCallHelpers::addressFor(stackSpillSlot + count), reg);
+            count++;
+        }
+    }
+    for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
+        if (registersToPreserveForCallThatMightThrow.get(reg)) {
+            jit.loadDouble(CCallHelpers::addressFor(stackSpillSlot + count), reg);
+            count++;
+        }
+    }
 }
 
 } } // namespace JSC::FTL

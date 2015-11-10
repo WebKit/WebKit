@@ -66,6 +66,15 @@ RegisterSet RegisterSet::specialRegisters()
         stackRegisters(), reservedHardwareRegisters(), runtimeRegisters());
 }
 
+RegisterSet RegisterSet::volatileRegistersForJSCall()
+{
+    RegisterSet volatileRegisters = allRegisters();
+    volatileRegisters.exclude(RegisterSet::stackRegisters());
+    volatileRegisters.exclude(RegisterSet::reservedHardwareRegisters());
+    volatileRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
+    return volatileRegisters;
+}
+
 RegisterSet RegisterSet::stubUnavailableRegisters()
 {
     return RegisterSet(specialRegisters(), vmCalleeSaveRegisters());

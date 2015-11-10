@@ -45,6 +45,8 @@ struct OSRExitBase {
         , m_count(0)
         , m_codeOrigin(origin)
         , m_codeOriginForExitProfile(originForProfile)
+        , m_exceptionHandlerCallSiteIndex(std::numeric_limits<unsigned>::max())
+        , m_isExceptionHandler(false)
     {
         ASSERT(m_codeOrigin.isSet());
         ASSERT(m_codeOriginForExitProfile.isSet());
@@ -55,6 +57,9 @@ struct OSRExitBase {
     
     CodeOrigin m_codeOrigin;
     CodeOrigin m_codeOriginForExitProfile;
+    CallSiteIndex m_exceptionHandlerCallSiteIndex;
+
+    bool m_isExceptionHandler : 1;
 
 protected:
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
