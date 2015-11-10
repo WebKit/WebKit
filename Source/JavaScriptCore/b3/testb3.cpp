@@ -2703,6 +2703,50 @@ void testReturnDouble(double value)
     CHECK(isIdentical(compileAndRun<double>(proc), value));
 }
 
+double simpleFunctionDouble(double a, double b)
+{
+    return a + b;
+}
+
+void testCallSimpleDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<CCallValue>(
+            proc, Double, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunctionDouble)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
+
+    CHECK(compileAndRun<double>(proc, a, b) == a + b);
+}
+
+double functionWithHellaDoubleArguments(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, double k, double l, double m, double n, double o, double p, double q, double r, double s, double t, double u, double v, double w, double x, double y, double z)
+{
+    return a * pow(2, 0) + b * pow(2, 1) + c * pow(2, 2) + d * pow(2, 3) + e * pow(2, 4) + f * pow(2, 5) + g * pow(2, 6) + h * pow(2, 7) + i * pow(2, 8) + j * pow(2, 9) + k * pow(2, 10) + l * pow(2, 11) + m * pow(2, 12) + n * pow(2, 13) + o * pow(2, 14) + p * pow(2, 15) + q * pow(2, 16) + r * pow(2, 17) + s * pow(2, 18) + t * pow(2, 19) + u * pow(2, 20) + v * pow(2, 21) + w * pow(2, 22) + x * pow(2, 23) + y * pow(2, 24) + z * pow(2, 25);
+}
+
+void testCallFunctionWithHellaDoubleArguments()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Vector<Value*> args;
+    for (unsigned i = 0; i < 26; ++i)
+        args.append(root->appendNew<ConstDoubleValue>(proc, Origin(), i + 1));
+
+    CCallValue* call = root->appendNew<CCallValue>(
+        proc, Double, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionWithHellaDoubleArguments)));
+    call->children().appendVector(args);
+    
+    root->appendNew<ControlValue>(proc, Return, Origin(), call);
+
+    CHECK(compileAndRun<double>(proc) == functionWithHellaDoubleArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -3173,6 +3217,9 @@ void run(const char* filter)
     RUN(testReturnDouble(0.0));
     RUN(testReturnDouble(-0.0));
     RUN(testReturnDouble(42.5));
+
+    RUN(testCallSimpleDouble(1, 2));
+    RUN(testCallFunctionWithHellaDoubleArguments());
 
     if (tasks.isEmpty())
         usage();

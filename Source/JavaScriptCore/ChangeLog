@@ -1,3 +1,30 @@
+2015-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        [B3] Add a test for CCall with double arguments and results
+        https://bugs.webkit.org/show_bug.cgi?id=151064
+
+        Reviewed by Saam Barati.
+
+        The test already passed on trunk. But when looking at the disassembly, I realized that I had
+        made a rookie mistake in the call argument marshalling: the stores to the stack went after the
+        moves to argument registers! This means that arguments that go to stack would be made to
+        interfere with all argument registers. That's some severe register pressure right there. So,
+        this change fixes that as well, and adds a FIXME to do it in a more principled manner in Air.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::createStore):
+        (JSC::B3::Air::LowerToAir::appendStore):
+        (JSC::B3::Air::LowerToAir::moveForType):
+        (JSC::B3::Air::LowerToAir::marshallCCallArgument):
+        * b3/testb3.cpp:
+        (JSC::B3::testReturnDouble):
+        (JSC::B3::simpleFunctionDouble):
+        (JSC::B3::testCallSimpleDouble):
+        (JSC::B3::functionWithHellaDoubleArguments):
+        (JSC::B3::testCallFunctionWithHellaDoubleArguments):
+        (JSC::B3::run):
+
 2015-11-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove create_hash_table options and simplify build system

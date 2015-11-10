@@ -661,16 +661,19 @@ private:
         return true;
     }
 
-    void appendStore(Value* value, const Arg& dest)
+    Inst createStore(Value* value, const Arg& dest)
     {
         Air::Opcode move = moveForType(value->type());
 
-        if (imm(value) && isValidForm(move, Arg::Imm, dest.kind())) {
-            append(move, imm(value), dest);
-            return;
-        }
+        if (imm(value) && isValidForm(move, Arg::Imm, dest.kind()))
+            return Inst(move, m_value, imm(value), dest);
 
-        append(move, tmp(value), dest);
+        return Inst(move, m_value, tmp(value), dest);
+    }
+
+    void appendStore(Value* value, const Arg& dest)
+    {
+        m_insts.last().append(createStore(value, dest));
     }
 
     Air::Opcode moveForType(Type type)
@@ -1167,7 +1170,14 @@ private:
         unsigned stackIndex = stackCount++;
 
         Arg result = Arg::callArg(stackIndex * sizeof(void*));
-        appendStore(child, result);
+        
+        // Put the code for storing the argument before anything else. This significantly eases the
+        // burden on the register allocator. If we could, we'd hoist these stores as far as
+        // possible.
+        // FIXME: Add a phase to hoist stores as high as possible to relieve register pressure.
+        // https://bugs.webkit.org/show_bug.cgi?id=151063
+        m_insts.last().insert(0, createStore(child, result));
+        
         return result;
     }
 
