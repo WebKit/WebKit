@@ -1,3 +1,14 @@
+2015-11-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test fast/css/background-repeat-null-y-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=150211
+        <rdar://problem/23137321>
+
+        Reviewed by Alex Christensen.
+
+        * fast/css/background-repeat-null-y-crash-expected.txt: Added.
+        * fast/css/background-repeat-null-y-crash.html: Added.
+
 2015-10-29  Michael Saboff  <msaboff@apple.com>
 
         Crash making a tail call from a getter to a host function
