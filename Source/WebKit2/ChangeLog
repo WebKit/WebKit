@@ -1,5 +1,18 @@
 2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [UNIX] Environment variable should take precedence over directories in plugin search path
+        https://bugs.webkit.org/show_bug.cgi?id=151096
+
+        Reviewed by Martin Robinson.
+
+        Otherwise you can't override the directories using the env vars
+        for plugins already installed.
+
+        * Shared/Plugins/unix/PluginSearchPath.cpp:
+        (WebKit::pluginsDirectories):
+
+2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use CROSS_PLATFORM_CONTEXT_MENUS
         https://bugs.webkit.org/show_bug.cgi?id=150642
 
