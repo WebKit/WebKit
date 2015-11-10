@@ -1,3 +1,14 @@
+2015-10-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test editing/execCommand/format-block-uneditable-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=150207
+        <rdar://problem/23137066>
+
+        Reviewed by Enrica Casucci.
+
+        * editing/execCommand/format-block-uneditable-crash-expected.txt: Added.
+        * editing/execCommand/format-block-uneditable-crash.html: Added.
+
 2015-10-27  Keith Rollin  <krollin@apple.com>
 
         Do not sanitize user input for input[type=url]
