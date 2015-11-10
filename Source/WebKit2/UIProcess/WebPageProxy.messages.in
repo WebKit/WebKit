@@ -433,6 +433,8 @@ messages -> WebPageProxy {
     RemovePlaybackTargetPickerClient(uint64_t contextId)
     ShowPlaybackTargetPicker(uint64_t clientId, WebCore::FloatRect pickerLocation, bool hasVideo)
     PlaybackTargetPickerClientStateDidChange(uint64_t contextId, unsigned mediaState)
+    SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
+    SetMockMediaPlaybackTargetPickerState(String name, unsigned pickerState)
 #endif
 
     ImageOrMediaDocumentSizeChanged(WebCore::IntSize newSize)

@@ -403,6 +403,11 @@ public:
     void sendMediaControlEvent(const String&);
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    void setMockMediaPlaybackTargetPickerEnabled(bool);
+    void setMockMediaPlaybackTargetPickerState(const String& deviceName, const String& deviceState, ExceptionCode&);
+#endif
+
 #if ENABLE(WEB_AUDIO)
     void setAudioContextRestrictions(AudioContext*, const String& restrictions, ExceptionCode&);
 #endif

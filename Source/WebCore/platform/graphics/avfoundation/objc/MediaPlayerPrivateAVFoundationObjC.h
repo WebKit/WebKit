@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
+#include "MediaPlaybackTarget.h"
 #include "MediaPlayerPrivateAVFoundation.h"
 #include <wtf/HashMap.h>
 
@@ -64,7 +65,6 @@ class AudioSourceProviderAVFObjC;
 class AudioTrackPrivateAVFObjC;
 class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVFObjC;
-class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
@@ -362,6 +362,7 @@ private:
 
 #if PLATFORM(MAC) && ENABLE(WIRELESS_PLAYBACK_TARGET)
     RetainPtr<AVOutputContext> m_outputContext;
+    RefPtr<MediaPlaybackTarget> m_playbackTarget { nullptr };
 #endif
 
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;

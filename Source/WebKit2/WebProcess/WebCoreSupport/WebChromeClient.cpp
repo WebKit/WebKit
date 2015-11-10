@@ -1128,6 +1128,16 @@ void WebChromeClient::playbackTargetPickerClientStateDidChange(uint64_t contextI
 {
     m_page->send(Messages::WebPageProxy::PlaybackTargetPickerClientStateDidChange(contextId, state));
 }
+
+void WebChromeClient::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
+{
+    m_page->send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerEnabled(enabled));
+}
+
+void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContext::State state)
+{
+    m_page->send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerState(name, state));
+}
 #endif
 
 void WebChromeClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)

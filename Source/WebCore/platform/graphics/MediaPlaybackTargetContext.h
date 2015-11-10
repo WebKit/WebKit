@@ -28,6 +28,8 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include <wtf/text/WTFString.h>
+
 OBJC_CLASS AVOutputContext;
 
 #if PLATFORM(COCOA)
@@ -37,21 +39,66 @@ OBJC_CLASS NSKeyedUnarchiver;
 
 namespace WebCore {
 
-struct MediaPlaybackTargetContext {
-
-    enum ContextType : int32_t {
+class MediaPlaybackTargetContext {
+public:
+    enum Type : int32_t {
         None,
         AVOutputContextType,
-    } type;
+        MockType,
+    };
 
-    union {
-        AVOutputContext* avOutputContext;
-    } context;
+    enum ContextState {
+        Unavailable = 0,
+        OutputDeviceAvailable = 1 << 0,
+    };
+    typedef unsigned State;
 
-    bool encodingRequiresPlatformData() const { return type == AVOutputContextType; }
+    MediaPlaybackTargetContext()
+        : m_type(None)
+    {
+    }
+
+    MediaPlaybackTargetContext(AVOutputContext *outputContext)
+        : m_type(AVOutputContextType)
+        , m_outputContext(outputContext)
+    {
+    }
+
+    MediaPlaybackTargetContext(const String& name, State state)
+        : m_type(MockType)
+        , m_name(name)
+        , m_state(state)
+    {
+    }
+
+    Type type() const { return m_type; }
+
+    const String& mockDeviceName() const
+    {
+        ASSERT(m_type == MockType);
+        return m_name;
+    }
+
+    State mockState() const
+    {
+        ASSERT(m_type == MockType);
+        return m_state;
+    }
+
+    AVOutputContext *avOutputContext() const
+    {
+        ASSERT(m_type == AVOutputContextType);
+        return m_outputContext;
+    }
+
+    bool encodingRequiresPlatformData() const { return m_type == AVOutputContextType; }
+    
+private:
+    Type m_type { None };
+    AVOutputContext *m_outputContext { nullptr };
+    String m_name;
+    State m_state { Unavailable };
 };
-
-const MediaPlaybackTargetContext NoMediaPlaybackTargetContext = { MediaPlaybackTargetContext::None, {nullptr} };
 
 }
 

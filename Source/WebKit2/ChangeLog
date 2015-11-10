@@ -1,3 +1,40 @@
+2015-11-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Add a mock AppleTV device for testing
+        https://bugs.webkit.org/show_bug.cgi?id=148912
+        <rdar://problem/22596272>
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encode): Update for MediaPlaybackTargetContext changes.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decode): Ditto.
+        * Shared/WebCoreArgumentCoders.h:
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData): Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMockMediaPlaybackTargetPickerEnabled): New.
+        (WebKit::WebPageProxy::setMockMediaPlaybackTargetPickerState): Ditto.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in: Add SetMockMediaPlaybackTargetPickerEnabled and 
+          SetMockMediaPlaybackTargetPickerState.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setMockMediaPlaybackTargetPickerEnabled): New.
+        (WebKit::WebChromeClient::setMockMediaPlaybackTargetPickerState): Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        * WebProcess/WebPage/WebPage.h: MediaPlaybackTargetContext is a class, not a struct.
+
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetSelected): Support mock target.
+
 2015-11-09  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Crash while opening child webview with EWK_PROCESS_MODEL_MULTIPLE_SECONDARY

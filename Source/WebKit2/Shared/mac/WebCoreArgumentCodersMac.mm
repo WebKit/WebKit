@@ -491,14 +491,12 @@ static NSString *deviceContextKey()
 
 void ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData(ArgumentEncoder& encoder, const MediaPlaybackTargetContext& target)
 {
-    ASSERT(target.type == MediaPlaybackTargetContext::AVOutputContextType);
-
     RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
     [archiver setRequiresSecureCoding:YES];
 
     if ([getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
-        [archiver encodeObject:target.context.avOutputContext forKey:deviceContextKey()];
+        [archiver encodeObject:target.avOutputContext() forKey:deviceContextKey()];
 
     [archiver finishEncoding];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
@@ -507,8 +505,6 @@ void ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData(ArgumentEncod
 
 bool ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData(ArgumentDecoder& decoder, MediaPlaybackTargetContext& target)
 {
-    ASSERT(target.type == MediaPlaybackTargetContext::AVOutputContextType);
-
     if (![getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
         return false;
 
@@ -523,11 +519,11 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData(ArgumentDecod
     @try {
         context = [unarchiver decodeObjectOfClass:getAVOutputContextClass() forKey:deviceContextKey()];
     } @catch (NSException *exception) {
-        LOG_ERROR("The target picker being decoded is not a AVOutputContext.");
+        LOG_ERROR("The target picker being decoded is not an AVOutputContext.");
         return false;
     }
 
-    target.context.avOutputContext = context;
+    target = MediaPlaybackTargetContext(context);
     
     [unarchiver finishDecoding];
     return true;

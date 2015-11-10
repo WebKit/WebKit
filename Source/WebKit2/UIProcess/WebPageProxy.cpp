@@ -6017,6 +6017,16 @@ void WebPageProxy::playbackTargetPickerClientStateDidChange(uint64_t contextId, 
     m_pageClient.mediaSessionManager().clientStateDidChange(*this, contextId, state);
 }
 
+void WebPageProxy::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
+{
+    m_pageClient.mediaSessionManager().setMockMediaPlaybackTargetPickerEnabled(enabled);
+}
+
+void WebPageProxy::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContext::State state)
+{
+    m_pageClient.mediaSessionManager().setMockMediaPlaybackTargetPickerState(name, state);
+}
+
 void WebPageProxy::setPlaybackTarget(uint64_t contextId, Ref<MediaPlaybackTarget>&& target)
 {
     if (!isValid())

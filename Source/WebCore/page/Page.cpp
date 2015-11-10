@@ -1725,6 +1725,16 @@ void Page::playbackTargetPickerClientStateDidChange(uint64_t contextId, MediaPro
     chrome().client().playbackTargetPickerClientStateDidChange(contextId, state);
 }
 
+void Page::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
+{
+    chrome().client().setMockMediaPlaybackTargetPickerEnabled(enabled);
+}
+
+void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::State state)
+{
+    chrome().client().setMockMediaPlaybackTargetPickerState(name, state);
+}
+
 void Page::setPlaybackTarget(uint64_t contextId, Ref<MediaPlaybackTarget>&& target)
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())

@@ -51,6 +51,10 @@ class MediaSessionMetadata;
 }
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include "MediaPlaybackTargetContext.h"
+#endif
+
 #if PLATFORM(IOS)
 #include "PlatformLayer.h"
 #define NSResponder WAKResponder
@@ -449,6 +453,8 @@ public:
     virtual void removePlaybackTargetPickerClient(uint64_t /*contextId*/) { }
     virtual void showPlaybackTargetPicker(uint64_t /*contextId*/, const WebCore::IntPoint&, bool /* isVideo */) { }
     virtual void playbackTargetPickerClientStateDidChange(uint64_t /*contextId*/, MediaProducer::MediaStateFlags) { }
+    virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
+    virtual void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State) { }
 #endif
 
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }

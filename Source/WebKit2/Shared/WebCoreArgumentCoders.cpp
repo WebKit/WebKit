@@ -1969,26 +1969,47 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void ArgumentCoder<MediaPlaybackTargetContext>::encode(ArgumentEncoder& encoder, const MediaPlaybackTargetContext& target)
 {
-    int32_t targetType = target.type;
+    bool hasPlatformData = target.encodingRequiresPlatformData();
+    encoder << hasPlatformData;
+
+    int32_t targetType = target.type();
     encoder << targetType;
 
-    if (!target.encodingRequiresPlatformData())
+    if (target.encodingRequiresPlatformData()) {
+        encodePlatformData(encoder, target);
         return;
+    }
 
-    encodePlatformData(encoder, target);
+    ASSERT(targetType == MediaPlaybackTargetContext::MockType);
+    encoder << target.mockDeviceName();
+    encoder << static_cast<int32_t>(target.mockState());
 }
 
 bool ArgumentCoder<MediaPlaybackTargetContext>::decode(ArgumentDecoder& decoder, MediaPlaybackTargetContext& target)
 {
+    bool hasPlatformData;
+    if (!decoder.decode(hasPlatformData))
+        return false;
+
     int32_t targetType;
     if (!decoder.decode(targetType))
         return false;
 
-    target.type = static_cast<MediaPlaybackTargetContext::ContextType>(targetType);
-    if (!target.encodingRequiresPlatformData())
+    if (hasPlatformData)
+        return decodePlatformData(decoder, target);
+
+    ASSERT(targetType == MediaPlaybackTargetContext::MockType);
+
+    String mockDeviceName;
+    if (!decoder.decode(mockDeviceName))
         return false;
 
-    return decodePlatformData(decoder, target);
+    int32_t mockState;
+    if (!decoder.decode(mockState))
+        return false;
+
+    target = MediaPlaybackTargetContext(mockDeviceName, static_cast<MediaPlaybackTargetContext::State>(mockState));
+    return true;
 }
 #endif
 

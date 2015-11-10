@@ -1,3 +1,26 @@
+2015-11-09  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Add a mock AppleTV device for testing
+        https://bugs.webkit.org/show_bug.cgi?id=148912
+        <rdar://problem/22596272>
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setMockMediaPlaybackTargetPickerEnabled): New.
+        (WebChromeClient::setMockMediaPlaybackTargetPickerState): Ditto.
+
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerEnabled): New.
+        (WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerState): Ditto.
+
+        * WebView/WebView.mm:
+        (-[WebView _setMockMediaPlaybackTargetPickerEnabled:]): New.
+        (-[WebView _setMockMediaPlaybackTargetPickerName:state:]): Ditto.
+        * WebView/WebViewInternal.h:
+
 2015-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ColorSpace argument to all the drawing calls

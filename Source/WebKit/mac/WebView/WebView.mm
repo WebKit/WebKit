@@ -8666,6 +8666,16 @@ bool LayerFlushController::flushLayers()
 {
     [self _devicePicker]->playbackTargetPickerClientStateDidChange(clientId, state);
 }
+
+- (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled
+{
+    [self _devicePicker]->setMockMediaPlaybackTargetPickerEnabled(enabled);
+}
+
+- (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::State)state
+{
+    [self _devicePicker]->setMockMediaPlaybackTargetPickerState(name, state);
+}
 #endif
 
 @end
