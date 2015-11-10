@@ -133,7 +133,7 @@ enum Opcode : int16_t {
     Store,
 
     // This is a regular ordinary C function call, using the system C calling convention. Make sure
-    // that the arguments are passed using the right types.
+    // that the arguments are passed using the right types. The first argument is the callee.
     CCall,
 
     // This is a patchpoint. Use the PatchpointValue class. This is viewed as behaving like a call,

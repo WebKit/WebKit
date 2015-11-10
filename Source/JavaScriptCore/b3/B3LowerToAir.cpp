@@ -28,12 +28,14 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCCallSpecial.h"
 #include "AirCode.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirStackSlot.h"
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3CCallValue.h"
 #include "B3CheckSpecial.h"
 #include "B3Commutativity.h"
 #include "B3IndexMap.h"
@@ -1148,6 +1150,27 @@ private:
             inverted);
     }
 
+    template<typename BankInfo>
+    Arg marshallCCallArgument(unsigned& argumentCount, unsigned& stackCount, Value* child)
+    {
+        unsigned argumentIndex = argumentCount++;
+        if (argumentIndex < BankInfo::numberOfArgumentRegisters) {
+            Tmp result = Tmp(BankInfo::toArgumentRegister(argumentIndex));
+            append(relaxedMoveForType(child->type()), immOrTmp(child), result);
+            return result;
+        }
+
+        // Compute the place that this goes onto the stack. On X86_64 and probably other calling
+        // conventions that don't involve obsolete computers and operating systems, sub-pointer-size
+        // arguments are still given a full pointer-sized stack slot. Hence we don't have to consider
+        // the type of the argument when deducing the stack index.
+        unsigned stackIndex = stackCount++;
+
+        Arg result = Arg::callArg(stackIndex * sizeof(void*));
+        appendStore(child, result);
+        return result;
+    }
+
     void lower()
     {
         switch (m_value->opcode()) {
@@ -1333,6 +1356,70 @@ private:
         case AboveEqual:
         case BelowEqual: {
             m_insts.last().append(createCompare(m_value));
+            return;
+        }
+
+        case CCall: {
+            CCallValue* cCall = m_value->as<CCallValue>();
+            Inst inst(Patch, cCall, Arg::special(m_code.cCallSpecial()));
+
+            // This is a bit weird - we have a super intense contract with Arg::CCallSpecial. It might
+            // be better if we factored Air::CCallSpecial out of the Air namespace and made it a B3
+            // thing.
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=151045
+
+            // We have a ton of flexibility regarding the callee argument, but currently, we don't
+            // use it yet. It gets weird for reasons:
+            // 1) We probably will never take advantage of this. We don't have C calls to locations
+            //    loaded from addresses. We have JS calls like that, but those use Patchpoints.
+            // 2) On X86_64 we still don't support call with BaseIndex.
+            // 3) On non-X86, we don't natively support any kind of loading from address.
+            // 4) We don't have an isValidForm() for the CCallSpecial so we have no smart way to
+            //    decide.
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=151052
+            inst.args.append(tmp(cCall->child(0)));
+
+            // We need to tell Air what registers this defines.
+            inst.args.append(Tmp(GPRInfo::returnValueGPR));
+            inst.args.append(Tmp(GPRInfo::returnValueGPR2));
+            inst.args.append(Tmp(FPRInfo::returnValueFPR));
+
+            // Now marshall the arguments. This is where we implement the C calling convention. After
+            // this, Air does not know what the convention is; it just takes our word for it.
+            unsigned gpArgumentCount = 0;
+            unsigned fpArgumentCount = 0;
+            unsigned stackCount = 0;
+            for (unsigned i = 1; i < cCall->numChildren(); ++i) {
+                Value* argChild = cCall->child(i);
+                Arg arg;
+                
+                switch (Arg::typeForB3Type(argChild->type())) {
+                case Arg::GP:
+                    arg = marshallCCallArgument<GPRInfo>(gpArgumentCount, stackCount, argChild);
+                    break;
+
+                case Arg::FP:
+                    arg = marshallCCallArgument<FPRInfo>(fpArgumentCount, stackCount, argChild);
+                    break;
+                }
+
+                if (arg.isTmp())
+                    inst.args.append(arg);
+            }
+            
+            m_insts.last().append(WTF::move(inst));
+
+            switch (cCall->type()) {
+            case Void:
+                break;
+            case Int32:
+            case Int64:
+                append(Move, Tmp(GPRInfo::returnValueGPR), tmp(cCall));
+                break;
+            case Double:
+                append(MoveDouble, Tmp(FPRInfo::returnValueFPR), tmp(cCall));
+                break;
+            }
             return;
         }
 

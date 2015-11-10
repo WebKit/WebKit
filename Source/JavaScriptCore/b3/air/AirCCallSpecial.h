@@ -34,12 +34,13 @@ namespace JSC { namespace B3 { namespace Air {
 
 // Use this special for constructing a C call. Arg 0 is of course a Special arg that refers to the
 // CCallSpecial object. Arg 1 is the callee, and it can be an ImmPtr, a register, or an address. The
-// remaining args are just the set of argument registers used by this call. For arguments that go to
-// the stack, you have to do the grunt work of doing those stack stores. In fact, the only reason why
-// we specify the argument registers as arguments to a call is so that the liveness analysis can see
-// that they get used here. It would be wrong to automagically report all argument registers as being
-// used because if we had a call that didn't pass them, then they'd appear to be live until some
-// clobber point or the prologue, whichever happened sooner.
+// next three args - arg 2, arg 3, and arg 4 - hold the return value GPRs and FPR. The remaining args
+// are just the set of argument registers used by this call. For arguments that go to the stack, you
+// have to do the grunt work of doing those stack stores. In fact, the only reason why we specify the
+// argument registers as arguments to a call is so that the liveness analysis can see that they get
+// used here. It would be wrong to automagically report all argument registers as being used because
+// if we had a call that didn't pass them, then they'd appear to be live until some clobber point or
+// the prologue, whichever happened sooner.
 
 class CCallSpecial : public Special {
 public:
@@ -63,6 +64,17 @@ protected:
     void deepDumpImpl(PrintStream&) const override;
 
 private:
+    static const unsigned specialArgOffset = 0;
+    static const unsigned numSpecialArgs = 1;
+    static const unsigned calleeArgOffset = numSpecialArgs;
+    static const unsigned numCalleeArgs = 1;
+    static const unsigned returnGPArgOffset = numSpecialArgs + numCalleeArgs;
+    static const unsigned numReturnGPArgs = 2;
+    static const unsigned returnFPArgOffset = numSpecialArgs + numCalleeArgs + numReturnGPArgs;
+    static const unsigned numReturnFPArgs = 1;
+    static const unsigned argArgOffset =
+        numSpecialArgs + numCalleeArgs + numReturnGPArgs + numReturnFPArgs;
+    
     RegisterSet m_clobberedRegs;
 };
 

@@ -42,6 +42,7 @@ class FPRInfo {
 public:
     typedef FPRReg RegisterType;
     static const unsigned numberOfRegisters = 6;
+    static const unsigned numberOfArgumentRegisters = 8;
 
     // Temporary registers.
     static const FPRReg fpRegT0 = X86Registers::xmm0;
@@ -56,6 +57,10 @@ public:
     static const FPRReg argumentFPR1 = X86Registers::xmm1; // fpRegT1
     static const FPRReg argumentFPR2 = X86Registers::xmm2; // fpRegT2
     static const FPRReg argumentFPR3 = X86Registers::xmm3; // fpRegT3
+    static const FPRReg argumentFPR4 = X86Registers::xmm4; // fpRegT4
+    static const FPRReg argumentFPR5 = X86Registers::xmm5; // fpRegT5
+    static const FPRReg argumentFPR6 = X86Registers::xmm6;
+    static const FPRReg argumentFPR7 = X86Registers::xmm7;
 #endif
     // On X86 the return will actually be on the x87 stack,
     // so we'll copy to xmm0 for sanity!

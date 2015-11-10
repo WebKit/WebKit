@@ -44,9 +44,14 @@ CCallSpecial::~CCallSpecial()
 
 void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
-    callback(inst.args[1], Arg::Use, Arg::GP);
+    for (unsigned i = 0; i < numCalleeArgs; ++i)
+        callback(inst.args[calleeArgOffset + i], Arg::Use, Arg::GP);
+    for (unsigned i = 0; i < numReturnGPArgs; ++i)
+        callback(inst.args[returnGPArgOffset + i], Arg::Def, Arg::GP);
+    for (unsigned i = 0; i < numReturnFPArgs; ++i)
+        callback(inst.args[returnFPArgOffset + i], Arg::Def, Arg::FP);
     
-    for (unsigned i = 2; i < inst.args.size(); ++i) {
+    for (unsigned i = argArgOffset; i < inst.args.size(); ++i) {
         // For the type, we can just query the arg's type. The arg will have a type, because we
         // require these args to be argument registers.
         callback(inst.args[i], Arg::Use, inst.args[i].type());
@@ -55,31 +60,41 @@ void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
 
 bool CCallSpecial::isValid(Inst& inst)
 {
-    if (inst.args.size() < 2)
+    if (inst.args.size() < argArgOffset)
         return false;
 
-    switch (inst.args[1].kind()) {
-    case Arg::Imm:
-        if (is32Bit())
+    for (unsigned i = 0; i < numCalleeArgs; ++i) {
+        Arg& arg = inst.args[i + calleeArgOffset];
+        if (!arg.isGP())
+            return false;
+        switch (arg.kind()) {
+        case Arg::Imm:
+            if (is32Bit())
+                break;
+            return false;
+        case Arg::Imm64:
+            if (is64Bit())
+                break;
+            return false;
+        case Arg::Tmp:
+        case Arg::Addr:
+        case Arg::Stack:
+        case Arg::CallArg:
             break;
-        return false;
-    case Arg::Imm64:
-        if (is64Bit())
-            break;
-        return false;
-    case Arg::Tmp:
-    case Arg::Addr:
-    case Arg::Stack:
-    case Arg::CallArg:
-        break;
-    default:
-        return false;
+        default:
+            return false;
+        }
     }
 
-    if (!inst.args[1].isGP())
+    // Return args need to be exact.
+    if (inst.args[returnGPArgOffset + 0] != Tmp(GPRInfo::returnValueGPR))
+        return false;
+    if (inst.args[returnGPArgOffset + 1] != Tmp(GPRInfo::returnValueGPR2))
+        return false;
+    if (inst.args[returnFPArgOffset + 0] != Tmp(FPRInfo::returnValueFPR))
         return false;
 
-    for (unsigned i = 2; i < inst.args.size(); ++i) {
+    for (unsigned i = argArgOffset; i < inst.args.size(); ++i) {
         if (!inst.args[i].isReg())
             return false;
 
@@ -91,8 +106,8 @@ bool CCallSpecial::isValid(Inst& inst)
 
 bool CCallSpecial::admitsStack(Inst&, unsigned argIndex)
 {
-    // Arg 1 can be a stack address for sure.
-    if (argIndex == 1)
+    // The callee can be on the stack.
+    if (argIndex == calleeArgOffset)
         return true;
     
     return false;
@@ -104,17 +119,17 @@ void CCallSpecial::reportUsedRegisters(Inst&, const RegisterSet&)
 
 CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext&)
 {
-    switch (inst.args[1].kind()) {
+    switch (inst.args[calleeArgOffset].kind()) {
     case Arg::Imm:
     case Arg::Imm64:
-        jit.move(inst.args[1].asTrustedImmPtr(), scratchRegister);
+        jit.move(inst.args[calleeArgOffset].asTrustedImmPtr(), scratchRegister);
         jit.call(scratchRegister);
         break;
     case Arg::Tmp:
-        jit.call(inst.args[1].gpr());
+        jit.call(inst.args[calleeArgOffset].gpr());
         break;
     case Arg::Addr:
-        jit.call(inst.args[1].asAddress());
+        jit.call(inst.args[calleeArgOffset].asAddress());
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

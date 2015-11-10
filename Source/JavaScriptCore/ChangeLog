@@ -1,3 +1,35 @@
+2015-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        B3->Air lowering should support CCall
+        https://bugs.webkit.org/show_bug.cgi?id=151043
+
+        Reviewed by Geoffrey Garen.
+
+        Adds support for lowering CCall to Air, and adds a test that makes calls. I cannot test doubles
+        until https://bugs.webkit.org/show_bug.cgi?id=151002 lands, but this does test integer
+        arguments pretty thoroughly including a test for lots of arguments. That test ensures that the
+        arguments go to registers and the stack in the right order and such.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::marshallCCallArgument):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.h:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::forEachArg):
+        (JSC::B3::Air::CCallSpecial::isValid):
+        (JSC::B3::Air::CCallSpecial::admitsStack):
+        (JSC::B3::Air::CCallSpecial::generate):
+        * b3/air/AirCCallSpecial.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testCompare):
+        (JSC::B3::simpleFunction):
+        (JSC::B3::testCallSimple):
+        (JSC::B3::functionWithHellaArguments):
+        (JSC::B3::testCallFunctionWithHellaArguments):
+        (JSC::B3::run):
+        * jit/FPRInfo.h:
+
 2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: $0 stops working after navigating to a different domain

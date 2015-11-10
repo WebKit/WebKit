@@ -27,6 +27,7 @@
 
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3CCallValue.h"
 #include "B3Compilation.h"
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
@@ -2647,6 +2648,50 @@ void testCompare(B3::Opcode opcode, int left, int right)
     variants(-left, -right);
 }
 
+int simpleFunction(int a, int b)
+{
+    return a + b;
+}
+
+void testCallSimple(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<CCallValue>(
+            proc, Int32, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int>(proc, a, b) == a + b);
+}
+
+int functionWithHellaArguments(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n, int o, int p, int q, int r, int s, int t, int u, int v, int w, int x, int y, int z)
+{
+    return (a << 0) + (b << 1) + (c << 2) + (d << 3) + (e << 4) + (f << 5) + (g << 6) + (h << 7) + (i << 8) + (j << 9) + (k << 10) + (l << 11) + (m << 12) + (n << 13) + (o << 14) + (p << 15) + (q << 16) + (r << 17) + (s << 18) + (t << 19) + (u << 20) + (v << 21) + (w << 22) + (x << 23) + (y << 24) + (z << 25);
+}
+
+void testCallFunctionWithHellaArguments()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Vector<Value*> args;
+    for (unsigned i = 0; i < 26; ++i)
+        args.append(root->appendNew<Const32Value>(proc, Origin(), i + 1));
+
+    CCallValue* call = root->appendNew<CCallValue>(
+        proc, Int32, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionWithHellaArguments)));
+    call->children().appendVector(args);
+    
+    root->appendNew<ControlValue>(proc, Return, Origin(), call);
+
+    CHECK(compileAndRun<int>(proc) == functionWithHellaArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
+}
+
 void testReturnDouble(double value)
 {
     Procedure proc;
@@ -3121,6 +3166,9 @@ void run(const char* filter)
     RUN(testLoad<uint16_t>(Load16Z, -1000000));
     RUN(testLoad<uint16_t>(Load16Z, 1000000000));
     RUN(testLoad<uint16_t>(Load16Z, -1000000000));
+
+    RUN(testCallSimple(1, 2));
+    RUN(testCallFunctionWithHellaArguments());
 
     RUN(testReturnDouble(0.0));
     RUN(testReturnDouble(-0.0));
