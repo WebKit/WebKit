@@ -876,6 +876,8 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
 
     cascade.applyDeferredProperties(*this);
 
+    adjustRenderStyle(*state.style(), *state.parentStyle(), nullptr);
+
     // Start loading resources referenced by this style.
     loadPendingResources();
     
