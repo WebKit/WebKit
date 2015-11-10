@@ -1,3 +1,17 @@
+2015-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Exploitable crash happens when an SVG contains an indirect resource inheritance cycle
+        https://bugs.webkit.org/show_bug.cgi?id=150203
+
+        Reviewed by Brent Fulgham.
+
+        Ensure that we do not crash when an SVG has an indirect cyclic resource
+        inheritance. Make sure the cyclic resource was just ignored as if it did
+        not exist.
+
+        * svg/custom/pattern-content-inheritance-cycle-expected.svg: Added.
+        * svg/custom/pattern-content-inheritance-cycle.svg: Added.
+
 2015-10-28  Zalan Bujtas  <zalan@apple.com>
 
         Should never be reached failure in WebCore::backgroundRectForBox

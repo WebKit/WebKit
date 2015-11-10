@@ -27,6 +27,8 @@
 #include "RenderSVGRoot.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderingContext.h"
+#include "SVGResources.h"
+#include "SVGResourcesCache.h"
 
 namespace WebCore {
 
@@ -54,6 +56,19 @@ void RenderSVGResourcePattern::removeClientFromCache(RenderElement& client, bool
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
+void RenderSVGResourcePattern::collectPatternAttributes(PatternAttributes& attributes) const
+{
+    const RenderSVGResourcePattern* current = this;
+
+    while (current) {
+        const SVGPatternElement& pattern = current->patternElement();
+        pattern.collectPatternAttributes(attributes);
+
+        auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*current);
+        current = resources ? downcast<RenderSVGResourcePattern>(resources->linkedResource()) : nullptr;
+    }
+}
+
 PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, unsigned short resourceMode, GraphicsContext& context)
 {
     PatternData* currentData = m_patternMap.get(&renderer);
@@ -64,7 +79,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, uns
         patternElement().synchronizeAnimatedSVGAttribute(anyQName());
 
         m_attributes = PatternAttributes();
-        patternElement().collectPatternAttributes(m_attributes);
+        collectPatternAttributes(m_attributes);
         m_shouldCollectPatternAttributes = false;
     }
 
