@@ -1,3 +1,16 @@
+2015-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception creating TimelineRecord alternate subtitles
+        https://bugs.webkit.org/show_bug.cgi?id=151046
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        We just need to create an element, it does not need to be
+        a child of subtitle, as it gets appended to the right
+        place later on.
+
 2015-11-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [Regression] [Mavericks] Top border of selected tab matches the background when Web Inspector is undocked
