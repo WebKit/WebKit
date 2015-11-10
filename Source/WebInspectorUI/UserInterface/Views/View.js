@@ -31,7 +31,10 @@ WebInspector.View = class View extends WebInspector.Object
 
         this._element = element || document.createElement("div");
         this._element.__view = this;
+        this._parentView = null;
         this._subviews = [];
+        this._dirty = false;
+        this._dirtyDescendantsCount = 0;
     }
 
     // Public
@@ -43,12 +46,27 @@ WebInspector.View = class View extends WebInspector.Object
 
     get layoutPending()
     {
-        return !!this._scheduledLayoutUpdateIdentifier;
+        return this._dirty;
+    }
+
+    get parentView()
+    {
+        return this._parentView;
     }
 
     get subviews()
     {
         return this._subviews;
+    }
+
+    makeRootView()
+    {
+        console.assert(!WebInspector.View._rootView, "Root view already exists.");
+        console.assert(!this._parentView, "Root view cannot be a subview.")
+        if (WebInspector.View._rootView)
+            return;
+
+        WebInspector.View._rootView = this;
     }
 
     addSubview(view)
@@ -60,6 +78,7 @@ WebInspector.View = class View extends WebInspector.Object
     {
         console.assert(view instanceof WebInspector.View);
         console.assert(!referenceView || referenceView instanceof WebInspector.View);
+        console.assert(view !== WebInspector.View._rootView, "Root view cannot be a subview.");
 
         if (this._subviews.includes(view)) {
             console.assert(false, "Cannot add view that is already a subview.", view);
@@ -73,7 +92,11 @@ WebInspector.View = class View extends WebInspector.Object
         }
 
         this._subviews.insertAtIndex(view, beforeIndex);
-        this._element.insertBefore(view.element, referenceView ? referenceView.element : null);
+
+        if (!view.element.parentNode)
+            this._element.insertBefore(view.element, referenceView ? referenceView.element : null);
+
+        view.didAttach(this);
     }
 
     removeSubview(view)
@@ -88,6 +111,7 @@ WebInspector.View = class View extends WebInspector.Object
 
         this._subviews.remove(view, true);
         this._element.removeChild(view.element);
+        view.didDetach();
     }
 
     replaceSubview(oldView, newView)
@@ -100,12 +124,13 @@ WebInspector.View = class View extends WebInspector.Object
 
     updateLayout()
     {
+        WebInspector.View._cancelScheduledLayoutForView(this);
         this._layoutSubtree();
     }
 
     updateLayoutIfNeeded()
     {
-        if (!this._scheduledLayoutUpdateIdentifier)
+        if (!this._dirty)
             return;
 
         this.updateLayout();
@@ -113,16 +138,25 @@ WebInspector.View = class View extends WebInspector.Object
 
     needsLayout()
     {
-        if (this._scheduledLayoutUpdateIdentifier)
+        if (this._dirty)
             return;
 
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(() => {
-            this._scheduledLayoutUpdateIdentifier = undefined;
-            this._layoutSubtree();
-        });
+        WebInspector.View._scheduleLayoutForView(this);
     }
 
     // Protected
+
+    didAttach(parentView)
+    {
+        console.assert(!this._parentView, "Attached view already has a parent.", this._parentView);
+        this._parentView = parentView;
+    }
+
+    didDetach()
+    {
+        console.assert(this._parentView, "Detached view has no parent.")
+        this._parentView = null;
+    }
 
     layout()
     {
@@ -135,14 +169,82 @@ WebInspector.View = class View extends WebInspector.Object
 
     _layoutSubtree()
     {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = undefined;
-        }
+        this._dirty = false;
+        this._dirtyDescendantsCount = 0;
 
         this.layout();
 
         for (let view of this._subviews)
             view._layoutSubtree();
     }
+
+    // Private layout controller logic
+
+    static _scheduleLayoutForView(view)
+    {
+        // Asynchronous layouts aren't scheduled until the root view has been set.
+        // If the root view hasn't been set, switch to a synchronous layout.
+        if (!WebInspector.View._rootView) {
+            view._layoutSubtree();
+            return;
+        }
+
+        view._dirty = true;
+
+        let parentView = view.parentView;
+        while (parentView) {
+            parentView._dirtyDescendantsCount++;
+            parentView = parentView.parentView;
+        }
+
+        if (WebInspector.View._scheduledLayoutUpdateIdentifier)
+            return;
+
+        WebInspector.View._scheduledLayoutUpdateIdentifier = requestAnimationFrame(WebInspector.View._visitViewTreeForLayout);
+    }
+
+    static _cancelScheduledLayoutForView(view)
+    {
+        // Asynchronous layouts aren't scheduled until the root view has been set.
+        if (!WebInspector.View._rootView)
+            return;
+
+        let cancelledLayouts = view._dirtyDescendantsCount;
+        if (this._dirty)
+            cancelledLayouts++;
+
+        let parentView = view.parentView;
+        while (parentView) {
+            parentView._dirtyDescendantsCount = Math.max(0, parentView._dirtyDescendantsCount - cancelledLayouts);
+            parentView = parentView.parentView;
+        }
+
+        if (WebInspector.View._rootView._dirtyDescendantsCount || !WebInspector.View._scheduledLayoutUpdateIdentifier)
+            return;
+
+        // No views need layout, so cancel the pending requestAnimationFrame.
+        cancelAnimationFrame(WebInspector.View._scheduledLayoutUpdateIdentifier);
+        WebInspector.View._scheduledLayoutUpdateIdentifier = undefined;
+    }
+
+    static _visitViewTreeForLayout()
+    {
+        console.assert(WebInspector.View._rootView, "Cannot layout view tree without a root.");
+
+        WebInspector.View._scheduledLayoutUpdateIdentifier = undefined;
+
+        let views = [WebInspector.View._rootView];
+        while (views.length) {
+            let view = views.shift();
+            if (view.layoutPending)
+                view._layoutSubtree();
+            else if (view._dirtyDescendantsCount) {
+                views = views.concat(view.subviews);
+                view._dirtyDescendantsCount = 0;
+            }
+        }
+    }
 };
+
+WebInspector.View._rootView = null;
+WebInspector.View._scheduledLayoutUpdateIdentifier = undefined;

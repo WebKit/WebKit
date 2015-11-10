@@ -1,3 +1,48 @@
+2015-11-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Batch all scheduled layouts and update the view tree in a single animation frame
+        https://bugs.webkit.org/show_bug.cgi?id=150993
+
+        Reviewed by Brian Burg.
+
+        Shifts responsibility for scheduling asynchronous layouts from view objects to a controller
+        layer, implemented as private static methods and properties in the View class. A single animation
+        frame callback performs a breadth-first traversal of the view tree starting at the root view,
+        updating views marked as needing a layout.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Setup root view.
+
+        * UserInterface/Views/View.js:
+        Added private class properties for root view reference and rAF identifier.
+        (WebInspector.View):
+        (WebInspector.View.prototype.get layoutPending):
+        (WebInspector.View.prototype.get parentView):
+        (WebInspector.View.prototype.makeRootView):
+        Set current view to be the root of the view hierarchy.
+        Can only be called once.
+        (WebInspector.View.prototype.insertSubviewBefore):
+        No longer appends subview element to parent element, if subview already in the DOM.
+        Checks that view being inserted isn't the root view.
+        (WebInspector.View.prototype.removeSubview):
+        (WebInspector.View.prototype.updateLayout):
+        Cancels any scheduled layouts for the view, then does a synchronous layout.
+        (WebInspector.View.prototype.updateLayoutIfNeeded):
+        (WebInspector.View.prototype.needsLayout):
+        Schedules view for the next asynchronous layout, if not already scheduled.
+        (WebInspector.View.prototype.didAttach):
+        (WebInspector.View.prototype.didDetach):
+        Inform view of changing parent view.
+        (WebInspector.View.prototype._layoutSubtree):
+        (WebInspector.View._scheduleLayoutForView):
+        Increments dirty counts on ancestor views, schedules a layout if needed.
+        (WebInspector.View._cancelScheduledLayoutForView):
+        Decrements dirty counts on ancestor views, cancels a pending layout if needed.
+        (WebInspector.View._visitViewTreeForLayout):
+        Animation frame callback. Does a breadth-first traversal of the view tree,
+        and updates the layout of views marked as dirty.
+
 2015-11-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Code coverage profiler: incorrect "in-viewport" detection algorithm
