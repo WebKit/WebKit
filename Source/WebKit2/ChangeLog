@@ -1,3 +1,14 @@
+2015-11-10  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm:
+        (DatabaseServiceInitializer):
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+
 2015-11-10  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkCache] Rename SpeculativeLoader to SpeculativeLoadManager
