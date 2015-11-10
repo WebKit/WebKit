@@ -197,6 +197,14 @@ ControlsTest = class ControlsTest {
             this.logFailure(`${this.currentMessage} Expected a non-zero value`);
     }
 
+    isLessThan(value)
+    {
+        if (this.currentValue < value)
+            this.logSuccess(this.currentMessage);
+        else
+            this.logFailure(`${this.currentMessage} Actual: "${this.currentValue}" is not less than Expected: "${value}"`);
+    }
+
     isGreaterThan(value)
     {
         if (this.currentValue > value)

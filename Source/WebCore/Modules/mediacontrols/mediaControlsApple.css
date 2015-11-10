@@ -614,6 +614,7 @@ audio::-webkit-media-controls-timeline-container {
     -webkit-align-items: center;
     -webkit-user-select: none;
     -webkit-flex: 1 1 0;
+    min-width: 0;
     position: relative;
     padding: 0;
 }
@@ -622,7 +623,8 @@ video::-webkit-media-controls-panel .thumbnail-track,
 audio::-webkit-media-controls-panel .thumbnail-track {
     position: relative;
     -webkit-flex: 1 1 0;
-    height: 17 px;
+    min-width: 0;
+    height: 17px;
     margin: 0 2px;
     display: -webkit-flex;
     -webkit-align-items: stretch;
