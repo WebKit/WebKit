@@ -1,3 +1,32 @@
+2015-11-09  Saam barati  <sbarati@apple.com>
+
+        DFG::PutStackSinkingPhase should not treat the stack variables written by LoadVarargs/ForwardVarargs as being live
+        https://bugs.webkit.org/show_bug.cgi?id=145295
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes PutStackSinkingPhase to no longer escape the stack
+        locations that LoadVarargs and ForwardVarargs write to. We used
+        to consider sinking PutStacks right before a LoadVarargs/ForwardVarargs
+        because we considered them uses of such stack locations. They aren't
+        uses of those stack locations, they unconditionally write to those
+        stack locations. Sinking PutStacks to these nodes was not needed before,
+        but seemed mostly innocent. But I ran into a problem with this while implementing 
+        FTL try/catch where we would end up having to generate a value for a sunken PutStack 
+        right before a LoadVarargs. This would cause us to issue a GetStack that loaded garbage that 
+        was then forwarded into a Phi that was used as the source as the PutStack. This caused the
+        abstract interpreter to confuse itself on type information for the garbage GetStack
+        that was fed into the Phi, which would cause the abstract interpreter to then claim 
+        that the basic block with the PutStack in it would never be reached. This isn't true, the 
+        block would indeed be reached. The solution here is to be more precise about the 
+        liveness of locals w.r.t LoadVarargs and ForwardVarargs.
+
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::PreciseLocalClobberizeAdaptor):
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::write):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSACalculator.h:
+
 2015-11-09  Filip Pizlo  <fpizlo@apple.com>
 
         B3->Air lowering should support CCall

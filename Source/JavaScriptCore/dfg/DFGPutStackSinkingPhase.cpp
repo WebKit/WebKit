@@ -108,31 +108,29 @@ public:
                     if (verbose)
                         dataLog("Live at ", node, ": ", live, "\n");
                     
+                    Vector<VirtualRegister, 4> reads;
+                    Vector<VirtualRegister, 4> writes;
                     auto escapeHandler = [&] (VirtualRegister operand) {
                         if (operand.isHeader())
                             return;
                         if (verbose)
                             dataLog("    ", operand, " is live at ", node, "\n");
-                        live.operand(operand) = true;
+                        reads.append(operand);
                     };
-                    
-                    // FIXME: This might mishandle LoadVarargs and ForwardVarargs. It might make us
-                    // think that the locals being written are stack-live here. They aren't. This
-                    // should be harmless since we overwrite them anyway, but still, it's sloppy.
-                    // https://bugs.webkit.org/show_bug.cgi?id=145295
-                    preciseLocalClobberize(
-                        m_graph, node, escapeHandler, escapeHandler,
-                        [&] (VirtualRegister operand, LazyNode source) {
-                            RELEASE_ASSERT(source.isNode());
 
-                            if (source.asNode() == node) {
-                                // This is a load. Ignore it.
-                                return;
-                            }
-                            
-                            RELEASE_ASSERT(node->op() == PutStack);
-                            live.operand(operand) = false;
-                        });
+                    auto writeHandler = [&] (VirtualRegister operand) {
+                        RELEASE_ASSERT(node->op() == PutStack || node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        writes.append(operand);
+                    };
+
+                    preciseLocalClobberize(
+                        m_graph, node, escapeHandler, writeHandler,
+                        [&] (VirtualRegister, LazyNode) { });
+
+                    for (VirtualRegister operand : writes)
+                        live.operand(operand) = false;
+                    for (VirtualRegister operand : reads)
+                        live.operand(operand) = true;
                 }
                 
                 if (live == liveAtHead[block])
@@ -205,10 +203,13 @@ public:
         //     Represents the fact that the original code would have done a PutStack but we haven't
         //     identified an operation that would have observed that PutStack.
         //
-        // This code has some interesting quirks because of the fact that neither liveness nor
-        // deferrals are very precise. They are only precise enough to be able to correctly tell us
-        // when we may [sic] need to execute PutStacks. This means that they may report the need to
-        // execute a PutStack in cases where we actually don't really need it, and that's totally OK.
+        // We need to be precise about liveness in this phase because not doing so
+        // could cause us to insert a PutStack before a node we thought may escape a 
+        // value that it doesn't really escape. Sinking this PutStack above such a node may
+        // cause us to insert a GetStack that we forward to the Phi we're feeding into the
+        // sunken PutStack. Inserting such a GetStack could cause us to load garbage and
+        // can confuse the AI to claim untrue things (like that the program will exit when
+        // it really won't).
         BlockMap<Operands<FlushFormat>> deferredAtHead(m_graph);
         BlockMap<Operands<FlushFormat>> deferredAtTail(m_graph);
         
@@ -269,6 +270,10 @@ public:
                         // A GetStack doesn't affect anything, since we know which local we are reading
                         // from.
                         continue;
+                    } else if (node->op() == PutStack) {
+                        VirtualRegister operand = node->stackAccessData()->local;
+                        deferred.operand(operand) = node->stackAccessData()->format;
+                        continue;
                     }
                     
                     auto escapeHandler = [&] (VirtualRegister operand) {
@@ -279,19 +284,15 @@ public:
                         // We will materialize just before any reads.
                         deferred.operand(operand) = DeadFlush;
                     };
+
+                    auto writeHandler = [&] (VirtualRegister operand) {
+                        RELEASE_ASSERT(node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        deferred.operand(operand) = DeadFlush;
+                    };
                     
                     preciseLocalClobberize(
-                        m_graph, node, escapeHandler, escapeHandler,
-                        [&] (VirtualRegister operand, LazyNode source) {
-                            RELEASE_ASSERT(source.isNode());
-
-                            if (source.asNode() == node) {
-                                // This is a load. Ignore it.
-                                return;
-                            }
-                            
-                            deferred.operand(operand) = node->stackAccessData()->format;
-                        });
+                        m_graph, node, escapeHandler, writeHandler,
+                        [&] (VirtualRegister, LazyNode) { });
                 }
                 
                 if (deferred == deferredAtTail[block])
@@ -351,13 +352,13 @@ public:
             indexToOperand.append(operand);
         }
         
-        HashSet<Node*> putLocalsToSink;
+        HashSet<Node*> putStacksToSink;
         
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
                 switch (node->op()) {
                 case PutStack:
-                    putLocalsToSink.add(node);
+                    putStacksToSink.add(node);
                     ssaCalculator.newDef(
                         operandToVariable.operand(node->stackAccessData()->local),
                         block, node->child1().node());
@@ -496,9 +497,19 @@ public:
                     
                         deferred.operand(operand) = DeadFlush;
                     };
-                
+
+                    auto writeHandler = [&] (VirtualRegister operand) {
+                        // LoadVarargs and ForwardVarargs are unconditional writes to the stack
+                        // locations they claim to write to. They do not read from the stack 
+                        // locations they write to. This makes those stack locations dead right 
+                        // before a LoadVarargs/ForwardVarargs. This means we should never sink
+                        // PutStacks right to this point.
+                        RELEASE_ASSERT(node->op() == LoadVarargs || node->op() == ForwardVarargs);
+                        deferred.operand(operand) = DeadFlush;
+                    };
+
                     preciseLocalClobberize(
-                        m_graph, node, escapeHandler, escapeHandler,
+                        m_graph, node, escapeHandler, writeHandler,
                         [&] (VirtualRegister, LazyNode) { });
                     break;
                 } }
@@ -552,13 +563,11 @@ public:
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
                 
-                if (!putLocalsToSink.contains(node))
+                if (!putStacksToSink.contains(node))
                     continue;
                 
                 node->remove();
             }
-            
-            insertionSet.execute(block);
         }
         
         if (verbose) {
