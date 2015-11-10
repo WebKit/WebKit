@@ -1,3 +1,14 @@
+2015-10-27  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [Cairo] Incorrect dashed and dotted border painting after r177686.
+        https://bugs.webkit.org/show_bug.cgi?id=141967
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix the incorrect dashed/dotted border painting in cairo.
+
+        * platform/gtk/TestExpectations: Removed the passed test.
+
 2015-10-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test editing/execCommand/format-block-uneditable-crash.html
