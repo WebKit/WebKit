@@ -57,7 +57,7 @@ function initializeWritableStream(underlyingSink, strategy)
     var startResult = @invokeOrNoop(underlyingSink, "start", [error]);
     this.@startedPromise = @Promise.@resolve(startResult);
     var _this = this;
-    this.@startedPromise.@then(function() {
+    @Promise.prototype.@then.@call(this.@startedPromise, function() {
         _this.@started = true;
         _this.@startedPromise = undefined;
     }, error);
@@ -82,7 +82,7 @@ function abort(reason)
 
     const sinkAbortPromise = @promiseInvokeOrFallbackOrNoop(this.@underlyingSink, "abort", [reason], "close", []);
 
-    return sinkAbortPromise.@then(function() { return undefined; });
+    return @Promise.prototype.@then.@call(sinkAbortPromise, function() { return undefined; });
 }
 
 function close()

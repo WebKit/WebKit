@@ -56,7 +56,7 @@ function initializeReadableStream(underlyingSource, strategy)
 
     var result = @invokeOrNoop(underlyingSource, "start", [this.@controller]);
     var _this = this;
-    @Promise.@resolve(result).@then(function() {
+    @Promise.prototype.@then.@call(@Promise.@resolve(result), function() {
         _this.@started = true;
         @requestReadableStreamPull(_this);
     }, function(error) {
