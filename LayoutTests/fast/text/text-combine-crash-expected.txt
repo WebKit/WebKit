@@ -2,7 +2,7 @@ CONSOLE MESSAGE: line 149: TypeError: undefined is not an object (evaluating 'do
 CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '&'
 Test passes if there's no crash.
 
-foo   ￼￼
+￼￼￼
 
 
 Errlog webtest_fn_1: TypeError: undefined is not an object (evaluating 'document.applets[0].addEventListener')

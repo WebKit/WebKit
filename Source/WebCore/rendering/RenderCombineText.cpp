@@ -118,10 +118,14 @@ void RenderCombineText::combineText()
     glyphOverflow.computeBounds = true;
     
     float combinedTextWidth = width(0, textLength(), originalFont(), 0, nullptr, &glyphOverflow);
+
+    float bestFitDelta = combinedTextWidth - emWidth;
+    auto bestFitDescription = description;
+
     m_isCombined = combinedTextWidth <= emWidth;
     
     FontSelector* fontSelector = style().fontCascade().fontSelector();
-
+    
     if (m_isCombined)
         shouldUpdateFont = m_combineFontStyle->setFontDescription(description); // Need to change font orientation to horizontal.
     else {
@@ -133,6 +137,7 @@ void RenderCombineText::combineText()
             FontCascade compressedFont(description, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
             compressedFont.update(fontSelector);
             
+            glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;
             float runWidth = RenderText::width(0, textLength(), compressedFont, 0, nullptr, &glyphOverflow);
             if (runWidth <= emWidth) {
                 combinedTextWidth = runWidth;
@@ -142,11 +147,36 @@ void RenderCombineText::combineText()
                 shouldUpdateFont = m_combineFontStyle->setFontDescription(description);
                 break;
             }
+            
+            float widthDelta = runWidth - emWidth;
+            if (widthDelta < bestFitDelta) {
+                bestFitDelta = widthDelta;
+                bestFitDescription = description;
+            }
         }
     }
 
-    if (!m_isCombined)
-        shouldUpdateFont = m_combineFontStyle->setFontDescription(originalFont().fontDescription());
+    if (!m_isCombined) {
+        float scaleFactor = std::max(0.4f, emWidth / (emWidth + bestFitDelta));
+        float originalSize = bestFitDescription.computedSize();
+        do {
+            float computedSize = originalSize * scaleFactor;
+            bestFitDescription.setComputedSize(computedSize);
+            shouldUpdateFont = m_combineFontStyle->setFontDescription(bestFitDescription);
+        
+            FontCascade compressedFont(bestFitDescription, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+            compressedFont.update(fontSelector);
+            
+            glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;
+            float runWidth = RenderText::width(0, textLength(), compressedFont, 0, nullptr, &glyphOverflow);
+            if (runWidth <= emWidth) {
+                combinedTextWidth = runWidth;
+                m_isCombined = true;
+                break;
+            }
+            scaleFactor -= 0.05f;
+        } while (scaleFactor >= 0.4f);
+    }
 
     if (shouldUpdateFont)
         m_combineFontStyle->fontCascade().update(fontSelector);
