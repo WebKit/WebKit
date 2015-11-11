@@ -1,5 +1,24 @@
 2015-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Runtime critical warnings when closing a page containing windowed plugins
+        https://bugs.webkit.org/show_bug.cgi?id=151132
+
+        Reviewed by Martin Robinson.
+
+        This is because our plugin widget, that is a GtkPlug (derived from
+        GtkWindow), can receive the delete-event signal before
+        NetscapePlugin::platformDestroy is called. The delete-event
+        signal, by default, destroys the window when the signal is not
+        handled. So, after the delete-event the GtkPlug is destroyed, but
+        our pointer hasn't been reset. We can handle the delete-event
+        using gtk_widget_hide_on_delete as callback, so that the plugin
+        widget is hidden instead of destroyed.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformPostInitializeWindowed):
+
+2015-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r191856): [GTK] SOCK_SEQPACKET no longer used after r191856
         https://bugs.webkit.org/show_bug.cgi?id=151129
 
