@@ -775,7 +775,10 @@ class Port(object):
         """Absolute path to the place to store the test results (uses --results-directory)."""
         if not self._results_directory:
             option_val = self.get_option('results_directory') or self.default_results_directory()
-            self._results_directory = self._filesystem.abspath(option_val)
+            if sys.platform in ('win32', 'cygwin'):
+                self._results_directory = option_val
+            else:
+                self._results_directory = self._filesystem.abspath(option_val)
         return self._results_directory
 
     def perf_results_directory(self):
@@ -1149,6 +1152,10 @@ class Port(object):
             # there should be another way to propagate precomputed values to workers without modifying
             # the options list.
             self.set_option('_cached_root', root_directory)
+
+        if sys.platform in ('cygwin', 'win32'):
+            return self._filesystem.join(root_directory, *comps)
+
         return self._filesystem.join(self._filesystem.abspath(root_directory), *comps)
 
     def _path_to_driver(self, configuration=None):

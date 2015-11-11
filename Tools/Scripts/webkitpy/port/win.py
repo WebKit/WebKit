@@ -134,7 +134,7 @@ class WinPort(ApplePort):
             root_directory = self._filesystem.join(self.get_option('_cached_root'), binary_directory)
             self.set_option('_cached_root', root_directory)
 
-        return self._filesystem.join(self._filesystem.abspath(root_directory), *comps)
+        return self._filesystem.join(root_directory, *comps)
 
     # Note: These are based on the stock XAMPP locations for these files.
     def _uses_apache(self):
