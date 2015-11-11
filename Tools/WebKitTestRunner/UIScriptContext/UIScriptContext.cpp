@@ -36,6 +36,11 @@
 
 using namespace WTR;
 
+static inline bool isPersistentCallbackID(unsigned callbackID)
+{
+    return callbackID < firstNonPersistentCallbackID;
+}
+
 UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate)
     : m_context(Adopt, JSGlobalContextCreate(nullptr))
     , m_delegate(delegate)
@@ -59,20 +64,22 @@ void UIScriptContext::runUIScript(WKStringRef script, unsigned scriptCallbackID)
     
     if (!hasOutstandingAsyncTasks()) {
         JSValueRef stringifyException = nullptr;
-        JSRetainPtr<JSStringRef> resultString(Adopt, JSValueToStringCopy(m_context.get(), result, &stringifyException));
-        uiScriptComplete(resultString.get());
-        m_currentScriptCallbackID = 0;
+        requestUIScriptCompletion(JSValueToStringCopy(m_context.get(), result, &stringifyException));
+        tryToCompleteUIScriptForCurrentParentCallback();
     }
 }
 
-unsigned UIScriptContext::nextTaskCallbackID()
+unsigned UIScriptContext::nextTaskCallbackID(CallbackType type)
 {
-    return ++m_nextTaskCallbackID;
+    if (type == CallbackTypeNonPersistent)
+        return ++m_nextTaskCallbackID + firstNonPersistentCallbackID;
+
+    return type;
 }
 
-unsigned UIScriptContext::prepareForAsyncTask(JSValueRef callback)
+unsigned UIScriptContext::prepareForAsyncTask(JSValueRef callback, CallbackType type)
 {
-    unsigned callbackID = nextTaskCallbackID();
+    unsigned callbackID = nextTaskCallbackID(type);
     
     JSValueProtect(m_context.get(), callback);
     Task task;
@@ -99,12 +106,16 @@ void UIScriptContext::asyncTaskComplete(unsigned callbackID)
     JSObjectCallAsFunction(m_context.get(), callbackObject, JSContextGetGlobalObject(m_context.get()), 0, nullptr, &exception);
     JSValueUnprotect(m_context.get(), task.callback);
     
+    tryToCompleteUIScriptForCurrentParentCallback();
     m_currentScriptCallbackID = 0;
 }
 
-unsigned UIScriptContext::registerCallback(JSValueRef taskCallback)
+unsigned UIScriptContext::registerCallback(JSValueRef taskCallback, CallbackType type)
 {
-    return prepareForAsyncTask(taskCallback);
+    if (m_callbacks.contains(type))
+        unregisterCallback(type);
+
+    return prepareForAsyncTask(taskCallback, type);
 }
 
 void UIScriptContext::unregisterCallback(unsigned callbackID)
@@ -133,14 +144,31 @@ void UIScriptContext::fireCallback(unsigned callbackID)
     exception = nullptr;
     JSObjectCallAsFunction(m_context.get(), callbackObject, JSContextGetGlobalObject(m_context.get()), 0, nullptr, &exception);
     
+    tryToCompleteUIScriptForCurrentParentCallback();
     m_currentScriptCallbackID = 0;
 }
 
-void UIScriptContext::uiScriptComplete(JSStringRef result)
+void UIScriptContext::requestUIScriptCompletion(JSStringRef result)
 {
+    ASSERT(m_currentScriptCallbackID);
+    if (currentParentCallbackIsPendingCompletion())
+        return;
+
+    // This request for the UI script to complete is not fulfilled until the last non-persistent task for the parent callback is finished.
+    m_uiScriptResultsPendingCompletion.add(m_currentScriptCallbackID, result ? JSStringRetain(result) : nullptr);
+}
+
+void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
+{
+    if (!currentParentCallbackIsPendingCompletion() || currentParentCallbackHasOutstandingAsyncTasks())
+        return;
+
+    JSStringRef result = m_uiScriptResultsPendingCompletion.take(m_currentScriptCallbackID);
     WKRetainPtr<WKStringRef> uiScriptResult = adoptWK(WKStringCreateWithJSString(result));
     m_delegate.uiScriptDidComplete(uiScriptResult.get(), m_currentScriptCallbackID);
     m_currentScriptCallbackID = 0;
+    if (result)
+        JSStringRelease(result);
 }
 
 JSObjectRef UIScriptContext::objectFromRect(const WKRect& rect) const
@@ -153,5 +181,17 @@ JSObjectRef UIScriptContext::objectFromRect(const WKRect& rect) const
     JSObjectSetProperty(m_context.get(), object, adopt(JSStringCreateWithUTF8CString("height")).get(), JSValueMakeNumber(m_context.get(), rect.size.height), kJSPropertyAttributeNone, nullptr);
     
     return object;
+}
+
+bool UIScriptContext::currentParentCallbackHasOutstandingAsyncTasks() const
+{
+    for (auto entry : m_callbacks) {
+        unsigned callbackID = entry.key;
+        Task task = entry.value;
+        if (task.parentScriptCallbackID == m_currentScriptCallbackID && !isPersistentCallbackID(callbackID))
+            return true;
+    }
+
+    return false;
 }
 

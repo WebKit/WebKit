@@ -39,25 +39,35 @@ public:
     virtual void uiScriptDidComplete(WKStringRef result, unsigned callbackID) = 0;
 };
 
+const unsigned firstNonPersistentCallbackID = 1000;
+
+typedef enum  {
+    CallbackTypeWillBeginZooming = 0,
+    CallbackTypeDidEndZooming,
+    CallbackTypeDidShowKeyboard,
+    CallbackTypeDidHideKeyboard,
+    CallbackTypeNonPersistent = firstNonPersistentCallbackID
+} CallbackType;
+
 class UIScriptContext {
 public:
 
     UIScriptContext(UIScriptContextDelegate&);
 
     void runUIScript(WKStringRef script, unsigned scriptCallbackID);
-    void uiScriptComplete(JSStringRef);
+    void requestUIScriptCompletion(JSStringRef);
 
     // For one-shot tasks callbacks.
-    unsigned prepareForAsyncTask(JSValueRef taskCallback);
+    unsigned prepareForAsyncTask(JSValueRef taskCallback, CallbackType);
     void asyncTaskComplete(unsigned taskCallbackID);
 
     // For persistent callbacks.
-    unsigned registerCallback(JSValueRef taskCallback);
+    unsigned registerCallback(JSValueRef taskCallback, CallbackType);
     JSValueRef callbackWithID(unsigned callbackID);
     void unregisterCallback(unsigned callbackID);
     void fireCallback(unsigned callbackID);
 
-    unsigned nextTaskCallbackID();
+    unsigned nextTaskCallbackID(CallbackType);
 
     JSObjectRef objectFromRect(const WKRect&) const;
 
@@ -65,12 +75,16 @@ private:
     JSRetainPtr<JSGlobalContextRef> m_context;
     
     bool hasOutstandingAsyncTasks() const { return !m_callbacks.isEmpty(); }
+    bool currentParentCallbackIsPendingCompletion() const { return m_uiScriptResultsPendingCompletion.contains(m_currentScriptCallbackID); }
+    bool currentParentCallbackHasOutstandingAsyncTasks() const;
+    void tryToCompleteUIScriptForCurrentParentCallback();
     
     struct Task {
         unsigned parentScriptCallbackID { 0 };
         JSValueRef callback { nullptr };
     };
     HashMap<unsigned, Task> m_callbacks;
+    HashMap<unsigned, JSStringRef> m_uiScriptResultsPendingCompletion;
 
     UIScriptContextDelegate& m_delegate;
     RefPtr<UIScriptController> m_controller;

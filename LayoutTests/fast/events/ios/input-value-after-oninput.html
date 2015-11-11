@@ -4,15 +4,18 @@
     <meta name="viewport" content="initial-scale=1.0">
     <script id="ui-script" type="text/plain">
         (function() {
-            uiController.singleTapAtPoint(50, 25, function() {
-                uiController.didShowKeyboardCallback = function() {
-                    uiController.typeCharacterUsingHardwareKeyboard("a", function() { });
-                }
-            });
+            uiController.didShowKeyboardCallback = function() {
+                uiController.typeCharacterUsingHardwareKeyboard("a", function() {
+                    uiController.uiScriptComplete();
+                });
+            }
+            uiController.singleTapAtPoint(50, 25, function() {});
         })();
     </script>
 
     <script>
+        var uiScriptHasCompleted = false;
+        var oninputHasBeenHandled = false;
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
@@ -25,7 +28,9 @@
 
         function handleValueChanged(value) {
             document.getElementById("console").textContent = "Successfully handled oninput, value is now \"" + value.toLowerCase() + "\"";
-            testRunner.notifyDone();
+            oninputHasBeenHandled = true;
+            if (uiScriptHasCompleted)
+                testRunner.notifyDone();
         }
 
         function runTest()
@@ -33,7 +38,11 @@
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 
-            testRunner.runUIScript(getUIScript(), function(result) { });
+            testRunner.runUIScript(getUIScript(), function() {
+                uiScriptHasCompleted = true;
+                if (oninputHasBeenHandled)
+                    testRunner.notifyDone();
+            });
         }
     </script>
 </head>

@@ -84,11 +84,6 @@ private:
     JSObjectRef objectFromRect(const WKRect&) const;
 
     UIScriptContext& m_context;
-
-    unsigned m_willBeginZoomingCallback { 0 };
-    unsigned m_didEndZoomingCallback { 0 };
-    unsigned m_didShowKeyboardCallback { 0 };
-    unsigned m_didHideKeyboardCallback { 0 };
 };
 
 }

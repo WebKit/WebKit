@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width">
     <script id="ui-script" type="text/plain">
         (function() {
-            uiController.singleTapAtPoint(50, 50);
+            uiController.singleTapAtPoint(50, 50, function() {
+                uiController.uiScriptComplete();
+            });
         })();
     </script>
     <script>
+        var uiScriptHasCompleted = false;
+        var boxHasBeenClicked = false;
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
@@ -23,7 +27,9 @@
         {
             if (testRunner.runUIScript) {
                 testRunner.runUIScript(getUIScript(), function() {
-                    // Just wait for the tap.
+                    uiScriptHasCompleted = true;
+                    if (boxHasBeenClicked)
+                        testRunner.notifyDone();
                 });
             }
         }
@@ -31,7 +37,8 @@
         function boxClicked(event)
         {
             document.getElementById('target').textContent = 'PASS: received click event at ' + event.clientX + ' ' + event.clientY;
-            if (window.testRunner)
+            boxHasBeenClicked = true;
+            if (uiScriptHasCompleted && window.testRunner)
                 testRunner.notifyDone();
         }
     </script>

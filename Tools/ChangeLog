@@ -1,3 +1,71 @@
+2015-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        UI-side scripts in WebKitTestRunner should wait until event handling completes before finishing
+        https://bugs.webkit.org/show_bug.cgi?id=151101
+        <rdar://problem/23428601>
+
+        Reviewed by Simon Fraser.
+
+        WebKitTestRunner may still crash in the scenario where a marker event is dequeued and handled
+        after uiScriptComplete has been called. This patch teaches the UI script execution context to
+        defer script completion until all non-persistent tasks (currently tap, double tap and hardware
+        keyboard) have been handled, so marker events will no longer bleed through tests.
+
+        We accomplish this by changing the behavior of uiScriptComplete. When calling uiScriptComplete,
+        we store that a request to complete the UI-side script for the current parent callback has been
+        made. Subsequently, when a callback (either persistent or non-persistent) finishes invoking and
+        a request has been made to complete the UI script (this request may have been made when running
+        a previous callback) we check if all the non-persistent callbacks that have the same parent
+        callback as the current one have finished. If so, we complete the callback immediately;
+        otherwise, we wait until the in-flight non-persistent callbacks finish execution to complete the
+        UI script.
+
+        This patch also refactors some logic in UIScriptContext. It introduces a new convention for
+        assigning IDs to callbacks: IDs 1000 and above are treated as non-persistent callbacks, whereas
+        IDs between 0 and 999 are persistent task callbacks. This is similar to the existing convention
+        for assigning IDs in the 100s range to parent callbacks, and allows us to easily differentiate
+        between callbacks that are persistent and non-persistent, as well as determine when an existing
+        persistent callback must be unregistered before a new callback function can be set.
+
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.cpp:
+        (isPersistentCallbackID):
+        (UIScriptContext::runUIScript):
+        (UIScriptContext::nextTaskCallbackID):
+        (UIScriptContext::prepareForAsyncTask):
+        (UIScriptContext::asyncTaskComplete):
+        (UIScriptContext::registerCallback):
+        (UIScriptContext::fireCallback):
+        (UIScriptContext::requestUIScriptCompletion):
+        (UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback):
+        (UIScriptContext::currentParentCallbackHasOutstandingAsyncTasks):
+        (UIScriptContext::uiScriptComplete): Deleted.
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.h:
+        (WTR::UIScriptContext::currentParentCallbackIsPendingCompletion):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setWillBeginZoomingCallback):
+        (WTR::UIScriptController::willBeginZoomingCallback):
+        (WTR::UIScriptController::setDidEndZoomingCallback):
+        (WTR::UIScriptController::didEndZoomingCallback):
+        (WTR::UIScriptController::setDidShowKeyboardCallback):
+        (WTR::UIScriptController::didShowKeyboardCallback):
+        (WTR::UIScriptController::setDidHideKeyboardCallback):
+        (WTR::UIScriptController::didHideKeyboardCallback):
+        (WTR::UIScriptController::uiScriptComplete):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::doAsyncTask):
+        (WTR::UIScriptController::zoomToScale):
+        (WTR::UIScriptController::singleTapAtPoint):
+        (WTR::UIScriptController::doubleTapAtPoint):
+        (WTR::UIScriptController::typeCharacterUsingHardwareKeyboard):
+        (WTR::UIScriptController::platformSetWillBeginZoomingCallback):
+        (WTR::UIScriptController::platformSetDidEndZoomingCallback):
+        (WTR::UIScriptController::platformSetDidShowKeyboardCallback):
+        (WTR::UIScriptController::platformSetDidHideKeyboardCallback):
+        (WTR::UIScriptController::platformClearAllCallbacks): Deleted.
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::doAsyncTask):
+
 2015-11-10  Daniel Bates  <dabates@apple.com>
 
         Teach Makefile to build LayoutTestRelay when building for iOS Simulator

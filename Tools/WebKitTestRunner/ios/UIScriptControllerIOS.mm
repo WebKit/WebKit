@@ -42,7 +42,7 @@ namespace WTR {
 
 void UIScriptController::doAsyncTask(JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback);
+    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         m_context.asyncTaskComplete(callbackID);
@@ -53,7 +53,7 @@ void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
 
-    unsigned callbackID = m_context.prepareForAsyncTask(callback);
+    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     [webView zoomToScale:scale animated:YES completionHandler:^{
         m_context.asyncTaskComplete(callbackID);
@@ -77,7 +77,7 @@ static CGPoint globalToContentCoordinates(TestRunnerWKWebView *webView, long x, 
 
 void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback);
+    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
         m_context.asyncTaskComplete(callbackID);
@@ -86,7 +86,7 @@ void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef callback)
 
 void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback);
+    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     [[HIDEventGenerator sharedHIDEventGenerator] doubleTap:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
         m_context.asyncTaskComplete(callbackID);
@@ -95,7 +95,7 @@ void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
 
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {
-    unsigned callbackID = m_context.prepareForAsyncTask(callback);
+    unsigned callbackID = m_context.prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     // Assumes that the keyboard is already shown.
     [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(toWK(character)) completionBlock:^{
@@ -129,7 +129,7 @@ void UIScriptController::platformSetWillBeginZoomingCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.willBeginZoomingCallback = ^{
-        m_context.fireCallback(m_willBeginZoomingCallback);
+        m_context.fireCallback(CallbackTypeWillBeginZooming);
     };
 }
 
@@ -137,7 +137,7 @@ void UIScriptController::platformSetDidEndZoomingCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didEndZoomingCallback = ^{
-        m_context.fireCallback(m_didEndZoomingCallback);
+        m_context.fireCallback(CallbackTypeDidEndZooming);
     };
 }
 
@@ -145,7 +145,7 @@ void UIScriptController::platformSetDidShowKeyboardCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didShowKeyboardCallback = ^{
-        m_context.fireCallback(m_didShowKeyboardCallback);
+        m_context.fireCallback(CallbackTypeDidShowKeyboard);
     };
 }
 
@@ -153,17 +153,13 @@ void UIScriptController::platformSetDidHideKeyboardCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didHideKeyboardCallback = ^{
-        m_context.fireCallback(m_didHideKeyboardCallback);
+        m_context.fireCallback(CallbackTypeDidHideKeyboard);
     };
 }
 
 void UIScriptController::platformClearAllCallbacks()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    m_didEndZoomingCallback = 0;
-    m_willBeginZoomingCallback = 0;
-    m_didHideKeyboardCallback = 0;
-    m_didShowKeyboardCallback = 0;
     webView.didEndZoomingCallback = nil;
     webView.willBeginZoomingCallback = nil;
     webView.didHideKeyboardCallback = nil;

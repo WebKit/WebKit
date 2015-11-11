@@ -5,10 +5,14 @@
     <head>
         <script id="ui-script" type="text/plain">
             (function() {
-                uiController.singleTapAtPoint(100, 300);
+                uiController.singleTapAtPoint(100, 300, function() {
+                    uiController.uiScriptComplete("");
+                });
             })();
         </script>
         <script>
+            var uiScriptHasCompleted = false;
+            var clickHasBeenHandled = false;
             if (window.testRunner) {
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
@@ -24,11 +28,17 @@
                 document.addEventListener("click", function() {
                     document.body.appendChild(document.createTextNode("The currently focused element is of type " + document.activeElement.tagName));
                     document.body.appendChild(document.createElement("br"));
-                    if (window.testRunner)
+                    clickHasBeenHandled = true;
+                    if (window.testRunner && uiScriptHasCompleted)
                         testRunner.notifyDone();
                 });
-                if (window.testRunner && testRunner.runUIScript)
-                    testRunner.runUIScript(getUIScript(), function() { });
+                if (window.testRunner && testRunner.runUIScript) {
+                    testRunner.runUIScript(getUIScript(), function() {
+                        uiScriptHasCompleted = true;
+                        if (clickHasBeenHandled)
+                            testRunner.notifyDone();
+                    });
+                }
             }
         </script>
     </head>
