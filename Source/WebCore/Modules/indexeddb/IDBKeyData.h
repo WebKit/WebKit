@@ -122,9 +122,6 @@ public:
             break;
         }
 
-        unsigned targetSize = WTF::roundUpToPowerOfTwo(hashCodes.size());
-        hashCodes.resize(targetSize);
-
         return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
     }
 

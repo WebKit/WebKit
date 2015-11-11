@@ -258,8 +258,7 @@ IDBError MemoryIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     if (!objectStore)
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found to put record"));
 
-    objectStore->addRecord(*transaction, keyData, value);
-    return IDBError();
+    return objectStore->addRecord(*transaction, keyData, value);
 }
 
 IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, ThreadSafeDataBuffer& outValue)

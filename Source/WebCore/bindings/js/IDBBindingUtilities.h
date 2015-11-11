@@ -35,8 +35,10 @@
 namespace WebCore {
 
 class DOMRequestState;
+class IDBIndexInfo;
 class IDBKey;
 class IDBKeyPath;
+class IndexKey;
 class SharedBuffer;
 class ThreadSafeDataBuffer;
 
@@ -58,12 +60,17 @@ Deprecated::ScriptValue deserializeIDBValue(DOMRequestState*, PassRefPtr<Seriali
 Deprecated::ScriptValue deserializeIDBValueData(ScriptExecutionContext&, const ThreadSafeDataBuffer& valueData);
 Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState*, PassRefPtr<SharedBuffer>, bool keyIsDefined);
 WEBCORE_EXPORT Deprecated::ScriptValue deserializeIDBValueBuffer(JSC::ExecState*, const Vector<uint8_t>&, bool keyIsDefined);
+
 Deprecated::ScriptValue idbKeyToScriptValue(DOMRequestState*, PassRefPtr<IDBKey>);
 RefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState*, const JSC::JSValue&);
 RefPtr<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
 WEBCORE_EXPORT void generateIndexKeysForValue(JSC::ExecState*, const IDBIndexMetadata&, const Deprecated::ScriptValue& objectValue, Vector<IDBKeyData>& indexKeys);
 
 Deprecated::ScriptValue idbKeyDataToScriptValue(ScriptExecutionContext*, const IDBKeyData&);
+
+JSC::JSValue idbValueDataToJSValue(JSC::ExecState&, const ThreadSafeDataBuffer& valueData);
+void generateIndexKeyForValue(JSC::ExecState&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey);
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

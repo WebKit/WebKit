@@ -28,11 +28,17 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBindingUtilities.h"
 #include "IDBDatabaseException.h"
 #include "IDBError.h"
 #include "IDBKeyRangeData.h"
+#include "IndexKey.h"
 #include "Logging.h"
 #include "MemoryBackingStoreTransaction.h"
+
+#include <wtf/NeverDestroyed.h>
+
+using namespace JSC;
 
 namespace WebCore {
 namespace IDBServer {
@@ -76,7 +82,7 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
         return IDBError(IDBExceptionCode::ConstraintError);
 
     ASSERT(!m_indexesByIdentifier.contains(info.identifier()));
-    auto index = MemoryIndex::create(info);
+    auto index = MemoryIndex::create(info, *this);
 
     m_info.addExistingIndex(info);
 
@@ -100,6 +106,8 @@ void MemoryObjectStore::clear()
     ASSERT(m_writeTransaction);
 
     m_writeTransaction->objectStoreCleared(*this, WTF::move(m_keyValueStore));
+    for (auto& index : m_indexesByIdentifier.values())
+        index->objectStoreCleared();
 }
 
 void MemoryObjectStore::replaceKeyValueStore(std::unique_ptr<KeyValueMap>&& store)
@@ -132,6 +140,8 @@ void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
     m_writeTransaction->recordValueChanged(*this, key, &iterator->value);
     m_keyValueStore->remove(iterator);
     m_orderedKeys->erase(key);
+
+    updateIndexesForDeleteRecord(key);
 }
 
 void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
@@ -158,7 +168,7 @@ void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
     }
 }
 
-void MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
 {
     LOG(IndexedDB, "MemoryObjectStore::addRecord");
 
@@ -173,9 +183,80 @@ void MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction, co
         m_orderedKeys = std::make_unique<std::set<IDBKeyData>>();
     }
 
-    auto result = m_keyValueStore->set(keyData, value);
-    if (result.isNewEntry)
-        m_orderedKeys->insert(keyData);
+    auto mapResult = m_keyValueStore->set(keyData, value);
+    ASSERT(mapResult.isNewEntry);
+    auto listResult = m_orderedKeys->insert(keyData);
+    ASSERT(listResult.second);
+
+    // If there was an error indexing this addition, then revert it.
+    auto error = updateIndexesForPutRecord(keyData, value);
+    if (!error.isNull()) {
+        m_keyValueStore->remove(mapResult.iterator);
+        m_orderedKeys->erase(listResult.first);
+    }
+
+    return error;
+}
+
+static VM& indexVM()
+{
+    ASSERT(!isMainThread());
+    static NeverDestroyed<RefPtr<VM>> vm = VM::create();
+    return *vm.get();
+}
+
+static ExecState& indexGlobalExec()
+{
+    ASSERT(!isMainThread());
+    static NeverDestroyed<Strong<JSGlobalObject>> globalObject;
+    static bool initialized = false;
+    if (!initialized) {
+        globalObject.get().set(indexVM(), JSGlobalObject::create(indexVM(), JSGlobalObject::createStructure(indexVM(), jsNull())));
+        initialized = true;
+    }
+
+    RELEASE_ASSERT(globalObject.get()->globalExec());
+    return *globalObject.get()->globalExec();
+}
+
+void MemoryObjectStore::updateIndexesForDeleteRecord(const IDBKeyData& value)
+{
+    for (auto* index : m_indexesByName.values())
+        index->removeEntriesWithValueKey(value);
+}
+
+IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, const ThreadSafeDataBuffer& value)
+{
+    JSLockHolder locker(indexVM());
+
+    auto jsValue = idbValueDataToJSValue(indexGlobalExec(), value);
+    if (jsValue.isUndefinedOrNull())
+        return { };
+
+    IDBError error;
+    Vector<std::pair<MemoryIndex*, IndexKey>> changedIndexRecords;
+
+    for (auto* index : m_indexesByName.values()) {
+        IndexKey indexKey;
+        generateIndexKeyForValue(indexGlobalExec(), index->info(), jsValue, indexKey);
+
+        if (indexKey.isNull())
+            continue;
+
+        error = index->putIndexKey(key, indexKey);
+        if (!error.isNull())
+            break;
+
+        changedIndexRecords.append(std::make_pair(index, indexKey));
+    }
+
+    // If any of the index puts failed, revert all of the ones that went through.
+    if (!error.isNull()) {
+        for (auto& record : changedIndexRecords)
+            record.first->removeRecord(key, record.second);
+    }
+
+    return error;
 }
 
 uint64_t MemoryObjectStore::countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData& inRange) const
@@ -224,7 +305,7 @@ IDBGetResult MemoryObjectStore::indexValueForKeyRange(uint64_t indexIdentifier, 
 
     auto* index = m_indexesByIdentifier.get(indexIdentifier);
     ASSERT(index);
-    return index->valueForKeyRange(recordType, range);
+    return index->getResultForKeyRange(recordType, range);
 }
 
 IDBKeyData MemoryObjectStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& keyRangeData) const

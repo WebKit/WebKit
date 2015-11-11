@@ -117,19 +117,22 @@ void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& object
 
     auto addResult = m_clearedKeyValueMaps.add(&objectStore, nullptr);
 
-    // If this object store has already been cleared during this transaction, we don't need to remember this clearing.
+    // If this object store has already been cleared during this transaction, we shouldn't remember this clearing.
     if (!addResult.isNewEntry)
         return;
 
-    // If values had previously been changed during this transaction, fold those changes back into the
-    // cleared key-value map now, so we have exactly the map that will need to be restored if the transaction is aborted.
-    auto originalValues = m_originalValues.take(&objectStore);
-    if (originalValues) {
-        for (auto iterator : *originalValues)
-            keyValueMap->set(iterator.key, iterator.value);
-    }
-
     addResult.iterator->value = WTF::move(keyValueMap);
+}
+
+void MemoryBackingStoreTransaction::indexCleared(MemoryIndex& index, std::unique_ptr<IndexValueStore>&& valueStore)
+{
+    auto addResult = m_clearedIndexValueStores.add(&index, nullptr);
+
+    // If this index has already been cleared during this transaction, we shouldn't remember this clearing.
+    if (!addResult.isNewEntry)
+        return;
+
+    addResult.iterator->value = WTF::move(valueStore);
 }
 
 void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& objectStore, const IDBKeyData& key, ThreadSafeDataBuffer* value)
@@ -182,15 +185,19 @@ void MemoryBackingStoreTransaction::abort()
         m_backingStore.setDatabaseInfo(*m_originalDatabaseInfo);
     }
 
+    // Restore cleared index value stores before we re-insert values into object stores
+    // because inserting those values will regenerate the appropriate index values.
+    for (auto& iterator : m_clearedIndexValueStores)
+        iterator.key->replaceIndexValueStore(WTF::move(iterator.value));
+    m_clearedIndexValueStores.clear();
+    
     for (auto objectStore : m_objectStores) {
         ASSERT(m_originalKeyGenerators.contains(objectStore));
         objectStore->setKeyGeneratorValue(m_originalKeyGenerators.get(objectStore));
 
         auto clearedKeyValueMap = m_clearedKeyValueMaps.take(objectStore);
-        if (clearedKeyValueMap) {
+        if (clearedKeyValueMap)
             objectStore->replaceKeyValueStore(WTF::move(clearedKeyValueMap));
-            continue;
-        }
 
         auto keyValueMap = m_originalValues.take(objectStore);
         if (!keyValueMap)

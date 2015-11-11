@@ -1,9 +1,10 @@
-ALERT: Initial upgrade needed: Old version - 0 New version - 1
-ALERT: get result is: undefined
-ALERT: getKey result is: undefined
-ALERT: count result is: 0
-ALERT: Initial upgrade versionchange transaction complete
-ALERT: Done
 This tests the most basic operation of the IDBIndex methods get(), getKey(), and count().
-It doesn't actually do anything other than exercise the requests themselves because we don't actually index yet.
+Initial upgrade needed: Old version - 0 New version - 1
+get result is: [object Object]
+bar is good
+baz is bad
+getKey result is: foo
+count result is: 1
+Initial upgrade versionchange transaction complete
+Done
 

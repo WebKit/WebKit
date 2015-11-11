@@ -2047,6 +2047,10 @@
 		516D7D701BB5F0BD00AF7C77 /* IDBConnectionToServerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185FCBD1BB5CB770012898F /* IDBConnectionToServerDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516D7D711BB5F0BD00AF7C77 /* IDBConnectionToClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516D7D6D1BB5F06500AF7C77 /* IDBConnectionToClient.cpp */; };
 		516D7D721BB5F0BD00AF7C77 /* IDBConnectionToClientDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 516D7D6E1BB5F06500AF7C77 /* IDBConnectionToClientDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517138EF1BED1D1A000D5F01 /* IndexKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517138ED1BED1D17000D5F01 /* IndexKey.cpp */; };
+		517138F01BED1D1A000D5F01 /* IndexKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138EE1BED1D17000D5F01 /* IndexKey.h */; };
+		517138F71BF128BB000D5F01 /* IndexValueStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517138F51BF12262000D5F01 /* IndexValueStore.cpp */; };
+		517138F81BF128BB000D5F01 /* IndexValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138F61BF12262000D5F01 /* IndexValueStore.h */; };
 		51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
@@ -2211,6 +2215,8 @@
 		51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */; };
 		51EE7B381AA50B0500F92B21 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EE7B3A1AA5123100F92B21 /* ResourceLoadInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EE7B391AA5123100F92B21 /* ResourceLoadInfo.cpp */; };
+		51EEAA731BEFFAB100218008 /* IndexValueEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */; };
+		51EEAA741BEFFAB100218008 /* IndexValueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EEAA721BEFFA7900218008 /* IndexValueEntry.h */; };
 		51F41A681BA73B5B002E053B /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A481BA73B2C002E053B /* IDBCallbacks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F41A691BA73B5B002E053B /* IDBCursorBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F41A491BA73B2C002E053B /* IDBCursorBackend.cpp */; };
 		51F41A6A1BA73B5B002E053B /* IDBCursorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F41A4A1BA73B2C002E053B /* IDBCursorBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9497,6 +9503,10 @@
 		516C62241950E2B900337E75 /* JSGamepadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGamepadEvent.h; sourceTree = "<group>"; };
 		516D7D6D1BB5F06500AF7C77 /* IDBConnectionToClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBConnectionToClient.cpp; sourceTree = "<group>"; };
 		516D7D6E1BB5F06500AF7C77 /* IDBConnectionToClientDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBConnectionToClientDelegate.h; sourceTree = "<group>"; };
+		517138ED1BED1D17000D5F01 /* IndexKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexKey.cpp; sourceTree = "<group>"; };
+		517138EE1BED1D17000D5F01 /* IndexKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexKey.h; sourceTree = "<group>"; };
+		517138F51BF12262000D5F01 /* IndexValueStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexValueStore.cpp; sourceTree = "<group>"; };
+		517138F61BF12262000D5F01 /* IndexValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexValueStore.h; sourceTree = "<group>"; };
 		51741D0B0B07259A00ED442C /* BackForwardClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardClient.h; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
@@ -9654,6 +9664,8 @@
 		51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
 		51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		51EE7B391AA5123100F92B21 /* ResourceLoadInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadInfo.cpp; sourceTree = "<group>"; };
+		51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexValueEntry.cpp; sourceTree = "<group>"; };
+		51EEAA721BEFFA7900218008 /* IndexValueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexValueEntry.h; sourceTree = "<group>"; };
 		51F41A481BA73B2C002E053B /* IDBCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCallbacks.h; sourceTree = "<group>"; };
 		51F41A491BA73B2C002E053B /* IDBCursorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackend.cpp; sourceTree = "<group>"; };
 		51F41A4A1BA73B2C002E053B /* IDBCursorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackend.h; sourceTree = "<group>"; };
@@ -16878,6 +16890,8 @@
 				5198F7AB1BBDD3E300E2CC5F /* IDBTransactionInfo.h */,
 				510A58E21BAA40AE00C19282 /* InProcessIDBServer.cpp */,
 				510A58E31BAA40AE00C19282 /* InProcessIDBServer.h */,
+				517138ED1BED1D17000D5F01 /* IndexKey.cpp */,
+				517138EE1BED1D17000D5F01 /* IndexKey.h */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -16893,6 +16907,10 @@
 				510A58F01BAB720F00C19282 /* IDBServer.h */,
 				518864E41BBB4B7E00E540C9 /* IDBServerOperation.cpp */,
 				518864E51BBB4B7E00E540C9 /* IDBServerOperation.h */,
+				51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */,
+				51EEAA721BEFFA7900218008 /* IndexValueEntry.h */,
+				517138F51BF12262000D5F01 /* IndexValueStore.cpp */,
+				517138F61BF12262000D5F01 /* IndexValueStore.h */,
 				51E1BAC01BD806470055D81F /* MemoryBackingStoreTransaction.cpp */,
 				51E1BAC11BD806470055D81F /* MemoryBackingStoreTransaction.h */,
 				51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */,
@@ -25682,6 +25700,7 @@
 				A871DE2D0A152AC800B12A68 /* HTMLHeadElement.h in Headers */,
 				A8EA7CB80A192B9C00A8EF5F /* HTMLHeadingElement.h in Headers */,
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
+				517138F81BF128BB000D5F01 /* IndexValueStore.h in Headers */,
 				A871DE270A152AC800B12A68 /* HTMLHtmlElement.h in Headers */,
 				A871DE2A0A152AC800B12A68 /* HTMLIFrameElement.h in Headers */,
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
@@ -26960,6 +26979,7 @@
 				CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */,
 				442AF7A9102CDDEA008FD4D3 /* QuickLook.h in Headers */,
 				A10DBF4718F92317000D70C6 /* QuickLookHandleClient.h in Headers */,
+				51EEAA741BEFFAB100218008 /* IndexValueEntry.h in Headers */,
 				937F4CCC1A2D48C100BB39F5 /* QuickLookMacSPI.h in Headers */,
 				443918001A91B2F8006E04F2 /* QuickLookSoftLink.h in Headers */,
 				CE1252391A166FA000864480 /* QuickLookSPI.h in Headers */,
@@ -27321,6 +27341,7 @@
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
+				517138F01BED1D1A000D5F01 /* IndexKey.h in Headers */,
 				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
@@ -28718,6 +28739,7 @@
 				31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */,
 				CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */,
 				FBD6AF8B15EF25E5008B7110 /* CSSBasicShapes.cpp in Sources */,
+				51EEAA731BEFFAB100218008 /* IndexValueEntry.cpp in Sources */,
 				E16A84F914C85CCC002977DF /* CSSBorderImage.cpp in Sources */,
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
 				49AE2D8E134EE50C0072920A /* CSSCalculationValue.cpp in Sources */,
@@ -29789,6 +29811,7 @@
 				9752D38D1413104B003305BD /* JSHTMLSpanElement.cpp in Sources */,
 				A80E7B0F0A19D606007FB8C5 /* JSHTMLStyleElement.cpp in Sources */,
 				BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */,
+				517138F71BF128BB000D5F01 /* IndexValueStore.cpp in Sources */,
 				BC06EDE30BFD6D0D00856E9D /* JSHTMLTableCellElement.cpp in Sources */,
 				BC06ED9D0BFD660600856E9D /* JSHTMLTableColElement.cpp in Sources */,
 				836CB1F91BD1E41800AF1591 /* JSHTMLTableDataCellElement.cpp in Sources */,
@@ -29961,6 +29984,7 @@
 				AA7FEEA416A4E6F3004C0C33 /* JSSpeechSynthesis.cpp in Sources */,
 				AA2A5AD316A4860D00976A25 /* JSSpeechSynthesisEvent.cpp in Sources */,
 				AA7FEEA616A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.cpp in Sources */,
+				517138EF1BED1D1A000D5F01 /* IndexKey.cpp in Sources */,
 				AA7FEEA816A4E6F3004C0C33 /* JSSpeechSynthesisVoice.cpp in Sources */,
 				514C76370CE9225E007EF3CD /* JSSQLError.cpp in Sources */,
 				B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */,

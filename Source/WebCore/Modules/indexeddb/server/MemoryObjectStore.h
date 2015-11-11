@@ -61,13 +61,14 @@ public:
 
     void writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
+    MemoryBackingStoreTransaction* writeTransaction() { return m_writeTransaction; }
 
     IDBError createIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
 
     bool containsRecord(const IDBKeyData&);
     void deleteRecord(const IDBKeyData&);
     void deleteRange(const IDBKeyRangeData&);
-    void addRecord(MemoryBackingStoreTransaction&, const IDBKeyData&, const ThreadSafeDataBuffer& value);
+    IDBError addRecord(MemoryBackingStoreTransaction&, const IDBKeyData&, const ThreadSafeDataBuffer& value);
 
     uint64_t currentKeyGeneratorValue() const { return m_keyGeneratorValue; }
     void setKeyGeneratorValue(uint64_t value) { m_keyGeneratorValue = value; }
@@ -85,6 +86,9 @@ private:
     MemoryObjectStore(const IDBObjectStoreInfo&);
 
     IDBKeyData lowestKeyWithRecordInRange(const IDBKeyRangeData&) const;
+
+    IDBError updateIndexesForPutRecord(const IDBKeyData&, const ThreadSafeDataBuffer& value);
+    void updateIndexesForDeleteRecord(const IDBKeyData& value);
 
     IDBObjectStoreInfo m_info;
 

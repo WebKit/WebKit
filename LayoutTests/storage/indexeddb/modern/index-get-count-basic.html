@@ -1,5 +1,4 @@
 This tests the most basic operation of the IDBIndex methods get(), getKey(), and count().<br>
-It doesn't actually do anything other than exercise the requests themselves because we don't actually index yet.<br>
 <div id="logger"></div>
 <script>
 
@@ -10,12 +9,12 @@ if (window.testRunner) {
 
 function done()
 {
-    alert("Done");
+    log("Done");
     if (window.testRunner)
         testRunner.notifyDone();
 }
 
-function gol(message)
+function log(message)
 {
     document.getElementById("logger").innerHTML += message + "<br>";
 }
@@ -23,42 +22,44 @@ function gol(message)
 var createRequest = window.indexedDB.open("IndexGetCountBasicDatabase", 1);
 
 createRequest.onupgradeneeded = function(event) {
-    alert("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    log("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
 
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
     var objectStore = database.createObjectStore("TestObjectStore");
-    var index = objectStore.createIndex("TestIndex", "foo");
+    var index = objectStore.createIndex("TestIndex", "bar");
 
-    objectStore.put("bar", "foo");
+    objectStore.put({ bar: "good", baz: "bad" }, "foo");
     
-    var request1 = index.get("bar");
+    var request1 = index.get("good");
     request1.onsuccess = function() {
-        alert("get result is: " + request1.result);
+        log("get result is: " + request1.result);
+        for (n in request1.result)
+            log(n + " is " + request1.result[n]);
     }
 
-    request2 = index.getKey("bar");
+    request2 = index.getKey("good");
     request2.onsuccess = function() {
-        alert("getKey result is: " + request2.result);
+        log("getKey result is: " + request2.result);
     }
     
     var request3 = index.count();
     request3.onsuccess = function() {
-        alert("count result is: " + request3.result);
+        log("count result is: " + request3.result);
     }
         
     versionTransaction.onabort = function(event) {
-        alert("Initial upgrade versionchange transaction unexpected aborted");
+        log("Initial upgrade versionchange transaction unexpected aborted");
         done();
     }
 
     versionTransaction.oncomplete = function(event) {
-        alert("Initial upgrade versionchange transaction complete");
+        log("Initial upgrade versionchange transaction complete");
         done();
     }
 
     versionTransaction.onerror = function(event) {
-        alert("Initial upgrade versionchange transaction unexpected error" + event);
+        log("Initial upgrade versionchange transaction unexpected error" + event);
         done();
     }
 }

@@ -1,0 +1,23 @@
+This test exercises the "unique" constraint of indexes.
+Initial upgrade needed: Old version - 0 New version - 1
+First put success
+Value of 1 is: [object Object]
+Value of 2 is: undefined
+Value of 3 is: undefined
+Count in index 1 is: 1
+Count in index 2 is: 1
+Second put failure
+Value of 1 is: [object Object]
+Value of 2 is: undefined
+Value of 3 is: undefined
+Count in index 1 is: 1
+Count in index 2 is: 1
+Third put failure
+Value of 1 is: [object Object]
+Value of 2 is: undefined
+Value of 3 is: undefined
+Count in index 1 is: 1
+Count in index 2 is: 1
+Initial upgrade versionchange transaction complete
+Done
+

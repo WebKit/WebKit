@@ -31,6 +31,7 @@
 #include "IDBDatabaseInfo.h"
 #include "IDBKeyData.h"
 #include "IDBTransactionInfo.h"
+#include "IndexValueStore.h"
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -63,6 +64,7 @@ public:
     void recordValueChanged(MemoryObjectStore&, const IDBKeyData&, ThreadSafeDataBuffer*);
     void objectStoreDeleted(std::unique_ptr<MemoryObjectStore>);
     void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&);
+    void indexCleared(MemoryIndex&, std::unique_ptr<IndexValueStore>&&);
 
     void addNewIndex(MemoryIndex&);
     void addExistingIndex(MemoryIndex&);
@@ -90,8 +92,10 @@ private:
 
     HashMap<MemoryObjectStore*, uint64_t> m_originalKeyGenerators;
     HashMap<String, std::unique_ptr<MemoryObjectStore>> m_deletedObjectStores;
+    HashMap<String, std::unique_ptr<MemoryIndex>> m_deletedIndexes;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_clearedKeyValueMaps;
+    HashMap<MemoryIndex*, std::unique_ptr<IndexValueStore>> m_clearedIndexValueStores;
 };
 
 } // namespace IDBServer

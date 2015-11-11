@@ -73,7 +73,7 @@ PassRefPtr<IDBKeyRange> IDBKeyRangeData::maybeCreateIDBKeyRange() const
 
 bool IDBKeyRangeData::isExactlyOneKey() const
 {
-    if (isNull || lowerOpen || upperOpen)
+    if (isNull || lowerOpen || upperOpen || !upperKey.isValid() || !lowerKey.isValid())
         return false;
 
     return !lowerKey.compare(upperKey);

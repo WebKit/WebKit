@@ -902,6 +902,8 @@ set(WebCore_SOURCES
     Modules/indexeddb/server/IDBConnectionToClient.cpp
     Modules/indexeddb/server/IDBServer.cpp
     Modules/indexeddb/server/IDBServerOperation.cpp
+    Modules/indexeddb/server/IndexValueEntry.cpp
+    Modules/indexeddb/server/IndexValueStore.cpp
     Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp
     Modules/indexeddb/server/MemoryIDBBackingStore.cpp
     Modules/indexeddb/server/MemoryIndex.cpp
@@ -919,6 +921,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/shared/IDBResultData.cpp
     Modules/indexeddb/shared/IDBTransactionInfo.cpp
     Modules/indexeddb/shared/InProcessIDBServer.cpp
+    Modules/indexeddb/shared/IndexKey.cpp
 
     Modules/mediacontrols/MediaControlsHost.cpp
 
