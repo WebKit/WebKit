@@ -139,6 +139,7 @@ private:
 
     static const unsigned cHashTableDeletedSize = 0xFFFFFFFFU;
 
+    // FontCascade::locale() is explicitly not included in this struct.
     unsigned m_size { 0 };
     unsigned m_weight { 0 };
     std::array<unsigned, 2> m_flags {{ 0, 0 }};

@@ -115,7 +115,7 @@ font-variant-caps [Inherited, FontProperty, NameForMethods=VariantCaps]
 font-variant-numeric [Inherited, FontProperty, NameForMethods=VariantNumeric, Custom=All]
 font-variant-alternates [Inherited, FontProperty, NameForMethods=VariantAlternates]
 font-variant-east-asian [Inherited, FontProperty, NameForMethods=VariantEastAsian, Custom=All]
--webkit-locale [Inherited, Custom=Value]
+-webkit-locale [Inherited, FontProperty, Custom=Value]
 -webkit-text-orientation [Inherited, Custom=Value]
 -epub-text-orientation = -webkit-text-orientation
 #if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING

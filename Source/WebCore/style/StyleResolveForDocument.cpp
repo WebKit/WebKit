@@ -59,7 +59,9 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
     documentStyle.get().setRTLOrdering(document.visuallyOrdered() ? VisualOrder : LogicalOrder);
     documentStyle.get().setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
     documentStyle.get().setPageScaleTransform(renderView.frame().frameScaleFactor());
-    documentStyle.get().setLocale(document.contentLanguage());
+    FontCascadeDescription documentFontDescription = documentStyle.get().fontDescription();
+    documentFontDescription.setLocale(document.contentLanguage());
+    documentStyle.get().setFontDescription(WTF::move(documentFontDescription));
 
     // This overrides any -webkit-user-modify inherited from the parent iframe.
     documentStyle.get().setUserModify(document.inDesignMode() ? READ_WRITE : READ_ONLY);
@@ -97,7 +99,7 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
     const Settings& settings = renderView.frame().settings();
 
     FontCascadeDescription fontDescription;
-    fontDescription.setScript(localeToScriptCodeForFontSelection(documentStyle.get().locale()));
+    fontDescription.setLocale(document.contentLanguage());
     fontDescription.setRenderingMode(settings.fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
 

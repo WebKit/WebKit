@@ -30,10 +30,13 @@
 #include "config.h"
 #include "FontDescription.h"
 
+#include "LocaleToScriptMapping.h"
+
 namespace WebCore {
 
 struct SameSizeAsFontCascadeDescription {
     Vector<void*> vector;
+    AtomicString string;
     float size;
     unsigned bitfields1;
     unsigned bitfields2 : 22;
@@ -79,6 +82,12 @@ FontTraitsMask FontDescription::traitsMask() const
         | (m_smallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask)
         | (FontWeight100Mask << (m_weight - FontWeight100)));
     
+}
+
+void FontDescription::setLocale(const AtomicString& locale)
+{
+    m_locale = locale;
+    m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
 FontCascadeDescription::FontCascadeDescription()
