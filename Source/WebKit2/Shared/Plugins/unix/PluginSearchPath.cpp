@@ -37,6 +37,17 @@ Vector<String> pluginsDirectories()
     Vector<String> result;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
+    String mozillaPaths(getenv("MOZ_PLUGIN_PATH"));
+    if (!mozillaPaths.isEmpty()) {
+        Vector<String> paths;
+        mozillaPaths.split(UChar(':'), /* allowEmptyEntries */ false, paths);
+        result.appendVector(paths);
+    }
+
+    String mozillaHome(getenv("MOZILLA_HOME"));
+    if (!mozillaHome.isEmpty())
+        result.append(mozillaHome + "/plugins");
+
     result.append(homeDirectoryPath() + "/.mozilla/plugins");
     result.append(homeDirectoryPath() + "/.netscape/plugins");
     result.append("/usr/lib/browser/plugins");
@@ -57,17 +68,6 @@ Vector<String> pluginsDirectories()
     result.append("/usr/lib64/mozilla/plugins");
     result.append("/usr/lib/nsbrowser/plugins");
     result.append("/usr/lib64/nsbrowser/plugins");
-
-    String mozillaHome(getenv("MOZILLA_HOME"));
-    if (!mozillaHome.isEmpty())
-        result.append(mozillaHome + "/plugins");
-
-    String mozillaPaths(getenv("MOZ_PLUGIN_PATH"));
-    if (!mozillaPaths.isEmpty()) {
-        Vector<String> paths;
-        mozillaPaths.split(UChar(':'), /* allowEmptyEntries */ false, paths);
-        result.appendVector(paths);
-    }
 #endif
 
     return result;
