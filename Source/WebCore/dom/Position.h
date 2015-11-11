@@ -207,7 +207,10 @@ public:
     void showAnchorTypeAndOffset() const;
     void showTreeForThis() const;
 #endif
-    
+
+    // This is a tentative enhancement of operator== to account for different position types.
+    // FIXME: Combine this function with operator==
+    bool equals(const Position&) const;
 private:
     WEBCORE_EXPORT int offsetForPositionAfterAnchor() const;
     

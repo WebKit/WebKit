@@ -1,3 +1,17 @@
+2015-11-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test editing/inserting/insert-html-crash-01.html
+        https://bugs.webkit.org/show_bug.cgi?id=149298
+        <rdar://problem/22746918>
+
+        Reviewed by Ryosuke Niwa.
+
+        This test case is from Blink r153982:
+        https://codereview.chromium.org/16053005
+
+        * editing/inserting/insert-html-crash-01-expected.txt: Added.
+        * editing/inserting/insert-html-crash-01.html: Added.
+
 2015-11-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Some style changes cause tatechuyoko to be drawn off center
