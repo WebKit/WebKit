@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,18 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebActionDisablingCALayerDelegate_h
-#define WebActionDisablingCALayerDelegate_h
+#if USE(APPKIT)
 
-#import <WebCore/QuartzCoreSPI.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-WEBCORE_EXPORT @interface WebActionDisablingCALayerDelegate : NSObject <CALayerDelegate>
+#import <AppKit/NSAccessibilityRemoteUIElement.h>
 
-+ (instancetype)shared;
+#else
+
+@interface NSAccessibilityRemoteUIElement : NSObject
+
++ (void)setRemoteUIApp:(BOOL)flag;
 
 @end
 
-#endif // WebActionDisablingCALayerDelegate_h
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // USE(APPKIT)

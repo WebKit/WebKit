@@ -50,6 +50,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryPressureHandler.h>
+#import <WebCore/NSAccessibilitySPI.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/pthreadSPI.h>
 #import <WebCore/VNodeTracker.h>
@@ -60,10 +61,6 @@
 #import <objc/runtime.h>
 #import <stdio.h>
 #import <wtf/RAMSize.h>
-
-#if USE(APPKIT)
-#import "AppKitSPI.h"
-#endif
 
 #if PLATFORM(IOS)
 #import <WebCore/GraphicsServicesSPI.h>

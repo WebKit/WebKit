@@ -195,3 +195,11 @@ EXTERN_C NSString * const kCAFilterExclusionBlendMode;
 EXTERN_C NSString * const kCAContextDisplayName;
 EXTERN_C NSString * const kCAContextDisplayId;
 EXTERN_C NSString * const kCAContextIgnoresHitTest;
+
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED <= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101100)
+@protocol CALayerDelegate <NSObject>
+@end
+
+@protocol CAAnimationDelegate <NSObject>
+@end
+#endif

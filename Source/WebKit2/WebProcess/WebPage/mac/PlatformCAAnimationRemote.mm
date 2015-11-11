@@ -33,6 +33,7 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/TextStream.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/CurrentTime.h>
@@ -49,7 +50,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplicitBeginTimeFlag";
 
-@interface WKAnimationDelegate : NSObject {
+@interface WKAnimationDelegate : NSObject <CAAnimationDelegate> {
     GraphicsLayer::PlatformLayerID _layerID;
     WebKit::RemoteLayerTreeHost* _layerTreeHost;
 }

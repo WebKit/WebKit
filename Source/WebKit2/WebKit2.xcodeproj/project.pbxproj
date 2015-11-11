@@ -805,7 +805,6 @@
 		37694525184FC6B600CDE21F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		37716A5A195B910500EE8B1B /* ProcessAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37716A59195B910500EE8B1B /* ProcessAssertion.cpp */; };
 		377216B81A4E6BE000DCA718 /* _WKRenderingProgressEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 377216B71A4E6BE000DCA718 /* _WKRenderingProgressEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		37777A0E1BD2CA11007F74B5 /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 37777A0D1BD2CA11007F74B5 /* AppKitSPI.h */; };
 		377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4917E2C77B002D193D /* WKUserScriptInjectionTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3004,7 +3003,6 @@
 		3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleFormClient.h; sourceTree = "<group>"; };
 		37716A59195B910500EE8B1B /* ProcessAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessAssertion.cpp; sourceTree = "<group>"; };
 		377216B71A4E6BE000DCA718 /* _WKRenderingProgressEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRenderingProgressEvents.h; sourceTree = "<group>"; };
-		37777A0D1BD2CA11007F74B5 /* AppKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
 		377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeclarationSpecifiers.h; sourceTree = "<group>"; };
 		377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentInjectedFrames.h; sourceTree = "<group>"; };
 		377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserScriptInjectionTime.h; sourceTree = "<group>"; };
@@ -5369,14 +5367,6 @@
 			path = Cocoa;
 			sourceTree = "<group>";
 		};
-		37777A0C1BD2C9D6007F74B5 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				37777A0D1BD2CA11007F74B5 /* AppKitSPI.h */,
-			);
-			path = mac;
-			sourceTree = "<group>";
-		};
 		37C4C08318149C2A003688B9 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -7485,7 +7475,6 @@
 			children = (
 				3754D5411B3A2998003A4C7F /* Cocoa */,
 				CE1A0BCB1A48E6C60054EF74 /* ios */,
-				37777A0C1BD2C9D6007F74B5 /* mac */,
 			);
 			path = spi;
 			sourceTree = "<group>";
@@ -7617,7 +7606,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A3A73CE1A48C6D4007231B3 /* APIPageGroupHandle.h in Headers */,
-				37777A0E1BD2CA11007F74B5 /* AppKitSPI.h in Headers */,
 				7C4ED3291A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h in Headers */,
 				E19BDA8A193686A400B97F57 /* SandboxUtilities.h in Headers */,
 				1A7284471959ED100007BCE5 /* SessionStateConversion.h in Headers */,

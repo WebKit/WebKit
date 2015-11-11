@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "APIUIClient.h"
-#import "AppKitSPI.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -50,6 +49,7 @@
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/NSApplicationSPI.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>

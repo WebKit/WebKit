@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "APILegacyContextHistoryClient.h"
-#import "AppKitSPI.h"
 #import "ColorSpaceData.h"
 #import "GenericCallback.h"
 #import "Logging.h"
@@ -74,7 +73,9 @@
 #import <WebCore/KeypressCommand.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LookupSPI.h>
+#import <WebCore/NSApplicationSPI.h>
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
+#import <WebCore/NSTextFinderSPI.h>
 #import <WebCore/NSWindowSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/SoftLinking.h>

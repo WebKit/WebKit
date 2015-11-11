@@ -1,3 +1,22 @@
+2015-11-10  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt formal protocols for CA delegates
+        https://bugs.webkit.org/show_bug.cgi?id=151121
+        <rdar://problem/6739193>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        Adapt to the split out SPI headers.
+
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        Conform!
+
 2015-11-10  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build.

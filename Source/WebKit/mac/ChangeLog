@@ -1,3 +1,13 @@
+2015-11-10  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt formal protocols for CA delegates
+        https://bugs.webkit.org/show_bug.cgi?id=151121
+        <rdar://problem/6739193>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebHTMLView.mm:
+
 2015-11-09  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Add a mock AppleTV device for testing

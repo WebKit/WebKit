@@ -30,9 +30,9 @@
 
 #import "APIFindClient.h"
 #import "APIFindMatchesClient.h"
-#import "AppKitSPI.h"
 #import "WebImage.h"
 #import "WebPageProxy.h"
+#import <WebCore/NSTextFinderSPI.h>
 #import <wtf/Deque.h>
 
 // FIXME: Implement support for replace.

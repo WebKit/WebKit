@@ -339,10 +339,10 @@
 		07D07B141834158800ABDD3C /* JSRTCSessionDescriptionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D07B131834158800ABDD3C /* JSRTCSessionDescriptionCustom.cpp */; };
 		07D637401BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h */; };
 		07D637411BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07D6373F1BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm */; };
-		07D6A4EF1BECF2D200174146 /* MockRealtimeMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D6A4ED1BECF2D200174146 /* MockRealtimeMediaSource.cpp */; settings = {ASSET_TAGS = (); }; };
-		07D6A4F01BECF2D200174146 /* MockRealtimeMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4EE1BECF2D200174146 /* MockRealtimeMediaSource.h */; settings = {ASSET_TAGS = (); }; };
-		07D6A4F31BED5F8800174146 /* MockRealtimeAudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D6A4F11BED5F8800174146 /* MockRealtimeAudioSource.cpp */; settings = {ASSET_TAGS = (); }; };
-		07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4F21BED5F8800174146 /* MockRealtimeAudioSource.h */; settings = {ASSET_TAGS = (); }; };
+		07D6A4EF1BECF2D200174146 /* MockRealtimeMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D6A4ED1BECF2D200174146 /* MockRealtimeMediaSource.cpp */; };
+		07D6A4F01BECF2D200174146 /* MockRealtimeMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4EE1BECF2D200174146 /* MockRealtimeMediaSource.h */; };
+		07D6A4F31BED5F8800174146 /* MockRealtimeAudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D6A4F11BED5F8800174146 /* MockRealtimeAudioSource.cpp */; };
+		07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4F21BED5F8800174146 /* MockRealtimeAudioSource.h */; };
 		07DC5FD417D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */; };
 		07E116B11489C9A100EC5ACE /* JSTextTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */; };
 		07E117071489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */; };
@@ -350,10 +350,10 @@
 		07E9E12E18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E9E12D18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h */; };
 		07E9E13018F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E9E12F18F62B370011A3A4 /* InbandMetadataTextTrackPrivateAVF.cpp */; };
 		07EDC3EE1AACB75D00983EB5 /* MediaSessionManagerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EDC3ED1AACB75D00983EB5 /* MediaSessionManagerMac.cpp */; };
-		07EE76EB1BE96DB000F89133 /* MockRealtimeVideoSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EE76E91BE96DB000F89133 /* MockRealtimeVideoSource.cpp */; settings = {ASSET_TAGS = (); }; };
-		07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EE76EA1BE96DB000F89133 /* MockRealtimeVideoSource.h */; settings = {ASSET_TAGS = (); }; };
-		07EE76EF1BEA619800F89133 /* MockRealtimeVideoSourceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EE76ED1BEA619800F89133 /* MockRealtimeVideoSourceMac.h */; settings = {ASSET_TAGS = (); }; };
-		07EE76F01BEA619800F89133 /* MockRealtimeVideoSourceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07EE76EE1BEA619800F89133 /* MockRealtimeVideoSourceMac.mm */; settings = {ASSET_TAGS = (); }; };
+		07EE76EB1BE96DB000F89133 /* MockRealtimeVideoSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07EE76E91BE96DB000F89133 /* MockRealtimeVideoSource.cpp */; };
+		07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EE76EA1BE96DB000F89133 /* MockRealtimeVideoSource.h */; };
+		07EE76EF1BEA619800F89133 /* MockRealtimeVideoSourceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EE76ED1BEA619800F89133 /* MockRealtimeVideoSourceMac.h */; };
+		07EE76F01BEA619800F89133 /* MockRealtimeVideoSourceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07EE76EE1BEA619800F89133 /* MockRealtimeVideoSourceMac.mm */; };
 		07F0B97A1AC5DB3300E535D9 /* AVKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F0B9791AC5DB3300E535D9 /* AVKitSPI.h */; };
 		07F0B97C1AC5DB4600E535D9 /* AVFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F876841AD580F900905849 /* MediaPlaybackTargetContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F876831AD4A94500905849 /* MediaPlaybackTargetContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1166,6 +1166,10 @@
 		2D70BA1518074F860001908A /* PlatformCALayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D70BA1418074F850001908A /* PlatformCALayer.cpp */; };
 		2D76BB821945632400CFD29A /* RunLoopObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D76BB801945632400CFD29A /* RunLoopObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D76BB8419456F8100CFD29A /* RunLoopObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D76BB8319456F8100CFD29A /* RunLoopObserver.cpp */; };
+		2D77AC291BF2B9860072470A /* NSAccessibilitySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D77AC261BF2B9860072470A /* NSAccessibilitySPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D77AC2A1BF2B9870072470A /* NSApplicationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D77AC271BF2B9860072470A /* NSApplicationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D77AC2B1BF2B9870072470A /* NSTextFinderSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D77AC281BF2B9860072470A /* NSTextFinderSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D77AC2D1BF2B9A00072470A /* NSViewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D77AC2C1BF2B9A00072470A /* NSViewSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */; };
 		2D7ED0AC1BAE99170043B3E5 /* UserMediaClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7ED0AA1BAE99170043B3E5 /* UserMediaClientMock.h */; };
 		2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */; };
@@ -5007,10 +5011,10 @@
 		B2C3DA6B0D006CD600EF6F26 /* FontSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA5A0D006CD600EF6F26 /* FontSelector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA6C0D006CD600EF6F26 /* GlyphBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA5B0D006CD600EF6F26 /* GlyphBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C96D8D0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */; };
-		B2D3DA640D006CD600EF6F3A /* OpenTypeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */; };
-		B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2D3DA640D006CD600EF6F27 /* OpenTypeMathData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */; };
+		B2D3DA640D006CD600EF6F3A /* OpenTypeCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */; };
 		B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */; };
 		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8513,6 +8517,10 @@
 		2D70BA1418074F850001908A /* PlatformCALayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayer.cpp; sourceTree = "<group>"; };
 		2D76BB801945632400CFD29A /* RunLoopObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopObserver.h; sourceTree = "<group>"; };
 		2D76BB8319456F8100CFD29A /* RunLoopObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopObserver.cpp; sourceTree = "<group>"; };
+		2D77AC261BF2B9860072470A /* NSAccessibilitySPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAccessibilitySPI.h; sourceTree = "<group>"; };
+		2D77AC271BF2B9860072470A /* NSApplicationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSApplicationSPI.h; sourceTree = "<group>"; };
+		2D77AC281BF2B9860072470A /* NSTextFinderSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTextFinderSPI.h; sourceTree = "<group>"; };
+		2D77AC2C1BF2B9A00072470A /* NSViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewSPI.h; sourceTree = "<group>"; };
 		2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerEventBasedMock.h; sourceTree = "<group>"; };
 		2D7ED0AA1BAE99170043B3E5 /* UserMediaClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaClientMock.h; sourceTree = "<group>"; };
 		2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestLocation.cpp; sourceTree = "<group>"; };
@@ -12755,10 +12763,10 @@
 		B2C3DA5A0D006CD600EF6F26 /* FontSelector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontSelector.h; sourceTree = "<group>"; };
 		B2C3DA5B0D006CD600EF6F26 /* GlyphBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GlyphBuffer.h; sourceTree = "<group>"; };
 		B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSegCustom.cpp; sourceTree = "<group>"; };
-		B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OpenTypeCG.cpp; sourceTree = "<group>"; };
-		B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeCG.h; sourceTree = "<group>"; };
 		B2D3DA530D006CD600EF6F27 /* OpenTypeMathData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OpenTypeMathData.cpp; sourceTree = "<group>"; };
+		B2D3DA530D006CD600EF6F3A /* OpenTypeCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OpenTypeCG.cpp; sourceTree = "<group>"; };
 		B2D3DA540D006CD600EF6F27 /* OpenTypeMathData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeMathData.h; sourceTree = "<group>"; };
+		B2D3DA540D006CD600EF6F3A /* OpenTypeCG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeCG.h; sourceTree = "<group>"; };
 		B2D3EA540D006CD600EF6F28 /* OpenTypeTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenTypeTypes.h; sourceTree = "<group>"; };
 		B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint3D.cpp; sourceTree = "<group>"; };
 		B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint3D.h; sourceTree = "<group>"; };
@@ -18618,6 +18626,8 @@
 		9348428019F1A9190009D5AE /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				2D77AC261BF2B9860072470A /* NSAccessibilitySPI.h */,
+				2D77AC271BF2B9860072470A /* NSApplicationSPI.h */,
 				07F0B97B1AC5DB4600E535D9 /* AVFoundationSPI.h */,
 				2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */,
 				2D413F601A187A3F0041A521 /* LookupSPI.h */,
@@ -18629,6 +18639,8 @@
 				F40EA8AA1B867D6500CE5581 /* NSScrollingInputFilterSPI.h */,
 				2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */,
 				2DCB837819F99BBA00A7FBE4 /* NSSharingServiceSPI.h */,
+				2D77AC281BF2B9860072470A /* NSTextFinderSPI.h */,
+				2D77AC2C1BF2B9A00072470A /* NSViewSPI.h */,
 				2D0CF8161BCF5DE1007A4937 /* NSWindowSPI.h */,
 				937F4CCB1A2D48C100BB39F5 /* QuickLookMacSPI.h */,
 				2D232BFF1A326EF9006BF2DB /* TUCallSPI.h */,
@@ -26141,6 +26153,7 @@
 				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
 				070756D414239A4F00414161 /* JSHTMLTrackElement.h in Headers */,
 				1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */,
+				2D77AC2D1BF2B9A00072470A /* NSViewSPI.h in Headers */,
 				6E4ABCD5138EA0B70071D291 /* JSHTMLUnknownElement.h in Headers */,
 				E44614170CD6826900FADA75 /* JSHTMLVideoElement.h in Headers */,
 				C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */,
@@ -27047,6 +27060,7 @@
 				1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */,
 				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,
 				BC1A7D9818FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.h in Headers */,
+				2D77AC2B1BF2B9870072470A /* NSTextFinderSPI.h in Headers */,
 				8AC822FD180FC03300FB64D5 /* RenderNamedFlowFragment.h in Headers */,
 				BC85F23D151915E000BC17BE /* RenderNamedFlowThread.h in Headers */,
 				BCEA4880097D93020094C9E4 /* RenderObject.h in Headers */,
@@ -27247,6 +27261,7 @@
 				5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */,
 				1AA84F05143BA7BD0051D153 /* ScrollController.h in Headers */,
 				0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */,
+				2D77AC2A1BF2B9870072470A /* NSApplicationSPI.h in Headers */,
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
 				0FC4E40D187F82E10045882C /* ScrollingCoordinatorIOS.h in Headers */,
 				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
@@ -27968,6 +27983,7 @@
 				93F1D5BB12D532C400832BEC /* WebGLLoseContext.h in Headers */,
 				49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */,
 				49C7B9D71042D32F0009D447 /* WebGLProgram.h in Headers */,
+				2D77AC291BF2B9860072470A /* NSAccessibilitySPI.h in Headers */,
 				6F995A201A7078B100A735F4 /* WebGLQuery.h in Headers */,
 				49C7B9DA1042D32F0009D447 /* WebGLRenderbuffer.h in Headers */,
 				49C7B9E01042D32F0009D447 /* WebGLRenderingContext.h in Headers */,

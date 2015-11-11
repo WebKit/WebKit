@@ -110,6 +110,7 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/NSURLFileTypeMappingsSPI.h>
+#import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderView.h>

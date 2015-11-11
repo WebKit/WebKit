@@ -31,7 +31,6 @@
 #import "APIFormClient.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
-#import "AppKitSPI.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
@@ -84,6 +83,7 @@
 #import "_WKVisitedLinkStoreInternal.h"
 #import <WebCore/IOSurface.h>
 #import <WebCore/JSDOMBinding.h>
+#import <WebCore/NSTextFinderSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
