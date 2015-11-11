@@ -1,5 +1,17 @@
 2015-11-11  Anders Carlsson  <andersca@apple.com>
 
+        Handle custom menu items in WebKit instead of WebCore on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=151147
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::contextMenuItemSelected):
+        * WebView.cpp:
+        (WebView::onMenuCommand):
+
+2015-11-11  Anders Carlsson  <andersca@apple.com>
+
         Use Win32 functions to get context menu item info
         https://bugs.webkit.org/show_bug.cgi?id=151123
 

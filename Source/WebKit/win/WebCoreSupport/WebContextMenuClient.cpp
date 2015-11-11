@@ -52,29 +52,8 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
+void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
 {
-    ASSERT(item->type() == ActionType || item->type() == CheckableActionType);
-
-    COMPtr<IWebUIDelegate> uiDelegate;
-    if (FAILED(m_webView->uiDelegate(&uiDelegate)))
-        return;
-
-    ASSERT(uiDelegate);
-
-    COMPtr<WebElementPropertyBag> propertyBag;
-    propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController().hitTestResult()));
-
-    // This call would leak the MENUITEMINFO's subMenu if it had one, but on Windows, subMenus can't be selected, so there is
-    // no way we would get to this point. Also, it can't be a separator, because separators cannot be selected.
-    ASSERT(item->type() != SubmenuType);
-    ASSERT(item->type() != SeparatorType);
-
-    // ContextMenuItem::platformContextMenuItem doesn't set the dwTypeData of the MENUITEMINFO, but no WebKit clients
-    // use the title in IWebUIDelegate::contextMenuItemSelected, so we don't need to populate it here.
-    MENUITEMINFO selectedItem = item->platformContextMenuItem();
-
-    uiDelegate->contextMenuItemSelected(m_webView, &selectedItem, propertyBag.get());
 }
 
 void WebContextMenuClient::downloadURL(const URL& url)
