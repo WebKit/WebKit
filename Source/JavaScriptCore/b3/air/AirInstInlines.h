@@ -59,6 +59,13 @@ template<> struct ForEach<StackSlot*> {
                 if (!arg.isStack())
                     return;
                 StackSlot* stackSlot = arg.stackSlot();
+
+                // FIXME: This is way too optimistic about the meaning of "Def". It gets lucky for
+                // now because our only use of "Anonymous" stack slots happens to want the optimistic
+                // semantics. We could fix this by just changing the comments that describe the
+                // semantics of "Anonymous".
+                // https://bugs.webkit.org/show_bug.cgi?id=151128
+                
                 functor(stackSlot, role, type);
                 arg = Arg::stack(stackSlot);
             });
