@@ -1,3 +1,15 @@
+2015-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r191856): [GTK] SOCK_SEQPACKET no longer used after r191856
+        https://bugs.webkit.org/show_bug.cgi?id=151129
+
+        Reviewed by Martin Robinson.
+
+        r191856 unconditionally disabled SOCK_SEQPACKET for GTK port.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp: Use always SOCK_SEQPACKET
+        when available.
+
 2015-11-10  Alex Christensen  <achristensen@webkit.org>
 
         Implement authentication challenge handling when using NETWORK_SESSION

@@ -43,7 +43,7 @@
 #include <gio/gio.h>
 #endif
 
-#if defined(SOCK_SEQPACKET) && !PLATFORM(GTK)
+#if defined(SOCK_SEQPACKET)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
 #if PLATFORM(GTK)
