@@ -1,3 +1,75 @@
+2015-11-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Air should allocate registers
+        https://bugs.webkit.org/show_bug.cgi?id=150457
+
+        Reviewed by Filip Pizlo.
+
+        This is a direct implementation of the Iterated Register Coalescing allocator.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirInstInlines.h:
+        * b3/air/AirIteratedRegisterCoalescing.cpp: Added.
+        (JSC::B3::Air::MoveInstHelper<Arg::GP>::mayBeCoalescable):
+        (JSC::B3::Air::MoveInstHelper<Arg::FP>::mayBeCoalescable):
+        (JSC::B3::Air::AbsoluteTmpHelper<Arg::GP>::absoluteIndex):
+        (JSC::B3::Air::AbsoluteTmpHelper<Arg::GP>::tmpFromAbsoluteIndex):
+        (JSC::B3::Air::AbsoluteTmpHelper<Arg::FP>::absoluteIndex):
+        (JSC::B3::Air::AbsoluteTmpHelper<Arg::FP>::tmpFromAbsoluteIndex):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::IteratedRegisterCoalescingAllocator):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::build):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::allocate):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::getAlias):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::spilledTmp):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::allocatedReg):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::tmpArraySize):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::initializeDegrees):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::addEdges):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::addEdge):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::makeWorkList):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::simplify):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::forEachAdjacent):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::hasBeenSimplified):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::decrementDegree):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::forEachNodeMoves):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::isMoveRelated):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::enableMovesOnValue):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::enableMovesOnValueAndAdjacents):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::coalesce):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::canBeSafelyCoalesced):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::precoloredCoalescingHeuristic):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::conservativeHeuristic):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::addWorkList):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::combine):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::freeze):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::freezeMoves):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::selectSpill):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::assignColors):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::dumpInterferenceGraphInDot):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::dumpWorkLists):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::InterferenceEdge):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::first):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::second):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::operator==):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::isHashTableDeletedValue):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::hash):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdgeHash::hash):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdgeHash::equal):
+        (JSC::B3::Air::isUselessMoveInst):
+        (JSC::B3::Air::assignRegisterToTmpInProgram):
+        (JSC::B3::Air::addSpillAndFillToProgram):
+        (JSC::B3::Air::iteratedRegisterCoalescingOnType):
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+        * b3/air/AirIteratedRegisterCoalescing.h: Added.
+        * b3/air/AirTmp.h:
+        (JSC::B3::Air::Tmp::internalValue):
+        (JSC::B3::Air::Tmp::tmpForInternalValue):
+        * b3/testb3.cpp:
+        (JSC::B3::testSpillGP):
+        (JSC::B3::run):
+
 2015-11-10  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add a FIXME referencing https://bugs.webkit.org/show_bug.cgi?id=151128.

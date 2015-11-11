@@ -1808,6 +1808,29 @@ void testLoad(B3::Opcode opcode, int32_t value)
     }
 }
 
+void testSpillGP()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Vector<Value*> sources;
+    sources.append(root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    sources.append(root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+
+    for (unsigned i = 0; i < 30; ++i) {
+        sources.append(
+            root->appendNew<Value>(proc, Add, Origin(), sources[sources.size() - 1], sources[sources.size() - 2])
+        );
+    }
+
+    Value* total = root->appendNew<Const64Value>(proc, Origin(), 0);
+    for (Value* value : sources)
+        total = root->appendNew<Value>(proc, Add, Origin(), total, value);
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), total);
+    compileAndRun<int>(proc, 1, 2);
+}
+
 void testBranch()
 {
     Procedure proc;
@@ -3301,6 +3324,8 @@ void run(const char* filter)
     RUN(testLoad<uint16_t>(Load16Z, -1000000));
     RUN(testLoad<uint16_t>(Load16Z, 1000000000));
     RUN(testLoad<uint16_t>(Load16Z, -1000000000));
+
+    RUN(testSpillGP());
 
     RUN(testCallSimple(1, 2));
     RUN(testCallFunctionWithHellaArguments());

@@ -67,7 +67,7 @@ template<> struct ForEach<StackSlot*> {
                 // https://bugs.webkit.org/show_bug.cgi?id=151128
                 
                 functor(stackSlot, role, type);
-                arg = Arg::stack(stackSlot);
+                arg = Arg::stack(stackSlot, arg.offset());
             });
     }
 };

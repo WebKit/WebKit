@@ -33,6 +33,7 @@
 #include "AirEliminateDeadCode.h"
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
+#include "AirIteratedRegisterCoalescing.h"
 #include "AirReportUsedRegisters.h"
 #include "AirSimplifyCFG.h"
 #include "AirSpillEverything.h"
@@ -68,8 +69,7 @@ void generate(Code& code, CCallHelpers& jit)
 
     // This is where we would have a real register allocator. Then, we could use spillEverything()
     // in place of the register allocator only for testing.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150457
-    spillEverything(code);
+    iteratedRegisterCoalescing(code);
 
     // Prior to this point the prologue and epilogue is implicit. This makes it explicit. It also
     // does things like identify which callee-saves we're using and saves them.

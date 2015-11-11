@@ -172,7 +172,16 @@ public:
     {
         return WTF::IntHash<int>::hash(m_value);
     }
-    
+
+    unsigned internalValue() const { return static_cast<unsigned>(m_value); }
+
+    static Tmp tmpForInternalValue(unsigned index)
+    {
+        Tmp result;
+        result.m_value = static_cast<int>(index);
+        return result;
+    }
+
 private:
     static int encodeGP(unsigned index)
     {
