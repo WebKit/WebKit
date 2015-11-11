@@ -1,5 +1,20 @@
 2015-11-11  Mark Lam  <mark.lam@apple.com>
 
+        Change probe CPUState gpr() and fpr() to return references.
+        https://bugs.webkit.org/show_bug.cgi?id=151154
+
+        Reviewed by Saam Barati.
+
+        This will allow us to set their values as well as reading them.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CPUState::gpr):
+        (JSC::AbstractMacroAssembler::CPUState::fpr):
+        (JSC::AbstractMacroAssembler::ProbeContext::gpr):
+        (JSC::AbstractMacroAssembler::ProbeContext::fpr):
+
+2015-11-11  Mark Lam  <mark.lam@apple.com>
+
         Add convenience utility to support dataLogging opcodeIDs.
         https://bugs.webkit.org/show_bug.cgi?id=151117
 

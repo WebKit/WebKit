@@ -878,7 +878,7 @@ public:
             }
         }
 
-        void* gpr(RegisterID regID)
+        void*& gpr(RegisterID regID)
         {
             switch (regID) {
                 #define DECLARE_REGISTER(_type, _regName) \
@@ -891,7 +891,7 @@ public:
             }
         }
 
-        double fpr(FPRegisterID regID)
+        double& fpr(FPRegisterID regID)
         {
             switch (regID) {
                 #define DECLARE_REGISTER(_type, _regName) \
@@ -915,8 +915,8 @@ public:
         CPUState cpu;
 
         // Convenience methods:
-        void* gpr(RegisterID regID) { return cpu.gpr(regID); }
-        double fpr(FPRegisterID regID) { return cpu.fpr(regID); }
+        void*& gpr(RegisterID regID) { return cpu.gpr(regID); }
+        double& fpr(FPRegisterID regID) { return cpu.fpr(regID); }
         const char* gprName(RegisterID regID) { return cpu.gprName(regID); }
         const char* fprName(FPRegisterID regID) { return cpu.fprName(regID); }
     };
