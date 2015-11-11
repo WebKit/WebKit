@@ -63,7 +63,12 @@ RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
 
     styleElement->appendChild(frame->document()->createEditingTextNode(""), ASSERT_NO_EXCEPTION);
 
-    position.deprecatedNode()->parentNode()->appendChild(styleElement.copyRef(), ASSERT_NO_EXCEPTION);
+    ContainerNode* parentNode = position.deprecatedNode()->parentNode();
+
+    if (!parentNode->ensurePreInsertionValidity(styleElement.copyRef(), nullptr, IGNORE_EXCEPTION))
+        return nullptr; 
+
+    parentNode->appendChild(styleElement.copyRef(), ASSERT_NO_EXCEPTION);
 
     nodeToRemove = styleElement.ptr();
 
