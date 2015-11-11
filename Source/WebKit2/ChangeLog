@@ -1,3 +1,18 @@
+2015-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Use different pixel formats for displays that support them
+        https://bugs.webkit.org/show_bug.cgi?id=151122
+        rdar://problem/22846841
+
+        Reviewed by Tim Horton.
+        
+        New the new IOSurface formats when appropriate for the properties of the
+        display.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::bufferFormat):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+
 2015-11-10  Tim Horton  <timothy_horton@apple.com>
 
         Adopt formal protocols for CA delegates

@@ -40,7 +40,9 @@ class IOSurface final {
 public:
     enum class Format {
         RGBA,
-        YUV422
+        YUV422,
+        RGB10,
+        RGB10A8,
     };
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, ColorSpace, Format = Format::RGBA);

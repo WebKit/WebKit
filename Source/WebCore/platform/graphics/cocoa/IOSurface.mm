@@ -104,45 +104,111 @@ IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
     unsigned pixelFormat;
     unsigned bytesPerPixel;
     unsigned bytesPerElement;
-    unsigned elementWidth;
-
-    if (format == Format::RGBA) {
-        pixelFormat = 'BGRA';
-        bytesPerPixel = 4;
-        bytesPerElement = 4;
-        elementWidth = 1;
-    } else {
-        ASSERT(format == Format::YUV422);
-        pixelFormat = 'yuvf';
-        bytesPerPixel = 2;
-        elementWidth = 2;
-        bytesPerElement = 4;
-    }
 
     int width = size.width();
     int height = size.height();
 
-    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
-    ASSERT(bytesPerRow);
+    NSDictionary *options;
+    
+    if (format == Format::RGB10A8) {
+        pixelFormat = 'b3a8';
+        
+        // RGB plane (10-10-10)
+        bytesPerPixel = 4;
+        bytesPerElement = 4;
 
-    m_totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
-    ASSERT(m_totalBytes);
+        size_t rgbPlaneBytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
+        size_t rgbPlaneTotalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * rgbPlaneBytesPerRow);
 
-    NSDictionary *options = @{
-        (id)kIOSurfaceWidth: @(width),
-        (id)kIOSurfaceHeight: @(height),
-        (id)kIOSurfacePixelFormat: @(pixelFormat),
-        (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
-        (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
-        (id)kIOSurfaceAllocSize: @(m_totalBytes),
+        // Alpha plane (8)
+        bytesPerElement = 1;
+        size_t alphaPlaneBytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
+        size_t alphaPlaneTotalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * alphaPlaneBytesPerRow);
+        
+        m_totalBytes = rgbPlaneTotalBytes + alphaPlaneTotalBytes;
+
+        NSArray *planeInfo = @[
+            @{
+                (id)kIOSurfacePlaneWidth: @(width),
+                (id)kIOSurfacePlaneHeight: @(height),
+                (id)kIOSurfacePlaneBytesPerRow: @(rgbPlaneBytesPerRow),
+                (id)kIOSurfacePlaneOffset: @(0),
+                (id)kIOSurfacePlaneSize: @(rgbPlaneTotalBytes)
+            },
+            @{
+                (id)kIOSurfacePlaneWidth: @(width),
+                (id)kIOSurfacePlaneHeight: @(height),
+                (id)kIOSurfacePlaneBytesPerRow: @(alphaPlaneBytesPerRow),
+                (id)kIOSurfacePlaneOffset: @(rgbPlaneTotalBytes),
+                (id)kIOSurfacePlaneSize: @(alphaPlaneTotalBytes)
+            }
+        ];
+
+        options = @{
+            (id)kIOSurfaceWidth: @(width),
+            (id)kIOSurfaceHeight: @(height),
+            (id)kIOSurfacePixelFormat: @(pixelFormat),
+            (id)kIOSurfaceAllocSize: @(m_totalBytes),
 #if PLATFORM(IOS)
-        (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
+            (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
 #endif
-        (id)kIOSurfaceElementWidth: @(elementWidth),
-        (id)kIOSurfaceElementHeight: @(1)
-    };
+            (id)kIOSurfacePlaneInfo: planeInfo,
+        };
+    } else {
+        unsigned elementWidth;
 
+        switch (format) {
+        case Format::RGBA:
+            pixelFormat = 'BGRA';
+            bytesPerPixel = 4;
+            bytesPerElement = 4;
+            elementWidth = 1;
+            break;
+        case Format::YUV422:
+            pixelFormat = 'yuvf';
+            bytesPerPixel = 2;
+            bytesPerElement = 4;
+            elementWidth = 2;
+            break;
+        case Format::RGB10:
+            pixelFormat = 'w30r';
+            bytesPerPixel = 4;
+            bytesPerElement = 4;
+            elementWidth = 1;
+            break;
+        case Format::RGB10A8:
+            ASSERT_NOT_REACHED();
+            pixelFormat = 'b3a8';
+            bytesPerPixel = 1;
+            bytesPerElement = 1;
+            elementWidth = 1;
+            break;
+        }
+
+        size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
+        ASSERT(bytesPerRow);
+
+        m_totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
+        ASSERT(m_totalBytes);
+
+        options = @{
+            (id)kIOSurfaceWidth: @(width),
+            (id)kIOSurfaceHeight: @(height),
+            (id)kIOSurfacePixelFormat: @(pixelFormat),
+            (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
+            (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
+            (id)kIOSurfaceAllocSize: @(m_totalBytes),
+#if PLATFORM(IOS)
+            (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
+#endif
+            (id)kIOSurfaceElementWidth: @(elementWidth),
+            (id)kIOSurfaceElementHeight: @(1)
+        };
+    }
+    
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
+    if (!m_surface)
+        NSLog(@"Surface creation failed for options %@", options);
 }
 
 IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colorSpace)
