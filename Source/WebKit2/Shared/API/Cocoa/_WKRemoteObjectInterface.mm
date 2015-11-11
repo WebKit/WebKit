@@ -260,38 +260,56 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
     return result.autorelease();
 }
 
-static HashSet<Class>& classesForSelectorArgument(_WKRemoteObjectInterface *interface, SEL selector, NSUInteger argumentIndex)
+static HashSet<Class>& classesForSelectorArgument(_WKRemoteObjectInterface *interface, SEL selector, NSUInteger argumentIndex, bool replyBlock)
 {
     auto it = interface->_methods.find(selector);
     if (it == interface->_methods.end())
         [NSException raise:NSInvalidArgumentException format:@"Interface does not contain selector \"%s\"", sel_getName(selector)];
 
     MethodInfo& methodInfo = it->value;
-    auto& allowedArgumentClasses = methodInfo.allowedArgumentClasses;
+    if (replyBlock) {
+        if (!methodInfo.replyInfo)
+            [NSException raise:NSInvalidArgumentException format:@"Selector \"%s\" does not have a reply block", sel_getName(selector)];
 
-    if (argumentIndex >= allowedArgumentClasses.size())
+        if (argumentIndex >= methodInfo.replyInfo->allowedReplyClasses.size())
+            [NSException raise:NSInvalidArgumentException format:@"Argument index %ld is out of range for reply block of selector \"%s\"", (unsigned long)argumentIndex, sel_getName(selector)];
+
+        return methodInfo.replyInfo->allowedReplyClasses[argumentIndex];
+    }
+
+    if (argumentIndex >= methodInfo.allowedArgumentClasses.size())
         [NSException raise:NSInvalidArgumentException format:@"Argument index %ld is out of range for selector \"%s\"", (unsigned long)argumentIndex, sel_getName(selector)];
 
-    return allowedArgumentClasses[argumentIndex];
+    return methodInfo.allowedArgumentClasses[argumentIndex];
 }
 
-- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex
+- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex ofReply:(BOOL)ofReply
 {
     auto result = adoptNS([[NSMutableSet alloc] init]);
 
-    for (auto allowedClass : classesForSelectorArgument(self, selector, argumentIndex))
+    for (auto allowedClass : classesForSelectorArgument(self, selector, argumentIndex, ofReply))
         [result addObject:allowedClass];
 
     return result.autorelease();
 }
 
-- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex
+- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex ofReply:(BOOL)ofReply
 {
     HashSet<Class> allowedClasses;
     for (Class allowedClass in classes)
         allowedClasses.add(allowedClass);
 
-    classesForSelectorArgument(self, selector, argumentIndex) = WTF::move(allowedClasses);
+    classesForSelectorArgument(self, selector, argumentIndex, ofReply) = WTF::move(allowedClasses);
+}
+
+- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex
+{
+    return [self classesForSelector:selector argumentIndex:argumentIndex ofReply:NO];
+}
+
+- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex
+{
+    [self setClasses:classes forSelector:selector argumentIndex:argumentIndex ofReply:NO];
 }
 
 static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)

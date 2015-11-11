@@ -39,6 +39,10 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property (readonly, nonatomic) Protocol *protocol;
 @property (readonly, nonatomic) NSString *identifier;
 
+- (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex ofReply:(BOOL)ofReply;
+- (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex ofReply:(BOOL)ofReply;
+
+// FIXME: Deprecate these.
 - (NSSet *)classesForSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
 - (void)setClasses:(NSSet *)classes forSelector:(SEL)selector argumentIndex:(NSUInteger)argumentIndex;
 

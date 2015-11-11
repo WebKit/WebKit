@@ -27,11 +27,22 @@
 
 #if WK_API_ENABLED
 
+#import <WebKit/_WKRemoteObjectInterface.h>
+
 @protocol RemoteObjectProtocol <NSObject>
 
 - (void)sayHello:(NSString *)hello;
 - (void)sayHello:(NSString *)hello completionHandler:(void (^)(NSString *))completionHandler;
+- (void)selectionAndClickInformationForClickAtPoint:(NSValue *)pointValue completionHandler:(void (^)(NSDictionary *))completionHandler;
 
 @end
 
+static inline _WKRemoteObjectInterface *remoteObjectInterface()
+{
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RemoteObjectProtocol)];
+
+    [interface setClasses:[NSSet setWithObjects:[NSDictionary class], [NSURL class], nil] forSelector:@selector(selectionAndClickInformationForClickAtPoint:completionHandler:) argumentIndex:0 ofReply:YES];
+
+    return interface;
+}
 #endif

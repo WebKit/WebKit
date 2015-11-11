@@ -48,7 +48,7 @@ TEST(WebKit2, RemoteObjectRegistry)
 
         isDone = false;
 
-        _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(RemoteObjectProtocol)];
+        _WKRemoteObjectInterface *interface = remoteObjectInterface();
         id <RemoteObjectProtocol> object = [[webView _remoteObjectRegistry] remoteObjectProxyWithInterface:interface];
 
         [object sayHello:@"Hello, World!"];
@@ -67,6 +67,10 @@ TEST(WebKit2, RemoteObjectRegistry)
             isDone = true;
         }];
 
+        isDone = false;
+        [object selectionAndClickInformationForClickAtPoint:[NSValue valueWithPoint:NSMakePoint(12, 34)] completionHandler:^(NSDictionary *result) {
+            isDone = true;
+        }];
         TestWebKitAPI::Util::run(&isDone);
     }
 }
