@@ -90,6 +90,10 @@ void RenderCombineText::combineText()
     if (!m_needsFontUpdate)
         return;
 
+    // An ancestor element may trigger us to lay out again, even when we're already combined.
+    if (m_isCombined)
+        RenderText::setRenderedText(originalText());
+
     m_isCombined = false;
     m_needsFontUpdate = false;
 
@@ -141,8 +145,8 @@ void RenderCombineText::combineText()
         m_combineFontStyle->fontCascade().update(fontSelector);
 
     if (m_isCombined) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&objectReplacementCharacter, 1));
-        RenderText::setRenderedText(objectReplacementCharacterString.impl());
+        static NeverDestroyed<String> objectReplacementCharacterString(&objectReplacementCharacter, 1);
+        RenderText::setRenderedText(objectReplacementCharacterString.get());
         m_combinedTextSize = FloatSize(combinedTextWidth, glyphOverflow.bottom + glyphOverflow.top);
     }
 }

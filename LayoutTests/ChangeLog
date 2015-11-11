@@ -1,3 +1,14 @@
+2015-11-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Some style changes cause tatechuyoko to be drawn off center
+        https://bugs.webkit.org/show_bug.cgi?id=150986
+        <rdar://problem/20748013>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/text-combine-style-change-extra-layout-expected.html: Added.
+        * fast/text/text-combine-style-change-extra-layout.html: Added.
+
 2015-11-07  Zalan Bujtas  <zalan@apple.com>
 
         Crash when subtree layout is set on FrameView while auto size mode is enabled.
