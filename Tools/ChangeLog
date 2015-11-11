@@ -184,7 +184,7 @@
         Override the user-specified arguments SDKROOT and ARCHS to use the default SDK
         and default ARCHS since LayoutTestRelay is a Mac command line tool.
 
-        * LayoutTestRelay/Makefile: Define OVERWRITE_SDKROOT and OVERWRITE_ARCHS.
+        * LayoutTestRelay/Makefile: Define OVERRIDE_SDKROOT and OVERRIDE_ARCHS.
 
 2015-11-05  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
