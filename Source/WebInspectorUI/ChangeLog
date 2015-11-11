@@ -1,5 +1,19 @@
 2015-11-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Enable/disable All Breakpoints not usable when "No Filter Results" displayed
+        https://bugs.webkit.org/show_bug.cgi?id=151062
+
+        Reviewed by Timothy Hatcher.
+
+        Position the placeholder element below the navigation bar. This was already being done
+        for the other navigation sidebars.
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.debugger > .content): Deleted.
+
+2015-11-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Batch all scheduled layouts and update the view tree in a single animation frame
         https://bugs.webkit.org/show_bug.cgi?id=150993
 
