@@ -257,6 +257,9 @@ private:
     Timer m_resumeTimer;
     bool m_dispatchErrorOnResuming;
 
+    Timer m_networkErrorTimer;
+    void networkErrorTimerFired();
+
 #if ENABLE(XHR_TIMEOUT)
     unsigned m_timeoutMilliseconds { 0 };
     std::chrono::steady_clock::time_point m_sendingTime;
