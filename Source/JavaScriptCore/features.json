@@ -140,15 +140,17 @@
     {
         "name": "Generators",
         "status": {
-            "status": "No active development"
+            "status": "In Development",
+            "enabled-by-default": false
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-generator-objects",
         "specification": "ES6",
         "description": "An iterative function object that is interruptable and resumable.",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=150290",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Yusuke Suzuki",
+            "twitter": "@Constellation",
+            "email": "utatane.tea@gmail.com"
         }
     },
     {

@@ -1,3 +1,15 @@
+2015-11-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Update ES6 Generators' status to "In Development"
+        https://bugs.webkit.org/show_bug.cgi?id=151142
+
+        Reviewed by Saam Barati.
+
+        Currently, features.json raises some linting errors.
+        This should be cleaned up in another patch.
+
+        * features.json:
+
 2015-11-10  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile a program with ChillDiv
