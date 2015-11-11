@@ -1,0 +1,2 @@
+This test makes sure there is no ASSERT when laying out SoftBank emoji symbols without kerning or ligatures. The test passes if there is no ASSERT.
+
