@@ -1513,22 +1513,27 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!::ClientToScreen(m_viewWindow, &point))
         return false;
 
-    HMENU contextMenu = createContextMenu();
+    if (m_currentContextMenu)
+        ::DestroyMenu(m_currentContextMenu);
+    m_currentContextMenu = createContextMenu();
+
+    MENUINFO menuInfo;
+    menuInfo.cbSize = sizeof(menuInfo);
+    menuInfo.fMask = MIM_STYLE;
+    menuInfo.dwStyle = MNS_NOTIFYBYPOS;
+    ::SetMenuInfo(m_currentContextMenu, &menuInfo);
 
     BOOL hasCustomMenus = false;
     if (m_uiDelegate)
         m_uiDelegate->hasCustomMenuImplementation(&hasCustomMenus);
 
     if (hasCustomMenus)
-        m_uiDelegate->trackCustomPopupMenu((IWebView*)this, contextMenu, &point);
+        m_uiDelegate->trackCustomPopupMenu((IWebView*)this, m_currentContextMenu, &point);
     else {
         // Surprisingly, TPM_RIGHTBUTTON means that items are selectable with either the right OR left mouse button
-        UINT flags = TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_VERPOSANIMATION | TPM_HORIZONTAL
-            | TPM_LEFTALIGN | TPM_HORPOSANIMATION;
-        ::TrackPopupMenuEx(contextMenu, flags, point.x, point.y, m_viewWindow, 0);
+        UINT flags = TPM_RIGHTBUTTON | TPM_TOPALIGN | TPM_VERPOSANIMATION | TPM_HORIZONTAL | TPM_LEFTALIGN | TPM_HORPOSANIMATION;
+        ::TrackPopupMenuEx(m_currentContextMenu, flags, point.x, point.y, m_viewWindow, 0);
     }
-
-    ::DestroyMenu(contextMenu);
 
     return true;
 }
@@ -1597,15 +1602,31 @@ bool WebView::onUninitMenuPopup(WPARAM wParam, LPARAM /*lParam*/)
     return true;
 }
 
-void WebView::performContextMenuAction(WPARAM wParam, LPARAM lParam, bool byPosition)
+void WebView::onMenuCommand(WPARAM wParam, LPARAM lParam)
 {
-    ContextMenu* menu = m_page->contextMenuController().contextMenu();
-    ASSERT(menu);
+    HMENU hMenu = reinterpret_cast<HMENU>(lParam);
+    unsigned index = static_cast<unsigned>(wParam);
 
-    ContextMenuItem* item = byPosition ? menu->itemAtIndex((unsigned)wParam) : menu->itemWithAction((ContextMenuAction)wParam);
-    if (!item)
-        return;
-    m_page->contextMenuController().contextMenuItemSelected(item);
+    MENUITEMINFO menuItemInfo = { 0 };
+    menuItemInfo.cbSize = sizeof(menuItemInfo);
+    menuItemInfo.fMask = MIIM_STRING;
+    ::GetMenuItemInfo(hMenu, index, true, &menuItemInfo);
+
+    auto buffer = std::make_unique<WCHAR[]>(menuItemInfo.cch + 1);
+    menuItemInfo.dwTypeData = buffer.get();
+    menuItemInfo.cch++;
+    menuItemInfo.fMask |= MIIM_ID;
+
+    ::GetMenuItemInfo(hMenu, index, true, &menuItemInfo);
+
+    ::DestroyMenu(m_currentContextMenu);
+    m_currentContextMenu = nullptr;
+
+    String title(buffer.get(), menuItemInfo.cch);
+    ContextMenuAction action = static_cast<ContextMenuAction>(menuItemInfo.wID);
+
+    ContextMenuItem item(ActionType, action, title, true, false);
+    m_page->contextMenuController().contextMenuItemSelected(&item);
 }
 
 bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
@@ -2491,11 +2512,9 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
         case WM_COMMAND:
             if (HIWORD(wParam))
                 handled = webView->execCommand(wParam, lParam);
-            else // If the high word of wParam is 0, the message is from a menu
-                webView->performContextMenuAction(wParam, lParam, false);
             break;
         case WM_MENUCOMMAND:
-            webView->performContextMenuAction(wParam, lParam, true);
+            webView->onMenuCommand(wParam, lParam);
             break;
         case WM_CONTEXTMENU:
             handled = webView->handleContextMenuEvent(wParam, lParam);

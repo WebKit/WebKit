@@ -405,7 +405,7 @@ public:
     bool onDrawItem(WPARAM, LPARAM);
     bool onInitMenuPopup(WPARAM, LPARAM);
     bool onUninitMenuPopup(WPARAM, LPARAM);
-    void performContextMenuAction(WPARAM, LPARAM, bool byPosition);
+    void onMenuCommand(WPARAM, LPARAM);
     bool mouseWheel(WPARAM, LPARAM, bool isMouseHWheel);
     bool verticalScroll(WPARAM, LPARAM);
     bool horizontalScroll(WPARAM, LPARAM);
@@ -615,6 +615,7 @@ protected:
     WebCore::Page* m_page { nullptr };
     WebInspectorClient* m_inspectorClient { nullptr };
 
+    HMENU m_currentContextMenu { nullptr };
     RefPtr<WebCore::SharedGDIObject<HBITMAP>> m_backingStoreBitmap;
     SIZE m_backingStoreSize;
     RefPtr<WebCore::SharedGDIObject<HRGN>> m_backingStoreDirtyRegion;
