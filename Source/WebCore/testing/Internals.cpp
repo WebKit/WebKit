@@ -2399,6 +2399,14 @@ void Internals::forceReload(bool endToEnd)
     frame()->loader().reload(endToEnd);
 }
 
+void Internals::enableAutoSizeMode(bool enabled, int minimumWidth, int minimumHeight, int maximumWidth, int maximumHeight)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return;
+    document->view()->enableAutoSizeMode(enabled, IntSize(minimumWidth, minimumHeight), IntSize(maximumWidth, maximumHeight));
+}
+
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 void Internals::initializeMockCDM()
 {

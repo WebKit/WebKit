@@ -676,6 +676,8 @@ private:
     void removeFromAXObjectCache();
     void notifyWidgets(WidgetNotification);
 
+    void convertSubtreeLayoutToFullLayout();
+
     RenderElement* viewportRenderer() const;
 
     HashSet<Widget*> m_widgetsInRenderTree;
