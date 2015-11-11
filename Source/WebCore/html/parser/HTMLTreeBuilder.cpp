@@ -774,9 +774,9 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == inputTag) {
-        Attribute* typeAttribute = findAttribute(token.attributes(), typeAttr);
         m_tree.reconstructTheActiveFormattingElements();
         m_tree.insertSelfClosingHTMLElement(&token);
+        Attribute* typeAttribute = findAttribute(token.attributes(), typeAttr);
         if (!typeAttribute || !equalIgnoringCase(typeAttribute->value(), "hidden"))
             m_framesetOk = false;
         return;
