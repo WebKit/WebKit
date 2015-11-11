@@ -94,6 +94,24 @@ inline bool isRepresentableAs(double value)
     return isRepresentableAsImpl<ResultType, double, int64_t>(value);
 }
 
+inline int32_t chillDiv(int32_t num, int32_t den)
+{
+    if (!den)
+        return 0;
+    if (den == -1 && num == std::numeric_limits<int32_t>::min())
+        return num;
+    return num / den;
+}
+
+inline int64_t chillDiv(int64_t num, int64_t den)
+{
+    if (!den)
+        return 0;
+    if (den == -1 && num == std::numeric_limits<int64_t>::min())
+        return num;
+    return num / den;
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

@@ -71,6 +71,20 @@ bool replacePredecessor(BasicBlock* block, BasicBlock* from, BasicBlock* to)
     return changed;
 }
 
+template<typename BasicBlock>
+void updatePredecessorsAfter(BasicBlock* root)
+{
+    Vector<BasicBlock*, 16> worklist;
+    worklist.append(root);
+    while (!worklist.isEmpty()) {
+        BasicBlock* block = worklist.takeLast();
+        for (BasicBlock* successor : block->successorBlocks()) {
+            if (addPredecessor(successor, block))
+                worklist.append(successor);
+        }
+    }
+}
+
 // This recomputes predecessors and removes blocks that aren't reachable.
 template<typename BasicBlock, typename DeleteFunctor>
 void resetReachability(
@@ -82,14 +96,7 @@ void resetReachability(
             block->predecessors().resize(0);
     }
 
-    GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> worklist;
-    worklist.push(blocks[0].get());
-    while (BasicBlock* block = worklist.pop()) {
-        for (BasicBlock* successor : block->successorBlocks()) {
-            addPredecessor(successor, block);
-            worklist.push(successor);
-        }
-    }
+    updatePredecessorsAfter(blocks[0].get());
 
     for (unsigned i = 1; i < blocks.size(); ++i) {
         if (!blocks[i])

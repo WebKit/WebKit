@@ -1,3 +1,215 @@
+2015-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile a program with ChillDiv
+        https://bugs.webkit.org/show_bug.cgi?id=151114
+
+        Reviewed by Benjamin Poulain.
+
+        This change is about a lot more than ChillDiv. I picked that as the next thing to lower
+        because I knew that it would force me to come up with a sensible idiom for doing
+        stepwise lowerings that require breaking basic blocks. The idea is that you want to
+        write a loop that iterates forward over the program, which turns some operations that
+        currently are just single Values into an entire little sub-CFGs. That requires splitting
+        the block that contained the original Value. That's tricky if you then want to keep
+        iterating: the index of the Value you were last looking at has now changed and your
+        InsertionSets are now invalid.
+
+        This introduces an idiom that handles this. It's BlockInsertionSet::splitBefore(). The
+        idea is that it uses the current block before the split as the continuation after the
+        split. When you call splitBefore(), you pass it your loop index and your InsertionSet
+        (if applicable). It makes sure that it changes those auxiliary things in such a way that
+        you can keep looping.
+
+        This uncovered some bugs, since this is the first time that we're compiling cross edges.
+
+        Because ChillDiv is really a division, I also had to write a bunch of code to support
+        the ordinary B3 Div. While doing that, I realized that there was asymmetry to that
+        constness of the Value constant folding methods, so I fixed that as well.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::mul32):
+        (JSC::MacroAssemblerX86Common::x86ConvertToDoubleWord32):
+        (JSC::MacroAssemblerX86Common::x86Div32):
+        (JSC::MacroAssemblerX86Common::neg32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::mul64):
+        (JSC::MacroAssemblerX86_64::x86ConvertToQuadWord64):
+        (JSC::MacroAssemblerX86_64::x86Div64):
+        (JSC::MacroAssemblerX86_64::neg64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::idivl_r):
+        (JSC::X86Assembler::idivq_r):
+        (JSC::X86Assembler::cmpl_rr):
+        (JSC::X86Assembler::cdq):
+        (JSC::X86Assembler::cdqq):
+        (JSC::X86Assembler::fstps):
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::append):
+        (JSC::B3::BasicBlock::replaceLast):
+        (JSC::B3::BasicBlock::appendIntConstant):
+        (JSC::B3::BasicBlock::replaceSuccessor):
+        (JSC::B3::BasicBlock::addPredecessor):
+        (JSC::B3::BasicBlock::replacePredecessor):
+        (JSC::B3::BasicBlock::updatePredecessors):
+        (JSC::B3::BasicBlock::dump):
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::values):
+        (JSC::B3::BasicBlock::numPredecessors):
+        (JSC::B3::BasicBlock::predecessor):
+        (JSC::B3::BasicBlock::frequency):
+        * b3/B3BasicBlockInlines.h:
+        (JSC::B3::BasicBlock::appendNew):
+        (JSC::B3::BasicBlock::replaceLastWithNew):
+        (JSC::B3::BasicBlock::numSuccessors):
+        * b3/B3BasicBlockUtils.h:
+        (JSC::B3::replacePredecessor):
+        (JSC::B3::updatePredecessors):
+        (JSC::B3::resetReachability):
+        * b3/B3BlockInsertionSet.cpp: Added.
+        (JSC::B3::BlockInsertionSet::BlockInsertionSet):
+        (JSC::B3::BlockInsertionSet::~BlockInsertionSet):
+        (JSC::B3::BlockInsertionSet::insert):
+        (JSC::B3::BlockInsertionSet::insertBefore):
+        (JSC::B3::BlockInsertionSet::splitForward):
+        (JSC::B3::BlockInsertionSet::execute):
+        * b3/B3BlockInsertionSet.h: Added.
+        * b3/B3Common.h:
+        (JSC::B3::isRepresentableAs):
+        (JSC::B3::chillDiv):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::addConstant):
+        (JSC::B3::Const32Value::subConstant):
+        (JSC::B3::Const32Value::divConstant):
+        (JSC::B3::Const32Value::bitAndConstant):
+        (JSC::B3::Const32Value::bitOrConstant):
+        (JSC::B3::Const32Value::bitXorConstant):
+        (JSC::B3::Const32Value::shlConstant):
+        (JSC::B3::Const32Value::sShrConstant):
+        (JSC::B3::Const32Value::zShrConstant):
+        (JSC::B3::Const32Value::equalConstant):
+        (JSC::B3::Const32Value::notEqualConstant):
+        (JSC::B3::Const32Value::lessThanConstant):
+        (JSC::B3::Const32Value::greaterThanConstant):
+        (JSC::B3::Const32Value::lessEqualConstant):
+        (JSC::B3::Const32Value::greaterEqualConstant):
+        (JSC::B3::Const32Value::aboveConstant):
+        (JSC::B3::Const32Value::belowConstant):
+        (JSC::B3::Const32Value::aboveEqualConstant):
+        (JSC::B3::Const32Value::belowEqualConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::addConstant):
+        (JSC::B3::Const64Value::subConstant):
+        (JSC::B3::Const64Value::divConstant):
+        (JSC::B3::Const64Value::bitAndConstant):
+        (JSC::B3::Const64Value::bitOrConstant):
+        (JSC::B3::Const64Value::bitXorConstant):
+        (JSC::B3::Const64Value::shlConstant):
+        (JSC::B3::Const64Value::sShrConstant):
+        (JSC::B3::Const64Value::zShrConstant):
+        (JSC::B3::Const64Value::equalConstant):
+        (JSC::B3::Const64Value::notEqualConstant):
+        (JSC::B3::Const64Value::lessThanConstant):
+        (JSC::B3::Const64Value::greaterThanConstant):
+        (JSC::B3::Const64Value::lessEqualConstant):
+        (JSC::B3::Const64Value::greaterEqualConstant):
+        (JSC::B3::Const64Value::aboveConstant):
+        (JSC::B3::Const64Value::belowConstant):
+        (JSC::B3::Const64Value::aboveEqualConstant):
+        (JSC::B3::Const64Value::belowEqualConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::addConstant):
+        (JSC::B3::ConstDoubleValue::subConstant):
+        (JSC::B3::ConstDoubleValue::divConstant):
+        (JSC::B3::ConstDoubleValue::equalConstant):
+        (JSC::B3::ConstDoubleValue::notEqualConstant):
+        (JSC::B3::ConstDoubleValue::lessThanConstant):
+        (JSC::B3::ConstDoubleValue::greaterThanConstant):
+        (JSC::B3::ConstDoubleValue::lessEqualConstant):
+        (JSC::B3::ConstDoubleValue::greaterEqualConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ControlValue.cpp:
+        (JSC::B3::ControlValue::~ControlValue):
+        (JSC::B3::ControlValue::replaceSuccessor):
+        (JSC::B3::ControlValue::convertToJump):
+        * b3/B3ControlValue.h:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3GenericFrequentedBlock.h:
+        (JSC::B3::GenericFrequentedBlock::block):
+        (JSC::B3::GenericFrequentedBlock::frequency):
+        (JSC::B3::GenericFrequentedBlock::dump):
+        * b3/B3InsertionSet.cpp:
+        (JSC::B3::InsertionSet::insertIntConstant):
+        (JSC::B3::InsertionSet::execute):
+        * b3/B3InsertionSet.h:
+        * b3/B3LowerMacros.cpp: Added.
+        (JSC::B3::lowerMacros):
+        * b3/B3LowerMacros.h: Added.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::addIntConstant):
+        (JSC::B3::Procedure::addBoolConstant):
+        (JSC::B3::Procedure::resetValueOwners):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::takeByproducts):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::addConstant):
+        (JSC::B3::Value::subConstant):
+        (JSC::B3::Value::divConstant):
+        (JSC::B3::Value::bitAndConstant):
+        (JSC::B3::Value::bitOrConstant):
+        (JSC::B3::Value::bitXorConstant):
+        (JSC::B3::Value::shlConstant):
+        (JSC::B3::Value::sShrConstant):
+        (JSC::B3::Value::zShrConstant):
+        (JSC::B3::Value::equalConstant):
+        (JSC::B3::Value::notEqualConstant):
+        (JSC::B3::Value::lessThanConstant):
+        (JSC::B3::Value::greaterThanConstant):
+        (JSC::B3::Value::lessEqualConstant):
+        (JSC::B3::Value::greaterEqualConstant):
+        (JSC::B3::Value::aboveConstant):
+        (JSC::B3::Value::belowConstant):
+        (JSC::B3::Value::aboveEqualConstant):
+        (JSC::B3::Value::belowEqualConstant):
+        * b3/B3Value.h:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::isUrshift64Valid):
+        (JSC::B3::Air::isX86DivHelperValid):
+        (JSC::B3::Air::isX86ConvertToDoubleWord32Valid):
+        (JSC::B3::Air::isX86ConvertToDoubleWord64Valid):
+        (JSC::B3::Air::isX86Div32Valid):
+        (JSC::B3::Air::isX86Div64Valid):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirSimplifyCFG.cpp:
+        (JSC::B3::Air::simplifyCFG):
+        * b3/testb3.cpp:
+        (JSC::B3::testCallFunctionWithHellaDoubleArguments):
+        (JSC::B3::testChillDiv):
+        (JSC::B3::testChillDivTwice):
+        (JSC::B3::testChillDiv64):
+        (JSC::B3::run):
+        * dfg/DFGBlockInsertionSet.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildBinaryI32):
+
 2015-11-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Air should allocate registers

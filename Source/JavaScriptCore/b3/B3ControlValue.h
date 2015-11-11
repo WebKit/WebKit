@@ -64,6 +64,8 @@ public:
     const SuccessorList& successors() const { return m_successors; }
     SuccessorList& successors() { return m_successors; }
 
+    bool replaceSuccessor(BasicBlock* from, BasicBlock* to);
+
     const FrequentedBlock& taken() const
     {
         ASSERT(opcode() == Jump || opcode() == Branch);
@@ -85,7 +87,7 @@ public:
         return successor(1);
     }
 
-    void convertToJump(const FrequentedBlock& destination);
+    void convertToJump(BasicBlock* destination);
 
 protected:
     JS_EXPORT_PRIVATE void dumpMeta(CommaPrinter&, PrintStream&) const override;

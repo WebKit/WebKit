@@ -32,6 +32,7 @@
 #include "AirGenerate.h"
 #include "AirInstInlines.h"
 #include "B3Common.h"
+#include "B3LowerMacros.h"
 #include "B3LowerToAir.h"
 #include "B3MoveConstants.h"
 #include "B3Procedure.h"
@@ -65,6 +66,8 @@ void generateToAir(Procedure& procedure, Air::Code& code)
         dataLog("Initial B3:\n");
         dataLog(procedure);
     }
+
+    lowerMacros(procedure);
 
     reduceStrength(procedure);
     

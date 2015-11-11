@@ -65,6 +65,7 @@ public:
     BasicBlock* block() const { return m_block; }
     BasicBlock*& block() { return m_block; }
     FrequencyClass frequency() const { return m_frequency; }
+    FrequencyClass& frequency() { return m_frequency; }
 
     void dump(PrintStream& out) const
     {

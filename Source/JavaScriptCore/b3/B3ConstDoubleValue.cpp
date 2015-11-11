@@ -47,56 +47,63 @@ Value* ConstDoubleValue::addConstant(Procedure& proc, int32_t other) const
     return proc.add<ConstDoubleValue>(origin(), m_value + static_cast<double>(other));
 }
 
-Value* ConstDoubleValue::addConstant(Procedure& proc, Value* other) const
+Value* ConstDoubleValue::addConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasDouble())
         return nullptr;
     return proc.add<ConstDoubleValue>(origin(), m_value + other->asDouble());
 }
 
-Value* ConstDoubleValue::subConstant(Procedure& proc, Value* other) const
+Value* ConstDoubleValue::subConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasDouble())
         return nullptr;
     return proc.add<ConstDoubleValue>(origin(), m_value - other->asDouble());
 }
 
-TriState ConstDoubleValue::equalConstant(Value* other) const
+Value* ConstDoubleValue::divConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasDouble())
+        return nullptr;
+    return proc.add<ConstDoubleValue>(origin(), m_value / other->asDouble());
+}
+
+TriState ConstDoubleValue::equalConstant(const Value* other) const
 {
     if (!other->hasDouble())
         return MixedTriState;
     return triState(m_value == other->asDouble());
 }
 
-TriState ConstDoubleValue::notEqualConstant(Value* other) const
+TriState ConstDoubleValue::notEqualConstant(const Value* other) const
 {
     if (!other->hasDouble())
         return MixedTriState;
     return triState(m_value != other->asDouble());
 }
 
-TriState ConstDoubleValue::lessThanConstant(Value* other) const
+TriState ConstDoubleValue::lessThanConstant(const Value* other) const
 {
     if (!other->hasDouble())
         return MixedTriState;
     return triState(m_value < other->asDouble());
 }
 
-TriState ConstDoubleValue::greaterThanConstant(Value* other) const
+TriState ConstDoubleValue::greaterThanConstant(const Value* other) const
 {
     if (!other->hasDouble())
         return MixedTriState;
     return triState(m_value > other->asDouble());
 }
 
-TriState ConstDoubleValue::lessEqualConstant(Value* other) const
+TriState ConstDoubleValue::lessEqualConstant(const Value* other) const
 {
     if (!other->hasDouble())
         return MixedTriState;
     return triState(m_value <= other->asDouble());
 }
 
-TriState ConstDoubleValue::greaterEqualConstant(Value* other) const
+TriState ConstDoubleValue::greaterEqualConstant(const Value* other) const
 {
     if (!other->hasDouble())
         return MixedTriState;

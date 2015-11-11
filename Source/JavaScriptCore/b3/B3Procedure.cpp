@@ -55,22 +55,27 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
-Value* Procedure::addIntConstant(Type type, int64_t value)
+Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
 {
     switch (type) {
     case Int32:
-        return add<Const32Value>(Origin(), static_cast<int32_t>(value));
+        return add<Const32Value>(origin, static_cast<int32_t>(value));
     case Int64:
-        return add<Const64Value>(Origin(), value);
+        return add<Const64Value>(origin, value);
     case Double:
-        return add<ConstDoubleValue>(Origin(), static_cast<double>(value));
+        return add<ConstDoubleValue>(origin, static_cast<double>(value));
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
 }
 
-Value* Procedure::addBoolConstant(TriState triState)
+Value* Procedure::addIntConstant(Value* likeValue, int64_t value)
+{
+    return addIntConstant(likeValue->origin(), likeValue->type(), value);
+}
+
+Value* Procedure::addBoolConstant(Origin origin, TriState triState)
 {
     int32_t value = 0;
     switch (triState) {
@@ -84,7 +89,7 @@ Value* Procedure::addBoolConstant(TriState triState)
         return nullptr;
     }
 
-    return addIntConstant(Int32, value);
+    return addIntConstant(origin, Int32, value);
 }
 
 void Procedure::resetValueOwners()

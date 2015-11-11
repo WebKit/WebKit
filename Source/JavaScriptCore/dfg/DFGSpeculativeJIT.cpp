@@ -3399,8 +3399,8 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         }
             
         m_jit.move(op1GPR, eax.gpr());
-        m_jit.assembler().cdq();
-        m_jit.assembler().idivl_r(op2GPR);
+        m_jit.x86ConvertToDoubleWord32();
+        m_jit.x86Div32(op2GPR);
             
         if (op2TempGPR != InvalidGPRReg)
             unlock(op2TempGPR);
@@ -3555,8 +3555,8 @@ void SpeculativeJIT::compileArithMod(Node* node)
 
                 m_jit.move(op1Gpr, eax.gpr());
                 m_jit.move(TrustedImm32(divisor), scratchGPR);
-                m_jit.assembler().cdq();
-                m_jit.assembler().idivl_r(scratchGPR);
+                m_jit.x86ConvertToDoubleWord32();
+                m_jit.x86Div32(scratchGPR);
                 if (shouldCheckNegativeZero(node->arithMode())) {
                     JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
                     speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
@@ -3646,8 +3646,8 @@ void SpeculativeJIT::compileArithMod(Node* node)
         }
             
         m_jit.move(op1GPR, eax.gpr());
-        m_jit.assembler().cdq();
-        m_jit.assembler().idivl_r(op2GPR);
+        m_jit.x86ConvertToDoubleWord32();
+        m_jit.x86Div32(op2GPR);
             
         if (op2TempGPR != InvalidGPRReg)
             unlock(op2TempGPR);

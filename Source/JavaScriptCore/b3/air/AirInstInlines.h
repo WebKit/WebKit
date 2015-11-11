@@ -135,6 +135,36 @@ inline bool isUrshift64Valid(const Inst& inst)
     return isShiftValid(inst);
 }
 
+inline bool isX86DivHelperValid(const Inst& inst)
+{
+#if CPU(X86) || CPU(X86_64)
+    return inst.args[0] == Tmp(X86Registers::eax)
+        && inst.args[1] == Tmp(X86Registers::edx);
+#else
+    return false;
+#endif
+}
+
+inline bool isX86ConvertToDoubleWord32Valid(const Inst& inst)
+{
+    return isX86DivHelperValid(inst);
+}
+
+inline bool isX86ConvertToQuadWord64Valid(const Inst& inst)
+{
+    return isX86DivHelperValid(inst);
+}
+
+inline bool isX86Div32Valid(const Inst& inst)
+{
+    return isX86DivHelperValid(inst);
+}
+
+inline bool isX86Div64Valid(const Inst& inst)
+{
+    return isX86DivHelperValid(inst);
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

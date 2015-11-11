@@ -962,6 +962,13 @@ public:
         m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_IDIV, dst);
     }
 
+#if CPU(X86_64)
+    void idivq_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP3_Ev, GROUP3_OP_IDIV, dst);
+    }
+#endif // CPU(X86_64)
+
     // Comparisons:
 
     void cmpl_rr(RegisterID src, RegisterID dst)
@@ -1293,6 +1300,13 @@ public:
     {
         m_formatter.oneByteOp(OP_CDQ);
     }
+
+#if CPU(X86_64)
+    void cqo()
+    {
+        m_formatter.oneByteOp64(OP_CDQ);
+    }
+#endif
 
     void fstps(int offset, RegisterID base)
     {

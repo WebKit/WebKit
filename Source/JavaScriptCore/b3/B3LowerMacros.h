@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGBlockInsertionSet_h
-#define DFGBlockInsertionSet_h
+#ifndef B3LowerMacros_h
+#define B3LowerMacros_h
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(B3_JIT)
 
-#include "DFGGraph.h"
-#include <wtf/Insertion.h>
-#include <wtf/Vector.h>
+namespace JSC { namespace B3 {
 
-namespace JSC { namespace DFG {
+class Procedure;
 
-typedef WTF::Insertion<RefPtr<BasicBlock>> BlockInsertion;
+// Lowers high-level operations that it's easier to deal with once they are broken up. Currently
+// this includes Switch and ChillDiv.
 
-class BlockInsertionSet {
-public:
-    BlockInsertionSet(Graph&);
-    ~BlockInsertionSet();
-    
-    void insert(const BlockInsertion&);
-    void insert(size_t index, PassRefPtr<BasicBlock>);
-    BasicBlock* insert(size_t index, float executionCount);
-    BasicBlock* insertBefore(BasicBlock* before, float executionCount);
+bool lowerMacros(Procedure&);
 
-    bool execute();
+} } // namespace JSC::B3
 
-private:
-    Graph& m_graph;
-    Vector<BlockInsertion, 8> m_insertions;
-};
+#endif // ENABLE(B3_JIT)
 
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
-
-#endif // DFGBlockInsertionSet_h
+#endif // B3LowerMacros_h
 

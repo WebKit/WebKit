@@ -763,8 +763,8 @@ public:
             ASSERT(GPRInfo::regT0 == X86Registers::eax);
             move(GPRInfo::regT1, X86Registers::ecx);
             if (op == WASMOpExpressionI32::SDiv || op == WASMOpExpressionI32::SMod) {
-                m_assembler.cdq();
-                m_assembler.idivl_r(X86Registers::ecx);
+                x86ConvertToDoubleWord32();
+                x86Div32(X86Registers::ecx);
             } else {
                 ASSERT(op == WASMOpExpressionI32::UDiv || op == WASMOpExpressionI32::UMod);
                 xor32(X86Registers::edx, X86Registers::edx);

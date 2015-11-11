@@ -32,15 +32,17 @@ template<typename T>
 class Insertion {
 public:
     Insertion() { }
-    
-    Insertion(size_t index, T element)
+
+    template<typename U>
+    Insertion(size_t index, U&& element)
         : m_index(index)
-        , m_element(element)
+        , m_element(std::forward<U>(element))
     {
     }
     
     size_t index() const { return m_index; }
-    T element() const { return m_element; }
+    const T& element() const { return m_element; }
+    T& element() { return m_element; }
     
     bool operator<(const Insertion& other) const
     {
@@ -66,8 +68,8 @@ void executeInsertions(TargetVectorType& target, InsertionVectorType& insertions
         size_t firstIndex = insertions[indexInInsertions].index() + indexInInsertions;
         size_t indexOffset = indexInInsertions + 1;
         for (size_t i = lastIndex; --i > firstIndex;)
-            target[i] = target[i - indexOffset];
-        target[firstIndex] = insertions[indexInInsertions].element();
+            target[i] = WTF::move(target[i - indexOffset]);
+        target[firstIndex] = WTF::move(insertions[indexInInsertions].element());
         lastIndex = firstIndex;
     }
     insertions.resize(0);

@@ -42,25 +42,26 @@ public:
 
     Value* negConstant(Procedure&) const override;
     Value* addConstant(Procedure&, int32_t other) const override;
-    Value* addConstant(Procedure&, Value* other) const override;
-    Value* subConstant(Procedure&, Value* other) const override;
-    Value* bitAndConstant(Procedure&, Value* other) const override;
-    Value* bitOrConstant(Procedure&, Value* other) const override;
-    Value* bitXorConstant(Procedure&, Value* other) const override;
-    Value* shlConstant(Procedure&, Value* other) const override;
-    Value* sShrConstant(Procedure&, Value* other) const override;
-    Value* zShrConstant(Procedure&, Value* other) const override;
+    Value* addConstant(Procedure&, const Value* other) const override;
+    Value* subConstant(Procedure&, const Value* other) const override;
+    Value* divConstant(Procedure&, const Value* other) const override;
+    Value* bitAndConstant(Procedure&, const Value* other) const override;
+    Value* bitOrConstant(Procedure&, const Value* other) const override;
+    Value* bitXorConstant(Procedure&, const Value* other) const override;
+    Value* shlConstant(Procedure&, const Value* other) const override;
+    Value* sShrConstant(Procedure&, const Value* other) const override;
+    Value* zShrConstant(Procedure&, const Value* other) const override;
 
-    TriState equalConstant(Value* other) const override;
-    TriState notEqualConstant(Value* other) const override;
-    TriState lessThanConstant(Value* other) const override;
-    TriState greaterThanConstant(Value* other) const override;
-    TriState lessEqualConstant(Value* other) const override;
-    TriState greaterEqualConstant(Value* other) const override;
-    TriState aboveConstant(Value* other) const override;
-    TriState belowConstant(Value* other) const override;
-    TriState aboveEqualConstant(Value* other) const override;
-    TriState belowEqualConstant(Value* other) const override;
+    TriState equalConstant(const Value* other) const override;
+    TriState notEqualConstant(const Value* other) const override;
+    TriState lessThanConstant(const Value* other) const override;
+    TriState greaterThanConstant(const Value* other) const override;
+    TriState lessEqualConstant(const Value* other) const override;
+    TriState greaterEqualConstant(const Value* other) const override;
+    TriState aboveConstant(const Value* other) const override;
+    TriState belowConstant(const Value* other) const override;
+    TriState aboveEqualConstant(const Value* other) const override;
+    TriState belowEqualConstant(const Value* other) const override;
 
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;

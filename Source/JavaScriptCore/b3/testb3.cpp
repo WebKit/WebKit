@@ -2859,6 +2859,108 @@ void testCallFunctionWithHellaDoubleArguments()
     CHECK(compileAndRun<double>(proc) == functionWithHellaDoubleArguments(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
 }
 
+void testChillDiv(int num, int den, int res)
+{
+    // Test non-constant.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, ChillDiv, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+        CHECK(compileAndRun<int>(proc, num, den) == res);
+    }
+
+    // Test constant.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, ChillDiv, Origin(),
+                root->appendNew<Const32Value>(proc, Origin(), num),
+                root->appendNew<Const32Value>(proc, Origin(), den)));
+        
+        CHECK(compileAndRun<int>(proc) == res);
+    }
+}
+
+void testChillDivTwice(int num1, int den1, int num2, int den2, int res)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<Value>(
+                proc, ChillDiv, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))),
+            root->appendNew<Value>(
+                proc, ChillDiv, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3)))));
+    
+    CHECK(compileAndRun<int>(proc, num1, den1, num2, den2) == res);
+}
+
+void testChillDiv64(int64_t num, int64_t den, int64_t res)
+{
+    if (!is64Bit())
+        return;
+
+    // Test non-constant.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, ChillDiv, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+        
+        CHECK(compileAndRun<int64_t>(proc, num, den) == res);
+    }
+
+    // Test constant.
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, ChillDiv, Origin(),
+                root->appendNew<Const64Value>(proc, Origin(), num),
+                root->appendNew<Const64Value>(proc, Origin(), den)));
+        
+        CHECK(compileAndRun<int64_t>(proc) == res);
+    }
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -3336,6 +3438,26 @@ void run(const char* filter)
 
     RUN(testCallSimpleDouble(1, 2));
     RUN(testCallFunctionWithHellaDoubleArguments());
+
+    RUN(testChillDiv(4, 2, 2));
+    RUN(testChillDiv(1, 0, 0));
+    RUN(testChillDiv(0, 0, 0));
+    RUN(testChillDiv(1, -1, -1));
+    RUN(testChillDiv(-2147483647 - 1, 0, 0));
+    RUN(testChillDiv(-2147483647 - 1, 1, -2147483647 - 1));
+    RUN(testChillDiv(-2147483647 - 1, -1, -2147483647 - 1));
+    RUN(testChillDiv(-2147483647 - 1, 2, -1073741824));
+    RUN(testChillDiv64(4, 2, 2));
+    RUN(testChillDiv64(1, 0, 0));
+    RUN(testChillDiv64(0, 0, 0));
+    RUN(testChillDiv64(1, -1, -1));
+    RUN(testChillDiv64(-9223372036854775807ll - 1, 0, 0));
+    RUN(testChillDiv64(-9223372036854775807ll - 1, 1, -9223372036854775807ll - 1));
+    RUN(testChillDiv64(-9223372036854775807ll - 1, -1, -9223372036854775807ll - 1));
+    RUN(testChillDiv64(-9223372036854775807ll - 1, 2, -4611686018427387904));
+    RUN(testChillDivTwice(4, 2, 6, 2, 5));
+    RUN(testChillDivTwice(4, 0, 6, 2, 3));
+    RUN(testChillDivTwice(4, 2, 6, 0, 2));
 
     if (tasks.isEmpty())
         usage();

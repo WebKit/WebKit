@@ -858,8 +858,8 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     Jump denominatorNotNeg1 = branch32(NotEqual, regT2, TrustedImm32(-1));
     addSlowCase(branch32(Equal, regT0, TrustedImm32(-2147483647-1)));
     denominatorNotNeg1.link(this);
-    m_assembler.cdq();
-    m_assembler.idivl_r(regT2);
+    x86ConvertToDoubleWord32();
+    x86Div32(regT2);
     Jump numeratorPositive = branch32(GreaterThanOrEqual, regT3, TrustedImm32(0));
     addSlowCase(branchTest32(Zero, regT1));
     numeratorPositive.link(this);

@@ -1233,6 +1233,40 @@ private:
             return;
         }
 
+        case Div: {
+            if (isInt(m_value->type())) {
+                Tmp eax = Tmp(X86Registers::eax);
+                Tmp edx = Tmp(X86Registers::edx);
+
+                Air::Opcode convertToDoubleWord;
+                Air::Opcode div;
+                switch (m_value->type()) {
+                case Int32:
+                    convertToDoubleWord = X86ConvertToDoubleWord32;
+                    div = X86Div32;
+                    break;
+                case Int64:
+                    convertToDoubleWord = X86ConvertToQuadWord64;
+                    div = X86Div64;
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    return;
+                }
+                
+                append(Move, tmp(m_value->child(0)), eax);
+                append(convertToDoubleWord, eax, edx);
+                append(div, eax, edx, tmp(m_value->child(1)));
+                append(Move, eax, tmp(m_value));
+                return;
+            }
+
+            // FIXME: Support doubles.
+            // https://bugs.webkit.org/show_bug.cgi?id=150991
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+
         case BitAnd: {
             appendBinOp<And32, And64, Air::Oops, Commutative>(
                 m_value->child(0), m_value->child(1));

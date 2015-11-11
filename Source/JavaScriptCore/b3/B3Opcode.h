@@ -69,7 +69,7 @@ enum Opcode : int16_t {
     Add,
     Sub,
     Mul,
-    Div,
+    Div, // All bets are off as to what will happen when you execute this for -2^31/-1 and x/0.
 
     // Integer math.
     ChillDiv, // doesn't trap ever, behaves like JS (x/y)|0.

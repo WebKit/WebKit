@@ -42,6 +42,14 @@ ValueType* BasicBlock::appendNew(Procedure& procedure, Arguments... arguments)
     return result;
 }
 
+template<typename ValueType, typename... Arguments>
+ValueType* BasicBlock::replaceLastWithNew(Procedure& procedure, Arguments... arguments)
+{
+    ValueType* result = procedure.add<ValueType>(arguments...);
+    replaceLast(procedure, result);
+    return result;
+}
+
 inline unsigned BasicBlock::numSuccessors() const
 {
     return last()->as<ControlValue>()->numSuccessors();

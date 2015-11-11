@@ -29,9 +29,21 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlock.h"
+#include "B3ProcedureInlines.h"
+#include "B3ValueInlines.h"
 #include <wtf/BubbleSort.h>
 
 namespace JSC { namespace B3 {
+
+Value* InsertionSet::insertIntConstant(size_t index, Origin origin, Type type, int64_t value)
+{
+    return insertValue(index, m_procedure.addIntConstant(origin, type, value));
+}
+
+Value* InsertionSet::insertIntConstant(size_t index, Value* likeValue, int64_t value)
+{
+    return insertIntConstant(index, likeValue->origin(), likeValue->type(), value);
+}
 
 void InsertionSet::execute(BasicBlock* block)
 {

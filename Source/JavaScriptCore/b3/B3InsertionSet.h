@@ -28,6 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Origin.h"
+#include "B3Type.h"
 #include <wtf/Insertion.h>
 #include <wtf/Vector.h>
 
@@ -61,6 +63,9 @@ public:
 
     template<typename ValueType, typename... Arguments>
     Value* insert(size_t index, Arguments... arguments);
+
+    Value* insertIntConstant(size_t index, Origin, Type, int64_t value);
+    Value* insertIntConstant(size_t index, Value* likeValue, int64_t value);
 
     void execute(BasicBlock*);
 

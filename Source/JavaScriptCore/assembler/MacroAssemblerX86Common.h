@@ -247,6 +247,30 @@ public:
         m_assembler.imull_i32r(src, imm.m_value, dest);
     }
 
+    void x86ConvertToDoubleWord32()
+    {
+        m_assembler.cdq();
+    }
+
+    void x86ConvertToDoubleWord32(RegisterID eax, RegisterID edx)
+    {
+        ASSERT_UNUSED(eax, eax == X86Registers::eax);
+        ASSERT_UNUSED(edx, edx == X86Registers::edx);
+        x86ConvertToDoubleWord32();
+    }
+
+    void x86Div32(RegisterID denominator)
+    {
+        m_assembler.idivl_r(denominator);
+    }
+
+    void x86Div32(RegisterID eax, RegisterID edx, RegisterID denominator)
+    {
+        ASSERT_UNUSED(eax, eax == X86Registers::eax);
+        ASSERT_UNUSED(edx, edx == X86Registers::edx);
+        x86Div32(denominator);
+    }
+
     void neg32(RegisterID srcDest)
     {
         m_assembler.negl_r(srcDest);

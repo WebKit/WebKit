@@ -28,9 +28,11 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3BasicBlockInlines.h"
 #include "B3BasicBlockUtils.h"
+#include "B3ControlValue.h"
 #include "B3Procedure.h"
-#include "B3Value.h"
+#include "B3ValueInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 {
@@ -52,6 +54,29 @@ void BasicBlock::append(Value* value)
     m_values.append(value);
 }
 
+void BasicBlock::replaceLast(Procedure& proc, Value* value)
+{
+    proc.deleteValue(last());
+    last() = value;
+}
+
+Value* BasicBlock::appendIntConstant(Procedure& proc, Origin origin, Type type, int64_t value)
+{
+    Value* result = proc.addIntConstant(origin, type, value);
+    append(result);
+    return result;
+}
+
+Value* BasicBlock::appendIntConstant(Procedure& proc, Value* likeValue, int64_t value)
+{
+    return appendIntConstant(proc, likeValue->origin(), likeValue->type(), value);
+}
+
+bool BasicBlock::replaceSuccessor(BasicBlock* from, BasicBlock* to)
+{
+    return last()->as<ControlValue>()->replaceSuccessor(from, to);
+}
+
 bool BasicBlock::addPredecessor(BasicBlock* block)
 {
     return B3::addPredecessor(this, block);
@@ -65,6 +90,11 @@ bool BasicBlock::removePredecessor(BasicBlock* block)
 bool BasicBlock::replacePredecessor(BasicBlock* from, BasicBlock* to)
 {
     return B3::replacePredecessor(this, from, to);
+}
+
+void BasicBlock::updatePredecessorsAfter()
+{
+    B3::updatePredecessorsAfter(this);
 }
 
 void BasicBlock::dump(PrintStream& out) const

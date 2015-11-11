@@ -96,6 +96,22 @@ Neg32 UD:G
 Neg64 UD:G
     Tmp
 
+Mul32 U:G, UD:G
+    Tmp, Tmp
+    Addr, Tmp
+
+X86ConvertToDoubleWord32 U:G, D:G
+    Tmp*, Tmp*
+
+X86ConvertToQuadWord64 U:G, D:G
+    Tmp*, Tmp*
+
+X86Div32 UD:G, UD:G, U:G
+    Tmp*, Tmp*, Tmp
+
+X86Div64 UD:G, UD:G, U:G
+    Tmp*, Tmp*, Tmp
+
 Lea UA:G, D:G
     Addr, Tmp
 
@@ -156,10 +172,6 @@ Xor64 U:G, UD:G
     Tmp, Tmp
     Tmp, Addr
     Imm, Tmp
-
-Mul32 U:G, UD:G
-    Tmp, Tmp
-    Addr, Tmp
 
 # Note that Move operates over the full register size, which is either 32-bit or 64-bit depending on
 # the platform. I'm not entirely sure that this is a good thing; it might be better to just have a

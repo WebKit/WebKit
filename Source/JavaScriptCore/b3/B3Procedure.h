@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Origin.h"
 #include "B3Type.h"
 #include "PureNaN.h"
 #include <wtf/Bag.h>
@@ -40,6 +41,7 @@
 namespace JSC { namespace B3 {
 
 class BasicBlock;
+class BlockInsertionSet;
 class OpaqueByproducts;
 class Value;
 
@@ -56,10 +58,11 @@ public:
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);
 
-    Value* addIntConstant(Type, int64_t value);
+    Value* addIntConstant(Origin, Type, int64_t value);
+    Value* addIntConstant(Value*, int64_t value);
 
     // Returns null for MixedTriState.
-    Value* addBoolConstant(TriState);
+    Value* addBoolConstant(Origin, TriState);
 
     void resetValueOwners();
     void resetReachability();
@@ -216,6 +219,8 @@ public:
     std::unique_ptr<OpaqueByproducts> takeByproducts() { return WTF::move(m_byproducts); }
 
 private:
+    friend class BlockInsertionSet;
+    
     JS_EXPORT_PRIVATE size_t addValueIndex();
     
     Vector<std::unique_ptr<BasicBlock>> m_blocks;

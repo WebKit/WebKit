@@ -80,8 +80,10 @@ public:
         }
 
         for (Value* value : valueInProc) {
-            for (Value* child : value->children())
+            for (Value* child : value->children()) {
+                VALIDATE(child, ("At ", *value));
                 VALIDATE(valueInProc.contains(child), ("At ", *value, "->", pointerDump(child)));
+            }
         }
 
         HashMap<BasicBlock*, HashSet<BasicBlock*>> allPredecessors;

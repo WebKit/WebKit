@@ -386,6 +386,30 @@ public:
         m_assembler.imulq_rr(src, dest);
     }
     
+    void x86ConvertToQuadWord64()
+    {
+        m_assembler.cqo();
+    }
+
+    void x86ConvertToQuadWord64(RegisterID rax, RegisterID rdx)
+    {
+        ASSERT_UNUSED(rax, rax == X86Registers::eax);
+        ASSERT_UNUSED(rdx, rdx == X86Registers::edx);
+        x86ConvertToQuadWord64();
+    }
+
+    void x86Div64(RegisterID denominator)
+    {
+        m_assembler.idivq_r(denominator);
+    }
+
+    void x86Div64(RegisterID rax, RegisterID rdx, RegisterID denominator)
+    {
+        ASSERT_UNUSED(rax, rax == X86Registers::eax);
+        ASSERT_UNUSED(rdx, rdx == X86Registers::edx);
+        x86Div64(denominator);
+    }
+
     void neg64(RegisterID dest)
     {
         m_assembler.negq_r(dest);

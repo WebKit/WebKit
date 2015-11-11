@@ -86,7 +86,9 @@ bool simplifyCFG(Code& code)
                                 "Replacing ", pointerDump(block), "->", pointerDump(successor),
                                 " with ", pointerDump(block), "->", pointerDump(newSuccessor), "\n");
                         }
-                        newSuccessor->replacePredecessor(successor, block);
+                        // Note that we do not do replacePredecessor() because the block we're
+                        // skipping will still have newSuccessor as its successor.
+                        newSuccessor->addPredecessor(block);
                         successor = newSuccessor;
                         changed = true;
                     }
@@ -112,6 +114,7 @@ bool simplifyCFG(Code& code)
                             dataLog("Changing ", pointerDump(block), "'s terminal to a Jump.\n");
                         block->last() = Inst(Jump, block->last().origin);
                         block->successors().resize(1);
+                        block->successors()[0].frequency() = FrequencyClass::Normal;
                         changed = true;
                     }
                 }

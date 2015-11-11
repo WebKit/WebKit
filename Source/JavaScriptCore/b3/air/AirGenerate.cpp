@@ -121,6 +121,7 @@ void generate(Code& code, CCallHelpers& jit)
 
     for (BasicBlock* block : code) {
         blockJumps[block].link(&jit);
+        blockLabels[block] = jit.label();
         ASSERT(block->size() >= 1);
         for (unsigned i = 0; i < block->size() - 1; ++i) {
             CCallHelpers::Jump jump = block->at(i).generate(jit, context);
@@ -140,8 +141,6 @@ void generate(Code& code, CCallHelpers& jit)
         }
         
         CCallHelpers::Jump jump = block->last().generate(jit, context);
-        for (Inst& inst : *block)
-            jump = inst.generate(jit, context);
         switch (block->numSuccessors()) {
         case 0:
             ASSERT(!jump.isSet());

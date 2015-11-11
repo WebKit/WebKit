@@ -124,92 +124,97 @@ Value* Value::addConstant(Procedure&, int32_t) const
     return nullptr;
 }
 
-Value* Value::addConstant(Procedure&, Value*) const
+Value* Value::addConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-Value* Value::subConstant(Procedure&, Value*) const
+Value* Value::subConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-Value* Value::bitAndConstant(Procedure&, Value*) const
+Value* Value::divConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-Value* Value::bitOrConstant(Procedure&, Value*) const
+Value* Value::bitAndConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-Value* Value::bitXorConstant(Procedure&, Value*) const
+Value* Value::bitOrConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-Value* Value::shlConstant(Procedure&, Value*) const
+Value* Value::bitXorConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-Value* Value::sShrConstant(Procedure&, Value*) const
+Value* Value::shlConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-Value* Value::zShrConstant(Procedure&, Value*) const
+Value* Value::sShrConstant(Procedure&, const Value*) const
 {
     return nullptr;
 }
 
-TriState Value::equalConstant(Value*) const
+Value* Value::zShrConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
+TriState Value::equalConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::notEqualConstant(Value*) const
+TriState Value::notEqualConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::lessThanConstant(Value*) const
+TriState Value::lessThanConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::greaterThanConstant(Value*) const
+TriState Value::greaterThanConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::lessEqualConstant(Value*) const
+TriState Value::lessEqualConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::greaterEqualConstant(Value*) const
+TriState Value::greaterEqualConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::aboveConstant(Value*) const
+TriState Value::aboveConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::belowConstant(Value*) const
+TriState Value::belowConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::aboveEqualConstant(Value*) const
+TriState Value::aboveEqualConstant(const Value*) const
 {
     return MixedTriState;
 }
 
-TriState Value::belowEqualConstant(Value*) const
+TriState Value::belowEqualConstant(const Value*) const
 {
     return MixedTriState;
 }

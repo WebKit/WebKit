@@ -1,3 +1,23 @@
+2015-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile a program with ChillDiv
+        https://bugs.webkit.org/show_bug.cgi?id=151114
+
+        Reviewed by Benjamin Poulain.
+
+        Needed to beef up some compiler algorithms. All of the hardening was about making them
+        work with objects that have move semantics but not copy semantics. This arises in B3
+        basic block insertion sets.
+
+        * wtf/BubbleSort.h:
+        (WTF::bubbleSort):
+        * wtf/Insertion.h:
+        (WTF::Insertion::Insertion):
+        (WTF::Insertion::index):
+        (WTF::Insertion::element):
+        (WTF::Insertion::operator<):
+        (WTF::executeInsertions):
+
 2015-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use CROSS_PLATFORM_CONTEXT_MENUS

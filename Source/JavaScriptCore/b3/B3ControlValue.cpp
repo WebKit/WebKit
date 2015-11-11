@@ -36,7 +36,22 @@ ControlValue::~ControlValue()
 {
 }
 
-void ControlValue::convertToJump(const FrequentedBlock& destination)
+bool ControlValue::replaceSuccessor(BasicBlock* from, BasicBlock* to)
+{
+    bool result = false;
+    for (FrequentedBlock& successor : m_successors) {
+        if (successor.block() == from) {
+            successor.block() = to;
+            result = true;
+
+            // Keep looping because it's valid for a successor to be mentioned multiple times,
+            // like if multiple switch cases have the same target.
+        }
+    }
+    return result;
+}
+
+void ControlValue::convertToJump(BasicBlock* destination)
 {
     unsigned index = this->index();
     Origin origin = this->origin();
@@ -44,7 +59,7 @@ void ControlValue::convertToJump(const FrequentedBlock& destination)
 
     this->ControlValue::~ControlValue();
 
-    new (this) ControlValue(index, Jump, origin, destination);
+    new (this) ControlValue(index, Jump, origin, FrequentedBlock(destination));
 
     this->owner = owner;
 }

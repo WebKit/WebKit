@@ -111,25 +111,26 @@ public:
     
     virtual Value* negConstant(Procedure&) const;
     virtual Value* addConstant(Procedure&, int32_t other) const;
-    virtual Value* addConstant(Procedure&, Value* other) const;
-    virtual Value* subConstant(Procedure&, Value* other) const;
-    virtual Value* bitAndConstant(Procedure&, Value* other) const;
-    virtual Value* bitOrConstant(Procedure&, Value* other) const;
-    virtual Value* bitXorConstant(Procedure&, Value* other) const;
-    virtual Value* shlConstant(Procedure&, Value* other) const;
-    virtual Value* sShrConstant(Procedure&, Value* other) const;
-    virtual Value* zShrConstant(Procedure&, Value* other) const;
+    virtual Value* addConstant(Procedure&, const Value* other) const;
+    virtual Value* subConstant(Procedure&, const Value* other) const;
+    virtual Value* divConstant(Procedure&, const Value* other) const; // This chooses ChillDiv semantics for integers.
+    virtual Value* bitAndConstant(Procedure&, const Value* other) const;
+    virtual Value* bitOrConstant(Procedure&, const Value* other) const;
+    virtual Value* bitXorConstant(Procedure&, const Value* other) const;
+    virtual Value* shlConstant(Procedure&, const Value* other) const;
+    virtual Value* sShrConstant(Procedure&, const Value* other) const;
+    virtual Value* zShrConstant(Procedure&, const Value* other) const;
     
-    virtual TriState equalConstant(Value* other) const;
-    virtual TriState notEqualConstant(Value* other) const;
-    virtual TriState lessThanConstant(Value* other) const;
-    virtual TriState greaterThanConstant(Value* other) const;
-    virtual TriState lessEqualConstant(Value* other) const;
-    virtual TriState greaterEqualConstant(Value* other) const;
-    virtual TriState aboveConstant(Value* other) const;
-    virtual TriState belowConstant(Value* other) const;
-    virtual TriState aboveEqualConstant(Value* other) const;
-    virtual TriState belowEqualConstant(Value* other) const;
+    virtual TriState equalConstant(const Value* other) const;
+    virtual TriState notEqualConstant(const Value* other) const;
+    virtual TriState lessThanConstant(const Value* other) const;
+    virtual TriState greaterThanConstant(const Value* other) const;
+    virtual TriState lessEqualConstant(const Value* other) const;
+    virtual TriState greaterEqualConstant(const Value* other) const;
+    virtual TriState aboveConstant(const Value* other) const;
+    virtual TriState belowConstant(const Value* other) const;
+    virtual TriState aboveEqualConstant(const Value* other) const;
+    virtual TriState belowEqualConstant(const Value* other) const;
 
     // If the value is a comparison then this returns the inverted form of that comparison, if
     // possible. It can be impossible for double comparisons, where for example LessThan and

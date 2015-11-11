@@ -300,6 +300,10 @@
 		0F338E141BF0276C0013C88F /* B3ValueKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E081BF0276C0013C88F /* B3ValueKey.cpp */; };
 		0F338E151BF0276C0013C88F /* B3ValueKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E091BF0276C0013C88F /* B3ValueKey.h */; };
 		0F338E161BF0276C0013C88F /* B3ValueKeyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E0A1BF0276C0013C88F /* B3ValueKeyInlines.h */; };
+		0F338E1B1BF286EA0013C88F /* B3BlockInsertionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */; };
+		0F338E1C1BF286EA0013C88F /* B3BlockInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */; };
+		0F338E1D1BF286EA0013C88F /* B3LowerMacros.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */; };
+		0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */; };
 		0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */; };
 		0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; };
 		0F38B01117CF078000B144D3 /* LLIntEntrypoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */; };
@@ -2343,6 +2347,10 @@
 		0F338E081BF0276C0013C88F /* B3ValueKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ValueKey.cpp; path = b3/B3ValueKey.cpp; sourceTree = "<group>"; };
 		0F338E091BF0276C0013C88F /* B3ValueKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ValueKey.h; path = b3/B3ValueKey.h; sourceTree = "<group>"; };
 		0F338E0A1BF0276C0013C88F /* B3ValueKeyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ValueKeyInlines.h; path = b3/B3ValueKeyInlines.h; sourceTree = "<group>"; };
+		0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3BlockInsertionSet.cpp; path = b3/B3BlockInsertionSet.cpp; sourceTree = "<group>"; };
+		0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BlockInsertionSet.h; path = b3/B3BlockInsertionSet.h; sourceTree = "<group>"; };
+		0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3LowerMacros.cpp; path = b3/B3LowerMacros.cpp; sourceTree = "<group>"; };
+		0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LowerMacros.h; path = b3/B3LowerMacros.h; sourceTree = "<group>"; };
 		0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGUseKind.cpp; path = dfg/DFGUseKind.cpp; sourceTree = "<group>"; };
 		0F34B14816D4200E001CDA5A /* DFGUseKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUseKind.h; path = dfg/DFGUseKind.h; sourceTree = "<group>"; };
 		0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoint.cpp; path = llint/LLIntEntrypoint.cpp; sourceTree = "<group>"; };
@@ -4442,6 +4450,8 @@
 				0FEC84B71BDACDAC0080FF74 /* B3BasicBlock.h */,
 				0FEC84B81BDACDAC0080FF74 /* B3BasicBlockInlines.h */,
 				0FEC84B91BDACDAC0080FF74 /* B3BasicBlockUtils.h */,
+				0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */,
+				0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */,
 				0FEC84BA1BDACDAC0080FF74 /* B3BlockWorklist.h */,
 				0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */,
 				0F338DF81BE96AA80013C88F /* B3CCallValue.h */,
@@ -4483,6 +4493,8 @@
 				0FEC85B41BE1462F0080FF74 /* B3InsertionSet.cpp */,
 				0FEC85B51BE1462F0080FF74 /* B3InsertionSet.h */,
 				0FEC85B61BE1462F0080FF74 /* B3InsertionSetInlines.h */,
+				0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */,
+				0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */,
 				0FEC84D31BDACDAC0080FF74 /* B3LowerToAir.cpp */,
 				0FEC84D41BDACDAC0080FF74 /* B3LowerToAir.h */,
 				0FEC84D51BDACDAC0080FF74 /* B3MemoryValue.cpp */,
@@ -6680,6 +6692,7 @@
 				0FEC85381BDACDAC0080FF74 /* B3SwitchCase.h in Headers */,
 				0FEC853A1BDACDAC0080FF74 /* B3SwitchValue.h in Headers */,
 				0F4570411BE584CA0062A629 /* B3TimingScope.h in Headers */,
+				0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */,
 				0FEC853C1BDACDAC0080FF74 /* B3Type.h in Headers */,
 				0FEC853E1BDACDAC0080FF74 /* B3UpsilonValue.h in Headers */,
 				0FEC85401BDACDAC0080FF74 /* B3UseCounts.h in Headers */,
@@ -6779,6 +6792,7 @@
 				C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */,
 				C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */,
 				C4F4B6F41A05C944005CAB76 /* cpp_generator.py in Headers */,
+				0F338E1C1BF286EA0013C88F /* B3BlockInsertionSet.h in Headers */,
 				C4F4B6F31A05C944005CAB76 /* cpp_generator_templates.py in Headers */,
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
 				9959E92B1BD17FA4001AA413 /* cssmin.py in Headers */,
@@ -8324,6 +8338,7 @@
 				147F39C6107EC37600427A48 /* DatePrototype.cpp in Sources */,
 				14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
+				0F338E1D1BF286EA0013C88F /* B3LowerMacros.cpp in Sources */,
 				0F2D4DDD19832D34007D4B19 /* DebuggerScope.cpp in Sources */,
 				2A7A58EF1808A4C40020BDF7 /* DeferGC.cpp in Sources */,
 				0FC712DE17CD8779008CC93C /* DeferredCompilationCallback.cpp in Sources */,
@@ -8496,6 +8511,7 @@
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
 				0F485327187DFDEC0083B687 /* FTLAvailableRecovery.cpp in Sources */,
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,
+				0F338E1B1BF286EA0013C88F /* B3BlockInsertionSet.cpp in Sources */,
 				0FEA0A271709623B00BB722C /* FTLCommonValues.cpp in Sources */,
 				0FEA0A0B170513DB00BB722C /* FTLCompile.cpp in Sources */,
 				0FE95F7918B5694700B531FB /* FTLDataSection.cpp in Sources */,
