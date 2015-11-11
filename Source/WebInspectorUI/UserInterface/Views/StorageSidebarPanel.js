@@ -34,7 +34,7 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
         this.filterBar.placeholder = WebInspector.UIString("Filter Storage List");
 
         this._navigationBar = new WebInspector.NavigationBar;
-        this.element.appendChild(this._navigationBar.element);
+        this.addSubview(this._navigationBar);
 
         var scopeItemPrefix = "storage-sidebar-";
         var scopeBarItems = [];

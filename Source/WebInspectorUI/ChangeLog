@@ -1,3 +1,67 @@
+2015-11-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Convert sidebars to use View base class
+        https://bugs.webkit.org/show_bug.cgi?id=151057
+
+        Reviewed by Timothy Hatcher.
+
+        This patch makes Sidebar a subclass of View. Mostly mechanical changes and cleanup,
+        such as adding navigation bars and panels as subviews, removing element getters,
+        and replacing external properties with symbols.
+
+        * UserInterface/Base/Main.js:
+        Added sidebars to view hierarchy.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        Add navigation bar as a subview.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        Add navigation bar as a subview.
+        (WebInspector.NetworkSidebarPanel):
+        (WebInspector.NetworkSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WebInspector.NetworkSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.NetworkSidebarPanel.prototype.treeElementAddedOrChanged):
+        (WebInspector.NetworkSidebarPanel.prototype._treeElementGoToArrowWasClicked):
+        External properties replaced with symbols.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        Add navigation bar as a subview.
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WebInspector.ResourceSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        External properties replaced with symbols.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar):
+        (WebInspector.Sidebar.prototype.addSidebarPanel):
+        (WebInspector.Sidebar.prototype.removeSidebarPanel):
+        Panels are now added and removed as subviews.
+        (WebInspector.Sidebar.prototype.get width):
+        (WebInspector.Sidebar.prototype.set width):
+        (WebInspector.Sidebar.prototype.get collapsed):
+        (WebInspector.Sidebar.prototype.set collapsed):
+        "collapsed" property now backed by private class variable, not DOM state.
+        (WebInspector.Sidebar.prototype.get element): Deleted.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel):
+        (WebInspector.SidebarPanel.prototype.get visible):
+        (WebInspector.SidebarPanel.prototype.get selected):
+        (WebInspector.SidebarPanel.prototype.set selected):
+        "selected" property now backed by private class variable, not DOM state.
+        (WebInspector.SidebarPanel.prototype.get parentSidebar):
+        No longer stored as separate property. Wrapper around View.prototype.parentView.
+        Original getter retained for clarity.
+        (WebInspector.SidebarPanel.prototype.show):
+        (WebInspector.SidebarPanel.prototype.hide):
+        (WebInspector.SidebarPanel.prototype.added):
+        (WebInspector.SidebarPanel.prototype.removed):
+        (WebInspector.SidebarPanel.prototype.get element): Deleted.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel):
+        Add navigation bar as a subview.
+
 2015-11-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Enable/disable All Breakpoints not usable when "No Filter Results" displayed
