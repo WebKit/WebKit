@@ -1,3 +1,13 @@
+2015-11-09  Alex Christensen  <achristensen@webkit.org>
+
+        XHR timeouts should not fire if there is an immediate network error.
+        https://bugs.webkit.org/show_bug.cgi?id=150577
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk2/TestExpectations:
+        http/tests/contentextensions/async-xhr-onerror.html shouldn't be flaky any more.
+
 2015-10-14  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Make blocked async XHR call onerror
