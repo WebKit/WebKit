@@ -1,5 +1,11 @@
 2015-11-11  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix the Mac CMake build.
+
+        * CMakeLists.txt:
+
+2015-11-11  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Add initial support for speculative resource revalidation to the WebKit disk cache
         https://bugs.webkit.org/show_bug.cgi?id=150856
         <rdar://problem/23092196>
