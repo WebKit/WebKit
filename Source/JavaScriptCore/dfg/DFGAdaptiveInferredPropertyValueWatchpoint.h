@@ -28,44 +28,19 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "ObjectPropertyCondition.h"
-#include "Watchpoint.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+#include "AdaptiveInferredPropertyValueWatchpointBase.h"
 
 namespace JSC { namespace DFG {
 
-class AdaptiveInferredPropertyValueWatchpoint {
-    WTF_MAKE_NONCOPYABLE(AdaptiveInferredPropertyValueWatchpoint);
-    WTF_MAKE_FAST_ALLOCATED;
-
+class AdaptiveInferredPropertyValueWatchpoint : public AdaptiveInferredPropertyValueWatchpointBase {
 public:
+    typedef AdaptiveInferredPropertyValueWatchpointBase Base;
     AdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
-    
-    const ObjectPropertyCondition& key() const { return m_key; }
-    
-    void install();
 
 private:
-    class StructureWatchpoint : public Watchpoint {
-    public:
-        StructureWatchpoint() { }
-    protected:
-        virtual void fireInternal(const FireDetail&) override;
-    };
-    class PropertyWatchpoint : public Watchpoint {
-    public:
-        PropertyWatchpoint() { }
-    protected:
-        virtual void fireInternal(const FireDetail&) override;
-    };
-    
-    void fire(const FireDetail&);
-    
-    ObjectPropertyCondition m_key;
+    virtual void handleFire(const FireDetail&) override;
+
     CodeBlock* m_codeBlock;
-    StructureWatchpoint m_structureWatchpoint;
-    PropertyWatchpoint m_propertyWatchpoint;
 };
 
 } } // namespace JSC::DFG

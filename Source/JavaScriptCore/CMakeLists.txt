@@ -133,6 +133,7 @@ set(JavaScriptCore_SOURCES
 
     builtins/BuiltinExecutables.cpp
 
+    bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp
     bytecode/ArrayAllocationProfile.cpp
     bytecode/ArrayProfile.cpp
     bytecode/BytecodeBasicBlock.cpp

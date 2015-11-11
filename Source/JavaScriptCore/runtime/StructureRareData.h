@@ -30,11 +30,14 @@
 #include "JSCell.h"
 #include "JSTypeInfo.h"
 #include "PropertyOffset.h"
+#include "PropertySlot.h"
 
 namespace JSC {
 
 class JSPropertyNameEnumerator;
 class Structure;
+class ObjectToStringAdaptiveStructureWatchpoint;
+class ObjectToStringAdaptiveInferredPropertyValueWatchpoint;
 
 class StructureRareData final : public JSCell {
 public:
@@ -55,7 +58,7 @@ public:
     void clearPreviousID();
 
     JSString* objectToStringValue() const;
-    void setObjectToStringValue(VM&, JSString* value);
+    void setObjectToStringValue(ExecState*, VM&, Structure* baseStructure, JSString* value, PropertySlot toStringTagSymbolSlot);
 
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
@@ -64,7 +67,11 @@ public:
 
 private:
     friend class Structure;
-    
+    friend class ObjectToStringAdaptiveStructureWatchpoint;
+    friend class ObjectToStringAdaptiveInferredPropertyValueWatchpoint;
+
+    void clearObjectToStringValue();
+
     StructureRareData(VM&, Structure*);
 
     WriteBarrier<Structure> m_previous;
@@ -73,6 +80,9 @@ private:
     
     typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
     std::unique_ptr<PropertyWatchpointMap> m_replacementWatchpointSets;
+    Bag<ObjectToStringAdaptiveStructureWatchpoint> m_objectToStringAdaptiveWatchpointSet;
+    std::unique_ptr<ObjectToStringAdaptiveInferredPropertyValueWatchpoint> m_objectToStringAdaptiveInferredValueWatchpoint;
+    bool m_giveUpOnObjectToStringValueCache;
 };
 
 } // namespace JSC

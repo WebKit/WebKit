@@ -286,7 +286,7 @@
 		0F338DF61BE93D550013C88F /* B3ConstrainedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */; };
 		0F338DF91BE96AA80013C88F /* B3CCallValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */; };
 		0F338DFA1BE96AA80013C88F /* B3CCallValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF81BE96AA80013C88F /* B3CCallValue.h */; };
-		0F338DFD1BED51270013C88F /* AirSimplifyCFG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DFB1BED51270013C88F /* AirSimplifyCFG.cpp */; };
+                0F338DFD1BED51270013C88F /* AirSimplifyCFG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DFB1BED51270013C88F /* AirSimplifyCFG.cpp */; };
 		0F338DFE1BED51270013C88F /* AirSimplifyCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DFC1BED51270013C88F /* AirSimplifyCFG.h */; };
 		0F338E0B1BF0276C0013C88F /* B3Compilation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338DFF1BF0276C0013C88F /* B3Compilation.cpp */; };
 		0F338E0C1BF0276C0013C88F /* B3Compilation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E001BF0276C0013C88F /* B3Compilation.h */; };
@@ -300,12 +300,12 @@
 		0F338E141BF0276C0013C88F /* B3ValueKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E081BF0276C0013C88F /* B3ValueKey.cpp */; };
 		0F338E151BF0276C0013C88F /* B3ValueKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E091BF0276C0013C88F /* B3ValueKey.h */; };
 		0F338E161BF0276C0013C88F /* B3ValueKeyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E0A1BF0276C0013C88F /* B3ValueKeyInlines.h */; };
-		0F338E1B1BF286EA0013C88F /* B3BlockInsertionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */; };
+                0F338E1B1BF286EA0013C88F /* B3BlockInsertionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */; };
 		0F338E1C1BF286EA0013C88F /* B3BlockInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */; };
 		0F338E1D1BF286EA0013C88F /* B3LowerMacros.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */; };
 		0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */; };
 		0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */; };
-		0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; };
+                0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; };
 		0F38B01117CF078000B144D3 /* LLIntEntrypoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */; };
 		0F38B01217CF078300B144D3 /* LLIntEntrypoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F38B01717CFE75500B144D3 /* DFGCompilationKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F38B01317CFE75500B144D3 /* DFGCompilationKey.cpp */; };
@@ -1128,6 +1128,8 @@
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
 		534C457C1BC72411007476A7 /* JSTypedArrayViewConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 534C457B1BC72411007476A7 /* JSTypedArrayViewConstructor.h */; };
 		534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 534C457D1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp */; };
+		5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */; };
+		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
 		5D53726F0E1C54880021E549 /* Tracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D53726E0E1C54880021E549 /* Tracing.h */; };
 		5D5D8AD10E0D0EBE00F9C692 /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
@@ -2333,7 +2335,7 @@
 		0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ConstrainedValue.h; path = b3/B3ConstrainedValue.h; sourceTree = "<group>"; };
 		0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3CCallValue.cpp; path = b3/B3CCallValue.cpp; sourceTree = "<group>"; };
 		0F338DF81BE96AA80013C88F /* B3CCallValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3CCallValue.h; path = b3/B3CCallValue.h; sourceTree = "<group>"; };
-		0F338DFB1BED51270013C88F /* AirSimplifyCFG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirSimplifyCFG.cpp; path = b3/air/AirSimplifyCFG.cpp; sourceTree = "<group>"; };
+                0F338DFB1BED51270013C88F /* AirSimplifyCFG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirSimplifyCFG.cpp; path = b3/air/AirSimplifyCFG.cpp; sourceTree = "<group>"; };
 		0F338DFC1BED51270013C88F /* AirSimplifyCFG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirSimplifyCFG.h; path = b3/air/AirSimplifyCFG.h; sourceTree = "<group>"; };
 		0F338DFF1BF0276C0013C88F /* B3Compilation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Compilation.cpp; path = b3/B3Compilation.cpp; sourceTree = "<group>"; };
 		0F338E001BF0276C0013C88F /* B3Compilation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Compilation.h; path = b3/B3Compilation.h; sourceTree = "<group>"; };
@@ -2347,12 +2349,12 @@
 		0F338E081BF0276C0013C88F /* B3ValueKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ValueKey.cpp; path = b3/B3ValueKey.cpp; sourceTree = "<group>"; };
 		0F338E091BF0276C0013C88F /* B3ValueKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ValueKey.h; path = b3/B3ValueKey.h; sourceTree = "<group>"; };
 		0F338E0A1BF0276C0013C88F /* B3ValueKeyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ValueKeyInlines.h; path = b3/B3ValueKeyInlines.h; sourceTree = "<group>"; };
-		0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3BlockInsertionSet.cpp; path = b3/B3BlockInsertionSet.cpp; sourceTree = "<group>"; };
+                0F338E171BF286EA0013C88F /* B3BlockInsertionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3BlockInsertionSet.cpp; path = b3/B3BlockInsertionSet.cpp; sourceTree = "<group>"; };
 		0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BlockInsertionSet.h; path = b3/B3BlockInsertionSet.h; sourceTree = "<group>"; };
 		0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3LowerMacros.cpp; path = b3/B3LowerMacros.cpp; sourceTree = "<group>"; };
 		0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LowerMacros.h; path = b3/B3LowerMacros.h; sourceTree = "<group>"; };
 		0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGUseKind.cpp; path = dfg/DFGUseKind.cpp; sourceTree = "<group>"; };
-		0F34B14816D4200E001CDA5A /* DFGUseKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUseKind.h; path = dfg/DFGUseKind.h; sourceTree = "<group>"; };
+                0F34B14816D4200E001CDA5A /* DFGUseKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUseKind.h; path = dfg/DFGUseKind.h; sourceTree = "<group>"; };
 		0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoint.cpp; path = llint/LLIntEntrypoint.cpp; sourceTree = "<group>"; };
 		0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LLIntEntrypoint.h; path = llint/LLIntEntrypoint.h; sourceTree = "<group>"; };
 		0F38B01317CFE75500B144D3 /* DFGCompilationKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCompilationKey.cpp; path = dfg/DFGCompilationKey.cpp; sourceTree = "<group>"; };
@@ -3147,6 +3149,8 @@
 		534C457A1BC703DC007476A7 /* TypedArrayConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = TypedArrayConstructor.js; sourceTree = "<group>"; };
 		534C457B1BC72411007476A7 /* JSTypedArrayViewConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArrayViewConstructor.h; sourceTree = "<group>"; };
 		534C457D1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewConstructor.cpp; sourceTree = "<group>"; };
+		5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AdaptiveInferredPropertyValueWatchpointBase.cpp; sourceTree = "<group>"; };
+		5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdaptiveInferredPropertyValueWatchpointBase.h; sourceTree = "<group>"; };
 		53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGenericTypedArrayViewPrototypeFunctions.h; sourceTree = "<group>"; };
 		53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArrayViewPrototype.h; sourceTree = "<group>"; };
 		53917E831B791CB8000EBD33 /* TypedArray.prototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = TypedArray.prototype.js; path = builtins/TypedArray.prototype.js; sourceTree = SOURCE_ROOT; };
@@ -6167,6 +6171,8 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */,
+				5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */,
 				0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */,
 				0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */,
 				0F63945115D07051006A597C /* ArrayProfile.cpp */,
@@ -7639,6 +7645,7 @@
 				0FFB6C391AF48DDC00DB1BF7 /* TypeofType.h in Headers */,
 				52C952B719A289850069B386 /* TypeProfiler.h in Headers */,
 				0F2D4DEC19832DC4007D4B19 /* TypeProfilerLog.h in Headers */,
+				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
 				0F2D4DF019832DD6007D4B19 /* TypeSet.h in Headers */,
 				0FF4274B158EBE91004CB9FF /* udis86.h in Headers */,
 				0FF42741158EBE8D004CB9FF /* udis86_decode.h in Headers */,
@@ -8739,6 +8746,7 @@
 				A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */,
 				709FB8671AE335C60039D069 /* JSWeakSet.cpp in Sources */,
 				1442566115EDE98D0066A49B /* JSWithScope.cpp in Sources */,
+				5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */,
 				86E3C618167BABEE006D760A /* JSWrapperMap.mm in Sources */,
 				14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */,
 				BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */,

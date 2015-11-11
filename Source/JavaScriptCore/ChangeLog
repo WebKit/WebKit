@@ -1,3 +1,102 @@
+2015-11-10  Keith Miller  <keith_miller@apple.com>
+
+        Regression(r191815): 5.3% regression on Dromaeo JS Library Benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=150945
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes a performance regression introduced by r191815. Before adding Symbol.toStringTag
+        we would cache the value of Object.prototype.toString() in the rareData of the structure.
+        In order to cache the result of Object.prototype.toString() we now need to ensure that the
+        value stored in Symbol.toStringTag is a known constant. Thus, in order to ensure the stored Symbol.toStringTag
+        value remains constant adaptive inferred value watchpoints have been re-factored to be generalizable and
+        a new version that clears the toString value cache when fired has been added.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp: Copied from Source/JavaScriptCore/dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp.
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::AdaptiveInferredPropertyValueWatchpointBase):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::install):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::fire):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint::fireInternal):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint::fireInternal):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h: Copied from Source/JavaScriptCore/dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h.
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::key):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint::StructureWatchpoint):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint::PropertyWatchpoint):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::handleFire):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::install): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::fire): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::StructureWatchpoint::fireInternal): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::PropertyWatchpoint::fireInternal): Deleted.
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::key): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::StructureWatchpoint::StructureWatchpoint): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::PropertyWatchpoint::PropertyWatchpoint): Deleted.
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setObjectToStringValue):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::setObjectToStringValue):
+        (JSC::StructureRareData::clearObjectToStringValue):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::ObjectToStringAdaptiveStructureWatchpoint):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::install):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::fireInternal):
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::ObjectToStringAdaptiveInferredPropertyValueWatchpoint):
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setObjectToStringValue): Deleted.
+        * tests/stress/symbol-tostringtag-watchpoints.js: Added.
+        (Base):
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp: Copied from Source/JavaScriptCore/dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp.
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::AdaptiveInferredPropertyValueWatchpointBase):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::install):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::fire):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint::fireInternal):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint::fireInternal):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h: Copied from Source/JavaScriptCore/dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h.
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::key):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint::StructureWatchpoint):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint::PropertyWatchpoint):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::handleFire):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::install): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::fire): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::StructureWatchpoint::fireInternal): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::PropertyWatchpoint::fireInternal): Deleted.
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::key): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::StructureWatchpoint::StructureWatchpoint): Deleted.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::PropertyWatchpoint::PropertyWatchpoint): Deleted.
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setObjectToStringValue):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::StructureRareData):
+        (JSC::StructureRareData::setObjectToStringValue):
+        (JSC::StructureRareData::clearObjectToStringValue):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::ObjectToStringAdaptiveStructureWatchpoint):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::install):
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::fireInternal):
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::ObjectToStringAdaptiveInferredPropertyValueWatchpoint):
+        (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setObjectToStringValue): Deleted.
+        * tests/stress/symbol-tostringtag-watchpoints.js: Added.
+        (Base):
+
 2015-11-11  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile and canonicalize Mul

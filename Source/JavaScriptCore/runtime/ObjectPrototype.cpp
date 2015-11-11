@@ -27,6 +27,7 @@
 #include "JSString.h"
 #include "JSCInlines.h"
 #include "PropertySlot.h"
+#include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
 
 namespace JSC {
@@ -244,24 +245,32 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
     JSObject* thisObject = thisValue.toObject(exec);
 
-    JSValue stringTag = thisObject->get(exec, exec->propertyNames().toStringTagSymbol);
-    if (stringTag.isString()) {
-        JSRopeString::RopeBuilder ropeBuilder(vm);
-        ropeBuilder.append(vm.smallStrings.objectStringStart());
-        ropeBuilder.append(jsCast<JSString*>(stringTag));
-        ropeBuilder.append(vm.smallStrings.singleCharacterString(']'));
-        return JSValue::encode(ropeBuilder.release());
-    }
-
     JSString* result = thisObject->structure(vm)->objectToStringValue();
     if (!result) {
+        PropertyName toStringTagSymbol = exec->propertyNames().toStringTagSymbol;
+        PropertySlot toStringTagSlot(thisObject);
+        if (thisObject->getPropertySlot(exec, toStringTagSymbol, toStringTagSlot)) {
+            JSValue stringTag = toStringTagSlot.getValue(exec, toStringTagSymbol);
+            if (stringTag.isString()) {
+                JSRopeString::RopeBuilder ropeBuilder(vm);
+                ropeBuilder.append(vm.smallStrings.objectStringStart());
+                ropeBuilder.append(jsCast<JSString*>(stringTag));
+                ropeBuilder.append(vm.smallStrings.singleCharacterString(']'));
+                result = ropeBuilder.release();
+
+                thisObject->structure(vm)->setObjectToStringValue(exec, vm, result, toStringTagSlot);
+                return JSValue::encode(result);
+            }
+        }
+
         String newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]");
         if (!newString)
             return JSValue::encode(throwOutOfMemoryError(exec));
 
         result = jsNontrivialString(&vm, newString);
-        thisObject->structure(vm)->setObjectToStringValue(vm, result);
+        thisObject->structure(vm)->setObjectToStringValue(exec, vm, result, toStringTagSlot);
     }
+
     return JSValue::encode(result);
 }
 

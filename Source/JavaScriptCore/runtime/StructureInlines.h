@@ -27,6 +27,7 @@
 #define StructureInlines_h
 
 #include "JSArrayBufferView.h"
+#include "JSGlobalObject.h"
 #include "PropertyMapHashTable.h"
 #include "Structure.h"
 #include "StructureChain.h"
@@ -302,6 +303,13 @@ inline size_t nextOutOfLineStorageCapacity(size_t currentCapacity)
 inline size_t Structure::suggestedNewOutOfLineStorageCapacity()
 {
     return nextOutOfLineStorageCapacity(outOfLineCapacity());
+}
+
+inline void Structure::setObjectToStringValue(ExecState* exec, VM& vm, JSString* value, PropertySlot toStringTagSymbolSlot)
+{
+    if (!hasRareData())
+        allocateRareData(vm);
+    rareData()->setObjectToStringValue(exec, vm, this, value, toStringTagSymbolSlot);
 }
 
 } // namespace JSC

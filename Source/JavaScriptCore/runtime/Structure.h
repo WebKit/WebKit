@@ -378,12 +378,7 @@ public:
         return rareData()->objectToStringValue();
     }
 
-    void setObjectToStringValue(VM& vm, JSString* value)
-    {
-        if (!hasRareData())
-            allocateRareData(vm);
-        rareData()->setObjectToStringValue(vm, value);
-    }
+    void setObjectToStringValue(ExecState*, VM&, JSString* value, PropertySlot toStringTagSymbolSlot);
 
     const ClassInfo* classInfo() const { return m_classInfo; }
 

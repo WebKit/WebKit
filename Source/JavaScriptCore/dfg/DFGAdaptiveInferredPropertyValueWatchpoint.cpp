@@ -34,79 +34,24 @@
 
 namespace JSC { namespace DFG {
 
-AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint(
-    const ObjectPropertyCondition& key,
-    CodeBlock* codeBlock)
-    : m_key(key)
+AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition& key, CodeBlock* codeBlock)
+    : Base(key)
     , m_codeBlock(codeBlock)
 {
-    RELEASE_ASSERT(key.kind() == PropertyCondition::Equivalence);
 }
 
-void AdaptiveInferredPropertyValueWatchpoint::install()
+void AdaptiveInferredPropertyValueWatchpoint::handleFire(const FireDetail& detail)
 {
-    RELEASE_ASSERT(m_key.isWatchable());
-    
-    m_key.object()->structure()->addTransitionWatchpoint(&m_structureWatchpoint);
-    
-    PropertyOffset offset = m_key.object()->structure()->getConcurrently(m_key.uid());
-    WatchpointSet* set = m_key.object()->structure()->propertyReplacementWatchpointSet(offset);
-    set->add(&m_propertyWatchpoint);
-}
+    if (DFG::shouldDumpDisassembly())
+        dataLog("Firing watchpoint ", RawPointer(this), " (", key(), ") on ", *m_codeBlock, "\n");
 
-void AdaptiveInferredPropertyValueWatchpoint::fire(const FireDetail& detail)
-{
-    // One of the watchpoints fired, but the other one didn't. Make sure that neither of them are
-    // in any set anymore. This simplifies things by allowing us to reinstall the watchpoints
-    // wherever from scratch.
-    if (m_structureWatchpoint.isOnList())
-        m_structureWatchpoint.remove();
-    if (m_propertyWatchpoint.isOnList())
-        m_propertyWatchpoint.remove();
-    
-    if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
-        install();
-        return;
-    }
-    
-    if (DFG::shouldDumpDisassembly()) {
-        dataLog(
-            "Firing watchpoint ", RawPointer(this), " (", m_key, ") on ", *m_codeBlock, "\n");
-    }
-    
+
     StringPrintStream out;
-    out.print("Adaptation of ", m_key, " failed: ", detail);
-    
+    out.print("Adaptation of ", key(), " failed: ", detail);
+
     StringFireDetail stringDetail(out.toCString().data());
-    
-    m_codeBlock->jettison(
-        Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &stringDetail);
-}
 
-void AdaptiveInferredPropertyValueWatchpoint::StructureWatchpoint::fireInternal(
-    const FireDetail& detail)
-{
-    ptrdiff_t myOffset = OBJECT_OFFSETOF(
-        AdaptiveInferredPropertyValueWatchpoint, m_structureWatchpoint);
-    
-    AdaptiveInferredPropertyValueWatchpoint* parent =
-        bitwise_cast<AdaptiveInferredPropertyValueWatchpoint*>(
-            bitwise_cast<char*>(this) - myOffset);
-    
-    parent->fire(detail);
-}
-
-void AdaptiveInferredPropertyValueWatchpoint::PropertyWatchpoint::fireInternal(
-    const FireDetail& detail)
-{
-    ptrdiff_t myOffset = OBJECT_OFFSETOF(
-        AdaptiveInferredPropertyValueWatchpoint, m_propertyWatchpoint);
-    
-    AdaptiveInferredPropertyValueWatchpoint* parent =
-        bitwise_cast<AdaptiveInferredPropertyValueWatchpoint*>(
-            bitwise_cast<char*>(this) - myOffset);
-    
-    parent->fire(detail);
+    m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &stringDetail);
 }
 
 } } // namespace JSC::DFG
