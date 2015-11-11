@@ -1,4 +1,17 @@
 =================
+WebKitGTK+ 2.10.4
+=================
+
+What's new in WebKitGTK+ 2.10.4?
+
+  - Fixed dashed and dotted border painting.
+  - Properly cancel navigation policy checks.
+  - Several crashes fixed when running editor commands.
+  - Fix several crashes due to assertions in Debug builds.
+  - Fix the build on Mac OSX and bring back the Quartz target.
+  - Fix the build on glibc-based BSD systems.
+
+=================
 WebKitGTK+ 2.10.3
 =================
 
