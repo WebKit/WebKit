@@ -51,23 +51,30 @@ static String platformVersionForUAString()
     if (uname(&name) != -1)
         version = makeString(name.sysname, ' ', name.machine);
     else
-        version = "Unknown";
+        version = ASCIILiteral("Unknown");
     return version;
 }
 
-static const String versionForUAString()
+static const String& versionForUAString()
 {
     static NeverDestroyed<String> version(String::format("%i.%i", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION));
     return version;
 }
 
-String standardUserAgent(const String& applicationName, const String&)
+String standardUserAgent(const String& applicationName, const String& applicationVersion)
 {
-    String version = versionForUAString();
+    const String& version = versionForUAString();
     static NeverDestroyed<String> standardUserAgentString = makeString("Mozilla/5.0 (", platformForUAString(), "; ", platformVersionForUAString(),
         ") AppleWebKit/", version, " (KHTML, like Gecko) Version/8.0 Safari/601.2.7");
 
-    return applicationName.isEmpty() ? standardUserAgentString : standardUserAgentString + ' ' + applicationName;
+    if (applicationName.isEmpty())
+        return standardUserAgentString;
+
+    String finalApplicationVersion = applicationVersion;
+    if (finalApplicationVersion.isEmpty())
+        finalApplicationVersion = versionForUAString();
+
+    return standardUserAgentString + ' ' + applicationName + '/' + finalApplicationVersion;
 }
 
 } // namespace WebCore
