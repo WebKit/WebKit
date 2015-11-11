@@ -1,5 +1,16 @@
 2015-11-09  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Crash when right clicking in input box with -webkit-user-select: none
+        https://bugs.webkit.org/show_bug.cgi?id=145981
+        <rdar://problem/22441925>
+
+        Reviewed by Enrica Casucci.
+
+        * editing/selection/minimal-user-select-crash-expected.txt: Added.
+        * editing/selection/minimal-user-select-crash.html: Added.
+
+2015-11-09  Jiewen Tan  <jiewen_tan@apple.com>
+
         Null dereference loading Blink layout test editing/inserting/insert-html-crash-01.html
         https://bugs.webkit.org/show_bug.cgi?id=149298
         <rdar://problem/22746918>

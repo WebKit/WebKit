@@ -2558,6 +2558,7 @@ editing/spelling/spellcheck-async.html
 editing/spelling/spellcheck-async-mutation.html
 editing/spelling/spellcheck-queue.html
 editing/style/style-text-node-without-editable-parent.html
+editing/selection/minimal-user-select-crash.html
 
 # Editing tests that fail:
 editing/deleting/delete-emoji.html [ Failure ]

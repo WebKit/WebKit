@@ -709,6 +709,9 @@ bool Editor::hasBidiSelection() const
     } else
         startNode = m_frame.selection().selection().visibleStart().deepEquivalent().deprecatedNode();
 
+    if (!startNode)
+        return false;
+
     auto renderer = startNode->renderer();
     while (renderer && !is<RenderBlockFlow>(*renderer))
         renderer = renderer->parent();
