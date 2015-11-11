@@ -1,3 +1,15 @@
+2015-11-10  Daniel Bates  <dabates@apple.com>
+
+        Teach Makefile to build LayoutTestRelay when building for iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=150849
+
+        Reviewed by Alexey Proskuryakov.
+
+        Unless variable DO_NOT_BUILD_LAYOUT_TEST_RELAY is non-empty, build LayoutTestRelay when
+        building WebKit tools.
+
+        * Makefile:
+
 2015-11-10  David Kilzer  <ddkilzer@apple.com>
 
         [check-webkit-style] False positive (readability/enum_casing) on CF-styled enum members
