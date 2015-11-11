@@ -69,6 +69,14 @@
             "Savago"
          ]
       },
+      "Akos Kiss" : {
+         "emails" : [
+            "akiss@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "akiss"
+         ]
+      },
       "Albert J. Wong" : {
          "emails" : [
             "ajwong@chromium.org"
@@ -3112,14 +3120,6 @@
       "Aharon Lanin" : {
          "emails" : [
             "aharon@google.com"
-         ]
-      },
-      "Akos Kiss" : {
-         "emails" : [
-            "akiss@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "akiss"
          ]
       },
       "Alan Cutter" : {
