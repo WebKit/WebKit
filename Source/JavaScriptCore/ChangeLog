@@ -1,3 +1,14 @@
+2015-11-11  Mark Lam  <mark.lam@apple.com>
+
+        Add convenience utility to support dataLogging opcodeIDs.
+        https://bugs.webkit.org/show_bug.cgi?id=151117
+
+        Reviewed by Saam Barati.
+
+        * bytecode/Opcode.cpp:
+        (WTF::printInternal):
+        * bytecode/Opcode.h:
+
 2015-11-10  Keith Miller  <keith_miller@apple.com>
 
         Regression(r191815): 5.3% regression on Dromaeo JS Library Benchmark

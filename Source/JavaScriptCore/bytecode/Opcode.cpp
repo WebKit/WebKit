@@ -30,6 +30,8 @@
 #include "config.h"
 #include "Opcode.h"
 
+#include <wtf/PrintStream.h>
+
 #if ENABLE(OPCODE_STATS)
 #include <array>
 #include <wtf/DataLog.h>
@@ -185,3 +187,14 @@ void OpcodeStats::resetLastInstruction()
 #endif
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, OpcodeID opcode)
+{
+    out.print(opcodeNames[opcode]);
+}
+
+} // namespace WTF
