@@ -391,7 +391,6 @@ public:
     // A Document node returns itself.
     Document& document() const
     {
-        ASSERT(this);
         return treeScope().documentScope();
     }
 
