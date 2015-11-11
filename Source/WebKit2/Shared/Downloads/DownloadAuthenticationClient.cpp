@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DownloadAuthenticationClient.h"
 
+#if !USE(NETWORK_SESSION)
+
 #include "Download.h"
 
 using namespace WebCore;
@@ -64,3 +66,5 @@ void DownloadAuthenticationClient::receivedChallengeRejection(const Authenticati
 }
 
 } // namespace WebKit
+
+#endif

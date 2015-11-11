@@ -26,6 +26,8 @@
 #ifndef DownloadAuthenticationClient_h
 #define DownloadAuthenticationClient_h
 
+#if !USE(NETWORK_SESSION)
+
 #include <WebCore/AuthenticationClient.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -64,5 +66,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // !USE(NETWORK_SESSION)
 
 #endif // DownloadAuthenticationClient_h

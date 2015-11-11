@@ -94,9 +94,11 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
     if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
         if (auto* client = networkingTask->client()) {
-            client->willPerformHTTPRedirection(response, request, ^(const WebCore::ResourceRequest& request)
+            auto completionHandlerCopy = Block_copy(completionHandler);
+            client->willPerformHTTPRedirection(response, request, [completionHandlerCopy](const WebCore::ResourceRequest& request)
                 {
-                    completionHandler(request.nsURLRequest(WebCore::UpdateHTTPBody));
+                    completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
+                    Block_release(completionHandlerCopy);
                 }
             );
         }
@@ -109,9 +111,11 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
     if (auto* networkingTask = _session->dataTaskForIdentifier(task.taskIdentifier)) {
         if (auto* client = networkingTask->client()) {
-            client->didReceiveChallenge(challenge, ^(WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
+            auto completionHandlerCopy = Block_copy(completionHandler);
+            client->didReceiveChallenge(challenge, [completionHandlerCopy](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
                 {
-                    completionHandler(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
+                    completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
+                    Block_release(completionHandlerCopy);
                 }
             );
         }
@@ -136,9 +140,11 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         if (auto* client = networkingTask->client()) {
             ASSERT(isMainThread());
             WebCore::ResourceResponse resourceResponse(response);
-            client->didReceiveResponse(resourceResponse, ^(WebKit::ResponseDisposition responseDisposition)
+            auto completionHandlerCopy = Block_copy(completionHandler);
+            client->didReceiveResponse(resourceResponse, [completionHandlerCopy](WebKit::ResponseDisposition responseDisposition)
                 {
-                    completionHandler(toNSURLSessionResponseDisposition(responseDisposition));
+                    completionHandlerCopy(toNSURLSessionResponseDisposition(responseDisposition));
+                    Block_release(completionHandlerCopy);
                 }
             );
         }

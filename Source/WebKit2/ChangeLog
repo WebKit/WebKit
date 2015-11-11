@@ -1,3 +1,52 @@
+2015-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        Implement authentication challenge handling when using NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=150968
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        Copy functionality from NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync (which is used when we don't use NETWORK_SESSION)
+        because there is no canAuthenticateAgainstProtectionSpace delegate callback when using NSURLSession, according to
+        https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/URLLoadingSystem/Articles/AuthenticationChallenges.html
+        Instead, all authentication challenge callbacks go to URLSession:task:didReceiveChallenge:completionHandler:
+        because we do not implement URLSession:didReceiveChallenge:completionHandler:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[NetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[NetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[NetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        Make a block copy of the completion handlers so we can copy the std::functions that wrap them into HashMaps and call them later,
+        in this case we call the completion handler after the UIProcess gives us credentials for an authentication challenge.
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        (WebKit::AuthenticationManager::addChallengeToChallengeMap):
+        (WebKit::AuthenticationManager::shouldCoalesceChallenge):
+        (WebKit::AuthenticationManager::coalesceChallengesMatching):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        Fix an existing bug that caused multiple calls to addChallengeToChallengeMap for one challenge.  This caused too many calls to 
+        the AuthenticationClient methods, which did not cause a problem because they were not one-time-use block copies of completion handlers before.
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::cancelChallenge):
+        (WebKit::AuthenticationManager::cancelSingleChallenge):
+        (WebKit::AuthenticationManager::performDefaultHandling):
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinue):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+        Call completion handlers which we stored in a HashMap before doing IPC if we are using NETWORK_SESSION,
+        which has completion handlers instead of continueSomething client calls.
+        * Shared/Authentication/AuthenticationManager.h:
+        (WebKit::AuthenticationManager::outstandingAuthenticationChallengeCount):
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveAuthenticationChallenge):
+        (WebKit::Download::didReceiveResponse):
+        * Shared/Downloads/DownloadAuthenticationClient.cpp:
+        (WebKit::DownloadAuthenticationClient::receivedChallengeRejection):
+        * Shared/Downloads/DownloadAuthenticationClient.h:
+        Add ifdefs for code related to downloading I will implement later.
+
 2015-11-10  Simon Fraser  <simon.fraser@apple.com>
 
         Use different pixel formats for displays that support them

@@ -158,8 +158,30 @@ void NetworkLoad::willPerformHTTPRedirection(const ResourceResponse& response, c
 
 void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, std::function<void(AuthenticationChallengeDisposition, const Credential&)> completionHandler)
 {
-    notImplemented();
-    completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
+    // NetworkResourceLoader does not know whether the request is cross origin, so Web process computes an applicable credential policy for it.
+    ASSERT(m_parameters.clientCredentialPolicy != DoNotAskClientForCrossOriginCredentials);
+
+    // Handle server trust evaluation at platform-level if requested, for performance reasons.
+    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
+        && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
+        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
+        return;
+    }
+
+    if (m_client.isSynchronous()) {
+        // FIXME: We should ask the WebProcess like the asynchronous case below does.
+        // This is currently impossible as the WebProcess is blocked waiting on this synchronous load.
+        // It's possible that we can jump straight to the UI process to resolve this.
+        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
+        return;
+    }
+
+    if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
+        return;
+    }
+
+    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, completionHandler);
 }
 
 void NetworkLoad::didReceiveResponse(const ResourceResponse& response, std::function<void(ResponseDisposition)> completionHandler)
