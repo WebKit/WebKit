@@ -347,6 +347,36 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setAntialiasedFontDilationEnabled(antialiasedFontDilationEnabled);
 }
 
+- (NSUInteger)_defaultFontSize
+{
+    return _preferences->defaultFontSize();
+}
+
+- (void)_setDefaultFontSize:(NSUInteger)defaultFontSize
+{
+    _preferences->setDefaultFontSize(defaultFontSize);
+}
+
+- (NSUInteger)_defaultFixedPitchFontSize
+{
+    return _preferences->defaultFixedFontSize();
+}
+
+- (void)_setDefaultFixedPitchFontSize:(NSUInteger)defaultFixedPitchFontSize
+{
+    _preferences->setDefaultFixedFontSize(defaultFixedPitchFontSize);
+}
+
+- (NSString *)_fixedPitchFontFamily
+{
+    return _preferences->fixedFontFamily();
+}
+
+- (void)_setFixedPitchFontFamily:(NSString *)fixedPitchFontFamily
+{
+    _preferences->setFixedFontFamily(fixedPitchFontFamily);
+}
+
 @end
 
 #endif // WK_API_ENABLED

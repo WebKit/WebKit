@@ -76,6 +76,10 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 
 @property (nonatomic, setter=_setAntialiasedFontDilationEnabled:) BOOL _antialiasedFontDilationEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+@property (nonatomic, setter=_setDefaultFontSize:) NSUInteger _defaultFontSize WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setDefaultFixedPitchFontSize:) NSUInteger _defaultFixedPitchFontSize WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, copy, setter=_setFixedPitchFontFamily:) NSString *_fixedPitchFontFamily WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 // FIXME: This should be configured on the WKWebsiteDataStore.
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;

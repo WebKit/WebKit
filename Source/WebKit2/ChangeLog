@@ -1,3 +1,20 @@
+2015-11-11  Tim Horton  <timothy_horton@apple.com>
+
+        Add some font-related preferences to the modern API
+        https://bugs.webkit.org/show_bug.cgi?id=151138
+        <rdar://problem/23492636>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _defaultFontSize]):
+        (-[WKPreferences _setDefaultFontSize:]):
+        (-[WKPreferences _defaultFixedPitchFontSize]):
+        (-[WKPreferences _setDefaultFixedPitchFontSize:]):
+        (-[WKPreferences _fixedPitchFontFamily]):
+        (-[WKPreferences _setFixedPitchFontFamily:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2015-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Runtime critical warnings when closing a page containing windowed plugins
