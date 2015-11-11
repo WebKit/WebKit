@@ -43,10 +43,11 @@ namespace WebKit {
 namespace NetworkCache {
 
 class Entry {
-    WTF_MAKE_NONCOPYABLE(Entry); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Entry(const Key&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, const Vector<std::pair<String, String>>& varyingRequestHeaders);
     explicit Entry(const Storage::Record&);
+    Entry(const Entry&);
 
     Storage::Record encodeAsStorageRecord() const;
     static std::unique_ptr<Entry> decodeStorageRecord(const Storage::Record&);

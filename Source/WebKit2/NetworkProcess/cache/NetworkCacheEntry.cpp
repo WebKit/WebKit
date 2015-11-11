@@ -49,6 +49,16 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<W
     ASSERT(m_key.type() == "resource");
 }
 
+Entry::Entry(const Entry& other)
+    : m_key(other.m_key)
+    , m_timeStamp(other.m_timeStamp)
+    , m_response(other.m_response)
+    , m_varyingRequestHeaders(other.m_varyingRequestHeaders)
+    , m_buffer(other.m_buffer)
+    , m_sourceStorageRecord(other.m_sourceStorageRecord)
+{
+}
+
 Entry::Entry(const Storage::Record& storageEntry)
     : m_key(storageEntry.key)
     , m_timeStamp(storageEntry.timeStamp)

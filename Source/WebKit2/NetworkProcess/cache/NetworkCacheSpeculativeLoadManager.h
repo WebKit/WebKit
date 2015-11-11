@@ -28,27 +28,48 @@
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
+#include "NetworkCache.h"
 #include "NetworkCacheStorage.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
 namespace NetworkCache {
+
+class Entry;
+class SpeculativeLoad;
 
 class SpeculativeLoadManager {
 public:
     explicit SpeculativeLoadManager(Storage&);
     ~SpeculativeLoadManager();
 
-    void registerLoad(uint64_t webPageID, uint64_t webFrameID, const WebCore::ResourceRequest&, const Key& resourceKey);
+    void registerLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, const Key& resourceKey);
+
+    typedef std::function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
+    bool retrieve(const Key& storageKey, const RetrieveCompletionHandler&);
+
+    void startSpeculativeRevalidation(const WebCore::ResourceRequest&, const GlobalFrameID&, const Key& storageKey);
 
 private:
+    void addPreloadedEntry(std::unique_ptr<Entry>);
+    void preloadEntry(const Key&, const GlobalFrameID&);
+    void retrieveEntryFromStorage(const Key&, const RetrieveCompletionHandler&);
+    void revalidateEntry(std::unique_ptr<Entry>, const GlobalFrameID&);
+    bool satisfyPendingRequests(const Key&, Entry*);
+
     Storage& m_storage;
 
     class PendingFrameLoad;
-    using GlobalFrameID = std::pair<uint64_t /*webPageID*/, uint64_t /*webFrameID*/>;
     HashMap<GlobalFrameID, std::unique_ptr<PendingFrameLoad>> m_pendingFrameLoads;
+
+    HashMap<Key, std::unique_ptr<SpeculativeLoad>> m_pendingPreloads;
+    HashMap<Key, std::unique_ptr<Vector<RetrieveCompletionHandler>>> m_pendingRetrieveRequests;
+
+    class PreloadedEntry;
+    HashMap<Key, std::unique_ptr<PreloadedEntry>> m_preloadedEntries;
 };
 
 } // namespace NetworkCache

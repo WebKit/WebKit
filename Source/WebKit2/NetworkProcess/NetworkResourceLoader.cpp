@@ -128,7 +128,7 @@ void NetworkResourceLoader::start()
     }
 
     RefPtr<NetworkResourceLoader> loader(this);
-    NetworkCache::singleton().retrieve(originalRequest(), m_parameters.webPageID, m_parameters.webFrameID, [loader](std::unique_ptr<NetworkCache::Entry> entry) {
+    NetworkCache::singleton().retrieve(originalRequest(), { m_parameters.webPageID, m_parameters.webFrameID }, [loader](std::unique_ptr<NetworkCache::Entry> entry) {
         if (loader->hasOneRef()) {
             // The loader has been aborted and is only held alive by this lambda.
             return;
@@ -241,7 +241,7 @@ auto NetworkResourceLoader::didReceiveResponse(const ResourceResponse& receivedR
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
         if (validationSucceeded) {
-            NetworkCache::singleton().update(originalRequest(), m_parameters.webPageID, *m_cacheEntryForValidation, m_response);
+            NetworkCache::singleton().update(originalRequest(), { m_parameters.webPageID, m_parameters.webFrameID }, *m_cacheEntryForValidation, m_response);
             // If the request was conditional then this revalidation was not triggered by the network cache and we pass the
             // 304 response to WebCore.
             if (originalRequest().isConditional())

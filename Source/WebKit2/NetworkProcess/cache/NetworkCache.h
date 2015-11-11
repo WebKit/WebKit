@@ -84,6 +84,8 @@ enum class UseDecision {
     NoDueToDecodeFailure,
 };
 
+using GlobalFrameID = std::pair<uint64_t /*webPageID*/, uint64_t /*webFrameID*/>;
+
 class Cache {
     WTF_MAKE_NONCOPYABLE(Cache);
     friend class WTF::NeverDestroyed<Cache>;
@@ -100,9 +102,9 @@ public:
     bool isEnabled() const { return !!m_storage; }
 
     // Completion handler may get called back synchronously on failure.
-    void retrieve(const WebCore::ResourceRequest&, uint64_t webPageID, uint64_t webFrameID, std::function<void (std::unique_ptr<Entry>)>);
-    void store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
-    void update(const WebCore::ResourceRequest&, uint64_t webPageID, const Entry&, const WebCore::ResourceResponse& validatingResponse);
+    void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, std::function<void (std::unique_ptr<Entry>)>);
+    std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, std::function<void (MappedBody&)>);
+    std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const GlobalFrameID&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
 
     void traverse(std::function<void (const Entry*)>&&);
     void remove(const Key&);

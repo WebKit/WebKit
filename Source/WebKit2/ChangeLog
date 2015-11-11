@@ -1,3 +1,67 @@
+2015-11-11  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add initial support for speculative resource revalidation to the WebKit disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=150856
+        <rdar://problem/23092196>
+
+        Reviewed by Antti Koivisto.
+
+        Add initial support for speculative resource revalidation to the WebKit
+        disk cache. When a main resource is requested by WebCore, we look up its
+        list of subresources in the cache and speculatively warm them up before
+        WebCore asks for them, in order to improve page load time. In this
+        context, warming it up means:
+        1. If the cached resource is usable (has not expired), keep it around
+           in a memory for a limited amount of time (10 seconds).
+        2. If the resource has expired, do a speculative revalidation of the
+           resource and then keep it in memory for a while as well (10 seconds).
+
+        The feature is currently behind a compile-time flag that is only enabled
+        on COCOA. Also, it is currently disabled at run-time until it is mature
+        enough.
+
+        Initial results show that speculative revalidation gives a ~5%
+        progression on throttled warm PLT on iPhone 5s.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::update):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp: Added.
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        (WebKit::NetworkCache::SpeculativeLoad::~SpeculativeLoad):
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveBuffer):
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        (WebKit::NetworkCache::SpeculativeLoad::didFailLoading):
+        (WebKit::NetworkCache::SpeculativeLoad::didComplete):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h: Added.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::responseNeedsRevalidation):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::PreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::takeCacheEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::lifetimeTimerFired):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::PendingFrameLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieve):
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::addPreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage):
+        (WebKit::NetworkCache::SpeculativeLoadManager::satisfyPendingRequests):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::registerSubresource): Deleted.
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::encodeAsSubresourcesRecord): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-11-11  Anders Carlsson  <andersca@apple.com>
 
         _WKRemoteObjectInterface should handle specifying allowed classes for reply block arguments
