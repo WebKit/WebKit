@@ -68,9 +68,9 @@ namespace {
 
 VM* vm;
 
-std::unique_ptr<Compilation> compile(Procedure& procedure)
+std::unique_ptr<Compilation> compile(Procedure& procedure, unsigned optLevel = 1)
 {
-    return std::make_unique<Compilation>(*vm, procedure);
+    return std::make_unique<Compilation>(*vm, procedure, optLevel);
 }
 
 template<typename T, typename... Arguments>
@@ -132,6 +132,18 @@ void testReturnConst64(int64_t value)
     CHECK(compileAndRun<int64_t>(proc) == value);
 }
 
+void testAddArg(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), value, value));
+
+    CHECK(compileAndRun<int>(proc, a) == a + a);
+}
+
 void testAddArgs(int a, int b)
 {
     Procedure proc;
@@ -190,6 +202,132 @@ void testAddArgs32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
 
     CHECK(compileAndRun<int>(proc, a, b) == a + b);
+}
+
+void testAddLoadTwice()
+{
+    auto test = [&] (unsigned optLevel) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        int32_t value = 42;
+        Value* load = root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &value));
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Add, Origin(), load, load));
+
+        auto code = compile(proc, optLevel);
+        CHECK(invoke<int32_t>(*code) == 42 * 2);
+    };
+
+    test(0);
+    test(1);
+}
+
+void testMulArg(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mul, Origin(), value, value));
+
+    CHECK(compileAndRun<int>(proc, a) == a * a);
+}
+
+void testMulArgs(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Mul, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int>(proc, a, b) == a * b);
+}
+
+void testMulArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Mul, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == a * b);
+}
+
+void testMulImmArg(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Mul, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(compileAndRun<int>(proc, b) == a * b);
+}
+
+void testMulArgs32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Mul, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+    CHECK(compileAndRun<int>(proc, a, b) == a * b);
+}
+
+void testMulLoadTwice()
+{
+    auto test = [&] (unsigned optLevel) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        int32_t value = 42;
+        Value* load = root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &value));
+        root->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Mul, Origin(), load, load));
+
+        auto code = compile(proc, optLevel);
+        CHECK(invoke<int32_t>(*code) == 42 * 42);
+    };
+
+    test(0);
+    test(1);
+}
+
+void testSubArg(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sub, Origin(), value, value));
+
+    CHECK(!compileAndRun<int>(proc, a));
 }
 
 void testSubArgs(int a, int b)
@@ -1011,6 +1149,20 @@ void testShlArgImm(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a) == (a << b));
 }
 
+void testShlArg32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Shl, Origin(), value, value));
+
+    CHECK(compileAndRun<int32_t>(proc, a) == (a << a));
+}
+
 void testShlArgs32(int32_t a, int32_t b)
 {
     Procedure proc;
@@ -1103,6 +1255,20 @@ void testSShrArgImm(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a) == (a >> b));
 }
 
+void testSShrArg32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, SShr, Origin(), value, value));
+
+    CHECK(compileAndRun<int32_t>(proc, a) == (a >> a));
+}
+
 void testSShrArgs32(int32_t a, int32_t b)
 {
     Procedure proc;
@@ -1193,6 +1359,20 @@ void testZShrArgImm(uint64_t a, uint64_t b)
             root->appendNew<Const32Value>(proc, Origin(), b)));
 
     CHECK(compileAndRun<uint64_t>(proc, a) == (a >> b));
+}
+
+void testZShrArg32(uint32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, ZShr, Origin(), value, value));
+
+    CHECK(compileAndRun<uint32_t>(proc, a) == (a >> a));
 }
 
 void testZShrArgs32(uint32_t a, uint32_t b)
@@ -2523,12 +2703,14 @@ void genericTestCompare(
         Procedure proc;
         BasicBlock* root = proc.addBlock();
 
+        Value* leftValue = leftFunctor(root, proc);
+        Value* rightValue = rightFunctor(root, proc);
+        
         root->appendNew<ControlValue>(
             proc, Return, Origin(),
             root->appendNew<Value>(
                 proc, NotEqual, Origin(),
-                root->appendNew<Value>(
-                    proc, opcode, Origin(), leftFunctor(root, proc), rightFunctor(root, proc)),
+                root->appendNew<Value>(proc, opcode, Origin(), leftValue, rightValue),
                 root->appendNew<Const32Value>(proc, Origin(), 0)));
 
         CHECK(compileAndRun<int>(proc, left, right) == result);
@@ -2541,10 +2723,12 @@ void genericTestCompare(
         BasicBlock* thenCase = proc.addBlock();
         BasicBlock* elseCase = proc.addBlock();
 
+        Value* leftValue = leftFunctor(root, proc);
+        Value* rightValue = rightFunctor(root, proc);
+
         root->appendNew<ControlValue>(
             proc, Branch, Origin(),
-            root->appendNew<Value>(
-                proc, opcode, Origin(), leftFunctor(root, proc), rightFunctor(root, proc)),
+            root->appendNew<Value>(proc, opcode, Origin(), leftValue, rightValue),
             FrequentedBlock(thenCase), FrequentedBlock(elseCase));
 
         // We use a patchpoint on the then case to ensure that this doesn't get if-converted.
@@ -2662,6 +2846,22 @@ void testCompareLoad(B3::Opcode opcode, B3::Opcode loadOpcode, int left, int rig
                 block->appendNew<ConstPtrValue>(proc, Origin(), &slot));
         },
         left, right, result);
+
+    // Test addr-to-addr, with the same addr.
+    slot = left;
+    Value* value;
+    genericTestCompare(
+        opcode,
+        [&] (BasicBlock* block, Procedure& proc) {
+            value = block->appendNew<MemoryValue>(
+                proc, loadOpcode, Int32, Origin(),
+                block->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+            return value;
+        },
+        [&] (BasicBlock*, Procedure&) {
+            return value;
+        },
+        left, left, modelCompare(opcode, modelLoad<T>(left), modelLoad<T>(left)));
 }
 
 void testCompareImpl(B3::Opcode opcode, int left, int right)
@@ -2990,6 +3190,7 @@ void run(const char* filter)
     RUN(testReturnConst64(5));
     RUN(testReturnConst64(-42));
 
+    RUN(testAddArg(111));
     RUN(testAddArgs(1, 1));
     RUN(testAddArgs(1, 2));
     RUN(testAddArgImm(1, 2));
@@ -3000,7 +3201,45 @@ void run(const char* filter)
     RUN(testAddImmArg(1, 0));
     RUN(testAddArgs32(1, 1));
     RUN(testAddArgs32(1, 2));
+    RUN(testAddLoadTwice());
 
+    RUN(testMulArg(5));
+    RUN(testMulArgs(1, 1));
+    RUN(testMulArgs(1, 2));
+    RUN(testMulArgs(3, 3));
+    RUN(testMulArgImm(1, 2));
+    RUN(testMulArgImm(1, 4));
+    RUN(testMulArgImm(1, 8));
+    RUN(testMulArgImm(1, 16));
+    RUN(testMulArgImm(1, 0x80000000llu));
+    RUN(testMulArgImm(1, 0x800000000000llu));
+    RUN(testMulArgImm(7, 2));
+    RUN(testMulArgImm(7, 4));
+    RUN(testMulArgImm(7, 8));
+    RUN(testMulArgImm(7, 16));
+    RUN(testMulArgImm(7, 0x80000000llu));
+    RUN(testMulArgImm(7, 0x800000000000llu));
+    RUN(testMulArgImm(-42, 2));
+    RUN(testMulArgImm(-42, 4));
+    RUN(testMulArgImm(-42, 8));
+    RUN(testMulArgImm(-42, 16));
+    RUN(testMulArgImm(-42, 0x80000000llu));
+    RUN(testMulArgImm(-42, 0x800000000000llu));
+    RUN(testMulArgImm(0, 2));
+    RUN(testMulArgImm(1, 0));
+    RUN(testMulArgImm(3, 3));
+    RUN(testMulArgImm(3, -1));
+    RUN(testMulArgImm(-3, -1));
+    RUN(testMulArgImm(0, -1));
+    RUN(testMulImmArg(1, 2));
+    RUN(testMulImmArg(0, 2));
+    RUN(testMulImmArg(1, 0));
+    RUN(testMulImmArg(3, 3));
+    RUN(testMulArgs32(1, 1));
+    RUN(testMulArgs32(1, 2));
+    RUN(testMulLoadTwice());
+
+    RUN(testSubArg(24));
     RUN(testSubArgs(1, 1));
     RUN(testSubArgs(1, 2));
     RUN(testSubArgs(13, -42));
@@ -3207,6 +3446,7 @@ void run(const char* filter)
     RUN(testShlArgImm(0xffffffffffffffff, 0));
     RUN(testShlArgImm(0xffffffffffffffff, 1));
     RUN(testShlArgImm(0xffffffffffffffff, 63));
+    RUN(testShlArg32(2));
     RUN(testShlArgs32(1, 0));
     RUN(testShlArgs32(1, 1));
     RUN(testShlArgs32(1, 62));
@@ -3248,6 +3488,7 @@ void run(const char* filter)
     RUN(testSShrArgImm(0xffffffffffffffff, 0));
     RUN(testSShrArgImm(0xffffffffffffffff, 1));
     RUN(testSShrArgImm(0xffffffffffffffff, 63));
+    RUN(testSShrArg32(32));
     RUN(testSShrArgs32(1, 0));
     RUN(testSShrArgs32(1, 1));
     RUN(testSShrArgs32(1, 62));
@@ -3289,6 +3530,7 @@ void run(const char* filter)
     RUN(testZShrArgImm(0xffffffffffffffff, 0));
     RUN(testZShrArgImm(0xffffffffffffffff, 1));
     RUN(testZShrArgImm(0xffffffffffffffff, 63));
+    RUN(testZShrArg32(32));
     RUN(testZShrArgs32(1, 0));
     RUN(testZShrArgs32(1, 1));
     RUN(testZShrArgs32(1, 62));

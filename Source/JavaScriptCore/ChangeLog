@@ -1,3 +1,87 @@
+2015-11-11  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile and canonicalize Mul
+        https://bugs.webkit.org/show_bug.cgi?id=151124
+
+        Reviewed by Geoffrey Garen.
+
+        This was a strange trip. I wanted to do a quick patch to implement Mul. But then I realized
+        that our tradition when adding new lowerings was to also add the corresponding strength
+        reductions. So then I wrote the Mul->Shl strength reduction. But that reminded me that I needed
+        to canonicalize between Add(x, x) and Shl(x, 1). I decided that it would probably be better to
+        use Shl(x, 1), since that only has one use of x. But that means that we should compile
+        Shl(x, 1) to Add x, x in the backend, since that's what X86 wants. While doing that, I almost
+        introduced a bug where Shl(Load(x), 1) would cause the compiler to either crash or generate bad
+        code. That's because I was using Add(x, x) to handle Shl(x, 1), so we'd end up with
+        Add(Load(x), Load(x)) - i.e. we would try to duplicate the Load.
+
+        The instruction selector already defends against this, and the only reason why I would have
+        created the bug was by using the Add helper when compiling a Shl. Still, this was so close to
+        a bad bug that I added a ton of new tests that cover the Op(x, x) where x = Load case.
+
+        * b3/B3Compilation.cpp:
+        (JSC::B3::Compilation::Compilation):
+        * b3/B3Compilation.h:
+        (JSC::B3::Compilation::code):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::subConstant):
+        (JSC::B3::Const32Value::mulConstant):
+        (JSC::B3::Const32Value::bitAndConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::subConstant):
+        (JSC::B3::Const64Value::mulConstant):
+        (JSC::B3::Const64Value::bitAndConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::subConstant):
+        (JSC::B3::ConstDoubleValue::mulConstant):
+        (JSC::B3::ConstDoubleValue::equalConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generate):
+        (JSC::B3::generateToAir):
+        * b3/B3Generate.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::subConstant):
+        (JSC::B3::Value::mulConstant):
+        (JSC::B3::Value::bitAndConstant):
+        * b3/B3Value.h:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::compile):
+        (JSC::B3::testReturnConst64):
+        (JSC::B3::testAddArg):
+        (JSC::B3::testAddArgs):
+        (JSC::B3::testAddArgs32):
+        (JSC::B3::testAddLoadTwice):
+        (JSC::B3::testMulArg):
+        (JSC::B3::testMulArgs):
+        (JSC::B3::testMulArgImm):
+        (JSC::B3::testMulImmArg):
+        (JSC::B3::testMulArgs32):
+        (JSC::B3::testMulLoadTwice):
+        (JSC::B3::testSubArg):
+        (JSC::B3::testSubArgs):
+        (JSC::B3::testShlArgImm):
+        (JSC::B3::testShlArg32):
+        (JSC::B3::testShlArgs32):
+        (JSC::B3::testSShrArgImm):
+        (JSC::B3::testSShrArg32):
+        (JSC::B3::testSShrArgs32):
+        (JSC::B3::testZShrArgImm):
+        (JSC::B3::testZShrArg32):
+        (JSC::B3::testZShrArgs32):
+        (JSC::B3::genericTestCompare):
+        (JSC::B3::testCompareLoad):
+        (JSC::B3::testCompareImpl):
+        (JSC::B3::run):
+
 2015-11-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Update ES6 Generators' status to "In Development"

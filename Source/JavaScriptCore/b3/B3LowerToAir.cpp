@@ -540,7 +540,7 @@ private:
             return;
         }
 
-        // Note that no known architecture has a three-operand form of binary operations that also
+        // Note that no extant architecture has a three-operand form of binary operations that also
         // load from memory. If such an abomination did exist, we would handle it somewhere around
         // here.
 
@@ -883,7 +883,7 @@ private:
                 }
 
                 // Finally, handle comparison between tmps.
-                return tryCompare(width, tmpPromise(left), tmpPromise(right));
+                return compare(width, relCond, tmpPromise(left), tmpPromise(right));
             }
 
             // Double comparisons can't really do anything smart.
@@ -1233,6 +1233,12 @@ private:
             return;
         }
 
+        case Mul: {
+            appendBinOp<Mul32, Mul64, Air::Oops, Commutative>(
+                m_value->child(0), m_value->child(1));
+            return;
+        }
+
         case Div: {
             if (isInt(m_value->type())) {
                 Tmp eax = Tmp(X86Registers::eax);
@@ -1286,6 +1292,15 @@ private:
         }
 
         case Shl: {
+            if (m_value->child(1)->isInt32(1)) {
+                // This optimization makes sense on X86. I don't know if it makes sense anywhere else.
+                append(Move, tmp(m_value->child(0)), tmp(m_value));
+                append(
+                    opcodeForType(Add32, Add64, Air::Oops, m_value->child(0)->type()),
+                    tmp(m_value), tmp(m_value));
+                return;
+            }
+            
             appendShift<Lshift32, Lshift64>(m_value->child(0), m_value->child(1));
             return;
         }

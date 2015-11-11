@@ -156,6 +156,17 @@ private:
                 break;
             }
 
+            // Turn this: Add(value, value)
+            // Into this: Shl(value, 1)
+            // This is a useful canonicalization. It's not meant to be a strength reduction.
+            if (m_value->child(0) == m_value->child(1)) {
+                replaceWithNewValue(
+                    m_proc.add<Value>(
+                        Shl, m_value->origin(), m_value->child(0),
+                        m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), 1)));
+                break;
+            }
+
             // Turn this: Add(value, zero)
             // Into an Identity.
             if (m_value->child(1)->isInt(0)) {
@@ -180,6 +191,72 @@ private:
                     m_insertionSet.insertValue(m_index, negatedConstant);
                     replaceWithNew<Value>(
                         Add, m_value->origin(), m_value->child(0), negatedConstant);
+                    break;
+                }
+            }
+
+            break;
+
+        case Mul:
+            handleCommutativity();
+
+            // Turn this: Mul(constant1, constant2)
+            // Into this: constant1 * constant2
+            if (Value* value = m_value->child(0)->mulConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(value);
+                break;
+            }
+
+            if (m_value->child(1)->hasInt()) {
+                int64_t factor = m_value->child(1)->asInt();
+
+                // Turn this: Mul(value, 0)
+                // Into this: 0
+                // Note that we don't do this for doubles because that's wrong. For example, -1 * 0
+                // and 1 * 0 yield different results.
+                if (!factor) {
+                    m_value->replaceWithIdentity(m_value->child(1));
+                    m_changed = true;
+                    break;
+                }
+
+                // Turn this: Mul(value, 1)
+                // Into this: value
+                if (factor == 1) {
+                    m_value->replaceWithIdentity(m_value->child(0));
+                    m_changed = true;
+                    break;
+                }
+
+                // Turn this: Mul(value, -1)
+                // Into this: Sub(0, value)
+                if (factor == -1) {
+                    replaceWithNewValue(
+                        m_proc.add<Value>(
+                            Sub, m_value->origin(),
+                            m_insertionSet.insertIntConstant(m_index, m_value, 0),
+                            m_value->child(0)));
+                    break;
+                }
+                
+                // Turn this: Mul(value, constant)
+                // Into this: Shl(value, log2(constant))
+                if (hasOneBitSet(factor)) {
+                    unsigned shiftAmount = WTF::fastLog2(static_cast<uint64_t>(factor));
+                    replaceWithNewValue(
+                        m_proc.add<Value>(
+                            Shl, m_value->origin(), m_value->child(0),
+                            m_insertionSet.insert<Const32Value>(
+                                m_index, m_value->origin(), shiftAmount)));
+                    break;
+                }
+            } else if (m_value->child(1)->hasDouble()) {
+                double factor = m_value->child(1)->asDouble();
+
+                // Turn this: Mul(value, 1)
+                // Into this: value
+                if (factor == 1) {
+                    m_value->replaceWithIdentity(m_value->child(0));
                     break;
                 }
             }

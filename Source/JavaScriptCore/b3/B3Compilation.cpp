@@ -37,10 +37,10 @@
 
 namespace JSC { namespace B3 {
 
-Compilation::Compilation(VM& vm, Procedure& proc)
+Compilation::Compilation(VM& vm, Procedure& proc, unsigned optLevel)
 {
     CCallHelpers jit(&vm);
-    generate(proc, jit);
+    generate(proc, jit, optLevel);
     LinkBuffer linkBuffer(vm, jit, nullptr);
 
     m_codeRef = FINALIZE_CODE(linkBuffer, ("B3::Compilation"));

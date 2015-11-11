@@ -39,12 +39,12 @@ namespace Air { class Code; }
 
 // This takes a B3::Procedure, optimizes it in-place, and generates it to machine code by first
 // internally converting to an Air::Code and then generating that.
-JS_EXPORT_PRIVATE void generate(Procedure&, CCallHelpers&);
+JS_EXPORT_PRIVATE void generate(Procedure&, CCallHelpers&, unsigned optLevel = 1);
 
 // This takes a B3::Procedure, optimizes it in-place, and lowers it to Air. You can then generate
 // the Air to machine code using Air::generate(). Note that an Air::Code will have pointers into the
 // B3::Procedure, so you need to ensure that the B3::Procedure outlives the Air::Code.
-void generateToAir(Procedure&, Air::Code&);
+void generateToAir(Procedure&, Air::Code&, unsigned optLevel = 1);
 
 } } // namespace JSC::B3
 

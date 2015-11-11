@@ -100,6 +100,12 @@ Mul32 U:G, UD:G
     Tmp, Tmp
     Addr, Tmp
 
+Mul32 U:G, U:G, D:G
+    Imm, Tmp, Tmp
+
+Mul64 U:G, UD:G
+    Tmp, Tmp
+
 X86ConvertToDoubleWord32 U:G, D:G
     Tmp*, Tmp*
 

@@ -42,16 +42,16 @@
 
 namespace JSC { namespace B3 {
 
-void generate(Procedure& procedure, CCallHelpers& jit)
+void generate(Procedure& procedure, CCallHelpers& jit, unsigned optLevel)
 {
     TimingScope timingScope("generate");
 
     Air::Code code(procedure);
-    generateToAir(procedure, code);
+    generateToAir(procedure, code, optLevel);
     Air::generate(code, jit);
 }
 
-void generateToAir(Procedure& procedure, Air::Code& code)
+void generateToAir(Procedure& procedure, Air::Code& code, unsigned optLevel)
 {
     TimingScope timingScope("generateToAir");
     
@@ -69,10 +69,12 @@ void generateToAir(Procedure& procedure, Air::Code& code)
 
     lowerMacros(procedure);
 
-    reduceStrength(procedure);
-    
-    // FIXME: Add more optimizations here.
-    // https://bugs.webkit.org/show_bug.cgi?id=150507
+    if (optLevel >= 1) {
+        reduceStrength(procedure);
+        
+        // FIXME: Add more optimizations here.
+        // https://bugs.webkit.org/show_bug.cgi?id=150507
+    }
 
     moveConstants(procedure);
 

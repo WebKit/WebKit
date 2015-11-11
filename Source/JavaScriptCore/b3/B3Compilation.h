@@ -54,7 +54,7 @@ class Compilation {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    JS_EXPORT_PRIVATE Compilation(VM&, Procedure&);
+    JS_EXPORT_PRIVATE Compilation(VM&, Procedure&, unsigned optLevel = 1);
     JS_EXPORT_PRIVATE ~Compilation();
 
     MacroAssemblerCodePtr code() const { return m_codeRef.code(); }

@@ -134,6 +134,11 @@ Value* Value::subConstant(Procedure&, const Value*) const
     return nullptr;
 }
 
+Value* Value::mulConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::divConstant(Procedure&, const Value*) const
 {
     return nullptr;

@@ -113,6 +113,7 @@ public:
     virtual Value* addConstant(Procedure&, int32_t other) const;
     virtual Value* addConstant(Procedure&, const Value* other) const;
     virtual Value* subConstant(Procedure&, const Value* other) const;
+    virtual Value* mulConstant(Procedure&, const Value* other) const;
     virtual Value* divConstant(Procedure&, const Value* other) const; // This chooses ChillDiv semantics for integers.
     virtual Value* bitAndConstant(Procedure&, const Value* other) const;
     virtual Value* bitOrConstant(Procedure&, const Value* other) const;

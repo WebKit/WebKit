@@ -368,6 +368,14 @@ inline unsigned fastLog2(unsigned i)
     return log2;
 }
 
+inline unsigned fastLog2(uint64_t value)
+{
+    unsigned high = static_cast<unsigned>(value >> 32);
+    if (high)
+        return fastLog2(high) + 32;
+    return fastLog2(static_cast<unsigned>(value));
+}
+
 template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, T>::type safeFPDivision(T u, T v)
 {
