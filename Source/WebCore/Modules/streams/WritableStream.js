@@ -53,9 +53,11 @@ function initializeWritableStream(underlyingSink, strategy)
 
     @syncWritableStreamStateWithQueue(this);
 
-    const error = @errorWritableStream.bind(this);
-    this.@startedPromise = @Promise.@resolve(@invokeOrNoop(underlyingSink, "start", [error]));
     const _this = this;
+    function error(e) {
+        @errorWritableStream.@call(_this, e);
+    };
+    this.@startedPromise = @Promise.@resolve(@invokeOrNoop(underlyingSink, "start", [error]));
     @Promise.prototype.@then.@call(this.@startedPromise, function() {
         _this.@started = true;
         _this.@startedPromise = undefined;
