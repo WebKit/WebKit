@@ -1,5 +1,14 @@
 2015-11-11  Anders Carlsson  <andersca@apple.com>
 
+        Fix builds.
+
+        * WebProcess/WebCoreSupport/efl/WebContextMenuClientEfl.cpp:
+        (WebKit::WebContextMenuClient::shareMenuItem): Deleted.
+        * WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp:
+        (WebKit::WebContextMenuClient::shareMenuItem): Deleted.
+
+2015-11-11  Anders Carlsson  <andersca@apple.com>
+
         REGRESSION (r191407): Context menus are missing Services
         https://bugs.webkit.org/show_bug.cgi?id=151167
         rdar://problem/23500769
