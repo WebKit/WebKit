@@ -772,4 +772,3 @@ ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure ]
 #
 webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
 
-webkit.org/b/150730 js/regress/ftl-object-sub.html [ Pass Timeout ]
