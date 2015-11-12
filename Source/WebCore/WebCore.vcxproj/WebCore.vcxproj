@@ -8182,8 +8182,6 @@
     <ClCompile Include="..\platform\win\BitmapInfo.cpp" />
     <ClCompile Include="..\platform\win\BString.cpp" />
     <ClCompile Include="..\platform\win\ClipboardUtilitiesWin.cpp" />
-    <ClCompile Include="..\platform\win\ContextMenuItemWin.cpp" />
-    <ClCompile Include="..\platform\win\ContextMenuWin.cpp" />
     <ClCompile Include="..\platform\win\CursorWin.cpp" />
     <ClCompile Include="..\platform\win\DefWndProcWindowClass.cpp" />
     <ClCompile Include="..\platform\win\DelayLoadedModulesEnumerator.cpp" />

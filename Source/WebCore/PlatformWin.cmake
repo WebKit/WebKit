@@ -111,8 +111,6 @@ list(APPEND WebCore_SOURCES
     platform/win/BString.cpp
     platform/win/BitmapInfo.cpp
     platform/win/ClipboardUtilitiesWin.cpp
-    platform/win/ContextMenuItemWin.cpp
-    platform/win/ContextMenuWin.cpp
     platform/win/CursorWin.cpp
     platform/win/DefWndProcWindowClass.cpp
     platform/win/DragDataWin.cpp

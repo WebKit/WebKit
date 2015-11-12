@@ -1190,12 +1190,6 @@
     <ClCompile Include="..\platform\win\ClipboardUtilitiesWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\win\ContextMenuItemWin.cpp">
-      <Filter>platform\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\win\ContextMenuWin.cpp">
-      <Filter>platform\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\win\CursorWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
