@@ -43,8 +43,6 @@ namespace WebCore {
         virtual ~ContextMenuClient() {  }
         virtual void contextMenuDestroyed() = 0;
         
-        virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) = 0;
-
         virtual void downloadURL(const URL& url) = 0;
         virtual void searchWithGoogle(const Frame*) = 0;
         virtual void lookUpInDictionary(Frame*) = 0;

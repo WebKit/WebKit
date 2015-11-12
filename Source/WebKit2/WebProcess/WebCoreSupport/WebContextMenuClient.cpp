@@ -49,11 +49,6 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
-{
-    notImplemented();
-}
-
 void WebContextMenuClient::downloadURL(const URL&)
 {
     // This is handled in the UI process.

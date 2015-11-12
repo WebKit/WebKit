@@ -35,8 +35,6 @@ public:
 
     virtual void contextMenuDestroyed();
 
-    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
-    
     virtual void downloadURL(const WebCore::URL&);
     virtual void searchWithGoogle(const WebCore::Frame*);
     virtual void lookUpInDictionary(WebCore::Frame*);

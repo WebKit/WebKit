@@ -215,11 +215,6 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 {
     ASSERT(item->type() == ActionType || item->type() == CheckableActionType);
 
-    if (item->action() >= ContextMenuItemBaseApplicationTag) {
-        m_client.contextMenuItemSelected(item, m_contextMenu.get());
-        return;
-    }
-
     if (item->action() >= ContextMenuItemBaseCustomTag) {
         ASSERT(m_menuProvider);
         m_menuProvider->contextMenuItemSelected(item);

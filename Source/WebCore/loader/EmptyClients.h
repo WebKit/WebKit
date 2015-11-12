@@ -549,8 +549,6 @@ public:
     virtual ~EmptyContextMenuClient() {  }
     virtual void contextMenuDestroyed() override { }
 
-    virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) override { }
-
     virtual void downloadURL(const URL&) override { }
     virtual void searchWithGoogle(const Frame*) override { }
     virtual void lookUpInDictionary(Frame*) override { }

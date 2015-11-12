@@ -52,10 +52,6 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)
-{
-}
-
 void WebContextMenuClient::downloadURL(const URL& url)
 {
     m_webView->downloadURL(url);

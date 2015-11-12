@@ -49,9 +49,7 @@ public:
     virtual ~WebContextMenuClient();
 
     virtual void contextMenuDestroyed() override;
-    
-    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) override;
-    
+
     virtual void downloadURL(const WebCore::URL&) override;
     virtual void searchWithGoogle(const WebCore::Frame*) override;
     virtual void lookUpInDictionary(WebCore::Frame*) override;

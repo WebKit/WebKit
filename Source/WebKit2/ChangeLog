@@ -1,3 +1,14 @@
+2015-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused function
+        https://bugs.webkit.org/show_bug.cgi?id=151215
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::contextMenuItemSelected): Deleted.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+
 2015-11-11  Anders Carlsson  <andersca@apple.com>
 
         Enable cross-platform context menus by default
