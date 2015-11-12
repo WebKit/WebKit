@@ -1,3 +1,23 @@
+2015-11-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: blank debugger tab when opening inspector on unvisited website
+        https://bugs.webkit.org/show_bug.cgi?id=151149
+
+        Reviewed by Joseph Pecoraro.
+
+        When Inspector tries to show default content when initially showing a tab upon opening,
+        there may not be any tree elements added to the navigation bar yet. In the case of an
+        unvisited website, there will be no state restoration cookie to trigger deferred selection.
+        So, showDefaultContentView finds no tree elements it can show, and the main view is blank.
+
+        We can fix this by speculatively showing the first script/resource that's added to the tree
+        if no content view is being shown. If a state restoration cookie exists, it will take priority
+        over the default-displayed content view.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._addResource):
+        (WebInspector.DebuggerSidebarPanel.prototype._addScript):
+
 2015-11-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Convert sidebars to use View base class
