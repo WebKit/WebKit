@@ -1,3 +1,40 @@
+2015-11-12  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile Patchpoints with Register and Any constraints
+        https://bugs.webkit.org/show_bug.cgi?id=151209
+
+        Reviewed by Geoffrey Garen.
+
+        Most of this patch is about adding tests, since Register constraints already worked but
+        were untested, and almost all forms of the Any constraint worked.
+
+        One change that I'm making is that Patchpoints now default to forCall effects rather
+        than no effects. I think this is better because if a client of Patchpoint never supplies
+        any effects, it's best to assume the worst.
+
+        My testing uncovered only one real bug: moveConstants() would turn all non-zero double
+        constants into Loads, so the optimization to fold constants into a Stackmap would stop
+        working. Instead of telling the Stackmap that the double value it wanted is actually a
+        constant, we would tell it that it's a register and it would emit code to materialize
+        the double into that register. I worked around this by having moveConstants() create
+        ConstDoubleValue's just for the Stackmaps, which lowerToAir() recognizes and does the
+        right thing with (i.e. folds into the stackmap instead of materializing).
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/testb3.cpp:
+        (JSC::B3::testPatchpointCallArg):
+        (JSC::B3::testPatchpointFixedRegister):
+        (JSC::B3::testPatchpointAny):
+        (JSC::B3::testPatchpointAnyImm):
+        (JSC::B3::testPatchpointManyImms):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::run):
+
 2015-11-12  Mark Lam  <mark.lam@apple.com>
 
         Move some prototypes to header files.

@@ -82,11 +82,28 @@ public:
             
             for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
                 Value* value = block->at(valueIndex);
-                for (Value*& child : value->children()) {
+                StackmapValue* stackmap = value->as<StackmapValue>();
+                for (unsigned childIndex = 0; childIndex < value->numChildren(); ++childIndex) {
+                    Value*& child = value->child(childIndex);
                     if (!needsMotion(child))
                         continue;
 
-                    child = materialize(valueIndex, child->key(), value->origin());
+                    ValueKey key = child->key();
+                    if (stackmap
+                        && goesInTable(key)
+                        && stackmap->constrainedChild(childIndex).rep() == ValueRep::Any) {
+                        // This is a weird special case. When we constant-fold an argument to a
+                        // stackmap, and that argument has the Any constraint, we want to just
+                        // tell the stackmap's generator that the argument is a constant rather
+                        // than materializing it in a register. For this to work, we need
+                        // lowerToAir to see this argument as a constant rather than as a load
+                        // from a table.
+                        child = m_insertionSet.insertValue(
+                            valueIndex, key.materialize(m_proc, value->origin()));
+                        continue;
+                    }
+                    
+                    child = materialize(valueIndex, key, value->origin());
                 }
             }
             

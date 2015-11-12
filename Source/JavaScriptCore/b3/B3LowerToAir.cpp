@@ -732,9 +732,10 @@ private:
                     arg = imm(value.value());
                 else if (value.value()->hasInt64())
                     arg = Arg::imm64(value.value()->asInt64());
-                else if (value.value()->hasDouble())
+                else if (value.value()->hasDouble() && canBeInternal(value.value())) {
+                    commitInternal(value.value());
                     arg = Arg::imm64(bitwise_cast<int64_t>(value.value()->asDouble()));
-                else
+                } else
                     arg = tmp(value.value());
                 break;
             case ValueRep::SomeRegister:
@@ -1383,7 +1384,8 @@ private:
         }
 
         case ConstDouble: {
-            // We expect that the moveConstants() phase has run.
+            // We expect that the moveConstants() phase has run, and any doubles referenced from
+            // stackmaps get fused.
             RELEASE_ASSERT(isIdentical(m_value->asDouble(), 0.0));
             append(MoveZeroToDouble, tmp(m_value));
             return;

@@ -36,6 +36,7 @@ PatchpointValue::~PatchpointValue()
 
 PatchpointValue::PatchpointValue(unsigned index, Type type, Origin origin)
     : StackmapValue(index, CheckedOpcode, Patchpoint, type, origin)
+    , effects(Effects::forCall())
 {
 }
 
