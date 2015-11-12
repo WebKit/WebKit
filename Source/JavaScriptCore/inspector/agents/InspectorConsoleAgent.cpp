@@ -40,8 +40,8 @@
 
 namespace Inspector {
 
-static const unsigned maximumConsoleMessages = 1000;
-static const int expireConsoleMessagesStep = 100;
+static const unsigned maximumConsoleMessages = 100;
+static const int expireConsoleMessagesStep = 10;
 
 InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
     : InspectorAgentBase(ASCIILiteral("Console"))

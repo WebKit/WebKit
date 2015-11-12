@@ -1,3 +1,28 @@
+2015-11-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reduce list of saved console messages
+        https://bugs.webkit.org/show_bug.cgi?id=151225
+
+        Reviewed by Geoffrey Garen.
+
+        Inspector saves messages so that when an inspector frontend opens it can report
+        these messages to the frontend. However we were saving a rather large list of
+        1000 messages. Most pages do not produce a large number of console messages.
+        However pages that live for a long time can generate many errors over time,
+        especially periodic engine issues such as cross-origin access errors. This could
+        result in a lot of wasted memory for console messages that may never be used.
+
+        Likewise when an inspector first open sending all 1000 messages to the frontend
+        results in a poor experience.
+
+        Lets reduce the list of saved messages. Developer will still be able to see
+        all messages as long as they have Web Inspector open at the time the messages
+        are generated.
+
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        Reduce the list from 1000 to 100. Also, when expiring
+        messages from this list, chunk in 10s instead of 100s.
+
 2015-11-12  Mark Lam  <mark.lam@apple.com>
 
         Adjust timeout values in ExecutionTimeLimitTest.
