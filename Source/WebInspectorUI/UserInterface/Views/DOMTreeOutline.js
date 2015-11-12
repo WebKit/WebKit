@@ -509,7 +509,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
         function logElement()
         {
-            WebInspector.RemoteObject.resolveNode(domNode, "console", function(remoteObject) {
+            WebInspector.RemoteObject.resolveNode(domNode, WebInspector.RuntimeManager.ConsoleObjectGroup, function(remoteObject) {
                 if (!remoteObject)
                     return;
                 var text = WebInspector.UIString("Selected Element");

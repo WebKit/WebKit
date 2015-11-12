@@ -117,7 +117,7 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         consoleSession.element.scrollIntoView();
     }
 
-    appendImmediateExecutionWithResult(text, result, addSpecialUserLogClass)
+    appendImmediateExecutionWithResult(text, result, addSpecialUserLogClass, synthetic)
     {
         console.assert(result instanceof WebInspector.RemoteObject);
 
@@ -126,8 +126,8 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
 
         function saveResultCallback(savedResultIndex)
         {
-            var commandResultMessage = new WebInspector.ConsoleCommandResultMessage(result, false, savedResultIndex);
-            var commandResultMessageView = new WebInspector.ConsoleMessageView(commandResultMessage);
+            let commandResultMessage = new WebInspector.ConsoleCommandResultMessage(result, false, savedResultIndex, synthetic);
+            let commandResultMessageView = new WebInspector.ConsoleMessageView(commandResultMessage);
             this._appendConsoleMessageView(commandResultMessageView, true);
         }
 
@@ -224,12 +224,13 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             if (!result || this._cleared)
                 return;
 
-            var commandResultMessage = new WebInspector.ConsoleCommandResultMessage(result, wasThrown, savedResultIndex);
-            var commandResultMessageView = new WebInspector.ConsoleMessageView(commandResultMessage);
+            let synthetic = false;
+            let commandResultMessage = new WebInspector.ConsoleCommandResultMessage(result, wasThrown, savedResultIndex, synthetic);
+            let commandResultMessageView = new WebInspector.ConsoleMessageView(commandResultMessage);
             this._appendConsoleMessageView(commandResultMessageView, true);
         }
 
-        WebInspector.runtimeManager.evaluateInInspectedWindow(text, "console", true, false, false, true, true, printResult.bind(this));
+        WebInspector.runtimeManager.evaluateInInspectedWindow(text, WebInspector.RuntimeManager.ConsoleObjectGroup, true, false, false, true, true, printResult.bind(this));
     }
 
     // Private

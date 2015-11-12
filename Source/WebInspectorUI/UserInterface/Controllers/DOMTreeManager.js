@@ -328,6 +328,16 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
                 return;
 
             this.inspectElement(nodeId);
+
+            // Re-resolve the node in the console's object group when adding to the console.
+            let domNode = this.nodeForId(nodeId);
+            WebInspector.RemoteObject.resolveNode(domNode, WebInspector.RuntimeManager.ConsoleObjectGroup, function(remoteObject) {
+                if (!remoteObject)
+                    return;
+                let specialLogStyles = true;
+                let synthetic = true;
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(WebInspector.UIString("Selected Element"), remoteObject, specialLogStyles, synthetic);
+            });
         }
 
         remoteObject.pushNodeToFrontend(nodeAvailable.bind(this));

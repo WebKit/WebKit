@@ -112,3 +112,5 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
 WebInspector.RuntimeManager.Event = {
     DidEvaluate: "runtime-manager-did-evaluate"
 };
+
+WebInspector.RuntimeManager.ConsoleObjectGroup = "console";
