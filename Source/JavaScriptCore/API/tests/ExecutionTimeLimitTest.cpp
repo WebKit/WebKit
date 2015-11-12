@@ -140,7 +140,7 @@ int testExecutionTimeLimit()
         timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, shouldTerminateCallback, 0);
         {
-            unsigned timeAfterWatchdogShouldHaveFired = 150 + tierAdjustmentMillis;
+            unsigned timeAfterWatchdogShouldHaveFired = 300 + tierAdjustmentMillis;
 
             StringBuilder scriptBuilder;
             scriptBuilder.append("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
@@ -176,7 +176,7 @@ int testExecutionTimeLimit()
         timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, shouldTerminateCallback, 0);
         {
-            unsigned timeAfterWatchdogShouldHaveFired = 150 + tierAdjustmentMillis;
+            unsigned timeAfterWatchdogShouldHaveFired = 300 + tierAdjustmentMillis;
             
             StringBuilder scriptBuilder;
             scriptBuilder.append("function foo() { var startTime = currentCPUTime(); try { while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
@@ -213,7 +213,7 @@ int testExecutionTimeLimit()
         timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, 0, 0);
         {
-            unsigned timeAfterWatchdogShouldHaveFired = 150 + tierAdjustmentMillis;
+            unsigned timeAfterWatchdogShouldHaveFired = 300 + tierAdjustmentMillis;
             
             StringBuilder scriptBuilder;
             scriptBuilder.append("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
@@ -250,7 +250,7 @@ int testExecutionTimeLimit()
         timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, cancelTerminateCallback, 0);
         {
-            unsigned timeAfterWatchdogShouldHaveFired = 150 + tierAdjustmentMillis;
+            unsigned timeAfterWatchdogShouldHaveFired = 300 + tierAdjustmentMillis;
             
             StringBuilder scriptBuilder;
             scriptBuilder.append("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
@@ -285,9 +285,9 @@ int testExecutionTimeLimit()
         timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, extendTerminateCallback, 0);
         {
-            unsigned timeBeforeExtendedDeadline = 200 + tierAdjustmentMillis;
-            unsigned timeAfterExtendedDeadline = 400 + tierAdjustmentMillis;
-            unsigned maxBusyLoopTime = 600 + tierAdjustmentMillis;
+            unsigned timeBeforeExtendedDeadline = 250 + tierAdjustmentMillis;
+            unsigned timeAfterExtendedDeadline = 600 + tierAdjustmentMillis;
+            unsigned maxBusyLoopTime = 750 + tierAdjustmentMillis;
 
             StringBuilder scriptBuilder;
             scriptBuilder.append("function foo() { var startTime = currentCPUTime(); while (true) { for (var i = 0; i < 1000; i++); if (currentCPUTime() - startTime > ");
