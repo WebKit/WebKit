@@ -1389,7 +1389,6 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagPDFFacingPagesScrolling:
         case ContextMenuItemTagInspectElement:
         case ContextMenuItemBaseCustomTag:
-        case ContextMenuItemCustomTagNoAction:
         case ContextMenuItemLastCustomTag:
         case ContextMenuItemBaseApplicationTag:
         case ContextMenuItemTagDictationAlternative:

@@ -157,7 +157,6 @@ enum ContextMenuAction {
     ContextMenuItemTagToggleVideoFullscreen,
     ContextMenuItemTagShareMenu, 
     ContextMenuItemBaseCustomTag = 5000,
-    ContextMenuItemCustomTagNoAction = 5998,
     ContextMenuItemLastCustomTag = 5999,
     ContextMenuItemBaseApplicationTag = 10000
 };

@@ -65,18 +65,13 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
 
         String typeString = type.toString(exec)->value(exec);
         if (typeString == "separator") {
-            ContextMenuItem item(SeparatorType,
-                                 ContextMenuItemCustomTagNoAction,
-                                 String());
+            ContextMenuItem item(SeparatorType, ContextMenuItemTagNoAction, String());
             menu.appendItem(item);
         } else if (typeString == "subMenu" && subItems.inherits(JSArray::info())) {
             ContextMenu subMenu;
             JSArray* subItemsArray = asArray(subItems);
             populateContextMenuItems(exec, subItemsArray, subMenu);
-            ContextMenuItem item(SubmenuType,
-                                 ContextMenuItemCustomTagNoAction,
-                                 label.toString(exec)->value(exec),
-                                 &subMenu);
+            ContextMenuItem item(SubmenuType, ContextMenuItemTagNoAction, label.toString(exec)->value(exec), &subMenu);
             menu.appendItem(item);
         } else {
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(exec));
