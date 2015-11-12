@@ -1,5 +1,12 @@
 2015-11-12  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebView/WebHTMLView.mm:
+        (fixMenusReceivedFromOldClients):
+
+2015-11-12  Anders Carlsson  <andersca@apple.com>
+
         Remove a couple of unused menu item tag enums
         https://bugs.webkit.org/show_bug.cgi?id=151220
 

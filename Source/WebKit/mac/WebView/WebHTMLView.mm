@@ -3333,6 +3333,13 @@ static BOOL isPreInspectElementTagClient(void)
     return preInspectElementTagClient;
 }
 
+enum {
+    // The next three values were used in WebKit 2.0 for SPI. In WebKit 3.0 these are API, with different values.
+    OldWebMenuItemTagSearchInSpotlight = 1000,
+    OldWebMenuItemTagSearchWeb,
+    OldWebMenuItemTagLookUpInDictionary,
+};
+
 static RetainPtr<NSArray> fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
 {
     auto savedItems = adoptNS([[NSMutableArray alloc] init]);
@@ -3494,13 +3501,6 @@ static RetainPtr<NSArray> fixMenusReceivedFromOldClients(NSArray *delegateSuppli
                 ASSERT_NOT_REACHED();
             }
         } else if (preVersion3Client) {
-            enum {
-                // The next three values were used in WebKit 2.0 for SPI. In WebKit 3.0 these are API, with different values.
-                OldWebMenuItemTagSearchInSpotlight = 1000,
-                OldWebMenuItemTagSearchWeb,
-                OldWebMenuItemTagLookUpInDictionary,
-            };
-
             // Restore the new API tag for items on which we temporarily set the old SPI tag. The old SPI tag was
             // needed to avoid confusing clients linked against earlier WebKits; the new API tag is needed for
             // WebCore to handle the menu items appropriately (without needing to know about the old SPI tags).
