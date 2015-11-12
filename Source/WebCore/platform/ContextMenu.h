@@ -42,60 +42,60 @@
 
 namespace WebCore {
 
-    class ContextMenuController;
+class ContextMenuController;
 
-    class ContextMenu {
-        WTF_MAKE_NONCOPYABLE(ContextMenu); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        ContextMenu();
+class ContextMenu {
+    WTF_MAKE_NONCOPYABLE(ContextMenu); WTF_MAKE_FAST_ALLOCATED;
+public:
+    ContextMenu();
 
-        ContextMenuItem* itemWithAction(unsigned);
+    ContextMenuItem* itemWithAction(unsigned);
 
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-        explicit ContextMenu(PlatformContextMenu);
+    explicit ContextMenu(PlatformContextMenu);
 
-        PlatformContextMenu platformContextMenu() const;
+    PlatformContextMenu platformContextMenu() const;
 
-        static PlatformContextMenu createPlatformContextMenuFromItems(const Vector<ContextMenuItem>&);
-        static void getContextMenuItems(PlatformContextMenu, Vector<ContextMenuItem>&);
+    static PlatformContextMenu createPlatformContextMenuFromItems(const Vector<ContextMenuItem>&);
+    static void getContextMenuItems(PlatformContextMenu, Vector<ContextMenuItem>&);
 
-        // FIXME: When more platforms switch over, this should return const ContextMenuItem*'s.
-        ContextMenuItem* itemAtIndex(unsigned index) { return &m_items[index]; }
+    // FIXME: When more platforms switch over, this should return const ContextMenuItem*'s.
+    ContextMenuItem* itemAtIndex(unsigned index) { return &m_items[index]; }
 
-        void setItems(const Vector<ContextMenuItem>& items) { m_items = items; }
-        const Vector<ContextMenuItem>& items() const { return m_items; }
+    void setItems(const Vector<ContextMenuItem>& items) { m_items = items; }
+    const Vector<ContextMenuItem>& items() const { return m_items; }
 
-        void appendItem(const ContextMenuItem& item) { m_items.append(item); } 
+    void appendItem(const ContextMenuItem& item) { m_items.append(item); } 
 #else
-        explicit ContextMenu(const PlatformMenuDescription);
-        ~ContextMenu();
+    explicit ContextMenu(const PlatformMenuDescription);
+    ~ContextMenu();
 
-        void insertItem(unsigned position, ContextMenuItem&);
-        void appendItem(ContextMenuItem&);
+    void insertItem(unsigned position, ContextMenuItem&);
+    void appendItem(ContextMenuItem&);
 
-        ContextMenuItem* itemAtIndex(unsigned, const PlatformMenuDescription);
+    ContextMenuItem* itemAtIndex(unsigned, const PlatformMenuDescription);
 
-        unsigned itemCount() const;
+    unsigned itemCount() const;
 
-        WEBCORE_EXPORT PlatformMenuDescription platformDescription() const;
-        WEBCORE_EXPORT void setPlatformDescription(PlatformMenuDescription);
+    WEBCORE_EXPORT PlatformMenuDescription platformDescription() const;
+    WEBCORE_EXPORT void setPlatformDescription(PlatformMenuDescription);
 
-        PlatformMenuDescription releasePlatformDescription();
+    PlatformMenuDescription releasePlatformDescription();
 #endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
 
-    private:
+private:
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-        Vector<ContextMenuItem> m_items;
+    Vector<ContextMenuItem> m_items;
 #else
 #if PLATFORM(COCOA)
-        // Keep this in sync with the PlatformMenuDescription typedef
-        RetainPtr<NSMutableArray> m_platformDescription;
+    // Keep this in sync with the PlatformMenuDescription typedef
+    RetainPtr<NSMutableArray> m_platformDescription;
 #else
-        PlatformMenuDescription m_platformDescription;
+    PlatformMenuDescription m_platformDescription;
 #endif
 
 #endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    };
+};
 
 #if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
 WEBCORE_EXPORT Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription);
