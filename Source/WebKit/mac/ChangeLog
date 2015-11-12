@@ -1,5 +1,18 @@
 2015-11-12  Anders Carlsson  <andersca@apple.com>
 
+        Remove a couple of unused menu item tag enums
+        https://bugs.webkit.org/show_bug.cgi?id=151220
+
+        Reviewed by Sam Weinig.
+
+        Also, move the old internal tags away from the SPI header.
+
+        * WebView/WebHTMLView.mm:
+        (fixMenusReceivedFromOldClients):
+        * WebView/WebUIDelegatePrivate.h:
+
+2015-11-12  Anders Carlsson  <andersca@apple.com>
+
         ContextMenuController::contextMenuItemSelected only needs the action and title, not the full item
         https://bugs.webkit.org/show_bug.cgi?id=151217
 
