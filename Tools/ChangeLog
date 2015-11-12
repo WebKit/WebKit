@@ -1,3 +1,17 @@
+2015-11-12  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] fix EvasGL configuration error
+        https://bugs.webkit.org/show_bug.cgi?id=151180
+
+        Reviewed by Csaba Osztrogonác.
+
+        EvasGL backend and depth, stencil buffer size should be specified before elm_win_add to let EvasGL keep quiet.
+        Additionally, duplicated elm_config_accel_preference_set() call is eleminated.  
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        (elm_main):
+
 2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix EFL 1.16 with enabled NEON support

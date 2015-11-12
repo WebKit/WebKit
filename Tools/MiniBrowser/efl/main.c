@@ -2071,8 +2071,6 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
     window->tooltip.text_set = EINA_FALSE;
     window->tooltip.shown = EINA_FALSE;
 
-    elm_config_accel_preference_set("opengl:depth24:stencil8");
-
     /* Create window */
     window->elm_window = elm_win_add(NULL, "minibrowser-window", ELM_WIN_BASIC);
     elm_win_title_set(window->elm_window, APP_NAME);
@@ -2440,7 +2438,7 @@ elm_main(int argc, char *argv[])
     if (evas_engine_name)
         elm_config_accel_preference_set(evas_engine_name);
     else {
-        evas_engine_name = "opengl";
+        evas_engine_name = "opengl:depth24:stencil8";
         elm_config_accel_preference_set(evas_engine_name);
     }
 
