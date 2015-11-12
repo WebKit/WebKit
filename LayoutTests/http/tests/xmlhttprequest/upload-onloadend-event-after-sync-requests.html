@@ -59,11 +59,12 @@ function testAbort()
     results = "";
 
     xhr.onloadstart = logUnexpectedProgressEvent;
-    xhr.onabort = logProgressEvent;
+    xhr.onabort = logUnexpectedProgressEvent;
     xhr.onerror = logUnexpectedProgressEvent;
-    xhr.onload = logUnexpectedProgressEvent;
+    xhr.onload = logProgressEvent;
     xhr.onloadend = logProgressEvent;
     xhr.onreadystatechange = function(e) {
+        // abort in DONE state should do nothing.
         if (xhr.readyState == xhr.DONE)
             xhr.abort();
     }
@@ -77,7 +78,7 @@ function testAbort()
             results += " " + e;
     }
     
-    completeTest(" abort loadend");
+    completeTest(" load loadend");
 }
 
 testNormal();

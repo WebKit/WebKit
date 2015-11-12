@@ -2,7 +2,7 @@ This page tests event listener fire order for a few objects that had it wrong in
 
 If the test passes, you'll see a series of PASS messages below.
 
-PASS: result should be f1,f2 and is.
-PASS: result should be f1,f2 and is.
-PASS: result should be f1,f2 and is.
+PASS: result should be 'f1,f2' and is.
+PASS: result should be 'f1,f2' and is.
+PASS: result should be '' and is.
 

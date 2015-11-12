@@ -373,10 +373,13 @@ void XMLHttpRequest::callReadyStateChangeListener()
     if (!scriptExecutionContext())
         return;
 
+    // Check whether sending load and loadend events before sending readystatechange event, as it may change m_error/m_state values.
+    bool shouldSendLoadEvent = (m_state == DONE && !m_error);
+
     if (m_async || (m_state <= OPENED || m_state == DONE))
         m_progressEventThrottle.dispatchReadyStateChangeEvent(Event::create(eventNames().readystatechangeEvent, false, false), m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
 
-    if (m_state == DONE && !m_error) {
+    if (shouldSendLoadEvent) {
         m_progressEventThrottle.dispatchProgressEvent(eventNames().loadEvent);
         m_progressEventThrottle.dispatchProgressEvent(eventNames().loadendEvent);
     }
@@ -384,7 +387,7 @@ void XMLHttpRequest::callReadyStateChangeListener()
 
 void XMLHttpRequest::setWithCredentials(bool value, ExceptionCode& ec)
 {
-    if (m_state > OPENED || m_loader) {
+    if (m_state > OPENED || m_sendFlag) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -476,6 +479,7 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
     State previousState = m_state;
     m_state = UNSENT;
     m_error = false;
+    m_sendFlag = false;
     m_uploadComplete = false;
 
     // clear stuff from possible previous load
@@ -565,10 +569,11 @@ bool XMLHttpRequest::initSend(ExceptionCode& ec)
     if (!scriptExecutionContext())
         return false;
 
-    if (m_state != OPENED || m_loader) {
+    if (m_state != OPENED || m_sendFlag) {
         ec = INVALID_STATE_ERR;
         return false;
     }
+    ASSERT(!m_loader);
 
     m_error = false;
     return true;
@@ -716,6 +721,8 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         return;
     }
 
+    m_sendFlag = true;
+
     // The presence of upload event listeners forces us to use preflighting because POSTing to an URL that does not
     // permit cross origin requests should look exactly like POSTing to an URL that does not respond at all.
     // Also, only async requests support upload progress events.
@@ -782,6 +789,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         // and they are referenced by the JavaScript wrapper.
         setPendingActivity(this);
         if (!m_loader) {
+            m_sendFlag = false;
             m_timeoutTimer.stop();
             m_networkErrorTimer.startOneShot(0);
         }
@@ -801,8 +809,6 @@ void XMLHttpRequest::abort()
     // internalAbort() calls dropProtection(), which may release the last reference.
     Ref<XMLHttpRequest> protect(*this);
 
-    bool sendFlag = m_loader;
-
     if (!internalAbort())
         return;
 
@@ -810,16 +816,13 @@ void XMLHttpRequest::abort()
 
     // Clear headers as required by the spec
     m_requestHeaders.clear();
-
-    if ((m_state <= OPENED && !sendFlag) || m_state == DONE)
-        m_state = UNSENT;
-    else {
+    if ((m_state == OPENED && m_sendFlag) || m_state == HEADERS_RECEIVED || m_state == LOADING) {
         ASSERT(!m_loader);
+        m_sendFlag = false;
         changeState(DONE);
-        m_state = UNSENT;
+        dispatchErrorEvents(eventNames().abortEvent);
     }
-
-    dispatchErrorEvents(eventNames().abortEvent);
+    m_state = UNSENT;
 }
 
 bool XMLHttpRequest::internalAbort()
@@ -881,6 +884,7 @@ void XMLHttpRequest::genericError()
 {
     clearResponse();
     clearRequest();
+    m_sendFlag = false;
     m_error = true;
 
     changeState(DONE);
@@ -934,7 +938,7 @@ void XMLHttpRequest::overrideMimeType(const String& override, ExceptionCode& ec)
 
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value, ExceptionCode& ec)
 {
-    if (m_state != OPENED || m_loader) {
+    if (m_state != OPENED || m_sendFlag) {
 #if ENABLE(DASHBOARD_SUPPORT)
         if (usesDashboardBackwardCompatibilityMode())
             return;
@@ -1118,6 +1122,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
     bool hadLoader = m_loader;
     m_loader = nullptr;
 
+    m_sendFlag = false;
     changeState(DONE);
     m_responseEncoding = String();
     m_decoder = nullptr;
@@ -1241,6 +1246,7 @@ void XMLHttpRequest::didReachTimeout()
     clearResponse();
     clearRequest();
 
+    m_sendFlag = false;
     m_error = true;
     m_exceptionCode = XMLHttpRequestException::TIMEOUT_ERR;
 

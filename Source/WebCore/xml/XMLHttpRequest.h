@@ -216,6 +216,7 @@ private:
 
     RefPtr<ThreadableLoader> m_loader;
     State m_state;
+    bool m_sendFlag { false };
 
     ResourceResponse m_response;
     String m_responseEncoding;

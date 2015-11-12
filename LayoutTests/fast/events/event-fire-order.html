@@ -49,12 +49,12 @@ function reportResult(name, expected)
     var end = result.length > expected.length ? result.length : expected.length;
     for (var i = 0; i < end; ++i) {
         if (result[i] != expected[i]) {
-            log("FAIL: " + name + " result[" + i + "] should be " + expected[i] + " but instead is " + result[i] + ".");
+            log("FAIL: " + name + " result[" + i + "] should be '" + expected[i] + "' but instead is '" + result[i] + "'.");
             passed = false;
         }
     }
     if (passed)
-        log("PASS: result should be " + expected + " and is.");
+        log("PASS: result should be '" + expected + "' and is.");
 }
 
 var tests = [
@@ -97,7 +97,7 @@ var tests = [
         x.open("POST", "resources/does-not-exist");
         x.abort();
 
-        reportResult(arguments.callee.name, [ "f1", "f2" ]);
+        reportResult(arguments.callee.name, []);
     }
 ];
 

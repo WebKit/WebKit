@@ -2518,7 +2518,6 @@ imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Timeout ]
-imported/w3c/web-platform-tests/XMLHttpRequest/interfaces.html [ Timeout ]
 
 webkit.org/b/148938 accessibility/aria-table-hierarchy.html [ Failure ]
 webkit.org/b/148938 accessibility/aria-table-with-presentational-elements.html [ Failure ]
