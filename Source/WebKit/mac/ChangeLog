@@ -1,5 +1,32 @@
 2015-11-12  Anders Carlsson  <andersca@apple.com>
 
+        ContextMenuAction and WebMenuItemTag shouldn't have to be in sync
+        https://bugs.webkit.org/show_bug.cgi?id=151226
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm:
+        (toAction):
+        (toTag):
+        Add conversion functions.
+
+        (-[WebMenuTarget forwardContextMenuAction:]):
+        Use toAction.
+
+        (createMenuItem):
+        Use toTag.
+
+        (setMenuItemTarget): Deleted.
+        (setMenuTargets): Deleted.
+        (-[WebHTMLView menuForEvent:]):
+        Don't call setMenuTargets, that's already done when we create the menu items.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Add missing menu item tags. This does break ABI, but the menu item tags were already out of sync
+        so it's very likely that nobody is relying on this.
+
+2015-11-12  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * WebView/WebHTMLView.mm:

@@ -92,6 +92,7 @@ enum {
     WebMenuItemTagCapitalize,
     WebMenuItemTagChangeBack,
     WebMenuItemTagOpenMediaInNewWindow,
+    WebMenuItemTagDownloadMediaToDisk,
     WebMenuItemTagCopyMediaLinkToClipboard,
     WebMenuItemTagToggleMediaControls,
     WebMenuItemTagToggleMediaLoop,
@@ -99,6 +100,8 @@ enum {
     WebMenuItemTagMediaPlayPause,
     WebMenuItemTagMediaMute,
     WebMenuItemTagDictationAlternative,
+    WebMenuItemTagToggleVideoFullscreen,
+    WebMenuItemTagShareMenu,
 };
 
 // Deprecated; remove when there are no more clients.

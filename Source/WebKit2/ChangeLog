@@ -1,5 +1,17 @@
 2015-11-12  Anders Carlsson  <andersca@apple.com>
 
+        ContextMenuAction and WebMenuItemTag shouldn't have to be in sync
+        https://bugs.webkit.org/show_bug.cgi?id=151226
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        Remove ContextMenuItemTagOpenLinkInThisWindow.
+
+2015-11-12  Anders Carlsson  <andersca@apple.com>
+
         ContextMenuController::contextMenuItemSelected only needs the action and title, not the full item
         https://bugs.webkit.org/show_bug.cgi?id=151217
 

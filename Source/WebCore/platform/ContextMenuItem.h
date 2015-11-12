@@ -40,11 +40,9 @@ class ContextMenu;
 class Image;
 class URL;
 
-// This enum needs to be in sync with the WebMenuItemTag enum in WebUIDelegate.h and the
-// extra values in WebUIDelegatePrivate.h
 enum ContextMenuAction {
-    ContextMenuItemTagNoAction=0, // This item is not actually in WebUIDelegate.h
-    ContextMenuItemTagOpenLinkInNewWindow=1,
+    ContextMenuItemTagNoAction,
+    ContextMenuItemTagOpenLinkInNewWindow,
     ContextMenuItemTagDownloadLinkToDisk,
     ContextMenuItemTagCopyLinkToClipboard,
     ContextMenuItemTagOpenImageInNewWindow,
@@ -99,8 +97,7 @@ enum ContextMenuAction {
     ContextMenuItemPDFContinuous,
     ContextMenuItemPDFNextPage,
     ContextMenuItemPDFPreviousPage,
-    // These are new tags! Not a part of API!!!!
-    ContextMenuItemTagOpenLink = 2000,
+    ContextMenuItemTagOpenLink,
     ContextMenuItemTagIgnoreGrammar,
     ContextMenuItemTagSpellingMenu, // Spelling or Spelling/Grammar sub-menu
     ContextMenuItemTagShowSpellingPanel,
@@ -153,7 +150,6 @@ enum ContextMenuAction {
     ContextMenuItemTagMediaPlayPause,
     ContextMenuItemTagMediaMute,
     ContextMenuItemTagDictationAlternative,
-    ContextMenuItemTagOpenLinkInThisWindow,
     ContextMenuItemTagToggleVideoFullscreen,
     ContextMenuItemTagShareMenu, 
     ContextMenuItemBaseCustomTag = 5000,

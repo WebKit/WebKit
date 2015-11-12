@@ -180,6 +180,370 @@ using namespace WTF;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
+static Optional<ContextMenuAction> toAction(NSInteger tag)
+{
+    if (tag >= ContextMenuItemBaseCustomTag && tag <= ContextMenuItemLastCustomTag) {
+        // Just pass these through.
+        return static_cast<ContextMenuAction>(tag);
+    }
+
+    switch (tag) {
+    case WebMenuItemTagOpenLinkInNewWindow:
+        return ContextMenuItemTagOpenLinkInNewWindow;
+    case WebMenuItemTagDownloadLinkToDisk:
+        return ContextMenuItemTagDownloadLinkToDisk;
+    case WebMenuItemTagCopyLinkToClipboard:
+        return ContextMenuItemTagCopyLinkToClipboard;
+    case WebMenuItemTagOpenImageInNewWindow:
+        return ContextMenuItemTagOpenImageInNewWindow;
+    case WebMenuItemTagDownloadImageToDisk:
+        return ContextMenuItemTagDownloadImageToDisk;
+    case WebMenuItemTagCopyImageToClipboard:
+        return ContextMenuItemTagCopyImageToClipboard;
+    case WebMenuItemTagOpenFrameInNewWindow:
+        return ContextMenuItemTagOpenFrameInNewWindow;
+    case WebMenuItemTagCopy:
+        return ContextMenuItemTagCopy;
+    case WebMenuItemTagGoBack:
+        return ContextMenuItemTagGoBack;
+    case WebMenuItemTagGoForward:
+        return ContextMenuItemTagGoForward;
+    case WebMenuItemTagStop:
+        return ContextMenuItemTagStop;
+    case WebMenuItemTagReload:
+        return ContextMenuItemTagReload;
+    case WebMenuItemTagCut:
+        return ContextMenuItemTagCut;
+    case WebMenuItemTagPaste:
+        return ContextMenuItemTagPaste;
+    case WebMenuItemTagSpellingGuess:
+        return ContextMenuItemTagSpellingGuess;
+    case WebMenuItemTagNoGuessesFound:
+        return ContextMenuItemTagNoGuessesFound;
+    case WebMenuItemTagIgnoreSpelling:
+        return ContextMenuItemTagIgnoreSpelling;
+    case WebMenuItemTagLearnSpelling:
+        return ContextMenuItemTagLearnSpelling;
+    case WebMenuItemTagOther:
+        return ContextMenuItemTagOther;
+    case WebMenuItemTagSearchInSpotlight:
+        return ContextMenuItemTagSearchInSpotlight;
+    case WebMenuItemTagSearchWeb:
+        return ContextMenuItemTagSearchWeb;
+    case WebMenuItemTagLookUpInDictionary:
+        return ContextMenuItemTagLookUpInDictionary;
+    case WebMenuItemTagOpenWithDefaultApplication:
+        return ContextMenuItemTagOpenWithDefaultApplication;
+    case WebMenuItemPDFActualSize:
+        return ContextMenuItemPDFActualSize;
+    case WebMenuItemPDFZoomIn:
+        return ContextMenuItemPDFZoomIn;
+    case WebMenuItemPDFZoomOut:
+        return ContextMenuItemPDFZoomOut;
+    case WebMenuItemPDFAutoSize:
+        return ContextMenuItemPDFAutoSize;
+    case WebMenuItemPDFSinglePage:
+        return ContextMenuItemPDFSinglePage;
+    case WebMenuItemPDFFacingPages:
+        return ContextMenuItemPDFFacingPages;
+    case WebMenuItemPDFContinuous:
+        return ContextMenuItemPDFContinuous;
+    case WebMenuItemPDFNextPage:
+        return ContextMenuItemPDFNextPage;
+    case WebMenuItemPDFPreviousPage:
+        return ContextMenuItemPDFPreviousPage;
+    case WebMenuItemTagOpenLink:
+        return ContextMenuItemTagOpenLink;
+    case WebMenuItemTagIgnoreGrammar:
+        return ContextMenuItemTagIgnoreGrammar;
+    case WebMenuItemTagSpellingMenu:
+        return ContextMenuItemTagSpellingMenu;
+    case WebMenuItemTagShowSpellingPanel:
+        return ContextMenuItemTagShowSpellingPanel;
+    case WebMenuItemTagCheckSpelling:
+        return ContextMenuItemTagCheckSpelling;
+    case WebMenuItemTagCheckSpellingWhileTyping:
+        return ContextMenuItemTagCheckSpellingWhileTyping;
+    case WebMenuItemTagCheckGrammarWithSpelling:
+        return ContextMenuItemTagCheckGrammarWithSpelling;
+    case WebMenuItemTagFontMenu:
+        return ContextMenuItemTagFontMenu;
+    case WebMenuItemTagShowFonts:
+        return ContextMenuItemTagShowFonts;
+    case WebMenuItemTagBold:
+        return ContextMenuItemTagBold;
+    case WebMenuItemTagItalic:
+        return ContextMenuItemTagItalic;
+    case WebMenuItemTagUnderline:
+        return ContextMenuItemTagUnderline;
+    case WebMenuItemTagOutline:
+        return ContextMenuItemTagOutline;
+    case WebMenuItemTagStyles:
+        return ContextMenuItemTagStyles;
+    case WebMenuItemTagShowColors:
+        return ContextMenuItemTagShowColors;
+    case WebMenuItemTagSpeechMenu:
+        return ContextMenuItemTagSpeechMenu;
+    case WebMenuItemTagStartSpeaking:
+        return ContextMenuItemTagStartSpeaking;
+    case WebMenuItemTagStopSpeaking:
+        return ContextMenuItemTagStopSpeaking;
+    case WebMenuItemTagWritingDirectionMenu:
+        return ContextMenuItemTagWritingDirectionMenu;
+    case WebMenuItemTagDefaultDirection:
+        return ContextMenuItemTagDefaultDirection;
+    case WebMenuItemTagLeftToRight:
+        return ContextMenuItemTagLeftToRight;
+    case WebMenuItemTagRightToLeft:
+        return ContextMenuItemTagRightToLeft;
+    case WebMenuItemPDFSinglePageScrolling:
+        return ContextMenuItemTagPDFSinglePageScrolling;
+    case WebMenuItemPDFFacingPagesScrolling:
+        return ContextMenuItemTagPDFFacingPagesScrolling;
+    case WebMenuItemTagInspectElement:
+        return ContextMenuItemTagInspectElement;
+    case WebMenuItemTagTextDirectionMenu:
+        return ContextMenuItemTagTextDirectionMenu;
+    case WebMenuItemTagTextDirectionDefault:
+        return ContextMenuItemTagTextDirectionDefault;
+    case WebMenuItemTagTextDirectionLeftToRight:
+        return ContextMenuItemTagTextDirectionLeftToRight;
+    case WebMenuItemTagTextDirectionRightToLeft:
+        return ContextMenuItemTagTextDirectionRightToLeft;
+    case WebMenuItemTagCorrectSpellingAutomatically:
+        return ContextMenuItemTagCorrectSpellingAutomatically;
+    case WebMenuItemTagSubstitutionsMenu:
+        return ContextMenuItemTagSubstitutionsMenu;
+    case WebMenuItemTagShowSubstitutions:
+        return ContextMenuItemTagShowSubstitutions;
+    case WebMenuItemTagSmartCopyPaste:
+        return ContextMenuItemTagSmartCopyPaste;
+    case WebMenuItemTagSmartQuotes:
+        return ContextMenuItemTagSmartQuotes;
+    case WebMenuItemTagSmartDashes:
+        return ContextMenuItemTagSmartDashes;
+    case WebMenuItemTagSmartLinks:
+        return ContextMenuItemTagSmartLinks;
+    case WebMenuItemTagTextReplacement:
+        return ContextMenuItemTagTextReplacement;
+    case WebMenuItemTagTransformationsMenu:
+        return ContextMenuItemTagTransformationsMenu;
+    case WebMenuItemTagMakeUpperCase:
+        return ContextMenuItemTagMakeUpperCase;
+    case WebMenuItemTagMakeLowerCase:
+        return ContextMenuItemTagMakeLowerCase;
+    case WebMenuItemTagCapitalize:
+        return ContextMenuItemTagCapitalize;
+    case WebMenuItemTagChangeBack:
+        return ContextMenuItemTagChangeBack;
+    case WebMenuItemTagOpenMediaInNewWindow:
+        return ContextMenuItemTagOpenMediaInNewWindow;
+    case WebMenuItemTagCopyMediaLinkToClipboard:
+        return ContextMenuItemTagCopyMediaLinkToClipboard;
+    case WebMenuItemTagToggleMediaControls:
+        return ContextMenuItemTagToggleMediaControls;
+    case WebMenuItemTagToggleMediaLoop:
+        return ContextMenuItemTagToggleMediaLoop;
+    case WebMenuItemTagEnterVideoFullscreen:
+        return ContextMenuItemTagEnterVideoFullscreen;
+    case WebMenuItemTagMediaPlayPause:
+        return ContextMenuItemTagMediaPlayPause;
+    case WebMenuItemTagMediaMute:
+        return ContextMenuItemTagMediaMute;
+    case WebMenuItemTagDictationAlternative:
+        return ContextMenuItemTagDictationAlternative;
+    }
+    return Nullopt;
+}
+
+static Optional<NSInteger> toTag(ContextMenuAction action)
+{
+    switch (action) {
+    case ContextMenuItemTagNoAction:
+        return Nullopt;
+
+    case ContextMenuItemTagOpenLinkInNewWindow:
+        return WebMenuItemTagOpenLinkInNewWindow;
+    case ContextMenuItemTagDownloadLinkToDisk:
+        return WebMenuItemTagDownloadLinkToDisk;
+    case ContextMenuItemTagCopyLinkToClipboard:
+        return WebMenuItemTagCopyLinkToClipboard;
+    case ContextMenuItemTagOpenImageInNewWindow:
+        return WebMenuItemTagOpenImageInNewWindow;
+    case ContextMenuItemTagDownloadImageToDisk:
+        return WebMenuItemTagDownloadImageToDisk;
+    case ContextMenuItemTagCopyImageToClipboard:
+        return WebMenuItemTagCopyImageToClipboard;
+    case ContextMenuItemTagOpenFrameInNewWindow:
+        return WebMenuItemTagOpenFrameInNewWindow;
+    case ContextMenuItemTagCopy:
+        return WebMenuItemTagCopy;
+    case ContextMenuItemTagGoBack:
+        return WebMenuItemTagGoBack;
+    case ContextMenuItemTagGoForward:
+        return WebMenuItemTagGoForward;
+    case ContextMenuItemTagStop:
+        return WebMenuItemTagStop;
+    case ContextMenuItemTagReload:
+        return WebMenuItemTagReload;
+    case ContextMenuItemTagCut:
+        return WebMenuItemTagCut;
+    case ContextMenuItemTagPaste:
+        return WebMenuItemTagPaste;
+    case ContextMenuItemTagSpellingGuess:
+        return WebMenuItemTagSpellingGuess;
+    case ContextMenuItemTagNoGuessesFound:
+        return WebMenuItemTagNoGuessesFound;
+    case ContextMenuItemTagIgnoreSpelling:
+        return WebMenuItemTagIgnoreSpelling;
+    case ContextMenuItemTagLearnSpelling:
+        return WebMenuItemTagLearnSpelling;
+    case ContextMenuItemTagOther:
+        return WebMenuItemTagOther;
+    case ContextMenuItemTagSearchInSpotlight:
+        return WebMenuItemTagSearchInSpotlight;
+    case ContextMenuItemTagSearchWeb:
+        return WebMenuItemTagSearchWeb;
+    case ContextMenuItemTagLookUpInDictionary:
+        return WebMenuItemTagLookUpInDictionary;
+    case ContextMenuItemTagOpenWithDefaultApplication:
+        return WebMenuItemTagOpenWithDefaultApplication;
+    case ContextMenuItemPDFActualSize:
+        return WebMenuItemPDFActualSize;
+    case ContextMenuItemPDFZoomIn:
+        return WebMenuItemPDFZoomIn;
+    case ContextMenuItemPDFZoomOut:
+        return WebMenuItemPDFZoomOut;
+    case ContextMenuItemPDFAutoSize:
+        return WebMenuItemPDFAutoSize;
+    case ContextMenuItemPDFSinglePage:
+        return WebMenuItemPDFSinglePage;
+    case ContextMenuItemPDFFacingPages:
+        return WebMenuItemPDFFacingPages;
+    case ContextMenuItemPDFContinuous:
+        return WebMenuItemPDFContinuous;
+    case ContextMenuItemPDFNextPage:
+        return WebMenuItemPDFNextPage;
+    case ContextMenuItemPDFPreviousPage:
+        return WebMenuItemPDFPreviousPage;
+    case ContextMenuItemTagOpenLink:
+        return WebMenuItemTagOpenLink;
+    case ContextMenuItemTagIgnoreGrammar:
+        return WebMenuItemTagIgnoreGrammar;
+    case ContextMenuItemTagSpellingMenu:
+        return WebMenuItemTagSpellingMenu;
+    case ContextMenuItemTagShowSpellingPanel:
+        return WebMenuItemTagShowSpellingPanel;
+    case ContextMenuItemTagCheckSpelling:
+        return WebMenuItemTagCheckSpelling;
+    case ContextMenuItemTagCheckSpellingWhileTyping:
+        return WebMenuItemTagCheckSpellingWhileTyping;
+    case ContextMenuItemTagCheckGrammarWithSpelling:
+        return WebMenuItemTagCheckGrammarWithSpelling;
+    case ContextMenuItemTagFontMenu:
+        return WebMenuItemTagFontMenu;
+    case ContextMenuItemTagShowFonts:
+        return WebMenuItemTagShowFonts;
+    case ContextMenuItemTagBold:
+        return WebMenuItemTagBold;
+    case ContextMenuItemTagItalic:
+        return WebMenuItemTagItalic;
+    case ContextMenuItemTagUnderline:
+        return WebMenuItemTagUnderline;
+    case ContextMenuItemTagOutline:
+        return WebMenuItemTagOutline;
+    case ContextMenuItemTagStyles:
+        return WebMenuItemTagStyles;
+    case ContextMenuItemTagShowColors:
+        return WebMenuItemTagShowColors;
+    case ContextMenuItemTagSpeechMenu:
+        return WebMenuItemTagSpeechMenu;
+    case ContextMenuItemTagStartSpeaking:
+        return WebMenuItemTagStartSpeaking;
+    case ContextMenuItemTagStopSpeaking:
+        return WebMenuItemTagStopSpeaking;
+    case ContextMenuItemTagWritingDirectionMenu:
+        return WebMenuItemTagWritingDirectionMenu;
+    case ContextMenuItemTagDefaultDirection:
+        return WebMenuItemTagDefaultDirection;
+    case ContextMenuItemTagLeftToRight:
+        return WebMenuItemTagLeftToRight;
+    case ContextMenuItemTagRightToLeft:
+        return WebMenuItemTagRightToLeft;
+    case ContextMenuItemTagPDFSinglePageScrolling:
+        return WebMenuItemPDFSinglePageScrolling;
+    case ContextMenuItemTagPDFFacingPagesScrolling:
+        return WebMenuItemPDFFacingPagesScrolling;
+    case ContextMenuItemTagInspectElement:
+        return WebMenuItemTagInspectElement;
+    case ContextMenuItemTagTextDirectionMenu:
+        return WebMenuItemTagTextDirectionMenu;
+    case ContextMenuItemTagTextDirectionDefault:
+        return WebMenuItemTagTextDirectionDefault;
+    case ContextMenuItemTagTextDirectionLeftToRight:
+        return WebMenuItemTagTextDirectionLeftToRight;
+    case ContextMenuItemTagTextDirectionRightToLeft:
+        return WebMenuItemTagTextDirectionRightToLeft;
+    case ContextMenuItemTagCorrectSpellingAutomatically:
+        return WebMenuItemTagCorrectSpellingAutomatically;
+    case ContextMenuItemTagSubstitutionsMenu:
+        return WebMenuItemTagSubstitutionsMenu;
+    case ContextMenuItemTagShowSubstitutions:
+        return WebMenuItemTagShowSubstitutions;
+    case ContextMenuItemTagSmartCopyPaste:
+        return WebMenuItemTagSmartCopyPaste;
+    case ContextMenuItemTagSmartQuotes:
+        return WebMenuItemTagSmartQuotes;
+    case ContextMenuItemTagSmartDashes:
+        return WebMenuItemTagSmartDashes;
+    case ContextMenuItemTagSmartLinks:
+        return WebMenuItemTagSmartLinks;
+    case ContextMenuItemTagTextReplacement:
+        return WebMenuItemTagTextReplacement;
+    case ContextMenuItemTagTransformationsMenu:
+        return WebMenuItemTagTransformationsMenu;
+    case ContextMenuItemTagMakeUpperCase:
+        return WebMenuItemTagMakeUpperCase;
+    case ContextMenuItemTagMakeLowerCase:
+        return WebMenuItemTagMakeLowerCase;
+    case ContextMenuItemTagCapitalize:
+        return WebMenuItemTagCapitalize;
+    case ContextMenuItemTagChangeBack:
+        return WebMenuItemTagChangeBack;
+    case ContextMenuItemTagOpenMediaInNewWindow:
+        return WebMenuItemTagOpenMediaInNewWindow;
+    case ContextMenuItemTagDownloadMediaToDisk:
+        return WebMenuItemTagDownloadMediaToDisk;
+    case ContextMenuItemTagCopyMediaLinkToClipboard:
+        return WebMenuItemTagCopyMediaLinkToClipboard;
+    case ContextMenuItemTagToggleMediaControls:
+        return WebMenuItemTagToggleMediaControls;
+    case ContextMenuItemTagToggleMediaLoop:
+        return WebMenuItemTagToggleMediaLoop;
+    case ContextMenuItemTagEnterVideoFullscreen:
+        return WebMenuItemTagEnterVideoFullscreen;
+    case ContextMenuItemTagMediaPlayPause:
+        return WebMenuItemTagMediaPlayPause;
+    case ContextMenuItemTagMediaMute:
+        return WebMenuItemTagMediaMute;
+    case ContextMenuItemTagDictationAlternative:
+        return WebMenuItemTagDictationAlternative;
+    case ContextMenuItemTagToggleVideoFullscreen:
+        return WebMenuItemTagToggleVideoFullscreen;
+    case ContextMenuItemTagShareMenu:
+        return WebMenuItemTagShareMenu;
+
+    case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
+        // We just pass these through.
+        return static_cast<NSInteger>(action);
+
+    case ContextMenuItemBaseApplicationTag:
+        ASSERT_NOT_REACHED();
+    }
+
+    return Nullopt;
+}
+
 static WebMenuTarget* target;
 
 @implementation WebMenuTarget
@@ -203,7 +567,8 @@ static WebMenuTarget* target;
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    _menuController->contextMenuItemSelected(static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title]);
+    if (auto action = toAction([sender tag]))
+        _menuController->contextMenuItemSelected(*action, [sender title]);
 }
 
 @end
@@ -3299,28 +3664,6 @@ WEBCORE_COMMAND(toggleUnderline)
         coreframe->eventHandler().mouseUp(event, [[self _webView] _pressureEvent]);
 }
 
-static void setMenuItemTarget(NSMenuItem* menuItem)
-{
-    // Don't set the menu item's action to the context menu action forwarder if we already
-    // have an action.
-    if ([menuItem action])
-        return;
-
-    [menuItem setTarget:[WebMenuTarget sharedMenuTarget]];
-    [menuItem setAction:@selector(forwardContextMenuAction:)];
-}
-
-static void setMenuTargets(NSMenu* menu)
-{
-    NSInteger itemCount = [menu numberOfItems];
-    for (NSInteger i = 0; i < itemCount; ++i) {
-        NSMenuItem *item = [menu itemAtIndex:i];
-        setMenuItemTarget(item);
-        if ([item hasSubmenu])
-            setMenuTargets([item submenu]);
-    }
-}
-
 static BOOL isPreVersion3Client(void)
 {
     static BOOL preVersion3Client = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_3_0_CONTEXT_MENU_TAGS);
@@ -3571,7 +3914,8 @@ static RetainPtr<NSMenuItem> createMenuItem(const HitTestResult& hitTestResult, 
     case WebCore::CheckableActionType: {
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
 
-        [menuItem setTag:item.action()];
+        if (auto tag = toTag(item.action()))
+            [menuItem setTag:*tag];
         [menuItem setEnabled:item.enabled()];
         [menuItem setState:item.checked() ? NSOnState : NSOffState];
         [menuItem setTarget:[WebMenuTarget sharedMenuTarget]];
@@ -3696,8 +4040,6 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
         }
     }
 
-    setMenuTargets(menu.get());
-    
     [[WebMenuTarget sharedMenuTarget] setMenuController:&page->contextMenuController()];
     
     return menu.autorelease();
