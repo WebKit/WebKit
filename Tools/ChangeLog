@@ -1,3 +1,9 @@
+2015-11-12  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, add watchlist for Source/JavaScriptCore and add myself, Saam, and Mark.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2015-11-12  Daniel Bates  <dabates@apple.com>
 
         Support building configuration Production of DumpRenderTree and WebKitTestRunner for iOS
