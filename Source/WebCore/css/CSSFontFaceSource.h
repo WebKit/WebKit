@@ -45,6 +45,7 @@ class CSSFontSelector;
 class Font;
 class FontDescription;
 class FontFeatureSettings;
+struct FontVariantSettings;
 
 class CSSFontFaceSource final : public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED;
