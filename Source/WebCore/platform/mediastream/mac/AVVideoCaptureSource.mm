@@ -101,8 +101,6 @@ RefPtr<AVMediaCaptureSource> AVVideoCaptureSource::create(AVCaptureDeviceType* d
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraint)
     : AVMediaCaptureSource(device, id, RealtimeMediaSource::Video, constraint)
 {
-    currentStates()->setSourceId(id);
-    currentStates()->setSourceType(RealtimeMediaSourceStates::Camera);
 }
 
 AVVideoCaptureSource::~AVVideoCaptureSource()
@@ -119,6 +117,9 @@ void AVVideoCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilitie
 void AVVideoCaptureSource::updateStates()
 {
     RealtimeMediaSourceStates* states = currentStates();
+
+    states->setSourceId(id());
+    states->setSourceType(RealtimeMediaSourceStates::Camera);
 
     if ([device() position] == AVCaptureDevicePositionFront)
         states->setFacingMode(RealtimeMediaSourceStates::User);

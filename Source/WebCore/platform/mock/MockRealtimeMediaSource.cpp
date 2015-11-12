@@ -98,7 +98,7 @@ RefPtr<RealtimeMediaSourceCapabilities> MockRealtimeMediaSource::capabilities()
 {
     if (!m_capabilities) {
         m_capabilities = RealtimeMediaSourceCapabilities::create();
-        m_capabilities->setSourceId(m_currentStates.sourceId());
+        m_capabilities->setSourceId(id());
         initializeCapabilities(*m_capabilities.get());
     }
     return m_capabilities;

@@ -3302,4 +3302,7 @@ webkit.org/b/147933 streams/reference-implementation/count-queuing-strategy.html
 
 webkit.org/b/150946 [ Debug ] scrollbars/custom-scrollbar-appearance-property.html [ Crash ]
 
+# HTMLMediaElement can not use a MediaStream as source.
+fast/mediastream/MediaStream-video-element.html [ Skip ]
+
 webkit.org/b/150948 [ Debug ] imported/blink/transitions/unprefixed-transform.html [ Pass Failure ]

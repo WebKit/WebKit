@@ -30,10 +30,12 @@
 
 #import "AVAudioCaptureSource.h"
 #import "AVVideoCaptureSource.h"
+#import "AudioTrackPrivateMediaStream.h"
 #import "Clock.h"
 #import "GraphicsContext.h"
 #import "Logging.h"
 #import "MediaStreamPrivate.h"
+#import "VideoTrackPrivateMediaStream.h"
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <objc_runtime.h>
@@ -128,6 +130,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
     m_ended = !m_mediaStreamPrivate->active();
 
     scheduleDeferredTask([this] {
+        updateTracks();
         setNetworkState(MediaPlayer::Idle);
         updateReadyState();
     });
@@ -381,6 +384,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
         sizeChanged = true;
     }
 
+    updateTracks();
+
     if (m_waitingForNewFrame && m_mediaStreamPrivate->isProducingData())
         setPausedImageVisible(false);
 
@@ -397,6 +402,79 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
                 m_player->client().mediaPlayerRenderingModeChanged(m_player);
         }
     });
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::didAddTrack(MediaStreamTrackPrivate&)
+{
+    updateTracks();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::didRemoveTrack(MediaStreamTrackPrivate&)
+{
+    updateTracks();
+}
+
+template <typename RefT, typename PassRefT>
+void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Type trackType, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), MediaPlayer* player, void (MediaPlayer::*removedFunction)(PassRefT), void (MediaPlayer::*addedFunction)(PassRefT), std::function<void(RefT, int)> configureCallback)
+{
+    Vector<RefT> removedTracks;
+    Vector<RefT> addedTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>> addedPrivateTracks;
+
+    for (const auto& track : currentTracks) {
+        if (track->type() != trackType)
+            continue;
+
+        if (!trackMap.contains(track->id()))
+            addedPrivateTracks.append(track);
+    }
+
+    for (const auto& track : trackMap.values()) {
+        MediaStreamTrackPrivate* streamTrack = track->streamTrack();
+        if (currentTracks.contains(streamTrack))
+            continue;
+
+        removedTracks.append(track);
+        trackMap.remove(streamTrack->id());
+    }
+
+    for (auto& track : addedPrivateTracks) {
+        RefT newTrack = itemFactory(*track.get());
+        trackMap.add(track->id(), newTrack);
+        addedTracks.append(newTrack);
+    }
+
+    int index = 0;
+    for (const auto& track : trackMap.values())
+        configureCallback(track, index++);
+
+    for (auto& track : removedTracks)
+        (player->*removedFunction)(track);
+
+    for (auto& track : addedTracks)
+        (player->*addedFunction)(track);
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
+{
+    Vector<RefPtr<TrackPrivateBase>> removedTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>> addedTracks;
+
+    MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
+
+    std::function<void(RefPtr<AudioTrackPrivateMediaStream>, int)> enableAudioTrack = [this](RefPtr<AudioTrackPrivateMediaStream> track, int index)
+    {
+        track->setTrackIndex(index);
+        track->setEnabled(track->streamTrack()->enabled() && !track->streamTrack()->muted());
+    };
+    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, m_player, &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack, enableAudioTrack);
+
+    std::function<void(RefPtr<VideoTrackPrivateMediaStream>, int)> enableVideoTrack = [this](RefPtr<VideoTrackPrivateMediaStream> track, int index)
+    {
+        track->setTrackIndex(index);
+        track->setSelected(track->streamTrack() == m_mediaStreamPrivate->activeVideoTrack());
+    };
+    updateTracksOfType(m_videoTrackMap, RealtimeMediaSource::Video, currentTracks, &VideoTrackPrivateMediaStream::create, m_player, &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack, enableVideoTrack);
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const

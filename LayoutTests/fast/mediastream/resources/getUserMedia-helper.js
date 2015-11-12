@@ -4,9 +4,13 @@ function getUserMedia(permission, constraints, successCallback, errorCallback) {
     else {
         debug("This test can not be run without the testRunner");
         finishJSTest();
+        return;
     }
 
-    navigator.mediaDevices.getUserMedia(constraints).then(successCallback, reject).catch(defaultRejectOrCatch);
+    navigator.mediaDevices
+                .getUserMedia(constraints)
+                .then(successCallback, reject)
+                .catch(defaultRejectOrCatch);
 
     function reject(e) {
         if (errorCallback)

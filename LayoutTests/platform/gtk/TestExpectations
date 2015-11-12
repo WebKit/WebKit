@@ -2572,4 +2572,7 @@ media/controls [ Skip ]
 # Mocking the system language is not implemented in GTK.
 fast/text/international/system-language [ Failure ]
 
+# HTMLMediaElement can not use a MediaStream as source.
+fast/mediastream/MediaStream-video-element.html [ Skip ]
+
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]

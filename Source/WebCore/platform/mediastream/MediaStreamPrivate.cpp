@@ -241,7 +241,7 @@ void MediaStreamPrivate::paintCurrentFrameInContext(GraphicsContext& context, co
 
 RefPtr<Image> MediaStreamPrivate::currentFrameImage()
 {
-    if (!active() && !m_activeVideoTrack)
+    if (!active() || !m_activeVideoTrack)
         return nullptr;
 
     return m_activeVideoTrack->source()->currentFrameImage();

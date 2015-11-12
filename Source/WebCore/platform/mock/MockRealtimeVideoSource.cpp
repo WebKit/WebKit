@@ -93,6 +93,7 @@ void MockRealtimeVideoSource::updateStates()
 {
     RealtimeMediaSourceStates* states = currentStates();
 
+    states->setSourceType(RealtimeMediaSourceStates::Camera);
     states->setFacingMode(RealtimeMediaSourceStates::User);
     states->setFrameRate(m_frameRate);
     states->setWidth(m_size.width());

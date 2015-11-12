@@ -40,9 +40,11 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
+class AudioTrackPrivateMediaStream;
 class AVVideoCaptureSource;
 class Clock;
 class MediaSourcePrivateClient;
+class VideoTrackPrivateMediaStream;
 
 class MediaPlayerPrivateMediaStreamAVFObjC : public MediaPlayerPrivateInterface, public MediaStreamPrivate::Observer {
 public:
@@ -138,14 +140,17 @@ private:
     RenderingModeStatus updateIntrinsicSize(const FloatSize&);
 
     void createPreviewLayers();
-
     void setPausedImageVisible(bool);
+
+    void updateTracks();
 
     void scheduleDeferredTask(std::function<void()>);
 
     // MediaStreamPrivate::Observer
     void activeStatusChanged() override;
     void characteristicsChanged() override;
+    void didAddTrack(MediaStreamTrackPrivate&) override;
+    void didRemoveTrack(MediaStreamTrackPrivate&) override;
 
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
@@ -154,6 +159,10 @@ private:
     mutable RetainPtr<PlatformLayer> m_videoBackgroundLayer;
     RetainPtr<CGImageRef> m_pausedImage;
     std::unique_ptr<Clock> m_clock;
+
+    HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;
+    HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
+
     MediaPlayer::NetworkState m_networkState { MediaPlayer::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };
     FloatSize m_intrinsicSize;

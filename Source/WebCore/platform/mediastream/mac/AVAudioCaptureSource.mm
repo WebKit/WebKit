@@ -88,6 +88,10 @@ void AVAudioCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilitie
 void AVAudioCaptureSource::updateStates()
 {
     // FIXME: use [AVCaptureAudioPreviewOutput volume] for volume
+
+    RealtimeMediaSourceStates* states = currentStates();
+    states->setSourceId(id());
+    states->setSourceType(RealtimeMediaSourceStates::Microphone);
 }
 
 void AVAudioCaptureSource::addObserver(AVAudioCaptureSource::Observer* observer)
