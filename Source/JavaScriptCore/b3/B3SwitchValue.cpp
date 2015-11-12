@@ -63,8 +63,9 @@ void SwitchValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.print(comma, "fallThrough = ", fallThrough());
 }
 
-SwitchValue::SwitchValue(unsigned index, Origin origin, const FrequentedBlock& fallThrough)
-    : ControlValue(index, Switch, Void, origin)
+SwitchValue::SwitchValue(
+    unsigned index, Origin origin, Value* child, const FrequentedBlock& fallThrough)
+    : ControlValue(index, Switch, Void, origin, child)
 {
     m_successors.append(fallThrough);
 }

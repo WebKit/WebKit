@@ -111,7 +111,7 @@ public:
     // contain some other case value). This removes the case that was removed.
     SwitchCase removeCase(unsigned index);
 
-    void appendCase(const SwitchCase&);
+    JS_EXPORT_PRIVATE void appendCase(const SwitchCase&);
 
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
@@ -119,7 +119,8 @@ protected:
 private:
     friend class Procedure;
 
-    SwitchValue(unsigned index, Origin, const FrequentedBlock& fallThrough);
+    JS_EXPORT_PRIVATE SwitchValue(
+        unsigned index, Origin, Value* child, const FrequentedBlock& fallThrough);
 
     Vector<int64_t> m_values;
 };

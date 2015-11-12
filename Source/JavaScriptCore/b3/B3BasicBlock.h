@@ -78,6 +78,8 @@ public:
 
     Value* appendIntConstant(Procedure&, Origin, Type, int64_t value);
     Value* appendIntConstant(Procedure&, Value* likeValue, int64_t value);
+
+    void removeLast(Procedure&);
     
     template<typename ValueType, typename... Arguments>
     ValueType* replaceLastWithNew(Procedure&, Arguments...);

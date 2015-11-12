@@ -60,6 +60,11 @@ BasicBlock* BlockInsertionSet::insertBefore(BasicBlock* before, double frequency
     return insert(before->index(), frequency == frequency ? frequency : before->frequency());
 }
 
+BasicBlock* BlockInsertionSet::insertAfter(BasicBlock* after, double frequency)
+{
+    return insert(after->index() + 1, frequency == frequency ? frequency : after->frequency());
+}
+
 BasicBlock* BlockInsertionSet::splitForward(
     BasicBlock* block, unsigned& valueIndex, InsertionSet* insertionSet, double frequency)
 {

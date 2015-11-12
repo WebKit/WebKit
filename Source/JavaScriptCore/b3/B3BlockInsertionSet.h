@@ -53,6 +53,9 @@ public:
     // usually what you want.
     BasicBlock* insertBefore(BasicBlock* before, double frequency = PNaN);
 
+    // Inserts a new block after the given block.
+    BasicBlock* insertAfter(BasicBlock* after, double frequency = PNaN);
+
     // A helper to split a block when forward iterating over it. It creates a new block to hold
     // everything before the instruction at valueIndex. The current block is left with
     // everything at and after valueIndex. If the optional InsertionSet is provided, it will get

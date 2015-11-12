@@ -95,7 +95,7 @@ protected:
     // Use this for subclasses.
     template<typename... Arguments>
     ControlValue(unsigned index, Opcode opcode, Type type, Origin origin, Arguments... arguments)
-        : Value(index, opcode, type, origin, arguments...)
+        : Value(index, CheckedOpcode, opcode, type, origin, arguments...)
     {
         ASSERT(accepts(opcode));
     }

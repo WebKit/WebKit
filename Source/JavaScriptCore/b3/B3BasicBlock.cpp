@@ -54,10 +54,16 @@ void BasicBlock::append(Value* value)
     m_values.append(value);
 }
 
+void BasicBlock::removeLast(Procedure& proc)
+{
+    ASSERT(!m_values.isEmpty());
+    proc.deleteValue(m_values.takeLast());
+}
+
 void BasicBlock::replaceLast(Procedure& proc, Value* value)
 {
-    proc.deleteValue(last());
-    last() = value;
+    removeLast(proc);
+    append(value);
 }
 
 Value* BasicBlock::appendIntConstant(Procedure& proc, Origin origin, Type type, int64_t value)

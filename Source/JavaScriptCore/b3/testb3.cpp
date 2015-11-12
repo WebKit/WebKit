@@ -35,6 +35,7 @@
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
+#include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "CCallHelpers.h"
@@ -1266,7 +1267,7 @@ void testSShrArg32(int32_t a)
         proc, Return, Origin(),
         root->appendNew<Value>(proc, SShr, Origin(), value, value));
 
-    CHECK(compileAndRun<int32_t>(proc, a) == (a >> a));
+    CHECK(compileAndRun<int32_t>(proc, a) == (a >> (a & 31)));
 }
 
 void testSShrArgs32(int32_t a, int32_t b)
@@ -1372,7 +1373,7 @@ void testZShrArg32(uint32_t a)
         proc, Return, Origin(),
         root->appendNew<Value>(proc, ZShr, Origin(), value, value));
 
-    CHECK(compileAndRun<uint32_t>(proc, a) == (a >> a));
+    CHECK(compileAndRun<uint32_t>(proc, a) == (a >> (a & 31)));
 }
 
 void testZShrArgs32(uint32_t a, uint32_t b)
@@ -3188,6 +3189,89 @@ void testChillDiv64(int64_t num, int64_t den, int64_t res)
     }
 }
 
+void testSwitch(unsigned degree, unsigned gap = 1)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    BasicBlock* terminate = proc.addBlock();
+    terminate->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        terminate->appendNew<Const32Value>(proc, Origin(), 0));
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(
+        proc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        FrequentedBlock(terminate));
+
+    for (unsigned i = 0; i < degree; ++i) {
+        BasicBlock* newBlock = proc.addBlock();
+        newBlock->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            newBlock->appendNew<ArgumentRegValue>(
+                proc, Origin(), (i & 1) ? GPRInfo::argumentGPR2 : GPRInfo::argumentGPR1));
+        switchValue->appendCase(SwitchCase(gap * i, FrequentedBlock(newBlock)));
+    }
+
+    auto code = compile(proc);
+
+    for (unsigned i = 0; i < degree; ++i) {
+        CHECK(invoke<int32_t>(*code, i * gap, 42, 11) == ((i & 1) ? 11 : 42));
+        if (gap > 1) {
+            CHECK(!invoke<int32_t>(*code, i * gap + 1, 42, 11));
+            CHECK(!invoke<int32_t>(*code, i * gap - 1, 42, 11));
+        }
+    }
+
+    CHECK(!invoke<int32_t>(*code, -1, 42, 11));
+    CHECK(!invoke<int32_t>(*code, degree * gap, 42, 11));
+    CHECK(!invoke<int32_t>(*code, degree * gap + 1, 42, 11));
+}
+
+void testSwitchChillDiv(unsigned degree, unsigned gap = 1)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* left = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* right = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+    BasicBlock* terminate = proc.addBlock();
+    terminate->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        terminate->appendNew<Const32Value>(proc, Origin(), 0));
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(
+        proc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        FrequentedBlock(terminate));
+
+    for (unsigned i = 0; i < degree; ++i) {
+        BasicBlock* newBlock = proc.addBlock();
+
+        newBlock->appendNew<ControlValue>(
+            proc, Return, Origin(),
+            newBlock->appendNew<Value>(
+                proc, ChillDiv, Origin(), (i & 1) ? right : left, (i & 1) ? left : right));
+        
+        switchValue->appendCase(SwitchCase(gap * i, FrequentedBlock(newBlock)));
+    }
+
+    auto code = compile(proc);
+
+    for (unsigned i = 0; i < degree; ++i) {
+        CHECK(invoke<int32_t>(*code, i * gap, 42, 11) == ((i & 1) ? 11/42 : 42/11));
+        if (gap > 1) {
+            CHECK(!invoke<int32_t>(*code, i * gap + 1, 42, 11));
+            CHECK(!invoke<int32_t>(*code, i * gap - 1, 42, 11));
+        }
+    }
+
+    CHECK(!invoke<int32_t>(*code, -1, 42, 11));
+    CHECK(!invoke<int32_t>(*code, degree * gap, 42, 11));
+    CHECK(!invoke<int32_t>(*code, degree * gap + 1, 42, 11));
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -3728,6 +3812,24 @@ void run(const char* filter)
     RUN(testChillDivTwice(4, 2, 6, 2, 5));
     RUN(testChillDivTwice(4, 0, 6, 2, 3));
     RUN(testChillDivTwice(4, 2, 6, 0, 2));
+
+    RUN(testSwitch(0, 1));
+    RUN(testSwitch(1, 1));
+    RUN(testSwitch(2, 1));
+    RUN(testSwitch(2, 2));
+    RUN(testSwitch(10, 1));
+    RUN(testSwitch(10, 2));
+    RUN(testSwitch(100, 1));
+    RUN(testSwitch(100, 100));
+
+    RUN(testSwitchChillDiv(0, 1));
+    RUN(testSwitchChillDiv(1, 1));
+    RUN(testSwitchChillDiv(2, 1));
+    RUN(testSwitchChillDiv(2, 2));
+    RUN(testSwitchChillDiv(10, 1));
+    RUN(testSwitchChillDiv(10, 2));
+    RUN(testSwitchChillDiv(100, 1));
+    RUN(testSwitchChillDiv(100, 100));
 
     if (tasks.isEmpty())
         usage();

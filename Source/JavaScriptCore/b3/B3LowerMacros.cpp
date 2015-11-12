@@ -34,6 +34,7 @@
 #include "B3InsertionSetInlines.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
+#include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 
@@ -67,6 +68,7 @@ private:
     {
         for (m_index = 0; m_index < m_block->size(); ++m_index) {
             m_value = m_block->at(m_index);
+            m_origin = m_value->origin();
             switch (m_value->opcode()) {
             case ChillDiv: {
                 // ARM supports this instruction natively.
@@ -96,8 +98,8 @@ private:
                 Value* one =
                     m_insertionSet.insertIntConstant(m_index, m_value, 1);
                 Value* isDenOK = m_insertionSet.insert<Value>(
-                    m_index, Above, m_value->origin(),
-                    m_insertionSet.insert<Value>(m_index, Add, m_value->origin(), den, one),
+                    m_index, Above, m_origin,
+                    m_insertionSet.insert<Value>(m_index, Add, m_origin, den, one),
                     one);
 
                 BasicBlock* before =
@@ -110,26 +112,26 @@ private:
                 BasicBlock* intMinCase = m_blockInsertionSet.insertBefore(m_block);
 
                 before->replaceLastWithNew<ControlValue>(
-                    m_proc, Branch, m_value->origin(), isDenOK,
+                    m_proc, Branch, m_origin, isDenOK,
                     FrequentedBlock(normalDivCase, FrequencyClass::Normal),
                     FrequentedBlock(shadyDenCase, FrequencyClass::Rare));
 
                 UpsilonValue* normalResult = normalDivCase->appendNew<UpsilonValue>(
-                    m_proc, m_value->origin(),
-                    normalDivCase->appendNew<Value>(m_proc, Div, m_value->origin(), num, den));
+                    m_proc, m_origin,
+                    normalDivCase->appendNew<Value>(m_proc, Div, m_origin, num, den));
                 normalDivCase->appendNew<ControlValue>(
-                    m_proc, Jump, m_value->origin(), FrequentedBlock(m_block));
+                    m_proc, Jump, m_origin, FrequentedBlock(m_block));
 
                 shadyDenCase->appendNew<ControlValue>(
-                    m_proc, Branch, m_value->origin(), den,
+                    m_proc, Branch, m_origin, den,
                     FrequentedBlock(neg1DenCase, FrequencyClass::Normal),
                     FrequentedBlock(zeroDenCase, FrequencyClass::Rare));
 
                 UpsilonValue* zeroResult = zeroDenCase->appendNew<UpsilonValue>(
-                    m_proc, m_value->origin(),
+                    m_proc, m_origin,
                     zeroDenCase->appendIntConstant(m_proc, m_value, 0));
                 zeroDenCase->appendNew<ControlValue>(
-                    m_proc, Jump, m_value->origin(), FrequentedBlock(m_block));
+                    m_proc, Jump, m_origin, FrequentedBlock(m_block));
 
                 int64_t badNumeratorConst;
                 switch (m_value->type()) {
@@ -148,19 +150,19 @@ private:
                     neg1DenCase->appendIntConstant(m_proc, m_value, badNumeratorConst);
 
                 neg1DenCase->appendNew<ControlValue>(
-                    m_proc, Branch, m_value->origin(),
+                    m_proc, Branch, m_origin,
                     neg1DenCase->appendNew<Value>(
-                        m_proc, Equal, m_value->origin(), num, badNumerator),
+                        m_proc, Equal, m_origin, num, badNumerator),
                     FrequentedBlock(intMinCase, FrequencyClass::Rare),
                     FrequentedBlock(normalDivCase, FrequencyClass::Normal));
 
                 UpsilonValue* intMinResult = intMinCase->appendNew<UpsilonValue>(
-                    m_proc, m_value->origin(), badNumerator);
+                    m_proc, m_origin, badNumerator);
                 intMinCase->appendNew<ControlValue>(
-                    m_proc, Jump, m_value->origin(), FrequentedBlock(m_block));
+                    m_proc, Jump, m_origin, FrequentedBlock(m_block));
 
                 Value* phi = m_insertionSet.insert<Value>(
-                    m_index, Phi, m_value->type(), m_value->origin());
+                    m_index, Phi, m_value->type(), m_origin);
                 normalResult->setPhi(phi);
                 zeroResult->setPhi(phi);
                 intMinResult->setPhi(phi);
@@ -170,14 +172,102 @@ private:
                 break;
             }
 
-            // FIXME: Implement Switch.
-            // https://bugs.webkit.org/show_bug.cgi?id=151115
+            case Switch: {
+                SwitchValue* switchValue = m_value->as<SwitchValue>();
+                Vector<SwitchCase> cases;
+                for (const SwitchCase& switchCase : *switchValue)
+                    cases.append(switchCase);
+                std::sort(
+                    cases.begin(), cases.end(),
+                    [] (const SwitchCase& left, const SwitchCase& right) {
+                        return left.caseValue() < right.caseValue();
+                    });
+                m_block->values().removeLast();
+                recursivelyBuildSwitch(cases, 0, false, cases.size(), m_block);
+                m_proc.deleteValue(switchValue);
+                m_block->updatePredecessorsAfter();
+                m_changed = true;
+                break;
+            }
 
             default:
                 break;
             }
         }
         m_insertionSet.execute(m_block);
+    }
+
+    void recursivelyBuildSwitch(
+        const Vector<SwitchCase>& cases, unsigned start, bool hardStart, unsigned end,
+        BasicBlock* before)
+    {
+        // FIXME: Add table-based switch lowering.
+        // https://bugs.webkit.org/show_bug.cgi?id=151141
+        
+        // See comments in jit/BinarySwitch.cpp for a justification of this algorithm. The only
+        // thing we do differently is that we don't use randomness.
+
+        const unsigned leafThreshold = 3;
+
+        unsigned size = end - start;
+
+        if (size <= leafThreshold) {
+            bool allConsecutive = false;
+
+            if ((hardStart || (start && cases[start - 1].caseValue() == cases[start].caseValue() - 1))
+                && end < cases.size()
+                && cases[end - 1].caseValue() == cases[end].caseValue() - 1) {
+                allConsecutive = true;
+                for (unsigned i = 0; i < size - 1; ++i) {
+                    if (cases[start + i].caseValue() + 1 != cases[start + i + 1].caseValue()) {
+                        allConsecutive = false;
+                        break;
+                    }
+                }
+            }
+
+            unsigned limit = allConsecutive ? size - 1 : size;
+            
+            for (unsigned i = 0; i < limit; ++i) {
+                BasicBlock* nextCheck = m_blockInsertionSet.insertAfter(m_block);
+                before->appendNew<ControlValue>(
+                    m_proc, Branch, m_origin,
+                    before->appendNew<Value>(
+                        m_proc, Equal, m_origin, m_value->child(0),
+                        before->appendIntConstant(
+                            m_proc, m_origin, m_value->child(0)->type(),
+                            cases[start + i].caseValue())),
+                    cases[start + i].target(), FrequentedBlock(nextCheck));
+
+                before = nextCheck;
+            }
+
+            if (allConsecutive) {
+                before->appendNew<ControlValue>(
+                    m_proc, Jump, m_origin, cases[end - 1].target());
+            } else {
+                before->appendNew<ControlValue>(
+                    m_proc, Jump, m_origin, m_value->as<SwitchValue>()->fallThrough());
+            }
+            return;
+        }
+
+        unsigned medianIndex = (start + end) / 2;
+
+        BasicBlock* left = m_blockInsertionSet.insertAfter(m_block);
+        BasicBlock* right = m_blockInsertionSet.insertAfter(m_block);
+
+        before->appendNew<ControlValue>(
+            m_proc, Branch, m_origin,
+            before->appendNew<Value>(
+                m_proc, LessThan, m_origin, m_value->child(0),
+                before->appendIntConstant(
+                    m_proc, m_origin, m_value->child(0)->type(),
+                    cases[medianIndex].caseValue())),
+            FrequentedBlock(left), FrequentedBlock(right));
+
+        recursivelyBuildSwitch(cases, start, hardStart, medianIndex, left);
+        recursivelyBuildSwitch(cases, medianIndex, true, end, right);
     }
     
     Procedure& m_proc;
@@ -186,6 +276,7 @@ private:
     BasicBlock* m_block;
     unsigned m_index;
     Value* m_value;
+    Origin m_origin;
     bool m_changed { false };
 };
 

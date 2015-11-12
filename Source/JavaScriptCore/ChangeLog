@@ -1,5 +1,37 @@
 2015-11-11  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 should be able to compile a program with Switch
+        https://bugs.webkit.org/show_bug.cgi?id=151115
+
+        Reviewed by Benjamin Poulain.
+
+        Adds lowering of Switch to a binary switch. This doesn't require any Air support.
+
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::append):
+        (JSC::B3::BasicBlock::removeLast):
+        (JSC::B3::BasicBlock::replaceLast):
+        * b3/B3BasicBlock.h:
+        * b3/B3BlockInsertionSet.cpp:
+        (JSC::B3::BlockInsertionSet::insertBefore):
+        (JSC::B3::BlockInsertionSet::insertAfter):
+        (JSC::B3::BlockInsertionSet::splitForward):
+        * b3/B3BlockInsertionSet.h:
+        * b3/B3ControlValue.h:
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3LowerMacros.cpp:
+        * b3/B3SwitchValue.cpp:
+        (JSC::B3::SwitchValue::dumpMeta):
+        (JSC::B3::SwitchValue::SwitchValue):
+        * b3/B3SwitchValue.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testChillDiv64):
+        (JSC::B3::testSwitch):
+        (JSC::B3::run):
+
+2015-11-11  Filip Pizlo  <fpizlo@apple.com>
+
         Patchpoints with stackArgument constraints should work
         https://bugs.webkit.org/show_bug.cgi?id=151177
 

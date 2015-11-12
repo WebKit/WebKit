@@ -55,17 +55,16 @@ void generateToAir(Procedure& procedure, Air::Code& code, unsigned optLevel)
 {
     TimingScope timingScope("generateToAir");
     
+    if (shouldDumpIR() && !shouldDumpIRAtEachPhase()) {
+        dataLog("Initial B3:\n");
+        dataLog(procedure);
+    }
+
     // We don't require the incoming IR to have predecessors computed.
     procedure.resetReachability();
     
     if (shouldValidateIR())
         validate(procedure);
-
-    // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
-    if (shouldDumpIR() && !shouldDumpIRAtEachPhase()) {
-        dataLog("Initial B3:\n");
-        dataLog(procedure);
-    }
 
     lowerMacros(procedure);
 
