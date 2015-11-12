@@ -1,5 +1,14 @@
 2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Fix EFL 1.16 with enabled NEON support
+        https://bugs.webkit.org/show_bug.cgi?id=151188
+
+        Unreviewed buildfix, disable NEON temporarily after r192358.
+
+        * efl/jhbuild.modules:
+
+2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Bump EFL version to 1.16.0
         https://bugs.webkit.org/show_bug.cgi?id=150228
 

@@ -199,7 +199,7 @@
  </autotools>
 
   <autotools id="efl" autogen-sh="configure"
-             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba">
+             autogenargs="--disable-fribidi --disable-audio --disable-libmount --disable-physics --enable-lua-old --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba --disable-neon">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="gstreamer"/>
