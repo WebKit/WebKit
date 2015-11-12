@@ -5374,8 +5374,7 @@ void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL
 
 void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36202 Popstate event needs to fire asynchronously
-    dispatchWindowEvent(PopStateEvent::create(stateObject, m_domWindow ? m_domWindow->history() : nullptr));
+    enqueueWindowEvent(PopStateEvent::create(stateObject, m_domWindow ? m_domWindow->history() : nullptr));
 }
 
 void Document::addMediaCanStartListener(MediaCanStartListener* listener)

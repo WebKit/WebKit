@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<link rel="stylesheet" href="../../../resources/js-test-style.css" type="text/css">
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="description"></div>
+<pre id="console"></pre>
+<script>
+description('Tests that popstate events fire asynchronously.');
+
+window.onload = function()
+{
+    debug('onload fired');
+    history.pushState("test", "test");
+    history.back();
+}
+
+var initialPopState = true;
+
+window.onpopstate = function()
+{
+    debug('popstate fired');
+
+    if (initialPopState) {
+        initialPopState = false;
+
+        // This should not be re-entrant; there should be no other log lines
+        // between the "Setting..." and "Set..." lines.
+        debug('Setting hash to #foo');
+        location.hash = '#foo';
+        debug('Set hash to #foo');
+    } else
+        finishJSTest();
+}
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>
