@@ -1,3 +1,9 @@
+2015-11-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update my watchlists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2015-11-12  Daniel Bates  <dabates@apple.com>
 
         Rename webkitdirs::willUseIOS{Device, Simulator}SDKWhenBuilding() to willUseIOS{Device, Simulator}SDK()
