@@ -1,3 +1,15 @@
+2015-11-11  Akos Kiss  <akiss@inf.u-szeged.hu>
+
+        bmalloc: Add libdl dependency
+        https://bugs.webkit.org/show_bug.cgi?id=151140
+
+        Reviewed by Csaba Osztrogonác.
+
+        Make sure that the linker links libdl and finds the references to
+        dlopen, dlsym and dlclose in Environment.cpp.
+
+        * CMakeLists.txt:
+
 2015-11-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add tvOS and watchOS to SUPPORTED_PLATFORMS

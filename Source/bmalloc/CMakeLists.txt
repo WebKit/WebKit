@@ -16,6 +16,10 @@ set(bmalloc_SOURCES
     bmalloc/mbmalloc.cpp
 )
 
+set(bmalloc_LIBRARIES
+    ${CMAKE_DL_LIBS}
+)
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_WRAP_SOURCELIST(${bmalloc_SOURCES})
