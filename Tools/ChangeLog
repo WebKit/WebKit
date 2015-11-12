@@ -1,3 +1,29 @@
+2015-11-12  Daniel Bates  <dabates@apple.com>
+
+        Support building configuration Production of DumpRenderTree and WebKitTestRunner for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=151191
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Remove hardcoded SKIP_INTALL.
+        Will override this setting in DumpRenderTree.xcconfig.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig: When building for iOS we now
+        compile source file DumpRenderTreeMain.mm to produce a built product and make the Apple
+        Internal build system happy. Do not waste time coping OpenType font files (*.otf files)
+        and skip installation when building for iOS since we are not interested in the build product
+        and are only building this target to make the Apple Internal build system happy.
+        * DumpRenderTree/mac/DumpRenderTreeMain.mm:
+        (main): Added dummy implementation for iOS so that we build an actual command line tool to
+        make the Apple Internal build system happy.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Add iOS-specific definition for WEBKIT_UMBRELLA_FRAMEWORKS_DIR.
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig: Remove variable WEBKIT_UMBRELLA_FRAMEWORKS_DIR.
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig: Build file WebKitTestRunner/mac/main.mm
+        on iOS Only to produce a built product and make the Apple Internal build system happy. No need
+        to define OTHER_LDFLAGS when building this target for iOS as the default linker flags are sufficient.
+        * WebKitTestRunner/mac/main.mm:
+        (main): Added dummy implementation for iOS so that we build an actual command line tool to
+        make the Apple Internal build system happy.
+
 2015-11-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add watchlist for history/ and add myself.

@@ -27,5 +27,6 @@ OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME)) $(ASAN_OTHER_LDFL
 OTHER_LDFLAGS_macosx = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a -framework Carbon -framework Cocoa -framework JavaScriptCore -framework OpenGL -framework QuartzCore -framework WebKit;
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 PRODUCT_NAME = DumpRenderTree;
-
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = DumpRenderTreeMain.mm *.ttf *.TTF;
+SKIP_INSTALL[sdk=macosx*] = NO;
+SKIP_INSTALL[sdk=iphone*] = YES;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *.ttf *.TTF *.otf;

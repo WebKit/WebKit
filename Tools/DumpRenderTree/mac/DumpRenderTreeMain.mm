@@ -23,9 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(MAC)
+
 #include "DumpRenderTreeMac.h"
 
 int main(int argc, const char *argv[])
 {
     return DumpRenderTreeMain(argc, argv);
 }
+
+#else
+
+int main(int, const char*[])
+{
+    return 0;
+}
+
+#endif

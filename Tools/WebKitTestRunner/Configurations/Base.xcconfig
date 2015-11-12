@@ -60,8 +60,14 @@ SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx tvos tvsimulator watchos w
 
 SDKROOT = macosx.internal;
 
-WEBKIT_UMBRELLA_FRAMEWORKS_DIR = $(SDKROOT)$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
-WEBCORE_PRIVATE_HEADERS_DIR = $(WEBKIT_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
+PRODUCTION_FRAMEWORKS_DIR[sdk=iphone*] = $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+PRODUCTION_FRAMEWORKS_DIR[sdk=macosx*] = $(SDKROOT)$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
+
+WEBCORE_PRIVATE_HEADERS_DIR = $(WEBCORE_PRIVATE_HEADERS_DIR_$(CONFIGURATION));
+WEBCORE_PRIVATE_HEADERS_DIR_Release = $(WEBCORE_PRIVATE_HEADERS_DIR_engineering);
+WEBCORE_PRIVATE_HEADERS_DIR_Debug = $(WEBCORE_PRIVATE_HEADERS_DIR_engineering);
+WEBCORE_PRIVATE_HEADERS_DIR_Production = $(PRODUCTION_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
+WEBCORE_PRIVATE_HEADERS_DIR_engineering = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;
 
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 
