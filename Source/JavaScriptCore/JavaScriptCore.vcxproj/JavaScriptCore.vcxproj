@@ -1469,6 +1469,7 @@
     <ClInclude Include="..\jit\JITInlines.h" />
     <ClInclude Include="..\jit\JITOperations.h" />
     <ClInclude Include="..\jit\JITStubRoutine.h" />
+    <ClInclude Include="..\jit\JITSubGenerator.h" />
     <ClInclude Include="..\jit\JITThunks.h" />
     <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />

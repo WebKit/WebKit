@@ -2522,6 +2522,9 @@
     <ClInclude Include="..\jit\JITStubRoutine.h">
       <Filter>jit</Filter>
     </ClInclude>
+    <ClInclude Include="..\jit\JITSubGenerator.h">
+      <Filter>jit</Filter>
+    </ClInclude>
     <ClInclude Include="..\jit\JITThunks.h">
       <Filter>jit</Filter>
     </ClInclude>

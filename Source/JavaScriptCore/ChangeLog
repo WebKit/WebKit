@@ -1,5 +1,37 @@
 2015-11-11  Mark Lam  <mark.lam@apple.com>
 
+        The BinarySnippetRegisterContext needs to copy the result back from the scratch register.
+        https://bugs.webkit.org/show_bug.cgi?id=150712
+
+        Reviewed by Geoffrey Garen.
+
+        If the BinarySnippetRegisterContext had re-assigned the result register to a scratch
+        before emitting the snippet, it needs to copy the result back from the scratch after
+        the snippet is done.
+
+        This fixes the cdjs-tests.yaml/main.js.ftl failure reported in
+        https://bugs.webkit.org/show_bug.cgi?id=150687.
+
+        Also added an optimization to check for the case where any of the left, right,
+        or result registers are aliased together, and to map them to the corresponding
+        allocated scratch register for their alias instead of allocating separate ones.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        - Added JITSubGenerator.h to these project files for completeness.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        - Re-enable ArithSub handling of UntypedUse operands.
+
+        * ftl/FTLCompile.cpp:
+
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfArithSub):
+        - Adjusted IC sizes to account for the snippet changes.
+
+2015-11-11  Mark Lam  <mark.lam@apple.com>
+
         Crash in sorting-benchmark.js on ARM64 with full op_sub FTL coverage.
         https://bugs.webkit.org/show_bug.cgi?id=150936
 

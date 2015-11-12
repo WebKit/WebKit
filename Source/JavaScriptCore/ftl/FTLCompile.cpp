@@ -310,13 +310,17 @@ static void generateCheckInICFastPath(
 class BinarySnippetRegisterContext {
     // The purpose of this class is to shuffle registers to get them into the state
     // that baseline code expects so that we can use the baseline snippet generators i.e.
-    //    1. ensure that the inputs and outputs are not in tag or scratch registers.
-    //    2. tag registers are loaded with the expected values.
+    //    1. Ensure that the inputs and output are not in reserved registers (which
+    //       include the tag registers). The snippet will use these reserved registers.
+    //       Hence, we need to put the inputs and output in other scratch registers.
+    //    2. Tag registers are loaded with the expected values.
     //
-    // We also need to:
-    //    1. restore the input and tag registers to the values that LLVM put there originally.
-    //    2. that is except when one of the input registers is also the result register.
-    //       In this case, we don't want to trash the result, and hence, should not restore into it.
+    // When the snippet is done:
+    //    1. If we had re-assigned the result register to a scratch, we need to copy the
+    //       result back from the scratch.
+    //    2. Restore the input and tag registers to the values that LLVM put there originally.
+    //       That is unless when one of them is also the result register. In that case, we
+    //       don't want to trash the result, and hence, should not restore into it.
 
 public:
     BinarySnippetRegisterContext(ScratchRegisterAllocator& allocator, GPRReg& result, GPRReg& left, GPRReg& right)
@@ -332,20 +336,28 @@ public:
         m_allocator.lock(m_left);
         m_allocator.lock(m_right);
 
-        RegisterSet inputRegisters = RegisterSet(m_left, m_right);
-        RegisterSet inputAndOutputRegisters = RegisterSet(inputRegisters, m_result);
-
+        RegisterSet inputAndOutputRegisters = RegisterSet(m_left, m_right, m_result);
         RegisterSet reservedRegisters;
         for (GPRReg reg : GPRInfo::reservedRegisters())
             reservedRegisters.set(reg);
 
         if (reservedRegisters.get(m_left))
             m_left = m_allocator.allocateScratchGPR();
-        if (reservedRegisters.get(m_right))
-            m_right = m_allocator.allocateScratchGPR();
-        if (!inputRegisters.get(m_result) && reservedRegisters.get(m_result))
-            m_result = m_allocator.allocateScratchGPR();
-        
+        if (reservedRegisters.get(m_right)) {
+            if (m_origRight == m_origLeft)
+                m_right = m_left;
+            else
+                m_right = m_allocator.allocateScratchGPR();
+        }
+        if (reservedRegisters.get(m_result)) {
+            if (m_origResult == m_origLeft)
+                m_result = m_left;
+            else if (m_origResult == m_origRight)
+                m_result = m_right;
+            else
+                m_result = m_allocator.allocateScratchGPR();
+        }
+
         if (!inputAndOutputRegisters.get(GPRInfo::tagMaskRegister))
             m_savedTagMaskRegister = m_allocator.allocateScratchGPR();
         if (!inputAndOutputRegisters.get(GPRInfo::tagTypeNumberRegister))
@@ -356,7 +368,7 @@ public:
     {
         if (m_left != m_origLeft)
             jit.move(m_origLeft, m_left);
-        if (m_right != m_origRight)
+        if (m_right != m_origRight && m_origRight != m_origLeft)
             jit.move(m_origRight, m_right);
 
         if (m_savedTagMaskRegister != InvalidGPRReg)
@@ -369,15 +381,28 @@ public:
 
     void restoreRegisters(CCallHelpers& jit)
     {
+        if (m_origResult != m_result)
+            jit.move(m_result, m_origResult);
         if (m_origLeft != m_left && m_origLeft != m_origResult)
             jit.move(m_left, m_origLeft);
-        if (m_origRight != m_right && m_origRight != m_origResult)
+        if (m_origRight != m_right && m_origRight != m_origResult && m_origRight != m_origLeft)
             jit.move(m_right, m_origRight);
-        
-        if (m_savedTagMaskRegister != InvalidGPRReg)
+
+        // We are guaranteed that the tag registers are not the same as the original input
+        // or output registers. Otherwise, we would not have allocated a scratch for them.
+        // Hence, we don't need to need to check for overlap like we do for the input registers.
+        if (m_savedTagMaskRegister != InvalidGPRReg) {
+            ASSERT(GPRInfo::tagMaskRegister != m_origLeft);
+            ASSERT(GPRInfo::tagMaskRegister != m_origRight);
+            ASSERT(GPRInfo::tagMaskRegister != m_origResult);
             jit.move(m_savedTagMaskRegister, GPRInfo::tagMaskRegister);
-        if (m_savedTagTypeNumberRegister != InvalidGPRReg)
+        }
+        if (m_savedTagTypeNumberRegister != InvalidGPRReg) {
+            ASSERT(GPRInfo::tagTypeNumberRegister != m_origLeft);
+            ASSERT(GPRInfo::tagTypeNumberRegister != m_origRight);
+            ASSERT(GPRInfo::tagTypeNumberRegister != m_origResult);
             jit.move(m_savedTagTypeNumberRegister, GPRInfo::tagTypeNumberRegister);
+        }
     }
 
 private:
