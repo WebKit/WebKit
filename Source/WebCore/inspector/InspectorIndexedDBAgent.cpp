@@ -345,10 +345,10 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     if (!key->getString("type", type))
         return nullptr;
 
-    NeverDestroyed<const String> numberType(ASCIILiteral("number"));
-    NeverDestroyed<const String> stringType(ASCIILiteral("string"));
-    NeverDestroyed<const String> dateType(ASCIILiteral("date"));
-    NeverDestroyed<const String> arrayType(ASCIILiteral("array"));
+    static NeverDestroyed<const String> numberType(ASCIILiteral("number"));
+    static NeverDestroyed<const String> stringType(ASCIILiteral("string"));
+    static NeverDestroyed<const String> dateType(ASCIILiteral("date"));
+    static NeverDestroyed<const String> arrayType(ASCIILiteral("array"));
 
     if (type == numberType) {
         double number;
