@@ -97,8 +97,8 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 
 MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
 {
-    MacroAssembler jit;
-    
+    AssemblyHelpers jit(vm, nullptr);
+
     // We get passed the address of a scratch buffer. The first 8-byte slot of the buffer
     // is the frame size. The second 8-byte slot is the pointer to where we are supposed to
     // jump. The remaining bytes are the new call frame header followed by the locals.
@@ -128,7 +128,12 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
     jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, offsetOfTargetPC), GPRInfo::regT1);
     MacroAssembler::Jump ok = jit.branchPtr(MacroAssembler::Above, GPRInfo::regT1, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
     jit.abortWithReason(DFGUnreasonableOSREntryJumpDestination);
+
     ok.link(&jit);
+    RegisterSet usedRegisters(RegisterSet::stubUnavailableRegisters(), GPRInfo::regT1);
+    jit.restoreCalleeSavesFromVMCalleeSavesBuffer(usedRegisters);
+    jit.emitMaterializeTagCheckRegisters();
+
     jit.jump(GPRInfo::regT1);
     
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);

@@ -1,3 +1,40 @@
+2015-11-11  Mark Lam  <mark.lam@apple.com>
+
+        Crash in sorting-benchmark.js on ARM64 with full op_sub FTL coverage.
+        https://bugs.webkit.org/show_bug.cgi?id=150936
+
+        Reviewed by Michael Saboff.
+
+        The OSR entry thunk does not currently restore the callee saved registers that the baseline
+        JIT saves but the DFG does not.  As a result, sorting-benchmark.js was crashing with the
+        following scenario:
+
+            1. There exists 2 functions: benchmark() and bottom_up_merge_sort().
+               Let's call them A() and B() respectively for brevity.
+            2. A() is FTL compiled.
+            3. B() is FTL compiled.
+            4. FTL A() calls FTL B().  FTL B() trashes register x26.
+            5. FTL B() goes through an OSR exit, and deopts to baseline.  The OSR exit off-ramp
+               puts x26's original value in the baseline B()'s stash location for x26 in its stack
+               frame.  It expects baseline B() to restore x26 when it returns.
+            6. Baseline B() gets DFG optimized, and we OSR enter into DFG B().
+               The OSR entry thunk does nothing to restore x26's original value.  Hence, x26 contains
+               whatever value FTL B() left in it.
+            7. DFG B() returns to FTL A().
+               x26 is not one of the callee saved registers used by DFG B().  Hence, it does nothing
+               to restore it.
+            8. FTL A() tries to use x26 and crashes, because x26 contains FTL B()'s value for it, and
+               not FTL A()'s.
+
+        This patch fixes this issue by having the OSR entry thunk restore all the callee saved
+        registers before running the DFG code.
+
+        No new test needed because this issue will be covered by sorting-benchmark.js as soon as
+        https://bugs.webkit.org/show_bug.cgi?id=150712 lands.
+
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+
 2015-11-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add a comment explaining the opcode suffixes on x86
