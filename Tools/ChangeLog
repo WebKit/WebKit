@@ -1,5 +1,15 @@
 2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Bump EFL version to 1.16.0
+        https://bugs.webkit.org/show_bug.cgi?id=150228
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * efl/patches/efl-remove-XPrint.patch: Removed.
+
+2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         Remove ENABLE(SATURATED_LAYOUT_ARITHMETIC) guards
         https://bugs.webkit.org/show_bug.cgi?id=150972
 

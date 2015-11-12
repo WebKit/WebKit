@@ -205,20 +205,19 @@
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="rel/libs/efl/efl-1.15.0.tar.gz" version="1.15.0"
+    <branch module="rel/libs/efl/efl-1.16.0.tar.gz" version="1.16.0"
             repo="download.enlightenment.org"
-            hash="sha256:2552e364e83b8b747ba6f6fcca699a025751a65407055faa9a2afce29d12b6f4">
+            hash="sha256:35af0783d6dd87ebb435c46fd662ef5a648510d74fb6dc6540a3165c9b221e50">
       <patch file="ecore_remove_warnings.patch" strip="1"/>
-      <patch file="efl-remove-XPrint.patch" strip="1"/>
     </branch>
   </autotools>
 
   <autotools id="elementary"
              autogen-sh="configure"
              autogenargs="--disable-emap --disable-eweather --with-elementary-web-backend=none">
-    <branch module="rel/libs/elementary/elementary-1.15.0.tar.gz" version="1.15.0"
+    <branch module="rel/libs/elementary/elementary-1.16.0.tar.gz" version="1.16.0"
             repo="download.enlightenment.org"
-            hash="sha256:62b4b7d506cf9ca82f9890328ec01b82d0f84a8d4acd787cec68c3367817ba20">
+            hash="sha256:18b1f2d55af46840d0a9477a615d0c5a033b24f06d8fcf539da33aa5db357bd0">
     </branch>
     <dependencies>
         <dep package="efl"/>
