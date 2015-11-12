@@ -785,8 +785,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 #endif
 
     const FontPlatformData& platformData = originalFontData->platformData();
-    // FIXME: Should pass in the locale instead of nullAtom.
-    RetainPtr<CTFontRef> result = platformLookupFallbackFont(platformData.font(), description.weight(), nullAtom, characters, length);
+    RetainPtr<CTFontRef> result = platformLookupFallbackFont(platformData.font(), description.weight(), description.locale(), characters, length);
     result = preparePlatformFont(result.get(), description.textRenderingMode(), nullptr, nullptr, description.featureSettings(), description.variantSettings());
     if (!result)
         return lastResortFallbackFont(description);
