@@ -930,10 +930,6 @@
 /* Set up a define for a common error that is intended to cause a build error -- thus the space after Error. */
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
-#if PLATFORM(WIN) || PLATFORM(GTK)
-#define USE_CROSS_PLATFORM_CONTEXT_MENUS 1
-#endif
-
 #if PLATFORM(COCOA) && HAVE(ACCESSIBILITY)
 #define USE_ACCESSIBILITY_CONTEXT_MENUS 1
 #endif

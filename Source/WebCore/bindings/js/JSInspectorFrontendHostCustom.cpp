@@ -102,12 +102,7 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState& state)
     ContextMenu menu;
     populateContextMenuItems(&state, array, menu);
 
-#if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    Vector<ContextMenuItem> items = contextMenuItemVector(menu.platformDescription());
-#else
-    Vector<ContextMenuItem> items = menu.items();
-#endif
-    wrapped().showContextMenu(event, items);
+    wrapped().showContextMenu(event, menu.items());
 #else
     UNUSED_PARAM(state);
 #endif

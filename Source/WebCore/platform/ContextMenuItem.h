@@ -30,14 +30,9 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "PlatformMenuDescription.h"
-#include <wtf/text/WTFString.h>
-
-#if PLATFORM(COCOA)
-#include <wtf/RetainPtr.h>
-OBJC_CLASS NSImage;
-OBJC_CLASS NSMenuItem;
-#endif
 #endif // ENABLE(CONTEXT_MENUS)
+
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -174,13 +169,6 @@ enum ContextMenuItemType {
     SubmenuType
 };
 
-#if ENABLE(CONTEXT_MENUS)
-#if PLATFORM(COCOA)
-typedef NSMenuItem* PlatformMenuItemDescription;
-#else
-typedef void* PlatformMenuItemDescription;
-#endif
-
 class ContextMenuItem {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -203,7 +191,6 @@ public:
 
     void setSubMenu(ContextMenu*);
 
-#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
     ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems);
     ContextMenuItem();
 
@@ -213,42 +200,15 @@ public:
     const String& title() const { return m_title; }
 
     const Vector<ContextMenuItem>& subMenuItems() const { return m_subMenuItems; }
-#else
-public:
-    WEBCORE_EXPORT explicit ContextMenuItem(PlatformMenuItemDescription);
-    explicit ContextMenuItem(ContextMenu* subMenu);
-    ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
-    WEBCORE_EXPORT ContextMenuItem();
-
-    bool isNull() const { return !m_platformDescription; }
-
-    WEBCORE_EXPORT PlatformMenuItemDescription platformDescription() const;
-
-    WEBCORE_EXPORT String title() const;
-    void setTitle(const String&);
-
-    WEBCORE_EXPORT PlatformMenuDescription platformSubMenu() const;
-    void setSubMenu(Vector<ContextMenuItem>&);
-
-#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
 private:
-#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
     ContextMenuItemType m_type;
     ContextMenuAction m_action;
     String m_title;
     bool m_enabled;
     bool m_checked;
     Vector<ContextMenuItem> m_subMenuItems;
-#else
-#if PLATFORM(COCOA)
-    RetainPtr<NSMenuItem> m_platformDescription;
-#else
-    PlatformMenuItemDescription m_platformDescription;
-#endif
-#endif // USE(CROSS_PLATFORM_CONTEXT_MENUS)
 };
 
-#endif // ENABLE(CONTEXT_MENUS)
 }
 
 #endif // ContextMenuItem_h

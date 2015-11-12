@@ -1,3 +1,15 @@
+2015-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Enable cross-platform context menus by default
+        https://bugs.webkit.org/show_bug.cgi?id=151173
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData): Deleted.
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::menuItemsWithUserData): Deleted.
+
 2015-11-12  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build.

@@ -3579,7 +3579,7 @@ static RetainPtr<NSMenuItem> createMenuItem(const HitTestResult& hitTestResult, 
     case SubmenuType: {
         auto menu = adoptNS([[NSMenu alloc] init]);
 
-        auto submenuItems = createMenuItems(hitTestResult, contextMenuItemVector(item.platformSubMenu()));
+        auto submenuItems = createMenuItems(hitTestResult, item.subMenuItems());
         for (NSMenuItem *menuItem in submenuItems.get())
             [menu addItem:menuItem];
 
@@ -3607,7 +3607,7 @@ static RetainPtr<NSMutableArray> createMenuItems(const HitTestResult& hitTestRes
 static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const ContextMenu& defaultMenu)
 {
     const auto& hitTestResult = webView.page->contextMenuController().hitTestResult();
-    auto defaultMenuItems = createMenuItems(hitTestResult, contextMenuItemVector(defaultMenu.platformDescription()));
+    auto defaultMenuItems = createMenuItems(hitTestResult, defaultMenu.items());
 
     id delegate = [webView UIDelegate];
     SEL selector = @selector(webView:contextMenuItemsForElement:defaultMenuItems:);

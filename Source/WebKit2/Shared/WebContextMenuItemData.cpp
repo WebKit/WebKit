@@ -73,11 +73,7 @@ WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& i
     , m_title(item.title())
 {
     if (m_type == WebCore::SubmenuType) {
-#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
         const Vector<WebCore::ContextMenuItem>& coreSubmenu = item.subMenuItems();
-#else
-        Vector<WebCore::ContextMenuItem> coreSubmenu = WebCore::contextMenuItemVector(item.platformSubMenu());
-#endif
         m_submenu = kitItems(coreSubmenu);
     }
     
