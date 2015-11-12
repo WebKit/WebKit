@@ -571,7 +571,7 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsign
     static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
 }
 
-void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
+void WebFrameLoaderClient::dispatchDidDispatchOnloadEvents()
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);

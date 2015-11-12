@@ -323,7 +323,7 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned 
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
+void WebFrameLoaderClient::dispatchDidDispatchOnloadEvents()
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;

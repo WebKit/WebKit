@@ -410,7 +410,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
 
     // We do not want to submit more than one form from the same page, nor do we want to submit a single
     // form more than once. This flag prevents these from happening; not sure how other browsers prevent this.
-    // The flag is reset in each time we start handle a new mouse or key down event, and
+    // The flag is reset in each time we start dispatching a new mouse or key down event, and
     // also in setView since this part may get reused for a page from the back/forward cache.
     // The form multi-submit logic here is only needed when we are submitting a form that affects this frame.
 
@@ -437,7 +437,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         m_frame.document()->parser()->stopParsing();
 
     if (unloadEventPolicy != UnloadEventPolicyNone)
-        handleUnloadEvents(unloadEventPolicy);
+        dispatchUnloadEvents(unloadEventPolicy);
 
     m_isComplete = true; // to avoid calling completed() in finishedParsing()
     m_didCallImplicitClose = true; // don't want that one either
@@ -2451,12 +2451,12 @@ String FrameLoader::userAgent(const URL& url) const
     return m_client.userAgent(url);
 }
 
-void FrameLoader::handledOnloadEvents()
+void FrameLoader::dispatchOnloadEvents()
 {
-    m_client.dispatchDidHandleOnloadEvents();
+    m_client.dispatchDidDispatchOnloadEvents();
 
     if (documentLoader())
-        documentLoader()->handledOnloadEvents();
+        documentLoader()->dispatchOnloadEvents();
 }
 
 void FrameLoader::frameDetached()
@@ -2822,7 +2822,7 @@ bool FrameLoader::shouldClose()
         for (i = 0; i < targetFrames.size(); i++) {
             if (!targetFrames[i]->tree().isDescendantOf(&m_frame))
                 continue;
-            if (!targetFrames[i]->loader().handleBeforeUnloadEvent(page->chrome(), this))
+            if (!targetFrames[i]->loader().dispatchBeforeUnloadEvent(page->chrome(), this))
                 break;
         }
 
@@ -2837,7 +2837,7 @@ bool FrameLoader::shouldClose()
     return shouldClose;
 }
 
-void FrameLoader::handleUnloadEvents(UnloadEventPolicy unloadEventPolicy)
+void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
 {
     if (!m_frame.document())
         return;
@@ -2895,7 +2895,7 @@ void FrameLoader::handleUnloadEvents(UnloadEventPolicy unloadEventPolicy)
         m_frame.document()->removeAllEventListeners();
 }
 
-bool FrameLoader::handleBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated)
+bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated)
 {
     DOMWindow* domWindow = m_frame.document()->domWindow();
     if (!domWindow)

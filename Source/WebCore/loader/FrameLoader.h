@@ -212,7 +212,7 @@ public:
 
     void receivedFirstData();
 
-    void handledOnloadEvents();
+    void dispatchOnloadEvents();
     String userAgent(const URL&) const;
 
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&);
@@ -320,8 +320,8 @@ private:
 
     SubstituteData defaultSubstituteDataForURL(const URL&);
 
-    bool handleBeforeUnloadEvent(Chrome&, FrameLoader* frameLoaderBeingNavigated);
-    void handleUnloadEvents(UnloadEventPolicy);
+    bool dispatchBeforeUnloadEvent(Chrome&, FrameLoader* frameLoaderBeingNavigated);
+    void dispatchUnloadEvents(UnloadEventPolicy);
 
     void continueLoadAfterNavigationPolicy(const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue, AllowNavigationToInvalidURL);
     void continueLoadAfterNewWindowPolicy(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue, AllowNavigationToInvalidURL, NewFrameOpenerPolicy);

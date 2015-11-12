@@ -271,7 +271,7 @@ public:
     virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&) override { }
     virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) override { return false; }
 
-    virtual void dispatchDidHandleOnloadEvents() override { }
+    virtual void dispatchDidDispatchOnloadEvents() override { }
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() override { }
     virtual void dispatchDidCancelClientRedirect() override { }
     virtual void dispatchWillPerformClientRedirect(const URL&, double, double) override { }

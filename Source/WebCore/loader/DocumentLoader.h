@@ -138,8 +138,8 @@ namespace WebCore {
 
         bool isClientRedirect() const { return m_isClientRedirect; }
         void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
-        void handledOnloadEvents();
-        bool wasOnloadHandled() { return m_wasOnloadHandled; }
+        void dispatchOnloadEvents();
+        bool wasOnloadDispatched() { return m_wasOnloadDispatched; }
         WEBCORE_EXPORT bool isLoadingInAPISense() const;
         WEBCORE_EXPORT void setTitle(const StringWithDirection&);
         const String& overrideEncoding() const { return m_overrideEncoding; }
@@ -386,9 +386,9 @@ namespace WebCore {
         bool m_isClientRedirect;
         bool m_isLoadingMultipartContent;
 
-        // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
+        // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
         // and should be merged.
-        bool m_wasOnloadHandled;
+        bool m_wasOnloadDispatched;
 
         StringWithDirection m_pageTitle;
 

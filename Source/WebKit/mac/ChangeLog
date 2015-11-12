@@ -1,3 +1,16 @@
+2015-11-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Rename handle.*Event to dispatch.*Event
+        https://bugs.webkit.org/show_bug.cgi?id=151168
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::dispatchDidDispatchOnloadEvents):
+        (WebFrameLoaderClient::dispatchDidHandleOnloadEvents): Deleted.
+
 2015-11-11  Anders Carlsson  <andersca@apple.com>
 
         Remove more dead context menu code

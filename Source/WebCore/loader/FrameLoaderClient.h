@@ -152,7 +152,7 @@ namespace WebCore {
         virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&) = 0;
         virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) = 0;
 
-        virtual void dispatchDidHandleOnloadEvents() = 0;
+        virtual void dispatchDidDispatchOnloadEvents() = 0;
         virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
         virtual void dispatchDidChangeProvisionalURL() { }
         virtual void dispatchDidCancelClientRedirect() = 0;

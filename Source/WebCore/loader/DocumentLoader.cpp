@@ -134,7 +134,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_gotFirstByte(false)
     , m_isClientRedirect(false)
     , m_isLoadingMultipartContent(false)
-    , m_wasOnloadHandled(false)
+    , m_wasOnloadDispatched(false)
     , m_stopRecordingResponses(false)
     , m_substituteResourceDeliveryTimer(*this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_didCreateGlobalHistoryEntry(false)
@@ -1593,9 +1593,9 @@ void DocumentLoader::getIconDataForIconURL(const String& urlString)
     iconDatabase().iconDataForIconURL(urlString, m_iconDataCallback);
 }
 
-void DocumentLoader::handledOnloadEvents()
+void DocumentLoader::dispatchOnloadEvents()
 {
-    m_wasOnloadHandled = true;
+    m_wasOnloadDispatched = true;
     applicationCacheHost()->stopDeferringEvents();
 }
 

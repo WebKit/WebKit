@@ -2666,7 +2666,7 @@ void Document::implicitClose()
         enqueuePopstateEvent(m_pendingStateObject.release());
     
     if (f)
-        f->loader().handledOnloadEvents();
+        f->loader().dispatchOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
         printf("onload fired at %lld\n", elapsedTime().count());

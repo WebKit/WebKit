@@ -1522,7 +1522,7 @@ private:
 
     // FIXME: Merge these 2 variables into an enum. Also, FrameLoader::m_didCallImplicitClose
     // is almost a duplication of this data, so that should probably get merged in too.
-    // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
+    // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.
     bool m_processingLoadEvent;
     bool m_loadEventFinished;
