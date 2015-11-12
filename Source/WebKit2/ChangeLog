@@ -1,5 +1,21 @@
 2015-11-11  Anders Carlsson  <andersca@apple.com>
 
+        REGRESSION (r191407): Context menus are missing Services
+        https://bugs.webkit.org/show_bug.cgi?id=151167
+        rdar://problem/23500769
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        Use contentsToRootView to better indicate which coordinate system we're using.
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        Use +[NSMenu popUpContextMenu:withEvent:forView:] so we'll get service menus where applicable.
+
+2015-11-11  Anders Carlsson  <andersca@apple.com>
+
         Remove more dead context menu code
         https://bugs.webkit.org/show_bug.cgi?id=151163
 

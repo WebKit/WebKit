@@ -64,7 +64,8 @@ void WebContextMenu::show()
     RefPtr<API::Object> userData;
     menuItemsWithUserData(menuItems, userData);
 
-    auto menuLocation = view->contentsToWindow(controller.hitTestResult().roundedPointInInnerNodeFrame());
+    auto menuLocation = view->contentsToRootView(controller.hitTestResult().roundedPointInInnerNodeFrame());
+
     ContextMenuContextData contextMenuContextData(menuLocation, menuItems, controller.context());
 
     // Mark the WebPage has having a shown context menu then notify the UIProcess.
