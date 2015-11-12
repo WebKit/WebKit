@@ -47,6 +47,9 @@ size_t sizeOfConstructVarargs();
 size_t sizeOfConstructForwardVarargs();
 size_t sizeOfIn();
 size_t sizeOfArithSub();
+#if ENABLE(MASM_PROBE)
+size_t sizeOfProbe();
+#endif
 
 size_t sizeOfICFor(DFG::Node*);
 

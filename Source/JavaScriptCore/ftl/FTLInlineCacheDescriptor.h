@@ -175,6 +175,22 @@ public:
     RefPtr<LazySlowPathLinkerTask> m_linker;
 };
 
+#if ENABLE(MASM_PROBE)
+class ProbeDescriptor : public InlineCacheDescriptor {
+public:
+    ProbeDescriptor(unsigned stackmapID, std::function<void (CCallHelpers::ProbeContext*)> probeFunction)
+        : InlineCacheDescriptor(stackmapID, codeOrigin(), nullptr)
+        , m_probeFunction(probeFunction)
+    {
+    }
+
+    std::function<void (CCallHelpers::ProbeContext*)>& probeFunction() { return m_probeFunction; }
+
+private:
+    std::function<void (CCallHelpers::ProbeContext*)> m_probeFunction;
+};
+#endif // ENABLE(MASM_PROBE)
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

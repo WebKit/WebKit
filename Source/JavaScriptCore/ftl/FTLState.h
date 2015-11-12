@@ -81,6 +81,9 @@ public:
     SegmentedVector<CheckInDescriptor> checkIns;
     SegmentedVector<ArithSubDescriptor> arithSubs;
     SegmentedVector<LazySlowPathDescriptor> lazySlowPaths;
+#if ENABLE(MASM_PROBE)
+    SegmentedVector<ProbeDescriptor> probes;
+#endif
     Vector<JSCall> jsCalls;
     Vector<JSCallVarargs> jsCallVarargses;
     Vector<JSTailCall> jsTailCalls;

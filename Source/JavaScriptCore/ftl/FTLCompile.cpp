@@ -459,6 +459,36 @@ static void generateArithSubICFastPath(
     }
 }
 
+#if ENABLE(MASM_PROBE)
+
+static void generateProbe(
+    State& state, CodeBlock* codeBlock, GeneratedFunction generatedFunction,
+    StackMaps::RecordMap& recordMap, ProbeDescriptor& ic)
+{
+    VM& vm = state.graph.m_vm;
+    size_t sizeOfIC = sizeOfProbe();
+
+    StackMaps::RecordMap::iterator iter = recordMap.find(ic.stackmapID());
+    if (iter == recordMap.end())
+        return; // It was optimized out.
+
+    CCallHelpers fastPathJIT(&vm, codeBlock);
+    Vector<StackMaps::RecordAndIndex>& records = iter->value;
+    for (unsigned i = records.size(); i--;) {
+        StackMaps::Record& record = records[i].record;
+
+        fastPathJIT.probe(ic.probeFunction());
+        CCallHelpers::Jump done = fastPathJIT.jump();
+
+        char* startOfIC = bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "Probe", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+            linkBuffer.link(done, CodeLocationLabel(startOfIC + sizeOfIC));
+        });
+    }
+}
+
+#endif // ENABLE(MASM_PROBE)
+
 static RegisterSet usedRegistersFor(const StackMaps::Record& record)
 {
     if (Options::assumeAllRegsInFTLICAreLive())
@@ -911,6 +941,12 @@ static void fixFunctionBasedOnStackMaps(
                     state.finalizer->sideCodeLinkBuffer->locationOf(std::get<1>(tuple)));
             }
         }
+#if ENABLE(MASM_PROBE)
+        for (unsigned i = state.probes.size(); i--;) {
+            ProbeDescriptor& probe = state.probes[i];
+            generateProbe(state, codeBlock, generatedFunction, recordMap, probe);
+        }
+#endif
         for (auto& pair : exceptionJumpsToLink)
             state.finalizer->sideCodeLinkBuffer->link(pair.first, pair.second);
     }

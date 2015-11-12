@@ -9397,6 +9397,15 @@ private:
         return abstractStructure(edge.node());
     }
     
+#if ENABLE(MASM_PROBE)
+    void probe(std::function<void (CCallHelpers::ProbeContext*)> probeFunc)
+    {
+        uint32_t stackmapID = m_stackmapIDs++;
+        m_ftlState.probes.append(ProbeDescriptor(stackmapID, probeFunc));
+        m_out.call(m_out.stackmapIntrinsic(), m_out.constInt64(stackmapID), m_out.constInt32(sizeOfProbe()));
+    }
+#endif
+
     void crash()
     {
         crash(m_highBlock->index, m_node->index());

@@ -1,5 +1,31 @@
 2015-11-11  Mark Lam  <mark.lam@apple.com>
 
+        Add ability to insert probes in LLVM IR that we generate.
+        https://bugs.webkit.org/show_bug.cgi?id=151159
+
+        Reviewed by Geoffrey Garen.
+
+        This is done by inserting a stackmap intrinsic and emitting the probe there.
+
+        We can now insert probes that take a lambda like so:
+
+            probe([] (CCallHelpers::ProbeContext*) {
+                dataLog("Hello FTL\n");
+            });
+
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::ProbeDescriptor::ProbeDescriptor):
+        (JSC::FTL::ProbeDescriptor::probeFunction):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfProbe):
+        * ftl/FTLInlineCacheSize.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::probe):
+        * ftl/FTLState.h:
+
+2015-11-11  Mark Lam  <mark.lam@apple.com>
+
         Change probe CPUState gpr() and fpr() to return references.
         https://bugs.webkit.org/show_bug.cgi?id=151154
 

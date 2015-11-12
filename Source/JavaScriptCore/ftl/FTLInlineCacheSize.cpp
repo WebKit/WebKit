@@ -145,6 +145,13 @@ size_t sizeOfArithSub()
 #endif
 }
 
+#if ENABLE(MASM_PROBE)
+size_t sizeOfProbe()
+{
+    return 132; // Based on ARM64.
+}
+#endif
+
 size_t sizeOfICFor(Node* node)
 {
     switch (node->op()) {
