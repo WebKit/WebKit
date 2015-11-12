@@ -114,23 +114,19 @@ public:
     {
         if (m_layoutState) {
             m_layoutState->m_layoutDelta += delta;
-#if !ASSERT_DISABLED && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+#if !ASSERT_DISABLED
             m_layoutState->m_layoutDeltaXSaturated |= m_layoutState->m_layoutDelta.width() == LayoutUnit::max() || m_layoutState->m_layoutDelta.width() == LayoutUnit::min();
             m_layoutState->m_layoutDeltaYSaturated |= m_layoutState->m_layoutDelta.height() == LayoutUnit::max() || m_layoutState->m_layoutDelta.height() == LayoutUnit::min();
 #endif
         }
     }
-    
+
 #if !ASSERT_DISABLED
     bool layoutDeltaMatches(const LayoutSize& delta)
     {
         if (!m_layoutState)
             return false;
-#if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
         return (delta.width() == m_layoutState->m_layoutDelta.width() || m_layoutState->m_layoutDeltaXSaturated) && (delta.height() == m_layoutState->m_layoutDelta.height() || m_layoutState->m_layoutDeltaYSaturated);
-#else
-        return delta == m_layoutState->m_layoutDelta;
-#endif
     }
 #endif
 

@@ -28,7 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define ENABLE_SATURATED_LAYOUT_ARITHMETIC 1
 #include "config.h"
 
 #include <WebCore/LayoutUnit.h>

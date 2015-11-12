@@ -683,10 +683,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_RUBBER_BANDING 0
 #endif
 
-#if !defined(ENABLE_SATURATED_LAYOUT_ARITHMETIC)
-#define ENABLE_SATURATED_LAYOUT_ARITHMETIC 1
-#endif
-
 #if !defined(ENABLE_SHADOW_DOM)
 #define ENABLE_SHADOW_DOM 0
 #endif

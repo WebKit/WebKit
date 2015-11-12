@@ -1,3 +1,13 @@
+2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(SATURATED_LAYOUT_ARITHMETIC) guards
+        https://bugs.webkit.org/show_bug.cgi?id=150972
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-11-11  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][Mac] don't install .frameworks
