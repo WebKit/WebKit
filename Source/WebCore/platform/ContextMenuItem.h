@@ -205,14 +205,9 @@ public:
 
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
     ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems);
-    explicit ContextMenuItem(const PlatformContextMenuItem&);
     ContextMenuItem();
 
     bool isNull() const;
-
-    // On Windows, the title (dwTypeData of the MENUITEMINFO) is not set in this function. Callers can set the title themselves,
-    // and handle the lifetime of the title, if they need it.
-    PlatformContextMenuItem platformContextMenuItem() const;
 
     void setTitle(const String& title) { m_title = title; }
     const String& title() const { return m_title; }

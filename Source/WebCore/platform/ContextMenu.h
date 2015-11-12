@@ -49,19 +49,7 @@ class ContextMenu {
 public:
     ContextMenu();
 
-    ContextMenuItem* itemWithAction(unsigned);
-
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    explicit ContextMenu(PlatformContextMenu);
-
-    PlatformContextMenu platformContextMenu() const;
-
-    static PlatformContextMenu createPlatformContextMenuFromItems(const Vector<ContextMenuItem>&);
-    static void getContextMenuItems(PlatformContextMenu, Vector<ContextMenuItem>&);
-
-    // FIXME: When more platforms switch over, this should return const ContextMenuItem*'s.
-    ContextMenuItem* itemAtIndex(unsigned index) { return &m_items[index]; }
-
     void setItems(const Vector<ContextMenuItem>& items) { m_items = items; }
     const Vector<ContextMenuItem>& items() const { return m_items; }
 
@@ -72,8 +60,6 @@ public:
 
     void insertItem(unsigned position, ContextMenuItem&);
     void appendItem(ContextMenuItem&);
-
-    ContextMenuItem* itemAtIndex(unsigned, const PlatformMenuDescription);
 
     unsigned itemCount() const;
 
