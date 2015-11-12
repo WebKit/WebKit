@@ -203,8 +203,7 @@ static WebMenuTarget* target;
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    WebCore::ContextMenuItem item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title]);
-    _menuController->contextMenuItemSelected(&item);
+    _menuController->contextMenuItemSelected(static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title]);
 }
 
 @end

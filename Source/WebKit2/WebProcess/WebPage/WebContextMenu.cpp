@@ -75,8 +75,7 @@ void WebContextMenu::show()
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
 {
-    ContextMenuItem coreItem(ActionType, static_cast<ContextMenuAction>(item.action()), item.title());
-    m_page->corePage()->contextMenuController().contextMenuItemSelected(&coreItem);
+    m_page->corePage()->contextMenuController().contextMenuItemSelected(static_cast<ContextMenuAction>(item.action()), item.title());
 }
 
 void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuItems, RefPtr<API::Object>& userData) const

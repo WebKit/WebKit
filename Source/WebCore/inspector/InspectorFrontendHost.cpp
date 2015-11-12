@@ -89,11 +89,11 @@ private:
             menu->appendItem(item);
     }
     
-    virtual void contextMenuItemSelected(ContextMenuItem* item) override
+    virtual void contextMenuItemSelected(ContextMenuAction action, const String&) override
     {
         if (m_frontendHost) {
             UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
-            int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
+            int itemNumber = action - ContextMenuItemBaseCustomTag;
 
             Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuItemSelected", WebCore::functionCallHandlerFromAnyThread);
             function.appendArgument(itemNumber);

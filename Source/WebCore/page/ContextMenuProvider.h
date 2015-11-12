@@ -31,6 +31,7 @@
 #ifndef ContextMenuProvider_h
 #define ContextMenuProvider_h
 
+#include "ContextMenuItem.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ public:
     virtual ~ContextMenuProvider() { };
 
     virtual void populateContextMenu(ContextMenu*) = 0;
-    virtual void contextMenuItemSelected(ContextMenuItem*) = 0;
+    virtual void contextMenuItemSelected(ContextMenuAction, const String& title) = 0;
     virtual void contextMenuCleared() = 0;
 };
 

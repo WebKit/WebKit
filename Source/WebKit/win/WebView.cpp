@@ -1635,8 +1635,7 @@ void WebView::onMenuCommand(WPARAM wParam, LPARAM lParam)
         return;
     }
 
-    ContextMenuItem item(ActionType, action, title, true, false);
-    m_page->contextMenuController().contextMenuItemSelected(&item);
+    m_page->contextMenuController().contextMenuItemSelected(action, title);
 }
 
 bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)

@@ -211,13 +211,11 @@ static void insertUnicodeCharacter(UChar character, Frame* frame)
 }
 #endif
 
-void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
+void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, const String& title)
 {
-    ASSERT(item->type() == ActionType || item->type() == CheckableActionType);
-
-    if (item->action() >= ContextMenuItemBaseCustomTag) {
+    if (action >= ContextMenuItemBaseCustomTag) {
         ASSERT(m_menuProvider);
-        m_menuProvider->contextMenuItemSelected(item);
+        m_menuProvider->contextMenuItemSelected(action, title);
         return;
     }
 
@@ -225,7 +223,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     if (!frame)
         return;
 
-    switch (item->action()) {
+    switch (action) {
     case ContextMenuItemTagOpenLinkInNewWindow:
         openNewWindow(m_context.hitTestResult().absoluteLinkURL(), frame, ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes);
         break;
@@ -354,7 +352,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 #endif
     case ContextMenuItemTagSpellingGuess: {
         VisibleSelection selection = frame->selection().selection();
-        if (frame->editor().shouldInsertText(item->title(), selection.toNormalizedRange().get(), EditorInsertActionPasted)) {
+        if (frame->editor().shouldInsertText(title, selection.toNormalizedRange().get(), EditorInsertActionPasted)) {
             ReplaceSelectionCommand::CommandOptions replaceOptions = ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting;
 
             if (frame->editor().behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
@@ -369,7 +367,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 
             Document* document = frame->document();
             ASSERT(document);
-            RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(*document, createFragmentFromMarkup(*document, item->title(), ""), replaceOptions);
+            RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(*document, createFragmentFromMarkup(*document, title, ""), replaceOptions);
             applyCommand(command);
             frame->selection().revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
         }
@@ -513,7 +511,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             page->inspectorController().inspect(m_context.hitTestResult().innerNonSharedNode());
         break;
     case ContextMenuItemTagDictationAlternative:
-        frame->editor().applyDictationAlternativelternative(item->title());
+        frame->editor().applyDictationAlternativelternative(title);
         break;
     default:
         break;
