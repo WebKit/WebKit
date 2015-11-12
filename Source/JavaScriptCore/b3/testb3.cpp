@@ -2077,6 +2077,29 @@ void testSpillGP()
     compileAndRun<int>(proc, 1, 2);
 }
 
+void testSpillFP()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Vector<Value*> sources;
+    sources.append(root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
+    sources.append(root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1));
+
+    for (unsigned i = 0; i < 30; ++i) {
+        sources.append(
+            root->appendNew<Value>(proc, Add, Origin(), sources[sources.size() - 1], sources[sources.size() - 2])
+        );
+    }
+
+    Value* total = root->appendNew<ConstDoubleValue>(proc, Origin(), 0.);
+    for (Value* value : sources)
+        total = root->appendNew<Value>(proc, Add, Origin(), total, value);
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), total);
+    compileAndRun<double>(proc, 1.1, 2.5);
+}
+
 void testBranch()
 {
     Procedure proc;
@@ -3882,6 +3905,7 @@ void run(const char* filter)
     RUN(testLoad<uint16_t>(Load16Z, -1000000000));
 
     RUN(testSpillGP());
+    RUN(testSpillFP());
 
     RUN(testCallSimple(1, 2));
     RUN(testCallFunctionWithHellaArguments());

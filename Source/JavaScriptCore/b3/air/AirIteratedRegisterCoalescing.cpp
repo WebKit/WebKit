@@ -128,22 +128,10 @@ struct AbsoluteTmpHelper<Arg::FP> {
 };
 
 template<Arg::Type type>
-struct Bank;
-
-template<>
-struct Bank<Arg::GP> {
-    typedef GPRInfo Info;
-};
-
-template<>
-struct Bank<Arg::FP> {
-    typedef FPRInfo Info;
-};
-
-template<Arg::Type type>
 class IteratedRegisterCoalescingAllocator {
 public:
     IteratedRegisterCoalescingAllocator(Code& code)
+        : m_numberOfRegisters(regsInPriorityOrder(type).size())
     {
         initializeDegrees(code);
 
@@ -324,7 +312,7 @@ private:
 
             Tmp tmp = AbsoluteTmpHelper<type>::tmpFromAbsoluteIndex(i);
 
-            if (degree >= Bank<type>::Info::numberOfRegisters)
+            if (degree >= m_numberOfRegisters)
                 m_spillWorklist.add(tmp);
             else if (!m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(tmp)].isEmpty())
                 m_freezeWorklist.add(tmp);
@@ -366,7 +354,7 @@ private:
         ASSERT(m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]);
 
         unsigned oldDegree = m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]--;
-        if (oldDegree == Bank<type>::Info::numberOfRegisters) {
+        if (oldDegree == m_numberOfRegisters) {
             enableMovesOnValueAndAdjacents(tmp);
             m_spillWorklist.remove(tmp);
             if (isMoveRelated(tmp))
@@ -472,7 +460,7 @@ private:
         for (Tmp adjacentTmp : adjacentsOfV) {
             if (!adjacentTmp.isReg()
                 && !hasBeenSimplified(adjacentTmp)
-                && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(adjacentTmp)] >= Bank<type>::Info::numberOfRegisters
+                && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(adjacentTmp)] >= m_numberOfRegisters
                 && !m_interferenceEdges.contains(InterferenceEdge(u, adjacentTmp)))
                 return false;
         }
@@ -493,7 +481,7 @@ private:
         auto adjacentsOfU = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(u)];
         auto adjacentsOfV = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(v)];
 
-        if (adjacentsOfU.size() + adjacentsOfV.size() < Bank<type>::Info::numberOfRegisters) {
+        if (adjacentsOfU.size() + adjacentsOfV.size() < m_numberOfRegisters) {
             // Shortcut: if the total number of adjacents is less than the number of register, the condition is always met.
             return true;
         }
@@ -503,29 +491,29 @@ private:
         for (Tmp adjacentTmp : adjacentsOfU) {
             ASSERT(adjacentTmp != v);
             ASSERT(adjacentTmp != u);
-            if (!hasBeenSimplified(adjacentTmp) && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(adjacentTmp)] >= Bank<type>::Info::numberOfRegisters) {
+            if (!hasBeenSimplified(adjacentTmp) && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(adjacentTmp)] >= m_numberOfRegisters) {
                 auto addResult = highOrderAdjacents.add(adjacentTmp);
-                if (addResult.isNewEntry && highOrderAdjacents.size() >= Bank<type>::Info::numberOfRegisters)
+                if (addResult.isNewEntry && highOrderAdjacents.size() >= m_numberOfRegisters)
                     return false;
             }
         }
         for (Tmp adjacentTmp : adjacentsOfV) {
             ASSERT(adjacentTmp != u);
             ASSERT(adjacentTmp != v);
-            if (!hasBeenSimplified(adjacentTmp) && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(adjacentTmp)] >= Bank<type>::Info::numberOfRegisters) {
+            if (!hasBeenSimplified(adjacentTmp) && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(adjacentTmp)] >= m_numberOfRegisters) {
                 auto addResult = highOrderAdjacents.add(adjacentTmp);
-                if (addResult.isNewEntry && highOrderAdjacents.size() >= Bank<type>::Info::numberOfRegisters)
+                if (addResult.isNewEntry && highOrderAdjacents.size() >= m_numberOfRegisters)
                     return false;
             }
         }
 
-        ASSERT(highOrderAdjacents.size() < Bank<type>::Info::numberOfRegisters);
+        ASSERT(highOrderAdjacents.size() < m_numberOfRegisters);
         return true;
     }
 
     void addWorkList(Tmp tmp)
     {
-        if (!tmp.isReg() && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(tmp)] < Bank<type>::Info::numberOfRegisters && !isMoveRelated(tmp)) {
+        if (!tmp.isReg() && m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(tmp)] < m_numberOfRegisters && !isMoveRelated(tmp)) {
             m_freezeWorklist.remove(tmp);
             m_simplifyWorklist.append(tmp);
         }
@@ -547,7 +535,7 @@ private:
             decrementDegree(adjacentTmp);
         });
 
-        if (m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(u)] >= Bank<type>::Info::numberOfRegisters && m_freezeWorklist.remove(u))
+        if (m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(u)] >= m_numberOfRegisters && m_freezeWorklist.remove(u))
             m_spillWorklist.add(u);
     }
 
@@ -565,7 +553,7 @@ private:
                 m_worklistMoves.remove(&inst);
 
             Tmp otherTmp = inst.args[0].tmp() != tmp ? inst.args[0].tmp() : inst.args[1].tmp();
-            if (m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(otherTmp)] < Bank<type>::Info::numberOfRegisters && !isMoveRelated(otherTmp)) {
+            if (m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(otherTmp)] < m_numberOfRegisters && !isMoveRelated(otherTmp)) {
                 m_freezeWorklist.remove(otherTmp);
                 m_simplifyWorklist.append(otherTmp);
             }
@@ -753,6 +741,8 @@ private:
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
     typedef SimpleClassHashTraits<InterferenceEdge> InterferenceEdgeHashTraits;
+
+    unsigned m_numberOfRegisters { 0 };
 
     // The interference graph.
     HashSet<InterferenceEdge, InterferenceEdgeHash, InterferenceEdgeHashTraits> m_interferenceEdges;
