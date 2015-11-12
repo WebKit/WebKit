@@ -160,6 +160,9 @@
         "MathML": {
             "filename": r"(Source|LayoutTests|Websites)/.*mathml",
         },
+        "History": {
+            "filename": r"Source/WebCore/history/",
+        },
         "Editing": {
             "filename": r"Source/WebCore/editing/",
         },
@@ -359,6 +362,7 @@
         "GStreamerAudio": [ "pnormand@igalia.com", "sergio.correia@openbossa.org", "calvaris@igalia.com", "vjaquez@igalia.com", "agomez@igalia.com" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org", "berto@igalia.com", "mcatanzaro@igalia.com" ],
         "HTML": [ "esprehn+autocc@chromium.org", "gyuyoung.kim@webkit.org", "cdumez@apple.com" ],
+        "History": [ "cdumez@apple.com" ],
         "IndexedDB": [ "alecflett@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org", "cdumez@apple.com" ],
         "MacAndIOSTextLayoutAndRendering": [ "mmaxfield@apple.com" ],
