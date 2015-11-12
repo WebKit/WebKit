@@ -1,3 +1,30 @@
+2015-11-12  Daniel Bates  <dabates@apple.com>
+
+        run-api-tests fails to run with public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=151076
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use the command line tool simctl as the sim tool was removed from the public iOS 9 SDK.
+
+        A side benefit of this change it is sufficient to run the tests without launching Simulator.app
+        to boot the simulator device beforehand because simctl will boot the device for us.
+
+        Additionally, use Perl pragma sigtrap to install signal handlers to catch SIG{HUP, INT, PIPE, TERM}
+        signals and ultimately run our END block so that we shutdown the simulator device (if applicable).
+        This makes Control-C terminate the app gracefully.
+
+        * Scripts/run-api-tests:
+        (runTest):
+        (listAllTests):
+        (prepareEnvironmentForRunningTestTool): When running for iOS Simulator use setupIOSWebKitEnvironment()
+        to setup the environment variables for iOS instead of using setupMacWebKitEnvironment(). We also
+        prefix the name of these environment variables with "SIMCTL_CHILD_" so that simctl sets these environment
+        variables in the simulator environment.
+        * Scripts/webkitdirs.pm:
+        (shutDownIOSSimulatorDevice): Added.
+        (restartIOSSimulatorDevice): Added.
+
 2015-11-12  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] fix EvasGL configuration error

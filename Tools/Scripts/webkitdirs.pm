@@ -74,6 +74,7 @@ BEGIN {
        &productDir
        &quitIOSSimulator
        &relaunchIOSSimulator
+       &restartIOSSimulatorDevice
        &runIOSWebKitApp
        &runMacWebKitApp
        &safariPath
@@ -82,6 +83,7 @@ BEGIN {
        &setupMacWebKitEnvironment
        &sharedCommandLineOptions
        &sharedCommandLineOptionsUsage
+       &shutDownIOSSimulatorDevice
        SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT
        USE_OPEN_COMMAND
    );
@@ -2212,6 +2214,20 @@ sub waitUntilIOSSimulatorDeviceIsInState($$)
         usleep(500 * 1000); # Waiting 500ms between file system polls does not make script run-safari feel sluggish.
         $device = iosSimulatorDeviceByUDID($deviceUDID);
     }
+}
+
+sub shutDownIOSSimulatorDevice($)
+{
+    my ($simulatorDevice) = @_;
+    system("xcrun --sdk iphonesimulator simctl shutdown $simulatorDevice->{UDID} > /dev/null 2>&1");
+}
+
+sub restartIOSSimulatorDevice($)
+{
+    my ($simulatorDevice) = @_;
+    shutDownIOSSimulatorDevice($simulatorDevice);
+
+    exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "boot", $simulatorDevice->{UDID})) == 0 or die "Failed to boot simulator device $simulatorDevice->{UDID}";
 }
 
 sub relaunchIOSSimulator($)
