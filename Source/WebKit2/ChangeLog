@@ -1,3 +1,10 @@
+2015-11-12  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (PluginServiceInitializer):
+
 2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SATURATED_LAYOUT_ARITHMETIC) guards
