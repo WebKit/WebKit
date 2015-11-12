@@ -286,6 +286,18 @@ void MacroAssembler::print(Arguments... args)
     MacroAssemblerPrinter::print(this, args...);
 }
 
+
+// These printers will print a block of information. That block may be
+// indented with the specified indentation.
+void printCPU(MacroAssembler::CPUState&, int indentation = 0);
+void printCPURegisters(MacroAssembler::CPUState&, int indentation = 0);
+
+// These printers will print the specified information in line in the
+// print stream. Hence, no indentation will be applied.
+void printRegister(MacroAssembler::CPUState&, MacroAssembler::RegisterID);
+void printRegister(MacroAssembler::CPUState&, MacroAssembler::FPRegisterID);
+void printMemory(MacroAssembler::CPUState&, const Memory&);
+
 } // namespace JSC
 
 #endif // ENABLE(MASM_PROBE)

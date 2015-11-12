@@ -1,3 +1,15 @@
+2015-11-12  Mark Lam  <mark.lam@apple.com>
+
+        Move some prototypes to header files.
+        https://bugs.webkit.org/show_bug.cgi?id=151194
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::printIndent):
+        * assembler/MacroAssemblerPrinter.h:
+        (JSC::MacroAssembler::print):
+
 2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SATURATED_LAYOUT_ARITHMETIC) guards

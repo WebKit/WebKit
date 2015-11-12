@@ -37,17 +37,6 @@ using ProbeContext = MacroAssembler::ProbeContext;
 using RegisterID = MacroAssembler::RegisterID;
 using FPRegisterID = MacroAssembler::FPRegisterID;
 
-// These printers will print a block of information. That block may be
-// indented with the specified indentation.
-void printCPU(CPUState&, int indentation = 0);
-void printCPURegisters(CPUState&, int indentation = 0);
-
-// These printers will print the specified information in line in the
-// print stream. Hence, no indentation will be applied.
-void printRegister(CPUState&, RegisterID);
-void printRegister(CPUState&, FPRegisterID);
-void printMemory(CPUState&, const Memory&);
-    
 static void printIndent(int indentation)
 {
     for (; indentation > 0; indentation--)
