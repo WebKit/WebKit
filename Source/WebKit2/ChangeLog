@@ -1,3 +1,23 @@
+2015-11-11  Tim Horton  <timothy_horton@apple.com>
+
+        Remove an unnecessary zero-delay timer from swipe snapshot removal
+        https://bugs.webkit.org/show_bug.cgi?id=151161
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::mainFrameDidLayout):
+        (WebKit::ViewGestureGeometryCollector::ViewGestureGeometryCollector): Deleted.
+        (WebKit::ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired): Deleted.
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        There's no discernable reason for this zero-delay timer, and it dates back
+        to the original swipe patch with no explanation given. My only theory
+        is that I was depending on spinning the runloop to ensure we've painted,
+        but we have other mechanisms to do that now, on both platforms.
+
+        This also was a surprising waste of time in some cases where the web
+        process was very slow.
+
 2015-11-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the Mac CMake build.

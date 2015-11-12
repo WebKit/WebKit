@@ -67,7 +67,6 @@ private:
 
 #if PLATFORM(MAC)
     uint64_t m_renderTreeSizeNotificationThreshold;
-    RunLoop::Timer<ViewGestureGeometryCollector> m_renderTreeSizeNotificationTimer;
 #endif
 };
 

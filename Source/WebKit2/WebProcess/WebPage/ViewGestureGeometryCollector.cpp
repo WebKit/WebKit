@@ -54,7 +54,6 @@ ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
     : m_webPage(webPage)
 #if PLATFORM(MAC)
     , m_renderTreeSizeNotificationThreshold(0)
-    , m_renderTreeSizeNotificationTimer(RunLoop::main(), this, &ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired)
 #endif
 {
     WebProcess::singleton().addMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.pageID(), *this);
@@ -138,14 +137,9 @@ void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 void ViewGestureGeometryCollector::mainFrameDidLayout()
 {
     if (m_renderTreeSizeNotificationThreshold && m_webPage.renderTreeSize() >= m_renderTreeSizeNotificationThreshold) {
-        m_renderTreeSizeNotificationTimer.startOneShot(0);
+        m_webPage.send(Messages::ViewGestureController::DidHitRenderTreeSizeThreshold());
         m_renderTreeSizeNotificationThreshold = 0;
     }
-}
-
-void ViewGestureGeometryCollector::renderTreeSizeNotificationTimerFired()
-{
-    m_webPage.send(Messages::ViewGestureController::DidHitRenderTreeSizeThreshold());
 }
 #endif
 
