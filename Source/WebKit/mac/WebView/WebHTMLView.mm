@@ -178,7 +178,6 @@ using namespace WTF;
 - (WebCore::ContextMenuController*)menuController;
 - (void)setMenuController:(WebCore::ContextMenuController*)menuController;
 - (void)forwardContextMenuAction:(id)sender;
-- (BOOL)validateMenuItem:(NSMenuItem *)item;
 @end
 
 static WebMenuTarget* target;
@@ -206,14 +205,6 @@ static WebMenuTarget* target;
 {
     WebCore::ContextMenuItem item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title]);
     _menuController->contextMenuItemSelected(&item);
-}
-
-- (BOOL)validateMenuItem:(NSMenuItem *)item
-{
-    WebCore::ContextMenuItem coreItem(item);
-    ASSERT(_menuController->contextMenu());
-    _menuController->checkOrEnableIfNeeded(coreItem);
-    return coreItem.enabled();
 }
 
 @end

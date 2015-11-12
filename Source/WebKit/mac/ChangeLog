@@ -1,3 +1,15 @@
+2015-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of -[WebMenuTarget validateMenuItem:]
+        https://bugs.webkit.org/show_bug.cgi?id=151172
+
+        Reviewed by Beth Dakin.
+
+        We don't need the menu items to be validated since we handle enabling/disabling them ourselves (as well as setting their checked state).
+
+        * WebView/WebHTMLView.mm:
+        (-[WebMenuTarget validateMenuItem:]): Deleted.
+
 2015-11-11  Geoffrey Garen  <ggaren@apple.com>
 
         Rename handle.*Event to dispatch.*Event
