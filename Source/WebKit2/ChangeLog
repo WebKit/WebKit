@@ -1,3 +1,18 @@
+2015-11-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Print result of memory sampler more readable
+        https://bugs.webkit.org/show_bug.cgi?id=151085
+
+        Reviewed by Darin Adler.
+
+        Current memory sampler prints result of memory sample horizontally. It makes us hard to read
+        the result at a glance. To improve readability of the memory sampler result, this patch prints it
+        vertically.
+
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::appendCurrentMemoryUsageToFile):
+        (WebKit::WebMemorySampler::writeHeaders):
+
 2015-11-11  Geoffrey Garen  <ggaren@apple.com>
 
         Rename handle.*Event to dispatch.*Event
