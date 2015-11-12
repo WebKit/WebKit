@@ -558,8 +558,6 @@ public:
     virtual void speak(const String&) override { }
     virtual void stopSpeaking() override { }
 
-    virtual ContextMenuItem shareMenuItem(const HitTestResult&) override { return ContextMenuItem(); }
-
 #if PLATFORM(COCOA)
     virtual void searchWithSpotlight() override { }
 #endif

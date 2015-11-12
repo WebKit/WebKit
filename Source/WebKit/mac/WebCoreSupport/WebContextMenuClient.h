@@ -58,7 +58,6 @@ public:
     virtual bool isSpeaking() override;
     virtual void speak(const WTF::String&) override;
     virtual void stopSpeaking() override;
-    virtual WebCore::ContextMenuItem shareMenuItem(const WebCore::HitTestResult&) override;
     virtual void searchWithSpotlight() override;
     virtual void showContextMenu() override;
 

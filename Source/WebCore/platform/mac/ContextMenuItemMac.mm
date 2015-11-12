@@ -196,33 +196,6 @@ bool ContextMenuItem::checked() const
     return [m_platformDescription.get() state] == NSOnState;
 }
 
-ContextMenuItem ContextMenuItem::shareMenuItem(const URL& absoluteLinkURL, const URL& downloadableMediaURL, NSImage *image, const String& selectedText)
-{
-    if (![[NSMenuItem class] respondsToSelector:@selector(standardShareMenuItemWithItems:)])
-        return ContextMenuItem();
-
-    RetainPtr<NSMutableArray> items = adoptNS([[NSMutableArray alloc] init]);
-
-    if (!absoluteLinkURL.isEmpty())
-        [items addObject:(NSURL *)absoluteLinkURL];
-
-    if (!downloadableMediaURL.isEmpty())
-        [items addObject:(NSURL *)downloadableMediaURL];
-
-    if (image)
-        [items addObject:image];
-
-    if (!selectedText.isEmpty())
-        [items addObject:(NSString *)selectedText];
-
-    if (![items count])
-        return ContextMenuItem();
-
-    ContextMenuItem item([NSMenuItem standardShareMenuItemWithItems:items.get()]);
-    item.setAction(ContextMenuItemTagShareMenu);
-    return item;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(CONTEXT_MENUS)

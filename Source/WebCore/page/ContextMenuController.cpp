@@ -807,7 +807,7 @@ void ContextMenuController::populate()
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
 #endif
 
-    ContextMenuItem ShareMenuItem = m_client.shareMenuItem(m_context.hitTestResult());
+    ContextMenuItem ShareMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
 
     Node* node = m_context.hitTestResult().innerNonSharedNode();
     if (!node)
@@ -895,10 +895,8 @@ void ContextMenuController::populate()
 #if PLATFORM(COCOA)
                 appendItem(*separatorItem(), m_contextMenu.get());
 
-                if (!ShareMenuItem.isNull()) {
-                    appendItem(ShareMenuItem, m_contextMenu.get());
-                    appendItem(*separatorItem(), m_contextMenu.get());
-                }
+                appendItem(ShareMenuItem, m_contextMenu.get());
+                appendItem(*separatorItem(), m_contextMenu.get());
 
                 ContextMenuItem SpeechMenuItem(SubmenuType, ContextMenuItemTagSpeechMenu, contextMenuItemTagSpeechMenu());
                 createAndAppendSpeechSubMenu(SpeechMenuItem);
@@ -932,12 +930,10 @@ void ContextMenuController::populate()
                 if (frame->page() && !frame->isMainFrame())
                     appendItem(OpenFrameItem, m_contextMenu.get());
 
-                if (!ShareMenuItem.isNull()) {
-                    appendItem(*separatorItem(), m_contextMenu.get());
-                    appendItem(ShareMenuItem, m_contextMenu.get());
-                }
+                appendItem(*separatorItem(), m_contextMenu.get());
+                appendItem(ShareMenuItem, m_contextMenu.get());
             }
-        } else if (!ShareMenuItem.isNull()) {
+        } else {
             appendItem(*separatorItem(), m_contextMenu.get());
             appendItem(ShareMenuItem, m_contextMenu.get());
         }

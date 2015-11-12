@@ -203,10 +203,6 @@ namespace WebCore {
 
         void setSubMenu(ContextMenu*);
 
-#if PLATFORM(MAC)
-        WEBCORE_EXPORT static ContextMenuItem shareMenuItem(const URL& absoluteLinkURL, const URL& downloadableMediaURL, NSImage *, const String& selectedText);
-#endif
-
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
         ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems);
         explicit ContextMenuItem(const PlatformContextMenuItem&);

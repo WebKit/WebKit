@@ -131,32 +131,6 @@ void WebContextMenuClient::stopSpeaking()
     [NSApp stopSpeaking:nil];
 }
 
-ContextMenuItem WebContextMenuClient::shareMenuItem(const HitTestResult& hitTestResult)
-{
-    if (![[NSMenuItem class] respondsToSelector:@selector(standardShareMenuItemWithItems:)])
-        return ContextMenuItem();
-
-    Node* node = hitTestResult.innerNonSharedNode();
-    if (!node)
-        return ContextMenuItem();
-
-    Frame* frame = node->document().frame();
-    if (!frame)
-        return ContextMenuItem();
-
-    URL downloadableMediaURL;
-    if (!hitTestResult.absoluteMediaURL().isEmpty() && hitTestResult.isDownloadableMedia())
-        downloadableMediaURL = hitTestResult.absoluteMediaURL();
-
-    RetainPtr<NSImage> nsImage;
-    if (Image* image = hitTestResult.image()) {
-        if (RefPtr<SharedBuffer> buffer = image->data())
-            nsImage = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:buffer->data() length:buffer->size()]]);
-    }
-
-    return ContextMenuItem::shareMenuItem(hitTestResult.absoluteLinkURL(), downloadableMediaURL, nsImage.get(), hitTestResult.selectedText());
-}
-
 bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) const
 {
     RenderObject* renderer = node.renderer();
