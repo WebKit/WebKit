@@ -1,5 +1,33 @@
 2015-11-12  Daniel Bates  <dabates@apple.com>
 
+        Rename webkitdirs::willUseIOS{Device, Simulator}SDKWhenBuilding() to willUseIOS{Device, Simulator}SDK()
+        https://bugs.webkit.org/show_bug.cgi?id=151207
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        The functions webkitdirs::willUseIOS{Device, Simulator}SDKWhenBuilding() are not specific to building
+        iOS software. We should rename these functions to webkitdirs::willUseIOS{Device, Simulator}SDK() to
+        convey their general-purpose nature of determining whether we are using the iphoneos or iphonesimulator SDK.
+
+        * Scripts/build-jsc:
+        * Scripts/build-layouttestrelay:
+        * Scripts/build-webkit:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        * Scripts/run-api-tests:
+        (runTest):
+        (prepareEnvironmentForRunningTestTool):
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+        (willUseIOSDeviceSDK): Formerly named willUseIOSDeviceSDKWhenBuilding.
+        (willUseIOSSimulatorSDK): Formerly name willUseIOSSimulatorSDKWhenBuilding.
+        (isIOSWebKit):
+        (runIOSWebKitApp):
+        (willUseIOSDeviceSDKWhenBuilding): Deleted.
+        (willUseIOSSimulatorSDKWhenBuilding): Deleted.
+
+2015-11-12  Daniel Bates  <dabates@apple.com>
+
         run-api-tests fails to run with public iOS SDK
         https://bugs.webkit.org/show_bug.cgi?id=151076
 

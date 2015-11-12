@@ -179,7 +179,7 @@ if ($runTestAPI) {
     chdirWebKit();
     chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
     my @command = (testapiPath($productDir));
-    unshift @command, ("xcrun", "-sdk", xcodeSDK(), "sim") if willUseIOSSimulatorSDKWhenBuilding();
+    unshift @command, ("xcrun", "-sdk", xcodeSDK(), "sim") if willUseIOSSimulatorSDK();
 
     if ($envVars ne "") {
         foreach my $var (split(/\s+/, $envVars)) {

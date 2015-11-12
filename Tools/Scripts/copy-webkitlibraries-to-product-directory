@@ -42,7 +42,7 @@ my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
 my $preferSystemLLVMOverDrops = 0;
 my $llvmSubdirectoryName = "llvm";
-my $llvmPrefix = willUseIOSDeviceSDKWhenBuilding() ? "/usr/local" : "/usr/local/LLVMForJavaScriptCore";
+my $llvmPrefix = willUseIOSDeviceSDK() ? "/usr/local" : "/usr/local/LLVMForJavaScriptCore";
 my $osxVersion;
 my $force = 0;
 

@@ -84,6 +84,8 @@ BEGIN {
        &sharedCommandLineOptions
        &sharedCommandLineOptionsUsage
        &shutDownIOSSimulatorDevice
+       &willUseIOSDeviceSDK
+       &willUseIOSSimulatorSDK
        SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT
        USE_OPEN_COMMAND
    );
@@ -704,7 +706,7 @@ sub XcodeOptions
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
-    if (willUseIOSDeviceSDKWhenBuilding()) {
+    if (willUseIOSDeviceSDK()) {
         push @options, "ENABLE_BITCODE=NO";
         if (hasIOSDevelopmentCertificate()) {
             # FIXME: May match more than one installed development certificate.
@@ -1232,12 +1234,12 @@ sub createiOSSimulatorDevice
     die "Device $name $deviceTypeId $runtimeId wasn't found in " . iOSSimulatorDevicesPath();
 }
 
-sub willUseIOSDeviceSDKWhenBuilding()
+sub willUseIOSDeviceSDK()
 {
     return xcodeSDKPlatformName() eq "iphoneos";
 }
 
-sub willUseIOSSimulatorSDKWhenBuilding()
+sub willUseIOSSimulatorSDK()
 {
     return xcodeSDKPlatformName() eq "iphonesimulator";
 }
@@ -1245,7 +1247,7 @@ sub willUseIOSSimulatorSDKWhenBuilding()
 sub isIOSWebKit()
 {
     determineXcodeSDK();
-    return isAppleMacWebKit() && (willUseIOSDeviceSDKWhenBuilding() || willUseIOSSimulatorSDKWhenBuilding());
+    return isAppleMacWebKit() && (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK());
 }
 
 sub determineNmPath()
@@ -2416,10 +2418,10 @@ sub runIOSWebKitAppInSimulator($;$)
 sub runIOSWebKitApp($)
 {
     my ($appBundle) = @_;
-    if (willUseIOSDeviceSDKWhenBuilding()) {
+    if (willUseIOSDeviceSDK()) {
         die "Only running Safari in iOS Simulator is supported now.";
     }
-    if (willUseIOSSimulatorSDKWhenBuilding()) {
+    if (willUseIOSSimulatorSDK()) {
         return runIOSWebKitAppInSimulator($appBundle);
     }
     die "Not using an iOS SDK."

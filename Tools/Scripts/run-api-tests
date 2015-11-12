@@ -110,7 +110,7 @@ buildTestTool() if $build && !defined($root);
 setPathForRunningWebKitApp(\%ENV);
 
 my $simulatorDevice;
-if (willUseIOSSimulatorSDKWhenBuilding()) {
+if (willUseIOSSimulatorSDK()) {
     $simulatorDevice = findOrCreateSimulatorForIOSDevice(SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT);
     restartIOSSimulatorDevice($simulatorDevice);
 }
@@ -200,7 +200,7 @@ sub runTest($$)
     foreach(testToolPaths()) {
         my $pid;
         my @commonArguments = ($_, $gtestArg, @ARGV);
-        if (willUseIOSSimulatorSDKWhenBuilding()) {
+        if (willUseIOSSimulatorSDK()) {
             $pid = open3($childIn, $childOut, $childErr, qw(xcrun --sdk iphonesimulator simctl spawn), $simulatorDevice->{UDID}, @commonArguments) or die "Failed to run test: $test.";
         } elsif (isAppleMacWebKit() && architecture()) {
             $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), archCommandLineArgumentsForRestrictedEnvironmentVariables(), @commonArguments) or die "Failed to run test: $test.";
@@ -355,7 +355,7 @@ sub prepareEnvironmentForRunningTestTool()
 {
     return unless isAppleMacWebKit();
 
-    if (willUseIOSSimulatorSDKWhenBuilding()) {
+    if (willUseIOSSimulatorSDK()) {
         my %simulatorENV;
         {
             local %ENV;
