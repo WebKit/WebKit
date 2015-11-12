@@ -3188,6 +3188,7 @@ fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
+fast/text/fallback-language-han-2.html [ Skip ]
 
 # Changing system language is not supported.
 fast/text/international/system-language [ Skip ]

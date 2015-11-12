@@ -2559,6 +2559,7 @@ fast/text/hangul-generic-font-families.html [ WontFix ]
 
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
+fast/text/fallback-language-han-2.html [ Skip ]
 
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
