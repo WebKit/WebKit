@@ -1,3 +1,35 @@
+2015-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Debug toolbar button to toggle InspectorBackend.dumpInspectorProtocolMessages
+        https://bugs.webkit.org/show_bug.cgi?id=151175
+
+        Reviewed by Brian Burg.
+
+        Add debug UI and a way to toggle it on and off in non-production builds.
+        To enable the debug UI use a keyboard shortcut in Inspector:
+        Option+Shift+Command+D (Mac) or Option+Shift+Ctrl+D (Windows / Linux)
+
+        The debug UI setting is a persistent setting, so those of use developing
+        Web Inspector will turn it on and leave it on.
+
+        Currently the only debug UI is a new toolbar button to toggle
+        the frontend logging on or off.
+
+        * Scripts/combine-resources.pl:
+        (concatenateFiles):
+        Exclude "Debug" files when combining resources for minification.
+
+        * UserInterface/Main.html:
+        Rename "Base/Bootstrap.js" to "Debug/Bootstrap" so that we can easily exclude it.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Only evaluate bootstrap functions if they exist.
+
+        * UserInterface/Debug/Bootstrap.js: Renamed from Source/WebInspectorUI/UserInterface/Base/Bootstrap.js.
+        (WebInspector.runBootstrapOperations):
+        Add a debug setting, toolbar button, and keyboard shortcut.
+
 2015-11-11  Brian Burg  <bburg@apple.com>
 
         Web Inspector: blank debugger tab when opening inspector on unvisited website

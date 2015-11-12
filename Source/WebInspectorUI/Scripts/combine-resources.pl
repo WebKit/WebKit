@@ -76,6 +76,7 @@ sub concatenateFiles($$$)
 
     while ($headContents =~ m/$tagExpression/gi) {
         local $/;
+        next if $1 =~ /^Debug\//;
         open IN, "$htmlDirectory/$1" or open IN, "$derivedSourcesDirectory/$1" or die "Can't open $htmlDirectory/$1: $!";
         print OUT "\n" if $fileCount++;
         print OUT "/* $1 */\n\n";

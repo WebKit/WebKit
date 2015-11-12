@@ -403,7 +403,8 @@ WebInspector.contentLoaded = function()
 
     this._contentLoaded = true;
 
-    this.runBootstrapOperations();
+    if (this.runBootstrapOperations)
+        this.runBootstrapOperations();
 };
 
 WebInspector.isTabTypeAllowed = function(tabType)
