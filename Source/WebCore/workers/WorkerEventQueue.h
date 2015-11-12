@@ -39,7 +39,7 @@ public:
     explicit WorkerEventQueue(ScriptExecutionContext&);
     virtual ~WorkerEventQueue();
 
-    virtual bool enqueueEvent(PassRefPtr<Event>) override;
+    virtual bool enqueueEvent(Ref<Event>&&) override;
     virtual bool cancelEvent(Event&) override;
     virtual void close() override;
 

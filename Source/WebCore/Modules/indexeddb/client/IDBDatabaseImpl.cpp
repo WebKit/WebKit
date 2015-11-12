@@ -331,7 +331,7 @@ void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)
     
     Ref<Event> event = IDBVersionChangeEvent::create(currentVersion, requestedVersion, eventNames().versionchangeEvent);
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(adoptRef(&event.leakRef()));
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
 }
 
 void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)

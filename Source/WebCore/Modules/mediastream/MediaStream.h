@@ -128,7 +128,7 @@ private:
     HashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
 
     Timer m_activityEventTimer;
-    Vector<RefPtr<Event>> m_scheduledActivityEvents;
+    Vector<Ref<Event>> m_scheduledActivityEvents;
 
     Vector<Observer*> m_observers;
 };

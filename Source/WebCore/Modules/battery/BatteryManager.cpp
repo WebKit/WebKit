@@ -77,7 +77,7 @@ double BatteryManager::level()
     return m_batteryStatus ? m_batteryStatus->level() : 1;
 }
 
-void BatteryManager::didChangeBatteryStatus(PassRefPtr<Event> event, PassRefPtr<BatteryStatus> batteryStatus)
+void BatteryManager::didChangeBatteryStatus(Event& event, PassRefPtr<BatteryStatus> batteryStatus)
 {
     updateBatteryStatus(batteryStatus);
     dispatchEvent(event);

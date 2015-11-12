@@ -145,9 +145,9 @@ bool RTCDTMFSender::canSuspendForPageCache() const
     return false;
 }
 
-void RTCDTMFSender::scheduleDispatchEvent(PassRefPtr<Event> event)
+void RTCDTMFSender::scheduleDispatchEvent(Ref<Event>&& event)
 {
-    m_scheduledEvents.append(event);
+    m_scheduledEvents.append(WTF::move(event));
 
     if (!m_scheduledEventTimer.isActive())
         m_scheduledEventTimer.startOneShot(0);
@@ -158,11 +158,11 @@ void RTCDTMFSender::scheduledEventTimerFired()
     if (m_stopped)
         return;
 
-    Vector<RefPtr<Event>> events;
+    Vector<Ref<Event>> events;
     events.swap(m_scheduledEvents);
 
     for (auto& event : events)
-        dispatchEvent(event.release());
+        dispatchEvent(event);
 }
 
 } // namespace WebCore

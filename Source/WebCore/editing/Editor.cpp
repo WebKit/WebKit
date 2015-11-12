@@ -461,7 +461,7 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     Node* target = findEventTargetFromSelection();
     if (!target)
         return;
-    target->dispatchEvent(TextEvent::createForPlainTextPaste(document().domWindow(), pastingText, smartReplace), IGNORE_EXCEPTION);
+    target->dispatchEvent(TextEvent::createForPlainTextPaste(document().domWindow(), pastingText, smartReplace));
 }
 
 void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool smartReplace, bool matchStyle, MailBlockquoteHandling respectsMailBlockquote)
@@ -469,7 +469,7 @@ void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool 
     Node* target = findEventTargetFromSelection();
     if (!target)
         return;
-    target->dispatchEvent(TextEvent::createForFragmentPaste(document().domWindow(), pastingFragment, smartReplace, matchStyle, respectsMailBlockquote), IGNORE_EXCEPTION);
+    target->dispatchEvent(TextEvent::createForFragmentPaste(document().domWindow(), pastingFragment, smartReplace, matchStyle, respectsMailBlockquote));
 }
 
 void Editor::pasteAsPlainTextBypassingDHTML()
@@ -851,8 +851,8 @@ bool Editor::dispatchCPPEvent(const AtomicString& eventType, DataTransferAccessP
 
     RefPtr<DataTransfer> dataTransfer = DataTransfer::createForCopyAndPaste(policy);
 
-    RefPtr<Event> event = ClipboardEvent::create(eventType, true, true, dataTransfer);
-    target->dispatchEvent(event, IGNORE_EXCEPTION);
+    Ref<Event> event = ClipboardEvent::create(eventType, true, true, dataTransfer);
+    target->dispatchEvent(event);
     bool noDefaultProcessing = event->defaultPrevented();
     if (noDefaultProcessing && policy == DataTransferAccessPolicy::Writable) {
         auto pasteboard = Pasteboard::createForCopyAndPaste();
@@ -1012,9 +1012,9 @@ static void dispatchEditableContentChangedEvents(PassRefPtr<Element> prpStartRoo
     RefPtr<Element> startRoot = prpStartRoot;
     RefPtr<Element> endRoot = prpEndRoot;
     if (startRoot)
-        startRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false), IGNORE_EXCEPTION);
+        startRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false));
     if (endRoot && endRoot != startRoot)
-        endRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false), IGNORE_EXCEPTION);
+        endRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false));
 }
 
 void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
@@ -1720,8 +1720,8 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     // We should send this event before sending a TextEvent as written in Section 6.2.2 and 6.2.3 of
     // the DOM Event specification.
     if (Element* target = document().focusedElement()) {
-        RefPtr<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, document().domWindow(), text);
-        target->dispatchEvent(event.release(), IGNORE_EXCEPTION);
+        Ref<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, document().domWindow(), text);
+        target->dispatchEvent(event);
     }
 
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
@@ -1795,8 +1795,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             else
                 event = CompositionEvent::create(eventNames().compositionendEvent, document().domWindow(), text);
         }
-        if (event.get())
-            target->dispatchEvent(event, IGNORE_EXCEPTION);
+        if (event)
+            target->dispatchEvent(*event);
     }
 
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input

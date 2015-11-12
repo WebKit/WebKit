@@ -92,7 +92,7 @@ LegacyDatabase::~LegacyDatabase()
         // connection called setVersion, but the frontend connection is being
         // closed before they could fire.
         for (auto& event : m_enqueuedEvents)
-            context->eventQueue().cancelEvent(*event);
+            context->eventQueue().cancelEvent(event);
     }
 }
 
@@ -321,7 +321,7 @@ void LegacyDatabase::closeConnection()
     // connection called setVersion, but the frontend connection is being
     // closed before they could fire.
     for (auto& event : m_enqueuedEvents) {
-        bool removed = eventQueue.cancelEvent(*event);
+        bool removed = eventQueue.cancelEvent(event);
         ASSERT_UNUSED(removed, removed);
     }
 
@@ -341,25 +341,25 @@ void LegacyDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion)
     enqueueEvent(LegacyVersionChangeEvent::create(oldVersion, newVersion, eventNames().versionchangeEvent));
 }
 
-void LegacyDatabase::enqueueEvent(PassRefPtr<Event> event)
+void LegacyDatabase::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(!m_contextStopped);
     ASSERT(!m_isClosed);
     ASSERT(scriptExecutionContext());
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(event.get());
-    m_enqueuedEvents.append(event);
+    scriptExecutionContext()->eventQueue().enqueueEvent(event.copyRef());
+    m_enqueuedEvents.append(WTF::move(event));
 }
 
-bool LegacyDatabase::dispatchEvent(PassRefPtr<Event> event)
+bool LegacyDatabase::dispatchEvent(Event& event)
 {
     LOG(StorageAPI, "LegacyDatabase::dispatchEvent");
-    ASSERT(event->type() == eventNames().versionchangeEvent);
+    ASSERT(event.type() == eventNames().versionchangeEvent);
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
-        if (m_enqueuedEvents[i].get() == event.get())
+        if (m_enqueuedEvents[i].ptr() == &event)
             m_enqueuedEvents.remove(i);
     }
-    return EventTarget::dispatchEvent(event.get());
+    return EventTarget::dispatchEvent(event);
 }
 
 int64_t LegacyDatabase::findObjectStoreId(const String& name) const

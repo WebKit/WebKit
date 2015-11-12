@@ -190,7 +190,7 @@ void TextTrackCue::invalidateCueIndex()
     m_cueIndex = invalidCueIndex;
 }
 
-bool TextTrackCue::dispatchEvent(PassRefPtr<Event> event)
+bool TextTrackCue::dispatchEvent(Event& event)
 {
     // When a TextTrack's mode is disabled: no cues are active, no events fired.
     if (!track() || track()->mode() == TextTrack::disabledKeyword())

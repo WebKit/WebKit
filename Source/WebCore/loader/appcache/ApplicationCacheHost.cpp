@@ -350,7 +350,7 @@ void ApplicationCacheHost::dispatchDOMEvent(EventID id, int total, int done)
             event = ProgressEvent::create(eventType, true, done, total);
         else
             event = Event::create(eventType, false, false);
-        m_domApplicationCache->dispatchEvent(event, ASSERT_NO_EXCEPTION);
+        m_domApplicationCache->dispatchEvent(*event);
     }
 }
 

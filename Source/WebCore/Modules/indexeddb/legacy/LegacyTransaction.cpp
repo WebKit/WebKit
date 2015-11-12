@@ -306,13 +306,13 @@ bool LegacyTransaction::hasPendingActivity() const
     return m_hasPendingActivity && !m_contextStopped;
 }
 
-bool LegacyTransaction::dispatchEvent(PassRefPtr<Event> event)
+bool LegacyTransaction::dispatchEvent(Event& event)
 {
     LOG(StorageAPI, "LegacyTransaction::dispatchEvent");
     ASSERT(m_state != Finished);
     ASSERT(m_hasPendingActivity);
     ASSERT(scriptExecutionContext());
-    ASSERT(event->target() == this);
+    ASSERT(event.target() == this);
     m_state = Finished;
 
     // Break reference cycles.
@@ -328,8 +328,8 @@ bool LegacyTransaction::dispatchEvent(PassRefPtr<Event> event)
     targets.append(db());
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
-    ASSERT(event->type() == eventNames().completeEvent || event->type() == eventNames().abortEvent);
-    bool returnValue = IDBEventDispatcher::dispatch(event.get(), targets);
+    ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
+    bool returnValue = IDBEventDispatcher::dispatch(event, targets);
     // FIXME: Try to construct a test where |this| outlives openDBRequest and we
     // get a crash.
     if (m_openDBRequest) {
@@ -359,14 +359,14 @@ const char* LegacyTransaction::activeDOMObjectName() const
     return "LegacyTransaction";
 }
 
-void LegacyTransaction::enqueueEvent(PassRefPtr<Event> event)
+void LegacyTransaction::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT_WITH_MESSAGE(m_state != Finished, "A finished transaction tried to enqueue an event of type %s.", event->type().string().utf8().data());
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(event);
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
 }
 
 IDBDatabaseBackend* LegacyTransaction::backendDB() const

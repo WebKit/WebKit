@@ -53,7 +53,7 @@ public:
     void resumeUpdates();
 #else
     virtual bool hasLastData() override;
-    virtual PassRefPtr<Event> getLastEvent() override;
+    virtual RefPtr<Event> getLastEvent() override;
 #endif
 
     static const char* supplementName();

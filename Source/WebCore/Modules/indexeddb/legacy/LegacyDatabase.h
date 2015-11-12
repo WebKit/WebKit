@@ -84,10 +84,10 @@ public:
     bool isClosePending() const { return m_closePending; }
     void forceClose();
     const IDBDatabaseMetadata metadata() const { return m_metadata; }
-    void enqueueEvent(PassRefPtr<Event>);
+    void enqueueEvent(Ref<Event>&&);
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) override;
+    virtual bool dispatchEvent(Event&) override;
 
     int64_t findObjectStoreId(const String& name) const;
     bool containsObjectStore(const String& name) const
@@ -130,7 +130,7 @@ private:
 
     // Keep track of the versionchange events waiting to be fired on this
     // database so that we can cancel them if the database closes.
-    Vector<RefPtr<Event>> m_enqueuedEvents;
+    Vector<Ref<Event>> m_enqueuedEvents;
 
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
 };

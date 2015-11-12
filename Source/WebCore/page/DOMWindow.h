@@ -244,7 +244,7 @@ namespace WebCore {
         // Needed for Objective-C bindings (see bug 28774).
         void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
         void postMessageTimerFired(PostMessageTimer&);
-        void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, PassRefPtr<Event>, PassRefPtr<Inspector::ScriptCallStack>);
+        void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
 
         void scrollBy(int x, int y) const;
         void scrollTo(int x, int y) const;
@@ -278,7 +278,7 @@ namespace WebCore {
         virtual void removeAllEventListeners() override;
 
         using EventTarget::dispatchEvent;
-        bool dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget);
+        bool dispatchEvent(Event&, EventTarget*);
 
         void dispatchLoadEvent();
 

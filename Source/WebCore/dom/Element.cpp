@@ -253,7 +253,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))
         return false;
 
-    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType, document().defaultView(), platformEvent, detail, relatedTarget);
+    Ref<MouseEvent> mouseEvent = MouseEvent::create(eventType, document().defaultView(), platformEvent, detail, relatedTarget);
 
     if (mouseEvent->type().isEmpty())
         return true; // Shouldn't happen.
@@ -265,7 +265,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
         // Special case: If it's a double click event, we also send the dblclick event. This is not part
         // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
         // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
-        RefPtr<MouseEvent> doubleClickEvent = MouseEvent::create();
+        Ref<MouseEvent> doubleClickEvent = MouseEvent::create();
         doubleClickEvent->initMouseEvent(eventNames().dblclickEvent,
             mouseEvent->bubbles(), mouseEvent->cancelable(), mouseEvent->view(), mouseEvent->detail(),
             mouseEvent->screenX(), mouseEvent->screenY(), mouseEvent->clientX(), mouseEvent->clientY(),
@@ -285,7 +285,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
 bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
-    RefPtr<WheelEvent> wheelEvent = WheelEvent::create(event, document().defaultView());
+    Ref<WheelEvent> wheelEvent = WheelEvent::create(event, document().defaultView());
 
     // Events with no deltas are important because they convey platform information about scroll gestures
     // and momentum beginning or ending. However, those events should not be sent to the DOM since some
@@ -300,9 +300,9 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 
 bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 {
-    RefPtr<KeyboardEvent> event = KeyboardEvent::create(platformEvent, document().defaultView());
+    Ref<KeyboardEvent> event = KeyboardEvent::create(platformEvent, document().defaultView());
     if (Frame* frame = document().frame()) {
-        if (frame->eventHandler().accessibilityPreventsEventPropogation(event.get()))
+        if (frame->eventHandler().accessibilityPreventsEventPropogation(event))
             event->stopPropagation();
     }
     return EventDispatcher::dispatchEvent(this, event) && !event->defaultHandled();
@@ -2324,7 +2324,7 @@ bool Element::dispatchMouseForceWillBegin()
         return false;
 
     PlatformMouseEvent platformMouseEvent(frame->eventHandler().lastKnownMousePosition(), frame->eventHandler().lastKnownMouseGlobalPosition(), NoButton, PlatformEvent::NoType, 1, false, false, false, false, WTF::currentTime(), ForceAtClick);
-    RefPtr<MouseEvent> mouseForceWillBeginEvent =  MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
+    Ref<MouseEvent> mouseForceWillBeginEvent =  MouseEvent::create(eventNames().webkitmouseforcewillbeginEvent, document().defaultView(), platformMouseEvent, 0, nullptr);
     mouseForceWillBeginEvent->setTarget(this);
     dispatchEvent(mouseForceWillBeginEvent);
 

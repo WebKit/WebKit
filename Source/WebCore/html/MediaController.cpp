@@ -544,11 +544,11 @@ void MediaController::scheduleEvent(const AtomicString& eventName)
 
 void MediaController::asyncEventTimerFired()
 {
-    Vector<RefPtr<Event>> pendingEvents;
+    Vector<Ref<Event>> pendingEvents;
 
     m_pendingEvents.swap(pendingEvents);
     for (auto& pendingEvent : pendingEvents)
-        dispatchEvent(pendingEvent.release(), IGNORE_EXCEPTION);
+        dispatchEvent(pendingEvent);
 }
 
 void MediaController::clearPositionTimerFired()

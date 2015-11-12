@@ -63,9 +63,9 @@ String dispatchBeforeTextInsertedEvent(const String& text, const VisibleSelectio
     if (Node* startNode = selectionForInsertion.start().containerNode()) {
         if (startNode->rootEditableElement()) {
             // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
-            RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
-            startNode->rootEditableElement()->dispatchEvent(evt, IGNORE_EXCEPTION);
-            newText = evt->text();
+            Ref<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(text);
+            startNode->rootEditableElement()->dispatchEvent(event);
+            newText = event->text();
         }
     }
     return newText;
@@ -77,8 +77,8 @@ bool canAppendNewLineFeedToSelection(const VisibleSelection& selection)
     if (!node)
         return false;
     
-    RefPtr<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(String("\n"));
-    node->dispatchEvent(event, IGNORE_EXCEPTION);
+    Ref<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(String("\n"));
+    node->dispatchEvent(event);
     return event->text().length();
 }
 

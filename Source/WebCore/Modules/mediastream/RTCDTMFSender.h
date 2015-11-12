@@ -71,7 +71,7 @@ private:
     const char* activeDOMObjectName() const override;
     bool canSuspendForPageCache() const override;
 
-    void scheduleDispatchEvent(PassRefPtr<Event>);
+    void scheduleDispatchEvent(Ref<Event>&&);
     void scheduledEventTimerFired();
 
     // EventTarget
@@ -90,7 +90,7 @@ private:
     bool m_stopped;
 
     Timer m_scheduledEventTimer;
-    Vector<RefPtr<Event>> m_scheduledEvents;
+    Vector<Ref<Event>> m_scheduledEvents;
 };
 
 } // namespace WebCore

@@ -106,7 +106,7 @@ public:
     void setType(const AtomicString& type) { m_type = type; }
     
     EventTarget* target() const { return m_target.get(); }
-    void setTarget(PassRefPtr<EventTarget>);
+    void setTarget(RefPtr<EventTarget>&&);
 
     EventTarget* currentTarget() const { return m_currentTarget; }
     void setCurrentTarget(EventTarget* currentTarget) { m_currentTarget = currentTarget; }

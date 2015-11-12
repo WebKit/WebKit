@@ -83,7 +83,7 @@ public:
 private:
     RTCDataChannel(ScriptExecutionContext*, std::unique_ptr<RTCDataChannelHandler>);
 
-    void scheduleDispatchEvent(PassRefPtr<Event>);
+    void scheduleDispatchEvent(Ref<Event>&&);
     void scheduledEventTimerFired();
 
     // EventTarget
@@ -110,7 +110,7 @@ private:
     BinaryType m_binaryType;
 
     Timer m_scheduledEventTimer;
-    Vector<RefPtr<Event>> m_scheduledEvents;
+    Vector<Ref<Event>> m_scheduledEvents;
 };
 
 } // namespace WebCore

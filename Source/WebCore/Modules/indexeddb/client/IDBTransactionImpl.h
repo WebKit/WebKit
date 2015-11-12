@@ -71,7 +71,7 @@ public:
     virtual void refEventTarget() override final { ref(); }
     virtual void derefEventTarget() override final { deref(); }
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) override final;
+    virtual bool dispatchEvent(Event&) override final;
 
     virtual const char* activeDOMObjectName() const override final;
     virtual bool canSuspendForPageCache() const override final;
@@ -128,7 +128,7 @@ private:
 
     void fireOnComplete();
     void fireOnAbort();
-    void enqueueEvent(Ref<Event>);
+    void enqueueEvent(Ref<Event>&&);
 
     Ref<IDBRequest> requestIndexRecord(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
 

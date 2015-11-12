@@ -404,7 +404,7 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
 
     ASSERT(!m_inDispatchErrorEvent);
     m_inDispatchErrorEvent = true;
-    RefPtr<ErrorEvent> errorEvent = ErrorEvent::create(message, sourceName, line, column);
+    Ref<ErrorEvent> errorEvent = ErrorEvent::create(message, sourceName, line, column);
     target->dispatchEvent(errorEvent);
     m_inDispatchErrorEvent = false;
     return errorEvent->defaultPrevented();

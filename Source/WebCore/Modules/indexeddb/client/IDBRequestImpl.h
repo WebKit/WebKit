@@ -78,7 +78,7 @@ public:
     using RefCounted<IDBRequest>::deref;
 
     void enqueueEvent(Ref<Event>&&);
-    virtual bool dispatchEvent(PassRefPtr<Event>) override final;
+    virtual bool dispatchEvent(Event&) override final;
 
     IDBConnectionToServer& connection() { return m_connection; }
 

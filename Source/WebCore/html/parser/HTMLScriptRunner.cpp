@@ -81,7 +81,7 @@ static URL documentURLForScriptExecution(Document* document)
     return document->frame()->document()->url();
 }
 
-inline PassRefPtr<Event> createScriptLoadEvent()
+inline Ref<Event> createScriptLoadEvent()
 {
     return Event::create(eventNames().loadEvent, false, false);
 }

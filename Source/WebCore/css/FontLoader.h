@@ -99,7 +99,7 @@ private:
     EventTargetData m_eventTargetData;
     unsigned m_numLoadingFromCSS;
     unsigned m_numLoadingFromJS;
-    Vector<RefPtr<Event>> m_pendingEvents;
+    Vector<Ref<Event>> m_pendingEvents;
     Vector<RefPtr<VoidCallback>> m_callbacks;
     RefPtr<Event> m_loadingDoneEvent;
     Timer m_pendingEventsTimer;

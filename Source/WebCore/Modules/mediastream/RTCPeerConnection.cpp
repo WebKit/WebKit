@@ -725,9 +725,9 @@ void RTCPeerConnection::changeIceConnectionState(IceConnectionState iceConnectio
     }
 }
 
-void RTCPeerConnection::scheduleDispatchEvent(PassRefPtr<Event> event)
+void RTCPeerConnection::scheduleDispatchEvent(Ref<Event>&& event)
 {
-    m_scheduledEvents.append(event);
+    m_scheduledEvents.append(WTF::move(event));
 
     if (!m_scheduledEventTimer.isActive())
         m_scheduledEventTimer.startOneShot(0);
@@ -738,11 +738,11 @@ void RTCPeerConnection::scheduledEventTimerFired()
     if (m_stopped)
         return;
 
-    Vector<RefPtr<Event>> events;
+    Vector<Ref<Event>> events;
     events.swap(m_scheduledEvents);
 
     for (auto& event : events)
-        dispatchEvent(event.release());
+        dispatchEvent(event);
 
     events.clear();
 }

@@ -304,9 +304,9 @@ void RTCDataChannel::stop()
     m_scriptExecutionContext = nullptr;
 }
 
-void RTCDataChannel::scheduleDispatchEvent(PassRefPtr<Event> event)
+void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
 {
-    m_scheduledEvents.append(event);
+    m_scheduledEvents.append(WTF::move(event));
 
     if (!m_scheduledEventTimer.isActive())
         m_scheduledEventTimer.startOneShot(0);
@@ -317,11 +317,11 @@ void RTCDataChannel::scheduledEventTimerFired()
     if (m_stopped)
         return;
 
-    Vector<RefPtr<Event>> events;
+    Vector<Ref<Event>> events;
     events.swap(m_scheduledEvents);
 
     for (auto& event : events)
-        dispatchEvent(event.release());
+        dispatchEvent(event);
 }
 
 } // namespace WebCore

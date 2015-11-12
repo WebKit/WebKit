@@ -194,16 +194,14 @@ void IDBRequest::enqueueEvent(Ref<Event>&& event)
         return;
 
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(&event.get());
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
 }
 
-bool IDBRequest::dispatchEvent(PassRefPtr<Event> prpEvent)
+bool IDBRequest::dispatchEvent(Event& event)
 {
-    LOG(IndexedDB, "IDBRequest::dispatchEvent - %s", prpEvent->type().characters8());
+    LOG(IndexedDB, "IDBRequest::dispatchEvent - %s", event.type().characters8());
 
-    RefPtr<Event> event = prpEvent;
-
-    if (event->type() != eventNames().blockedEvent)
+    if (event.type() != eventNames().blockedEvent)
         m_readyState = IDBRequestReadyState::Done;
 
     Vector<RefPtr<EventTarget>> targets;
@@ -217,7 +215,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> prpEvent)
     bool dontPreventDefault;
     {
         TransactionActivator activator(m_transaction.get());
-        dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
+        dontPreventDefault = IDBEventDispatcher::dispatch(event, targets);
     }
 
     m_hasPendingActivity = false;

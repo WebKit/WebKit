@@ -96,7 +96,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) override final;
+    virtual bool dispatchEvent(Event&) override final;
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const override final;
@@ -104,7 +104,7 @@ public:
 private:
     LegacyTransaction(ScriptExecutionContext*, int64_t, const Vector<String>&, IndexedDB::TransactionMode, LegacyDatabase*, LegacyOpenDBRequest*, const IDBDatabaseMetadata&);
 
-    void enqueueEvent(PassRefPtr<Event>);
+    void enqueueEvent(Ref<Event>&&);
     void closeOpenCursors();
 
     void registerOpenCursor(LegacyCursor*);

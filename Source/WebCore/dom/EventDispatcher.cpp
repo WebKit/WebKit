@@ -70,9 +70,9 @@ bool WindowEventContext::handleLocalEvents(Event& event)
     if (!m_window)
         return false;
 
-    event.setTarget(m_target.get());
+    event.setTarget(m_target.copyRef());
     event.setCurrentTarget(m_window.get());
-    m_window->fireEventListeners(&event);
+    m_window->fireEventListeners(event);
     return true;
 }
 
@@ -201,10 +201,10 @@ inline EventTarget* eventTargetRespectingTargetRules(Node& referenceNode)
     return &referenceNode;
 }
 
-void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<Event> event)
+void EventDispatcher::dispatchScopedEvent(Node& node, Event& event)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    event->setTarget(eventTargetRespectingTargetRules(node));
+    event.setTarget(eventTargetRespectingTargetRules(node));
     ScopedEventQueue::singleton().enqueueEvent(event);
 }
 
@@ -300,23 +300,19 @@ static void dispatchEventInDOM(Event& event, const EventPath& path, WindowEventC
     }
 }
 
-bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
+bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    if (!prpEvent)
-        return true;
-
     ASSERT(origin);
     RefPtr<Node> node(origin);
-    RefPtr<Event> event(prpEvent);
     RefPtr<FrameView> view = node->document().view();
-    EventPath eventPath(*node, *event);
+    EventPath eventPath(*node, event);
 
-    if (EventTarget* relatedTarget = event->relatedTarget())
+    if (EventTarget* relatedTarget = event.relatedTarget())
         eventPath.setRelatedTarget(*node, *relatedTarget);
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (is<TouchEvent>(*event)) {
-        if (!eventPath.updateTouchLists(downcast<TouchEvent>(*event)))
+    if (is<TouchEvent>(event)) {
+        if (!eventPath.updateTouchLists(downcast<TouchEvent>(event)))
             return true;
     }
 #endif
@@ -324,8 +320,8 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
     EventTarget* target = eventTargetRespectingTargetRules(*node);
-    event->setTarget(target);
-    if (!event->target())
+    event.setTarget(target);
+    if (!event.target())
         return true;
 
     ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
@@ -334,30 +330,30 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
 
     InputElementClickState clickHandlingState;
     if (is<HTMLInputElement>(*node))
-        downcast<HTMLInputElement>(*node).willDispatchEvent(*event, clickHandlingState);
+        downcast<HTMLInputElement>(*node).willDispatchEvent(event, clickHandlingState);
 
-    if (!event->propagationStopped() && !eventPath.isEmpty())
-        dispatchEventInDOM(*event, eventPath, windowEventContext);
+    if (!event.propagationStopped() && !eventPath.isEmpty())
+        dispatchEventInDOM(event, eventPath, windowEventContext);
 
-    event->setTarget(eventTargetRespectingTargetRules(*node));
-    event->setCurrentTarget(nullptr);
-    event->setEventPhase(0);
+    event.setTarget(eventTargetRespectingTargetRules(*node));
+    event.setCurrentTarget(nullptr);
+    event.setEventPhase(0);
 
     if (clickHandlingState.stateful)
-        downcast<HTMLInputElement>(*node).didDispatchClickEvent(*event, clickHandlingState);
+        downcast<HTMLInputElement>(*node).didDispatchClickEvent(event, clickHandlingState);
 
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal
     // implementation detail and not part of the DOM.
-    if (!event->defaultPrevented() && !event->defaultHandled())
-        callDefaultEventHandlersInTheBubblingOrder(*event, eventPath);
+    if (!event.defaultPrevented() && !event.defaultHandled())
+        callDefaultEventHandlersInTheBubblingOrder(event, eventPath);
 
     // Ensure that after event dispatch, the event's target object is the
     // outermost shadow DOM boundary.
-    event->setTarget(windowEventContext.target());
-    event->setCurrentTarget(nullptr);
+    event.setTarget(windowEventContext.target());
+    event.setCurrentTarget(nullptr);
 
-    return !event->defaultPrevented();
+    return !event.defaultPrevented();
 }
 
 static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shadowRoot, EventTarget& target)

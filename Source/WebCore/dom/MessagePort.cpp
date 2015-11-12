@@ -160,9 +160,8 @@ void MessagePort::dispatchMessages()
             return;
 
         std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTF::move(channels));
-        RefPtr<Event> evt = MessageEvent::create(WTF::move(ports), message.release());
-
-        dispatchEvent(evt.release(), ASSERT_NO_EXCEPTION);
+        Ref<Event> event = MessageEvent::create(WTF::move(ports), message.release());
+        dispatchEvent(event);
     }
 }
 

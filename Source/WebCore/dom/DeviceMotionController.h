@@ -52,7 +52,7 @@ public:
     DeviceMotionClient* deviceMotionClient();
 
     virtual bool hasLastData() override;
-    virtual PassRefPtr<Event> getLastEvent() override;
+    virtual RefPtr<Event> getLastEvent() override;
 
     static const char* supplementName();
     static DeviceMotionController* from(Page*);

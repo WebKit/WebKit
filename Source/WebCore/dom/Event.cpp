@@ -162,12 +162,12 @@ PassRefPtr<Event> Event::cloneFor(HTMLIFrameElement*) const
     return Event::create(type(), bubbles(), cancelable());
 }
 
-void Event::setTarget(PassRefPtr<EventTarget> target)
+void Event::setTarget(RefPtr<EventTarget>&& target)
 {
     if (m_target == target)
         return;
 
-    m_target = target;
+    m_target = WTF::move(target);
     if (m_target)
         receivedTarget();
 }

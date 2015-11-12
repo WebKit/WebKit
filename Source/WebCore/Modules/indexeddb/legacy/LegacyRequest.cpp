@@ -166,7 +166,7 @@ void LegacyRequest::abort()
 
     EventQueue& eventQueue = scriptExecutionContext()->eventQueue();
     for (auto& event : m_enqueuedEvents) {
-        bool removed = eventQueue.cancelEvent(*event);
+        bool removed = eventQueue.cancelEvent(event);
         ASSERT_UNUSED(removed, removed);
     }
     m_enqueuedEvents.clear();
@@ -262,7 +262,7 @@ void LegacyRequest::onError(PassRefPtr<IDBDatabaseError> error)
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 
-static PassRefPtr<Event> createSuccessEvent()
+static Ref<Event> createSuccessEvent()
 {
     return Event::create(eventNames().successEvent, false, false);
 }
@@ -466,7 +466,7 @@ EventTargetInterface LegacyRequest::eventTargetInterface() const
     return IDBRequestEventTargetInterfaceType;
 }
 
-bool LegacyRequest::dispatchEvent(PassRefPtr<Event> event)
+bool LegacyRequest::dispatchEvent(Event& event)
 {
     LOG(StorageAPI, "LegacyRequest::dispatchEvent");
     ASSERT(m_readyState == IDBRequestReadyState::Pending);
@@ -474,16 +474,16 @@ bool LegacyRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(m_hasPendingActivity);
     ASSERT(m_enqueuedEvents.size());
     ASSERT(scriptExecutionContext());
-    ASSERT(event->target() == this);
-    ASSERT_WITH_MESSAGE(m_readyState < IDBRequestReadyState::Done, "When dispatching event %s, m_readyState < DONE(%d), was %d", event->type().string().utf8().data(), static_cast<int>(IDBRequestReadyState::Done), static_cast<int>(m_readyState));
+    ASSERT(event.target() == this);
+    ASSERT_WITH_MESSAGE(m_readyState < IDBRequestReadyState::Done, "When dispatching event %s, m_readyState < DONE(%d), was %d", event.type().string().utf8().data(), static_cast<int>(IDBRequestReadyState::Done), static_cast<int>(m_readyState));
 
     DOMRequestState::Scope scope(m_requestState);
 
-    if (event->type() != eventNames().blockedEvent)
+    if (event.type() != eventNames().blockedEvent)
         m_readyState = IDBRequestReadyState::Done;
 
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
-        if (m_enqueuedEvents[i].get() == event.get())
+        if (m_enqueuedEvents[i].ptr() == &event)
             m_enqueuedEvents.remove(i);
     }
 
@@ -500,7 +500,7 @@ bool LegacyRequest::dispatchEvent(PassRefPtr<Event> event)
 
     // Cursor properties should not updated until the success event is being dispatched.
     RefPtr<LegacyCursor> cursorToNotify;
-    if (event->type() == eventNames().successEvent) {
+    if (event.type() == eventNames().successEvent) {
         cursorToNotify = getResultCursor();
         if (cursorToNotify) {
             cursorToNotify->setValueReady(requestState(), m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
@@ -508,19 +508,19 @@ bool LegacyRequest::dispatchEvent(PassRefPtr<Event> event)
         }
     }
 
-    if (event->type() == eventNames().upgradeneededEvent) {
+    if (event.type() == eventNames().upgradeneededEvent) {
         ASSERT(!m_didFireUpgradeNeededEvent);
         m_didFireUpgradeNeededEvent = true;
     }
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
-    ASSERT_WITH_MESSAGE(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent || event->type() == eventNames().upgradeneededEvent, "event type was %s", event->type().string().utf8().data());
-    const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || event->type() == eventNames().upgradeneededEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::AbortError));
+    ASSERT_WITH_MESSAGE(event.type() == eventNames().successEvent || event.type() == eventNames().errorEvent || event.type() == eventNames().blockedEvent || event.type() == eventNames().upgradeneededEvent, "event type was %s", event.type().string().utf8().data());
+    const bool setTransactionActive = m_transaction && (event.type() == eventNames().successEvent || event.type() == eventNames().upgradeneededEvent || (event.type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::AbortError));
 
     if (setTransactionActive)
         m_transaction->setActive(true);
 
-    bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
+    bool dontPreventDefault = IDBEventDispatcher::dispatch(event, targets);
 
     if (m_transaction) {
         if (m_readyState == IDBRequestReadyState::Done)
@@ -528,7 +528,7 @@ bool LegacyRequest::dispatchEvent(PassRefPtr<Event> event)
 
         // Possibly abort the transaction. This must occur after unregistering (so this request
         // doesn't receive a second error) and before deactivating (which might trigger commit).
-        if (event->type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {
+        if (event.type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {
             m_transaction->setError(m_error, m_errorMessage);
             m_transaction->abort(IGNORE_EXCEPTION);
         }
@@ -541,7 +541,7 @@ bool LegacyRequest::dispatchEvent(PassRefPtr<Event> event)
     if (cursorToNotify)
         cursorToNotify->postSuccessHandlerCallback();
 
-    if (m_readyState == IDBRequestReadyState::Done && (!cursorToNotify || m_cursorFinished) && event->type() != eventNames().upgradeneededEvent)
+    if (m_readyState == IDBRequestReadyState::Done && (!cursorToNotify || m_cursorFinished) && event.type() != eventNames().upgradeneededEvent)
         m_hasPendingActivity = false;
 
     return dontPreventDefault;
@@ -565,7 +565,7 @@ void LegacyRequest::transactionDidFinishAndDispatch()
     m_readyState = IDBRequestReadyState::Pending;
 }
 
-void LegacyRequest::enqueueEvent(PassRefPtr<Event> event)
+void LegacyRequest::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(m_readyState == IDBRequestReadyState::Pending || m_readyState == IDBRequestReadyState::Done);
 
@@ -576,8 +576,8 @@ void LegacyRequest::enqueueEvent(PassRefPtr<Event> event)
 
     event->setTarget(this);
 
-    if (scriptExecutionContext()->eventQueue().enqueueEvent(event.get()))
-        m_enqueuedEvents.append(event);
+    if (scriptExecutionContext()->eventQueue().enqueueEvent(event.copyRef()))
+        m_enqueuedEvents.append(WTF::move(event));
 }
 
 } // namespace WebCore

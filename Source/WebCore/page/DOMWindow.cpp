@@ -156,7 +156,7 @@ public:
     {
     }
 
-    PassRefPtr<MessageEvent> event(ScriptExecutionContext* context)
+    Ref<MessageEvent> event(ScriptExecutionContext* context)
     {
         std::unique_ptr<MessagePortArray> messagePorts = MessagePort::entanglePorts(*context, WTF::move(m_channels));
         return MessageEvent::create(WTF::move(messagePorts), m_message, m_origin, String(), m_source);
@@ -928,7 +928,7 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer& timer)
     dispatchMessageEventWithOriginCheck(timer.targetOrigin(), timer.event(document()), timer.stackTrace());
 }
 
-void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, PassRefPtr<Event> event, PassRefPtr<ScriptCallStack> stackTrace)
+void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event& event, PassRefPtr<ScriptCallStack> stackTrace)
 {
     if (intendedTargetOrigin) {
         // Check target origin now since the target document may have changed since the timer was scheduled.
@@ -1870,7 +1870,7 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
 
 void DOMWindow::dispatchLoadEvent()
 {
-    RefPtr<Event> loadEvent(Event::create(eventNames().loadEvent, false, false));
+    Ref<Event> loadEvent = Event::create(eventNames().loadEvent, false, false);
     if (m_frame && m_frame->loader().documentLoader() && !m_frame->loader().documentLoader()->timing().loadEventStart()) {
         // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed while dispatching
         // the event, so protect it to prevent writing the end time into freed memory.
@@ -1892,34 +1892,33 @@ void DOMWindow::dispatchLoadEvent()
     InspectorInstrumentation::loadEventFired(frame());
 }
 
-bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
+bool DOMWindow::dispatchEvent(Event& event, EventTarget* target)
 {
     Ref<EventTarget> protect(*this);
-    RefPtr<Event> event = prpEvent;
 
     // Pausing a page may trigger pagehide and pageshow events. WebCore also implicitly fires these
     // events when closing a WebView. Here we keep track of the state of the page to prevent duplicate,
     // unbalanced events per the definition of the pageshow event:
     // <http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-pageshow>.
-    if (event->eventInterface() == PageTransitionEventInterfaceType) {
-        if (event->type() == eventNames().pageshowEvent) {
+    if (event.eventInterface() == PageTransitionEventInterfaceType) {
+        if (event.type() == eventNames().pageshowEvent) {
             if (m_lastPageStatus == PageStatusShown)
                 return true; // Event was previously dispatched; do not fire a duplicate event.
             m_lastPageStatus = PageStatusShown;
-        } else if (event->type() == eventNames().pagehideEvent) {
+        } else if (event.type() == eventNames().pagehideEvent) {
             if (m_lastPageStatus == PageStatusHidden)
                 return true; // Event was previously dispatched; do not fire a duplicate event.
             m_lastPageStatus = PageStatusHidden;
         }
     }
 
-    event->setTarget(prpTarget ? prpTarget : this);
-    event->setCurrentTarget(this);
-    event->setEventPhase(Event::AT_TARGET);
+    event.setTarget(target ? target : this);
+    event.setCurrentTarget(this);
+    event.setEventPhase(Event::AT_TARGET);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), *event, *this);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), event, *this);
 
-    bool result = fireEventListeners(event.get());
+    bool result = fireEventListeners(event);
 
     InspectorInstrumentation::didDispatchEventOnWindow(cookie);
 

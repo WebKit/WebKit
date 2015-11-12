@@ -68,15 +68,15 @@ DocumentEventQueue::~DocumentEventQueue()
 {
 }
 
-bool DocumentEventQueue::enqueueEvent(PassRefPtr<Event> event)
+bool DocumentEventQueue::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(event->target());
-    ASSERT(!m_queuedEvents.contains(event.get()));
+    ASSERT(!m_queuedEvents.contains(event.ptr()));
 
     if (m_isClosed)
         return false;
 
-    m_queuedEvents.add(event);
+    m_queuedEvents.add(event.ptr());
     if (!m_pendingEventTimer->isActive())
         m_pendingEventTimer->startOneShot(0);
     return true;
@@ -99,9 +99,9 @@ void DocumentEventQueue::enqueueOrDispatchScrollEvent(Node& target)
     bool bubbles = target.isDocumentNode();
     bool cancelable = false;
 
-    RefPtr<Event> scrollEvent = Event::create(eventNames().scrollEvent, bubbles, cancelable);
+    Ref<Event> scrollEvent = Event::create(eventNames().scrollEvent, bubbles, cancelable);
     scrollEvent->setTarget(&target);
-    enqueueEvent(scrollEvent.release());
+    enqueueEvent(WTF::move(scrollEvent));
 }
 
 bool DocumentEventQueue::cancelEvent(Event& event)
@@ -146,9 +146,9 @@ void DocumentEventQueue::dispatchEvent(Event& event)
     // Why do we have this special case here instead of a virtual function on EventTarget?
     EventTarget& eventTarget = *event.target();
     if (DOMWindow* window = eventTarget.toDOMWindow())
-        window->dispatchEvent(&event, 0);
+        window->dispatchEvent(event, nullptr);
     else
-        eventTarget.dispatchEvent(&event);
+        eventTarget.dispatchEvent(event);
 }
 
 }

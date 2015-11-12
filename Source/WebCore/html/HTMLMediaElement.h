@@ -564,7 +564,7 @@ private:
     void enqueuePlaybackTargetAvailabilityChangedEvent();
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) override;
+    virtual bool dispatchEvent(Event&) override;
 #endif
 
 #if ENABLE(MEDIA_SESSION)

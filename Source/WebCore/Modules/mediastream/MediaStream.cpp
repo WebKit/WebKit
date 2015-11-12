@@ -299,13 +299,11 @@ void MediaStream::scheduleActiveStateChange()
 
 void MediaStream::activityEventTimerFired()
 {
-    Vector<RefPtr<Event>> events;
+    Vector<Ref<Event>> events;
     events.swap(m_scheduledActivityEvents);
 
     for (auto& event : events)
-        dispatchEvent(event.release());
-
-    events.clear();
+        dispatchEvent(event);
 }
 
 URLRegistry& MediaStream::registry() const

@@ -38,11 +38,11 @@ class Node;
 
 namespace EventDispatcher {
 
-bool dispatchEvent(Node*, PassRefPtr<Event>);
-void dispatchScopedEvent(Node&, PassRefPtr<Event>);
+bool dispatchEvent(Node*, Event&);
+void dispatchScopedEvent(Node&, Event&);
 void dispatchSimulatedClick(Element*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 
-};
+}
 
 }
 

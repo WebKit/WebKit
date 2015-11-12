@@ -410,11 +410,11 @@ bool EventSource::canSuspendForPageCache() const
     return false;
 }
 
-PassRefPtr<MessageEvent> EventSource::createMessageEvent()
+Ref<MessageEvent> EventSource::createMessageEvent()
 {
-    RefPtr<MessageEvent> event = MessageEvent::create();
+    Ref<MessageEvent> event = MessageEvent::create();
     event->initMessageEvent(m_eventName.isEmpty() ? eventNames().messageEvent : AtomicString(m_eventName), false, false, SerializedScriptValue::create(String::adopt(m_data)), m_eventStreamOrigin, m_lastEventId, 0, 0);
-    return event.release();
+    return event;
 }
 
 } // namespace WebCore

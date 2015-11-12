@@ -100,7 +100,7 @@ void GenericEventQueue::dispatchOneEvent()
     Ref<EventTarget> protect(m_owner);
     RefPtr<Event> event = m_pendingEvents.takeFirst();
     EventTarget& target = event->target() ? *event->target() : m_owner;
-    target.dispatchEvent(event.release());
+    target.dispatchEvent(*event);
 }
 
 void GenericEventQueue::close()

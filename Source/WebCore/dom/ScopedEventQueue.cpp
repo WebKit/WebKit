@@ -43,27 +43,27 @@ ScopedEventQueue& ScopedEventQueue::singleton()
     return scopedEventQueue;
 }
 
-void ScopedEventQueue::enqueueEvent(PassRefPtr<Event> event)
+void ScopedEventQueue::enqueueEvent(Ref<Event>&& event)
 {
     if (m_scopingLevel)
-        m_queuedEvents.append(event);
+        m_queuedEvents.append(WTF::move(event));
     else
         dispatchEvent(event);
 }
 
-void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
+void ScopedEventQueue::dispatchEvent(Event& event) const
 {
-    ASSERT(event->target());
+    ASSERT(event.target());
     // Store the target in a local variable to avoid possibly dereferencing a nullified PassRefPtr after it's passed on.
-    Node* node = event->target()->toNode();
+    Node* node = event.target()->toNode();
     EventDispatcher::dispatchEvent(node, event);
 }
 
 void ScopedEventQueue::dispatchAllEvents()
 {
-    Vector<RefPtr<Event>> queuedEvents = WTF::move(m_queuedEvents);
+    Vector<Ref<Event>> queuedEvents = WTF::move(m_queuedEvents);
     for (auto& queuedEvent : queuedEvents)
-        dispatchEvent(queuedEvent.release());
+        dispatchEvent(queuedEvent);
 }
 
 void ScopedEventQueue::incrementScopingLevel()

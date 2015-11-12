@@ -99,7 +99,7 @@ private:
     void abortConnectionAttempt();
     void parseEventStream();
     void parseEventStreamLine(unsigned pos, int fieldLength, int lineLength);
-    PassRefPtr<MessageEvent> createMessageEvent();
+    Ref<MessageEvent> createMessageEvent();
 
     URL m_url;
     bool m_withCredentials;

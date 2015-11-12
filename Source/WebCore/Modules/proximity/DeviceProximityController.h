@@ -43,7 +43,7 @@ public:
     DeviceProximityClient* deviceProximityClient();
 
     virtual bool hasLastData();
-    virtual PassRefPtr<Event> getLastEvent();
+    virtual RefPtr<Event> getLastEvent();
 
     static const char* supplementName();
     static DeviceProximityController* from(Page*);

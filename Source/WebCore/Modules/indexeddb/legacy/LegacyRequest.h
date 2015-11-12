@@ -92,7 +92,7 @@ public:
     virtual void uncaughtExceptionInEventHandler() override final;
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) override;
+    virtual bool dispatchEvent(Event&) override;
 
     void transactionDidFinishAndDispatch();
 
@@ -108,7 +108,7 @@ public:
 
 protected:
     LegacyRequest(ScriptExecutionContext*, PassRefPtr<LegacyAny> source, IDBDatabaseBackend::TaskType, LegacyTransaction*);
-    void enqueueEvent(PassRefPtr<Event>);
+    void enqueueEvent(Ref<Event>&&);
     virtual bool shouldEnqueueEvent() const;
     void onSuccessInternal(PassRefPtr<SerializedScriptValue>);
     void onSuccessInternal(const Deprecated::ScriptValue&);
@@ -139,7 +139,7 @@ private:
     const IDBDatabaseBackend::TaskType m_taskType;
 
     bool m_hasPendingActivity;
-    Vector<RefPtr<Event>> m_enqueuedEvents;
+    Vector<Ref<Event>> m_enqueuedEvents;
 
     // Only used if the result type will be a cursor.
     IndexedDB::CursorType m_cursorType;

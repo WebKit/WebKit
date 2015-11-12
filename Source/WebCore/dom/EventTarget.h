@@ -123,8 +123,8 @@ public:
     virtual bool addEventListener(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture);
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
     virtual void removeAllEventListeners();
-    virtual bool dispatchEvent(PassRefPtr<Event>);
-    bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&); // DOM API
+    virtual bool dispatchEvent(Event&);
+    bool dispatchEvent(Event*, ExceptionCode&); // DOM API
     virtual void uncaughtExceptionInEventHandler();
 
     // Used for legacy "onEvent" attribute APIs.
@@ -137,7 +137,7 @@ public:
     bool hasCapturingEventListeners(const AtomicString& eventType);
     const EventListenerVector& getEventListeners(const AtomicString& eventType);
 
-    bool fireEventListeners(Event*);
+    bool fireEventListeners(Event&);
     bool isFiringEventListeners();
 
     void visitJSEventListeners(JSC::SlotVisitor&);
@@ -153,7 +153,7 @@ private:
     virtual void refEventTarget() = 0;
     virtual void derefEventTarget() = 0;
     
-    void fireEventListeners(Event*, EventTargetData*, EventListenerVector&);
+    void fireEventListeners(Event&, EventTargetData*, EventListenerVector&);
 
     friend class EventListenerIterator;
 };

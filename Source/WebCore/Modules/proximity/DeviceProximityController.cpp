@@ -57,7 +57,7 @@ bool DeviceProximityController::hasLastData()
     return deviceProximityClient()->hasLastData();
 }
 
-PassRefPtr<Event> DeviceProximityController::getLastEvent()
+RefPtr<Event> DeviceProximityController::getLastEvent()
 {
     return DeviceProximityEvent::create(eventNames().webkitdeviceproximityEvent, deviceProximityClient()->value(), deviceProximityClient()->min(), deviceProximityClient()->max());
 }

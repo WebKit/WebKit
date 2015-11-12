@@ -243,8 +243,8 @@ unsigned long long QuickTimePluginReplacement::movieSize() const
 void QuickTimePluginReplacement::postEvent(const String& eventName)
 {
     Ref<HTMLPlugInElement> protect(*m_parentElement);
-    RefPtr<Event> event = Event::create(eventName, false, true);
-    m_parentElement->dispatchEvent(event.get());
+    Ref<Event> event = Event::create(eventName, false, true);
+    m_parentElement->dispatchEvent(event);
 }
 
 #if PLATFORM(IOS)

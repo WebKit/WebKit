@@ -519,9 +519,9 @@ public:
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
 
     using EventTarget::dispatchEvent;
-    virtual bool dispatchEvent(PassRefPtr<Event>) override;
+    virtual bool dispatchEvent(Event&) override;
 
-    void dispatchScopedEvent(PassRefPtr<Event>);
+    void dispatchScopedEvent(Event&);
 
     virtual void handleLocalEvents(Event&);
 
@@ -533,10 +533,10 @@ public:
 #endif
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    bool dispatchTouchEvent(PassRefPtr<TouchEvent>);
+    bool dispatchTouchEvent(TouchEvent&);
 #endif
 #if ENABLE(INDIE_UI)
-    bool dispatchUIRequestEvent(PassRefPtr<UIRequestEvent>);
+    bool dispatchUIRequestEvent(UIRequestEvent&);
 #endif
 
     bool dispatchBeforeLoadEvent(const String& sourceURL);

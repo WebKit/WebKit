@@ -648,7 +648,7 @@ void WebSocket::dispatchOrQueueEvent(Ref<Event>&& event)
     if (m_shouldDelayEventFiring)
         m_pendingEvents.append(WTF::move(event));
     else
-        dispatchEvent(WTF::move(event));
+        dispatchEvent(event);
 }
 
 }  // namespace WebCore

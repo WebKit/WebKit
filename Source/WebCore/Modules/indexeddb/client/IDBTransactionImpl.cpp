@@ -346,7 +346,7 @@ void IDBTransaction::fireOnAbort()
     enqueueEvent(Event::create(eventNames().abortEvent, true, false));
 }
 
-void IDBTransaction::enqueueEvent(Ref<Event> event)
+void IDBTransaction::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(m_state != IndexedDB::TransactionState::Finished);
 
@@ -354,22 +354,22 @@ void IDBTransaction::enqueueEvent(Ref<Event> event)
         return;
 
     event->setTarget(this);
-    scriptExecutionContext()->eventQueue().enqueueEvent(&event.get());
+    scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
 }
 
-bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
+bool IDBTransaction::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBTransaction::dispatchEvent");
 
     ASSERT(scriptExecutionContext());
-    ASSERT(event->target() == this);
-    ASSERT(event->type() == eventNames().completeEvent || event->type() == eventNames().abortEvent);
+    ASSERT(event.target() == this);
+    ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
 
     Vector<RefPtr<EventTarget>> targets;
     targets.append(this);
     targets.append(db());
 
-    return IDBEventDispatcher::dispatch(event.get(), targets);
+    return IDBEventDispatcher::dispatch(event, targets);
 }
 
 Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& info)

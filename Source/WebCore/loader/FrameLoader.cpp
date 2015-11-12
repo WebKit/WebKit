@@ -2859,7 +2859,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
             // https://bugs.webkit.org/show_bug.cgi?id=116770
 
             if (!m_frame.document()->inPageCache()) {
-                RefPtr<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
+                Ref<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
                 // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed
                 // while dispatching the event, so protect it to prevent writing the end
                 // time into freed memory.
@@ -2905,18 +2905,18 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     if (!document->bodyOrFrameset())
         return true;
     
-    RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
+    Ref<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
     m_pageDismissalEventBeingDispatched = PageDismissalType::BeforeUnload;
 
     {
         ForbidPromptsScope forbidPrompts(m_frame.page());
-        domWindow->dispatchEvent(beforeUnloadEvent.get(), domWindow->document());
+        domWindow->dispatchEvent(beforeUnloadEvent, domWindow->document());
     }
 
     m_pageDismissalEventBeingDispatched = PageDismissalType::None;
 
     if (!beforeUnloadEvent->defaultPrevented())
-        document->defaultEventHandler(beforeUnloadEvent.get());
+        document->defaultEventHandler(beforeUnloadEvent.ptr());
     if (beforeUnloadEvent->returnValue().isNull())
         return true;
 

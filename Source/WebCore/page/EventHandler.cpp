@@ -3012,13 +3012,13 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
     if (keyDownEvent.type() != PlatformEvent::RawKeyDown)
         keyDownEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown, backwardCompatibilityMode);
-    RefPtr<KeyboardEvent> keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
+    Ref<KeyboardEvent> keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
     if (matchedAnAccessKey)
         keydown->setDefaultPrevented(true);
     keydown->setTarget(element);
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
-        element->dispatchEvent(keydown, IGNORE_EXCEPTION);
+        element->dispatchEvent(keydown);
         // If frame changed as a result of keydown dispatch, then return true to avoid sending a subsequent keypress message to the new frame.
         bool changedFocusedFrame = m_frame.page() && &m_frame != &m_frame.page()->focusController().focusedOrMainFrame();
         return keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
@@ -3029,7 +3029,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     // in order to match IE:
     // 1. preventing default handling of keydown and keypress events has no effect on IM input;
     // 2. if an input method handles the event, its keyCode is set to 229 in keydown event.
-    m_frame.editor().handleInputMethodKeydown(keydown.get());
+    m_frame.editor().handleInputMethodKeydown(keydown.ptr());
     
     bool handledByInputMethod = keydown->defaultHandled();
     
@@ -3040,10 +3040,10 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
         keydown->setDefaultHandled();
     }
     
-    if (accessibilityPreventsEventPropogation(keydown.get()))
+    if (accessibilityPreventsEventPropogation(keydown))
         keydown->stopPropagation();
 
-    element->dispatchEvent(keydown, IGNORE_EXCEPTION);
+    element->dispatchEvent(keydown);
     // If frame changed as a result of keydown dispatch, then return early to avoid sending a subsequent keypress message to the new frame.
     bool changedFocusedFrame = m_frame.page() && &m_frame != &m_frame.page()->focusController().focusedOrMainFrame();
     bool keydownResult = keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
@@ -3062,14 +3062,14 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     keyPressEvent.disambiguateKeyDownEvent(PlatformEvent::Char, backwardCompatibilityMode);
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
-    RefPtr<KeyboardEvent> keypress = KeyboardEvent::create(keyPressEvent, m_frame.document()->defaultView());
+    Ref<KeyboardEvent> keypress = KeyboardEvent::create(keyPressEvent, m_frame.document()->defaultView());
     keypress->setTarget(element);
     if (keydownResult)
         keypress->setDefaultPrevented(true);
 #if PLATFORM(COCOA)
     keypress->keypressCommands() = keydown->keypressCommands();
 #endif
-    element->dispatchEvent(keypress, IGNORE_EXCEPTION);
+    element->dispatchEvent(keypress);
 
     return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();
 }
@@ -3186,7 +3186,7 @@ void EventHandler::handleKeyboardSelectionMovementForAccessibility(KeyboardEvent
     }
 }
 
-bool EventHandler::accessibilityPreventsEventPropogation(KeyboardEvent* event)
+bool EventHandler::accessibilityPreventsEventPropogation(KeyboardEvent& event)
 {
 #if PLATFORM(COCOA)
     if (!AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
@@ -3196,9 +3196,9 @@ bool EventHandler::accessibilityPreventsEventPropogation(KeyboardEvent* event)
         return false;
 
     // Check for key events that are relevant to accessibility: tab and arrows keys that change focus
-    if (event->keyIdentifier() == "U+0009")
+    if (event.keyIdentifier() == "U+0009")
         return true;
-    FocusDirection direction = focusDirectionForKey(event->keyIdentifier());
+    FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
     if (direction != FocusDirectionNone)
         return true;
 #else
@@ -3494,10 +3494,10 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     if (FrameView* view = m_frame.view())
         view->disableLayerFlushThrottlingTemporarilyForInteraction();
 
-    RefPtr<TextEvent> event = TextEvent::create(m_frame.document()->domWindow(), text, inputType);
+    Ref<TextEvent> event = TextEvent::create(m_frame.document()->domWindow(), text, inputType);
     event->setUnderlyingEvent(underlyingEvent);
 
-    target->dispatchEvent(event, IGNORE_EXCEPTION);
+    target->dispatchEvent(event);
     return event->defaultHandled();
 }
     
@@ -3899,11 +3899,11 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             RefPtr<TouchList> targetTouches(isTouchCancelEvent ? emptyList : touchesByTarget.get(touchEventTarget));
             ASSERT(targetTouches);
 
-            RefPtr<TouchEvent> touchEvent =
+            Ref<TouchEvent> touchEvent =
                 TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
                     stateName, touchEventTarget->toNode()->document().defaultView(),
                     0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
-            touchEventTarget->toNode()->dispatchTouchEvent(touchEvent.get());
+            touchEventTarget->toNode()->dispatchTouchEvent(touchEvent);
             swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();
         }
     }

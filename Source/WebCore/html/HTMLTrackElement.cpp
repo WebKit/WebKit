@@ -260,7 +260,7 @@ void HTMLTrackElement::didCompleteLoad(LoadStatus status)
 
     if (status == Failure) {
         setReadyState(HTMLTrackElement::TRACK_ERROR);
-        dispatchEvent(Event::create(eventNames().errorEvent, false, false), IGNORE_EXCEPTION);
+        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
         return;
     }
 
@@ -271,7 +271,7 @@ void HTMLTrackElement::didCompleteLoad(LoadStatus status)
 
     //     2. If the file was successfully processed, fire a simple event named load at the 
     //        track element.
-    dispatchEvent(Event::create(eventNames().loadEvent, false, false), IGNORE_EXCEPTION);
+    dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 }
 
 // NOTE: The values in the TextTrack::ReadinessState enum must stay in sync with those in HTMLTrackElement::ReadyState.

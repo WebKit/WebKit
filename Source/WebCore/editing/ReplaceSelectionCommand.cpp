@@ -182,16 +182,16 @@ ReplacementFragment::ReplacementFragment(Document& document, DocumentFragment* f
     restoreAndRemoveTestRenderingNodesToFragment(holder.get());
 
     // Give the root a chance to change the text.
-    RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
-    editableRoot->dispatchEvent(evt, ASSERT_NO_EXCEPTION);
-    if (text != evt->text() || !editableRoot->hasRichlyEditableStyle()) {
+    Ref<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(text);
+    editableRoot->dispatchEvent(event);
+    if (text != event->text() || !editableRoot->hasRichlyEditableStyle()) {
         restoreAndRemoveTestRenderingNodesToFragment(holder.get());
 
         RefPtr<Range> range = selection.toNormalizedRange();
         if (!range)
             return;
 
-        m_fragment = createFragmentFromText(*range, evt->text());
+        m_fragment = createFragmentFromText(*range, event->text());
         if (!m_fragment->firstChild())
             return;
 

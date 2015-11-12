@@ -788,7 +788,7 @@ public:
     void setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
     void setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
     EventListener* getWindowAttributeEventListener(const AtomicString& eventType);
-    WEBCORE_EXPORT void dispatchWindowEvent(PassRefPtr<Event>, PassRefPtr<EventTarget> = nullptr);
+    WEBCORE_EXPORT void dispatchWindowEvent(Event&, EventTarget* = nullptr);
     void dispatchWindowLoadEvent();
 
     RefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
@@ -1092,9 +1092,9 @@ public:
     virtual bool isContextThread() const override final;
     virtual bool isJSExecutionForbidden() const override final { return false; }
 
-    void enqueueWindowEvent(PassRefPtr<Event>);
-    void enqueueDocumentEvent(PassRefPtr<Event>);
-    void enqueueOverflowEvent(PassRefPtr<Event>);
+    void enqueueWindowEvent(Ref<Event>&&);
+    void enqueueDocumentEvent(Ref<Event>&&);
+    void enqueueOverflowEvent(Ref<Event>&&);
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);

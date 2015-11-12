@@ -169,9 +169,9 @@ public:
         if (!horizontalLayoutOverflowChanged && !verticalLayoutOverflowChanged)
             return;
 
-        RefPtr<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow);
+        Ref<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow);
         overflowEvent->setTarget(m_block->element());
-        m_block->document().enqueueOverflowEvent(overflowEvent.release());
+        m_block->document().enqueueOverflowEvent(WTF::move(overflowEvent));
     }
 
 private:

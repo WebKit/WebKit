@@ -2090,19 +2090,19 @@ void Node::handleLocalEvents(Event& event)
     if (is<Element>(*this) && downcast<Element>(*this).isDisabledFormControl() && event.isMouseEvent())
         return;
 
-    fireEventListeners(&event);
+    fireEventListeners(event);
 }
 
-void Node::dispatchScopedEvent(PassRefPtr<Event> event)
+void Node::dispatchScopedEvent(Event& event)
 {
     EventDispatcher::dispatchScopedEvent(*this, event);
 }
 
-bool Node::dispatchEvent(PassRefPtr<Event> event)
+bool Node::dispatchEvent(Event& event)
 {
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (is<TouchEvent>(*event))
-        return dispatchTouchEvent(adoptRef(downcast<TouchEvent>(event.leakRef())));
+    if (is<TouchEvent>(event))
+        return dispatchTouchEvent(downcast<TouchEvent>(event));
 #endif
     return EventDispatcher::dispatchEvent(this, event);
 }
@@ -2126,24 +2126,24 @@ void Node::dispatchSubtreeModifiedEvent()
 bool Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    RefPtr<UIEvent> event = UIEvent::create(eventNames().DOMActivateEvent, true, true, document().defaultView(), detail);
+    Ref<UIEvent> event = UIEvent::create(eventNames().DOMActivateEvent, true, true, document().defaultView(), detail);
     event->setUnderlyingEvent(underlyingEvent);
     dispatchScopedEvent(event);
     return event->defaultHandled();
 }
 
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-bool Node::dispatchTouchEvent(PassRefPtr<TouchEvent> event)
+bool Node::dispatchTouchEvent(TouchEvent& event)
 {
     return EventDispatcher::dispatchEvent(this, event);
 }
 #endif
 
 #if ENABLE(INDIE_UI)
-bool Node::dispatchUIRequestEvent(PassRefPtr<UIRequestEvent> event)
+bool Node::dispatchUIRequestEvent(UIRequestEvent& event)
 {
     EventDispatcher::dispatchEvent(this, event);
-    return event->defaultHandled() || event->defaultPrevented();
+    return event.defaultHandled() || event.defaultPrevented();
 }
 #endif
     
@@ -2153,8 +2153,8 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
         return true;
 
     Ref<Node> protect(*this);
-    RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
-    dispatchEvent(beforeLoadEvent.get());
+    Ref<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
+    dispatchEvent(beforeLoadEvent);
     return !beforeLoadEvent->defaultPrevented();
 }
 

@@ -48,7 +48,7 @@ public:
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const override final;
-    virtual bool dispatchEvent(PassRefPtr<Event>) override final;
+    virtual bool dispatchEvent(Event&) override final;
 
 protected:
     virtual bool shouldEnqueueEvent() const override;

@@ -3184,14 +3184,14 @@ void FrameView::sendResizeEventIfNeeded()
     bool isMainFrame = frame().isMainFrame();
     bool canSendResizeEventSynchronously = isMainFrame && !m_shouldAutoSize;
 
-    RefPtr<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
+    Ref<Event> resizeEvent = Event::create(eventNames().resizeEvent, false, false);
     if (canSendResizeEventSynchronously)
-        frame().document()->dispatchWindowEvent(resizeEvent.release());
+        frame().document()->dispatchWindowEvent(resizeEvent);
     else {
         // FIXME: Queueing this event for an unpredictable time in the future seems
         // intrinsically racy. By the time this resize event fires, the frame might
         // be resized again, so we could end up with two resize events for the same size.
-        frame().document()->enqueueWindowEvent(resizeEvent.release());
+        frame().document()->enqueueWindowEvent(WTF::move(resizeEvent));
     }
 
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
@@ -3377,11 +3377,11 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
 
-        RefPtr<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
+        Ref<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
             verticalOverflowChanged, verticalOverflow);
         overflowEvent->setTarget(viewportRenderer->element());
 
-        frame().document()->enqueueOverflowEvent(overflowEvent.release());
+        frame().document()->enqueueOverflowEvent(WTF::move(overflowEvent));
     }
 }
 

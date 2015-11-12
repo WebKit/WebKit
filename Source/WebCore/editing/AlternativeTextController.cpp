@@ -682,10 +682,10 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     if (FrameView* view = m_frame.view())
         view->disableLayerFlushThrottlingTemporarilyForInteraction();
 
-    RefPtr<TextEvent> event = TextEvent::createForDictation(m_frame.document()->domWindow(), text, dictationAlternatives);
+    Ref<TextEvent> event = TextEvent::createForDictation(m_frame.document()->domWindow(), text, dictationAlternatives);
     event->setUnderlyingEvent(triggeringEvent);
 
-    target->dispatchEvent(event, IGNORE_EXCEPTION);
+    target->dispatchEvent(event);
     return event->defaultHandled();
 }
 

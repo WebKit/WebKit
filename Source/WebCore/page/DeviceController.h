@@ -48,12 +48,12 @@ public:
     void removeDeviceEventListener(DOMWindow*);
     void removeAllDeviceEventListeners(DOMWindow*);
 
-    void dispatchDeviceEvent(PassRefPtr<Event>);
+    void dispatchDeviceEvent(Event&);
     bool isActive() { return !m_listeners.isEmpty(); }
     DeviceClient* client() { return m_client; }
 
     virtual bool hasLastData() { return false; }
-    virtual PassRefPtr<Event> getLastEvent() { return 0; }
+    virtual RefPtr<Event> getLastEvent() { return nullptr; }
 
 protected:
     void fireDeviceEvent();

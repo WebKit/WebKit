@@ -84,7 +84,7 @@ void BatteryController::updateBatteryStatus(PassRefPtr<BatteryStatus> batterySta
 
 void BatteryController::didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> batteryStatus)
 {
-    RefPtr<Event> event = Event::create(eventType, false, false);
+    Ref<Event> event = Event::create(eventType, false, false);
     RefPtr<BatteryStatus> battery = batteryStatus;
     for (auto& listener : m_listeners)
         listener->didChangeBatteryStatus(event, battery);
