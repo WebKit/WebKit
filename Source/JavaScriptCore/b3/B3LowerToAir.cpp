@@ -1218,9 +1218,7 @@ private:
         }
 
         case Add: {
-            // FIXME: Need a story for doubles.
-            // https://bugs.webkit.org/show_bug.cgi?id=150991
-            appendBinOp<Add32, Add64, Air::Oops, Commutative>(
+            appendBinOp<Add32, Add64, AddDouble, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }

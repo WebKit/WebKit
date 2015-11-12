@@ -64,6 +64,11 @@ inline bool Value::isConstant() const
     }
 }
 
+inline bool Value::isInteger() const
+{
+    return type() == Int32 || type() == Int64;
+}
+
 inline bool Value::hasInt32() const
 {
     return !!as<Const32Value>();
@@ -146,6 +151,15 @@ inline bool Value::isEqualToDouble(double value) const
 inline bool Value::hasNumber() const
 {
     return hasInt() || hasDouble();
+}
+
+inline bool Value::isNegativeZero() const
+{
+    if (hasDouble()) {
+        double value = asDouble();
+        return !value && std::signbit(value);
+    }
+    return false;
 }
 
 template<typename T>

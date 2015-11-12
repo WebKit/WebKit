@@ -132,6 +132,10 @@ And64 U:G, UD:G
     Tmp, Tmp
     Imm, Tmp
 
+AddDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 Lshift32 U:G, UD:G
     Tmp*, Tmp
     Imm, Tmp

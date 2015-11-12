@@ -43,6 +43,7 @@
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "VM.h"
+#include <cmath>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Threading.h>
@@ -224,6 +225,70 @@ void testAddLoadTwice()
 
     test(0);
     test(1);
+}
+
+void testAddArgDouble(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), value, value));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), a + a));
+}
+
+void testAddArgsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a, b), a + b));
+}
+
+void testAddArgImmDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), a + b));
+}
+
+void testAddImmArgDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, b), a + b));
+}
+
+void testAddImmsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), a + b));
 }
 
 void testMulArg(int a)
@@ -3272,6 +3337,17 @@ void testSwitchChillDiv(unsigned degree, unsigned gap = 1)
     CHECK(!invoke<int32_t>(*code, degree * gap + 1, 42, 11));
 }
 
+// Make sure the compiler does not try to optimize anything out.
+NEVER_INLINE double zero()
+{
+    return 0.;
+}
+
+double negativeZero()
+{
+    return -zero();
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -3313,6 +3389,30 @@ void run(const char* filter)
     RUN(testAddArgs32(1, 1));
     RUN(testAddArgs32(1, 2));
     RUN(testAddLoadTwice());
+
+    RUN(testAddArgDouble(M_PI));
+    RUN(testAddArgsDouble(M_PI, 1));
+    RUN(testAddArgsDouble(M_PI, -M_PI));
+    RUN(testAddArgImmDouble(M_PI, 1));
+    RUN(testAddArgImmDouble(M_PI, 0));
+    RUN(testAddArgImmDouble(M_PI, negativeZero()));
+    RUN(testAddArgImmDouble(0, 0));
+    RUN(testAddArgImmDouble(0, negativeZero()));
+    RUN(testAddArgImmDouble(negativeZero(), 0));
+    RUN(testAddArgImmDouble(negativeZero(), negativeZero()));
+    RUN(testAddImmArgDouble(M_PI, 1));
+    RUN(testAddImmArgDouble(M_PI, 0));
+    RUN(testAddImmArgDouble(M_PI, negativeZero()));
+    RUN(testAddImmArgDouble(0, 0));
+    RUN(testAddImmArgDouble(0, negativeZero()));
+    RUN(testAddImmArgDouble(negativeZero(), 0));
+    RUN(testAddImmArgDouble(negativeZero(), negativeZero()));
+    RUN(testAddImmsDouble(M_PI, 1));
+    RUN(testAddImmsDouble(M_PI, 0));
+    RUN(testAddImmsDouble(M_PI, negativeZero()));
+    RUN(testAddImmsDouble(0, 0));
+    RUN(testAddImmsDouble(0, negativeZero()));
+    RUN(testAddImmsDouble(negativeZero(), negativeZero()));
 
     RUN(testMulArg(5));
     RUN(testMulArgs(1, 1));
@@ -3787,7 +3887,7 @@ void run(const char* filter)
     RUN(testCallFunctionWithHellaArguments());
 
     RUN(testReturnDouble(0.0));
-    RUN(testReturnDouble(-0.0));
+    RUN(testReturnDouble(negativeZero()));
     RUN(testReturnDouble(42.5));
 
     RUN(testCallSimpleDouble(1, 2));

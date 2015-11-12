@@ -1,3 +1,29 @@
+2015-11-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Support Doubles with B3's Add
+        https://bugs.webkit.org/show_bug.cgi?id=151164
+
+        Reviewed by Filip Pizlo.
+
+        I tweaked ReduceStrength a bit to maintain correctness.
+        Nothing fancy otherwise.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::isInteger):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::bitWiseEqual):
+        (JSC::B3::testAddArgDouble):
+        (JSC::B3::testAddArgsDouble):
+        (JSC::B3::testAddArgImmDouble):
+        (JSC::B3::testAddImmArgDouble):
+        (JSC::B3::testAddImmsDouble):
+        (JSC::B3::run):
+
 2015-11-11  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile a program with Switch

@@ -156,10 +156,10 @@ private:
                 break;
             }
 
-            // Turn this: Add(value, value)
+            // Turn this: Integer Add(value, value)
             // Into this: Shl(value, 1)
             // This is a useful canonicalization. It's not meant to be a strength reduction.
-            if (m_value->child(0) == m_value->child(1)) {
+            if (m_value->isInteger() && m_value->child(0) == m_value->child(1)) {
                 replaceWithNewValue(
                     m_proc.add<Value>(
                         Shl, m_value->origin(), m_value->child(0),
@@ -169,7 +169,13 @@ private:
 
             // Turn this: Add(value, zero)
             // Into an Identity.
-            if (m_value->child(1)->isInt(0)) {
+            //
+            // Addition is subtle with doubles. Zero is not the neutral value, negative zero is:
+            //    0 + 0 = 0
+            //    0 + -0 = 0
+            //    -0 + 0 = 0
+            //    -0 + -0 = -0
+            if (m_value->child(1)->isInt(0) || m_value->child(1)->isNegativeZero()) {
                 m_value->replaceWithIdentity(m_value->child(0));
                 m_changed = true;
                 break;
