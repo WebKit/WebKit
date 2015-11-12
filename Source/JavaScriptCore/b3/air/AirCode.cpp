@@ -68,6 +68,7 @@ StackSlot* Code::addStackSlot(StackSlotValue* value)
 Special* Code::addSpecial(std::unique_ptr<Special> special)
 {
     Special* result = special.get();
+    result->m_code = this;
     m_specials.append(WTF::move(special));
     return result;
 }

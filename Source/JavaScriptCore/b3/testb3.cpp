@@ -2577,6 +2577,33 @@ void testSimplePatchpoint()
     CHECK(compileAndRun<int>(proc, 1, 2) == 3);
 }
 
+void testPatchpointCallArg()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->append(ConstrainedValue(arg1, ValueRep::stackArgument(0)));
+    patchpoint->append(ConstrainedValue(arg2, ValueRep::stackArgument(8)));
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 3);
+            CHECK(params.reps[0].isGPR());
+            CHECK(params.reps[1].isStack());
+            CHECK(params.reps[2].isStack());
+            jit.load32(
+                CCallHelpers::Address(GPRInfo::callFrameRegister, params.reps[1].offsetFromFP()),
+                params.reps[0].gpr());
+            jit.add32(
+                CCallHelpers::Address(GPRInfo::callFrameRegister, params.reps[2].offsetFromFP()),
+                params.reps[0].gpr());
+        });
+    root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+}
+
 void testSimpleCheck()
 {
     Procedure proc;
@@ -3606,6 +3633,7 @@ void run(const char* filter)
     RUN(testComplex(4, 384));
 
     RUN(testSimplePatchpoint());
+    RUN(testPatchpointCallArg());
     RUN(testSimpleCheck());
     RUN(testCheckLessThan());
     RUN(testCheckMegaCombo());

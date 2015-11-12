@@ -151,9 +151,17 @@ bool StackmapSpecial::isValidImpl(
             ASSERT_NOT_REACHED();
             break;
         case ValueRep::StackArgument:
-            if (arg != Arg::callArg(rep.offsetFromSP()))
-                return false;
-            break;
+            if (arg == Arg::callArg(rep.offsetFromSP()))
+                break;
+            if (arg.isAddr() && code().frameSize()) {
+                if (arg.base() == Tmp(GPRInfo::callFrameRegister)
+                    && arg.offset() == rep.offsetFromSP() - code().frameSize())
+                    break;
+                if (arg.base() == Tmp(MacroAssembler::stackPointerRegister)
+                    && arg.offset() == rep.offsetFromSP())
+                    break;
+            }
+            return false;
         case ValueRep::Constant:
             // This is not a valid input representation.
             ASSERT_NOT_REACHED();

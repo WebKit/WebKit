@@ -1,3 +1,33 @@
+2015-11-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Patchpoints with stackArgument constraints should work
+        https://bugs.webkit.org/show_bug.cgi?id=151177
+
+        Reviewed by Saam Barati.
+
+        The only thing broken was that StackmapSpecial's isValidForm would reject Arg::addr, so
+        validation would fail after allocateStack.
+
+        In order for StackmapSpecial to validate Arg::addr, it needs to know the frame size. To know
+        the frame size, it needs access to Code&. So, this changes Air::Special to always have a
+        pointer back to Code.
+
+        Other than this already worked.
+
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addSpecial):
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::Special):
+        * b3/air/AirSpecial.h:
+        (JSC::B3::Air::Special::code):
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpoint):
+        (JSC::B3::testPatchpointCallArg):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::run):
+
 2015-11-11  Mark Lam  <mark.lam@apple.com>
 
         Add ability to insert probes in LLVM IR that we generate.

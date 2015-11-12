@@ -36,6 +36,7 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+class Code;
 struct GenerationContext;
 
 class Special {
@@ -46,6 +47,8 @@ public:
     
     Special();
     virtual ~Special();
+
+    Code& code() const { return *m_code; }
 
     CString name() const;
 
@@ -97,6 +100,7 @@ private:
 
     const char* m_name;
     unsigned m_index;
+    Code* m_code;
 };
 
 class DeepSpecialDump {
