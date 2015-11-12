@@ -28,8 +28,9 @@
 #include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"
 #include <glib.h>
+#include <wtf/Condition.h>
 #include <wtf/Forward.h>
-#include <wtf/glib/GThreadSafeMainLoopSource.h>
+#include <wtf/RunLoop.h>
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 #include "TextureMapperPlatformLayer.h"
@@ -117,6 +118,7 @@ protected:
     virtual bool handleSyncMessage(GstMessage*);
 
     void triggerRepaint(GstSample*);
+    void repaint();
 
     static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
 #if USE(GSTREAMER_GL)
@@ -152,9 +154,9 @@ protected:
     mutable GMutex m_sampleMutex;
     GRefPtr<GstSample> m_sample;
 #if USE(GSTREAMER_GL)
-    GThreadSafeMainLoopSource m_drawTimerHandler;
-    GCond m_drawCondition;
-    GMutex m_drawMutex;
+    RunLoop::Timer<MediaPlayerPrivateGStreamerBase> m_drawTimer;
+    Condition m_drawCondition;
+    Lock m_drawMutex;
 #endif
     mutable FloatSize m_videoSize;
     bool m_usingFallbackVideoSink;

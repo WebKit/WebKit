@@ -107,13 +107,12 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_fpsSink(0)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
+#if USE(GSTREAMER_GL)
+    , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint())
+#endif
     , m_usingFallbackVideoSink(false)
 {
     g_mutex_init(&m_sampleMutex);
-#if USE(GSTREAMER_GL)
-    g_cond_init(&m_drawCondition);
-    g_mutex_init(&m_drawMutex);
-#endif
 }
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
@@ -127,11 +126,6 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
     m_player = 0;
 
     g_signal_handlers_disconnect_matched(m_volumeElement.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-
-#if USE(GSTREAMER_GL)
-    g_cond_clear(&m_drawCondition);
-    g_mutex_clear(&m_drawMutex);
-#endif
 
     if (m_pipeline) {
         GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -421,6 +415,28 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
 }
 #endif
 
+void MediaPlayerPrivateGStreamerBase::repaint()
+{
+    ASSERT(m_sample);
+    ASSERT(isMainThread());
+
+#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+    if (supportsAcceleratedRendering() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player) && client()) {
+        client()->setPlatformLayerNeedsDisplay();
+#if USE(GSTREAMER_GL)
+        m_drawCondition.notifyOne();
+#endif
+        return;
+    }
+#endif
+
+    m_player->repaint();
+
+#if USE(GSTREAMER_GL)
+    m_drawCondition.notifyOne();
+#endif
+}
+
 void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 {
     {
@@ -432,29 +448,13 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
     {
         ASSERT(!isMainThread());
 
-        WTF::GMutexLocker<GMutex> lock(m_drawMutex);
-
-        m_drawTimerHandler.schedule("[WebKit] video render", [this] {
-            // Rendering should be done from the main thread
-            // because this is where the GL APIs were initialized.
-            WTF::GMutexLocker<GMutex> lock(m_drawMutex);
-#if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
-            if (supportsAcceleratedRendering() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player) && client())
-                client()->setPlatformLayerNeedsDisplay();
-            g_cond_signal(&m_drawCondition);
-#endif
-        });
-        g_cond_wait(&m_drawCondition, &m_drawMutex);
+        LockHolder locker(m_drawMutex);
+        m_drawTimer.startOneShot(0);
+        m_drawCondition.wait();
     }
-
-#elif USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
-    if (supportsAcceleratedRendering() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player) && client()) {
-        client()->setPlatformLayerNeedsDisplay();
-        return;
-    }
+#else
+    repaint();
 #endif
-
-    m_player->repaint();
 }
 
 void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreamerBase* player, GstSample* sample)
