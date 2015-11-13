@@ -43,7 +43,6 @@ void computeUsesForBytecodeOffset(
     case op_new_regexp:
     case op_new_array_buffer:
     case op_throw_static_error:
-    case op_assert:
     case op_debug:
     case op_jneq_ptr:
     case op_loop_hint:
@@ -55,6 +54,7 @@ void computeUsesForBytecodeOffset(
     case op_create_direct_arguments:
     case op_create_out_of_band_arguments:
         return;
+    case op_assert:
     case op_get_scope:
     case op_load_arrowfunction_this:
     case op_to_this:
