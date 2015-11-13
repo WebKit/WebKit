@@ -38,7 +38,14 @@ class MachSendRight;
 
 class IOSurface final {
 public:
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, ColorSpace);
+    enum class Format {
+        RGBA,
+#if PLATFORM(IOS)
+        YUV422
+#endif
+    };
+
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, ColorSpace, Format = Format::RGBA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, IntSize contextSize, ColorSpace);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const MachSendRight&, ColorSpace);
     static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, ColorSpace);
@@ -73,6 +80,7 @@ public:
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
     ColorSpace colorSpace() const { return m_colorSpace; }
+    Format format() const { return m_format; }
 
     WEBCORE_EXPORT bool isInUse() const;
 
@@ -80,8 +88,12 @@ public:
     // an accurate result from isInUse(), it needs to be released.
     WEBCORE_EXPORT void releaseGraphicsContext();
 
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT static void convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, std::function<void(std::unique_ptr<WebCore::IOSurface>)>);
+#endif
+
 private:
-    IOSurface(IntSize, ColorSpace);
+    IOSurface(IntSize, ColorSpace, Format);
     IOSurface(IntSize, IntSize contextSize, ColorSpace);
     IOSurface(IOSurfaceRef, ColorSpace);
 
@@ -90,6 +102,7 @@ private:
     void setContextSize(IntSize);
 
     ColorSpace m_colorSpace;
+    Format m_format;
     IntSize m_size;
     IntSize m_contextSize;
     size_t m_totalBytes;
