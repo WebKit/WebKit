@@ -1,3 +1,16 @@
+2015-11-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Deleting a probe should remove probe breakpoint actions only.
+        https://bugs.webkit.org/show_bug.cgi?id=151245
+
+        Reviewed by Brian Burg.
+
+        Fixed breakpoint action filter.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.clearActions):
+        Missing return in named function expression.
+
 2015-11-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Auto-log inspect node selected elements to the console
