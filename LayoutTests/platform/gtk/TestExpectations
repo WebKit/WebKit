@@ -697,6 +697,8 @@ webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html 
 
 webkit.org/b/144771 editing/selection/selection-invalid-offset.html [ Crash ]
 
+webkit.org/b/151260 imported/blink/editing/execCommand/indent-button-crash.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1253,7 +1255,7 @@ webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html
 
 webkit.org/b/120682 inspector/page/archive.html [ Timeout ]
 
-webkit.org/b/122571 http/tests/inspector/console/access-inspected-object.html [ Timeout Pass ]
+webkit.org/b/122571 http/tests/inspector/console/cross-domain-inspected-node-access.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/debugger/setBreakpoint.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/debugger/call-frame-function-name.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/debugger/setBreakpoint-options-exception.html [ Timeout Pass ]
@@ -2533,6 +2535,39 @@ webkit.org/b/148938 accessibility/table-fallback-roles-expose-element-attributes
 webkit.org/b/148938 accessibility/table-sections.html [ Failure ]
 webkit.org/b/148938 accessibility/table-with-footer-section-above-body.html [ Failure ]
 webkit.org/b/148938 accessibility/table-with-missing-aria-role-rows.html [ Failure ]
+
+webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/squashing/squash-overflow-hidden-contents.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/squashing/squash-overflow-hidden-scrolltop.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/squashing/subpixel-rounding.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/squashing/transform-squashed-owner.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/css3/blending/mix-blend-mode-background-size.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/css3/blending/mix-blend-mode-with-opacity-change-js.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/css3/blending/svg-blend-overlapping-elements.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/css3/blending/svg-isolation-foreign-no-isolation.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/css3/blending/svg-isolation-nested-svg-no-isolation.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/editing/selection/deleteFromDocument-crash.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/css/tab-size-complex-path.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/css/text-overflow-ellipsis-button.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/events/click-focus-keydown-no-ring.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/gradients/large-vertical-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/multicol/composited-relpos-2nd-column.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/multicol/composited-relpos-simple.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/text/international/complex-text-space-in-second-font.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/text/tab-renders-as-space.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/text/word-spacing-nbsp.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/custom/feDisplacementMap-invalid-selector.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/filters/big-viewbox.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/filters/feOffset-nonuniform-scale.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/filters/filter-huge-clamping.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
