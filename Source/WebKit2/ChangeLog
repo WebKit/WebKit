@@ -1,3 +1,11 @@
+2015-11-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Follow-up to r192437. Add availability macros.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2015-11-13  Anders Carlsson  <andersca@apple.com>
 
         Add identifier strings for a bunch of context menu items
