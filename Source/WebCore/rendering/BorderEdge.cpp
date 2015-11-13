@@ -46,16 +46,6 @@ BorderEdge::BorderEdge(LayoutUnit edgeWidth, Color edgeColor, EBorderStyle edgeS
     m_flooredToDevicePixelWidth = floorToDevicePixel(edgeWidth, devicePixelRatio);
 }
 
-BorderEdge::BorderEdge()
-    : m_width(LayoutUnit::fromPixel(0))
-    , m_style(BHIDDEN)
-    , m_isTransparent(false)
-    , m_isPresent(false)
-    , m_flooredToDevicePixelWidth(0)
-    , m_devicePixelRatio(1)
-{
-}
-
 void BorderEdge::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle& style, float deviceScaleFactor, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     bool horizontal = style.isHorizontalWritingMode();

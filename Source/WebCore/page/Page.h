@@ -563,7 +563,7 @@ private:
 
     float m_pageScaleFactor;
     float m_zoomedOutPageScaleFactor;
-    float m_deviceScaleFactor;
+    float m_deviceScaleFactor { 1 };
     float m_viewScaleFactor { 1 };
 
     float m_topContentInset;
