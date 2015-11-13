@@ -70,7 +70,7 @@ function parseCSSImage(s)
     // Generator functions can have CSS images as values themself.
     // These functions will call parseCSSImage for each CSS Image.
     switch (functionName) {
-    case "-webkit-filter":
+    case "filter":
         return parseFilterImage(functionValue);
     case "-webkit-cross-fade":
         return parseCrossFade(functionValue);

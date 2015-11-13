@@ -246,7 +246,7 @@ void TextureMapperAnimation::applyInternal(Client* client, const AnimationValue&
     case AnimatedPropertyTransform:
         client->setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize, m_listsMatch));
         return;
-    case AnimatedPropertyWebkitFilter:
+    case AnimatedPropertyFilter:
         client->setAnimatedFilters(applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize));
         return;
     default:

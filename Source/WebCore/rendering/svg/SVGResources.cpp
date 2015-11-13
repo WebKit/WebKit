@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGResources.h"
 
+#include "FilterOperation.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
@@ -177,7 +178,7 @@ static inline void registerPendingResource(SVGDocumentExtensions& extensions, co
     extensions.addPendingResource(id, &element);
 }
 
-bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVGRenderStyle& svgStyle)
+bool SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)
 {
     ASSERT(renderer.element());
     ASSERT_WITH_SECURITY_IMPLICATION(renderer.element()->isSVGElement());
@@ -195,6 +196,8 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVG
     if (tagName.isNull())
         return false;
 
+    const SVGRenderStyle& svgStyle = style.svgStyle();
+
     bool foundResources = false;
     if (clipperFilterMaskerTags().contains(tagName)) {
         if (svgStyle.hasClipper()) {
@@ -205,12 +208,19 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVG
                 registerPendingResource(extensions, id, element);
         }
 
-        if (svgStyle.hasFilter()) {
-            AtomicString id(svgStyle.filterResource());
-            if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id)))
-                foundResources = true;
-            else
-                registerPendingResource(extensions, id, element);
+        if (style.hasFilter()) {
+            const FilterOperations& filterOperations = style.filter();
+            if (filterOperations.size() == 1) {
+                const FilterOperation& filterOperation = *filterOperations.at(0);
+                if (filterOperation.type() == FilterOperation::REFERENCE) {
+                    const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
+                    AtomicString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), element.document());
+                    if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id)))
+                        foundResources = true;
+                    else
+                        registerPendingResource(extensions, id, element);
+                }
+            }
         }
 
         if (svgStyle.hasMasker()) {

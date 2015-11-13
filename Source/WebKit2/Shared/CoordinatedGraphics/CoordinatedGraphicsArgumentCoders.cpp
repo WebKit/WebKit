@@ -448,7 +448,7 @@ void ArgumentCoder<TextureMapperAnimation>::encode(ArgumentEncoder& encoder, con
         case AnimatedPropertyTransform:
             encoder << static_cast<const TransformAnimationValue&>(value).value();
             break;
-        case AnimatedPropertyWebkitFilter:
+        case AnimatedPropertyFilter:
             encoder << static_cast<const FilterAnimationValue&>(value).value();
             break;
         default:
@@ -534,7 +534,7 @@ bool ArgumentCoder<TextureMapperAnimation>::decode(ArgumentDecoder& decoder, Tex
             keyframes.insert(std::make_unique<TransformAnimationValue>(keyTime, transform, timingFunction.get()));
             break;
         }
-        case AnimatedPropertyWebkitFilter: {
+        case AnimatedPropertyFilter: {
             FilterOperations filter;
             if (!decoder.decode(filter))
                 return false;

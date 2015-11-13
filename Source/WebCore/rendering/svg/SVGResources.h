@@ -29,6 +29,7 @@ namespace WebCore {
 class Document;
 class RenderElement;
 class RenderObject;
+class RenderStyle;
 class RenderSVGResourceClipper;
 class RenderSVGResourceContainer;
 class RenderSVGResourceFilter;
@@ -42,7 +43,7 @@ class SVGResources {
 public:
     SVGResources();
 
-    bool buildCachedResources(const RenderElement&, const SVGRenderStyle&);
+    bool buildCachedResources(const RenderElement&, const RenderStyle&);
 
     // Ordinary resources
     RenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper : 0; }

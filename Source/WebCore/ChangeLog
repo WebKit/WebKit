@@ -1,5 +1,106 @@
 2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188647. rdar://problem/23432373
+
+    2015-08-18  Dean Jackson  <dino@apple.com>
+
+            Support CSS filters without webkit prefix
+            https://bugs.webkit.org/show_bug.cgi?id=148138
+            <rdar://problem/22331434>
+
+            Reviewed by Sam Weinig.
+
+            Add support for the un-prefixed form of the CSS filter property.
+            This was straightforward for the general case on HTML content.
+            It was a bit more tricky on SVG content, where there already
+            was an existing "filter" property/attribute. The parsing
+            code is now shared between SVG and HTML, as is the
+            computed style output.
+
+            Covered by updating the existing tests, and
+            adding one new test: css3/filters/unprefixed.html
+
+            * css/CSSComputedStyleDeclaration.cpp: Rename CSSPropertyWebkitFilter to CSSPropertyFilter.
+            (WebCore::isLayoutDependent):
+            (WebCore::ComputedStyleExtractor::propertyValue):
+
+            * css/CSSFilterImageValue.cpp:
+            (WebCore::CSSFilterImageValue::customCSSText): Use "filter(" as the prefix.
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue): Rename CSSPropertyWebkitFilter to CSSPropertyFilter.
+            (WebCore::CSSParser::isGeneratedImageValue): Add support for "filter()".
+            (WebCore::CSSParser::parseGeneratedImage): Ditto.
+            (WebCore::CSSParser::parseBuiltinFilterArguments):
+
+            * css/CSSPropertyNames.in: Add filter. Make -webkit-filter an alias.
+
+            * css/SVGCSSComputedStyleDeclaration.cpp:
+            (WebCore::ComputedStyleExtractor::svgPropertyValue): Deleted.
+
+            * page/animation/CSSPropertyAnimation.cpp: Rename CSSPropertyWebkitFilter to CSSPropertyFilter.
+            (WebCore::PropertyWrapperAcceleratedFilter::PropertyWrapperAcceleratedFilter):
+            * page/animation/KeyframeAnimation.cpp: Ditto.
+            (WebCore::KeyframeAnimation::checkForMatchingFilterFunctionLists):
+
+            * platform/graphics/GraphicsLayer.cpp: Rename AnimatedPropertyWebkitFilter to AnimatedPropertyFilter.
+            (WebCore::GraphicsLayer::validateFilterOperations):
+            * platform/graphics/GraphicsLayerClient.h: Ditto.
+            * platform/graphics/ca/GraphicsLayerCA.cpp: Ditto.
+            (WebCore::GraphicsLayerCA::moveOrCopyAnimations):
+            (WebCore::GraphicsLayerCA::addAnimation):
+            (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+            (WebCore::GraphicsLayerCA::createFilterAnimationsFromKeyframes):
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::updateOrRemoveFilterClients): SVG manages its own filter resources,
+            so we shouldn't add a layer that has an SVG root to the filter clients.
+
+            * rendering/RenderLayerBacking.cpp: Renaming.
+            (WebCore::RenderLayerBacking::startAnimation):
+            (WebCore::RenderLayerBacking::startTransition):
+            (WebCore::RenderLayerBacking::graphicsLayerToCSSProperty):
+            (WebCore::RenderLayerBacking::cssToGraphicsLayerProperty):
+            * rendering/RenderLayerCompositor.cpp: Ditto.
+            (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+
+            * rendering/style/SVGRenderStyle.h: Remove the SVG filter style.
+            (WebCore::SVGRenderStyle::isolatesBlending): No need to check for hasFilter().
+            (WebCore::SVGRenderStyle::initialFilterResource): Deleted.
+            (WebCore::SVGRenderStyle::setFilterResource): Deleted.
+            (WebCore::SVGRenderStyle::filterResource): Deleted.
+            (WebCore::SVGRenderStyle::hasFilter): Deleted.
+
+            * rendering/style/SVGRenderStyleDefs.cpp: Remove the filter resource.
+            (WebCore::StyleResourceData::StyleResourceData): Deleted.
+            (WebCore::StyleResourceData::operator==): Deleted.
+            * rendering/style/SVGRenderStyleDefs.h:
+
+            * rendering/style/WillChangeData.cpp: Renaming.
+            (WebCore::propertyCreatesStackingContext):
+            (WebCore::propertyTriggersCompositing):
+
+            * rendering/svg/SVGRenderSupport.cpp:
+            (WebCore::SVGRenderSupport::isolatesBlending): Since SVGRenderStyle no longer checks
+            hasFilter() in its isolatesBlending(), we need to do it here.
+
+            * rendering/svg/SVGRenderingContext.cpp:
+            (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+
+            * rendering/svg/SVGRenderTreeAsText.cpp:
+            (WebCore::writeResources): Dump from the CSS style value.
+            * rendering/svg/SVGResources.cpp: Ditto.
+            (WebCore::SVGResources::buildCachedResources):
+            * rendering/svg/SVGResources.h:
+            * rendering/svg/SVGResourcesCache.cpp:
+            (WebCore::SVGResourcesCache::addResourcesFromRenderer):
+
+            * platform/graphics/texmap/TextureMapperLayer.cpp: Renaming.
+            * platform/graphics/texmap/TextureMapperAnimation.cpp:
+            * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+
+2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188530. rdar://problem/23432371
 
     2015-08-17  Simon Fraser  <simon.fraser@apple.com>

@@ -305,6 +305,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyAlignContent,
     CSSPropertyAlignItems,
     CSSPropertyAlignSelf,
+    CSSPropertyFilter,
     CSSPropertyFlexBasis,
     CSSPropertyFlexGrow,
     CSSPropertyFlexShrink,
@@ -313,7 +314,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyJustifyContent,
     CSSPropertyJustifySelf,
     CSSPropertyJustifyItems,
-    CSSPropertyWebkitFilter,
 #if ENABLE(FILTERS_LEVEL_2)
     CSSPropertyWebkitBackdropFilter,
 #endif
@@ -1682,7 +1682,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
     case CSSPropertyPerspectiveOrigin:
     case CSSPropertyTransformOrigin:
     case CSSPropertyTransform:
-    case CSSPropertyWebkitFilter:
+    case CSSPropertyFilter:
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
 #endif
@@ -3102,7 +3102,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitShapeOutside:
             return shapePropertyValue(*style, style->shapeOutside());
 #endif
-        case CSSPropertyWebkitFilter:
+        case CSSPropertyFilter:
             return valueForFilter(*style, style->filter());
 #if ENABLE(FILTERS_LEVEL_2)
         case CSSPropertyWebkitBackdropFilter:
@@ -3306,7 +3306,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyClipRule:
         case CSSPropertyMask:
         case CSSPropertyEnableBackground:
-        case CSSPropertyFilter:
         case CSSPropertyFloodColor:
         case CSSPropertyFloodOpacity:
         case CSSPropertyLightingColor:

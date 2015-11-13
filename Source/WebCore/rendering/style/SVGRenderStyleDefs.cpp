@@ -225,7 +225,6 @@ bool StyleShadowSVGData::operator==(const StyleShadowSVGData& other) const
 
 StyleResourceData::StyleResourceData()
     : clipper(SVGRenderStyle::initialClipperResource())
-    , filter(SVGRenderStyle::initialFilterResource())
     , masker(SVGRenderStyle::initialMaskerResource())
 {
 }
@@ -233,7 +232,6 @@ StyleResourceData::StyleResourceData()
 inline StyleResourceData::StyleResourceData(const StyleResourceData& other)
     : RefCounted<StyleResourceData>()
     , clipper(other.clipper)
-    , filter(other.filter)
     , masker(other.masker)
 {
 }
@@ -246,7 +244,6 @@ Ref<StyleResourceData> StyleResourceData::copy() const
 bool StyleResourceData::operator==(const StyleResourceData& other) const
 {
     return clipper == other.clipper
-        && filter == other.filter
         && masker == other.masker;
 }
 

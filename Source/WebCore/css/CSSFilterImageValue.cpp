@@ -50,7 +50,7 @@ CSSFilterImageValue::~CSSFilterImageValue()
 String CSSFilterImageValue::customCSSText() const
 {
     StringBuilder result;
-    result.appendLiteral("-webkit-filter(");
+    result.appendLiteral("filter(");
     result.append(m_imageValue->cssText());
     result.appendLiteral(", ");
     result.append(m_filterValue->cssText());
