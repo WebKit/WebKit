@@ -1,5 +1,31 @@
 2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r192269. rdar://problem/23189742
+
+    2015-11-09  David Hyatt  <hyatt@apple.com>
+
+            tate-chu-yoko should shrink to fit when it exceeds the available width.
+            <rdar://problem/12130468>
+            https://bugs.webkit.org/show_bug.cgi?id=151051
+
+            Reviewed by Myles Maxfield.
+
+            Covered by existing tests
+
+            * rendering/RenderCombineText.cpp:
+            (WebCore::RenderCombineText::combineText):
+
+            When testing for text-combine, find the font variant that is the best fit, i.e.,
+            that exceeds the available width by the smallest amount. Scale that best fit down
+            repeatedly until it fits within the available space. We set a pixel size of 6 as
+            the threshold at which we give up.
+
+            Also make sure to reset glyphOverflow on each measurement, as this was creating
+            a potential bug both with variant checking and then with scaling, since glyphOverflow
+            isn't reset when width() is invoked.
+
+2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r192120. rdar://problem/23189774
 
     2015-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
