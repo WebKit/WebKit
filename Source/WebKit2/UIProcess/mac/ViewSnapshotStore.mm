@@ -37,11 +37,10 @@
 
 using namespace WebCore;
 
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
-static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-// Because render server snapshots are not purgeable, we should keep fewer around.
+#if PLATFORM(IOS)
 static const size_t maximumSnapshotCacheSize = 50 * (1024 * 1024);
+#else
+static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
 #endif
 
 namespace WebKit {
@@ -61,24 +60,6 @@ ViewSnapshotStore& ViewSnapshotStore::singleton()
     static ViewSnapshotStore& store = *new ViewSnapshotStore;
     return store;
 }
-
-#if USE_RENDER_SERVER_VIEW_SNAPSHOTS
-CAContext *ViewSnapshotStore::snapshottingContext()
-{
-    static CAContext *context;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSDictionary *options = @{
-            kCAContextDisplayName: @"WebKitSnapshotting",
-            kCAContextIgnoresHitTest: @YES,
-            kCAContextDisplayId : @20000
-        };
-        context = [[CAContext remoteContextWithOptions:options] retain];
-    });
-
-    return context;
-}
-#endif
 
 void ViewSnapshotStore::didAddImageToSnapshot(ViewSnapshot& snapshot)
 {
@@ -132,30 +113,13 @@ void ViewSnapshotStore::discardSnapshotImages()
         m_snapshotsWithImages.first()->clearImage();
 }
 
-
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
 Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<IOSurface> surface)
 {
     return adoptRef(*new ViewSnapshot(WTF::move(surface)));
 }
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-Ref<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
-{
-    return adoptRef(*new ViewSnapshot(slotID, size, imageSizeInBytes));
-}
-#endif
 
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
 ViewSnapshot::ViewSnapshot(std::unique_ptr<IOSurface> surface)
     : m_surface(WTF::move(surface))
-    , m_imageSizeInBytes(m_surface->totalBytes())
-    , m_size(m_surface->size())
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
-    : m_slotID(slotID)
-    , m_imageSizeInBytes(imageSizeInBytes)
-    , m_size(size)
-#endif
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
@@ -166,13 +130,21 @@ ViewSnapshot::~ViewSnapshot()
     clearImage();
 }
 
+void ViewSnapshot::setSurface(std::unique_ptr<WebCore::IOSurface> surface)
+{
+    ASSERT(!m_surface);
+    if (!surface) {
+        clearImage();
+        return;
+    }
+
+    m_surface = WTF::move(surface);
+    ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
+}
+
 bool ViewSnapshot::hasImage() const
 {
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
     return !!m_surface;
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    return m_slotID;
-#endif
 }
 
 void ViewSnapshot::clearImage()
@@ -182,18 +154,11 @@ void ViewSnapshot::clearImage()
 
     ViewSnapshotStore::singleton().willRemoveImageFromSnapshot(*this);
 
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
     m_surface = nullptr;
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    [ViewSnapshotStore::snapshottingContext() deleteSlot:m_slotID];
-    m_slotID = 0;
-#endif
-    m_imageSizeInBytes = 0;
 }
 
 id ViewSnapshot::asLayerContents()
 {
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
     if (!m_surface)
         return nullptr;
 
@@ -203,9 +168,6 @@ id ViewSnapshot::asLayerContents()
     }
 
     return (id)m_surface->surface();
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    return [CAContext objectForSlot:m_slotID];
-#endif
 }
 
 } // namespace WebKit

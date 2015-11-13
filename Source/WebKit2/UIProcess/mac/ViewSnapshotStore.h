@@ -41,14 +41,6 @@ typedef struct objc_object *id;
 
 OBJC_CLASS CAContext;
 
-#if PLATFORM(MAC)
-#define USE_IOSURFACE_VIEW_SNAPSHOTS 1
-#define USE_RENDER_SERVER_VIEW_SNAPSHOTS 0
-#else
-#define USE_IOSURFACE_VIEW_SNAPSHOTS 0
-#define USE_RENDER_SERVER_VIEW_SNAPSHOTS 1
-#endif
-
 namespace WebCore {
 class IOSurface;
 }
@@ -61,11 +53,7 @@ class WebPageProxy;
 
 class ViewSnapshot : public RefCounted<ViewSnapshot> {
 public:
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
     static Ref<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    static Ref<ViewSnapshot> create(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
-#endif
 
     ~ViewSnapshot();
 
@@ -82,29 +70,20 @@ public:
     void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-    size_t imageSizeInBytes() const { return m_imageSizeInBytes; }
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
     WebCore::IOSurface* surface() const { return m_surface.get(); }
-#endif
-    WebCore::IntSize size() const { return m_size; }
+
+    size_t imageSizeInBytes() const { return m_surface ? m_surface->totalBytes() : 0; }
+    WebCore::IntSize size() const { return m_surface ? m_surface->size() : WebCore::IntSize(); }
+
+    void setSurface(std::unique_ptr<WebCore::IOSurface>);
 
 private:
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
     explicit ViewSnapshot(std::unique_ptr<WebCore::IOSurface>);
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    explicit ViewSnapshot(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
-#endif
 
-#if USE_IOSURFACE_VIEW_SNAPSHOTS
     std::unique_ptr<WebCore::IOSurface> m_surface;
-#elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    uint32_t m_slotID;
-#endif
 
-    size_t m_imageSizeInBytes;
     uint64_t m_renderTreeSize;
     float m_deviceScaleFactor;
-    WebCore::IntSize m_size;
     WebCore::Color m_backgroundColor;
 };
 
@@ -120,10 +99,6 @@ public:
     void recordSnapshot(WebPageProxy&, WebBackForwardListItem&);
 
     void discardSnapshotImages();
-
-#if USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    static CAContext *snapshottingContext();
-#endif
 
 private:
     void didAddImageToSnapshot(ViewSnapshot&);
