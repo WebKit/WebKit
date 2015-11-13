@@ -1,5 +1,28 @@
 2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r192120. rdar://problem/23189774
+
+    2015-11-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r182286): Tatechuyoko following ruby is drawn too far to the right
+            https://bugs.webkit.org/show_bug.cgi?id=150923
+
+            Reviewed by Zalan Bujtas.
+
+            Ever since r182286, expansion opportunities in justified ruby were moved to their neighboring
+            elements (thereby forbidding trailing nor leading expansions inside ruby). However, when the
+            neighboring element is tatechuyoko, we will erroneously honor the expansion opportunity inside
+            the tatechuyoko, thereby moving it horizontally.
+
+            Tatechuyoko should never have expansion opportunities inside it.
+
+            Test: fast/text/ruby-justify-tatechuyoko.html
+
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::expansionBehaviorForInlineTextBox):
+
+2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r192042. rdar://problem/23189765
 
     2015-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
