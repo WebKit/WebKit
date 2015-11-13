@@ -120,7 +120,7 @@
 		0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */; };
 		070E09191875EEFC003A1D3C /* PlatformMediaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 070E09181875ED93003A1D3C /* PlatformMediaSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		070E091B1875EF71003A1D3C /* PlatformMediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070E091A1875EF71003A1D3C /* PlatformMediaSession.cpp */; };
-		070E81D11BF27656001FDA48 /* VideoTrackPrivateMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 070E81D01BF27656001FDA48 /* VideoTrackPrivateMediaStream.h */; settings = {ASSET_TAGS = (); }; };
+		070E81D11BF27656001FDA48 /* VideoTrackPrivateMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 070E81D01BF27656001FDA48 /* VideoTrackPrivateMediaStream.h */; };
 		070F549817F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F549717F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h */; };
 		070F549E17F2402700169E04 /* AudioDestinationConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F549D17F2402700169E04 /* AudioDestinationConsumer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0711589117DF6F6600EDFE2B /* MediaStreamPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0711588F17DF633700EDFE2B /* MediaStreamPrivate.cpp */; };
@@ -343,7 +343,7 @@
 		07D6A4F01BECF2D200174146 /* MockRealtimeMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4EE1BECF2D200174146 /* MockRealtimeMediaSource.h */; };
 		07D6A4F31BED5F8800174146 /* MockRealtimeAudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07D6A4F11BED5F8800174146 /* MockRealtimeAudioSource.cpp */; };
 		07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4F21BED5F8800174146 /* MockRealtimeAudioSource.h */; };
- 		07D6A4F81BF2307D00174146 /* AudioTrackPrivateMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4F61BF2307D00174146 /* AudioTrackPrivateMediaStream.h */; settings = {ASSET_TAGS = (); }; };
+		07D6A4F81BF2307D00174146 /* AudioTrackPrivateMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4F61BF2307D00174146 /* AudioTrackPrivateMediaStream.h */; };
 		07DC5FD417D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */; };
 		07E116B11489C9A100EC5ACE /* JSTextTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */; };
 		07E117071489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */; };
@@ -3470,7 +3470,6 @@
 		9321D5901A390704008052BE /* NSImmediateActionGestureRecognizerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D58F1A3906FA008052BE /* NSImmediateActionGestureRecognizerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AC09D14EE6000E61D7 /* CharsetData.cpp */; };
 		9327A94209968D1A0068A546 /* HTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */; };
-		932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 932871BF0B20DEB70049035A /* PlatformMenuDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932AD70517EFA2C30038F8FF /* MainFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932AD70317EFA2C30038F8FF /* MainFrame.cpp */; };
 		932AD70617EFA2C40038F8FF /* MainFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 932AD70417EFA2C30038F8FF /* MainFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932E16090AF578340025F408 /* FrameLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932E16080AF578340025F408 /* FrameLoader.cpp */; };
@@ -10959,7 +10958,6 @@
 		931D72F515FE695300C4C07E /* LayoutMilestones.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutMilestones.h; sourceTree = "<group>"; };
 		9321D58F1A3906FA008052BE /* NSImmediateActionGestureRecognizerSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSImmediateActionGestureRecognizerSPI.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
-		932871BF0B20DEB70049035A /* PlatformMenuDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformMenuDescription.h; sourceTree = "<group>"; };
 		932AD70317EFA2C30038F8FF /* MainFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainFrame.cpp; sourceTree = "<group>"; };
 		932AD70417EFA2C30038F8FF /* MainFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainFrame.h; sourceTree = "<group>"; };
 		932E16080AF578340025F408 /* FrameLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoader.cpp; sourceTree = "<group>"; };
@@ -22548,7 +22546,6 @@
 				A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */,
 				515E5FEF195101470086CA5E /* PlatformGamepad.h */,
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
-				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */,
 				BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */,
@@ -26938,7 +26935,6 @@
 				CEEFCD7C19DB33DC003876D7 /* PlatformMediaResourceLoader.h in Headers */,
 				070E09191875EEFC003A1D3C /* PlatformMediaSession.h in Headers */,
 				07F944161864D046005D31CB /* PlatformMediaSessionManager.h in Headers */,
-				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
 				41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */,
 				935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */,
 				C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */,

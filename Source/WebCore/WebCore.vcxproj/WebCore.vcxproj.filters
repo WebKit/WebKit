@@ -8221,9 +8221,6 @@
     <ClInclude Include="..\platform\PlatformKeyboardEvent.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\PlatformMenuDescription.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\PlatformMouseEvent.h">
       <Filter>platform</Filter>
     </ClInclude>

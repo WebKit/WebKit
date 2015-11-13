@@ -21048,7 +21048,6 @@
     <ClInclude Include="..\platform\Pasteboard.h" />
     <ClInclude Include="..\platform\PlatformEvent.h" />
     <ClInclude Include="..\platform\PlatformKeyboardEvent.h" />
-    <ClInclude Include="..\platform\PlatformMenuDescription.h" />
     <ClInclude Include="..\platform\PlatformMouseEvent.h" />
     <ClInclude Include="..\platform\PlatformScreen.h" />
     <ClInclude Include="..\platform\PlatformStrategies.h" />
