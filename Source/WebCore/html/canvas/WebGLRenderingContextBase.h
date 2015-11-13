@@ -800,10 +800,6 @@ protected:
     // Helper for restoration after context lost.
     void maybeRestoreContext();
 
-    // Determine if we are running privileged code in the browser, for example,
-    // a Safari or Chrome extension.
-    bool allowPrivilegedExtensions() const;
-
     enum ConsoleDisplayPreference {
         DisplayInConsole,
         DontDisplayInConsole
