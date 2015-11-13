@@ -1,5 +1,71 @@
 2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188530. rdar://problem/23432371
+
+    2015-08-17  Simon Fraser  <simon.fraser@apple.com>
+
+            will-change should sometimes trigger compositing
+            https://bugs.webkit.org/show_bug.cgi?id=148072
+
+            Reviewed by Tim Horton.
+
+            Implement the compositing side-effects of will-change, if any of the
+            following properties are specified:
+                opacity
+                filter (as -webkit-filter)
+                backdrop-filter (as -webkit-backdrop-filter)
+                transform (on transformable elements only)
+
+            Tests: compositing/layer-creation/will-change-change.html
+                   compositing/layer-creation/will-change-layer-creation.html
+
+            * inspector/InspectorLayerTreeAgent.cpp:
+            (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer): Tell the inspector
+            about will-change.
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::adjustStyleDifference): Need to trigger a recomposite if
+            will-change includes a compositing trigger property. This gets called before and
+            after setting the style, so this checks both states.
+            (WebCore::RenderElement::shouldWillChangeCreateStackingContext):
+            * rendering/RenderElement.h:
+            (WebCore::RenderElement::willChangeCreatesStackingContext): Helper function that
+            RenderInline uses to determine if it needs to create a RenderLayer, since RenderInline
+            doesn't get automatic layer RenderLayers as a side effect of having non-auto z-index
+            in the style.
+            * rendering/RenderInline.h: Need to trigger a RenderLayer if will-change includes
+            a property that applies to inlines.
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::requiresCompositingLayer): Call requiresCompositingForWillChange().
+            (WebCore::RenderLayerCompositor::requiresOwnBackingStore): Call requiresCompositingForWillChange().
+            (WebCore::RenderLayerCompositor::reasonsForCompositing): Include requiresCompositingForWillChange().
+            (WebCore::RenderLayerCompositor::requiresCompositingForWillChange): If will-change contains a
+            property that would trigger compositing on this element, return true.
+            * rendering/RenderLayerCompositor.h:
+            * rendering/style/RenderStyle.cpp:
+            (WebCore::RenderStyle::changeRequiresLayout): Set ContextSensitivePropertyWillChange in
+            changedContextSensitiveProperties if will-change changes.
+            * rendering/style/RenderStyle.h: Rename for clarity.
+            * rendering/style/RenderStyleConstants.h: Add ContextSensitivePropertyWillChange.
+            * rendering/style/WillChangeData.cpp:
+            (WebCore::propertyCreatesStackingContext): Subset of properties that create stacking
+            context on any element.
+            (WebCore::propertyCreatesStackingContextOnBoxesOnly): Additional properties that
+            create stacking context on boxes.
+            (WebCore::propertyTriggersCompositing): Properties that trigger compositing on
+            any element.
+            (WebCore::propertyTriggersCompositingOnBoxesOnly): Additional properties that
+            trigger compositing on boxes.
+            (WebCore::WillChangeData::addFeature): As features are added, manage a set of
+            flags to know if they trigger stacking context or compositing, on inlines and boxes.
+            (WebCore::WillChangeData::createsStackingContext): Deleted.
+            * rendering/style/WillChangeData.h:
+            (WebCore::WillChangeData::canCreateStackingContext):
+            (WebCore::WillChangeData::canCreateStackingContextOnInline):
+            (WebCore::WillChangeData::canTriggerCompositing):
+            (WebCore::WillChangeData::canTriggerCompositingOnInline):
+
+2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188514. rdar://problem/23432371
 
     2015-08-15  Simon Fraser  <simon.fraser@apple.com>

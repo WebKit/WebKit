@@ -136,7 +136,7 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
 
-    virtual bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath(); }
+    virtual bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath() || willChangeCreatesStackingContext(); }
 
     virtual LayoutUnit offsetLeft() const override final;
     virtual LayoutUnit offsetTop() const override final;

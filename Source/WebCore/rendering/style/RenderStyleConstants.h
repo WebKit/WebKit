@@ -69,7 +69,8 @@ enum StyleDifferenceContextSensitiveProperty {
     ContextSensitivePropertyOpacity     = 1 << 1,
     ContextSensitivePropertyFilter      = 1 << 2,
     ContextSensitivePropertyClipRect    = 1 << 3,
-    ContextSensitivePropertyClipPath    = 1 << 4
+    ContextSensitivePropertyClipPath    = 1 << 4,
+    ContextSensitivePropertyWillChange  = 1 << 5,
 };
 
 // Static pseudo styles. Dynamic ones are produced on the fly.
