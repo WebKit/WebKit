@@ -49,6 +49,15 @@ class FileSystem(object):
     pardir = os.pardir
 
     def abspath(self, path):
+        # FIXME: This gross hack is needed while we transition from Cygwin to native Windows, because we
+        # have some mixing of file conventions from different tools:
+        if sys.platform == 'cygwin':
+            path = os.path.normpath(path)
+            path_components = path.split(os.sep)
+            if path_components and len(path_components[0]) == 2 and path_components[0][1] == ':':
+                path_components[0] = path_components[0][0]
+                path = os.path.join('/', 'cygdrive', *path_components)
+
         return os.path.abspath(path)
 
     def realpath(self, path):

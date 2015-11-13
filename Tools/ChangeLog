@@ -1,3 +1,33 @@
+2015-11-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] webkitpy is applying abspath to DOS paths, yielding invalid paths
+        https://bugs.webkit.org/show_bug.cgi?id=151156
+
+        Reviewed by Anders Carlsson.
+
+        My earlier patch was incomplete. There are some Python libraries that want
+        to receive UNIX style paths, even though all of our applications and tools
+        use DOS paths. To handle this special case, we need to track a UNIX-style
+        absolute path that can be given to things like the Python socket server.
+        
+        When we cut over to all-native Windows Python we can get rid of this
+        special case code.
+        
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.abspath): Add special code for Cygwin to convert a DOS-style
+        path into something Cygwin can use internally.
+        * Scripts/webkitpy/port/base.py:
+        (Port.results_directory): Remove custom Windows code. Instead, override
+        the method in the windows port object.
+        (Port.abs_results_directory): Add stub.
+        (Port.to.start_websocket_server): For Cygwin, use special cygwin absolute
+        path.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.__init__): Added to initialze new _abs_results_directory value.
+        (WinPort.abs_results_directory): Added,
+        (WinPort.results_directory): Modified to also create a value for
+        _abs_results_directory
+
 2015-11-12  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, add Michael Saboff to the JavaScriptCore watchlist, per request.
