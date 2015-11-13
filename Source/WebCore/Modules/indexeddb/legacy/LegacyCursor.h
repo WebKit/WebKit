@@ -55,18 +55,18 @@ public:
     virtual ~LegacyCursor();
 
     // Implement the IDL
-    const String& direction() const;
-    const Deprecated::ScriptValue& key() const;
-    const Deprecated::ScriptValue& primaryKey() const;
-    const Deprecated::ScriptValue& value() const;
-    IDBAny* source() const;
+    const String& direction() const override;
+    const Deprecated::ScriptValue& key() const override;
+    const Deprecated::ScriptValue& primaryKey() const override;
+    const Deprecated::ScriptValue& value() const override;
+    IDBAny* source() override;
 
-    RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&);
-    void advance(unsigned long, ExceptionCode&);
+    RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override;
+    void advance(unsigned long, ExceptionCode&) override;
     // FIXME: Try to modify the code generator so this overload is unneeded.
-    void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) { continueFunction(static_cast<IDBKey*>(nullptr), ec); }
-    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
-    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
+    void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) override { continueFunction(static_cast<IDBKey*>(nullptr), ec); }
+    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override;
+    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) override;
 
     void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
     void postSuccessHandlerCallback();
@@ -74,9 +74,10 @@ public:
     void setValueReady(DOMRequestState*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, Deprecated::ScriptValue&);
     PassRefPtr<IDBKey> idbPrimaryKey() { return m_currentPrimaryKey; }
 
+    virtual bool isKeyCursor() const override { return true; }
+
 protected:
     LegacyCursor(PassRefPtr<IDBCursorBackend>, IndexedDB::CursorDirection, LegacyRequest*, LegacyAny* source, LegacyTransaction*);
-    virtual bool isKeyCursor() const { return true; }
 
 private:
     PassRefPtr<LegacyObjectStore> effectiveObjectStore();

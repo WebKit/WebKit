@@ -83,6 +83,8 @@ public:
     void getRecord(const IDBRequestData&, const IDBKeyRangeData&, GetResultCallback);
     void getCount(const IDBRequestData&, const IDBKeyRangeData&, CountCallback);
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback);
+    void openCursor(const IDBRequestData&, const IDBCursorInfo&, GetResultCallback);
+    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count, GetResultCallback);
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
     void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
@@ -117,6 +119,8 @@ private:
     void performGetIndexRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
     void performGetCount(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&);
     void performDeleteRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&);
+    void performOpenCursor(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&);
+    void performIterateCursor(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBKeyData&, unsigned long count);
     void performActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBTransactionInfo&);
 
     // Main thread callbacks
@@ -129,6 +133,8 @@ private:
     void didPerformGetRecord(uint64_t callbackIdentifier, const IDBError&, const IDBGetResult&);
     void didPerformGetCount(uint64_t callbackIdentifier, const IDBError&, uint64_t);
     void didPerformDeleteRecord(uint64_t callbackIdentifier, const IDBError&);
+    void didPerformOpenCursor(uint64_t callbackIdentifier, const IDBError&, const IDBGetResult&);
+    void didPerformIterateCursor(uint64_t callbackIdentifier, const IDBError&, const IDBGetResult&);
     void didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);
     void didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);
     void didPerformActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBError&);

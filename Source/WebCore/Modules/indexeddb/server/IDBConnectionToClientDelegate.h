@@ -56,6 +56,8 @@ public:
     virtual void didGetRecord(const IDBResultData&) = 0;
     virtual void didGetCount(const IDBResultData&) = 0;
     virtual void didDeleteRecord(const IDBResultData&) = 0;
+    virtual void didOpenCursor(const IDBResultData&) = 0;
+    virtual void didIterateCursor(const IDBResultData&) = 0;
 
     virtual void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion) = 0;
     virtual void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) = 0;

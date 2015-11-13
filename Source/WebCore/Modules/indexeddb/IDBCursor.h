@@ -63,7 +63,7 @@ public:
     virtual const Deprecated::ScriptValue& key() const = 0;
     virtual const Deprecated::ScriptValue& primaryKey() const = 0;
     virtual const Deprecated::ScriptValue& value() const = 0;
-    virtual IDBAny* source() const = 0;
+    virtual IDBAny* source() = 0;
 
     virtual RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
     virtual void advance(unsigned long, ExceptionCode&) = 0;
@@ -72,10 +72,10 @@ public:
     virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) = 0;
 
+    virtual bool isKeyCursor() const = 0;
+
 protected:
     IDBCursor();
-
-    virtual bool isKeyCursor() const { return true; }
 };
 
 } // namespace WebCore

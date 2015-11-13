@@ -2054,6 +2054,8 @@
 		517138F01BED1D1A000D5F01 /* IndexKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138EE1BED1D17000D5F01 /* IndexKey.h */; };
 		517138F71BF128BB000D5F01 /* IndexValueStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517138F51BF12262000D5F01 /* IndexValueStore.cpp */; };
 		517138F81BF128BB000D5F01 /* IndexValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138F61BF12262000D5F01 /* IndexValueStore.h */; };
+		517138FB1BF3ADF4000D5F01 /* IDBCursorInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517138F91BF3ADAC000D5F01 /* IDBCursorInfo.cpp */; };
+		517138FC1BF3ADF4000D5F01 /* IDBCursorInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */; };
 		51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
@@ -9511,6 +9513,8 @@
 		517138EE1BED1D17000D5F01 /* IndexKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexKey.h; sourceTree = "<group>"; };
 		517138F51BF12262000D5F01 /* IndexValueStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexValueStore.cpp; sourceTree = "<group>"; };
 		517138F61BF12262000D5F01 /* IndexValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexValueStore.h; sourceTree = "<group>"; };
+		517138F91BF3ADAC000D5F01 /* IDBCursorInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorInfo.cpp; sourceTree = "<group>"; };
+		517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorInfo.h; sourceTree = "<group>"; };
 		51741D0B0B07259A00ED442C /* BackForwardClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardClient.h; sourceTree = "<group>"; };
 		51741D0D0B07259A00ED442C /* HistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HistoryItem.h; sourceTree = "<group>"; };
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
@@ -16876,6 +16880,8 @@
 		510A58E11BAA409800C19282 /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				517138F91BF3ADAC000D5F01 /* IDBCursorInfo.cpp */,
+				517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */,
 				51BA4AC11BBB5CBF00DF3D6D /* IDBDatabaseInfo.cpp */,
 				51BA4AC21BBB5CBF00DF3D6D /* IDBDatabaseInfo.h */,
 				5148453C1BB9D076006A72ED /* IDBError.cpp */,
@@ -25159,6 +25165,7 @@
 				854075200AD6C5FB00620C57 /* DOMEventTarget.h in Headers */,
 				85C78A680ABDE1B40044FC16 /* DOMException.h in Headers */,
 				BC1A37B5097C715F0019F3D8 /* DOMExtensions.h in Headers */,
+				517138FC1BF3ADF4000D5F01 /* IDBCursorInfo.h in Headers */,
 				BC00F0040E0A185500FD04E3 /* DOMFile.h in Headers */,
 				2E3BC108117D479800B9409A /* DOMFileError.h in Headers */,
 				2E3BC10B117D47C800B9409A /* DOMFileErrorInternal.h in Headers */,
@@ -29626,6 +29633,7 @@
 				316FE0730E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp in Sources */,
 				BC46C2000C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp in Sources */,
 				BC46C2020C0DDC8F0020CFC3 /* JSCSSPageRule.cpp in Sources */,
+				517138FB1BF3ADF4000D5F01 /* IDBCursorInfo.cpp in Sources */,
 				930705E909E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp in Sources */,
 				14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */,
 				BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */,

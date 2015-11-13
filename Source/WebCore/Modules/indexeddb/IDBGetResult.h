@@ -89,6 +89,7 @@ struct IDBGetResult {
 
     ThreadSafeDataBuffer valueBuffer;
     IDBKeyData keyData;
+    IDBKeyData primaryKeyData;
     IDBKeyPath keyPath;
 };
 

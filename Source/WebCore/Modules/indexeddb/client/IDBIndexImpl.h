@@ -77,6 +77,9 @@ public:
 
     const IDBIndexInfo& info() const { return m_info; }
 
+    IDBObjectStore& modernObjectStore() { return m_objectStore.get(); }
+    bool isDeleted() const { return m_deleted; }
+
 private:
     IDBIndex(const IDBIndexInfo&, IDBObjectStore&);
 

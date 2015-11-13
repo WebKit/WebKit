@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class CrossThreadTask;
+class IDBCursorInfo;
 class IDBRequestData;
 
 namespace IDBServer {
@@ -67,6 +68,9 @@ public:
     void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
     void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
+    void openCursor(const IDBRequestData&, const IDBCursorInfo&);
+    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
+
     void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
 

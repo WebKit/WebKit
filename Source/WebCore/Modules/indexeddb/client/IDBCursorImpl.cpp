@@ -28,61 +28,261 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMRequestState.h"
+#include "ExceptionCode.h"
+#include "IDBBindingUtilities.h"
+#include "IDBDatabaseException.h"
+#include "IDBGetResult.h"
+#include "Logging.h"
+#include "ScriptExecutionContext.h"
+
 namespace WebCore {
 namespace IDBClient {
+
+Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
+{
+    return adoptRef(*new IDBCursor(transaction, index, info));
+}
+
+IDBCursor::IDBCursor(IDBTransaction&, IDBObjectStore& objectStore, const IDBCursorInfo& info)
+    : m_info(info)
+    , m_source(IDBAny::create(objectStore).leakRef())
+    , m_objectStore(&objectStore)
+{
+}
+
+IDBCursor::IDBCursor(IDBTransaction&, IDBIndex& index, const IDBCursorInfo& info)
+    : m_info(info)
+    , m_source(IDBAny::create(index).leakRef())
+    , m_index(&index)
+{
+}
 
 IDBCursor::~IDBCursor()
 {
 }
 
+bool IDBCursor::sourcesDeleted() const
+{
+    if (m_objectStore)
+        return m_objectStore->isDeleted();
+
+    ASSERT(m_index);
+    return m_index->isDeleted() || m_index->modernObjectStore().isDeleted();
+}
+
+IDBObjectStore& IDBCursor::effectiveObjectStore() const
+{
+    if (m_objectStore)
+        return *m_objectStore;
+
+    ASSERT(m_index);
+    return m_index->modernObjectStore();
+}
+
+IDBTransaction& IDBCursor::transaction() const
+{
+    return effectiveObjectStore().modernTransaction();
+}
+
 const String& IDBCursor::direction() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return IDBCursor::directionToString(m_info.cursorDirection());
 }
 
 const Deprecated::ScriptValue& IDBCursor::key() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return m_deprecatedCurrentKey;
 }
 
 const Deprecated::ScriptValue& IDBCursor::primaryKey() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return m_deprecatedCurrentPrimaryKey;
 }
 
 const Deprecated::ScriptValue& IDBCursor::value() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return m_deprecatedCurrentValue;
 }
 
-IDBAny* IDBCursor::source() const
+IDBAny* IDBCursor::source()
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return &m_source.get();
 }
 
-RefPtr<IDBRequest> IDBCursor::update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBCursor::advance");
+
+    if (sourcesDeleted()) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    if (!transaction().isActive()) {
+        ec = IDBDatabaseException::TransactionInactiveError;
+        return nullptr;
+    }
+
+    if (transaction().isReadOnly()) {
+        ec = IDBDatabaseException::ReadOnlyError;
+        return nullptr;
+    }
+
+    if (!m_gotValue) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    if (isKeyCursor()) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    return effectiveObjectStore().put(exec, value.jsValue(), m_deprecatedCurrentPrimaryKey.jsValue(), ec);
 }
 
-void IDBCursor::advance(unsigned long, ExceptionCode&)
+void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBCursor::advance");
+
+    if (!m_request) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+    
+    if (!count) {
+        ec = TypeError;
+        return;
+    }
+
+    if (sourcesDeleted()) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+
+    if (!transaction().isActive()) {
+        ec = IDBDatabaseException::TransactionInactiveError;
+        return;
+    }
+
+    if (!m_gotValue) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+
+    uncheckedIteratorCursor(IDBKeyData(), count);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext*, ExceptionCode&)
+void IDBCursor::continueFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    if (!context) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+
+    continueFunction(IDBKeyData(), ec);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    if (!context) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
+    continueFunction(key.get(), ec);
 }
 
-RefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext*, ExceptionCode&)
+void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBCursor::continueFunction");
+
+    if (!m_request) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+
+    if (sourcesDeleted()) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+
+    if (!transaction().isActive()) {
+        ec = IDBDatabaseException::TransactionInactiveError;
+        return;
+    }
+
+    if (!m_gotValue) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return;
+    }
+
+    if (!key.isValid()) {
+        ec = IDBDatabaseException::DataError;
+        return;
+    }
+
+    if (m_info.isDirectionForward()) {
+        if (key.compare(m_currentPrimaryKeyData) <= 0) {
+            ec = IDBDatabaseException::DataError;
+            return;
+        }
+    } else if (key.compare(m_currentPrimaryKeyData) >= 0) {
+        ec = IDBDatabaseException::DataError;
+        return;
+    }
+
+    uncheckedIteratorCursor(key, 0);
+}
+
+void IDBCursor::uncheckedIteratorCursor(const IDBKeyData& key, unsigned long count)
+{
+    m_request->willIterateCursor(*this);
+    transaction().iterateCursor(*this, key, count);
+}
+
+RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
+{
+    LOG(IndexedDB, "IDBCursor::deleteFunction");
+
+    if (!context) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    if (sourcesDeleted()) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    if (!transaction().isActive()) {
+        ec = IDBDatabaseException::TransactionInactiveError;
+        return nullptr;
+    }
+
+    if (transaction().isReadOnly()) {
+        ec = IDBDatabaseException::ReadOnlyError;
+        return nullptr;
+    }
+
+    if (!m_gotValue) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    return effectiveObjectStore().deleteFunction(context, m_deprecatedCurrentPrimaryKey.jsValue(), ec);
+}
+
+void IDBCursor::setGetResult(const IDBGetResult&)
+{
+    LOG(IndexedDB, "IDBCursor::setGetResult");
+
+    // FIXME: Implement.
+
+    m_gotValue = true;
 }
 
 } // namespace IDBClient

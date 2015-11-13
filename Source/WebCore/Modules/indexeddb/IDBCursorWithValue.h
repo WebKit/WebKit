@@ -38,8 +38,6 @@ public:
 
 protected:
     IDBCursorWithValue();
-
-    virtual bool isKeyCursor() const override { return false; }
 };
 
 } // namespace WebCore

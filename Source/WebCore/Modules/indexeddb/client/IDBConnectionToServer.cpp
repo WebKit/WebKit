@@ -217,6 +217,34 @@ void IDBConnectionToServer::didDeleteRecord(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
+void IDBConnectionToServer::openCursor(TransactionOperation& operation, const IDBCursorInfo& info)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::openCursor");
+
+    saveOperation(operation);
+    m_delegate->openCursor(IDBRequestData(operation), info);
+}
+
+void IDBConnectionToServer::didOpenCursor(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didOpenCursor");
+    completeOperation(resultData);
+}
+
+void IDBConnectionToServer::iterateCursor(TransactionOperation& operation, const IDBKeyData& key, unsigned long count)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::iterateCursor");
+
+    saveOperation(operation);
+    m_delegate->iterateCursor(IDBRequestData(operation), key, count);
+}
+
+void IDBConnectionToServer::didIterateCursor(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didIterateCursor");
+    completeOperation(resultData);
+}
+
 void IDBConnectionToServer::establishTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBConnectionToServer::establishTransaction");

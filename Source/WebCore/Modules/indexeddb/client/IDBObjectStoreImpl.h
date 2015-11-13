@@ -78,6 +78,8 @@ public:
     virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, JSC::JSValue key, ExceptionCode&);
+
     void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 

@@ -912,6 +912,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp
     Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp
 
+    Modules/indexeddb/shared/IDBCursorInfo.cpp
     Modules/indexeddb/shared/IDBDatabaseInfo.cpp
     Modules/indexeddb/shared/IDBError.cpp
     Modules/indexeddb/shared/IDBIndexInfo.cpp

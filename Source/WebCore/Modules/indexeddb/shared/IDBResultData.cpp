@@ -136,6 +136,20 @@ IDBResultData IDBResultData::deleteRecordSuccess(const IDBResourceIdentifier& re
     return { IDBResultType::DeleteRecordSuccess, requestIdentifier };
 }
 
+IDBResultData IDBResultData::openCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
+{
+    IDBResultData result(IDBResultType::OpenCursorSuccess, requestIdentifier);
+    result.m_getResult = std::make_unique<IDBGetResult>(getResult);
+    return result;
+}
+
+IDBResultData IDBResultData::iterateCursorSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBGetResult& getResult)
+{
+    IDBResultData result(IDBResultType::IterateCursorSuccess, requestIdentifier);
+    result.m_getResult = std::make_unique<IDBGetResult>(getResult);
+    return result;
+}
+
 const IDBDatabaseInfo& IDBResultData::databaseInfo() const
 {
     RELEASE_ASSERT(m_databaseInfo);

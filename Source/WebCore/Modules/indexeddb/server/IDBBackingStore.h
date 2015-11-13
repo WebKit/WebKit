@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class IDBCursorInfo;
 class IDBIndexInfo;
 class IDBKeyData;
 class IDBObjectStoreInfo;
@@ -70,7 +71,8 @@ public:
     virtual IDBError getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult& outValue) = 0;
     virtual IDBError getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, uint64_t& outCount) = 0;
     virtual IDBError generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber) = 0;
-
+    virtual IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) = 0;
+    virtual IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBKeyData&, unsigned long count, IDBGetResult& outResult) = 0;
 };
 
 } // namespace IDBServer

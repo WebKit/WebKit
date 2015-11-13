@@ -28,13 +28,24 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBAnyImpl.h"
+#include "IDBCursorInfo.h"
 #include "IDBCursorWithValue.h"
 
 namespace WebCore {
+
+struct IDBGetResult;
+
 namespace IDBClient {
+
+class IDBIndex;
+class IDBObjectStore;
+class IDBTransaction;
 
 class IDBCursor : public WebCore::IDBCursorWithValue {
 public:
+    static Ref<IDBCursor> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+
     virtual ~IDBCursor();
 
     // Implement the IDL
@@ -42,16 +53,52 @@ public:
     virtual const Deprecated::ScriptValue& key() const override final;
     virtual const Deprecated::ScriptValue& primaryKey() const override final;
     virtual const Deprecated::ScriptValue& value() const override final;
-    virtual IDBAny* source() const override final;
+    virtual IDBAny* source() override final;
 
-    virtual RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override final;
     virtual void advance(unsigned long, ExceptionCode&) override final;
     virtual void continueFunction(ScriptExecutionContext*, ExceptionCode&) override final;
     virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) override final;
+
+    void continueFunction(const IDBKeyData&, ExceptionCode&);
+
+    const IDBCursorInfo& info() const { return m_info; }
+
+    void setRequest(IDBRequest& request) { m_request = &request; }
+    void clearRequest() { m_request = nullptr; }
+    IDBRequest* request() { return m_request; }
+
+    void setGetResult(const IDBGetResult&);
+
+    virtual bool isKeyCursor() const override { return true; }
 
 protected:
-    IDBCursor();
+    IDBCursor(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
+    IDBCursor(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+
+private:
+    IDBCursorInfo m_info;
+    Ref<IDBAny> m_source;
+    IDBObjectStore* m_objectStore { nullptr };
+    IDBIndex* m_index { nullptr };
+    IDBRequest* m_request;
+
+    bool sourcesDeleted() const;
+    IDBObjectStore& effectiveObjectStore() const;
+    IDBTransaction& transaction() const;
+
+    void uncheckedIteratorCursor(const IDBKeyData&, unsigned long count);
+
+    bool m_gotValue { false };
+
+    IDBKeyData m_currentPrimaryKeyData;
+
+    // FIXME: When ditching Legacy IDB and combining this implementation with the abstract IDBCursor,
+    // these Deprecated::ScriptValue members should be JSValues instead.
+    Deprecated::ScriptValue m_deprecatedCurrentKey;
+    Deprecated::ScriptValue m_deprecatedCurrentPrimaryKey;
+    Deprecated::ScriptValue m_deprecatedCurrentValue;
 };
 
 } // namespace IDBClient

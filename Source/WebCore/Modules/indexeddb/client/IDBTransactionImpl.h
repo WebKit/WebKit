@@ -41,7 +41,9 @@
 
 namespace WebCore {
 
+class IDBCursorInfo;
 class IDBIndexInfo;
+class IDBKeyData;
 class IDBObjectStoreInfo;
 class IDBResultData;
 
@@ -49,6 +51,7 @@ struct IDBKeyRangeData;
 
 namespace IDBClient {
 
+class IDBCursor;
 class IDBDatabase;
 class IDBIndex;
 class TransactionOperation;
@@ -101,6 +104,9 @@ public:
     Ref<IDBRequest> requestCount(ScriptExecutionContext&, IDBIndex&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestGetValue(ScriptExecutionContext&, IDBIndex&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestGetKey(ScriptExecutionContext&, IDBIndex&, const IDBKeyRangeData&);
+    Ref<IDBRequest> requestOpenCursor(ScriptExecutionContext&, IDBObjectStore&, const IDBCursorInfo&);
+    Ref<IDBRequest> requestOpenCursor(ScriptExecutionContext&, IDBIndex&, const IDBCursorInfo&);
+    void iterateCursor(IDBCursor&, const IDBKeyData&, unsigned long count);
 
     void deleteObjectStore(const String& objectStoreName);
 
@@ -158,6 +164,13 @@ private:
 
     void deleteObjectStoreOnServer(TransactionOperation&, const String& objectStoreName);
     void didDeleteObjectStoreOnServer(const IDBResultData&);
+
+    Ref<IDBRequest> doRequestOpenCursor(ScriptExecutionContext&, Ref<IDBCursor>&&);
+    void openCursorOnServer(TransactionOperation&, const IDBCursorInfo&);
+    void didOpenCursorOnServer(IDBRequest&, const IDBResultData&);
+
+    void iterateCursorOnServer(TransactionOperation&, const IDBKeyData&, const unsigned long& count);
+    void didIterateCursorOnServer(IDBRequest&, const IDBResultData&);
 
     void establishOnServer();
 

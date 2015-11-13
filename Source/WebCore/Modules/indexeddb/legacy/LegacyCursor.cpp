@@ -91,7 +91,7 @@ const Deprecated::ScriptValue& LegacyCursor::value() const
     return m_currentValue;
 }
 
-IDBAny* LegacyCursor::source() const
+IDBAny* LegacyCursor::source()
 {
     return m_source.get();
 }

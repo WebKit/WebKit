@@ -66,6 +66,8 @@ public:
     virtual void getRecord(const IDBRequestData&, const IDBKeyRangeData&) override final;
     virtual void getCount(const IDBRequestData&, const IDBKeyRangeData&) override final;
     virtual void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) override final;
+    virtual void openCursor(const IDBRequestData&, const IDBCursorInfo&) override final;
+    virtual void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count) override final;
     virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) override final;
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
 
@@ -83,6 +85,8 @@ public:
     virtual void didGetRecord(const IDBResultData&) override final;
     virtual void didGetCount(const IDBResultData&) override final;
     virtual void didDeleteRecord(const IDBResultData&) override final;
+    virtual void didOpenCursor(const IDBResultData&) override final;
+    virtual void didIterateCursor(const IDBResultData&) override final;
     virtual void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, uint64_t requestedVersion) override final;
     virtual void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
 

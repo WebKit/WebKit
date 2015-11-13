@@ -52,6 +52,7 @@ class IDBConnectionToServer;
 class IDBRequest : public WebCore::IDBOpenDBRequest, public RefCounted<IDBRequest> {
 public:
     static Ref<IDBRequest> create(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
+    static Ref<IDBRequest> create(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
     static Ref<IDBRequest> createCount(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
     static Ref<IDBRequest> createGet(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
@@ -89,9 +90,15 @@ public:
     void setResultToStructuredClone(const ThreadSafeDataBuffer&);
     void setResultToUndefined();
 
+    IDBAny* modernResult() { return m_result.get(); }
+
+    void willIterateCursor(IDBCursor&);
+    void didOpenOrIterateCursor(const IDBResultData&);
+
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
+    IDBRequest(ScriptExecutionContext&, IDBCursor&, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
@@ -114,11 +121,15 @@ private:
     void onError();
     void onSuccess();
 
+    IDBCursor* resultCursor();
+
     IDBConnectionToServer& m_connection;
     IDBResourceIdentifier m_resourceIdentifier;
     RefPtr<IDBAny> m_source;
     bool m_hasPendingActivity { true };
     IndexedDB::IndexRecordType m_requestedIndexRecordType;
+
+    RefPtr<IDBCursor> m_pendingCursor;
 };
 
 } // namespace IDBClient

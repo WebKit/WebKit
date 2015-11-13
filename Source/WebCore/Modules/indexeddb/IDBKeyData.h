@@ -128,6 +128,30 @@ public:
     static IDBKeyData deletedValue();
     bool isDeletedValue() const { return m_isDeletedValue; }
 
+    String string() const
+    {
+        ASSERT(m_type == KeyType::String);
+        return m_stringValue;
+    }
+
+    double date() const
+    {
+        ASSERT(m_type == KeyType::Date);
+        return m_numberValue;
+    }
+
+    double number() const
+    {
+        ASSERT(m_type == KeyType::Number);
+        return m_numberValue;
+    }
+
+    const Vector<IDBKeyData>& array() const
+    {
+        ASSERT(m_type == KeyType::Array);
+        return m_arrayValue;
+    }
+
 private:
     KeyType m_type;
     Vector<IDBKeyData> m_arrayValue;

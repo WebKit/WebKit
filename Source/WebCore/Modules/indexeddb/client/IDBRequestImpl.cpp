@@ -31,6 +31,7 @@
 #include "DOMRequestState.h"
 #include "EventQueue.h"
 #include "IDBBindingUtilities.h"
+#include "IDBCursorImpl.h"
 #include "IDBEventDispatcher.h"
 #include "IDBKeyData.h"
 #include "IDBResultData.h"
@@ -45,6 +46,11 @@ namespace IDBClient {
 Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
 {
     return adoptRef(*new IDBRequest(context, objectStore, transaction));
+}
+
+Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBCursor& cursor, IDBTransaction& transaction)
+{
+    return adoptRef(*new IDBRequest(context, cursor, transaction));
 }
 
 Ref<IDBRequest> IDBRequest::createCount(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
@@ -75,6 +81,23 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     suspendIfNeeded();
 }
 
+IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTransaction& transaction)
+    : IDBOpenDBRequest(&context)
+    , m_transaction(&transaction)
+    , m_connection(transaction.serverConnection())
+    , m_resourceIdentifier(transaction.serverConnection())
+    , m_pendingCursor(&cursor)
+{
+    suspendIfNeeded();
+
+    cursor.setRequest(*this);
+
+    auto* cursorSource = cursor.source();
+    ASSERT(cursorSource);
+    ASSERT(cursorSource->type() == IDBAny::Type::IDBObjectStore || cursorSource->type() == IDBAny::Type::IDBIndex);
+    m_source = cursorSource;
+}
+
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
     : IDBOpenDBRequest(&context)
     , m_transaction(&transaction)
@@ -93,6 +116,11 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, Indexed
 
 IDBRequest::~IDBRequest()
 {
+    if (m_result) {
+        auto type = m_result->type();
+        if (type == IDBAny::Type::IDBCursor || type == IDBAny::Type::IDBCursorWithValue)
+            m_result->modernIDBCursor()->clearRequest();
+    }
 }
 
 RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCode&) const
@@ -112,7 +140,7 @@ RefPtr<DOMError> IDBRequest::error(ExceptionCode&) const
 
 RefPtr<WebCore::IDBAny> IDBRequest::source() const
 {
-    return nullptr;
+    return m_source;
 }
 
 RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
@@ -261,8 +289,46 @@ void IDBRequest::setResultToUndefined()
     m_result = IDBAny::createUndefined();
 }
 
+IDBCursor* IDBRequest::resultCursor()
+{
+    if (!m_result)
+        return nullptr;
+    if (m_result->type() == IDBAny::Type::IDBCursor || m_result->type() == IDBAny::Type::IDBCursorWithValue)
+        return m_result->modernIDBCursor();
+    return nullptr;
+}
+
+void IDBRequest::willIterateCursor(IDBCursor& cursor)
+{
+    ASSERT(m_readyState == IDBRequestReadyState::Done);
+    ASSERT(scriptExecutionContext());
+    ASSERT(m_transaction);
+    ASSERT(!m_pendingCursor);
+    ASSERT(&cursor == resultCursor());
+
+    m_pendingCursor = &cursor;
+    m_result = nullptr;
+    m_readyState = IDBRequestReadyState::Pending;
+    m_domError = nullptr;
+    m_idbError = { };
+}
+
+void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
+{
+    ASSERT(m_pendingCursor);
+    if (resultData.type() == IDBResultType::IterateCursorSuccess)
+        m_pendingCursor->setGetResult(resultData.getResult());
+
+    m_result = IDBAny::create(*m_pendingCursor);
+    m_pendingCursor = nullptr;
+
+    requestCompleted(resultData);
+}
+
 void IDBRequest::requestCompleted(const IDBResultData& resultData)
 {
+    m_readyState = IDBRequestReadyState::Done;
+
     m_idbError = resultData.error();
     if (!m_idbError.isNull())
         onError();

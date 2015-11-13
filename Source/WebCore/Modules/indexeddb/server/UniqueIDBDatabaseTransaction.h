@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class IDBCursorInfo;
 class IDBDatabaseInfo;
 class IDBError;
 class IDBIndexInfo;
@@ -73,6 +74,8 @@ public:
     void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
     void getCount(const IDBRequestData&, const IDBKeyRangeData&);
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&);
+    void openCursor(const IDBRequestData&, const IDBCursorInfo&);
+    void iterateCursor(const IDBRequestData&, const IDBKeyData&, unsigned long count);
 
     void didActivateInBackingStore(const IDBError&);
 

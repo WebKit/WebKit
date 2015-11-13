@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorInfo.h"
 #include "IDBKeyRangeData.h"
 #include "IDBResultData.h"
 #include "IDBServer.h"
@@ -550,6 +551,62 @@ void UniqueIDBDatabase::didPerformDeleteRecord(uint64_t callbackIdentifier, cons
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformDeleteRecord");
 
     performErrorCallback(callbackIdentifier, error);
+}
+
+void UniqueIDBDatabase::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info, GetResultCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::openCursor");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performOpenCursor, callbackID, requestData.transactionIdentifier(), info));
+}
+
+void UniqueIDBDatabase::performOpenCursor(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo& info)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performOpenCursor");
+
+    IDBGetResult result;
+    IDBError error = m_backingStore->openCursor(transactionIdentifier, info, result);
+
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformOpenCursor, callbackIdentifier, error, result));
+}
+
+void UniqueIDBDatabase::didPerformOpenCursor(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& result)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformOpenCursor");
+
+    performGetResultCallback(callbackIdentifier, error, result);
+}
+
+void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count, GetResultCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::iterateCursor");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performIterateCursor, callbackID, requestData.transactionIdentifier(), key, count));
+}
+
+void UniqueIDBDatabase::performIterateCursor(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBKeyData& key, unsigned long count)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performIterateCursor");
+
+    IDBGetResult result;
+    IDBError error = m_backingStore->iterateCursor(transactionIdentifier, key, count, result);
+
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformIterateCursor, callbackIdentifier, error, result));
+}
+
+void UniqueIDBDatabase::didPerformIterateCursor(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& result)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformIterateCursor");
+
+    performGetResultCallback(callbackIdentifier, error, result);
 }
 
 void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)

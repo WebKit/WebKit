@@ -247,6 +247,28 @@ void IDBServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRang
     transaction->deleteRecord(requestData, keyRangeData);
 }
 
+void IDBServer::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info)
+{
+    LOG(IndexedDB, "IDBServer::openCursor");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    transaction->openCursor(requestData, info);
+}
+
+void IDBServer::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
+{
+    LOG(IndexedDB, "IDBServer::iterateCursor");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    transaction->iterateCursor(requestData, key, count);
+}
+
 void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "IDBServer::establishTransaction");

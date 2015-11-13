@@ -78,6 +78,43 @@ static bool set(ExecState* exec, JSValue& object, const String& keyPathElement, 
     return true;
 }
 
+JSValue idbKeyDataToJSValue(JSC::ExecState& exec, const IDBKeyData& keyData)
+{
+    if (keyData.isNull())
+        return jsUndefined();
+
+    Locker<JSLock> locker(exec.vm().apiLock());
+
+    switch (keyData.type()) {
+    case KeyType::Array:
+        {
+            const Vector<IDBKeyData>& inArray = keyData.array();
+            size_t size = inArray.size();
+            JSArray* outArray = constructEmptyArray(&exec, 0, exec.lexicalGlobalObject(), size);
+            for (size_t i = 0; i < size; ++i) {
+                auto& arrayKey = inArray.at(i);
+                outArray->putDirectIndex(&exec, i, idbKeyDataToJSValue(exec, arrayKey));
+            }
+            return JSValue(outArray);
+        }
+    case KeyType::String:
+        return jsStringWithCache(&exec, keyData.string());
+    case KeyType::Date:
+        return jsDateOrNull(&exec, keyData.date());
+    case KeyType::Number:
+        return jsNumber(keyData.number());
+    case KeyType::Min:
+    case KeyType::Max:
+    case KeyType::Invalid:
+        ASSERT_NOT_REACHED();
+        return jsUndefined();
+    }
+
+    ASSERT_NOT_REACHED();
+    return jsUndefined();
+
+}
+
 static JSValue idbKeyToJSValue(ExecState* exec, JSDOMGlobalObject* globalObject, IDBKey* key)
 {
     if (!key || !exec) {

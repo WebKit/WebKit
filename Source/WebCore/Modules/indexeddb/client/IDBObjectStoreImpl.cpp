@@ -30,6 +30,7 @@
 
 #include "DOMRequestState.h"
 #include "IDBBindingUtilities.h"
+#include "IDBCursorImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBError.h"
 #include "IDBIndexImpl.h"
@@ -89,29 +90,51 @@ bool IDBObjectStore::autoIncrement() const
     return m_info.autoIncrement();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return openCursor(context, keyRange, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return openCursor(context, key, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext*, IDBKeyRange*, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& directionString, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::openCursor");
+
+    if (m_deleted) {
+        ec = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TransactionInactiveError;
+        return nullptr;
+    }
+
+    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec);
+    if (ec)
+        return nullptr;
+
+    auto info = IDBCursorInfo::objectStoreCursor(m_transaction.get(), m_info.identifier(), range, direction);
+    Ref<IDBRequest> request = m_transaction->requestOpenCursor(*context, *this, info);
+    return WTF::move(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue&, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
+    if (ec)
+        return 0;
+
+    return openCursor(context, keyRange.get(), direction, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
@@ -307,6 +330,11 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContex
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+{
+    return deleteFunction(context, key.jsValue(), ec);
+}
+
+RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, JSC::JSValue key, ExceptionCode& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);

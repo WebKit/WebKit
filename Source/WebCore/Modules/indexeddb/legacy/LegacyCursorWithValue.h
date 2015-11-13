@@ -41,8 +41,7 @@ public:
     // The value attribute defined in the IDL is simply implemented in LegacyCursor (but not exposed via
     // its IDL). This is to make the implementation more simple while matching what the spec says.
 
-protected:
-    virtual bool isKeyCursor() const override { return false; }
+    virtual bool isKeyCursor() const override final { return false; }
 
 private:
     LegacyCursorWithValue(PassRefPtr<IDBCursorBackend>, IndexedDB::CursorDirection, LegacyRequest*, LegacyAny* source, LegacyTransaction*);

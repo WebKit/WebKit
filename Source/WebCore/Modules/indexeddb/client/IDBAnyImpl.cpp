@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBAny.h"
-#include "IDBCursorWithValue.h"
+#include "IDBCursorImpl.h"
 #include "IDBFactory.h"
 #include "IDBIndex.h"
 
@@ -57,6 +57,17 @@ IDBAny::IDBAny(Ref<IDBIndex>&& index)
     : m_type(IDBAny::Type::IDBIndex)
     , m_index(WTF::move(index))
 {
+}
+
+IDBAny::IDBAny(Ref<IDBCursor>&& cursor)
+{
+    if (cursor->isKeyCursor()) {
+        m_type = IDBAny::Type::IDBCursor;
+        m_cursor = WTF::move(cursor);
+    } else {
+        m_type = IDBAny::Type::IDBCursorWithValue;
+        m_cursorWithValue = WTF::move(cursor);
+    }
 }
 
 IDBAny::IDBAny(const IDBKeyPath& keyPath)
@@ -88,12 +99,14 @@ RefPtr<WebCore::DOMStringList> IDBAny::domStringList()
 
 RefPtr<WebCore::IDBCursor> IDBAny::idbCursor()
 {
-    return nullptr;
+    ASSERT(m_type == IDBAny::Type::IDBCursor || m_type == IDBAny::Type::IDBCursorWithValue);
+    return m_cursor.get();
 }
 
 RefPtr<WebCore::IDBCursorWithValue> IDBAny::idbCursorWithValue()
 {
-    return nullptr;
+    ASSERT(m_type == IDBAny::Type::IDBCursorWithValue);
+    return m_cursorWithValue.get();
 }
 
 RefPtr<WebCore::IDBFactory> IDBAny::idbFactory()
@@ -103,12 +116,14 @@ RefPtr<WebCore::IDBFactory> IDBAny::idbFactory()
 
 RefPtr<WebCore::IDBIndex> IDBAny::idbIndex()
 {
-    return nullptr;
+    ASSERT(m_type == IDBAny::Type::IDBIndex);
+    return m_index.get();
 }
 
 RefPtr<WebCore::IDBObjectStore> IDBAny::idbObjectStore()
 {
-    return nullptr;
+    ASSERT(m_type == IDBAny::Type::IDBObjectStore);
+    return m_objectStore.get();
 }
 
 IDBObjectStore* IDBAny::modernIDBObjectStore()
@@ -121,6 +136,12 @@ IDBIndex* IDBAny::modernIDBIndex()
 {
     ASSERT(m_type == IDBAny::Type::IDBIndex);
     return m_index.get();
+}
+
+IDBCursor* IDBAny::modernIDBCursor()
+{
+    ASSERT(m_type == IDBAny::Type::IDBCursor || m_type == IDBAny::Type::IDBCursorWithValue);
+    return m_cursor.get();
 }
 
 RefPtr<WebCore::IDBTransaction> IDBAny::idbTransaction()

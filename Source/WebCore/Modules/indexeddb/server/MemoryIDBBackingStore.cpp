@@ -329,6 +329,24 @@ IDBError MemoryIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
     return IDBError();
 }
 
+IDBError MemoryIDBBackingStore::openCursor(const IDBResourceIdentifier&, const IDBCursorInfo&, IDBGetResult&)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::openCursor");
+
+    // FIXME: Implement.
+
+    return { IDBExceptionCode::Unknown };
+}
+
+IDBError MemoryIDBBackingStore::iterateCursor(const IDBResourceIdentifier&, const IDBKeyData&, unsigned long, IDBGetResult&)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::iterateCursor");
+
+    // FIXME: Implement.
+
+    return { IDBExceptionCode::Unknown };
+}
+
 void MemoryIDBBackingStore::registerObjectStore(std::unique_ptr<MemoryObjectStore>&& objectStore)
 {
     ASSERT(objectStore);

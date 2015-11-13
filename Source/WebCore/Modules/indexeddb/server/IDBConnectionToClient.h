@@ -60,6 +60,8 @@ public:
     void didGetRecord(const IDBResultData&);
     void didGetCount(const IDBResultData&);
     void didDeleteRecord(const IDBResultData&);
+    void didOpenCursor(const IDBResultData&);
+    void didIterateCursor(const IDBResultData&);
 
     void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion);
     void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);

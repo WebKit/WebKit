@@ -232,6 +232,40 @@ void UniqueIDBDatabaseTransaction::deleteRecord(const IDBRequestData& requestDat
     });
 }
 
+void UniqueIDBDatabaseTransaction::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::openCursor");
+
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().openCursor(requestData, info, [this, protectedThis, requestData](const IDBError& error, const IDBGetResult& result) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::openCursor (callback)");
+
+        if (error.isNull())
+            m_databaseConnection->connectionToClient().didOpenCursor(IDBResultData::openCursorSuccess(requestData.requestIdentifier(), result));
+        else
+            m_databaseConnection->connectionToClient().didOpenCursor(IDBResultData::error(requestData.requestIdentifier(), error));
+    });
+}
+
+void UniqueIDBDatabaseTransaction::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::iterateCursor");
+
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().iterateCursor(requestData, key, count, [this, protectedThis, requestData](const IDBError& error, const IDBGetResult& result) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::openCursor (callback)");
+
+        if (error.isNull())
+            m_databaseConnection->connectionToClient().didIterateCursor(IDBResultData::iterateCursorSuccess(requestData.requestIdentifier(), result));
+        else
+            m_databaseConnection->connectionToClient().didIterateCursor(IDBResultData::error(requestData.requestIdentifier(), error));
+    });
+}
+
 const Vector<uint64_t>& UniqueIDBDatabaseTransaction::objectStoreIdentifiers()
 {
     if (!m_objectStoreIdentifiers.isEmpty())

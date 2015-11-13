@@ -70,6 +70,7 @@ Deprecated::ScriptValue idbKeyDataToScriptValue(ScriptExecutionContext*, const I
 
 JSC::JSValue idbValueDataToJSValue(JSC::ExecState&, const ThreadSafeDataBuffer& valueData);
 void generateIndexKeyForValue(JSC::ExecState&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey);
+JSC::JSValue idbKeyDataToJSValue(JSC::ExecState&, const IDBKeyData&);
 
 }
 

@@ -43,14 +43,19 @@ public:
         return adoptRef(new IDBAny(WTF::move(database)));
     }
 
-    static RefPtr<IDBAny> create(Ref<IDBObjectStore>&& objectStore)
+    static Ref<IDBAny> create(Ref<IDBObjectStore>&& objectStore)
     {
-        return adoptRef(new IDBAny(WTF::move(objectStore)));
+        return adoptRef(*new IDBAny(WTF::move(objectStore)));
     }
 
-    static RefPtr<IDBAny> create(Ref<IDBIndex>&& index)
+    static Ref<IDBAny> create(Ref<IDBIndex>&& index)
     {
-        return adoptRef(new IDBAny(WTF::move(index)));
+        return adoptRef(*new IDBAny(WTF::move(index)));
+    }
+
+    static RefPtr<IDBAny> create(Ref<IDBCursor>&& cursor)
+    {
+        return adoptRef(new IDBAny(WTF::move(cursor)));
     }
 
     static RefPtr<IDBAny> create(const IDBKeyPath& keyPath)
@@ -86,12 +91,14 @@ public:
 
     IDBObjectStore* modernIDBObjectStore();
     IDBIndex* modernIDBIndex();
+    IDBCursor* modernIDBCursor();
 
 private:
     explicit IDBAny(IDBAny::Type);
     explicit IDBAny(Ref<IDBDatabase>&&);
     explicit IDBAny(Ref<IDBObjectStore>&&);
     explicit IDBAny(Ref<IDBIndex>&&);
+    explicit IDBAny(Ref<IDBCursor>&&);
     explicit IDBAny(const IDBKeyPath&);
     explicit IDBAny(const Deprecated::ScriptValue&);
 
@@ -99,6 +106,8 @@ private:
     RefPtr<IDBDatabase> m_database;
     RefPtr<IDBObjectStore> m_objectStore;
     RefPtr<IDBIndex> m_index;
+    RefPtr<IDBCursor> m_cursor;
+    RefPtr<IDBCursor> m_cursorWithValue;
 
     const IDBKeyPath m_idbKeyPath;
     const Deprecated::ScriptValue m_scriptValue;

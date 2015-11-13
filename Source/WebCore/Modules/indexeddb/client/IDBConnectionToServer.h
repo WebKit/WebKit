@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class IDBCursorInfo;
 class IDBError;
 class IDBObjectStoreInfo;
 class IDBResultData;
@@ -84,6 +85,12 @@ public:
 
     void deleteRecord(TransactionOperation&, const IDBKeyRangeData&);
     void didDeleteRecord(const IDBResultData&);
+
+    void openCursor(TransactionOperation&, const IDBCursorInfo&);
+    void didOpenCursor(const IDBResultData&);
+
+    void iterateCursor(TransactionOperation&, const IDBKeyData&, unsigned long count);
+    void didIterateCursor(const IDBResultData&);
 
     void commitTransaction(IDBTransaction&);
     void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);

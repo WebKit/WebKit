@@ -61,6 +61,11 @@ enum class CursorType {
 };
 const unsigned CursorTypeMaximum = 1;
 
+enum class CursorSource {
+    Index,
+    ObjectStore,
+};
+
 enum class VersionNullness {
     Null,
     NonNull,

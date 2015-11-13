@@ -30,6 +30,7 @@
 
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
+#include "IDBCursorInfo.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequestImpl.h"
 #include "IDBRequestData.h"
@@ -183,6 +184,22 @@ void InProcessIDBServer::didDeleteRecord(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didOpenCursor(const IDBResultData& resultData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData] {
+        m_connectionToServer->didOpenCursor(resultData);
+    });
+}
+
+void InProcessIDBServer::didIterateCursor(const IDBResultData& resultData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData] {
+        m_connectionToServer->didIterateCursor(resultData);
+    });
+}
+
 void InProcessIDBServer::abortTransaction(IDBResourceIdentifier& resourceIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
@@ -265,6 +282,24 @@ void InProcessIDBServer::deleteRecord(const IDBRequestData& requestData, const I
 
     RunLoop::current().dispatch([this, self, requestData, keyRangeData] {
         m_server->deleteRecord(requestData, keyRangeData);
+    });
+}
+
+void InProcessIDBServer::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info)
+{
+    RefPtr<InProcessIDBServer> self(this);
+
+    RunLoop::current().dispatch([this, self, requestData, info] {
+        m_server->openCursor(requestData, info);
+    });
+}
+
+void InProcessIDBServer::iterateCursor(const IDBRequestData& requestData, const IDBKeyData& key, unsigned long count)
+{
+    RefPtr<InProcessIDBServer> self(this);
+
+    RunLoop::current().dispatch([this, self, requestData, key, count] {
+        m_server->iterateCursor(requestData, key, count);
     });
 }
 

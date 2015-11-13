@@ -35,10 +35,16 @@ namespace IDBClient {
 
 class IDBCursorWithValue : public IDBCursor {
 public:
+    static Ref<IDBCursorWithValue> create(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
+    static Ref<IDBCursorWithValue> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
+
     virtual ~IDBCursorWithValue();
 
+    virtual bool isKeyCursor() const override final { return false; }
+
 private:
-    IDBCursorWithValue();
+    IDBCursorWithValue(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
+    IDBCursorWithValue(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
 };
 
 } // namespace IDBClient

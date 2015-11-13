@@ -1,0 +1,77 @@
+This tests basic IDBCursor functionality
+Initial upgrade needed: Old version - 0 New version - 1
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: next
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: next
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursor]
+Cursor direction is: next
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: nextunique
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: nextunique
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursor]
+Cursor direction is: nextunique
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: prev
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: prev
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursor]
+Cursor direction is: prev
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: prevunique
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursorWithValue]
+Cursor direction is: prevunique
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Error opening cursor (expected for now)
+Cursor is: [object IDBCursor]
+Cursor direction is: prevunique
+Cursor source is: [object IDBIndex] (TestIndex1)
+Cursor key is: null
+Cursor primary key is: null
+Initial upgrade versionchange transaction complete
+Done
+
