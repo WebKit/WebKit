@@ -388,7 +388,7 @@ void WebContextMenuProxyMac::showContextMenu()
         return;
 
     auto menu = createContextMenuFromItems(items);
-    m_menu = m_page.contextMenuClient().menuFromProposedMenu(m_page, menu.get(), m_context.webHitTestResultData());
+    m_menu = m_page.contextMenuClient().menuFromProposedMenu(m_page, menu.get(), m_context.webHitTestResultData(), m_userData.object());
 
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
 

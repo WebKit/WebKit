@@ -63,7 +63,7 @@ private:
 
     private:
         // API::ContextMenuClient
-        virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *, const WebKit::WebHitTestResultData&) override;
+        virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *, const WebKit::WebHitTestResultData&, API::Object*) override;
 
         UIDelegate& m_uiDelegate;
     };
@@ -126,6 +126,7 @@ private:
 
 #if ENABLE(CONTEXT_MENUS)
         bool webViewContextMenuForElement : 1;
+        bool webViewContextMenuForElementUserInfo : 1;
 #endif
     } m_delegateMethods;
 };

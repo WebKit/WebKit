@@ -56,7 +56,7 @@ public:
     virtual bool hideContextMenu(WebKit::WebPageProxy&) { return false; }
 
 #if PLATFORM(MAC)
-    virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *menu, const WebKit::WebHitTestResultData&) { return menu; }
+    virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *menu, const WebKit::WebHitTestResultData&, API::Object*) { return menu; }
 #endif
 };
 
