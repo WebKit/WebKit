@@ -447,7 +447,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opentype/OpenTypeMathData.cpp
 
     platform/mac/BlockExceptions.mm
-    platform/mac/ContextMenuMac.mm
     platform/mac/CursorMac.mm
     platform/mac/DragDataMac.mm
     platform/mac/DragImageMac.mm
