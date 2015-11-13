@@ -345,6 +345,8 @@ public:
 
     bool parseFontVariantLigatures(bool important);
 
+    bool parseWillChange(bool important);
+
     // Faster than doing a new/delete each time since it keeps one vector.
     std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> createSelectorVector();
     void recycleSelectorVector(std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>>);

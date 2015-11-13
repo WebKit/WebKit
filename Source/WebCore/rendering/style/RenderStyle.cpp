@@ -40,6 +40,7 @@
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
+#include "WillChangeData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
@@ -923,6 +924,15 @@ void RenderStyle::setQuotes(PassRefPtr<QuotesData> q)
         return;
 
     rareInheritedData.access()->quotes = q;
+}
+
+void RenderStyle::setWillChange(PassRefPtr<WillChangeData> willChangeData)
+{
+    if (rareNonInheritedData->m_willChange == willChangeData
+        || (rareNonInheritedData->m_willChange && willChangeData && *rareNonInheritedData->m_willChange == *willChangeData))
+        return;
+
+    rareNonInheritedData.access()->m_willChange = WTF::move(willChangeData);
 }
 
 void RenderStyle::clearCursorList()
