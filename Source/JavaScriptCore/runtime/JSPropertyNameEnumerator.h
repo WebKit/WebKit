@@ -90,6 +90,11 @@ public:
         return m_endGenericPropertyIndex;
     }
 
+    size_t propertyNameCacheSize() const
+    {
+        return WTF::roundUpToMultipleOf<8>(cachedPropertyNameCount() * sizeof(WriteBarrier<JSString>));
+    }
+
 private:
     JSPropertyNameEnumerator(VM&, StructureID, uint32_t);
     void finishCreation(VM&, uint32_t, uint32_t, PassRefPtr<PropertyNameArrayData>);

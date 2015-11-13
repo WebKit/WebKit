@@ -1,3 +1,24 @@
+2015-11-13  Andreas Kling  <akling@apple.com>
+
+        Follow-up for 32-bit test failures after...
+        [JSC] JSPropertyNameEnumerator could be destructorless.
+        <https://webkit.org/b/151242>
+
+        Reviewed by Mark Lam
+
+        Apparently copied space allocations need to be in multiples of 8 bytes.
+        Have JSPropertyNameEnumerator do what other copied space clients already do
+        and round the allocation size up to a multiple of 8.
+
+        Added a little helper function to compute the allocation size so this doesn't
+        have to be repeated everywhere.
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+        (JSC::JSPropertyNameEnumerator::copyBackingStore):
+        * runtime/JSPropertyNameEnumerator.h:
+
 2015-11-13  Saam barati  <sbarati@apple.com>
 
         sub IC does not properly handle exception handling now that try/catch is compiled in the FTL

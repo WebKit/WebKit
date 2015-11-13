@@ -74,7 +74,7 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, uint32_t indexedLength, ui
 
     if (!vector.isEmpty()) {
         void* backingStore;
-        RELEASE_ASSERT(vm.heap.tryAllocateStorage(this, vector.size() * sizeof(WriteBarrier<JSString>), &backingStore));
+        RELEASE_ASSERT(vm.heap.tryAllocateStorage(this, propertyNameCacheSize(), &backingStore));
         WriteBarrier<JSString>* propertyNames = reinterpret_cast<WriteBarrier<JSString>*>(backingStore);
         m_propertyNames.set(vm, this, propertyNames);
 
@@ -93,7 +93,7 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.appendValues(reinterpret_cast<WriteBarrier<Unknown>*>(thisObject->m_propertyNames.getWithoutBarrier()), thisObject->cachedPropertyNameCount());
         visitor.copyLater(
             thisObject, JSPropertyNameEnumeratorCopyToken,
-            thisObject->m_propertyNames.getWithoutBarrier(), thisObject->cachedPropertyNameCount() * sizeof(JSString*));
+            thisObject->m_propertyNames.getWithoutBarrier(), thisObject->propertyNameCacheSize());
     }
 }
 
@@ -106,10 +106,10 @@ void JSPropertyNameEnumerator::copyBackingStore(JSCell* cell, CopyVisitor& visit
 
     void* oldPropertyNames = thisObject->m_propertyNames.getWithoutBarrier();
     if (visitor.checkIfShouldCopy(oldPropertyNames)) {
-        WriteBarrier<JSString>* newPropertyNames = static_cast<WriteBarrier<JSString>*>(visitor.allocateNewSpace(thisObject->cachedPropertyNameCount() * sizeof(WriteBarrier<JSString>)));
-        memcpy(newPropertyNames, oldPropertyNames, thisObject->cachedPropertyNameCount() * sizeof(JSString*));
+        WriteBarrier<JSString>* newPropertyNames = static_cast<WriteBarrier<JSString>*>(visitor.allocateNewSpace(thisObject->propertyNameCacheSize()));
+        memcpy(newPropertyNames, oldPropertyNames, thisObject->propertyNameCacheSize());
         thisObject->m_propertyNames.setWithoutBarrier(newPropertyNames);
-        visitor.didCopy(oldPropertyNames, thisObject->cachedPropertyNameCount() * sizeof(JSString*));
+        visitor.didCopy(oldPropertyNames, thisObject->propertyNameCacheSize());
     }
 }
 
