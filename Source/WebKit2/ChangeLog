@@ -1,3 +1,16 @@
+2015-11-12  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Fix wrong test case for window_create since r192196
+        https://bugs.webkit.org/show_bug.cgi?id=151247
+
+        Reviewed by Gyuyoung Kim.
+
+        r192196 introduces new test cases for window_create but there are typos which hide bug
+        This patch fixes typos and split ewk_view_create_window test case.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2015-11-12  Anders Carlsson  <andersca@apple.com>
 
         Add a context menu delegate method that takes a userInfo parameter
