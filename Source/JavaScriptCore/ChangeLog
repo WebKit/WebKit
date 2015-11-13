@@ -1,3 +1,17 @@
+2015-11-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Restore CodeBlock jettison code I accidentally removed
+        https://bugs.webkit.org/show_bug.cgi?id=151241
+
+        Reviewed by Andreas Kling.
+
+        I meant to add this back in <http://trac.webkit.org/changeset/190827>
+        but I missed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::timeToLive):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+
 2015-11-12  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile programs with CheckAdd, CheckSub, and CheckMul
