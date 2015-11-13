@@ -438,7 +438,7 @@ public:
     virtual LayoutUnit computeReplacedLogicalHeight() const;
 
     bool hasDefiniteLogicalWidth() const;
-    static bool percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool outOfFlowPositioned);
+    static bool percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool outOfFlowPositioned, bool scrollsOverflowY);
     bool hasDefiniteLogicalHeight() const;
     Optional<LayoutUnit> computePercentageLogicalHeight(const Length& height) const;
 

@@ -2904,10 +2904,23 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox* 
     return !containingBlock->isTableCell() && !containingBlock->isOutOfFlowPositioned() && containingBlock->style().logicalHeight().isAuto() && isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode();
 }
 
+static bool tableCellShouldHaveZeroInitialSize(const RenderBlock& block, bool scrollsOverflowY)
+{
+    // Normally we would let the cell size intrinsically, but scrolling overflow has to be
+    // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
+    // While we can't get all cases right, we can at least detect when the cell has a specified
+    // height or when the table has a specified height. In these cases we want to initially have
+    // no size and allow the flexing of the table or the cell to its specified height to cause us
+    // to grow to fill the space. This could end up being wrong in some cases, but it is
+    // preferable to the alternative (sizing intrinsically and making the row end up too big).
+    const RenderTableCell& cell = downcast<RenderTableCell>(block);
+    return scrollsOverflowY && (!cell.style().logicalHeight().isAuto() || !cell.table()->style().logicalHeight().isAuto());
+}
+
 Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& height) const
 {
     Optional<LayoutUnit> availableHeight;
-    
+
     bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
     const RenderBox* containingBlockChild = this;
@@ -2941,19 +2954,9 @@ Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& hei
             // Table cells violate what the CSS spec says to do with heights. Basically we
             // don't care if the cell specified a height or not. We just always make ourselves
             // be a percentage of the cell's current content height.
-            if (!cb->hasOverrideLogicalContentHeight()) {
-                // Normally we would let the cell size intrinsically, but scrolling overflow has to be
-                // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
-                // While we can't get all cases right, we can at least detect when the cell has a specified
-                // height or when the table has a specified height. In these cases we want to initially have
-                // no size and allow the flexing of the table or the cell to its specified height to cause us
-                // to grow to fill the space. This could end up being wrong in some cases, but it is
-                // preferable to the alternative (sizing intrinsically and making the row end up too big).
-                RenderTableCell& cell = downcast<RenderTableCell>(*cb);
-                if (scrollsOverflowY() && (!cell.style().logicalHeight().isAuto() || !cell.table()->style().logicalHeight().isAuto()))
-                    return LayoutUnit(0);
-                return Nullopt;
-            }
+            if (!cb->hasOverrideLogicalContentHeight())
+                return tableCellShouldHaveZeroInitialSize(*cb, scrollsOverflowY()) ? Optional<LayoutUnit>() : Nullopt;
+
             availableHeight = cb->overrideLogicalContentHeight();
             includeBorderPadding = true;
         }
@@ -4624,10 +4627,10 @@ bool RenderBox::hasDefiniteLogicalWidth() const
 
 inline static bool percentageLogicalHeightIsResolvable(const RenderBox* box)
 {
-    return RenderBox::percentageLogicalHeightIsResolvableFromBlock(box->containingBlock(), box->isOutOfFlowPositioned());
+    return RenderBox::percentageLogicalHeightIsResolvableFromBlock(box->containingBlock(), box->isOutOfFlowPositioned(), box->scrollsOverflowY());
 }
 
-bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool isOutOfFlowPositioned)
+bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* containingBlock, bool isOutOfFlowPositioned, bool scrollsOverflowY)
 {
     // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
     // block that may have a specified height and then use it. In strict mode, this violates the
@@ -4636,6 +4639,7 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
     // only at explicit containers.
     const RenderBlock* cb = containingBlock;
     bool inQuirksMode = cb->document().inQuirksMode();
+    bool skippedAutoHeightContainingBlock = false;
     while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style().logicalHeight().isAuto()) {
         if (!inQuirksMode && !cb->isAnonymousBlock())
             break;
@@ -4643,7 +4647,7 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
         if (cb->hasOverrideContainingBlockLogicalHeight())
             return static_cast<bool>(cb->overrideContainingBlockContentLogicalHeight());
 #endif
-
+        skippedAutoHeightContainingBlock = true;
         cb = cb->containingBlock();
     }
 
@@ -4656,15 +4660,17 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
     // Table cells violate what the CSS spec says to do with heights.  Basically we
     // don't care if the cell specified a height or not.  We just always make ourselves
     // be a percentage of the cell's current content height.
-    if (cb->isTableCell())
-        return true;
+    if (cb->isTableCell()) {
+        // Matches computePercentageLogicalHeight().
+        return skippedAutoHeightContainingBlock || cb->hasOverrideLogicalContentHeight() || tableCellShouldHaveZeroInitialSize(*cb, scrollsOverflowY);
+    }
 
     // Otherwise we only use our percentage height if our containing block had a specified
     // height.
     if (cb->style().logicalHeight().isFixed())
         return true;
     if (cb->style().logicalHeight().isPercentOrCalculated() && !isOutOfFlowPositionedWithSpecifiedHeight)
-        return percentageLogicalHeightIsResolvableFromBlock(cb->containingBlock(), cb->isOutOfFlowPositioned());
+        return percentageLogicalHeightIsResolvableFromBlock(cb->containingBlock(), cb->isOutOfFlowPositioned(), cb->scrollsOverflowY());
     if (cb->isRenderView() || inQuirksMode || isOutOfFlowPositionedWithSpecifiedHeight)
         return true;
     if (cb->isDocumentElementRenderer() && isOutOfFlowPositioned) {
