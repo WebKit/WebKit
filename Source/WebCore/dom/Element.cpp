@@ -2252,7 +2252,8 @@ void Element::updateFocusAppearanceAfterAttachIfNeeded()
 void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode revealMode)
 {
     if (isRootEditableElement()) {
-        Frame* frame = document().frame();
+        // Keep frame alive in this method, since setSelection() may release the last reference to |frame|.
+        RefPtr<Frame> frame = document().frame();
         if (!frame)
             return;
         
