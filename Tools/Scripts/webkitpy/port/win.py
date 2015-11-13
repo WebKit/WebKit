@@ -75,7 +75,9 @@ class WinPort(ApplePort):
         """Absolute path to the place to store the test results (uses --results-directory)."""
         if not self._results_directory:
             option_val = self.get_option('results_directory') or self.default_results_directory()
-            self._results_directory = option_val
+            self._results_directory = self._filesystem.abspath(option_val)
+            if sys.platform == 'cygwin':
+                self._results_directory = cygpath(self._results_directory)   
             self._abs_results_directory = self._filesystem.abspath(option_val)
         return self._results_directory
 

@@ -1,3 +1,11 @@
+2015-11-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test fix.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.results_directory): Our 'results_directory' should be an absolute path (even when not
+        using Cygwin), but should be in DOS format for non-Cygwin clients.
+
 2015-11-12  Daniel Bates  <dabates@apple.com>
 
         Add my apple.com email address to contributors.json
