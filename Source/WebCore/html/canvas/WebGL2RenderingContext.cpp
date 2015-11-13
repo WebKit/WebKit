@@ -950,7 +950,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     if (isContextLostOrPending())
         return nullptr;
 
-    if (equalIgnoringCase(name, "WEBKIT_EXT_texture_filter_anisotropic")
+    if ((equalIgnoringCase(name, "EXT_texture_filter_anisotropic") || equalIgnoringCase(name, "WEBKIT_EXT_texture_filter_anisotropic"))
         && m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic")) {
         if (!m_extTextureFilterAnisotropic) {
             m_context->getExtensions()->ensureEnabled("GL_EXT_texture_filter_anisotropic");
