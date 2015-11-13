@@ -53,23 +53,26 @@ void ExitThunkGenerator::emitThunk(unsigned index, int32_t osrExitFromGenericUnw
     
     info.m_thunkLabel = label();
 
-    if (exit.m_descriptor.m_willArriveAtOSRExitFromGenericUnwind) {
+    Jump jumpToPushIndexFromGenericUnwind;
+    if (exit.m_descriptor.mightArriveAtOSRExitFromGenericUnwind()) {
         restoreCalleeSavesFromVMCalleeSavesBuffer();
         loadPtr(vm()->addressOfCallFrameForCatch(), framePointerRegister);
         addPtr(TrustedImm32(- static_cast<int64_t>(m_state.jitCode->stackmaps.stackSizeForLocals())), 
             framePointerRegister, stackPointerRegister);
 
-        if (exit.m_descriptor.m_isExceptionFromJSCall)
+        if (exit.m_descriptor.needsRegisterRecoveryOnGenericUnwindOSRExitPath())
             exit.recoverRegistersFromSpillSlot(*this, osrExitFromGenericUnwindStackSpillSlot);
 
-        Jump skipGetAndPutByIdSlowPathEntrance = jump();
-
-        info.m_getAndPutByIdCallOperationExceptionOSRExitEntrance = label();
-        if (exit.m_descriptor.m_isExceptionFromGetById)
-            exit.recoverRegistersFromSpillSlot(*this, osrExitFromGenericUnwindStackSpillSlot);
-        
-        skipGetAndPutByIdSlowPathEntrance.link(this);
+        jumpToPushIndexFromGenericUnwind = jump();
     }
+
+    if (exit.m_descriptor.mightArriveAtOSRExitFromCallOperation()) {
+        info.m_callOperationExceptionOSRExitEntrance = label();
+        exit.recoverRegistersFromSpillSlot(*this, osrExitFromGenericUnwindStackSpillSlot);
+    }
+    
+    if (exit.m_descriptor.mightArriveAtOSRExitFromGenericUnwind())
+        jumpToPushIndexFromGenericUnwind.link(this);
 
     pushToSaveImmediateWithoutTouchingRegisters(TrustedImm32(index));
     info.m_thunkJump = patchableJump();

@@ -136,13 +136,30 @@ namespace FTL {
 //   intrinsics (or meta-data, or something) to inform the backend that it's safe to
 //   make the predicate passed to 'exitIf()' more truthy.
 
+enum class ExceptionType {
+    None,
+    CCallException,
+    JSCall,
+    GetById,
+    PutById,
+    LazySlowPath,
+    SubGenerator
+};
+
 struct OSRExitDescriptor {
     OSRExitDescriptor(
-        ExitKind, DataFormat profileDataFormat, MethodOfGettingAValueProfile,
+        ExitKind, ExceptionType, DataFormat profileDataFormat, MethodOfGettingAValueProfile,
         CodeOrigin, CodeOrigin originForProfile,
         unsigned numberOfArguments, unsigned numberOfLocals);
 
+    bool willArriveAtExitFromIndirectExceptionCheck() const;
+    bool mightArriveAtOSRExitFromGenericUnwind() const;
+    bool mightArriveAtOSRExitFromCallOperation() const;
+    bool needsRegisterRecoveryOnGenericUnwindOSRExitPath() const;
+    bool isExceptionHandler() const;
+
     ExitKind m_kind;
+    ExceptionType m_exceptionType;
     CodeOrigin m_codeOrigin;
     CodeOrigin m_codeOriginForExitProfile;
     CodeOrigin m_semanticCodeOriginForCallFrameHeader;
@@ -161,11 +178,6 @@ struct OSRExitDescriptor {
     uint32_t m_stackmapID;
     HandlerInfo m_baselineExceptionHandler;
     bool m_isInvalidationPoint : 1;
-    bool m_isExceptionHandler : 1;
-    bool m_willArriveAtOSRExitFromGenericUnwind : 1;
-    bool m_isExceptionFromJSCall : 1;
-    bool m_isExceptionFromGetById : 1;
-    bool m_isExceptionFromLazySlowPath : 1;
     
     void validateReferences(const TrackedReferences&);
 };

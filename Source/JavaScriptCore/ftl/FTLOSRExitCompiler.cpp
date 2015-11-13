@@ -547,8 +547,8 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("    Exit stackmap ID: ", exit.m_descriptor.m_stackmapID, "\n");
         dataLog("    Current call site index: ", exec->callSiteIndex().bits(), "\n");
         dataLog("    Exit is exception handler: ", exit.m_isExceptionHandler,
-            " will arrive at exit from genericUnwind(): ", exit.m_descriptor.m_willArriveAtOSRExitFromGenericUnwind, 
-            " will arrive at exit from lazy slow path: ", exit.m_descriptor.m_isExceptionFromLazySlowPath, "\n");
+            " might arrive at exit from genericUnwind(): ", exit.m_descriptor.mightArriveAtOSRExitFromGenericUnwind(), 
+            " will arrive at exit from lazy slow path: ", exit.m_descriptor.m_exceptionType == ExceptionType::LazySlowPath, "\n");
         dataLog("    Exit values: ", exit.m_descriptor.m_values, "\n");
         if (!exit.m_descriptor.m_materializations.isEmpty()) {
             dataLog("    Materializations:\n");

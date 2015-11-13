@@ -1,3 +1,78 @@
+2015-11-13  Saam barati  <sbarati@apple.com>
+
+        sub IC does not properly handle exception handling now that try/catch is compiled in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=151080
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements proper exception handling for ArithSubs with binaryUseKind as
+        UntypedUse inside try/catch.  We implement this in a very similar way as we implement 
+        exception handling from GetById/PutById/LazySlowPaths callOperation calls. We do the needed 
+        spilling if the result is the same register as the left/right register because in the event
+        of an exception, we don't want to do value recovery on the garbage result, we
+        want to do it on the original lhs/rhs of the operation.
+
+        This patch also does some refactoring. No longer does OSRExitDescriptor
+        have a long list of booleans that correspond to different OSR exit types.
+        It now just has an enum property called ExceptionType that tells us
+        what type of exception handler the OSR exit is. Then, we can just ask
+        interesting questions about the OSR exit and get answers based on its
+        ExceptionType property.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExceptionHandlerManager.cpp:
+        (JSC::FTL::ExceptionHandlerManager::addNewExit):
+        (JSC::FTL::ExceptionHandlerManager::callOperationExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::lazySlowPathExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::getByIdOSRExit):
+        (JSC::FTL::ExceptionHandlerManager::subOSRExit):
+        (JSC::FTL::ExceptionHandlerManager::getCallOSRExitCommon):
+        (JSC::FTL::ExceptionHandlerManager::getOrPutByIdCallOperationExceptionTarget): Deleted.
+        * ftl/FTLExceptionHandlerManager.h:
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBranchToOSRExitIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExitDescriptor::willArriveAtExitFromIndirectExceptionCheck):
+        (JSC::FTL::OSRExitDescriptor::mightArriveAtOSRExitFromGenericUnwind):
+        (JSC::FTL::OSRExitDescriptor::mightArriveAtOSRExitFromCallOperation):
+        (JSC::FTL::OSRExitDescriptor::needsRegisterRecoveryOnGenericUnwindOSRExitPath):
+        (JSC::FTL::OSRExitDescriptor::isExceptionHandler):
+        (JSC::FTL::OSRExitDescriptor::validateReferences):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::gatherRegistersToSpillForCallIfException):
+        (JSC::FTL::OSRExit::spillRegistersToSpillSlot):
+        (JSC::FTL::OSRExit::recoverRegistersFromSpillSlot):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * tests/stress/ftl-try-catch-arith-sub-exception.js: Added.
+        (assert):
+        (let.o.valueOf):
+        (baz):
+        (foo):
+        (bar):
+
 2015-11-13  Caitlin Potter  <caitpotter88@gmail.com>
 
         Allow any LeftHandSideExpression as a valid AssignmentElement

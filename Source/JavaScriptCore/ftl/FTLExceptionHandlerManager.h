@@ -57,10 +57,11 @@ public:
 
     // These functions only make sense to be called after we've generated the OSR
     // exit thunks and allocated the OSR exit thunks' link buffer.
-    CodeLocationLabel getOrPutByIdCallOperationExceptionTarget(uint32_t stackmapRecordIndex);
+    CodeLocationLabel callOperationExceptionTarget(uint32_t stackmapRecordIndex);
     CodeLocationLabel lazySlowPathExceptionTarget(uint32_t stackmapRecordIndex);
 
     OSRExit* getByIdOSRExit(uint32_t stackmapRecordIndex);
+    OSRExit* subOSRExit(uint32_t stackmapRecordIndex);
     OSRExit* getCallOSRExit(uint32_t stackmapRecordIndex, const JSCall&);
     OSRExit* getCallOSRExit(uint32_t stackmapRecordIndex, const JSTailCall&);
     OSRExit* getCallOSRExit(uint32_t stackmapRecordIndex, const JSCallVarargs&);

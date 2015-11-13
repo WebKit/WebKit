@@ -39,7 +39,7 @@ struct OSRExitCompilationInfo {
     }
     
     MacroAssembler::Label m_thunkLabel;
-    MacroAssembler::Label m_getAndPutByIdCallOperationExceptionOSRExitEntrance;
+    MacroAssembler::Label m_callOperationExceptionOSRExitEntrance;
     MacroAssembler::PatchableJump m_thunkJump;
     CodeLocationLabel m_thunkAddress;
 };

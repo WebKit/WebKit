@@ -41,20 +41,20 @@ void ExceptionHandlerManager::addNewExit(uint32_t stackmapRecordIndex, size_t os
 {
     m_map.add(stackmapRecordIndex, osrExitIndex);
     OSRExit& exit = m_state.jitCode->osrExit[osrExitIndex];
-    RELEASE_ASSERT(exit.m_descriptor.m_willArriveAtOSRExitFromGenericUnwind || exit.m_descriptor.m_isExceptionFromLazySlowPath);
+    RELEASE_ASSERT(exit.m_descriptor.willArriveAtExitFromIndirectExceptionCheck());
 }
 
-CodeLocationLabel ExceptionHandlerManager::getOrPutByIdCallOperationExceptionTarget(uint32_t stackmapRecordIndex)
+CodeLocationLabel ExceptionHandlerManager::callOperationExceptionTarget(uint32_t stackmapRecordIndex)
 {
     auto findResult = m_map.find(stackmapRecordIndex);
     if (findResult == m_map.end())
         return CodeLocationLabel();
 
     size_t osrExitIndex = findResult->value;
-    RELEASE_ASSERT(m_state.jitCode->osrExit[osrExitIndex].m_descriptor.m_willArriveAtOSRExitFromGenericUnwind);
+    RELEASE_ASSERT(m_state.jitCode->osrExit[osrExitIndex].m_descriptor.mightArriveAtOSRExitFromCallOperation());
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[osrExitIndex];
-    RELEASE_ASSERT(info.m_getAndPutByIdCallOperationExceptionOSRExitEntrance.isSet());
-    return m_state.finalizer->exitThunksLinkBuffer->locationOf(info.m_getAndPutByIdCallOperationExceptionOSRExitEntrance);
+    RELEASE_ASSERT(info.m_callOperationExceptionOSRExitEntrance.isSet());
+    return m_state.finalizer->exitThunksLinkBuffer->locationOf(info.m_callOperationExceptionOSRExitEntrance);
 }
 
 CodeLocationLabel ExceptionHandlerManager::lazySlowPathExceptionTarget(uint32_t stackmapRecordIndex)
@@ -64,7 +64,7 @@ CodeLocationLabel ExceptionHandlerManager::lazySlowPathExceptionTarget(uint32_t 
         return CodeLocationLabel();
 
     size_t osrExitIndex = findResult->value;
-    RELEASE_ASSERT(m_state.jitCode->osrExit[osrExitIndex].m_descriptor.m_isExceptionFromLazySlowPath);
+    RELEASE_ASSERT(m_state.jitCode->osrExit[osrExitIndex].m_descriptor.m_exceptionType == ExceptionType::LazySlowPath);
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[osrExitIndex];
     RELEASE_ASSERT(info.m_thunkLabel.isSet());
     return m_state.finalizer->exitThunksLinkBuffer->locationOf(info.m_thunkLabel);
@@ -77,7 +77,18 @@ OSRExit* ExceptionHandlerManager::getByIdOSRExit(uint32_t stackmapRecordIndex)
         return nullptr;
     size_t osrExitIndex = findResult->value;
     OSRExit* exit = &m_state.jitCode->osrExit[osrExitIndex];
-    RELEASE_ASSERT(exit->m_descriptor.m_isExceptionFromGetById);
+    RELEASE_ASSERT(exit->m_descriptor.m_exceptionType == ExceptionType::GetById);
+    return exit; 
+}
+
+OSRExit* ExceptionHandlerManager::subOSRExit(uint32_t stackmapRecordIndex)
+{
+    auto findResult = m_map.find(stackmapRecordIndex);
+    if (findResult == m_map.end())
+        return nullptr;
+    size_t osrExitIndex = findResult->value;
+    OSRExit* exit = &m_state.jitCode->osrExit[osrExitIndex];
+    RELEASE_ASSERT(exit->m_descriptor.m_exceptionType == ExceptionType::SubGenerator);
     return exit; 
 }
 
@@ -88,7 +99,7 @@ OSRExit* ExceptionHandlerManager::getCallOSRExitCommon(uint32_t stackmapRecordIn
         return nullptr;
     size_t osrExitIndex = findResult->value;
     OSRExit* exit = &m_state.jitCode->osrExit[osrExitIndex];
-    RELEASE_ASSERT(exit->m_descriptor.m_isExceptionFromJSCall);
+    RELEASE_ASSERT(exit->m_descriptor.m_exceptionType == ExceptionType::JSCall);
     return exit; 
 }
 

@@ -639,21 +639,36 @@ static void fixFunctionBasedOnStackMaps(
             }
 
             OSRExit& exit = state.jitCode->osrExit.last();
-            if (exitDescriptor.m_willArriveAtOSRExitFromGenericUnwind || exitDescriptor.m_isExceptionFromLazySlowPath) {
+            if (exitDescriptor.willArriveAtExitFromIndirectExceptionCheck()) {
                 StackMaps::Record& record = iter->value[j].record;
                 RELEASE_ASSERT(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader.isSet());
                 CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader);
                 exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
                 exceptionHandlerManager.addNewExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
 
-                if (exitDescriptor.m_isExceptionFromJSCall)
+                // Subs and GetByIds have an interesting register preservation story,
+                // see comment below at GetById to read about it.
+                //
+                // We set the registers needing spillage here because they need to be set
+                // before we generate OSR exits so the exit knows to do the proper recovery.
+                if (exitDescriptor.m_exceptionType == ExceptionType::JSCall) {
+                    // Call patchpoints might have values we want to do value recovery
+                    // on inside volatile registers. We need to collect the volatile
+                    // registers we want to do value recovery on here because they must
+                    // be preserved to the stack before the call, that way the OSR exit
+                    // exception handler can recover them into the proper registers.
                     exit.gatherRegistersToSpillForCallIfException(stackmaps, record);
-                if (exitDescriptor.m_isExceptionFromGetById) {
+                } else if (exitDescriptor.m_exceptionType == ExceptionType::GetById) {
                     GPRReg result = record.locations[0].directGPR();
                     GPRReg base = record.locations[1].directGPR();
-                    // This has an interesting story, see comment below describing it.
-                    if (result == base)
+                    if (base == result)
                         exit.registersToPreserveForCallThatMightThrow.set(base);
+                } else if (exitDescriptor.m_exceptionType == ExceptionType::SubGenerator) {
+                    GPRReg result = record.locations[0].directGPR();
+                    GPRReg left = record.locations[1].directGPR();
+                    GPRReg right = record.locations[2].directGPR();
+                    if (result == left || result == right)
+                        exit.registersToPreserveForCallThatMightThrow.set(result);
                 }
             }
         }
@@ -684,7 +699,7 @@ static void fixFunctionBasedOnStackMaps(
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
 
-            if (exit.m_descriptor.m_willArriveAtOSRExitFromGenericUnwind) {
+            if (exit.m_descriptor.mightArriveAtOSRExitFromGenericUnwind()) {
                 HandlerInfo newHandler = exit.m_descriptor.m_baselineExceptionHandler;
                 newHandler.start = exit.m_exceptionHandlerCallSiteIndex.bits();
                 newHandler.end = exit.m_exceptionHandlerCallSiteIndex.bits() + 1;
@@ -717,7 +732,7 @@ static void fixFunctionBasedOnStackMaps(
 
         Vector<std::pair<CCallHelpers::JumpList, CodeLocationLabel>> exceptionJumpsToLink;
         auto addNewExceptionJumpIfNecessary = [&] (uint32_t recordIndex) {
-            CodeLocationLabel exceptionTarget = exceptionHandlerManager.getOrPutByIdCallOperationExceptionTarget(recordIndex);
+            CodeLocationLabel exceptionTarget = exceptionHandlerManager.callOperationExceptionTarget(recordIndex);
             if (!exceptionTarget)
                 return false;
             exceptionJumpsToLink.append(
@@ -877,8 +892,15 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg right = record.locations[2].directGPR();
 
                 arithSub.m_slowPathStarts.append(slowPathJIT.label());
+                bool addedUniqueExceptionJump = addNewExceptionJumpIfNecessary(iter->value[i].index);
+                if (result == left || result == right) {
+                    // This situation has a really interesting register preservation story.
+                    // See comment above for GetByIds.
+                    if (OSRExit* exit = exceptionHandlerManager.subOSRExit(iter->value[i].index))
+                        exit->spillRegistersToSpillSlot(slowPathJIT, jsCallThatMightThrowSpillOffset);
+                }
 
-                callOperation(state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
+                callOperation(state, usedRegisters, slowPathJIT, codeOrigin, addedUniqueExceptionJump ? &exceptionJumpsToLink.last().first : &exceptionTarget,
                     operationValueSub, result, left, right).call();
 
                 arithSub.m_slowPathDone.append(slowPathJIT.jump());
@@ -1058,7 +1080,7 @@ static void fixFunctionBasedOnStackMaps(
         OSRExit& exit = jitCode->osrExit[exitIndex];
         Vector<const void*> codeAddresses;
 
-        if (exit.m_descriptor.m_willArriveAtOSRExitFromGenericUnwind || exit.m_descriptor.m_isExceptionFromLazySlowPath) // This is reached by a jump from genericUnwind or a jump from a lazy slow path.
+        if (exit.m_descriptor.willArriveAtExitFromIndirectExceptionCheck()) // This jump doesn't happen directly from a patchpoint/stackmap we compile. It happens indirectly through an exception check somewhere.
             continue;
         
         StackMaps::Record& record = jitCode->stackmaps.records[exit.m_stackmapRecordIndex];
