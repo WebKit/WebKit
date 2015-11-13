@@ -1,3 +1,30 @@
+2015-11-13  Caitlin Potter  <caitpotter88@gmail.com>
+
+        Allow any LeftHandSideExpression as a valid AssignmentElement
+        https://bugs.webkit.org/show_bug.cgi?id=151026
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignmentElementNode::collectBoundIdentifiers):
+        (JSC::AssignmentElementNode::bindValue):
+        (JSC::AssignmentElementNode::toString):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::isAssignmentLocation):
+        (JSC::ASTBuilder::createAssignmentElement):
+        * parser/NodeConstructors.h:
+        (JSC::AssignmentElementNode::AssignmentElementNode):
+        * parser/Nodes.h:
+        (JSC::AssignmentElementNode::assignmentTarget):
+        (JSC::AssignmentElementNode::divotStart):
+        (JSC::AssignmentElementNode::divotEnd):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::createAssignmentElement):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2015-11-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         op_assert should declare that it uses the first register argument
