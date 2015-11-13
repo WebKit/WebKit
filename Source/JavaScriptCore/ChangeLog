@@ -1,3 +1,36 @@
+2015-11-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Do not generate an Add when adding a zero immediate to something
+        https://bugs.webkit.org/show_bug.cgi?id=151171
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid generating an add if one of arguments is a zero immediate.
+
+        On x86, the add32/64() were also used internally for branchAdd32/64.
+        I split the code that sets flag to add32AndSetFlags() to make sure
+        we always force the flags before testing.
+
+        I could have used CMp to set the flags but I would gain nothing from
+        that, cmp is just a SUB.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::add32):
+        (JSC::MacroAssemblerARM64::add64):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::add32):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::add32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::add32AndSetFlags):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::branchAdd64):
+        (JSC::MacroAssemblerX86_64::add64AndSetFlags):
+
 2015-11-12  Geoffrey Garen  <ggaren@apple.com>
 
         Restore CodeBlock jettison code I accidentally removed
