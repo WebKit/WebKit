@@ -791,20 +791,28 @@ writeH("OpcodeGenerated") {
     outp.puts "bool Inst::hasNonArgNonControlEffects()"
     outp.puts "{"
     outp.puts "switch (opcode) {"
+    foundTrue = false
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:effects]
             outp.puts "case #{opcode.name}:"
+            foundTrue = true
         end
     }
-    outp.puts "return true;"
+    if foundTrue
+        outp.puts "return true;"
+    end
+    foundTrue = false
     $opcodes.values.each {
         | opcode |
         if opcode.special
             outp.puts "case #{opcode.name}:"
+            foundTrue = true
         end
     }
-    outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
+    if foundTrue
+        outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
+    end
     outp.puts "default:"
     outp.puts "return false;"
     outp.puts "}"
@@ -813,20 +821,28 @@ writeH("OpcodeGenerated") {
     outp.puts "bool Inst::hasNonArgEffects()"
     outp.puts "{"
     outp.puts "switch (opcode) {"
+    foundTrue = false
     $opcodes.values.each {
         | opcode |
         if opcode.attributes[:branch] or opcode.attributes[:terminal] or opcode.attributes[:effects]
             outp.puts "case #{opcode.name}:"
+            foundTrue = true
         end
     }
-    outp.puts "return true;"
+    if foundTrue
+        outp.puts "return true;"
+    end
+    foundTrue = false
     $opcodes.values.each {
         | opcode |
         if opcode.special
             outp.puts "case #{opcode.name}:"
+            foundTrue = true
         end
     }
-    outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
+    if foundTrue
+        outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
+    end
     outp.puts "default:"
     outp.puts "return false;"
     outp.puts "}"

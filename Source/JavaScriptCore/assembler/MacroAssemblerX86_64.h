@@ -785,6 +785,14 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        if (src1 == dest)
+            return branchMul64(cond, src2, dest);
+        move(src2, dest);
+        return branchMul64(cond, src1, dest);
+    }
+
     Jump branchSub64(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         sub64(imm, dest);

@@ -497,11 +497,18 @@ private:
         // mean something like:
         //     b = Op a
 
+        ArgPromise addr = loadPromise(value);
+        if (isValidForm(opcode, addr.kind(), Arg::Tmp)) {
+            append(opcode, addr.consume(*this), result);
+            return;
+        }
+
         if (isValidForm(opcode, Arg::Tmp, Arg::Tmp)) {
             append(opcode, tmp(value), result);
             return;
         }
 
+        ASSERT(value->type() == m_value->type());
         append(relaxedMoveForType(m_value->type()), tmp(value), result);
         append(opcode, result);
     }
@@ -718,6 +725,14 @@ private:
                 m_code.addSpecial(std::make_unique<T>(std::forward<Arguments>(arguments)...)));
         }
         return field;
+    }
+
+    template<typename... Arguments>
+    CheckSpecial* ensureCheckSpecial(Arguments&&... arguments)
+    {
+        CheckSpecial::Key key(std::forward<Arguments>(arguments)...);
+        auto result = m_checkSpecials.add(key, nullptr);
+        return ensureSpecial(result.iterator->value, key);
     }
 
     void fillStackmap(Inst& inst, StackmapValue* stackmap, unsigned numSkipped)
@@ -1418,6 +1433,11 @@ private:
             return;
         }
 
+        case IToD: {
+            appendUnOp<ConvertInt32ToDouble, ConvertInt64ToDouble, Air::Oops>(m_value->child(0));
+            return;
+        }
+
         case CCall: {
             CCallValue* cCall = m_value->as<CCallValue>();
             Inst inst(Patch, cCall, Arg::special(m_code.cCallSpecial()));
@@ -1497,12 +1517,111 @@ private:
             return;
         }
 
+        case CheckAdd:
+        case CheckSub: {
+            // FIXME: Make this support commutativity. That will let us leverage more instruction forms
+            // and it let us commute to maximize coalescing.
+            // https://bugs.webkit.org/show_bug.cgi?id=151214
+
+            CheckValue* checkValue = m_value->as<CheckValue>();
+
+            Value* left = checkValue->child(0);
+            Value* right = checkValue->child(1);
+
+            Tmp result = tmp(m_value);
+
+            // Handle checked negation.
+            if (checkValue->opcode() == CheckSub && left->isInt(0)) {
+                append(relaxedMoveForType(checkValue->type()), tmp(right), result);
+
+                Air::Opcode opcode =
+                    opcodeForType(BranchNeg32, BranchNeg64, Air::Oops, checkValue->type());
+                CheckSpecial* special = ensureCheckSpecial(opcode, 2);
+
+                Inst inst(Patch, checkValue, Arg::special(special));
+                inst.args.append(Arg::resCond(MacroAssembler::Overflow));
+                inst.args.append(result);
+
+                fillStackmap(inst, checkValue, 2);
+
+                m_insts.last().append(WTF::move(inst));
+                return;
+            }
+
+            append(relaxedMoveForType(m_value->type()), tmp(left), result);
+            
+            Air::Opcode opcode = Air::Oops;
+            CheckSpecial* special = nullptr;
+            switch (m_value->opcode()) {
+            case CheckAdd:
+                opcode = opcodeForType(BranchAdd32, BranchAdd64, Air::Oops, m_value->type());
+                special = ensureCheckSpecial(opcode, 3);
+                break;
+            case CheckSub:
+                opcode = opcodeForType(BranchSub32, BranchSub64, Air::Oops, m_value->type());
+                special = ensureCheckSpecial(opcode, 3);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+
+            Inst inst(Patch, checkValue, Arg::special(special));
+
+            inst.args.append(Arg::resCond(MacroAssembler::Overflow));
+
+            // FIXME: It would be great to fuse Loads into these. We currently don't do it because the
+            // rule for stackmaps is that all addresses are just stack addresses. Maybe we could relax
+            // this rule here.
+            // https://bugs.webkit.org/show_bug.cgi?id=151228
+            
+            if (imm(right) && isValidForm(opcode, Arg::ResCond, Arg::Imm, Arg::Tmp))
+                inst.args.append(imm(right));
+            else
+                inst.args.append(tmp(right));
+            inst.args.append(result);
+            
+            fillStackmap(inst, checkValue, 2);
+
+            m_insts.last().append(WTF::move(inst));
+            return;
+        }
+
+        case CheckMul: {
+            // Handle multiplication separately. Multiplication is hard because we have to preserve
+            // both inputs. This requires using three-operand multiplication, even on platforms where
+            // this requires an additional Move.
+
+            CheckValue* checkValue = m_value->as<CheckValue>();
+
+            Value* left = checkValue->child(0);
+            Value* right = checkValue->child(1);
+
+            Tmp result = tmp(m_value);
+
+            Air::Opcode opcode =
+                opcodeForType(BranchMul32, BranchMul64, Air::Oops, checkValue->type());
+            CheckSpecial* special = ensureCheckSpecial(opcode, 4);
+
+            // FIXME: Handle immediates.
+            // https://bugs.webkit.org/show_bug.cgi?id=151230
+
+            Inst inst(Patch, checkValue, Arg::special(special));
+            inst.args.append(Arg::resCond(MacroAssembler::Overflow));
+            inst.args.append(tmp(left));
+            inst.args.append(tmp(right));
+            inst.args.append(result);
+
+            fillStackmap(inst, checkValue, 2);
+            
+            m_insts.last().append(WTF::move(inst));
+            return;
+        }
+
         case Check: {
             Inst branch = createBranch(m_value->child(0));
-            
-            CheckSpecial::Key key(branch);
-            auto result = m_checkSpecials.add(key, nullptr);
-            Special* special = ensureSpecial(result.iterator->value, key);
+
+            CheckSpecial* special = ensureCheckSpecial(branch);
             
             CheckValue* checkValue = m_value->as<CheckValue>();
             

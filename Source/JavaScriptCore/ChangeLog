@@ -1,3 +1,85 @@
+2015-11-12  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile programs with CheckAdd, CheckSub, and CheckMul
+        https://bugs.webkit.org/show_bug.cgi?id=151213
+
+        Reviewed by Benjamin Poulain.
+
+        This adds lowering code for CheckAdd, CheckSub, and CheckMul along with support for CheckNeg
+        (i.e. CheckSub with the left child being zero).
+
+        This adds tests for these things, by simulating what JS would do: if there is overflow, revert
+        to double math. To write the test, I needed support for IToD so I added that support.
+
+        This also fixes a memory corruption bug in the register allocator.
+
+        Also fixes a bug in opcode_generator.rb where we were emitting stray "return" statements inside
+        switch statements. I think this was benign, but I'm not sure, so I fixed it.
+
+        Note that I had to convert CheckMul handling to always use a three-operand form. That's because
+        there is no other way to tell Air that we need the original value alive. This means that on X86
+        we'll emit an extra Move just before the checked mul. That's probably fine since that's
+        necessary anyway.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchMul64):
+        (JSC::MacroAssemblerX86_64::branchSub64):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::generate):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::mulConstant):
+        (JSC::B3::Const32Value::checkAddConstant):
+        (JSC::B3::Const32Value::checkSubConstant):
+        (JSC::B3::Const32Value::checkMulConstant):
+        (JSC::B3::Const32Value::divConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::mulConstant):
+        (JSC::B3::Const64Value::checkAddConstant):
+        (JSC::B3::Const64Value::checkSubConstant):
+        (JSC::B3::Const64Value::checkMulConstant):
+        (JSC::B3::Const64Value::divConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendUnOp):
+        (JSC::B3::Air::LowerToAir::ensureSpecial):
+        (JSC::B3::Air::LowerToAir::ensureCheckSpecial):
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::mulConstant):
+        (JSC::B3::Value::checkAddConstant):
+        (JSC::B3::Value::checkSubConstant):
+        (JSC::B3::Value::checkMulConstant):
+        (JSC::B3::Value::divConstant):
+        * b3/B3Value.h:
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testCheckAdd):
+        (JSC::B3::testCheckAdd64):
+        (JSC::B3::testCheckAddFold):
+        (JSC::B3::testCheckAddFoldFail):
+        (JSC::B3::testCheckSubImm):
+        (JSC::B3::testCheckSub):
+        (JSC::B3::doubleSub):
+        (JSC::B3::testCheckSub64):
+        (JSC::B3::testCheckSubFold):
+        (JSC::B3::testCheckSubFoldFail):
+        (JSC::B3::testCheckNeg):
+        (JSC::B3::testCheckNeg64):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::testCheckMulFold):
+        (JSC::B3::testCheckMulFoldFail):
+        (JSC::B3::genericTestCompare):
+        (JSC::B3::run):
+
 2015-11-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce list of saved console messages

@@ -632,6 +632,70 @@ private:
                     m_value->child(0)->belowEqualConstant(m_value->child(1))));
             break;
 
+        case CheckAdd:
+            // FIXME: Handle commutativity.
+            // https://bugs.webkit.org/show_bug.cgi?id=151214
+            
+            if (replaceWithNewValue(m_value->child(0)->checkAddConstant(m_proc, m_value->child(1))))
+                break;
+            
+            if (m_value->child(0)->isInt(0)) {
+                m_value->replaceWithIdentity(m_value->child(1));
+                m_changed = true;
+                break;
+            }
+            
+            if (m_value->child(1)->isInt(0)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+            break;
+
+        case CheckSub:
+            if (replaceWithNewValue(m_value->child(0)->checkSubConstant(m_proc, m_value->child(1))))
+                break;
+
+            if (m_value->child(1)->isInt(0)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+            break;
+
+        case CheckMul:
+            // FIXME: Handle commutativity.
+            // https://bugs.webkit.org/show_bug.cgi?id=151214
+            
+            if (replaceWithNewValue(m_value->child(0)->checkMulConstant(m_proc, m_value->child(1))))
+                break;
+
+            if (m_value->child(0)->isInt(1)) {
+                m_value->replaceWithIdentity(m_value->child(1));
+                m_changed = true;
+                break;
+            }
+            
+            if (m_value->child(1)->isInt(1)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+
+            if (m_value->child(0)->isInt(0) || m_value->child(1)->isInt(0)) {
+                replaceWithNewValue(m_proc.addIntConstant(m_value, 0));
+                break;
+            }
+            break;
+
+        case Check:
+            if (m_value->child(0)->isLikeZero()) {
+                m_value->replaceWithNop();
+                m_changed = true;
+                break;
+            }
+            break;
+
         case Branch: {
             ControlValue* branch = m_value->as<ControlValue>();
 
@@ -722,13 +786,14 @@ private:
         replaceWithNewValue(m_proc.add<ValueType>(arguments...));
     }
 
-    void replaceWithNewValue(Value* newValue)
+    bool replaceWithNewValue(Value* newValue)
     {
         if (!newValue)
-            return;
+            return false;
         m_insertionSet.insertValue(m_index, newValue);
         m_value->replaceWithIdentity(newValue);
         m_changed = true;
+        return true;
     }
 
     bool handleShiftByZero()

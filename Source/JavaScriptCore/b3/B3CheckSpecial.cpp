@@ -131,13 +131,16 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
 
     Vector<ValueRep> reps;
     if (isCheckMath(value->opcode())) {
-        if (value->opcode() == CheckMul)
-            reps.append(ValueRep());
-        else if (value->opcode() == CheckSub && value->child(0)->isInt(0))
-            reps.append(ValueRep::constant(0));
-        else
+        if (value->opcode() == CheckMul) {
+            reps.append(repForArg(*context.code, inst.args[2]));
             reps.append(repForArg(*context.code, inst.args[3]));
-        reps.append(repForArg(*context.code, inst.args[2]));
+        } else {
+            if (value->opcode() == CheckSub && value->child(0)->isInt(0))
+                reps.append(ValueRep::constant(0));
+            else
+                reps.append(repForArg(*context.code, inst.args[3]));
+            reps.append(repForArg(*context.code, inst.args[2]));
+        }
     } else {
         ASSERT(value->opcode() == Check);
         reps.append(ValueRep::constant(1));

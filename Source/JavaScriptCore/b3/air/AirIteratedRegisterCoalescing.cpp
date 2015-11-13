@@ -920,13 +920,14 @@ void iteratedRegisterCoalescing(Code& code)
         }
 
         gpAllocator.allocate();
+        fpAllocator.allocate();
+
         if (gpAllocator.spilledTmp().isEmpty()) {
             assignRegisterToTmpInProgram(code, gpAllocator);
             gpIsColored = true;
         } else
             addSpillAndFillToProgram<Arg::GP>(code, gpAllocator.spilledTmp());
 
-        fpAllocator.allocate();
         if (fpAllocator.spilledTmp().isEmpty()) {
             assignRegisterToTmpInProgram(code, fpAllocator);
             fpIsColored = true;

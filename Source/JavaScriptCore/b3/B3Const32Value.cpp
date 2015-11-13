@@ -68,6 +68,36 @@ Value* Const32Value::mulConstant(Procedure& proc, const Value* other) const
     return proc.add<Const32Value>(origin(), m_value * other->asInt32());
 }
 
+Value* Const32Value::checkAddConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    CheckedInt32 result = CheckedInt32(m_value) + CheckedInt32(other->asInt32());
+    if (result.hasOverflowed())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), result.unsafeGet());
+}
+
+Value* Const32Value::checkSubConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    CheckedInt32 result = CheckedInt32(m_value) - CheckedInt32(other->asInt32());
+    if (result.hasOverflowed())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), result.unsafeGet());
+}
+
+Value* Const32Value::checkMulConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    CheckedInt32 result = CheckedInt32(m_value) * CheckedInt32(other->asInt32());
+    if (result.hasOverflowed())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), result.unsafeGet());
+}
+
 Value* Const32Value::divConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasInt32())

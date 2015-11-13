@@ -183,6 +183,13 @@ Xor64 U:G, UD:G
     Tmp, Addr
     Imm, Tmp
 
+ConvertInt32ToDouble U:G, D:F
+    Tmp, Tmp
+    Addr, Tmp
+
+ConvertInt64ToDouble U:G, D:F
+    Tmp, Tmp
+
 # Note that Move operates over the full register size, which is either 32-bit or 64-bit depending on
 # the platform. I'm not entirely sure that this is a good thing; it might be better to just have a
 # Move64 instruction. OTOH, our MacroAssemblers already have this notion of "move()" that basically
@@ -301,9 +308,22 @@ BranchAdd32 U:G, U:G, UD:G /branch
     ResCond, Tmp, Addr
     ResCond, Addr, Tmp
 
+BranchAdd64 U:G, U:G, UD:G /branch
+    ResCond, Imm, Tmp
+    ResCond, Tmp, Tmp
+
 BranchMul32 U:G, U:G, UD:G /branch
     ResCond, Tmp, Tmp
     ResCond, Addr, Tmp
+
+BranchMul32 U:G, U:G, U:G, D:G /branch
+    ResCond, Tmp, Tmp, Tmp
+
+BranchMul64 U:G, U:G, UD:G /branch
+    ResCond, Tmp, Tmp
+
+BranchMul64 U:G, U:G, U:G, D:G /branch
+    ResCond, Tmp, Tmp, Tmp
 
 BranchSub32 U:G, U:G, UD:G /branch
     ResCond, Tmp, Tmp
@@ -312,7 +332,14 @@ BranchSub32 U:G, U:G, UD:G /branch
     ResCond, Tmp, Addr
     ResCond, Addr, Tmp
 
+BranchSub64 U:G, U:G, UD:G /branch
+    ResCond, Imm, Tmp
+    ResCond, Tmp, Tmp
+
 BranchNeg32 U:G, UD:G /branch
+    ResCond, Tmp
+
+BranchNeg64 U:G, UD:G /branch
     ResCond, Tmp
 
 Jump /branch
