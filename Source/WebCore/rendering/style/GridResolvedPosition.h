@@ -80,8 +80,6 @@ public:
     {
     }
 
-    GridResolvedPosition(const GridPosition&, GridPositionSide);
-
     GridResolvedPosition& operator*()
     {
         return *this;

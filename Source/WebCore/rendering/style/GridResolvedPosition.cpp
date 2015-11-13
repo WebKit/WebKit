@@ -292,17 +292,6 @@ static GridResolvedPosition resolveGridPositionFromStyle(const RenderStyle& grid
     return GridResolvedPosition(0);
 }
 
-GridResolvedPosition::GridResolvedPosition(const GridPosition& position, GridPositionSide side)
-{
-    ASSERT(position.integerPosition());
-    unsigned integerPosition = position.integerPosition() - 1;
-
-    if (isStartSide(side) && integerPosition)
-        --integerPosition;
-
-    m_integerPosition = integerPosition;
-}
-
 GridUnresolvedSpan GridResolvedPosition::unresolvedSpanFromStyle(const RenderStyle& gridContainerStyle, const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
     GridPosition initialPosition = (direction == ForColumns) ? gridItem.style().gridItemColumnStart() : gridItem.style().gridItemRowStart();
