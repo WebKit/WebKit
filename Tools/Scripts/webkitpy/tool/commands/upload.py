@@ -176,7 +176,7 @@ class ObsoleteAttachments(AbstractSequencedCommand):
 
 class AttachToBug(AbstractSequencedCommand):
     name = "attach-to-bug"
-    help_text = "Attach the the file to the bug"
+    help_text = "Attach the file to the bug"
     argument_names = "BUGID FILEPATH"
     steps = [
         steps.AttachToBug,

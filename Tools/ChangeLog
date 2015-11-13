@@ -1,3 +1,10 @@
+2015-11-12  Daniel Bates  <dabates@apple.com>
+
+        webkitpy: Remove extraneous word "the" from the description of command attach-to-bug
+
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (AttachToBug):
+
 2015-11-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] webkitpy is applying abspath to DOS paths, yielding invalid paths
