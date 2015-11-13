@@ -47,6 +47,9 @@ PageDebuggable::PageDebuggable(Page& page)
 
 String PageDebuggable::name() const
 {
+    if (!m_nameOverride.isNull())
+        return m_nameOverride;
+
     if (!m_page.mainFrame().document())
         return String();
 
@@ -98,6 +101,12 @@ void PageDebuggable::dispatchMessageFromRemoteFrontend(const String& message)
 void PageDebuggable::setIndicating(bool indicating)
 {
     m_page.inspectorController().setIndicating(indicating);
+}
+
+void PageDebuggable::setNameOverride(const String& name)
+{
+    m_nameOverride = name;
+    update();
 }
 
 } // namespace WebCore

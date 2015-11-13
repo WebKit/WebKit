@@ -417,7 +417,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_page->setRemoteInspectionAllowed(true);
+    m_page->setRemoteInspectionAllowed(parameters.allowsRemoteInspection);
+    m_page->setRemoteInspectionNameOverride(parameters.remoteInspectionNameOverride);
 #endif
 
     m_page->setCanStartMedia(false);
@@ -2243,6 +2244,11 @@ void WebPage::centerSelectionInVisibleArea()
 void WebPage::setAllowsRemoteInspection(bool allow)
 {
     m_page->setRemoteInspectionAllowed(allow);
+}
+
+void WebPage::setRemoteInspectionNameOverride(const String& name)
+{
+    m_page->setRemoteInspectionNameOverride(name);
 }
 #endif
 

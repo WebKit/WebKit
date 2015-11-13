@@ -96,6 +96,7 @@ messages -> WebPage LegacyReceiver {
 
 #if ENABLE(REMOTE_INSPECTOR)
     SetAllowsRemoteInspection(bool allow)
+    SetRemoteInspectionNameOverride(String name)
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

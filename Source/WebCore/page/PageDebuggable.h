@@ -53,8 +53,12 @@ public:
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
     virtual void setIndicating(bool) override;
 
+    String nameOverride() const { return m_nameOverride; }
+    void setNameOverride(const String&);
+
 private:
     Page& m_page;
+    String m_nameOverride;
     bool m_forcedDeveloperExtrasEnabled;
 };
 

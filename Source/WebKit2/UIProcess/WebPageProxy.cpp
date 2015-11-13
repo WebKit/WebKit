@@ -1231,6 +1231,18 @@ void WebPageProxy::setAllowsRemoteInspection(bool allow)
     if (isValid())
         m_process->send(Messages::WebPage::SetAllowsRemoteInspection(allow), m_pageID);
 }
+
+void WebPageProxy::setRemoteInspectionNameOverride(const String& name)
+{
+    if (m_remoteInspectionNameOverride == name)
+        return;
+
+    m_remoteInspectionNameOverride = name;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetRemoteInspectionNameOverride(m_remoteInspectionNameOverride), m_pageID);
+}
+
 #endif
 
 void WebPageProxy::setDrawsBackground(bool drawsBackground)
@@ -5116,6 +5128,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.layerHostingMode = m_layerHostingMode;
 #if ENABLE(REMOTE_INSPECTOR)
     parameters.allowsRemoteInspection = m_allowsRemoteInspection;
+    parameters.remoteInspectionNameOverride = m_remoteInspectionNameOverride;
 #endif
 #if PLATFORM(MAC)
     parameters.colorSpace = m_pageClient.colorSpace();

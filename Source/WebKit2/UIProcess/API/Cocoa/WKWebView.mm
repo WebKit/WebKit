@@ -3066,6 +3066,22 @@ static int32_t activeOrientation(WKWebView *webView)
 #endif
 }
 
+- (NSString *)_remoteInspectionNameOverride
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    return _page->remoteInspectionNameOverride();
+#else
+    return nil;
+#endif
+}
+
+- (void)_setRemoteInspectionNameOverride:(NSString *)name
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    _page->setRemoteInspectionNameOverride(name);
+#endif
+}
+
 - (BOOL)_addsVisitedLinks
 {
     return _page->addsVisitedLinks();

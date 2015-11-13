@@ -1025,6 +1025,7 @@ private:
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setAllowsRemoteInspection(bool);
+    void setRemoteInspectionNameOverride(const String&);
 #endif
 
     void setDrawsBackground(bool);

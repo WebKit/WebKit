@@ -1394,6 +1394,16 @@ void Page::setRemoteInspectionAllowed(bool allowed)
     m_inspectorDebuggable->setRemoteDebuggingAllowed(allowed);
 }
 
+String Page::remoteInspectionNameOverride() const
+{
+    return m_inspectorDebuggable->nameOverride();
+}
+
+void Page::setRemoteInspectionNameOverride(const String& name)
+{
+    m_inspectorDebuggable->setNameOverride(name);
+}
+
 void Page::remoteInspectorInformationDidChange() const
 {
     m_inspectorDebuggable->update();

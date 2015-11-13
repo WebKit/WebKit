@@ -310,6 +310,8 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     bool allowsRemoteInspection() const { return m_allowsRemoteInspection; }
     void setAllowsRemoteInspection(bool);
+    String remoteInspectionNameOverride() const { return m_remoteInspectionNameOverride; }
+    void setRemoteInspectionNameOverride(const String&);
 #endif
 
 #if ENABLE(VIBRATION)
@@ -1666,6 +1668,7 @@ private:
 
 #if ENABLE(REMOTE_INSPECTOR)
     bool m_allowsRemoteInspection;
+    String m_remoteInspectionNameOverride;
 #endif
 
 #if PLATFORM(COCOA)

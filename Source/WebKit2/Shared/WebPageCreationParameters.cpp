@@ -72,6 +72,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 
 #if ENABLE(REMOTE_INSPECTOR)
     encoder << allowsRemoteInspection;
+    encoder << remoteInspectionNameOverride;
 #endif
 #if PLATFORM(MAC)
     encoder << colorSpace;
@@ -162,6 +163,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (!decoder.decode(parameters.allowsRemoteInspection))
+        return false;
+    if (!decoder.decode(parameters.remoteInspectionNameOverride))
         return false;
 #endif
 
