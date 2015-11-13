@@ -1,3 +1,22 @@
+2015-11-13  Andreas Kling  <akling@apple.com>
+
+        [JSC] JSPropertyNameEnumerator could be destructorless.
+        <https://webkit.org/b/151242>
+
+        Reviewed by Mark Lam.
+
+        Make JSPropertyNameEnumerator destructorless and have it store the property names
+        cache in CopiedSpace. This was the most popular occupant of 64-byte destructor cells
+        in MarkedSpace, so making it destructorless gets rid of some ill-filled MarkedBlocks.
+
+        * heap/CopyToken.h:
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+        (JSC::JSPropertyNameEnumerator::copyBackingStore):
+        (JSC::JSPropertyNameEnumerator::destroy): Deleted.
+        * runtime/JSPropertyNameEnumerator.h:
+
 2015-11-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Do not generate an Add when adding a zero immediate to something

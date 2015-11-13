@@ -43,9 +43,6 @@ public:
     static JSPropertyNameEnumerator* create(VM&);
     static JSPropertyNameEnumerator* create(VM&, Structure*, uint32_t, uint32_t, PropertyNameArray&);
 
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
-
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
@@ -55,9 +52,9 @@ public:
 
     JSString* propertyNameAtIndex(uint32_t index) const
     {
-        if (index >= m_propertyNames.size())
+        if (index >= cachedPropertyNameCount())
             return nullptr;
-        return m_propertyNames[index].get();
+        return m_propertyNames.get(this)[index].get();
     }
 
     StructureChain* cachedPrototypeChain() const { return m_prototypeChain.get(); }
@@ -81,18 +78,25 @@ public:
     static ptrdiff_t cachedInlineCapacityOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedInlineCapacity); }
     static ptrdiff_t cachedPropertyNamesVectorOffset()
     {
-        return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_propertyNames) + Vector<WriteBarrier<JSString>>::dataMemoryOffset();
+        return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_propertyNames);
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
+    static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
+
+    uint32_t cachedPropertyNameCount() const
+    {
+        // Note that this depends on m_endGenericPropertyIndex being the number of entries in m_propertyNames.
+        return m_endGenericPropertyIndex;
+    }
 
 private:
     JSPropertyNameEnumerator(VM&, StructureID, uint32_t);
     void finishCreation(VM&, uint32_t, uint32_t, PassRefPtr<PropertyNameArrayData>);
 
-    Vector<WriteBarrier<JSString>> m_propertyNames;
-    StructureID m_cachedStructureID;
+    CopyBarrier<WriteBarrier<JSString>> m_propertyNames;
     WriteBarrier<StructureChain> m_prototypeChain;
+    StructureID m_cachedStructureID;
     uint32_t m_indexedLength;
     uint32_t m_endStructurePropertyIndex;
     uint32_t m_endGenericPropertyIndex;
