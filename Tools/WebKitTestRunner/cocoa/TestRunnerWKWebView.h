@@ -35,6 +35,7 @@
 @property (nonatomic, copy) void (^didEndZoomingCallback)(void);
 @property (nonatomic, copy) void (^didShowKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
+@property (nonatomic, copy) void (^didEndScrollingCallback)(void);
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
 - (void)dealloc;

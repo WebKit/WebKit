@@ -75,6 +75,17 @@ JSValueRef UIScriptController::didEndZoomingCallback() const
     return m_context.callbackWithID(CallbackTypeDidEndZooming);
 }
 
+void UIScriptController::setDidEndScrollingCallback(JSValueRef callback)
+{
+    m_context.registerCallback(callback, CallbackTypeDidEndScrolling);
+    platformSetDidEndScrollingCallback();
+}
+
+JSValueRef UIScriptController::didEndScrollingCallback() const
+{
+    return m_context.callbackWithID(CallbackTypeDidEndScrolling);
+}
+
 void UIScriptController::setDidShowKeyboardCallback(JSValueRef callback)
 {
     m_context.registerCallback(callback, CallbackTypeDidShowKeyboard);
@@ -139,6 +150,10 @@ void UIScriptController::platformSetWillBeginZoomingCallback()
 }
 
 void UIScriptController::platformSetDidEndZoomingCallback()
+{
+}
+
+void UIScriptController::platformSetDidEndScrollingCallback()
 {
 }
 

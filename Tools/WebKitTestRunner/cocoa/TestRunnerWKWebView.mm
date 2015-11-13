@@ -36,6 +36,7 @@
 // FIXME: move these to WKWebView_Private.h
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
+- (void)_didFinishScrolling;
 
 @end
 #endif
@@ -76,6 +77,7 @@
     self.didEndZoomingCallback = nil;
     self.didShowKeyboardCallback = nil;
     self.didHideKeyboardCallback = nil;
+    self.didEndScrollingCallback = nil;
 
     self.zoomToScaleCompletionHandler = nil;
     self.showKeyboardCompletionHandler = nil;
@@ -122,6 +124,14 @@
         self.zoomToScaleCompletionHandler();
         self.zoomToScaleCompletionHandler = nullptr;
     }
+}
+
+- (void)_didFinishScrolling
+{
+    [super _didFinishScrolling];
+
+    if (self.didEndScrollingCallback)
+        self.didEndScrollingCallback();
 }
 #endif
 

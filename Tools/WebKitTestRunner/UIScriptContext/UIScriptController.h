@@ -62,6 +62,9 @@ public:
     void setDidHideKeyboardCallback(JSValueRef);
     JSValueRef didHideKeyboardCallback() const;
 
+    void setDidEndScrollingCallback(JSValueRef);
+    JSValueRef didEndScrollingCallback() const;
+
     double zoomScale() const;
     double minimumZoomScale() const;
     double maximumZoomScale() const;
@@ -77,6 +80,7 @@ private:
     void platformSetDidEndZoomingCallback();
     void platformSetDidShowKeyboardCallback();
     void platformSetDidHideKeyboardCallback();
+    void platformSetDidEndScrollingCallback();
     void platformClearAllCallbacks();
 
     virtual JSClassRef wrapperClass() override;

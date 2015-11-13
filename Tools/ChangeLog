@@ -1,3 +1,27 @@
+2015-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Hardware keyboard spacebar scrolls too far on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=151227
+        <rdar://problem/23500681>
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.h:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setDidEndScrollingCallback):
+        (WTR::UIScriptController::didEndScrollingCallback):
+        (WTR::UIScriptController::platformSetDidEndScrollingCallback):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView _didFinishScrolling]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::platformSetDidEndScrollingCallback):
+        (WTR::UIScriptController::platformClearAllCallbacks):
+        Expose _didFinishScrolling on WKWebView to the UIScriptController.
+
 2015-11-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test fix.

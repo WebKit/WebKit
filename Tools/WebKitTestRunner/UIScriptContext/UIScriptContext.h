@@ -46,6 +46,7 @@ typedef enum  {
     CallbackTypeDidEndZooming,
     CallbackTypeDidShowKeyboard,
     CallbackTypeDidHideKeyboard,
+    CallbackTypeDidEndScrolling,
     CallbackTypeNonPersistent = firstNonPersistentCallbackID
 } CallbackType;
 

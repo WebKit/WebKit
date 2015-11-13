@@ -157,6 +157,14 @@ void UIScriptController::platformSetDidHideKeyboardCallback()
     };
 }
 
+void UIScriptController::platformSetDidEndScrollingCallback()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.didEndScrollingCallback = ^{
+        m_context.fireCallback(CallbackTypeDidEndScrolling);
+    };
+}
+
 void UIScriptController::platformClearAllCallbacks()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
@@ -164,6 +172,7 @@ void UIScriptController::platformClearAllCallbacks()
     webView.willBeginZoomingCallback = nil;
     webView.didHideKeyboardCallback = nil;
     webView.didShowKeyboardCallback = nil;
+    webView.didEndScrollingCallback = nil;
 }
 
 }

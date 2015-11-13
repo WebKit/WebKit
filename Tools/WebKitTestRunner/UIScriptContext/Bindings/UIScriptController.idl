@@ -43,6 +43,8 @@ interface UIScriptController {
     attribute object willBeginZoomingCallback;
     attribute object didEndZoomingCallback;
 
+    attribute object didEndScrollingCallback;
+
     // View state
     readonly attribute double zoomScale;
     readonly attribute double minimumZoomScale;

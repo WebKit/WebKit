@@ -1,3 +1,58 @@
+2015-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Hardware keyboard spacebar scrolls too far on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=151227
+        <rdar://problem/23500681>
+
+        Reviewed by Simon Fraser.
+
+        There were two bugs conspiring here to make spacebar scrolling very wrong on iOS:
+
+        1) Incoming key events were being handled twice
+            - fix this by only propagating the event to super if we don't
+            end up handling the event ourselves
+
+        2) _scrollByOffset was not converting the offset delta out of content coordinates
+            - fix this by doing the relevant conversion and renaming the function
+            to make it more clear exactly what it does
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollByContentOffset:]):
+        (-[WKWebView _scrollByOffset:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Rename to _scrollByContentOffset to make it clear that this is
+        in content coordinates, and do the conversion from content coordinates
+        (apply the scale) so that we scroll by the right amount.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        Pass whether the event was handled through to WKContentView.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKWebEvent dealloc]):
+        Add WKWebEvent, which is a WebEvent and retains a reference to the UIEvent
+        from which it came.
+
+        (-[WKContentView _handleKeyUIEvent:]):
+        Only pass the event to super immediately if we don't try to handle it.
+        We'll re-send it to super asynchronously if we decide not to handle it.
+
+        (-[WKContentView handleKeyEvent:]):
+        If we're in the middle of resending an event we didn't handle the first
+        time, just ignore it.
+
+        Make a WKWebEvent and store the UIEvent on it.
+
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]):
+        If the event wasn't handled, and is one of our special events with a
+        wrapped UIEvent, resend it to super. We'll ignore it as noted above.
+
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+        Factor out unobscured content rect retrieval.
+        Make use of Scrollbar::pageStep to match the Mac behavior of not
+        scrolling quite a whole page when scrolling with the spacebar.
+
 2015-11-12  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Fix wrong test case for window_create since r192196

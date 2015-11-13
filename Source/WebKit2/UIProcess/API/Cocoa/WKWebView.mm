@@ -1309,12 +1309,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return true;
 }
 
-- (void)_scrollByOffset:(WebCore::FloatPoint)offset
+- (void)_scrollByContentOffset:(WebCore::FloatPoint)contentOffsetDelta
 {
-    CGPoint currentOffset = ([_scrollView _isAnimatingScroll]) ? [_scrollView _animatedTargetOffset] : [_scrollView contentOffset];
+    WebCore::FloatPoint scaledOffsetDelta = contentOffsetDelta;
+    CGFloat zoomScale = contentZoomScale(self);
+    scaledOffsetDelta.scale(zoomScale, zoomScale);
 
-    CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), currentOffset + offset);
-    
+    CGPoint currentOffset = [_scrollView _isAnimatingScroll] ? [_scrollView _animatedTargetOffset] : [_scrollView contentOffset];
+    CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), currentOffset + scaledOffsetDelta);
+
     if (CGPointEqualToPoint(boundedOffset, currentOffset))
         return;
     [_contentView willStartZoomOrScroll];

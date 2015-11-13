@@ -78,6 +78,20 @@
 @property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
 @end
 
+@interface WKWebEvent : WebEvent
+@property (nonatomic, retain) UIEvent *uiEvent;
+@end
+
+@implementation WKWebEvent
+
+- (void)dealloc
+{
+    [_uiEvent release];
+    [super dealloc];
+}
+
+@end
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -2789,15 +2803,21 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 {
     // We only want to handle key event from the hardware keyboard when we are
     // first responder and we are not interacting with editable content.
-    if ([self isFirstResponder] && event._hidEvent && !_page->editorState().isContentEditable)
+    if ([self isFirstResponder] && event._hidEvent && !_page->editorState().isContentEditable) {
         [self handleKeyEvent:event];
+        return;
+    }
 
     [super _handleKeyUIEvent:event];
 }
 
 - (void)handleKeyEvent:(::UIEvent *)event
 {
-    ::WebEvent *webEvent = [[[::WebEvent alloc] initWithKeyEventType:(event._isKeyDown) ? WebEventKeyDown : WebEventKeyUp
+    // WebCore has already seen the event, no need for custom processing.
+    if (event == _uiEventBeingResent)
+        return;
+
+    WKWebEvent *webEvent = [[[WKWebEvent alloc] initWithKeyEventType:(event._isKeyDown) ? WebEventKeyDown : WebEventKeyUp
                                                            timeStamp:event.timestamp
                                                           characters:event._modifiedInput
                                          charactersIgnoringModifiers:event._unmodifiedInput
@@ -2807,6 +2827,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
                                                              keyCode:0
                                                             isTabKey:[event._modifiedInput isEqualToString:@"\t"]
                                                         characterSet:WebEventCharacterSetUnicode] autorelease];
+    webEvent.uiEvent = event;
     
     [self handleKeyWebEvent:webEvent];    
 }
@@ -2816,7 +2837,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
 }
 
-- (void)_didHandleKeyEvent:(WebIOSEvent *)event
+- (void)_didHandleKeyEvent:(WebIOSEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
     if (event.type == WebEventKeyDown) {
         // FIXME: This is only for staging purposes.
@@ -2825,6 +2846,22 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         else
             [[UIKeyboardImpl sharedInstance] didHandleWebKeyEvent];
     }
+
+    if (eventWasHandled)
+        return;
+
+    if (![event isKindOfClass:[WKWebEvent class]])
+        return;
+
+    // Resending the event may destroy this WKContentView.
+    RetainPtr<WKContentView> protector(self);
+
+    // We keep here the event when resending it to the application to distinguish
+    // the case of a new event from one that has been already sent to WebCore.
+    ASSERT(!_uiEventBeingResent);
+    _uiEventBeingResent = [(WKWebEvent *)event uiEvent];
+    [super _handleKeyUIEvent:_uiEventBeingResent.get()];
+    _uiEventBeingResent = nil;
 }
 
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)event isCharEvent:(BOOL)isCharEvent
@@ -2837,6 +2874,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     static const unsigned kWebSpaceKey = 0x20;
 
     BOOL contentEditable = _page->editorState().isContentEditable;
+    WebCore::FloatRect unobscuredContentRect = _page->unobscuredContentRect();
 
     if (!contentEditable && event.isTabKey)
         return NO;
@@ -2852,29 +2890,29 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         scrollOffset.setX(-Scrollbar::pixelsPerLineStep());
     else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputUpArrow]) {
         if (option)
-            scrollOffset.setY(-_page->unobscuredContentRect().height());
+            scrollOffset.setY(-unobscuredContentRect.height());
         else if (command)
-            scrollOffset.setY(-[self bounds].size.height);
+            scrollOffset.setY(-self.bounds.size.height);
         else
             scrollOffset.setY(-Scrollbar::pixelsPerLineStep());
     } else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputRightArrow])
             scrollOffset.setX(Scrollbar::pixelsPerLineStep());
     else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputDownArrow]) {
         if (option)
-            scrollOffset.setY(_page->unobscuredContentRect().height());
+            scrollOffset.setY(unobscuredContentRect.height());
         else if (command)
-            scrollOffset.setY([self bounds].size.height);
+            scrollOffset.setY(self.bounds.size.height);
         else
             scrollOffset.setY(Scrollbar::pixelsPerLineStep());
     } else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageDown])
-        scrollOffset.setY(_page->unobscuredContentRect().height());
+        scrollOffset.setY(unobscuredContentRect.height());
     else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageUp])
-        scrollOffset.setY(-_page->unobscuredContentRect().height());
+        scrollOffset.setY(-unobscuredContentRect.height());
     else
         shouldScroll = NO;
 
     if (shouldScroll) {
-        [_webView _scrollByOffset:scrollOffset];
+        [_webView _scrollByContentOffset:scrollOffset];
         return YES;
     }
 
@@ -2899,7 +2937,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
     case kWebSpaceKey:
         if (!contentEditable) {
-            [_webView _scrollByOffset:FloatPoint(0, shift ? -_page->unobscuredContentRect().height() : _page->unobscuredContentRect().height())];
+            int pageStep = Scrollbar::pageStep(unobscuredContentRect.height(), self.bounds.size.height);
+            [_webView _scrollByContentOffset:FloatPoint(0, shift ? -pageStep : pageStep)];
             return YES;
         }
         if (isCharEvent) {

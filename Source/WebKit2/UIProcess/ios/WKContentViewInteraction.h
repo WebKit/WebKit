@@ -141,6 +141,7 @@ struct WKAutoCorrectionData {
     WebKit::InteractionInformationAtPosition _positionInformation;
     WebKit::AssistedNodeInformation _assistedNodeInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
+    RetainPtr<UIEvent> _uiEventBeingResent;
 
     CGPoint _lastInteractionLocation;
 
@@ -202,7 +203,7 @@ struct WKAutoCorrectionData {
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect;
 - (void)_showRunOpenPanel:(WebKit::WebOpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)accessoryDone;
-- (void)_didHandleKeyEvent:(WebIOSEvent *)event;
+- (void)_didHandleKeyEvent:(WebIOSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (Vector<WebKit::OptionItem>&) assistedNodeSelectOptions;
 - (void)_enableInspectorNodeSearch;
 - (void)_disableInspectorNodeSearch;
