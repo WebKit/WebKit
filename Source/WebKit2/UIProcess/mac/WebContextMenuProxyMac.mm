@@ -35,6 +35,7 @@
 #import "ServicesController.h"
 #import "ShareableBitmap.h"
 #import "StringUtilities.h"
+#import "WKMenuItemIdentifiersPrivate.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuItem.h"
 #import "WebContextMenuItemData.h"
@@ -257,6 +258,74 @@ void WebContextMenuProxyMac::clearServicesMenu()
     m_menu = nullptr;
 }
 
+static NSString *menuItemIdentifier(const ContextMenuAction action)
+{
+    switch (action) {
+    case ContextMenuItemTagCopy:
+        return _WKMenuItemIdentifierCopy;
+
+    case ContextMenuItemTagCopyImageToClipboard:
+        return _WKMenuItemIdentifierCopyImage;
+
+    case ContextMenuItemTagCopyLinkToClipboard:
+        return _WKMenuItemIdentifierCopyLink;
+
+    case ContextMenuItemTagDownloadImageToDisk:
+        return _WKMenuItemIdentifierDownloadImage;
+
+    case ContextMenuItemTagDownloadLinkToDisk:
+        return _WKMenuItemIdentifierDownloadLinkedFile;
+
+    case ContextMenuItemTagGoBack:
+        return _WKMenuItemIdentifierGoBack;
+
+    case ContextMenuItemTagGoForward:
+        return _WKMenuItemIdentifierGoForward;
+
+    case ContextMenuItemTagInspectElement:
+        return _WKMenuItemIdentifierInspectElement;
+
+    case ContextMenuItemTagLookUpInDictionary:
+        return _WKMenuItemIdentifierLookUp;
+
+    case ContextMenuItemTagOpenFrameInNewWindow:
+        return _WKMenuItemIdentifierOpenFrameInNewWindow;
+
+    case ContextMenuItemTagOpenImageInNewWindow:
+        return _WKMenuItemIdentifierOpenImageInNewWindow;
+
+    case ContextMenuItemTagOpenLink:
+        return _WKMenuItemIdentifierOpenLink;
+
+    case ContextMenuItemTagOpenLinkInNewWindow:
+        return _WKMenuItemIdentifierOpenLinkInNewWindow;
+
+    case ContextMenuItemTagPaste:
+        return _WKMenuItemIdentifierPaste;
+
+    case ContextMenuItemTagReload:
+        return _WKMenuItemIdentifierReload;
+
+    case ContextMenuItemTagSearchWeb:
+        return _WKMenuItemIdentifierSearchWeb;
+
+    case ContextMenuItemTagToggleMediaControls:
+        return _WKMenuItemIdentifierToggleMediaControls;
+
+    case ContextMenuItemTagToggleVideoFullscreen:
+        return _WKMenuItemIdentifierToggleFullScreen;
+
+    case ContextMenuItemTagShareMenu:
+        return _WKMenuItemIdentifierShareMenu;
+
+    case ContextMenuItemTagSpeechMenu:
+        return _WKMenuItemIdentifierSpeechMenu;
+
+    default:
+        return nil;
+    }
+}
+
 RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
 {
     if (![[NSMenuItem class] respondsToSelector:@selector(standardShareMenuItemWithItems:)])
@@ -297,6 +366,8 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
 
     // Setting the picker lets the delegate retain it to keep it alive, but this picker is kept alive by the menu item.
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nil];
+
+    [item setIdentifier:_WKMenuItemIdentifierShareMenu];
 
     return item;
 }
@@ -345,6 +416,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createContextMenuItem(const WebCon
         [menuItem setEnabled:item.enabled()];
         [menuItem setState:item.checked() ? NSOnState : NSOffState];
         [menuItem setTarget:[WKMenuTarget sharedMenuTarget]];
+        [menuItem setIdentifier:menuItemIdentifier(item.action())];
 
         if (item.userData()) {
             auto wrapper = adoptNS([[WKUserDataWrapper alloc] initWithUserData:item.userData()]);
@@ -361,6 +433,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createContextMenuItem(const WebCon
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:nullptr keyEquivalent:@""]);
         [menuItem setEnabled:item.enabled()];
         [menuItem setSubmenu:createContextMenuFromItems(item.submenu()).get()];
+        [menuItem setIdentifier:menuItemIdentifier(item.action())];
 
         return menuItem;
     }

@@ -1,3 +1,18 @@
+2015-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Add identifier strings for a bunch of context menu items
+        https://bugs.webkit.org/show_bug.cgi?id=151272
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm: Added.
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h: Added.
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+        (WebKit::WebContextMenuProxyMac::createShareMenuItem):
+        (WebKit::WebContextMenuProxyMac::createContextMenuItem):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Provide a way to override the WKWebView remote inspector name

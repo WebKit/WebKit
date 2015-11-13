@@ -45,4 +45,7 @@ typedef NS_ENUM(NSInteger, NSMenuType) {
 + (NSMenuItem *)standardShareMenuItemWithItems:(NSArray *)items;
 @end
 
+@interface NSMenuItem () <NSUserInterfaceItemIdentification>
+@end
+
 #endif
