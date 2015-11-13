@@ -4047,7 +4047,8 @@
       },
       "Daniel Bates" : {
          "emails" : [
-            "dbates@webkit.org"
+            "dbates@webkit.org",
+            "dabates@apple.com"
          ],
          "expertise" : "XSSAuditor, Drag and Drop, Tools, Perl, svn-apply/unapply",
          "nicks" : [

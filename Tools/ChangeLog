@@ -1,5 +1,11 @@
 2015-11-12  Daniel Bates  <dabates@apple.com>
 
+        Add my apple.com email address to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2015-11-12  Daniel Bates  <dabates@apple.com>
+
         webkitpy: Remove extraneous word "the" from the description of command attach-to-bug
 
         * Scripts/webkitpy/tool/commands/upload.py:
