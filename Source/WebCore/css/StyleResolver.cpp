@@ -1269,6 +1269,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         || style.position() == StickyPosition
         || (style.position() == FixedPosition && documentSettings() && documentSettings()->fixedPositionCreatesStackingContext())
         || style.hasFlowFrom()
+        || style.willChangeCreatesStackingContext()
         ))
         style.setZIndex(0);
 
