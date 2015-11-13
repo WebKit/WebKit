@@ -1,5 +1,21 @@
 2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r192042. rdar://problem/23189765
+
+    2015-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Ruby base ending in tatechuyoko forces a line break before the tatechuyoko
+            https://bugs.webkit.org/show_bug.cgi?id=150883
+
+            Reviewed by Darin Adler.
+
+            * platform/mac/fast/text/international/text-combine-image-test-expected.txt: Updated.
+            * platform/mac/fast/text/tatechuyoko-expected.txt: Ditto.
+            * fast/text/ruby-tatechuyoko-expected.html: Added.
+            * fast/text/ruby-tatechuyoko.html: Added.
+
+2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190595. rdar://problem/23432378
 
     2015-10-05  Dean Jackson  <dino@apple.com>
