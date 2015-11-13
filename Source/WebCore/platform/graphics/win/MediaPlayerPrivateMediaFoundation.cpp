@@ -2668,7 +2668,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFS
     return hr;
 }
 
-void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(WebCore::GraphicsContext& context, const WebCore::FloatRect& r)
+void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(WebCore::GraphicsContext& context, const WebCore::FloatRect& destRect)
 {
     UINT width = m_destRect.right - m_destRect.left;
     UINT height = m_destRect.bottom - m_destRect.top;
@@ -2688,10 +2688,8 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
 #if USE(CAIRO)
         WebCore::PlatformContextCairo* ctxt = context.platformContext();
         cairo_surface_t* image = cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), CAIRO_FORMAT_ARGB32, width, height, pitch);
-        WebCore::FloatRect clip(0, 0, width, height);
-        WebCore::FloatRect rect = r;
-        rect.intersect(clip);
-        ctxt->drawSurfaceToContext(image, rect, rect, context);
+        FloatRect srcRect(0, 0, width, height);
+        ctxt->drawSurfaceToContext(image, destRect, srcRect, context);
         cairo_surface_destroy(image);
 #else
 #error "Platform needs to implement drawing of Direct3D surface to graphics context!"
