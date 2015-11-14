@@ -800,7 +800,8 @@ void linkPolymorphicCall(
             AssemblyHelpers::selectScratchGPR(calleeGPR, comparisonValueGPR, GPRInfo::regT3);
     }
     stubJit.move(CCallHelpers::TrustedImmPtr(fastCounts.get()), fastCountsBaseGPR);
-    
+    if (!frameShuffler && callLinkInfo.isTailCall())
+        stubJit.emitRestoreCalleeSaves();
     BinarySwitch binarySwitch(comparisonValueGPR, caseValues, BinarySwitch::IntPtr);
     CCallHelpers::JumpList done;
     while (binarySwitch.advance(stubJit)) {
@@ -821,7 +822,6 @@ void linkPolymorphicCall(
             CallFrameShuffler(stubJit, frameShuffler->snapshot()).prepareForTailCall();
             calls[caseIndex].call = stubJit.nearTailCall();
         } else if (callLinkInfo.isTailCall()) {
-            stubJit.emitRestoreCalleeSaves();
             stubJit.prepareForTailCallSlow();
             calls[caseIndex].call = stubJit.nearTailCall();
         } else
