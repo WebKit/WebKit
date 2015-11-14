@@ -1,3 +1,23 @@
+2015-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WK2 iOS interaction tests in LayoutTests/fast/events/ios are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=151199
+        <rdar://problem/23518459>
+
+        Reviewed by Tim Horton.
+
+        While transforming touch positions from document to global coordinates, HIDEventGenerator
+        sometimes uses an old scale of the webview in computing the transformed position. This happens
+        in spite of how we force the UI script to run after the UI process receives a layer tree commit
+        because we invoke the callback before calling WebPageProxy::didCommitLayerTree, which is where
+        we actually use the layer transaction information to update the WKWebView.
+
+        To fix this, we run the drawing-ensured callbacks after committing the layer tree, so the
+        callbacks will have updated information about the web view's scale and dimensions.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+
 2015-11-13  Tim Horton  <timothy_horton@apple.com>
 
         Support printing in WKWebView

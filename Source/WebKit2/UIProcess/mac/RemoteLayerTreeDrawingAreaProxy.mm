@@ -188,11 +188,6 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID + 1);
     m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
 
-    for (auto& callbackID : layerTreeTransaction.callbackIDs()) {
-        if (auto callback = m_callbacks.take<VoidCallback>(callbackID))
-            callback->performCallback();
-    }
-
     if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction)) {
         if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
             m_webPageProxy.setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
@@ -241,6 +236,11 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     if (auto milestones = layerTreeTransaction.newlyReachedLayoutMilestones())
         m_webPageProxy.didLayout(milestones);
+
+    for (auto& callbackID : layerTreeTransaction.callbackIDs()) {
+        if (auto callback = m_callbacks.take<VoidCallback>(callbackID))
+            callback->performCallback();
+    }
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime)
