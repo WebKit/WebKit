@@ -369,7 +369,9 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
     // Setting the picker lets the delegate retain it to keep it alive, but this picker is kept alive by the menu item.
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nil];
 
+#if WK_API_ENABLED
     [item setIdentifier:_WKMenuItemIdentifierShareMenu];
+#endif
 
     return item;
 }

@@ -3,6 +3,13 @@
         Try to fix the 32-bit build
 
         * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::createShareMenuItem):
+
+2015-11-13  Timothy Horton  <timothy_horton@apple.com>
+
+        Try to fix the 32-bit build
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
         (WebKit::menuItemIdentifier):
 
 2015-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
