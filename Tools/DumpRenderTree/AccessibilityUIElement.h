@@ -226,6 +226,9 @@ public:
     bool scrollPageDown();
     bool scrollPageLeft();
     bool scrollPageRight();
+    
+    bool hasContainedByFieldsetTrait();
+    AccessibilityUIElement fieldsetAncestorElement();
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(EFL)

@@ -223,6 +223,10 @@ interface AccessibilityUIElement {
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
     void assistiveTechnologySimulatedFocus();
 
+    // Fieldset
+    readonly attribute boolean hasContainedByFieldsetTrait;
+    AccessibilityUIElement fieldsetAncestorElement();
+
     // Notification support.
     boolean addNotificationListener(object callbackFunction);
     boolean removeNotificationListener();

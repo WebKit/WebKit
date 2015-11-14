@@ -67,6 +67,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
+- (UIAccessibilityTraits)_axContainedByFieldsetTrait;
+- (id)_accessibilityFieldsetAncestor;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -670,6 +672,21 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::traits()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier()
 {
     return concatenateAttributeAndValue(@"AXIdentifier", [m_element accessibilityIdentifier]);
+}
+
+bool AccessibilityUIElement::hasContainedByFieldsetTrait()
+{
+    UIAccessibilityTraits traits = [m_element accessibilityTraits];
+    return (traits & [m_element _axContainedByFieldsetTrait]) == [m_element _axContainedByFieldsetTrait];
+}
+
+PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement()
+{
+    id ancestorElement = [m_element _accessibilityFieldsetAncestor];
+    if (ancestorElement)
+        return AccessibilityUIElement::create(ancestorElement);
+    
+    return nullptr;
 }
 
 int AccessibilityUIElement::rowCount()

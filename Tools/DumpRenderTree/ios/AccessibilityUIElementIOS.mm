@@ -90,6 +90,8 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
+- (UIAccessibilityTraits)_axContainedByFieldsetTrait;
+- (id)_accessibilityFieldsetAncestor;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -133,6 +135,22 @@ int AccessibilityUIElement::elementTextLength()
     NSRange range = [[m_element valueForKey:@"elementTextRange"] rangeValue];
     return range.length;    
 }
+
+bool AccessibilityUIElement::hasContainedByFieldsetTrait()
+{
+    UIAccessibilityTraits traits = [m_element accessibilityTraits];
+    return (traits & [m_element _axContainedByFieldsetTrait]) == [m_element _axContainedByFieldsetTrait];
+}
+
+AccessibilityUIElement AccessibilityUIElement::fieldsetAncestorElement()
+{
+    id ancestorElement = [m_element _accessibilityFieldsetAncestor];
+    if (ancestorElement)
+        return AccessibilityUIElement(ancestorElement);
+    
+    return nullptr;
+}
+
 
 JSStringRef AccessibilityUIElement::url()
 {

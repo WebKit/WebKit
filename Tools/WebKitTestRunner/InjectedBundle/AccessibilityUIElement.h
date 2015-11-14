@@ -282,6 +282,10 @@ public:
     bool scrollPageLeft();
     bool scrollPageRight();
     
+    // Fieldset
+    bool hasContainedByFieldsetTrait();
+    PassRefPtr<AccessibilityUIElement> fieldsetAncestorElement();
+    
 private:
     AccessibilityUIElement(PlatformUIElement);
     AccessibilityUIElement(const AccessibilityUIElement&);

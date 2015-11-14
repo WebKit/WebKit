@@ -271,6 +271,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_axSelectedTrait { return (1 << 19); }
 - (uint64_t)_axNotEnabledTrait { return (1 << 20); }
 - (uint64_t)_axRadioButtonTrait { return (1 << 21); }
+- (uint64_t)_axContainedByFieldsetTrait { return (1 << 22); }
 
 - (BOOL)accessibilityCanFuzzyHitTest
 {
@@ -494,6 +495,16 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return nil;
 }
 
+- (AccessibilityObjectWrapper*)_accessibilityFieldsetAncestor
+{
+    for (AccessibilityObject* parent = m_object->parentObject(); parent != nil; parent = parent->parentObject()) {
+        if (parent->isFieldset())
+            return parent->wrapper();
+    }
+    
+    return nil;
+}
+
 - (uint64_t)_accessibilityTraitsFromAncestors
 {
     uint64_t traits = 0;
@@ -538,6 +549,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
                     traits |= [self _axContainedByLandmarkTrait];
                 break;
         }
+        
+        // If this object has fieldset parent, we should add containedByFieldsetTrait to it.
+        if (parent->isFieldset())
+            traits |= [self _axContainedByFieldsetTrait];
     }
     
     return traits;

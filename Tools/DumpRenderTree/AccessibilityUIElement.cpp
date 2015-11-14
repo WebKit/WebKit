@@ -364,6 +364,11 @@ static JSValueRef assistiveTechnologySimulatedFocusCallback(JSContextRef context
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef fieldsetAncestorElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->fieldsetAncestorElement());
+}
+
 #endif
 
 static JSValueRef childAtIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1373,7 +1378,10 @@ static JSValueRef getElementTextLengthCallback(JSContextRef context, JSObjectRef
     return JSValueMakeNumber(context, toAXElement(thisObject)->elementTextLength());
 }
 
-
+static JSValueRef hasContainedByFieldsetTraitCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->hasContainedByFieldsetTrait());
+}
 
 #endif // PLATFORM(IOS)
 
@@ -1631,6 +1639,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "elementTextPosition", getElementTextPositionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementTextLength", getElementTextLengthCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringForSelection", stringForSelectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "hasContainedByFieldsetTrait", hasContainedByFieldsetTraitCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif // PLATFORM(IOS)
 #if PLATFORM(MAC) && !PLATFORM(IOS)
         { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -1748,6 +1757,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "scrollPageLeft", scrollPageLeftCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "scrollPageRight", scrollPageRightCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "assistiveTechnologySimulatedFocus", assistiveTechnologySimulatedFocusCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "fieldsetAncestorElement", fieldsetAncestorElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
         { 0, 0, 0 }
     };
