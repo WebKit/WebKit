@@ -1,3 +1,23 @@
+2015-11-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r192445, r192451, and r192452.
+        https://bugs.webkit.org/show_bug.cgi?id=151291
+
+        Broke Mavericks build (and thus EWS) (Requested by ap on
+        #webkit).
+
+        Reverted changesets:
+
+        "Add identifier strings for a bunch of context menu items"
+        https://bugs.webkit.org/show_bug.cgi?id=151272
+        http://trac.webkit.org/changeset/192445
+
+        "Try to fix the 32-bit build"
+        http://trac.webkit.org/changeset/192451
+
+        "Try to fix the 32-bit build"
+        http://trac.webkit.org/changeset/192452
+
 2015-11-13  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the 32-bit build
