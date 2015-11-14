@@ -261,6 +261,7 @@ void WebContextMenuProxyMac::clearServicesMenu()
 static NSString *menuItemIdentifier(const ContextMenuAction action)
 {
     switch (action) {
+#if WK_API_ENABLED
     case ContextMenuItemTagCopy:
         return _WKMenuItemIdentifierCopy;
 
@@ -320,6 +321,7 @@ static NSString *menuItemIdentifier(const ContextMenuAction action)
 
     case ContextMenuItemTagSpeechMenu:
         return _WKMenuItemIdentifierSpeechMenu;
+#endif // WK_API_ENABLED
 
     default:
         return nil;
