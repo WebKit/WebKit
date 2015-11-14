@@ -1,3 +1,9 @@
+2015-11-13  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, change JavaScriptCore watchlist to exclude inspector things.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2015-11-13  Tim Horton  <timothy_horton@apple.com>
 
         Support printing in WKWebView

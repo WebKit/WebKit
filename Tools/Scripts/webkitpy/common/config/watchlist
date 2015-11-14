@@ -277,7 +277,7 @@
                         r"|LayoutTests/platform/.*/storage/indexeddb",
         },
         "JavaScriptCore": {
-            "filename": r"Source/JavaScriptCore/"
+            "filename": r"Source/JavaScriptCore/(?!inspector)"
         },
         "BindingsScripts": {
             "filename": r"Source/WebCore/bindings/scripts/",
