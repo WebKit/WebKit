@@ -1,5 +1,23 @@
 2015-11-13  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r192416 and r192443.
+        https://bugs.webkit.org/show_bug.cgi?id=151285
+
+        Broke 32-bit in some mysterious way I need to understand
+        (Requested by kling on #webkit).
+
+        Reverted changesets:
+
+        "[JSC] JSPropertyNameEnumerator could be destructorless."
+        https://bugs.webkit.org/show_bug.cgi?id=151242
+        http://trac.webkit.org/changeset/192416
+
+        "Follow-up for 32-bit test failures after..."
+        https://bugs.webkit.org/show_bug.cgi?id=151242
+        http://trac.webkit.org/changeset/192443
+
+2015-11-13  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r192401.
         https://bugs.webkit.org/show_bug.cgi?id=151282
 

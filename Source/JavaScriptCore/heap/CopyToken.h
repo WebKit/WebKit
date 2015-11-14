@@ -32,8 +32,7 @@ enum CopyToken {
     ButterflyCopyToken,
     TypedArrayVectorCopyToken,
     MapBackingStoreCopyToken,
-    DirectArgumentsOverridesCopyToken,
-    JSPropertyNameEnumeratorCopyToken,
+    DirectArgumentsOverridesCopyToken
 };
 
 } // namespace JSC
