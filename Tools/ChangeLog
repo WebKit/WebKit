@@ -1,5 +1,20 @@
 2015-11-13  Tim Horton  <timothy_horton@apple.com>
 
+        Support printing in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=151276
+        <rdar://problem/23525715>
+
+        Reviewed by Beth Dakin.
+
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController printWebView:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController printWebView:]):
+        Hook up printing to Minibrowser!
+
+2015-11-13  Tim Horton  <timothy_horton@apple.com>
+
         Hardware keyboard spacebar scrolls too far on iOS
         https://bugs.webkit.org/show_bug.cgi?id=151227
         <rdar://problem/23500681>

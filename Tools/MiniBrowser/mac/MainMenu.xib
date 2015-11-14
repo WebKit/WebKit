@@ -140,7 +140,7 @@
                             </menuItem>
                             <menuItem title="Print…" keyEquivalent="p" id="78">
                                 <connections>
-                                    <action selector="print:" target="-1" id="86"/>
+                                    <action selector="printWebView:" target="-1" id="86"/>
                                 </connections>
                             </menuItem>
                         </items>

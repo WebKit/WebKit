@@ -49,6 +49,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 } WK_AVAILABLE(WK_MAC_TBA, NA);
 
 @class WKBrowsingContextHandle;
+@class _WKFrameHandle;
 @class _WKHitTestResult;
 @class _WKRemoteObjectRegistry;
 @class _WKSessionState;
@@ -187,6 +188,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id<NSSecureCoding>)userData;
 
 @property (nonatomic, setter=_setMinimumLayoutWidth:) CGFloat _minimumLayoutWidth WK_AVAILABLE(WK_MAC_TBA, NA);
+
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #endif
 

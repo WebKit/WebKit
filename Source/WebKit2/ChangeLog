@@ -1,3 +1,17 @@
+2015-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Support printing in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=151276
+        <rdar://problem/23525715>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _printOperationWithPrintInfo:]):
+        (-[WKWebView _printOperationWithPrintInfo:forFrame:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Expose SPI similar to what we have on WKView.
+
 2015-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Follow-up to r192437. Add availability macros.

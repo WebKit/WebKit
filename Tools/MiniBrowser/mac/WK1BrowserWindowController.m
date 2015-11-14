@@ -283,6 +283,11 @@
     }
 }
 
+- (IBAction)printWebView:(id)sender
+{
+    [[[[_webView mainFrame] frameView] printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]] runOperationModalForWindow:self.window delegate:nil didRunSelector:nil contextInfo:nil];
+}
+
 - (void)webView:(WebView *)sender didLayout:(WebLayoutMilestones)milestones
 {
     if (milestones & WebDidFirstLayout)

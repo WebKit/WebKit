@@ -76,6 +76,7 @@
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
+#import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKInputDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
@@ -92,7 +93,6 @@
 #import <wtf/TemporaryChange.h>
 
 #if PLATFORM(IOS)
-#import "_WKFrameHandleInternal.h"
 #import "_WKWebViewPrintFormatter.h"
 #import "PrintInfo.h"
 #import "ProcessThrottler.h"
@@ -4064,6 +4064,20 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->setMainFrameIsScrollable(!expandsToFit);
 
     _impl->setClipsToVisibleRect(expandsToFit);
+}
+
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo
+{
+    if (auto webFrameProxy = _page->mainFrame())
+        return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
+    return nil;
+}
+
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle
+{
+    if (auto webFrameProxy = _page->process().webFrame(frameHandle._frameID))
+        return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
+    return nil;
 }
 
 #endif
