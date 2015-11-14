@@ -1,3 +1,19 @@
+2015-11-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Eliminate a request for layout every time an item is added to the stage of the graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=151289
+
+        Reviewed by Simon Fraser.
+        
+        Cache the stage size when it is created instead of requesting every time
+        an object is added via clientWidth and clientHeight.
+
+        * Animometer/resources/extensions.js:
+        (Insets.elementPadding):
+        * Animometer/tests/resources/stage.js:
+        (Stage):
+        (Stage.prototype.get size):
+
 2015-11-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Initialize the graphics benchmark's Kalman filter with estimated 60 FPS

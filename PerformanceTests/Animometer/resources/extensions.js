@@ -68,6 +68,16 @@ function Insets(top, right, bottom, left)
     this.left = left;
 }
 
+Insets.elementPadding = function(element)
+{
+    var styles = window.getComputedStyle(element);
+    return new Insets(
+        parseFloat(styles.paddingTop),
+        parseFloat(styles.paddingRight),
+        parseFloat(styles.paddingBottom),
+        parseFloat(styles.paddingTop));
+}
+
 Insets.prototype =
 {
     get width()

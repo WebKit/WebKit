@@ -35,19 +35,14 @@ Rotater.prototype =
 function Stage(element, options)
 {
     this.element = element;
+    this._size = Point.elementClientSize(element).subtract(Insets.elementPadding(element).size);
 }
 
 Stage.prototype =
 {
     get size()
     {
-        var styles = window.getComputedStyle(this.element);
-        var padding = new Insets(
-            parseFloat(styles.paddingTop),
-            parseFloat(styles.paddingRight),
-            parseFloat(styles.paddingBottom),
-            parseFloat(styles.paddingTop));
-        return new Point(this.element.clientWidth - padding.width, this.element.clientHeight - padding.height);
+        return this._size
     },
     
     random: function(min, max)
