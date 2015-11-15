@@ -1,3 +1,14 @@
+2015-11-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WPT server should use its own testharness.js file and generate a warning when it does not match WebKit version
+        https://bugs.webkit.org/show_bug.cgi?id=150332
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__): Removed testharness.js as file to copy from WK to WPT.
+        (WebPlatformTestServer._copy_webkit_test_files): Added warning generation when WK testharness.js is not matching WPT version.
+
 2015-11-14  Nan Wang  <n_wang@apple.com>
 
         AX: add a new trait for elements in fieldset on iOS
