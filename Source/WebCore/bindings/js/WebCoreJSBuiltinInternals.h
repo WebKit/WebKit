@@ -33,6 +33,14 @@
 #include "WritableStreamInternalsBuiltins.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "RTCPeerConnectionInternalsBuiltins.h"
+#endif
+
+#if ENABLE(STREAMS_API) || ENABLE(MEDIA_STREAM)
+#define SKIP_UNUSED_PARAM
+#endif
+
 namespace WebCore {
 
 class JSBuiltinInternalFunctions {
@@ -44,6 +52,9 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
         , m_streamInternalsFunctions(vm)
         , m_writableStreamInternalsFunctions(vm)
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , m_rTCPeerConnectionInternalsFunctions(vm)
+#endif
     { }
 
 #if ENABLE(STREAMS_API)
@@ -51,12 +62,19 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
     StreamInternalsBuiltinFunctions streamInternals() { return m_streamInternalsFunctions; }
     WritableStreamInternalsBuiltinFunctions writableStreamInternals() { return m_writableStreamInternalsFunctions; }
 #endif
+#if ENABLE(MEDIA_STREAM)
+    RTCPeerConnectionInternalsBuiltinFunctions rTCPeerConnectionInternals() { return m_rTCPeerConnectionInternalsFunctions; }
+#endif
     void visit(JSC::SlotVisitor& visitor) {
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsFunctions.visit(visitor);
         m_streamInternalsFunctions.visit(visitor);
         m_writableStreamInternalsFunctions.visit(visitor);
-#else
+#endif
+#if ENABLE(MEDIA_STREAM)
+        m_rTCPeerConnectionInternalsFunctions.visit(visitor);
+#endif
+#ifndef SKIP_UNUSED_PARAM
         UNUSED_PARAM(visitor);
 #endif
     }
@@ -65,7 +83,11 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
         m_readableStreamInternalsFunctions.init(globalObject);
         m_streamInternalsFunctions.init(globalObject);
         m_writableStreamInternalsFunctions.init(globalObject);
-#else
+#endif
+#if ENABLE(MEDIA_STREAM)
+        m_rTCPeerConnectionInternalsFunctions.init(globalObject);
+#endif
+#ifndef SKIP_UNUSED_PARAM
         UNUSED_PARAM(globalObject);
 #endif
     }
@@ -76,6 +98,9 @@ private:
     ReadableStreamInternalsBuiltinFunctions m_readableStreamInternalsFunctions;
     StreamInternalsBuiltinFunctions m_streamInternalsFunctions;
     WritableStreamInternalsBuiltinFunctions m_writableStreamInternalsFunctions;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    RTCPeerConnectionInternalsBuiltinFunctions m_rTCPeerConnectionInternalsFunctions;
 #endif
 
 };

@@ -57,3 +57,10 @@ function isObject(object)
 
     return (object !== null && typeof object === "object") || typeof object === "function";
 }
+
+function isDictionary(object)
+{
+    "use strict";
+
+    return typeof object === "undefined" || object == null || typeof object === "object";
+}

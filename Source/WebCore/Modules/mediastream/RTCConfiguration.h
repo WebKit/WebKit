@@ -33,55 +33,35 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RTCConfigurationPrivate.h"
 #include "RTCIceServer.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class Dictionary;
+
+typedef int ExceptionCode;
+
 class RTCConfiguration : public RefCounted<RTCConfiguration> {
 public:
-    static Ref<RTCConfiguration> create() { return adoptRef(*new RTCConfiguration()); }
+    static RefPtr<RTCConfiguration> create(const Dictionary& configuration, ExceptionCode&);
     virtual ~RTCConfiguration() { }
 
-    void appendServer(PassRefPtr<RTCIceServer> server) { m_private->appendServer(server->privateServer()); }
-    size_t numberOfServers() { return m_private->numberOfServers(); }
-    PassRefPtr<RTCIceServer> server(size_t index)
-    {
-        RTCIceServerPrivate* server = m_private->server(index);
-        if (!server)
-            return nullptr;
-
-        return RTCIceServer::create(server);
-    }
-
-    const String& iceTransports() const { return m_private->iceTransports(); }
-    void setIceTransports(const String& iceTransports) { m_private->setIceTransports(iceTransports); }
-
-    const String& requestIdentity() const { return m_private->requestIdentity(); }
-    void setRequestIdentity(const String& requestIdentity) { m_private->setRequestIdentity(requestIdentity); }
-
-    Vector<RefPtr<RTCIceServer>> iceServers() const
-    {
-        Vector<RefPtr<RTCIceServer>> servers;
-        for (auto& server : m_private->iceServers())
-            servers.append(RTCIceServer::create(server));
-
-        return servers;
-    }
-
-    RTCConfigurationPrivate* privateConfiguration() { return m_private.get(); }
+    const String& iceTransportPolicy() const { return m_iceTransportPolicy; }
+    const String& bundlePolicy() const { return m_bundlePolicy; }
+    Vector<RefPtr<RTCIceServer>> iceServers() const { return m_iceServers; }
 
 private:
-    RTCConfiguration()
-        : m_private(RTCConfigurationPrivate::create())
-    {
-    }
+    RTCConfiguration();
 
-    RefPtr<RTCConfigurationPrivate> m_private;
+    void initialize(const Dictionary& configuration, ExceptionCode&);
+
+    Vector<RefPtr<RTCIceServer>> m_iceServers;
+    String m_iceTransportPolicy;
+    String m_bundlePolicy;
 };
 
 } // namespace WebCore

@@ -30,6 +30,8 @@
 #if ENABLE(MEDIA_STREAM)
 #include "MediaDevicesBuiltins.h"
 #include "NavigatorUserMediaBuiltins.h"
+#include "RTCPeerConnectionBuiltins.h"
+#include "RTCPeerConnectionInternalsBuiltins.h"
 #endif
 
 #if ENABLE(STREAMS_API)
@@ -66,12 +68,17 @@ public:
 #if ENABLE(MEDIA_STREAM)
         , m_mediaDevicesBuiltins(&vm)
         , m_navigatorUserMediaBuiltins(&vm)
+        , m_rTCPeerConnectionBuiltins(&vm)
+        , m_rTCPeerConnectionInternalsBuiltins(&vm)
 #endif
     {
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsBuiltins.exportNames();
         m_streamInternalsBuiltins.exportNames();
         m_writableStreamInternalsBuiltins.exportNames();
+#endif
+#if ENABLE(MEDIA_STREAM)
+        m_rTCPeerConnectionInternalsBuiltins.exportNames();
 #endif
     }
 #if ENABLE(STREAMS_API)
@@ -88,6 +95,8 @@ public:
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper& mediaDevicesBuiltins() { return m_mediaDevicesBuiltins; }
     NavigatorUserMediaBuiltinsWrapper& navigatorUserMediaBuiltins() { return m_navigatorUserMediaBuiltins;}
+    RTCPeerConnectionBuiltinsWrapper& rTCPeerConnectionBuiltins() { return m_rTCPeerConnectionBuiltins; }
+    RTCPeerConnectionInternalsBuiltinsWrapper& rTCPeerConnectionInternalsBuiltins() { return m_rTCPeerConnectionInternalsBuiltins; }
 #endif
 
 private:
@@ -106,6 +115,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper m_mediaDevicesBuiltins;
     NavigatorUserMediaBuiltinsWrapper m_navigatorUserMediaBuiltins;
+    RTCPeerConnectionBuiltinsWrapper m_rTCPeerConnectionBuiltins;
+    RTCPeerConnectionInternalsBuiltinsWrapper m_rTCPeerConnectionInternalsBuiltins;
 #endif
 
 };

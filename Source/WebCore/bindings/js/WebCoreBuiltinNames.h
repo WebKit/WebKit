@@ -32,15 +32,22 @@
 namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro)\
+    macro(operations) \
     macro(closeRequested) \
     macro(closedPromiseCapability) \
     macro(controlledReadableStream) \
     macro(controller) \
     macro(getUserMediaFromJS) \
     macro(ownerReadableStream) \
+    macro(privateGetStats) \
     macro(pulling) \
     macro(pullAgain) \
     macro(queue) \
+    macro(queuedAddIceCandidate) \
+    macro(queuedCreateAnswer) \
+    macro(queuedCreateOffer) \
+    macro(queuedSetLocalDescription) \
+    macro(queuedSetRemoteDescription) \
     macro(reader) \
     macro(readRequests) \
     macro(readyPromiseCapability) \

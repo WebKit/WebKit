@@ -34,8 +34,8 @@
     CustomConstructor(optional Dictionary dictionary),
     ConstructorRaisesException
 ] interface RTCIceCandidate {
-    readonly attribute DOMString candidate;
-    readonly attribute DOMString sdpMid;
-    readonly attribute unsigned short sdpMLineIndex;
+    attribute DOMString candidate;
+    attribute DOMString sdpMid;
+    attribute unsigned short sdpMLineIndex;
 };
 

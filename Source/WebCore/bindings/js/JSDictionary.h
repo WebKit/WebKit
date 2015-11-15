@@ -50,6 +50,7 @@ class Gamepad;
 class MediaKeyError;
 class MediaStream;
 class MediaStreamTrack;
+class RTCRtpReceiver;
 class Node;
 class SerializedScriptValue;
 class Storage;
@@ -128,6 +129,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStream>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStreamTrack>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<RTCRtpReceiver>& result);
 #endif
 #if ENABLE(FONT_LOAD_EVENTS)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<CSSFontFaceRule>& result);

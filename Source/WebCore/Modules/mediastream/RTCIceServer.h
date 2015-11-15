@@ -28,7 +28,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RTCIceServerPrivate.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -42,31 +41,22 @@ public:
     {
         return adoptRef(*new RTCIceServer(urls, credential, username));
     }
-
-    static Ref<RTCIceServer> create(PassRefPtr<RTCIceServerPrivate> server)
-    {
-        return adoptRef(*new RTCIceServer(server));
-    }
-
     virtual ~RTCIceServer() { }
 
-    const Vector<String>& urls() { return m_private->urls(); }
-    const String& credential() { return m_private->credential(); }
-    const String& username() { return m_private->username(); }
-    RTCIceServerPrivate* privateServer() { return m_private.get(); }
+    const Vector<String>& urls() const { return m_urls; }
+    const String& credential() const { return m_credential; }
+    const String& username() const { return m_username; }
 
 private:
     RTCIceServer(const Vector<String>& urls, const String& credential, const String& username)
-        : m_private(RTCIceServerPrivate::create(urls, credential, username))
-    {
-    }
+        : m_urls(urls)
+        , m_credential(credential)
+        , m_username(username)
+    { }
 
-    RTCIceServer(PassRefPtr<RTCIceServerPrivate> server)
-        : m_private(server)
-    {
-    }
-
-    RefPtr<RTCIceServerPrivate> m_private;
+    Vector<String> m_urls;
+    String m_credential;
+    String m_username;
 };
 
 } // namespace WebCore

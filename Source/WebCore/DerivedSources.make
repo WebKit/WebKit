@@ -146,12 +146,12 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/RTCIceCandidateEvent.idl \
     $(WebCore)/Modules/mediastream/RTCIceServer.idl \
     $(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
-    $(WebCore)/Modules/mediastream/RTCPeerConnectionErrorCallback.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpReceiver.idl \
+    $(WebCore)/Modules/mediastream/RTCRtpSender.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
-    $(WebCore)/Modules/mediastream/RTCSessionDescriptionCallback.idl \
-    $(WebCore)/Modules/mediastream/RTCStatsCallback.idl \
     $(WebCore)/Modules/mediastream/RTCStatsReport.idl \
     $(WebCore)/Modules/mediastream/RTCStatsResponse.idl \
+    $(WebCore)/Modules/mediastream/RTCTrackEvent.idl \
     $(WebCore)/Modules/mediastream/SourceInfo.idl \
     $(WebCore)/Modules/notifications/DOMWindowNotifications.idl \
     $(WebCore)/Modules/notifications/Notification.idl \
@@ -1256,6 +1256,8 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/mediastream/MediaDevices.js \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.js \
+    $(WebCore)/Modules/mediastream/RTCPeerConnection.js \
+    $(WebCore)/Modules/mediastream/RTCPeerConnectionInternals.js \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.js \
     $(WebCore)/Modules/streams/CountQueuingStrategy.js \
     $(WebCore)/Modules/streams/ReadableStream.js \

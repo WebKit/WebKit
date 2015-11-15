@@ -38,6 +38,7 @@ MediaStreamTrackEvent conditional=MEDIA_STREAM
 RTCIceCandidateEvent conditional=MEDIA_STREAM
 RTCDataChannelEvent conditional=MEDIA_STREAM
 RTCDTMFToneChangeEvent conditional=MEDIA_STREAM
+RTCTrackEvent conditional=MEDIA_STREAM
 SpeechSynthesisEvent conditional=SPEECH_SYNTHESIS
 WebGLContextEvent conditional=WEBGL
 StorageEvent

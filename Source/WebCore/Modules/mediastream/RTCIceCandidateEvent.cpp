@@ -38,18 +38,18 @@ Ref<RTCIceCandidateEvent> RTCIceCandidateEvent::create()
     return adoptRef(*new RTCIceCandidateEvent);
 }
 
-Ref<RTCIceCandidateEvent> RTCIceCandidateEvent::create(bool canBubble, bool cancelable, PassRefPtr<RTCIceCandidate> candidate)
+Ref<RTCIceCandidateEvent> RTCIceCandidateEvent::create(bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&& candidate)
 {
-    return adoptRef(*new RTCIceCandidateEvent(canBubble, cancelable, candidate));
+    return adoptRef(*new RTCIceCandidateEvent(canBubble, cancelable, WTF::move(candidate)));
 }
 
 RTCIceCandidateEvent::RTCIceCandidateEvent()
 {
 }
 
-RTCIceCandidateEvent::RTCIceCandidateEvent(bool canBubble, bool cancelable, PassRefPtr<RTCIceCandidate> candidate)
+RTCIceCandidateEvent::RTCIceCandidateEvent(bool canBubble, bool cancelable, RefPtr<RTCIceCandidate>&& candidate)
     : Event(eventNames().icecandidateEvent, canBubble, cancelable)
-    , m_candidate(candidate)
+    , m_candidate(WTF::move(candidate))
 {
 }
 
