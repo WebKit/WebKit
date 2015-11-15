@@ -21,7 +21,6 @@
 #  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import filecmp
 import json
 import logging
 import sys
@@ -73,7 +72,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._layout_root = port_obj.path_from_webkit_base("LayoutTests")
         self._doc_root = self._filesystem.join(self._layout_root, doc_root(port_obj))
 
-        self._resources_files_to_copy = ['testharness.css', 'testharnessreport.js']
+        self._resources_files_to_copy = ['testharness.js', 'testharness.css', 'testharnessreport.js']
 
         current_dir_path = self._filesystem.abspath(self._filesystem.split(__file__)[0])
         self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py"), self._servers_file]
@@ -99,15 +98,6 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         if self._filesystem.isfile(config_wk_filename):
             config_json = self._filesystem.read_text_file(config_wk_filename).replace("%CERTS_DIR%", self._filesystem.join(self._output_dir, "_wpt_certs"))
             self._filesystem.write_text_file(self._filesystem.join(self._doc_root, "config.json"), config_json)
-
-        wpt_testharnessjs_file = self._filesystem.join(self._doc_root, "resources", "testharness.js")
-        wk_testharnessjs_file = self._filesystem.join(self._layout_root, "resources", "testharness.js")
-         # Next two lines are a temp hack for this patch to land smoothly on bots. They should be removed once patch landed and each bot runs these lines once.
-        if (not self._filesystem.isfile(wpt_testharnessjs_file)):
-            self._filesystem.copyfile(wk_testharnessjs_file, wpt_testharnessjs_file)
-        # Let's check whether WPT testharness.js is the same as WK version
-        if (not filecmp.cmp(wpt_testharnessjs_file, wk_testharnessjs_file)):
-            _log.warning("\n//////////\nWPT tests are not using the same testharness.js file as other WebKit Layout tests.\nWebKit testharness.js might need to be updated according WPT testharness.js.\n//////////\n")
 
     def _clean_webkit_test_files(self):
         _log.debug('Cleaning WPT resources files')
