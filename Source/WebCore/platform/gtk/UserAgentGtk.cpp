@@ -111,10 +111,11 @@ static const String platformVersionForUAString()
 #endif
 }
 
-static const String versionForUAString()
+static const char* versionForUAString()
 {
-    static NeverDestroyed<const String> uaVersion(String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION));
-    return uaVersion;
+#define MAKE_VERSION(major, minor) #major "." #minor
+    return MAKE_VERSION(USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION);
+#undef MAKE_VERSION
 }
 
 static String buildUserAgentString(const UserAgentQuirks& quirks)

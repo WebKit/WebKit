@@ -55,15 +55,16 @@ static String platformVersionForUAString()
     return version;
 }
 
-static const String& versionForUAString()
+static const char* versionForUAString()
 {
-    static NeverDestroyed<String> version(String::format("%i.%i", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION));
-    return version;
+#define MAKE_VERSION(major, minor) #major "." #minor
+    return MAKE_VERSION(WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+#undef MAKE_VERSION
 }
 
 String standardUserAgent(const String& applicationName, const String& applicationVersion)
 {
-    const String& version = versionForUAString();
+    const String& version = ASCIILiteral(versionForUAString());
     static NeverDestroyed<String> standardUserAgentString = makeString("Mozilla/5.0 (", platformForUAString(), "; ", platformVersionForUAString(),
         ") AppleWebKit/", version, " (KHTML, like Gecko) Version/8.0 Safari/601.2.7");
 
@@ -72,7 +73,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
 
     String finalApplicationVersion = applicationVersion;
     if (finalApplicationVersion.isEmpty())
-        finalApplicationVersion = versionForUAString();
+        finalApplicationVersion = ASCIILiteral(versionForUAString());
 
     return standardUserAgentString + ' ' + applicationName + '/' + finalApplicationVersion;
 }
