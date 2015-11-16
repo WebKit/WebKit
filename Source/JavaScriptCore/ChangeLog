@@ -1,3 +1,17 @@
+2015-11-15  Saam barati  <sbarati@apple.com>
+
+        64-bit in the DFG: non tail Calls unnecessarily store the argument count twice on the callee frame and tails calls unnecessarily store it once
+        https://bugs.webkit.org/show_bug.cgi?id=151297
+
+        Reviewed by Geoffrey Garen.
+
+        Non tail calls only need to store the count once. Tail calls
+        never need to store the count on the callee frame because they
+        will be reusing the caller's frame.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+
 2015-11-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update RTCPeerConnection API and introduce PeerConnectionBackend

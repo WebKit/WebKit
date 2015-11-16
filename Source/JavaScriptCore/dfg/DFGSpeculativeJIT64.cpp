@@ -774,8 +774,6 @@ void SpeculativeJIT::emitCall(Node* node)
         // arguments.
         int numPassedArgs = node->numChildren() - 1;
 
-        m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), JITCompiler::calleeFramePayloadSlot(JSStack::ArgumentCount));
-
         if (node->op() == TailCall) {
             Edge calleeEdge = m_jit.graph().child(node, 0);
             JSValueOperand callee(this, calleeEdge);
