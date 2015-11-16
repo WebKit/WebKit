@@ -395,6 +395,18 @@ private:
             return Arg::index(tmp(left), tmp(right));
         }
 
+        case Shl: {
+            Value* left = address->child(0);
+
+            // We'll never see child(1)->isInt32(0), since that would have been reduced. If the shift
+            // amount is greater than 1, then there isn't really anything smart that we could do here.
+            // We avoid using baseless indexes because their encoding isn't particularly efficient.
+            if (m_locked.contains(left) || !address->child(1)->isInt32(1))
+                return Arg::addr(tmp(address));
+
+            return Arg::index(tmp(left), tmp(left));
+        }
+
         case FramePointer:
             return Arg::addr(Tmp(GPRInfo::callFrameRegister));
 

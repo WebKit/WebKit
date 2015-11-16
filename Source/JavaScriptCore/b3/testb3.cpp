@@ -1889,6 +1889,36 @@ void testLoadOffsetUsingAddNotConstant()
     CHECK(compileAndRun<int>(proc, &array[0]) == array[0] + array[1]);
 }
 
+void testLoadAddrShift(unsigned shift)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int slots[2];
+
+    // Figure out which slot to use while having proper alignment for the shift.
+    int* slot;
+    uintptr_t arg;
+    for (unsigned i = sizeof(slots)/sizeof(slots[0]); i--;) {
+        slot = slots + i;
+        arg = bitwise_cast<uintptr_t>(slot) >> shift;
+        if (bitwise_cast<int*>(arg << shift) == slot)
+            break;
+    }
+
+    *slot = 8675309;
+    
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<Value>(
+                proc, Shl, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Const32Value>(proc, Origin(), shift))));
+
+    CHECK(compileAndRun<int>(proc, arg) == 8675309);
+}
+
 void testFramePointer()
 {
     Procedure proc;
@@ -4362,6 +4392,10 @@ void run(const char* filter)
     RUN(testLoadOffsetUsingAdd());
     RUN(testLoadOffsetUsingAddInterference());
     RUN(testLoadOffsetUsingAddNotConstant());
+    RUN(testLoadAddrShift(0));
+    RUN(testLoadAddrShift(1));
+    RUN(testLoadAddrShift(2));
+    RUN(testLoadAddrShift(3));
     RUN(testFramePointer());
     RUN(testStackSlot());
     RUN(testLoadFromFramePointer());
