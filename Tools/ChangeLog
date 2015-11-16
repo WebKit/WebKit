@@ -1,5 +1,18 @@
 2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Use commit id instead of tag name for jhbuild revision.
+
+        In r192469 I updated the jhbuild version to 3.12.0, and used the
+        tag instead of the commit id to make it easier to read and
+        remember. But we use the commit id to check if the current
+        revision is up to date, and when compared to the tag id it always
+        fails and jhbuild is always updated.
+
+        * jhbuild/jhbuild-wrapper: Use commit id and add a comment to
+        remember this is the id of 3.12.0.
+
+2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ layout tests running after r192469.
 
         We fail to find the Gallium llvmpipe driver because of the build
