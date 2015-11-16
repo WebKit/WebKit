@@ -56,6 +56,7 @@ public:
     uint64_t objectStoreIdentifier() const;
     uint64_t indexIdentifier() const;
     IndexedDB::IndexRecordType indexRecordType() const;
+    IDBResourceIdentifier cursorIdentifier() const;
 
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
     uint64_t requestedVersion() const;
@@ -66,6 +67,7 @@ private:
     uint64_t m_serverConnectionIdentifier { 0 };
     std::unique_ptr<IDBResourceIdentifier> m_requestIdentifier;
     std::unique_ptr<IDBResourceIdentifier> m_transactionIdentifier;
+    std::unique_ptr<IDBResourceIdentifier> m_cursorIdentifier;
     uint64_t m_objectStoreIdentifier { 0 };
     uint64_t m_indexIdentifier { 0 };
     IndexedDB::IndexRecordType m_indexRecordType;

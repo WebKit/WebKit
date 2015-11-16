@@ -79,6 +79,26 @@ bool IDBKeyRangeData::isExactlyOneKey() const
     return !lowerKey.compare(upperKey);
 }
 
+bool IDBKeyRangeData::containsKey(const IDBKeyData& key) const
+{
+    if (lowerKey.isValid()) {
+        auto compare = lowerKey.compare(key);
+        if (compare > 0)
+            return false;
+        if (lowerOpen && !compare)
+            return false;
+    }
+    if (upperKey.isValid()) {
+        auto compare = upperKey.compare(key);
+        if (compare < 0)
+            return false;
+        if (upperOpen && !compare)
+            return false;
+    }
+
+    return true;
+}
+
 bool IDBKeyRangeData::isValid() const
 {
     if (isNull)
@@ -92,6 +112,13 @@ bool IDBKeyRangeData::isValid() const
 
     return true;
 }
+
+#ifndef NDEBUG
+String IDBKeyRangeData::loggingString() const
+{
+    return makeString(lowerOpen ? "( " : "[ ", lowerKey.loggingString(), ", ", upperKey.loggingString(), upperOpen ? " )" : " ]");
+}
+#endif
 
 } // namespace WebCore
 

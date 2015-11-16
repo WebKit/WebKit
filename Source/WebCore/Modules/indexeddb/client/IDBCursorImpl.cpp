@@ -112,7 +112,7 @@ IDBAny* IDBCursor::source()
 
 RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
-    LOG(IndexedDB, "IDBCursor::advance");
+    LOG(IndexedDB, "IDBCursor::update");
 
     if (sourcesDeleted()) {
         ec = IDBDatabaseException::InvalidStateError;
@@ -171,6 +171,8 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
         return;
     }
 
+    m_gotValue = false;
+
     uncheckedIteratorCursor(IDBKeyData(), count);
 }
 
@@ -220,20 +222,22 @@ void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCode& ec)
         return;
     }
 
-    if (!key.isValid()) {
+    if (!key.isNull() && !key.isValid()) {
         ec = IDBDatabaseException::DataError;
         return;
     }
 
     if (m_info.isDirectionForward()) {
-        if (key.compare(m_currentPrimaryKeyData) <= 0) {
+        if (!key.isNull() && key.compare(m_currentPrimaryKeyData) <= 0) {
             ec = IDBDatabaseException::DataError;
             return;
         }
-    } else if (key.compare(m_currentPrimaryKeyData) >= 0) {
+    } else if (!key.isNull() && key.compare(m_currentPrimaryKeyData) >= 0) {
         ec = IDBDatabaseException::DataError;
         return;
     }
+
+    m_gotValue = false;
 
     uncheckedIteratorCursor(key, 0);
 }
@@ -276,11 +280,22 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* co
     return effectiveObjectStore().deleteFunction(context, m_deprecatedCurrentPrimaryKey.jsValue(), ec);
 }
 
-void IDBCursor::setGetResult(const IDBGetResult&)
+void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 {
-    LOG(IndexedDB, "IDBCursor::setGetResult");
+    LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData.loggingString().utf8().data());
 
-    // FIXME: Implement.
+    auto* context = request.scriptExecutionContext();
+    if (!context)
+        return;
+
+    m_deprecatedCurrentKey = idbKeyDataToScriptValue(context, getResult.keyData);
+    m_deprecatedCurrentPrimaryKey = idbKeyDataToScriptValue(context, getResult.primaryKeyData);
+    m_currentPrimaryKeyData = getResult.primaryKeyData;
+
+    if (isKeyCursor())
+        m_deprecatedCurrentValue = { };
+    else
+        m_deprecatedCurrentValue = deserializeIDBValueData(*context, getResult.valueBuffer);
 
     m_gotValue = true;
 }

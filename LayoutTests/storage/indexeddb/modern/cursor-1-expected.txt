@@ -1,11 +1,11 @@
 This tests basic IDBCursor functionality
 Initial upgrade needed: Old version - 0 New version - 1
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: next
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: 0
+Cursor primary key is: 0
 Error opening cursor (expected for now)
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: next
@@ -18,12 +18,12 @@ Cursor direction is: next
 Cursor source is: [object IDBIndex] (TestIndex1)
 Cursor key is: null
 Cursor primary key is: null
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: nextunique
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: 0
+Cursor primary key is: 0
 Error opening cursor (expected for now)
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: nextunique
@@ -36,12 +36,12 @@ Cursor direction is: nextunique
 Cursor source is: [object IDBIndex] (TestIndex1)
 Cursor key is: null
 Cursor primary key is: null
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prev
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: foo
+Cursor primary key is: foo
 Error opening cursor (expected for now)
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prev
@@ -54,12 +54,12 @@ Cursor direction is: prev
 Cursor source is: [object IDBIndex] (TestIndex1)
 Cursor key is: null
 Cursor primary key is: null
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prevunique
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: foo
+Cursor primary key is: foo
 Error opening cursor (expected for now)
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prevunique

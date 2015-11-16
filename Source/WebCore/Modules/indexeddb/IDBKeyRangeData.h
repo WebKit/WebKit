@@ -65,6 +65,7 @@ struct IDBKeyRangeData {
     WEBCORE_EXPORT PassRefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
 
     WEBCORE_EXPORT bool isExactlyOneKey() const;
+    bool containsKey(const IDBKeyData&) const;
     bool isValid() const;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -77,6 +78,10 @@ struct IDBKeyRangeData {
 
     bool lowerOpen;
     bool upperOpen;
+
+#ifndef NDEBUG
+    String loggingString() const;
+#endif
 };
 
 template<class Encoder>

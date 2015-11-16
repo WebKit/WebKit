@@ -63,7 +63,7 @@ public:
     
     void recordValueChanged(MemoryObjectStore&, const IDBKeyData&, ThreadSafeDataBuffer*);
     void objectStoreDeleted(std::unique_ptr<MemoryObjectStore>);
-    void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&);
+    void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&, std::unique_ptr<std::set<IDBKeyData>>&&);
     void indexCleared(MemoryIndex&, std::unique_ptr<IndexValueStore>&&);
 
     void addNewIndex(MemoryIndex&);
@@ -95,6 +95,7 @@ private:
     HashMap<String, std::unique_ptr<MemoryIndex>> m_deletedIndexes;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_clearedKeyValueMaps;
+    HashMap<MemoryObjectStore*, std::unique_ptr<std::set<IDBKeyData>>> m_clearedOrderedKeys;
     HashMap<MemoryIndex*, std::unique_ptr<IndexValueStore>> m_clearedIndexValueStores;
 };
 

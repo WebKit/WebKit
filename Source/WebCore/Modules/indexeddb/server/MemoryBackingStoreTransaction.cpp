@@ -111,7 +111,7 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(std::unique_ptr<MemoryObj
         addResult.iterator->value = WTF::move(objectStore);
 }
 
-void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& objectStore, std::unique_ptr<KeyValueMap>&& keyValueMap)
+void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& objectStore, std::unique_ptr<KeyValueMap>&& keyValueMap, std::unique_ptr<std::set<IDBKeyData>>&& orderedKeys)
 {
     ASSERT(m_objectStores.contains(&objectStore));
 
@@ -122,6 +122,9 @@ void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& object
         return;
 
     addResult.iterator->value = WTF::move(keyValueMap);
+
+    ASSERT(!m_clearedOrderedKeys.contains(&objectStore));
+    m_clearedOrderedKeys.add(&objectStore, WTF::move(orderedKeys));
 }
 
 void MemoryBackingStoreTransaction::indexCleared(MemoryIndex& index, std::unique_ptr<IndexValueStore>&& valueStore)
@@ -196,8 +199,10 @@ void MemoryBackingStoreTransaction::abort()
         objectStore->setKeyGeneratorValue(m_originalKeyGenerators.get(objectStore));
 
         auto clearedKeyValueMap = m_clearedKeyValueMaps.take(objectStore);
-        if (clearedKeyValueMap)
-            objectStore->replaceKeyValueStore(WTF::move(clearedKeyValueMap));
+        if (clearedKeyValueMap) {
+            ASSERT(m_clearedOrderedKeys.contains(objectStore));
+            objectStore->replaceKeyValueStore(WTF::move(clearedKeyValueMap), m_clearedOrderedKeys.take(objectStore));
+        }
 
         auto keyValueMap = m_originalValues.take(objectStore);
         if (!keyValueMap)

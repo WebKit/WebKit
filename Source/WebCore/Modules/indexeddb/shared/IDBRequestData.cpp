@@ -50,6 +50,9 @@ IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
 {
     if (m_indexIdentifier)
         m_indexRecordType = operation.indexRecordType();
+
+    if (operation.cursorIdentifier())
+        m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(*operation.cursorIdentifier());
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& other)
@@ -64,6 +67,8 @@ IDBRequestData::IDBRequestData(const IDBRequestData& other)
         m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_requestIdentifier);
     if (other.m_transactionIdentifier)
         m_transactionIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_transactionIdentifier);
+    if (other.m_cursorIdentifier)
+        m_cursorIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_cursorIdentifier);
 }
 
 uint64_t IDBRequestData::serverConnectionIdentifier() const
@@ -74,14 +79,20 @@ uint64_t IDBRequestData::serverConnectionIdentifier() const
 
 IDBResourceIdentifier IDBRequestData::requestIdentifier() const
 {
-    RELEASE_ASSERT(m_requestIdentifier);
+    ASSERT(m_requestIdentifier);
     return *m_requestIdentifier;
 }
 
 IDBResourceIdentifier IDBRequestData::transactionIdentifier() const
 {
-    RELEASE_ASSERT(m_transactionIdentifier);
+    ASSERT(m_transactionIdentifier);
     return *m_transactionIdentifier;
+}
+
+IDBResourceIdentifier IDBRequestData::cursorIdentifier() const
+{
+    ASSERT(m_cursorIdentifier);
+    return *m_cursorIdentifier;
 }
 
 uint64_t IDBRequestData::objectStoreIdentifier() const

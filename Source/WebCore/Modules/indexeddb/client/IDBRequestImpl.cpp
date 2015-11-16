@@ -227,7 +227,7 @@ void IDBRequest::enqueueEvent(Ref<Event>&& event)
 
 bool IDBRequest::dispatchEvent(Event& event)
 {
-    LOG(IndexedDB, "IDBRequest::dispatchEvent - %s", event.type().characters8());
+    LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().characters8(), this);
 
     if (event.type() != eventNames().blockedEvent)
         m_readyState = IDBRequestReadyState::Done;
@@ -246,11 +246,10 @@ bool IDBRequest::dispatchEvent(Event& event)
         dontPreventDefault = IDBEventDispatcher::dispatch(event, targets);
     }
 
-    m_hasPendingActivity = false;
-
-    // FIXME: When we implement reusable requests (for cursors) it will be incorrect to always remove the request from the transaction.
-    if (m_transaction)
+    if (m_transaction && !m_pendingCursor) {
         m_transaction->removeRequest(*this);
+        m_hasPendingActivity = false;
+    }
 
     return dontPreventDefault;
 }
@@ -316,8 +315,8 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
 void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
 {
     ASSERT(m_pendingCursor);
-    if (resultData.type() == IDBResultType::IterateCursorSuccess)
-        m_pendingCursor->setGetResult(resultData.getResult());
+    if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess)
+        m_pendingCursor->setGetResult(*this, resultData.getResult());
 
     m_result = IDBAny::create(*m_pendingCursor);
     m_pendingCursor = nullptr;

@@ -95,6 +95,8 @@ public:
     void willIterateCursor(IDBCursor&);
     void didOpenOrIterateCursor(const IDBResultData&);
 
+    const IDBCursor* pendingCursor() const { return m_pendingCursor.get(); }
+
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);

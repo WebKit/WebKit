@@ -141,7 +141,9 @@ IDBIndex* IDBAny::modernIDBIndex()
 IDBCursor* IDBAny::modernIDBCursor()
 {
     ASSERT(m_type == IDBAny::Type::IDBCursor || m_type == IDBAny::Type::IDBCursorWithValue);
-    return m_cursor.get();
+    if (m_type == IDBAny::Type::IDBCursor)
+        return m_cursor.get();
+    return m_cursorWithValue.get();
 }
 
 RefPtr<WebCore::IDBTransaction> IDBAny::idbTransaction()

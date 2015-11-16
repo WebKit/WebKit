@@ -69,7 +69,7 @@ public:
     void clearRequest() { m_request = nullptr; }
     IDBRequest* request() { return m_request; }
 
-    void setGetResult(const IDBGetResult&);
+    void setGetResult(IDBRequest&, const IDBGetResult&);
 
     virtual bool isKeyCursor() const override { return true; }
 

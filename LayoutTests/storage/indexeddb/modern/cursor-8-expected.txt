@@ -1,0 +1,8 @@
+This tests iterating a "prev" cursor in a read-write transaction while changing records.
+Initial upgrade needed: Old version - 0 New version - 1
+Cursor open at key 2
+Object store cleared.
+Cursor iterated to key -100
+Initial upgrade versionchange transaction complete
+Done
+

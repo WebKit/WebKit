@@ -105,17 +105,21 @@ void MemoryObjectStore::clear()
     LOG(IndexedDB, "MemoryObjectStore::clear");
     ASSERT(m_writeTransaction);
 
-    m_writeTransaction->objectStoreCleared(*this, WTF::move(m_keyValueStore));
+    m_writeTransaction->objectStoreCleared(*this, WTF::move(m_keyValueStore), WTF::move(m_orderedKeys));
     for (auto& index : m_indexesByIdentifier.values())
         index->objectStoreCleared();
+
+    for (auto& cursor : m_cursors.values())
+        cursor->objectStoreCleared();
 }
 
-void MemoryObjectStore::replaceKeyValueStore(std::unique_ptr<KeyValueMap>&& store)
+void MemoryObjectStore::replaceKeyValueStore(std::unique_ptr<KeyValueMap>&& store, std::unique_ptr<std::set<IDBKeyData>>&& orderedKeys)
 {
     ASSERT(m_writeTransaction);
     ASSERT(m_writeTransaction->isAborting());
 
     m_keyValueStore = WTF::move(store);
+    m_orderedKeys = WTF::move(orderedKeys);
 }
 
 void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
@@ -142,6 +146,7 @@ void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
     m_orderedKeys->erase(key);
 
     updateIndexesForDeleteRecord(key);
+    updateCursorsForDeleteRecord(key);
 }
 
 void MemoryObjectStore::deleteRange(const IDBKeyRangeData& inputRange)
@@ -193,7 +198,8 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
     if (!error.isNull()) {
         m_keyValueStore->remove(mapResult.iterator);
         m_orderedKeys->erase(listResult.first);
-    }
+    } else
+        updateCursorsForPutRecord(listResult.first);
 
     return error;
 }
@@ -217,6 +223,18 @@ static ExecState& indexGlobalExec()
 
     RELEASE_ASSERT(globalObject.get()->globalExec());
     return *globalObject.get()->globalExec();
+}
+
+void MemoryObjectStore::updateCursorsForPutRecord(std::set<IDBKeyData>::iterator iterator)
+{
+    for (auto& cursor : m_cursors.values())
+        cursor->keyAdded(iterator);
+}
+
+void MemoryObjectStore::updateCursorsForDeleteRecord(const IDBKeyData& key)
+{
+    for (auto& cursor : m_cursors.values())
+        cursor->keyDeleted(key);
 }
 
 void MemoryObjectStore::updateIndexesForDeleteRecord(const IDBKeyData& value)
@@ -356,6 +374,16 @@ void MemoryObjectStore::unregisterIndex(MemoryIndex& index)
 
     m_indexesByName.remove(index.info().name());
     m_indexesByIdentifier.remove(index.info().identifier());
+}
+
+MemoryObjectStoreCursor* MemoryObjectStore::maybeOpenCursor(const IDBCursorInfo& info)
+{
+    auto result = m_cursors.add(info.identifier(), nullptr);
+    if (!result.isNewEntry)
+        return nullptr;
+
+    result.iterator->value = MemoryObjectStoreCursor::create(*this, info);
+    return result.iterator->value.get();
 }
 
 } // namespace IDBServer

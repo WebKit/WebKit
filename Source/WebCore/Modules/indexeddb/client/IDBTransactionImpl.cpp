@@ -211,7 +211,6 @@ bool IDBTransaction::isFinishedOrFinishing() const
 
 void IDBTransaction::addRequest(IDBRequest& request)
 {
-    ASSERT(!m_openRequests.contains(&request));
     m_openRequests.add(&request);
 }
 
@@ -239,7 +238,7 @@ void IDBTransaction::scheduleOperationTimer()
 
 void IDBTransaction::operationTimerFired()
 {
-    LOG(IndexedDB, "IDBTransaction::operationTimerFired");
+    LOG(IndexedDB, "IDBTransaction::operationTimerFired (%p)", this);
 
     if (!m_startedOnServer)
         return;
