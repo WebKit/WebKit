@@ -83,7 +83,7 @@ function abort(reason)
 
     const sinkAbortPromise = @promiseInvokeOrFallbackOrNoop(this.@underlyingSink, "abort", [reason], "close", []);
 
-    return @Promise.prototype.@then.@call(sinkAbortPromise, function() { return undefined; });
+    return @Promise.prototype.@then.@call(sinkAbortPromise, function() { });
 }
 
 function close()

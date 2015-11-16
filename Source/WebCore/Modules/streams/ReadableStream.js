@@ -87,9 +87,6 @@ function getReader()
     if (!@isReadableStream(this))
         throw new @TypeError("Function should be called on a ReadableStream");
 
-    if (@isReadableStreamLocked(this))
-        throw new @TypeError("ReadableStream is locked");
-
     return new @ReadableStreamReader(this);
 }
 

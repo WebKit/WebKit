@@ -110,7 +110,7 @@ function writableStreamAdvanceQueue(stream)
             @writableStreamAdvanceQueue(stream);
         },
         function(r) {
-            @errorWritableStream.@apply(stream, [r]);
+            @errorWritableStream.@call(stream, r);
         }
     );
 }
@@ -129,7 +129,7 @@ function closeWritableStream(stream)
             stream.@state = @streamClosed;
         },
         function(r) {
-            @errorWritableStream.@apply(stream, [r]);
+            @errorWritableStream.@call(stream, r);
         }
     );
 }
