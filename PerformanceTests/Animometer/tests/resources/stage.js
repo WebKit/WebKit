@@ -173,7 +173,7 @@ StageBenchmark.prototype.showResults = function(message, progress)
         return;
 
     if (this._options["show-running-results"])
-        this._recordTable.showRecord(this._test.name, message, this._sampler.toJSON(true, false));
+        this._recordTable.showRecord(this._test.name, message, this._sampler.toJSON(true, false), this._options);
 
     this._progressBar.setPos(progress);
 }

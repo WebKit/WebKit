@@ -1,5 +1,46 @@
 2015-11-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Highlight the alarming test results in the graphics benchmark results page
+        https://bugs.webkit.org/show_bug.cgi?id=151286
+
+        Reviewed by Simon Fraser.
+        
+        When showing the results of a test in the graphics benchmark the following
+        criteria is going to be applied:
+        
+        1. If the standard deviation of the test complexity or the frame rate is
+           equal to or more than 10%, the standard deviation and the test name
+           will be displayed in red.
+        2. If the average frame rate is not in the range = [(desired_frame_rate - 2)
+           .. (desired_frame_rate + 2)], the average frame rate and the test name will
+           be displayed in red.
+
+        * Animometer/resources/extensions.js:
+        (ResultsTable.prototype._showHeaderRow):
+        (ResultsTable.prototype._showHeader):
+        (ResultsTable.prototype._showEmptyCell):
+        (ResultsTable.prototype._showText):
+        (ResultsTable.prototype._showFixedNumber):
+        (ResultsTable.prototype.):
+        (ResultsTable.prototype._showGraph):
+        (ResultsTable.prototype._showJSON):
+        (ResultsTable.prototype._isAlarmingMeasurement):
+        (ResultsTable.prototype._isAlarmingTestResults):
+        (ResultsTable.prototype._showEmptyCells):
+        (ResultsTable.prototype._showEmptyRow):
+        (ResultsTable.prototype._showTest):
+        (ResultsTable.prototype._showSuite):
+        (ResultsTable.prototype._showIteration):
+        (ResultsTable.prototype.showRecord):
+        (ResultsTable.prototype.showIterations):
+        (ResultsTable.prototype._showEmpty): Deleted.
+        * Animometer/runner/resources/animometer.js:
+        (window.benchmarkRunnerClient.didFinishLastIteration):
+        * Animometer/tests/resources/stage.js:
+        (StageBenchmark.prototype.showResults):
+
+2015-11-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Clean referencing the options object in the graphics benchmark
         https://bugs.webkit.org/show_bug.cgi?id=151284
 

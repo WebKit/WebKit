@@ -45,7 +45,7 @@ window.benchmarkRunnerClient = {
     {
         var json = this._resultsDashboard.toJSON(true, true);
         this.score = json[Strings["JSON_SCORE"]];
-        this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]]);
+        this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]], this.options);
         sectionsManager.showJSON("json", json[Strings["JSON_RESULTS"][0]][0]);
         suitesManager.updateLocalStorageFromJSON(json[Strings["JSON_RESULTS"][0]][0]);
         benchmarkController.showResults();

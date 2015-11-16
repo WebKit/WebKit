@@ -161,6 +161,14 @@ table.results-table {
     color: black;
 }
 
+.results-table td.noisy-results {
+    color: red;
+}
+
+.results-table td.suites-separator {
+    background-color: yellow;
+}
+ 
 /* -------------------------------------------------------------------------- */
 /*                              Results JSON                                  */
 /* -------------------------------------------------------------------------- */

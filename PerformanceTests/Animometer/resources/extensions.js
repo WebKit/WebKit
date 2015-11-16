@@ -274,16 +274,14 @@ ResultsTable.prototype =
     _showHeaderRow: function(row, queue, headers, message)
     {
         headers.forEach(function (header) {
-            var th = document.createElement("th");
+            var th = DocumentExtension.createElement("th", {}, row);
             th.textContent = header.text;
             if (typeof message != "undefined" && message.length) {
-                th.appendChild(document.createElement('br'));
-                th.appendChild(document.createTextNode('[' + message +']'));
+                th.innerHTML += "<br>" + '[' + message +']';
                 message = "";
             }
             if ("width" in header)
                 th.width = header.width + "%";
-            row.appendChild(th);
             queue.push({element: th, headers: header.children });
         });
     },
@@ -323,37 +321,33 @@ ResultsTable.prototype =
         }
     },
     
-    _showEmpty: function(row)
+    _showEmptyCell: function(row, className)
     {
-        var td = document.createElement("td");
-        row.appendChild(td);
+        return DocumentExtension.createElement("td", { class: className }, row);
     },
 
-    _showText: function(row, text)
+    _showText: function(row, text, className)
     {
-        var td = document.createElement("td");
+        var td = DocumentExtension.createElement("td", { class: className }, row);
         td.textContent = text;
-        row.appendChild(td);
     },
 
-    _showFixedNumber: function(row, value, digits)
+    _showFixedNumber: function(row, value, digits, className)
     {
-        var td = document.createElement("td");
+        var td = DocumentExtension.createElement("td", { class: className }, row);
         td.textContent = value.toFixed(digits || 2);
-        row.appendChild(td);
     },
     
     _showGraph: function(row, testName, testResults)
     {
         var data = testResults[Strings["JSON_SAMPLES"][0]];
         if (!data) {
-            this._showEmpty(row);
+            this._showEmptyCell(row, "");
             return;
         }
         
-        var td = document.createElement("td");
-        var button = document.createElement("button");
-        button.className = "small-button";
+        var td = DocumentExtension.createElement("td", {}, row);
+        var button = DocumentExtension.createElement("button", { class: "small-button" }, td);
 
         button.addEventListener("click", function() {
             var samples = data[Strings["JSON_GRAPH"][0]];
@@ -363,40 +357,78 @@ ResultsTable.prototype =
         });
             
         button.textContent = Strings["TEXT_RESULTS"][1] + "...";
-        td.appendChild(button);
-        row.appendChild(td);
     },
 
     _showJSON: function(row, testName, testResults)
     {
         var data = testResults[Strings["JSON_SAMPLES"][0]];
         if (!data) {
-            this._showEmpty(row);
+            this._showEmptyCell(row, "");
             return;
         }
-        
-        var td = document.createElement("td");
-        var button = document.createElement("button");
-        button.className = "small-button";
+
+        var td = DocumentExtension.createElement("td", {}, row);
+        var button = DocumentExtension.createElement("button", { class: "small-button" }, td);
 
         button.addEventListener("click", function() {
             benchmarkController.showTestJSON(testName, testResults);
         });
             
         button.textContent = Strings["TEXT_RESULTS"][2] + "...";
-        td.appendChild(button);
-        row.appendChild(td);
+    },
+    
+    _isNoisyMeasurement: function(index, data, measurement, options)
+    {
+        const percentThreshold = 10;
+        const averageThreshold = 2;
+         
+        if (measurement == Strings["JSON_MEASUREMENTS"][3])
+            return data[Strings["JSON_MEASUREMENTS"][3]] >= percentThreshold;
+            
+        if (index == 1 && measurement == Strings["JSON_MEASUREMENTS"][0])
+            return Math.abs(data[Strings["JSON_MEASUREMENTS"][0]] - options["frame-rate"]) >= averageThreshold;
+
+        return false;
     },
 
-    _showTest: function(testName, testResults)
+    _isNoisyTest: function(testResults, options)
     {
-        var row = document.createElement("tr");
+        for (var index = 0; index < 2; ++index) {
+            var data = testResults[Strings["JSON_EXPERIMENTS"][index]];
+            for (var measurement in data) {
+                if (this._isNoisyMeasurement(index, data, measurement, options))
+                    return true;
+            }
+        }
+        return false;
+    },
+
+    _showEmptyCells: function(row, headers)
+    {
+        for (var index = 0; index < headers.length; ++index) {
+            if (!headers[index].children.length)
+                this._showEmptyCell(row, "suites-separator");
+            else
+                this._showEmptyCells(row, headers[index].children);
+        }
+    },
+
+    _showEmptyRow: function()
+    {
+        var row = DocumentExtension.createElement("tr", {}, this.element);
+        this._showEmptyCells(row, this._headers);
+    },
+
+    _showTest: function(testName, testResults, options)
+    {
+        var row = DocumentExtension.createElement("tr", {}, this.element);
+        var className = this._isNoisyTest(testResults, options) ? "noisy-results" : "";
         
         for (var index = 0; index < this._headers.length; ++index) {
 
             switch (index) {
             case 0:
-                this._showText(row, testName);
+                this._showText(row, testName, className);
                 break;
 
             case 1:
@@ -408,7 +440,7 @@ ResultsTable.prototype =
             case 3:
                 var data = testResults[Strings["JSON_EXPERIMENTS"][index - 2]];
                 for (var measurement in data)
-                    this._showFixedNumber(row, data[measurement], 2);
+                    this._showFixedNumber(row, data[measurement], 2, this._isNoisyMeasurement(index - 2, data, measurement, options) ? className : "");
                 break;
                 
             case 4:
@@ -417,38 +449,38 @@ ResultsTable.prototype =
                 break;
             }
         }
-        
-        this.element.appendChild(row);
     },
 
-    _showSuite: function(suiteName, suiteResults)
+    _showSuite: function(suiteName, suiteResults, options)
     {
         for (var testName in suiteResults[Strings["JSON_RESULTS"][2]]) {
-            this._showTest(testName, suiteResults[Strings["JSON_RESULTS"][2]][testName]);
+            this._showTest(testName, suiteResults[Strings["JSON_RESULTS"][2]][testName], options);
         }
     },
     
-    _showIteration : function(iterationResults)
+    _showIteration : function(iterationResults, options)
     {
         for (var suiteName in iterationResults[Strings["JSON_RESULTS"][1]]) {
-            this._showSuite(suiteName, iterationResults[Strings["JSON_RESULTS"][1]][suiteName]);
+            if (suiteName != Object.keys(iterationResults[Strings["JSON_RESULTS"][1]])[0])
+                this._showEmptyRow();
+            this._showSuite(suiteName, iterationResults[Strings["JSON_RESULTS"][1]][suiteName], options);
         }
     },
     
-    showRecord: function(testName, message, testResults)
+    showRecord: function(testName, message, testResults, options)
     {
         this.clear();
         this._showHeader(message);
-        this._showTest(testName, testResults);
+        this._showTest(testName, testResults, options);
     },
 
-    showIterations: function(iterationsResults)
+    showIterations: function(iterationsResults, options)
     {
         this.clear();
         this._showHeader("");
         
         iterationsResults.forEach(function(iterationResults) {
-            this._showIteration(iterationResults);
+            this._showIteration(iterationResults, options);
         }, this);
     }
 }
