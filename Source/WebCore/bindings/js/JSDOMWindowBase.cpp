@@ -56,6 +56,10 @@
 #include "WritableStreamInternalsBuiltins.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "RTCPeerConnectionInternalsBuiltins.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -85,7 +89,7 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
 
     m_privateFunctions.init(*this);
 
-#if ENABLE(STREAMS_API)
+#if ENABLE(STREAMS_API) || ENABLE(MEDIA_STREAM)
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
 #endif
 
@@ -115,6 +119,13 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
         GlobalPropertyInfo(\
             clientData.builtinFunctions().writableStreamInternalsBuiltins().name##PrivateName(), m_privateFunctions.writableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
         WEBCORE_FOREACH_WRITABLESTREAMINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
+#undef DECLARE_GLOBAL_STATIC
+#endif
+#if ENABLE(MEDIA_STREAM)
+#define DECLARE_GLOBAL_STATIC(name)\
+        GlobalPropertyInfo(\
+            clientData.builtinFunctions().rTCPeerConnectionInternalsBuiltins().name##PrivateName(), m_privateFunctions.rTCPeerConnectionInternals().m_##name##Function.get() , DontDelete | ReadOnly),
+        WEBCORE_FOREACH_RTCPEERCONNECTIONINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef DECLARE_GLOBAL_STATIC
 #endif
     };
