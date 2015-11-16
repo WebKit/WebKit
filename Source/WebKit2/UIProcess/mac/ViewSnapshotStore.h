@@ -83,6 +83,7 @@ public:
     void setSurface(std::unique_ptr<WebCore::IOSurface>);
 #else
     WebCore::IntSize size() const { return m_size; }
+    size_t imageSizeInBytes() const { return m_imageSizeInBytes; }
 #endif
 
 private:
