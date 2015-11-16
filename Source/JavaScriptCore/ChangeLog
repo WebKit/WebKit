@@ -1,3 +1,57 @@
+2015-11-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Speed up the coalescing-related operation of the iterated register allocator
+        https://bugs.webkit.org/show_bug.cgi?id=151290
+
+        Reviewed by Geoffrey Garen.
+
+        One step closer to removing the Hash structures:
+
+        For the coalescing operation, we need to keep track of Move instructions. We do not strictly
+        need those to be the Air Move, just any abstract operation that copy a Tmp into another Tmp.
+
+        In this patch, I exploit that to remove the Hash structure related to the Inst. Instead of
+        using the Move Inst, we just keep track of the Use() and Def() of the instructions.
+        Those are added in the global list m_coalescingCandidates and the index in that list represent
+        the move for the remaining of the algorithm.
+
+        With Moves transformed into dense indices, we can start using arrays to make fast sets.
+
+        The m_activeMoves Set is easy since we only need simple add/remove/contains. It is transformed
+        into a BitVector.
+        The bit vector is always fully allocated to allow for quick uniform access. The assumtion is that
+        activeMoves will contains a few values for non trivial cases.
+
+        The worklist m_worklistMoves is more complicated. I want it to be ordered to coalesce moves starting
+        at the top of blocks. Having a fast remove() operation is also useful for mass coalescing.
+        It also needs Set operations, especially a fast contains().
+
+        For m_worklistMoves, I created a new structure: OrderedMoveSet.
+        It contains a list of ordered values, and a map of each value to its position in the list.
+
+        This resembles Briggs' Sparse Set but it is not exactly the same. When removing a value,
+        I set a special marker in the map (UINT_MAX). The reason is that I want contains() to be fast
+        instead of remove(). The marker in the map allows contains() with a single memory operation instead of two.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::build):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::allocate):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::forEachNodeMoves):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::isMoveRelated):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::enableMovesOnValue):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::coalesce):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::combine):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::freezeMoves):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::dumpWorkLists):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::OrderedMoveSet::addMove):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::OrderedMoveSet::isEmpty):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::OrderedMoveSet::contains):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::OrderedMoveSet::takeMove):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::OrderedMoveSet::takeLastMove):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::OrderedMoveSet::returnMove):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::OrderedMoveSet::clear):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::assignColors): Deleted.
+
 2015-11-16  Saam barati  <sbarati@apple.com>
 
         DFGEdge's dump method should print "Untyped:" for untyped uses.

@@ -161,12 +161,6 @@ public:
         });
 
         if (MoveInstHelper<type>::mayBeCoalescable(inst)) {
-            for (const Arg& arg : inst.args) {
-                HashSet<Inst*>& list = m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(arg.tmp())];
-                list.add(&inst);
-            }
-            m_worklistMoves.add(&inst);
-
             // We do not want the Use() of this move to interfere with the Def(), even if it is live
             // after the Move. If we were to add the interference edge, it would be impossible to
             // coalesce the Move even if the two Tmp never interfere anywhere.
@@ -183,6 +177,20 @@ public:
             ASSERT(defTmp);
             ASSERT(useTmp);
 
+            unsigned nextMoveIndex = m_coalescingCandidates.size();
+            m_coalescingCandidates.append({ useTmp, defTmp });
+
+            unsigned newIndexInWorklist = m_worklistMoves.addMove();
+            ASSERT_UNUSED(newIndexInWorklist, newIndexInWorklist == nextMoveIndex);
+
+            ASSERT(nextMoveIndex <= m_activeMoves.size());
+            m_activeMoves.ensureSize(nextMoveIndex + 1);
+
+            for (const Arg& arg : inst.args) {
+                auto& list = m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(arg.tmp())];
+                list.add(nextMoveIndex);
+            }
+
             for (const Tmp& liveTmp : localCalc.live()) {
                 if (liveTmp != useTmp && liveTmp.isGP() == (type == Arg::GP))
                     addEdge(defTmp, liveTmp);
@@ -193,6 +201,8 @@ public:
 
     void allocate()
     {
+        ASSERT_WITH_MESSAGE(m_activeMoves.size() >= m_coalescingCandidates.size(), "The activeMove set should be big enough for the quick operations of BitVector.");
+
         makeWorkList();
 
         if (debug) {
@@ -367,16 +377,16 @@ private:
     template<typename Function>
     void forEachNodeMoves(Tmp tmp, Function function)
     {
-        for (Inst* inst : m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]) {
-            if (m_activeMoves.contains(inst) || m_worklistMoves.contains(inst))
-                function(*inst);
+        for (unsigned moveIndex : m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]) {
+            if (m_activeMoves.quickGet(moveIndex) || m_worklistMoves.contains(moveIndex))
+                function(moveIndex);
         }
     }
 
     bool isMoveRelated(Tmp tmp)
     {
-        for (Inst* inst : m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]) {
-            if (m_activeMoves.contains(inst) || m_worklistMoves.contains(inst))
+        for (unsigned moveIndex : m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]) {
+            if (m_activeMoves.quickGet(moveIndex) || m_worklistMoves.contains(moveIndex))
                 return true;
         }
         return false;
@@ -384,9 +394,9 @@ private:
 
     void enableMovesOnValue(Tmp tmp)
     {
-        for (Inst* inst : m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]) {
-            if (m_activeMoves.remove(inst))
-                m_worklistMoves.add(inst);
+        for (unsigned moveIndex : m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(tmp)]) {
+            if (m_activeMoves.quickClear(moveIndex))
+                m_worklistMoves.returnMove(moveIndex);
         }
     }
 
@@ -401,19 +411,18 @@ private:
 
     void coalesce()
     {
-        Inst* moveInst = m_worklistMoves.takeLast();
-        ASSERT(moveInst->args.size() == 2);
-
-        Tmp u = moveInst->args[0].tmp();
+        unsigned moveIndex = m_worklistMoves.takeLastMove();
+        const MoveOperands& moveOperands = m_coalescingCandidates[moveIndex];
+        Tmp u = moveOperands.src;
         u = getAlias(u);
-        Tmp v = moveInst->args[1].tmp();
+        Tmp v = moveOperands.dst;
         v = getAlias(v);
 
         if (v.isReg())
             std::swap(u, v);
 
         if (traceDebug)
-            dataLog("Coalescing ", *moveInst, " u = ", u, " v = ", v, "\n");
+            dataLog("Coalescing move at index", moveIndex, " u = ", u, " v = ", v, "\n");
 
         if (u == v) {
             addWorkList(u);
@@ -433,7 +442,7 @@ private:
             if (traceDebug)
                 dataLog("    Safe Coalescing\n");
         } else {
-            m_activeMoves.add(moveInst);
+            m_activeMoves.quickSet(moveIndex);
 
             if (traceDebug)
                 dataLog("    Failed coalescing, added to active moves.\n");
@@ -527,7 +536,7 @@ private:
         ASSERT(!m_coalescedTmps[AbsoluteTmpHelper<type>::absoluteIndex(v)]);
         m_coalescedTmps[AbsoluteTmpHelper<type>::absoluteIndex(v)] = u;
 
-        HashSet<Inst*>& vMoves = m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(v)];
+        auto& vMoves = m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(v)];
         m_moveList[AbsoluteTmpHelper<type>::absoluteIndex(u)].add(vMoves.begin(), vMoves.end());
 
         forEachAdjacent(v, [this, u] (Tmp adjacentTmp) {
@@ -548,11 +557,12 @@ private:
 
     void freezeMoves(Tmp tmp)
     {
-        forEachNodeMoves(tmp, [this, tmp] (Inst& inst) {
-            if (!m_activeMoves.remove(&inst))
-                m_worklistMoves.remove(&inst);
+        forEachNodeMoves(tmp, [this, tmp] (unsigned moveIndex) {
+            if (!m_activeMoves.quickClear(moveIndex))
+                m_worklistMoves.takeMove(moveIndex);
 
-            Tmp otherTmp = inst.args[0].tmp() != tmp ? inst.args[0].tmp() : inst.args[1].tmp();
+            const MoveOperands& moveOperands = m_coalescingCandidates[moveIndex];
+            Tmp otherTmp = moveOperands.src != tmp ? moveOperands.src : moveOperands.dst;
             if (m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(otherTmp)] < m_numberOfRegisters && !isMoveRelated(otherTmp)) {
                 m_freezeWorklist.remove(otherTmp);
                 m_simplifyWorklist.append(otherTmp);
@@ -597,7 +607,6 @@ private:
         m_degrees.clear();
         m_moveList.clear();
         m_worklistMoves.clear();
-        m_activeMoves.clear();
         m_simplifyWorklist.clear();
         m_spillWorklist.clear();
         m_freezeWorklist.clear();
@@ -667,9 +676,7 @@ private:
         out.print("Simplify work list:\n");
         for (Tmp tmp : m_simplifyWorklist)
             out.print("    ", tmp, "\n");
-        out.print("Moves work list:\n");
-        for (Inst* inst : m_worklistMoves)
-            out.print("    ", *inst, "\n");
+        out.printf("Moves work list is empty? %d\n", m_worklistMoves.isEmpty());
         out.print("Freeze work list:\n");
         for (Tmp tmp : m_freezeWorklist)
             out.print("    ", tmp, "\n");
@@ -749,8 +756,16 @@ private:
     Vector<Vector<Tmp, 0, UnsafeVectorOverflow, 4>, 0, UnsafeVectorOverflow> m_adjacencyList;
     Vector<unsigned, 0, UnsafeVectorOverflow> m_degrees;
 
+    // Instead of keeping track of the move instructions, we just keep their operands around and use the index
+    // in the vector as the "identifier" for the move.
+    struct MoveOperands {
+        Tmp src;
+        Tmp dst;
+    };
+    Vector<MoveOperands, 0, UnsafeVectorOverflow> m_coalescingCandidates;
+
     // List of every move instruction associated with a Tmp.
-    Vector<HashSet<Inst*>> m_moveList;
+    Vector<HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>> m_moveList;
 
     // Colors.
     Vector<Reg, 0, UnsafeVectorOverflow> m_coloredTmp;
@@ -763,11 +778,84 @@ private:
     BitVector m_isOnSelectStack;
     Vector<Tmp> m_selectStack;
 
+    struct OrderedMoveSet {
+        unsigned addMove()
+        {
+            unsigned nextIndex = m_moveList.size();
+            m_moveList.append(nextIndex);
+            m_positionInMoveList.append(nextIndex);
+            return nextIndex;
+        }
+
+        bool isEmpty() const
+        {
+            return m_moveList.isEmpty();
+        }
+
+        bool contains(unsigned index)
+        {
+            return m_positionInMoveList[index] != WTF::notFound;
+        }
+
+        void takeMove(unsigned moveIndex)
+        {
+            unsigned positionInMoveList = m_positionInMoveList[moveIndex];
+            if (positionInMoveList == WTF::notFound)
+                return;
+
+            ASSERT(m_moveList[positionInMoveList] == moveIndex);
+            unsigned lastIndex = m_moveList.last();
+            m_positionInMoveList[lastIndex] = positionInMoveList;
+            m_moveList[positionInMoveList] = lastIndex;
+            m_moveList.removeLast();
+
+            m_positionInMoveList[moveIndex] = WTF::notFound;
+
+            ASSERT(!contains(moveIndex));
+        }
+
+        unsigned takeLastMove()
+        {
+            ASSERT(!isEmpty());
+
+            unsigned lastIndex = m_moveList.takeLast();
+            ASSERT(m_positionInMoveList[lastIndex] == m_moveList.size());
+            m_positionInMoveList[lastIndex] = WTF::notFound;
+
+            ASSERT(!contains(lastIndex));
+            return lastIndex;
+        }
+
+        void returnMove(unsigned index)
+        {
+            // This assertion is a bit strict but that is how the move list should be used. The only kind of moves that can
+            // return to the list are the ones that we previously failed to coalesce with the conservative heuristics.
+            // Values should not be added back if they were never taken out when attempting coalescing.
+            ASSERT(!contains(index));
+
+            unsigned position = m_moveList.size();
+            m_moveList.append(index);
+            m_positionInMoveList[index] = position;
+
+            ASSERT(contains(index));
+        }
+
+        void clear()
+        {
+            m_positionInMoveList.clear();
+            m_moveList.clear();
+        }
+
+    private:
+        Vector<unsigned, 0, UnsafeVectorOverflow> m_positionInMoveList;
+        Vector<unsigned, 0, UnsafeVectorOverflow> m_moveList;
+    };
+
     // Work lists.
     // Set of "move" enabled for possible coalescing.
-    ListHashSet<Inst*> m_worklistMoves;
+    OrderedMoveSet m_worklistMoves;
     // Set of "move" not yet ready for coalescing.
-    HashSet<Inst*> m_activeMoves;
+    BitVector m_activeMoves;
     // Low-degree, non-Move related.
     Vector<Tmp> m_simplifyWorklist;
     // High-degree Tmp.
