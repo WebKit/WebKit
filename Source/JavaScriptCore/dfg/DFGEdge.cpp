@@ -35,11 +35,9 @@ namespace JSC { namespace DFG {
 
 void Edge::dump(PrintStream& out) const
 {
-    if (useKindUnchecked() != UntypedUse) {
-        if (!isProved())
-            out.print("Check:");
-        out.print(useKind(), ":");
-    }
+    if (!isProved())
+        out.print("Check:");
+    out.print(useKind(), ":");
     if (DFG::doesKill(killStatusUnchecked()))
         out.print("Kill:");
     out.print(node());
