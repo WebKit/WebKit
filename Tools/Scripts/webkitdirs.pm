@@ -1157,6 +1157,11 @@ sub isARM()
     return ($Config{archname} =~ /^arm[v\-]/) || ($Config{archname} =~ /^aarch64[v\-]/);
 }
 
+sub isX86_64()
+{
+    return (architecture() eq "x86_64") || 0;
+}
+
 sub isCrossCompilation()
 {
   my $compiler = "";

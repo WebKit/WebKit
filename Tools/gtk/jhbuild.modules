@@ -33,6 +33,9 @@
       <dep package="mesa"/>
       <dep package="openwebrtc"/>
       <dep package="libseccomp"/>
+      <if condition-set="x86_64">
+        <dep package="llvm"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -63,6 +66,8 @@
       href="http://anongit.freedesktop.org/git"/>
   <repository type="tarball" name="people.freedesktop.org"
       href="http://people.freedesktop.org"/>
+  <repository type="tarball" name="llvm.org"
+      href="http://llvm.org"/>
 
   <autotools id="cairo"
              autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no"
@@ -86,12 +91,12 @@
     </branch>
   </autotools>
 
-  <autotools id="fonts"
+  <autotools id="fonts" supports-non-srcdir-builds="no"
              skip-autogen="true">
     <branch repo="github.com" module="mrobinson/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.5"/>
   </autotools>
 
-  <autotools id="dicts"
+  <autotools id="dicts" supports-non-srcdir-builds="no"
              skip-autogen="true">
     <branch repo="github.com" module="mrobinson/webkitgtk-test-dicts.git" checkoutdir="webkitgtk-test-dicts" tag="0.0.1"/>
   </autotools>
@@ -122,7 +127,7 @@
              md5sum="f5898b29bbfd70502831a212d9249d10"/>
   </autotools>
 
-  <autotools id="libseccomp" autogen-sh="./autogen.sh; ./configure">
+  <autotools id="libseccomp" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
     <branch repo="github.com" module="seccomp/libseccomp.git" tag="v2.2.3"/>
   </autotools>
 
@@ -222,7 +227,7 @@
     </branch>
   </autotools>
 
-  <autotools id="gnome-icon-theme-symbolic" autogen-sh="configure">
+  <autotools id="gnome-icon-theme-symbolic" supports-non-srcdir-builds="no" autogen-sh="configure">
     <dependencies>
       <dep package="gtk+"/>
     </dependencies>
@@ -275,7 +280,7 @@
     </dependencies>
   </autotools>
 
-  <autotools id="libxml2"
+  <autotools id="libxml2" supports-non-srcdir-builds="no"
              autogen-sh="./autogen.sh; ./configure --with-python=no">
     <branch module="/sources/libxml2-2.9.1.tar.gz" version="2.9.1"
             repo="xmlsoft.org"
@@ -371,11 +376,11 @@
     </branch>
   </autotools>
 
-  <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
+  <autotools id="libusrsctp" supports-non-srcdir-builds="no" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
     <branch repo="github.com" module="sctplab/usrsctp.git" checkoutdir="usrsctp" tag="078ff3252f73327e0ac11d6fd5eff62011f6646e"/>
    </autotools>
 
-   <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" autogen-sh="./autogen.sh; ./configure">
+   <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
      <dependencies>
        <dep package="gst-plugins-base"/>
        <dep package="libusrsctp"/>
@@ -383,7 +388,7 @@
     <branch repo="github.com" module="EricssonResearch/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="e359b67484af90f416ea35e301205d2b53c77a14"/>
    </autotools>
 
-   <autotools id="libnice">
+   <autotools id="libnice" supports-non-srcdir-builds="no">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
@@ -396,6 +401,13 @@
       <dep package="libnice"/>
      </dependencies>
     <branch repo="github.com" module="EricssonResearch/openwebrtc.git" checkoutdir="openwebrtc" tag="13516c7f79a0c48bb411464f7613d4b426c70f5b"/>
+  </autotools>
+
+  <autotools id="llvm"
+             autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions --enable-shared">
+    <branch repo="llvm.org"
+            module="/releases/3.7.0/llvm-3.7.0.src.tar.xz" version="3.7.0" checkoutdir="llvm-3.7.0"
+            hash="sha256:ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153"/>
   </autotools>
 
   <!-- Dependencies listed below this point are not thought to affect test results, and are only

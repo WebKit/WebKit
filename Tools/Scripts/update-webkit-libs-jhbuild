@@ -122,6 +122,11 @@ sub cleanJhbuild()
     if (system("rm -rf $jhbuildPath/Source") ne 0) {
         die "Cleaning jhbuild sources failed!";
     }
+
+    if (isGtk()) {
+        # GTK+ uses a separate build directory.
+        system("rm -rf $jhbuildPath/Build");
+    }
 }
 
 delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};

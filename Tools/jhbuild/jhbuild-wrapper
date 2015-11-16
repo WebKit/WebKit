@@ -24,7 +24,7 @@ import shlex
 import subprocess
 import sys
 
-jhbuild_revision = 'c0cb46177d79189ffe0f760703c732f1c7ea8b29'
+jhbuild_revision = '3.12.0'
 
 def determine_platform():
     if '--efl' in sys.argv:

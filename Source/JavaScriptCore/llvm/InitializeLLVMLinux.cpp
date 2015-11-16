@@ -32,11 +32,26 @@
 
 #include "InitializeLLVMPOSIX.h"
 
+#if PLATFORM(GTK)
+#include <wtf/glib/GUniquePtr.h>
+#endif
+
 namespace JSC {
 
 LLVMInitializerFunction getLLVMInitializerFunction(bool verbose)
 {
+#if PLATFORM(GTK)
+#if ENABLE(DEVELOPER_MODE)
+    LLVMInitializerFunction function = getLLVMInitializerFunctionPOSIX("libllvmForJSC.so", verbose);
+    if (function)
+        return function;
+#endif
+    static const char* libllvmForJSCInstalledPath = LIBDIR G_DIR_SEPARATOR_S "javascriptcoregtk-" WEBKITGTK_API_VERSION_STRING G_DIR_SEPARATOR_S;
+    GUniquePtr<char> libllvmForJSCFilename(g_build_filename(libllvmForJSCInstalledPath, "libllvmForJSC.so", nullptr));
+    return getLLVMInitializerFunctionPOSIX(libllvmForJSCFilename.get(), verbose);
+#else
     return getLLVMInitializerFunctionPOSIX("libllvmForJSC.so", verbose);
+#endif
 }
 
 } // namespace JSC

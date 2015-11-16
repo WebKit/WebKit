@@ -62,7 +62,7 @@ my $envVars = "";
 my $gmallocPath = undef;
 my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
 
-my $enableFTL = isAppleMacWebKit();
+my $enableFTL = isAppleMacWebKit() || (isGtk() && isX86_64());
 my $createTarball = 0;
 my $remoteHost = 0;
 my $remoteConfigFile;

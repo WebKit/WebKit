@@ -1,3 +1,35 @@
+2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use FTL by default when LLVM 3.7 is available
+        https://bugs.webkit.org/show_bug.cgi?id=142128
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/run-javascriptcore-tests: Enable FTL for GTK+ port when
+        architecture is x86_64.
+        * Scripts/update-webkit-libs-jhbuild:
+        (cleanJhbuild): Remove also the separate Build directory used by
+        GTK+ port now.
+        * Scripts/webkitdirs.pm:
+        (isX86_64):
+        * Scripts/webkitperl/FeatureList.pm: Enable FTL by default for
+        GTK+ port when architecture is x86_64.
+        * gtk/jhbuild-optional.modules: Remove llvm.
+        * gtk/jhbuild.modules: Add llvm 3.7 and include it as dependecy
+        only when architecture is x86_64.
+        * gtk/jhbuildrc: Set a buildroot to use a separate build
+        directory. LLVM 3.7 fails to build if configure script is run from
+        source dir. Since it's not possible to use a separate build dir
+        only for llvm, we do it now globally. Modules not supporting non
+        source build dirs are marked in the moduleset. Also set x86_64
+        condition when the architecture is x86_64.
+        * gtk/patches/llvm-elf-add-stackmaps-arm64.patch: Removed.
+        * gtk/patches/llvm-elf-add-stackmaps.patch: Removed.
+        * gtk/patches/llvm-elf-allow-fde-references-outside-the-2gb-range-arm64.patch: Removed.
+        * gtk/patches/llvm-elf-allow-fde-references-outside-the-2gb-range.patch: Removed.
+        * jhbuild/jhbuild-wrapper: Use a newer jhbuild version to be able
+        to use conditions.
+
 2015-11-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r192462.

@@ -1,3 +1,17 @@
+2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use FTL by default when LLVM 3.7 is available
+        https://bugs.webkit.org/show_bug.cgi?id=142128
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PlatformGTK.cmake: Install libllvmForJSC.so.
+        * llvm/InitializeLLVMLinux.cpp:
+        (JSC::getLLVMInitializerFunction): For developer build try to load first
+        libllvmForJSC.so from standard paths since not installed binaries
+        have the RPATH set. If it fails try the installed one. For
+        production buils load always the installed one.
+
 2015-11-15  Saam barati  <sbarati@apple.com>
 
         64-bit in the DFG: non tail Calls unnecessarily store the argument count twice on the callee frame and tails calls unnecessarily store it once

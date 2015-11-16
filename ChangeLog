@@ -1,3 +1,24 @@
+2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use FTL by default when LLVM 3.7 is available
+        https://bugs.webkit.org/show_bug.cgi?id=142128
+
+        Reviewed by Csaba Osztrogonác.
+
+        Enable FTL by default when architecture is X86_64. It requires
+        LLVM 3.7, but can be disabled manually as a cmake configure
+        argument.
+
+        * Source/cmake/FindLLVM.cmake: In debian llvm-config is only
+        available if the metapackage is installed and it points to
+        llvm-config-3.5. So, here we check first if the llvm-config is
+        from a recent enough version, and if not we check several
+        llvm-config-<version> programs, so this should work on any distro.
+        * Source/cmake/OptionsGTK.cmake: Enable FTL by default when
+        target architecture is X86_64, and check the LLVM is at least
+        3.7. The option is now public, since we want people to be able to
+        disable it manually.
+
 2015-11-11  Anders Carlsson  <andersca@apple.com>
 
         Enable cross-platform context menus by default
