@@ -1,5 +1,15 @@
 2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ unit tests after r192469.
+
+        In r192469 jhbuild version was updated and coinfig lcas API changed.
+
+        * jhbuild/jhbuildutils.py:
+        (enter_jhbuild_environment_if_available): Pass an empty list for
+        conditions to the Config constructor.
+
+2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Use commit id instead of tag name for jhbuild revision.
 
         In r192469 I updated the jhbuild version to 3.12.0, and used the
