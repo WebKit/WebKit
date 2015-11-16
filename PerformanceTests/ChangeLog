@@ -1,3 +1,53 @@
+2015-11-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Clean referencing the options object in the graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=151284
+
+        Reviewed by Simon Fraser.
+
+        Get rid of the Benchmark.options member and rely only on the private member
+        Benchmark._options. The animator need to have its own options member instead
+        of accessing it from its reference to Benchmark object.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js:
+        (BouncingCanvasParticlesAnimator):
+        (BouncingCanvasParticlesBenchmark.prototype.createAnimator):
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        (BouncingParticle.prototype.animate):
+        (BouncingParticlesAnimator):
+        (BouncingParticlesBenchmark.prototype.createAnimator):
+        * Animometer/tests/examples/resources/canvas-electrons.js:
+        (CanvasElectronsStage.prototype.animate):
+        (CanvasElectronsAnimator):
+        (CanvasElectronsBenchmark.prototype.createAnimator):
+        (window.benchmarkClient.create):
+        * Animometer/tests/examples/resources/canvas-stars.js:
+        (CanvasStarsStage.prototype.animate):
+        (CanvasStarsAnimator):
+        (CanvasStarsBenchmark.prototype.createAnimator):
+        (window.benchmarkClient.create):
+        * Animometer/tests/resources/main.js:
+        (BenchmarkState.prototype.currentProgress):
+        (Animator):
+        (Animator.prototype.animate):
+        (Benchmark):
+        (Benchmark.prototype.update):
+        * Animometer/tests/resources/stage.js:
+        (Stage.prototype.clear):
+        (StageAnimator):
+        (StageBenchmark.prototype.createAnimator):
+        (StageBenchmark.prototype.tune):
+        (StageBenchmark.prototype.showResults):
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        (SimpleCanvasStage.prototype.animate):
+        (SimpleCanvasAnimator):
+        (SimpleCanvasAnimator.prototype.animate):
+        (SimpleCanvasBenchmark.prototype.createAnimator):
+        * Animometer/tests/template/resources/template-canvas.js:
+        (TemplateCanvasStage.prototype.animate):
+        (TemplateCanvasBenchmark.prototype.createAnimator):
+        (window.benchmarkClient.create):
+
 2015-11-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Eliminate a request for layout every time an item is added to the stage of the graphics benchmark

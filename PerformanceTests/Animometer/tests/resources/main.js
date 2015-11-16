@@ -59,9 +59,11 @@ BenchmarkState.prototype =
     }
 }
 
-function Animator(benchmark)
+function Animator(benchmark, options)
 {
     this._benchmark = benchmark;
+    this._options = options;
+    
     this._frameCount = 0;
     this._dropFrameCount = 1;
     this._measureFrameCount = 3; 
@@ -109,7 +111,7 @@ Animator.prototype =
         var currentFrameRate = Math.floor(1000 / (measureTimeDelta / this._measureFrameCount));
          
         // Use Kalman filter to get a more non-fluctuating frame rate.
-        if (this._benchmark.options["estimated-frame-rate"])
+        if (this._options["estimated-frame-rate"])
             currentFrameRate = this._estimator.estimate(currentFrameRate);
         
         // Adjust the test to reach the desired FPS.
@@ -138,7 +140,6 @@ function Benchmark(options)
     this._options = options;
     this._method = this._options["method"] || "requestAnimationFrame";
 
-    this.options = options;
     this._recordInterval = 200;    
     this._isSampling = false;
 
@@ -148,7 +149,7 @@ function Benchmark(options)
     
     this._controller = new PIDController(gain, options["frame-rate"], lowValue, highValue);
     this._sampler = new Sampler(2);
-    this._state = new BenchmarkState(this.options["test-interval"] * 1000);
+    this._state = new BenchmarkState(this._options["test-interval"] * 1000);
 }
 
 Benchmark.prototype =
@@ -179,11 +180,11 @@ Benchmark.prototype =
         }
 
         var tuneValue = 0;
-        if (this.options["complexity"] && !this.options["adaptive-test"]) {
+        if (this._options["complexity"] && !this._options["adaptive-test"]) {
             // this.tune(0) returns the current complexity of the test.
-            tuneValue = this.options["complexity"] - this.tune(0);
+            tuneValue = this._options["complexity"] - this.tune(0);
         }
-        else if (!(this._isSampling && this.options["fix-test-complexity"])) {
+        else if (!(this._isSampling && this._options["fix-test-complexity"])) {
             // The relationship between frameRate and test complexity is inverse-proportional so we
             // need to use the negative of PIDController.tune() to change the complexity of the test.
             tuneValue = -this._controller.tune(currentFrameRate, timeDelta / 1000);

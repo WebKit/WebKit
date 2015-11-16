@@ -57,9 +57,9 @@ BouncingParticle.prototype =
     }
 }
 
-function BouncingParticlesAnimator(benchmark)
+function BouncingParticlesAnimator(benchmark, options)
 {
-    StageAnimator.call(this, benchmark);
+    StageAnimator.call(this, benchmark, options);
 };
 
 BouncingParticlesAnimator.prototype = Object.create(StageAnimator.prototype);
@@ -126,5 +126,5 @@ BouncingParticlesBenchmark.prototype.constructor = BouncingParticlesBenchmark;
 
 BouncingParticlesBenchmark.prototype.createAnimator = function()
 {
-    return new BouncingParticlesAnimator(this);
+    return new BouncingParticlesAnimator(this, this._options);
 }

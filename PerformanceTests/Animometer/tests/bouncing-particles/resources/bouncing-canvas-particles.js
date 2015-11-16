@@ -76,9 +76,9 @@ function BouncingCanvasParticlesStage(element, options)
 BouncingCanvasParticlesStage.prototype = Object.create(BouncingParticlesStage.prototype);
 BouncingCanvasParticlesStage.prototype.constructor = BouncingCanvasParticlesStage;
 
-function BouncingCanvasParticlesAnimator(benchmark)
+function BouncingCanvasParticlesAnimator(benchmark, options)
 {
-    BouncingParticlesAnimator.call(this, benchmark);
+    BouncingParticlesAnimator.call(this, benchmark, options);
     this._context = benchmark._stage.context;
 }
 
@@ -101,5 +101,5 @@ BouncingCanvasParticlesBenchmark.prototype.constructor = BouncingCanvasParticles
 
 BouncingCanvasParticlesBenchmark.prototype.createAnimator = function()
 {
-    return new BouncingCanvasParticlesAnimator(this);
+    return new BouncingCanvasParticlesAnimator(this, this._options);
 }

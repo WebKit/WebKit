@@ -82,9 +82,9 @@ CanvasElectronsStage.prototype.animate = function(timeDelta)
     });
 }
 
-function CanvasElectronsAnimator(benchmark)
+function CanvasElectronsAnimator(benchmark, options)
 {
-    Animator.call(this, benchmark);
+    Animator.call(this, benchmark, options);
     this._context = benchmark._stage.context;
 }
 
@@ -121,7 +121,7 @@ CanvasElectronsBenchmark.prototype.createStage = function(element)
 CanvasElectronsBenchmark.prototype.createAnimator = function()
 {
     // Attach the animator to the benchmark.
-    return new CanvasElectronsAnimator(this);
+    return new CanvasElectronsAnimator(this, this._options);
 }
 
 window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)

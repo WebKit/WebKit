@@ -112,9 +112,9 @@ Stage.prototype =
     }
 }
 
-function StageAnimator(benchmark)
+function StageAnimator(benchmark, options)
 {
-    Animator.call(this, benchmark);
+    Animator.call(this, benchmark, options);
 };
 
 StageAnimator.prototype = Object.create(Animator.prototype);
@@ -154,7 +154,7 @@ StageBenchmark.prototype.createStage = function(element)
 
 StageBenchmark.prototype.createAnimator = function()
 {
-    return new StageAnimator(this);
+    return new StageAnimator(this, this._options);
 }
 
 StageBenchmark.prototype.tune = function(count)
@@ -172,7 +172,7 @@ StageBenchmark.prototype.showResults = function(message, progress)
     if (!this._recordTable || !this._progressBar || !this._test)
         return;
 
-    if (this.options["show-running-results"])
+    if (this._options["show-running-results"])
         this._recordTable.showRecord(this._test.name, message, this._sampler.toJSON(true, false));
 
     this._progressBar.setPos(progress);

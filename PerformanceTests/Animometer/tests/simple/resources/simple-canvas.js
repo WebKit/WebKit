@@ -36,9 +36,9 @@ SimpleCanvasStage.prototype.animate = function()
     });
 }
 
-function SimpleCanvasAnimator(benchmark)
+function SimpleCanvasAnimator(benchmark, options)
 {
-    StageAnimator.call(this, benchmark);
+    StageAnimator.call(this, benchmark, options);
     this._context = benchmark._stage.context;
 }
 
@@ -47,7 +47,7 @@ SimpleCanvasAnimator.prototype.constructor = SimpleCanvasAnimator;
 SimpleCanvasAnimator.prototype.animate = function()
 {
     this._context.clearRect(0, 0, this._benchmark._stage.size.x, this._benchmark._stage.size.y);
-    return StageAnimator.prototype.animate.call(this);
+    return StageAnimator.prototype.animate.call(this, this._options);
 }
 
 
@@ -60,6 +60,6 @@ function SimpleCanvasBenchmark(suite, test, options, recordTable, progressBar) {
 SimpleCanvasBenchmark.prototype = Object.create(StageBenchmark.prototype);
 SimpleCanvasBenchmark.prototype.constructor = SimpleCanvasBenchmark;
 SimpleCanvasBenchmark.prototype.createAnimator = function() {
-    return new SimpleCanvasAnimator(this);
+    return new SimpleCanvasAnimator(this, this._options);
 }
 

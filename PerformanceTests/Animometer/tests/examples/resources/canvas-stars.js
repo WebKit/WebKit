@@ -83,9 +83,9 @@ CanvasStarsStage.prototype.animate = function(timeDelta)
     });
 }
 
-function CanvasStarsAnimator(benchmark)
+function CanvasStarsAnimator(benchmark, options)
 {
-   Animator.call(this, benchmark);
+   Animator.call(this, benchmark, options);
    this._context = benchmark._stage.context;
 }
 
@@ -118,7 +118,7 @@ CanvasStarsBenchmark.prototype.createStage = function(element)
 CanvasStarsBenchmark.prototype.createAnimator = function()
 {
    // Attach the animator to the benchmark.
-   return new CanvasStarsAnimator(this);
+   return new CanvasStarsAnimator(this, this._options);
 }
 
 window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)

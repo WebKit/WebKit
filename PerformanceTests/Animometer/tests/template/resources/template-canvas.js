@@ -57,9 +57,9 @@ TemplateCanvasStage.prototype.animate = function(timeDelta)
     // Loop through all your objects and ask them to animate.
 }
 
-function TemplateCanvasAnimator(benchmark)
+function TemplateCanvasAnimator(benchmark, options)
 {
-    Animator.call(this, benchmark);
+    Animator.call(this, benchmark, options);
     this._context = benchmark._stage.context;
 }
 
@@ -93,7 +93,7 @@ TemplateCanvasBenchmark.prototype.createStage = function(element)
 TemplateCanvasBenchmark.prototype.createAnimator = function()
 {
     // Attach the animator to the benchmark.
-    return new TemplateCanvasAnimator(this);
+    return new TemplateCanvasAnimator(this, this._options);
 }
 
 window.benchmarkClient.create = function(suite, test, options, recordTable, progressBar)
