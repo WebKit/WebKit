@@ -1,5 +1,16 @@
 2015-11-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        Follow-up of https://bugs.webkit.org/show_bug.cgi?id=151190
+
+        Unreviewed.
+
+        * web-platform-tests/dom/nodes/resources/Document-createElement-namespace-tests/empty.html: Removed.
+        * web-platform-tests/dom/nodes/resources/Document-createElement-namespace-tests/empty.svg: Removed.
+        * web-platform-tests/dom/nodes/resources/Document-createElement-namespace-tests/empty.xhtml: Removed.
+        * web-platform-tests/dom/nodes/resources/Document-createElement-namespace-tests/empty.xml: Removed.
+ 
+2015-11-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         Clean imported/w3c/web-platform-tests folder
         https://bugs.webkit.org/show_bug.cgi?id=151190
 
