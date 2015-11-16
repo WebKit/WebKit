@@ -78,6 +78,10 @@ Add64 U:G, UD:G
 Add64 U:G, U:G, D:G
     Imm, Tmp, Tmp
 
+AddDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 Sub32 U:G, UD:G
     Tmp, Tmp
     Imm, Addr
@@ -106,6 +110,10 @@ Mul32 U:G, U:G, D:G
 Mul64 U:G, UD:G
     Tmp, Tmp
 
+DivDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 X86ConvertToDoubleWord32 U:G, D:G
     Tmp*, Tmp*
 
@@ -131,10 +139,6 @@ And32 U:G, UD:G
 And64 U:G, UD:G
     Tmp, Tmp
     Imm, Tmp
-
-AddDouble U:F, UD:F
-    Tmp, Tmp
-    Addr, Tmp
 
 Lshift32 U:G, UD:G
     Tmp*, Tmp

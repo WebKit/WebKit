@@ -1292,10 +1292,9 @@ private:
                 append(Move, eax, tmp(m_value));
                 return;
             }
+            ASSERT(isFloat(m_value->type()));
 
-            // FIXME: Support doubles.
-            // https://bugs.webkit.org/show_bug.cgi?id=150991
-            RELEASE_ASSERT_NOT_REACHED();
+            appendBinOp<Air::Oops, Air::Oops, DivDouble>(m_value->child(0), m_value->child(1));
             return;
         }
 
