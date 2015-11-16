@@ -1,5 +1,15 @@
 2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ layout tests running after r192469.
+
+        We fail to find the Gallium llvmpipe driver because of the build
+        directory change in r192469.
+
+        * gtk/jhbuildrc: Use buildroot instead of checkoutdir to build
+        the LLVMPIPE_LIBGL_PATH.
+
+2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use FTL by default when LLVM 3.7 is available
         https://bugs.webkit.org/show_bug.cgi?id=142128
 
