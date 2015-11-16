@@ -287,6 +287,9 @@ Position previousVisuallyDistinctCandidate(const Position& position)
 
 Position firstEditablePositionAfterPositionInRoot(const Position& position, Node* highestRoot)
 {
+    if (!highestRoot)
+        return Position();
+
     // position falls before highestRoot.
     if (comparePositions(position, firstPositionInNode(highestRoot)) == -1 && highestRoot->hasEditableStyle())
         return firstPositionInNode(highestRoot);
@@ -312,6 +315,9 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Node
 
 Position lastEditablePositionBeforePositionInRoot(const Position& position, Node* highestRoot)
 {
+    if (!highestRoot)
+        return Position();
+
     // When position falls after highestRoot, the result is easy to compute.
     if (comparePositions(position, lastPositionInNode(highestRoot)) == 1)
         return lastPositionInNode(highestRoot);
