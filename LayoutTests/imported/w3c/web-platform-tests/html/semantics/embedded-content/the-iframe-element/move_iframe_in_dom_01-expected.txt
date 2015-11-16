@@ -1,4 +1,0 @@
- 
-
-PASS moving modified IFRAME in document (original page about:blank, DOM modification) 
-
