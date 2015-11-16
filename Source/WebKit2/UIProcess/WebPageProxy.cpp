@@ -4930,7 +4930,10 @@ void WebPageProxy::processDidBecomeUnresponsive()
 
     updateBackingStoreDiscardableState();
 
-    m_loaderClient->processDidBecomeUnresponsive(*this);
+    if (m_navigationClient)
+        m_navigationClient->processDidBecomeUnresponsive(*this);
+    else
+        m_loaderClient->processDidBecomeUnresponsive(*this);
 }
 
 void WebPageProxy::interactionOccurredWhileProcessUnresponsive()
@@ -4948,7 +4951,10 @@ void WebPageProxy::processDidBecomeResponsive()
     
     updateBackingStoreDiscardableState();
 
-    m_loaderClient->processDidBecomeResponsive(*this);
+    if (m_navigationClient)
+        m_navigationClient->processDidBecomeResponsive(*this);
+    else
+        m_loaderClient->processDidBecomeResponsive(*this);
 }
 
 void WebPageProxy::processDidCrash()
