@@ -1,3 +1,51 @@
+2015-11-16  Beth Dakin  <bdakin@apple.com>
+
+        Add SPI for handling inline link navigation for peek/pop
+        https://bugs.webkit.org/show_bug.cgi?id=151270
+        -and corresponding-
+        rdar://problem/22233739
+
+        Reviewed by Darin Adler.
+
+        This patch adds three new SPI methods. If a client wants to disable previews 
+        entirely for the given element, they should return NO in 
+        shouldPreviewElement:. Returning NO in shouldPreviewElement will prevent the 
+        other methods from being invoked. The client can provide a custom preview by 
+        returning their own UIViewController from 
+        previewingViewControllerForElement:defaultActions:. Returning nil will result 
+        in the default preview behavior for that element. This will allow clients to 
+        implement this method to handle http link navigation inline, but still opt 
+        into UIKit’s built-in DataDetectors behaviors for DD links once we start 
+        supporting DD links in WK2. 
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        Added linkURL to _WKElementInfo. linkURL will be nil for elements that are 
+        not links.
+        * UIProcess/API/Cocoa/_WKElementInfo.h:
+        * UIProcess/API/Cocoa/_WKElementInfo.mm:
+        (-[_WKElementInfo copyWithZone:]):
+        (-[_WKElementInfo linkURL]):
+        * UIProcess/API/Cocoa/_WKElementInfoInternal.h: Added.
+
+        _WKPreviewingElementInfo inherits from _WKElementInfo. Added a constructor.
+        * UIProcess/API/Cocoa/_WKPreviewElementInfo.h: Added.
+        * UIProcess/API/Cocoa/_WKPreviewElementInfo.mm: Added.
+        (-[_WKPreviewElementInfo _initWithLinkURL:]):
+        * UIProcess/API/Cocoa/_WKPreviewElementInfoInternal.h: Added.
+
+        Invoke shouldPreviewElement:.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+
+        Invoke previewingViewControllerForElement: for all potentially preview-able 
+        elements that have a default implementations, which will be limited to links 
+        at this time.
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+
+        Invoke commitPreviewingViewController:
+        (-[WKContentView _previewItemController:commitPreview:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-11-16  Anders Carlsson  <andersca@apple.com>
 
         Add identifier strings for a bunch of context menu items

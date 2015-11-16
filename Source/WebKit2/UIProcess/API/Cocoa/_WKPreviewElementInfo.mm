@@ -24,20 +24,23 @@
  */
 
 #import "config.h"
+#import "_WKPreviewElementInfoInternal.h"
+
 #import "_WKElementInfoInternal.h"
+#import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(IOS)
 
-@implementation _WKElementInfo
+@implementation _WKPreviewElementInfo
 
-- (id)copyWithZone:(NSZone *)zone
+- (instancetype)_initWithLinkURL:(NSURL *)url
 {
-    return [self retain];
-}
+    if (!(self = [super init]))
+        return nil;
 
-- (NSURL *)linkURL
-{
-    return _linkURL.get();
+    _linkURL = adoptNS([url copy]);
+
+    return self;
 }
 
 @end

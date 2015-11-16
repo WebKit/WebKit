@@ -32,6 +32,8 @@ WK_ASSUME_NONNULL_BEGIN
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKElementInfo : NSObject <NSCopying>
 
+@property (nonatomic, readonly) NSURL *linkURL;
+
 @end
 
 WK_ASSUME_NONNULL_END

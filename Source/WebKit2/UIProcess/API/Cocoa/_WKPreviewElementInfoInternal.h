@@ -23,23 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKElementInfoInternal.h"
+#import "_WKPreviewElementInfo.h"
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && TARGET_OS_IPHONE
 
-@implementation _WKElementInfo
+@interface _WKPreviewElementInfo ()
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-- (NSURL *)linkURL
-{
-    return _linkURL.get();
-}
+- (instancetype)_initWithLinkURL:(NSURL *)url;
 
 @end
 
-#endif
+#endif // WK_API_ENABLED

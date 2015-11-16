@@ -56,6 +56,7 @@
 #import "_WKFocusedElementInfo.h"
 #import "_WKFormInputSession.h"
 #import "_WKInputDelegate.h"
+#import "_WKPreviewElementInfoInternal.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
@@ -3478,11 +3479,16 @@ static bool isAssistableInputType(InputType type)
     
     String absoluteLinkURL = _positionInformation.url;
     if (_positionInformation.isLink) {
+        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
+        id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+        if ([uiDelegate respondsToSelector:@selector(_webView:shouldPreviewElement:)]) {
+            auto previewElementInfo = adoptNS([[_WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
+            return [uiDelegate _webView:_webView shouldPreviewElement:previewElementInfo.get()];
+        }
         if (absoluteLinkURL.isEmpty())
             return NO;
         if (WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
             return YES;
-        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
         if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
             return YES;
         return NO;
@@ -3561,6 +3567,12 @@ static bool isAssistableInputType(InputType type)
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
 
         RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
+        if ([uiDelegate respondsToSelector:@selector(_webView:previewingViewControllerForElement:defaultActions:)]) {
+            auto previewElementInfo = adoptNS([[_WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
+            if (UIViewController *controller = [uiDelegate _webView:_webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:actions.get()])
+                return controller;
+        }
+
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL defaultActions:actions.get() elementInfo:elementInfo.get()];
 
@@ -3595,6 +3607,11 @@ static bool isAssistableInputType(InputType type)
             [uiDelegate _webView:_webView commitPreviewedImageWithURL:[NSURL _web_URLWithWTFString:absoluteImageURL]];
             return;
         }
+        return;
+    }
+
+    if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewingViewController:)]) {
+        [uiDelegate _webView:_webView commitPreviewingViewController:viewController];
         return;
     }
 

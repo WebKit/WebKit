@@ -23,23 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKElementInfoInternal.h"
+#import "_WKElementInfo.h"
+
+#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-@implementation _WKElementInfo
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-- (NSURL *)linkURL
-{
-    return _linkURL.get();
+@interface _WKElementInfo () {
+@package
+    RetainPtr<NSURL> _linkURL;
 }
 
 @end
 
-#endif
+#endif // WK_API_ENABLED
