@@ -52,7 +52,7 @@
                 shouldBeEqualToString('audioTrack.readyState', 'ended');
 
                 debug("*** construct new 'empty' stream2")
-                stream2 = new webkitMediaStream();
+                stream2 = new MediaStream();
                 shouldBe('stream2.getTracks().length', '0');
                 shouldBe('stream2.active', 'false');
 

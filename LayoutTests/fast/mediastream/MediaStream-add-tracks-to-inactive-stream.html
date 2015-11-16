@@ -21,7 +21,7 @@
 
             function createStreamAndAddTracks()
             {
-                stream2 = new webkitMediaStream();
+                stream2 = new MediaStream();
                 debug("MediaStream without tracks created.");
                 shouldBe('stream2.getAudioTracks().length', '0');
                 audioTrack = stream1.getAudioTracks()[0];

@@ -9,7 +9,7 @@
 description("This tests the constructor for the MediaStreamEvent DOM class.");
 
 var testObject = {nyannyan: 123};
-var mediaStream = new webkitMediaStream();
+var mediaStream = new MediaStream();
 
 // No initializer is passed.
 shouldBe("new MediaStreamEvent('eventType').bubbles", "false");

@@ -29,12 +29,12 @@
                 var tracksArray = [];
                 tracksArray.push(videoTrack);
                 tracksArray.push(audioTrack);
-                newMediaStream = new webkitMediaStream(tracksArray);
+                newMediaStream = new MediaStream(tracksArray);
 
                 shouldEvaluateTo('newMediaStream.active', false);
                 shouldNotBe('mediaStream.id', 'newMediaStream.id');
 
-                mediaStreamCopy = new webkitMediaStream(newMediaStream);
+                mediaStreamCopy = new MediaStream(newMediaStream);
                 shouldEvaluateTo('mediaStreamCopy.active', false);
                 shouldNotBe('mediaStreamCopy.id', 'newMediaStream.id');
 

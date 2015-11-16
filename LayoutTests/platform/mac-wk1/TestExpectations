@@ -86,6 +86,10 @@ webkit.org/b/119094 fast/forms/color/color-suggestion-picker-crash-on-set-value.
 # WK1 and WK2 mousemove events are subtly different in ways that break this test on WK1.
 fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 
+# Media Stream API testing is not supported for WK1 yet.
+fast/mediastream
+http/tests/media/media-stream
+
 # Disable snapshotting tests on WK1 only
 plugins/snapshotting
 

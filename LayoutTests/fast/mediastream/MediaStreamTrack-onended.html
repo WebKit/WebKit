@@ -36,7 +36,7 @@
             function gotStream2(s) {
                 debug("");
                 testPassed('gotStream2 was called.');
-                stream = new webkitMediaStream(s);
+                stream = new MediaStream(s);
                 track = stream.getAudioTracks()[0];
                 trackClone = track.clone();
                 shouldBeFalse('track.readyState == "ended"');
