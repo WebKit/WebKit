@@ -1,3 +1,58 @@
+2015-11-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r192138. rdar://problem/22846841
+
+    2015-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+            Use ColorSpaceSRGB for image buffers everywhere
+            https://bugs.webkit.org/show_bug.cgi?id=150990
+
+            Reviewed by Zalan Bujtas.
+
+            ColorSpaceSRGB and ColorSpaceDeviceRGB are equivalent now, so convert
+            code that creates image buffers tagged with ColorSpaceDeviceRGB to use ColorSpaceSRGB.
+
+            * platform/graphics/GraphicsContext.cpp:
+            (WebCore::GraphicsContext::createCompatibleBuffer):
+            * platform/graphics/ImageBuffer.h:
+            (WebCore::ImageBuffer::create):
+            * platform/graphics/cg/BitmapImageCG.cpp:
+            (WebCore::BitmapImage::checkForSolidColor):
+            * platform/graphics/cg/ColorCG.cpp:
+            (WebCore::Color::Color):
+            * platform/graphics/cg/GraphicsContextCG.cpp:
+            (WebCore::sRGBColorSpaceRef): Deleted.
+            * platform/graphics/cg/ImageBufferCG.cpp:
+            (WebCore::ImageBuffer::putByteArray):
+            * platform/graphics/cocoa/IOSurface.mm:
+            (IOSurface::createFromImage):
+            * platform/graphics/filters/FEFlood.h:
+            * platform/graphics/filters/FETile.cpp:
+            (WebCore::FETile::platformApplySoftware):
+            * platform/graphics/filters/FilterEffect.cpp:
+            (WebCore::FilterEffect::FilterEffect):
+            * platform/graphics/filters/SourceGraphic.h:
+            (WebCore::SourceGraphic::SourceGraphic):
+            * rendering/FilterEffectRenderer.cpp:
+            (WebCore::FilterEffectRenderer::build):
+            (WebCore::FilterEffectRenderer::apply):
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::paintProgressBar):
+            * rendering/svg/RenderSVGResourceClipper.cpp:
+            (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+            * rendering/svg/RenderSVGResourceFilter.cpp:
+            (WebCore::RenderSVGResourceFilter::buildPrimitives):
+            * rendering/svg/RenderSVGResourceGradient.cpp:
+            (WebCore::createMaskAndSwapContextForTextGradient):
+            * rendering/svg/RenderSVGResourceMasker.cpp:
+            (WebCore::RenderSVGResourceMasker::applyResource):
+            * rendering/svg/RenderSVGResourcePattern.cpp:
+            (WebCore::RenderSVGResourcePattern::createTileImage):
+            * svg/graphics/SVGImage.cpp:
+            (WebCore::SVGImage::drawPatternForContainer):
+            * svg/graphics/filters/SVGFEImage.cpp:
+            (WebCore::FEImage::platformApplySoftware):
+
 2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r192269. rdar://problem/23189742

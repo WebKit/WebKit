@@ -139,7 +139,7 @@ bool RemoteLayerBackingStore::decode(IPC::ArgumentDecoder& decoder, RemoteLayerB
         MachSendRight sendRight;
         if (!decoder.decode(sendRight))
             return false;
-        result.m_frontBuffer.surface = IOSurface::createFromSendRight(sendRight, ColorSpaceDeviceRGB);
+        result.m_frontBuffer.surface = IOSurface::createFromSendRight(sendRight, ColorSpaceSRGB);
         return true;
     }
 #endif
@@ -186,7 +186,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (!m_frontBuffer.surface)
-            m_frontBuffer.surface = IOSurface::create(expandedScaledSize, ColorSpaceDeviceRGB);
+            m_frontBuffer.surface = IOSurface::create(expandedScaledSize, ColorSpaceSRGB);
 
         setBufferVolatility(BufferType::Front, false);
 

@@ -88,7 +88,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(IntSize(width, height), ColorSpaceDeviceRGB);
+    auto surface = IOSurface::create(IntSize(width, height), ColorSpaceSRGB);
     auto surfaceContext = surface->ensurePlatformContext();
     CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
     CGContextFlush(surfaceContext);
