@@ -156,6 +156,10 @@ fast/mediastream/MediaStream-MediaElement-srcObject.html
 fast/mediastream/MediaStreamTrack-onended.html
 fast/mediastream/MediaStreamTrack.html
 
+# Media Stream tests that crash unexpectedly under GuardMalloc, see https://bugs.webkit.org/show_bug.cgi?id=151353
+fast/mediastream/MediaStream-video-element-track-stop.html
+fast/mediastream/MediaStream-video-element.html
+
 # WebRTC is not supported yet.
 fast/mediastream/RTCPeerConnection-AddRemoveStream.html
 fast/mediastream/RTCPeerConnection-createAnswer.html
