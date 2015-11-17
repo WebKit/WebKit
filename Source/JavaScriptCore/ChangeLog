@@ -1,5 +1,13 @@
 2015-11-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Add a FTL_USES_B3 compile-time setting and set it to 0.
+
+        Rubber stamped by Benjamin Poulain.
+
+        * dfg/DFGCommon.h:
+
+2015-11-17  Filip Pizlo  <fpizlo@apple.com>
+
         CheckAdd/Mul should have commutativity optimizations in B3->Air lowering
         https://bugs.webkit.org/show_bug.cgi?id=151214
 
