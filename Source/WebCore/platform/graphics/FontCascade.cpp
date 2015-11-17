@@ -1152,7 +1152,7 @@ GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& te
     UChar32 baseCharacter;
     unsigned offsetInString = glyphBuffer.offsetInString(index);
 
-    if (offsetInString == GlyphBuffer::noOffset) {
+    if (offsetInString == GlyphBuffer::noOffset || offsetInString >= textRun.length()) {
         // We have no idea which character spawned this glyph. Bail.
         return GlyphToPathTranslator::GlyphUnderlineType::DrawOverGlyph;
     }
