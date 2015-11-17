@@ -316,8 +316,7 @@ void RenderGrid::computeTrackSizesForDirection(GridTrackSizingDirection directio
 {
     ASSERT(freeSpace >= 0);
     LayoutUnit totalGuttersSize = guttersSize(direction, direction == ForRows ? gridRowCount() : gridColumnCount());
-    freeSpace = std::max<LayoutUnit>(0, freeSpace - totalGuttersSize);
-    sizingData.setFreeSpaceForDirection(direction, freeSpace);
+    sizingData.setFreeSpaceForDirection(direction, freeSpace - totalGuttersSize);
 
     LayoutUnit baseSizes, growthLimits;
     computeUsedBreadthOfGridTracks(direction, sizingData, baseSizes, growthLimits);

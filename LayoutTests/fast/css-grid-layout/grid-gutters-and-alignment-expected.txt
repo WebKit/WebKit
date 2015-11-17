@@ -56,3 +56,21 @@ border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px
 direction: RTL (parall) | align-items: 'self-start' | justify-items: 'self-start'
 
 PASS
+Negative free space. justify-content: start
+
+PASS
+Negative free space. justify-content: center
+
+PASS
+Negative free space. justify-content: end
+
+PASS
+Negative free space. align-content: start
+
+PASS
+Negative free space. align-content: center
+
+PASS
+Negative free space. align-content: end
+
+PASS
