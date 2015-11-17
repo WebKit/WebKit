@@ -146,7 +146,7 @@ public:
     void build(Inst& inst, const Liveness<Tmp>::LocalCalc& localCalc)
     {
         inst.forEachDefAndExtraClobberedTmp(type, [&] (Tmp& arg) {
-            // All the Def()s interfere with eachother and with all the extra clobbered Tmps.
+            // All the Def()s interfere with each other and with all the extra clobbered Tmps.
             // We should not use forEachDefAndExtraClobberedTmp() here since colored Tmps
             // do not need interference edges in our implementation.
             inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type otherArgType) {
