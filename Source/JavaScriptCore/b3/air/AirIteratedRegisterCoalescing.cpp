@@ -794,13 +794,13 @@ private:
 
         bool contains(unsigned index)
         {
-            return m_positionInMoveList[index] != WTF::notFound;
+            return m_positionInMoveList[index] != std::numeric_limits<unsigned>::max();
         }
 
         void takeMove(unsigned moveIndex)
         {
             unsigned positionInMoveList = m_positionInMoveList[moveIndex];
-            if (positionInMoveList == WTF::notFound)
+            if (positionInMoveList == std::numeric_limits<unsigned>::max())
                 return;
 
             ASSERT(m_moveList[positionInMoveList] == moveIndex);
@@ -809,7 +809,7 @@ private:
             m_moveList[positionInMoveList] = lastIndex;
             m_moveList.removeLast();
 
-            m_positionInMoveList[moveIndex] = WTF::notFound;
+            m_positionInMoveList[moveIndex] = std::numeric_limits<unsigned>::max();
 
             ASSERT(!contains(moveIndex));
         }
@@ -820,7 +820,7 @@ private:
 
             unsigned lastIndex = m_moveList.takeLast();
             ASSERT(m_positionInMoveList[lastIndex] == m_moveList.size());
-            m_positionInMoveList[lastIndex] = WTF::notFound;
+            m_positionInMoveList[lastIndex] = std::numeric_limits<unsigned>::max();
 
             ASSERT(!contains(lastIndex));
             return lastIndex;
