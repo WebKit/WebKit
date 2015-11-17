@@ -172,3 +172,6 @@ imported/blink/compositing/reorder-z-with-style.html [ Pass Timeout ]
 imported/blink/svg/custom/marker-layout-invalidation.html [ Pass Timeout ]
 imported/blink/fast/css/crash-corner-present.html [ Pass Timeout ]
 imported/blink/compositing/layer-creation/iframe-clip-removed.html [ Pass Timeout ]
+
+# ASAN test only fails on WK1:
+webgl/1.0.3/151055_asan.html [ Failure ]
