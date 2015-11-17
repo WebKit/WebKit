@@ -123,6 +123,9 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         }
     }
 
+    // Due to negative margins, it is possible that we calculated a negative intrinsic width.
+    // Make sure that we never return a negative width.
+    minLogicalWidth = std::max(LayoutUnit(), minLogicalWidth);
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
 
     LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
