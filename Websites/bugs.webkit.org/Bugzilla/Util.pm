@@ -654,12 +654,17 @@ sub generate_random_password {
 sub validate_email_syntax {
     my ($addr) = @_;
     my $match = Bugzilla->params->{'emailregexp'};
-    my $ret = ($addr =~ /$match/ && $addr !~ /[\\\(\)<>&,;:"\[\] \t\r\n\P{ASCII}]/);
-    if ($ret) {
+    # We set the max length to 127 to ensure addresses aren't truncated when
+    # inserted into the tokens.eventdata field.
+    if ($addr =~ /$match/
+        && $addr !~ /[\\\(\)<>&,;:"\[\] \t\r\n\P{ASCII}]/
+        && length($addr) <= 127)
+    {
         # We assume these checks to suffice to consider the address untainted.
         trick_taint($_[0]);
+        return 1;
     }
-    return $ret ? 1 : 0;
+    return 0;
 }
 
 sub validate_date {

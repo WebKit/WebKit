@@ -85,7 +85,7 @@
            'timetrackinggroup' => '',
            'upgrade_notification' => 'latest_stable_release',
            'urlbase' => 'https://bugs.webkit.org/',
-           'use_mailer_queue' => 0,
+           'use_mailer_queue' => '1',
            'use_see_also' => 1,
            'usebugaliases' => '1',
            'useclassification' => 0,
