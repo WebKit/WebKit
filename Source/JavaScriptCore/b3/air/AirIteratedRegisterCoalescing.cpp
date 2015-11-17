@@ -464,7 +464,7 @@ private:
         // If any adjacent of the non-colored node is not an adjacent of the colored node AND has a degree >= K
         // there is a risk that this node needs to have the same color as our precolored node. If we coalesce such
         // move, we may create an uncolorable graph.
-        auto adjacentsOfV = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(v)];
+        const auto& adjacentsOfV = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(v)];
         for (Tmp adjacentTmp : adjacentsOfV) {
             if (!adjacentTmp.isReg()
                 && !hasBeenSimplified(adjacentTmp)
@@ -486,8 +486,8 @@ private:
         ASSERT(!u.isReg());
         ASSERT(!v.isReg());
 
-        auto adjacentsOfU = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(u)];
-        auto adjacentsOfV = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(v)];
+        const auto& adjacentsOfU = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(u)];
+        const auto& adjacentsOfV = m_adjacencyList[AbsoluteTmpHelper<type>::absoluteIndex(v)];
 
         if (adjacentsOfU.size() + adjacentsOfV.size() < m_numberOfRegisters) {
             // Shortcut: if the total number of adjacents is less than the number of register, the condition is always met.
