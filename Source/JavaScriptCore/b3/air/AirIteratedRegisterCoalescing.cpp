@@ -130,8 +130,9 @@ struct AbsoluteTmpHelper<Arg::FP> {
 template<Arg::Type type>
 class IteratedRegisterCoalescingAllocator {
 public:
-    IteratedRegisterCoalescingAllocator(Code& code)
-        : m_numberOfRegisters(regsInPriorityOrder(type).size())
+    IteratedRegisterCoalescingAllocator(Code& code, const HashSet<Tmp>& unspillableTmp)
+        : m_unspillableTmp(unspillableTmp)
+        , m_numberOfRegisters(regsInPriorityOrder(type).size())
     {
         initializeDegrees(code);
 
@@ -144,20 +145,17 @@ public:
 
     void build(Inst& inst, const Liveness<Tmp>::LocalCalc& localCalc)
     {
-        // All the Def()s interfere with eachother.
-        inst.forEachTmp([&] (Tmp& arg, Arg::Role role, Arg::Type argType) {
-            if (argType != type)
-                return;
+        inst.forEachDefAndExtraClobberedTmp(type, [&] (Tmp& arg) {
+            // All the Def()s interfere with eachother and with all the extra clobbered Tmps.
+            // We should not use forEachDefAndExtraClobberedTmp() here since colored Tmps
+            // do not need interference edges in our implementation.
+            inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type otherArgType) {
+                if (otherArgType != type)
+                    return;
 
-            if (Arg::isDef(role)) {
-                inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type) {
-                    if (argType != type)
-                        return;
-
-                    if (Arg::isDef(role))
-                        addEdge(arg, otherArg);
-                });
-            }
+                if (Arg::isDef(role))
+                    addEdge(arg, otherArg);
+            });
         });
 
         if (MoveInstHelper<type>::mayBeCoalescable(inst)) {
@@ -282,12 +280,10 @@ private:
     void addEdges(Inst& inst, const HashSet<Tmp>& liveTmp)
     {
         // All the Def()s interfere with everthing live.
-        inst.forEachTmp([&] (Tmp& arg, Arg::Role role, Arg::Type argType) {
-            if (argType == type && Arg::isDef(role)) {
-                for (const Tmp& liveTmp : liveTmp) {
-                    if (liveTmp.isGP() == (type == Arg::GP))
-                        addEdge(arg, liveTmp);
-                }
+        inst.forEachDefAndExtraClobberedTmp(type, [&] (Tmp& arg) {
+            for (const Tmp& liveTmp : liveTmp) {
+                if (liveTmp.isGP() == (type == Arg::GP))
+                    addEdge(arg, liveTmp);
             }
         });
     }
@@ -573,9 +569,12 @@ private:
     void selectSpill()
     {
         // FIXME: we should select a good candidate based on all the information we have.
-        // FIXME: we should never select a spilled tmp as we would never converge.
-
         auto iterator = m_spillWorklist.begin();
+
+        while (iterator != m_spillWorklist.end() && m_unspillableTmp.contains(*iterator))
+            ++iterator;
+
+        RELEASE_ASSERT_WITH_MESSAGE(iterator != m_spillWorklist.end(), "It is not possible to color the Air graph with the number of available registers.");
 
         auto victimIterator = iterator;
         unsigned maxDegree = m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(*iterator)];
@@ -584,6 +583,9 @@ private:
         for (;iterator != m_spillWorklist.end(); ++iterator) {
             unsigned tmpDegree = m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(*iterator)];
             if (tmpDegree > maxDegree) {
+                if (m_unspillableTmp.contains(*iterator))
+                    continue;
+
                 victimIterator = iterator;
                 maxDegree = tmpDegree;
             }
@@ -749,6 +751,7 @@ private:
     };
     typedef SimpleClassHashTraits<InterferenceEdge> InterferenceEdgeHashTraits;
 
+    const HashSet<Tmp>& m_unspillableTmp;
     unsigned m_numberOfRegisters { 0 };
 
     // The interference graph.
@@ -901,8 +904,11 @@ static void assignRegisterToTmpInProgram(Code& code, const IteratedRegisterCoale
 }
 
 template<Arg::Type type>
-static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp)
+static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp, HashSet<Tmp>& unspillableTmp)
 {
+    // All the spilled values become unspillable.
+    unspillableTmp.add(spilledTmp.begin(), spilledTmp.end());
+
     // Allocate stack slot for each spilled value.
     HashMap<Tmp, StackSlot*> stackSlots;
     for (Tmp tmp : spilledTmp) {
@@ -947,6 +953,9 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp)
                     Tmp newTmp = code.newTmp(type);
                     insertionSet.insert(instIndex, move, inst.origin, arg, newTmp);
                     tmp = newTmp;
+
+                    // Any new Fill() should never be spilled.
+                    unspillableTmp.add(tmp);
                 }
                 if (Arg::isDef(role))
                     insertionSet.insert(instIndex + 1, move, inst.origin, tmp, arg);
@@ -957,10 +966,10 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp)
 }
 
 template<Arg::Type type>
-static void iteratedRegisterCoalescingOnType(Code& code)
+static void iteratedRegisterCoalescingOnType(Code& code, HashSet<Tmp>& unspillableTmps)
 {
     while (true) {
-        IteratedRegisterCoalescingAllocator<type> allocator(code);
+        IteratedRegisterCoalescingAllocator<type> allocator(code, unspillableTmps);
         Liveness<Tmp> liveness(code);
         for (BasicBlock* block : code) {
             Liveness<Tmp>::LocalCalc localCalc(liveness, block);
@@ -976,7 +985,7 @@ static void iteratedRegisterCoalescingOnType(Code& code)
             assignRegisterToTmpInProgram(code, allocator);
             return;
         }
-        addSpillAndFillToProgram<type>(code, allocator.spilledTmp());
+        addSpillAndFillToProgram<type>(code, allocator.spilledTmp(), unspillableTmps);
     }
 }
 
@@ -987,10 +996,13 @@ void iteratedRegisterCoalescing(Code& code)
     bool gpIsColored = false;
     bool fpIsColored = false;
 
+    HashSet<Tmp> unspillableGPs;
+    HashSet<Tmp> unspillableFPs;
+
     // First we run both allocator together as long as they both spill.
     while (!gpIsColored && !fpIsColored) {
-        IteratedRegisterCoalescingAllocator<Arg::GP> gpAllocator(code);
-        IteratedRegisterCoalescingAllocator<Arg::FP> fpAllocator(code);
+        IteratedRegisterCoalescingAllocator<Arg::GP> gpAllocator(code, unspillableGPs);
+        IteratedRegisterCoalescingAllocator<Arg::FP> fpAllocator(code, unspillableFPs);
 
         // Liveness Analysis can be prohibitively expensive. It is shared
         // between the two allocators to avoid doing it twice.
@@ -1014,19 +1026,19 @@ void iteratedRegisterCoalescing(Code& code)
             assignRegisterToTmpInProgram(code, gpAllocator);
             gpIsColored = true;
         } else
-            addSpillAndFillToProgram<Arg::GP>(code, gpAllocator.spilledTmp());
+            addSpillAndFillToProgram<Arg::GP>(code, gpAllocator.spilledTmp(), unspillableGPs);
 
         if (fpAllocator.spilledTmp().isEmpty()) {
             assignRegisterToTmpInProgram(code, fpAllocator);
             fpIsColored = true;
         } else
-            addSpillAndFillToProgram<Arg::FP>(code, fpAllocator.spilledTmp());
+            addSpillAndFillToProgram<Arg::FP>(code, fpAllocator.spilledTmp(), unspillableFPs);
     };
 
     if (!gpIsColored)
-        iteratedRegisterCoalescingOnType<Arg::GP>(code);
+        iteratedRegisterCoalescingOnType<Arg::GP>(code, unspillableGPs);
     if (!fpIsColored)
-        iteratedRegisterCoalescingOnType<Arg::FP>(code);
+        iteratedRegisterCoalescingOnType<Arg::FP>(code, unspillableFPs);
 }
 
 } } } // namespace JSC::B3::Air

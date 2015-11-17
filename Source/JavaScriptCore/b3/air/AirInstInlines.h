@@ -89,6 +89,26 @@ inline const RegisterSet& Inst::extraClobberedRegs()
     return args[0].special()->extraClobberedRegs(*this);
 }
 
+template<typename Functor>
+inline void Inst::forEachDefAndExtraClobberedTmp(Arg::Type type, const Functor& functor)
+{
+    forEachTmp([&] (Tmp& tmpArg, Arg::Role role, Arg::Type argType) {
+        if (argType == type && Arg::isDef(role))
+            functor(tmpArg);
+    });
+
+    if (!hasSpecial())
+        return;
+
+    const RegisterSet& clobberedRegisters = extraClobberedRegs();
+    clobberedRegisters.forEach([functor, type] (Reg reg) {
+        if (reg.isGPR() == (type == Arg::GP)) {
+            Tmp registerTmp(reg);
+            functor(registerTmp);
+        }
+    });
+}
+
 inline void Inst::reportUsedRegisters(const RegisterSet& usedRegisters)
 {
     ASSERT(hasSpecial());

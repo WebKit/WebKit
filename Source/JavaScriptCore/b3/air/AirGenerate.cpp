@@ -67,8 +67,10 @@ void generate(Code& code, CCallHelpers& jit)
     
     eliminateDeadCode(code);
 
-    // This is where we would have a real register allocator. Then, we could use spillEverything()
-    // in place of the register allocator only for testing.
+    // Register allocation for all the Tmps that do not have a corresponding machine register.
+    // After this phase, every Tmp has a reg.
+    //
+    // For debugging, you can use spillEverything() to put everything to the stack between each Inst.
     iteratedRegisterCoalescing(code);
 
     // Prior to this point the prologue and epilogue is implicit. This makes it explicit. It also

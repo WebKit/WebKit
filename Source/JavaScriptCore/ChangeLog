@@ -1,3 +1,47 @@
+2015-11-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add support for the extra registers that can be clobbered by Specials
+        https://bugs.webkit.org/show_bug.cgi?id=151246
+
+        Reviewed by Geoffrey Garen.
+
+        Specials can clobber arbitrary registers. This was not handled correctly by Air
+        and nothing was preventing us from re-allocating those registers.
+
+        This patch adds support for the extra clobbered registers in the two register allocators.
+
+        I also fixed the re-spilling FIXME of the iterated allocator because the test might
+        not always converge without it. Since we are at maximum register pressure at the patch point,
+        we could be always spilling the return value, which would loop forever.
+
+        To fix the re-spilling, I just kept a Set of every value spilled or filled so far. When selecting
+        a spill candidate, we never pick a Tmp from that set.
+
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::forEachDefAndExtraClobberedTmp):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::IteratedRegisterCoalescingAllocator):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::build):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::addEdges):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::selectSpill):
+        (JSC::B3::Air::addSpillAndFillToProgram):
+        (JSC::B3::Air::iteratedRegisterCoalescingOnType):
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersFPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersFPArgs):
+        (JSC::B3::run):
+        * jit/RegisterSet.h:
+
 2015-11-16  Benjamin Poulain  <benjamin@webkit.org>
 
         Build fix after r192492

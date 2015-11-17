@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirInsertionSet.h"
+#include "AirInstInlines.h"
 #include "AirPhaseScope.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -47,6 +48,9 @@ void handleCalleeSaves(Code& code)
                     // At first we just record all used regs.
                     usedCalleeSaves.set(tmp.reg());
                 });
+
+            if (inst.hasSpecial())
+                usedCalleeSaves.merge(inst.extraClobberedRegs());
         }
     }
 

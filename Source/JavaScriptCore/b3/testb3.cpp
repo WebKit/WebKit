@@ -2760,6 +2760,154 @@ void testSimplePatchpoint()
     CHECK(compileAndRun<int>(proc, 1, 2) == 3);
 }
 
+void testSimplePatchpointWithoutOuputClobbersGPArgs()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* const1 = root->appendNew<Const64Value>(proc, Origin(), 42);
+    Value* const2 = root->appendNew<Const64Value>(proc, Origin(), 13);
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->clobber(RegisterSet(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1));
+    patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 2);
+            CHECK(params.reps[0].isGPR());
+            CHECK(params.reps[1].isGPR());
+            jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), params.reps[0].gpr());
+            jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), params.reps[1].gpr());
+            jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), GPRInfo::argumentGPR0);
+            jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), GPRInfo::argumentGPR1);
+        });
+
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), arg1, arg2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+}
+
+void testSimplePatchpointWithOuputClobbersGPArgs()
+{
+    // We can't predict where the output will be but we want to be sure it is not
+    // one of the clobbered registers which is a bit hard to test.
+    //
+    // What we do is force the hand of our register allocator by clobbering absolutely
+    // everything but 1. The only valid allocation is to give it to the result and
+    // spill everything else.
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* const1 = root->appendNew<Const64Value>(proc, Origin(), 42);
+    Value* const2 = root->appendNew<Const64Value>(proc, Origin(), 13);
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int64, Origin());
+
+    RegisterSet clobberAll = RegisterSet::allGPRs();
+    clobberAll.exclude(RegisterSet::stackRegisters());
+    clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
+    clobberAll.clear(GPRInfo::argumentGPR2);
+    patchpoint->clobber(clobberAll);
+
+    patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
+
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 3);
+            CHECK(params.reps[0].isGPR());
+            CHECK(params.reps[1].isGPR());
+            CHECK(params.reps[2].isGPR());
+            jit.move(params.reps[1].gpr(), params.reps[0].gpr());
+            jit.add64(params.reps[2].gpr(), params.reps[0].gpr());
+
+            clobberAll.forEach([&] (Reg reg) {
+                jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), reg.gpr());
+            });
+        });
+
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), patchpoint,
+        root->appendNew<Value>(proc, Add, Origin(), arg1, arg2));
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 58);
+}
+
+void testSimplePatchpointWithoutOuputClobbersFPArgs()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1);
+    Value* const1 = root->appendNew<ConstDoubleValue>(proc, Origin(), 42.5);
+    Value* const2 = root->appendNew<ConstDoubleValue>(proc, Origin(), 13.1);
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->clobber(RegisterSet(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1));
+    patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 2);
+            CHECK(params.reps[0].isFPR());
+            CHECK(params.reps[1].isFPR());
+            jit.moveZeroToDouble(params.reps[0].fpr());
+            jit.moveZeroToDouble(params.reps[1].fpr());
+            jit.moveZeroToDouble(FPRInfo::argumentFPR0);
+            jit.moveZeroToDouble(FPRInfo::argumentFPR1);
+        });
+
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), arg1, arg2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<double>(proc, 1.5, 2.5) == 4);
+}
+
+void testSimplePatchpointWithOuputClobbersFPArgs()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1);
+    Value* const1 = root->appendNew<ConstDoubleValue>(proc, Origin(), 42.5);
+    Value* const2 = root->appendNew<ConstDoubleValue>(proc, Origin(), 13.1);
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Double, Origin());
+
+    RegisterSet clobberAll = RegisterSet::allFPRs();
+    clobberAll.exclude(RegisterSet::stackRegisters());
+    clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
+    clobberAll.clear(FPRInfo::argumentFPR2);
+    patchpoint->clobber(clobberAll);
+
+    patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
+
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(params.reps.size() == 3);
+            CHECK(params.reps[0].isFPR());
+            CHECK(params.reps[1].isFPR());
+            CHECK(params.reps[2].isFPR());
+            jit.addDouble(params.reps[1].fpr(), params.reps[2].fpr(), params.reps[0].fpr());
+
+            clobberAll.forEach([&] (Reg reg) {
+                jit.moveZeroToDouble(reg.fpr());
+            });
+        });
+
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), patchpoint,
+        root->appendNew<Value>(proc, Add, Origin(), arg1, arg2));
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<double>(proc, 1.5, 2.5) == 59.6);
+}
+
 void testPatchpointCallArg()
 {
     Procedure proc;
@@ -4516,6 +4664,10 @@ void run(const char* filter)
     RUN(testComplex(4, 384));
 
     RUN(testSimplePatchpoint());
+    RUN(testSimplePatchpointWithoutOuputClobbersGPArgs());
+    RUN(testSimplePatchpointWithOuputClobbersGPArgs());
+    RUN(testSimplePatchpointWithoutOuputClobbersFPArgs());
+    RUN(testSimplePatchpointWithOuputClobbersFPArgs());
     RUN(testPatchpointCallArg());
     RUN(testPatchpointFixedRegister());
     RUN(testPatchpointAny());

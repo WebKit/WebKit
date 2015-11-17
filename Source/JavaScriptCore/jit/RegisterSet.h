@@ -45,8 +45,8 @@ public:
         setMany(regs...);
     }
     
-    static RegisterSet stackRegisters();
-    static RegisterSet reservedHardwareRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet stackRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
     static RegisterSet runtimeRegisters();
     static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
     static RegisterSet calleeSaveRegisters();
@@ -59,8 +59,8 @@ public:
 #endif
     static RegisterSet volatileRegistersForJSCall();
     static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
-    static RegisterSet allGPRs();
-    static RegisterSet allFPRs();
+    JS_EXPORT_PRIVATE static RegisterSet allGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet allFPRs();
     static RegisterSet allRegisters();
 
     static RegisterSet registersToNotSaveForJSCall();

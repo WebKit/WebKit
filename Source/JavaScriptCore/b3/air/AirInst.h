@@ -126,6 +126,10 @@ public:
     // extraClobberedRegs() only works if hasSpecial() returns true.
     const RegisterSet& extraClobberedRegs();
 
+    // Iterate over the Defs and the extra clobbered registers.
+    template<typename Functor>
+    void forEachDefAndExtraClobberedTmp(Arg::Type, const Functor& functor);
+
     // Use this to report which registers are live. This should be done just before codegen. Note
     // that for efficiency, reportUsedRegisters() only works if hasSpecial() returns true.
     void reportUsedRegisters(const RegisterSet&);
