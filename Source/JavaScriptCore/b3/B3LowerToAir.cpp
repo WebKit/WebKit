@@ -1260,7 +1260,7 @@ private:
         }
 
         case Mul: {
-            appendBinOp<Mul32, Mul64, Air::Oops, Commutative>(
+            appendBinOp<Mul32, Mul64, MulDouble, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }

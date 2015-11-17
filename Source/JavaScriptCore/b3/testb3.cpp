@@ -386,6 +386,70 @@ void testMulLoadTwice()
     test(1);
 }
 
+void testMulArgDouble(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mul, Origin(), value, value));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), a * a));
+}
+
+void testMulArgsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mul, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a, b), a * b));
+}
+
+void testMulArgImmDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mul, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), a * b));
+}
+
+void testMulImmArgDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mul, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, b), a * b));
+}
+
+void testMulImmsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mul, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), a * b));
+}
+
 void testDivArgDouble(double a)
 {
     Procedure proc;
@@ -4395,6 +4459,12 @@ void run(const char* filter)
     RUN(testMulArgs32(1, 1));
     RUN(testMulArgs32(1, 2));
     RUN(testMulLoadTwice());
+
+    RUN_UNARY(testMulArgDouble, doubleOperands());
+    RUN_BINARY(testMulArgsDouble, doubleOperands(), doubleOperands());
+    RUN_BINARY(testMulArgImmDouble, doubleOperands(), doubleOperands());
+    RUN_BINARY(testMulImmArgDouble, doubleOperands(), doubleOperands());
+    RUN_BINARY(testMulImmsDouble, doubleOperands(), doubleOperands());
 
     RUN(testDivArgDouble(M_PI));
     RUN(testDivArgsDouble(M_PI, 1));

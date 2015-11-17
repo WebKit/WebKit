@@ -114,6 +114,10 @@ Mul32 U:G, U:G, D:G
 Mul64 U:G, UD:G
     Tmp, Tmp
 
+MulDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 DivDouble U:F, UD:F
     Tmp, Tmp
     Addr, Tmp

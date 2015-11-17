@@ -1,3 +1,23 @@
+2015-11-17  Mark Lam  <mark.lam@apple.com>
+
+        [JSC] Support Doubles with B3's Mul.
+        https://bugs.webkit.org/show_bug.cgi?id=151355
+
+        Reviewed by Filip Pizlo.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testMulLoadTwice):
+        (JSC::B3::testMulArgDouble):
+        (JSC::B3::testMulArgsDouble):
+        (JSC::B3::testMulArgImmDouble):
+        (JSC::B3::testMulImmArgDouble):
+        (JSC::B3::testMulImmsDouble):
+        (JSC::B3::testDivArgDouble):
+        (JSC::B3::run):
+
 2015-11-17  Matthew Daiter  <mdaiter8121@gmail.com>
 
         Removed useless variable scriptResult from testExecutionTimeLimit
