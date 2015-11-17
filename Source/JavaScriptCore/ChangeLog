@@ -1,3 +1,32 @@
+2015-11-17  Andreas Kling  <akling@apple.com>
+
+        [JSC] JSPropertyNameEnumerator could be destructorless.
+        <https://webkit.org/b/151242>
+
+        Reviewed by Mark Lam.
+
+        Make JSPropertyNameEnumerator destructorless and have it store the property names
+        cache in CopiedSpace. This was the most popular occupant of 64-byte destructor cells
+        in MarkedSpace, so making it destructorless gets rid of some ill-filled MarkedBlocks.
+
+        This patch had two issues on 32-bit platforms when first landed:
+
+        - Copied space allocations are required to be 8-byte divisible in size.
+
+        - WriteBarrier<Unknown> and WriteBarrier<JSString> are not the same size on 32-bit;
+          the former is a 64-bit EncodedJSValue internally, and the latter is a 32-bit JSCell*.
+          My patch was reinterpret_cast'ing a WriteBarrier<JSString> to a WriteBarrier<Unknown>
+          when passing to SlotVisitor::appendValues(), which led to invalid addresses getting
+          marked and strings getting GC'd prematurely.
+
+        * heap/CopyToken.h:
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+        (JSC::JSPropertyNameEnumerator::copyBackingStore):
+        (JSC::JSPropertyNameEnumerator::destroy): Deleted.
+        * runtime/JSPropertyNameEnumerator.h:
+
 2015-11-17  Mark Lam  <mark.lam@apple.com>
 
         Refactoring: move branchMul32's imm arg to the 3rd argument to be consistent.
