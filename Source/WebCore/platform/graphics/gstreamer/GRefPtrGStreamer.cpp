@@ -183,6 +183,25 @@ template<> void derefGPtr<GstBuffer>(GstBuffer* ptr)
         gst_buffer_unref(ptr);
 }
 
+template<> GRefPtr<GstBufferList> adoptGRef(GstBufferList* ptr)
+{
+    return GRefPtr<GstBufferList>(ptr, GRefPtrAdopt);
+}
+
+template<> GstBufferList* refGPtr<GstBufferList>(GstBufferList* ptr)
+{
+    if (ptr)
+        gst_buffer_list_ref(ptr);
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstBufferList>(GstBufferList* ptr)
+{
+    if (ptr)
+        gst_buffer_list_unref(ptr);
+}
+
 template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr)
 {
     return GRefPtr<GstSample>(ptr, GRefPtrAdopt);

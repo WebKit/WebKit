@@ -31,6 +31,7 @@ typedef struct _GstTask GstTask;
 typedef struct _GstBus GstBus;
 typedef struct _GstElementFactory GstElementFactory;
 typedef struct _GstBuffer GstBuffer;
+typedef struct _GstBufferList GstBufferList;
 typedef struct _GstSample GstSample;
 typedef struct _GstTagList GstTagList;
 typedef struct _GstEvent GstEvent;
@@ -72,6 +73,10 @@ template<> void derefGPtr<GstElementFactory>(GstElementFactory* ptr);
 template<> GRefPtr<GstBuffer> adoptGRef(GstBuffer* ptr);
 template<> GstBuffer* refGPtr<GstBuffer>(GstBuffer* ptr);
 template<> void derefGPtr<GstBuffer>(GstBuffer* ptr);
+
+template<> GRefPtr<GstBufferList> adoptGRef(GstBufferList*);
+template<> GstBufferList* refGPtr<GstBufferList>(GstBufferList*);
+template<> void derefGPtr<GstBufferList>(GstBufferList*);
 
 template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr);
 template<> GstSample* refGPtr<GstSample>(GstSample* ptr);
