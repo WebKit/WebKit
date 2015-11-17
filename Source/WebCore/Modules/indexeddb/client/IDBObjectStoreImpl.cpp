@@ -77,7 +77,12 @@ const IDBKeyPath IDBObjectStore::keyPath() const
 
 RefPtr<DOMStringList> IDBObjectStore::indexNames() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    RefPtr<DOMStringList> indexNames = DOMStringList::create();
+    for (auto& name : m_info.indexNames())
+        indexNames->append(name);
+    indexNames->sort();
+
+    return indexNames;
 }
 
 RefPtr<WebCore::IDBTransaction> IDBObjectStore::transaction()

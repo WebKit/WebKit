@@ -54,6 +54,8 @@ public:
     bool hasIndex(const String& name) const;
     IDBIndexInfo* infoForExistingIndex(const String& name);
 
+    Vector<String> indexNames() const;
+
 private:
     uint64_t m_identifier { 0 };
     String m_name;

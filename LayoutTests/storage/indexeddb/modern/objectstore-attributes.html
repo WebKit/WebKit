@@ -1,4 +1,5 @@
-This test exercises the readonly attributes on an IDBObjectStore.
+This test exercises the readonly attributes on an IDBObjectStore.<br>
+<div id="logger"></div>
 <script>
 
 if (window.testRunner) {
@@ -8,51 +9,99 @@ if (window.testRunner) {
 
 var request = window.indexedDB.open("ObjectStoreAttributesTestDatabase");
 
+function log(message)
+{
+    document.getElementById("logger").innerHTML += message + "<br>";
+}
+
 function done()
 {
-    alert("Done");
+    log("Done");
     if (window.testRunner)
         testRunner.notifyDone();
 }
 
+var database;
+
 request.onupgradeneeded = function(event)
 {
-    alert("First upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    log("First upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
     
     var tx = request.transaction;
-    var db = event.target.result;
+    database = event.target.result;
 
-    alert(tx + " - " + tx.mode);
-    alert(db);
+    log(tx + " - " + tx.mode);
+    log(database);
 
-    var os1 = db.createObjectStore('TestObjectStore1', { autoIncrement: true , keyPath: "foo" });
-    var os2 = db.createObjectStore('TestObjectStore2', { autoIncrement: false });
+    var os1 = database.createObjectStore('TestObjectStore1', { autoIncrement: true , keyPath: "foo" });
+    var os2 = database.createObjectStore('TestObjectStore2', { autoIncrement: false });
 
-    alert(os1.name);
-    alert(os2.name);
-    alert(os1.autoIncrement);
-    alert(os2.autoIncrement);
-    alert(os1.keyPath);
-    alert(os2.keyPath);
-    alert(os1.transaction);
-    alert(os2.transaction);
-    alert(os1.transaction == tx);
-    alert(os2.transaction == tx);
-    alert(os1.transaction == os2.transaction);
+    log(os1.name);
+    log(os2.name);
+    log(os1.autoIncrement);
+    log(os2.autoIncrement);
+    log(os1.keyPath);
+    log(os2.keyPath);
+    log(os1.transaction);
+    log(os2.transaction);
+    log(os1.transaction == tx);
+    log(os2.transaction == tx);
+    log(os1.transaction == os2.transaction);
+    
+    os2.createIndex("Foo index", "foo");
+    os2.createIndex("Bar index", "bar");
+    
+    var names = os2.indexNames;
+    log("Object store has indexes:")
+    for (var i = 0; i < names.length; ++i)
+        log(names[i]);
+    
+    os2.createIndex("Baz index", "baz");
+    log("After adding another, object store now has indexes:");
+    names = os2.indexNames;
+    for (var i = 0; i < names.length; ++i)
+        log(names[i]);
     
     tx.onabort = function(event) {
-        alert("First version change transaction unexpected abort");
+        log("First version change transaction unexpected abort");
         done();
     }
 
     tx.oncomplete = function(event) {
-        alert("First version change transaction completed");
-        done();
+        log("First version change transaction completed");
+        continueTest();
     }
 
     tx.onerror = function(event) {
-        alert("First version change transaction unexpected error - " + event);
+        log("First version change transaction unexpected error - " + event);
         done();
     }
 }
+
+function continueTest()
+{
+    var transaction = database.transaction("TestObjectStore2", "readonly");
+    var objectStore = transaction.objectStore("TestObjectStore2");
+    
+    log("In a new transaction, object store has indexes:");
+    var names = objectStore.indexNames;
+    for (var i = 0; i < names.length; ++i)
+        log(names[i]);
+
+    transaction.onabort = function(event) {
+        log("readonly transaction unexpected abort" + event);
+        done();
+    }
+
+    transaction.oncomplete = function(event) {
+        log("readonly transaction complete");
+        done();
+    }
+
+    transaction.onerror = function(event) {
+        log("readonly transaction unexpected error" + event);
+        done();
+    }
+}
+
 </script>

@@ -89,6 +89,16 @@ IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const
     return result;
 }
 
+Vector<String> IDBObjectStoreInfo::indexNames() const
+{
+    Vector<String> names;
+    names.reserveCapacity(m_indexMap.size());
+    for (auto& index : m_indexMap.values())
+        names.uncheckedAppend(index.name());
+
+    return names;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
