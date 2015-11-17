@@ -28,6 +28,10 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGCommon.h"
+#include "B3BasicBlock.h"
+#include "B3Value.h"
+#include "B3Procedure.h"
 #include "LLVMAPI.h"
 
 namespace JSC { namespace FTL {

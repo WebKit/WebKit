@@ -37,6 +37,7 @@
 #include "DirectArguments.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLAvailableRecovery.h"
+#include "FTLB3Output.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLFormattedValue.h"
 #include "FTLInlineCacheSize.h"
@@ -368,7 +369,7 @@ private:
                     DFG_CRASH(m_graph, node, "Bad Phi node result type");
                     break;
                 }
-                m_phis.add(node, buildAlloca(m_out.m_builder, type));
+                m_phis.add(node, m_out.alloca(type));
             }
         }
     }

@@ -24,9 +24,12 @@
  */
 
 #include "config.h"
+
+#include "DFGCommon.h"
 #include "FTLOutput.h"
 
 #if ENABLE(FTL_JIT)
+#if !FTL_USES_B3
 
 namespace JSC { namespace FTL {
 
@@ -154,5 +157,6 @@ void Output::check(LValue condition, WeightedTarget taken)
 
 } } // namespace JSC::FTL
 
+#endif // !FTL_USES_B3
 #endif // ENABLE(FTL_JIT)
 

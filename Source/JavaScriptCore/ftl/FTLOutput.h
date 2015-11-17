@@ -27,6 +27,7 @@
 #define FTLOutput_h
 
 #if ENABLE(FTL_JIT)
+#if !FTL_USES_B3
 
 #include "DFGCommon.h"
 #include "FTLAbbreviations.h"
@@ -478,6 +479,7 @@ inline LValue Output::fround(LValue doubleValue)
 
 } } // namespace JSC::FTL
 
+#endif // !FTL_USES_B3
 #endif // ENABLE(FTL_JIT)
 
 #endif // FTLOutput_h

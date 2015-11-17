@@ -1,5 +1,21 @@
 2015-11-17  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Add an empty FTLOutput for B3 that crashes on any operation
+        https://bugs.webkit.org/show_bug.cgi?id=151366
+
+        Reviewed by Filip Pizlo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/B3Output.h: Added.
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLAbstractHeap.cpp:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::createPhiVariables):
+        * ftl/FTLOutput.cpp:
+        * ftl/FTLOutput.h:
+
+2015-11-17  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Do not copy the adjacency list when we just need to manipulate them
         https://bugs.webkit.org/show_bug.cgi?id=151343
 

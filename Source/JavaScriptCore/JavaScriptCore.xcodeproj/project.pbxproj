@@ -1083,6 +1083,7 @@
 		2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2600B5A5152BAAA70091EE5F /* JSStringJoiner.h */; };
 		26718BA41BE99F780052017B /* AirIteratedRegisterCoalescing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26718BA21BE99F780052017B /* AirIteratedRegisterCoalescing.cpp */; };
 		26718BA51BE99F780052017B /* AirIteratedRegisterCoalescing.h in Headers */ = {isa = PBXBuildFile; fileRef = 26718BA31BE99F780052017B /* AirIteratedRegisterCoalescing.h */; };
+		269D636E1BFBE5D100101B1D /* FTLB3Output.h in Headers */ = {isa = PBXBuildFile; fileRef = 269D636D1BFBE5D000101B1D /* FTLB3Output.h */; };
 		2A05ABD51961DF2400341750 /* JSPropertyNameEnumerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A05ABD31961DF2400341750 /* JSPropertyNameEnumerator.cpp */; };
 		2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A05ABD41961DF2400341750 /* JSPropertyNameEnumerator.h */; };
 		2A111245192FCE79005EE18D /* CustomGetterSetter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A111243192FCE79005EE18D /* CustomGetterSetter.cpp */; };
@@ -3103,6 +3104,7 @@
 		264091FA1BE2FD4100684DB2 /* AirOpcode.opcodes */ = {isa = PBXFileReference; lastKnownFileType = text; name = AirOpcode.opcodes; path = b3/air/AirOpcode.opcodes; sourceTree = "<group>"; };
 		26718BA21BE99F780052017B /* AirIteratedRegisterCoalescing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirIteratedRegisterCoalescing.cpp; path = b3/air/AirIteratedRegisterCoalescing.cpp; sourceTree = "<group>"; };
 		26718BA31BE99F780052017B /* AirIteratedRegisterCoalescing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirIteratedRegisterCoalescing.h; path = b3/air/AirIteratedRegisterCoalescing.h; sourceTree = "<group>"; };
+		269D636D1BFBE5D000101B1D /* FTLB3Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLB3Output.h; path = ftl/FTLB3Output.h; sourceTree = "<group>"; };
 		2A05ABD31961DF2400341750 /* JSPropertyNameEnumerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameEnumerator.cpp; sourceTree = "<group>"; };
 		2A05ABD41961DF2400341750 /* JSPropertyNameEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameEnumerator.h; sourceTree = "<group>"; };
 		2A111243192FCE79005EE18D /* CustomGetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomGetterSetter.cpp; sourceTree = "<group>"; };
@@ -4352,6 +4354,7 @@
 				0FEA0A1A1708B00700BB722C /* FTLAbstractHeapRepository.h */,
 				0F485323187DFDEC0083B687 /* FTLAvailableRecovery.cpp */,
 				0F485324187DFDEC0083B687 /* FTLAvailableRecovery.h */,
+				269D636D1BFBE5D000101B1D /* FTLB3Output.h */,
 				0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */,
 				0FEA09FF170513DB00BB722C /* FTLCapabilities.h */,
 				0FEA0A251709623B00BB722C /* FTLCommonValues.cpp */,
@@ -4370,7 +4373,6 @@
 				0F235BBE17178E1C00690C7F /* FTLExitArgument.h */,
 				0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */,
 				0F235BC017178E1C00690C7F /* FTLExitArgumentForOperand.h */,
-				0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */,
 				0F2B9CEE19D0BAC100B1D1B5 /* FTLExitPropertyValue.cpp */,
 				0F2B9CEF19D0BAC100B1D1B5 /* FTLExitPropertyValue.h */,
 				0F235BC217178E1C00690C7F /* FTLExitThunkGenerator.cpp */,
@@ -4431,6 +4433,7 @@
 				0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */,
 				0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */,
 				0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */,
+				0F235BC117178E1C00690C7F /* FTLStackmapArgumentList.h */,
 				0F9D33981803ADB70073C2BC /* FTLStackMaps.cpp */,
 				0F9D33991803ADB70073C2BC /* FTLStackMaps.h */,
 				0FEA0A151706BB9000BB722C /* FTLState.cpp */,
@@ -6709,6 +6712,7 @@
 				0F4570411BE584CA0062A629 /* B3TimingScope.h in Headers */,
 				0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */,
 				0FEC853C1BDACDAC0080FF74 /* B3Type.h in Headers */,
+				269D636E1BFBE5D100101B1D /* FTLB3Output.h in Headers */,
 				0FEC853E1BDACDAC0080FF74 /* B3UpsilonValue.h in Headers */,
 				0FEC85401BDACDAC0080FF74 /* B3UseCounts.h in Headers */,
 				0FEC85421BDACDAC0080FF74 /* B3Validate.h in Headers */,
