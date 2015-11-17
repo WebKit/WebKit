@@ -89,7 +89,6 @@ public:
     
     LValue param(unsigned index) { return getParam(m_function, index); }
     LValue constBool(bool value) { return constInt(boolean, value); }
-    LValue constInt8(int8_t value) { return constInt(int8, value); }
     LValue constInt32(int32_t value) { return constInt(int32, value); }
     template<typename T>
     LValue constIntPtr(T* value) { return constInt(intPtr, bitwise_cast<intptr_t>(value)); }
@@ -242,20 +241,20 @@ public:
     
     LValue load(TypedPointer, LType refType);
     void store(LValue, TypedPointer, LType refType);
-    
-    LValue load8(TypedPointer pointer) { return load(pointer, ref8); }
-    LValue load16(TypedPointer pointer) { return load(pointer, ref16); }
+
+    LValue load8SignExt32(TypedPointer);
+    LValue load8ZeroExt32(TypedPointer);
+    LValue load16SignExt32(TypedPointer);
+    LValue load16ZeroExt32(TypedPointer);
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
     LValue loadFloat(TypedPointer pointer) { return load(pointer, refFloat); }
     LValue loadDouble(TypedPointer pointer) { return load(pointer, refDouble); }
-    void store8(LValue value, TypedPointer pointer) { store(value, pointer, ref8); }
     void store16(LValue value, TypedPointer pointer) { store(value, pointer, ref16); }
     void store32(LValue value, TypedPointer pointer) { store(value, pointer, ref32); }
     void store64(LValue value, TypedPointer pointer) { store(value, pointer, ref64); }
     void storePtr(LValue value, TypedPointer pointer) { store(value, pointer, refPtr); }
-    void storeFloat(LValue value, TypedPointer pointer) { store(value, pointer, refFloat); }
     void storeDouble(LValue value, TypedPointer pointer) { store(value, pointer, refDouble); }
 
     LValue addPtr(LValue value, ptrdiff_t immediate = 0)
@@ -294,14 +293,15 @@ public:
     {
         return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
     }
-    
-    LValue load8(LValue base, const AbstractField& field) { return load8(address(base, field)); }
-    LValue load16(LValue base, const AbstractField& field) { return load16(address(base, field)); }
+
+    LValue load8SignExt32(LValue base, const AbstractField& field) { return load8SignExt32(address(base, field)); }
+    LValue load8ZeroExt32(LValue base, const AbstractField& field) { return load8ZeroExt32(address(base, field)); }
+    LValue load16SignExt32(LValue base, const AbstractField& field) { return load16SignExt32(address(base, field)); }
+    LValue load16ZeroExt32(LValue base, const AbstractField& field) { return load16ZeroExt32(address(base, field)); }
     LValue load32(LValue base, const AbstractField& field) { return load32(address(base, field)); }
     LValue load64(LValue base, const AbstractField& field) { return load64(address(base, field)); }
     LValue loadPtr(LValue base, const AbstractField& field) { return loadPtr(address(base, field)); }
     LValue loadDouble(LValue base, const AbstractField& field) { return loadDouble(address(base, field)); }
-    void store8(LValue value, LValue base, const AbstractField& field) { store8(value, address(base, field)); }
     void store32(LValue value, LValue base, const AbstractField& field) { store32(value, address(base, field)); }
     void store64(LValue value, LValue base, const AbstractField& field) { store64(value, address(base, field)); }
     void storePtr(LValue value, LValue base, const AbstractField& field) { storePtr(value, address(base, field)); }
@@ -347,8 +347,6 @@ public:
     LValue doubleGreaterThanOrUnordered(LValue left, LValue right) { return fcmp(LLVMRealUGT, left, right); }
     LValue doubleGreaterThanOrEqualOrUnordered(LValue left, LValue right) { return fcmp(LLVMRealUGE, left, right); }
     
-    LValue isZero8(LValue value) { return equal(value, int8Zero); }
-    LValue notZero8(LValue value) { return notEqual(value, int8Zero); }
     LValue isZero32(LValue value) { return equal(value, int32Zero); }
     LValue notZero32(LValue value) { return notEqual(value, int32Zero); }
     LValue isZero64(LValue value) { return equal(value, int64Zero); }
@@ -356,8 +354,6 @@ public:
     LValue isNull(LValue value) { return equal(value, intPtrZero); }
     LValue notNull(LValue value) { return notEqual(value, intPtrZero); }
     
-    LValue testIsZero8(LValue value, LValue mask) { return isZero8(bitAnd(value, mask)); }
-    LValue testNonZero8(LValue value, LValue mask) { return notZero8(bitAnd(value, mask)); }
     LValue testIsZero32(LValue value, LValue mask) { return isZero32(bitAnd(value, mask)); }
     LValue testNonZero32(LValue value, LValue mask) { return notZero32(bitAnd(value, mask)); }
     LValue testIsZero64(LValue value, LValue mask) { return isZero64(bitAnd(value, mask)); }
@@ -442,6 +438,30 @@ public:
     LBasicBlock m_block;
     LBasicBlock m_nextBlock;
 };
+
+inline LValue Output::load8SignExt32(TypedPointer pointer)
+{
+    LValue value8 = load(pointer, ref8);
+    return signExt(value8, int32);
+}
+
+inline LValue Output::load8ZeroExt32(TypedPointer pointer)
+{
+    LValue value8 = load(pointer, ref8);
+    return zeroExt(value8, int32);
+}
+
+inline LValue Output::load16SignExt32(TypedPointer pointer)
+{
+    LValue value16 = load(pointer, ref16);
+    return signExt(value16, int32);
+}
+
+inline LValue Output::load16ZeroExt32(TypedPointer pointer)
+{
+    LValue value16 = load(pointer, ref16);
+    return zeroExt(value16, int32);
+}
 
 #define FTL_NEW_BLOCK(output, nameArguments) \
     (LIKELY(!verboseCompilationEnabled()) \

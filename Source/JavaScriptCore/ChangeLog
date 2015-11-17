@@ -1,5 +1,51 @@
 2015-11-16  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Make FTLOutput's load8() and load16() compatible with B3
+        https://bugs.webkit.org/show_bug.cgi?id=151336
+
+        Reviewed by Filip Pizlo.
+
+        B3 does not have 8bit and 16bit types. Make FTLOutput abstract enough
+        to handle LLVM IR and B3.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStringCharCodeAt):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNotifyWrite):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckHasInstance):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckWatchdogTimer):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateTruthyObject):
+        (JSC::FTL::DFG::LowerDFGToLLVM::boolify):
+        (JSC::FTL::DFG::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::DFG::LowerDFGToLLVM::switchStringRecurse):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isObject):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isNotObject):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isArrayType):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isExoticForTypeof):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isType):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateNonNullObject):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadCellState):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitStoreBarrier):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::load16SignExt32):
+        (JSC::FTL::Output::load16ZeroExt32):
+        (JSC::FTL::Output::constInt8): Deleted.
+        (JSC::FTL::Output::load8): Deleted.
+        (JSC::FTL::Output::load16): Deleted.
+        (JSC::FTL::Output::store8): Deleted.
+        (JSC::FTL::Output::storeFloat): Deleted.
+        (JSC::FTL::Output::isZero8): Deleted.
+        (JSC::FTL::Output::notZero8): Deleted.
+        (JSC::FTL::Output::testIsZero8): Deleted.
+        (JSC::FTL::Output::testNonZero8): Deleted.
+
+2015-11-16  Benjamin Poulain  <bpoulain@apple.com>
+
         Fix a typo in AirIteratedRegisterCoalescing
 
         I forgot to fix that review comment from Geoff.

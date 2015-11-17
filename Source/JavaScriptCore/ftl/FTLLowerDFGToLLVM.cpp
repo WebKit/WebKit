@@ -2511,7 +2511,7 @@ private:
             LValue arguments = lowCell(m_node->child1());
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.notZero8(m_out.load8(arguments, m_heaps.ScopedArguments_overrodeThings)));
+                m_out.notZero32(m_out.load8ZeroExt32(arguments, m_heaps.ScopedArguments_overrodeThings)));
             setInt32(m_out.load32NonNegative(arguments, m_heaps.ScopedArguments_totalLength));
             return;
         }
@@ -2751,10 +2751,10 @@ private:
                     LValue result;
                     switch (elementSize(type)) {
                     case 1:
-                        result = m_out.load8(pointer);
+                        result = isSigned(type) ? m_out.load8SignExt32(pointer) :  m_out.load8ZeroExt32(pointer);
                         break;
                     case 2:
-                        result = m_out.load16(pointer);
+                        result = isSigned(type) ? m_out.load16SignExt32(pointer) :  m_out.load16ZeroExt32(pointer);
                         break;
                     case 4:
                         result = m_out.load32(pointer);
@@ -2763,20 +2763,11 @@ private:
                         DFG_CRASH(m_graph, m_node, "Bad element size");
                     }
                     
-                    if (elementSize(type) < 4) {
-                        if (isSigned(type))
-                            result = m_out.signExt(result, m_out.int32);
-                        else
-                            result = m_out.zeroExt(result, m_out.int32);
+                    if (elementSize(type) < 4 || isSigned(type)) {
                         setInt32(result);
                         return;
                     }
-                    
-                    if (isSigned(type)) {
-                        setInt32(result);
-                        return;
-                    }
-                    
+
                     if (m_node->shouldSpeculateInt32()) {
                         speculate(
                             Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero));
@@ -3998,20 +3989,18 @@ private:
             
         m_out.appendTo(is8Bit, is16Bit);
             
-        ValueFromBlock char8Bit = m_out.anchor(m_out.zeroExt(
-            m_out.load8(m_out.baseIndex(
+        ValueFromBlock char8Bit = m_out.anchor(
+            m_out.load8ZeroExt32(m_out.baseIndex(
                 m_heaps.characters8, storage, m_out.zeroExtPtr(index),
-                provenValue(m_node->child2()))),
-            m_out.int32));
+                provenValue(m_node->child2()))));
         m_out.jump(bitsContinuation);
             
         m_out.appendTo(is16Bit, bigCharacter);
             
-        ValueFromBlock char16Bit = m_out.anchor(m_out.zeroExt(
-            m_out.load16(m_out.baseIndex(
+        ValueFromBlock char16Bit = m_out.anchor(
+            m_out.load16ZeroExt32(m_out.baseIndex(
                 m_heaps.characters16, storage, m_out.zeroExtPtr(index),
-                provenValue(m_node->child2()))),
-            m_out.int32));
+                provenValue(m_node->child2()))));
         m_out.branch(
             m_out.aboveOrEqual(char16Bit.value(), m_out.constInt32(0x100)),
             rarely(bigCharacter), usually(bitsContinuation));
@@ -4096,20 +4085,18 @@ private:
             
         LBasicBlock lastNext = m_out.appendTo(is8Bit, is16Bit);
             
-        ValueFromBlock char8Bit = m_out.anchor(m_out.zeroExt(
-            m_out.load8(m_out.baseIndex(
+        ValueFromBlock char8Bit = m_out.anchor(
+            m_out.load8ZeroExt32(m_out.baseIndex(
                 m_heaps.characters8, storage, m_out.zeroExtPtr(index),
-                provenValue(m_node->child2()))),
-            m_out.int32));
+                provenValue(m_node->child2()))));
         m_out.jump(continuation);
             
         m_out.appendTo(is16Bit, continuation);
             
-        ValueFromBlock char16Bit = m_out.anchor(m_out.zeroExt(
-            m_out.load16(m_out.baseIndex(
+        ValueFromBlock char16Bit = m_out.anchor(
+            m_out.load16ZeroExt32(m_out.baseIndex(
                 m_heaps.characters16, storage, m_out.zeroExtPtr(index),
-                provenValue(m_node->child2()))),
-            m_out.int32));
+                provenValue(m_node->child2()))));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -4309,9 +4296,9 @@ private:
         LBasicBlock isNotInvalidated = FTL_NEW_BLOCK(m_out, ("NotifyWrite not invalidated case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NotifyWrite continuation"));
         
-        LValue state = m_out.load8(m_out.absolute(set->addressOfState()));
+        LValue state = m_out.load8ZeroExt32(m_out.absolute(set->addressOfState()));
         m_out.branch(
-            m_out.equal(state, m_out.constInt8(IsInvalidated)),
+            m_out.equal(state, m_out.constInt32(IsInvalidated)),
             usually(continuation), rarely(isNotInvalidated));
         
         LBasicBlock lastNext = m_out.appendTo(isNotInvalidated, continuation);
@@ -4944,16 +4931,15 @@ private:
             
             Vector<ValueFromBlock, 2> characters;
             m_out.appendTo(is8Bit, is16Bit);
-            characters.append(m_out.anchor(
-                m_out.zeroExt(m_out.load8(characterData, m_heaps.characters8[0]), m_out.int16)));
+            characters.append(m_out.anchor(m_out.load8ZeroExt32(characterData, m_heaps.characters8[0])));
             m_out.jump(continuation);
             
             m_out.appendTo(is16Bit, continuation);
-            characters.append(m_out.anchor(m_out.load16(characterData, m_heaps.characters16[0])));
+            characters.append(m_out.anchor(m_out.load16ZeroExt32(characterData, m_heaps.characters16[0])));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            buildSwitch(data, m_out.int16, m_out.phi(m_out.int16, characters));
+            buildSwitch(data, m_out.int32, m_out.phi(m_out.int32, characters));
             return;
         }
         
@@ -5281,9 +5267,9 @@ private:
     {
         speculate(
             Uncountable, noValue(), 0,
-            m_out.testIsZero8(
-                m_out.load8(lowCell(m_node->child1()), m_heaps.JSCell_typeInfoFlags),
-                m_out.constInt8(ImplementsDefaultHasInstance)));
+            m_out.testIsZero32(
+                m_out.load8ZeroExt32(lowCell(m_node->child1()), m_heaps.JSCell_typeInfoFlags),
+                m_out.constInt32(ImplementsDefaultHasInstance)));
     }
     
     void compileInstanceOf()
@@ -5776,8 +5762,8 @@ private:
         LBasicBlock timerDidFire = FTL_NEW_BLOCK(m_out, ("CheckWatchdogTimer timer did fire"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CheckWatchdogTimer continuation"));
         
-        LValue state = m_out.load8(m_out.absolute(vm().watchdog->timerDidFireAddress()));
-        m_out.branch(m_out.equal(state, m_out.constInt8(0)),
+        LValue state = m_out.load8ZeroExt32(m_out.absolute(vm().watchdog->timerDidFireAddress()));
+        m_out.branch(m_out.isZero32(state),
             usually(continuation), rarely(timerDidFire));
 
         LBasicBlock lastNext = m_out.appendTo(timerDidFire, continuation);
@@ -6453,9 +6439,9 @@ private:
         FTL_TYPE_CHECK(jsValueValue(cell), edge, filter, isNotObject(cell));
         speculate(
             BadType, jsValueValue(cell), edge.node(),
-            m_out.testNonZero8(
-                m_out.load8(cell, m_heaps.JSCell_typeInfoFlags),
-                m_out.constInt8(MasqueradesAsUndefined)));
+            m_out.testNonZero32(
+                m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoFlags),
+                m_out.constInt32(MasqueradesAsUndefined)));
     }
     
     void nonSpeculativeCompare(LIntPredicate intCondition, S_JITOperation_EJJ helperFunction)
@@ -6803,9 +6789,9 @@ private:
                 results.append(m_out.anchor(m_out.booleanTrue));
                 
                 m_out.branch(
-                    m_out.testIsZero8(
-                        m_out.load8(value, m_heaps.JSCell_typeInfoFlags),
-                        m_out.constInt8(MasqueradesAsUndefined)),
+                    m_out.testIsZero32(
+                        m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoFlags),
+                        m_out.constInt32(MasqueradesAsUndefined)),
                     usually(continuation), rarely(masqueradesCase));
                 
                 m_out.appendTo(masqueradesCase);
@@ -6901,9 +6887,9 @@ private:
             results.append(m_out.anchor(m_out.booleanFalse));
             
             m_out.branch(
-                m_out.testNonZero8(
-                    m_out.load8(value, m_heaps.JSCell_typeInfoFlags),
-                    m_out.constInt8(MasqueradesAsUndefined)),
+                m_out.testNonZero32(
+                    m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoFlags),
+                    m_out.constInt32(MasqueradesAsUndefined)),
                 rarely(masqueradesCase), usually(continuation));
             
             m_out.appendTo(masqueradesCase, primitiveCase);
@@ -7157,8 +7143,8 @@ private:
         for (unsigned i = numChecked; i < commonChars; ++i) {
             m_out.check(
                 m_out.notEqual(
-                    m_out.load8(buffer, m_heaps.characters8[i]),
-                    m_out.constInt8(cases[begin].string->at(i))),
+                    m_out.load8ZeroExt32(buffer, m_heaps.characters8[i]),
+                    m_out.constInt32(static_cast<uint16_t>(cases[begin].string->at(i)))),
                 unsure(fallThrough));
         }
         
@@ -7195,7 +7181,7 @@ private:
         
         DFG_ASSERT(m_graph, m_node, end >= begin + 2);
         
-        LValue uncheckedChar = m_out.load8(buffer, m_heaps.characters8[commonChars]);
+        LValue uncheckedChar = m_out.load8ZeroExt32(buffer, m_heaps.characters8[commonChars]);
         
         Vector<CharacterCase> characterCases;
         CharacterCase currentCase(cases[begin].string->at(commonChars), begin, begin + 1);
@@ -7219,7 +7205,7 @@ private:
             if (i)
                 DFG_ASSERT(m_graph, m_node, characterCases[i - 1].character < characterCases[i].character);
             switchCases.append(SwitchCase(
-                m_out.constInt8(characterCases[i].character), characterBlocks[i], Weight()));
+                m_out.constInt32(characterCases[i].character), characterBlocks[i], Weight()));
         }
         m_out.switchInstruction(uncheckedChar, switchCases, fallThrough, Weight());
         
@@ -8313,8 +8299,8 @@ private:
         if (LValue proven = isProvenValue(type & SpecCell, SpecObject))
             return proven;
         return m_out.aboveOrEqual(
-            m_out.load8(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt8(ObjectType));
+            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+            m_out.constInt32(ObjectType));
     }
 
     LValue isNotObject(LValue cell, SpeculatedType type = SpecFullTop)
@@ -8322,8 +8308,8 @@ private:
         if (LValue proven = isProvenValue(type & SpecCell, ~SpecObject))
             return proven;
         return m_out.below(
-            m_out.load8(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt8(ObjectType));
+            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+            m_out.constInt32(ObjectType));
     }
 
     LValue isNotString(LValue cell, SpeculatedType type = SpecFullTop)
@@ -8359,7 +8345,7 @@ private:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous: {
-            LValue indexingType = m_out.load8(cell, m_heaps.JSCell_indexingType);
+            LValue indexingType = m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingType);
             
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
@@ -8368,19 +8354,19 @@ private:
                 
             case Array::Array:
                 return m_out.equal(
-                    m_out.bitAnd(indexingType, m_out.constInt8(IsArray | IndexingShapeMask)),
-                    m_out.constInt8(IsArray | arrayMode.shapeMask()));
+                    m_out.bitAnd(indexingType, m_out.constInt32(IsArray | IndexingShapeMask)),
+                    m_out.constInt32(IsArray | arrayMode.shapeMask()));
                 
             case Array::NonArray:
             case Array::OriginalNonArray:
                 return m_out.equal(
-                    m_out.bitAnd(indexingType, m_out.constInt8(IsArray | IndexingShapeMask)),
-                    m_out.constInt8(arrayMode.shapeMask()));
+                    m_out.bitAnd(indexingType, m_out.constInt32(IsArray | IndexingShapeMask)),
+                    m_out.constInt32(arrayMode.shapeMask()));
                 
             case Array::PossiblyArray:
                 return m_out.equal(
-                    m_out.bitAnd(indexingType, m_out.constInt8(IndexingShapeMask)),
-                    m_out.constInt8(arrayMode.shapeMask()));
+                    m_out.bitAnd(indexingType, m_out.constInt32(IndexingShapeMask)),
+                    m_out.constInt32(arrayMode.shapeMask()));
             }
             
             DFG_CRASH(m_graph, m_node, "Corrupt array class");
@@ -8388,18 +8374,18 @@ private:
             
         case Array::DirectArguments:
             return m_out.equal(
-                m_out.load8(cell, m_heaps.JSCell_typeInfoType),
-                m_out.constInt8(DirectArgumentsType));
+                m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+                m_out.constInt32(DirectArgumentsType));
             
         case Array::ScopedArguments:
             return m_out.equal(
-                m_out.load8(cell, m_heaps.JSCell_typeInfoType),
-                m_out.constInt8(ScopedArgumentsType));
+                m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+                m_out.constInt32(ScopedArgumentsType));
             
         default:
             return m_out.equal(
-                m_out.load8(cell, m_heaps.JSCell_typeInfoType), 
-                m_out.constInt8(typeForTypedArrayType(arrayMode.typedArrayType())));
+                m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+                m_out.constInt32(typeForTypedArrayType(arrayMode.typedArrayType())));
         }
     }
     
@@ -8420,16 +8406,16 @@ private:
     {
         if (!(type & SpecObjectOther))
             return m_out.booleanFalse;
-        return m_out.testNonZero8(
-            m_out.load8(cell, m_heaps.JSCell_typeInfoFlags),
-            m_out.constInt8(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
+        return m_out.testNonZero32(
+            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoFlags),
+            m_out.constInt32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
     }
     
     LValue isType(LValue cell, JSType type)
     {
         return m_out.equal(
-            m_out.load8(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt8(type));
+            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+            m_out.constInt32(type));
     }
     
     LValue isNotType(LValue cell, JSType type)
@@ -8594,9 +8580,9 @@ private:
         
         speculate(
             BadType, jsValueValue(cell), edge.node(),
-            m_out.testNonZero8(
-                m_out.load8(cell, m_heaps.JSCell_typeInfoFlags),
-                m_out.constInt8(MasqueradesAsUndefined)));
+            m_out.testNonZero32(
+                m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoFlags),
+                m_out.constInt32(MasqueradesAsUndefined)));
     }
     
     void speculateNumber(Edge edge)
@@ -8713,7 +8699,7 @@ private:
     
     LValue loadCellState(LValue base)
     {
-        return m_out.load8(base, m_heaps.JSCell_cellState);
+        return m_out.load8ZeroExt32(base, m_heaps.JSCell_cellState);
     }
 
     void emitStoreBarrier(LValue base)
@@ -8722,7 +8708,7 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
 
         m_out.branch(
-            m_out.notZero8(loadCellState(base)), usually(continuation), rarely(slowPath));
+            m_out.notZero32(loadCellState(base)), usually(continuation), rarely(slowPath));
 
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
 
