@@ -1,3 +1,14 @@
+2015-11-17  Michael Saboff  <msaboff@apple.com>
+
+        Reserved VM pool established in r187125 is likely too conservative
+        https://bugs.webkit.org/show_bug.cgi?id=151351
+
+        Reviewed by Filip Pizlo.
+
+        Reduce the VM allocation reserved pool from 25% to 15% for ARM32.
+
+        * jit/ExecutableAllocator.h:
+
 2015-11-17  Saam barati  <sbarati@apple.com>
 
         FTLLazySlowPaths should be able to handle being passed the zero register as a location

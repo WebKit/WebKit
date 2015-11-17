@@ -82,7 +82,11 @@ static const size_t fixedExecutableMemoryPoolSize = 1024 * 1024 * 1024;
 #else
 static const size_t fixedExecutableMemoryPoolSize = 32 * 1024 * 1024;
 #endif
+#if CPU(ARM)
+static const double executablePoolReservationFraction = 0.15;
+#else
 static const double executablePoolReservationFraction = 0.25;
+#endif
 
 extern uintptr_t startOfFixedExecutableMemoryPool;
 #endif
