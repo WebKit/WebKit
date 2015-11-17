@@ -314,6 +314,12 @@ void DrawingAreaProxyImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     m_webPageProxy.process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID());
 }
+
+void DrawingAreaProxyImpl::destroyNativeSurfaceHandleForCompositing()
+{
+    bool handled;
+    m_webPageProxy.process().sendSync(Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing(), Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing::Reply(handled), m_webPageProxy.pageID());
+}
 #endif
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()

@@ -72,6 +72,7 @@ private:
 
 #if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
     virtual void setNativeSurfaceHandleForCompositing(uint64_t) override;
+    virtual void destroyNativeSurfaceHandleForCompositing(bool&) override;
 #endif
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)

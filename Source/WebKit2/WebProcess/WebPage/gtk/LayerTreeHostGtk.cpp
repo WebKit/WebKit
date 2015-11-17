@@ -145,10 +145,12 @@ LayerTreeHostGtk::LayerTreeHostGtk(WebPage* webPage)
 
 bool LayerTreeHostGtk::makeContextCurrent()
 {
-    if (!m_context) {
-        if (!m_layerTreeContext.contextID)
-            return false;
+    if (!m_layerTreeContext.contextID) {
+        m_context = nullptr;
+        return false;
+    }
 
+    if (!m_context) {
         m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_layerTreeContext.contextID), GLContext::sharingContext());
         if (!m_context)
             return false;
@@ -416,6 +418,7 @@ void LayerTreeHostGtk::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverl
 
 void LayerTreeHostGtk::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
+    cancelPendingLayerFlush();
     m_layerTreeContext.contextID = handle;
 
     // The creation of the TextureMapper needs an active OpenGL context.

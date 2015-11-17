@@ -699,6 +699,12 @@ void DrawingAreaImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
         m_layerTreeHost->setNativeSurfaceHandleForCompositing(handle);
     }
 }
+
+void DrawingAreaImpl::destroyNativeSurfaceHandleForCompositing(bool& handled)
+{
+    handled = true;
+    setNativeSurfaceHandleForCompositing(0);
+}
 #endif
 
 } // namespace WebKit

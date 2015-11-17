@@ -1,3 +1,50 @@
+2015-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Web Process crashes on reparenting a WebView with AC mode on
+        https://bugs.webkit.org/show_bug.cgi?id=151139
+
+        Reviewed by Mario Sanchez Prada.
+
+        When the web view is reparented, the widget is first unrealized,
+        and then realized again when added to the new parent. In the
+        second realize, the old redirected XComposite window is destroyed
+        and a new one is created, but the web process is still using the
+        old redirected window ID. As soon as the redirected window is
+        destroyed and the web process tries to use the window ID, it
+        crashes due to a BadDrawable X error. We have to notify the web
+        process as soon as the web view is unrealized to stop using the
+        current window ID and exit accelerated compositing mode until a
+        new window ID is given. This notification needs to be synchronous,
+        because the window can be destroyed in the UI process before the
+        message is received in the web process.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Add an assert to ensure we never have
+        a redirected window when the view is realized. Also check drawing
+        area is not nullptr, since it can be destroyed at any time if the
+        web process crashes.
+        (webkitWebViewBaseUnrealize): Call
+        DrawingAreaProxyImpl::destroyNativeSurfaceHandleForCompositing()
+        and destroy the redirected XComposite window.
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::destroyNativeSurfaceHandleForCompositing):
+        Send DestroyNativeSurfaceHandleForCompositing synchronous messsage
+        to the web process.
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in: Add
+        DestroyNativeSurfaceHandleForCompositing message.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::destroyNativeSurfaceHandleForCompositing):
+        Set the native surface handler for compositing to 0 to reset it.
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::makeContextCurrent): Return false
+        early always when layer tree context ID is 0, even if we already
+        have a context.
+        (WebKit::LayerTreeHostGtk::setNativeSurfaceHandleForCompositing):
+        Cancel any pending layer flush when setting a new handler.
+
 2015-11-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build and make PluginProcess executable
