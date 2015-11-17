@@ -1,5 +1,20 @@
 2015-11-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Remove the option for animating using setInterval from the graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=151283
+
+        Reviewed by Darin Adler.
+        
+        Get rid of the option to run animation using setInterval().
+
+        * Animometer/tests/resources/main.js:
+        (Animator.prototype.animate):
+        (Benchmark):
+        (Benchmark.prototype.start):
+        (Animator.prototype.start): Deleted.
+
+2015-11-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Highlight the alarming test results in the graphics benchmark results page
         https://bugs.webkit.org/show_bug.cgi?id=151286
 

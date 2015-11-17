@@ -74,11 +74,6 @@ function Animator(benchmark, options)
 
 Animator.prototype =
 {
-    start: function()
-    {
-        this._intervalId = setInterval(this.animate.bind(this), 1);
-    },
-    
     timeDelta: function()
     {
         return this._currentTimeOffset - this._startTimeOffset;
@@ -117,14 +112,10 @@ Animator.prototype =
         // Adjust the test to reach the desired FPS.
         var result = this._benchmark.update(this._currentTimeOffset, this.timeDelta(), currentFrameRate);
         
-        // Stop the animator if the benchmark has finished.
-        if (!result && typeof this._intervalId != "undefined")
-            clearInterval(this._intervalId);
-
         // Start the next drop/measure cycle.
         this._frameCount = 0;
         
-        // result may stop the animator if requestAnimationFrame() has been used.
+        // If result == 0, no more requestAnimationFrame() will be invoked.
         return result;
     },
     
@@ -138,8 +129,6 @@ Animator.prototype =
 function Benchmark(options)
 {
     this._options = options;
-    this._method = this._options["method"] || "requestAnimationFrame";
-
     this._recordInterval = 200;    
     this._isSampling = false;
 
@@ -147,7 +136,7 @@ function Benchmark(options)
     var lowValue = -parseInt(this._options["addLimit"]) || 1;
     var highValue = parseInt(this._options["removeLimit"]) || 1;
     
-    this._controller = new PIDController(gain, options["frame-rate"], lowValue, highValue);
+    this._controller = new PIDController(gain, this._options["frame-rate"], lowValue, highValue);
     this._sampler = new Sampler(2);
     this._state = new BenchmarkState(this._options["test-interval"] * 1000);
 }
@@ -157,10 +146,7 @@ Benchmark.prototype =
     // Called from the load event listener or from this.run().
     start: function()
     {
-        if (this._method == "setInterval")
-            this._animator.start();
-        else
-            this._animator.animateLoop();
+        this._animator.animateLoop();
     },
     
     // Called from the animator to adjust the complexity of the test.
