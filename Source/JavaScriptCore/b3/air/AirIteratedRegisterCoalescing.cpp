@@ -547,6 +547,7 @@ private:
     void freeze()
     {
         Tmp victim = m_freezeWorklist.takeAny();
+        ASSERT_WITH_MESSAGE(getAlias(victim) == victim, "coalesce() should not leave aliased Tmp in the worklist.");
         m_simplifyWorklist.append(victim);
         freezeMoves(victim);
     }
@@ -558,10 +559,11 @@ private:
                 m_worklistMoves.takeMove(moveIndex);
 
             const MoveOperands& moveOperands = m_coalescingCandidates[moveIndex];
-            Tmp otherTmp = moveOperands.src != tmp ? moveOperands.src : moveOperands.dst;
+            Tmp originalOtherTmp = moveOperands.src != tmp ? moveOperands.src : moveOperands.dst;
+            Tmp otherTmp = getAlias(originalOtherTmp);
             if (m_degrees[AbsoluteTmpHelper<type>::absoluteIndex(otherTmp)] < m_numberOfRegisters && !isMoveRelated(otherTmp)) {
-                m_freezeWorklist.remove(otherTmp);
-                m_simplifyWorklist.append(otherTmp);
+                if (m_freezeWorklist.remove(otherTmp))
+                    m_simplifyWorklist.append(otherTmp);
             }
         });
     }

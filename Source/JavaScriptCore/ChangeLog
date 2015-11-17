@@ -1,3 +1,46 @@
+2015-11-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] IteratedRegisterCoalescingAllocator's freeze can add zombie Tmps to our coloring algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=151345
+
+        Reviewed by Filip Pizlo.
+
+        The extended test of https://bugs.webkit.org/show_bug.cgi?id=151214 revealed a problem with
+        the Move freezing step of the iterated register allocator.
+
+        When freezing a move related Tmp, we go over all the move instructions and update the other
+        Tmp of the move as needed. If that Tmp is no longer Move related and is of low degree it can
+        be simplified too.
+
+        The problem arise when one of those Tmp was already coalesced. For example, say we have
+
+          1: move %tmp42, %tmp43
+          2: move %tmp42, %tmp44
+
+        The first move cannot be coalesced for some reason and is moved to the Active worklist.
+        The second move is coalesced and %tmp42 is now %tmp44.
+
+        When nothing can be simplified or coalesced, we look at freezing a Move-related Tmp.
+        Let's say we pick %tmp43. The code of freeze() was going to all the Move instructions
+        to update them. Here you would find @1 above, get %tmp42 as the other Tmp. Since %tmp42
+        is no longer move related, it is added to the simplify work list.
+        -> We just added a coalesced Tmp to our worklist!
+
+        To fix that, I get the alias of every other Tmp before updating its status.
+
+        There is still a problem: multiple Moves instructions may have been coalesced to the same
+        Tmp. We must not add a Tmp twice to a worklist.
+        To avoid duplicates, I rely on the fact that the freeze worklist should not contains
+        aliased Tmps. Before adding something to the simplify worklist, I check that it was
+        in the freeze worklist.
+
+        I cannot find how this problem would have been avoided in the original paper. I suspect
+        that may have been a bug in the pseudo-code.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::freeze):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::freezeMoves):
+
 2015-11-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make FTLOutput's load8() and load16() compatible with B3
