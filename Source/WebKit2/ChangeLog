@@ -1,3 +1,16 @@
+2015-11-16  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction calls an std::function after it's been moved from
+        https://bugs.webkit.org/show_bug.cgi?id=151248
+
+        Reviewed by Darin Adler.
+
+        Like r188287, calling an empty std::function results in a std::bad_function_call
+        exception being thrown when sendSync is failed.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2015-11-16  Beth Dakin  <bdakin@apple.com>
 
         Add SPI for handling inline link navigation for peek/pop
