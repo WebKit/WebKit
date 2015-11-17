@@ -128,7 +128,6 @@ int testExecutionTimeLimit()
         JSObjectRef globalObject = JSContextGetGlobalObject(context);
         ASSERT(JSValueIsObject(context, globalObject));
 
-        JSValueRef scriptResult = nullptr;
         JSValueRef exception = nullptr;
 
         JSStringRef currentCPUTimeStr = JSStringCreateWithUTF8CString("currentCPUTime");
@@ -151,7 +150,7 @@ int testExecutionTimeLimit()
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
             auto startTime = currentCPUTime();
-            scriptResult = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
             auto endTime = currentCPUTime();
 
             if (((endTime - startTime) < milliseconds(timeAfterWatchdogShouldHaveFired)) && shouldTerminateCallbackWasCalled)
@@ -188,7 +187,7 @@ int testExecutionTimeLimit()
             shouldTerminateCallbackWasCalled = false;
 
             auto startTime = currentCPUTime();
-            scriptResult = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
             auto endTime = currentCPUTime();
             
             if (((endTime - startTime) >= milliseconds(timeAfterWatchdogShouldHaveFired)) || !shouldTerminateCallbackWasCalled) {
@@ -225,7 +224,7 @@ int testExecutionTimeLimit()
             shouldTerminateCallbackWasCalled = false;
 
             auto startTime = currentCPUTime();
-            scriptResult = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
             auto endTime = currentCPUTime();
             
             if (((endTime - startTime) < milliseconds(timeAfterWatchdogShouldHaveFired)) && !shouldTerminateCallbackWasCalled)
@@ -262,7 +261,7 @@ int testExecutionTimeLimit()
             cancelTerminateCallbackWasCalled = false;
 
             auto startTime = currentCPUTime();
-            scriptResult = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
             auto endTime = currentCPUTime();
             
             if (((endTime - startTime) >= milliseconds(timeAfterWatchdogShouldHaveFired)) && cancelTerminateCallbackWasCalled && !exception)
@@ -299,7 +298,7 @@ int testExecutionTimeLimit()
             extendTerminateCallbackCalled = 0;
 
             auto startTime = currentCPUTime();
-            scriptResult = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
             auto endTime = currentCPUTime();
             auto deltaTime = endTime - startTime;
             
