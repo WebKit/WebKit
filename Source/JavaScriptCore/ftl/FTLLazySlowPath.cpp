@@ -35,12 +35,15 @@ namespace JSC { namespace FTL {
 
 LazySlowPath::LazySlowPath(
     CodeLocationLabel patchpoint, CodeLocationLabel exceptionTarget,
-    const RegisterSet& usedRegisters, CallSiteIndex callSiteIndex, RefPtr<Generator> generator)
+    const RegisterSet& usedRegisters, CallSiteIndex callSiteIndex, RefPtr<Generator> generator,
+    GPRReg newZeroReg, ScratchRegisterAllocator scratchRegisterAllocator)
     : m_patchpoint(patchpoint)
     , m_exceptionTarget(exceptionTarget)
     , m_usedRegisters(usedRegisters)
     , m_callSiteIndex(callSiteIndex)
     , m_generator(generator)
+    , m_newZeroValueRegister(newZeroReg)
+    , m_scratchRegisterAllocator(scratchRegisterAllocator)
 {
 }
 
@@ -59,11 +62,32 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
     CCallHelpers::JumpList exceptionJumps;
     params.exceptionJumps = m_exceptionTarget ? &exceptionJumps : nullptr;
     params.lazySlowPath = this;
+
+    unsigned bytesSaved = m_scratchRegisterAllocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    // This is needed because LLVM may create a stackmap location that is the register SP.
+    // But on arm64, SP is also the same register number as ZR, so LLVM is telling us that it has
+    // proven something is zero. Our MASM isn't universally compatible with arm64's context dependent
+    // notion of SP meaning ZR. We just make things easier by ensuring we do the necessary move of zero
+    // into a non-SP register.
+    if (m_newZeroValueRegister != InvalidGPRReg)
+        jit.move(CCallHelpers::TrustedImm32(0), m_newZeroValueRegister);
+
     m_generator->run(jit, params);
 
+    CCallHelpers::Label doneLabel;
+    CCallHelpers::Jump jumpToEndOfPatchpoint;
+    if (bytesSaved) {
+        doneLabel = jit.label();
+        m_scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesSaved, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+        jumpToEndOfPatchpoint = jit.jump();
+    }
+
     LinkBuffer linkBuffer(vm, jit, codeBlock, JITCompilationMustSucceed);
-    linkBuffer.link(
-        params.doneJumps, m_patchpoint.labelAtOffset(MacroAssembler::maxJumpReplacementSize()));
+    if (bytesSaved) {
+        linkBuffer.link(params.doneJumps, linkBuffer.locationOf(doneLabel));
+        linkBuffer.link(jumpToEndOfPatchpoint, m_patchpoint.labelAtOffset(MacroAssembler::maxJumpReplacementSize()));
+    } else
+        linkBuffer.link(params.doneJumps, m_patchpoint.labelAtOffset(MacroAssembler::maxJumpReplacementSize()));
     if (m_exceptionTarget)
         linkBuffer.link(exceptionJumps, m_exceptionTarget);
     m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, ("Lazy slow path call stub"));

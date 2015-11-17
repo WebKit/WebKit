@@ -34,6 +34,7 @@
 #include "GPRInfo.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterSet.h"
+#include "ScratchRegisterAllocator.h"
 #include <wtf/SharedTask.h>
 
 namespace JSC { namespace FTL {
@@ -65,8 +66,8 @@ public:
     }
     
     LazySlowPath(
-        CodeLocationLabel patchpoint, CodeLocationLabel exceptionTarget,
-        const RegisterSet& usedRegisters, CallSiteIndex callSiteIndex, RefPtr<Generator>);
+        CodeLocationLabel patchpoint, CodeLocationLabel exceptionTarget, const RegisterSet& usedRegisters,
+        CallSiteIndex, RefPtr<Generator>, GPRReg newZeroReg, ScratchRegisterAllocator);
 
     ~LazySlowPath();
 
@@ -85,6 +86,8 @@ private:
     CallSiteIndex m_callSiteIndex;
     MacroAssemblerCodeRef m_stub;
     RefPtr<Generator> m_generator;
+    GPRReg m_newZeroValueRegister;
+    ScratchRegisterAllocator m_scratchRegisterAllocator;
 };
 
 } } // namespace JSC::FTL

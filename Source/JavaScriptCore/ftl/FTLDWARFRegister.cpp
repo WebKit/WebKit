@@ -55,7 +55,6 @@ Reg DWARFRegister::reg() const
         case 7:
             return X86Registers::esp;
         default:
-            RELEASE_ASSERT(m_dwarfRegNum < 16);
             // Registers r8..r15 are numbered sensibly.
             return static_cast<GPRReg>(m_dwarfRegNum);
         }

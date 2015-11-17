@@ -1,3 +1,39 @@
+2015-11-17  Saam barati  <sbarati@apple.com>
+
+        FTLLazySlowPaths should be able to handle being passed the zero register as a location
+        https://bugs.webkit.org/show_bug.cgi?id=151193
+
+        Reviewed by Geoffrey Garen.
+
+        On arm64, SP and ZR are the same register number. The meaning
+        of the register number being SP or ZR is dependent on context of
+        the instruction and the register within the instruction. LLVM may
+        prove that a value is zero, or sometimes, we will lower a
+        value as a constant zero (for example, we might compile
+        CreateDirectArguments of an inlined call frame and we might know
+        that the arguments have a length of zero). LazySlowPaths should
+        be able to gracefully handle being passed a stackmap location
+        with a gpr value of SP by moving zero into another register
+        and replacing the location's register with the new register.
+        This way, no lazy slow path will ever have access to a location with a GPR
+        value of SP.  This patch makes this work by using a scratch register 
+        allocator when we need to do this maneuver of moving zero into a scratch
+        register.  Inside FTLCompile, we track if we need to move zero into a register,
+        and if so, into which register. We actually emit the necessary
+        instructions to move zero into this register, and to spill reused
+        registers if necessary, while generating the code for the lazy slow
+        path itself.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLDWARFRegister.cpp:
+        (JSC::FTL::DWARFRegister::reg):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::LazySlowPath):
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLazySlowPath.h:
+        (JSC::FTL::LazySlowPath::createGenerator):
+
 2015-11-17  Mark Lam  <mark.lam@apple.com>
 
         [JSC] Support Doubles with B3's Mul.
