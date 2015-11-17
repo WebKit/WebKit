@@ -16,6 +16,7 @@ list(APPEND WebKit2_SOURCES
     NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
 
     NetworkProcess/cocoa/NetworkProcessCocoa.mm
+    NetworkProcess/cocoa/NetworkSessionCocoa.mm
 
     NetworkProcess/mac/NetworkDiskCacheMonitor.mm
     NetworkProcess/mac/NetworkLoadMac.mm
@@ -151,6 +152,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKConnection.mm
     UIProcess/API/Cocoa/WKError.mm
     UIProcess/API/Cocoa/WKFrameInfo.mm
+    UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm
     UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
     UIProcess/API/Cocoa/WKNavigation.mm
     UIProcess/API/Cocoa/WKNavigationAction.mm
