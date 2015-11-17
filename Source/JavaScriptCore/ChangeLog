@@ -1,3 +1,22 @@
+2015-11-17  Filip Pizlo  <fpizlo@apple.com>
+
+        It's best for the DFG to always have some guess of basic block frequency
+        https://bugs.webkit.org/show_bug.cgi?id=151350
+
+        Reviewed by Geoffrey Garen.
+
+        It'll simplify things for B3 if we always have some estimate of block frequency, even if it's not
+        a great estimate. Using NaN as an estimate is probably worse than using any non-NaN number.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+
 2015-11-17  Michael Saboff  <msaboff@apple.com>
 
         Reserved VM pool established in r187125 is likely too conservative

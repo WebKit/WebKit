@@ -64,9 +64,16 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
     // SSACalculator and treating the Upsilons as Defs and rebuilding the Phis from scratch.
     //
     // https://bugs.webkit.org/show_bug.cgi?id=148587
-    
-    // Don't bother to preserve execution frequencies for now.
-    BasicBlock* preHeader = insertionSet.insertBefore(block, PNaN);
+
+    // Determine a good frequency for the pre-header. It's definitely not the frequency of the loop body.
+    // Instead, we use the max of the frequencies of the loop body's non-loop predecessors.
+    float frequency = 0;
+    for (BasicBlock* predecessor : block->predecessors) {
+        if (graph.m_dominators->dominates(block, predecessor))
+            continue;
+        frequency = std::max(frequency, predecessor->executionCount);
+    }
+    BasicBlock* preHeader = insertionSet.insertBefore(block, frequency);
 
     // FIXME: It would be great if we put some effort into enabling exitOK at this origin, if it
     // happens to be unset. It might not be set because the loop header (i.e. "block") has Phis in it.
