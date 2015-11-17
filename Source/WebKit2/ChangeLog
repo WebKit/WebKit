@@ -1,3 +1,15 @@
+2015-11-16  Tim Horton  <timothy_horton@apple.com>
+
+        Multi-WKWebView find completes after the first view
+        https://bugs.webkit.org/show_bug.cgi?id=151325
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]):
+        Update progress before calling the completion handler; NSTextFinder assumes
+        that if the progress doesn't change, the search is complete.
+
 2015-11-16  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction calls an std::function after it's been moved from

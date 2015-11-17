@@ -186,10 +186,9 @@ private:
     RetainPtr<NSProgress> progress = [NSProgress progressWithTotalUnitCount:1];
     auto copiedResultCollector = Block_copy(resultCollector);
     _findReplyCallbacks.append([progress, copiedResultCollector] (NSArray *matches, bool didWrap) {
+        [progress setCompletedUnitCount:1];
         copiedResultCollector(matches, didWrap);
         Block_release(copiedResultCollector);
-
-        [progress setCompletedUnitCount:1];
     });
 
     if (maxResults == 1)
