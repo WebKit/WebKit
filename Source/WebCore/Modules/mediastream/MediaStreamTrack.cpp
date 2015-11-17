@@ -123,7 +123,7 @@ const AtomicString& MediaStreamTrack::readyState() const
 
 bool MediaStreamTrack::ended() const
 {
-    return m_private->ended();
+    return m_ended || m_private->ended();
 }
 
 RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
@@ -148,12 +148,11 @@ void MediaStreamTrack::stopProducingData()
     // 3. Notify track's source that track is ended so that the source may be stopped, unless other
     // MediaStreamTrack objects depend on it.
     // 4. Set track's readyState attribute to ended.
-    m_private->endTrack();
 
-    // MediaStreamPrivate::endTrack will not result in a call to MediaStreamTrack::trackEnded, so
-    // notify observers now or they won't know about the change.
-    for (auto& observer : m_observers)
-        observer->trackDidEnd();
+    // Set m_ended to true before telling the private to stop so we do not fire an 'ended' event.
+    m_ended = true;
+
+    m_private->endTrack();
 }
 
 RefPtr<MediaTrackConstraints> MediaStreamTrack::getConstraints() const
@@ -206,9 +205,20 @@ void MediaStreamTrack::removeObserver(MediaStreamTrack::Observer* observer)
 
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
+    // http://w3c.github.io/mediacapture-main/#life-cycle
+    // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must queue a task that runs the following steps:
+    // 1. If the track's readyState attribute has the value ended already, then abort these steps.
+    if (m_ended)
+        return;
+
+    // 2. Set track's readyState attribute to ended.
+    m_ended = true;
+
     if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped())
         return;
 
+    // 3. Notify track's source that track is ended so that the source may be stopped, unless other MediaStreamTrack objects depend on it.
+    // 4. Fire a simple event named ended at the object.
     dispatchEvent(Event::create(eventNames().endedEvent, false, false));
 
     for (auto& observer : m_observers)

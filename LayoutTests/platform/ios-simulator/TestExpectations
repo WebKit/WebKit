@@ -2826,6 +2826,3 @@ imported/blink/svg/text/text-outline-2.html [ ImageOnlyFailure Pass ]
 imported/blink/svg/text/tspan-outline-crash.html [ ImageOnlyFailure Pass ]
 imported/blink/transitions/transition-shape-outside-crash.html [ Pass Timeout ]
 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
-
-# HTMLMediaElement can not use a MediaStream as source.
-fast/mediastream/MediaStream-video-element.html [ Skip ]

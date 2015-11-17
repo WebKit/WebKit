@@ -124,6 +124,8 @@ private:
     Ref<MediaStreamTrackPrivate> m_private;
 
     RefPtr<MediaConstraintsImpl> m_constraints;
+
+    bool m_ended { false };
 };
 
 typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;

@@ -133,18 +133,21 @@ private:
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();
 
-    enum RenderingModeStatus {
-        RenderingModeUnchanged,
-        RenderingModeChanged,
-    };
-    RenderingModeStatus updateIntrinsicSize(const FloatSize&);
-
+    void updateIntrinsicSize(const FloatSize&);
     void createPreviewLayers();
-    void setPausedImageVisible(bool);
-
     void updateTracks();
+    void renderingModeChanged();
 
     void scheduleDeferredTask(std::function<void()>);
+
+    enum DisplayMode {
+        None,
+        PaintItBlack,
+        PausedImage,
+        LivePreview,
+    };
+    DisplayMode currentDisplayMode() const;
+    void updateDisplayMode();
 
     // MediaStreamPrivate::Observer
     void activeStatusChanged() override;
@@ -167,9 +170,9 @@ private:
     MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };
     FloatSize m_intrinsicSize;
     float m_volume { 1 };
+    DisplayMode m_displayMode { None };
     bool m_playing { false };
     bool m_muted { false };
-    bool m_waitingForNewFrame {false };
     bool m_haveEverPlayed { false };
     bool m_ended { false };
 };

@@ -353,7 +353,6 @@ void MockRealtimeVideoSource::paintCurrentFrameInContext(GraphicsContext& contex
         return;
 
     GraphicsContextStateSaver stateSaver(context);
-//    context.translate(rect.x(), rect.y() + rect.height());
     context.setImageInterpolationQuality(InterpolationLow);
     IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
 

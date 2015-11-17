@@ -108,17 +108,14 @@ MediaStreamTrackPrivateVector MediaStreamPrivate::tracks() const
 void MediaStreamPrivate::updateActiveState(NotifyClientOption notifyClientOption)
 {
     bool newActiveState = false;
-    m_activeVideoTrack = nullptr;
     for (auto& track : m_trackSet.values()) {
-
         if (!track->ended()) {
             newActiveState = true;
-            if (track->source()->type() == RealtimeMediaSource::Type::Video) {
-                m_activeVideoTrack = track.get();
-                break;
-            }
+            break;
         }
     }
+
+    updateActiveVideoTrack();
 
     // A stream is active if it has at least one un-ended track.
     if (newActiveState == m_isActive)
@@ -187,7 +184,7 @@ bool MediaStreamPrivate::isProducingData() const
 bool MediaStreamPrivate::hasVideo()
 {
     for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Video && track->enabled())
+        if (track->type() == RealtimeMediaSource::Type::Video && track->enabled() && !track->ended())
             return true;
     }
     return false;
@@ -196,7 +193,7 @@ bool MediaStreamPrivate::hasVideo()
 bool MediaStreamPrivate::hasAudio()
 {
     for (auto& track : m_trackSet.values()) {
-        if (track->type() == RealtimeMediaSource::Type::Audio && track->enabled())
+        if (track->type() == RealtimeMediaSource::Type::Audio && track->enabled() && !track->ended())
             return true;
     }
     return false;
@@ -229,7 +226,7 @@ void MediaStreamPrivate::paintCurrentFrameInContext(GraphicsContext& context, co
         return;
 
     if (active() && m_activeVideoTrack)
-        m_activeVideoTrack->source()->paintCurrentFrameInContext(context, rect);
+        m_activeVideoTrack->paintCurrentFrameInContext(context, rect);
     else {
         GraphicsContextStateSaver stateSaver(context);
         context.translate(rect.x(), rect.y() + rect.height());
@@ -245,6 +242,17 @@ RefPtr<Image> MediaStreamPrivate::currentFrameImage()
         return nullptr;
 
     return m_activeVideoTrack->source()->currentFrameImage();
+}
+
+void MediaStreamPrivate::updateActiveVideoTrack()
+{
+    m_activeVideoTrack = nullptr;
+    for (auto& track : m_trackSet.values()) {
+        if (!track->ended() && track->type() == RealtimeMediaSource::Type::Video && !track->ended()) {
+            m_activeVideoTrack = track.get();
+            break;
+        }
+    }
 }
 
 void MediaStreamPrivate::characteristicsChanged()
@@ -266,6 +274,15 @@ void MediaStreamPrivate::trackStatesChanged(MediaStreamTrackPrivate&)
 }
 
 void MediaStreamPrivate::trackEnabledChanged(MediaStreamTrackPrivate&)
+{
+    updateActiveVideoTrack();
+
+    scheduleDeferredTask([this] {
+        characteristicsChanged();
+    });
+}
+
+void MediaStreamPrivate::trackEnded(MediaStreamTrackPrivate&)
 {
     scheduleDeferredTask([this] {
         updateActiveState(NotifyClientOption::Notify);

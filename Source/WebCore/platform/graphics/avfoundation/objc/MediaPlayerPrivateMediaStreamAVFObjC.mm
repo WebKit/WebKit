@@ -150,18 +150,38 @@ void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
 {
-    if (!m_videoBackgroundLayer)
+    if (!m_videoBackgroundLayer || m_displayMode == None)
         return nullptr;
 
     return m_videoBackgroundLayer.get();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setPausedImageVisible(bool visible)
+MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode() const
 {
-    if (!metaDataAvailable() || !m_videoBackgroundLayer)
-        return;
+    if (m_ended || m_intrinsicSize.isEmpty() || !metaDataAvailable() || !m_videoBackgroundLayer)
+        return None;
 
-    if (visible == m_previewLayer.get().hidden)
+    if (m_mediaStreamPrivate->activeVideoTrack() && !m_mediaStreamPrivate->activeVideoTrack()->enabled())
+        return PaintItBlack;
+
+    if (m_playing) {
+        if (!m_mediaStreamPrivate->isProducingData())
+            return PausedImage;
+        return LivePreview;
+    }
+
+    return PausedImage;
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode()
+{
+    DisplayMode displayMode = currentDisplayMode();
+
+    if (displayMode == m_displayMode)
+        return;
+    m_displayMode = displayMode;
+
+    if (m_displayMode == None)
         return;
 
     [CATransaction begin];
@@ -169,33 +189,43 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setPausedImageVisible(bool visible)
     [CATransaction setDisableActions:YES];
 
     do {
-        if (visible) {
-            m_clock->stop();
+        if (m_displayMode < LivePreview) {
 
-            RefPtr<Image> image = m_mediaStreamPrivate->currentFrameImage();
-            if (!image)
-                break;
+            if (m_displayMode == PausedImage) {
+                if (m_videoBackgroundLayer.get().contents)
+                    break;
 
-            m_pausedImage = image->getCGImageRef();
-            if (!m_pausedImage)
-                break;
+                RefPtr<Image> image = m_mediaStreamPrivate->currentFrameImage();
+                if (!image) {
+                    m_displayMode = PaintItBlack;
+                    continue;
+                }
 
-            m_videoBackgroundLayer.get().contents = (id)m_pausedImage.get();
-            m_previewLayer.get().hidden = true;
-            m_waitingForNewFrame = false;
-        } else {
-            if (!m_mediaStreamPrivate->isProducingData()) {
-                m_waitingForNewFrame = true;
-                break;
+                m_pausedImage = image->getCGImageRef();
+                if (!m_pausedImage) {
+                    m_displayMode = PaintItBlack;
+                    continue;
+                }
+
+                m_videoBackgroundLayer.get().contents = (id)m_pausedImage.get();
+                m_videoBackgroundLayer.get().backgroundColor = nil;
+            } else {
+                m_videoBackgroundLayer.get().contents = nil;
+                m_videoBackgroundLayer.get().backgroundColor = cachedCGColor(Color::black);
+                m_pausedImage = nullptr;
             }
 
-            m_clock->start();
-            m_waitingForNewFrame = false;
+            m_previewLayer.get().hidden = true;
+
+        } else {
+
             m_previewLayer.get().hidden = false;
             m_videoBackgroundLayer.get().contents = nil;
             m_pausedImage = nullptr;
         }
-    } while (0);
+
+        break;
+    } while (1);
 
     [CATransaction commit];
 }
@@ -207,9 +237,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
     if (!metaDataAvailable() || m_playing || m_ended)
         return;
 
+    m_clock->start();
     m_playing = true;
     m_haveEverPlayed = true;
-    setPausedImageVisible(false);
+    updateDisplayMode();
     updateReadyState();
 }
 
@@ -220,8 +251,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
     if (!metaDataAvailable() || !m_playing || m_ended)
         return;
 
-    setPausedImageVisible(true);
+    m_clock->stop();
     m_playing = false;
+    updateDisplayMode();
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::paused() const
@@ -304,10 +336,9 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState(
         return MediaPlayer::ReadyState::HaveEnoughData;
     }
 
-    if (!m_pausedImage)
-        setPausedImageVisible(true);
+    updateDisplayMode();
 
-    if (m_pausedImage)
+    if (m_displayMode == PausedImage)
         return MediaPlayer::ReadyState::HaveCurrentData;
 
     return MediaPlayer::ReadyState::HaveMetadata;
@@ -329,6 +360,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
             pause();
 
         updateReadyState();
+        updateDisplayMode();
 
         if (ended != m_ended) {
             m_ended = ended;
@@ -338,58 +370,68 @@ void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
     });
 }
 
-MediaPlayerPrivateMediaStreamAVFObjC::RenderingModeStatus MediaPlayerPrivateMediaStreamAVFObjC::updateIntrinsicSize(const FloatSize& size)
+void MediaPlayerPrivateMediaStreamAVFObjC::updateIntrinsicSize(const FloatSize& size)
 {
     if (size == m_intrinsicSize)
-        return RenderingModeUnchanged;
+        return;
 
     m_intrinsicSize = size;
 
     if (m_videoBackgroundLayer || !m_player || !m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
-        return RenderingModeUnchanged;
+        return;
 
     if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->platformLayer())
-        return RenderingModeUnchanged;
+        return;
 
     createPreviewLayers();
-
-    return RenderingModeChanged;
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::createPreviewLayers()
 {
-    if (m_videoBackgroundLayer)
-        return;
+    if (!m_videoBackgroundLayer) {
+        m_videoBackgroundLayer = adoptNS([[CALayer alloc] init]);
+        m_videoBackgroundLayer.get().name = @"MediaPlayerPrivateMediaStreamAVFObjC preview background layer";
+    }
 
-    m_videoBackgroundLayer = adoptNS([[CALayer alloc] init]);
-    m_videoBackgroundLayer.get().name = @"MediaPlayerPrivateMediaStreamAVFObjC preview background layer";
+    if (!m_previewLayer) {
+        m_previewLayer = m_mediaStreamPrivate->platformLayer();
+        if (m_previewLayer) {
+            m_previewLayer.get().contentsGravity = kCAGravityResize;
+            m_previewLayer.get().anchorPoint = CGPointZero;
+            if (!m_playing)
+                m_previewLayer.get().hidden = true;
 
-    m_previewLayer = m_mediaStreamPrivate->platformLayer();
-    m_previewLayer.get().contentsGravity = kCAGravityResize;
-    m_previewLayer.get().anchorPoint = CGPointZero;
-    if (!m_playing)
-        m_previewLayer.get().hidden = true;
+            [m_videoBackgroundLayer addSublayer:m_previewLayer.get()];
+        }
+    }
 
-    [m_videoBackgroundLayer addSublayer:m_previewLayer.get()];
+    renderingModeChanged();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::renderingModeChanged()
+{
+    updateDisplayMode();
+    scheduleDeferredTask([this] {
+        if (m_player)
+            m_player->client().mediaPlayerRenderingModeChanged(m_player);
+    });
+
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
 {
-    RenderingModeStatus status = RenderingModeUnchanged;
     bool sizeChanged = false;
 
     FloatSize intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
     if (intrinsicSize.height() != m_intrinsicSize.height() || intrinsicSize.width() != m_intrinsicSize.width()) {
-        status = updateIntrinsicSize(intrinsicSize);
+        updateIntrinsicSize(intrinsicSize);
         sizeChanged = true;
     }
 
     updateTracks();
+    updateDisplayMode();
 
-    if (m_waitingForNewFrame && m_mediaStreamPrivate->isProducingData())
-        setPausedImageVisible(false);
-
-    scheduleDeferredTask([this, sizeChanged, status] {
+    scheduleDeferredTask([this, sizeChanged] {
         updateReadyState();
 
         if (!m_player)
@@ -398,8 +440,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
         m_player->characteristicChanged();
         if (sizeChanged) {
             m_player->sizeChanged();
-            if (status == RenderingModeChanged)
-                m_player->client().mediaPlayerRenderingModeChanged(m_player);
         }
     });
 }
@@ -457,10 +497,8 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
 {
-    Vector<RefPtr<TrackPrivateBase>> removedTracks;
-    Vector<RefPtr<MediaStreamTrackPrivate>> addedTracks;
-
     MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
+    bool selectedVideoTrackChanged = false;
 
     std::function<void(RefPtr<AudioTrackPrivateMediaStream>, int)> enableAudioTrack = [this](RefPtr<AudioTrackPrivateMediaStream> track, int index)
     {
@@ -469,12 +507,22 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     };
     updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, m_player, &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack, enableAudioTrack);
 
-    std::function<void(RefPtr<VideoTrackPrivateMediaStream>, int)> enableVideoTrack = [this](RefPtr<VideoTrackPrivateMediaStream> track, int index)
+    std::function<void(RefPtr<VideoTrackPrivateMediaStream>, int)> enableVideoTrack = [this, &selectedVideoTrackChanged](RefPtr<VideoTrackPrivateMediaStream> track, int index)
     {
+        bool wasSelected = track->selected();
         track->setTrackIndex(index);
         track->setSelected(track->streamTrack() == m_mediaStreamPrivate->activeVideoTrack());
+        if (wasSelected != track->selected())
+            selectedVideoTrackChanged = true;
     };
     updateTracksOfType(m_videoTrackMap, RealtimeMediaSource::Video, currentTracks, &VideoTrackPrivateMediaStream::create, m_player, &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack, enableVideoTrack);
+
+    if (selectedVideoTrackChanged) {
+        if (m_previewLayer)
+            m_previewLayer = nullptr;
+
+        createPreviewLayers();
+    }
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
@@ -494,18 +542,23 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext& context, const
 
 void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
-    if (!metaDataAvailable() || context.paintingDisabled() || !m_haveEverPlayed)
+    if (m_displayMode == None || !metaDataAvailable() || context.paintingDisabled() || !m_haveEverPlayed)
         return;
 
-    if (m_playing)
+
+    if (m_displayMode == LivePreview)
         m_mediaStreamPrivate->paintCurrentFrameInContext(context, rect);
-    else if (m_pausedImage) {
+    else {
         GraphicsContextStateSaver stateSaver(context);
         context.translate(rect.x(), rect.y() + rect.height());
         context.scale(FloatSize(1, -1));
-        context.setImageInterpolationQuality(InterpolationLow);
         IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
-        CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), m_pausedImage.get());
+        context.setImageInterpolationQuality(InterpolationLow);
+
+        if (m_displayMode == PausedImage && m_pausedImage)
+            CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), m_pausedImage.get());
+        else
+            context.fillRect(paintRect, Color::black);
     }
 }
 

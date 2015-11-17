@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class AudioSourceProvider;
+class GraphicsContext;
 class MediaSourceStates;
 class RealtimeMediaSourceCapabilities;
 
@@ -91,6 +92,8 @@ public:
     void applyConstraints(const MediaConstraints&);
 
     AudioSourceProvider* audioSourceProvider();
+
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
 private:
     explicit MediaStreamTrackPrivate(const MediaStreamTrackPrivate&);

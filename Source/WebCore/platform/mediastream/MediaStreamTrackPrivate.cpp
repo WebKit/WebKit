@@ -30,6 +30,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioSourceProvider.h"
+#include "GraphicsContext.h"
+#include "IntRect.h"
 #include "MediaSourceStates.h"
 #include "MediaStreamCapabilities.h"
 #include "UUID.h"
@@ -106,8 +108,14 @@ bool MediaStreamTrackPrivate::remote() const
 
 void MediaStreamTrackPrivate::setEnabled(bool enabled)
 {
+    if (m_isEnabled == enabled)
+        return;
+
     // Always update the enabled state regardless of the track being ended.
     m_isEnabled = enabled;
+
+    for (auto& observer : m_observers)
+        observer->trackEnabledChanged(*this);
 }
 
 void MediaStreamTrackPrivate::endTrack()
@@ -115,8 +123,15 @@ void MediaStreamTrackPrivate::endTrack()
     if (m_isEnded)
         return;
 
+    // Set m_isEnded to true before telling the source it can stop, so if this is the
+    // only track using the source and it does stop, we will only call each observer's
+    // trackEnded method once.
     m_isEnded = true;
+
     m_source->requestStop(this);
+
+    for (auto& observer : m_observers)
+        observer->trackEnded(*this);
 }
 
 RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
@@ -142,6 +157,21 @@ const RealtimeMediaSourceStates& MediaStreamTrackPrivate::states() const
 RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrackPrivate::capabilities() const
 {
     return m_source->capabilities();
+}
+
+void MediaStreamTrackPrivate::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
+{
+    if (context.paintingDisabled() || m_source->type() != RealtimeMediaSource::Type::Video || ended())
+        return;
+
+    if (!m_source->muted())
+        m_source->paintCurrentFrameInContext(context, rect);
+    else {
+        GraphicsContextStateSaver stateSaver(context);
+        context.translate(rect.x(), rect.y() + rect.height());
+        IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
+        context.fillRect(paintRect, Color::black);
+    }
 }
 
 void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints&)
@@ -180,6 +210,7 @@ void MediaStreamTrackPrivate::sourceStatesChanged()
 
 bool MediaStreamTrackPrivate::preventSourceFromStopping()
 {
+    // Do not allow the source to stop if we are still using it.
     return !m_isEnded;
 }
 

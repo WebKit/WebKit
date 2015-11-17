@@ -550,9 +550,6 @@ webkit.org/b/146400 http/tests/contentextensions/character-set-basic-support.htm
 # WebKit1-only failure.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html [ Pass ]
 
-# HTMLMediaElement can not use a MediaStream as source.
-fast/mediastream/MediaStream-video-element.html [ Skip ]
-
 # Imported Blink tests which have not been investigated. Partially covered with rdar://problem/23023848.
 imported/blink/fast/media/empty-media-rule.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/multicol/basic-rtl.html [ Pass ImageOnlyFailure ]

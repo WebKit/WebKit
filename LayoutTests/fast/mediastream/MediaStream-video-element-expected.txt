@@ -21,14 +21,17 @@ Event 'canplaythrough'
 video.pause()
 
 **** check video element ****
-PASS video.videoWidth is 640
-PASS video.videoHeight is 480
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].states().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].states().height
 PASS video.src.indexOf("blob:") is 0
 PASS video.srcObject is mediaStream
 
 **** check video tracks ****
 PASS video.videoTracks.length is 1
 PASS video.videoTracks[0].id is mediaStream.getVideoTracks()[0].id
+PASS video.videoTracks[0].language is ""
+PASS video.videoTracks[0].kind is "main"
+
 video.videoTracks[0] properties:
   track.kind = main
   track.language = 
@@ -40,6 +43,9 @@ video.videoTracks[0] properties:
 **** check audio tracks ****
 PASS video.audioTracks.length is 1
 PASS video.audioTracks[0].id is mediaStream.getAudioTracks()[0].id
+PASS video.audioTracks[0].language is ""
+PASS video.audioTracks[0].kind is "main"
+
 video.audioTracks[0] properties:
   track.kind = main
   track.language = 
