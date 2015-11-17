@@ -785,12 +785,12 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     if (isOperandConstantInt(op1) && ((value = getOperandConstantInt(op1)) > 0)) {
         emitGetVirtualRegister(op2, regT0);
         emitJumpSlowCaseIfNotInt(regT0);
-        addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));
+        addSlowCase(branchMul32(Overflow, regT0, Imm32(value), regT1));
         emitTagInt(regT1, regT0);
     } else if (isOperandConstantInt(op2) && ((value = getOperandConstantInt(op2)) > 0)) {
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotInt(regT0);
-        addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));
+        addSlowCase(branchMul32(Overflow, regT0, Imm32(value), regT1));
         emitTagInt(regT1, regT0);
     } else
         compileBinaryArithOp(op_mul, result, op1, op2, types);

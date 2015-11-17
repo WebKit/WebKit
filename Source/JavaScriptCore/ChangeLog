@@ -1,5 +1,35 @@
 2015-11-17  Mark Lam  <mark.lam@apple.com>
 
+        Refactoring: move branchMul32's imm arg to the 3rd argument to be consistent.
+        https://bugs.webkit.org/show_bug.cgi?id=151358
+
+        Reviewed by Saam Barati.
+
+        branch32, branchAdd32, and branchSub32 all have it as the 3rd argument.
+        branchMul32 is the odd man out.  This patch makes branchMul32 consistent with
+        the others.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchAdd32):
+        (JSC::MacroAssembler::branchMul32):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchMul32):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchMul32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchMul32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchMul32):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchNeg32):
+        (JSC::MacroAssemblerSH4::branchMul32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchMul32):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mul):
+
+2015-11-17  Mark Lam  <mark.lam@apple.com>
+
         Use the JITAddGenerator snippet in the DFG.
         https://bugs.webkit.org/show_bug.cgi?id=151266
 

@@ -1458,7 +1458,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         mul32(imm, src, dest);
         if (cond != Overflow)

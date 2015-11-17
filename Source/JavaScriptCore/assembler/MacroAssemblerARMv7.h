@@ -1615,7 +1615,7 @@ public:
         return branchMul32(cond, src, dest, dest);
     }
 
-    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, dataTempRegister);
         return branchMul32(cond, dataTempRegister, src, dest);

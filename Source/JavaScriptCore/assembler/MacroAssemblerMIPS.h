@@ -1819,7 +1819,7 @@ public:
         return Jump();
     }
 
-    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, immTempRegister);
         return branchMul32(cond, immTempRegister, src, dest);

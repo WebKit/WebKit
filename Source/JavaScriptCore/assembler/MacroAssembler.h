@@ -1605,7 +1605,7 @@ public:
         return branchAdd32(cond, src, imm.asTrustedImm32(), dest);            
     }
     
-    Jump branchMul32(ResultCondition cond, Imm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, Imm32 imm, RegisterID dest)
     {
         if (src == dest)
             ASSERT(haveScratchRegisterForBlinding());
@@ -1618,7 +1618,7 @@ public:
             loadXorBlindedConstant(xorBlindConstant(imm), dest);
             return branchMul32(cond, src, dest);  
         }
-        return branchMul32(cond, imm.asTrustedImm32(), src, dest);
+        return branchMul32(cond, src, imm.asTrustedImm32(), dest);
     }
 
     // branchSub32 takes a scratch register as 32 bit platforms make use of this,

@@ -2040,7 +2040,7 @@ public:
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
 
         if (cond == Overflow)
-            return branchMul32(cond, TrustedImm32(-1), srcDest, srcDest);
+            return branchMul32(cond, srcDest, TrustedImm32(-1), srcDest);
 
         neg32(srcDest);
 
@@ -2244,7 +2244,7 @@ public:
         return (cond == NonZero) ? branchFalse() : branchTrue();
     }
 
-    Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
 
