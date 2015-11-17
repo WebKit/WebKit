@@ -42,8 +42,10 @@
 #include "InitializeThreading.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
+#include "PureNaN.h"
 #include "VM.h"
 #include <cmath>
+#include <string>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Threading.h>
@@ -550,6 +552,70 @@ void testSubImmArg32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
 
     CHECK(compileAndRun<int>(proc, b) == a - b);
+}
+
+void testSubArgDouble(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sub, Origin(), value, value));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), a - a));
+}
+
+void testSubArgsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sub, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a, b), a - b));
+}
+
+void testSubArgImmDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sub, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), a - b));
+}
+
+void testSubImmArgDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sub, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, b), a - b));
+}
+
+void testSubImmsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sub, Origin(), valueA, valueB));
+    
+    CHECK(isIdentical(compileAndRun<double>(proc), a - b));
 }
 
 void testBitAndArgs(int64_t a, int64_t b)
@@ -4167,6 +4233,39 @@ double negativeZero()
     return -zero();
 }
 
+// Some convenience functions for brevity of the test output.
+double posInfinity()
+{
+    return std::numeric_limits<double>::infinity();
+}
+
+double negInfinity()
+{
+    return -std::numeric_limits<double>::infinity();
+}
+
+
+struct DoubleOperand {
+    const char* name;
+    double value;
+};
+
+static const std::array<DoubleOperand, 9>& doubleOperands()
+{
+    static const std::array<DoubleOperand, 9> operands = {{
+        { "M_PI", M_PI },
+        { "-M_PI", -M_PI },
+        { "1", 1 },
+        { "-1", -1 },
+        { "0", 0 },
+        { "negativeZero()", negativeZero() },
+        { "posInfinity()", posInfinity() },
+        { "negInfinity()", negInfinity() },
+        { "PNaN", PNaN },
+    }};
+    return operands;
+};
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -4178,6 +4277,34 @@ double negativeZero()
                     dataLog(#test ": OK!\n");   \
                 }));                            \
     } while (false);
+
+#define RUN_UNARY(test, values) \
+    for (auto a : values) {                             \
+        CString testStr = toCString(#test, "(", a.name, ")"); \
+        if (!shouldRun(testStr.data()))                 \
+            continue;                                   \
+        tasks.append(createSharedTask<void()>(          \
+            [=] () {                                    \
+                dataLog(testStr, "...\n");              \
+                test(a.value);                          \
+                dataLog(testStr, ": OK!\n");            \
+            }));                                        \
+    }
+
+#define RUN_BINARY(test, valuesA, valuesB) \
+    for (auto a : valuesA) {                                \
+        for (auto b : valuesB) {                            \
+            CString testStr = toCString(#test, "(", a.name, ", ", b.name, ")"); \
+            if (!shouldRun(testStr.data()))                 \
+                continue;                                   \
+            tasks.append(createSharedTask<void()>(          \
+                [=] () {                                    \
+                    dataLog(testStr, "...\n");              \
+                    test(a.value, b.value);                 \
+                    dataLog(testStr, ": OK!\n");            \
+                }));                                        \
+        }                                                   \
+    }
 
 void run(const char* filter)
 {
@@ -4320,6 +4447,12 @@ void run(const char* filter)
     RUN(testSubImmArg32(1, 2));
     RUN(testSubImmArg32(13, -42));
     RUN(testSubImmArg32(-13, 42));
+
+    RUN_UNARY(testSubArgDouble, doubleOperands());
+    RUN_BINARY(testSubArgsDouble, doubleOperands(), doubleOperands());
+    RUN_BINARY(testSubArgImmDouble, doubleOperands(), doubleOperands());
+    RUN_BINARY(testSubImmArgDouble, doubleOperands(), doubleOperands());
+    RUN_BINARY(testSubImmsDouble, doubleOperands(), doubleOperands());
 
     RUN(testBitAndArgs(43, 43));
     RUN(testBitAndArgs(43, 0));

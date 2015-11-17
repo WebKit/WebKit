@@ -1255,7 +1255,7 @@ private:
             if (m_value->child(0)->isInt(0))
                 appendUnOp<Neg32, Neg64, Air::Oops>(m_value->child(1));
             else
-                appendBinOp<Sub32, Sub64, Air::Oops>(m_value->child(0), m_value->child(1));
+                appendBinOp<Sub32, Sub64, SubDouble>(m_value->child(0), m_value->child(1));
             return;
         }
 

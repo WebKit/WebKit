@@ -93,6 +93,10 @@ Sub64 U:G, UD:G
     Tmp, Tmp
     Imm, Tmp
 
+SubDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 Neg32 UD:G
     Tmp
     Addr

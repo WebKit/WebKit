@@ -1,3 +1,31 @@
+2015-11-16  Mark Lam  <mark.lam@apple.com>
+
+        [JSC] Support Doubles with B3's Sub.
+        https://bugs.webkit.org/show_bug.cgi?id=151322
+
+        Reviewed by Filip Pizlo.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+
+        * b3/testb3.cpp:
+        (JSC::B3::testSubImmArg32):
+        (JSC::B3::testSubArgDouble):
+        (JSC::B3::testSubArgsDouble):
+        (JSC::B3::testSubArgImmDouble):
+        (JSC::B3::testSubImmArgDouble):
+        (JSC::B3::testSubImmsDouble):
+        (JSC::B3::testBitAndArgs):
+        (JSC::B3::negativeZero):
+        (JSC::B3::posInfinity):
+        (JSC::B3::negInfinity):
+        (JSC::B3::doubleOperands):
+        (JSC::B3::run):
+        - Added RUN_UNARY and RUN_BINARY macros to auto generate permutations
+          of operands for the tests.
+        - Added SubDouble tests using the new macros.
+
 2015-11-17  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] IteratedRegisterCoalescingAllocator's freeze can add zombie Tmps to our coloring algorithm
