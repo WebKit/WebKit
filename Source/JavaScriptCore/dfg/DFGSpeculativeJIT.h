@@ -2207,6 +2207,7 @@ public:
     void compileValueToInt32(Node*);
     void compileUInt32ToNumber(Node*);
     void compileDoubleAsInt32(Node*);
+    void compileValueAdd(Node*);
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);
     void compileArithClz32(Node*);
@@ -2549,6 +2550,32 @@ public:
         m_register.pair.payloadGPR = InvalidGPRReg;
         if (jit->isFilled(node()))
             fill();
+#endif
+    }
+
+    explicit JSValueOperand(JSValueOperand&& other)
+        : m_jit(other.m_jit)
+        , m_edge(other.m_edge)
+    {
+#if USE(JSVALUE64)
+        m_gprOrInvalid = other.m_gprOrInvalid;
+#elif USE(JSVALUE32_64)
+        m_register.pair.tagGPR = InvalidGPRReg;
+        m_register.pair.payloadGPR = InvalidGPRReg;
+        m_isDouble = other.m_isDouble;
+
+        if (m_edge) {
+            if (m_isDouble)
+                m_register.fpr = other.m_register.fpr;
+            else
+                m_register.pair = other.m_register.pair;
+        }
+#endif
+        other.m_edge = Edge();
+#if USE(JSVALUE64)
+        other.m_gprOrInvalid = InvalidGPRReg;
+#elif USE(JSVALUE32_64)
+        other.m_isDouble = false;
 #endif
     }
 

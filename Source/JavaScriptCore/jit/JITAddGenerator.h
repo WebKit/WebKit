@@ -35,36 +35,26 @@ namespace JSC {
 
 class JITAddGenerator {
 public:
-    enum OperandsConstness {
-        NeitherAreConstInt32,
-
-        // Since addition is commutative, it doesn't matter which operand we make the
-        // ConstInt32. Let's always put the const in the right, and the variable operand
-        // in the left.
-        RightIsConstInt32,
-
-        // We choose not to implement any optimization for the case where both operands
-        // are ConstInt32 here. The client may choose to do that optimzation and not
-        // invoke this snippet generator, or may load both operands into registers
-        // and pass them as variables to the snippet generator instead.
-    };
-
     JITAddGenerator(JSValueRegs result, JSValueRegs left, JSValueRegs right,
-        OperandsConstness operandsConstness, int32_t rightConstInt32,
-        ResultType leftType, ResultType rightType, FPRReg leftFPR, FPRReg rightFPR,
+        ResultType leftType, ResultType rightType, bool leftIsConstInt32, bool rightIsConstInt32,
+        int32_t leftConstInt32, int32_t rightConstInt32, FPRReg leftFPR, FPRReg rightFPR,
         GPRReg scratchGPR, FPRReg scratchFPR)
         : m_result(result)
         , m_left(left)
         , m_right(right)
-        , m_operandsConstness(operandsConstness)
-        , m_rightConstInt32(rightConstInt32)
         , m_leftType(leftType)
         , m_rightType(rightType)
+        , m_leftIsConstInt32(leftIsConstInt32)
+        , m_rightIsConstInt32(rightIsConstInt32)
+        , m_leftConstInt32(leftConstInt32)
+        , m_rightConstInt32(rightConstInt32)
         , m_leftFPR(leftFPR)
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
         , m_scratchFPR(scratchFPR)
-    { }
+    {
+        ASSERT(!leftIsConstInt32 || !rightIsConstInt32);
+    }
 
     void generateFastPath(CCallHelpers&);
 
@@ -75,10 +65,12 @@ private:
     JSValueRegs m_result;
     JSValueRegs m_left;
     JSValueRegs m_right;
-    OperandsConstness m_operandsConstness;
-    int32_t m_rightConstInt32;
     ResultType m_leftType;
     ResultType m_rightType;
+    bool m_leftIsConstInt32;
+    bool m_rightIsConstInt32;
+    int32_t m_leftConstInt32;
+    int32_t m_rightConstInt32;
     FPRReg m_leftFPR;
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;

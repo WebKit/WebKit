@@ -1,3 +1,65 @@
+2015-11-17  Mark Lam  <mark.lam@apple.com>
+
+        Use the JITAddGenerator snippet in the DFG.
+        https://bugs.webkit.org/show_bug.cgi?id=151266
+
+        Reviewed by Geoffrey Garen.
+
+        No tests added because the op_add.js stress test already tests for correctness
+        (using the LLINT as a reference).
+
+        Performance-wise, the difference from the pre-existing DFG implementation is
+        insignificant (at least as measured on x86 and x86_64).  We're moving forward
+        with adopting this implementation because it unifies the 32-bit and 64-bit
+        implementations, as well as lays ground work for a repatching inline cache
+        implementation of op_add later.
+
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::resultType):
+        - Made an assertion less restrictive.  For ValueAdd operands, the DFG thinks that
+          the operand can also be empty (though we should never see this in practice).
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        - Add fallback to unused type operands.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        - Introduce a common function to compile the ValueAdd node.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        - Add the forwarding constructor so that we can use Optional<JSValueOperand>.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        - Changed to use the common compileValueAdd().
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::moveValue):
+        - Similar to moveTrustedValue() but used for untrusted constants.
+
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::JITAddGenerator):
+        - Updated to take the left or right operand as a constant.  This is necessary
+          because the client should not be making assumptions about whether the snippet
+          will determine the operation to be commutative or not.  Instead, the client
+          should just pass in the operands and let the snippet do any operand order
+          swapping if necessary.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        - Updated to use the new JITAddGenerator interface.
+
+        * tests/stress/op_add.js:
+        (stringifyIfNeeded):
+        (runTest):
+        - Made test output more clear about when string results are expected.
+
 2015-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         It's best for the DFG to always have some guess of basic block frequency

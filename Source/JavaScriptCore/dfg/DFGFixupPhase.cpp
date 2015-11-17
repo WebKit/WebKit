@@ -155,8 +155,9 @@ private:
             if (attemptToMakeFastStringAdd(node))
                 break;
 
-            // We could attempt to turn this into a StrCat here. But for now, that wouldn't
-            // significantly reduce the number of branches required.
+            fixEdge<UntypedUse>(node->child1());
+            fixEdge<UntypedUse>(node->child2());
+            node->setResult(NodeResultJS);
             break;
         }
 

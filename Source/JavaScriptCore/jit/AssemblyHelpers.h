@@ -148,7 +148,17 @@ public:
         }
 #endif
     }
-    
+
+    void moveValue(JSValue value, JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        move(Imm64(JSValue::encode(value)), regs.gpr());
+#else
+        move(Imm32(value.tag()), regs.tagGPR());
+        move(Imm32(value.payload()), regs.payloadGPR());
+#endif
+    }
+
     void moveTrustedValue(JSValue value, JSValueRegs regs)
     {
 #if USE(JSVALUE64)

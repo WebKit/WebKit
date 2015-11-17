@@ -2134,29 +2134,10 @@ void SpeculativeJIT::compile(Node* node)
         compileValueRep(node);
         break;
     }
-        
-    case ValueAdd: {
-        JSValueOperand op1(this, node->child1());
-        JSValueOperand op2(this, node->child2());
-        
-        GPRReg op1TagGPR = op1.tagGPR();
-        GPRReg op1PayloadGPR = op1.payloadGPR();
-        GPRReg op2TagGPR = op2.tagGPR();
-        GPRReg op2PayloadGPR = op2.payloadGPR();
-        
-        flushRegisters();
-        
-        GPRFlushedCallResult2 resultTag(this);
-        GPRFlushedCallResult resultPayload(this);
-        if (isKnownNotNumber(node->child1().node()) || isKnownNotNumber(node->child2().node()))
-            callOperation(operationValueAddNotNumber, resultTag.gpr(), resultPayload.gpr(), op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
-        else
-            callOperation(operationValueAdd, resultTag.gpr(), resultPayload.gpr(), op1TagGPR, op1PayloadGPR, op2TagGPR, op2PayloadGPR);
-        m_jit.exceptionCheck();
-        
-        jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
+
+    case ValueAdd:
+        compileValueAdd(node);
         break;
-    }
 
     case StrCat: {
         JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);

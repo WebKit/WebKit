@@ -499,7 +499,7 @@ void AbstractValue::assertIsRegistered(Graph& graph) const
 
 ResultType AbstractValue::resultType() const
 {
-    ASSERT(isType(SpecHeapTop));
+    ASSERT(isType(SpecBytecodeTop));
     if (isType(SpecBoolean))
         return ResultType::booleanType();
     if (isType(SpecInt32))

@@ -318,6 +318,12 @@ initializeTestCases();
 
 var errorReport = "";
 
+function stringifyIfNeeded(x) {
+    if (typeof x == "string")
+        return '"' + x + '"';
+    return x;
+}
+
 function runTest(test) {
     var failedScenario = [];
     var scenarios = test.scenarios;
@@ -327,7 +333,7 @@ function runTest(test) {
             for (var scenarioID = 0; scenarioID < scenarios.length; scenarioID++) {
                 var scenario = scenarios[scenarioID];
                 if (verbose)
-                    print("Testing " + test.name + ":" + scenario.name + " on iteration " + i + ": expecting " + scenario.expected); 
+                    print("Testing " + test.name + ":" + scenario.name + " on iteration " + i + ": expecting " + stringifyIfNeeded(scenario.expected)); 
 
                 var result = testFunc(scenario.x, scenario.y);
                 if (result == scenario.expected)
@@ -335,7 +341,8 @@ function runTest(test) {
                 if (Number.isNaN(result) && Number.isNaN(scenario.expected))
                     continue;
                 if (!failedScenario[scenarioID]) {
-                    errorReport += "FAIL: " + test.name + ":" + scenario.name + " started failing on iteration " + i + ": expected " + scenario.expected + ", actual " + result + "\n";
+                    errorReport += "FAIL: " + test.name + ":" + scenario.name + " started failing on iteration " + i
+                        + ": expected " + stringifyIfNeeded(scenario.expected) + ", actual " + stringifyIfNeeded(result) + "\n";
                     if (abortOnFirstFail)
                         throw errorReport;
                     failedScenario[scenarioID] = scenario;

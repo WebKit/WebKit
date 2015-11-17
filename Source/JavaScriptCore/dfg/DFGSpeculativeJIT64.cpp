@@ -2268,27 +2268,11 @@ void SpeculativeJIT::compile(Node* node)
         }
         break;
     }
-        
-    case ValueAdd: {
-        JSValueOperand op1(this, node->child1());
-        JSValueOperand op2(this, node->child2());
-        
-        GPRReg op1GPR = op1.gpr();
-        GPRReg op2GPR = op2.gpr();
-        
-        flushRegisters();
-        
-        GPRFlushedCallResult result(this);
-        if (isKnownNotNumber(node->child1().node()) || isKnownNotNumber(node->child2().node()))
-            callOperation(operationValueAddNotNumber, result.gpr(), op1GPR, op2GPR);
-        else
-            callOperation(operationValueAdd, result.gpr(), op1GPR, op2GPR);
-        m_jit.exceptionCheck();
-        
-        jsValueResult(result.gpr(), node);
+
+    case ValueAdd:
+        compileValueAdd(node);
         break;
-    }
-        
+
     case StrCat: {
         JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);
         JSValueOperand op2(this, node->child2(), ManualOperandSpeculation);
