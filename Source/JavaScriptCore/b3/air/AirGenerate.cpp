@@ -34,6 +34,7 @@
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirIteratedRegisterCoalescing.h"
+#include "AirOptimizeBlockOrder.h"
 #include "AirReportUsedRegisters.h"
 #include "AirSimplifyCFG.h"
 #include "AirSpillEverything.h"
@@ -86,9 +87,11 @@ void generate(Code& code, CCallHelpers& jit)
     // phase.
     simplifyCFG(code);
 
-    // FIXME: We should really have a code layout optimization here.
-    // https://bugs.webkit.org/show_bug.cgi?id=150478
+    // This sorts the basic blocks in Code to achieve an ordering that maximizes the likelihood that a high
+    // frequency successor is also the fall-through target.
+    optimizeBlockOrder(code);
 
+    // This is needed to satisfy a requirement of B3::StackmapValue.
     reportUsedRegisters(code);
 
     if (shouldValidateIR())

@@ -45,6 +45,7 @@ public:
         return true;
     }
 
+    bool isEmpty() const { return m_stack.isEmpty(); }
     bool notEmpty() const { return !m_stack.isEmpty(); }
     
     Node pop()

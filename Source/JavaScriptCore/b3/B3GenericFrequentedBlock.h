@@ -67,6 +67,8 @@ public:
     FrequencyClass frequency() const { return m_frequency; }
     FrequencyClass& frequency() { return m_frequency; }
 
+    bool isRare() const { return frequency() == FrequencyClass::Rare; }
+
     void dump(PrintStream& out) const
     {
         if (frequency() != FrequencyClass::Normal)

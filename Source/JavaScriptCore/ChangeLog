@@ -1,3 +1,58 @@
+2015-11-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should lay out code optimally
+        https://bugs.webkit.org/show_bug.cgi?id=150478
+
+        Reviewed by Geoffrey Garen.
+
+        This adds a phase that optimizes code layout using something that's worked well for me in the past.
+        Basically, it just forces pre-ordering on the CFG, except that:
+
+        - Blocks that are only reachable by Rare control flow are scheduled separately, all the way at the
+          end.
+
+        - Successors of the same frequency class are pushed in ascending order of frequency, so that the most
+          frequent successor is scheduled immediately after.
+
+        This also adds the requisite branch flipping, so that a branch's taken successor is not the
+        fall-through block. We want the fall-through to be the not-taken successor if at all possible.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3BlockWorklist.h:
+        * b3/B3GenericFrequentedBlock.h:
+        (JSC::B3::GenericFrequentedBlock::frequency):
+        (JSC::B3::GenericFrequentedBlock::isRare):
+        (JSC::B3::GenericFrequentedBlock::dump):
+        * b3/B3Procedure.h:
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isDoubleCond):
+        (JSC::B3::Air::Arg::isCondition):
+        (JSC::B3::Air::Arg::isSpecial):
+        (JSC::B3::Air::Arg::asDoubleCondition):
+        (JSC::B3::Air::Arg::isInvertible):
+        (JSC::B3::Air::Arg::inverted):
+        * b3/air/AirBasicBlock.h:
+        (JSC::B3::Air::BasicBlock::index):
+        (JSC::B3::Air::BasicBlock::setIndex):
+        (JSC::B3::Air::BasicBlock::size):
+        (JSC::B3::Air::BasicBlock::begin):
+        (JSC::B3::Air::BasicBlock::containsPredecessor):
+        (JSC::B3::Air::BasicBlock::frequency):
+        * b3/air/AirBlockWorklist.h: Added.
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::findNextBlock):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::proc):
+        (JSC::B3::Air::Code::at):
+        (JSC::B3::Air::Code::operator[]):
+        (JSC::B3::Air::Code::blockList):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirOptimizeBlockOrder.cpp: Added.
+        (JSC::B3::Air::optimizeBlockOrder):
+        * b3/air/AirOptimizeBlockOrder.h: Added.
+
 2015-11-17  Andreas Kling  <akling@apple.com>
 
         [JSC] JSPropertyNameEnumerator could be destructorless.

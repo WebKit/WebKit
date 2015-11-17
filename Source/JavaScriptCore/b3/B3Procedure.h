@@ -53,7 +53,7 @@ public:
     JS_EXPORT_PRIVATE Procedure();
     JS_EXPORT_PRIVATE ~Procedure();
 
-    JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = PNaN);
+    JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = 1);
     
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);

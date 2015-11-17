@@ -380,6 +380,18 @@ public:
         return kind() == DoubleCond;
     }
 
+    bool isCondition() const
+    {
+        switch (kind()) {
+        case RelCond:
+        case ResCond:
+        case DoubleCond:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     bool isSpecial() const
     {
         return kind() == Special;
@@ -722,6 +734,21 @@ public:
     {
         ASSERT(isDoubleCond());
         return static_cast<MacroAssembler::DoubleCondition>(m_offset);
+    }
+
+    // Tells you if the Arg is invertible. Only condition arguments are invertible, and even for those, there
+    // are a few exceptions - notably Overflow and Signed.
+    bool isInvertible() const
+    {
+        switch (kind()) {
+        case RelCond:
+        case DoubleCond:
+            return true;
+        case ResCond:
+            return MacroAssembler::isInvertible(asResultCondition());
+        default:
+            return false;
+        }
     }
 
     // This is valid for condition arguments. It will invert them.

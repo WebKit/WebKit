@@ -23,38 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3BlockWorklist_h
-#define B3BlockWorklist_h
+#ifndef AirOptimizeBlockOrder_h
+#define AirOptimizeBlockOrder_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlock.h"
-#include "B3IndexSet.h"
-#include <wtf/GraphNodeWorklist.h>
-#include <wtf/Vector.h>
+namespace JSC { namespace B3 { namespace Air {
 
-namespace JSC { namespace B3 {
+class Code;
 
-typedef GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> BlockWorklist;
+// Reorders the basic blocks to keep hot blocks at the top, and maximize the likelihood that a frequently
+// taken edge is just a fall-through.
 
-// When you say BlockWith<int> you should read it as "block with an int".
-template<typename T> using BlockWith = GraphNodeWith<BasicBlock*, T>;
+void optimizeBlockOrder(Code&);
 
-// Extended block worklist is useful for enqueueing some meta-data along with the block. It also
-// permits forcibly enqueueing things even if the block has already been seen. It's useful for
-// things like building a spanning tree, in which case T (the auxiliary payload) would be the
-// successor index.
-template<typename T> using ExtendedBlockWorklist = ExtendedGraphNodeWorklist<BasicBlock*, T, IndexSet<BasicBlock>>;
-
-typedef GraphVisitOrder VisitOrder;
-
-typedef GraphNodeWithOrder<BasicBlock*> BlockWithOrder;
-
-typedef PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> PostOrderBlockWorklist;
-
-} } // namespace JSC::B3
+} } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3BlockWorklist_h
+#endif // AirOptimizeBlockOrder_h
 

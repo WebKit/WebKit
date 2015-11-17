@@ -23,17 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3BlockWorklist_h
-#define B3BlockWorklist_h
+#ifndef AirBlockWorklist_h
+#define AirBlockWorklist_h
 
 #if ENABLE(B3_JIT)
 
-#include "B3BasicBlock.h"
-#include "B3IndexSet.h"
-#include <wtf/GraphNodeWorklist.h>
-#include <wtf/Vector.h>
+#include "AirBasicBlock.h"
+#include "B3BlockWorklist.h"
 
-namespace JSC { namespace B3 {
+namespace JSC { namespace B3 { namespace Air {
 
 typedef GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> BlockWorklist;
 
@@ -46,15 +44,13 @@ template<typename T> using BlockWith = GraphNodeWith<BasicBlock*, T>;
 // successor index.
 template<typename T> using ExtendedBlockWorklist = ExtendedGraphNodeWorklist<BasicBlock*, T, IndexSet<BasicBlock>>;
 
-typedef GraphVisitOrder VisitOrder;
-
 typedef GraphNodeWithOrder<BasicBlock*> BlockWithOrder;
 
 typedef PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> PostOrderBlockWorklist;
 
-} } // namespace JSC::B3
+} } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3BlockWorklist_h
+#endif // AirBlockWorklist_h
 

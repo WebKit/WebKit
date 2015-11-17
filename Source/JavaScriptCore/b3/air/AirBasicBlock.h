@@ -50,6 +50,10 @@ public:
     typedef Vector<FrequentedBlock, 2> SuccessorList;
 
     unsigned index() const { return m_index; }
+
+    // This method is exposed for phases that mess with the layout of basic blocks. Currently that means just
+    // optimizeBlockOrder().
+    void setIndex(unsigned index) { m_index = index; }
     
     unsigned size() const { return m_insts.size(); }
     InstList::iterator begin() { return m_insts.begin(); }
@@ -109,6 +113,8 @@ public:
     bool removePredecessor(BasicBlock*);
     bool replacePredecessor(BasicBlock* from, BasicBlock* to);
     bool containsPredecessor(BasicBlock* predecessor) const { return m_predecessors.contains(predecessor); }
+
+    double frequency() const { return m_frequency; }
 
     void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;

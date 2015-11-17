@@ -128,7 +128,10 @@ unsigned Code::findNextBlockIndex(unsigned index) const
 
 BasicBlock* Code::findNextBlock(BasicBlock* block) const
 {
-    return at(findNextBlockIndex(block->index()));
+    unsigned index = findNextBlockIndex(block->index());
+    if (index < size())
+        return at(index);
+    return nullptr;
 }
 
 } } } // namespace JSC::B3::Air

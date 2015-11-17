@@ -55,7 +55,7 @@ public:
 
     Procedure& proc() { return m_proc; }
 
-    BasicBlock* addBlock(double frequency = PNaN);
+    BasicBlock* addBlock(double frequency = 1);
 
     StackSlot* addStackSlot(unsigned byteSize, StackSlotKind, StackSlotValue* = nullptr);
     StackSlot* addStackSlot(StackSlotValue*);
@@ -114,6 +114,10 @@ public:
     unsigned size() const { return m_blocks.size(); }
     BasicBlock* at(unsigned index) const { return m_blocks[index].get(); }
     BasicBlock* operator[](unsigned index) const { return at(index); }
+
+    // This is used by phases that optimize the block list. You shouldn't use this unless you really know
+    // what you're doing.
+    Vector<std::unique_ptr<BasicBlock>>& blockList() { return m_blocks; }
 
     // Finds the smallest index' such that at(index') != null and index' >= index.
     unsigned findFirstBlockIndex(unsigned index) const;
