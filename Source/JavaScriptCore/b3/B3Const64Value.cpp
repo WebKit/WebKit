@@ -98,6 +98,13 @@ Value* Const64Value::checkMulConstant(Procedure& proc, const Value* other) const
     return proc.add<Const64Value>(origin(), result.unsafeGet());
 }
 
+Value* Const64Value::checkNegConstant(Procedure& proc) const
+{
+    if (m_value == -m_value)
+        return nullptr;
+    return negConstant(proc);
+}
+
 Value* Const64Value::divConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasInt64())

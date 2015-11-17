@@ -49,6 +49,16 @@ public:
         m_liveAtHead.resize(code.size());
         m_liveAtTail.resize(code.size());
 
+        // The liveAtTail of each block automatically contains the LateUse's of the terminal.
+        for (BasicBlock* block : code) {
+            HashSet<Thing>& live = m_liveAtTail[block];
+            block->last().forEach<Thing>(
+                [&] (Thing& thing, Arg::Role role, Arg::Type) {
+                    if (Arg::isLateUse(role))
+                        live.add(thing);
+                });
+        }
+
         IndexSet<BasicBlock> seen;
 
         bool changed = true;
@@ -61,7 +71,7 @@ public:
                     continue;
                 LocalCalc localCalc(*this, block);
                 for (size_t instIndex = block->size(); instIndex--;)
-                    localCalc.execute(block->at(instIndex));
+                    localCalc.execute(instIndex);
                 bool firstTime = seen.add(block);
                 if (!firstTime && localCalc.live() == m_liveAtHead[block])
                     continue;
@@ -90,14 +100,17 @@ public:
     public:
         LocalCalc(Liveness& liveness, BasicBlock* block)
             : m_live(liveness.liveAtTail(block))
+            , m_block(block)
         {
         }
 
         const HashSet<Thing>& live() const { return m_live; }
         HashSet<Thing>&& takeLive() { return WTF::move(m_live); }
 
-        void execute(Inst& inst)
+        void execute(unsigned instIndex)
         {
+            Inst& inst = m_block->at(instIndex);
+            
             // First handle def's.
             inst.forEach<Thing>(
                 [this] (Thing& arg, Arg::Role role, Arg::Type) {
@@ -107,20 +120,34 @@ public:
                         m_live.remove(arg);
                 });
 
-            // Finally handle use's.
+            // Then handle use's.
             inst.forEach<Thing>(
                 [this] (Thing& arg, Arg::Role role, Arg::Type) {
                     if (!isAlive(arg))
                         return;
-                    if (Arg::isUse(role))
+                    if (Arg::isEarlyUse(role))
                         m_live.add(arg);
                 });
+
+            // And finally, handle the late use's of the previous instruction.
+            if (instIndex) {
+                Inst& prevInst = m_block->at(instIndex - 1);
+
+                prevInst.forEach<Thing>(
+                    [this] (Thing& arg, Arg::Role role, Arg::Type) {
+                        if (!Arg::isLateUse(role))
+                            return;
+                        if (isAlive(arg))
+                            m_live.add(arg);
+                    });
+            }
         }
 
     private:
         HashSet<Thing> m_live;
+        BasicBlock* m_block;
     };
-    
+
 private:
     IndexMap<BasicBlock, HashSet<Thing>> m_liveAtHead;
     IndexMap<BasicBlock, HashSet<Thing>> m_liveAtTail;

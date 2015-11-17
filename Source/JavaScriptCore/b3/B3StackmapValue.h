@@ -77,6 +77,10 @@ public:
     // children().append(). That will work fine, but it's not recommended.
     void append(const ConstrainedValue&);
 
+    // This is a helper for something you might do a lot of: append a value that should be constrained
+    // to SomeRegister.
+    void appendSomeRegister(Value*);
+
     const Vector<ValueRep>& reps() const { return m_reps; }
 
     void clobber(const RegisterSet& set)

@@ -49,6 +49,8 @@ public:
 
     ~CheckValue();
 
+    void convertToAdd();
+
 private:
     friend class Procedure;
 

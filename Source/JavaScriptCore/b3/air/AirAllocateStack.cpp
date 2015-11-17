@@ -146,38 +146,22 @@ void allocateStack(Code& code)
         auto interfere = [&] (Inst& inst) {
             if (verbose)
                 dataLog("Interfering: ", pointerListDump(localCalc.live()), "\n");
-            
-            // Form a clique of stack slots that interfere. First find the list of stack slots
-            // that are live right now.
-            slots.resize(0);
-            for (StackSlot* slot : localCalc.live()) {
-                if (slot->kind() == StackSlotKind::Anonymous)
-                    slots.append(slot);
-            }
 
-            // We mustn't mandate that the input code is optimal. Therefore, it may have dead stores
-            // to the stack. We need to treat these as interfering.
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Arg::Type) {
-                    if (Arg::isDef(role) && arg.isStack()) {
-                        StackSlot* slot = arg.stackSlot();
-                        if (slot->kind() == StackSlotKind::Anonymous
-                            && !localCalc.live().contains(slot))
-                            slots.append(slot);
+                    if (!Arg::isDef(role))
+                        return;
+                    if (!arg.isStack())
+                        return;
+                    StackSlot* slot = arg.stackSlot();
+                    if (slot->kind() != StackSlotKind::Anonymous)
+                        return;
+
+                    for (StackSlot* otherSlot : localCalc.live()) {
+                        interference[slot].add(otherSlot);
+                        interference[otherSlot].add(slot);
                     }
                 });
-            
-            if (verbose)
-                dataLog("    Slots: ", pointerListDump(slots), "\n");
-            for (unsigned i = 0; i < slots.size(); ++i) {
-                StackSlot* outer = slots[i];
-                for (unsigned j = i + 1; j < slots.size(); ++j) {
-                    StackSlot* inner = slots[j];
-
-                    interference[inner].add(outer);
-                    interference[outer].add(inner);
-                }
-            }
         };
 
         for (unsigned instIndex = block->size(); instIndex--;) {
@@ -185,7 +169,7 @@ void allocateStack(Code& code)
                 dataLog("Analyzing: ", block->at(instIndex), "\n");
             Inst& inst = block->at(instIndex);
             interfere(inst);
-            localCalc.execute(inst);
+            localCalc.execute(instIndex);
         }
         Inst nop;
         interfere(nop);

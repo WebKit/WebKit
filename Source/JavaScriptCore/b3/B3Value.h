@@ -41,6 +41,7 @@
 namespace JSC { namespace B3 {
 
 class BasicBlock;
+class CheckValue;
 class Procedure;
 
 class JS_EXPORT_PRIVATE Value {
@@ -118,6 +119,7 @@ public:
     virtual Value* checkAddConstant(Procedure&, const Value* other) const;
     virtual Value* checkSubConstant(Procedure&, const Value* other) const;
     virtual Value* checkMulConstant(Procedure&, const Value* other) const;
+    virtual Value* checkNegConstant(Procedure&) const;
     virtual Value* divConstant(Procedure&, const Value* other) const; // This chooses ChillDiv semantics for integers.
     virtual Value* bitAndConstant(Procedure&, const Value* other) const;
     virtual Value* bitOrConstant(Procedure&, const Value* other) const;
@@ -272,6 +274,8 @@ protected:
     }
 
 private:
+    friend class CheckValue; // CheckValue::convertToAdd() modifies m_opcode.
+    
     static Type typeFor(Opcode, Value* firstChild);
 
     // This group of fields is arranged to fit in 64 bits.

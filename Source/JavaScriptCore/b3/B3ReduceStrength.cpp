@@ -633,17 +633,10 @@ private:
             break;
 
         case CheckAdd:
-            // FIXME: Handle commutativity.
-            // https://bugs.webkit.org/show_bug.cgi?id=151214
-            
             if (replaceWithNewValue(m_value->child(0)->checkAddConstant(m_proc, m_value->child(1))))
                 break;
-            
-            if (m_value->child(0)->isInt(0)) {
-                m_value->replaceWithIdentity(m_value->child(1));
-                m_changed = true;
-                break;
-            }
+
+            handleCommutativity();
             
             if (m_value->child(1)->isInt(0)) {
                 m_value->replaceWithIdentity(m_value->child(0));
@@ -661,30 +654,43 @@ private:
                 m_changed = true;
                 break;
             }
+
+            if (Value* negatedConstant = m_value->child(1)->checkNegConstant(m_proc)) {
+                m_insertionSet.insertValue(m_index, negatedConstant);
+                m_value->as<CheckValue>()->convertToAdd();
+                m_value->child(1) = negatedConstant;
+                m_changed = true;
+                break;
+            }
             break;
 
         case CheckMul:
-            // FIXME: Handle commutativity.
-            // https://bugs.webkit.org/show_bug.cgi?id=151214
-            
             if (replaceWithNewValue(m_value->child(0)->checkMulConstant(m_proc, m_value->child(1))))
                 break;
 
-            if (m_value->child(0)->isInt(1)) {
-                m_value->replaceWithIdentity(m_value->child(1));
-                m_changed = true;
-                break;
-            }
-            
-            if (m_value->child(1)->isInt(1)) {
-                m_value->replaceWithIdentity(m_value->child(0));
-                m_changed = true;
-                break;
-            }
+            handleCommutativity();
 
-            if (m_value->child(0)->isInt(0) || m_value->child(1)->isInt(0)) {
-                replaceWithNewValue(m_proc.addIntConstant(m_value, 0));
-                break;
+            if (m_value->child(1)->hasInt()) {
+                bool modified = true;
+                switch (m_value->child(1)->asInt()) {
+                case 0:
+                    replaceWithNewValue(m_proc.addIntConstant(m_value, 0));
+                    break;
+                case 1:
+                    m_value->replaceWithIdentity(m_value->child(0));
+                    m_changed = true;
+                    break;
+                case 2:
+                    m_value->as<CheckValue>()->convertToAdd();
+                    m_value->child(1) = m_value->child(0);
+                    m_changed = true;
+                    break;
+                default:
+                    modified = false;
+                    break;
+                }
+                if (modified)
+                    break;
             }
             break;
 
@@ -761,6 +767,10 @@ private:
     // If we decide that value2 coming first is the canonical ordering.
     void handleCommutativity()
     {
+        // Note that we have commutative operations that take more than two children. Those operations may
+        // commute their first two children while leaving the rest unaffected.
+        ASSERT(m_value->numChildren() >= 2);
+        
         // Leave it alone if the right child is a constant.
         if (m_value->child(1)->isConstant())
             return;

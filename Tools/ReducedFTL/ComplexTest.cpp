@@ -102,9 +102,9 @@ void run(unsigned numVars, unsigned numConstructs)
     for (unsigned i = 0; i < numConstructs; ++i) {
         if (i & 1) {
             // Control flow diamond.
-            unsigned predicateVarIndex = (i >> 1) % numVars;
-            unsigned thenIncVarIndex = ((i >> 1) + 1) % numVars;
-            unsigned elseIncVarIndex = ((i >> 1) + 2) % numVars;
+            unsigned predicateVarIndex = ((i >> 1) + 2) % numVars;
+            unsigned thenIncVarIndex = ((i >> 1) + 0) % numVars;
+            unsigned elseIncVarIndex = ((i >> 1) + 1) % numVars;
 
             BasicBlock* thenBlock = BasicBlock::Create(context, "", function);
             BasicBlock* elseBlock = BasicBlock::Create(context, "", function);
@@ -138,7 +138,7 @@ void run(unsigned numVars, unsigned numConstructs)
             BasicBlock* loopBody = BasicBlock::Create(context, "", function);
             BasicBlock* continuation = BasicBlock::Create(context, "", function);
 
-            Value* startIndex = vars[(i >> 1) % numVars];
+            Value* startIndex = vars[((i >> 1) + 1) % numVars];
             Value* startSum = builder->getInt32(0);
             builder->CreateCondBr(
                 builder->CreateICmpNE(startIndex, builder->getInt32(0)),
@@ -176,6 +176,7 @@ void run(unsigned numVars, unsigned numConstructs)
             finalSum->addIncoming(startSum, current);
             finalSum->addIncoming(newBodySum, loopBody);
             current = continuation;
+            vars[((i >> 1) + 0) % numVars] = finalSum;
         }
     }
 

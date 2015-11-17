@@ -39,9 +39,9 @@ using namespace Air;
 
 namespace {
 
-unsigned numB3Args(Inst& inst)
+unsigned numB3Args(B3::Opcode opcode)
 {
-    switch (inst.origin->opcode()) {
+    switch (opcode) {
     case CheckAdd:
     case CheckSub:
     case CheckMul:
@@ -54,28 +54,40 @@ unsigned numB3Args(Inst& inst)
     }
 }
 
+unsigned numB3Args(Value* value)
+{
+    return numB3Args(value->opcode());
+}
+
+unsigned numB3Args(Inst& inst)
+{
+    return numB3Args(inst.origin);
+}
+
 } // anonymous namespace
 
 CheckSpecial::Key::Key(const Inst& inst)
 {
     m_opcode = inst.opcode;
     m_numArgs = inst.args.size();
+    m_stackmapRole = Arg::Use;
 }
 
 void CheckSpecial::Key::dump(PrintStream& out) const
 {
-    out.print(m_opcode, "(", m_numArgs, ")");
+    out.print(m_opcode, "(", m_numArgs, ",", m_stackmapRole, ")");
 }
 
-CheckSpecial::CheckSpecial(Air::Opcode opcode, unsigned numArgs)
+CheckSpecial::CheckSpecial(Air::Opcode opcode, unsigned numArgs, Arg::Role stackmapRole)
     : m_checkOpcode(opcode)
+    , m_stackmapRole(stackmapRole)
     , m_numCheckArgs(numArgs)
 {
     ASSERT(isTerminal(opcode));
 }
 
 CheckSpecial::CheckSpecial(const CheckSpecial::Key& key)
-    : CheckSpecial(key.opcode(), key.numArgs())
+    : CheckSpecial(key.opcode(), key.numArgs(), key.stackmapRole())
 {
 }
 
@@ -105,7 +117,7 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
     Inst hidden = hiddenBranch(inst);
     hidden.forEachArg(callback);
     commitHiddenBranch(inst, hidden);
-    forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, callback);
+    forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, callback);
 }
 
 bool CheckSpecial::isValid(Inst& inst)
@@ -130,28 +142,71 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     ASSERT(value);
 
     Vector<ValueRep> reps;
-    if (isCheckMath(value->opcode())) {
-        if (value->opcode() == CheckMul) {
-            reps.append(repForArg(*context.code, inst.args[2]));
-            reps.append(repForArg(*context.code, inst.args[3]));
-        } else {
-            if (value->opcode() == CheckSub && value->child(0)->isInt(0))
-                reps.append(ValueRep::constant(0));
-            else
-                reps.append(repForArg(*context.code, inst.args[3]));
-            reps.append(repForArg(*context.code, inst.args[2]));
-        }
-    } else {
-        ASSERT(value->opcode() == Check);
-        reps.append(ValueRep::constant(1));
-    }
+    for (unsigned i = numB3Args(value); i--;)
+        reps.append(ValueRep());
 
     appendRepsImpl(context, m_numCheckArgs + 1, inst, reps);
-    
+
+    // Set aside the args that are relevant to undoing the operation. This is because we don't want to
+    // capture all of inst in the closure below.
+    Vector<Arg, 3> args;
+    for (unsigned i = 0; i < m_numCheckArgs; ++i)
+        args.append(inst.args[1 + i]);
+
     context.latePaths.append(
         createSharedTask<GenerationContext::LatePathFunction>(
-            [=] (CCallHelpers& jit, GenerationContext&) {
+            [=] (CCallHelpers& jit, GenerationContext& context) {
                 fail.link(&jit);
+
+                // If necessary, undo the operation.
+                switch (m_checkOpcode) {
+                case BranchAdd32:
+                    if (args[1] == args[2]) {
+                        // This is ugly, but that's fine - we won't have to do this very often.
+                        ASSERT(args[1].isGPR());
+                        GPRReg valueGPR = args[1].gpr();
+                        GPRReg scratchGPR = CCallHelpers::selectScratchGPR(valueGPR);
+                        jit.pushToSave(scratchGPR);
+                        jit.setCarry(scratchGPR);
+                        jit.lshift32(CCallHelpers::TrustedImm32(31), scratchGPR);
+                        jit.urshift32(CCallHelpers::TrustedImm32(1), valueGPR);
+                        jit.or32(scratchGPR, valueGPR);
+                        jit.popToRestore(scratchGPR);
+                        break;
+                    }
+                    Inst(Sub32, nullptr, args[1], args[2]).generate(jit, context);
+                    break;
+                case BranchAdd64:
+                    if (args[1] == args[2]) {
+                        // This is ugly, but that's fine - we won't have to do this very often.
+                        ASSERT(args[1].isGPR());
+                        GPRReg valueGPR = args[1].gpr();
+                        GPRReg scratchGPR = CCallHelpers::selectScratchGPR(valueGPR);
+                        jit.pushToSave(scratchGPR);
+                        jit.setCarry(scratchGPR);
+                        jit.lshift64(CCallHelpers::TrustedImm32(63), scratchGPR);
+                        jit.urshift64(CCallHelpers::TrustedImm32(1), valueGPR);
+                        jit.or64(scratchGPR, valueGPR);
+                        jit.popToRestore(scratchGPR);
+                        break;
+                    }
+                    Inst(Sub64, nullptr, args[1], args[2]).generate(jit, context);
+                    break;
+                case BranchSub32:
+                    Inst(Add32, nullptr, args[1], args[2]).generate(jit, context);
+                    break;
+                case BranchSub64:
+                    Inst(Add64, nullptr, args[1], args[2]).generate(jit, context);
+                    break;
+                case BranchNeg32:
+                    Inst(Neg32, nullptr, args[1]).generate(jit, context);
+                    break;
+                case BranchNeg64:
+                    Inst(Neg64, nullptr, args[1]).generate(jit, context);
+                    break;
+                default:
+                    break;
+                }
                 
                 StackmapGenerationParams params;
                 params.value = value;
@@ -166,7 +221,7 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
 
 void CheckSpecial::dumpImpl(PrintStream& out) const
 {
-    out.print(m_checkOpcode, "(", m_numCheckArgs, ")");
+    out.print(m_checkOpcode, "(", m_numCheckArgs, ",", m_stackmapRole, ")");
 }
 
 void CheckSpecial::deepDumpImpl(PrintStream& out) const

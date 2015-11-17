@@ -34,12 +34,14 @@
 #include "AirLiveness.h"
 #include "AirPhaseScope.h"
 #include "AirRegisterPriority.h"
+#include <wtf/ListDump.h>
 #include <wtf/ListHashSet.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
 static bool debug = false;
 static bool traceDebug = false;
+static bool reportStats = false;
 
 template<Arg::Type type>
 struct MoveInstHelper;
@@ -168,7 +170,7 @@ public:
                 if (Arg::isDef(role))
                     defTmp = argTmp;
                 else {
-                    ASSERT(Arg::isUse(role));
+                    ASSERT(Arg::isEarlyUse(role));
                     useTmp = argTmp;
                 }
             });
@@ -204,6 +206,7 @@ public:
         makeWorkList();
 
         if (debug) {
+            dataLog("Interference: ", listDump(m_interferenceEdges), "\n");
             dumpInterferenceGraphInDot(WTF::dataFile());
             dataLog("Initial work list\n");
             dumpWorkLists(WTF::dataFile());
@@ -742,6 +745,11 @@ private:
             return WTF::IntHash<uint64_t>::hash(m_value);
         }
 
+        void dump(PrintStream& out) const
+        {
+            out.print(first(), "<=>", second());
+        }
+
     private:
         uint64_t m_value { 0 };
     };
@@ -951,7 +959,7 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp,
                 Arg arg = Arg::stack(stackSlotEntry->value);
                 Opcode move = type == Arg::GP ? Move : MoveDouble;
 
-                if (Arg::isUse(role)) {
+                if (Arg::isAnyUse(role)) {
                     Tmp newTmp = code.newTmp(type);
                     insertionSet.insert(instIndex, move, inst.origin, arg, newTmp);
                     tmp = newTmp;
@@ -968,9 +976,10 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp,
 }
 
 template<Arg::Type type>
-static void iteratedRegisterCoalescingOnType(Code& code, HashSet<Tmp>& unspillableTmps)
+static void iteratedRegisterCoalescingOnType(Code& code, HashSet<Tmp>& unspillableTmps, unsigned& numIterations)
 {
     while (true) {
+        numIterations++;
         IteratedRegisterCoalescingAllocator<type> allocator(code, unspillableTmps);
         Liveness<Tmp> liveness(code);
         for (BasicBlock* block : code) {
@@ -978,7 +987,7 @@ static void iteratedRegisterCoalescingOnType(Code& code, HashSet<Tmp>& unspillab
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
                 allocator.build(inst, localCalc);
-                localCalc.execute(inst);
+                localCalc.execute(instIndex);
             }
         }
 
@@ -997,12 +1006,14 @@ void iteratedRegisterCoalescing(Code& code)
 
     bool gpIsColored = false;
     bool fpIsColored = false;
+    unsigned numIterations = 0;
 
     HashSet<Tmp> unspillableGPs;
     HashSet<Tmp> unspillableFPs;
 
     // First we run both allocator together as long as they both spill.
     while (!gpIsColored && !fpIsColored) {
+        numIterations++;
         IteratedRegisterCoalescingAllocator<Arg::GP> gpAllocator(code, unspillableGPs);
         IteratedRegisterCoalescingAllocator<Arg::FP> fpAllocator(code, unspillableFPs);
 
@@ -1017,7 +1028,7 @@ void iteratedRegisterCoalescing(Code& code)
                 gpAllocator.build(inst, localCalc);
                 fpAllocator.build(inst, localCalc);
 
-                localCalc.execute(inst);
+                localCalc.execute(instIndex);
             }
         }
 
@@ -1038,9 +1049,12 @@ void iteratedRegisterCoalescing(Code& code)
     };
 
     if (!gpIsColored)
-        iteratedRegisterCoalescingOnType<Arg::GP>(code, unspillableGPs);
+        iteratedRegisterCoalescingOnType<Arg::GP>(code, unspillableGPs, numIterations);
     if (!fpIsColored)
-        iteratedRegisterCoalescingOnType<Arg::FP>(code, unspillableFPs);
+        iteratedRegisterCoalescingOnType<Arg::FP>(code, unspillableFPs, numIterations);
+
+    if (reportStats)
+        dataLog("Num iterations = ", numIterations, "\n");
 }
 
 } } } // namespace JSC::B3::Air

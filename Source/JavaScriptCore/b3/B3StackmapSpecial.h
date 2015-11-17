@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirArg.h"
 #include "AirSpecial.h"
 #include "B3ValueRep.h"
 
@@ -53,7 +54,7 @@ protected:
 
     void forEachArgImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-        Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&);
+        Air::Inst&, Air::Arg::Role role, const ScopedLambda<Air::Inst::EachArgCallback>&);
     bool isValidImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
         Air::Inst&);

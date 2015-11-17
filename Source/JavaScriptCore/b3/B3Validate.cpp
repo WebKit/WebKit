@@ -278,6 +278,8 @@ public:
                 VALIDATE(value->numChildren() >= 2, ("At ", *value));
                 VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
                 VALIDATE(isInt(value->child(1)->type()), ("At ", *value));
+                VALIDATE(value->as<StackmapValue>()->constrainedChild(0).rep() == ValueRep::Any, ("At ", *value));
+                VALIDATE(value->as<StackmapValue>()->constrainedChild(1).rep() == ValueRep::Any, ("At ", *value));
                 validateStackmap(value);
                 break;
             case Check:

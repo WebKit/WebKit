@@ -1611,6 +1611,11 @@ public:
         set32(x86Condition(cond), dest);
     }
 
+    void setCarry(RegisterID dest)
+    {
+        set32(X86Assembler::ConditionC, dest);
+    }
+
     // Invert a relational condition, e.g. == becomes !=, < becomes >=, etc.
     static RelationalCondition invert(RelationalCondition cond)
     {

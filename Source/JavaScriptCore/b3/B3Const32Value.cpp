@@ -98,6 +98,13 @@ Value* Const32Value::checkMulConstant(Procedure& proc, const Value* other) const
     return proc.add<Const32Value>(origin(), result.unsafeGet());
 }
 
+Value* Const32Value::checkNegConstant(Procedure& proc) const
+{
+    if (m_value == -m_value)
+        return nullptr;
+    return negConstant(proc);
+}
+
 Value* Const32Value::divConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasInt32())

@@ -72,7 +72,10 @@ void generate(Code& code, CCallHelpers& jit)
     // After this phase, every Tmp has a reg.
     //
     // For debugging, you can use spillEverything() to put everything to the stack between each Inst.
-    iteratedRegisterCoalescing(code);
+    if (false)
+        spillEverything(code);
+    else
+        iteratedRegisterCoalescing(code);
 
     // Prior to this point the prologue and epilogue is implicit. This makes it explicit. It also
     // does things like identify which callee-saves we're using and saves them.

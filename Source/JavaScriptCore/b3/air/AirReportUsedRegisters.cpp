@@ -56,7 +56,7 @@ void reportUsedRegisters(Code& code)
                 }
                 inst.reportUsedRegisters(registerSet);
             }
-            localCalc.execute(inst);
+            localCalc.execute(instIndex);
         }
     }
 }

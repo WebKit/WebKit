@@ -65,7 +65,7 @@ const RegisterSet& StackmapSpecial::extraClobberedRegs(Inst& inst)
 
 void StackmapSpecial::forEachArgImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-    Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
+    Inst& inst, Arg::Role role, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     Value* value = inst.origin;
 
@@ -78,7 +78,7 @@ void StackmapSpecial::forEachArgImpl(
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         Value* child = value->child(i + numIgnoredB3Args);
 
-        callback(arg, Arg::Use, Arg::typeForB3Type(child->type()));
+        callback(arg, role, Arg::typeForB3Type(child->type()));
     }
 }
 

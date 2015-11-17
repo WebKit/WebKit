@@ -48,6 +48,11 @@ void StackmapValue::append(const ConstrainedValue& constrainedValue)
     m_reps.append(constrainedValue.rep());
 }
 
+void StackmapValue::appendSomeRegister(Value* value)
+{
+    append(ConstrainedValue(value, ValueRep::SomeRegister));
+}
+
 void StackmapValue::setConstrainedChild(unsigned index, const ConstrainedValue& constrainedValue)
 {
     child(index) = constrainedValue.value();

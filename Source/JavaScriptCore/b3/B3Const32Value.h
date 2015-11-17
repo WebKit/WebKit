@@ -48,6 +48,7 @@ public:
     Value* checkAddConstant(Procedure&, const Value* other) const override;
     Value* checkSubConstant(Procedure&, const Value* other) const override;
     Value* checkMulConstant(Procedure&, const Value* other) const override;
+    Value* checkNegConstant(Procedure&) const override;
     Value* divConstant(Procedure&, const Value* other) const override;
     Value* bitAndConstant(Procedure&, const Value* other) const override;
     Value* bitOrConstant(Procedure&, const Value* other) const override;

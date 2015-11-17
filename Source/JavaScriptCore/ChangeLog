@@ -1,5 +1,176 @@
 2015-11-17  Filip Pizlo  <fpizlo@apple.com>
 
+        CheckAdd/Mul should have commutativity optimizations in B3->Air lowering
+        https://bugs.webkit.org/show_bug.cgi?id=151214
+
+        Reviewed by Geoffrey Garen.
+
+        This is an overhaul of CheckAdd/CheckSub/CheckMul that fixes bugs, improves codegen, and
+        simplifies the contract between B3 and its client.
+
+        Previously, the idea was that the operands to the Air BranchAdd/Sub/Mul matched the children of
+        the B3 CheckAdd/Sub/Mul, or at least, that's what the B3::CheckSpecial would make you believe.
+        This meant that B3/Air had to avoid optimizations that would break this protocol. This prevented
+        commutativity optimizations on CheckAdd/Mul and it also prevented strength reduction from
+        CheckMul(x, 2) to CheckAdd(x, x), for example. Those optimizations would break things because the
+        client's Stackmap generation callback was allowed to assume that the first entry in params.reps
+        was the first child. Also, there was a contract between B3 and its client that for CheckAdd/Sub,
+        the client would undo the operation by doing the opposite operation with the params.reps[0] as the
+        source and params.reps[1] as the destination.
+
+        This not only prevented commutativity optimizations, it also led to bugs. Here are two bugs that
+        we had:
+
+        - Add(x, x) would not work. The client would be told to undo the add using %x as both the source
+          and destination. The client would use a sub() instruction. The result would not be x - it would
+          be zero.
+
+        - Mul where the result got coalesced with one of the sources. You can't undo a multiplication, so
+          you need to keep the inputs alive until after the result is computed - i.e. the inputs are late
+          uses. I initially thought I worked around this by using a three-operand form of Mul, but of
+          course that doesn't actually fix the issue.
+
+        This patch fixes these issues comprehensively by introducing the following changes:
+
+        The params.reps corresponding to the first two children of CheckAdd/Sub/Mul and the first child of
+        Check are always garbage: if you want to know the values of those children in the slow path, pass
+        them as additional stackmap children. This makes it clear to the compiler whose values you
+        actually care about, and frees the compiler to reorder and commute the non-stackmap children.
+
+        The "undo" of an Add or Sub is handled internally by B3: the client doesn't have to know anything
+        about undoing. B3 does it. The contract is simply that if a B3::Value* is a stackmap child of a
+        CheckXYZ, then the corresponding entry in params.reps inside the stackmap generator callback will
+        contain the value of that Value*. For Add and Sub, B3 undoes the operation. For Add(x, x), the
+        undo uses the carry flag and some shift magic. For Mul, B3 uses LateUse:
+
+        A new kind of Arg::Role called Arg::LateUse is introduced: This kind of use means that the use
+        happens at the start of the execution of the next instruction. None of the built-in Air opcodes
+        use LateUse, but it is used by B3::CheckSpecial. We use it to implement CheckMul.
+
+        Finally, this change fixes testComplex to actually create many live variables. This revealed a
+        really dumb pathology in allocateStack(), and this patch fixes it. Basically, it's a bad idea to
+        build interference graphs by repeatedly recreating the same cliques.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::test32):
+        (JSC::MacroAssemblerX86Common::setCarry):
+        (JSC::MacroAssemblerX86Common::invert):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::Air::numB3Args):
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::dump):
+        (JSC::B3::CheckSpecial::CheckSpecial):
+        (JSC::B3::CheckSpecial::forEachArg):
+        (JSC::B3::CheckSpecial::isValid):
+        (JSC::B3::CheckSpecial::generate):
+        (JSC::B3::CheckSpecial::dumpImpl):
+        (JSC::B3::CheckSpecial::deepDumpImpl):
+        * b3/B3CheckSpecial.h:
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::operator==):
+        (JSC::B3::CheckSpecial::Key::operator!=):
+        (JSC::B3::CheckSpecial::Key::opcode):
+        (JSC::B3::CheckSpecial::Key::numArgs):
+        (JSC::B3::CheckSpecial::Key::stackmapRole):
+        (JSC::B3::CheckSpecial::Key::hash):
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::~CheckValue):
+        (JSC::B3::CheckValue::convertToAdd):
+        (JSC::B3::CheckValue::CheckValue):
+        * b3/B3CheckValue.h:
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::checkMulConstant):
+        (JSC::B3::Const32Value::checkNegConstant):
+        (JSC::B3::Const32Value::divConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::checkMulConstant):
+        (JSC::B3::Const64Value::checkNegConstant):
+        (JSC::B3::Const64Value::divConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.h:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::~PatchpointSpecial):
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        (JSC::B3::PatchpointSpecial::isValid):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::append):
+        (JSC::B3::StackmapValue::appendSomeRegister):
+        (JSC::B3::StackmapValue::setConstrainedChild):
+        * b3/B3StackmapValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::checkMulConstant):
+        (JSC::B3::Value::checkNegConstant):
+        (JSC::B3::Value::divConstant):
+        * b3/B3Value.h:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirArg.cpp:
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isAnyUse):
+        (JSC::B3::Air::Arg::isEarlyUse):
+        (JSC::B3::Air::Arg::isLateUse):
+        (JSC::B3::Air::Arg::isDef):
+        (JSC::B3::Air::Arg::forEachTmp):
+        (JSC::B3::Air::Arg::isUse): Deleted.
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::build):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::allocate):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::hash):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::InterferenceEdge::dump):
+        (JSC::B3::Air::addSpillAndFillToProgram):
+        (JSC::B3::Air::iteratedRegisterCoalescingOnType):
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::Liveness::Liveness):
+        (JSC::B3::Air::Liveness::LocalCalc::LocalCalc):
+        (JSC::B3::Air::Liveness::LocalCalc::live):
+        (JSC::B3::Air::Liveness::LocalCalc::takeLive):
+        (JSC::B3::Air::Liveness::LocalCalc::execute):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters):
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/testb3.cpp:
+        (JSC::B3::testMulArg):
+        (JSC::B3::testMulArgStore):
+        (JSC::B3::testMulAddArg):
+        (JSC::B3::testMulArgs):
+        (JSC::B3::testComplex):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCheckLessThan):
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testCheckAddImmCommute):
+        (JSC::B3::testCheckAddImmSomeRegister):
+        (JSC::B3::testCheckAdd):
+        (JSC::B3::testCheckAdd64):
+        (JSC::B3::testCheckSubImm):
+        (JSC::B3::testCheckSubBadImm):
+        (JSC::B3::testCheckSub):
+        (JSC::B3::testCheckSub64):
+        (JSC::B3::testCheckNeg):
+        (JSC::B3::testCheckNeg64):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul2):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::run):
+
+2015-11-17  Filip Pizlo  <fpizlo@apple.com>
+
         Air should lay out code optimally
         https://bugs.webkit.org/show_bug.cgi?id=150478
 

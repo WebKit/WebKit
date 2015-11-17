@@ -44,19 +44,20 @@ template<typename FunctionType> class ScopedLambda;
 template<typename ResultType, typename... ArgumentTypes>
 class ScopedLambda<ResultType (ArgumentTypes...)> {
 public:
-    ScopedLambda(ResultType (*impl)(void* arg, ArgumentTypes&&...) = nullptr, void* arg = nullptr)
+    ScopedLambda(ResultType (*impl)(void* arg, ArgumentTypes...) = nullptr, void* arg = nullptr)
         : m_impl(impl)
         , m_arg(arg)
     {
     }
-    
-    ResultType operator()(ArgumentTypes&&... arguments) const
+
+    template<typename... PassedArgumentTypes>
+    ResultType operator()(PassedArgumentTypes&&... arguments) const
     {
-        return m_impl(m_arg, std::forward<ArgumentTypes>(arguments)...);
+        return m_impl(m_arg, std::forward<PassedArgumentTypes>(arguments)...);
     }
 
 private:
-    ResultType (*m_impl)(void* arg, ArgumentTypes&&...);
+    ResultType (*m_impl)(void* arg, ArgumentTypes...);
     void *m_arg;
 };
 
@@ -72,10 +73,9 @@ public:
     }
 
 private:
-    static ResultType implFunction(void* argument, ArgumentTypes&&... arguments)
+    static ResultType implFunction(void* argument, ArgumentTypes... arguments)
     {
-        return static_cast<ScopedLambdaFunctor*>(argument)->m_functor(
-            std::forward<ArgumentTypes>(arguments)...);
+        return static_cast<ScopedLambdaFunctor*>(argument)->m_functor(arguments...);
     }
 
     Functor m_functor;

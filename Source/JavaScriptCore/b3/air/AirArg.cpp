@@ -181,6 +181,9 @@ void printInternal(PrintStream& out, Arg::Role role)
     case Arg::UseAddr:
         out.print("UseAddr");
         return;
+    case Arg::LateUse:
+        out.print("LateUse");
+        return;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
