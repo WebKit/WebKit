@@ -1,3 +1,22 @@
+2015-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        A window with a hung tab waits 5s before closing
+        https://bugs.webkit.org/show_bug.cgi?id=151319
+
+        Reviewed by Anders Carlsson.
+
+        I manually tested that I did not break unload events upon window close
+        by running run-webkit-httpd and invoking a 1x1 image load of
+        http://127.0.0.1:8000/navigation/resources/save-Ping.php from an unload
+        handler.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::tryClose): Use the sudden termination bit to
+        close without waiting for a response.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::isSuddenTerminationEnabled): Expose the bit.
+
 2015-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Web Process crashes on reparenting a WebView with AC mode on

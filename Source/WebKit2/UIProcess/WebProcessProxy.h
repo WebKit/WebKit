@@ -131,6 +131,7 @@ public:
 
     void enableSuddenTermination();
     void disableSuddenTermination();
+    bool isSuddenTerminationEnabled() { return !m_numberOfTimesSuddenTerminationWasDisabled; }
 
     void requestTermination();
 

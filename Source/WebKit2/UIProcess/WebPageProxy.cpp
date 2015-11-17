@@ -861,6 +861,11 @@ bool WebPageProxy::tryClose()
     if (!isValid())
         return true;
 
+    // Close without delay if the process allows it. Our goal is to terminate
+    // the process, so we check a per-process status bit.
+    if (m_process->isSuddenTerminationEnabled())
+        return true;
+
     m_process->send(Messages::WebPage::TryClose(), m_pageID);
     m_process->responsivenessTimer().start();
     return false;
