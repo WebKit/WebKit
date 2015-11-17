@@ -45,6 +45,23 @@
 #import <mach/mach_port.h>
 #endif
 
+#if __has_include(<WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>)
+#import <WebKitAdditions/RemoteLayerBackingStoreAdditions.mm>
+#else
+
+namespace WebKit {
+
+#if USE(IOSURFACE)
+static WebCore::IOSurface::Format bufferFormat(bool)
+{
+    return WebCore::IOSurface::Format::RGBA;
+}
+#endif // USE(IOSURFACE)
+
+} // namespace WebKit
+
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -186,10 +203,9 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (!m_frontBuffer.surface)
-            m_frontBuffer.surface = IOSurface::create(expandedScaledSize, ColorSpaceSRGB);
+            m_frontBuffer.surface = IOSurface::create(expandedScaledSize, ColorSpaceSRGB, bufferFormat(m_isOpaque));
 
         setBufferVolatility(BufferType::Front, false);
-
         return;
     }
 #endif

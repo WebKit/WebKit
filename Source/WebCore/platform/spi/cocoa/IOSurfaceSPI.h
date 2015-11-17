@@ -56,6 +56,12 @@ extern const CFStringRef kIOSurfaceCacheMode;
 extern const CFStringRef kIOSurfaceHeight;
 extern const CFStringRef kIOSurfacePixelFormat;
 extern const CFStringRef kIOSurfaceWidth;
+extern const CFStringRef kIOSurfacePlaneWidth;
+extern const CFStringRef kIOSurfacePlaneHeight;
+extern const CFStringRef kIOSurfacePlaneBytesPerRow;
+extern const CFStringRef kIOSurfacePlaneOffset;
+extern const CFStringRef kIOSurfacePlaneSize;
+extern const CFStringRef kIOSurfacePlaneInfo;
 
 size_t IOSurfaceAlignProperty(CFStringRef property, size_t value);
 IOSurfaceRef IOSurfaceCreate(CFDictionaryRef properties);

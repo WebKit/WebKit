@@ -41,7 +41,9 @@ public:
     enum class Format {
         RGBA,
 #if PLATFORM(IOS)
-        YUV422
+        YUV422,
+        RGB10,
+        RGB10A8,
 #endif
     };
 
