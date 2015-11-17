@@ -90,41 +90,29 @@ static bool canUseForText(const RenderText& textRenderer, const Font& font)
     return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font);
 }
 
-bool canUseFor(const RenderBlockFlow& flow)
+static bool canUseForFontAndText(const RenderBlockFlow& flow)
 {
-    if (!flow.frame().settings().simpleLineLayoutEnabled())
+    // We assume that all lines have metrics based purely on the primary font.
+    const auto& style = flow.style();
+    auto& primaryFont = style.fontCascade().primaryFont();
+    if (primaryFont.isLoading())
         return false;
-    if (!flow.firstChild())
-        return false;
-    // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
-    // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
-    for (const auto& renderer : childrenOfType<RenderObject>(flow)) {
-        if (is<RenderText>(renderer))
-            continue;
-        if (is<RenderLineBreak>(renderer) && !downcast<RenderLineBreak>(renderer).isWBR() && renderer.style().clear() == CNONE)
-            continue;
-        return false;
+    for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
+        if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
+            || textRenderer.isSVGInlineText())
+            return false;
+        if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
+            return false;
+        if (!canUseForText(textRenderer, primaryFont))
+            return false;
     }
-    if (!flow.isHorizontalWritingMode())
+    return true;
+}
+
+static bool canUseForStyle(const RenderStyle& style)
+{
+    if (style.textOverflow())
         return false;
-    if (flow.flowThreadState() != RenderObject::NotInsideFlowThread)
-        return false;
-    // Printing does pagination without a flow thread.
-    if (flow.document().paginated())
-        return false;
-    if (flow.hasOutline())
-        return false;
-    if (flow.isRubyText() || flow.isRubyBase())
-        return false;
-    if (flow.parent()->isDeprecatedFlexibleBox())
-        return false;
-    // FIXME: Implementation of wrap=hard looks into lineboxes.
-    if (flow.parent()->isTextArea() && flow.parent()->element()->fastHasAttribute(HTMLNames::wrapAttr))
-        return false;
-    // FIXME: Placeholders do something strange.
-    if (is<RenderTextControl>(*flow.parent()) && downcast<RenderTextControl>(*flow.parent()).textFormControlElement().placeholderElement())
-        return false;
-    const RenderStyle& style = flow.style();
     if (style.textDecorationsInEffect() != TextDecorationNone)
         return false;
     if (style.textAlign() == JUSTIFY)
@@ -156,11 +144,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.textShadow())
         return false;
-    if (style.textOverflow() || (flow.isAnonymousBlock() && flow.parent()->style().textOverflow()))
-        return false;
     if (style.hasPseudoStyle(FIRST_LINE) || style.hasPseudoStyle(FIRST_LETTER))
-        return false;
-    else if (flow.isAnonymous() && flow.firstLineBlock())
         return false;
     if (style.hasTextCombine())
         return false;
@@ -174,7 +158,57 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (style.trailingWord() != TrailingWord::Auto)
         return false;
 #endif
+    if (style.fontCascade().primaryFont().isSVGFont())
+        return false;
+    return true;
+}
 
+bool canUseFor(const RenderBlockFlow& flow)
+{
+    if (!flow.frame().settings().simpleLineLayoutEnabled())
+        return false;
+    if (!flow.parent())
+        return false;
+    if (!flow.firstChild())
+        return false;
+    if (flow.flowThreadState() != RenderObject::NotInsideFlowThread)
+        return false;
+    if (!flow.isHorizontalWritingMode())
+        return false;
+    if (flow.hasOutline())
+        return false;
+    if (flow.isRubyText() || flow.isRubyBase())
+        return false;
+    // Printing does pagination without a flow thread.
+    if (flow.document().paginated())
+        return false;
+    if (flow.isAnonymous() && flow.firstLineBlock())
+        return false;
+    if (flow.isAnonymousBlock() && flow.parent()->style().textOverflow())
+        return false;
+    if (flow.parent()->isDeprecatedFlexibleBox())
+        return false;
+    // FIXME: Placeholders do something strange.
+    if (is<RenderTextControl>(*flow.parent()) && downcast<RenderTextControl>(*flow.parent()).textFormControlElement().placeholderElement())
+        return false;
+    // FIXME: Implementation of wrap=hard looks into lineboxes.
+    if (flow.parent()->isTextArea() && flow.parent()->element()->fastHasAttribute(HTMLNames::wrapAttr))
+        return false;
+    // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
+    // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
+    for (const auto* child = flow.firstChild(); child;) {
+        if (is<RenderText>(*child)) {
+            child = child->nextSibling();
+            continue;
+        }
+        if (is<RenderLineBreak>(child) && !downcast<RenderLineBreak>(*child).isWBR() && child->style().clear() == CNONE) {
+            child = child->nextSibling();
+            continue;
+        }
+        return false;
+    }
+    if (!canUseForStyle(flow.style()))
+        return false;
     // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
     if (flow.containsFloats()) {
         float minimumWidthNeeded = std::numeric_limits<float>::max();
@@ -195,21 +229,8 @@ bool canUseFor(const RenderBlockFlow& flow)
             }
         }
     }
-    if (style.fontCascade().primaryFont().isSVGFont())
+    if (!canUseForFontAndText(flow))
         return false;
-    // We assume that all lines have metrics based purely on the primary font.
-    auto& primaryFont = style.fontCascade().primaryFont();
-    if (primaryFont.isLoading())
-        return false;
-    for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
-        if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
-            || textRenderer.isSVGInlineText())
-            return false;
-        if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
-            return false;
-        if (!canUseForText(textRenderer, primaryFont))
-            return false;
-    }
     return true;
 }
 
