@@ -74,6 +74,8 @@ public:
     virtual void seekDouble(double) override;
     virtual double durationDouble() const override;
 
+    virtual float currentTime() const override;
+
     virtual bool paused() const;
 
     virtual MediaPlayer::NetworkState networkState() const;
@@ -387,6 +389,8 @@ private:
         virtual void onMediaPlayerDeleted() override;
 
         void paintCurrentFrame(GraphicsContext&, const FloatRect&);
+
+        float currentTime();
 
     private:
         ULONG m_refCount { 0 };
