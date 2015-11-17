@@ -91,6 +91,8 @@ LValue Output::load(TypedPointer pointer, LType refType)
 
 void Output::store(LValue value, TypedPointer pointer, LType refType)
 {
+    if (refType == refFloat)
+        value = buildFPCast(m_builder, value, floatType);
     LValue result = set(value, intToPtr(pointer.value(), refType));
     pointer.heap().decorateInstruction(result, *m_heaps);
 }

@@ -224,6 +224,8 @@ public:
     LValue intToPtr(LValue value, LType type) { return buildIntToPtr(m_builder, value, type); }
     LValue ptrToInt(LValue value, LType type) { return buildPtrToInt(m_builder, value, type); }
     LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
+
+    LValue fround(LValue doubleValue);
     
     // Hilariously, the #define machinery in the stdlib means that this method is actually called
     // __builtin_alloca. So far this appears benign. :-|
@@ -249,7 +251,7 @@ public:
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
-    LValue loadFloat(TypedPointer pointer) { return load(pointer, refFloat); }
+    LValue loadFloatToDouble(TypedPointer pointer) { return buildFPCast(m_builder, load(pointer, refFloat), doubleType); }
     LValue loadDouble(TypedPointer pointer) { return load(pointer, refDouble); }
     void store16(LValue value, TypedPointer pointer) { store(value, pointer, ref16); }
     void store32(LValue value, TypedPointer pointer) { store(value, pointer, ref32); }
@@ -461,6 +463,12 @@ inline LValue Output::load16ZeroExt32(TypedPointer pointer)
 {
     LValue value16 = load(pointer, ref16);
     return zeroExt(value16, int32);
+}
+
+inline LValue Output::fround(LValue doubleValue)
+{
+    LValue floatValue = buildFPCast(m_builder, doubleValue, floatType);
+    return buildFPCast(m_builder, floatValue, doubleType);
 }
 
 #define FTL_NEW_BLOCK(output, nameArguments) \

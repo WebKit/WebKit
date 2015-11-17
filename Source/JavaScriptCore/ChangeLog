@@ -1,3 +1,21 @@
+2015-11-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove FTLOutput operations that act directly on floats
+        https://bugs.webkit.org/show_bug.cgi?id=151342
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithFRound):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutByVal):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::store):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::loadFloatToDouble):
+        (JSC::FTL::Output::fround):
+        (JSC::FTL::Output::loadFloat): Deleted.
+
 2015-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         Add a FTL_USES_B3 compile-time setting and set it to 0.

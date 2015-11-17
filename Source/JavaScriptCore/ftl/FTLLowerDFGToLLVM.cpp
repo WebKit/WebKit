@@ -2035,8 +2035,7 @@ private:
     
     void compileArithFRound()
     {
-        LValue floatValue = m_out.fpCast(lowDouble(m_node->child1()), m_out.floatType);
-        setDouble(m_out.fpCast(floatValue, m_out.doubleType));
+        setDouble(m_out.fround(lowDouble(m_node->child1())));
     }
     
     void compileArithNegate()
@@ -2789,7 +2788,7 @@ private:
                 LValue result;
                 switch (type) {
                 case TypeFloat32:
-                    result = m_out.fpCast(m_out.loadFloat(pointer), m_out.doubleType);
+                    result = m_out.loadFloatToDouble(pointer);
                     break;
                 case TypeFloat64:
                     result = m_out.loadDouble(pointer);
@@ -3062,7 +3061,7 @@ private:
                     LValue value = lowDouble(child3);
                     switch (type) {
                     case TypeFloat32:
-                        valueToStore = m_out.fpCast(value, m_out.floatType);
+                        valueToStore = value;
                         refType = m_out.refFloat;
                         break;
                     case TypeFloat64:
