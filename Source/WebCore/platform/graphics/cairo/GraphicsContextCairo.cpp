@@ -311,7 +311,8 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
         }
         const double dashedLine[2] = { static_cast<double>(patternWidth), static_cast<double>(patternWidth) };
         cairo_set_dash(cairoContext, dashedLine, 2, patternOffset);
-    }
+    } else
+        setSourceRGBAFromColor(cairoContext, strokeColor);
 
     FloatPoint p1 = point1;
     FloatPoint p2 = point2;
