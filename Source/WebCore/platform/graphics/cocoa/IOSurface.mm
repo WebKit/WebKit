@@ -51,15 +51,11 @@ inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSi
     return cachedSurface;
 }
 
-std::unique_ptr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace, Format pixelFormat)
+std::unique_ptr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace)
 {
-    // YUV422 IOSurfaces do not go in the pool.
-    if (pixelFormat == Format::RGBA) {
-        if (auto cachedSurface = surfaceFromPool(size, size, colorSpace))
-            return cachedSurface;
-    }
-
-    return std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, pixelFormat));
+    if (auto cachedSurface = surfaceFromPool(size, size, colorSpace))
+        return cachedSurface;
+    return std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace));
 }
 
 std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, ColorSpace colorSpace)
@@ -96,30 +92,17 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     return surface;
 }
 
-IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
+IOSurface::IOSurface(IntSize size, ColorSpace colorSpace)
     : m_colorSpace(colorSpace)
-    , m_format(format)
     , m_size(size)
     , m_contextSize(size)
 {
     unsigned pixelFormat = 'BGRA';
-    unsigned bytesPerPixel = 4;
     unsigned bytesPerElement = 4;
-    unsigned elementWidth = 1;
-
-#if PLATFORM(IOS)
-    if (format == Format::YUV422) {
-        pixelFormat = 'yuvf';
-        bytesPerPixel = 2;
-        elementWidth = 2;
-        bytesPerElement = 4;
-    }
-#endif
-
     int width = size.width();
     int height = size.height();
 
-    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
+    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
     ASSERT(bytesPerRow);
 
     m_totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
@@ -133,17 +116,15 @@ IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
         (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
         (id)kIOSurfaceAllocSize: @(m_totalBytes),
 #if PLATFORM(IOS)
-        (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
+        (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache)
 #endif
-        (id)kIOSurfaceElementWidth: @(elementWidth),
-        (id)kIOSurfaceElementHeight: @(1)
     };
 
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
 }
 
 IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colorSpace)
-    : IOSurface(size, colorSpace, Format::RGBA)
+    : IOSurface(size, colorSpace)
 {
     ASSERT(contextSize.width() <= size.width());
     ASSERT(contextSize.height() <= size.height());
@@ -152,7 +133,6 @@ IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colorSpace)
 
 IOSurface::IOSurface(IOSurfaceRef surface, ColorSpace colorSpace)
     : m_colorSpace(colorSpace)
-    , m_format(Format::RGBA)
     , m_surface(surface)
 {
     m_size = IntSize(IOSurfaceGetWidth(surface), IOSurfaceGetHeight(surface));
@@ -247,40 +227,5 @@ void IOSurface::releaseGraphicsContext()
     m_graphicsContext = nullptr;
     m_cgContext = nullptr;
 }
-
-#if PLATFORM(IOS)
- void IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format format, std::function<void(std::unique_ptr<WebCore::IOSurface>)> callback)
-{
-    static IOSurfaceAcceleratorRef accelerator;
-    if (!accelerator) {
-        IOSurfaceAcceleratorCreate(nullptr, nullptr, &accelerator);
-
-        auto runLoopSource = IOSurfaceAcceleratorGetRunLoopSource(accelerator);
-        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopDefaultMode);
-    }
-
-    if (inSurface->format() == format) {
-        callback(WTF::move(inSurface));
-        return;
-    }
-
-    auto destinationSurface = IOSurface::create(inSurface->size(), inSurface->colorSpace(), format);
-    IOSurfaceRef destinationIOSurfaceRef = destinationSurface->surface();
-
-    IOSurfaceAcceleratorCompletion completion;
-    completion.completionRefCon = new std::function<void(std::unique_ptr<IOSurface>)> (WTF::move(callback));
-    completion.completionRefCon2 = destinationSurface.release();
-    completion.completionCallback = [](void *completionRefCon, IOReturn, void * completionRefCon2) {
-        auto* callback = static_cast<std::function<void(std::unique_ptr<WebCore::IOSurface>)>*>(completionRefCon);
-        auto destinationSurface = std::unique_ptr<IOSurface>(static_cast<IOSurface*>(completionRefCon2));
-        
-        (*callback)(WTF::move(destinationSurface));
-        delete callback;
-    };
-
-    IOReturn ret = IOSurfaceAcceleratorTransformSurface(accelerator, inSurface->surface(), destinationIOSurfaceRef, nullptr, nullptr, &completion, nullptr, nullptr);
-    ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
-}
-#endif // PLATFORM(IOS)
 
 #endif // USE(IOSURFACE)

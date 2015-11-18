@@ -115,7 +115,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
     webPageProxy.willRecordNavigationSnapshot(item);
 
     RefPtr<ViewSnapshot> snapshot = webPageProxy.takeViewSnapshot();
-    if (!snapshot)
+    if (!snapshot || !snapshot->hasImage())
         return;
 
     snapshot->setRenderTreeSize(webPageProxy.renderTreeSize());
