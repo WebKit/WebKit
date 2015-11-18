@@ -235,6 +235,38 @@ augmentsArguments5(20);
 })();
 
 
+// Test proper variable binding.
+;(function() {
+    function foo(a = function() { return b; }, {b}) {
+        assert(a() === 34);
+        assert(b === 34);
+        b = 50;
+        assert(a() === 50);
+        assert(b === 50);
+    }
+    function bar(a = function(x) { b = x; }, {b}) {
+        assert(b === 34);
+        a(50);
+        assert(b === 50);
+    }
+    function baz(f1 = function(x) { b = x; }, f2 = function() { return b; }, {b}) {
+        var b;
+        assert(b === 34);
+        assert(f2() === 34);
+        f1(50);
+        assert(b === 34);
+        assert(f2() === 50);
+    }
+    noInline(foo);
+    noInline(bar);
+    noInline(baz);
+    for (let i = 0; i < 1000; i++) {
+        foo(undefined, {b: 34});
+        bar(undefined, {b: 34});
+        baz(undefined, undefined, {b: 34});
+    }
+})();
+
 
 // Syntax errors.
 shouldThrowSyntaxError("function b(a = 20, a = 40) {}");

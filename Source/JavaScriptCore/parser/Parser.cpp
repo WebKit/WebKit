@@ -667,7 +667,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier& name, int depth, JSToken token, AssignmentContext bindingContext, const Identifier** duplicateIdentifier)
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier& name, JSToken token, AssignmentContext bindingContext, const Identifier** duplicateIdentifier)
 {
     ASSERT(!name.isNull());
     
@@ -685,41 +685,22 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
             failIfTrue(declarationResult & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare a lexical variable twice: '", name.impl(), "'");
         }
     } else if (kind == DestructureToParameters) {
-        if (depth) {
-            auto bindingResult = declareBoundParameter(&name);
-            if (bindingResult == Scope::StrictBindingFailed && strictMode()) {
-                semanticFailIfTrue(isEvalOrArguments(&name), "Cannot destructure to a parameter name '", name.impl(), "' in strict mode");
-                if (m_lastFunctionName && name == *m_lastFunctionName)
-                    semanticFail("Cannot destructure to '", name.impl(), "' as it shadows the name of a strict mode function");
-                semanticFailureDueToKeyword("bound parameter name");
-                if (hasDeclaredParameter(name))
-                    semanticFail("Cannot destructure to '", name.impl(), "' as it has already been declared");
-                semanticFail("Cannot bind to a parameter named '", name.impl(), "' in strict mode");
-            }
-            if (bindingResult == Scope::BindingFailed) {
-                semanticFailureDueToKeyword("bound parameter name");
-                if (hasDeclaredParameter(name))
-                    semanticFail("Cannot destructure to '", name.impl(), "' as it has already been declared");
-                semanticFail("Cannot destructure to a parameter named '", name.impl(), "'");
-            }
-        } else {
-            DeclarationResultMask declarationResult = declareParameter(&name);
-            if ((declarationResult & DeclarationResult::InvalidStrictMode) && strictMode()) {
-                semanticFailIfTrue(isEvalOrArguments(&name), "Cannot destructure to a parameter name '", name.impl(), "' in strict mode");
-                if (m_lastFunctionName && name == *m_lastFunctionName)
-                    semanticFail("Cannot declare a parameter named '", name.impl(), "' as it shadows the name of a strict mode function");
-                semanticFailureDueToKeyword("parameter name");
-                if (hasDeclaredParameter(name))
-                    semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode as it has already been declared");
-                semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode");
-            }
-            if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration) {
-                // It's not always an error to define a duplicate parameter.
-                // It's only an error when there are default parameter values or destructuring parameters.
-                // We note this value now so we can check it later.
-                if (duplicateIdentifier)
-                    *duplicateIdentifier = &name;
-            }
+        DeclarationResultMask declarationResult = declareParameter(&name);
+        if ((declarationResult & DeclarationResult::InvalidStrictMode) && strictMode()) {
+            semanticFailIfTrue(isEvalOrArguments(&name), "Cannot destructure to a parameter name '", name.impl(), "' in strict mode");
+            if (m_lastFunctionName && name == *m_lastFunctionName)
+                semanticFail("Cannot declare a parameter named '", name.impl(), "' as it shadows the name of a strict mode function");
+            semanticFailureDueToKeyword("parameter name");
+            if (hasDeclaredParameter(name))
+                semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode as it has already been declared");
+            semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode");
+        }
+        if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration) {
+            // It's not always an error to define a duplicate parameter.
+            // It's only an error when there are default parameter values or destructuring parameters.
+            // We note this value now so we can check it later.
+            if (duplicateIdentifier)
+                *duplicateIdentifier = &name;
         }
     }
 
@@ -879,7 +860,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 if (consume(COLON))
                     innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 else
-                    innerPattern = createBindingPattern(context, kind, exportType, *propertyName, depth + 1, identifierToken, bindingContext, duplicateIdentifier);
+                    innerPattern = createBindingPattern(context, kind, exportType, *propertyName, identifierToken, bindingContext, duplicateIdentifier);
             } else {
                 JSTokenType tokenType = m_token.m_type;
                 switch (m_token.m_type) {
@@ -935,7 +916,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             failWithMessage("Expected a parameter pattern or a ')' in parameter list");
         }
         failIfTrue(match(LET) && (kind == DestructureToLet || kind == DestructureToConst), "Can't use 'let' as an identifier name for a LexicalDeclaration");
-        pattern = createBindingPattern(context, kind, exportType, *m_token.m_data.ident, depth, m_token, bindingContext, duplicateIdentifier);
+        pattern = createBindingPattern(context, kind, exportType, *m_token.m_data.ident, m_token, bindingContext, duplicateIdentifier);
         next();
         break;
     }

@@ -424,26 +424,6 @@ struct Scope {
         return result;
     }
     
-    enum BindingResult {
-        BindingFailed,
-        StrictBindingFailed,
-        BindingSucceeded
-    };
-    BindingResult declareBoundParameter(const Identifier* ident)
-    {
-        bool isArgumentsIdent = isArguments(m_vm, ident);
-        auto addResult = m_declaredVariables.add(ident->impl());
-        addResult.iterator->value.setIsVar(); // Treat destructuring parameters as "var"s.
-        bool isValidStrictMode = addResult.isNewEntry && !isEval(m_vm, ident) && !isArgumentsIdent;
-        m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-    
-        if (isArgumentsIdent)
-            m_shadowsArguments = true;
-        if (!addResult.isNewEntry)
-            return BindingFailed;
-        return isValidStrictMode ? BindingSucceeded : StrictBindingFailed;
-    }
-
     void getUsedVariables(IdentifierSet& usedVariables)
     {
         usedVariables.swap(m_usedVariables);
@@ -1054,7 +1034,6 @@ private:
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode() { return currentScope()->isValidStrictMode(); }
     DeclarationResultMask declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
-    Scope::BindingResult declareBoundParameter(const Identifier* ident) { return currentScope()->declareBoundParameter(ident); }
     bool breakIsValid()
     {
         ScopeRef current = currentScope();
@@ -1159,7 +1138,7 @@ private:
     template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, ExportType, bool& forLoopConstDoesNotHaveInitializer);
     template <class TreeBuilder> TreeSourceElements parseArrowFunctionSingleExpressionBodySourceElements(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier&, int depth, JSToken, AssignmentContext, const Identifier** duplicateIdentifier);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier&, JSToken, AssignmentContext, const Identifier** duplicateIdentifier);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createAssignmentElement(TreeBuilder&, TreeExpression&, const JSTextPosition&, const JSTextPosition&);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
