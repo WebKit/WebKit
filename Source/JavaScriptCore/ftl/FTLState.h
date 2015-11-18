@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3Procedure.h"
 #include "DFGCommon.h"
 #include "DFGGraph.h"
 #include "FTLAbbreviations.h"
@@ -64,6 +65,9 @@ public:
     // None of these things is owned by State. It is the responsibility of
     // FTL phases to properly manage the lifecycle of the module and function.
     DFG::Graph& graph;
+#if FTL_USES_B3
+    std::unique_ptr<B3::Procedure> proc;
+#endif
     LContext context;
     LModule module;
     LValue function;

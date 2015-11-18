@@ -1,3 +1,11 @@
+2015-11-17  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL::State should be able to refer to B3::Procedure
+
+        Rubber stamped by Benjamin Poulain.
+
+        * ftl/FTLState.h:
+
 2015-11-17  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add an empty FTLOutput for B3 that crashes on any operation
