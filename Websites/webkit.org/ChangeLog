@@ -1,3 +1,11 @@
+2015-11-18  Jonathan Davis  <jond@apple.com>
+
+        Adding a maintenance file for the old WordPress blog.
+
+        Reviewed by Timothy Hatcher.
+
+        * blog/wp-content/maintenance.php: Added.
+
 2015-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add images needed for shadow DOM blog post
