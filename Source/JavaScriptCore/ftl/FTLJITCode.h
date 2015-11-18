@@ -58,28 +58,36 @@ class JITCode : public JSC::JITCode {
 public:
     JITCode();
     ~JITCode();
-    
+
     CodePtr addressForCall(ArityCheckMode) override;
     void* executableAddressAtOffset(size_t offset) override;
     void* dataAddressAtOffset(size_t offset) override;
     unsigned offsetOf(void* pointerIntoCode) override;
     size_t size() override;
     bool contains(void*) override;
-    
+
+#if FTL_USES_B3
+    void initializeB3Code(CodeRef);
+#else
     void initializeExitThunks(CodeRef);
     void addHandle(PassRefPtr<ExecutableMemoryHandle>);
     void addDataSection(PassRefPtr<DataSection>);
-    void initializeArityCheckEntrypoint(CodeRef);
+#endif
     void initializeAddressForCall(CodePtr);
+    void initializeArityCheckEntrypoint(CodeRef);
     
     void validateReferences(const TrackedReferences&) override;
 
     RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
-    
+
+#if FTL_USES_B3
+    CodeRef b3Code() const { return m_b3Code; }
+#else
     const Vector<RefPtr<ExecutableMemoryHandle>>& handles() const { return m_handles; }
     const Vector<RefPtr<DataSection>>& dataSections() const { return m_dataSections; }
     
     CodePtr exitThunks();
+#endif
     
     JITCode* ftl() override;
     DFG::CommonData* dfgCommon() override;
@@ -91,11 +99,17 @@ public:
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:
+    CodePtr m_addressForCall;
+#if FTL_USES_B3
+    CodeRef m_b3Code;
+#else
     Vector<RefPtr<DataSection>> m_dataSections;
     Vector<RefPtr<ExecutableMemoryHandle>> m_handles;
-    CodePtr m_addressForCall;
+#endif
     CodeRef m_arityCheckEntrypoint;
+#if !FTL_USES_B3
     CodeRef m_exitThunks;
+#endif
 };
 
 } } // namespace JSC::FTL

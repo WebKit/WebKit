@@ -1,3 +1,56 @@
+2015-11-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Implement the B3 equivalent of FTLCompile
+        https://bugs.webkit.org/show_bug.cgi?id=151370
+
+        Reviewed by Benjamin Poulain.
+
+        This adds a B3 version of FTLCompile and gets the data structures related to installing an FTL
+        compilation (i.e. the finalizer and JITCode) to be aware of B3. That requires stubbing a lot of stuff
+        out and also simplifying a lot of code around having everything inside a single contiguous chunk of
+        JIT code rather than some opaque JIT code handles plus miscellaneous side-codes. This compiles but
+        crashes because lowering isn't done yet.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addDataSection):
+        (JSC::B3::Procedure::calleeSaveRegisters):
+        (JSC::B3::Procedure::addValueIndex):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::code):
+        * ftl/FTLB3Compile.cpp: Added.
+        (JSC::FTL::compile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExceptionHandlerManager.cpp:
+        (JSC::FTL::ExceptionHandlerManager::callOperationExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::lazySlowPathExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::getByIdOSRExit):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::~JITCode):
+        (JSC::FTL::JITCode::initializeB3Code):
+        (JSC::FTL::JITCode::initializeExitThunks):
+        (JSC::FTL::JITCode::addDataSection):
+        (JSC::FTL::JITCode::initializeAddressForCall):
+        (JSC::FTL::JITCode::initializeArityCheckEntrypoint):
+        (JSC::FTL::JITCode::addressForCall):
+        (JSC::FTL::JITCode::contains):
+        (JSC::FTL::JITCode::exitThunks):
+        (JSC::FTL::JITCode::ftl):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::b3Code):
+        (JSC::FTL::JITCode::handles):
+        (JSC::FTL::JITCode::dataSections):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::codeSize):
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::gatherRegistersToSpillForCallIfException):
+
 2015-11-18  Saam barati  <sbarati@apple.com>
 
         There is a bug when default parameter values are mixed with destructuring parameter values

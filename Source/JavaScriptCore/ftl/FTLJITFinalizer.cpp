@@ -49,18 +49,23 @@ JITFinalizer::~JITFinalizer()
 size_t JITFinalizer::codeSize()
 {
     size_t result = 0;
-    
+
+#if FTL_USES_B3
+    if (b3CodeLinkBuffer)
+        result += b3CodeLinkBuffer->size();
+#else // FTL_USES_B3
     if (exitThunksLinkBuffer)
         result += exitThunksLinkBuffer->size();
-    if (entrypointLinkBuffer)
-        result += entrypointLinkBuffer->size();
     if (sideCodeLinkBuffer)
         result += sideCodeLinkBuffer->size();
     if (handleExceptionsLinkBuffer)
         result += handleExceptionsLinkBuffer->size();
-    
     for (unsigned i = jitCode->handles().size(); i--;)
         result += jitCode->handles()[i]->sizeInBytes();
+#endif // FTL_USES_B3
+    
+    if (entrypointLinkBuffer)
+        result += entrypointLinkBuffer->size();
     
     return result;
 }
@@ -73,11 +78,25 @@ bool JITFinalizer::finalize()
 
 bool JITFinalizer::finalizeFunction()
 {
+#if FTL_USES_B3
+    for (OSRExitCompilationInfo& info : osrExit) {
+        b3CodeLinkBuffer->link(
+            info.m_thunkJump,
+            CodeLocationLabel(
+                m_plan.vm.getCTIStub(osrExitGenerationThunkGenerator).code()));
+    }
+    
+    jitCode->initializeB3Code(
+        FINALIZE_DFG_CODE(
+            *b3CodeLinkBuffer,
+            ("FTL B3 code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data())));
+
+#else // FTL_USES_B3
     for (unsigned i = jitCode->handles().size(); i--;) {
         MacroAssembler::cacheFlush(
             jitCode->handles()[i]->start(), jitCode->handles()[i]->sizeInBytes());
     }
-    
+
     if (exitThunksLinkBuffer) {
         for (unsigned i = 0; i < osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = osrExit[i];
@@ -124,6 +143,7 @@ bool JITFinalizer::finalizeFunction()
             *outOfLineCodeInfos[i].m_linkBuffer,
             ("FTL out of line code for %s", outOfLineCodeInfos[i].m_codeDescription)).executableMemory());
     }
+#endif // FTL_USES_B3
 
     jitCode->initializeArityCheckEntrypoint(
         FINALIZE_DFG_CODE(

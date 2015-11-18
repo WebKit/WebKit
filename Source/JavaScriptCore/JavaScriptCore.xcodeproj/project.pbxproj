@@ -530,6 +530,7 @@
 		0FB3878E1BFBC44D00E3AB1E /* AirBlockWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB3878B1BFBC44D00E3AB1E /* AirBlockWorklist.h */; };
 		0FB3878F1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB3878C1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.cpp */; };
 		0FB387901BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB3878D1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h */; };
+		0FB387921BFD31A100E3AB1E /* FTLB3Compile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB387911BFD31A100E3AB1E /* FTLB3Compile.cpp */; };
 		0FB438A319270B1D00E1FBC9 /* StructureSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB438A219270B1D00E1FBC9 /* StructureSet.cpp */; };
 		0FB4FB731BC843140025CA5A /* FTLLazySlowPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB4FB701BC843140025CA5A /* FTLLazySlowPath.cpp */; };
 		0FB4FB741BC843140025CA5A /* FTLLazySlowPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4FB711BC843140025CA5A /* FTLLazySlowPath.h */; };
@@ -2582,6 +2583,7 @@
 		0FB3878B1BFBC44D00E3AB1E /* AirBlockWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirBlockWorklist.h; path = b3/air/AirBlockWorklist.h; sourceTree = "<group>"; };
 		0FB3878C1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirOptimizeBlockOrder.cpp; path = b3/air/AirOptimizeBlockOrder.cpp; sourceTree = "<group>"; };
 		0FB3878D1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirOptimizeBlockOrder.h; path = b3/air/AirOptimizeBlockOrder.h; sourceTree = "<group>"; };
+		0FB387911BFD31A100E3AB1E /* FTLB3Compile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLB3Compile.cpp; path = ftl/FTLB3Compile.cpp; sourceTree = "<group>"; };
 		0FB438A219270B1D00E1FBC9 /* StructureSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureSet.cpp; sourceTree = "<group>"; };
 		0FB4B51016B3A964003F696B /* DFGMinifiedID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGMinifiedID.h; path = dfg/DFGMinifiedID.h; sourceTree = "<group>"; };
 		0FB4B51916B62772003F696B /* DFGAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAllocator.h; path = dfg/DFGAllocator.h; sourceTree = "<group>"; };
@@ -4354,6 +4356,7 @@
 				0FEA0A1A1708B00700BB722C /* FTLAbstractHeapRepository.h */,
 				0F485323187DFDEC0083B687 /* FTLAvailableRecovery.cpp */,
 				0F485324187DFDEC0083B687 /* FTLAvailableRecovery.h */,
+				0FB387911BFD31A100E3AB1E /* FTLB3Compile.cpp */,
 				269D636D1BFBE5D000101B1D /* FTLB3Output.h */,
 				0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */,
 				0FEA09FF170513DB00BB722C /* FTLCapabilities.h */,
@@ -8720,6 +8723,7 @@
 				E3D239C81B829C1C00BBEF67 /* JSModuleEnvironment.cpp in Sources */,
 				E318CBC01B8AEF5100A2929D /* JSModuleNamespaceObject.cpp in Sources */,
 				E39DA4A61B7E8B7C0084F33A /* JSModuleRecord.cpp in Sources */,
+				0FB387921BFD31A100E3AB1E /* FTLB3Compile.cpp in Sources */,
 				E33E8D1C1B9013C300346B52 /* JSNativeStdFunction.cpp in Sources */,
 				A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */,
 				147F39D4107EC37600427A48 /* JSObject.cpp in Sources */,

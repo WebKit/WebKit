@@ -46,6 +46,11 @@ void ExceptionHandlerManager::addNewExit(uint32_t stackmapRecordIndex, size_t os
 
 CodeLocationLabel ExceptionHandlerManager::callOperationExceptionTarget(uint32_t stackmapRecordIndex)
 {
+#if FTL_USES_B3
+    UNUSED_PARAM(stackmapRecordIndex);
+    RELEASE_ASSERT_NOT_REACHED();
+    return CodeLocationLabel();
+#else // FTL_USES_B3
     auto findResult = m_map.find(stackmapRecordIndex);
     if (findResult == m_map.end())
         return CodeLocationLabel();
@@ -55,10 +60,16 @@ CodeLocationLabel ExceptionHandlerManager::callOperationExceptionTarget(uint32_t
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[osrExitIndex];
     RELEASE_ASSERT(info.m_callOperationExceptionOSRExitEntrance.isSet());
     return m_state.finalizer->exitThunksLinkBuffer->locationOf(info.m_callOperationExceptionOSRExitEntrance);
+#endif // FTL_USES_B3
 }
 
 CodeLocationLabel ExceptionHandlerManager::lazySlowPathExceptionTarget(uint32_t stackmapRecordIndex)
 {
+#if FTL_USES_B3
+    UNUSED_PARAM(stackmapRecordIndex);
+    RELEASE_ASSERT_NOT_REACHED();
+    return CodeLocationLabel();
+#else // FTL_USES_B3
     auto findResult = m_map.find(stackmapRecordIndex);
     if (findResult == m_map.end())
         return CodeLocationLabel();
@@ -68,6 +79,7 @@ CodeLocationLabel ExceptionHandlerManager::lazySlowPathExceptionTarget(uint32_t 
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[osrExitIndex];
     RELEASE_ASSERT(info.m_thunkLabel.isSet());
     return m_state.finalizer->exitThunksLinkBuffer->locationOf(info.m_thunkLabel);
+#endif // FTL_USES_B3
 }
 
 OSRExit* ExceptionHandlerManager::getByIdOSRExit(uint32_t stackmapRecordIndex)

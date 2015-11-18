@@ -42,14 +42,25 @@ JITCode::~JITCode()
     if (FTL::shouldDumpDisassembly()) {
         dataLog("Destroying FTL JIT code at ");
         CommaPrinter comma;
+#if FTL_USES_B3
+        dataLog(comma, m_b3Code);
+        dataLog(comma, m_arityCheckEntrypoint);
+#else
         for (auto& handle : m_handles)
             dataLog(comma, pointerDump(handle.get()));
         dataLog(comma, pointerDump(m_arityCheckEntrypoint.executableMemory()));
         dataLog(comma, pointerDump(m_exitThunks.executableMemory()));
         dataLog("\n");
+#endif
     }
 }
 
+#if FTL_USES_B3
+void JITCode::initializeB3Code(CodeRef b3Code)
+{
+    m_b3Code = b3Code;
+}
+#else // FTL_USES_B3
 void JITCode::initializeExitThunks(CodeRef exitThunks)
 {
     m_exitThunks = exitThunks;
@@ -64,15 +75,16 @@ void JITCode::addDataSection(PassRefPtr<DataSection> dataSection)
 {
     m_dataSections.append(dataSection);
 }
-
-void JITCode::initializeArityCheckEntrypoint(CodeRef entrypoint)
-{
-    m_arityCheckEntrypoint = entrypoint;
-}
+#endif // FTL_USES_B3
 
 void JITCode::initializeAddressForCall(CodePtr address)
 {
     m_addressForCall = address;
+}
+
+void JITCode::initializeArityCheckEntrypoint(CodeRef entrypoint)
+{
+    m_arityCheckEntrypoint = entrypoint;
 }
 
 JITCode::CodePtr JITCode::addressForCall(ArityCheckMode arityCheck)
@@ -121,10 +133,12 @@ bool JITCode::contains(void*)
     return false;
 }
 
+#if !FTL_USES_B3
 JITCode::CodePtr JITCode::exitThunks()
 {
     return m_exitThunks.code();
 }
+#endif
 
 JITCode* JITCode::ftl()
 {

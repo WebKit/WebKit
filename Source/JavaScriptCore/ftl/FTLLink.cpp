@@ -143,8 +143,11 @@ void link(State& state)
         dumpContext.dump(out, prefix);
         compilation->addDescription(Profiler::OriginStack(), out.toCString());
         out.reset();
-        
+
         out.print("    Disassembly:\n");
+#if FTL_USES_B3
+        out.print("        <not implemented yet>\n");
+#else
         for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
             if (state.codeSectionNames[i] != SECTION_NAME("text"))
                 continue;
@@ -154,6 +157,7 @@ void link(State& state)
                 MacroAssemblerCodePtr(handle->start()), handle->sizeInBytes(),
                 "      ", out, LLVMSubset);
         }
+#endif
         compilation->addDescription(Profiler::OriginStack(), out.toCString());
         out.reset();
         

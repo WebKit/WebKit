@@ -137,10 +137,17 @@ OSRExit::OSRExit(OSRExitDescriptor& descriptor, uint32_t stackmapRecordIndex)
 
 CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
 {
+#if FTL_USES_B3
+    return CodeLocationJump(
+        reinterpret_cast<char*>(
+            ftlCodeBlock->jitCode()->ftl()->b3Code().code().dataLocation()) +
+        m_patchableCodeOffset);
+#else // FTL_USES_B3
     return CodeLocationJump(
         reinterpret_cast<char*>(
             ftlCodeBlock->jitCode()->ftl()->exitThunks().dataLocation()) +
         m_patchableCodeOffset);
+#endif // FTL_USES_B3
 }
 
 void OSRExit::gatherRegistersToSpillForCallIfException(StackMaps& stackmaps, StackMaps::Record& record)

@@ -31,6 +31,7 @@
 #include "B3Origin.h"
 #include "B3Type.h"
 #include "PureNaN.h"
+#include "RegisterAtOffsetList.h"
 #include <wtf/Bag.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -221,6 +222,8 @@ public:
     std::unique_ptr<OpaqueByproducts> takeByproducts() { return WTF::move(m_byproducts); }
 
     Air::Code& code() { return *m_code; }
+
+    const RegisterAtOffsetList& calleeSaveRegisters();
 
 private:
     friend class BlockInsertionSet;

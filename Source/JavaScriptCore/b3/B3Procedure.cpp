@@ -148,6 +148,11 @@ void* Procedure::addDataSection(size_t size)
     return result;
 }
 
+const RegisterAtOffsetList& Procedure::calleeSaveRegisters()
+{
+    return code().calleeSaveRegisters();
+}
+
 size_t Procedure::addValueIndex()
 {
     if (m_valueIndexFreeList.isEmpty()) {

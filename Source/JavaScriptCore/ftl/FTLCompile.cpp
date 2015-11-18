@@ -28,7 +28,7 @@
 #include "config.h"
 #include "FTLCompile.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "CodeBlockWithJITType.h"
 #include "CCallHelpers.h"
@@ -1318,5 +1318,5 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && FTL_USES_B3
 
