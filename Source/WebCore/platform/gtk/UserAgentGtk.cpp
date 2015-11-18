@@ -113,9 +113,7 @@ static const String platformVersionForUAString()
 
 static const char* versionForUAString()
 {
-#define MAKE_VERSION(major, minor) #major "." #minor
-    return MAKE_VERSION(USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION);
-#undef MAKE_VERSION
+    return USER_AGENT_GTK_MAJOR_VERSION "." USER_AGENT_GTK_MINOR_VERSION;
 }
 
 static String buildUserAgentString(const UserAgentQuirks& quirks)

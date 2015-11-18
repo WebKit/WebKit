@@ -1,3 +1,14 @@
+2015-11-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r192459): [GTK] User agent string is broken after r192459
+        https://bugs.webkit.org/show_bug.cgi?id=151347
+
+        Reviewed by Žan Doberšek.
+
+        Pass UA version numbers as strings to the build.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-11-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build and make PluginProcess executable
