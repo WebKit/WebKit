@@ -2188,6 +2188,13 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler()
     if (!m_schedulerThread.isValid())
         return S_OK;
 
+    {
+        // Clearing the sample queue before we post the thread terminate message will make sure
+        // the thread exits quickly, and we will not be stuck waiting for it to finish.
+        LockHolder locker(m_lock);
+        m_scheduledSamples.clear();
+    }
+
     // Terminate the scheduler thread
     ::PostThreadMessage(m_threadID, EventTerminate, 0, 0);
 
@@ -2198,9 +2205,6 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler()
 
     m_schedulerThread.clear();
     m_flushEvent.clear();
-
-    // Throw away samples
-    m_scheduledSamples.clear();
 
     // Clear previously set timer resolution.
     timeEndPeriod(1);
