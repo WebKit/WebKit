@@ -35,7 +35,7 @@ namespace Air { class Code; }
 
 // This lowers the current B3 procedure to an Air code.
 
-void lowerToAir(Procedure&, Air::Code&);
+void lowerToAir(Procedure&);
 
 } } // namespace JSC::B3
 

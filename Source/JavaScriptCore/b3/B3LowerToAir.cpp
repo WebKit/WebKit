@@ -61,12 +61,12 @@ const bool verbose = false;
 
 class LowerToAir {
 public:
-    LowerToAir(Procedure& procedure, Code& code)
+    LowerToAir(Procedure& procedure)
         : m_valueToTmp(procedure.values().size())
         , m_blockToBlock(procedure.size())
         , m_useCounts(procedure)
         , m_procedure(procedure)
-        , m_code(code)
+        , m_code(procedure.code())
     {
     }
 
@@ -1745,10 +1745,10 @@ private:
 
 } // anonymous namespace
 
-void lowerToAir(Procedure& procedure, Code& code)
+void lowerToAir(Procedure& procedure)
 {
     PhaseScope phaseScope(procedure, "lowerToAir");
-    LowerToAir lowerToAir(procedure, code);
+    LowerToAir lowerToAir(procedure);
     lowerToAir.run();
 }
 

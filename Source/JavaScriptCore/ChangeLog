@@ -1,5 +1,52 @@
 2015-11-17  Filip Pizlo  <fpizlo@apple.com>
 
+        B3::generate should separate out the final Air codegen, so that it can be done outside the Graph safepoint
+        https://bugs.webkit.org/show_bug.cgi?id=151371
+
+        Reviewed by Benjamin Poulain.
+
+        One of the FTL optimizations is that while the expensive backend is running, we are at a "graph
+        safepoint" that allows the VM to do GCs and other dangerous and time-sensitive things without
+        waiting for the compilation thread. While in the safepoint, we cannot do anything that touches
+        anything other than the backend's state. That means, for example, that we wouldn't be able to run
+        any of the stackmap generation callbacks, since those need to mess with DFG state.
+
+        That means that we need to separate the B3 pipeline into "preparation" and "generation".
+        Preparation is all of the expensive stuff: all B3 phases, lowering to Air, all Air phases.
+        Generation is just the part where we turn fully lowered Air into machine code. Generation also
+        happens to be the part where we call stackmap generation callbacks. In other words, preparation
+        is exactly the stuff that should go into the graph safepoint, while generation is the stuff that
+        we want to do after we emerge from the safepoint.
+
+        Because the tests were using the higher-level Compilation API, I didn't have to change any test
+        code. The FTL will not use that high-level API.
+
+        * b3/B3Compilation.cpp:
+        (JSC::B3::Compilation::Compilation):
+        * b3/B3Generate.cpp:
+        (JSC::B3::prepareForGeneration):
+        (JSC::B3::generate):
+        (JSC::B3::generateToAir):
+        * b3/B3Generate.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::lowerToAir):
+        * b3/B3LowerToAir.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::takeByproducts):
+        (JSC::B3::Procedure::code):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::proc):
+        (JSC::B3::Air::Code::lastPhaseName):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        (JSC::B3::Air::generate):
+        * b3/air/AirGenerate.h:
+
+2015-11-17  Filip Pizlo  <fpizlo@apple.com>
+
         FTL::State should be able to refer to B3::Procedure
 
         Rubber stamped by Benjamin Poulain.

@@ -42,16 +42,20 @@
 
 namespace JSC { namespace B3 {
 
-void generate(Procedure& procedure, CCallHelpers& jit, unsigned optLevel)
+void prepareForGeneration(Procedure& procedure, unsigned optLevel)
 {
-    TimingScope timingScope("generate");
+    TimingScope timingScope("prepareForGeneration");
 
-    Air::Code code(procedure);
-    generateToAir(procedure, code, optLevel);
-    Air::generate(code, jit);
+    generateToAir(procedure, optLevel);
+    Air::prepareForGeneration(procedure.code());
 }
 
-void generateToAir(Procedure& procedure, Air::Code& code, unsigned optLevel)
+void generate(Procedure& procedure, CCallHelpers& jit)
+{
+    Air::generate(procedure.code(), jit);
+}
+
+void generateToAir(Procedure& procedure, unsigned optLevel)
 {
     TimingScope timingScope("generateToAir");
     
@@ -87,7 +91,7 @@ void generateToAir(Procedure& procedure, Air::Code& code, unsigned optLevel)
         dataLog(procedure);
     }
 
-    lowerToAir(procedure, code);
+    lowerToAir(procedure);
 }
 
 } } // namespace JSC::B3

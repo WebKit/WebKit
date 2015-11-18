@@ -50,7 +50,6 @@ class Code {
     WTF_MAKE_NONCOPYABLE(Code);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Code(Procedure&);
     ~Code();
 
     Procedure& proc() { return m_proc; }
@@ -299,6 +298,10 @@ public:
     const char* lastPhaseName() const { return m_lastPhaseName; }
 
 private:
+    friend class ::JSC::B3::Procedure;
+    
+    Code(Procedure&);
+
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
     Vector<std::unique_ptr<StackSlot>> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;

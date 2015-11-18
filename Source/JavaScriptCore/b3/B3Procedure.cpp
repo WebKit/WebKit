@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCode.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BasicBlockUtils.h"
 #include "B3BlockWorklist.h"
@@ -40,6 +41,7 @@ namespace JSC { namespace B3 {
 Procedure::Procedure()
     : m_lastPhaseName("initial")
     , m_byproducts(std::make_unique<OpaqueByproducts>())
+    , m_code(new Air::Code(*this))
 {
 }
 

@@ -37,9 +37,11 @@ namespace B3 { namespace Air {
 class Code;
 
 // This takes an Air::Code that hasn't had any stack allocation and optionally hasn't had any
-// register allocation and does both of those things, and then generates the code using the given
-// CCallHelpers instance. Note that this may call callbacks in the supplied code as it is
-// generating.
+// register allocation and does both of those things.
+void prepareForGeneration(Code&);
+
+// This generates the code using the given CCallHelpers instance. Note that this may call callbacks
+// in the supplied code as it is generating.
 void generate(Code&, CCallHelpers&);
 
 } } } // namespace JSC::B3::Air

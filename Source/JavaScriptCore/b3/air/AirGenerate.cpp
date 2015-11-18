@@ -46,9 +46,9 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-void generate(Code& code, CCallHelpers& jit)
+void prepareForGeneration(Code& code)
 {
-    TimingScope timingScope("Air::generate");
+    TimingScope timingScope("Air::prepareForGeneration");
     
     // We don't expect the incoming code to have predecessors computed.
     code.resetReachability();
@@ -106,8 +106,11 @@ void generate(Code& code, CCallHelpers& jit)
         dataLog("Air after ", code.lastPhaseName(), ", before generation:\n");
         dataLog(code);
     }
+}
 
-    TimingScope codeGenTimingScope("Air::generate backend");
+void generate(Code& code, CCallHelpers& jit)
+{
+    TimingScope timingScope("Air::generate");
 
     // And now, we generate code.
     jit.emitFunctionPrologue();

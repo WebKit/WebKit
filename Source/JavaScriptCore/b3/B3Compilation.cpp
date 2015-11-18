@@ -31,6 +31,7 @@
 #include "B3Generate.h"
 #include "B3OpaqueByproducts.h"
 #include "B3Procedure.h"
+#include "B3TimingScope.h"
 #include "CCallHelpers.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
@@ -39,8 +40,11 @@ namespace JSC { namespace B3 {
 
 Compilation::Compilation(VM& vm, Procedure& proc, unsigned optLevel)
 {
+    TimingScope timingScope("Compilation");
+    
     CCallHelpers jit(&vm);
-    generate(proc, jit, optLevel);
+    prepareForGeneration(proc, optLevel);
+    generate(proc, jit);
     LinkBuffer linkBuffer(vm, jit, nullptr);
 
     m_codeRef = FINALIZE_CODE(linkBuffer, ("B3::Compilation"));

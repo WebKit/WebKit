@@ -45,6 +45,8 @@ class BlockInsertionSet;
 class OpaqueByproducts;
 class Value;
 
+namespace Air { class Code; }
+
 class Procedure {
     WTF_MAKE_NONCOPYABLE(Procedure);
     WTF_MAKE_FAST_ALLOCATED;
@@ -218,6 +220,8 @@ public:
     // that API, then you don't have to worry about this.
     std::unique_ptr<OpaqueByproducts> takeByproducts() { return WTF::move(m_byproducts); }
 
+    Air::Code& code() { return *m_code; }
+
 private:
     friend class BlockInsertionSet;
     
@@ -228,6 +232,7 @@ private:
     Vector<size_t> m_valueIndexFreeList;
     const char* m_lastPhaseName;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
+    std::unique_ptr<Air::Code> m_code;
 };
 
 } } // namespace JSC::B3
