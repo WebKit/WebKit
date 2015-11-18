@@ -1,43 +1,43 @@
 var Headers = [
     {
-        text: Strings["TEXT_TESTNAME"][0],
+        text: Strings.text.testName,
         width: 27,
         children: []
     },
     {
-        text: Strings["TEXT_SCORE"][0],
+        text: Strings.text.score,
         width: 7,
         children: []
     },
     {
-        text: Strings["TEXT_EXPERIMENTS"][0],
+        text: Strings.text.experiments.complexity,
         width: 27,
         children:
         [
-            { text: Strings["TEXT_MEASUREMENTS"][0], width: 7, children: [] },
-            { text: Strings["TEXT_MEASUREMENTS"][1], width: 7, children: [] },
-            { text: Strings["TEXT_MEASUREMENTS"][2], width: 7, children: [] },
-            { text: Strings["TEXT_MEASUREMENTS"][3], width: 6, children: [] },
+            { text: Strings.text.measurements.average, width: 7, children: [] },
+            { text: Strings.text.measurements.concern, width: 7, children: [] },
+            { text: Strings.text.measurements.stdev, width: 7, children: [] },
+            { text: Strings.text.measurements.percent, width: 6, children: [] },
         ]
     },
     {
-        text: Strings["TEXT_EXPERIMENTS"][1],
+        text: Strings.text.experiments.frameRate,
         width: 24,
         children:
         [
-            { text: Strings["TEXT_MEASUREMENTS"][0], width: 6, children: [] },
-            { text: Strings["TEXT_MEASUREMENTS"][1], width: 6, children: [] },
-            { text: Strings["TEXT_MEASUREMENTS"][2], width: 6, children: [] },
-            { text: Strings["TEXT_MEASUREMENTS"][3], width: 6, children: [] },
+            { text: Strings.text.measurements.average, width: 6, children: [] },
+            { text: Strings.text.measurements.concern, width: 6, children: [] },
+            { text: Strings.text.measurements.stdev, width: 6, children: [] },
+            { text: Strings.text.measurements.percent, width: 6, children: [] },
         ]
     },
     {
-        text: Strings["TEXT_SAMPLES"][0],
+        text: Strings.text.samples,
         width: 15,
         children:
         [
-            { text: Strings["TEXT_RESULTS"][1], width: 8, children: [] },
-            { text: Strings["TEXT_RESULTS"][2], width: 7, children: [] },
+            { text: Strings.text.results.graph, width: 8, children: [] },
+            { text: Strings.text.results.json, width: 7, children: [] },
         ]
     }
 ];

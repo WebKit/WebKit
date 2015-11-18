@@ -128,22 +128,23 @@ Sampler.prototype =
     {
         var results = {};
          
-        results[Strings["JSON_SCORE"]] = this.experiments[0].score(Experiment.defaults.CONCERN);
+        results[Strings.json.score] = this.experiments[0].score(Experiment.defaults.CONCERN);
            
         if (statistics) {
             this.experiments.forEach(function(experiment, index) {
-                results[Strings["JSON_EXPERIMENTS"][index]] = {};
-                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][0]] = experiment.mean();
-                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][1]] = experiment.concern(Experiment.defaults.CONCERN);
-                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][2]] = experiment.standardDeviation();
-                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][3]] = experiment.percentage();
+                var jsonExperiment = !index ? Strings.json.experiments.complexity : Strings.json.experiments.frameRate;
+                results[jsonExperiment] = {};
+                results[jsonExperiment][Strings.json.measurements.average] = experiment.mean();
+                results[jsonExperiment][Strings.json.measurements.concern] = experiment.concern(Experiment.defaults.CONCERN);
+                results[jsonExperiment][Strings.json.measurements.stdev] = experiment.standardDeviation();
+                results[jsonExperiment][Strings.json.measurements.percent] = experiment.percentage()
             });
         }
         
         if (graph) {
-            results[Strings["JSON_SAMPLES"][0]] = {};
-            results[Strings["JSON_SAMPLES"][0]][Strings["JSON_GRAPH"][0]] = this.samples;
-            results[Strings["JSON_SAMPLES"][0]][Strings["JSON_GRAPH"][1]] = this.samplingTimeOffset;
+            results[Strings.json.samples] = {};
+            results[Strings.json.samples][Strings.json.graph.points] = this.samples;
+            results[Strings.json.samples][Strings.json.graph.samplingTimeOffset] = this.samplingTimeOffset;
         }
         
         return results;

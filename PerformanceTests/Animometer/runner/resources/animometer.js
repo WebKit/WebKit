@@ -44,10 +44,10 @@ window.benchmarkRunnerClient = {
     didFinishLastIteration: function ()
     {
         var json = this._resultsDashboard.toJSON(true, true);
-        this.score = json[Strings["JSON_SCORE"]];
-        this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]], this.options);
-        sectionsManager.showJSON("json", json[Strings["JSON_RESULTS"][0]][0]);
-        suitesManager.updateLocalStorageFromJSON(json[Strings["JSON_RESULTS"][0]][0]);
+        this.score = json[Strings.json.score];
+        this._resultsTable.showIterations(json[Strings.json.results.iterations], this.options);
+        sectionsManager.showJSON("json", json[Strings.json.results.iterations][0]);
+        suitesManager.updateLocalStorageFromJSON(json[Strings.json.results.iterations][0]);
         benchmarkController.showResults();
     }
 }
@@ -368,13 +368,13 @@ window.suitesManager =
     
     updateLocalStorageFromJSON: function(iterationResults)
     {
-        for (var suiteName in iterationResults[Strings["JSON_RESULTS"][1]]) {
-            var suiteResults = iterationResults[Strings["JSON_RESULTS"][1]][suiteName];
+        for (var suiteName in iterationResults[Strings.json.results.suites]) {
+            var suiteResults = iterationResults[Strings.json.results.suites][suiteName];
 
-            for (var testName in suiteResults[Strings["JSON_RESULTS"][2]]) {
-                var testResults = suiteResults[Strings["JSON_RESULTS"][2]][testName];
-                var data = testResults[Strings["JSON_EXPERIMENTS"][0]]
-                var complexity = Math.round(data[Strings["JSON_MEASUREMENTS"][0]]);
+            for (var testName in suiteResults[Strings.json.results.tests]) {
+                var testResults = suiteResults[Strings.json.results.tests][testName];
+                var data = testResults[Strings.json.experiments.complexity];
+                var complexity = Math.round(data[Strings.json.measurements.average]);
 
                 var value = { checked: true, complexity: complexity };
                 localStorage.setItem(this._localStorageNameForTest(suiteName, testName), JSON.stringify(value));
@@ -417,26 +417,26 @@ window.benchmarkController =
     
     showResults: function()
     {
-        sectionsManager.showScore("results", Strings["TEXT_RESULTS"][0]);
+        sectionsManager.showScore("results", Strings.text.results.results);
         sectionsManager.showSection("results", true);
     },
     
     showJson: function()
     {
-        sectionsManager.showScore("json", Strings["TEXT_RESULTS"][0]);
+        sectionsManager.showScore("json", Strings.text.results.results);
         sectionsManager.showSection("json", true);
     },
     
     showTestGraph: function(testName, axes, samples, samplingTimeOffset)
     {
-        sectionsManager.showTestName("test-graph", Strings["TEXT_RESULTS"][1], testName);
+        sectionsManager.showTestName("test-graph", Strings.text.results.graph, testName);
         sectionsManager.showSection("test-graph", true);
         graph("section#test-graph > data", new Insets(20, 50, 20, 50), axes, samples, samplingTimeOffset);
     },
 
     showTestJSON: function(testName, json)
     {
-        sectionsManager.showTestName("test-json", Strings["TEXT_RESULTS"][1], testName);
+        sectionsManager.showTestName("test-json", Strings.text.results.graph, testName);
         sectionsManager.showJSON("test-json", json);
         sectionsManager.showSection("test-json", true);
     }

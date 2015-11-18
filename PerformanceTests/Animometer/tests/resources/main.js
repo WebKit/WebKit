@@ -9,7 +9,11 @@ BenchmarkState.stages = {
     WARMING_UP: 0,
     SAMPLING: 1,
     FINISHED: 2,
-    messages: [ "Warming up", "Sampling", "Finished" ]
+    messages: [ 
+        Strings.text.runningState.warmingup,
+        Strings.text.runningState.sampling,
+        Strings.text.runningState.finished
+    ]
 }
 
 BenchmarkState.prototype =

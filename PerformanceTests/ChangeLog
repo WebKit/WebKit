@@ -1,5 +1,38 @@
 2015-11-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Reorganize the graphics benchmark string table
+        https://bugs.webkit.org/show_bug.cgi?id=151334
+
+        Reviewed by Simon Fraser.
+        
+        Make the graphics benchmark string table be an object of sub-objects. Each
+        sub-object represents an associative array, the key is the string name and
+        the value is the string data.
+
+        * Animometer/resources/extensions.js:
+        (ResultsDashboard.prototype.toJSON):
+        (ResultsTable.prototype._showGraph):
+        (ResultsTable.prototype._showJSON):
+        (ResultsTable.prototype._isNoisyMeasurement):
+        (ResultsTable.prototype._isNoisyTest):
+        (ResultsTable.prototype._showTest):
+        (ResultsTable.prototype._showSuite):
+        (ResultsTable.prototype._showIteration):
+        * Animometer/resources/sampler.js:
+        (Sampler.prototype.toJSON):
+        * Animometer/resources/strings.js:
+        * Animometer/runner/resources/animometer.js:
+        (window.benchmarkRunnerClient.didFinishLastIteration):
+        (window.suitesManager.updateLocalStorageFromJSON):
+        (window.benchmarkController.showResults):
+        (window.benchmarkController.showJson):
+        (window.benchmarkController.showTestGraph):
+        (window.benchmarkController.showTestJSON):
+        * Animometer/runner/resources/tests.js:
+        * Animometer/tests/resources/main.js:
+
+2015-11-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Disable flattening the stage iframe of the graphics benchmark when running on iOS
         https://bugs.webkit.org/show_bug.cgi?id=151361
 

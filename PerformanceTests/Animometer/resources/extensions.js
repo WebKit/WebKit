@@ -219,24 +219,24 @@ ResultsDashboard.prototype =
                 for (var testName in suiteSamplers) {
                     var sampler = suiteSamplers[testName];
                     testsResults[testName] = sampler.toJSON(statistics, graph);
-                    testsScores.push(testsResults[testName][Strings["JSON_SCORE"]]);
+                    testsScores.push(testsResults[testName][Strings.json.score]);
                 }
 
                 suitesResults[suiteName] =  {};
-                suitesResults[suiteName][Strings["JSON_SCORE"]] = Statistics.geometricMean(testsScores);
-                suitesResults[suiteName][Strings["JSON_RESULTS"][2]] = testsResults;
-                suitesScores.push(suitesResults[suiteName][Strings["JSON_SCORE"]]);
+                suitesResults[suiteName][Strings.json.score] = Statistics.geometricMean(testsScores);
+                suitesResults[suiteName][Strings.json.results.tests] = testsResults;
+                suitesScores.push(suitesResults[suiteName][Strings.json.score]);
             }
             
             iterationsResults[index] = {};
-            iterationsResults[index][Strings["JSON_SCORE"]] = Statistics.geometricMean(suitesScores);
-            iterationsResults[index][Strings["JSON_RESULTS"][1]] = suitesResults;
-            iterationsScores.push(iterationsResults[index][Strings["JSON_SCORE"]]);
+            iterationsResults[index][Strings.json.score] = Statistics.geometricMean(suitesScores);
+            iterationsResults[index][Strings.json.results.suites] = suitesResults;
+            iterationsScores.push(iterationsResults[index][Strings.json.score]);
         });
 
         var json = {};
-        json[Strings["JSON_SCORE"]] = Statistics.sampleMean(iterationsScores.length, iterationsScores.reduce(function(a, b) { return a * b; }));
-        json[Strings["JSON_RESULTS"][0]] = iterationsResults;
+        json[Strings.json.score] = Statistics.sampleMean(iterationsScores.length, iterationsScores.reduce(function(a, b) { return a * b; }));
+        json[Strings.json.results.iterations] = iterationsResults;
         return json;
     }
 }
@@ -324,7 +324,7 @@ ResultsTable.prototype =
     
     _showGraph: function(row, testName, testResults)
     {
-        var data = testResults[Strings["JSON_SAMPLES"][0]];
+        var data = testResults[Strings.json.samples];
         if (!data) {
             this._showEmptyCell(row, "");
             return;
@@ -334,18 +334,18 @@ ResultsTable.prototype =
         var button = DocumentExtension.createElement("button", { class: "small-button" }, td);
 
         button.addEventListener("click", function() {
-            var samples = data[Strings["JSON_GRAPH"][0]];
-            var samplingTimeOffset = data[Strings["JSON_GRAPH"][1]];
-            var axes = Strings["TEXT_EXPERIMENTS"];
+            var samples = data[Strings.json.graph.points];
+            var samplingTimeOffset = data[Strings.json.graph.samplingTimeOffset];
+            var axes = [Strings.text.experiments.complexity, Strings.text.experiments.frameRate];
             benchmarkController.showTestGraph(testName, axes, samples, samplingTimeOffset);
         });
             
-        button.textContent = Strings["TEXT_RESULTS"][1] + "...";
+        button.textContent = Strings.text.results.graph + "...";
     },
 
     _showJSON: function(row, testName, testResults)
     {
-        var data = testResults[Strings["JSON_SAMPLES"][0]];
+        var data = testResults[Strings.json.samples];
         if (!data) {
             this._showEmptyCell(row, "");
             return;
@@ -358,29 +358,29 @@ ResultsTable.prototype =
             benchmarkController.showTestJSON(testName, testResults);
         });
             
-        button.textContent = Strings["TEXT_RESULTS"][2] + "...";
+        button.textContent = Strings.text.results.json + "...";
     },
     
-    _isNoisyMeasurement: function(index, data, measurement, options)
+    _isNoisyMeasurement: function(experiment, data, measurement, options)
     {
         const percentThreshold = 10;
         const averageThreshold = 2;
          
-        if (measurement == Strings["JSON_MEASUREMENTS"][3])
-            return data[Strings["JSON_MEASUREMENTS"][3]] >= percentThreshold;
+        if (measurement == Strings.json.measurements.percent)
+            return data[Strings.json.measurements.percent] >= percentThreshold;
             
-        if (index == 1 && measurement == Strings["JSON_MEASUREMENTS"][0])
-            return Math.abs(data[Strings["JSON_MEASUREMENTS"][0]] - options["frame-rate"]) >= averageThreshold;
+        if (experiment == Strings.json.experiments.frameRate && measurement == Strings.json.measurements.average)
+            return Math.abs(data[Strings.json.measurements.average] - options["frame-rate"]) >= averageThreshold;
 
         return false;
     },
 
     _isNoisyTest: function(testResults, options)
     {
-        for (var index = 0; index < 2; ++index) {
-            var data = testResults[Strings["JSON_EXPERIMENTS"][index]];
+        for (var experiment in testResults) {
+            var data = testResults[experiment];
             for (var measurement in data) {
-                if (this._isNoisyMeasurement(index, data, measurement, options))
+                if (this._isNoisyMeasurement(experiment, data, measurement, options))
                     return true;
             }
         }
@@ -416,13 +416,13 @@ ResultsTable.prototype =
                 break;
 
             case 1:
-                var data = testResults[Strings["JSON_SCORE"][0]];
+                var data = testResults[Strings.json.score];
                 this._showFixedNumber(row, data, 2);
                 break;
 
             case 2:
             case 3:
-                var data = testResults[Strings["JSON_EXPERIMENTS"][index - 2]];
+                var data = testResults[index == 2 ? Strings.json.experiments.complexity : Strings.json.experiments.frameRate];
                 for (var measurement in data)
                     this._showFixedNumber(row, data[measurement], 2, this._isNoisyMeasurement(index - 2, data, measurement, options) ? className : "");
                 break;
@@ -437,17 +437,17 @@ ResultsTable.prototype =
 
     _showSuite: function(suiteName, suiteResults, options)
     {
-        for (var testName in suiteResults[Strings["JSON_RESULTS"][2]]) {
-            this._showTest(testName, suiteResults[Strings["JSON_RESULTS"][2]][testName], options);
+        for (var testName in suiteResults[Strings.json.results.tests]) {
+            this._showTest(testName, suiteResults[Strings.json.results.tests][testName], options);
         }
     },
     
     _showIteration : function(iterationResults, options)
     {
-        for (var suiteName in iterationResults[Strings["JSON_RESULTS"][1]]) {
-            if (suiteName != Object.keys(iterationResults[Strings["JSON_RESULTS"][1]])[0])
+        for (var suiteName in iterationResults[Strings.json.results.suites]) {
+            if (suiteName != Object.keys(iterationResults[Strings.json.results.suites])[0])
                 this._showEmptyRow();
-            this._showSuite(suiteName, iterationResults[Strings["JSON_RESULTS"][1]][suiteName], options);
+            this._showSuite(suiteName, iterationResults[Strings.json.results.suites][suiteName], options);
         }
     },
     
