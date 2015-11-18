@@ -1,3 +1,44 @@
+2015-11-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Breakpoint condition field should use CodeMirror
+        https://bugs.webkit.org/show_bug.cgi?id=151333
+
+        Reviewed by Joseph Pecoraro.
+
+        Updated breakpoint popover's condition field to use CodeMirror.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        Removed keyboard shortcuts. Now handled by CodeMirror.
+        (WebInspector.BreakpointPopoverController.prototype.completionControllerShouldAllowEscapeCompletion):
+        Prevent handling of escape to allow tabbing to next element.
+        (WebInspector.BreakpointPopoverController.prototype._createPopoverContent):
+        Create CodeMirror instance.
+        (WebInspector.BreakpointPopoverController.prototype._conditionCodeMirrorChanged):
+        (WebInspector.BreakpointPopoverController.prototype._conditionCodeMirrorBeforeChange):
+        Enforce single-line editor.
+        (WebInspector.BreakpointPopoverController.prototype._conditionCodeMirrorEscapeOrEnterKey):
+        (WebInspector.BreakpointPopoverController): Deleted.
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.editBreakpoint):
+        Removed condition element select. CodeMirror sets focus when popover content is created.
+        (WebInspector.BreakpointPopoverController.prototype._popoverConditionInputChanged): Deleted.
+        Replaced by BreakpointPopoverController.prototype._conditionCodeMirrorChanged.
+        (WebInspector.BreakpointPopoverController.prototype._popoverConditionInputKeyDown): Deleted.
+        Replaced by BreakpointPopoverController.prototype._conditionCodeMirrorEscapeOrEnterKey.
+
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (.edit-breakpoint-popover-condition):
+        (.edit-breakpoint-popover-condition > .CodeMirror):
+        (#edit-breakpoint-popover-condition): Deleted.
+        Replace selector id with class, styled CodeMirror element to match original input element.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-placeholder): Deleted.
+        Moved common CodeMirror placeholder text style to CodeMirrorOverrides.css.
+
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror .CodeMirror-placeholder):
+        Add placeholder style.
+
 2015-11-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Deleting a probe should remove probe breakpoint actions only.

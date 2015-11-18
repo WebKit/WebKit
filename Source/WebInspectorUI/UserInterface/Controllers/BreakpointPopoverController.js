@@ -32,8 +32,6 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
         this._breakpoint = null;
         this._popover = null;
         this._popoverContentElement = null;
-        this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
-        this._keyboardShortcutEnter = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Enter);
     }
 
     // Public
@@ -55,8 +53,6 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
             let bounds = WebInspector.Rect.rectFromClientRect(breakpointDisplayElement.getBoundingClientRect());
             bounds.origin.x -= 1; // Move the anchor left one pixel so it looks more centered.
             this._popover.present(bounds.pad(2), [WebInspector.RectEdge.MAX_Y]);
-
-            document.getElementById(WebInspector.BreakpointPopoverController.PopoverConditionInputId).select();
         }
 
         function removeBreakpoint()
@@ -104,6 +100,13 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
         }
     }
 
+    // CodeMirrorCompletionController delegate
+
+    completionControllerShouldAllowEscapeCompletion()
+    {
+        return false;
+    }
+
     // Private
 
     _createPopoverContent(breakpoint)
@@ -132,15 +135,41 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
         let conditionHeader = conditionRow.appendChild(document.createElement("th"));
         let conditionData = conditionRow.appendChild(document.createElement("td"));
         let conditionLabel = conditionHeader.appendChild(document.createElement("label"));
-        let conditionInput = conditionData.appendChild(document.createElement("input"));
-        conditionInput.id = WebInspector.BreakpointPopoverController.PopoverConditionInputId;
-        conditionInput.value = this._breakpoint.condition || "";
-        conditionInput.spellcheck = false;
-        conditionInput.addEventListener("change", this._popoverConditionInputChanged.bind(this));
-        conditionInput.addEventListener("keydown", this._popoverConditionInputKeyDown.bind(this));
-        conditionInput.placeholder = WebInspector.UIString("Conditional expression");
-        conditionLabel.setAttribute("for", conditionInput.id);
         conditionLabel.textContent = WebInspector.UIString("Condition");
+        let conditionEditorElement = conditionData.appendChild(document.createElement("div"));
+        conditionEditorElement.classList.add("edit-breakpoint-popover-condition", WebInspector.SyntaxHighlightedStyleClassName);
+
+        this._conditionCodeMirror = CodeMirror(conditionEditorElement, {
+            extraKeys: {Tab: false},
+            lineWrapping: false,
+            mode: "text/javascript",
+            matchBrackets: true,
+            placeholder: WebInspector.UIString("Conditional expression"),
+            scrollbarStyle: null,
+            value: this._breakpoint.condition || "",
+        });
+
+        let conditionCodeMirrorInputField = this._conditionCodeMirror.getInputField();
+        conditionCodeMirrorInputField.id = "codemirror-condition-input-field";
+        conditionLabel.setAttribute("for", conditionCodeMirrorInputField.id);
+
+        this._conditionCodeMirrorEscapeOrEnterKeyHandler = this._conditionCodeMirrorEscapeOrEnterKey.bind(this);
+        this._conditionCodeMirror.addKeyMap({
+            "Esc": this._conditionCodeMirrorEscapeOrEnterKeyHandler,
+            "Enter": this._conditionCodeMirrorEscapeOrEnterKeyHandler,
+        });
+
+        this._conditionCodeMirror.on("change", this._conditionCodeMirrorChanged.bind(this));
+        this._conditionCodeMirror.on("beforeChange", this._conditionCodeMirrorBeforeChange.bind(this));
+
+        let completionController = new WebInspector.CodeMirrorCompletionController(this._conditionCodeMirror, this);
+        completionController.addExtendedCompletionProvider("javascript", WebInspector.javaScriptRuntimeCompletionProvider);
+
+        // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
+        setTimeout(function() {
+            this._conditionCodeMirror.refresh();
+            this._conditionCodeMirror.focus();
+        }.bind(this), 0);
 
         // COMPATIBILITY (iOS 7): Debugger.setBreakpoint did not support options.
         if (DebuggerAgent.setBreakpoint.supports("options")) {
@@ -207,9 +236,21 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
         this._breakpoint.disabled = !event.target.checked;
     }
 
-    _popoverConditionInputChanged(event)
+    _conditionCodeMirrorChanged(codeMirror, change)
     {
-        this._breakpoint.condition = event.target.value;
+        this._breakpoint.condition = (codeMirror.getValue() || "").trim();
+    }
+
+    _conditionCodeMirrorBeforeChange(codeMirror, change)
+    {
+        let newText = change.text.join("").replace(/\n/g, "");
+        change.update(change.from, change.to, [newText]);
+        return true;
+    }
+
+    _conditionCodeMirrorEscapeOrEnterKey()
+    {
+        this._popover.dismiss();
     }
 
     _popoverIgnoreInputChanged(event)
@@ -228,15 +269,6 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
     _popoverToggleAutoContinueCheckboxChanged(event)
     {
         this._breakpoint.autoContinue = event.target.checked;
-    }
-
-    _popoverConditionInputKeyDown(event)
-    {
-        if (this._keyboardShortcutEsc.matchesEvent(event) || this._keyboardShortcutEnter.matchesEvent(event)) {
-            this._popover.dismiss();
-            event.stopPropagation();
-            event.preventDefault();
-        }
     }
 
     _popoverActionsCreateAddActionButton()
@@ -335,5 +367,4 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
 };
 
 WebInspector.BreakpointPopoverController.WidePopoverClassName = "wide";
-WebInspector.BreakpointPopoverController.PopoverConditionInputId = "edit-breakpoint-popover-condition";
 WebInspector.BreakpointPopoverController.HiddenStyleClassName = "hidden";

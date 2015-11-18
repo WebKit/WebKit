@@ -83,3 +83,9 @@
 .CodeMirror-linewidget {
     -webkit-user-select: text;
 }
+
+.CodeMirror .CodeMirror-placeholder {
+    font-family: -apple-system, sans-serif;
+    color: hsl(0, 0%, 65%);
+    text-indent: 0;
+}
