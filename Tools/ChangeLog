@@ -1,3 +1,41 @@
+2015-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [XvfbDriver] Fail to run all layout tests when X server started with -displayfd option
+        https://bugs.webkit.org/show_bug.cgi?id=151135
+
+        Reviewed by Darin Adler.
+
+        The XvfbDriver uses the x server command line to check the
+        displays that are currently in use. This doesn't work when X
+        server was started with -displayfd option. This option is used to let
+        the server find the display id available that is written to the
+        given file descriptor. With this option xorg doesn't need to
+        create the lock files in tmp either. The -displayfd option is also
+        available in Xvfb, so we could use it too. That would simplify the
+        code, fixing also race conditions between the check for available
+        displays and Xvfb opening the connection, we wouldn't need to wait
+        for 4 seconds after launching Xvfb, and all lock files we are
+        using won't be needed either.
+
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._xvfb_pipe): Helper function to create the pipe, only
+        needed to be overriden by unit tests.
+        (XvfbDriver._xvfb_read_display_id): Helper function to read from
+        the pipe, only needed to be overriden by unit tests.
+        (XvfbDriver._xvfb_run): Run Xvfb with -displayfd option, using a
+        pipe to read the display id.
+        (XvfbDriver._start): Call _xvfb_run() and remove the code to run
+        Xvfb for a given display.
+        (XvfbDriver.stop): Remove code to release and delete file locks.
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.make_driver):
+        (XvfbDriverTest.test_start):
+        (XvfbDriverTest.test_start_arbitrary_worker_number):
+        (XvfbDriverTest.test_stop):
+        (XvfbDriverTest.assertDriverStartSuccessful): Deleted.
+        (XvfbDriverTest): Deleted.
+        (XvfbDriverTest.test_stop.FakeXvfbProcess): Deleted.
+
 2015-11-17  Alexey Proskuryakov  <ap@apple.com>
 
         run-webkit-tests should not truncate persistent lines
