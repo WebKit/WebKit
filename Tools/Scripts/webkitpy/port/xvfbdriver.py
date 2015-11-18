@@ -72,6 +72,10 @@ class XvfbDriver(Driver):
 
         return int(display_id)
 
+    def _xvfb_close_pipe(self, pipe_fds):
+        os.close(pipe_fds[0])
+        os.close(pipe_fds[1])
+
     def _xvfb_run(self, environment):
         read_fd, write_fd = self._xvfb_pipe()
         run_xvfb = ["Xvfb", "-displayfd", str(write_fd), "-screen",  "0", "1024x768x%s" % self._xvfb_screen_depth(), "-nolisten", "tcp"]
@@ -81,11 +85,7 @@ class XvfbDriver(Driver):
             self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment)
             display_id = self._xvfb_read_display_id(read_fd)
 
-        try:
-            os.close(read_fd)
-            os.close(write_fd)
-        except OSError:
-            pass
+        self._xvfb_close_pipe((read_fd, write_fd))
 
         return display_id
 

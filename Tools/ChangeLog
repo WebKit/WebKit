@@ -1,5 +1,18 @@
 2015-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix webkitpy tests after r192568.
+
+        Instead of ignoring exception when closing mock fds, use a helper
+        function that the unit test can override to do nothing.
+
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._xvfb_close_pipe):
+        (XvfbDriver._xvfb_run):
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.make_driver):
+
+2015-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [XvfbDriver] Fail to run all layout tests when X server started with -displayfd option
         https://bugs.webkit.org/show_bug.cgi?id=151135
 

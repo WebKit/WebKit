@@ -53,7 +53,8 @@ class XvfbDriverTest(unittest.TestCase):
         driver._startup_delay_secs = 0
         driver._xvfb_screen_depth = lambda: '24'
         driver._xvfb_pipe = lambda: (3, 4)
-        driver._xvfb_read_display_id = lambda(x): 1
+        driver._xvfb_read_display_id = lambda x: 1
+        driver._xvfb_close_pipe = lambda p: None
         driver._environment = port.setup_environ_for_server(port.driver_name())
         return driver
 
