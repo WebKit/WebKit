@@ -147,6 +147,8 @@ webkit.org/b/151219 storage/indexeddb/modern/idbindex-properties-basic.html [ Pa
 
 webkit.org/b/151364 storage/indexeddb/modern/get-index-failures.html [ Pass Timeout ]
 
+webkit.org/b/151389 storage/indexeddb/modern/aborted-put.html [ Pass Timeout ]
+
 ### END OF (2) Failures without bug reports
 ########################################
 
