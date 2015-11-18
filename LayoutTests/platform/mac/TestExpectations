@@ -160,9 +160,12 @@ fast/mediastream/MediaStreamTrack.html
 fast/mediastream/getusermedia.html
 fast/mediastream/MediaDevices-getUserMedia.html
 fast/mediastream/MediaStream-clone.html
+fast/mediastream/MediaStream-construct-with-ended-tracks.html
 fast/mediastream/MediaStream-video-element-track-stop.html
 fast/mediastream/MediaStream-video-element.html
 fast/mediastream/MediaStreamConstructor.html
+fast/mediastream/MediaStreamTrack-clone.html
+fast/mediastream/MediaStreamTrack-stop.html
 
 # WebRTC is not supported yet.
 fast/mediastream/RTCIceCandidate.html
@@ -180,6 +183,7 @@ fast/mediastream/RTCPeerConnection-have-remote-pranswer.html
 fast/mediastream/RTCPeerConnection-ice.html
 fast/mediastream/RTCPeerConnection-localDescription.html
 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html
+fast/mediastream/RTCPeerConnection-overloaded-operations-params.html
 fast/mediastream/RTCPeerConnection-remoteDescription.html
 fast/mediastream/RTCPeerConnection-stats.html
 fast/mediastream/RTCPeerConnection-statsSelector.html
