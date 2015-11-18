@@ -149,6 +149,7 @@ CachedResourceLoader::~CachedResourceLoader()
 
 CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) const 
 {
+    ASSERT(!resourceURL.isNull());
     URL url = m_document->completeURL(resourceURL);
     return cachedResource(url); 
 }
