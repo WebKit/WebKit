@@ -344,16 +344,15 @@
             md5sum="64a3e2cda2687132cadca4efdc63f3b4"/>
   </autotools>
 
-  <autotools id="xserver" autogenargs="--disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --enable-unix-transport --enable-tcp-transport --disable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin --without-dtrace">
+  <autotools id="xserver" autogenargs="--disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --disable-present --enable-unix-transport --enable-tcp-transport --disable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin --without-dtrace">
     <dependencies>
       <dep package="pixman"/>
     </dependencies>
-    <branch module="/releases/individual/xserver/xorg-server-1.12.4.tar.gz" version="1.12.4"
+    <branch module="/releases/individual/xserver/xorg-server-1.16.4.tar.bz2" version="1.16.4"
             repo="xorg"
-            hash="sha256:d88225cd3c4a6ecd92d1360b34a0e5b6346e2a04c842c018cef36d8a370714ef"
-            md5sum="19c17bf7ac3e2ce34bc40108692c031f">
+            hash="sha256:abb6e1cc9213a9915a121f48576ff6739a0b8cdb3d32796f9a7743c9a6efc871"
+            md5sum="80d140f631d862b76dc67ae983151c77">
       <patch file="xserver-remove-bogus-dependencies.patch" strip="1"/>
-      <patch file="xserver-fix-glx-init.patch" strip="1"/>
     </branch>
   </autotools>
 

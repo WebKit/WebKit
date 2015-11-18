@@ -16,8 +16,8 @@ diff --git a/hw/vfb/Makefile.am b/hw/vfb/Makefile.am
 index 9f4992c..06830ae 100644
 --- a/hw/vfb/Makefile.am
 +++ b/hw/vfb/Makefile.am
-@@ -25,7 +25,7 @@ XVFB_LIBS = \
- 	$(XSERVER_LIBS)
+@@ -20,7 +20,7 @@ XVFB_LIBS = \
+ 	$(top_builddir)/Xi/libXistubs.la
  
  Xvfb_LDADD = $(XVFB_LIBS) $(XVFB_SYS_LIBS) $(XSERVER_SYS_LIBS)
 -Xvfb_DEPENDENCIES = $(XVFB_LIBS)
@@ -29,7 +29,7 @@ diff --git a/test/Makefile.am b/test/Makefile.am
 index 34f53fc..3509306 100644
 --- a/test/Makefile.am
 +++ b/test/Makefile.am
-@@ -117,7 +117,7 @@ libxservertest_la_LIBADD += \
+@@ -131,7 +131,7 @@ libxservertest_la_LIBADD += \
  endif
  endif
  

@@ -1,5 +1,23 @@
 2015-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Update xserver version in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=151383
+
+        Reviewed by Alejandro G. Castro.
+
+        In r192568 I assumed the bots would have a recent enough Xvfb
+        to use the -displayfd option, but I forgot we build our own
+        xserver just for Xvfb. The version we build is too old, so
+        we could just use an updated version (the same bots have
+        installed, for example) to use the -displayfd option.
+
+        * gtk/jhbuild.modules: Update xserver to 1.16.4.
+        * gtk/patches/xserver-fix-glx-init.patch: Deleted.
+        * gtk/patches/xserver-remove-bogus-dependencies.patch: Updated to
+        apply on 1.16.4.
+
+2015-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix webkitpy tests after r192568.
 
         Instead of ignoring exception when closing mock fds, use a helper
