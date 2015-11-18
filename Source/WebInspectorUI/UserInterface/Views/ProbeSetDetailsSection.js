@@ -31,8 +31,6 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
         console.assert(probeSet instanceof WebInspector.ProbeSet, "Invalid ProbeSet argument:", probeSet);
 
         var optionsElement = document.createElement("div");
-        optionsElement.classList.add(WebInspector.ProbeSetDetailsSection.SectionOptionsStyleClassName);
-
         var dataGrid = new WebInspector.ProbeSetDataGrid(probeSet);
 
         var singletonRow = new WebInspector.DetailsSectionRow;
@@ -50,19 +48,24 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
         this._probeSet = probeSet;
         this._dataGrid = dataGrid;
 
-        var removeProbeButton = optionsElement.createChild("img");
-        removeProbeButton.classList.add(WebInspector.ProbeSetDetailsSection.ProbeRemoveStyleClassName);
-        removeProbeButton.classList.add(WebInspector.ProbeSetDetailsSection.ProbeButtonEnabledStyleClassName);
-        this._listeners.register(removeProbeButton, "click", this._removeButtonClicked);
+        this._navigationBar = new WebInspector.NavigationBar;
+        this._optionsElement.appendChild(this._navigationBar.element);
 
-        var clearSamplesButton = optionsElement.createChild("img");
-        clearSamplesButton.classList.add(WebInspector.ProbeSetDetailsSection.ProbeClearSamplesStyleClassName);
-        clearSamplesButton.classList.add(WebInspector.ProbeSetDetailsSection.ProbeButtonEnabledStyleClassName);
-        this._listeners.register(clearSamplesButton, "click", this._clearSamplesButtonClicked);
+        this._addProbeButtonItem = new WebInspector.ButtonNavigationItem("add-probe", WebInspector.UIString("Add probe expression"), "Images/Plus13.svg", 13, 13);
+        this._addProbeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._addProbeButtonClicked, this);
+        this._navigationBar.addNavigationItem(this._addProbeButtonItem);
 
-        var addProbeButton = optionsElement.createChild("img");
-        addProbeButton.classList.add(WebInspector.ProbeSetDetailsSection.AddProbeValueStyleClassName);
-        this._listeners.register(addProbeButton, "click", this._addProbeButtonClicked);
+        this._clearSamplesButtonItem = new WebInspector.ButtonNavigationItem("clear-samples", WebInspector.UIString("Clear samples"), "Images/NavigationItemTrash.svg", 14, 14);
+        this._clearSamplesButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearSamplesButtonClicked, this);
+        this._clearSamplesButtonItem.enabled = this._probeSetHasSamples();
+        this._navigationBar.addNavigationItem(this._clearSamplesButtonItem);
+
+        this._removeProbeButtonItem = new WebInspector.ButtonNavigationItem("remove-probe", WebInspector.UIString("Remove probe"), "Images/CloseLarge.svg", 12, 12);
+        this._removeProbeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._removeProbeButtonClicked, this);
+        this._navigationBar.addNavigationItem(this._removeProbeButtonItem);
+
+        this._listeners.register(this._probeSet, WebInspector.ProbeSet.Event.SampleAdded, this._probeSetSamplesChanged);
+        this._listeners.register(this._probeSet, WebInspector.ProbeSet.Event.SamplesCleared, this._probeSetSamplesChanged);
 
         // Update the source link when the breakpoint's resolved state changes,
         // so that it can become a live location link when possible.
@@ -111,41 +114,46 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
         {
             if (event.keyCode !== 13)
                 return;
-            var expression = event.target.value;
+            let expression = event.target.value;
             this._probeSet.createProbe(expression);
             visiblePopover.dismiss();
         }
 
-        var popover = new WebInspector.Popover;
-        var content = document.createElement("div");
+        let popover = new WebInspector.Popover;
+        let content = document.createElement("div");
         content.classList.add(WebInspector.ProbeSetDetailsSection.ProbePopoverElementStyleClassName);
         content.createChild("div").textContent = WebInspector.UIString("Add New Probe Expression");
-        var textBox = content.createChild("input");
+        let textBox = content.createChild("input");
         textBox.addEventListener("keypress", createProbeFromEnteredExpression.bind(this, popover));
         textBox.addEventListener("click", function (event) { event.target.select(); });
         textBox.type = "text";
         textBox.placeholder = WebInspector.UIString("Expression");
         popover.content = content;
-        var target = WebInspector.Rect.rectFromClientRect(event.target.getBoundingClientRect());
+        let target = WebInspector.Rect.rectFromClientRect(event.target.element.getBoundingClientRect());
         popover.present(target, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
         textBox.select();
-    }
-
-    _removeButtonClicked(event)
-    {
-        this._probeSet.clear();
     }
 
     _clearSamplesButtonClicked(event)
     {
         this._probeSet.clearSamples();
     }
+
+    _removeProbeButtonClicked(event)
+    {
+        this._probeSet.clear();
+    }
+
+    _probeSetSamplesChanged(event)
+    {
+        this._clearSamplesButtonItem.enabled = this._probeSetHasSamples();
+    }
+
+    _probeSetHasSamples()
+    {
+        return this._probeSet.probes.some((probe) => probe.samples.length);
+    }
 };
 
-WebInspector.ProbeSetDetailsSection.AddProbeValueStyleClassName = "probe-add";
 WebInspector.ProbeSetDetailsSection.DontFloatLinkStyleClassName = "dont-float";
-WebInspector.ProbeSetDetailsSection.ProbeButtonEnabledStyleClassName = "enabled";
 WebInspector.ProbeSetDetailsSection.ProbePopoverElementStyleClassName = "probe-popover";
-WebInspector.ProbeSetDetailsSection.ProbeClearSamplesStyleClassName = "probe-clear-samples";
-WebInspector.ProbeSetDetailsSection.ProbeRemoveStyleClassName = "probe-remove";
-WebInspector.ProbeSetDetailsSection.SectionOptionsStyleClassName = "options";

@@ -1,5 +1,48 @@
 2015-11-18  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Probes sidebar panel sections should use NavigationBar
+        https://bugs.webkit.org/show_bug.cgi?id=151373
+
+        Reviewed by Brian Burg.
+
+        Replaces image elements with a NavigationBar instance. The "Clear samples"
+        button is disabled when no samples exist in the probe set.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New navigation item labels.
+
+        * UserInterface/Models/ProbeSet.js:
+        (WebInspector.ProbeSet.prototype._sampleCollected):
+        Dispatch new event WebInspector.ProbeSet.Event.SampleAdded.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .header > .options > .navigation-bar):
+        (.details-section > .header > .options > .navigation-bar > .item):
+        Define consistent style for showing a NavigationBar inside the section header.
+
+        * UserInterface/Views/DetailsSection.js:
+        (WebInspector.DetailsSection):
+        Add "options" class name in the base class.
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.css:
+        (.details-section.probe-set .options > :matches(.probe-remove, .probe-clear-samples, .probe-add)): Deleted.
+        (.details-section.probe-set .options > .probe-clear-samples): Deleted.
+        (.details-section.probe-set .options > .probe-remove): Deleted.
+        (.details-section.probe-set .options > .probe-add): Deleted.
+        Remove <img> button styles.
+
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection):
+        (WebInspector.ProbeSetDetailsSection.prototype._addProbeButtonClicked.createProbeFromEnteredExpression):
+        (WebInspector.ProbeSetDetailsSection.prototype._addProbeButtonClicked):
+        (WebInspector.ProbeSetDetailsSection.prototype._clearSamplesButtonClicked):
+        (WebInspector.ProbeSetDetailsSection.prototype._probeSetSamplesChanged):
+        Update "Clear samples" enabled state.
+        (WebInspector.ProbeSetDetailsSection.prototype._probeSetHasSamples):
+        Helper function to check if the probe set is empty.
+
+2015-11-18  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Watch Expressions details section should use NavigationBar
         https://bugs.webkit.org/show_bug.cgi?id=151377
 
