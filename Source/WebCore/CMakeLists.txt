@@ -947,6 +947,7 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaDeviceInfo.cpp
     Modules/mediastream/MediaDevices.cpp
     Modules/mediastream/MediaDevicesRequest.cpp
+    Modules/mediastream/MediaEndpointPeerConnection.cpp
     Modules/mediastream/MediaSourceStates.cpp
     Modules/mediastream/MediaStream.cpp
     Modules/mediastream/MediaStreamCapabilities.cpp
@@ -960,7 +961,6 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaTrackConstraints.cpp
     Modules/mediastream/NavigatorMediaDevices.cpp
     Modules/mediastream/NavigatorUserMediaError.cpp
-    Modules/mediastream/PeerConnectionBackend.cpp
     Modules/mediastream/RTCConfiguration.cpp
     Modules/mediastream/RTCDTMFSender.cpp
     Modules/mediastream/RTCDTMFToneChangeEvent.cpp

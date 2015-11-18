@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+    </head>
+    <body>
+        <script>
+            var pc;
+            var result;
+            var desc;
+            var candidate;
+            var track;
+
+            description("Test various arguments to RTCPeerConnection overloaded functions");
+
+            shouldNotThrow("pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+
+            // Test createOffer/Answer()
+            testCreateOfferOrAnswer("createOffer");
+            testCreateOfferOrAnswer("createAnswer");
+
+            function testCreateOfferOrAnswer(functionName) {
+
+                shouldNotThrow("pc." + functionName + "()");
+                shouldNotThrow("pc." + functionName + "(emptyFunc, emptyFunc)");
+
+                ["null", "undefined", "{}"].forEach(function (arg) {
+                    shouldNotThrow("pc." + functionName + "(" + arg + ")");
+                    shouldNotThrow("pc." + functionName + "(emptyFunc, emptyFunc, " + arg + ")");
+                });
+                debug("");
+
+
+                debug("*** Options object must be last")
+                shouldThrow("pc." + functionName + "({}, emptyFunc, emptyFunc)");
+                debug("*** Callbacks are not nullable");
+                shouldThrow("pc." + functionName + "(null, emptyFunc)");
+                shouldThrow("pc." + functionName + "(emptyFunc, null)");
+                shouldThrow("pc." + functionName + "(null, null)");
+                debug("");
+            }
+
+            // Test setLocal/RemoteDescription()
+            shouldNotThrow("desc = new RTCSessionDescription({type:'offer', sdp:'x'});");
+
+            testSetLocalOrRemoteDescription("setLocalDescription")
+            testSetLocalOrRemoteDescription("setRemoteDescription")
+
+            function testSetLocalOrRemoteDescription(functionName) {
+                shouldNotThrow("pc." + functionName + "(desc)");
+                shouldNotThrow("pc." + functionName + "(desc, emptyFunc, emptyFunc)");
+                debug("");
+
+                badInputFull(functionName, "desc");
+                debug("");
+            }
+
+            function badInputFull(functionName, firstArg) {
+                debug("*** " + firstArg + " is not optional");
+                shouldThrow("pc." + functionName + "()");
+                debug("*** " + firstArg + " is not nullable");
+                shouldThrow("pc." + functionName + "(null)");
+                shouldThrow("pc." + functionName + "(null, emptyFunc, emptyFunc)");
+                badInput(functionName, firstArg);
+            }
+
+            function badInput(functionName, firstArg) {
+                debug("*** Error callback is mandatory")
+                shouldThrow("pc." + functionName + "(" + firstArg + ", emptyFunc)");
+                shouldThrow("pc." + functionName + "(" + firstArg + ", null)");
+                debug("*** Callbacks are not nullable");
+                shouldThrow("pc." + functionName + "(" + firstArg + ", emptyFunc, null)");
+                shouldThrow("pc." + functionName + "(" + firstArg + ", null, emptyFunc)");
+                shouldThrow("pc." + functionName + "(" + firstArg + ", null, null)");
+                debug("*** Bad input as " + firstArg);
+                shouldThrow("pc." + functionName + "('foo')");
+                shouldThrow("pc." + functionName + "('foo', emptyFunc, emptyFunc)");
+                shouldThrow("pc." + functionName + "(1)");
+                shouldThrow("pc." + functionName + "(1, emptyFunc, emptyFunc)");
+            }
+
+            // Test addIceCandidate()
+            shouldNotThrow("candidate = new RTCIceCandidate({});");
+
+            shouldNotThrow("pc.addIceCandidate(candidate)");
+            shouldNotThrow("pc.addIceCandidate(candidate, emptyFunc, emptyFunc)");
+            debug("");
+
+            badInputFull("addIceCandidate", "candidate");
+            debug("");
+
+            // Test getStats()
+            getUserMedia("allow", { "video": true }, function (stream) {
+                track = stream.getTracks()[0];
+
+                shouldNotThrow("pc.getStats()");
+                shouldNotThrow("pc.getStats(null)");
+                shouldNotThrow("pc.getStats(track)");
+                shouldNotThrow("pc.getStats(null, emptyFunc, emptyFunc)");
+                shouldNotThrow("pc.getStats(track, emptyFunc, emptyFunc)");
+                debug("");
+
+                badInput("getStats", "track");
+                finishJSTest();
+            });
+
+            function emptyFunc() { }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
