@@ -70,7 +70,7 @@ enum Scale { ScaleOne, ScaleTwo, ScaleFour, ScaleEight, ScalePtr };
 
 class Output : public IntrinsicRepository {
 public:
-    Output(LContext);
+    Output(State&);
     ~Output();
     
     void initialize(LModule, LValue, AbstractHeapRepository&);
@@ -113,6 +113,10 @@ public:
         for (unsigned i = 0; i < vector.size(); ++i)
             addIncoming(result, vector[i]);
         return result;
+    }
+    void addIncomingToPhi(LValue phi, ValueFromBlock value)
+    {
+        addIncoming(phi, value);
     }
     
     LValue add(LValue left, LValue right) { return buildAdd(m_builder, left, right); }

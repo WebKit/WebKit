@@ -29,15 +29,24 @@
 #if ENABLE(FTL_JIT)
 
 #include "DFGCommon.h"
-#include "B3BasicBlock.h"
-#include "B3Value.h"
-#include "B3Procedure.h"
-#include "LLVMAPI.h"
+#include "LLVMHeaders.h"
+
+namespace JSC { namespace B3 {
+class BasicBlock;
+enum Type : int8_t;
+} }
 
 namespace JSC { namespace FTL {
 
-typedef LLVMAtomicOrdering LAtomicOrdering;
+#if FTL_USES_B3
+typedef B3::BasicBlock* LBasicBlock;
+typedef B3::Type LType;
+#else
 typedef LLVMBasicBlockRef LBasicBlock;
+typedef LLVMTypeRef LType;
+#endif
+
+typedef LLVMAtomicOrdering LAtomicOrdering;
 typedef LLVMBuilderRef LBuilder;
 typedef LLVMCallConv LCallConv;
 typedef LLVMContextRef LContext;
@@ -45,9 +54,10 @@ typedef LLVMIntPredicate LIntPredicate;
 typedef LLVMLinkage LLinkage;
 typedef LLVMModuleRef LModule;
 typedef LLVMRealPredicate LRealPredicate;
-typedef LLVMTypeRef LType;
 typedef LLVMValueRef LValue;
 typedef LLVMMemoryBufferRef LMemoryBuffer;
+
+enum SynchronizationScope { SingleThread, CrossThread };
 
 } } // namespace JSC::FTL
 

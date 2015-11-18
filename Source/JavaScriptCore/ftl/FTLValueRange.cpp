@@ -35,9 +35,15 @@ namespace JSC { namespace FTL {
 void ValueRange::decorateInstruction(
     LContext context, LValue loadInstruction, unsigned rangeKind) const
 {
+#if FTL_USES_B3
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(loadInstruction);
+    UNUSED_PARAM(rangeKind);
+#else
     if (!m_rangeMetadata)
         m_rangeMetadata = mdNode(context, m_begin, m_end);
     setMetadata(loadInstruction, rangeKind, m_rangeMetadata);
+#endif // !FTL_USES_B3
 }
 
 } } // namespace JSC::FTL

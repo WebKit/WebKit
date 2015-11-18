@@ -35,6 +35,8 @@
 
 namespace JSC { namespace FTL {
 
+#if !FTL_USES_B3
+
 // This file contains short-form calls into the LLVM C API. It is meant to
 // save typing and make the lowering code clearer. If we ever call an LLVM C API
 // function more than once in the FTL lowering code, we should add a shortcut for
@@ -281,7 +283,6 @@ static inline LValue buildICmp(LBuilder builder, LIntPredicate cond, LValue left
 static inline LValue buildFCmp(LBuilder builder, LRealPredicate cond, LValue left, LValue right) { return llvm->BuildFCmp(builder, cond, left, right, ""); }
 static inline LValue buildInsertElement(LBuilder builder, LValue vector, LValue element, LValue index) { return llvm->BuildInsertElement(builder, vector, element, index, ""); }
 
-enum SynchronizationScope { SingleThread, CrossThread };
 static inline LValue buildFence(LBuilder builder, LAtomicOrdering ordering, SynchronizationScope scope = CrossThread)
 {
     return llvm->BuildFence(builder, ordering, scope == SingleThread, "");
@@ -336,6 +337,8 @@ static inline void verifyModule(LModule module)
     llvm->VerifyModule(module, LLVMAbortProcessAction, &error);
     llvm->DisposeMessage(error);
 }
+
+#endif // !FTL_USES_B3
 
 } } // namespace JSC::FTL
 

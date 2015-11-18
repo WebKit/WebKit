@@ -33,8 +33,8 @@
 
 namespace JSC { namespace FTL {
 
-Output::Output(LContext context)
-    : IntrinsicRepository(context)
+Output::Output(State& state)
+    : IntrinsicRepository(state.context)
     , m_function(0)
     , m_heaps(0)
     , m_builder(llvm->CreateBuilderInContext(m_context))

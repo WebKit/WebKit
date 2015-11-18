@@ -40,6 +40,7 @@
 
 namespace JSC { namespace FTL {
 
+#if !FTL_USES_B3
 LValue AbstractHeap::tbaaMetadataSlow(const AbstractHeapRepository& repository) const
 {
     m_tbaaMetadata = mdNode(
@@ -48,12 +49,18 @@ LValue AbstractHeap::tbaaMetadataSlow(const AbstractHeapRepository& repository) 
         m_parent->tbaaMetadata(repository));
     return m_tbaaMetadata;
 }
+#endif
 
 void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRepository& repository) const
 {
+#if !FTL_USES_B3
     if (!Options::useFTLTBAA())
         return;
     setMetadata(instruction, repository.m_tbaaKind, tbaaMetadata(repository));
+#else
+    UNUSED_PARAM(instruction);
+    UNUSED_PARAM(repository);
+#endif
 }
 
 void AbstractHeap::dump(PrintStream& out) const
@@ -78,6 +85,9 @@ IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent,
     , m_scaleTerm(0)
     , m_canShift(false)
 {
+#if FTL_USES_B3
+    UNUSED_PARAM(context);
+#else
     // See if there is a common shift amount we could use instead of multiplying. Don't
     // try too hard. This is just a speculative optimization to reduce load on LLVM.
     for (unsigned i = 0; i < 4; ++i) {
@@ -91,6 +101,7 @@ IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent,
     
     if (!m_canShift)
         m_scaleTerm = constInt(intPtrType(context), m_elementSize, ZeroExtend);
+#endif
 }
 
 IndexedAbstractHeap::~IndexedAbstractHeap()

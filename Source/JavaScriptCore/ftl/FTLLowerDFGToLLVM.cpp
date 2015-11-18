@@ -75,7 +75,7 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable()
 {
     CRASH();
 }
-#else
+#elif !FTL_USES_B3
 NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
     CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex)
 {
@@ -104,12 +104,14 @@ public:
         : m_graph(state.graph)
         , m_ftlState(state)
         , m_heaps(state.context)
-        , m_out(state.context)
+        , m_out(state)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
         , m_stackmapIDs(0)
+#if !FTL_USES_B3
         , m_tbaaKind(mdKindID(state.context, "tbaa"))
         , m_tbaaStructKind(mdKindID(state.context, "tbaa.struct"))
+#endif
     {
     }
     
@@ -124,7 +126,15 @@ public:
             name = "jsBody";
         
         m_graph.ensureDominators();
-        
+
+#if FTL_USES_B3
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+
+        m_prologue = FTL_NEW_BLOCK(m_out, ("Prologue"));
+        LBasicBlock stackOverflow = FTL_NEW_BLOCK(m_out, ("Stack overflow"));
+        LBasicBlock checkArguments = FTL_NEW_BLOCK(m_out, ("Check arguments"));
+#else
         m_ftlState.module =
             moduleCreateWithNameInContext(name.data(), m_ftlState.context);
         
@@ -158,8 +168,6 @@ public:
         m_out.appendTo(m_prologue, stackOverflow);
         createPhiVariables();
 
-        auto preOrder = m_graph.blocksInPreOrder();
-
         LValue capturedAlloca = m_out.alloca(arrayType(m_out.int64, m_graph.m_nextMachineLocal));
         
         m_captured = m_out.add(
@@ -170,6 +178,9 @@ public:
         m_out.call(
             m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.capturedStackmapID),
             m_out.int32Zero, capturedAlloca);
+#endif
+
+        auto preOrder = m_graph.blocksInPreOrder();
         
         // If we have any CallVarargs then we need to have a spill slot for it.
         bool hasVarargs = false;
@@ -231,6 +242,11 @@ public:
                 }
             }
         }
+
+#if FTL_USES_B3
+        if (hasVarargs || !hasVarargs)
+            CRASH();
+#else
         if (hasVarargs) {
             LValue varargsSpillSlots = m_out.alloca(
                 arrayType(m_out.int64, JSCallVarargs::numSpillSlotsNeeded()));
@@ -251,6 +267,7 @@ public:
                 m_out.stackmapIntrinsic(), m_out.constInt64(m_ftlState.exceptionHandlingSpillSlotStackmapID),
                 m_out.int32Zero, exceptionHandlingVolatileRegistersSpillSlots);
         }
+#endif
         
         // We should not create any alloca's after this point, since they will cease to
         // be mem2reg candidates.
@@ -326,14 +343,15 @@ public:
         
         for (BasicBlock* block : preOrder)
             compileBlock(block);
-        
+
+#if !FTL_USES_B3
         if (Options::dumpLLVMIR())
             dumpModule(m_ftlState.module);
-        
         if (verboseCompilationEnabled())
             m_ftlState.dumpState("after lowering");
         if (validationEnabled())
             verifyModule(m_ftlState.module);
+#endif
     }
 
 private:
@@ -1542,6 +1560,9 @@ private:
             if (Options::verboseCompilation())
                 dataLog("    Emitting ArithSub patchpoint with stackmap #", stackmapID, "\n");
 
+#if FTL_USES_B3
+            CRASH();
+#else
             LValue left = lowJSValue(m_node->child1());
             LValue right = lowJSValue(m_node->child2());
 
@@ -1564,6 +1585,7 @@ private:
                 abstractValue(m_node->child2()).resultType()));
 
             setJSValue(call);
+#endif
             break;
         }
 
@@ -2359,7 +2381,11 @@ private:
     {
         // See above; CellUse is easier so we do only that for now.
         ASSERT(m_node->child1().useKind() == CellUse);
-        
+
+#if FTL_USES_B3
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+#else
         LValue base = lowCell(m_node->child1());
         LValue value = lowJSValue(m_node->child2());
         auto uid = m_graph.identifiers()[m_node->identifierNumber()];
@@ -2369,7 +2395,7 @@ private:
 
         if (verboseCompilationEnabled())
             dataLog("    Emitting PutById patchpoint with stackmap #", stackmapID, "\n");
-        
+
         StackmapArgumentList arguments;
         arguments.append(base); 
         arguments.append(value);
@@ -2388,6 +2414,7 @@ private:
             stackmapID, m_node->origin.semantic, uid,
             m_graph.executableFor(m_node->origin.semantic)->ecmaMode(),
             m_node->op() == PutByIdDirect ? Direct : NotDirect));
+#endif
     }
     
     void compileGetButterfly()
@@ -2955,6 +2982,10 @@ private:
         }
             
         default:
+#if FTL_USES_B3
+            UNUSED_PARAM(child5);
+            CRASH();
+#else
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
@@ -3095,6 +3126,7 @@ private:
             }
             
             DFG_CRASH(m_graph, m_node, "Bad array type");
+#endif // FTL_USES_B3
             break;
         }
     }
@@ -3133,6 +3165,10 @@ private:
     
     void compileArrayPush()
     {
+#if FTL_USES_B3
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+#else
         LValue base = lowCell(m_node->child1());
         LValue storage = lowStorage(m_node->child3());
         
@@ -3199,6 +3235,7 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return;
         }
+#endif
     }
     
     void compileArrayPop()
@@ -3476,7 +3513,7 @@ private:
                 m_out.load64(m_out.baseIndex(m_heaps.variables, stackBase, index)),
                 m_out.baseIndex(m_heaps.DirectArguments_storage, result, index));
             ValueFromBlock nextIndex = m_out.anchor(index);
-            addIncoming(previousIndex, nextIndex);
+            m_out.addIncomingToPhi(previousIndex, nextIndex);
             m_out.branch(m_out.isNull(index), unsure(end), unsure(loop));
             
             m_out.appendTo(end, lastNext);
@@ -3701,8 +3738,8 @@ private:
                     TypedPointer(m_heaps.indexedDoubleProperties.atAnyIndex(), pointer));
                 
                 LValue nextIndex = m_out.sub(index, m_out.int32One);
-                addIncoming(index, m_out.anchor(nextIndex));
-                addIncoming(pointer, m_out.anchor(m_out.add(pointer, m_out.intPtrEight)));
+                m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
+                m_out.addIncomingToPhi(pointer, m_out.anchor(m_out.add(pointer, m_out.intPtrEight)));
                 m_out.branch(
                     m_out.notZero32(nextIndex), unsure(initLoop), unsure(initDone));
                 
@@ -4564,6 +4601,10 @@ private:
 
     void compileCallOrConstruct()
     {
+#if FTL_USES_B3
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+#else
         int numArgs = m_node->numChildren() - 1;
 
         LValue jsCallee = lowJSValue(m_graph.varArgChild(m_node, 0));
@@ -4598,10 +4639,15 @@ private:
         m_ftlState.jsCalls.append(JSCall(stackmapID, m_node, codeOriginDescriptionOfCallSite()));
         
         setJSValue(call);
+#endif
     }
 
     void compileTailCall()
     {
+#if FTL_USES_B3
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+#else
         int numArgs = m_node->numChildren() - 1;
         StackmapArgumentList exitArguments;
         exitArguments.reserveCapacity(numArgs + 6);
@@ -4633,10 +4679,15 @@ private:
         m_out.unreachable();
 
         m_ftlState.jsTailCalls.append(tailCall);
+#endif
     }
     
     void compileCallOrConstructVarargs()
     {
+#if FTL_USES_B3
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+#else
         LValue jsCallee = lowJSValue(m_node->child1());
         LValue thisArg = lowJSValue(m_node->child3());
         
@@ -4689,6 +4740,7 @@ private:
         default:
             setJSValue(call);
         }
+#endif
     }
     
     void compileLoadVarargs()
@@ -4760,7 +4812,7 @@ private:
             m_out.constInt64(JSValue::encode(jsUndefined())),
             m_out.baseIndex(m_heaps.variables, targetStart, currentIndex));
         ValueFromBlock nextIndex = m_out.anchor(currentIndex);
-        addIncoming(previousIndex, nextIndex);
+        m_out.addIncomingToPhi(previousIndex, nextIndex);
         m_out.branch(
             m_out.above(currentIndex, lengthAsPtr), unsure(undefinedLoop), unsure(mainLoopEntry));
         
@@ -4777,7 +4829,7 @@ private:
                 m_out.add(currentIndex, m_out.constIntPtr(data->offset))));
         m_out.store64(value, m_out.baseIndex(m_heaps.variables, targetStart, currentIndex));
         nextIndex = m_out.anchor(currentIndex);
-        addIncoming(previousIndex, nextIndex);
+        m_out.addIncomingToPhi(previousIndex, nextIndex);
         m_out.branch(m_out.isNull(currentIndex), unsure(continuation), unsure(mainLoop));
         
         m_out.appendTo(continuation, lastNext);
@@ -5238,6 +5290,10 @@ private:
     
     void compileIn()
     {
+#if FTL_USES_B3
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+#else
         Edge base = m_node->child2();
         LValue cell = lowCell(base);
         speculateObject(base, cell);
@@ -5261,6 +5317,7 @@ private:
         } 
 
         setJSValue(vmCall(m_out.operation(operationGenericIn), m_callFrame, cell, lowJSValue(m_node->child1())));
+#endif
     }
 
     void compileCheckHasInstance()
@@ -5315,7 +5372,7 @@ private:
         
         m_out.appendTo(notYetInstance, continuation);
         ValueFromBlock notInstanceResult = m_out.anchor(m_out.booleanFalse);
-        addIncoming(value, m_out.anchor(currentPrototype));
+        m_out.addIncomingToPhi(value, m_out.anchor(currentPrototype));
         m_out.branch(isCell(currentPrototype), unsure(loop), unsure(continuation));
         
         m_out.appendTo(continuation, lastNext);
@@ -6222,6 +6279,13 @@ private:
     
     LValue getById(LValue base)
     {
+#if FTL_USES_B3
+        UNUSED_PARAM(base);
+
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+        return nullptr;
+#else
         auto uid = m_graph.identifiers()[m_node->identifierNumber()];
 
         // Arguments: id, bytes, target, numArgs, args...
@@ -6246,6 +6310,7 @@ private:
         m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->origin.semantic, uid));
         
         return call;
+#endif
     }
 
     LValue loadButterflyWithBarrier(LValue object)
@@ -6480,8 +6545,12 @@ private:
         LValue result;
         LValue condition;
         if (Options::forceGCSlowPaths()) {
+#if FTL_USES_B3
+            CRASH();
+#else
             result = getUndef(m_out.int64);
             condition = m_out.booleanFalse;
+#endif
         } else {
             result = m_out.loadPtr(
                 allocator, m_heaps.MarkedAllocator_freeListHead);
@@ -6982,11 +7051,22 @@ private:
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)
     {
+        ASSERT(type == m_out.intPtr || type == m_out.int32);
+
         Vector<SwitchCase> cases;
         for (unsigned i = 0; i < data->cases.size(); ++i) {
-            cases.append(SwitchCase(
-                constInt(type, data->cases[i].value.switchLookupValue(data->kind)),
-                lowBlock(data->cases[i].target.block), Weight(data->cases[i].target.count)));
+            SwitchCase newCase;
+
+            if (type == m_out.intPtr) {
+                newCase = SwitchCase(m_out.constIntPtr(data->cases[i].value.switchLookupValue(data->kind)),
+                    lowBlock(data->cases[i].target.block), Weight(data->cases[i].target.count));
+            } else if (type == m_out.int32) {
+                newCase = SwitchCase(m_out.constInt32(data->cases[i].value.switchLookupValue(data->kind)),
+                    lowBlock(data->cases[i].target.block), Weight(data->cases[i].target.count));
+            } else
+                CRASH();
+
+            cases.append(newCase);
         }
         
         m_out.switchInstruction(
@@ -7579,6 +7659,14 @@ private:
     template<typename Functor>
     LValue lazySlowPath(const Functor& functor, const Vector<LValue>& userArguments)
     {
+#if FTL_USES_B3
+        UNUSED_PARAM(functor);
+        UNUSED_PARAM(userArguments);
+
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+        return nullptr;
+#else
         unsigned stackmapID = m_stackmapIDs++;
 
         StackmapArgumentList arguments;
@@ -7599,6 +7687,7 @@ private:
         m_ftlState.lazySlowPaths.append(LazySlowPathDescriptor(stackmapID, m_node->origin.semantic, linker));
 
         return call;
+#endif
     }
     
     void speculate(
@@ -9401,6 +9490,12 @@ private:
         UNUSED_PARAM(blockIndex);
         UNUSED_PARAM(nodeIndex);
 #else
+#if FTL_USES_B3
+        UNUSED_PARAM(blockIndex);
+        UNUSED_PARAM(nodeIndex);
+        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
+            CRASH();
+#else
         m_out.call(
             m_out.intToPtr(
                 m_out.constIntPtr(ftlUnreachable),
@@ -9409,6 +9504,7 @@ private:
                         m_out.voidType, m_out.intPtr, m_out.int32, m_out.int32))),
             m_out.constIntPtr(codeBlock()), m_out.constInt32(blockIndex),
             m_out.constInt32(nodeIndex));
+#endif
 #endif
         m_out.unreachable();
     }
@@ -9462,8 +9558,10 @@ private:
     Node* m_node;
     
     uint32_t m_stackmapIDs;
+#if !FTL_USES_B3
     unsigned m_tbaaKind;
     unsigned m_tbaaStructKind;
+#endif
 };
 
 } // anonymous namespace

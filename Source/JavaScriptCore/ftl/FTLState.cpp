@@ -87,8 +87,14 @@ void State::dumpState(const char* when)
 
 void State::dumpState(LModule module, const char* when)
 {
+#if FTL_USES_B3
+    UNUSED_PARAM(module);
+    if (!when || !!when)
+        CRASH();
+#else
     dataLog("LLVM IR for ", CodeBlockWithJITType(graph.m_codeBlock, FTL::JITCode::FTLJIT), " ", when, ":\n");
     dumpModule(module);
+#endif
 }
 
 } } // namespace JSC::FTL

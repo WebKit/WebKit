@@ -53,14 +53,18 @@ public:
     AbstractHeap()
         : m_parent(0)
         , m_heapName(0)
+#if !FTL_USES_B3
         , m_tbaaMetadata(0)
+#endif
     {
     }
     
     AbstractHeap(AbstractHeap* parent, const char* heapName)
         : m_parent(parent)
         , m_heapName(heapName)
+#if !FTL_USES_B3
         , m_tbaaMetadata(0)
+#endif
     {
     }
     
@@ -88,7 +92,8 @@ public:
         ASSERT(isInitialized());
         return m_heapName;
     }
-    
+
+#if !FTL_USES_B3
     LValue tbaaMetadata(const AbstractHeapRepository& repository) const
     {
         ASSERT(isInitialized());
@@ -96,6 +101,7 @@ public:
             return m_tbaaMetadata;
         return tbaaMetadataSlow(repository);
     }
+#endif
     
     void decorateInstruction(LValue instruction, const AbstractHeapRepository&) const;
 
@@ -103,12 +109,16 @@ public:
 
 private:
     friend class AbstractHeapRepository;
-    
+
+#if !FTL_USES_B3
     LValue tbaaMetadataSlow(const AbstractHeapRepository&) const;
+#endif
     
     AbstractHeap* m_parent;
     const char* m_heapName;
+#if !FTL_USES_B3
     mutable LValue m_tbaaMetadata;
+#endif
 };
 
 // Think of "AbstractField" as being an "AbstractHeapWithOffset". I would have named

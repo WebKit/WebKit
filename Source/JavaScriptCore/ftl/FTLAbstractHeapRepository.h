@@ -194,7 +194,9 @@ private:
     friend class AbstractHeap;
     
     LContext m_context;
+#if !FTL_USES_B3
     unsigned m_tbaaKind;
+#endif
 };
 
 } } // namespace JSC::FTL

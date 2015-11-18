@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLValueRange_h
-#define FTLValueRange_h
+#include "config.h"
+#include "FTLB3Output.h"
 
 #if ENABLE(FTL_JIT)
-
-#include "FTLAbbreviatedTypes.h"
+#if FTL_USES_B3
 
 namespace JSC { namespace FTL {
 
-class ValueRange {
-public:
-    ValueRange()
-        : m_begin(0)
-        , m_end(0)
-#if !FTL_USES_B3
-        , m_rangeMetadata(0)
-#endif
-    {
-    }
-    
-    ValueRange(LValue begin, LValue end)
-        : m_begin(begin)
-        , m_end(end)
-#if !FTL_USES_B3
-        , m_rangeMetadata(0)
-#endif
-    {
-    }
-    
-    LValue begin() const { return m_begin; }
-    LValue end() const { return m_end; }
-    
-    void decorateInstruction(LContext, LValue loadInstruction, unsigned rangeKind) const;
-    
-private:
-    LValue m_begin;
-    LValue m_end;
-#if !FTL_USES_B3
-    mutable LValue m_rangeMetadata;
-#endif
-};
+Output::Output(State& state)
+    : CommonValues(state.context)
+    , m_procedure(*state.proc)
+{
+}
 
 } } // namespace JSC::FTL
 
+#endif // FTL_USES_B3
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLValueRange_h
 

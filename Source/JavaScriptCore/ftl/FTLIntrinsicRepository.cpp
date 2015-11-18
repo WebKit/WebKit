@@ -27,6 +27,7 @@
 #include "FTLIntrinsicRepository.h"
 
 #if ENABLE(FTL_JIT)
+#if !FTL_USES_B3
 
 #include "FTLAbbreviations.h"
 
@@ -63,5 +64,6 @@ FOR_EACH_FUNCTION_TYPE(FUNCTION_TYPE_GETTER_SLOW_DEFINITION)
 
 } } // namespace JSC::FTL
 
+#endif // !FTL_USES_B3
 #endif // ENABLE(FTL_JIT)
 

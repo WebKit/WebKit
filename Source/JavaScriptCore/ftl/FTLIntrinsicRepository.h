@@ -28,6 +28,10 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGCommon.h"
+
+#if !FTL_USES_B3
+
 #include "DFGOperations.h"
 #include "FTLAbbreviations.h"
 #include "FTLCommonValues.h"
@@ -181,6 +185,7 @@ private:
 
 } } // namespace JSC::FTL
 
+#endif // !FTL_USES_B3
 #endif // ENABLE(FTL_JIT)
 
 #endif // FTLIntrinsicRepository_h

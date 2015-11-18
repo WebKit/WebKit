@@ -26,16 +26,20 @@
 #ifndef FTLB3Output_h
 #define FTLB3Output_h
 
+#include "DFGCommon.h"
+
 #if ENABLE(FTL_JIT)
 #if FTL_USES_B3
 
-#include "DFGCommon.h"
+#include "B3BasicBlock.h"
+#include "B3Procedure.h"
 #include "FTLAbbreviatedTypes.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLCommonValues.h"
 #include "FTLState.h"
 #include "FTLSwitchCase.h"
 #include "FTLTypedPointer.h"
+#include "FTLValueFromBlock.h"
 #include "FTLWeight.h"
 #include "FTLWeightedTarget.h"
 #include <wtf/StringPrintStream.h>
@@ -53,22 +57,24 @@ enum Scale { ScaleOne, ScaleTwo, ScaleFour, ScaleEight, ScalePtr };
 
 class Output : public CommonValues {
 public:
-    Output(LContext context)
-        : CommonValues(context)
-    {
-        CRASH();
-    }
+    Output(State&);
     ~Output() { CRASH(); }
 
-    void initialize(LModule, LValue, AbstractHeapRepository&) { CRASH(); }
+    LBasicBlock newBlock(const char* name = "")
+    {
+        UNUSED_PARAM(name);
+        return m_procedure.addBlock();
+    }
 
-    LBasicBlock insertNewBlocksBefore(LBasicBlock nextBlock) { CRASH(); }
+    LBasicBlock insertNewBlocksBefore(LBasicBlock nextBlock)
+    {
+        LBasicBlock lastNextBlock = m_nextBlock;
+        m_nextBlock = nextBlock;
+        return lastNextBlock;
+    }
 
     LBasicBlock appendTo(LBasicBlock, LBasicBlock nextBlock) { CRASH(); }
-
     void appendTo(LBasicBlock) { CRASH(); }
-
-    LBasicBlock newBlock(const char* name = "") { CRASH(); }
 
     LValue param(unsigned index) { CRASH(); }
     LValue constBool(bool value) { CRASH(); }
@@ -85,6 +91,8 @@ public:
     LValue phi(LType type, ValueFromBlock value, Params... theRest) { CRASH(); }
     template<typename VectorType>
     LValue phi(LType type, const VectorType& vector) { CRASH(); }
+    void addIncomingToPhi(LValue phi, ValueFromBlock value) { CRASH(); }
+
     LValue add(LValue left, LValue right) { CRASH(); }
     LValue sub(LValue left, LValue right) { CRASH(); }
     LValue mul(LValue left, LValue right) { CRASH(); }
@@ -308,9 +316,10 @@ public:
     LValue patchpointVoidIntrinsic() { CRASH(); }
 
 #pragma mark - States
+    B3::Procedure& m_procedure;
 
-    LBasicBlock m_block;
-    LBasicBlock m_nextBlock;
+    LBasicBlock m_block { nullptr };
+    LBasicBlock m_nextBlock { nullptr };
 };
 
 #if COMPILER(CLANG)

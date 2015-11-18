@@ -44,13 +44,14 @@ public:
     
     const LType voidType;
     const LType boolean;
-    const LType int8;
-    const LType int16;
     const LType int32;
     const LType int64;
     const LType intPtr;
-    const LType floatType;
     const LType doubleType;
+#if !FTL_USES_B3
+    const LType int8;
+    const LType int16;
+    const LType floatType;
     const LType ref8;
     const LType ref16;
     const LType ref32;
@@ -58,24 +59,25 @@ public:
     const LType refPtr;
     const LType refFloat;
     const LType refDouble;
-    const LValue booleanTrue;
-    const LValue booleanFalse;
-    const LValue int8Zero;
-    const LValue int32Zero;
-    const LValue int32One;
-    const LValue int64Zero;
-    const LValue intPtrZero;
-    const LValue intPtrOne;
-    const LValue intPtrTwo;
-    const LValue intPtrThree;
-    const LValue intPtrFour;
-    const LValue intPtrEight;
-    const LValue intPtrPtr;
-    const LValue doubleZero;
+#endif
+    const LValue booleanTrue { nullptr };
+    const LValue booleanFalse { nullptr };
+    const LValue int8Zero { nullptr };
+    const LValue int32Zero { nullptr };
+    const LValue int32One { nullptr };
+    const LValue int64Zero { nullptr };
+    const LValue intPtrZero { nullptr };
+    const LValue intPtrOne { nullptr };
+    const LValue intPtrTwo { nullptr };
+    const LValue intPtrThree { nullptr };
+    const LValue intPtrFour { nullptr };
+    const LValue intPtrEight { nullptr };
+    const LValue intPtrPtr { nullptr };
+    const LValue doubleZero { nullptr };
     
-    const unsigned rangeKind;
-    const unsigned profKind;
-    const LValue branchWeights;
+    const unsigned rangeKind { 0 };
+    const unsigned profKind { 0 };
+    const LValue branchWeights { nullptr };
     
     const ValueRange nonNegativeInt32;
 
