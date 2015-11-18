@@ -1,3 +1,31 @@
+2015-11-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Watch Expressions details section should use NavigationBar
+        https://bugs.webkit.org/show_bug.cgi?id=151377
+
+        Reviewed by Timothy Hatcher.
+
+        Replaces image elements with a NavigationBar instance. The refresh and 
+        clear buttons are disabled if no watch expressions exist.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New navigation item labels.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (.details-section.watch-expressions .options > *): Deleted.
+        (.details-section.watch-expressions .options > *:active): Deleted.
+        (.details-section.watch-expressions .options > .watch-expression-add): Deleted.
+        (.details-section.watch-expressions .options > .watch-expression-clear): Deleted.
+        (.details-section.watch-expressions .options > .watch-expression-refresh): Deleted.
+        Remove <img> button styles.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._addWatchExpressionButtonClicked.presentPopoverOverTargetElement):
+        Use the navigation item element.
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._updateWatchExpressionsNavigationBar):
+        Enable/disable refresh and clear buttons.
+
 2015-11-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move Timeline creation into a recording

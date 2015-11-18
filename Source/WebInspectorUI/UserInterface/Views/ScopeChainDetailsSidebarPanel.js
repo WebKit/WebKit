@@ -32,31 +32,31 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         this._callFrame = null;
 
         this._watchExpressionsSetting = new WebInspector.Setting("watch-expressions", []);
+        this._watchExpressionsSetting.addEventListener(WebInspector.Setting.Event.Changed, this._updateWatchExpressionsNavigationBar, this);
 
         this._watchExpressionOptionsElement = document.createElement("div");
         this._watchExpressionOptionsElement.classList.add("options");
 
-        let refreshAllWatchExpressionButton = this._watchExpressionOptionsElement.appendChild(document.createElement("img"));
-        refreshAllWatchExpressionButton.classList.add("watch-expression-refresh");
-        refreshAllWatchExpressionButton.setAttribute("role", "button");
-        refreshAllWatchExpressionButton.title = WebInspector.UIString("Refresh All Watch Expressions");
-        refreshAllWatchExpressionButton.addEventListener("click", this._refreshAllWatchExpressionsButtonClicked.bind(this));
+        this._navigationBar = new WebInspector.NavigationBar;
+        this._watchExpressionOptionsElement.appendChild(this._navigationBar.element);
 
-        let clearAllWatchExpressionButton = this._watchExpressionOptionsElement.appendChild(document.createElement("img"));
-        clearAllWatchExpressionButton.classList.add("watch-expression-clear");
-        clearAllWatchExpressionButton.setAttribute("role", "button");
-        clearAllWatchExpressionButton.title = WebInspector.UIString("Clear All Watch Expressions");
-        clearAllWatchExpressionButton.addEventListener("click", this._clearAllWatchExpressionsButtonClicked.bind(this));
+        let addWatchExpressionButton = new WebInspector.ButtonNavigationItem("add-watch-expression", WebInspector.UIString("Add watch expression"), "Images/Plus13.svg", 13, 13);
+        addWatchExpressionButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._addWatchExpressionButtonClicked, this);
+        this._navigationBar.addNavigationItem(addWatchExpressionButton);
 
-        let addWatchExpressionButton = this._watchExpressionOptionsElement.appendChild(document.createElement("img"));
-        addWatchExpressionButton.classList.add("watch-expression-add");
-        addWatchExpressionButton.title = WebInspector.UIString("Add Watch Expression");
-        addWatchExpressionButton.setAttribute("role", "button");
-        addWatchExpressionButton.addEventListener("click", this._addWatchExpressionButtonClicked.bind(this));
+        this._clearAllWatchExpressionButton = new WebInspector.ButtonNavigationItem("clear-watch-expressions", WebInspector.UIString("Clear watch expressions"), "Images/CloseLarge.svg", 13, 13);
+        this._clearAllWatchExpressionButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearAllWatchExpressionsButtonClicked, this);
+        this._navigationBar.addNavigationItem(this._clearAllWatchExpressionButton);
+
+        this._refreshAllWatchExpressionButton = new WebInspector.ButtonNavigationItem("refresh-watch-expressions", WebInspector.UIString("Refresh watch expressions"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshAllWatchExpressionButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshAllWatchExpressionsButtonClicked, this);
+        this._navigationBar.addNavigationItem(this._refreshAllWatchExpressionButton);
 
         this._watchExpressionsSectionGroup = new WebInspector.DetailsSectionGroup;
         this._watchExpressionsSection = new WebInspector.DetailsSection("watch-expressions", WebInspector.UIString("Watch Expressions"), [this._watchExpressionsSectionGroup], this._watchExpressionOptionsElement);
         this.contentElement.appendChild(this._watchExpressionsSection.element);
+
+        this._updateWatchExpressionsNavigationBar();
 
         this.needsRefresh();
 
@@ -304,7 +304,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
     {
         function presentPopoverOverTargetElement()
         {
-            let target = WebInspector.Rect.rectFromClientRect(event.target.getBoundingClientRect());
+            let target = WebInspector.Rect.rectFromClientRect(event.target.element.getBoundingClientRect());
             popover.present(target, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
         }
 
@@ -448,6 +448,13 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
             return;
 
         WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.delete(propertyPathIdentifier);
+    }
+
+    _updateWatchExpressionsNavigationBar()
+    {
+        let enabled = this._watchExpressionsSetting.value.length;
+        this._refreshAllWatchExpressionButton.enabled = enabled;
+        this._clearAllWatchExpressionButton.enabled = enabled;
     }
 };
 
