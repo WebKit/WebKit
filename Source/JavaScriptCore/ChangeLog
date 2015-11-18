@@ -14,7 +14,7 @@
         Reviewed by Filip Pizlo.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
-        * ftl/B3Output.h: Added.
+        * ftl/FTLB3Output.h: Added.
         * ftl/FTLAbbreviatedTypes.h:
         * ftl/FTLAbstractHeap.cpp:
         * ftl/FTLLowerDFGToLLVM.cpp:
