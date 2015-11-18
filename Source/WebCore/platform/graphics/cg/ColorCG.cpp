@@ -67,7 +67,6 @@ Color::Color(CGColorRef color)
     size_t numComponents = CGColorGetNumberOfComponents(color);
     const CGFloat* components = CGColorGetComponents(color);
 #else
-    // FIXME: can we remove this?
     RetainPtr<CGColorRef> correctedColor = adoptCF(createCGColorWithDeviceRGBA(color));
     if (!correctedColor)
         correctedColor = color;

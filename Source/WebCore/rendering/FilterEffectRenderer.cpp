@@ -284,7 +284,7 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
             // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
             // property applied here should not clip to their primitive subregions.
             effect->setClipsToBounds(consumer == FilterFunction);
-            effect->setOperatingColorSpace(ColorSpaceSRGB);
+            effect->setOperatingColorSpace(ColorSpaceDeviceRGB);
             
             if (filterOperation.type() != FilterOperation::REFERENCE) {
                 effect->inputEffects().append(previousEffect);
@@ -339,7 +339,7 @@ void FilterEffectRenderer::apply()
 {
     RefPtr<FilterEffect> effect = lastEffect();
     effect->apply();
-    effect->transformResultColorSpace(ColorSpaceSRGB);
+    effect->transformResultColorSpace(ColorSpaceDeviceRGB);
 }
 
 LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)

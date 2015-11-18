@@ -141,7 +141,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
 
     if (shouldCreateClipperMaskImage && !repaintRect.isEmpty()) {
-        clipperMaskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, ColorSpaceSRGB, Unaccelerated);
+        clipperMaskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, ColorSpaceDeviceRGB, Unaccelerated);
         if (!clipperMaskImage)
             return false;
 

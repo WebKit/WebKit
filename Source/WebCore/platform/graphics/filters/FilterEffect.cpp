@@ -46,7 +46,7 @@ FilterEffect::FilterEffect(Filter& filter)
     , m_hasHeight(false)
     , m_clipsToBounds(true)
     , m_operatingColorSpace(ColorSpaceLinearRGB)
-    , m_resultColorSpace(ColorSpaceSRGB)
+    , m_resultColorSpace(ColorSpaceDeviceRGB)
 {
 }
 

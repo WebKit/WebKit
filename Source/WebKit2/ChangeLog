@@ -1,5 +1,9 @@
 2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Rollout r192479. rdar://problem/22846841
+
+2015-11-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Rollout r192501. rdar://problem/22846841
 
 2015-11-16  Matthew Hanson  <matthew_hanson@apple.com>
@@ -34,27 +38,6 @@
                 has navigationClient.
             (WebKit::WebPageProxy::processDidBecomeResponsive):  Call navigationClient's processDidBecomeResponsive if the page proxy
                 has navigationClient.
-
-2015-11-16  Matthew Hanson  <matthew_hanson@apple.com>
-
-        Merge r192138. rdar://problem/22846841
-
-    2015-11-07  Simon Fraser  <simon.fraser@apple.com>
-
-            Use ColorSpaceSRGB for image buffers everywhere
-            https://bugs.webkit.org/show_bug.cgi?id=150990
-
-            Reviewed by Zalan Bujtas.
-
-            ColorSpaceSRGB and ColorSpaceDeviceRGB are equivalent now, so convert
-            code that creates image buffers tagged with ColorSpaceDeviceRGB to use ColorSpaceSRGB.
-
-            * Shared/mac/RemoteLayerBackingStore.mm:
-            (WebKit::RemoteLayerBackingStore::decode):
-            (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
-            * UIProcess/API/Cocoa/WKWebView.mm:
-            (-[WKWebView _takeViewSnapshot]):
-            (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
 
 2015-11-16  Matthew Hanson  <matthew_hanson@apple.com>
 
