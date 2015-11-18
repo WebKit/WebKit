@@ -141,7 +141,7 @@ public:
             LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) * Subresource: '%s'.", subresourceKey.identifier().utf8().data());
 #endif
 
-        return SubresourcesEntry(subresourcesStorageKey, WTF::move(subresourceKeys)).encodeAsStorageRecord();
+        return SubresourcesEntry(WTF::move(subresourcesStorageKey), WTF::move(subresourceKeys)).encodeAsStorageRecord();
     }
 
     void markAsCompleted()

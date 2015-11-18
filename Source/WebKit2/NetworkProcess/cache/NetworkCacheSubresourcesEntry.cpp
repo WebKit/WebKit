@@ -69,8 +69,8 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
     ASSERT(m_key.type() == "subresources");
 }
 
-SubresourcesEntry::SubresourcesEntry(const Key& key, Vector<Key>&& subresourceKeys)
-    : m_key(key)
+SubresourcesEntry::SubresourcesEntry(Key&& key, Vector<Key>&& subresourceKeys)
+    : m_key(WTF::move(key))
     , m_timeStamp(std::chrono::system_clock::now())
     , m_subresourceKeys(WTF::move(subresourceKeys))
 {

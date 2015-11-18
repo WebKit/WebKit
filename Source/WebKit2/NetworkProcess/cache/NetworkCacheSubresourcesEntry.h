@@ -36,7 +36,7 @@ namespace NetworkCache {
 class SubresourcesEntry {
     WTF_MAKE_NONCOPYABLE(SubresourcesEntry); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SubresourcesEntry(const Key&, Vector<Key>&& subresourceKeys);
+    SubresourcesEntry(Key&&, Vector<Key>&& subresourceKeys);
     explicit SubresourcesEntry(const Storage::Record&);
 
     Storage::Record encodeAsStorageRecord() const;
@@ -49,7 +49,6 @@ public:
 private:
     Key m_key;
     std::chrono::system_clock::time_point m_timeStamp;
-    Storage::Record m_sourceStorageRecord;
     Vector<Key> m_subresourceKeys;
 };
 

@@ -1,3 +1,20 @@
+2015-11-18  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / optimize NetworkCacheSubresourcesEntry
+        https://bugs.webkit.org/show_bug.cgi?id=151405
+
+        Reviewed by Antti Koivisto.
+
+        Clean up / optimize NetworkCacheSubresourcesEntry:
+        - Remove m_sourceStorageRecord data member
+        - Avoid copying the Key when constructing it
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::encodeAsSubresourcesRecord):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourcesEntry):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+
 2015-11-18  Jer Noble  <jer.noble@apple.com>
 
         Expose WebCore's AudioPlaybackRequiresUserGesture setting to WebKit & WebKit2
