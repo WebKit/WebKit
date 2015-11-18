@@ -109,30 +109,10 @@ window.sectionsManager =
             history.pushState({section: sectionIdentifier}, document.title);
     },
 
-    setupSectionStyle: function()
-    {
-        if (screen.width >= 1800 && screen.height >= 1000)
-            DocumentExtension.insertCssRuleAfter(" section { width: 1600px; height: 800px; }", "section");
-        else
-            DocumentExtension.insertCssRuleAfter(" section { width: 800px; height: 600px; }", "section");
-    },
-    
     setupRunningSectionStyle: function(options)
     {
         if (!options["show-running-results"])
             document.getElementById("record").style.display = "none";
-
-        if (options["normalize-for-device-scale-factor"] && window.devicePixelRatio != 1) {
-            var percentage = window.devicePixelRatio * 100;
-            var rule = "section#running > #running-test > iframe";
-            var newRule = rule;
-            newRule += " { ";
-            newRule += "width: " + percentage + "%; ";
-            newRule += "height: " + percentage + "%; ";
-            newRule += "transform: scale(" + 100 / percentage + ") translate(" + (100 - percentage) / 2 + "%," + (100 - percentage) / 2 + "%);";
-            newRule += " }";
-            DocumentExtension.insertCssRuleAfter(newRule, rule);
-        }
     }
 }
 
@@ -407,7 +387,6 @@ window.benchmarkController =
 {
     initialize: function()
     {
-        sectionsManager.setupSectionStyle();
         optionsManager.updateUIFromLocalStorage();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
@@ -463,4 +442,4 @@ window.benchmarkController =
     }
 }
 
-document.addEventListener("DOMContentLoaded", benchmarkController.initialize());
+window.addEventListener("load", benchmarkController.initialize);

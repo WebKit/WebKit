@@ -1,3 +1,31 @@
+2015-11-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Use the media queries to dynamically set the stage for the graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=151327
+
+        Reviewed by Simon Fraser.
+
+        Clean setting the benchmark css rules by using the media queries. Accessing
+        document.stylesheets.cssRules seems to be unreliable. Fix the test harness
+        load event listener invocation. And also remove the options for normalizing
+        the stage resolution for retina display.
+
+        * Animometer/resources/extensions.js:
+        (window.DocumentExtension.insertCssRuleAfter): Deleted.
+        * Animometer/runner/animometer.html:
+        * Animometer/runner/resources/animometer.css:
+        (@media screen and (min-device-width: 1800px)):
+        * Animometer/runner/resources/animometer.js:
+        (window.sectionsManager.setupRunningSectionStyle):
+        (window.benchmarkController.initialize):
+        (window.sectionsManager.setupSectionStyle): Deleted.
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        (BouncingParticlesStage):
+        * Animometer/tests/text/layering-text.html:
+        * Animometer/tests/text/resources/layering-text.js:
+        (LayeringTextStage):
+        (LayeringTextStage.prototype._setFontSize): Deleted.
+
 2015-11-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the option for animating using setInterval from the graphics benchmark

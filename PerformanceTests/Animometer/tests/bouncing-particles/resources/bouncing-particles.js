@@ -67,7 +67,7 @@ BouncingParticlesAnimator.prototype.constructor = BouncingParticlesAnimator;
 
 function BouncingParticlesStage(element, options)
 {
-    Stage.call(this, element);
+    Stage.call(this, element, options);
     
     this.particleSize = new Point(parseInt(options["particleWidth"]) || 10, parseInt(options["particleHeight"]) || 10);
     this._particles = [];

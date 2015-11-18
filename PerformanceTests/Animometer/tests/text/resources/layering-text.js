@@ -6,7 +6,6 @@ function LayeringTextStage(element, options)
     this._textItemIndex = 0;
     this._colorIndex = 0;
     this._animateCounts = 0;
-    this._setFontSize();
 }
 
 LayeringTextStage.textItems = [
@@ -61,7 +60,7 @@ LayeringTextStage.textItems = [
         "</ul>",
         "<h3>Open source benchmarks</h3>",
         "<ul>",
-            "<li>AIM Multiuser Benchmark: composed of a list of tests that could be mixed to create a ‘load mix’ that would simulate a specific computer function on any UNIX-type OS.</li>",
+            "<li>AIM Multiuser Benchmark: composed of a list of tests that could be mixed to create a 'load mix' that would simulate a specific computer function on any UNIX-type OS.</li>",
             "<li>Bonnie++: filesystem and hard drive benchmark</li>",
             "<li>BRL-CAD: cross-platform architecture-agnostic benchmark suite based on multithreaded ray tracing performance; baselined against a VAX-11/780; and used since 1984 for evaluating relative CPU performance, compiler differences, optimization levels, coherency, architecture differences, and operating system differences.</li>",
         "</ul>",
@@ -137,14 +136,6 @@ LayeringTextStage.colorIndexToTextElementIndex = function(colorIndex)
 
 LayeringTextStage.prototype = Object.create(Stage.prototype);
 LayeringTextStage.prototype.constructor = LayeringTextStage;
-
-LayeringTextStage.prototype._setFontSize = function()
-{
-    var lineHeight = this.size.height / LayeringTextStage.colorableTextItems;
-    var fontHeight = lineHeight / 1.5;
-    var fontSize = fontHeight * 72.0 / 96.0;
-    DocumentExtension.insertCssRuleAfter(".text-layer", ".text-layer { font-size: " + fontSize.toFixed(2) + "px; }");
-}
 
 LayeringTextStage.prototype._nextTextItem = function(textItemFlags)
 {

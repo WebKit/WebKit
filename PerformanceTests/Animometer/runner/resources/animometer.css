@@ -240,6 +240,13 @@ section > footer {
     justify-content: center;
 }
 
+@media screen and (min-device-width: 1800px) {
+    section {
+        width: 1600px;
+        height: 800px;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                 Home Section                               */
 /* -------------------------------------------------------------------------- */

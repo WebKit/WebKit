@@ -160,22 +160,6 @@ window.DocumentExtension =
             
         parentElement.appendChild(element);
         return element;
-    },
-    
-    insertCssRuleAfter: function(newRule, referenceRule)
-    {
-        var styleSheets = document.styleSheets;
-
-        for (var i = 0; i < styleSheets.length; ++i) {       
-            for (var j = 0; j < styleSheets[i].cssRules.length; ++j) {
-                if (styleSheets[i].cssRules[j].selectorText == referenceRule) {
-                    styleSheets[i].insertRule(newRule, j + 1);
-                    return true;
-                }
-            }
-        }
-        
-        return false;
     }
 }
 
