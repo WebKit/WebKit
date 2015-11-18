@@ -699,8 +699,6 @@ webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html 
 
 webkit.org/b/144771 editing/selection/selection-invalid-offset.html [ Crash ]
 
-webkit.org/b/151260 imported/blink/editing/execCommand/indent-button-crash.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
