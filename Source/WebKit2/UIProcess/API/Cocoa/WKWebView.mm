@@ -1105,14 +1105,20 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 - (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot
 {
     float deviceScale = WKGetScreenScaleFactor();
-    WebCore::FloatSize snapshotSize(self.bounds.size);
-    snapshotSize.scale(deviceScale, deviceScale);
+    CGSize snapshotSize = self.bounds.size;
+    snapshotSize.width *= deviceScale;
+    snapshotSize.height *= deviceScale;
+
+    uint32_t slotID = [WebKit::ViewSnapshotStore::snapshottingContext() createImageSlot:snapshotSize hasAlpha:YES];
+
+    if (!slotID)
+        return nullptr;
 
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
-    auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpaceDeviceRGB);
-    CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
+    CARenderServerCaptureLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, (uint64_t)self.layer, slotID, 0, 0, &transform);
 
-    return WebKit::ViewSnapshot::create(nullptr);
+    WebCore::IntSize imageSize = WebCore::expandedIntSize(WebCore::FloatSize(snapshotSize));
+    return WebKit::ViewSnapshot::create(slotID, imageSize, imageSize.width() * imageSize.height() * 4);
 }
 
 - (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale animated:(BOOL)animated
