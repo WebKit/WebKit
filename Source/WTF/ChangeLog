@@ -1,3 +1,17 @@
+2015-11-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] ASSERTION FAILED: temporaryFilePath.last() == '/' in WebCore::openTemporaryFile()
+        https://bugs.webkit.org/show_bug.cgi?id=151392
+        <rdar://problem/23595341>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Workaround <rdar://problem/23579077> where confstr(_CS_DARWIN_USER_TEMP_DIR, ..., ...) retrieves
+        the path to the user temporary directory without a trailing slash in the iOS simulator.
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+
 2015-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         CheckAdd/Mul should have commutativity optimizations in B3->Air lowering

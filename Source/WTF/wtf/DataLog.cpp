@@ -81,13 +81,21 @@ static void initializeLogFileOnce()
     const char* logBasename = "WTFLog";
 #endif
 
-    const char* filename = 0;
+    const char* filename = nullptr;
 
-    size_t lastComponentLength = strlen(logBasename) + suffixLength;
-    size_t dirnameLength = confstr(_CS_DARWIN_USER_TEMP_DIR, filenameBuffer, 1024);
-    if ((dirnameLength + lastComponentLength + suffixLength) < maxPathLength) {
-        strncat(filenameBuffer, logBasename, maxPathLength - dirnameLength);
-        filename = filenameBuffer;
+    bool success = confstr(_CS_DARWIN_USER_TEMP_DIR, filenameBuffer, sizeof(filenameBuffer));
+    if (success) {
+        // FIXME: Assert that the path ends with a slash instead of adding a slash if it does not exist
+        // once <rdar://problem/23579077> is fixed in all iOS Simulator versions that we use.
+        size_t lastComponentLength = strlen(logBasename) + suffixLength;
+        size_t dirnameLength = strlen(filenameBuffer);
+        bool shouldAddPathSeparator = filenameBuffer[dirnameLength - 1] != '/' && logBasename[0] != '/';
+        if (lastComponentLength + shouldAddPathSeparator <= sizeof(filenameBuffer) - dirnameLength - 1) {
+            if (shouldAddPathSeparator)
+                strncat(filenameBuffer, "/", 1);
+            strncat(filenameBuffer, logBasename, sizeof(filenameBuffer) - strlen(filenameBuffer) - 1);
+            filename = filenameBuffer;
+        }
     }
 #elif defined(DATA_LOG_FILENAME)
     const char* filename = DATA_LOG_FILENAME;

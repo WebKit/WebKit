@@ -1,3 +1,17 @@
+2015-11-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] ASSERTION FAILED: temporaryFilePath.last() == '/' in WebCore::openTemporaryFile()
+        https://bugs.webkit.org/show_bug.cgi?id=151392
+        <rdar://problem/23595341>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Workaround <rdar://problem/23579077> where confstr(_CS_DARWIN_USER_TEMP_DIR, ..., ...) retrieves
+        the path to the user temporary directory without a trailing slash in the iOS simulator.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandleForTemporaryFile): Add a path separator (/) between the directory path and filename.
+
 2015-11-17  Geoffrey Garen  <ggaren@apple.com>
 
         A window with a hung tab waits 5s before closing
