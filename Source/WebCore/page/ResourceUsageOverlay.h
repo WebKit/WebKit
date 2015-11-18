@@ -81,7 +81,7 @@ private:
     RetainPtr<CALayer> m_layer;
 #endif
 
-    static const int normalWidth = 550;
+    static const int normalWidth = 570;
     static const int normalHeight = 130;
 };
 

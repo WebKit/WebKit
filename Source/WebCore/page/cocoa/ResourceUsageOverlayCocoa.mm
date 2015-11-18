@@ -146,6 +146,7 @@ struct MemoryCategoryInfo {
     String name;
     RetainPtr<CGColorRef> color;
     RingBuffer<size_t> history;
+    RingBuffer<size_t> reclaimableHistory;
     bool isSubcategory { false };
     unsigned type { MemoryCategory::NumberOfCategories };
 };
@@ -411,8 +412,13 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
 
     float y = 50;
     for (auto& category : data.categories) {
+        String label = String::format("% 11s: %s", category.name.ascii().data(), formatByteNumber(category.history.last()).ascii().data());
+        size_t reclaimable = category.reclaimableHistory.last();
+        if (reclaimable)
+            label = label + String::format(" [%s]", formatByteNumber(reclaimable).ascii().data());
+
         // FIXME: Show size/capacity of GC heap.
-        showText(context, 10, y, category.color.get(), String::format("% 11s: %s", category.name.ascii().data(), formatByteNumber(category.history.last()).ascii().data()));
+        showText(context, 10, y, category.color.get(), label);
         y += 10;
     }
 
@@ -424,22 +430,49 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     drawMemoryPie(context, pieRect, data);
 }
 
-static std::array<size_t, 256> dirtyPagesPerVMTag()
+struct TagInfo {
+    TagInfo() { }
+    size_t dirty { 0 };
+    size_t reclaimable { 0 };
+};
+
+static std::array<TagInfo, 256> pagesPerVMTag()
 {
-    std::array<size_t, 256> dirty;
-    dirty.fill(0);
+    std::array<TagInfo, 256> tags;
     task_t task = mach_task_self();
     mach_vm_size_t size;
     uint32_t depth = 0;
     struct vm_region_submap_info_64 info = { };
     mach_msg_type_number_t count = VM_REGION_SUBMAP_INFO_COUNT_64;
     for (mach_vm_address_t addr = 0; ; addr += size) {
+        int purgeableState;
+        if (mach_vm_purgable_control(task, addr, VM_PURGABLE_GET_STATE, &purgeableState) != KERN_SUCCESS)
+            purgeableState = VM_PURGABLE_DENY;
+
         kern_return_t kr = mach_vm_region_recurse(task, &addr, &size, &depth, (vm_region_info_t)&info, &count);
         if (kr != KERN_SUCCESS)
             break;
-        dirty[info.user_tag] += info.pages_dirtied;
+
+        if (purgeableState == VM_PURGABLE_VOLATILE) {
+            tags[info.user_tag].reclaimable += info.pages_resident;
+            continue;
+        }
+
+        if (purgeableState == VM_PURGABLE_EMPTY) {
+            static size_t vmPageSize = getpagesize();
+            tags[info.user_tag].reclaimable += size / vmPageSize;
+            continue;
+        }
+
+        bool anonymous = !info.external_pager;
+        if (anonymous) {
+            tags[info.user_tag].dirty += info.pages_resident - info.pages_reusable;
+            tags[info.user_tag].reclaimable += info.pages_reusable;
+        } else
+            tags[info.user_tag].dirty += info.pages_dirtied;
     }
-    return dirty;
+
+    return tags;
 }
 
 static float cpuUsage()
@@ -504,26 +537,27 @@ NO_RETURN void runSamplerThread(void*)
     auto& data = sharedData();
     while (1) {
         float cpu = cpuUsage();
-        auto dirtyPages = dirtyPagesPerVMTag();
+        auto tags = pagesPerVMTag();
         Vector<CALayer *, 8> layers;
 
         {
             LockHolder locker(data.lock);
             data.cpuHistory.append(cpu);
 
-            std::array<size_t, MemoryCategory::NumberOfCategories> dirtyPagesPerCategory;
-            dirtyPagesPerCategory.fill(0);
+            std::array<TagInfo, MemoryCategory::NumberOfCategories> pagesPerCategory;
 
             size_t totalDirtyPages = 0;
             for (unsigned i = 0; i < 256; ++i) {
-                dirtyPagesPerCategory[categoryForVMTag(i)] += dirtyPages[i];
-                totalDirtyPages += dirtyPages[i];
+                pagesPerCategory[categoryForVMTag(i)].dirty += tags[i].dirty;
+                pagesPerCategory[categoryForVMTag(i)].reclaimable += tags[i].reclaimable;
+                totalDirtyPages += tags[i].dirty;
             }
 
             for (auto& category : data.categories) {
                 if (category.isSubcategory) // Only do automatic tallying for top-level categories.
                     continue;
-                category.history.append(dirtyPagesPerCategory[category.type] * vmPageSize);
+                category.history.append(pagesPerCategory[category.type].dirty * vmPageSize);
+                category.reclaimableHistory.append(pagesPerCategory[category.type].reclaimable * vmPageSize);
             }
             data.totalDirty.append(totalDirtyPages * vmPageSize);
 
