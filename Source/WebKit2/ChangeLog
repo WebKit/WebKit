@@ -1,3 +1,30 @@
+2015-11-18  Jer Noble  <jer.noble@apple.com>
+
+        Expose WebCore's AudioPlaybackRequiresUserGesture setting to WebKit & WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=151274
+
+        Reviewed by Anders Carlsson.
+
+        Add a new, private, WKWebViewConfiguration property, _requiresUserActionForAudioPlayback,
+        and use that configuration property to set WebCore's AudioPlaybackRequiresUserGesture setting
+        during page creation.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAudioPlaybackRequiresUserGesture): Add legacy C API for setting this new WK preference.
+        (WKPreferencesGetAudioPlaybackRequiresUserGesture): Ditto.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Set the page configuration value from preferences.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Default the value of the new configuration property to YES for iOS.
+        (-[WKWebViewConfiguration copyWithZone:]): Copy the value across.
+        (-[WKWebViewConfiguration _requiresUserActionForAudioPlayback]): Simple getter.
+        (-[WKWebViewConfiguration _setRequiresUserActionForAudioPlayback:]): Simple setter.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Set WebCore's audioPlaybackRequiresUserGesture Setting.
+
 2015-11-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] ASSERTION FAILED: temporaryFilePath.last() == '/' in WebCore::openTemporaryFile()

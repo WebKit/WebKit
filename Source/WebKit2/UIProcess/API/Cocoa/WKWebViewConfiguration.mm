@@ -104,6 +104,7 @@ private:
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _mediaDataLoadsAutomatically;
+    BOOL _requiresUserActionForAudioPlayback;
 #endif
 #if PLATFORM(MAC)
     BOOL _showsURLsInToolTips;
@@ -119,6 +120,7 @@ private:
     
 #if PLATFORM(IOS)
     _requiresUserActionForMediaPlayback = YES;
+    _requiresUserActionForAudioPlayback = YES;
     _allowsPictureInPictureMediaPlayback = YES;
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
@@ -185,6 +187,7 @@ private:
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_requiresUserActionForMediaPlayback = self->_requiresUserActionForMediaPlayback;
+    configuration->_requiresUserActionForAudioPlayback = self->_requiresUserActionForAudioPlayback;
     configuration->_selectionGranularity = self->_selectionGranularity;
 #endif
 #if PLATFORM(MAC)
@@ -462,6 +465,17 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     _mediaDataLoadsAutomatically = mediaDataLoadsAutomatically;
 }
+
+- (BOOL)_requiresUserActionForAudioPlayback
+{
+    return _requiresUserActionForAudioPlayback;
+}
+
+- (void)_setRequiresUserActionForAudioPlayback:(BOOL)requiresUserActionForAudioPlayback
+{
+    _requiresUserActionForAudioPlayback = requiresUserActionForAudioPlayback;
+}
+
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

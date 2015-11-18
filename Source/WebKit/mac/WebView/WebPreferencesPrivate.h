@@ -245,6 +245,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMediaPlaybackRequiresUserGesture:(BOOL)flag;
 - (BOOL)mediaPlaybackRequiresUserGesture;
 
+- (void)setAudioPlaybackRequiresUserGesture:(BOOL)flag;
+- (BOOL)audioPlaybackRequiresUserGesture;
+
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsInline;
 
