@@ -208,7 +208,7 @@ float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsig
     float width = m_style.font.width(run);
     if (measureWithEndSpace)
         width -= m_style.spaceWidth;
-    return width;
+    return std::max<float>(0, width);
 }
 
 }

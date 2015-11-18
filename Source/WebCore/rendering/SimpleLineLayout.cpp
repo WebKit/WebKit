@@ -122,7 +122,7 @@ static bool canUseForStyle(const RenderStyle& style)
         return false;
     if (!style.textIndent().isZero())
         return false;
-    if (!style.wordSpacing().isZero() || style.letterSpacing())
+    if (!style.wordSpacing().isZero())
         return false;
     if (!style.isLeftToRightDirection())
         return false;
