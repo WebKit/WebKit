@@ -29,6 +29,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
     {
         super();
 
+        console.assert(timelineRecording instanceof WebInspector.TimelineRecording);
+
         this._recording = timelineRecording;
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineAdded, this._timelineAdded, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
