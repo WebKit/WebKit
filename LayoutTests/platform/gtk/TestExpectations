@@ -358,6 +358,8 @@ webkit.org/b/79203 webaudio/mediastreamaudiodestinationnode.html [ Skip ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Skip ]
+webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
+webkit.org/b/151344 fast/mediastream/MediaStream-add-remove-tracks.html [ Skip ]
 
 # Text Autosizing is not yet enabled.
 webkit.org/b/99063 fast/text-autosizing [ Skip ]
