@@ -23,36 +23,44 @@ BouncingParticle.prototype =
 
         // If particle is going to move off right side
         if (this._position.x + this._size.x > this._stageSize.x) {
-            // If direction is East-South
+            // If direction is East-South, go West-South.
             if (this._angle >= 0 && this._angle < Math.PI / 2)
                 this._angle = Math.PI - this._angle;
-            // If angle is East-North
+            // If angle is East-North, go West-North.
             else if (this._angle > Math.PI / 2 * 3)
                 this._angle = this._angle - (this._angle - Math.PI / 2 * 3) * 2;
+            // Make sure the particle does not go outside the stage boundaries.
+            this._position.x = this._stageSize.x - this._size.x;
         }
         
         // If particle is going to move off left side
         if (this._position.x < 0) {
-            // If angle is West-South
+            // If angle is West-South, go East-South.
             if (this._angle > Math.PI / 2 && this._angle < Math.PI)
                 this._angle = Math.PI - this._angle;
-            // If angle is West-North
+            // If angle is West-North, go East-North.
             else if (this._angle > Math.PI && this._angle < Math.PI / 2 * 3)
                 this._angle = this._angle + (Math.PI / 2 * 3 - this._angle) * 2;
+            // Make sure the particle does not go outside the stage boundaries.
+            this._position.x = 0;
         }
 
         // If particle is going to move off bottom side
         if (this._position.y + this._size.y > this._stageSize.y) {
-            // If direction is South
+            // If direction is South, go North.
             if (this._angle > 0 && this._angle < Math.PI)
                 this._angle = Math.PI * 2 - this._angle;
+            // Make sure the particle does not go outside the stage boundaries.
+            this._position.y = this._stageSize.y - this._size.y;
         }
 
         // If particle is going to move off top side
         if (this._position.y < 0) {
-            // If direction is North
+            // If direction is North, go South.
             if (this._angle > Math.PI && this._angle < Math.PI * 2)
                 this._angle = this._angle - (this._angle - Math.PI) * 2;
+            // Make sure the particle does not go outside the stage boundaries.
+            this._position.y = 0;
         }
     }
 }
