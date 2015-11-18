@@ -30,10 +30,9 @@
 #if FTL_USES_B3
 
 #include "DFGCommon.h"
-#include "FTLAbbreviations.h"
+#include "FTLAbbreviatedTypes.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLCommonValues.h"
-#include "FTLIntrinsicRepository.h"
 #include "FTLState.h"
 #include "FTLSwitchCase.h"
 #include "FTLTypedPointer.h"
@@ -52,10 +51,10 @@ namespace JSC { namespace FTL {
 
 enum Scale { ScaleOne, ScaleTwo, ScaleFour, ScaleEight, ScalePtr };
 
-class Output : public IntrinsicRepository {
+class Output : public CommonValues {
 public:
     Output(LContext context)
-        : IntrinsicRepository(context)
+        : CommonValues(context)
     {
         CRASH();
     }
@@ -300,6 +299,15 @@ public:
     void trap() { CRASH(); }
 
     ValueFromBlock anchor(LValue value) { CRASH(); }
+
+#pragma mark - Intrinsics
+
+    LValue stackmapIntrinsic() { CRASH(); }
+    LValue frameAddressIntrinsic() { CRASH(); }
+    LValue patchpointInt64Intrinsic() { CRASH(); }
+    LValue patchpointVoidIntrinsic() { CRASH(); }
+
+#pragma mark - States
 
     LBasicBlock m_block;
     LBasicBlock m_nextBlock;

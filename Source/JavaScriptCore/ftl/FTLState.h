@@ -31,7 +31,7 @@
 #include "B3Procedure.h"
 #include "DFGCommon.h"
 #include "DFGGraph.h"
-#include "FTLAbbreviations.h"
+#include "FTLAbbreviatedTypes.h"
 #include "FTLGeneratedFunction.h"
 #include "FTLInlineCacheDescriptor.h"
 #include "FTLJITCode.h"

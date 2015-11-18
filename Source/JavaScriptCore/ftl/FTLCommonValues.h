@@ -28,7 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLAbbreviations.h"
+#include "FTLAbbreviatedTypes.h"
 #include "FTLValueRange.h"
 
 namespace JSC { namespace FTL {

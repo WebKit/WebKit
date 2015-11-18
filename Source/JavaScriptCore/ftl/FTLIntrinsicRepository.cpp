@@ -28,6 +28,8 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "FTLAbbreviations.h"
+
 namespace JSC { namespace FTL {
 
 IntrinsicRepository::IntrinsicRepository(LContext context)

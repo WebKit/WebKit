@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeBlockWithJITType.h"
+#include "FTLAbbreviations.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"

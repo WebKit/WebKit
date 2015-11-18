@@ -1,3 +1,35 @@
+2015-11-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Untangle the dependencies on FTLAbbreviations a bit
+        https://bugs.webkit.org/show_bug.cgi?id=151375
+
+        Reviewed by Geoffrey Garen.
+
+        FTLAbbreviations was included in many places but in most cases
+        we just need the Abbreviated types. Update the #include accordingly.
+
+        Also remove the IntrinsicRepository dependency from the B3Output.
+
+        * ftl/FTLAbstractHeap.cpp:
+        * ftl/FTLAbstractHeap.h:
+        * ftl/FTLAbstractHeapRepository.cpp:
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::stackmapIntrinsic):
+        (JSC::FTL::Output::frameAddressIntrinsic):
+        (JSC::FTL::Output::patchpointInt64Intrinsic):
+        (JSC::FTL::Output::patchpointVoidIntrinsic):
+        * ftl/FTLCommonValues.cpp:
+        * ftl/FTLCommonValues.h:
+        * ftl/FTLFormattedValue.h:
+        * ftl/FTLIntrinsicRepository.cpp:
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompilationInfo.h:
+        * ftl/FTLStackmapArgumentList.h:
+        * ftl/FTLState.cpp:
+        * ftl/FTLState.h:
+        * ftl/FTLTypedPointer.h:
+
 2015-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         B3::generate should separate out the final Air codegen, so that it can be done outside the Graph safepoint

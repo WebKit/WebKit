@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FTLCommonValues.h"
 
+#include "FTLAbbreviations.h"
+
 #if ENABLE(FTL_JIT)
 
 namespace JSC { namespace FTL {

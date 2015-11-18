@@ -31,7 +31,7 @@
 #include "CodeOrigin.h"
 #include "DFGExitProfile.h"
 #include "DFGOSRExitBase.h"
-#include "FTLAbbreviations.h"
+#include "FTLAbbreviatedTypes.h"
 #include "FTLExitTimeObjectMaterialization.h"
 #include "FTLExitValue.h"
 #include "FTLFormattedValue.h"

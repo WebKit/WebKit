@@ -29,7 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "DataFormat.h"
-#include "FTLAbbreviations.h"
+#include "FTLAbbreviatedTypes.h"
 
 namespace JSC { namespace FTL {
 

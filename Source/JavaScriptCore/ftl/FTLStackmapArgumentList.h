@@ -28,7 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLAbbreviations.h"
+#include "FTLAbbreviatedTypes.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace FTL {
