@@ -43,6 +43,10 @@
 .justifyContentStretch { justify-content: stretch; }
 
 /* Both align-items and justify-items */
+.itemsStart {
+    align-items: start;
+    justify-items: start;
+}
 .itemsCenter {
     align-items: center;
     justify-items: center;
@@ -71,4 +75,9 @@
 .itemsSelfEnd {
     align-items: self-end;
     justify-items: self-end;
+}
+
+.stretch {
+    align-self: stretch;
+    justify-self: stretch;
 }

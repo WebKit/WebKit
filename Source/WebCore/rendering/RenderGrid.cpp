@@ -263,6 +263,11 @@ static inline bool defaultAlignmentChangedToStretchInRowAxis(const RenderStyle& 
     return !defaultAlignmentIsStretch(oldStyle.justifyItemsPosition()) && defaultAlignmentIsStretch(newStyle.justifyItemsPosition());
 }
 
+static inline bool defaultAlignmentChangedFromStretchInRowAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+{
+    return defaultAlignmentIsStretch(oldStyle.justifyItemsPosition()) && !defaultAlignmentIsStretch(newStyle.justifyItemsPosition());
+}
+
 static inline bool defaultAlignmentChangedFromStretchInColumnAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     return defaultAlignmentIsStretch(oldStyle.alignItemsPosition()) && !defaultAlignmentIsStretch(newStyle.alignItemsPosition());
@@ -272,6 +277,12 @@ static inline bool selfAlignmentChangedToStretchInRowAxis(const RenderStyle& old
 {
     return RenderStyle::resolveJustification(oldStyle, childStyle, ItemPositionStretch) != ItemPositionStretch
         && RenderStyle::resolveJustification(newStyle, childStyle, ItemPositionStretch) == ItemPositionStretch;
+}
+
+static inline bool selfAlignmentChangedFromStretchInRowAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderStyle& childStyle)
+{
+    return RenderStyle::resolveJustification(oldStyle, childStyle, ItemPositionStretch) == ItemPositionStretch
+        && RenderStyle::resolveJustification(newStyle, childStyle, ItemPositionStretch) != ItemPositionStretch;
 }
 
 static inline bool selfAlignmentChangedFromStretchInColumnAxis(const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderStyle& childStyle)
@@ -287,15 +298,18 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         return;
 
     const RenderStyle& newStyle = style();
-    if (defaultAlignmentChangedToStretchInRowAxis(*oldStyle, newStyle) || defaultAlignmentChangedFromStretchInColumnAxis(*oldStyle, newStyle)) {
+    if (defaultAlignmentChangedToStretchInRowAxis(*oldStyle, newStyle) || defaultAlignmentChangedFromStretchInRowAxis(*oldStyle, newStyle)
+        || defaultAlignmentChangedFromStretchInColumnAxis(*oldStyle, newStyle)) {
         // Grid items that were not previously stretched in row-axis need to be relayed out so we can compute new available space.
         // Grid items that were previously stretching in column-axis need to be relayed out so we can compute new available space.
         // This is only necessary for stretching since other alignment values don't change the size of the box.
         for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
             if (child->isOutOfFlowPositioned())
                 continue;
-            if (selfAlignmentChangedToStretchInRowAxis(*oldStyle, newStyle, child->style()) || selfAlignmentChangedFromStretchInColumnAxis(*oldStyle, newStyle, child->style()))
+            if (selfAlignmentChangedToStretchInRowAxis(*oldStyle, newStyle, child->style()) || selfAlignmentChangedFromStretchInRowAxis(*oldStyle, newStyle, child->style())
+                || selfAlignmentChangedFromStretchInColumnAxis(*oldStyle, newStyle, child->style())) {
                 child->setChildNeedsLayout(MarkOnlyThis);
+            }
         }
     }
 }
@@ -1627,32 +1641,15 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
 {
-    ASSERT(child.overrideContainingBlockContentLogicalWidth() && child.overrideContainingBlockContentLogicalHeight());
+    ASSERT(child.overrideContainingBlockContentLogicalHeight());
 
-    // We clear both width and height override values because we will decide now whether they
-    // are allowed or not, evaluating the conditions which might have changed since the old
-    // values were set.
-    child.clearOverrideSize();
+    // We clear height override values because we will decide now whether it's allowed or
+    // not, evaluating the conditions which might have changed since the old values were set.
+    child.clearOverrideLogicalContentHeight();
 
     auto& gridStyle = style();
     auto& childStyle = child.style();
     bool isHorizontalMode = isHorizontalWritingMode();
-    bool hasAutoSizeInRowAxis = isHorizontalMode ? childStyle.width().isAuto() : childStyle.height().isAuto();
-    bool allowedToStretchChildAlongRowAxis = hasAutoSizeInRowAxis && !childStyle.marginStartUsing(&gridStyle).isAuto() && !childStyle.marginEndUsing(&gridStyle).isAuto();
-    if (!allowedToStretchChildAlongRowAxis || RenderStyle::resolveJustification(gridStyle, childStyle, ItemPositionStretch) != ItemPositionStretch) {
-        bool hasAutoMinSizeInRowAxis = isHorizontalMode ? childStyle.minWidth().isAuto() : childStyle.minHeight().isAuto();
-        bool canShrinkToFitInRowAxisForChild = !hasAutoMinSizeInRowAxis || child.minPreferredLogicalWidth() <= child.overrideContainingBlockContentLogicalWidth().value();
-        // TODO(lajava): how to handle orthogonality in this case ?.
-        // TODO(lajava): grid track sizing and positioning do not support orthogonal modes yet.
-        if (hasAutoSizeInRowAxis && canShrinkToFitInRowAxisForChild) {
-            LayoutUnit childWidthToFitContent = std::max(std::min(child.maxPreferredLogicalWidth(), child.overrideContainingBlockContentLogicalWidth().value() - child.marginLogicalWidth()), child.minPreferredLogicalWidth());
-            LayoutUnit desiredLogicalWidth = child.constrainLogicalHeightByMinMax(childWidthToFitContent, Nullopt);
-            child.setOverrideLogicalContentWidth(desiredLogicalWidth - child.borderAndPaddingLogicalWidth());
-            if (desiredLogicalWidth != child.logicalWidth())
-                child.setNeedsLayout();
-        }
-    }
-
     bool hasAutoSizeInColumnAxis = isHorizontalMode ? childStyle.height().isAuto() : childStyle.width().isAuto();
     bool allowedToStretchChildAlongColumnAxis = hasAutoSizeInColumnAxis && !childStyle.marginBeforeUsing(&gridStyle).isAuto() && !childStyle.marginAfterUsing(&gridStyle).isAuto();
     if (allowedToStretchChildAlongColumnAxis && RenderStyle::resolveAlignment(gridStyle, childStyle, ItemPositionStretch) == ItemPositionStretch) {

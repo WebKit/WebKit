@@ -2359,11 +2359,7 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     // width.  Use the width from the style context.
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
-    if (hasOverrideLogicalContentWidth() && (isRubyRun() || style().borderFit() == BorderFitLines || (parent()->isFlexibleBoxIncludingDeprecated()
-#if ENABLE(CSS_GRID_LAYOUT)
-        || parent()->isRenderGrid()
-#endif
-    ))) {
+    if (hasOverrideLogicalContentWidth() && (isRubyRun() || style().borderFit() == BorderFitLines || (parent()->isFlexibleBoxIncludingDeprecated()))) {
         computedValues.m_extent = overrideLogicalContentWidth() + borderAndPaddingLogicalWidth();
         return;
     }
@@ -2381,16 +2377,6 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     LayoutUnit containerLogicalWidth = std::max<LayoutUnit>(0, containingBlockLogicalWidthForContentInRegion(region));
     bool hasPerpendicularContainingBlock = cb->isHorizontalWritingMode() != isHorizontalWritingMode();
 
-#if ENABLE(CSS_GRID_LAYOUT)
-    if (parent()->isRenderGrid() && style().logicalWidth().isAuto() && style().logicalMinWidth().isAuto() && style().overflowX() == OVISIBLE) {
-        LayoutUnit minLogicalWidth = minPreferredLogicalWidth();
-        if (containerLogicalWidth < minLogicalWidth) {
-            computedValues.m_extent = constrainLogicalWidthInRegionByMinMax(minLogicalWidth, containerLogicalWidth, cb);
-            return;
-        }
-    }
-#endif
-
     if (isInline() && !isInlineBlockOrInlineTable()) {
         // just calculate margins
         computedValues.m_margins.m_start = minimumValueForLength(styleToUse.marginStart(), containerLogicalWidth);
@@ -2401,9 +2387,15 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     }
 
     // Width calculations
-    if (treatAsReplaced)
+    if (treatAsReplaced) {
         computedValues.m_extent = logicalWidthLength.value() + borderAndPaddingLogicalWidth();
-    else {
+#if ENABLE(CSS_GRID_LAYOUT)
+    } else if (parent()->isRenderGrid() && style().logicalWidth().isAuto() && style().logicalMinWidth().isAuto() && style().overflowX() == OVISIBLE && containerLogicalWidth < minPreferredLogicalWidth()) {
+        // TODO (lajava) Move this logic to the LayoutGrid class.
+        // Implied minimum size of Grid items.
+        computedValues.m_extent = constrainLogicalWidthInRegionByMinMax(minPreferredLogicalWidth(), containerLogicalWidth, cb);
+#endif
+    } else {
         LayoutUnit containerWidthInInlineDirection = containerLogicalWidth;
         if (hasPerpendicularContainingBlock)
             containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
@@ -2534,6 +2526,13 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     // but they allow text to sit on the same line as the marquee.
     if (isFloating() || (isInlineBlockOrInlineTable() && !isHTMLMarquee()))
         return true;
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    if (parent()->isRenderGrid()) {
+        bool allowedToStretchChildAlongRowAxis = style().logicalWidth().isAuto() && !style().marginStartUsing(&parent()->style()).isAuto() && !style().marginEndUsing(&parent()->style()).isAuto();
+        return !allowedToStretchChildAlongRowAxis || RenderStyle::resolveJustification(parent()->style(), style(), ItemPositionStretch) != ItemPositionStretch;
+    }
+#endif
 
     // This code may look a bit strange.  Basically width:intrinsic should clamp the size when testing both
     // min-width and width.  max-width is only clamped if it is also intrinsic.
