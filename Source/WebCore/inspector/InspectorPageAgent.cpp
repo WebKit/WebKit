@@ -803,12 +803,6 @@ void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
 
 void InspectorPageAgent::frameStartedLoading(Frame& frame)
 {
-    if (frame.isMainFrame()) {
-        auto stopwatch = m_environment.executionStopwatch();
-        stopwatch->reset();
-        stopwatch->start();
-    }
-
     m_frontendDispatcher->frameStartedLoading(frameId(&frame));
 }
 
