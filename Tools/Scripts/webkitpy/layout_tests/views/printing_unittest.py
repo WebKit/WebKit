@@ -150,6 +150,11 @@ class  Testprinter(unittest.TestCase):
         self.assertEqual(80, len(actual))
         self.assertEqual(actual, '[0/0] fast/dom/HTMLFormElement/associa...after-index-assertion-fail1.html passed')
 
+        printer._meter.number_of_columns = lambda: 80
+        actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed', truncate=False)
+        self.assertEqual(90, len(actual))
+        self.assertEqual(actual, '[0/0] fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html passed')
+
         printer._meter.number_of_columns = lambda: 89
         actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
         self.assertEqual(89, len(actual))

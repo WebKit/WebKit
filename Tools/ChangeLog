@@ -1,3 +1,21 @@
+2015-11-17  Alexey Proskuryakov  <ap@apple.com>
+
+        run-webkit-tests should not truncate persistent lines
+        https://bugs.webkit.org/show_bug.cgi?id=151376
+        rdar://problem/23162775
+
+        Reviewed by Antti Koivisto.
+
+        It is OK to truncate progress lines, but it's not OK to truncate error (or otherwise
+        unexpected result) messages that remain on the screen to be read. In practice, this
+        almost always truncates the test path, which is important to see.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._test_status_line):
+        (Printer.print_finished_test):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_test_status_line):
+
 2015-11-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ unit tests after r192469.

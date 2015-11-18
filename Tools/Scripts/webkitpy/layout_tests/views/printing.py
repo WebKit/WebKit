@@ -287,10 +287,10 @@ class Printer(object):
         self._print_quiet(summary)
         self._print_quiet("")
 
-    def _test_status_line(self, test_name, suffix):
+    def _test_status_line(self, test_name, suffix, truncate=True):
         format_string = '[%d/%d] %s%s'
         status_line = format_string % (self.num_started, self.num_tests, test_name, suffix)
-        if len(status_line) > self._meter.number_of_columns():
+        if truncate and len(status_line) > self._meter.number_of_columns():
             overflow_columns = len(status_line) - self._meter.number_of_columns()
             ellipsis = '...'
             if len(test_name) < overflow_columns + len(ellipsis) + 2:
@@ -324,7 +324,7 @@ class Printer(object):
         if self._options.details:
             self._print_test_trace(result, exp_str, got_str)
         elif (self._options.verbose and not self._options.debug_rwt_logging) or not expected:
-            self.writeln(self._test_status_line(test_name, result_message))
+            self.writeln(self._test_status_line(test_name, result_message, truncate=False))
         elif self.num_started == self.num_tests:
             self._meter.write_update('')
         else:
@@ -334,7 +334,7 @@ class Printer(object):
                 self._completed_tests.append([test_name, result_message])
 
             for test_name, result_message in self._completed_tests:
-                self._meter.write_throttled_update(self._test_status_line(test_name, result_message))
+                self._meter.write_throttled_update(self._test_status_line(test_name, result_message, truncate=False))
             self._completed_tests = []
         self._running_tests.remove(test_name)
 
