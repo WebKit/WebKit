@@ -32,6 +32,8 @@
     NoInterfaceObject,
     Conditional=MEDIA_STREAM
 ] interface MediaDevices {
+    MediaTrackSupportedConstraints getSupportedConstraints();
+
     [JSBuiltin] Promise getUserMedia(Dictionary options);
     [RaisesException] Promise enumerateDevices();
 

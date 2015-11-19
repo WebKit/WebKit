@@ -56,6 +56,17 @@ void MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter()
     }
 }
 
+MockRealtimeMediaSourceCenter::MockRealtimeMediaSourceCenter()
+{
+    m_supportedConstraints.setSupportsWidth(true);
+    m_supportedConstraints.setSupportsHeight(true);
+    m_supportedConstraints.setSupportsAspectRatio(true);
+    m_supportedConstraints.setSupportsFrameRate(true);
+    m_supportedConstraints.setSupportsFacingMode(true);
+    m_supportedConstraints.setSupportsVolume(true);
+    m_supportedConstraints.setSupportsDeviceId(true);
+}
+
 void MockRealtimeMediaSourceCenter::validateRequestConstraints(MediaStreamCreationClient* client, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints)
 {
     ASSERT(client);

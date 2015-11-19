@@ -81,10 +81,6 @@ RefPtr<TrackSourceInfo> MockRealtimeMediaSource::trackSourceWithUID(const String
     return nullptr;
 }
 
-#if 0
-
-#endif
-
 MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMediaSource::Type type, const String& name)
     : RealtimeMediaSource(id, type, name)
 {

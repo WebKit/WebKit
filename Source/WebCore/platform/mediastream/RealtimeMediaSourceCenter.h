@@ -35,6 +35,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSource.h"
+#include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,8 +43,9 @@ namespace WebCore {
 
 class MediaConstraints;
 class MediaStreamCreationClient;
-class RealtimeMediaSourceStates;
 class MediaStreamTrackSourcesRequestClient;
+class RealtimeMediaSourceStates;
+class RealtimeMediaSourceSupportedConstraints;
 class TrackSourceInfo;
 
 class RealtimeMediaSourceCenter {
@@ -63,10 +65,13 @@ public:
     
     virtual RefPtr<TrackSourceInfo> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) = 0;
 
+    virtual const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
+
 protected:
     RealtimeMediaSourceCenter();
 
     static RealtimeMediaSourceCenter& platformCenter();
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };
 
 } // namespace WebCore

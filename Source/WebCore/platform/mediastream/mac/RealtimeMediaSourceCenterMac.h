@@ -43,6 +43,8 @@ namespace WebCore {
 class RealtimeMediaSourceCenterMac final : public RealtimeMediaSourceCenter {
 public:
     RealtimeMediaSourceCenterMac();
+
+private:
     ~RealtimeMediaSourceCenterMac();
 
     void validateRequestConstraints(MediaStreamCreationClient*, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints) override;

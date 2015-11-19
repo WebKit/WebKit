@@ -50,6 +50,17 @@ RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
 
 RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
 {
+    m_supportedConstraints.setSupportsWidth(true);
+    m_supportedConstraints.setSupportsHeight(true);
+    m_supportedConstraints.setSupportsAspectRatio(true);
+    m_supportedConstraints.setSupportsFrameRate(true);
+    m_supportedConstraints.setSupportsFacingMode(true);
+    m_supportedConstraints.setSupportsVolume(true);
+    m_supportedConstraints.setSupportsSampleRate(false);
+    m_supportedConstraints.setSupportsSampleSize(false);
+    m_supportedConstraints.setSupportsEchoCancellation(false);
+    m_supportedConstraints.setSupportsDeviceId(true);
+    m_supportedConstraints.setSupportsGroupId(true);
 }
 
 RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()

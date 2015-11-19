@@ -37,6 +37,8 @@
 #include "Document.h"
 #include "MediaDevicesRequest.h"
 #include "MediaStream.h"
+#include "MediaTrackSupportedConstraints.h"
+#include "RealtimeMediaSourceCenter.h"
 #include "UserMediaController.h"
 #include "UserMediaRequest.h"
 
@@ -71,6 +73,11 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise, Exception
     RefPtr<MediaDevicesRequest> request = MediaDevicesRequest::create(document(), WTF::move(promise), ec);
     if (request)
         request->start();
+}
+
+RefPtr<MediaTrackSupportedConstraints> MediaDevices::getSupportedConstraints()
+{
+    return MediaTrackSupportedConstraints::create(RealtimeMediaSourceCenter::singleton().supportedConstraints());
 }
 
 } // namespace WebCore
