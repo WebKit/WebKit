@@ -1,5 +1,49 @@
 2015-11-19  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL->B3 lowering should support lazy slow paths, patchpoints, all integer comparisons, and more load/stores
+        https://bugs.webkit.org/show_bug.cgi?id=151459
+
+        Reviewed by Benjamin Poulain.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::absolute):
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::load16SignExt32):
+        (JSC::FTL::Output::load16ZeroExt32):
+        (JSC::FTL::Output::load32):
+        (JSC::FTL::Output::load64):
+        (JSC::FTL::Output::loadPtr):
+        (JSC::FTL::Output::loadDouble):
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::storeDouble):
+        (JSC::FTL::Output::ascribeRange):
+        (JSC::FTL::Output::nonNegative32):
+        (JSC::FTL::Output::load32NonNegative):
+        (JSC::FTL::Output::icmp):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::aboveOrEqual):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::belowOrEqual):
+        (JSC::FTL::Output::greaterThan):
+        (JSC::FTL::Output::greaterThanOrEqual):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::fcmp):
+        (JSC::FTL::Output::doubleEqual):
+        (JSC::FTL::Output::speculateMul):
+        (JSC::FTL::Output::patchpoint):
+        (JSC::FTL::Output::trap):
+        (JSC::FTL::Output::anchor):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+
+2015-11-19  Filip Pizlo  <fpizlo@apple.com>
+
         FTL->B3 lowering should support absolute(), double comparisons, and intToDouble()
         https://bugs.webkit.org/show_bug.cgi?id=151457
 

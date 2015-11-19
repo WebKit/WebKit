@@ -7734,11 +7734,15 @@ private:
     {
 #if FTL_USES_B3
         UNUSED_PARAM(functor);
-        UNUSED_PARAM(userArguments);
 
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
-        return nullptr;
+        B3::PatchpointValue* result = m_out.patchpoint(B3::Int64);
+        for (LValue arg : userArguments)
+            result->append(ConstrainedValue(arg, ValueRep::SomeRegister));
+        result->setGenerator(
+            [&] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                jit.oops();
+            });
+        return result;
 #else
         unsigned stackmapID = m_stackmapIDs++;
 

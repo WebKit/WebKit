@@ -255,37 +255,38 @@ public:
         return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
     }
 
-    LValue load8SignExt32(LValue base, const AbstractField& field) { CRASH(); }
-    LValue load8ZeroExt32(LValue base, const AbstractField& field) { CRASH(); }
-    LValue load16SignExt32(LValue base, const AbstractField& field) { CRASH(); }
-    LValue load16ZeroExt32(LValue base, const AbstractField& field) { CRASH(); }
-    LValue load32(LValue base, const AbstractField& field) { CRASH(); }
-    LValue load64(LValue base, const AbstractField& field) { CRASH(); }
-    LValue loadPtr(LValue base, const AbstractField& field) { CRASH(); }
-    LValue loadDouble(LValue base, const AbstractField& field) { CRASH(); }
-    void store32(LValue value, LValue base, const AbstractField& field) { CRASH(); }
-    void store64(LValue value, LValue base, const AbstractField& field) { CRASH(); }
-    void storePtr(LValue value, LValue base, const AbstractField& field) { CRASH(); }
-    void storeDouble(LValue value, LValue base, const AbstractField& field) { CRASH(); }
+    LValue load8SignExt32(LValue base, const AbstractField& field) { return load8SignExt32(address(base, field)); }
+    LValue load8ZeroExt32(LValue base, const AbstractField& field) { return load8ZeroExt32(address(base, field)); }
+    LValue load16SignExt32(LValue base, const AbstractField& field) { return load16SignExt32(address(base, field)); }
+    LValue load16ZeroExt32(LValue base, const AbstractField& field) { return load16ZeroExt32(address(base, field)); }
+    LValue load32(LValue base, const AbstractField& field) { return load32(address(base, field)); }
+    LValue load64(LValue base, const AbstractField& field) { return load64(address(base, field)); }
+    LValue loadPtr(LValue base, const AbstractField& field) { return loadPtr(address(base, field)); }
+    LValue loadDouble(LValue base, const AbstractField& field) { return loadDouble(address(base, field)); }
+    void store32(LValue value, LValue base, const AbstractField& field) { store32(value, address(base, field)); }
+    void store64(LValue value, LValue base, const AbstractField& field) { store64(value, address(base, field)); }
+    void storePtr(LValue value, LValue base, const AbstractField& field) { storePtr(value, address(base, field)); }
+    void storeDouble(LValue value, LValue base, const AbstractField& field) { storeDouble(value, address(base, field)); }
 
-    void ascribeRange(LValue loadInstruction, const ValueRange& range) { CRASH(); }
-
-    LValue nonNegative32(LValue loadInstruction) { CRASH(); }
-
-    LValue load32NonNegative(TypedPointer pointer) { CRASH(); }
-    LValue load32NonNegative(LValue base, const AbstractField& field) { CRASH(); }
+    // FIXME: Explore adding support for value range constraints to B3. Maybe it could be as simple as having
+    // a load instruction that guarantees that its result is non-negative.
+    // https://bugs.webkit.org/show_bug.cgi?id=151458
+    void ascribeRange(LValue, const ValueRange&) { }
+    LValue nonNegative32(LValue loadInstruction) { return loadInstruction; }
+    LValue load32NonNegative(TypedPointer pointer) { return load32(pointer); }
+    LValue load32NonNegative(LValue base, const AbstractField& field) { return load32(base, field); }
 
     LValue icmp(LIntPredicate cond, LValue left, LValue right) { CRASH(); }
-    LValue equal(LValue left, LValue right) { CRASH(); }
-    LValue notEqual(LValue left, LValue right) { CRASH(); }
-    LValue above(LValue left, LValue right) { CRASH(); }
-    LValue aboveOrEqual(LValue left, LValue right) { CRASH(); }
+    LValue equal(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right); }
+    LValue notEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), left, right); }
+    LValue above(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Above, origin(), left, right); }
+    LValue aboveOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::AboveEqual, origin(), left, right); }
     LValue below(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Below, origin(), left, right); }
-    LValue belowOrEqual(LValue left, LValue right) { CRASH(); }
-    LValue greaterThan(LValue left, LValue right) { CRASH(); }
-    LValue greaterThanOrEqual(LValue left, LValue right) { CRASH(); }
-    LValue lessThan(LValue left, LValue right) { CRASH(); }
-    LValue lessThanOrEqual(LValue left, LValue right) { CRASH(); }
+    LValue belowOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::BelowEqual, origin(), left, right); }
+    LValue greaterThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterThan, origin(), left, right); }
+    LValue greaterThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterEqual, origin(), left, right); }
+    LValue lessThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right); }
+    LValue lessThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right); }
 
     LValue fcmp(LRealPredicate cond, LValue left, LValue right) { CRASH(); }
     LValue doubleEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right); }
@@ -409,6 +410,11 @@ public:
     B3::CheckValue* speculateMul(LValue left, LValue right)
     {
         return m_block->appendNew<B3::CheckValue>(m_proc, B3::CheckMul, origin(), left, right);
+    }
+
+    B3::PatchpointValue* patchpoint(LType type)
+    {
+        return m_block->appendNew<B3::PatchpointValue>(m_proc, type, origin());
     }
 
     void trap() { CRASH(); }
