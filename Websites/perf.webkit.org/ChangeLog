@@ -1,3 +1,18 @@
+2015-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Internal perf dashboard takes forever to load
+        https://bugs.webkit.org/show_bug.cgi?id=151430
+
+        Rubber-stamped by Antti Koivisto.
+
+        Fix a few performance problems with the perf dashboard v2 UI.
+
+        * public/v2/app.js:
+        (App.DashboardRow._createPane): Set "inDashboard" to true.
+        (App.Pane._fetch): Immediately show the cached chart instead of waiting for the refetched data which invokes
+        a PHP JSON API. Also don't fetch the analysis tasks when the chart is shown in the dashboard since we don't
+        show annotate charts in the dashboard.
+
 2015-10-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed fix of a test after r190687.
