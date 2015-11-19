@@ -168,6 +168,10 @@ fast/mediastream/MediaStreamConstructor.html
 fast/mediastream/MediaStreamTrack-clone.html
 fast/mediastream/MediaStreamTrack-kind.html
 fast/mediastream/MediaStreamTrack-stop.html
+fast/mediastream/MediaStream-getTracks.html
+fast/mediastream/RTCSessionDescription.html
+fast/mediastream/enabled.html
+fast/mediastream/MediaStreamTrackEvent-constructor.html
 
 # WebRTC is not supported yet.
 fast/mediastream/RTCIceCandidate.html
