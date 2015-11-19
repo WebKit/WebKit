@@ -155,6 +155,21 @@ void IDBConnectionToServer::didCreateIndex(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
+void IDBConnectionToServer::deleteIndex(TransactionOperation& operation, uint64_t objectStoreIdentifier, const String& indexName)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::deleteIndex");
+
+    saveOperation(operation);
+
+    m_delegate->deleteIndex(IDBRequestData(operation), objectStoreIdentifier, indexName);
+}
+
+void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didDeleteIndex");
+    completeOperation(resultData);
+}
+
 void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, RefPtr<IDBKey>& key, RefPtr<SerializedScriptValue>& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");

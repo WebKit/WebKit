@@ -138,6 +138,18 @@ RefPtr<TransactionOperation> createTransactionOperation(
     return adoptRef(operation);
 }
 
+template<typename MP1, typename P1, typename MP2, typename P2>
+RefPtr<TransactionOperation> createTransactionOperation(
+    IDBTransaction& transaction,
+    void (IDBTransaction::*complete)(const IDBResultData&),
+    void (IDBTransaction::*perform)(TransactionOperation&, MP1, MP2),
+    const P1& parameter1,
+    const P2& parameter2)
+{
+    auto operation = new TransactionOperationImpl<MP1, MP2>(transaction, complete, perform, parameter1, parameter2);
+    return adoptRef(operation);
+}
+
 template<typename MP1, typename P1>
 RefPtr<TransactionOperation> createTransactionOperation(
     IDBTransaction& transaction,

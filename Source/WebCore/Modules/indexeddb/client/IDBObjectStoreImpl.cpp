@@ -424,6 +424,8 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* co
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.
     Ref<IDBIndex> index = m_transaction->createIndex(*this, info);
+    m_referencedIndexes.set(name, &index.get());
+
     return WTF::move(index);
 }
 
@@ -438,6 +440,11 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
 
     if (m_deleted) {
         ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (!m_transaction->isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
         return nullptr;
     }
 
@@ -457,9 +464,40 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
     return WTF::move(index);
 }
 
-void IDBObjectStore::deleteIndex(const String&, ExceptionCode&)
+void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::deleteIndex %s", name.utf8().data());
+
+    if (m_deleted) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::InvalidStateError);
+        return;
+    }
+
+    if (!m_transaction->isVersionChange()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::InvalidStateError);
+        return;
+    }
+
+    if (!m_transaction->isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return;
+    }
+
+    if (!m_info.hasIndex(name)) {
+        ec = IDBDatabaseException::NotFoundError;
+        return;
+    }
+
+    auto* info = m_info.infoForExistingIndex(name);
+    ASSERT(info);
+    m_transaction->database().didDeleteIndexInfo(*info);
+
+    m_info.deleteIndex(name);
+
+    if (auto index = m_referencedIndexes.take(name))
+        index->markAsDeleted();
+
+    m_transaction->deleteIndex(m_info.identifier(), name);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, ExceptionCode& ec)

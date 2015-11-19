@@ -86,6 +86,16 @@ void MemoryBackingStoreTransaction::addExistingIndex(MemoryIndex& index)
     m_indexes.add(&index);
 }
 
+void MemoryBackingStoreTransaction::indexDeleted(std::unique_ptr<MemoryIndex> index)
+{
+    ASSERT(index);
+    m_indexes.remove(index.get());
+
+    auto addResult = m_deletedIndexes.add(index->info().name(), nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = WTF::move(index);
+}
+
 void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& objectStore)
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::addExistingObjectStore");
@@ -170,7 +180,7 @@ void MemoryBackingStoreTransaction::abort()
 
     TemporaryChange<bool> change(m_isAborting, true);
 
-    // This loop moves the underlying unique_ptrs from out of the m_deleteObjectStores map,
+    // This loop moves the underlying unique_ptrs from out of the m_deletedObjectStores map,
     // but the entries in the map still remain.
     for (auto& objectStore : m_deletedObjectStores.values()) {
         MemoryObjectStore* rawObjectStore = objectStore.get();
@@ -213,6 +223,16 @@ void MemoryBackingStoreTransaction::abort()
             objectStore->addRecord(*this, entry.key, entry.value);
         }
     }
+
+    // This loop moves the underlying unique_ptrs from out of the m_deletedIndexes map,
+    // but the entries in the map still remain.
+    for (auto& index : m_deletedIndexes.values()) {
+        MemoryObjectStore& objectStore = index->objectStore();
+        objectStore.maybeRestoreDeletedIndex(WTF::move(index));
+    }
+
+    // This clears the entries from the map.
+    m_deletedIndexes.clear();
 
     finish();
 

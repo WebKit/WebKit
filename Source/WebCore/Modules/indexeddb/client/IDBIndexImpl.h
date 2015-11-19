@@ -78,6 +78,8 @@ public:
     const IDBIndexInfo& info() const { return m_info; }
 
     IDBObjectStore& modernObjectStore() { return m_objectStore.get(); }
+
+    void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
 private:

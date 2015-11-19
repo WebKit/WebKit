@@ -109,6 +109,7 @@ public:
     void iterateCursor(IDBCursor&, const IDBKeyData&, unsigned long count);
 
     void deleteObjectStore(const String& objectStoreName);
+    void deleteIndex(uint64_t objectStoreIdentifier, const String& indexName);
 
     void addRequest(IDBRequest&);
     void removeRequest(IDBRequest&);
@@ -164,6 +165,9 @@ private:
 
     void deleteObjectStoreOnServer(TransactionOperation&, const String& objectStoreName);
     void didDeleteObjectStoreOnServer(const IDBResultData&);
+
+    void deleteIndexOnServer(TransactionOperation&, const uint64_t& objectStoreIdentifier, const String& indexName);
+    void didDeleteIndexOnServer(const IDBResultData&);
 
     Ref<IDBRequest> doRequestOpenCursor(ScriptExecutionContext&, Ref<IDBCursor>&&);
     void openCursorOnServer(TransactionOperation&, const IDBCursorInfo&);

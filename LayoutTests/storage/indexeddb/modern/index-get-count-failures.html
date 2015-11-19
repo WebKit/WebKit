@@ -49,27 +49,31 @@ createRequest.onupgradeneeded = function(event) {
         log("Failed to count with a null range");
     }
     
-    // FIXME: once IDBObjectStore.deleteIndex() is implemented, try these
-    // https://bugs.webkit.org/show_bug.cgi?id=150911
-    // objectStore.deleteIndex("TestIndex");
-    // 
-    // try {
-    //     index.get("test");
-    // } catch(e) {
-    //     log("Failed to get with deleted IDBIndex");
-    // }
-    // 
-    // try {
-    //     index.getKey("test");
-    // } catch(e) {
-    //     log("Failed to getKey with deleted IDBIndex");
-    // }
-    // 
-    // try {
-    //     index.count();
-    // } catch(e) {
-    //     log("Failed to count with deleted IDBIndex");
-    // }
+    objectStore.deleteIndex("TestIndex");
+    
+    try {
+        index.get("test");
+    } catch(e) {
+        log("Failed to get with deleted IDBIndex");
+    }
+    
+    try {
+        index.getKey("test");
+    } catch(e) {
+        log("Failed to getKey with deleted IDBIndex");
+    }
+    
+    try {
+        index.count();
+    } catch(e) {
+        log("Failed to count with deleted IDBIndex");
+    }
+    
+    try {
+        objectStore.deleteIndex("TestIndex");
+    } catch(e) {
+        log("Failed to delete a nonexistent IDBIndex");
+    }
 
     database.deleteObjectStore("TestObjectStore");
     try {

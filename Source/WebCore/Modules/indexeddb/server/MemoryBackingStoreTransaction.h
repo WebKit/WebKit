@@ -68,6 +68,7 @@ public:
 
     void addNewIndex(MemoryIndex&);
     void addExistingIndex(MemoryIndex&);
+    void indexDeleted(std::unique_ptr<MemoryIndex>);
 
     void abort();
     void commit();

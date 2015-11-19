@@ -69,6 +69,11 @@ bool IDBObjectStoreInfo::hasIndex(const String& name) const
     return false;
 }
 
+bool IDBObjectStoreInfo::hasIndex(uint64_t indexIdentifier) const
+{
+    return m_indexMap.contains(indexIdentifier);
+}
+
 IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(const String& name)
 {
     for (auto& index : m_indexMap.values()) {
@@ -98,6 +103,30 @@ Vector<String> IDBObjectStoreInfo::indexNames() const
 
     return names;
 }
+
+void IDBObjectStoreInfo::deleteIndex(const String& indexName)
+{
+    auto* info = infoForExistingIndex(indexName);
+    if (!info)
+        return;
+
+    m_indexMap.remove(info->identifier());
+}
+
+#ifndef NDEBUG
+String IDBObjectStoreInfo::loggingString(int indent) const
+{
+    String indentString;
+    for (int i = 0; i < indent; ++i)
+        indentString.append(" ");
+
+    String top = makeString(indentString, "Object store: ", m_name, String::format(" (%" PRIu64 ") \n", m_identifier));
+    for (auto index : m_indexMap.values())
+        top.append(makeString(index.loggingString(indent + 1), "\n"));
+
+    return top; 
+}
+#endif
 
 } // namespace WebCore
 

@@ -58,6 +58,10 @@ public:
 
     void deleteObjectStore(const String& objectStoreName);
 
+#ifndef NDEBUG
+    String loggingString() const;
+#endif
+
 private:
     IDBDatabaseInfo();
 

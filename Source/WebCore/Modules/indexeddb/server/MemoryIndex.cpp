@@ -93,6 +93,14 @@ void MemoryIndex::notifyCursorsOfAllRecordsChanged()
     ASSERT(m_cleanCursors.isEmpty());
 }
 
+void MemoryIndex::clearIndexValueStore()
+{
+    ASSERT(m_objectStore.writeTransaction());
+    ASSERT(m_objectStore.writeTransaction()->isAborting());
+
+    m_records = nullptr;
+}
+
 void MemoryIndex::replaceIndexValueStore(std::unique_ptr<IndexValueStore>&& valueStore)
 {
     ASSERT(m_objectStore.writeTransaction());

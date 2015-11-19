@@ -52,6 +52,7 @@ public:
     virtual void didDeleteObjectStore(const IDBResultData&) = 0;
     virtual void didClearObjectStore(const IDBResultData&) = 0;
     virtual void didCreateIndex(const IDBResultData&) = 0;
+    virtual void didDeleteIndex(const IDBResultData&) = 0;
     virtual void didPutOrAdd(const IDBResultData&) = 0;
     virtual void didGetRecord(const IDBResultData&) = 0;
     virtual void didGetCount(const IDBResultData&) = 0;

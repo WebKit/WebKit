@@ -751,6 +751,30 @@ void IDBTransaction::didDeleteObjectStoreOnServer(const IDBResultData& resultDat
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteObjectStoreSuccess);
 }
 
+void IDBTransaction::deleteIndex(uint64_t objectStoreIdentifier, const String& indexName)
+{
+    LOG(IndexedDB, "IDBTransaction::deleteIndex");
+
+    ASSERT(isVersionChange());
+
+    auto operation = createTransactionOperation(*this, &IDBTransaction::didDeleteIndexOnServer, &IDBTransaction::deleteIndexOnServer, objectStoreIdentifier, indexName);
+    scheduleOperation(WTF::move(operation));
+}
+
+void IDBTransaction::deleteIndexOnServer(TransactionOperation& operation, const uint64_t& objectStoreIdentifier, const String& indexName)
+{
+    LOG(IndexedDB, "IDBTransaction::deleteIndexOnServer");
+    ASSERT(isVersionChange());
+
+    serverConnection().deleteIndex(operation, objectStoreIdentifier, indexName);
+}
+
+void IDBTransaction::didDeleteIndexOnServer(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didDeleteIndexOnServer");
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteIndexSuccess);
+}
+
 void IDBTransaction::operationDidComplete(TransactionOperation& operation)
 {
     ASSERT(m_transactionOperationMap.get(operation.identifier()) == &operation);

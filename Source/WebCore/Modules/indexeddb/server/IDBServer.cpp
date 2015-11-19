@@ -203,6 +203,18 @@ void IDBServer::createIndex(const IDBRequestData& requestData, const IDBIndexInf
     transaction->createIndex(requestData, info);
 }
 
+void IDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
+{
+    LOG(IndexedDB, "IDBServer::deleteIndex");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    ASSERT(transaction->isVersionChange());
+    transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
+}
+
 void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBServer::putOrAdd");

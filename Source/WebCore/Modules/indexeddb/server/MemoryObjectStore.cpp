@@ -102,6 +102,59 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
     return { };
 }
 
+void MemoryObjectStore::maybeRestoreDeletedIndex(std::unique_ptr<MemoryIndex> index)
+{
+    LOG(IndexedDB, "MemoryObjectStore::maybeRestoreDeletedIndex");
+
+    ASSERT(index);
+
+    if (m_info.hasIndex(index->info().name()))
+        return;
+
+    m_info.addExistingIndex(index->info());
+
+    ASSERT(!m_indexesByIdentifier.contains(index->info().identifier()));
+    index->clearIndexValueStore();
+    auto error = populateIndexWithExistingRecords(*index);
+
+    // Since this index was installed in the object store before this transaction started,
+    // assuming things were in a valid state then, we should definitely be able to successfully
+    // repopulate the index with the object store's pre-transaction records.
+    ASSERT_UNUSED(error, error.isNull());
+
+    registerIndex(WTF::move(index));
+}
+
+std::unique_ptr<MemoryIndex> MemoryObjectStore::takeIndexByName(const String& name)
+{
+    auto rawIndex = m_indexesByName.take(name);
+    if (!rawIndex)
+        return nullptr;
+
+    auto index = m_indexesByIdentifier.take(rawIndex->info().identifier());
+    ASSERT(index);
+
+    return index;
+}
+
+IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transaction, const String& indexName)
+{
+    LOG(IndexedDB, "MemoryObjectStore::deleteIndex");
+
+    if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
+        return IDBError(IDBExceptionCode::ConstraintError);
+    
+    auto index = takeIndexByName(indexName);
+    ASSERT(index);
+    if (!index)
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    m_info.deleteIndex(indexName);
+    transaction.indexDeleted(WTF::move(index));
+
+    return { };
+}
+
 bool MemoryObjectStore::containsRecord(const IDBKeyData& key)
 {
     if (!m_keyValueStore)

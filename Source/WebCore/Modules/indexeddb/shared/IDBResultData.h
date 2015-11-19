@@ -53,6 +53,7 @@ enum class IDBResultType {
     GetCountSuccess,
     DeleteRecordSuccess,
     CreateIndexSuccess,
+    DeleteIndexSuccess,
     OpenCursorSuccess,
     IterateCursorSuccess,
 };
@@ -71,6 +72,7 @@ public:
     static IDBResultData deleteObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData clearObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData createIndexSuccess(const IDBResourceIdentifier&);
+    static IDBResultData deleteIndexSuccess(const IDBResourceIdentifier&);
     static IDBResultData putOrAddSuccess(const IDBResourceIdentifier&, const IDBKeyData&);
     static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const IDBGetResult&);
     static IDBResultData getCountSuccess(const IDBResourceIdentifier&, uint64_t count);

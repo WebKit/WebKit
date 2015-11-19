@@ -62,6 +62,7 @@ public:
     virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) override final;
     virtual void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) override final;
     virtual void createIndex(const IDBRequestData&, const IDBIndexInfo&) override final;
+    virtual void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) override final;
     virtual void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) override final;
     virtual void getRecord(const IDBRequestData&, const IDBKeyRangeData&) override final;
     virtual void getCount(const IDBRequestData&, const IDBKeyRangeData&) override final;
@@ -81,6 +82,7 @@ public:
     virtual void didDeleteObjectStore(const IDBResultData&) override final;
     virtual void didClearObjectStore(const IDBResultData&) override final;
     virtual void didCreateIndex(const IDBResultData&) override final;
+    virtual void didDeleteIndex(const IDBResultData&) override final;
     virtual void didPutOrAdd(const IDBResultData&) override final;
     virtual void didGetRecord(const IDBResultData&) override final;
     virtual void didGetCount(const IDBResultData&) override final;

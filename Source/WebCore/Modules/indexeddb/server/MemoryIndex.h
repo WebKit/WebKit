@@ -71,6 +71,7 @@ public:
     void removeRecord(const IDBKeyData&, const IndexKey&);
 
     void objectStoreCleared();
+    void clearIndexValueStore();
     void replaceIndexValueStore(std::unique_ptr<IndexValueStore>&&);
 
     MemoryIndexCursor* maybeOpenCursor(const IDBCursorInfo&);

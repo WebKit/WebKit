@@ -327,6 +327,11 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, 
     return transaction.requestGetKey(context, *this, range);
 }
 
+void IDBIndex::markAsDeleted()
+{
+    m_deleted = true;
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

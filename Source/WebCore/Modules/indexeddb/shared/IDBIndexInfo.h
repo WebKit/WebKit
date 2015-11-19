@@ -47,6 +47,10 @@ public:
     bool unique() const { return m_unique; }
     bool multiEntry() const { return m_multiEntry; }
 
+#ifndef NDEBUG
+    String loggingString(int indent = 0) const;
+#endif
+
 private:
     uint64_t m_identifier { 0 };
     uint64_t m_objectStoreIdentifier { 0 };

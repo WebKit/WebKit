@@ -74,6 +74,9 @@ public:
     void createIndex(TransactionOperation&, const IDBIndexInfo&);
     void didCreateIndex(const IDBResultData&);
 
+    void deleteIndex(TransactionOperation&, uint64_t objectStoreIdentifier, const String& indexName);
+    void didDeleteIndex(const IDBResultData&);
+
     void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
     void didPutOrAdd(const IDBResultData&);
 

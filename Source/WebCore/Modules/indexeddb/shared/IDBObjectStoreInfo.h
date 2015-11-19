@@ -52,9 +52,16 @@ public:
     IDBIndexInfo createNewIndex(const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);
     bool hasIndex(const String& name) const;
+    bool hasIndex(uint64_t indexIdentifier) const;
     IDBIndexInfo* infoForExistingIndex(const String& name);
 
     Vector<String> indexNames() const;
+
+    void deleteIndex(const String& indexName);
+
+#ifndef NDEBUG
+    String loggingString(int indent = 0) const;
+#endif
 
 private:
     uint64_t m_identifier { 0 };

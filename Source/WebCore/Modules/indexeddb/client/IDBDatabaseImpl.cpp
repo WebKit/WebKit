@@ -341,6 +341,13 @@ void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)
     objectStore->addExistingIndex(info);
 }
 
+void IDBDatabase::didDeleteIndexInfo(const IDBIndexInfo& info)
+{
+    auto* objectStore = m_info.infoForExistingObjectStore(info.objectStoreIdentifier());
+    ASSERT(objectStore);
+    objectStore->deleteIndex(info.name());
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

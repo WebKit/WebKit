@@ -3,6 +3,10 @@ Initial upgrade needed: Old version - 0 New version - 1
 Failed to get with a null key
 Failed to getKey with a null key
 Failed to count with a null range
+Failed to get with deleted IDBIndex
+Failed to getKey with deleted IDBIndex
+Failed to count with deleted IDBIndex
+Failed to delete a nonexistent IDBIndex
 Failed to get with deleted IDBObjectStore
 Failed to getKey with deleted IDBObjectStore
 Failed to count with deleted IDBObjectStore

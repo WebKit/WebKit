@@ -83,6 +83,11 @@ void IDBConnectionToClient::didCreateIndex(const IDBResultData& result)
     m_delegate->didCreateIndex(result);
 }
 
+void IDBConnectionToClient::didDeleteIndex(const IDBResultData& result)
+{
+    m_delegate->didDeleteIndex(result);
+}
+
 void IDBConnectionToClient::didPutOrAdd(const IDBResultData& result)
 {
     m_delegate->didPutOrAdd(result);

@@ -49,6 +49,17 @@ IDBIndexInfo IDBIndexInfo::isolatedCopy() const
     return { m_identifier, m_objectStoreIdentifier, m_name.isolatedCopy(), m_keyPath.isolatedCopy(), m_unique, m_multiEntry };
 }
 
+#ifndef NDEBUG
+String IDBIndexInfo::loggingString(int indent) const
+{
+    String indentString;
+    for (int i = 0; i < indent; ++i)
+        indentString.append(" ");
+
+    return makeString(indentString, "Index: ", m_name, String::format(" (%" PRIu64 ") \n", m_identifier));
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

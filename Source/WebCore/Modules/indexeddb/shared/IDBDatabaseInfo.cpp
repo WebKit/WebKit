@@ -135,6 +135,17 @@ void IDBDatabaseInfo::deleteObjectStore(const String& objectStoreName)
     m_objectStoreMap.remove(info->identifier());
 }
 
+#ifndef NDEBUG
+String IDBDatabaseInfo::loggingString() const
+{
+    String top = makeString("Database: ", m_name, " version ", String::number(m_version), "\n");
+    for (auto objectStore : m_objectStoreMap.values())
+        top.append(makeString(objectStore.loggingString(1), "\n"));
+
+    return top; 
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

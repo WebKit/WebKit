@@ -201,6 +201,21 @@ IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
     return objectStore->createIndex(*rawTransaction, info);
 }
 
+IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& indexName)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::deleteIndex");
+
+    auto rawTransaction = m_transactions.get(transactionIdentifier);
+    ASSERT(rawTransaction);
+    ASSERT(rawTransaction->isVersionChange());
+
+    auto* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    if (!objectStore)
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    return objectStore->deleteIndex(*rawTransaction, indexName);
+}
+
 void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort");
