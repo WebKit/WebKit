@@ -464,6 +464,24 @@ private:
 
             break;
 
+        case BitwiseCast:
+            // Turn this: BitwiseCast(constant)
+            // Into this: bitwise_cast<value->type()>(constant)
+            if (Value* constant = m_value->child(0)->bitwiseCastConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            // Turn this: BitwiseCast(BitwiseCast(value))
+            // Into this: value
+            if (m_value->child(0)->opcode() == BitwiseCast) {
+                m_value->replaceWithIdentity(m_value->child(0)->child(0));
+                m_changed = true;
+                break;
+            }
+
+            break;
+
         case Load8Z:
         case Load8S:
         case Load16Z:

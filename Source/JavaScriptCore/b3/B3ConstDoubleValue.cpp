@@ -68,6 +68,11 @@ Value* ConstDoubleValue::mulConstant(Procedure& proc, const Value* other) const
     return proc.add<ConstDoubleValue>(origin(), m_value * other->asDouble());
 }
 
+Value* ConstDoubleValue::bitwiseCastConstant(Procedure& proc) const
+{
+    return proc.add<Const64Value>(origin(), bitwise_cast<int64_t>(m_value));
+}
+
 Value* ConstDoubleValue::divConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasDouble())

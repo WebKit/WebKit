@@ -127,6 +127,7 @@ public:
     virtual Value* shlConstant(Procedure&, const Value* other) const;
     virtual Value* sShrConstant(Procedure&, const Value* other) const;
     virtual Value* zShrConstant(Procedure&, const Value* other) const;
+    virtual Value* bitwiseCastConstant(Procedure&) const;
     
     virtual TriState equalConstant(const Value* other) const;
     virtual TriState notEqualConstant(const Value* other) const;

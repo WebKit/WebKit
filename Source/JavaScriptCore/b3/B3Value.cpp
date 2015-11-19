@@ -194,6 +194,11 @@ Value* Value::zShrConstant(Procedure&, const Value*) const
     return nullptr;
 }
 
+Value* Value::bitwiseCastConstant(Procedure&) const
+{
+    return nullptr;
+}
+
 TriState Value::equalConstant(const Value*) const
 {
     return MixedTriState;
@@ -320,6 +325,7 @@ Effects Value::effects() const
     case Shl:
     case SShr:
     case ZShr:
+    case BitwiseCast:
     case SExt8:
     case SExt16:
     case SExt32:
@@ -514,6 +520,13 @@ Type Value::typeFor(Opcode opcode, Value* firstChild)
     case FRound:
     case IToD:
         return Double;
+    case BitwiseCast:
+        if (firstChild->type() == Int64)
+            return Double;
+        if (firstChild->type() == Double)
+            return Int64;
+        ASSERT_NOT_REACHED();
+        return Void;
     case Nop:
         return Void;
     default:

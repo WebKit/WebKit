@@ -189,7 +189,7 @@ public:
     LValue fpCast(LValue value, LType type) { CRASH(); }
     LValue intToPtr(LValue value, LType type) { CRASH(); }
     LValue ptrToInt(LValue value, LType type) { CRASH(); }
-    LValue bitCast(LValue value, LType type) { CRASH(); }
+    LValue bitCast(LValue, LType);
 
     LValue fround(LValue doubleValue) { CRASH(); }
 
@@ -412,6 +412,11 @@ inline void Output::addIncomingToPhi(LValue phi, ValueFromBlock value, Params...
     addIncomingToPhi(phi, theRest...);
 }
 
+inline LValue Output::bitCast(LValue value, LType type)
+{
+    ASSERT_UNUSED(type, type == int64 || type == doubleType);
+    return m_block->appendNew<B3::Value>(m_proc, B3::BitwiseCast, origin(), value);
+}
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop

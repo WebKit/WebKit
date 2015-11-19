@@ -1729,6 +1729,110 @@ void testZShrArgImm32(uint32_t a, uint32_t b)
     CHECK(compileAndRun<uint32_t>(proc, a) == (a >> b));
 }
 
+void testDoubleArgToInt64BitwiseCast(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitwiseCast, Origin(), argument));
+
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, value), bitwise_cast<int64_t>(value)));
+}
+
+void testDoubleImmToInt64BitwiseCast(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ConstDoubleValue>(proc, Origin(), value);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitwiseCast, Origin(), argument));
+
+    CHECK(isIdentical(compileAndRun<int64_t>(proc), bitwise_cast<int64_t>(value)));
+}
+
+void testTwoBitwiseCastOnDouble(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* first = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument);
+    Value* second = root->appendNew<Value>(proc, BitwiseCast, Origin(), first);
+    root->appendNew<ControlValue>(proc, Return, Origin(), second);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, value), value));
+}
+
+void testBitwiseCastOnDoubleInMemory(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadDouble = root->appendNew<MemoryValue>(proc, Load, Double, Origin(), address);
+    Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
+    root->appendNew<ControlValue>(proc, Return, Origin(), cast);
+
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, &value), bitwise_cast<int64_t>(value)));
+}
+
+void testInt64BArgToDoubleBitwiseCast(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitwiseCast, Origin(), argument));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, value), bitwise_cast<double>(value)));
+}
+
+void testInt64BImmToDoubleBitwiseCast(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Const64Value>(proc, Origin(), value);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitwiseCast, Origin(), argument));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), bitwise_cast<double>(value)));
+}
+
+void testTwoBitwiseCastOnInt64(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* first = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument);
+    Value* second = root->appendNew<Value>(proc, BitwiseCast, Origin(), first);
+    root->appendNew<ControlValue>(proc, Return, Origin(), second);
+
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, value), value));
+}
+
+void testBitwiseCastOnInt64InMemory(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadDouble = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
+    root->appendNew<ControlValue>(proc, Return, Origin(), cast);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, &value), bitwise_cast<double>(value)));
+}
+
 void testStore(int value)
 {
     Procedure proc;
@@ -4547,11 +4651,14 @@ double negInfinity()
     return -std::numeric_limits<double>::infinity();
 }
 
-
-struct DoubleOperand {
+template<typename Type>
+struct Operand {
     const char* name;
-    double value;
+    Type value;
 };
+
+typedef Operand<double> DoubleOperand;
+typedef Operand<int64_t> Int64Operand;
 
 static const std::array<DoubleOperand, 9>& doubleOperands()
 {
@@ -4568,6 +4675,14 @@ static const std::array<DoubleOperand, 9>& doubleOperands()
     }};
     return operands;
 };
+
+static Vector<Int64Operand> int64Operands()
+{
+    Vector<Int64Operand> operands;
+    for (DoubleOperand doubleOperand : doubleOperands())
+        operands.append({ doubleOperand.name, bitwise_cast<int64_t>(doubleOperand.value) });
+    return operands;
+}
 
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
@@ -5051,6 +5166,15 @@ void run(const char* filter)
     RUN(testZShrArgImm32(0xffffffff, 0));
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
+
+    RUN_UNARY(testDoubleArgToInt64BitwiseCast, doubleOperands());
+    RUN_UNARY(testDoubleImmToInt64BitwiseCast, doubleOperands());
+    RUN_UNARY(testTwoBitwiseCastOnDouble, doubleOperands());
+    RUN_UNARY(testBitwiseCastOnDoubleInMemory, doubleOperands());
+    RUN_UNARY(testInt64BArgToDoubleBitwiseCast, int64Operands());
+    RUN_UNARY(testInt64BImmToDoubleBitwiseCast, int64Operands());
+    RUN_UNARY(testTwoBitwiseCastOnInt64, int64Operands());
+    RUN_UNARY(testBitwiseCastOnInt64InMemory, int64Operands());
 
     RUN(testStore(44));
     RUN(testStoreConstant(49));

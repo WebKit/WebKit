@@ -82,6 +82,8 @@ enum Opcode : int16_t {
     ZShr, // Logical Shift.
 
     // Casts and such.
+    // Bitwise Cast of Double->Int64 or Int64->Double
+    BitwiseCast,
     // Takes and returns Int32:
     SExt8,
     SExt16,

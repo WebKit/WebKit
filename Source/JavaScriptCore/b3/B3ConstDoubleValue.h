@@ -46,6 +46,7 @@ public:
     Value* subConstant(Procedure&, const Value* other) const override;
     Value* divConstant(Procedure&, const Value* other) const override;
     Value* mulConstant(Procedure&, const Value* other) const override;
+    Value* bitwiseCastConstant(Procedure&) const override;
 
     TriState equalConstant(const Value* other) const override;
     TriState notEqualConstant(const Value* other) const override;

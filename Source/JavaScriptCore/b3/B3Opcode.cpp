@@ -137,6 +137,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case ZShr:
         out.print("ZShr");
         return;
+    case BitwiseCast:
+        out.print("BitwiseCast");
+        return;
     case SExt8:
         out.print("SExt8");
         return;

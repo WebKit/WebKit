@@ -1,3 +1,45 @@
+2015-11-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add bitwise Double-Int conversion to B3
+        https://bugs.webkit.org/show_bug.cgi?id=151432
+
+        Reviewed by Filip Pizlo.
+
+        This is needed for boxing/unboxing doubles.
+
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::bitwiseCastConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::bitwiseCastConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::bitwiseCastConstant):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testDoubleArgToInt64BitwiseCast):
+        (JSC::B3::testDoubleImmToInt64BitwiseCast):
+        (JSC::B3::testTwoBitwiseCastOnDouble):
+        (JSC::B3::testBitwiseCastOnDoubleInMemory):
+        (JSC::B3::testInt64BArgToDoubleBitwiseCast):
+        (JSC::B3::testInt64BImmToDoubleBitwiseCast):
+        (JSC::B3::testTwoBitwiseCastOnInt64):
+        (JSC::B3::testBitwiseCastOnInt64InMemory):
+        (JSC::B3::int64Operands):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::bitCast):
+
 2015-11-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add some missing load/store to FTLB3Output

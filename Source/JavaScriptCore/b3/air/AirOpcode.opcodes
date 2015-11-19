@@ -237,9 +237,11 @@ MoveZeroToDouble D:F
 
 Move64ToDouble U:G, D:F
     Tmp, Tmp
+    Addr, Tmp as loadDouble
 
 MoveDoubleTo64 U:F, D:G
     Tmp, Tmp
+    Addr, Tmp as load64
 
 Load8 U:G, D:G
     Addr, Tmp

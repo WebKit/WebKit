@@ -172,6 +172,14 @@ public:
                 VALIDATE(value->child(1)->type() == Int32, ("At ", *value));
                 VALIDATE(isInt(value->type()), ("At ", *value));
                 break;
+            case BitwiseCast:
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->type() != value->child(0)->type(), ("At ", *value));
+                VALIDATE(
+                    (value->type() == Int64 && value->child(0)->type() == Double)
+                    || (value->type() == Double && value->child(0)->type() == Int64),
+                    ("At ", *value));
+                break;
             case SExt8:
             case SExt16:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));

@@ -1344,6 +1344,11 @@ private:
             return;
         }
 
+        case BitwiseCast: {
+            appendUnOp<Air::Oops, Move64ToDouble, MoveDoubleTo64>(m_value->child(0));
+            return;
+        }
+
         case Store: {
             Value* valueToStore = m_value->child(0);
             if (canBeInternal(valueToStore)) {
