@@ -1,3 +1,47 @@
+2015-11-19  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have a story for Ext/Trunc strength reduction
+        https://bugs.webkit.org/show_bug.cgi?id=151464
+
+        Reviewed by Geoffrey Garen.
+
+        The LLVM shift operations require the shift amount to have the same type as the shift base. The B3
+        shift operations require the shift amount to be an Int32. DFG concurs with this. But the initial
+        lowering should involve pretending the FTLOutput's shift operations still take an LLVM-style shift
+        amount so that we don't regress FTL->LLVM performance. That means emitting an extra Trunc. That means
+        that we want to be able to constant fold Trunc and be able to fold Trunc(ZExt).
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testSwitchChillDiv):
+        (JSC::B3::testTruncFold):
+        (JSC::B3::testZExt32):
+        (JSC::B3::testZExt32Fold):
+        (JSC::B3::testSExt32):
+        (JSC::B3::testSExt32Fold):
+        (JSC::B3::testTruncZExt32):
+        (JSC::B3::testTruncSExt32):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::baseIndex):
+        (JSC::FTL::Output::branch):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::bitAnd):
+        (JSC::FTL::Output::bitOr):
+        (JSC::FTL::Output::bitXor):
+        (JSC::FTL::Output::shl):
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::bitNot):
+        (JSC::FTL::Output::insertElement):
+        (JSC::FTL::Output::address):
+        (JSC::FTL::Output::baseIndex):
+
 2015-11-19  Mark Lam  <mark.lam@apple.com>
 
         Create correctness tests for binary snippet operators.

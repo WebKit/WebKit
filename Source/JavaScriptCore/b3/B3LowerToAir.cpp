@@ -1398,6 +1398,11 @@ private:
             return;
         }
 
+        case SExt32: {
+            append(SignExtend32ToPtr, tmp(m_value->child(0)), tmp(m_value));
+            return;
+        }
+
         case ArgumentReg: {
             m_prologue.append(Inst(
                 moveForType(m_value->type()), m_value,

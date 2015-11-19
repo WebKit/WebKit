@@ -110,6 +110,32 @@ void Output::store(LValue value, TypedPointer pointer)
     pointer.heap().decorateInstruction(store, *m_heaps);
 }
 
+LValue Output::baseIndex(LValue base, LValue index, Scale scale, ptrdiff_t offset)
+{
+    LValue accumulatedOffset;
+        
+    switch (scale) {
+    case ScaleOne:
+        accumulatedOffset = index;
+        break;
+    case ScaleTwo:
+        accumulatedOffset = shl(index, intPtrOne);
+        break;
+    case ScaleFour:
+        accumulatedOffset = shl(index, intPtrTwo);
+        break;
+    case ScaleEight:
+    case ScalePtr:
+        accumulatedOffset = shl(index, intPtrThree);
+        break;
+    }
+        
+    if (offset)
+        accumulatedOffset = add(accumulatedOffset, constIntPtr(offset));
+        
+    return add(base, accumulatedOffset);
+}
+
 void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight)
 {
     m_block->appendNew<B3::ControlValue>(

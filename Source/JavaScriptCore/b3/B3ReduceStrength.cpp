@@ -326,6 +326,16 @@ private:
                 break;
             }
 
+            // Turn this: BitAnd(64-bit value, 32 ones)
+            // Into this: ZExt32(Trunc(64-bit value))
+            if (m_value->child(1)->isInt64(0xffffffffllu)) {
+                Value* newValue = m_insertionSet.insert<Value>(
+                    m_index, ZExt32, m_value->origin(),
+                    m_insertionSet.insert<Value>(m_index, Trunc, m_value->origin(), m_value->child(0)));
+                m_value->replaceWithIdentity(newValue);
+                m_changed = true;
+                break;
+            }
             break;
 
         case BitOr:
@@ -479,7 +489,45 @@ private:
                 m_changed = true;
                 break;
             }
+            break;
 
+        case SExt32:
+            // Turn this: SExt32(constant)
+            // Into this: static_cast<int64_t>(constant)
+            if (m_value->child(0)->hasInt32()) {
+                replaceWithNewValue(m_proc.addIntConstant(m_value, m_value->child(0)->asInt32()));
+                break;
+            }
+            break;
+
+        case ZExt32:
+            // Turn this: ZExt32(constant)
+            // Into this: static_cast<uint64_t>(static_cast<uint32_t>(constant))
+            if (m_value->child(0)->hasInt32()) {
+                replaceWithNewValue(
+                    m_proc.addIntConstant(
+                        m_value,
+                        static_cast<uint64_t>(static_cast<uint32_t>(m_value->child(0)->asInt32()))));
+                break;
+            }
+            break;
+
+        case Trunc:
+            // Turn this: Trunc(constant)
+            // Into this: static_cast<int32_t>(constant)
+            if (m_value->child(0)->hasInt64()) {
+                replaceWithNewValue(
+                    m_proc.addIntConstant(m_value, static_cast<int32_t>(m_value->child(0)->asInt64())));
+                break;
+            }
+
+            // Turn this: Trunc(SExt32(value)) or Trunc(ZExt32(value))
+            // Into this: value
+            if (m_value->child(0)->opcode() == SExt32 || m_value->child(0)->opcode() == ZExt32) {
+                m_value->replaceWithIdentity(m_value->child(0)->child(0));
+                m_changed = true;
+                break;
+            }
             break;
 
         case Load8Z:

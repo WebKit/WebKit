@@ -225,6 +225,9 @@ Move32 U:G, D:G
     Imm, Addr as store32
     Imm, Index as store32
 
+SignExtend32ToPtr U:G, D:G
+    Tmp, Tmp
+
 MoveDouble U:F, D:F
     Tmp, Tmp
     Addr, Tmp as loadDouble

@@ -4629,6 +4629,109 @@ void testSwitchChillDiv(unsigned degree, unsigned gap = 1)
     CHECK(!invoke<int32_t>(*code, degree * gap + 1, 42, 11));
 }
 
+void testTruncFold(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), value)));
+
+    CHECK(compileAndRun<int>(proc) == static_cast<int>(value));
+}
+
+void testZExt32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+    CHECK(compileAndRun<uint64_t>(proc, value) == static_cast<uint64_t>(static_cast<uint32_t>(value)));
+}
+
+void testZExt32Fold(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), value)));
+
+    CHECK(compileAndRun<uint64_t>(proc, value) == static_cast<uint64_t>(static_cast<uint32_t>(value)));
+}
+
+void testSExt32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, SExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+    CHECK(compileAndRun<int64_t>(proc, value) == static_cast<int64_t>(value));
+}
+
+void testSExt32Fold(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, SExt32, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), value)));
+
+    CHECK(compileAndRun<int64_t>(proc, value) == static_cast<int64_t>(value));
+}
+
+void testTruncZExt32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<Value>(
+                proc, ZExt32, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+
+    CHECK(compileAndRun<int32_t>(proc, value) == value);
+}
+
+void testTruncSExt32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<Value>(
+                proc, SExt32, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)))));
+
+    CHECK(compileAndRun<int32_t>(proc, value) == value);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -5377,6 +5480,50 @@ void run(const char* filter)
     RUN(testSwitchChillDiv(10, 2));
     RUN(testSwitchChillDiv(100, 1));
     RUN(testSwitchChillDiv(100, 100));
+
+    RUN(testTrunc(0));
+    RUN(testTrunc(1));
+    RUN(testTrunc(-1));
+    RUN(testTrunc(1000000000000ll));
+    RUN(testTrunc(-1000000000000ll));
+    RUN(testTruncFold(0));
+    RUN(testTruncFold(1));
+    RUN(testTruncFold(-1));
+    RUN(testTruncFold(1000000000000ll));
+    RUN(testTruncFold(-1000000000000ll));
+    
+    RUN(testZExt32(0));
+    RUN(testZExt32(1));
+    RUN(testZExt32(-1));
+    RUN(testZExt32(1000000000ll));
+    RUN(testZExt32(-1000000000ll));
+    RUN(testZExt32Fold(0));
+    RUN(testZExt32Fold(1));
+    RUN(testZExt32Fold(-1));
+    RUN(testZExt32Fold(1000000000ll));
+    RUN(testZExt32Fold(-1000000000ll));
+
+    RUN(testSExt32(0));
+    RUN(testSExt32(1));
+    RUN(testSExt32(-1));
+    RUN(testSExt32(1000000000ll));
+    RUN(testSExt32(-1000000000ll));
+    RUN(testSExt32Fold(0));
+    RUN(testSExt32Fold(1));
+    RUN(testSExt32Fold(-1));
+    RUN(testSExt32Fold(1000000000ll));
+    RUN(testSExt32Fold(-1000000000ll));
+
+    RUN(testTruncZExt32(0));
+    RUN(testTruncZExt32(1));
+    RUN(testTruncZExt32(-1));
+    RUN(testTruncZExt32(1000000000ll));
+    RUN(testTruncZExt32(-1000000000ll));
+    RUN(testTruncSExt32(0));
+    RUN(testTruncSExt32(1));
+    RUN(testTruncSExt32(-1));
+    RUN(testTruncSExt32(1000000000ll));
+    RUN(testTruncSExt32(-1000000000ll));
 
     if (tasks.isEmpty())
         usage();
