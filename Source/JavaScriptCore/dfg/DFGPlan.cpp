@@ -498,10 +498,12 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return FTLPath;
         }
 
+#if !FTL_USES_B3
         if (state.jitCode->stackmaps.stackSize() > Options::llvmMaxStackSize()) {
             FTL::fail(state);
             return FTLPath;
         }
+#endif
 
         FTL::link(state);
         

@@ -52,6 +52,7 @@ void link(State& state)
     // LLVM will create its own jump tables as needed.
     codeBlock->clearSwitchJumpTables();
 
+#if !FTL_USES_B3
     // What LLVM's stackmaps call stackSizeForLocals and what we call frameRegisterCount have a simple
     // relationship, though it's not obvious from reading the code. The easiest way to understand them
     // is to look at stackOffset, i.e. what you have to add to FP to get SP. For LLVM that is just:
@@ -77,6 +78,7 @@ void link(State& state)
     //     frameRegisterCount == -(-state.jitCode->stackmaps.stackSizeForLocals()) / sizeof(Register)
     //     frameRegisterCount == state.jitCode->stackmaps.stackSizeForLocals() / sizeof(Register)
     state.jitCode->common.frameRegisterCount = state.jitCode->stackmaps.stackSizeForLocals() / sizeof(void*);
+#endif
     
     state.jitCode->common.requiredRegisterCountForExit = graph.requiredRegisterCountForExit();
     

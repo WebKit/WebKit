@@ -79,6 +79,7 @@ LValue Output::sensibleDoubleToInt(LValue value)
 {
     RELEASE_ASSERT(isX86());
     return call(
+        int32,
         x86SSE2CvtTSD2SIIntrinsic(),
         insertElement(
             insertElement(getUndef(vectorType(doubleType, 2)), value, int32Zero),

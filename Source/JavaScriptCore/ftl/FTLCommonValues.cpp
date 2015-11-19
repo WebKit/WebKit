@@ -26,12 +26,21 @@
 #include "config.h"
 #include "FTLCommonValues.h"
 
+#include "B3BasicBlockInlines.h"
+#include "B3Const32Value.h"
+#include "B3Const64Value.h"
+#include "B3ConstDoubleValue.h"
+#include "B3ConstPtrValue.h"
+#include "B3ProcedureInlines.h"
 #include "B3Type.h"
+#include "B3ValueInlines.h"
 #include "FTLAbbreviations.h"
 
 #if ENABLE(FTL_JIT)
 
 namespace JSC { namespace FTL {
+
+using namespace B3;
 
 CommonValues::CommonValues(LContext context)
 #if FTL_USES_B3
@@ -68,9 +77,7 @@ CommonValues::CommonValues(LContext context)
     , intPtrOne(constInt(intPtr, 1, SignExtend))
     , intPtrTwo(constInt(intPtr, 2, SignExtend))
     , intPtrThree(constInt(intPtr, 3, SignExtend))
-    , intPtrFour(constInt(intPtr, 4, SignExtend))
     , intPtrEight(constInt(intPtr, 8, SignExtend))
-    , intPtrPtr(constInt(intPtr, sizeof(void*), SignExtend))
     , doubleZero(constReal(doubleType, 0))
     , rangeKind(mdKindID(context, "range"))
     , profKind(mdKindID(context, "prof"))
@@ -80,12 +87,24 @@ CommonValues::CommonValues(LContext context)
     , m_context(context)
     , m_module(0)
 {
-#if FTL_USES_B3
-    // Plenty of values are uninitialized. The branch is just there for NORETURN.
-    if (!m_module)
-        CRASH();
-#endif
 }
+
+#if FTL_USES_B3
+void CommonValues::initializeConstants(B3::Procedure& proc, B3::BasicBlock* block)
+{
+    int32Zero = block->appendNew<Const32Value>(proc, Origin(), 0);
+    int32One = block->appendNew<Const32Value>(proc, Origin(), 1);
+    booleanTrue = int32One;
+    booleanFalse = int32Zero;
+    int64Zero = block->appendNew<Const64Value>(proc, Origin(), 0);
+    intPtrZero = block->appendNew<ConstPtrValue>(proc, Origin(), 0);
+    intPtrOne = block->appendNew<ConstPtrValue>(proc, Origin(), 1);
+    intPtrTwo = block->appendNew<ConstPtrValue>(proc, Origin(), 2);
+    intPtrThree = block->appendNew<ConstPtrValue>(proc, Origin(), 3);
+    intPtrEight = block->appendNew<ConstPtrValue>(proc, Origin(), 8);
+    doubleZero = block->appendNew<ConstDoubleValue>(proc, Origin(), 0.);
+}
+#endif
 
 } } // namespace JSC::FTL
 

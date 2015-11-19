@@ -1714,6 +1714,11 @@ private:
             return;
         }
 
+        case B3::Oops: {
+            append(Air::Oops);
+            return;
+        }
+
         default:
             break;
         }

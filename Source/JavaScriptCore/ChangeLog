@@ -1,3 +1,188 @@
+2015-11-18  Filip Pizlo  <fpizlo@apple.com> and Benjamin Poulain  <bpoulain@apple.com>
+
+        FTL should be able to compile a small function with B3
+        https://bugs.webkit.org/show_bug.cgi?id=151423
+
+        Reviewed by Filip Pizlo.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::~Output):
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::appendTo):
+        (JSC::FTL::Output::lockedStackSlot):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::branch):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::newBlock):
+        (JSC::FTL::Output::setOrigin):
+        (JSC::FTL::Output::origin):
+        (JSC::FTL::Output::framePointer):
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::constInt32):
+        (JSC::FTL::Output::constIntPtr):
+        (JSC::FTL::Output::constInt64):
+        (JSC::FTL::Output::constDouble):
+        (JSC::FTL::Output::upsilon):
+        (JSC::FTL::Output::phi):
+        (JSC::FTL::Output::add):
+        (JSC::FTL::Output::sub):
+        (JSC::FTL::Output::mul):
+        (JSC::FTL::Output::neg):
+        (JSC::FTL::Output::doubleAdd):
+        (JSC::FTL::Output::doubleSub):
+        (JSC::FTL::Output::doubleMul):
+        (JSC::FTL::Output::doubleDiv):
+        (JSC::FTL::Output::doubleNeg):
+        (JSC::FTL::Output::bitAnd):
+        (JSC::FTL::Output::bitOr):
+        (JSC::FTL::Output::bitXor):
+        (JSC::FTL::Output::shl):
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::lShr):
+        (JSC::FTL::Output::load64):
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::storeDouble):
+        (JSC::FTL::Output::addPtr):
+        (JSC::FTL::Output::address):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::isZero32):
+        (JSC::FTL::Output::notZero32):
+        (JSC::FTL::Output::isZero64):
+        (JSC::FTL::Output::notZero64):
+        (JSC::FTL::Output::isNull):
+        (JSC::FTL::Output::notNull):
+        (JSC::FTL::Output::testIsZero32):
+        (JSC::FTL::Output::testNonZero32):
+        (JSC::FTL::Output::testIsZero64):
+        (JSC::FTL::Output::testNonZero64):
+        (JSC::FTL::Output::testIsZeroPtr):
+        (JSC::FTL::Output::testNonZeroPtr):
+        (JSC::FTL::Output::call):
+        (JSC::FTL::Output::operation):
+        (JSC::FTL::Output::jump):
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::ret):
+        (JSC::FTL::Output::unreachable):
+        (JSC::FTL::Output::check):
+        (JSC::FTL::Output::anchor):
+        (JSC::FTL::Output::addIncomingToPhi):
+        (JSC::FTL::Output::~Output): Deleted.
+        (JSC::FTL::Output::appendTo): Deleted.
+        (JSC::FTL::Output::param): Deleted.
+        (JSC::FTL::Output::load): Deleted.
+        (JSC::FTL::Output::store): Deleted.
+        (JSC::FTL::Output::store16): Deleted.
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        (JSC::FTL::CommonValues::initializeConstants):
+        * ftl/FTLCommonValues.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::createPhiVariables):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::safelyInvalidateAfterTermination):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileUpsilon):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePhi):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileToThis):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStrCat):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArrayifyToStructure):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutAccessorById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutGetterSetterById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutAccessorByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArrayPop):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateScopedArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateClonedArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileToStringOrCallStringConstructor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileToPrimitive):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileLoadVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIn):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileHasIndexedProperty):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileHasGenericProperty):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileHasStructureProperty):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetDirectPname):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetPropertyEnumerator):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileToIndexString):
+        (JSC::FTL::DFG::LowerDFGToLLVM::didOverflowStack):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToLLVM::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::nonSpeculativeCompare):
+        (JSC::FTL::DFG::LowerDFGToLLVM::contiguousPutByValOutOfBounds):
+        (JSC::FTL::DFG::LowerDFGToLLVM::switchStringSlow):
+        (JSC::FTL::DFG::LowerDFGToLLVM::doubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::sensibleDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToLLVM::jsValueToStrictInt52):
+        (JSC::FTL::DFG::LowerDFGToLLVM::doubleToStrictInt52):
+        (JSC::FTL::DFG::LowerDFGToLLVM::vmCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callStackmap):
+        (JSC::FTL::DFG::LowerDFGToLLVM::probe):
+        (JSC::FTL::DFG::LowerDFGToLLVM::crash):
+        (JSC::FTL::lowerDFGToLLVM):
+        (JSC::FTL::DFG::LowerDFGToLLVM::vmCallNoExceptions): Deleted.
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::sensibleDoubleToInt):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::ceil64):
+        (JSC::FTL::Output::ctlz32):
+        (JSC::FTL::Output::addWithOverflow32):
+        (JSC::FTL::Output::subWithOverflow32):
+        (JSC::FTL::Output::mulWithOverflow32):
+        (JSC::FTL::Output::addWithOverflow64):
+        (JSC::FTL::Output::subWithOverflow64):
+        (JSC::FTL::Output::mulWithOverflow64):
+        (JSC::FTL::Output::doubleAbs):
+        (JSC::FTL::Output::doubleSin):
+        (JSC::FTL::Output::doubleCos):
+        (JSC::FTL::Output::doublePow):
+        (JSC::FTL::Output::doublePowi):
+        (JSC::FTL::Output::doubleSqrt):
+        (JSC::FTL::Output::doubleLog):
+        (JSC::FTL::Output::call):
+        (JSC::FTL::Output::trap):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State): Deleted.
+        * ftl/FTLState.h:
+        * ftl/FTLWeight.h:
+        (JSC::FTL::Weight::frequencyClass):
+
 2015-11-18  Saam barati  <sbarati@apple.com>
 
         There is a bug when default parameter values are mixed with destructuring parameter values

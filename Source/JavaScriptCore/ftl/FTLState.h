@@ -75,11 +75,19 @@ public:
     RefPtr<JITCode> jitCode;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
-    unsigned handleStackOverflowExceptionStackmapID;
-    unsigned handleExceptionStackmapID;
-    unsigned capturedStackmapID;
-    unsigned varargsSpillSlotsStackmapID;
-    unsigned exceptionHandlingSpillSlotStackmapID;
+#if FTL_USES_B3
+    LValue handleStackOverflowExceptionValue { nullptr };
+    LValue handleExceptionValue { nullptr };
+    LValue capturedValue { nullptr };
+    LValue varargsSpillSlotsValue { nullptr };
+    LValue exceptionHandlingSpillSlotValue { nullptr };
+#else // FTL_USES_B3
+    unsigned handleStackOverflowExceptionStackmapID { UINT_MAX };
+    unsigned handleExceptionStackmapID { UINT_MAX };
+    unsigned capturedStackmapID { UINT_MAX };
+    unsigned varargsSpillSlotsStackmapID { UINT_MAX };
+    unsigned exceptionHandlingSpillSlotStackmapID { UINT_MAX };
+#endif // FTL_USE_B3
     SegmentedVector<GetByIdDescriptor> getByIds;
     SegmentedVector<PutByIdDescriptor> putByIds;
     SegmentedVector<CheckInDescriptor> checkIns;

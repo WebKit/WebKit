@@ -151,8 +151,9 @@ bool JITFinalizer::finalizeFunction()
             ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), function)));
     
     m_plan.codeBlock->setJITCode(jitCode);
-
+#if !FTL_USES_B3
     m_plan.vm.updateFTLLargestStackSize(jitCode->stackmaps.stackSize());
+#endif
 
     if (m_plan.compilation)
         m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);

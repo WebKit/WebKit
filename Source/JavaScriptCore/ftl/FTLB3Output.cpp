@@ -33,8 +33,54 @@ namespace JSC { namespace FTL {
 
 Output::Output(State& state)
     : CommonValues(state.context)
-    , m_procedure(*state.proc)
+    , m_proc(*state.proc)
 {
+}
+
+Output::~Output()
+{
+}
+
+void Output::initialize(AbstractHeapRepository& heaps)
+{
+    m_heaps = &heaps;
+}
+
+LBasicBlock Output::appendTo(LBasicBlock block, LBasicBlock nextBlock)
+{
+    appendTo(block);
+    return insertNewBlocksBefore(nextBlock);
+}
+
+void Output::appendTo(LBasicBlock block)
+{
+    m_block = block;
+}
+
+LValue Output::lockedStackSlot(size_t bytes)
+{
+    return m_block->appendNew<B3::StackSlotValue>(m_proc, origin(), bytes, B3::StackSlotKind::Locked);
+}
+
+LValue Output::load(TypedPointer pointer, LType type)
+{
+    LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Load, type, origin(), pointer.value());
+    pointer.heap().decorateInstruction(load, *m_heaps);
+    return load;
+}
+
+void Output::store(LValue value, TypedPointer pointer)
+{
+    LValue store = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Store, origin(), value, pointer.value());
+    pointer.heap().decorateInstruction(store, *m_heaps);
+}
+
+void Output::branch(LValue condition, LBasicBlock taken, Weight takenWeight, LBasicBlock notTaken, Weight notTakenWeight)
+{
+    m_block->appendNew<B3::ControlValue>(
+        m_proc, B3::Branch, origin(), condition,
+        B3::FrequentedBlock(taken, takenWeight.frequencyClass()),
+        B3::FrequentedBlock(notTaken, notTakenWeight.frequencyClass()));
 }
 
 } } // namespace JSC::FTL

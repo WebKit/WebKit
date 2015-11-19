@@ -145,68 +145,68 @@ public:
 
     LValue ceil64(LValue operand)
     {
-        return call(ceil64Intrinsic(), operand);
+        return call(doubleType, ceil64Intrinsic(), operand);
     }
     LValue ctlz32(LValue xOperand, LValue yOperand)
     {
-        return call(ctlz32Intrinsic(), xOperand, yOperand);
+        return call(int32, ctlz32Intrinsic(), xOperand, yOperand);
     }
     LValue addWithOverflow32(LValue left, LValue right)
     {
-        return call(addWithOverflow32Intrinsic(), left, right);
+        return call(int32, addWithOverflow32Intrinsic(), left, right);
     }
     LValue subWithOverflow32(LValue left, LValue right)
     {
-        return call(subWithOverflow32Intrinsic(), left, right);
+        return call(int32, subWithOverflow32Intrinsic(), left, right);
     }
     LValue mulWithOverflow32(LValue left, LValue right)
     {
-        return call(mulWithOverflow32Intrinsic(), left, right);
+        return call(int32, mulWithOverflow32Intrinsic(), left, right);
     }
     LValue addWithOverflow64(LValue left, LValue right)
     {
-        return call(addWithOverflow64Intrinsic(), left, right);
+        return call(int64, addWithOverflow64Intrinsic(), left, right);
     }
     LValue subWithOverflow64(LValue left, LValue right)
     {
-        return call(subWithOverflow64Intrinsic(), left, right);
+        return call(int64, subWithOverflow64Intrinsic(), left, right);
     }
     LValue mulWithOverflow64(LValue left, LValue right)
     {
-        return call(mulWithOverflow64Intrinsic(), left, right);
+        return call(int64, mulWithOverflow64Intrinsic(), left, right);
     }
     LValue doubleAbs(LValue value)
     {
-        return call(doubleAbsIntrinsic(), value);
+        return call(doubleType, doubleAbsIntrinsic(), value);
     }
 
     LValue doubleSin(LValue value)
     {
-        return call(doubleSinIntrinsic(), value);
+        return call(doubleType, doubleSinIntrinsic(), value);
     }
     LValue doubleCos(LValue value)
     {
-        return call(doubleCosIntrinsic(), value);
+        return call(doubleType, doubleCosIntrinsic(), value);
     }
 
     LValue doublePow(LValue xOperand, LValue yOperand)
     {
-        return call(doublePowIntrinsic(), xOperand, yOperand);
+        return call(doubleType, doublePowIntrinsic(), xOperand, yOperand);
     }
 
     LValue doublePowi(LValue xOperand, LValue yOperand)
     {
-        return call(doublePowiIntrinsic(), xOperand, yOperand);
+        return call(doubleType, doublePowiIntrinsic(), xOperand, yOperand);
     }
 
     LValue doubleSqrt(LValue value)
     {
-        return call(doubleSqrtIntrinsic(), value);
+        return call(doubleType, doubleSqrtIntrinsic(), value);
     }
 
     LValue doubleLog(LValue value)
     {
-        return call(doubleLogIntrinsic(), value);
+        return call(doubleType, doubleLogIntrinsic(), value);
     }
 
     static bool hasSensibleDoubleToInt() { return isX86(); }
@@ -375,11 +375,11 @@ public:
     LValue fenceAcqRel() { return fence(LLVMAtomicOrderingAcquireRelease); }
     
     template<typename VectorType>
-    LValue call(LValue function, const VectorType& vector) { return buildCall(m_builder, function, vector); }
-    LValue call(LValue function) { return buildCall(m_builder, function); }
-    LValue call(LValue function, LValue arg1) { return buildCall(m_builder, function, arg1); }
+    LValue call(LType, LValue function, const VectorType& vector) { return buildCall(m_builder, function, vector); }
+    LValue call(LType, LValue function) { return buildCall(m_builder, function); }
+    LValue call(LType, LValue function, LValue arg1) { return buildCall(m_builder, function, arg1); }
     template<typename... Args>
-    LValue call(LValue function, LValue arg1, Args... args) { return buildCall(m_builder, function, arg1, args...); }
+    LValue call(LType, LValue function, LValue arg1, Args... args) { return buildCall(m_builder, function, arg1, args...); }
     
     template<typename FunctionType>
     LValue operation(FunctionType function)
@@ -431,7 +431,7 @@ public:
     
     void trap()
     {
-        call(trapIntrinsic());
+        call(voidType, trapIntrinsic());
     }
     
     ValueFromBlock anchor(LValue value)

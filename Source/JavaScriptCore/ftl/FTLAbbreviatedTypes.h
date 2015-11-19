@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 
 namespace JSC { namespace B3 {
 class BasicBlock;
+class Value;
 enum Type : int8_t;
 } }
 
@@ -41,9 +42,11 @@ namespace JSC { namespace FTL {
 #if FTL_USES_B3
 typedef B3::BasicBlock* LBasicBlock;
 typedef B3::Type LType;
+typedef B3::Value* LValue;
 #else
 typedef LLVMBasicBlockRef LBasicBlock;
 typedef LLVMTypeRef LType;
+typedef LLVMValueRef LValue;
 #endif
 
 typedef LLVMAtomicOrdering LAtomicOrdering;
@@ -54,7 +57,6 @@ typedef LLVMIntPredicate LIntPredicate;
 typedef LLVMLinkage LLinkage;
 typedef LLVMModuleRef LModule;
 typedef LLVMRealPredicate LRealPredicate;
-typedef LLVMValueRef LValue;
 typedef LLVMMemoryBufferRef LMemoryBuffer;
 
 enum SynchronizationScope { SingleThread, CrossThread };

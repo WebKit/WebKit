@@ -31,16 +31,27 @@
 #include "FTLAbbreviatedTypes.h"
 #include "FTLValueRange.h"
 
-namespace JSC { namespace FTL {
+namespace JSC {
+
+namespace B3 {
+class BasicBlock;
+class Procedure;
+}
+
+namespace FTL {
 
 class CommonValues {
 public:
     CommonValues(LContext context);
-    
+
+#if FTL_USES_B3
+    void initializeConstants(B3::Procedure&, B3::BasicBlock*);
+#else // FTL_USES_B3
     void initialize(LModule module)
     {
         m_module = module;
     }
+#endif // FTL_USES_B3
     
     const LType voidType;
     const LType boolean;
@@ -60,20 +71,20 @@ public:
     const LType refFloat;
     const LType refDouble;
 #endif
-    const LValue booleanTrue { nullptr };
-    const LValue booleanFalse { nullptr };
-    const LValue int8Zero { nullptr };
-    const LValue int32Zero { nullptr };
-    const LValue int32One { nullptr };
-    const LValue int64Zero { nullptr };
-    const LValue intPtrZero { nullptr };
-    const LValue intPtrOne { nullptr };
-    const LValue intPtrTwo { nullptr };
-    const LValue intPtrThree { nullptr };
-    const LValue intPtrFour { nullptr };
-    const LValue intPtrEight { nullptr };
-    const LValue intPtrPtr { nullptr };
-    const LValue doubleZero { nullptr };
+    LValue booleanTrue { nullptr };
+    LValue booleanFalse { nullptr };
+#if !FTL_USES_B3
+    LValue int8Zero { nullptr };
+#endif
+    LValue int32Zero { nullptr };
+    LValue int32One { nullptr };
+    LValue int64Zero { nullptr };
+    LValue intPtrZero { nullptr };
+    LValue intPtrOne { nullptr };
+    LValue intPtrTwo { nullptr };
+    LValue intPtrThree { nullptr };
+    LValue intPtrEight { nullptr };
+    LValue doubleZero { nullptr };
     
     const unsigned rangeKind { 0 };
     const unsigned profKind { 0 };
