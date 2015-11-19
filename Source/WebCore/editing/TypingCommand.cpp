@@ -83,7 +83,7 @@ TypingCommand::TypingCommand(Document& document, ETypingCommand commandType, con
     , m_smartDelete(options & SmartDelete)
     , m_granularity(granularity)
     , m_compositionType(compositionType)
-    , m_killRing(options & KillRing)
+    , m_shouldAddToKillRing(options & AddsToKillRing)
     , m_openedByBackwardDelete(false)
     , m_shouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator)
     , m_shouldPreventSpellChecking(options & PreventSpellChecking)
@@ -114,7 +114,7 @@ void TypingCommand::deleteKeyPressed(Document& document, Options options, TextGr
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), document.frame());
             lastTypingCommand->setShouldPreventSpellChecking(options & PreventSpellChecking);
-            lastTypingCommand->deleteKeyPressed(granularity, options & KillRing);
+            lastTypingCommand->deleteKeyPressed(granularity, options & AddsToKillRing);
             return;
         }
     }
@@ -130,7 +130,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document& document, Options options,
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame)) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), frame);
             lastTypingCommand->setShouldPreventSpellChecking(options & PreventSpellChecking);
-            lastTypingCommand->forwardDeleteKeyPressed(granularity, options & KillRing);
+            lastTypingCommand->forwardDeleteKeyPressed(granularity, options & AddsToKillRing);
             return;
         }
     }
@@ -263,10 +263,10 @@ void TypingCommand::doApply()
         deleteSelection(m_smartDelete);
         return;
     case DeleteKey:
-        deleteKeyPressed(m_granularity, m_killRing);
+        deleteKeyPressed(m_granularity, m_shouldAddToKillRing);
         return;
     case ForwardDeleteKey:
-        forwardDeleteKeyPressed(m_granularity, m_killRing);
+        forwardDeleteKeyPressed(m_granularity, m_shouldAddToKillRing);
         return;
     case InsertLineBreak:
         insertLineBreak();
@@ -433,7 +433,7 @@ bool TypingCommand::makeEditableRootEmpty()
     return true;
 }
 
-void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
+void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
     Frame& frame = this->frame();
 
@@ -458,7 +458,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
         FrameSelection selection;
         selection.setSelection(endingSelection());
         selection.modify(FrameSelection::AlterationExtend, DirectionBackward, granularity);
-        if (killRing && selection.isCaret() && granularity != CharacterGranularity)
+        if (shouldAddToKillRing && selection.isCaret() && granularity != CharacterGranularity)
             selection.modify(FrameSelection::AlterationExtend, DirectionBackward, CharacterGranularity);
 
         if (endingSelection().visibleStart().previous(CannotCrossEditingBoundary).isNull()) {
@@ -530,8 +530,8 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
     
-    if (killRing)
-        frame.editor().addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
+    if (shouldAddToKillRing)
+        frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::PrependText);
     // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
     // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
     // more text than you insert.  In that case all of the text that was around originally should be selected.
@@ -542,7 +542,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     typingAddedToOpenCommand(DeleteKey);
 }
 
-void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool killRing)
+void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
     Frame& frame = this->frame();
 
@@ -565,7 +565,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
         FrameSelection selection;
         selection.setSelection(endingSelection());
         selection.modify(FrameSelection::AlterationExtend, DirectionForward, granularity);
-        if (killRing && selection.isCaret() && granularity != CharacterGranularity)
+        if (shouldAddToKillRing && selection.isCaret() && granularity != CharacterGranularity)
             selection.modify(FrameSelection::AlterationExtend, DirectionForward, CharacterGranularity);
 
         Position downstreamEnd = endingSelection().end().downstream();
@@ -628,8 +628,8 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
         
-    if (killRing)
-        frame.editor().addToKillRing(selectionToDelete.toNormalizedRange().get(), false);
+    if (shouldAddToKillRing)
+        frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::AppendText);
     // make undo select what was deleted
     setStartingSelection(selectionAfterUndo);
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);

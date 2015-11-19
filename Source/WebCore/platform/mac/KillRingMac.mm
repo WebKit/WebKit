@@ -38,6 +38,7 @@ void _NSPrependToKillRing(NSString *);
 NSString *_NSYankFromKillRing();
 void _NSNewKillRingSequence();
 void _NSSetKillRingToYankedState();
+void _NSResetKillRingOperationFlag();
 
 }
 
@@ -53,12 +54,16 @@ static void initializeKillRingIfNeeded()
 void KillRing::append(const String& string)
 {
     initializeKillRingIfNeeded();
+    // Necessary to prevent an implicit new sequence if the previous command was NSPrependToKillRing.
+    _NSResetKillRingOperationFlag();
     _NSAppendToKillRing(string);
 }
 
 void KillRing::prepend(const String& string)
 {
     initializeKillRingIfNeeded();
+    // Necessary to prevent an implicit new sequence if the previous command was NSAppendToKillRing.
+    _NSResetKillRingOperationFlag();
     _NSPrependToKillRing(string);
 }
 
