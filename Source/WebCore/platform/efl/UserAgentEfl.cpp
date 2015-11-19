@@ -57,8 +57,10 @@ static String platformVersionForUAString()
 
 static const char* versionForUAString()
 {
-#define MAKE_VERSION(major, minor) #major "." #minor
+#define MAKE_STRING(value) #value
+#define MAKE_VERSION(major, minor) MAKE_STRING(major) "." MAKE_STRING(minor)
     return MAKE_VERSION(WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+#undef MAKE_STRING
 #undef MAKE_VERSION
 }
 
