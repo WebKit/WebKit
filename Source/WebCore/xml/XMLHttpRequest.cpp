@@ -592,8 +592,7 @@ void XMLHttpRequest::send(Document* document, ExceptionCode& ec)
         return;
 
     if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
-        String contentType = getRequestHeader("Content-Type");
-        if (contentType.isEmpty()) {
+        if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
 #if ENABLE(DASHBOARD_SUPPORT)
             if (usesDashboardBackwardCompatibilityMode())
                 setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
@@ -622,7 +621,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
     if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
         String contentType = getRequestHeader("Content-Type");
-        if (contentType.isEmpty()) {
+        if (contentType.isNull()) {
 #if ENABLE(DASHBOARD_SUPPORT)
             if (usesDashboardBackwardCompatibilityMode())
                 setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
@@ -648,8 +647,7 @@ void XMLHttpRequest::send(Blob* body, ExceptionCode& ec)
         return;
 
     if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
-        const String& contentType = getRequestHeader("Content-Type");
-        if (contentType.isEmpty()) {
+        if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
             const String& blobType = body->type();
             if (!blobType.isEmpty() && isValidContentType(blobType))
                 setRequestHeaderInternal("Content-Type", blobType);
@@ -676,11 +674,8 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
 
         m_requestEntityBody->generateFiles(document());
 
-        String contentType = getRequestHeader("Content-Type");
-        if (contentType.isEmpty()) {
-            contentType = makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary().data());
-            setRequestHeaderInternal("Content-Type", contentType);
-        }
+        if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
+            setRequestHeaderInternal("Content-Type", makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary().data()));
     }
 
     createRequest(ec);
