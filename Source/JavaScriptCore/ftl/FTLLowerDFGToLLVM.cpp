@@ -1033,7 +1033,7 @@ private:
 #if FTL_USES_B3
         ValueFromBlock upsilon = m_out.anchor(upsilonValue);
         LValue phiNode = m_phis.get(m_node->phi());
-        addIncomingToPhi(phiNode, uspilon);
+        m_out.addIncomingToPhi(phiNode, upsilon);
 #else
         LValue destination = m_phis.get(m_node->phi());
         m_out.set(upsilonValue, destination);

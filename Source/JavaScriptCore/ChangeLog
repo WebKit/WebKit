@@ -1,3 +1,10 @@
+2015-11-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix typos in r192605
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileUpsilon):
+
 2015-11-18  Filip Pizlo  <fpizlo@apple.com> and Benjamin Poulain  <bpoulain@apple.com>
 
         FTL should be able to compile a small function with B3
