@@ -176,6 +176,8 @@ private:
 
     void scheduleOperationTimer();
 
+    void immediateAbort();
+
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;

@@ -90,8 +90,12 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
     ASSERT(!m_indexesByIdentifier.contains(info.identifier()));
     auto index = MemoryIndex::create(info, *this);
 
-    m_info.addExistingIndex(info);
+    // If there was an error populating the new index, then the current records in the object store violate its contraints
+    auto error = populateIndexWithExistingRecords(*index);
+    if (!error.isNull())
+        return error;
 
+    m_info.addExistingIndex(info);
     transaction.addNewIndex(*index);
     registerIndex(WTF::move(index));
 
@@ -281,6 +285,33 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
     }
 
     return error;
+}
+
+
+IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
+{
+    if (!m_keyValueStore)
+        return { };
+
+    JSLockHolder locker(indexVM());
+
+    for (auto iterator : *m_keyValueStore) {
+        auto jsValue = idbValueDataToJSValue(indexGlobalExec(), iterator.value);
+        if (jsValue.isUndefinedOrNull())
+            return { };
+
+        IndexKey indexKey;
+        generateIndexKeyForValue(indexGlobalExec(), index.info(), jsValue, indexKey);
+
+        if (indexKey.isNull())
+            continue;
+
+        IDBError error = index.putIndexKey(iterator.key, indexKey);
+        if (!error.isNull())
+            return error;
+    }
+
+    return { };
 }
 
 uint64_t MemoryObjectStore::countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData& inRange) const

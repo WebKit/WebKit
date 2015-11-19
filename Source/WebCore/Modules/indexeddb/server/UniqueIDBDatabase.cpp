@@ -353,9 +353,8 @@ void UniqueIDBDatabase::performCreateIndex(uint64_t callbackIdentifier, const ID
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performCreateIndex");
 
     ASSERT(m_backingStore);
-    m_backingStore->createIndex(transactionIdentifier, info);
+    IDBError error = m_backingStore->createIndex(transactionIdentifier, info);
 
-    IDBError error;
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCreateIndex, callbackIdentifier, error, info));
 }
 

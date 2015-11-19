@@ -97,6 +97,7 @@ private:
     IDBKeyData lowestKeyWithRecordInRange(const IDBKeyRangeData&) const;
     std::set<IDBKeyData>::iterator lowestIteratorInRange(const IDBKeyRangeData&, bool reverse) const;
 
+    IDBError populateIndexWithExistingRecords(MemoryIndex&);
     IDBError updateIndexesForPutRecord(const IDBKeyData&, const ThreadSafeDataBuffer& value);
     void updateIndexesForDeleteRecord(const IDBKeyData& value);
     void updateCursorsForPutRecord(std::set<IDBKeyData>::iterator);
