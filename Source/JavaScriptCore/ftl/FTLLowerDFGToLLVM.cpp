@@ -1043,8 +1043,29 @@ private:
     void compilePhi()
     {
 #if FTL_USES_B3
-        LValue phiNode = m_phis.get(m_node->phi());
-        m_out.m_block->append(phiNode);
+        LValue phi = m_phis.get(m_node);
+        m_out.m_block->append(phi);
+
+        switch (m_node->flags() & NodeResultMask) {
+        case NodeResultDouble:
+            setDouble(phi);
+            break;
+        case NodeResultInt32:
+            setInt32(phi);
+            break;
+        case NodeResultInt52:
+            setInt52(phi);
+            break;
+        case NodeResultBoolean:
+            setBoolean(phi);
+            break;
+        case NodeResultJS:
+            setJSValue(phi);
+            break;
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            break;
+        }
 #else
         LValue source = m_phis.get(m_node);
         
