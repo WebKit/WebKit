@@ -44,9 +44,11 @@ void JITAddGenerator::generateFastPath(CCallHelpers& jit)
     ASSERT(!m_leftIsConstInt32 || !m_rightIsConstInt32);
     
     if (!m_leftType.mightBeNumber() || !m_rightType.mightBeNumber()) {
-        m_slowPathJumpList.append(jit.jump());
+        ASSERT(!m_didEmitFastPath);
         return;
     }
+
+    m_didEmitFastPath = true;
 
     if (m_leftIsConstInt32 || m_rightIsConstInt32) {
         JSValueRegs var;
@@ -137,8 +139,6 @@ void JITAddGenerator::generateFastPath(CCallHelpers& jit)
     // Do doubleVar + doubleVar.
     jit.addDouble(m_rightFPR, m_leftFPR);
     jit.boxDouble(m_leftFPR, m_result);
-
-    m_endJumpList.append(jit.jump());
 }
 
 } // namespace JSC

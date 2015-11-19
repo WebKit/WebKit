@@ -58,6 +58,7 @@ public:
 
     void generateFastPath(CCallHelpers&);
 
+    bool didEmitFastPath() const { return m_didEmitFastPath; }
     CCallHelpers::JumpList endJumpList() { return m_endJumpList; }
     CCallHelpers::JumpList slowPathJumpList() { return m_slowPathJumpList; }
 
@@ -75,6 +76,7 @@ private:
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
+    bool m_didEmitFastPath { false };
 
     CCallHelpers::JumpList m_endJumpList;
     CCallHelpers::JumpList m_slowPathJumpList;

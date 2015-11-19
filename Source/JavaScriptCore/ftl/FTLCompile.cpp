@@ -462,6 +462,7 @@ static void generateArithSubICFastPath(
         context.initializeRegisters(fastPathJIT);
         gen.generateFastPath(fastPathJIT);
 
+        ASSERT(gen.didEmitFastPath());
         gen.endJumpList().link(&fastPathJIT);
         context.restoreRegisters(fastPathJIT);
         allocator.restoreReusedRegistersByPopping(fastPathJIT, numberOfBytesUsedToPreserveReusedRegisters,

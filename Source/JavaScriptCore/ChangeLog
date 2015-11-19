@@ -1,3 +1,43 @@
+2015-11-18  Mark Lam  <mark.lam@apple.com>
+
+        Remove some unnecessary jumps in snippet code.
+        https://bugs.webkit.org/show_bug.cgi?id=151415
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, the snippet generators always emit a jump at the end of the fast
+        path.  In the baseline JIT and FTL, this results in a jump to the very next
+        instruction.  I've change it to assume that the fast path will just fall thru,
+        and let the client decide instead if it wants/needs a jump or not after the fast
+        path.
+
+        I also changed the generators to provide a didEmitFastPath() query explicitly
+        declare if they actually generated the fast path, instead of having the client
+        infer it from an empty endJumpList.
+
+        Benchmarks show that perf is neutral with this change (tested on x86_64).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::didEmitFastPath):
+        (JSC::JITAddGenerator::endJumpList):
+        (JSC::JITAddGenerator::slowPathJumpList):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_sub):
+        * jit/JITSubGenerator.cpp:
+        (JSC::JITSubGenerator::generateFastPath):
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::didEmitFastPath):
+        (JSC::JITSubGenerator::endJumpList):
+        (JSC::JITSubGenerator::slowPathJumpList):
+
 2015-11-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r192436 and r192586.

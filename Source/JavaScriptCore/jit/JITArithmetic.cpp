@@ -958,13 +958,14 @@ void JIT::emit_op_add(Instruction* currentInstruction)
 
     gen.generateFastPath(*this);
 
-    if (!gen.endJumpList().empty()) {
+    if (gen.didEmitFastPath()) {
         gen.endJumpList().link(this);
         emitPutVirtualRegister(result, resultRegs);
         
         addSlowCase(gen.slowPathJumpList());
     } else {
-        gen.slowPathJumpList().link(this);
+        ASSERT(gen.endJumpList().empty());
+        ASSERT(gen.slowPathJumpList().empty());
         JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
         slowPathCall.call();
     }
@@ -1006,6 +1007,8 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
         fpRegT0, fpRegT1, scratchGPR, scratchFPR);
 
     gen.generateFastPath(*this);
+
+    ASSERT(gen.didEmitFastPath());
     gen.endJumpList().link(this);
     emitPutVirtualRegister(result, resultRegs);
 

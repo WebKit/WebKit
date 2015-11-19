@@ -40,6 +40,9 @@ void JITSubGenerator::generateFastPath(CCallHelpers& jit)
     ASSERT(m_scratchGPR != m_right.tagGPR());
     ASSERT(m_scratchFPR != InvalidFPRReg);
 #endif
+
+    m_didEmitFastPath = true;
+
     CCallHelpers::Jump leftNotInt = jit.branchIfNotInt32(m_left);
     CCallHelpers::Jump rightNotInt = jit.branchIfNotInt32(m_right);
 
@@ -81,8 +84,6 @@ void JITSubGenerator::generateFastPath(CCallHelpers& jit)
 
     jit.subDouble(m_rightFPR, m_leftFPR);
     jit.boxDouble(m_leftFPR, m_result);
-
-    m_endJumpList.append(jit.jump());
 }
 
 } // namespace JSC

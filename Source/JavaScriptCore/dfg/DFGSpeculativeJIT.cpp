@@ -2880,6 +2880,9 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         leftFPR, rightFPR, scratchGPR, scratchFPR);
     gen.generateFastPath(m_jit);
 
+    ASSERT(gen.didEmitFastPath());
+    gen.endJumpList().append(m_jit.jump());
+
     gen.slowPathJumpList().link(&m_jit);
 
     silentSpillAllRegisters(resultRegs);
@@ -3239,6 +3242,9 @@ void SpeculativeJIT::compileArithSub(Node* node)
         JITSubGenerator gen(resultRegs, leftRegs, rightRegs, leftType, rightType,
             leftFPR, rightFPR, scratchGPR, scratchFPR);
         gen.generateFastPath(m_jit);
+
+        ASSERT(gen.didEmitFastPath());
+        gen.endJumpList().append(m_jit.jump());
 
         gen.slowPathJumpList().link(&m_jit);
         silentSpillAllRegisters(resultRegs);
