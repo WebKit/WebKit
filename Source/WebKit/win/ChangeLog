@@ -1,3 +1,11 @@
+2015-11-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r192601.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2015-11-12  Anders Carlsson  <andersca@apple.com>
 
         ContextMenuController::contextMenuItemSelected only needs the action and title, not the full item
