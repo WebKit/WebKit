@@ -281,6 +281,8 @@ webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure
 webkit.org/b/151053 http/tests/security/cross-frame-access-put.html [ Pass Failure ]
 
 webkit.org/b/151326 [ Yosemite+ ] webarchive/loading/missing-data.html [ Pass Crash ]
+
+webkit.org/b/151455 [ Yosemite ] http/tests/xmlhttprequest/workers/methods-async.html [ Pass Timeout ]
 ### END OF (1) Classified failures with bug reports
 ########################################
 
