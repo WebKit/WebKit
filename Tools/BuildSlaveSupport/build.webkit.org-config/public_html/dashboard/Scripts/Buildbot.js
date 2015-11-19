@@ -151,6 +151,19 @@ Buildbot.prototype = {
         return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id;
     },
 
+    layoutTestResultsDirectoryURLForIteration: function(iteration)
+    {
+        var underscoreSeparatedRevisions = "r";
+        sortDictionariesByOrder(Dashboard.Repository).forEach(function(repository) {
+            if (iteration.revision[repository.name]) {
+                if (underscoreSeparatedRevisions.length > 1)
+                    underscoreSeparatedRevisions += "_";
+                underscoreSeparatedRevisions += iteration.revision[repository.name];
+            }
+        });
+        return this.baseURL + "results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent(underscoreSeparatedRevisions + " (" + iteration.id + ")");
+    },
+
     layoutTestResultsURLForIteration: function(iteration)
     {
         return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/results.html";

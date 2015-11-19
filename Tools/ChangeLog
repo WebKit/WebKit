@@ -1,3 +1,15 @@
+2015-11-19  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard: Move layoutTestResultsDirectoryURLForIteration implementation to base class
+        https://bugs.webkit.org/show_bug.cgi?id=151425
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.layoutTestResultsDirectoryURLForIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.layoutTestResultsDirectoryURLForIteration): Deleted.
+
 2015-11-19  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         WPT server should use its own testharness.js file and generate a warning when it does not match WebKit version
