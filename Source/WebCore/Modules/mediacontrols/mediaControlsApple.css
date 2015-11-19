@@ -619,11 +619,6 @@ audio::-webkit-media-controls-timeline-container {
     padding: 0;
 }
 
-video::-webkit-media-controls-timeline-container.dropped,
-audio::-webkit-media-controls-timeline-container.dropped {
-    display: -webkit-flex !important;
-}
-
 video::-webkit-media-controls-panel .thumbnail-track,
 audio::-webkit-media-controls-panel .thumbnail-track {
     position: relative;
@@ -662,7 +657,10 @@ audio::-webkit-media-controls-panel .thumbnail.show {
 }
 
 video::-webkit-media-controls-panel.hidden,
-audio::-webkit-media-controls-panel.hidden,
+audio::-webkit-media-controls-panel.hidden {
+    display: none;
+}
+
 video::-webkit-media-controls-panel .hidden,
 audio::-webkit-media-controls-panel .hidden,
 video::-webkit-media-controls-panel .dropped,

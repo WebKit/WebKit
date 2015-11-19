@@ -348,20 +348,22 @@ Internals::~Internals()
 {
 }
 
-void Internals::resetToConsistentState(Page& page)
+void Internals::resetToConsistentState(Page* page)
 {
-    page.setPageScaleFactor(1, IntPoint(0, 0));
-    page.setPagination(Pagination());
+    ASSERT(page);
 
-    page.setDefersLoading(false);
+    page->setPageScaleFactor(1, IntPoint(0, 0));
+    page->setPagination(Pagination());
+
+    page->setDefersLoading(false);
     
-    page.mainFrame().setTextZoomFactor(1.0f);
+    page->mainFrame().setTextZoomFactor(1.0f);
     
-    FrameView* mainFrameView = page.mainFrame().view();
+    FrameView* mainFrameView = page->mainFrame().view();
     if (mainFrameView) {
         mainFrameView->setHeaderHeight(0);
         mainFrameView->setFooterHeight(0);
-        page.setTopContentInset(0);
+        page->setTopContentInset(0);
         mainFrameView->setUseFixedLayout(false);
         mainFrameView->setFixedLayoutSize(IntSize());
     }
@@ -369,16 +371,16 @@ void Internals::resetToConsistentState(Page& page)
     TextRun::setAllowsRoundingHacks(false);
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
-    page.inspectorController().setProfilerEnabled(false);
+    page->inspectorController().setProfilerEnabled(false);
 #if ENABLE(VIDEO_TRACK)
-    page.group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
-    page.group().captionPreferences()->setTestingMode(false);
+    page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
+    page->group().captionPreferences()->setTestingMode(false);
 #endif
-    if (!page.mainFrame().editor().isContinuousSpellCheckingEnabled())
-        page.mainFrame().editor().toggleContinuousSpellChecking();
-    if (page.mainFrame().editor().isOverwriteModeEnabled())
-        page.mainFrame().editor().toggleOverwriteModeEnabled();
-    page.mainFrame().loader().clearTestingOverrides();
+    if (!page->mainFrame().editor().isContinuousSpellCheckingEnabled())
+        page->mainFrame().editor().toggleContinuousSpellChecking();
+    if (page->mainFrame().editor().isOverwriteModeEnabled())
+        page->mainFrame().editor().toggleOverwriteModeEnabled();
+    page->mainFrame().loader().clearTestingOverrides();
     ApplicationCacheStorage::singleton().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
     PlatformMediaSessionManager::sharedManager().resetRestrictions();
@@ -395,11 +397,7 @@ void Internals::resetToConsistentState(Page& page)
     MockContentFilterSettings::reset();
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    page.setMockMediaPlaybackTargetPickerEnabled(true);
-#endif
-
-    page.setShowAllPlugins(false);
+    page->setShowAllPlugins(false);
 }
 
 Internals::Internals(Document* document)
@@ -2978,8 +2976,6 @@ void Internals::setMockMediaPlaybackTargetPickerState(const String& deviceName, 
 
     if (equalIgnoringCase(deviceState, "DeviceAvailable"))
         state = MediaPlaybackTargetContext::OutputDeviceAvailable;
-    else if (equalIgnoringCase(deviceState, "DeviceNotAvailable"))
-        state = MediaPlaybackTargetContext::Unavailable;
     else {
         ec = INVALID_ACCESS_ERR;
         return;

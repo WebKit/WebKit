@@ -61,7 +61,7 @@ void resetInternalsObject(JSContextRef context)
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     Page* page = downcast<Document>(scriptContext)->frame()->page();
-    Internals::resetToConsistentState(*page);
+    Internals::resetToConsistentState(page);
     InternalSettings::from(page)->resetToConsistentState();
 }
 

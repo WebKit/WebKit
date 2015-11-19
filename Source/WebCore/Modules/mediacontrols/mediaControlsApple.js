@@ -1501,7 +1501,6 @@ Controller.prototype = {
 
         // Check if there is enough room for the scrubber.
         var shouldDropTimeline = (visibleWidth - visibleButtonWidth) < this.MinimumTimelineWidth;
-        this.controls.timelineBox.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
         this.controls.timeline.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
         this.controls.currentTime.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
         this.controls.thumbnailTrack.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
@@ -2131,10 +2130,6 @@ Controller.prototype = {
             {
                 name: "Mute Box",
                 object: this.controls.muteBox
-            },
-            {
-                name: "Captions Button",
-                object: this.controls.captionButton
             },
             {
                 name: "Fullscreen Button",

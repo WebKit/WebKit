@@ -81,7 +81,7 @@ public:
     static Ref<Internals> create(Document*);
     virtual ~Internals();
 
-    static void resetToConsistentState(Page&);
+    static void resetToConsistentState(Page*);
 
     String elementRenderTreeAsText(Element*, ExceptionCode&);
     bool hasPausedImageAnimations(Element*, ExceptionCode&);
