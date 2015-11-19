@@ -199,7 +199,7 @@ static void onTitleChanged(void* userData, Evas_Object* webView, void*)
 
 bool EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds)
 {
-    waitUntilTitleChangedTo(m_webView, expectedTitle, timeoutSeconds);
+    return waitUntilTitleChangedTo(m_webView, expectedTitle, timeoutSeconds);
 }
 
 bool EWK2UnitTestBase::waitUntilTitleChangedTo(Evas_Object* webView, const char* expectedTitle, double timeoutSeconds)
