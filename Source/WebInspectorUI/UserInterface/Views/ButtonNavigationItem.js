@@ -76,7 +76,7 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
         this._element.classList.add(WebInspector.ButtonNavigationItem.TextOnlyClassName);
         this._element.textContent = newLabel || "";
         if (this.parentNavigationBar)
-            this.parentNavigationBar.updateLayout();
+            this.parentNavigationBar.needsLayout();
     }
 
     get image()

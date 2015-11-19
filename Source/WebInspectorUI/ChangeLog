@@ -1,5 +1,53 @@
 2015-11-18  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Reduce synchronous view layouts
+        https://bugs.webkit.org/show_bug.cgi?id=151058
+
+        Reviewed by Timothy Hatcher.
+
+        Replace calls to View.updateLayout with needsLayout, when a synchronous layout
+        isn't absolutely necessary.
+
+        * UserInterface/Models/BackForwardEntry.js:
+        (WebInspector.BackForwardEntry.prototype.prepareToShow):
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype.updateLayout): Deleted.
+        View subclasses shouldn't override updateLayout.
+
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WebInspector.ButtonNavigationItem.prototype.set label):
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._contentViewSelectionPathComponentDidChange):
+        (WebInspector.ContentBrowser.prototype._currentContentViewDidChange):
+        (WebInspector.ContentBrowser.prototype._contentViewNavigationItemsDidChange):
+
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView.prototype._queryFinished):
+        Just update DataGrid's layout, not the whole view. The grid is the only subview
+        so the result is identical, but the intent is cleared this way.
+        (WebInspector.DatabaseTableContentView.prototype.updateLayout): Deleted.
+        View subclasses shouldn't override updateLayout.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessageView):
+        (WebInspector.LogContentView.prototype.promptDidChangeHeight): Deleted.
+        Unused code.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.set width):
+        (WebInspector.Sidebar.prototype.set collapsed):
+
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype._contentWillPopulate):
+        Add TextEditor as a subview.
+        (WebInspector.TextResourceContentView.prototype.updateLayout): Deleted.
+        View subclasses shouldn't override updateLayout.
+
+
+2015-11-18  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Probes sidebar panel sections should use NavigationBar
         https://bugs.webkit.org/show_bug.cgi?id=151373
 

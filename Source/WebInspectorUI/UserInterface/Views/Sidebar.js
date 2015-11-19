@@ -182,7 +182,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         this.element.style.width = newWidth + "px";
 
         if (!this.collapsed && this._navigationBar)
-            this._navigationBar.updateLayout();
+            this._navigationBar.needsLayout();
 
         if (!this.collapsed && this._selectedSidebarPanel)
             this._selectedSidebarPanel.widthDidChange();
@@ -203,10 +203,8 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         this._collapsed = flag || false;
         this.element.classList.toggle(WebInspector.Sidebar.CollapsedStyleClassName);
 
-        if (!this._collapsed) {
-            if (this._navigationBar)
-                this._navigationBar.updateLayout();
-        }
+        if (!this._collapsed && this._navigationBar)
+            this._navigationBar.needsLayout();
 
         if (this._selectedSidebarPanel) {
             if (this._selectedSidebarPanel.visible)
