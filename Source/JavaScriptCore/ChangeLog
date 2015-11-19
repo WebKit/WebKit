@@ -1,3 +1,38 @@
+2015-11-18  Saam barati  <sbarati@apple.com>
+
+        There is a bug when default parameter values are mixed with destructuring parameter values
+        https://bugs.webkit.org/show_bug.cgi?id=151369
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+
+        Relanding this after a rollout.
+
+        This patch changes our parser to no longer declare destructuring
+        parameters as "var"s. This is a weird bug that just happened
+        to work in a world without default parameter values. In a world with
+        default parameter values this is just completely wrong. It would
+        incorrectly transform this program:
+        ```function foo(a = function() { b = 40; }, {b}) { a(); return b; }; foo(undefined, {b: 42}); // Should return 40```
+        into
+        ```function foo(a = function() { b = 40; }, {b}) { var b; a(); return b; }; foo(undefined, {b:42}); // Returns 42, not 40.```
+        Which is wrong because we end up with two distinct bindings of "b" when
+        there should only be one.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        * parser/Parser.h:
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::getUsedVariables):
+        (JSC::Parser::strictMode):
+        (JSC::Parser::isValidStrictMode):
+        (JSC::Parser::declareParameter):
+        (JSC::Parser::breakIsValid):
+        (JSC::Scope::declareBoundParameter): Deleted.
+        (JSC::Parser::declareBoundParameter): Deleted.
+        * tests/stress/es6-default-parameters.js:
+
 2015-11-18  Mark Lam  <mark.lam@apple.com>
 
         Snippefy op_mul for the baseline JIT.
