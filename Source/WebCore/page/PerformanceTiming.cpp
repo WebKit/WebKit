@@ -340,9 +340,9 @@ unsigned long long PerformanceTiming::resourceLoadTimeRelativeToFetchStart(int r
 unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(double monotonicSeconds) const
 {
     ASSERT(monotonicSeconds >= 0);
-    const DocumentLoadTiming* timing = documentLoadTiming();
-    ASSERT(timing);
-    return toIntegerMilliseconds(timing->monotonicTimeToPseudoWallTime(monotonicSeconds));
+    if (const DocumentLoadTiming* timing = documentLoadTiming())
+        return toIntegerMilliseconds(timing->monotonicTimeToPseudoWallTime(monotonicSeconds));
+    return 0;
 }
 
 } // namespace WebCore

@@ -28,9 +28,12 @@
 
 #import "InjectedBundle.h"
 #import <JavaScriptCore/JSStringRefCF.h>
+
+#if !PLATFORM(IOS)
 #import <WebCore/SoftLinking.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
+#endif
 
 namespace WTR {
 
@@ -69,6 +72,9 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 
 JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
+#if PLATFORM(IOS)
+    return nullptr;
+#else
     // Call the soft link framework function to dlopen it, then CFBundleGetBundleWithIdentifier will work.
     WebInspectorUILibrary();
 
@@ -82,6 +88,7 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 
     CFStringRef urlString = CFURLGetString(url.get());
     return adopt(JSStringCreateWithCFString(urlString));
+#endif
 }
 
 } // namespace WTR

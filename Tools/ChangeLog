@@ -1,3 +1,16 @@
+2015-11-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WK1] Crash loading Blink layout test fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
+        https://bugs.webkit.org/show_bug.cgi?id=150198
+        <rdar://problem/23136026>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::inspectorTestStubURL):
+        Since WebInspectorUI.framework is not available for iOS, the framework
+        and corresponding functions are disabled in iOS.
+
 2015-11-18  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Swipe tests depend on user preferences
