@@ -109,21 +109,11 @@ testSyntaxError(String.raw`(function ([a, ...b = 20,,]) { })`, String.raw`Syntax
 testSyntaxError(String.raw`(function ([a, ...[b, c]]) { })`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element destructuring pattern.`);
 testSyntaxError(String.raw`(function ([a, ...{ b, c }]) { })`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element destructuring pattern.`);
 
-shouldThrow(function () {
-    [a, ...b, c] = 20;
-}, "ReferenceError: Left side of assignment is not a reference.");
 
-shouldThrow(function () {
-    [a, ...b,] = 20
-}, "ReferenceError: Left side of assignment is not a reference.");
-
-shouldThrow(function () {
-    [a, ...b,,] = 20
-}, "ReferenceError: Left side of assignment is not a reference.");
-
-shouldThrow(function () {
-    [a, ...b = 20] = 20
-}, "ReferenceError: Left side of assignment is not a reference.");
+testSyntaxError(String.raw`[a, ...b, c] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`[a, ...b,] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`[a, ...b,,] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`[a, ...b = 20] = 20`, String.raw`SyntaxError: Unexpected token '='. Expected a closing ']' following a rest element destructuring pattern.`);
 
 (function () {
     var a, b, c;

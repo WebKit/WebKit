@@ -60,6 +60,7 @@
 #define semanticFailIfTrue(cond, ...) do { if (cond) internalFailWithMessage(false, __VA_ARGS__); } while (0)
 #define semanticFailIfFalse(cond, ...) do { if (!(cond)) internalFailWithMessage(false, __VA_ARGS__); } while (0)
 #define regexFail(failure) do { setErrorMessage(failure); return 0; } while (0)
+#define restoreSavePointAndFail(savePoint, message) do { restoreSavePointWithError(savePoint, message); return 0; } while (0)
 #define failDueToUnexpectedToken() do {\
         logError(true);\
     return 0;\
@@ -219,6 +220,7 @@ Parser<LexerType>::Parser(
     m_token.m_location.endOffset = source.startOffset();
     m_token.m_location.lineStartOffset = source.startOffset();
     m_functionCache = vm->addSourceProviderCache(source.provider());
+    m_expressionErrorClassifier = nullptr;
 
     ScopeRef scope = pushScope();
     scope->setSourceParseMode(parseMode);
@@ -712,6 +714,12 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
 }
 
 template <typename LexerType>
+template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern Parser<LexerType>::createAssignmentElement(TreeBuilder& context, TreeExpression& assignmentTarget, const JSTextPosition& startPosition, const JSTextPosition& endPosition)
+{
+    return context.createAssignmentElement(assignmentTarget, startPosition, endPosition);
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseArrowFunctionSingleExpressionBodySourceElements(TreeBuilder& context)
 {
     ASSERT(!match(OPENBRACE));
@@ -747,6 +755,34 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::tryPars
 }
 
 template <typename LexerType>
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
+{
+    if (kind == DestructureToExpressions)
+        return parseAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
+    return parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAssignmentElement(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
+{
+    SavePoint savePoint = createSavePoint();
+    TreeDestructuringPattern assignmentTarget = 0;
+
+    if (match(OPENBRACE) || match(OPENBRACKET))
+        assignmentTarget = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
+    if (!assignmentTarget || match(DOT) || match(OPENBRACKET) || match(OPENPAREN) || match(TEMPLATE)) {
+        restoreSavePoint(savePoint);
+        JSTextPosition startPosition = tokenStartPosition();
+        auto element = parseMemberExpression(context);
+
+        semanticFailIfFalse(element && context.isAssignmentLocation(element), "Invalid destructuring assignment target");
+
+        return createAssignmentElement(context, element, startPosition, lastTokenEndPosition());
+    }
+    return assignmentTarget;
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDestructuringPattern(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
 {
     failIfStackOverflow();
@@ -776,7 +812,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             if (UNLIKELY(match(DOTDOTDOT))) {
                 JSTokenLocation location = m_token.m_location;
                 next();
-                auto innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+                auto innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 if (kind == DestructureToExpressions && !innerPattern)
                     return 0;
                 failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
@@ -789,7 +825,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             }
 
             JSTokenLocation location = m_token.m_location;
-            auto innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+            auto innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
             if (kind == DestructureToExpressions && !innerPattern)
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
@@ -797,8 +833,6 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             context.appendArrayPatternEntry(arrayPattern, location, innerPattern, defaultValue);
         } while (consume(COMMA));
 
-        if (kind == DestructureToExpressions && !match(CLOSEBRACKET))
-            return 0;
         consumeOrFail(CLOSEBRACKET, restElementWasFound ? "Expected a closing ']' following a rest element destructuring pattern" : "Expected either a closing ']' or a ',' following an element destructuring pattern");
         context.finishArrayPattern(arrayPattern, divotStart, divotStart, lastTokenEndPosition());
         pattern = arrayPattern;
@@ -826,7 +860,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 JSToken identifierToken = m_token;
                 next();
                 if (consume(COLON))
-                    innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+                    innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 else
                     innerPattern = createBindingPattern(context, kind, exportType, *propertyName, identifierToken, bindingContext, duplicateIdentifier);
             } else {
@@ -859,7 +893,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                     
                     failWithMessage("Expected a ':' prior to a named destructuring property");
                 }
-                innerPattern = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
+                innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
             }
             if (kind == DestructureToExpressions && !innerPattern)
                 return 0;
@@ -2670,16 +2704,9 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     JSTokenLocation location(tokenLocation());
     int initialAssignmentCount = m_assignmentCount;
     int initialNonLHSCount = m_nonLHSCount;
-    if (match(OPENBRACE) || match(OPENBRACKET)) {
-        SavePoint savePoint = createSavePoint();
-        auto pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
-        if (pattern && consume(EQUAL)) {
-            auto rhs = parseAssignmentExpression(context);
-            if (rhs)
-                return context.createDestructuringAssignment(location, pattern, rhs);
-        }
-        restoreSavePoint(savePoint);
-    }
+    bool maybeAssignmentPattern = match(OPENBRACE) || match(OPENBRACKET);
+    SavePoint savePoint = createSavePoint();
+    ExpressionErrorClassifier classifier(this);
 
 #if ENABLE(ES6_GENERATORS)
     if (match(YIELD))
@@ -2692,6 +2719,25 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
 #endif
     
     TreeExpression lhs = parseConditionalExpression(context);
+
+    if (!lhs && (!maybeAssignmentPattern || !classifier.indicatesPossiblePattern()))
+        propagateError();
+
+    if (maybeAssignmentPattern && (!lhs || (context.isObjectOrArrayLiteral(lhs) && match(EQUAL)))) {
+        String expressionError = m_errorMessage;
+        SavePoint expressionErrorLocation = createSavePointForError();
+        restoreSavePoint(savePoint);
+        auto pattern = tryParseDestructuringPatternExpression(context, AssignmentContext::AssignmentExpression);
+        if (classifier.indicatesPossiblePattern() && (!pattern || !match(EQUAL)))
+            restoreSavePointAndFail(expressionErrorLocation, expressionError);
+        failIfFalse(pattern, "Cannot parse assignment pattern");
+        consumeOrFail(EQUAL, "Expected '=' following assignment pattern");
+        auto rhs = parseAssignmentExpression(context);
+        if (!rhs)
+            propagateError();
+        return context.createDestructuringAssignment(location, pattern, rhs);
+    }
+
     failIfFalse(lhs, "Cannot parse expression");
     if (initialNonLHSCount != m_nonLHSCount) {
         if (m_token.m_type >= EQUAL && m_token.m_type <= OREQUAL)
@@ -2910,6 +2956,9 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
             TreeExpression node = context.createResolve(location, ident, start);
             return context.createProperty(ident, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Shorthand), PropertyNode::KnownDirect, complete);
         }
+
+        if (match(EQUAL)) // CoverInitializedName is exclusive to BindingPattern and AssignmentPattern
+            classifyExpressionError(ErrorIndicatesPattern);
 
         PropertyNode::Type type;
         if (*ident == m_vm->propertyNames->get)

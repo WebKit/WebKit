@@ -717,6 +717,45 @@ private:
         Parser* m_parser;
     };
 
+    enum ExpressionErrorClass {
+        ErrorIndicatesNothing,
+        ErrorIndicatesPattern
+    };
+
+    struct ExpressionErrorClassifier {
+        ExpressionErrorClassifier(Parser* parser)
+            : m_class(ErrorIndicatesNothing)
+            , m_previous(parser->m_expressionErrorClassifier)
+            , m_parser(parser)
+        {
+            m_parser->m_expressionErrorClassifier = this;
+        }
+
+        ~ExpressionErrorClassifier()
+        {
+            m_parser->m_expressionErrorClassifier = m_previous;
+        }
+
+        void classifyExpressionError(ExpressionErrorClass classification)
+        {
+            if (m_class != ErrorIndicatesNothing)
+                return;
+            m_class = classification;
+        }
+        bool indicatesPossiblePattern() const { return m_class == ErrorIndicatesPattern; }
+
+    private:
+        ExpressionErrorClass m_class;
+        ExpressionErrorClassifier* m_previous;
+        Parser* m_parser;
+    };
+
+    ALWAYS_INLINE void classifyExpressionError(ExpressionErrorClass classification)
+    {
+        if (m_expressionErrorClassifier)
+            m_expressionErrorClassifier->classifyExpressionError(classification);
+    }
+
     ALWAYS_INLINE DestructuringKind destructuringKindFromDeclarationType(DeclarationType type)
     {
         switch (type) {
@@ -1139,6 +1178,9 @@ private:
     template <class TreeBuilder> TreeSourceElements parseArrowFunctionSingleExpressionBodySourceElements(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier&, JSToken, AssignmentContext, const Identifier** duplicateIdentifier);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createAssignmentElement(TreeBuilder&, TreeExpression&, const JSTextPosition&, const JSTextPosition&);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier** duplicateIdentifier = nullptr, bool* hasDestructuringPattern = nullptr, AssignmentContext = AssignmentContext::DeclarationStatement, int depth = 0);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern tryParseDestructuringPatternExpression(TreeBuilder&, AssignmentContext);
     template <class TreeBuilder> NEVER_INLINE TreeExpression parseDefaultValueForDestructuringPattern(TreeBuilder&);
@@ -1201,9 +1243,8 @@ private:
         unsigned oldLineNumber;
     };
     
-    ALWAYS_INLINE SavePoint createSavePoint()
+    ALWAYS_INLINE SavePoint createSavePointForError()
     {
-        ASSERT(!hasError());
         SavePoint result;
         result.startOffset = m_token.m_location.startOffset;
         result.oldLineStartOffset = m_token.m_location.lineStartOffset;
@@ -1212,13 +1253,24 @@ private:
         return result;
     }
     
-    ALWAYS_INLINE void restoreSavePoint(const SavePoint& savePoint)
+    ALWAYS_INLINE SavePoint createSavePoint()
     {
-        m_errorMessage = String();
+        ASSERT(!hasError());
+        return createSavePointForError();
+    }
+
+    ALWAYS_INLINE void restoreSavePointWithError(const SavePoint& savePoint, const String& message)
+    {
+        m_errorMessage = message;
         m_lexer->setOffset(savePoint.startOffset, savePoint.oldLineStartOffset);
         next();
         m_lexer->setLastLineNumber(savePoint.oldLastLineNumber);
         m_lexer->setLineNumber(savePoint.oldLineNumber);
+    }
+
+    ALWAYS_INLINE void restoreSavePoint(const SavePoint& savePoint)
+    {
+        restoreSavePointWithError(savePoint, String());
     }
 
     enum class FunctionParsePhase { Parameters, Body };
@@ -1276,6 +1328,7 @@ private:
     Vector<RefPtr<UniquedStringImpl>> m_closedVariables;
     CodeFeatures m_features;
     int m_numConstants;
+    ExpressionErrorClassifier* m_expressionErrorClassifier;
     
     struct DepthManager {
         DepthManager(int* depth)

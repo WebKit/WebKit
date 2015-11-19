@@ -1,3 +1,66 @@
+2015-11-19  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Fix AssignmentElement parsing
+        https://bugs.webkit.org/show_bug.cgi?id=151026
+
+        Reviewed by Geoffrey Garen.
+
+        When parsing an AssignmentPattern, any LeftHandSideExpression which
+        is a valid assignment target is acceptable.
+
+        Additionally, this change minimizes the amount of time spent
+        re-parsing ObjectLiteral and ArrayLiterals, by parsing as an
+        Expression first (the common case), and re-parsing only if the
+        result is a valid ObjectLiteral or ArrayLiteral followed by an `=`,
+        or if an error specifically indicates that the expression could
+        have been parsed as an AssignmentPattern.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignmentElementNode::collectBoundIdentifiers):
+        (JSC::AssignmentElementNode::bindValue):
+        (JSC::AssignmentElementNode::toString):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::isAssignmentLocation):
+        (JSC::ASTBuilder::isObjectLiteral):
+        (JSC::ASTBuilder::isArrayLiteral):
+        (JSC::ASTBuilder::isObjectOrArrayLiteral):
+        (JSC::ASTBuilder::createAssignmentElement):
+        * parser/NodeConstructors.h:
+        (JSC::AssignmentElementNode::AssignmentElementNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isObjectLiteral):
+        (JSC::ExpressionNode::isArrayLiteral):
+        (JSC::AssignmentElementNode::assignmentTarget):
+        (JSC::AssignmentElementNode::divotStart):
+        (JSC::AssignmentElementNode::divotEnd):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::createAssignmentElement):
+        (JSC::Parser<LexerType>::parseBindingOrAssignmentElement):
+        (JSC::Parser<LexerType>::parseAssignmentElement):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        * parser/Parser.h:
+        (JSC::Parser::ExpressionErrorClassifier::ExpressionErrorClassifier):
+        (JSC::Parser::ExpressionErrorClassifier::~ExpressionErrorClassifier):
+        (JSC::Parser::ExpressionErrorClassifier::classifyExpressionError):
+        (JSC::Parser::ExpressionErrorClassifier::indicatesPossiblePattern):
+        (JSC::Parser::classifyExpressionError):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        * tests/es6.yaml:
+        * tests/es6/destructuring_assignment_non_simple_target.js: Added.
+        (test.):
+        (test):
+        * tests/es6/destructuring_initializer_scoping.js: Added.
+        (test.tester):
+        * tests/stress/destructuring-assignment-syntax.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        * tests/stress/rest-elements.js:
+        (shouldThrow): Deleted.
+
 2015-11-19  Filip Pizlo  <fpizlo@apple.com>
 
         FTL->B3 lowering should support integer comparisons with the opcode abstracted and a few other things

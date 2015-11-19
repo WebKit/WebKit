@@ -153,6 +153,8 @@ namespace JSC {
 
         virtual bool isNumber() const { return false; }
         virtual bool isString() const { return false; }
+        virtual bool isObjectLiteral() const { return false; }
+        virtual bool isArrayLiteral() const { return false; }
         virtual bool isNull() const { return false; }
         virtual bool isPure(BytecodeGenerator&) const { return false; }        
         virtual bool isConstant() const { return false; }
@@ -592,6 +594,8 @@ namespace JSC {
         ArrayNode(const JSTokenLocation&, ElementNode*);
         ArrayNode(const JSTokenLocation&, int elision, ElementNode*);
 
+        virtual bool isArrayLiteral() const override { return true; }
+
         ArgumentListNode* toArgumentList(ParserArena&, int, int) const;
 
         ElementNode* elements() const { ASSERT(isSimpleArray()); return m_element; }
@@ -647,6 +651,7 @@ namespace JSC {
     public:
         ObjectLiteralNode(const JSTokenLocation&);
         ObjectLiteralNode(const JSTokenLocation&, PropertyListNode*);
+        virtual bool isObjectLiteral() const override { return true; }
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -2046,6 +2051,24 @@ namespace JSC {
         JSTextPosition m_divotEnd;
         const Identifier& m_boundProperty;
         AssignmentContext m_bindingContext;
+    };
+
+    class AssignmentElementNode : public DestructuringPatternNode {
+    public:
+        AssignmentElementNode(ExpressionNode* assignmentTarget, const JSTextPosition& start, const JSTextPosition& end);
+        const ExpressionNode* assignmentTarget() { return m_assignmentTarget; }
+
+        const JSTextPosition& divotStart() const { return m_divotStart; }
+        const JSTextPosition& divotEnd() const { return m_divotEnd; }
+
+    private:
+        virtual void collectBoundIdentifiers(Vector<Identifier>&) const override;
+        virtual void bindValue(BytecodeGenerator&, RegisterID*) const override;
+        virtual void toString(StringBuilder&) const override;
+
+        JSTextPosition m_divotStart;
+        JSTextPosition m_divotEnd;
+        ExpressionNode* m_assignmentTarget;
     };
 
     class DestructuringAssignmentNode : public ExpressionNode {
