@@ -36,7 +36,9 @@
 #include "ContextMenuProvider.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "Editor.h"
 #include "Event.h"
+#include "FocusController.h"
 #include "HitTestResult.h"
 #include "InspectorFrontendClient.h"
 #include "JSMainThreadExecState.h"
@@ -182,12 +184,16 @@ void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
 
 void InspectorFrontendHost::setZoomFactor(float zoom)
 {
-    m_frontendPage->mainFrame().setPageAndTextZoomFactors(zoom, 1);
+    if (m_frontendPage)
+        m_frontendPage->mainFrame().setPageAndTextZoomFactors(zoom, 1);
 }
 
 float InspectorFrontendHost::zoomFactor()
 {
-    return m_frontendPage->mainFrame().pageZoomFactor();
+    if (m_frontendPage)
+        return m_frontendPage->mainFrame().pageZoomFactor();
+
+    return 1.0;
 }
 
 void InspectorFrontendHost::setAttachedWindowHeight(unsigned height)
@@ -263,6 +269,17 @@ String InspectorFrontendHost::port()
 void InspectorFrontendHost::copyText(const String& text)
 {
     Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
+}
+
+void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence)
+{
+    if (!m_frontendPage)
+        return;
+
+    Editor& editor = m_frontendPage->focusController().focusedOrMainFrame().editor();
+    editor.setStartNewKillRingSequence(shouldStartNewSequence);
+    Editor::KillRingInsertionMode insertionMode = shouldPrependToKillRing ? Editor::KillRingInsertionMode::PrependText : Editor::KillRingInsertionMode::AppendText;
+    editor.addTextToKillRing(text, insertionMode);
 }
 
 void InspectorFrontendHost::openInNewTab(const String& url)

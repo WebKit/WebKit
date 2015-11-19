@@ -1,3 +1,61 @@
+2015-11-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: yank/kill shortcuts (CTRL+Y, K) don't work in Console / QuickConsole
+        https://bugs.webkit.org/show_bug.cgi?id=151157
+
+        Reviewed by Joseph Pecoraro.
+
+        CodeMirror maintains its own editor buffer and implements its own
+        `killLine` command but doesn't implement the yank command. So, text
+        that is "killed" with CTRL-k inside a CodeMirror instance isn't
+        added to WebCore's kill ring. Subsequent yank commands won't match
+        up with the killed text, instead returning text from a prior kill
+        that was handled by WebCore (i.e., in a contenteditable or form input).
+
+        This patch adds a host function so that the Inspector frontend can
+        append "missed" killed text to WebCore's kill ring. Subsequent
+        yanks handled by WebCore will then match the text killed by CodeMirror.
+
+        In the frontend, we implement our own key binding handler for
+        CTRL-k that captures killed text, detects whether the kill
+        should start a new sequence, and sends it to WebCore. Because this
+        involves several flags and listeners, and we want this behavior for
+        all editable CodeMirror instances, the text kill handling is
+        factored into its own CodeMirrorTextKillController.
+
+        To add this behavior to all instances, this patch centralizes the
+        code that constructs a base CodeMirror instance, and attaches the
+        CodeMirrorTextKillController to all instances. The shortcut
+        does nothing when its CodeMirror instance is read-only.
+
+        The particulars of the kill controller are documented inline.
+
+        No new tests, because we need to use both InspectorFrontendHost
+        and TestRunner.execCommand, but the latter is not available in
+        the inspector context where we would need to simulate a kill.
+
+        * UserInterface/Controllers/CodeMirrorTextKillController.js: Added.
+        (WebInspector.CodeMirrorTextKillController):
+        (WebInspector.CodeMirrorTextKillController.prototype._handleKillLine):
+        (WebInspector.CodeMirrorTextKillController.prototype._handleTextChange):
+        (WebInspector.CodeMirrorTextKillController.prototype._handleEditorBlur):
+        (WebInspector.CodeMirrorTextKillController.prototype._handleSelectionOrCaretChange):
+        * UserInterface/Main.html:
+        * UserInterface/Protocol/InspectorFrontendHostStub.js:
+        (window.InspectorFrontendHost.WebInspector.InspectorFrontendHostStub.prototype.killText): Add a stub to avoid check-before-use.
+        * UserInterface/Views/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.prototype._updateBody):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor):
+        * UserInterface/Views/CodeMirrorEditor.js: Added.
+        (WebInspector.CodeMirrorEditor.create):
+        (WebInspector.CodeMirrorEditor):
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+
 2015-11-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Convert remaining timeline views to use View base class

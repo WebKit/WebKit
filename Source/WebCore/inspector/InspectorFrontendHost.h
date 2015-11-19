@@ -76,6 +76,7 @@ public:
     String port();
 
     void copyText(const String& text);
+    void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);
     void openInNewTab(const String& url);
     bool canSave();
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs);

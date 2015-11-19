@@ -139,7 +139,7 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
         let conditionEditorElement = conditionData.appendChild(document.createElement("div"));
         conditionEditorElement.classList.add("edit-breakpoint-popover-condition", WebInspector.SyntaxHighlightedStyleClassName);
 
-        this._conditionCodeMirror = CodeMirror(conditionEditorElement, {
+        this._conditionCodeMirror = WebInspector.CodeMirrorEditor.create(conditionEditorElement, {
             extraKeys: {Tab: false},
             lineWrapping: false,
             mode: "text/javascript",

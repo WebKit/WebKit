@@ -316,7 +316,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         let editorElement = content.appendChild(document.createElement("div"));
         editorElement.classList.add("watch-expression-editor", WebInspector.SyntaxHighlightedStyleClassName);
 
-        this._codeMirror = CodeMirror(editorElement, {
+        this._codeMirror = WebInspector.CodeMirrorEditor.create(editorElement, {
             lineWrapping: true,
             mode: "text/javascript",
             indentWithTabs: true,

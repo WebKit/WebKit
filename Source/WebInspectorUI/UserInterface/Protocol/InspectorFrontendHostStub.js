@@ -122,6 +122,10 @@ if (!window.InspectorFrontendHost) {
                 console.error("Clipboard access is denied");
         },
 
+        killText: function(text, shouldStartNewSequence)
+        {
+        },
+
         openInNewTab: function(url)
         {
             window.open(url, "_blank");
