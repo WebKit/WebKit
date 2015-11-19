@@ -51,6 +51,7 @@ function initializeReadableStream(underlyingSource, strategy)
     this.@pulling = false;
     this.@reader = undefined;
     this.@storedError = undefined;
+    this.@disturbed = false;
     this.@controller = new @ReadableStreamController(this);
     this.@strategy = @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark);
 

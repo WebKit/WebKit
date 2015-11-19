@@ -37,6 +37,7 @@ namespace WebCore {
     macro(closedPromiseCapability) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(disturbed) \
     macro(getUserMediaFromJS) \
     macro(ownerReadableStream) \
     macro(privateGetStats) \

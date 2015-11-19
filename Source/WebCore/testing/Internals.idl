@@ -409,4 +409,6 @@ enum MediaControlEvent {
     DOMString userVisibleString(DOMURL url);
 
     void setShowAllPlugins(boolean showAll);
+
+    [Conditional=STREAMS_API, CallWith=ScriptState] boolean isReadableStreamDisturbed(any stream);
 };

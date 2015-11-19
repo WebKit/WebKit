@@ -114,6 +114,7 @@
 #include "TypeConversions.h"
 #include "UserMediaController.h"
 #include "ViewportArguments.h"
+#include "WebCoreJSClientData.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
 #include <JavaScriptCore/Profile.h>
@@ -199,10 +200,17 @@
 #include "MediaPlaybackTargetContext.h"
 #endif
 
+using JSC::CallData;
+using JSC::CallType;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
+using JSC::Identifier;
 using JSC::JSFunction;
+using JSC::JSGlobalObject;
+using JSC::JSObject;
 using JSC::JSValue;
+using JSC::MarkedArgumentBuffer;
+using JSC::PropertySlot;
 using JSC::ScriptExecutable;
 using JSC::StackVisitor;
 
@@ -3190,5 +3198,30 @@ void Internals::setShowAllPlugins(bool show)
 
     page->setShowAllPlugins(show);
 }
+
+#if ENABLE(STREAMS_API)
+bool Internals::isReadableStreamDisturbed(ScriptState& state, JSValue stream)
+{
+    JSGlobalObject* globalObject = state.vmEntryGlobalObject();
+    JSVMClientData* clientData = static_cast<JSVMClientData*>(state.vm().clientData);
+    const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().isReadableStreamDisturbedPrivateName();
+    JSValue value;
+    PropertySlot propertySlot(value);
+    globalObject->fastGetOwnPropertySlot(&state, state.vm(), *globalObject->structure(), privateName, propertySlot);
+    value = propertySlot.getValue(&state, privateName);
+    ASSERT(value.isFunction());
+
+    JSObject* function = value.getObject();
+    CallData callData;
+    CallType callType = JSC::getCallData(function, callData);
+    ASSERT(callType != JSC::CallTypeNone);
+    MarkedArgumentBuffer arguments;
+    arguments.append(stream);
+    JSValue returnedValue = JSC::call(&state, function, callType, callData, JSC::jsUndefined(), arguments);
+    ASSERT(returnedValue.isBoolean());
+
+    return returnedValue.asBoolean();
+}
+#endif
 
 }

@@ -266,6 +266,7 @@ function cancelReadableStream(stream, reason)
 {
     "use strict";
 
+    stream.@disturbed = true;
     if (stream.@state === @streamClosed)
         return @Promise.@resolve();
     if (stream.@state === @streamErrored)
@@ -340,6 +341,7 @@ function readFromReadableStreamReader(reader)
 
     const stream = reader.@ownerReadableStream;
     @assert(!!stream);
+    stream.@disturbed = true;
     if (stream.@state === @streamClosed)
         return @Promise.@resolve({value: undefined, done: true});
     if (stream.@state === @streamErrored)
@@ -357,4 +359,12 @@ function readFromReadableStreamReader(reader)
     reader.@readRequests.push(readPromiseCapability);
     @requestReadableStreamPull(stream);
     return readPromiseCapability.@promise;
+}
+
+function isReadableStreamDisturbed(stream)
+{
+    "use strict";
+
+    @assert(@isReadableStream(stream));
+    return stream.@disturbed;
 }

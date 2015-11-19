@@ -32,6 +32,7 @@
 #include "ExceptionCodePlaceholder.h"
 #include "NodeList.h"
 #include "PageConsoleClient.h"
+#include "ScriptState.h"
 #include <bindings/ScriptValue.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/Float32Array.h>
@@ -441,6 +442,10 @@ public:
 
     String userVisibleString(const DOMURL*);
     void setShowAllPlugins(bool);
+
+#if ENABLE(STREAMS_API)
+    bool isReadableStreamDisturbed(ScriptState&, JSC::JSValue);
+#endif
 
 private:
     explicit Internals(Document*);
