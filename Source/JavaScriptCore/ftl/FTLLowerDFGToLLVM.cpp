@@ -4522,7 +4522,11 @@ private:
         }
         
         if (m_node->isBinaryUseKind(UntypedUse)) {
-            nonSpeculativeCompare(LLVMIntEQ, operationCompareEq);
+            nonSpeculativeCompare(
+                [&] (LValue left, LValue right) {
+                    return m_out.equal(left, right);
+                },
+                operationCompareEq);
             return;
         }
 
@@ -4667,22 +4671,50 @@ private:
     
     void compileCompareLess()
     {
-        compare(LLVMIntSLT, LLVMRealOLT, operationCompareLess);
+        compare(
+            [&] (LValue left, LValue right) {
+                return m_out.lessThan(left, right);
+            },
+            [&] (LValue left, LValue right) {
+                return m_out.doubleLessThan(left, right);
+            },
+            operationCompareLess);
     }
     
     void compileCompareLessEq()
     {
-        compare(LLVMIntSLE, LLVMRealOLE, operationCompareLessEq);
+        compare(
+            [&] (LValue left, LValue right) {
+                return m_out.lessThanOrEqual(left, right);
+            },
+            [&] (LValue left, LValue right) {
+                return m_out.doubleLessThanOrEqual(left, right);
+            },
+            operationCompareLessEq);
     }
     
     void compileCompareGreater()
     {
-        compare(LLVMIntSGT, LLVMRealOGT, operationCompareGreater);
+        compare(
+            [&] (LValue left, LValue right) {
+                return m_out.greaterThan(left, right);
+            },
+            [&] (LValue left, LValue right) {
+                return m_out.doubleGreaterThan(left, right);
+            },
+            operationCompareGreater);
     }
     
     void compileCompareGreaterEq()
     {
-        compare(LLVMIntSGE, LLVMRealOGE, operationCompareGreaterEq);
+        compare(
+            [&] (LValue left, LValue right) {
+                return m_out.greaterThanOrEqual(left, right);
+            },
+            [&] (LValue left, LValue right) {
+                return m_out.doubleGreaterThanOrEqual(left, right);
+            },
+            operationCompareGreaterEq);
     }
     
     void compileLogicalNot()
@@ -6523,15 +6555,16 @@ private:
         return m_out.baseIndex(
             heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset);
     }
-    
+
+    template<typename IntFunctor, typename DoubleFunctor>
     void compare(
-        LIntPredicate intCondition, LRealPredicate realCondition,
+        const IntFunctor& intFunctor, const DoubleFunctor& doubleFunctor,
         S_JITOperation_EJJ helperFunction)
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
             LValue left = lowInt32(m_node->child1());
             LValue right = lowInt32(m_node->child2());
-            setBoolean(m_out.icmp(intCondition, left, right));
+            setBoolean(intFunctor(left, right));
             return;
         }
         
@@ -6539,19 +6572,19 @@ private:
             Int52Kind kind;
             LValue left = lowWhicheverInt52(m_node->child1(), kind);
             LValue right = lowInt52(m_node->child2(), kind);
-            setBoolean(m_out.icmp(intCondition, left, right));
+            setBoolean(intFunctor(left, right));
             return;
         }
         
         if (m_node->isBinaryUseKind(DoubleRepUse)) {
             LValue left = lowDouble(m_node->child1());
             LValue right = lowDouble(m_node->child2());
-            setBoolean(m_out.fcmp(realCondition, left, right));
+            setBoolean(doubleFunctor(left, right));
             return;
         }
         
         if (m_node->isBinaryUseKind(UntypedUse)) {
-            nonSpeculativeCompare(intCondition, helperFunction);
+            nonSpeculativeCompare(intFunctor, helperFunction);
             return;
         }
         
@@ -6602,8 +6635,9 @@ private:
                 m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoFlags),
                 m_out.constInt32(MasqueradesAsUndefined)));
     }
-    
-    void nonSpeculativeCompare(LIntPredicate intCondition, S_JITOperation_EJJ helperFunction)
+
+    template<typename IntFunctor>
+    void nonSpeculativeCompare(const IntFunctor& intFunctor, S_JITOperation_EJJ helperFunction)
     {
         LValue left = lowJSValue(m_node->child1());
         LValue right = lowJSValue(m_node->child2());
@@ -6619,8 +6653,7 @@ private:
         m_out.branch(isNotInt32(right), rarely(slowPath), usually(fastPath));
         
         m_out.appendTo(fastPath, slowPath);
-        ValueFromBlock fastResult = m_out.anchor(
-            m_out.icmp(intCondition, unboxInt32(left), unboxInt32(right)));
+        ValueFromBlock fastResult = m_out.anchor(intFunctor(unboxInt32(left), unboxInt32(right)));
         m_out.jump(continuation);
         
         m_out.appendTo(slowPath, continuation);

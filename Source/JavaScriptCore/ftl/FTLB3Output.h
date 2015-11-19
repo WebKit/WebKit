@@ -175,7 +175,7 @@ public:
 
     LValue signExt(LValue value, LType type) { CRASH(); }
     LValue zeroExt(LValue value, LType type) { return m_block->appendNew<B3::Value>(m_proc, B3::ZExt32, type, origin(), value); }
-    LValue zeroExtPtr(LValue value) { CRASH(); }
+    LValue zeroExtPtr(LValue value) { return zeroExt(value, B3::Int64); }
     LValue fpToInt(LValue value, LType type) { CRASH(); }
     LValue fpToUInt(LValue value, LType type) { CRASH(); }
     LValue fpToInt32(LValue value) { CRASH(); }
@@ -247,8 +247,14 @@ public:
 
     LValue baseIndex(LValue base, LValue index, Scale, ptrdiff_t offset = 0) { CRASH(); }
 
-    TypedPointer baseIndex(const AbstractHeap& heap, LValue base, LValue index, Scale scale, ptrdiff_t offset = 0) { CRASH(); }
-    TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0) { CRASH(); }
+    TypedPointer baseIndex(const AbstractHeap& heap, LValue base, LValue index, Scale scale, ptrdiff_t offset = 0)
+    {
+        return TypedPointer(heap, baseIndex(base, index, scale, offset));
+    }
+    TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0)
+    {
+        return heap.baseIndex(*this, base, index, indexAsConstant, offset);
+    }
 
     TypedPointer absolute(void* address)
     {
@@ -276,7 +282,6 @@ public:
     LValue load32NonNegative(TypedPointer pointer) { return load32(pointer); }
     LValue load32NonNegative(LValue base, const AbstractField& field) { return load32(base, field); }
 
-    LValue icmp(LIntPredicate cond, LValue left, LValue right) { CRASH(); }
     LValue equal(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right); }
     LValue notEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), left, right); }
     LValue above(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Above, origin(), left, right); }
@@ -288,7 +293,6 @@ public:
     LValue lessThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right); }
     LValue lessThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right); }
 
-    LValue fcmp(LRealPredicate cond, LValue left, LValue right) { CRASH(); }
     LValue doubleEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right); }
     LValue doubleNotEqualOrUnordered(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), left, right); }
     LValue doubleLessThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right); }

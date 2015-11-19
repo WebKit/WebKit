@@ -1,3 +1,42 @@
+2015-11-19  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL->B3 lowering should support integer comparisons with the opcode abstracted and a few other things
+        https://bugs.webkit.org/show_bug.cgi?id=151463
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::signExt):
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::zeroExtPtr):
+        (JSC::FTL::Output::fpToInt):
+        (JSC::FTL::Output::fpToUInt):
+        (JSC::FTL::Output::fpToInt32):
+        (JSC::FTL::Output::baseIndex):
+        (JSC::FTL::Output::absolute):
+        (JSC::FTL::Output::load32NonNegative):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::doubleEqual):
+        (JSC::FTL::Output::doubleNotEqualOrUnordered):
+        (JSC::FTL::Output::doubleLessThan):
+        (JSC::FTL::Output::icmp): Deleted.
+        (JSC::FTL::Output::fcmp): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareLess):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareLessEq):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareGreater):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareGreaterEq):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileLogicalNot):
+        (JSC::FTL::DFG::LowerDFGToLLVM::baseIndex):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compare):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateTruthyObject):
+        (JSC::FTL::DFG::LowerDFGToLLVM::nonSpeculativeCompare):
+
 2015-11-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] When the iterated allocator is forced to spill, nuke the Moves that were already proven to be useless
