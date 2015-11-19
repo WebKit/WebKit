@@ -176,18 +176,19 @@ private:
     // Helper for min and max.
     template<typename ChecksFunctor>
     bool handleMinMax(int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& insertChecks);
-    
+
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
-    void handleCall(
+    enum Terminality { Terminal, NonTerminal };
+    Terminality handleCall(
         int result, NodeType op, InlineCallFrame::Kind, unsigned instructionSize,
         Node* callTarget, int argCount, int registerOffset, CallLinkStatus,
         SpeculatedType prediction);
-    void handleCall(
+    Terminality handleCall(
         int result, NodeType op, CallMode, unsigned instructionSize,
         Node* callTarget, int argCount, int registerOffset, CallLinkStatus);
-    void handleCall(int result, NodeType op, CallMode, unsigned instructionSize, int callee, int argCount, int registerOffset);
-    void handleCall(Instruction* pc, NodeType op, CallMode);
-    void handleVarargsCall(Instruction* pc, NodeType op, CallMode);
+    Terminality handleCall(int result, NodeType op, CallMode, unsigned instructionSize, int callee, int argCount, int registerOffset);
+    Terminality handleCall(Instruction* pc, NodeType op, CallMode);
+    Terminality handleVarargsCall(Instruction* pc, NodeType op, CallMode);
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     unsigned inliningCost(CallVariant, int argumentCountIncludingThis, CallMode); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
@@ -1131,16 +1132,16 @@ private:
     m_exitOK = false; \
     return shouldContinueParsing
 
-void ByteCodeParser::handleCall(Instruction* pc, NodeType op, CallMode callMode)
+ByteCodeParser::Terminality ByteCodeParser::handleCall(Instruction* pc, NodeType op, CallMode callMode)
 {
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_tail_call));
-    handleCall(
+    return handleCall(
         pc[1].u.operand, op, callMode, OPCODE_LENGTH(op_call),
         pc[2].u.operand, pc[3].u.operand, -pc[4].u.operand);
 }
 
-void ByteCodeParser::handleCall(
+ByteCodeParser::Terminality ByteCodeParser::handleCall(
     int result, NodeType op, CallMode callMode, unsigned instructionSize,
     int callee, int argumentCountIncludingThis, int registerOffset)
 {
@@ -1150,22 +1151,22 @@ void ByteCodeParser::handleCall(
         m_inlineStackTop->m_profiledBlock, currentCodeOrigin(),
         m_inlineStackTop->m_callLinkInfos, m_callContextMap);
     
-    handleCall(
+    return handleCall(
         result, op, callMode, instructionSize, callTarget,
         argumentCountIncludingThis, registerOffset, callLinkStatus);
 }
     
-void ByteCodeParser::handleCall(
+ByteCodeParser::Terminality ByteCodeParser::handleCall(
     int result, NodeType op, CallMode callMode, unsigned instructionSize,
     Node* callTarget, int argumentCountIncludingThis, int registerOffset,
     CallLinkStatus callLinkStatus)
 {
-    handleCall(
+    return handleCall(
         result, op, InlineCallFrame::kindFor(callMode), instructionSize, callTarget, argumentCountIncludingThis,
         registerOffset, callLinkStatus, getPrediction());
 }
 
-void ByteCodeParser::handleCall(
+ByteCodeParser::Terminality ByteCodeParser::handleCall(
     int result, NodeType op, InlineCallFrame::Kind kind, unsigned instructionSize,
     Node* callTarget, int argumentCountIncludingThis, int registerOffset,
     CallLinkStatus callLinkStatus, SpeculatedType prediction)
@@ -1182,8 +1183,11 @@ void ByteCodeParser::handleCall(
         // Oddly, this conflates calls that haven't executed with calls that behaved sufficiently polymorphically
         // that we cannot optimize them.
 
-        addCall(result, op, OpInfo(), callTarget, argumentCountIncludingThis, registerOffset, prediction);
-        return;
+        Node* callNode = addCall(result, op, OpInfo(), callTarget, argumentCountIncludingThis, registerOffset, prediction);
+        if (callNode->op() == TailCall)
+            return Terminal;
+        ASSERT(callNode->op() != TailCallVarargs);
+        return NonTerminal;
     }
     
     unsigned nextOffset = m_currentIndex + instructionSize;
@@ -1193,13 +1197,17 @@ void ByteCodeParser::handleCall(
     if (handleInlining(callTarget, result, callLinkStatus, registerOffset, virtualRegisterForArgument(0, registerOffset), VirtualRegister(), 0, argumentCountIncludingThis, nextOffset, op, kind, prediction)) {
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedCall();
-        return;
+        return NonTerminal;
     }
     
-    addCall(result, op, callOpInfo, callTarget, argumentCountIncludingThis, registerOffset, prediction);
+    Node* callNode = addCall(result, op, callOpInfo, callTarget, argumentCountIncludingThis, registerOffset, prediction);
+    if (callNode->op() == TailCall)
+        return Terminal;
+    ASSERT(callNode->op() != TailCallVarargs);
+    return NonTerminal;
 }
 
-void ByteCodeParser::handleVarargsCall(Instruction* pc, NodeType op, CallMode callMode)
+ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, NodeType op, CallMode callMode)
 {
     ASSERT(OPCODE_LENGTH(op_call_varargs) == OPCODE_LENGTH(op_construct_varargs));
     ASSERT(OPCODE_LENGTH(op_call_varargs) == OPCODE_LENGTH(op_tail_call_varargs));
@@ -1228,7 +1236,7 @@ void ByteCodeParser::handleVarargsCall(Instruction* pc, NodeType op, CallMode ca
         && handleInlining(callTarget, result, callLinkStatus, firstFreeReg, VirtualRegister(thisReg), VirtualRegister(arguments), firstVarArgOffset, 0, m_currentIndex + OPCODE_LENGTH(op_call_varargs), op, InlineCallFrame::varargsKindFor(callMode), prediction)) {
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedCall();
-        return;
+        return NonTerminal;
     }
     
     CallVarargsData* data = m_graph.m_callVarargsData.add();
@@ -1239,7 +1247,7 @@ void ByteCodeParser::handleVarargsCall(Instruction* pc, NodeType op, CallMode ca
     if (op == TailCallVarargs) {
         if (allInlineFramesAreTailCalls()) {
             addToGraph(op, OpInfo(data), OpInfo(), callTarget, get(VirtualRegister(arguments)), thisChild);
-            return;
+            return Terminal;
         }
         op = TailCallVarargsInlinedCaller;
     }
@@ -1248,6 +1256,7 @@ void ByteCodeParser::handleVarargsCall(Instruction* pc, NodeType op, CallMode ca
     VirtualRegister resultReg(result);
     if (resultReg.isValid())
         set(resultReg, call);
+    return NonTerminal;
 }
 
 void ByteCodeParser::emitFunctionChecks(CallVariant callee, Node* callTarget, VirtualRegister thisArgumentReg)
@@ -3180,9 +3189,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // to be true.
             // We also don't insert a jump if the block already has a terminal,
             // which could happen after a tail call.
-            ASSERT(m_currentBlock->isEmpty() || !m_currentBlock->terminal()
-                || m_currentBlock->terminal()->op() == TailCall || m_currentBlock->terminal()->op() == TailCallVarargs);
-            if (!m_currentBlock->isEmpty() && !m_currentBlock->terminal())
+            ASSERT(m_currentBlock->isEmpty() || !m_currentBlock->terminal());
+            if (!m_currentBlock->isEmpty())
                 addToGraph(Jump, OpInfo(m_currentIndex));
             return shouldContinueParsing;
         }
@@ -3796,12 +3804,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Block terminators. ===
 
         case op_jmp: {
-            if (m_currentBlock->terminal()) {
-                // We could be the dummy jump to a return after a non-inlined, non-emulated tail call in a ternary operator
-                Node* terminal = m_currentBlock->terminal();
-                ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs);
-                LAST_OPCODE(op_jmp);
-            }
+            ASSERT(!m_currentBlock->terminal());
             int relativeOffset = currentInstruction[1].u.operand;
             addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
             if (relativeOffset <= 0)
@@ -3973,12 +3976,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_ret:
-            if (m_currentBlock->terminal()) {
-                // We could be the dummy return after a non-inlined, non-emulated tail call
-                Node* terminal = m_currentBlock->terminal();
-                ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs);
-                LAST_OPCODE(op_ret);
-            }
+            ASSERT(!m_currentBlock->terminal());
             if (inlineCallFrame()) {
                 flushForReturn();
                 if (m_inlineStackTop->m_returnValue.isValid())
@@ -4031,18 +4029,24 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_call:
             handleCall(currentInstruction, Call, CallMode::Regular);
-            // Verify that handleCall(), which could have inlined the callee, didn't trash m_currentInstruction
+            // Verify that handleCall(), which could have inlined the callee, didn't trash m_currentInstruction.
             ASSERT(m_currentInstruction == currentInstruction);
             NEXT_OPCODE(op_call);
 
-        case op_tail_call:
+        case op_tail_call: {
             flushForReturn();
-            handleCall(currentInstruction, TailCall, CallMode::Tail);
-            // Verify that handleCall(), which could have inlined the callee, didn't trash m_currentInstruction
+            Terminality terminality = handleCall(currentInstruction, TailCall, CallMode::Tail);
+            // Verify that handleCall(), which could have inlined the callee, didn't trash m_currentInstruction.
             ASSERT(m_currentInstruction == currentInstruction);
-            // We let the following op_ret handle cases related to
-            // inlining to keep things simple.
-            NEXT_OPCODE(op_tail_call);
+            // If the call is terminal then we should not parse any further bytecodes as the TailCall will exit the function.
+            // If the call is not terminal, however, then we want the subsequent op_ret/op_jumpt to update metadata and clean
+            // things up.
+            if (terminality == NonTerminal) {
+                NEXT_OPCODE(op_tail_call);
+            } else {
+                LAST_OPCODE(op_tail_call);
+            }
+        }
 
         case op_construct:
             handleCall(currentInstruction, Construct, CallMode::Construct);
@@ -4055,8 +4059,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_tail_call_varargs: {
             flushForReturn();
-            handleVarargsCall(currentInstruction, TailCallVarargs, CallMode::Tail);
-            NEXT_OPCODE(op_tail_call_varargs);
+            Terminality terminality = handleVarargsCall(currentInstruction, TailCallVarargs, CallMode::Tail);
+            // If the call is terminal then we should not parse any further bytecodes as the TailCall will exit the function.
+            // If the call is not terminal, however, then we want the subsequent op_ret/op_jumpt to update metadata and clean
+            // things up.
+            if (terminality == NonTerminal) {
+                NEXT_OPCODE(op_tail_call_varargs);
+            } else {
+                LAST_OPCODE(op_tail_call_varargs);
+            }
         }
             
         case op_construct_varargs: {

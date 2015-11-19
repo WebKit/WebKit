@@ -1,3 +1,27 @@
+2015-11-17  Keith Miller  <keith_miller@apple.com>
+
+        [JSC] TailCalls should not trigger assertion failures when running with the jsc profiler on.
+        https://bugs.webkit.org/show_bug.cgi?id=151359
+
+        Reviewed by Geoffrey Garen.
+
+        If we have the profiler on when parsing tail calls in the dfg we would emit a CountExecutions node
+        following a TailCall node as our bytecode for tail calls always emits a op_ret following an op_tail_call.
+        This trips assertions that no nodes follow a terminal in a basic block. This patch fixes this issue by
+        not emiting a CountExecutions when we have a tail call that is terminal i.e. the tail caller is not
+        inlined into another function or the tail caller is inlined but is in tail position itself.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * tests/stress/tail-call-profiler.js: Added.
+        (tail):
+        (inlineTail):
+        (inlineTailVarArgs):
+        (inlineTailTernary):
+        (body):
+
 2015-11-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make LBasicBlock into an alias for B3::BasicBlock. #ifdef anything that does not compile
