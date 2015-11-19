@@ -87,14 +87,14 @@ ControlsTest = class ControlsTest {
 
     setup()
     {
+        this.console = document.createElement("div");
+        this.console.className = "console";
+        document.body.appendChild(this.console);
+
         if (!window.testRunner) {
             this.logFailure("Test requires DRT.");
             return false;
         }
-
-        this.console = document.createElement("div");
-        this.console.className = "console";
-        document.body.appendChild(this.console);
 
         this.media = document.querySelector("video");
 
