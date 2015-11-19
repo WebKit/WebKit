@@ -1,3 +1,21 @@
+2015-11-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix -Winconsistent-missing-override clang warnings
+        https://bugs.webkit.org/show_bug.cgi?id=151443
+
+        Reviewed by Darin Adler.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        (WebKit::CoordinatedDrawingArea::layerTreeStateIsFrozen):
+        (WebKit::CoordinatedDrawingArea::layerTreeHost):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (WebKit::CoordinatedLayerTreeHost::layerTreeContext):
+        (WebKit::CoordinatedLayerTreeHost::pauseRendering):
+        (WebKit::CoordinatedLayerTreeHost::resumeRendering):
+
 2015-11-18  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards implementing Downloads with NETWORK_SESSION

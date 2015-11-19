@@ -130,10 +130,10 @@ public:
     virtual void invalidateContentsForSlowScroll(const IntRect&) override { }
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) override { }
 #if USE(COORDINATED_GRAPHICS)
-    virtual void delegatedScrollRequested(const IntPoint&) { }
+    virtual void delegatedScrollRequested(const IntPoint&) override { }
 #endif
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    virtual void scheduleAnimation() { }
+    virtual void scheduleAnimation() override { }
 #endif
 
     virtual IntPoint screenToRootView(const IntPoint& p) const override { return p; }

@@ -43,26 +43,26 @@ public:
     static Ref<CoordinatedLayerTreeHost> create(WebPage*);
     virtual ~CoordinatedLayerTreeHost();
 
-    virtual const LayerTreeContext& layerTreeContext() { return m_layerTreeContext; }
-    virtual void setLayerFlushSchedulingEnabled(bool);
-    virtual void scheduleLayerFlush();
-    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool);
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
-    virtual void invalidate();
+    virtual const LayerTreeContext& layerTreeContext() override { return m_layerTreeContext; }
+    virtual void setLayerFlushSchedulingEnabled(bool) override;
+    virtual void scheduleLayerFlush() override;
+    virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) override;
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    virtual void invalidate() override;
 
     virtual void setNonCompositedContentsNeedDisplay() override { }
     virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) override { }
     virtual void scrollNonCompositedContents(const WebCore::IntRect&) override { }
-    virtual void forceRepaint();
-    virtual bool forceRepaintAsync(uint64_t callbackID);
-    virtual void sizeDidChange(const WebCore::IntSize& newSize);
+    virtual void forceRepaint() override;
+    virtual bool forceRepaintAsync(uint64_t callbackID) override;
+    virtual void sizeDidChange(const WebCore::IntSize& newSize) override;
 
-    virtual void pauseRendering() { m_isSuspended = true; }
-    virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
+    virtual void pauseRendering() override { m_isSuspended = true; }
+    virtual void resumeRendering() override { m_isSuspended = false; scheduleLayerFlush(); }
     virtual void deviceOrPageScaleFactorChanged() override;
     virtual void pageBackgroundTransparencyChanged() override;
 
-    virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&);
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
