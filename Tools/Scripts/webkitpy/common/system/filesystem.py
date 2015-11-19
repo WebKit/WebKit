@@ -31,6 +31,7 @@
 import codecs
 import errno
 import exceptions
+import filecmp
 import glob
 import hashlib
 import os
@@ -304,3 +305,6 @@ class FileSystem(object):
     def splitext(self, path):
         """Return (dirname + os.sep + basename, '.' + ext)"""
         return os.path.splitext(path)
+
+    def compare(self, path1, path2):
+        return filecmp.cmp(path1, path2)

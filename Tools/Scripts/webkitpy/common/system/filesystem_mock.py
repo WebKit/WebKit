@@ -418,6 +418,9 @@ class MockFileSystem(object):
             idx = len(path)
         return (path[0:idx], path[idx:])
 
+    def compare(self, path1, path2):
+        return self.read_binary_file(path1) == self.read_binary_file(path2)
+
 
 class WritableBinaryFileObject(object):
     def __init__(self, fs, path):

@@ -1,3 +1,25 @@
+2015-11-19  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WPT server should use its own testharness.js file and generate a warning when it does not match WebKit version
+        https://bugs.webkit.org/show_bug.cgi?id=150332
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        Removing testharness.js overwriting from LayoutTests/resources to LayoutTests/imported/w3c/web-platform-tests/resources.
+        Adding support for file comparison in python filesystem.
+        #NousSommesUnis.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.compare): Adding compare as a wrapper around filecmp.cmp.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.compare): Adding a mock compare.
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__): Removed testharness.js as file to copy from WK to WPT.
+        (WebPlatformTestServer._copy_webkit_test_files): Added warning generation when WK testharness.js is not matching WPT version.
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server_unittest.py:
+        (TestWebPlatformTestServer.test_previously_spawned_instance): Updated tests to add testharness.js to mock filesystem.
+        (TestWebPlatformTestServer.test_corrupted_subserver_files): Ditto.
+
 2015-11-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WK1] Crash loading Blink layout test fast/dom/Window/property-access-on-cached-window-after-frame-removed.html

@@ -42,6 +42,8 @@ class TestWebPlatformTestServer(unittest.TestCase):
         server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir", "/mock/output_dir/pid.txt")
         server._check_that_all_ports_are_available = lambda: True
         server._is_server_running_on_all_ports = lambda: True
+        host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
+        host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
 
         host.filesystem.write_text_file("/mock_output_dir/pid.txt", "0")
         server.start()
@@ -53,6 +55,8 @@ class TestWebPlatformTestServer(unittest.TestCase):
         server = WebPlatformTestServer(port, "wpttest", "/mock/output_dir", "/mock/output_dir/pid.txt")
         server._check_that_all_ports_are_available = lambda: True
         server._is_server_running_on_all_ports = lambda: True
+        host.filesystem.write_text_file("/mock-checkout/LayoutTests/resources/testharness.js", "0")
+        host.filesystem.write_text_file("/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js", "0")
 
         host.filesystem.write_text_file("/mock_output_dir/wpttest_servers.json", "0")
         server.stop()
