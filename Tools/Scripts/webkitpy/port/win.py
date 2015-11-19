@@ -61,26 +61,6 @@ class WinPort(ApplePort):
 
     previous_error_reporting_values = {}
 
-    def __init__(self, host, port_name, **kwargs):
-        ApplePort.__init__(self, host, port_name, **kwargs)
-
-        self._abs_results_directory = None
-
-    def abs_results_directory(self):
-        if not self._results_directory:
-            self.results_directory()
-        return self._abs_results_directory
-
-    def results_directory(self):
-        """Absolute path to the place to store the test results (uses --results-directory)."""
-        if not self._results_directory:
-            option_val = self.get_option('results_directory') or self.default_results_directory()
-            self._results_directory = self._filesystem.abspath(option_val)
-            if sys.platform == 'cygwin':
-                self._results_directory = cygpath(self._results_directory)   
-            self._abs_results_directory = self._filesystem.abspath(option_val)
-        return self._results_directory
-
     def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
         if self.get_option('webkit_test_runner'):

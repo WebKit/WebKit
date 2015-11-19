@@ -1,3 +1,22 @@
+2015-11-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] webkitpy is applying abspath to DOS paths, yielding invalid paths
+        https://bugs.webkit.org/show_bug.cgi?id=151156
+
+        Unreviewed test fix.
+        
+        I tracked down the cause of the test regression on the Windows builders. Once I fixed that,
+        I realized that the new 'abs_results_directory' value was not needed, so this change reverts
+        that code.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.start_websocket_server): We don't need a special directory variable on Cygwin anymore.
+        (Port.abs_results_directory): Deleted.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.__init__): Deleted.
+        (WinPort.abs_results_directory): Deleted.
+        (WinPort.results_directory): Deleted.
+
 2015-11-19  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Move layoutTestResultsDirectoryURLForIteration implementation to base class
