@@ -1020,15 +1020,7 @@ namespace JSC {
         , m_bindingContext(context)
     {
     }
-
-    inline AssignmentElementNode::AssignmentElementNode(ExpressionNode* assignmentTarget, const JSTextPosition& start, const JSTextPosition& end)
-        : DestructuringPatternNode()
-        , m_divotStart(start)
-        , m_divotEnd(end)
-        , m_assignmentTarget(assignmentTarget)
-    {
-    }
-
+    
     inline DestructuringAssignmentNode::DestructuringAssignmentNode(const JSTokenLocation& location, DestructuringPatternNode* bindings, ExpressionNode* initializer)
         : ExpressionNode(location)
         , m_bindings(bindings)

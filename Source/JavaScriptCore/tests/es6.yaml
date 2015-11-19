@@ -214,10 +214,6 @@
   cmd: runES6 :normal
 - path: es6/destructuring_with_strings.js
   cmd: runES6 :normal
-- path: es6/destructuring_assignment_non_simple_target.js
-  cmd: runES6 :normal
-- path: es6/destructuring_initializer_scoping.js
-  cmd: runES6 :normal
 - path: es6/for..of_loops_with_arrays.js
   cmd: runES6 :normal
 - path: es6/for..of_loops_with_astral_plane_strings.js
@@ -751,7 +747,7 @@
 - path: es6/destructuring_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/destructuring_nested_rest.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/destructuring_with_generator_instances.js
   cmd: runES6 :fail
 - path: es6/destructuring_with_generic_iterables.js

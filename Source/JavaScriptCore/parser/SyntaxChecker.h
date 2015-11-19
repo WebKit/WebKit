@@ -346,34 +346,10 @@ public:
     {
         return BindingDestructuring;
     }
-    DestructuringPattern createAssignmentElement(const Expression&, const JSTextPosition&, const JSTextPosition&)
-    {
-        return BindingDestructuring;
-    }
 
     bool isBindingNode(DestructuringPattern pattern)
     {
         return pattern == BindingDestructuring;
-    }
-
-    bool isAssignmentLocation(ExpressionType type)
-    {
-        return type == ResolveExpr || type == DotExpr || type == BracketExpr;
-    }
-
-    bool isObjectLiteral(ExpressionType type)
-    {
-        return type == ObjectLiteralExpr;
-    }
-
-    bool isArrayLiteral(ExpressionType type)
-    {
-        return type == ArrayLiteralExpr;
-    }
-
-    bool isObjectOrArrayLiteral(ExpressionType type)
-    {
-        return isObjectLiteral(type) || isArrayLiteral(type);
     }
 
     void setEndOffset(int, int) { }
