@@ -1,3 +1,31 @@
+2015-11-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove unused LLVM API functions
+        https://bugs.webkit.org/show_bug.cgi?id=151184
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::typeOf): Deleted.
+        (JSC::FTL::getElementType): Deleted.
+        (JSC::FTL::getNamedFunction): Deleted.
+        (JSC::FTL::removeFunctionAttr): Deleted.
+        (JSC::FTL::getLinkage): Deleted.
+        (JSC::FTL::setVisibility): Deleted.
+        (JSC::FTL::isDeclaration): Deleted.
+        (JSC::FTL::linkModules): Deleted.
+        (JSC::FTL::getValueName): Deleted.
+        (JSC::FTL::getNamedGlobal): Deleted.
+        (JSC::FTL::getFirstGlobal): Deleted.
+        (JSC::FTL::getNextGlobal): Deleted.
+        (JSC::FTL::createMemoryBufferWithContentsOfFile): Deleted.
+        (JSC::FTL::parseBitcodeInContext): Deleted.
+        (JSC::FTL::disposeMemoryBuffer): Deleted.
+        (JSC::FTL::getParamTypes): Deleted.
+        (JSC::FTL::constIntToPtr): Deleted.
+        (JSC::FTL::constBitCast): Deleted.
+        * llvm/LLVMAPIFunctions.h:
+
 2015-11-19  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove unnecessary PLATFORM(EFL) macro in globalMemoryStatistics()

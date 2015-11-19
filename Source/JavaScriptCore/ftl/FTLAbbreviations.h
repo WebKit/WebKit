@@ -126,10 +126,6 @@ static inline LType functionType(LType returnType, LType param1, LType param2, L
     return functionType(returnType, paramTypes, 6, variadicity);
 }
 
-static inline LType typeOf(LValue value) { return llvm->TypeOf(value); }
-
-static inline LType getElementType(LType value) { return llvm->GetElementType(value); }
-
 static inline unsigned mdKindID(LContext context, const char* string) { return llvm->GetMDKindIDInContext(context, string, std::strlen(string)); }
 static inline LValue mdString(LContext context, const char* string, unsigned length) { return llvm->MDStringInContext(context, string, length); }
 static inline LValue mdString(LContext context, const char* string) { return mdString(context, string, std::strlen(string)); }
@@ -152,26 +148,13 @@ static inline LValue mdNode(LContext context, LValue arg1, LValue arg2, LValue a
 static inline void setMetadata(LValue instruction, unsigned kind, LValue metadata) { llvm->SetMetadata(instruction, kind, metadata); }
 
 static inline LValue addFunction(LModule module, const char* name, LType type) { return llvm->AddFunction(module, name, type); }
-static inline LValue getNamedFunction(LModule module, const char* name) { return llvm->GetNamedFunction(module, name); }
 static inline LValue getFirstFunction(LModule module) { return llvm->GetFirstFunction(module); }
 static inline LValue getNextFunction(LValue function) { return llvm->GetNextFunction(function); }
 
 static inline void setFunctionCallingConv(LValue function, LCallConv convention) { llvm->SetFunctionCallConv(function, convention); }
 static inline void addTargetDependentFunctionAttr(LValue function, const char* key, const char* value) { llvm->AddTargetDependentFunctionAttr(function, key, value); }
-static inline void removeFunctionAttr(LValue function, LLVMAttribute pa) { llvm->RemoveFunctionAttr(function, pa); }
 
-static inline LLVMLinkage getLinkage(LValue global) { return llvm->GetLinkage(global); }
 static inline void setLinkage(LValue global, LLVMLinkage linkage) { llvm->SetLinkage(global, linkage); }
-static inline void setVisibility(LValue global, LLVMVisibility viz) { llvm->SetVisibility(global, viz); }
-static inline LLVMBool isDeclaration(LValue global) { return llvm->IsDeclaration(global); }
-
-static inline LLVMBool linkModules(LModule dest, LModule str, LLVMLinkerMode mode, char** outMessage) { return llvm->LinkModules(dest, str, mode, outMessage); }
-
-static inline const char * getValueName(LValue global) { return llvm->GetValueName(global); }
-
-static inline LValue getNamedGlobal(LModule module, const char* name) { return llvm->GetNamedGlobal(module, name); }
-static inline LValue getFirstGlobal(LModule module) { return llvm->GetFirstGlobal(module); }
-static inline LValue getNextGlobal(LValue global) { return llvm->GetNextGlobal(global); }
 
 static inline LValue addExternFunction(LModule module, const char* name, LType type)
 {
@@ -180,21 +163,6 @@ static inline LValue addExternFunction(LModule module, const char* name, LType t
     return result;
 }
 
-static inline LLVMBool createMemoryBufferWithContentsOfFile(const char* path, LLVMMemoryBufferRef* outMemBuf, char** outMessage) 
-{ 
-    return llvm->CreateMemoryBufferWithContentsOfFile(path, outMemBuf, outMessage); 
-}
-
-
-static inline LLVMBool parseBitcodeInContext(LLVMContextRef contextRef, LLVMMemoryBufferRef memBuf, LModule *outModule, char **outMessage)
-{ 
-    return llvm->ParseBitcodeInContext(contextRef, memBuf, outModule, outMessage); 
-}
-
-
-static inline void disposeMemoryBuffer(LLVMMemoryBufferRef memBuf){ llvm->DisposeMemoryBuffer(memBuf); }
-
-
 static inline LModule moduleCreateWithNameInContext(const char* moduleID, LContext context){ return llvm->ModuleCreateWithNameInContext(moduleID, context); }
 static inline void disposeModule(LModule m){ llvm->DisposeModule(m); }
 
@@ -202,15 +170,12 @@ static inline void disposeMessage(char* outMsg) { llvm->DisposeMessage(outMsg); 
 
 static inline LValue getParam(LValue function, unsigned index) { return llvm->GetParam(function, index); }
 
-static inline void getParamTypes(LType function, LType* dest) { return llvm->GetParamTypes(function, dest); }
 static inline LValue getUndef(LType type) { return llvm->GetUndef(type); }
 
 enum BitExtension { ZeroExtend, SignExtend };
 static inline LValue constInt(LType type, unsigned long long value, BitExtension extension = ZeroExtend) { return llvm->ConstInt(type, value, extension == SignExtend); }
 static inline LValue constReal(LType type, double value) { return llvm->ConstReal(type, value); }
-static inline LValue constIntToPtr(LValue value, LType type) { return llvm->ConstIntToPtr(value, type); }
 static inline LValue constNull(LType type) { return llvm->ConstNull(type); }
-static inline LValue constBitCast(LValue value, LType type) { return llvm->ConstBitCast(value, type); }
 
 static inline LBasicBlock appendBasicBlock(LContext context, LValue function, const char* name = "") { return llvm->AppendBasicBlockInContext(context, function, name); }
 static inline LBasicBlock insertBasicBlock(LContext context, LBasicBlock beforeBasicBlock, const char* name = "") { return llvm->InsertBasicBlockInContext(context, beforeBasicBlock, name); }
