@@ -1,5 +1,26 @@
 2015-11-19  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192138.
+
+    2015-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+            Use ColorSpaceSRGB for image buffers everywhere
+            https://bugs.webkit.org/show_bug.cgi?id=150990
+
+            Reviewed by Zalan Bujtas.
+
+            ColorSpaceSRGB and ColorSpaceDeviceRGB are equivalent now, so convert
+            code that creates image buffers tagged with ColorSpaceDeviceRGB to use ColorSpaceSRGB.
+
+            * Shared/mac/RemoteLayerBackingStore.mm:
+            (WebKit::RemoteLayerBackingStore::decode):
+            (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _takeViewSnapshot]):
+            (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+
+2015-11-19  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r189637.
 
     2015-09-11  Beth Dakin  <bdakin@apple.com>
