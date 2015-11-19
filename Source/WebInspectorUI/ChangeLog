@@ -1,5 +1,25 @@
 2015-11-18  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: Storage tab shouldn't hide cookies for .example.com when inspected page is foo.bar.example.com
+        https://bugs.webkit.org/show_bug.cgi?id=151408
+
+        Reviewed by Timothy Hatcher.
+
+        The regex should allow multiple subdomains to match a cookie for domain .example.com.
+
+        Test: inspector/page/filter-cookies-for-domain.html
+
+        * UserInterface/Models/CookieStorageObject.js:
+        (WebInspector.CookieStorageObject.cookieDomainMatchesResourceDomain):
+
+            Also make the group non-capturing. We don't use the match.
+
+        (WebInspector.CookieStorageObject.prototype.saveIdentityToCookie):
+        (WebInspector.CookieStorageObject):
+        * UserInterface/Test.html:
+
+2015-11-18  Brian Burg  <bburg@apple.com>
+
         Web Inspector: move cookie url matching out of CookieStorageContentView and clean up some code
         https://bugs.webkit.org/show_bug.cgi?id=151424
 
