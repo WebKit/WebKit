@@ -1,3 +1,49 @@
+2015-11-19  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL->B3 lowering should support checked int math
+        https://bugs.webkit.org/show_bug.cgi?id=151451
+
+        Reviewed by Saam Barati.
+
+        Adds lowering of ArithAdd/Sub/Mul to CheckAdd/Sub/Mul. Includes a nice refactoring of the OSR exit
+        code that made this a lot easier. Also needed to implement a few other ops in FTL::Output.
+
+        I ended up renaming "check" to "speculate" in FTL::Output, because it already had a thing called
+        "check". The FTL terminology for side-exit is "speculate", so I think that this is appropriate.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::sensibleDoubleToInt):
+        (JSC::FTL::Output::signExt):
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::zeroExtPtr):
+        (JSC::FTL::Output::fpToInt):
+        (JSC::FTL::Output::fpToUInt):
+        (JSC::FTL::Output::unsignedToFP):
+        (JSC::FTL::Output::unsignedToDouble):
+        (JSC::FTL::Output::intCast):
+        (JSC::FTL::Output::castToInt32):
+        (JSC::FTL::Output::fpCast):
+        (JSC::FTL::Output::intToPtr):
+        (JSC::FTL::Output::ptrToInt):
+        (JSC::FTL::Output::unreachable):
+        (JSC::FTL::Output::speculate):
+        (JSC::FTL::Output::speculateAdd):
+        (JSC::FTL::Output::speculateSub):
+        (JSC::FTL::Output::speculateMul):
+        (JSC::FTL::Output::trap):
+        (JSC::FTL::Output::check): Deleted.
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+
 2015-11-19  Mark Lam  <mark.lam@apple.com>
 
         JIT snippet generator JumpLists should be returned as references.

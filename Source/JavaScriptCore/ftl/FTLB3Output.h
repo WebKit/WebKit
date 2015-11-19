@@ -174,7 +174,7 @@ public:
     LValue sensibleDoubleToInt(LValue) { CRASH(); }
 
     LValue signExt(LValue value, LType type) { CRASH(); }
-    LValue zeroExt(LValue value, LType type) { CRASH(); }
+    LValue zeroExt(LValue value, LType type) { return m_block->appendNew<B3::Value>(m_proc, B3::ZExt32, type, origin(), value); }
     LValue zeroExtPtr(LValue value) { CRASH(); }
     LValue fpToInt(LValue value, LType type) { CRASH(); }
     LValue fpToUInt(LValue value, LType type) { CRASH(); }
@@ -185,7 +185,7 @@ public:
     LValue unsignedToFP(LValue value, LType type) { CRASH(); }
     LValue unsignedToDouble(LValue value) { CRASH(); }
     LValue intCast(LValue value, LType type) { CRASH(); }
-    LValue castToInt32(LValue value) { CRASH(); }
+    LValue castToInt32(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Trunc, origin(), value); }
     LValue fpCast(LValue value, LType type) { CRASH(); }
     LValue intToPtr(LValue value, LType type) { CRASH(); }
     LValue ptrToInt(LValue value, LType type) { CRASH(); }
@@ -350,12 +350,38 @@ public:
     void unreachable() { m_block->appendNew<B3::ControlValue>(m_proc, B3::Oops, origin()); }
 
     template<typename Functor>
-    void check(LValue value, const StackmapArgumentList& arguments, const Functor& functor)
+    void speculate(LValue value, const StackmapArgumentList& arguments, const Functor& functor)
     {
-        B3::CheckValue* check = m_block->appendNew<B3::CheckValue>(m_proc, B3::Check, origin(), value);
+        B3::CheckValue* check = speculate(value, arguments);
+        check->setGenerator(functor);
+    }
+
+    B3::CheckValue* speculate(LValue value, const StackmapArgumentList& arguments)
+    {
+        B3::CheckValue* check = speculate(value);
         for (LValue value : arguments)
             check->append(B3::ConstrainedValue(value));
-        check->setGenerator(functor);
+        return check;
+    }
+
+    B3::CheckValue* speculate(LValue value)
+    {
+        return m_block->appendNew<B3::CheckValue>(m_proc, B3::Check, origin(), value);
+    }
+
+    B3::CheckValue* speculateAdd(LValue left, LValue right)
+    {
+        return m_block->appendNew<B3::CheckValue>(m_proc, B3::CheckAdd, origin(), left, right);
+    }
+
+    B3::CheckValue* speculateSub(LValue left, LValue right)
+    {
+        return m_block->appendNew<B3::CheckValue>(m_proc, B3::CheckSub, origin(), left, right);
+    }
+
+    B3::CheckValue* speculateMul(LValue left, LValue right)
+    {
+        return m_block->appendNew<B3::CheckValue>(m_proc, B3::CheckMul, origin(), left, right);
     }
 
     void trap() { CRASH(); }

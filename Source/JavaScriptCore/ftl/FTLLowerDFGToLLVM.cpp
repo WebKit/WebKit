@@ -1496,6 +1496,12 @@ private:
                 break;
             }
 
+#if FTL_USES_B3
+            B3::CheckValue* result =
+                isSub ? m_out.speculateSub(left, right) : m_out.speculateAdd(left, right);
+            blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
+            setInt32(result);
+#else // FTL_USES_B3
             LValue result;
             if (!isSub) {
                 result = m_out.addWithOverflow32(left, right);
@@ -1530,6 +1536,7 @@ private:
 
             speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
             setInt32(m_out.extractValue(result, 0));
+#endif // FTL_USES_B3
             break;
         }
             
@@ -1542,9 +1549,15 @@ private:
                 setInt52(isSub ? m_out.sub(left, right) : m_out.add(left, right), kind);
                 break;
             }
-            
+
             LValue left = lowInt52(m_node->child1());
             LValue right = lowInt52(m_node->child2());
+#if FTL_USES_B3
+            B3::CheckValue* result =
+                isSub ? m_out.speculateSub(left, right) : m_out.speculateAdd(left, right);
+            blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
+            setInt52(result);
+#else // FTL_USES_B3
 
             LValue result;
             if (!isSub) {
@@ -1580,6 +1593,7 @@ private:
 
             speculate(Int52Overflow, noValue(), 0, m_out.extractValue(result, 1));
             setInt52(m_out.extractValue(result, 0));
+#endif // FTL_USES_B3
             break;
         }
             
@@ -1656,9 +1670,15 @@ private:
             if (!shouldCheckOverflow(m_node->arithMode()))
                 result = m_out.mul(left, right);
             else {
+#if FTL_USES_B3
+                B3::CheckValue* speculation = m_out.speculateMul(left, right);
+                blessSpeculation(speculation, Overflow, noValue(), nullptr, m_origin);
+                result = speculation;
+#else // FTL_USES_B3
                 LValue overflowResult = m_out.mulWithOverflow32(left, right);
                 speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
                 result = m_out.extractValue(overflowResult, 0);
+#endif // FTL_USES_B3
             }
             
             if (shouldCheckNegativeZero(m_node->arithMode())) {
@@ -1684,9 +1704,14 @@ private:
             LValue left = lowWhicheverInt52(m_node->child1(), kind);
             LValue right = lowInt52(m_node->child2(), opposite(kind));
 
+#if FTL_USES_B3
+            B3::CheckValue* result = m_out.speculateMul(left, right);
+            blessSpeculation(result, Overflow, noValue(), nullptr, m_origin);
+#else // FTL_USES_B3
             LValue overflowResult = m_out.mulWithOverflow64(left, right);
             speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
             LValue result = m_out.extractValue(overflowResult, 0);
+#endif // FTL_USES_B3
 
             if (shouldCheckNegativeZero(m_node->arithMode())) {
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
@@ -5153,9 +5178,8 @@ private:
         
         OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
         
-        StackmapArgumentList arguments;
-        
-        buildExitArguments(exitDescriptor, arguments, FormattedValue(), exitDescriptor.m_codeOrigin);
+        StackmapArgumentList arguments =
+            buildExitArguments(exitDescriptor, FormattedValue(), exitDescriptor.m_codeOrigin);
         callStackmap(exitDescriptor, arguments);
         
         exitDescriptor.m_isInvalidationPoint = true;
@@ -8981,8 +9005,8 @@ private:
         exitDescriptor.m_baselineExceptionHandler = *exceptionHandler;
         exitDescriptor.m_stackmapID = m_stackmapIDs - 1;
 
-        StackmapArgumentList freshList;
-        buildExitArguments(exitDescriptor, freshList, noValue(), exitDescriptor.m_codeOrigin, offsetOfExitArguments);
+        StackmapArgumentList freshList =
+            buildExitArguments(exitDescriptor, noValue(), exitDescriptor.m_codeOrigin, offsetOfExitArguments);
         arguments.appendVector(freshList);
     }
 
@@ -9046,22 +9070,13 @@ private:
         if (failCondition == m_out.booleanFalse)
             return;
 
+#if FTL_USES_B3
+        blessSpeculation(
+            m_out.speculate(failCondition), kind, lowValue, highValue, origin, isExceptionHandler);
+#else // FTL_USES_B3
         appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
         OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
 
-#if FTL_USES_B3
-        StackmapArgumentList arguments;
-
-        CodeOrigin codeOrigin = exitDescriptor.m_codeOrigin;
-
-        buildExitArguments(exitDescriptor, arguments, lowValue, codeOrigin);
-
-        m_out.check(
-            failCondition, arguments,
-            [&] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-                jit.oops();
-            });
-#else // FTL_USES_B3
         if (failCondition == m_out.booleanTrue) {
             emitOSRExitCall(exitDescriptor, lowValue);
             return;
@@ -9085,6 +9100,22 @@ private:
 #endif // FTL_USES_B3
     }
 
+#if FTL_USES_B3
+    void blessSpeculation(B3::StackmapValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin, bool isExceptionHandler = false)
+    {
+        appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
+        OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
+        CodeOrigin codeOrigin = exitDescriptor.m_codeOrigin;
+        StackmapArgumentList arguments = buildExitArguments(exitDescriptor, lowValue, codeOrigin);
+        for (LValue child : arguments)
+            value->append(child);
+        value->setGenerator(
+            [&] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                jit.oops();
+            });
+    }
+#endif
+
 #if !FTL_USES_B3
     void emitOSRExitCall(OSRExitDescriptor& exitDescriptor, FormattedValue lowValue)
     {
@@ -9097,6 +9128,16 @@ private:
         callStackmap(exitDescriptor, arguments);
     }
 #endif
+
+    StackmapArgumentList buildExitArguments(
+        OSRExitDescriptor& exitDescriptor, FormattedValue lowValue, CodeOrigin codeOrigin,
+        unsigned offsetOfExitArgumentsInStackmapLocations = 0)
+    {
+        StackmapArgumentList result;
+        buildExitArguments(
+            exitDescriptor, result, lowValue, codeOrigin, offsetOfExitArgumentsInStackmapLocations);
+        return result;
+    }
     
     void buildExitArguments(
         OSRExitDescriptor& exitDescriptor, StackmapArgumentList& arguments, FormattedValue lowValue,
