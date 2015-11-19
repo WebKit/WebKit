@@ -157,6 +157,7 @@ fast/mediastream/MediaStreamTrack-onended.html
 fast/mediastream/MediaStreamTrack.html
 
 # Media Stream tests that crash unexpectedly under GuardMalloc, see https://bugs.webkit.org/show_bug.cgi?id=151353
+fast/mediastream/delayed-permission-denied.html
 fast/mediastream/getusermedia.html
 fast/mediastream/MediaDevices-getUserMedia.html
 fast/mediastream/MediaStream-clone.html
@@ -165,6 +166,7 @@ fast/mediastream/MediaStream-video-element-track-stop.html
 fast/mediastream/MediaStream-video-element.html
 fast/mediastream/MediaStreamConstructor.html
 fast/mediastream/MediaStreamTrack-clone.html
+fast/mediastream/MediaStreamTrack-kind.html
 fast/mediastream/MediaStreamTrack-stop.html
 
 # WebRTC is not supported yet.
@@ -183,6 +185,7 @@ fast/mediastream/RTCPeerConnection-have-remote-pranswer.html
 fast/mediastream/RTCPeerConnection-ice.html
 fast/mediastream/RTCPeerConnection-localDescription.html
 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html
+fast/mediastream/RTCPeerConnection-overloaded-operations.html
 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html
 fast/mediastream/RTCPeerConnection-remoteDescription.html
 fast/mediastream/RTCPeerConnection-stats.html
