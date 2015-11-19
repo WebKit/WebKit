@@ -61,14 +61,17 @@ void IndexValueEntry::addKey(const IDBKeyData& key)
 
 bool IndexValueEntry::removeKey(const IDBKeyData& key)
 {
-    if (m_unique && m_key && *m_key == key) {
-        delete m_key;
-        m_key = nullptr;
-        return true;
+    if (m_unique) {
+        if (m_key && *m_key == key) {
+            delete m_key;
+            m_key = nullptr;
+            return true;
+        }
+
+        return false;
     }
 
-    m_orderedKeys->erase(key);
-    return m_orderedKeys->empty();
+    return m_orderedKeys->erase(key);
 }
 
 const IDBKeyData* IndexValueEntry::getLowest() const
@@ -89,6 +92,131 @@ uint64_t IndexValueEntry::getCount() const
 
     return m_orderedKeys->size();
 }
+
+IndexValueEntry::Iterator::Iterator(IndexValueEntry& entry)
+    : m_entry(&entry)
+{
+    ASSERT(m_entry->m_key);
+}
+
+IndexValueEntry::Iterator::Iterator(IndexValueEntry& entry, std::set<IDBKeyData>::iterator iterator)
+    : m_entry(&entry)
+    , m_forwardIterator(iterator)
+{
+}
+
+IndexValueEntry::Iterator::Iterator(IndexValueEntry& entry, std::set<IDBKeyData>::reverse_iterator iterator)
+    : m_entry(&entry)
+    , m_forward(false)
+    , m_reverseIterator(iterator)
+{
+}
+
+const IDBKeyData& IndexValueEntry::Iterator::key() const
+{
+    ASSERT(isValid());
+    if (m_entry->unique()) {
+        ASSERT(m_entry->m_key);
+        return *m_entry->m_key;
+    }
+
+    return m_forward ? *m_forwardIterator : *m_reverseIterator;
+}
+
+bool IndexValueEntry::Iterator::isValid() const
+{
+#ifndef NDEBUG
+    if (m_entry) {
+        if (m_entry->m_unique)
+            ASSERT(m_entry->m_key);
+        else
+            ASSERT(m_entry->m_orderedKeys);
+    }
+#endif
+
+    return m_entry;
+}
+
+void IndexValueEntry::Iterator::invalidate()
+{
+    m_entry = nullptr;
+}
+
+IndexValueEntry::Iterator& IndexValueEntry::Iterator::operator++()
+{
+    if (!isValid())
+        return *this;
+
+    if (m_entry->m_unique) {
+        invalidate();
+        return *this;
+    }
+
+    if (m_forward) {
+        ++m_forwardIterator;
+        if (m_forwardIterator == m_entry->m_orderedKeys->end())
+            invalidate();
+    } else {
+        ++m_reverseIterator;
+        if (m_reverseIterator == m_entry->m_orderedKeys->rend())
+            invalidate();
+    }
+
+    return *this;
+}
+
+IndexValueEntry::Iterator IndexValueEntry::begin()
+{
+    if (m_unique) {
+        ASSERT(m_key);
+        return { *this };
+    }
+
+    ASSERT(m_orderedKeys);
+    return { *this, m_orderedKeys->begin() };
+}
+
+IndexValueEntry::Iterator IndexValueEntry::reverseBegin()
+{
+    if (m_unique) {
+        ASSERT(m_key);
+        return { *this };
+    }
+
+    ASSERT(m_orderedKeys);
+    return { *this, m_orderedKeys->rbegin() };
+}
+
+IndexValueEntry::Iterator IndexValueEntry::find(const IDBKeyData& key)
+{
+    if (m_unique) {
+        ASSERT(m_key);
+        return *m_key == key ? IndexValueEntry::Iterator(*this) : IndexValueEntry::Iterator();
+    }
+
+    ASSERT(m_orderedKeys);
+    auto iterator = m_orderedKeys->lower_bound(key);
+    if (iterator == m_orderedKeys->end())
+        return { };
+
+    return { *this, iterator };
+}
+
+IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key)
+{
+    if (m_unique) {
+        ASSERT(m_key);
+        return *m_key == key ? IndexValueEntry::Iterator(*this) : IndexValueEntry::Iterator();
+    }
+
+    ASSERT(m_orderedKeys);
+    auto iterator = std::set<IDBKeyData>::reverse_iterator(m_orderedKeys->upper_bound(key));
+    if (iterator == m_orderedKeys->rend())
+        return { };
+
+    return { *this, iterator };
+}
+
 
 } // namespace IDBServer
 } // namespace WebCore

@@ -104,7 +104,13 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context
     if (ec)
         return nullptr;
 
-    auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyAndValue);
+    IDBKeyRangeData rangeData = range;
+    if (rangeData.lowerKey.isNull())
+        rangeData.lowerKey = IDBKeyData::minimum();
+    if (rangeData.upperKey.isNull())
+        rangeData.upperKey = IDBKeyData::maximum();
+
+    auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_objectStore->info().identifier(), m_info.identifier(), rangeData, direction, IndexedDB::CursorType::KeyAndValue);
     Ref<IDBRequest> request = m_objectStore->modernTransaction().requestOpenCursor(*context, *this, info);
     return WTF::move(request);
 }
@@ -202,7 +208,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* cont
     if (ec)
         return nullptr;
 
-    auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
+    auto info = IDBCursorInfo::indexCursor(m_objectStore->modernTransaction(), m_objectStore->info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
     Ref<IDBRequest> request = m_objectStore->modernTransaction().requestOpenCursor(*context, *this, info);
     return WTF::move(request);
 }

@@ -6,72 +6,72 @@ Cursor direction is: next
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: 0
 Cursor primary key is: 0
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: next
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
-Error opening cursor (expected for now)
+Cursor key is: Hello
+Cursor primary key is: foo
+Success opening cursor
 Cursor is: [object IDBCursor]
 Cursor direction is: next
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: Hello
+Cursor primary key is: foo
 Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: nextunique
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: 0
 Cursor primary key is: 0
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: nextunique
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
-Error opening cursor (expected for now)
+Cursor key is: Hello
+Cursor primary key is: foo
+Success opening cursor
 Cursor is: [object IDBCursor]
 Cursor direction is: nextunique
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: Hello
+Cursor primary key is: foo
 Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prev
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: foo
 Cursor primary key is: foo
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prev
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
-Error opening cursor (expected for now)
+Cursor key is: Hello
+Cursor primary key is: foo
+Success opening cursor
 Cursor is: [object IDBCursor]
 Cursor direction is: prev
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: Hello
+Cursor primary key is: foo
 Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prevunique
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: foo
 Cursor primary key is: foo
-Error opening cursor (expected for now)
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prevunique
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
-Error opening cursor (expected for now)
+Cursor key is: Hello
+Cursor primary key is: foo
+Success opening cursor
 Cursor is: [object IDBCursor]
 Cursor direction is: prevunique
 Cursor source is: [object IDBIndex] (TestIndex1)
-Cursor key is: null
-Cursor primary key is: null
+Cursor key is: Hello
+Cursor primary key is: foo
 Initial upgrade versionchange transaction complete
 Done
 

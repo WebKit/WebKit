@@ -55,12 +55,42 @@ MemoryIndex::~MemoryIndex()
 {
 }
 
+void MemoryIndex::cursorDidBecomeClean(MemoryIndexCursor& cursor)
+{
+    m_cleanCursors.add(&cursor);
+}
+
+void MemoryIndex::cursorDidBecomeDirty(MemoryIndexCursor& cursor)
+{
+    m_cleanCursors.remove(&cursor);
+}
+
 void MemoryIndex::objectStoreCleared()
 {
     auto transaction = m_objectStore.writeTransaction();
     ASSERT(transaction);
 
     transaction->indexCleared(*this, WTF::move(m_records));
+
+    notifyCursorsOfAllRecordsChanged();
+}
+
+void MemoryIndex::notifyCursorsOfValueChange(const IDBKeyData& indexKey, const IDBKeyData& primaryKey)
+{
+    Vector<MemoryIndexCursor*> cursors;
+    copyToVector(m_cleanCursors, cursors);
+    for (auto* cursor : cursors)
+        cursor->indexValueChanged(indexKey, primaryKey);
+}
+
+void MemoryIndex::notifyCursorsOfAllRecordsChanged()
+{
+    Vector<MemoryIndexCursor*> cursors;
+    copyToVector(m_cleanCursors, cursors);
+    for (auto* cursor : cursors)
+        cursor->indexRecordsAllChanged();
+
+    ASSERT(m_cleanCursors.isEmpty());
 }
 
 void MemoryIndex::replaceIndexValueStore(std::unique_ptr<IndexValueStore>&& valueStore)
@@ -122,12 +152,16 @@ IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& in
 {
     LOG(IndexedDB, "MemoryIndex::provisionalPutIndexKey");
 
-    if (!m_records)
+    if (!m_records) {
         m_records = std::make_unique<IndexValueStore>(m_info.unique());
+        notifyCursorsOfAllRecordsChanged();
+    }
 
     if (!m_info.multiEntry()) {
         IDBKeyData key = indexKey.asOneKey();
-        return m_records->addRecord(key, valueKey);
+        IDBError result = m_records->addRecord(key, valueKey);
+        notifyCursorsOfValueChange(key, valueKey);
+        return result;
     }
 
     Vector<IDBKeyData> keys = indexKey.multiEntry();
@@ -142,6 +176,7 @@ IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& in
     for (auto& key : keys) {
         auto error = m_records->addRecord(key, valueKey);
         ASSERT_UNUSED(error, error.isNull());
+        notifyCursorsOfValueChange(key, valueKey);
     }
 
     return { };
@@ -156,12 +191,15 @@ void MemoryIndex::removeRecord(const IDBKeyData& valueKey, const IndexKey& index
     if (!m_info.multiEntry()) {
         IDBKeyData key = indexKey.asOneKey();
         m_records->removeRecord(key, valueKey);
+        notifyCursorsOfValueChange(key, valueKey);
         return;
     }
 
     Vector<IDBKeyData> keys = indexKey.multiEntry();
-    for (auto& key : keys)
+    for (auto& key : keys) {
         m_records->removeRecord(key, valueKey);
+        notifyCursorsOfValueChange(key, valueKey);
+    }
 }
 
 void MemoryIndex::removeEntriesWithValueKey(const IDBKeyData& valueKey)
@@ -171,7 +209,17 @@ void MemoryIndex::removeEntriesWithValueKey(const IDBKeyData& valueKey)
     if (!m_records)
         return;
 
-    m_records->removeEntriesWithValueKey(valueKey);
+    m_records->removeEntriesWithValueKey(*this, valueKey);
+}
+
+MemoryIndexCursor* MemoryIndex::maybeOpenCursor(const IDBCursorInfo& info)
+{
+    auto result = m_cursors.add(info.identifier(), nullptr);
+    if (!result.isNewEntry)
+        return nullptr;
+
+    result.iterator->value = std::make_unique<MemoryIndexCursor>(*this, info);
+    return result.iterator->value.get();
 }
 
 } // namespace IDBServer

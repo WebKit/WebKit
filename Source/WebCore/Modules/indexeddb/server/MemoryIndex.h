@@ -32,6 +32,7 @@
 #include "IDBIndexInfo.h"
 #include "IDBKeyData.h"
 #include "IndexValueStore.h"
+#include "MemoryIndexCursor.h"
 #include <set>
 #include <wtf/HashMap.h>
 
@@ -72,15 +73,31 @@ public:
     void objectStoreCleared();
     void replaceIndexValueStore(std::unique_ptr<IndexValueStore>&&);
 
+    MemoryIndexCursor* maybeOpenCursor(const IDBCursorInfo&);
+
+    IndexValueStore* valueStore() { return m_records.get(); }
+
+    MemoryObjectStore& objectStore() { return m_objectStore; }
+
+    void cursorDidBecomeClean(MemoryIndexCursor&);
+    void cursorDidBecomeDirty(MemoryIndexCursor&);
+
+    void notifyCursorsOfValueChange(const IDBKeyData& indexKey, const IDBKeyData& primaryKey);
+
 private:
     MemoryIndex(const IDBIndexInfo&, MemoryObjectStore&);
 
     uint64_t recordCountForKey(const IDBKeyData&) const;
-    
+
+    void notifyCursorsOfAllRecordsChanged();
+
     IDBIndexInfo m_info;
     MemoryObjectStore& m_objectStore;
 
     std::unique_ptr<IndexValueStore> m_records;
+
+    HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryIndexCursor>> m_cursors;
+    HashSet<MemoryIndexCursor*> m_cleanCursors;
 };
 
 } // namespace IDBServer

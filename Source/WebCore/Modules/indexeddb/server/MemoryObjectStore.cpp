@@ -58,6 +58,12 @@ MemoryObjectStore::~MemoryObjectStore()
     ASSERT(!m_writeTransaction);
 }
 
+MemoryIndex* MemoryObjectStore::indexForIdentifier(uint64_t identifier)
+{
+    ASSERT(identifier);
+    return m_indexesByIdentifier.get(identifier);
+}
+
 void MemoryObjectStore::writeTransactionStarted(MemoryBackingStoreTransaction& transaction)
 {
     LOG(IndexedDB, "MemoryObjectStore::writeTransactionStarted");
@@ -303,6 +309,14 @@ uint64_t MemoryObjectStore::countForKeyRange(uint64_t indexIdentifier, const IDB
     }
 
     return count;
+}
+
+ThreadSafeDataBuffer MemoryObjectStore::valueForKey(const IDBKeyData& key) const
+{
+    if (!m_keyValueStore)
+        return { };
+
+    return m_keyValueStore->get(key);
 }
 
 ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& keyRangeData) const

@@ -48,10 +48,11 @@ struct IDBKeyRangeData;
 class IDBCursorInfo {
 public:
     static IDBCursorInfo objectStoreCursor(IDBClient::IDBTransaction&, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection);
-    static IDBCursorInfo indexCursor(IDBClient::IDBTransaction&, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    static IDBCursorInfo indexCursor(IDBClient::IDBTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
 
     IDBResourceIdentifier identifier() const { return m_cursorIdentifier; }
     uint64_t sourceIdentifier() const { return m_sourceIdentifier; }
+    uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
 
     IndexedDB::CursorSource cursorSource() const { return m_source; }
     IndexedDB::CursorDirection cursorDirection() const { return m_direction; }
@@ -59,15 +60,19 @@ public:
     const IDBKeyRangeData& range() const { return m_range; }
 
     bool isDirectionForward() const;
+    bool isDirectionNoDuplicate() const;
 
     IDBCursorInfo isolatedCopy() const;
 
 private:
-    IDBCursorInfo(IDBClient::IDBTransaction&, IndexedDB::CursorSource, uint64_t sourceIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
-    IDBCursorInfo(const IDBResourceIdentifier&, const IDBResourceIdentifier&, uint64_t, const IDBKeyRangeData&, IndexedDB::CursorSource, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    IDBCursorInfo(IDBClient::IDBTransaction&, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    IDBCursorInfo(IDBClient::IDBTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
+
+    IDBCursorInfo(const IDBResourceIdentifier&, const IDBResourceIdentifier&, uint64_t, uint64_t, const IDBKeyRangeData&, IndexedDB::CursorSource, IndexedDB::CursorDirection, IndexedDB::CursorType);
 
     IDBResourceIdentifier m_cursorIdentifier;
     IDBResourceIdentifier m_transactionIdentifier;
+    uint64_t m_objectStoreIdentifier;
     uint64_t m_sourceIdentifier;
 
     IDBKeyRangeData m_range;

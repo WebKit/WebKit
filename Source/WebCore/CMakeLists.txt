@@ -909,6 +909,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/server/MemoryCursor.cpp
     Modules/indexeddb/server/MemoryIDBBackingStore.cpp
     Modules/indexeddb/server/MemoryIndex.cpp
+    Modules/indexeddb/server/MemoryIndexCursor.cpp
     Modules/indexeddb/server/MemoryObjectStore.cpp
     Modules/indexeddb/server/MemoryObjectStoreCursor.cpp
     Modules/indexeddb/server/UniqueIDBDatabase.cpp

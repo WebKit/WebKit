@@ -354,7 +354,20 @@ IDBError MemoryIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
         break;
     }
     case IndexedDB::CursorSource::Index:
-        return IDBError(IDBExceptionCode::Unknown, ASCIILiteral("Index cursors not yet supported"));
+        auto* objectStore = m_objectStoresByIdentifier.get(info.objectStoreIdentifier());
+        if (!objectStore)
+            return IDBError(IDBExceptionCode::Unknown, ASCIILiteral("No backing store object store found"));
+
+        auto* index = objectStore->indexForIdentifier(info.sourceIdentifier());
+        if (!index)
+            return IDBError(IDBExceptionCode::Unknown, ASCIILiteral("No backing store index found"));
+
+        MemoryCursor* cursor = index->maybeOpenCursor(info);
+        if (!cursor)
+            return IDBError(IDBExceptionCode::Unknown, ASCIILiteral("Could not create index cursor in backing store"));
+
+        cursor->currentData(outData);
+        break;
     }
 
     return { };

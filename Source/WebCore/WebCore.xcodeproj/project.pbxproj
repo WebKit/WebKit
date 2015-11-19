@@ -130,7 +130,7 @@
 		071E49701AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 071E496F1AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0720B09E14D3323500642955 /* GenericEventQueue.cpp */; };
 		0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642955 /* GenericEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		072560FB1BFC2482004F9359 /* JSMediaTrackSupportedConstraintsCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C1C0E61BFB90A700BD2256 /* JSMediaTrackSupportedConstraintsCustom.cpp */; settings = {ASSET_TAGS = (); }; };
+		072560FB1BFC2482004F9359 /* JSMediaTrackSupportedConstraintsCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C1C0E61BFB90A700BD2256 /* JSMediaTrackSupportedConstraintsCustom.cpp */; };
 		07277E4C17D018CC0015534D /* JSMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4017D018CC0015534D /* JSMediaStream.cpp */; };
 		07277E4D17D018CC0015534D /* JSMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4117D018CC0015534D /* JSMediaStream.h */; };
 		07277E4E17D018CC0015534D /* JSMediaStreamAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4217D018CC0015534D /* JSMediaStreamAudioDestinationNode.cpp */; };
@@ -212,8 +212,8 @@
 		07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07846340145B151A00A58DF1 /* JSTrackEvent.cpp */; };
 		07846343145B151A00A58DF1 /* JSTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846341145B151A00A58DF1 /* JSTrackEvent.h */; };
 		07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846384145B1B8E00A58DF1 /* JSTrackCustom.h */; };
-		0787C4691BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0787C4671BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp */; settings = {ASSET_TAGS = (); }; };
-		0787C46A1BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */; settings = {ASSET_TAGS = (); }; };
+		0787C4691BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0787C4671BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp */; };
+		0787C46A1BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */; };
 		078E08FE17D14CEE00420AA1 /* MediaConstraintsImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */; };
 		078E08FF17D14CEE00420AA1 /* MediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4C17CEC32700848E51 /* MediaStream.cpp */; };
 		078E090017D14CEE00420AA1 /* MediaStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4F17CEC32700848E51 /* MediaStreamEvent.cpp */; };
@@ -317,7 +317,7 @@
 		07B5A2DC1464320A00A81ECE /* JSTextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B5A2DA1464320A00A81ECE /* JSTextTrackList.h */; };
 		07B5A30D14687D7100A81ECE /* JSTextTrackListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */; };
 		07BDD6EC1469B4C2009C9F85 /* JSTrackEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */; };
-		07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */; settings = {ASSET_TAGS = (); }; };
+		07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */; };
 		07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E41BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C59B6817F784BA000FBCBB /* MediaSourceStates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B6517F784BA000FBCBB /* MediaSourceStates.cpp */; };
 		07C59B6917F784BA000FBCBB /* MediaSourceStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B6617F784BA000FBCBB /* MediaSourceStates.h */; };
@@ -2137,6 +2137,8 @@
 		518F5004194CAC3A0081BAAE /* JSGamepadButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F5000194CAC3A0081BAAE /* JSGamepadButton.h */; };
 		518F97021BE94C630023187C /* MemoryIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518F97001BE94C5B0023187C /* MemoryIndex.cpp */; };
 		518F97031BE94C630023187C /* MemoryIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F97011BE94C5B0023187C /* MemoryIndex.h */; };
+		519755F91BFD7DC3003DE980 /* MemoryIndexCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 519755F71BFD7DBC003DE980 /* MemoryIndexCursor.cpp */; };
+		519755FA1BFD7DC3003DE980 /* MemoryIndexCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 519755F81BFD7DBC003DE980 /* MemoryIndexCursor.h */; };
 		5198F7A41BBDB79300E2CC5F /* UniqueIDBDatabaseConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5198F7A21BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.cpp */; };
 		5198F7A51BBDB79300E2CC5F /* UniqueIDBDatabaseConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5198F7A31BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5198F7A81BBDD38500E2CC5F /* UniqueIDBDatabaseTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5198F7A61BBDD38100E2CC5F /* UniqueIDBDatabaseTransaction.cpp */; };
@@ -2365,24 +2367,24 @@
 		5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */; };
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DFEBAB718592B6D00C75BEB /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5E16A2E41BFA650B0029A21E /* MediaEndpointPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E16A2E31BFA64FB0029A21E /* MediaEndpointPeerConnection.h */; settings = {ASSET_TAGS = (); }; };
-		5E16A2E51BFA650F0029A21E /* MediaEndpointPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C43521BCEE2F60001E2BC /* PeerConnectionStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C434E1BCEE2E50001E2BC /* PeerConnectionStates.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C43531BCEE2F60001E2BC /* RTCConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C434F1BCEE2E50001E2BC /* RTCConfiguration.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C435F1BCEE31E0001E2BC /* RTCRtpSenderReceiverBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C435D1BCEE30D0001E2BC /* RTCRtpSenderReceiverBase.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C43601BCEE3230001E2BC /* RTCRtpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43591BCEE30D0001E2BC /* RTCRtpSender.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C435A1BCEE30D0001E2BC /* RTCRtpSender.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C43621BCEE32B0001E2BC /* RTCRtpReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43561BCEE30D0001E2BC /* RTCRtpReceiver.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43571BCEE30D0001E2BC /* RTCRtpReceiver.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C43671BCEE3770001E2BC /* RTCTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43641BCEE3720001E2BC /* RTCTrackEvent.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C43681BCEE3770001E2BC /* RTCTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43651BCEE3720001E2BC /* RTCTrackEvent.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C436B1BCF071E0001E2BC /* JSRTCTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43691BCF05C80001E2BC /* JSRTCTrackEvent.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C436C1BCF071E0001E2BC /* JSRTCTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C436A1BCF05C80001E2BC /* JSRTCTrackEvent.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C43711BCF0D750001E2BC /* JSRTCRtpReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C436D1BCF0D690001E2BC /* JSRTCRtpReceiver.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C43721BCF0D750001E2BC /* JSRTCRtpReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C436E1BCF0D690001E2BC /* JSRTCRtpReceiver.h */; settings = {ASSET_TAGS = (); }; };
-		5E2C43731BCF0D750001E2BC /* JSRTCRtpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C436F1BCF0D690001E2BC /* JSRTCRtpSender.cpp */; settings = {ASSET_TAGS = (); }; };
-		5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */; settings = {ASSET_TAGS = (); }; };
+		5E16A2E41BFA650B0029A21E /* MediaEndpointPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E16A2E31BFA64FB0029A21E /* MediaEndpointPeerConnection.h */; };
+		5E16A2E51BFA650F0029A21E /* MediaEndpointPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */; };
+		5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */; };
+		5E2C43521BCEE2F60001E2BC /* PeerConnectionStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C434E1BCEE2E50001E2BC /* PeerConnectionStates.h */; };
+		5E2C43531BCEE2F60001E2BC /* RTCConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C434F1BCEE2E50001E2BC /* RTCConfiguration.cpp */; };
+		5E2C435F1BCEE31E0001E2BC /* RTCRtpSenderReceiverBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C435D1BCEE30D0001E2BC /* RTCRtpSenderReceiverBase.h */; };
+		5E2C43601BCEE3230001E2BC /* RTCRtpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43591BCEE30D0001E2BC /* RTCRtpSender.cpp */; };
+		5E2C43611BCEE3230001E2BC /* RTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C435A1BCEE30D0001E2BC /* RTCRtpSender.h */; };
+		5E2C43621BCEE32B0001E2BC /* RTCRtpReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43561BCEE30D0001E2BC /* RTCRtpReceiver.cpp */; };
+		5E2C43631BCEE32B0001E2BC /* RTCRtpReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43571BCEE30D0001E2BC /* RTCRtpReceiver.h */; };
+		5E2C43671BCEE3770001E2BC /* RTCTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43641BCEE3720001E2BC /* RTCTrackEvent.cpp */; };
+		5E2C43681BCEE3770001E2BC /* RTCTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43651BCEE3720001E2BC /* RTCTrackEvent.h */; };
+		5E2C436B1BCF071E0001E2BC /* JSRTCTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C43691BCF05C80001E2BC /* JSRTCTrackEvent.cpp */; };
+		5E2C436C1BCF071E0001E2BC /* JSRTCTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C436A1BCF05C80001E2BC /* JSRTCTrackEvent.h */; };
+		5E2C43711BCF0D750001E2BC /* JSRTCRtpReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C436D1BCF0D690001E2BC /* JSRTCRtpReceiver.cpp */; };
+		5E2C43721BCF0D750001E2BC /* JSRTCRtpReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C436E1BCF0D690001E2BC /* JSRTCRtpReceiver.h */; };
+		5E2C43731BCF0D750001E2BC /* JSRTCRtpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C436F1BCF0D690001E2BC /* JSRTCRtpSender.cpp */; };
+		5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43701BCF0D690001E2BC /* JSRTCRtpSender.h */; };
 		5E2C437B1BCF9A570001E2BC /* RTCPeerConnectionBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43761BCF9A0B0001E2BC /* RTCPeerConnectionBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5E2C437C1BCF9A840001E2BC /* RTCPeerConnectionInternalsBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E2C43791BCF9A0B0001E2BC /* RTCPeerConnectionInternalsBuiltins.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5EA725D21ACABD4700EAD17B /* MediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EA725CD1ACABCD900EAD17B /* MediaDevices.cpp */; };
@@ -9559,6 +9561,8 @@
 		518F5000194CAC3A0081BAAE /* JSGamepadButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGamepadButton.h; sourceTree = "<group>"; };
 		518F97001BE94C5B0023187C /* MemoryIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryIndex.cpp; sourceTree = "<group>"; };
 		518F97011BE94C5B0023187C /* MemoryIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryIndex.h; sourceTree = "<group>"; };
+		519755F71BFD7DBC003DE980 /* MemoryIndexCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryIndexCursor.cpp; sourceTree = "<group>"; };
+		519755F81BFD7DBC003DE980 /* MemoryIndexCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryIndexCursor.h; sourceTree = "<group>"; };
 		5198F7A21BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabaseConnection.cpp; sourceTree = "<group>"; };
 		5198F7A31BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseConnection.h; sourceTree = "<group>"; };
 		5198F7A61BBDD38100E2CC5F /* UniqueIDBDatabaseTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabaseTransaction.cpp; sourceTree = "<group>"; };
@@ -16973,6 +16977,8 @@
 				51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */,
 				518F97001BE94C5B0023187C /* MemoryIndex.cpp */,
 				518F97011BE94C5B0023187C /* MemoryIndex.h */,
+				519755F71BFD7DBC003DE980 /* MemoryIndexCursor.cpp */,
+				519755F81BFD7DBC003DE980 /* MemoryIndexCursor.h */,
 				51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */,
 				51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */,
 				517139031BF64DE3000D5F01 /* MemoryObjectStoreCursor.cpp */,
@@ -25833,6 +25839,7 @@
 				0707568C142262D600414161 /* HTMLTrackElement.h in Headers */,
 				977B37261228721700B81FF8 /* HTMLTreeBuilder.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
+				519755FA1BFD7DC3003DE980 /* MemoryIndexCursor.h in Headers */,
 				AD49914318F0815100BF0092 /* HTMLUnknownElement.h in Headers */,
 				E44613AB0CD6331000FADA75 /* HTMLVideoElement.h in Headers */,
 				839AAFED1A0C0C8D00605F99 /* HTMLWBRElement.h in Headers */,
@@ -31005,6 +31012,7 @@
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleCFNet.cpp in Sources */,
 				E45390470EAFD637003695C8 /* SoundIOS.mm in Sources */,
 				4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */,
+				519755F91BFD7DC3003DE980 /* MemoryIndexCursor.cpp in Sources */,
 				84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */,
 				CD3A496117A9D01B00274E42 /* SourceBuffer.cpp in Sources */,
 				CD3A496417A9D01B00274E42 /* SourceBufferList.cpp in Sources */,

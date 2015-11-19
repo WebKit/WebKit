@@ -30,6 +30,8 @@
 
 #include "IDBError.h"
 #include "IDBKeyRangeData.h"
+#include "Logging.h"
+#include "MemoryIndex.h"
 
 namespace WebCore {
 namespace IDBServer {
@@ -94,12 +96,14 @@ void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData&
         m_records.remove(iterator);
 }
 
-void IndexValueStore::removeEntriesWithValueKey(const IDBKeyData& valueKey)
+void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKeyData& valueKey)
 {
     HashSet<IDBKeyData*> entryKeysToRemove;
 
     for (auto& entry : m_records) {
         if (entry.value->removeKey(valueKey))
+            index.notifyCursorsOfValueChange(entry.key, valueKey);
+        if (!entry.value->getCount())
             entryKeysToRemove.add(&entry.key);
     }
 
@@ -111,28 +115,262 @@ void IndexValueStore::removeEntriesWithValueKey(const IDBKeyData& valueKey)
 
 IDBKeyData IndexValueStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& range) const
 {
+    LOG(IndexedDB, "IndexValueStore::lowestKeyWithRecordInRange - %s", range.loggingString().utf8().data());
+
     if (range.isExactlyOneKey())
         return m_records.contains(range.lowerKey) ? range.lowerKey : IDBKeyData();
 
+    auto iterator = lowestIteratorInRange(range);
+    if (iterator == m_orderedKeys.end())
+        return { };
+
+    return *iterator;
+}
+
+std::set<IDBKeyData>::iterator IndexValueStore::lowestIteratorInRange(const IDBKeyRangeData& range) const
+{
     auto lowestInRange = m_orderedKeys.lower_bound(range.lowerKey);
 
     if (lowestInRange == m_orderedKeys.end())
-        return { };
+        return lowestInRange;
 
-    if (range.lowerOpen && *lowestInRange == range.lowerKey)
+    if (range.lowerOpen && *lowestInRange == range.lowerKey) {
         ++lowestInRange;
 
-    if (lowestInRange == m_orderedKeys.end())
-        return { };
+        if (lowestInRange == m_orderedKeys.end())
+            return lowestInRange;
+    }
 
     if (!range.upperKey.isNull()) {
         if (lowestInRange->compare(range.upperKey) > 0)
-            return { };
+            return m_orderedKeys.end();
         if (range.upperOpen && *lowestInRange == range.upperKey)
-            return { };
+            return m_orderedKeys.end();
     }
 
-    return *lowestInRange;
+    return lowestInRange;
+}
+
+std::set<IDBKeyData>::reverse_iterator IndexValueStore::highestReverseIteratorInRange(const IDBKeyRangeData& range) const
+{
+    auto highestInRange = std::set<IDBKeyData>::reverse_iterator(m_orderedKeys.upper_bound(range.upperKey));
+
+    if (highestInRange == m_orderedKeys.rend())
+        return highestInRange;
+
+    if (range.upperOpen && *highestInRange == range.upperKey) {
+        ++highestInRange;
+
+        if (highestInRange == m_orderedKeys.rend())
+            return highestInRange;
+    }
+
+    if (!range.lowerKey.isNull()) {
+        if (highestInRange->compare(range.lowerKey) < 0)
+            return m_orderedKeys.rend();
+        if (range.lowerOpen && *highestInRange == range.lowerKey)
+            return m_orderedKeys.rend();
+    }
+
+    return highestInRange;
+}
+
+IndexValueStore::Iterator IndexValueStore::find(const IDBKeyData& key, bool open)
+{
+    IDBKeyRangeData range;
+    if (!key.isNull())
+        range.lowerKey = key;
+    else
+        range.lowerKey = IDBKeyData::minimum();
+    range.lowerOpen = open;
+
+    auto iterator = lowestIteratorInRange(range);
+    if (iterator == m_orderedKeys.end())
+        return { };
+
+    auto record = m_records.get(*iterator);
+    ASSERT(record);
+
+    auto primaryIterator = record->begin();
+    ASSERT(primaryIterator.isValid());
+    return { *this, iterator, primaryIterator };
+}
+
+IndexValueStore::Iterator IndexValueStore::find(const IDBKeyData& key, const IDBKeyData& primaryKey)
+{
+    ASSERT(!key.isNull());
+    ASSERT(!primaryKey.isNull());
+
+    IDBKeyRangeData range;
+    range.lowerKey = key;
+    range.lowerOpen = false;
+
+    auto iterator = lowestIteratorInRange(range);
+    if (iterator == m_orderedKeys.end())
+        return { };
+
+    auto record = m_records.get(*iterator);
+    ASSERT(record);
+
+    auto primaryIterator = record->find(primaryKey);
+    if (primaryIterator.isValid())
+        return { *this, iterator, primaryIterator };
+
+    // If we didn't find a primary key iterator in this entry,
+    // we need to move on to start of the next record.
+    iterator++;
+    if (iterator == m_orderedKeys.end())
+        return { };
+
+    record = m_records.get(*iterator);
+    ASSERT(record);
+
+    primaryIterator = record->begin();
+    ASSERT(primaryIterator.isValid());
+
+    return { *this, iterator, primaryIterator };
+}
+
+IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, bool open)
+{
+    IDBKeyRangeData range;
+    if (!key.isNull())
+        range.upperKey = key;
+    else
+        range.upperKey = IDBKeyData::maximum();
+    range.upperOpen = open;
+
+    auto iterator = highestReverseIteratorInRange(range);
+    if (iterator == m_orderedKeys.rend())
+        return { };
+
+    auto record = m_records.get(*iterator);
+    ASSERT(record);
+
+    auto primaryIterator = record->reverseBegin();
+    ASSERT(primaryIterator.isValid());
+    return { *this, iterator, primaryIterator };
+}
+
+IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, const IDBKeyData& primaryKey)
+{
+    ASSERT(!key.isNull());
+    ASSERT(!primaryKey.isNull());
+
+    IDBKeyRangeData range;
+    range.upperKey = key;
+    range.upperOpen = false;
+
+    auto iterator = highestReverseIteratorInRange(range);
+    if (iterator == m_orderedKeys.rend())
+        return { };
+
+    auto record = m_records.get(*iterator);
+    ASSERT(record);
+
+    auto primaryIterator = record->reverseFind(primaryKey);
+    if (primaryIterator.isValid())
+        return { *this, iterator, primaryIterator };
+
+    // If we didn't find a primary key iterator in this entry,
+    // we need to move on to start of the next record.
+    iterator++;
+    if (iterator == m_orderedKeys.rend())
+        return { };
+
+    record = m_records.get(*iterator);
+    ASSERT(record);
+
+    primaryIterator = record->reverseBegin();
+    ASSERT(primaryIterator.isValid());
+
+    return { *this, iterator, primaryIterator };
+}
+
+
+IndexValueStore::Iterator::Iterator(IndexValueStore& store, std::set<IDBKeyData>::iterator iterator, IndexValueEntry::Iterator primaryIterator)
+    : m_store(&store)
+    , m_forwardIterator(iterator)
+    , m_primaryKeyIterator(primaryIterator)
+{
+}
+
+IndexValueStore::Iterator::Iterator(IndexValueStore& store, std::set<IDBKeyData>::reverse_iterator iterator, IndexValueEntry::Iterator primaryIterator)
+    : m_store(&store)
+    , m_forward(false)
+    , m_reverseIterator(iterator)
+    , m_primaryKeyIterator(primaryIterator)
+{
+}
+
+IndexValueStore::Iterator& IndexValueStore::Iterator::nextIndexEntry()
+{
+    if (!m_store)
+        return *this;
+
+    if (m_forward) {
+        ++m_forwardIterator;
+        if (m_forwardIterator == m_store->m_orderedKeys.end()) {
+            invalidate();
+            return *this;
+        }
+
+        auto* entry = m_store->m_records.get(*m_forwardIterator);
+        ASSERT(entry);
+
+        m_primaryKeyIterator = entry->begin();
+        ASSERT(m_primaryKeyIterator.isValid());
+    } else {
+        ++m_reverseIterator;
+        if (m_reverseIterator == m_store->m_orderedKeys.rend()) {
+            invalidate();
+            return *this;
+        }
+
+        auto* entry = m_store->m_records.get(*m_reverseIterator);
+        ASSERT(entry);
+
+        m_primaryKeyIterator = entry->reverseBegin();
+        ASSERT(m_primaryKeyIterator.isValid());
+    }
+    
+    return *this;
+}
+
+IndexValueStore::Iterator& IndexValueStore::Iterator::operator++()
+{
+    if (!isValid())
+        return *this;
+
+    ++m_primaryKeyIterator;
+    if (m_primaryKeyIterator.isValid())
+        return *this;
+
+    // Ran out of primary key records, so move the main index iterator.
+    return nextIndexEntry();
+}
+
+void IndexValueStore::Iterator::invalidate()
+{
+    m_store = nullptr;
+    m_primaryKeyIterator.invalidate();
+}
+
+bool IndexValueStore::Iterator::isValid()
+{
+    return m_store && m_primaryKeyIterator.isValid();
+}
+
+const IDBKeyData& IndexValueStore::Iterator::key()
+{
+    ASSERT(isValid());
+    return m_forward ? *m_forwardIterator : *m_reverseIterator;
+}
+
+const IDBKeyData& IndexValueStore::Iterator::primaryKey()
+{
+    ASSERT(isValid());
+    return m_primaryKeyIterator.key();
 }
 
 } // namespace IDBServer

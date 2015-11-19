@@ -41,6 +41,8 @@ struct IDBKeyRangeData;
 
 namespace IDBServer {
 
+class MemoryIndex;
+
 typedef HashMap<IDBKeyData, std::unique_ptr<IndexValueEntry>, IDBKeyDataHash, IDBKeyDataHashTraits> IndexKeyValueMap;
 
 class IndexValueStore {
@@ -55,9 +57,49 @@ public:
     IDBError addRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey);
     void removeRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey);
 
-    void removeEntriesWithValueKey(const IDBKeyData& valueKey);
+    void removeEntriesWithValueKey(MemoryIndex&, const IDBKeyData& valueKey);
+
+    class Iterator {
+        friend class IndexValueStore;
+    public:
+        Iterator()
+        {
+        }
+
+        Iterator(IndexValueStore&, std::set<IDBKeyData>::iterator, IndexValueEntry::Iterator);
+        Iterator(IndexValueStore&, std::set<IDBKeyData>::reverse_iterator, IndexValueEntry::Iterator);
+
+        void invalidate();
+        bool isValid();
+
+        const IDBKeyData& key();
+        const IDBKeyData& primaryKey();
+        const ThreadSafeDataBuffer& value();
+
+        Iterator& operator++();
+        Iterator& nextIndexEntry();
+
+    private:
+        IndexValueStore* m_store { nullptr };
+        bool m_forward { true };
+        std::set<IDBKeyData>::iterator m_forwardIterator;
+        std::set<IDBKeyData>::reverse_iterator m_reverseIterator;
+
+        IndexValueEntry::Iterator m_primaryKeyIterator;
+    };
+
+    // Returns an iterator pointing to the first primaryKey record in the requested key, or the next key if it doesn't exist.
+    Iterator find(const IDBKeyData&, bool open = false);
+    Iterator reverseFind(const IDBKeyData&, bool open = false);
+
+    // Returns an iterator pointing to the key/primaryKey record, or the next one after it if it doesn't exist.
+    Iterator find(const IDBKeyData&, const IDBKeyData& primaryKey);
+    Iterator reverseFind(const IDBKeyData&, const IDBKeyData& primaryKey);
 
 private:
+    std::set<IDBKeyData>::iterator lowestIteratorInRange(const IDBKeyRangeData&) const;
+    std::set<IDBKeyData>::reverse_iterator highestReverseIteratorInRange(const IDBKeyRangeData&) const;
+
     IndexKeyValueMap m_records;
     std::set<IDBKeyData> m_orderedKeys;
     

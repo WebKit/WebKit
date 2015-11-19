@@ -35,28 +35,42 @@ namespace WebCore {
 
 IDBCursorInfo IDBCursorInfo::objectStoreCursor(IDBClient::IDBTransaction& transaction, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction)
 {
-    return { transaction, IndexedDB::CursorSource::ObjectStore, objectStoreIdentifier, range, direction, IndexedDB::CursorType::KeyAndValue };
+    return { transaction, objectStoreIdentifier, range, direction, IndexedDB::CursorType::KeyAndValue };
 }
 
-IDBCursorInfo IDBCursorInfo::indexCursor(IDBClient::IDBTransaction& transaction, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo IDBCursorInfo::indexCursor(IDBClient::IDBTransaction& transaction, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
 {
-    return { transaction, IndexedDB::CursorSource::Index, indexIdentifier, range, direction, type };
+    return { transaction, objectStoreIdentifier, indexIdentifier, range, direction, type };
 }
 
-IDBCursorInfo::IDBCursorInfo(IDBClient::IDBTransaction& transaction, IndexedDB::CursorSource source, uint64_t sourceIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo::IDBCursorInfo(IDBClient::IDBTransaction& transaction, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(transaction.serverConnection())
     , m_transactionIdentifier(transaction.info().identifier())
-    , m_sourceIdentifier(sourceIdentifier)
+    , m_objectStoreIdentifier(objectStoreIdentifier)
+    , m_sourceIdentifier(objectStoreIdentifier)
     , m_range(range)
-    , m_source(source)
+    , m_source(IndexedDB::CursorSource::ObjectStore)
     , m_direction(direction)
     , m_type(type)
 {
 }
 
-IDBCursorInfo::IDBCursorInfo(const IDBResourceIdentifier& cursorIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t sourceIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorSource source, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo::IDBCursorInfo(IDBClient::IDBTransaction& transaction, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+    : m_cursorIdentifier(transaction.serverConnection())
+    , m_transactionIdentifier(transaction.info().identifier())
+    , m_objectStoreIdentifier(objectStoreIdentifier)
+    , m_sourceIdentifier(indexIdentifier)
+    , m_range(range)
+    , m_source(IndexedDB::CursorSource::Index)
+    , m_direction(direction)
+    , m_type(type)
+{
+}
+
+IDBCursorInfo::IDBCursorInfo(const IDBResourceIdentifier& cursorIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t sourceIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorSource source, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(cursorIdentifier)
     , m_transactionIdentifier(transactionIdentifier)
+    , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_sourceIdentifier(sourceIdentifier)
     , m_range(range)
     , m_source(source)
@@ -70,9 +84,14 @@ bool IDBCursorInfo::isDirectionForward() const
     return m_direction == IndexedDB::CursorDirection::Next || m_direction == IndexedDB::CursorDirection::NextNoDuplicate;
 }
 
+bool IDBCursorInfo::isDirectionNoDuplicate() const
+{
+    return m_direction == IndexedDB::CursorDirection::NextNoDuplicate || m_direction == IndexedDB::CursorDirection::PrevNoDuplicate;
+}
+
 IDBCursorInfo IDBCursorInfo::isolatedCopy() const
 {
-    return { m_cursorIdentifier.isolatedCopy(), m_transactionIdentifier.isolatedCopy(), m_sourceIdentifier, m_range.isolatedCopy(), m_source, m_direction, m_type };
+    return { m_cursorIdentifier.isolatedCopy(), m_transactionIdentifier.isolatedCopy(), m_objectStoreIdentifier, m_sourceIdentifier, m_range.isolatedCopy(), m_source, m_direction, m_type };
 }
 
 } // namespace WebCore

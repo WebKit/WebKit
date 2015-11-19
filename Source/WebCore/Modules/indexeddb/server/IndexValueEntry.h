@@ -32,6 +32,9 @@
 #include <set>
 
 namespace WebCore {
+
+class ThreadSafeDataBuffer;
+
 namespace IDBServer {
 
 class IndexValueEntry {
@@ -41,12 +44,47 @@ public:
 
     void addKey(const IDBKeyData&);
 
-    // Returns true if the IndexValueEntry is empty after removing the key;
+    // Returns true if a key was actually removed.
     bool removeKey(const IDBKeyData&);
 
     const IDBKeyData* getLowest() const;
 
     uint64_t getCount() const;
+
+    class Iterator {
+    public:
+        Iterator()
+        {
+        }
+
+        Iterator(IndexValueEntry&);
+        Iterator(IndexValueEntry&, std::set<IDBKeyData>::iterator);
+        Iterator(IndexValueEntry&, std::set<IDBKeyData>::reverse_iterator);
+
+        bool isValid() const;
+        void invalidate();
+
+        const IDBKeyData& key() const;
+        const ThreadSafeDataBuffer& value() const;
+
+        Iterator& operator++();
+
+    private:
+        IndexValueEntry* m_entry { nullptr };
+        bool m_forward { true };
+        std::set<IDBKeyData>::iterator m_forwardIterator;
+        std::set<IDBKeyData>::reverse_iterator m_reverseIterator;
+    };
+
+    Iterator begin();
+    Iterator reverseBegin();
+
+    // Finds the key, or the next higher record after the key.
+    Iterator find(const IDBKeyData&);
+    // Finds the key, or the next lowest record before the key.
+    Iterator reverseFind(const IDBKeyData&);
+
+    bool unique() const { return m_unique; }
 
 private:
     union {
