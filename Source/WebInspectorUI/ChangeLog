@@ -1,5 +1,18 @@
 2015-11-18  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Clear watch expressions button using wrong icon
+        https://bugs.webkit.org/show_bug.cgi?id=151422
+
+        Reviewed by Timothy Hatcher.
+
+        Updated "clear" button to use trashcan image. This was broken by
+        https://bugs.webkit.org/show_bug.cgi?id=151377.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+
+2015-11-18  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Reduce synchronous view layouts
         https://bugs.webkit.org/show_bug.cgi?id=151058
 
