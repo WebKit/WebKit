@@ -1,4 +1,4 @@
-//@ runDefault
+//@ runFTLNoCJIT
 var o1 = {
     i: 0,
     valueOf: function() { return this.i; }
@@ -21,11 +21,23 @@ function foo(a, b) {
 }
 noInline(foo);
 
-for (var i = 0; i <= 10000; i++) {
+var iterations;
+var expectedResult;
+if (this.window) {
+    // The layout test doesn't like too many iterations and may time out.
+    iterations = 10000;
+    expectedResult = 200020;
+} else {
+    iterations = 100000;
+    expectedResult = 2000020;
+}
+
+
+for (var i = 0; i <= iterations; i++) {
     o1.i = i + 2;
     o2.i = i;
     result += foo(o1, o2);
 }
 
-if (result != 200020)
+if (result != expectedResult)
     throw "Bad result: " + result;
