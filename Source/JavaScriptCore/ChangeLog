@@ -1,3 +1,35 @@
+2015-11-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] When the iterated allocator is forced to spill, nuke the Moves that were already proven to be useless
+        https://bugs.webkit.org/show_bug.cgi?id=151461
+
+        Reviewed by Filip Pizlo.
+
+        Previously, when we had to spill, we were just inserting new Spill() and Fill()
+        in code while everything else remained identical.
+
+        Coalescing moves is a big part of the algorithm and takes a non-trivial time.
+        Since we were never removing Moves until reaching a successful coloring, we were
+        paying that cost with every single iteration.
+
+        With this patch, I keep a copy of the coalescing aliases when we make the first
+        potential spill decision. Before doing that, we have only simplified and coalesced
+        vertices that are provably colorable regardless of the other vertices' colors
+        (because their degree is <K, potentially after other edges were removed by simplification).
+
+        If we end up actually spilling, I use the old aliases to simplify the blocks if possible.
+
+        This is a 5% progression on "testComplex(64, 384)".
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::getAliasWhenSpilling):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::coalesce):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::selectSpill):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::assignColors):
+        (JSC::B3::Air::addSpillAndFillToProgram):
+        (JSC::B3::Air::iteratedRegisterCoalescingOnType):
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+
 2015-11-19  Filip Pizlo  <fpizlo@apple.com>
 
         Fix FTL->B3 lowering of Phi

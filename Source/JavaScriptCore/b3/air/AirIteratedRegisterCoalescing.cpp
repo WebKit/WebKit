@@ -244,6 +244,22 @@ public:
         return alias;
     }
 
+    Tmp getAliasWhenSpilling(Tmp tmp) const
+    {
+        ASSERT_WITH_MESSAGE(!m_spilledTmp.isEmpty(), "This function is only valid for coalescing during spilling.");
+
+        if (m_coalescedTmpsAtSpill.isEmpty())
+            return tmp;
+
+        Tmp alias = tmp;
+        while (Tmp nextAlias = m_coalescedTmpsAtSpill[AbsoluteTmpHelper<type>::absoluteIndex(alias)])
+            alias = nextAlias;
+
+        ASSERT_WITH_MESSAGE(!m_spilledTmp.contains(tmp) || alias == tmp, "The aliases at spill should always be colorable. Something went horribly wrong.");
+
+        return alias;
+    }
+
     const HashSet<Tmp>& spilledTmp() const { return m_spilledTmp; }
     Reg allocatedReg(Tmp tmp) const
     {
@@ -437,6 +453,7 @@ private:
         } else if (canBeSafelyCoalesced(u, v)) {
             combine(u, v);
             addWorkList(u);
+            m_hasCoalescedNonTrivialMove = true;
 
             if (traceDebug)
                 dataLog("    Safe Coalescing\n");
@@ -573,6 +590,13 @@ private:
 
     void selectSpill()
     {
+        if (!m_hasSelectedSpill) {
+            m_hasSelectedSpill = true;
+
+            if (m_hasCoalescedNonTrivialMove)
+                m_coalescedTmpsAtSpill = m_coalescedTmps;
+        }
+
         // FIXME: we should select a good candidate based on all the information we have.
         auto iterator = m_spillWorklist.begin();
 
@@ -654,7 +678,9 @@ private:
         }
         m_selectStack.clear();
 
-        if (!m_spilledTmp.isEmpty())
+        if (m_spilledTmp.isEmpty())
+            m_coalescedTmpsAtSpill.clear();
+        else
             m_coloredTmp.clear();
     }
 
@@ -785,7 +811,7 @@ private:
     HashSet<Tmp> m_spilledTmp;
 
     // Values that have been coalesced with an other value.
-    Vector<Tmp> m_coalescedTmps;
+    Vector<Tmp, 0, UnsafeVectorOverflow> m_coalescedTmps;
 
     // The stack of Tmp removed from the graph and ready for coloring.
     BitVector m_isOnSelectStack;
@@ -875,6 +901,12 @@ private:
     HashSet<Tmp> m_spillWorklist;
     // Low-degree, Move related.
     HashSet<Tmp> m_freezeWorklist;
+
+    bool m_hasSelectedSpill { false };
+    bool m_hasCoalescedNonTrivialMove { false };
+
+    // The mapping of Tmp to their alias for Moves that are always coalescing regardless of spilling.
+    Vector<Tmp, 0, UnsafeVectorOverflow> m_coalescedTmpsAtSpill;
 };
 
 template<Arg::Type type>
@@ -914,8 +946,10 @@ static void assignRegisterToTmpInProgram(Code& code, const IteratedRegisterCoale
 }
 
 template<Arg::Type type>
-static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp, HashSet<Tmp>& unspillableTmp)
+static void addSpillAndFillToProgram(Code& code, const IteratedRegisterCoalescingAllocator<type>& allocator, HashSet<Tmp>& unspillableTmp)
 {
+    const HashSet<Tmp>& spilledTmp = allocator.spilledTmp();
+
     // All the spilled values become unspillable.
     unspillableTmp.add(spilledTmp.begin(), spilledTmp.end());
 
@@ -929,6 +963,8 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp,
     // Rewrite the program to get rid of the spilled Tmp.
     InsertionSet insertionSet(code);
     for (BasicBlock* block : code) {
+        bool hasAliasedTmps = false;
+
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
 
@@ -937,13 +973,8 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp,
                 Arg& arg = inst.args[i];
                 if (arg.isTmp() && arg.type() == type && !arg.isReg()) {
                     auto stackSlotEntry = stackSlots.find(arg.tmp());
-                    if (stackSlotEntry == stackSlots.end())
-                        continue;
-
-                    if (inst.admitsStack(i)) {
+                    if (stackSlotEntry != stackSlots.end() && inst.admitsStack(i))
                         arg = Arg::stack(stackSlotEntry->value);
-                        continue;
-                    }
                 }
             }
 
@@ -953,8 +984,14 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp,
                     return;
 
                 auto stackSlotEntry = stackSlots.find(tmp);
-                if (stackSlotEntry == stackSlots.end())
+                if (stackSlotEntry == stackSlots.end()) {
+                    Tmp alias = allocator.getAliasWhenSpilling(tmp);
+                    if (alias != tmp) {
+                        tmp = alias;
+                        hasAliasedTmps = true;
+                    }
                     return;
+                }
 
                 Arg arg = Arg::stack(stackSlotEntry->value);
                 Opcode move = type == Arg::GP ? Move : MoveDouble;
@@ -972,6 +1009,9 @@ static void addSpillAndFillToProgram(Code& code, const HashSet<Tmp>& spilledTmp,
             });
         }
         insertionSet.execute(block);
+
+        if (hasAliasedTmps)
+            block->insts().removeAllMatching(isUselessMoveInst<type>);
     }
 }
 
@@ -996,7 +1036,7 @@ static void iteratedRegisterCoalescingOnType(Code& code, HashSet<Tmp>& unspillab
             assignRegisterToTmpInProgram(code, allocator);
             return;
         }
-        addSpillAndFillToProgram<type>(code, allocator.spilledTmp(), unspillableTmps);
+        addSpillAndFillToProgram<type>(code, allocator, unspillableTmps);
     }
 }
 
@@ -1039,13 +1079,13 @@ void iteratedRegisterCoalescing(Code& code)
             assignRegisterToTmpInProgram(code, gpAllocator);
             gpIsColored = true;
         } else
-            addSpillAndFillToProgram<Arg::GP>(code, gpAllocator.spilledTmp(), unspillableGPs);
+            addSpillAndFillToProgram<Arg::GP>(code, gpAllocator, unspillableGPs);
 
         if (fpAllocator.spilledTmp().isEmpty()) {
             assignRegisterToTmpInProgram(code, fpAllocator);
             fpIsColored = true;
         } else
-            addSpillAndFillToProgram<Arg::FP>(code, fpAllocator.spilledTmp(), unspillableFPs);
+            addSpillAndFillToProgram<Arg::FP>(code, fpAllocator, unspillableFPs);
     };
 
     if (!gpIsColored)
