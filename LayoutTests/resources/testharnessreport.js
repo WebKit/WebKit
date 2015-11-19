@@ -36,7 +36,7 @@ function convertResult(resultStatus){
 *  spacing between cells is preserved, and it is therefore not readable. By
 *  setting output to false, the HTML table will not be created
 */
-setup({"output":false, "explicit_timeout": true});
+setup({"output": false, "explicit_timeout": !!testRunner});
 
 /*  Using a callback function, test results will be added to the page in a 
 *   manner that allows dumpAsText to produce readable test results
