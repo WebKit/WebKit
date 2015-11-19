@@ -94,6 +94,35 @@ IOReturn IOSurfaceSetPurgeable(IOSurfaceRef buffer, uint32_t newState, uint32_t 
 
 WTF_EXTERN_C_END
 
-#endif
+#if PLATFORM(IOS)
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <IOSurfaceAccelerator/IOSurfaceAccelerator.h>
+
+#else
+
+typedef struct __IOSurfaceAccelerator *IOSurfaceAcceleratorRef;
+
+WTF_EXTERN_C_BEGIN
+
+IOReturn IOSurfaceAcceleratorCreate(CFAllocatorRef allocator, CFDictionaryRef properties, IOSurfaceAcceleratorRef* acceleratorOut);
+CFRunLoopSourceRef IOSurfaceAcceleratorGetRunLoopSource(IOSurfaceAcceleratorRef accelerator);
+
+typedef void (*IOSurfaceAcceleratorCompletionCallback)(void* completionRefCon, IOReturn status, void* completionRefCon2);
+
+typedef struct IOSurfaceAcceleratorCompletion {
+    IOSurfaceAcceleratorCompletionCallback completionCallback;
+    void* completionRefCon;
+    void* completionRefCon2;
+} IOSurfaceAcceleratorCompletion;
+
+IOReturn IOSurfaceAcceleratorTransformSurface(IOSurfaceAcceleratorRef accelerator, IOSurfaceRef sourceBuffer, IOSurfaceRef destinationBuffer, CFDictionaryRef options, void* pCropRectangles, IOSurfaceAcceleratorCompletion* pCompletion, void* pSwap, uint32_t* pCommandID);
+
+WTF_EXTERN_C_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // PLATFORM(IOS)
+
+#endif // !PLATFORM(IOS_SIMULATOR)
 
 #endif // IOSurfaceSPI_h
