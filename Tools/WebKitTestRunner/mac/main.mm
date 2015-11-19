@@ -36,7 +36,9 @@ static void setDefaultsToConsistentValuesForTesting()
         // FIXME: This is likely insufficient, as tests change (and don't reset) these settings via Internals.
         @"WebAutomaticQuoteSubstitutionEnabled": @NO,
         @"WebAutomaticDashSubstitutionEnabled": @NO,
-        @"NSFakeForceTouchDevice" : @YES
+        @"NSFakeForceTouchDevice" : @YES,
+        @"AppleEnableSwipeNavigateWithScrolls": @YES,
+        @"com.apple.swipescrolldirection": @1,
     };
 
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];

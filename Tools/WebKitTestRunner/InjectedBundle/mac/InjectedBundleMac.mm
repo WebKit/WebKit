@@ -74,6 +74,8 @@ void InjectedBundle::platformInitialize(WKTypeRef)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 101000
         @"AppleSystemFontOSSubversion": @(10),
 #endif
+        @"AppleEnableSwipeNavigateWithScrolls": @YES,
+        @"com.apple.swipescrolldirection": @1,
     };
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];

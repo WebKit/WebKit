@@ -1,3 +1,17 @@
+2015-11-18  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Swipe tests depend on user preferences
+        https://bugs.webkit.org/show_bug.cgi?id=151403
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm: (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/mac/main.mm: (setDefaultsToConsistentValuesForTesting):
+        Override these preferences to match the default for a new OS X installation.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (setDefaultsToConsistentValuesForTesting):
+        Swipe tests are not enabled in WK1, but let's override the default anyway.
+
 2015-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update xserver version in jhbuild
