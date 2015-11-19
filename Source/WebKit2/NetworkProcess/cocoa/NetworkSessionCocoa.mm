@@ -33,7 +33,9 @@
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Credential.h>
+#import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
@@ -41,14 +43,14 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
-static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebKit::ResponseDisposition disposition)
+static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
-    case WebKit::ResponseDisposition::Cancel:
+    case WebCore::PolicyAction::PolicyIgnore:
         return NSURLSessionResponseCancel;
-    case WebKit::ResponseDisposition::Allow:
+    case WebCore::PolicyAction::PolicyUse:
         return NSURLSessionResponseAllow;
-    case WebKit::ResponseDisposition::BecomeDownload:
+    case WebCore::PolicyAction::PolicyDownload:
         return NSURLSessionResponseBecomeDownload;
     }
 }
@@ -141,9 +143,9 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
             ASSERT(isMainThread());
             WebCore::ResourceResponse resourceResponse(response);
             auto completionHandlerCopy = Block_copy(completionHandler);
-            client->didReceiveResponse(resourceResponse, [completionHandlerCopy](WebKit::ResponseDisposition responseDisposition)
+            client->didReceiveResponse(resourceResponse, [completionHandlerCopy](WebCore::PolicyAction policyAction)
                 {
-                    completionHandlerCopy(toNSURLSessionResponseDisposition(responseDisposition));
+                    completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
                     Block_release(completionHandlerCopy);
                 }
             );
@@ -159,6 +161,26 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         if (auto* client = networkingTask->client())
             client->didReceiveData(WebCore::SharedBuffer::wrapNSData(data));
     }
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+{
+    notImplemented();
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+{
+    notImplemented();
+}
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
+{
+    notImplemented();
+}
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
+{
+    notImplemented();
 }
 
 @end

@@ -871,16 +871,17 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
 {
     DownloadProxy* downloadProxy = createDownloadProxy(request);
     uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
+    SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : SessionID::defaultSessionID();
 
 #if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && networkProcess()) {
         // FIXME (NetworkProcess): Replicate whatever FrameLoader::setOriginalURLForDownloadRequest does with the request here.
-        networkProcess()->send(Messages::NetworkProcess::DownloadRequest(downloadProxy->downloadID(), request), 0);
+        networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), request), 0);
         return downloadProxy;
     }
 #endif
 
-    m_processes[0]->send(Messages::WebProcess::DownloadRequest(downloadProxy->downloadID(), initiatingPageID, request), 0);
+    m_processes[0]->send(Messages::WebProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), initiatingPageID, request), 0);
     return downloadProxy;
 }
 

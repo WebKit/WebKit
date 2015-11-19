@@ -200,17 +200,23 @@ void NetworkResourceLoader::cleanup()
     m_connection->didCleanupResourceLoader(*this);
 }
 
+#if !USE(NETWORK_SESSION)
 void NetworkResourceLoader::didConvertHandleToDownload()
 {
     ASSERT(m_networkLoad);
     m_didConvertHandleToDownload = true;
 }
+#endif
 
 void NetworkResourceLoader::abort()
 {
     ASSERT(RunLoop::isMain());
 
-    if (m_networkLoad && !m_didConvertHandleToDownload) {
+    if (m_networkLoad
+#if !USE(NETWORK_SESSION)
+        && !m_didConvertHandleToDownload
+#endif
+    ) {
         m_networkLoad->cancel();
 
 #if ENABLE(NETWORK_CACHE)

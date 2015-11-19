@@ -28,6 +28,10 @@
 
 #include <WebCore/FrameLoaderClient.h>
 
+namespace WebCore {
+class SessionID;
+}
+
 namespace WebKit {
 
 class PluginView;
@@ -184,7 +188,7 @@ private:
     virtual void dispatchDidBecomeFrameset(bool) override;
 
     virtual bool canCachePage() const override;
-    virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) override;
+    virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) override;
 
     virtual RefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const String& name, WebCore::HTMLFrameOwnerElement*,
                                           const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) override;

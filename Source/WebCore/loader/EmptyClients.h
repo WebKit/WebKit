@@ -250,7 +250,7 @@ public:
     virtual void detachedFromParent2() override { }
     virtual void detachedFromParent3() override { }
 
-    virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) override { }
+    virtual void convertMainResourceLoadToDownload(DocumentLoader*, SessionID, const ResourceRequest&, const ResourceResponse&) override { }
 
     virtual void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) override { }
     virtual bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) override { return false; }

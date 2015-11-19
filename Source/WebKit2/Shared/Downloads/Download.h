@@ -64,6 +64,7 @@ namespace WebKit {
 
 class DownloadAuthenticationClient;
 class DownloadManager;
+class NetworkDataTask;
 class WebPage;
 
 class Download : public IPC::MessageSender {
@@ -73,7 +74,9 @@ public:
     ~Download();
 
     void start();
+#if !USE(NETWORK_SESSION)
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
+#endif
     void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancel();
 
@@ -120,8 +123,12 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
 
 #if PLATFORM(COCOA)
+#if USE(NETWORK_SESSION)
+    // FIXME: This needs member variables.
+#else
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
+#endif
 #endif
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;

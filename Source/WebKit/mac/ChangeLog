@@ -1,3 +1,15 @@
+2015-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards implementing Downloads with NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=151414
+
+        Reviewed begrudgingly by Brady Eidson.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::detachedFromParent3):
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+
 2015-11-18  Jer Noble  <jer.noble@apple.com>
 
         Expose WebCore's AudioPlaybackRequiresUserGesture setting to WebKit & WebKit2

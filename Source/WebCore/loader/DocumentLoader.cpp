@@ -728,11 +728,15 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
         frameLoader()->setOriginalURLForDownloadRequest(m_request);
 
+        SessionID sessionID = SessionID::defaultSessionID();
+        if (frame() && frame()->page())
+            sessionID = frame()->page()->sessionID();
+
         if (m_request.url().protocolIsData()) {
             // We decode data URL internally, there is no resource load to convert.
             frameLoader()->client().startDownload(m_request);
         } else
-            frameLoader()->client().convertMainResourceLoadToDownload(this, m_request, m_response);
+            frameLoader()->client().convertMainResourceLoadToDownload(this, sessionID, m_request, m_response);
 
         // It might have gone missing
         if (mainResourceLoader())
@@ -744,9 +748,6 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
             InspectorInstrumentation::continueWithPolicyIgnore(m_frame, *this, mainResourceLoader->identifier(), m_response);
         stopLoadingForPolicyChange();
         return;
-    
-    default:
-        ASSERT_NOT_REACHED();
     }
 
     if (m_response.isHTTP()) {

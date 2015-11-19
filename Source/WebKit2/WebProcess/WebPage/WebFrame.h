@@ -49,6 +49,7 @@ class Frame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
+class SessionID;
 class URL;
 }
 
@@ -82,7 +83,7 @@ public:
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, uint64_t downloadID);
 
     void startDownload(const WebCore::ResourceRequest&);
-    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     String source() const;
     String contentsAsString() const;

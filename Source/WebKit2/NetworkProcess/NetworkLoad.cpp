@@ -48,10 +48,12 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, const NetworkLoadParameters&
     : m_client(client)
     , m_parameters(parameters)
     , m_networkingContext(RemoteNetworkingContext::create(parameters.sessionID, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect))
+#if USE(NETWORK_SESSION)
+    , m_task(SessionTracker::networkSession(parameters.sessionID)->createDataTaskWithRequest(parameters.request, *this))
+#endif
     , m_currentRequest(parameters.request)
 {
 #if USE(NETWORK_SESSION)
-    m_task = SessionTracker::networkSession(parameters.sessionID)->createDataTaskWithRequest(parameters.request, *this);
     m_task->resume();
 #else
     m_handle = ResourceHandle::create(m_networkingContext.get(), parameters.request, this, parameters.defersLoading, parameters.contentSniffingPolicy == SniffContent);
@@ -184,11 +186,11 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
     NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, completionHandler);
 }
 
-void NetworkLoad::didReceiveResponse(const ResourceResponse& response, std::function<void(ResponseDisposition)> completionHandler)
+void NetworkLoad::didReceiveResponse(const ResourceResponse& response, std::function<void(WebCore::PolicyAction)> completionHandler)
 {
     ASSERT(isMainThread());
     sharedDidReceiveResponse(response);
-    completionHandler(ResponseDisposition::Allow);
+    completionHandler(PolicyUse);
 }
 
 void NetworkLoad::didReceiveData(RefPtr<SharedBuffer>&& buffer)

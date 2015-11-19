@@ -64,6 +64,7 @@ namespace WebCore {
 class CertificateInfo;
 class PageGroup;
 class ResourceRequest;
+class SessionID;
 struct PluginInfo;
 struct SecurityOriginData;
 }
@@ -262,7 +263,7 @@ private:
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
     void stopMemorySampler();
 
-    void downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const WebCore::ResourceRequest&);
+    void downloadRequest(WebCore::SessionID, uint64_t downloadID, uint64_t initiatingPageID, const WebCore::ResourceRequest&);
     void resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
     void cancelDownload(uint64_t downloadID);
 

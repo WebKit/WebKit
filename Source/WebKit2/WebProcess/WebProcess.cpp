@@ -1108,7 +1108,7 @@ void WebProcess::ensureWebToDatabaseProcessConnection()
 
 #endif // ENABLED(DATABASE_PROCESS)
 
-void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const ResourceRequest& request)
+void WebProcess::downloadRequest(SessionID sessionID, uint64_t downloadID, uint64_t initiatingPageID, const ResourceRequest& request)
 {
     WebPage* initiatingPage = initiatingPageID ? webPage(initiatingPageID) : 0;
 
@@ -1116,7 +1116,7 @@ void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID,
     if (initiatingPage)
         initiatingPage->mainFrame()->loader().setOriginalURLForDownloadRequest(requestWithOriginalURL);
 
-    downloadManager().startDownload(downloadID, requestWithOriginalURL);
+    downloadManager().startDownload(sessionID, downloadID, requestWithOriginalURL);
 }
 
 void WebProcess::resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
@@ -1175,7 +1175,7 @@ void WebProcess::releasePageCache()
     PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
 }
 
-void WebProcess::fetchWebsiteData(WebCore::SessionID sessionID, uint64_t websiteDataTypes, uint64_t callbackID)
+void WebProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataTypes, uint64_t callbackID)
 {
     WebsiteData websiteData;
 

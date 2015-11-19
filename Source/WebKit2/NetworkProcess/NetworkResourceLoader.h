@@ -63,7 +63,9 @@ public:
 
     NetworkLoad* networkLoad() const { return m_networkLoad.get(); }
 
+#if !USE(NETWORK_SESSION)
     void didConvertHandleToDownload();
+#endif
 
     void start();
     void abort();
@@ -150,7 +152,9 @@ private:
     std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
 
+#if !USE(NETWORK_SESSION)
     bool m_didConvertHandleToDownload { false };
+#endif
     bool m_didConsumeSandboxExtensions { false };
     bool m_defersLoading { false };
 

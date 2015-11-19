@@ -1,3 +1,84 @@
+2015-11-18  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards implementing Downloads with NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=151414
+
+        Reviewed begrudgingly by Brady Eidson.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession):
+        (WebKit::NetworkConnectionToWebProcess::startDownload):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponse):
+        (WebKit::NetworkLoad::didReceiveData):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::downloadRequest):
+        (WebKit::NetworkProcess::resumeDownload):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didConvertHandleToDownload):
+        (WebKit::NetworkResourceLoader::abort):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (toNSURLSessionResponseDisposition):
+        (-[NetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[NetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        (-[NetworkSessionDelegate URLSession:downloadTask:didFinishDownloadingToURL:]):
+        (-[NetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[NetworkSessionDelegate URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:]):
+        (-[NetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::cancelSingleChallenge):
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+        * Shared/Downloads/Download.h:
+        * Shared/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::DownloadManager):
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        (WebKit::DownloadManager::resumeDownload):
+        (WebKit::DownloadManager::cancelDownload):
+        (WebKit::DownloadManager::downloadFinished):
+        (WebKit::DownloadManager::didCreateDownload):
+        * Shared/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::isDownloading):
+        (WebKit::DownloadManager::activeDownloadCount):
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        (WebKit::Download::resume):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::canCachePage):
+        (WebKit::WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        (WebKit::WebFrameLoaderClient::createFrame):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        (WebKit::WebFrame::source):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadRequest):
+        (WebKit::WebProcess::resumeDownload):
+        (WebKit::WebProcess::releasePageCache):
+        (WebKit::WebProcess::fetchWebsiteData):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2015-11-18  Chris Dumez  <cdumez@apple.com>
 
         Clean up / optimize NetworkCacheSubresourcesEntry

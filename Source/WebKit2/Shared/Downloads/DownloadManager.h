@@ -27,6 +27,7 @@
 #define DownloadManager_h
 
 #include "SandboxExtension.h"
+#include <WebCore/NotImplemented.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -35,6 +36,7 @@ namespace WebCore {
 class ResourceHandle;
 class ResourceRequest;
 class ResourceResponse;
+class SessionID;
 }
 
 namespace IPC {
@@ -46,6 +48,7 @@ namespace WebKit {
 
 class AuthenticationManager;
 class Download;
+class NetworkDataTask;
 class WebPage;
 
 class DownloadManager {
@@ -64,16 +67,23 @@ public:
 
     explicit DownloadManager(Client*);
 
-    void startDownload(uint64_t downloadID, const WebCore::ResourceRequest&);
+    void startDownload(WebCore::SessionID, uint64_t downloadID, const WebCore::ResourceRequest&);
+#if !USE(NETWORK_SESSION)
     void convertHandleToDownload(uint64_t downloadID, WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+#endif
 
     void resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
 
     void cancelDownload(uint64_t downloadID);
 
     void downloadFinished(Download*);
+#if USE(NETWORK_SESSION)
+    bool isDownloading() const { notImplemented(); return false; }
+    uint64_t activeDownloadCount() const { notImplemented(); return 0; }
+#else
     bool isDownloading() const { return !m_downloads.isEmpty(); }
     uint64_t activeDownloadCount() const { return m_downloads.size(); }
+#endif
 
     void didCreateDownload();
     void didDestroyDownload();
@@ -83,7 +93,9 @@ public:
 
 private:
     Client* m_client;
+#if !USE(NETWORK_SESSION)
     HashMap<uint64_t, std::unique_ptr<Download>> m_downloads;
+#endif
 };
 
 } // namespace WebKit

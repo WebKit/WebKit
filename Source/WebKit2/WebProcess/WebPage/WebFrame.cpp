@@ -257,17 +257,26 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
     m_policyDownloadID = 0;
 
     auto& webProcess = WebProcess::singleton();
+#if USE(NETWORK_SESSION)
+    ASSERT(webProcess.usesNetworkProcess());
+#endif
+    SessionID sessionID = page() ? page()->sessionID() : SessionID::defaultSessionID();
 #if ENABLE(NETWORK_PROCESS)
     if (webProcess.usesNetworkProcess()) {
-        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(page()->sessionID(), policyDownloadID, request), 0);
+        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request), 0);
         return;
     }
 #endif
 
-    webProcess.downloadManager().startDownload(policyDownloadID, request);
+#if USE(NETWORK_SESSION)
+    // Using NETWORK_SESSION requires the use of a network process.
+    RELEASE_ASSERT_NOT_REACHED();
+#else
+    webProcess.downloadManager().startDownload(sessionID, policyDownloadID, request);
+#endif
 }
 
-void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT(m_policyDownloadID);
 
@@ -278,6 +287,9 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
 
     auto& webProcess = WebProcess::singleton();
 #if ENABLE(NETWORK_PROCESS)
+#if USE(NETWORK_SESSION)
+    ASSERT(webProcess.usesNetworkProcess());
+#endif
     if (webProcess.usesNetworkProcess()) {
         // Use 0 to indicate that the resource load can't be converted and a new download must be started.
         // This can happen if there is no loader because the main resource is in the WebCore memory cache,
@@ -288,21 +300,28 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
         else
             mainResourceLoadIdentifier = 0;
 
-        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
+        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(sessionID, mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
         return;
     }
 #endif
 
     if (!mainResourceLoader) {
         // The main resource has already been loaded. Start a new download instead.
-        webProcess.downloadManager().startDownload(policyDownloadID, request);
+#if !USE(NETWORK_SESSION)
+        webProcess.downloadManager().startDownload(sessionID, policyDownloadID, request);
+#endif
         return;
     }
 
+#if USE(NETWORK_SESSION)
+    // Using NETWORK_SESSION requires the use of a network process.
+    RELEASE_ASSERT_NOT_REACHED();
+#else
     webProcess.downloadManager().convertHandleToDownload(policyDownloadID, documentLoader->mainResourceLoader()->handle(), request, response);
+#endif
 }
 
-String WebFrame::source() const 
+String WebFrame::source() const
 {
     if (!m_coreFrame)
         return String();
