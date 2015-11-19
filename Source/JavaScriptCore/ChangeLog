@@ -1,3 +1,25 @@
+2015-11-19  Mark Lam  <mark.lam@apple.com>
+
+        JIT snippet generator JumpLists should be returned as references.
+        https://bugs.webkit.org/show_bug.cgi?id=151445
+
+        Reviewed by Gavin Barraclough.
+
+        The JumpLists were being returned by value.  As a result, new jumps added to
+        them in the client are actually added to a temporary copy and promptly discarded.
+        Those jumps never get linked, resulting in infinite loops in DFG generated code
+        that used the snippets.
+
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::endJumpList):
+        (JSC::JITAddGenerator::slowPathJumpList):
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::endJumpList):
+        (JSC::JITMulGenerator::slowPathJumpList):
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::endJumpList):
+        (JSC::JITSubGenerator::slowPathJumpList):
+
 2015-11-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed CLOOP buildfix after r192624.

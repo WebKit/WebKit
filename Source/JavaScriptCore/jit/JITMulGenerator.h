@@ -60,8 +60,8 @@ public:
     void generateFastPath(CCallHelpers&);
 
     bool didEmitFastPath() const { return m_didEmitFastPath; }
-    CCallHelpers::JumpList endJumpList() { return m_endJumpList; }
-    CCallHelpers::JumpList slowPathJumpList() { return m_slowPathJumpList; }
+    CCallHelpers::JumpList& endJumpList() { return m_endJumpList; }
+    CCallHelpers::JumpList& slowPathJumpList() { return m_slowPathJumpList; }
 
 private:
     JSValueRegs m_result;
