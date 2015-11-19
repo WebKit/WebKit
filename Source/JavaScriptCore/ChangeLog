@@ -1,5 +1,13 @@
 2015-11-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed CLOOP buildfix after r192624.
+
+        * runtime/MemoryStatistics.cpp:
+        (JSC::globalMemoryStatistics):
+        * runtime/MemoryStatistics.h:
+
+2015-11-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         Remove unused LLVM API functions
         https://bugs.webkit.org/show_bug.cgi?id=151184
 

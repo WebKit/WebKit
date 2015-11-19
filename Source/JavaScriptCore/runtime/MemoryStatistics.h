@@ -34,7 +34,7 @@ namespace JSC {
 
 struct GlobalMemoryStatistics {
     size_t stackBytes;
-    size_t JITBytes;
+    size_t JITBytes = 0;
 };
 
 JS_EXPORT_PRIVATE GlobalMemoryStatistics globalMemoryStatistics();

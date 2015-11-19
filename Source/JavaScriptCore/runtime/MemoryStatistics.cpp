@@ -37,7 +37,9 @@ GlobalMemoryStatistics globalMemoryStatistics()
     GlobalMemoryStatistics stats;
 
     stats.stackBytes = JSStack::committedByteCount();
+#if ENABLE(ASSEMBLER)
     stats.JITBytes = ExecutableAllocator::committedByteCount();
+#endif
 
     return stats;
 }
