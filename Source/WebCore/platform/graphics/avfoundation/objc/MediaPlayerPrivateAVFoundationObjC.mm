@@ -37,9 +37,11 @@
 #import "CDMSessionAVFoundationObjC.h"
 #import "Cookie.h"
 #import "ExceptionCodePlaceholder.h"
+#import "Extensions3D.h"
 #import "FloatConversion.h"
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
+#import "GraphicsContext3D.h"
 #import "GraphicsContextCG.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
@@ -63,6 +65,7 @@
 #import "WebCoreCALayerExtras.h"
 #import "WebCoreSystemInterface.h"
 #import <functional>
+#import <map>
 #import <objc/runtime.h>
 #import <runtime/DataView.h>
 #import <runtime/JSCInlines.h>
@@ -98,6 +101,10 @@
 
 #if USE(CFNETWORK)
 #include "CFNSURLConnectionSPI.h"
+#endif
+
+#if PLATFORM(IOS)
+#include <OpenGLES/ES3/glext.h>
 #endif
 
 namespace std {
@@ -294,6 +301,24 @@ SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceID3, NSString*)
 #if PLATFORM(IOS)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
 #define AVURLAssetBoundNetworkInterfaceName getAVURLAssetBoundNetworkInterfaceName()
+#endif
+
+#if PLATFORM(IOS)
+SOFT_LINK(CoreVideo, CVOpenGLESTextureCacheCreate, CVReturn, (CFAllocatorRef allocator, CFDictionaryRef cacheAttributes, CVEAGLContext eaglContext, CFDictionaryRef textureAttributes, CVOpenGLESTextureCacheRef* cacheOut), (allocator, cacheAttributes, eaglContext, textureAttributes, cacheOut))
+SOFT_LINK(CoreVideo, CVOpenGLESTextureCacheCreateTextureFromImage, CVReturn, (CFAllocatorRef allocator, CVOpenGLESTextureCacheRef textureCache, CVImageBufferRef sourceImage, CFDictionaryRef textureAttributes, GLenum target, GLint internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, size_t planeIndex, CVOpenGLESTextureRef* textureOut), (allocator, textureCache, sourceImage, textureAttributes, target, internalFormat, width, height, format, type, planeIndex, textureOut))
+SOFT_LINK(CoreVideo, CVOpenGLESTextureCacheFlush, void, (CVOpenGLESTextureCacheRef textureCache, CVOptionFlags options), (textureCache, options))
+SOFT_LINK(CoreVideo, CVOpenGLESTextureGetTarget, GLenum, (CVOpenGLESTextureRef image), (image))
+SOFT_LINK(CoreVideo, CVOpenGLESTextureGetName, GLuint, (CVOpenGLESTextureRef image), (image))
+SOFT_LINK_POINTER(CoreVideo, kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey, NSString *)
+#define kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey getkCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey()
+#else
+SOFT_LINK(CoreVideo, CVOpenGLTextureCacheCreate, CVReturn, (CFAllocatorRef allocator, CFDictionaryRef cacheAttributes, CGLContextObj cglContext, CGLPixelFormatObj cglPixelFormat, CFDictionaryRef textureAttributes, CVOpenGLTextureCacheRef* cacheOut), (allocator, cacheAttributes, cglContext, cglPixelFormat, textureAttributes, cacheOut))
+SOFT_LINK(CoreVideo, CVOpenGLTextureCacheCreateTextureFromImage, CVReturn, (CFAllocatorRef allocator, CVOpenGLTextureCacheRef textureCache, CVImageBufferRef sourceImage, CFDictionaryRef attributes, CVOpenGLTextureRef* textureOut), (allocator, textureCache, sourceImage, attributes, textureOut))
+SOFT_LINK(CoreVideo, CVOpenGLTextureCacheFlush, void, (CVOpenGLTextureCacheRef textureCache, CVOptionFlags options), (textureCache, options))
+SOFT_LINK(CoreVideo, CVOpenGLTextureGetTarget, GLenum, (CVOpenGLTextureRef image), (image))
+SOFT_LINK(CoreVideo, CVOpenGLTextureGetName, GLuint, (CVOpenGLTextureRef image), (image))
+SOFT_LINK_POINTER(CoreVideo, kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey, NSString *)
+#define kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey getkCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey()
 #endif
 
 using namespace WebCore;
@@ -624,6 +649,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
 {
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     destroyVideoOutput();
+    destroyOpenGLVideoOutput();
 #endif
     destroyImageGenerator();
 }
@@ -2355,6 +2381,260 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
     if (m_imageGenerator)
         destroyImageGenerator();
 
+}
+
+void MediaPlayerPrivateAVFoundationObjC::createOpenGLVideoOutput()
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createOpenGLVideoOutput(%p)", this);
+
+    if (!m_avPlayerItem || m_openGLVideoOutput)
+        return;
+
+#if PLATFORM(IOS)
+    NSDictionary* attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey: @YES};
+#else
+    NSDictionary* attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey: @YES};
+#endif
+    m_openGLVideoOutput = adoptNS([allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:attributes]);
+    ASSERT(m_openGLVideoOutput);
+
+    [m_avPlayerItem.get() addOutput:m_openGLVideoOutput.get()];
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createOpenGLVideoOutput(%p) - returning %p", this, m_openGLVideoOutput.get());
+}
+
+void MediaPlayerPrivateAVFoundationObjC::destroyOpenGLVideoOutput()
+{
+    if (!m_openGLVideoOutput)
+        return;
+
+    if (m_avPlayerItem)
+        [m_avPlayerItem.get() removeOutput:m_openGLVideoOutput.get()];
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyOpenGLVideoOutput(%p) - destroying  %p", this, m_videoOutput.get());
+
+    m_openGLVideoOutput = 0;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateLastOpenGLImage()
+{
+    if (!m_openGLVideoOutput)
+        return;
+
+    CMTime currentTime = [m_openGLVideoOutput itemTimeForHostTime:CACurrentMediaTime()];
+    if (![m_openGLVideoOutput hasNewPixelBufferForItemTime:currentTime])
+        return;
+
+    m_lastOpenGLImage = adoptCF([m_openGLVideoOutput copyPixelBufferForItemTime:currentTime itemTimeForDisplay:nil]);
+}
+
+#if !LOG_DISABLED
+
+#define STRINGIFY_PAIR(e) e, #e
+static std::map<uint32_t, const char*>& enumToStringMap()
+{
+    static NeverDestroyed<std::map<uint32_t, const char*>> map;
+    if (map.get().empty()) {
+        std::map<uint32_t, const char*> stringMap;
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA));
+        map.get().emplace(STRINGIFY_PAIR(GL_LUMINANCE_ALPHA));
+        map.get().emplace(STRINGIFY_PAIR(GL_LUMINANCE));
+        map.get().emplace(STRINGIFY_PAIR(GL_ALPHA));
+        map.get().emplace(STRINGIFY_PAIR(GL_R8));
+        map.get().emplace(STRINGIFY_PAIR(GL_R16F));
+        map.get().emplace(STRINGIFY_PAIR(GL_R32F));
+        map.get().emplace(STRINGIFY_PAIR(GL_R8UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_R8I));
+        map.get().emplace(STRINGIFY_PAIR(GL_R16UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_R16I));
+        map.get().emplace(STRINGIFY_PAIR(GL_R32UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_R32I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG8));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG16F));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG32F));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG8UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG8I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG16UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG16I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG32UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG32I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB8));
+        map.get().emplace(STRINGIFY_PAIR(GL_SRGB8));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA8));
+        map.get().emplace(STRINGIFY_PAIR(GL_SRGB8_ALPHA8));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA4));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB10_A2));
+        map.get().emplace(STRINGIFY_PAIR(GL_DEPTH_COMPONENT16));
+        map.get().emplace(STRINGIFY_PAIR(GL_DEPTH_COMPONENT24));
+        map.get().emplace(STRINGIFY_PAIR(GL_DEPTH_COMPONENT32F));
+        map.get().emplace(STRINGIFY_PAIR(GL_DEPTH24_STENCIL8));
+        map.get().emplace(STRINGIFY_PAIR(GL_DEPTH32F_STENCIL8));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA));
+        map.get().emplace(STRINGIFY_PAIR(GL_LUMINANCE_ALPHA));
+        map.get().emplace(STRINGIFY_PAIR(GL_LUMINANCE));
+        map.get().emplace(STRINGIFY_PAIR(GL_ALPHA));
+        map.get().emplace(STRINGIFY_PAIR(GL_RED));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG_INTEGER));
+        map.get().emplace(STRINGIFY_PAIR(GL_DEPTH_STENCIL));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_BYTE));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_SHORT_5_6_5));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_SHORT_4_4_4_4));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_SHORT_5_5_5_1));
+        map.get().emplace(STRINGIFY_PAIR(GL_BYTE));
+        map.get().emplace(STRINGIFY_PAIR(GL_HALF_FLOAT));
+        map.get().emplace(STRINGIFY_PAIR(GL_FLOAT));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_SHORT));
+        map.get().emplace(STRINGIFY_PAIR(GL_SHORT));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_INT));
+        map.get().emplace(STRINGIFY_PAIR(GL_INT));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_INT_2_10_10_10_REV));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_INT_24_8));
+        map.get().emplace(STRINGIFY_PAIR(GL_FLOAT_32_UNSIGNED_INT_24_8_REV));
+
+#if PLATFORM(IOS)
+        map.get().emplace(STRINGIFY_PAIR(GL_RED_INTEGER));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB_INTEGER));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG8_SNORM));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB565));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB8_SNORM));
+        map.get().emplace(STRINGIFY_PAIR(GL_R11F_G11F_B10F));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB9_E5));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB16F));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB32F));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB8UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB8I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB16UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB16I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB32UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB32I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA8_SNORM));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA16F));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA32F));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA8UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA8I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB10_A2UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA16UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA16I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA32I));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA32UI));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGB5_A1));
+        map.get().emplace(STRINGIFY_PAIR(GL_RG));
+        map.get().emplace(STRINGIFY_PAIR(GL_RGBA_INTEGER));
+        map.get().emplace(STRINGIFY_PAIR(GL_DEPTH_COMPONENT));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_INT_10F_11F_11F_REV));
+        map.get().emplace(STRINGIFY_PAIR(GL_UNSIGNED_INT_5_9_9_9_REV));
+#endif
+    }
+    return map.get();
+}
+
+#endif // !LOG_DISABLED
+
+bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
+{
+    if (flipY || premultiplyAlpha)
+        return false;
+
+    ASSERT(context);
+
+    if (!m_openGLVideoOutput)
+        createOpenGLVideoOutput();
+
+    updateLastOpenGLImage();
+
+    if (!m_lastOpenGLImage)
+        return false;
+
+    if (!m_openGLTextureCache) {
+#if PLATFORM(IOS)
+        CVOpenGLESTextureCacheRef cache = nullptr;
+        CVReturn error = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, nullptr, context->platformGraphicsContext3D(), nullptr, &cache);
+#else
+        CVOpenGLTextureCacheRef cache = nullptr;
+        CVReturn error = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, nullptr, context->platformGraphicsContext3D(), CGLGetPixelFormat(context->platformGraphicsContext3D()), nullptr, &cache);
+#endif
+        if (error != kCVReturnSuccess)
+            return false;
+        m_openGLTextureCache = adoptCF(cache);
+    }
+
+    size_t width = CVPixelBufferGetWidth(m_lastOpenGLImage.get());
+    size_t height = CVPixelBufferGetHeight(m_lastOpenGLImage.get());
+
+#if PLATFORM(IOS)
+    CVOpenGLESTextureRef bareVideoTexture = nullptr;
+    if (kCVReturnSuccess != CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, m_openGLTextureCache.get(), m_lastOpenGLImage.get(), nullptr, outputTarget, internalFormat, width, height, format, type, level, &bareVideoTexture))
+        return false;
+    RetainPtr<CVOpenGLESTextureRef> videoTexture = adoptCF(bareVideoTexture);
+    Platform3DObject videoTextureName = CVOpenGLESTextureGetName(videoTexture.get());
+    GC3Denum videoTextureTarget = CVOpenGLESTextureGetTarget(videoTexture.get());
+#else
+    CVOpenGLTextureRef bareVideoTexture = nullptr;
+    if (kCVReturnSuccess != CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, m_openGLTextureCache.get(), m_lastOpenGLImage.get(), nullptr, &bareVideoTexture))
+        return false;
+    RetainPtr<CVOpenGLTextureRef> videoTexture = adoptCF(bareVideoTexture);
+    Platform3DObject videoTextureName = CVOpenGLTextureGetName(videoTexture.get());
+    GC3Denum videoTextureTarget = CVOpenGLTextureGetTarget(videoTexture.get());
+#endif
+
+    auto weakThis = createWeakPtr();
+    dispatch_async(dispatch_get_main_queue(), [weakThis] {
+        if (!weakThis)
+            return;
+
+        if (auto cache = weakThis->m_openGLTextureCache.get())
+#if PLATFORM(IOS)
+            CVOpenGLESTextureCacheFlush(cache, 0);
+#else
+            CVOpenGLTextureCacheFlush(cache, 0);
+#endif
+    });
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(%p) - internalFormat: %s, format: %s, type: %s", this, enumToStringMap()[internalFormat], enumToStringMap()[format], enumToStringMap()[type]);
+
+    // Save the origial bound texture & framebuffer names so we can re-bind them after copying the video texture.
+    GC3Dint boundTexture = 0;
+    GC3Dint boundReadFramebuffer = 0;
+    context->getIntegerv(GraphicsContext3D::TEXTURE_BINDING_2D, &boundTexture);
+    context->getIntegerv(GraphicsContext3D::READ_FRAMEBUFFER_BINDING, &boundReadFramebuffer);
+
+    context->bindTexture(videoTextureTarget, videoTextureName);
+    context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+
+    // Create a framebuffer object to represent the video texture's memory.
+    Platform3DObject readFramebuffer = context->createFramebuffer();
+
+    // Make that framebuffer the read source from which drawing commands will read voxels.
+    context->bindFramebuffer(GraphicsContext3D::READ_FRAMEBUFFER, readFramebuffer);
+
+    // Allocate uninitialized memory for the output texture.
+    context->bindTexture(outputTarget, outputTexture);
+    context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+    context->texImage2DDirect(outputTarget, level, internalFormat, width, height, 0, format, type, nullptr);
+
+    // Attach the video texture to the framebuffer.
+    context->framebufferTexture2D(GraphicsContext3D::READ_FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, videoTextureTarget, videoTextureName, level);
+
+    GC3Denum status = context->checkFramebufferStatus(GraphicsContext3D::READ_FRAMEBUFFER);
+    if (status != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+        return false;
+
+    // Copy texture from the read framebuffer (and thus the video texture) to the output texture.
+    context->copyTexImage2D(outputTarget, level, internalFormat, 0, 0, width, height, 0);
+
+    // Restore the previous texture and framebuffer bindings.
+    context->bindTexture(outputTarget, boundTexture);
+    context->bindFramebuffer(GraphicsContext3D::READ_FRAMEBUFFER, boundReadFramebuffer);
+
+    // Clean up after ourselves.
+    context->deleteFramebuffer(readFramebuffer);
+
+    return !context->getError();
 }
 
 PassNativeImagePtr MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()

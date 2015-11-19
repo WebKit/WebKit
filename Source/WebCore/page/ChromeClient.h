@@ -84,6 +84,7 @@ class GraphicsContext3D;
 class GraphicsLayer;
 class GraphicsLayerFactory;
 class HTMLInputElement;
+class HTMLMediaElement;
 class HTMLVideoElement;
 class HitTestResult;
 class IntRect;

@@ -58,6 +58,11 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
 typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
+#if PLATFORM(IOS)
+typedef struct  __CVOpenGLESTextureCache *CVOpenGLESTextureCacheRef;
+#else
+typedef struct __CVOpenGLTextureCache* CVOpenGLTextureCacheRef;
+#endif
 
 namespace WebCore {
 
@@ -235,6 +240,12 @@ private:
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     virtual PassNativeImagePtr nativeImageForCurrentTime() override;
     void waitForVideoOutputMediaDataWillChange();
+
+    void createOpenGLVideoOutput();
+    void destroyOpenGLVideoOutput();
+    void updateLastOpenGLImage();
+
+    bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY) override;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -327,6 +338,14 @@ private:
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
     RetainPtr<CGImageRef> m_lastImage;
     dispatch_semaphore_t m_videoOutputSemaphore;
+
+    RetainPtr<AVPlayerItemVideoOutput> m_openGLVideoOutput;
+#if PLATFORM(IOS)
+    RetainPtr<CVOpenGLESTextureCacheRef> m_openGLTextureCache;
+#else
+    RetainPtr<CVOpenGLTextureCacheRef> m_openGLTextureCache;
+#endif
+    RetainPtr<CVPixelBufferRef> m_lastOpenGLImage;
 #endif
 
 #if USE(VIDEOTOOLBOX)
