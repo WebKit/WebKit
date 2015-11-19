@@ -1,3 +1,12 @@
+2015-11-19  Alexey Proskuryakov  <ap@apple.com>
+
+        LayoutTestRelay processes leak on iOS testers
+        https://bugs.webkit.org/show_bug.cgi?id=151447
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/kill-old-processes: Added LayoutTestRelay.
+
 2015-11-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] webkitpy is applying abspath to DOS paths, yielding invalid paths
