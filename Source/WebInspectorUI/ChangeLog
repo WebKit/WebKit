@@ -1,3 +1,29 @@
+2015-11-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move cookie url matching out of CookieStorageContentView and clean up some code
+        https://bugs.webkit.org/show_bug.cgi?id=151424
+
+        Reviewed by Timothy Hatcher.
+
+        Move the code that decides whether a cookie matches a resource URL to a model class.
+        This will make it possible to test this code easily without pulling Views into tests.
+
+        * UserInterface/Models/CookieStorageObject.js:
+        (WebInspector.CookieStorageObject.cookieMatchesResourceURL):
+        (WebInspector.CookieStorageObject.cookieDomainMatchesResourceDomain):
+        (WebInspector.CookieStorageObject.prototype.saveIdentityToCookie):
+        (WebInspector.CookieStorageObject):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype.update): use Promises.
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        (WebInspector.CookieStorageContentView.prototype._filterCookies):
+
+            Use Array.filter() and Array.some() to express this logic more directly.
+
+        (WebInspector.CookieStorageContentView.cookieMatchesResourceURL): Deleted.
+        (WebInspector.CookieStorageContentView.cookieDomainMatchesResourceDomain): Deleted.
+        (WebInspector.CookieStorageContentView.prototype.update.callback): Deleted.
+
 2015-11-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Clear watch expressions button using wrong icon

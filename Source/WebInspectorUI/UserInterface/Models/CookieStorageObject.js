@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,26 @@ WebInspector.CookieStorageObject = class CookieStorageObject
         this._host = host;
     }
 
+    // Static
+
+    static cookieMatchesResourceURL(cookie, resourceURL)
+    {
+        var parsedURL = parseURL(resourceURL);
+        if (!parsedURL || !WebInspector.CookieStorageObject.cookieDomainMatchesResourceDomain(cookie.domain, parsedURL.host))
+            return false;
+
+        return (parsedURL.path.startsWith(cookie.path)
+            && (!cookie.port || parsedURL.port === cookie.port)
+            && (!cookie.secure || parsedURL.scheme === "https"));
+    }
+
+    static cookieDomainMatchesResourceDomain(cookieDomain, resourceDomain)
+    {
+        if (cookieDomain.charAt(0) !== ".")
+            return resourceDomain === cookieDomain;
+        return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
+    }
+
     // Public
 
     get host()
@@ -39,7 +59,7 @@ WebInspector.CookieStorageObject = class CookieStorageObject
 
     saveIdentityToCookie(cookie)
     {
-        // FIXME: This class will need to look up cookies that are set for this host.
+        // FIXME <https://webkit.org/b/151413>: This class should actually store cookie data for this host.
         cookie[WebInspector.CookieStorageObject.CookieHostCookieKey] = this.host;
     }    
 };
