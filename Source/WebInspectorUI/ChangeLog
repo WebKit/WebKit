@@ -1,3 +1,69 @@
+2015-11-19  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Convert remaining timeline views to use View base class
+        https://bugs.webkit.org/show_bug.cgi?id=151410
+
+        Reviewed by Timothy Hatcher.
+
+        Converted timeline views to use View base class. Mostly mechanical
+        changes (override View.prototype.layout, use let in more places).
+
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.layout):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.updateLayout): Deleted.
+
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.layout.createBar):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.layout):
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout.createBar): Deleted.
+        (WebInspector.NetworkTimelineOverviewGraph.prototype.updateLayout): Deleted.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.layout):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype.updateLayout): Deleted.
+
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.layout.createBar):
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.layout):
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout.createBar): Deleted.
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout): Deleted.
+
+        * UserInterface/Views/TimelineOverview.js:
+        Extend View.
+        (WebInspector.TimelineOverview):
+        Add ruler as a subview.
+        (WebInspector.TimelineOverview.prototype.set startTime):
+        (WebInspector.TimelineOverview.prototype.set currentTime):
+        (WebInspector.TimelineOverview.prototype.set secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.set endTime):
+        (WebInspector.TimelineOverview.prototype.set scrollStartTime):
+        (WebInspector.TimelineOverview.prototype.updateLayoutIfNeeded):
+        (WebInspector.TimelineOverview.prototype.get timelineRuler):
+        (WebInspector.TimelineOverview.prototype.canShowTimeline):
+        (WebInspector.TimelineOverview.prototype.layout):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        (WebInspector.TimelineOverview._handleGestureStart):
+        (WebInspector.TimelineOverview.prototype._handleGestureChange):
+        (WebInspector.TimelineOverview.prototype._timelineAdded):
+        (WebInspector.TimelineOverview.prototype._timelineRemoved):
+        (WebInspector.TimelineOverview.prototype.get element): Deleted.
+        (WebInspector.TimelineOverview.prototype.updateLayout): Deleted.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        Extend view.
+        (WebInspector.TimelineOverviewGraph):
+        (WebInspector.TimelineOverviewGraph.prototype.needsLayout):
+        (WebInspector.TimelineOverviewGraph.prototype._needsSelectedRecordLayout):
+        (WebInspector.TimelineOverviewGraph.prototype.updateLayout): Deleted.
+        (WebInspector.TimelineOverviewGraph.prototype.updateLayoutIfNeeded): Deleted.
+        (WebInspector.TimelineOverviewGraph.prototype._needsSelectedRecordLayout.update): Deleted.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        Add overview as a subview.
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        Use View.prototype.replaceSubview to swap overview graphs.
+
 2015-11-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Storage tab shouldn't hide cookies for .example.com when inspected page is foo.bar.example.com

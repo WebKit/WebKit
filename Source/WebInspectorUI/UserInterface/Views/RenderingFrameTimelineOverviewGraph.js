@@ -93,21 +93,21 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         this._timelineRecordFrames[frameIndex].filtered = filtered;
     }
 
-    updateLayout()
-    {
-        super.updateLayout();
+    // Protected
 
+    layout()
+    {
         if (!this._renderingFrameTimeline.records.length)
             return;
 
-        var records = this._renderingFrameTimeline.records;
-        var startIndex = Math.floor(this.startTime);
-        var endIndex = Math.min(Math.floor(this.endTime), records.length - 1);
-        var recordFrameIndex = 0;
+        let records = this._renderingFrameTimeline.records;
+        let startIndex = Math.floor(this.startTime);
+        let endIndex = Math.min(Math.floor(this.endTime), records.length - 1);
+        let recordFrameIndex = 0;
 
-        for (var i = startIndex; i <= endIndex; ++i) {
-            var record = records[i];
-            var timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex];
+        for (let i = startIndex; i <= endIndex; ++i) {
+            let record = records[i];
+            let timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex];
             if (!timelineRecordFrame)
                 timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex] = new WebInspector.TimelineRecordFrame(this, record);
             else
@@ -130,8 +130,6 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         this._updateDividers();
         this._updateFrameMarker();
     }
-
-    // Protected
 
     updateSelectedRecord()
     {

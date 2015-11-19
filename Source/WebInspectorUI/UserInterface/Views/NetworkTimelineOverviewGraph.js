@@ -61,17 +61,16 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
         }
     }
 
-    updateLayout()
+    // Protected
+
+    layout()
     {
-        super.updateLayout();
-
-        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
-
-        var recordBarIndex = 0;
+        let secondsPerPixel = this.timelineOverview.secondsPerPixel;
+        let recordBarIndex = 0;
 
         function createBar(rowElement, rowRecordBars, records, renderMode)
         {
-            var timelineRecordBar = rowRecordBars[recordBarIndex];
+            let timelineRecordBar = rowRecordBars[recordBarIndex];
             if (!timelineRecordBar)
                 timelineRecordBar = rowRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar(records, renderMode);
             else {
@@ -84,9 +83,9 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
             ++recordBarIndex;
         }
 
-        for (var rowRecords of this._timelineRecordGridRows) {
-            var rowElement = rowRecords.__element;
-            var rowRecordBars = rowRecords.__recordBars;
+        for (let rowRecords of this._timelineRecordGridRows) {
+            let rowElement = rowRecords.__element;
+            let rowRecordBars = rowRecords.__recordBars;
 
             recordBarIndex = 0;
 
