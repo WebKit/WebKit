@@ -1,3 +1,26 @@
+2015-11-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add some missing load/store to FTLB3Output
+        https://bugs.webkit.org/show_bug.cgi?id=151427
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::load16SignExt32):
+        (JSC::FTL::Output::load16ZeroExt32):
+        (JSC::FTL::Output::loadFloatToDouble):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::load32):
+        (JSC::FTL::Output::loadPtr):
+        (JSC::FTL::Output::loadDouble):
+        (JSC::FTL::Output::load8SignExt32): Deleted.
+        (JSC::FTL::Output::load8ZeroExt32): Deleted.
+        (JSC::FTL::Output::load16SignExt32): Deleted.
+        (JSC::FTL::Output::load16ZeroExt32): Deleted.
+        (JSC::FTL::Output::loadFloatToDouble): Deleted.
+
 2015-11-18  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix typos in r192605

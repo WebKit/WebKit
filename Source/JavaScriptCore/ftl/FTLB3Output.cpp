@@ -69,6 +69,41 @@ LValue Output::load(TypedPointer pointer, LType type)
     return load;
 }
 
+LValue Output::load8SignExt32(TypedPointer pointer)
+{
+    LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Load8S, B3::Int32, origin(), pointer.value());
+    pointer.heap().decorateInstruction(load, *m_heaps);
+    return load;
+}
+
+LValue Output::load8ZeroExt32(TypedPointer pointer)
+{
+    LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Load8Z, B3::Int32, origin(), pointer.value());
+    pointer.heap().decorateInstruction(load, *m_heaps);
+    return load;
+}
+
+LValue Output::load16SignExt32(TypedPointer pointer)
+{
+    LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Load16S, B3::Int32, origin(), pointer.value());
+    pointer.heap().decorateInstruction(load, *m_heaps);
+    return load;
+}
+
+LValue Output::load16ZeroExt32(TypedPointer pointer)
+{
+    LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Load16Z, B3::Int32, origin(), pointer.value());
+    pointer.heap().decorateInstruction(load, *m_heaps);
+    return load;
+}
+
+LValue Output::loadFloatToDouble(TypedPointer pointer)
+{
+    LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::LoadFloat, B3::Double, origin(), pointer.value());
+    pointer.heap().decorateInstruction(load, *m_heaps);
+    return load;
+}
+
 void Output::store(LValue value, TypedPointer pointer)
 {
     LValue store = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Store, origin(), value, pointer.value());

@@ -210,15 +210,15 @@ public:
     LValue load(TypedPointer, LType);
     void store(LValue, TypedPointer);
 
-    LValue load8SignExt32(TypedPointer) { CRASH(); }
-    LValue load8ZeroExt32(TypedPointer) { CRASH(); }
-    LValue load16SignExt32(TypedPointer) { CRASH(); }
-    LValue load16ZeroExt32(TypedPointer) { CRASH(); }
-    LValue load32(TypedPointer pointer) { CRASH(); }
+    LValue load8SignExt32(TypedPointer);
+    LValue load8ZeroExt32(TypedPointer);
+    LValue load16SignExt32(TypedPointer);
+    LValue load16ZeroExt32(TypedPointer);
+    LValue load32(TypedPointer pointer) { return load(pointer, B3::Int32); }
     LValue load64(TypedPointer pointer) { return load(pointer, B3::Int64); }
-    LValue loadPtr(TypedPointer pointer) { CRASH(); }
-    LValue loadFloatToDouble(TypedPointer pointer) { CRASH(); }
-    LValue loadDouble(TypedPointer pointer) { CRASH(); }
+    LValue loadPtr(TypedPointer pointer) { return load(pointer, B3::pointerType()); }
+    LValue loadFloatToDouble(TypedPointer);
+    LValue loadDouble(TypedPointer pointer) { return load(pointer, B3::Double); }
     void store32(LValue value, TypedPointer pointer) { store(value, pointer); }
     void store64(LValue value, TypedPointer pointer) { store(value, pointer); }
     void storePtr(LValue value, TypedPointer pointer) { store(value, pointer); }
