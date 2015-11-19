@@ -1,3 +1,33 @@
+2015-11-19  Mark Lam  <mark.lam@apple.com>
+
+        Create correctness tests for binary snippet operators.
+        https://bugs.webkit.org/show_bug.cgi?id=151465
+
+        Reviewed by Geoffrey Garen.
+
+        Implement a common infrastructure for generating and running tests on binary
+        operators.  Also re-implemented the op_add, op_sub, and op_mul tests to be based
+        on this new infrastructure.
+
+        * tests/stress/op_add.js:
+        * tests/stress/op_mul.js:
+        * tests/stress/op_sub.js:
+        - These were reimplemented using binary-op-test.js.
+
+        * tests/stress/op_div.js: Added.
+        * tests/stress/op_mod.js: Added.
+
+        * tests/stress/op_bitand.js: Added.
+        * tests/stress/op_bitor.js: Added.
+        * tests/stress/op_bitxor.js: Added.
+
+        * tests/stress/op_lshift.js: Added.
+        * tests/stress/op_rshift.js: Added.
+        * tests/stress/op_urshift.js: Added.
+
+        * tests/stress/resources/binary-op-test.js: Added.
+        - Common code for generating and running tests.
+
 2015-11-19  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Fix AssignmentElement parsing

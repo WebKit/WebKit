@@ -8,8 +8,8 @@ load("./resources/binary-op-test.js");
 //============================================================================
 // Test configuration data:
 
-var opName = "mul";
-var op = "*";
+var opName = "bitor";
+var op = "|";
 
 var o1 = {
     valueOf: function() { return 10; }
@@ -45,6 +45,7 @@ var values = [
     '-0x10000',
     '0x7ffffff',
     '-0x7ffffff',
+    '0xa5a5a5a5',
     '0x100000000',
     '-0x100000000',
 
@@ -53,14 +54,9 @@ var values = [
     '"-0"',
     '"1"',
     '"-1"',
-    '"0x3fff"',
-    '"-0x3fff"',
-    '"0x7fff"',
-    '"-0x7fff"',
-    '"0x10000"',
-    '"-0x10000"',
     '"0x7ffffff"',
     '"-0x7ffffff"',
+    '"0xa5a5a5a5"',
     '"0x100000000"',
     '"-0x100000000"',
 ];

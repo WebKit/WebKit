@@ -8,8 +8,8 @@ load("./resources/binary-op-test.js");
 //============================================================================
 // Test configuration data:
 
-var opName = "mul";
-var op = "*";
+var opName = "div";
+var op = "/";
 
 var o1 = {
     valueOf: function() { return 10; }
