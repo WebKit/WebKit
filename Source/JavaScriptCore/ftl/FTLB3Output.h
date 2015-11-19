@@ -181,7 +181,7 @@ public:
     LValue fpToInt32(LValue value) { CRASH(); }
     LValue fpToUInt32(LValue value) { CRASH(); }
     LValue intToFP(LValue value, LType type) { CRASH(); }
-    LValue intToDouble(LValue value) { CRASH(); }
+    LValue intToDouble(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::IToD, origin(), value); }
     LValue unsignedToFP(LValue value, LType type) { CRASH(); }
     LValue unsignedToDouble(LValue value) { CRASH(); }
     LValue intCast(LValue value, LType type) { CRASH(); }
@@ -250,7 +250,10 @@ public:
     TypedPointer baseIndex(const AbstractHeap& heap, LValue base, LValue index, Scale scale, ptrdiff_t offset = 0) { CRASH(); }
     TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue base, LValue index, JSValue indexAsConstant = JSValue(), ptrdiff_t offset = 0) { CRASH(); }
 
-    TypedPointer absolute(void* address) { CRASH(); }
+    TypedPointer absolute(void* address)
+    {
+        return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
+    }
 
     LValue load8SignExt32(LValue base, const AbstractField& field) { CRASH(); }
     LValue load8ZeroExt32(LValue base, const AbstractField& field) { CRASH(); }
@@ -285,18 +288,42 @@ public:
     LValue lessThanOrEqual(LValue left, LValue right) { CRASH(); }
 
     LValue fcmp(LRealPredicate cond, LValue left, LValue right) { CRASH(); }
-    LValue doubleEqual(LValue left, LValue right) { CRASH(); }
-    LValue doubleNotEqualOrUnordered(LValue left, LValue right) { CRASH(); }
-    LValue doubleLessThan(LValue left, LValue right) { CRASH(); }
-    LValue doubleLessThanOrEqual(LValue left, LValue right) { CRASH(); }
-    LValue doubleGreaterThan(LValue left, LValue right) { CRASH(); }
-    LValue doubleGreaterThanOrEqual(LValue left, LValue right) { CRASH(); }
+    LValue doubleEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), left, right); }
+    LValue doubleNotEqualOrUnordered(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), left, right); }
+    LValue doubleLessThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right); }
+    LValue doubleLessThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right); }
+    LValue doubleGreaterThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterThan, origin(), left, right); }
+    LValue doubleGreaterThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterEqual, origin(), left, right); }
     LValue doubleEqualOrUnordered(LValue left, LValue right) { CRASH(); }
     LValue doubleNotEqual(LValue left, LValue right) { CRASH(); }
-    LValue doubleLessThanOrUnordered(LValue left, LValue right) { CRASH(); }
-    LValue doubleLessThanOrEqualOrUnordered(LValue left, LValue right) { CRASH(); }
-    LValue doubleGreaterThanOrUnordered(LValue left, LValue right) { CRASH(); }
-    LValue doubleGreaterThanOrEqualOrUnordered(LValue left, LValue right) { CRASH(); }
+    LValue doubleLessThanOrUnordered(LValue left, LValue right)
+    {
+        return m_block->appendNew<B3::Value>(
+            m_proc, B3::Equal, origin(),
+            m_block->appendNew<B3::Value>(m_proc, B3::GreaterEqual, origin(), left, right),
+            int32Zero);
+    }
+    LValue doubleLessThanOrEqualOrUnordered(LValue left, LValue right)
+    {
+        return m_block->appendNew<B3::Value>(
+            m_proc, B3::Equal, origin(),
+            m_block->appendNew<B3::Value>(m_proc, B3::GreaterThan, origin(), left, right),
+            int32Zero);
+    }
+    LValue doubleGreaterThanOrUnordered(LValue left, LValue right)
+    {
+        return m_block->appendNew<B3::Value>(
+            m_proc, B3::Equal, origin(),
+            m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right),
+            int32Zero);
+    }
+    LValue doubleGreaterThanOrEqualOrUnordered(LValue left, LValue right)
+    {
+        return m_block->appendNew<B3::Value>(
+            m_proc, B3::Equal, origin(),
+            m_block->appendNew<B3::Value>(m_proc, B3::LessThan, origin(), left, right),
+            int32Zero);
+    }
 
     LValue isZero32(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), value, int32Zero); }
     LValue notZero32(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::NotEqual, origin(), value, int32Zero); }

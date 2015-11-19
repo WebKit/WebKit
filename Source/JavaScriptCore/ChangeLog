@@ -1,5 +1,41 @@
 2015-11-19  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL->B3 lowering should support absolute(), double comparisons, and intToDouble()
+        https://bugs.webkit.org/show_bug.cgi?id=151457
+
+        Reviewed by Benjamin Poulain.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::fpToInt32):
+        (JSC::FTL::Output::fpToUInt32):
+        (JSC::FTL::Output::intToFP):
+        (JSC::FTL::Output::intToDouble):
+        (JSC::FTL::Output::unsignedToFP):
+        (JSC::FTL::Output::unsignedToDouble):
+        (JSC::FTL::Output::intCast):
+        (JSC::FTL::Output::baseIndex):
+        (JSC::FTL::Output::absolute):
+        (JSC::FTL::Output::load8SignExt32):
+        (JSC::FTL::Output::load8ZeroExt32):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::fcmp):
+        (JSC::FTL::Output::doubleEqual):
+        (JSC::FTL::Output::doubleNotEqualOrUnordered):
+        (JSC::FTL::Output::doubleLessThan):
+        (JSC::FTL::Output::doubleLessThanOrEqual):
+        (JSC::FTL::Output::doubleGreaterThan):
+        (JSC::FTL::Output::doubleGreaterThanOrEqual):
+        (JSC::FTL::Output::doubleEqualOrUnordered):
+        (JSC::FTL::Output::doubleNotEqual):
+        (JSC::FTL::Output::doubleLessThanOrUnordered):
+        (JSC::FTL::Output::doubleLessThanOrEqualOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrEqualOrUnordered):
+        (JSC::FTL::Output::isZero32):
+        (JSC::FTL::Output::notZero32):
+
+2015-11-19  Filip Pizlo  <fpizlo@apple.com>
+
         FTL->B3 lowering should support checked int math
         https://bugs.webkit.org/show_bug.cgi?id=151451
 
