@@ -677,27 +677,29 @@ void resolveTextNode(Text& text, RenderTreePosition& renderTreePosition)
     invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
 }
 
+static void resolveChildAtShadowBoundary(Node& child, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Style::Change change)
+{
+    if (auto* renderer = child.renderer())
+        renderTreePosition.invalidateNextSibling(*renderer);
+
+    if (is<Text>(child) && child.needsStyleRecalc()) {
+        resolveTextNode(downcast<Text>(child), renderTreePosition);
+        return;
+    }
+    if (is<Element>(child))
+        resolveTree(downcast<Element>(child), inheritedStyle, renderTreePosition, change);
+}
+
 static void resolveShadowTree(ShadowRoot& shadowRoot, Element& host, Style::Change change)
 {
-    StyleResolverParentPusher parentPusher(&host);
-
     ASSERT(shadowRoot.host() == &host);
     ASSERT(host.renderer());
+    auto& inheritedStyle = host.renderer()->style();
     if (shadowRoot.styleChangeType() >= FullStyleChange)
         change = Force;
     RenderTreePosition renderTreePosition(*host.renderer());
-    for (Node* child = shadowRoot.firstChild(); child; child = child->nextSibling()) {
-        if (child->renderer())
-            renderTreePosition.invalidateNextSibling(*child->renderer());
-        if (is<Text>(*child) && child->needsStyleRecalc()) {
-            resolveTextNode(downcast<Text>(*child), renderTreePosition);
-            continue;
-        }
-        if (is<Element>(*child)) {
-            parentPusher.push();
-            resolveTree(downcast<Element>(*child), host.renderer()->style(), renderTreePosition, change);
-        }
-    }
+    for (auto* child = shadowRoot.firstChild(); child; child = child->nextSibling())
+        resolveChildAtShadowBoundary(*child, inheritedStyle, renderTreePosition, change);
 
     shadowRoot.clearNeedsStyleRecalc();
     shadowRoot.clearChildNeedsStyleRecalc();
@@ -804,20 +806,11 @@ static void resolveChildren(Element& current, RenderStyle& inheritedStyle, Chang
 static void resolveSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Change change)
 {
     if (auto* assignedNodes = slot.assignedNodes()) {
-        for (auto* child : *assignedNodes) {
-            if (is<Text>(*child))
-                resolveTextNode(downcast<Text>(*child), renderTreePosition);
-            else if (is<Element>(*child))
-                resolveTree(downcast<Element>(*child), inheritedStyle, renderTreePosition, change);
-        }
-    } else {
-        for (Node* child = slot.firstChild(); child; child = child->nextSibling()) {
-            if (is<Text>(*child))
-                resolveTextNode(downcast<Text>(*child), renderTreePosition);
-            else if (is<Element>(*child))
-                resolveTree(downcast<Element>(*child), inheritedStyle, renderTreePosition, change);
-        }
-    }
+        for (auto* child : *assignedNodes)
+            resolveChildAtShadowBoundary(*child, inheritedStyle, renderTreePosition, change);
+    } else
+        resolveChildren(slot, inheritedStyle, change, renderTreePosition);
+
     slot.clearNeedsStyleRecalc();
     slot.clearChildNeedsStyleRecalc();
 }
