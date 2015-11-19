@@ -462,7 +462,6 @@ namespace JSC {
         void emitJumpSlowCaseIfNotInt(RegisterID, RegisterID, RegisterID scratch);
 
         void emitTagBool(RegisterID);
-        void compileBinaryArithOp(OpcodeID, int dst, int src1, int src2, OperandTypes opi);
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, int dst, int src1, int src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
         void compileGetByIdHotPath(int baseVReg, const Identifier*);

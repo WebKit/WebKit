@@ -1112,12 +1112,16 @@ public:
 #endif
     }
 
-    void boxInt32(GPRReg intGPR, JSValueRegs boxedRegs)
+    void boxInt32(GPRReg intGPR, JSValueRegs boxedRegs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        move(intGPR, boxedRegs.gpr());
-        or64(TrustedImm64(TagTypeNumber), boxedRegs.gpr());
+        if (mode == DoNotHaveTagRegisters) {
+            move(intGPR, boxedRegs.gpr());
+            or64(TrustedImm64(TagTypeNumber), boxedRegs.gpr());
+        } else
+            or64(GPRInfo::tagTypeNumberRegister, intGPR, boxedRegs.gpr());
 #else
+        UNUSED_PARAM(mode);
         move(intGPR, boxedRegs.payloadGPR());
         move(TrustedImm32(JSValue::Int32Tag), boxedRegs.tagGPR());
 #endif

@@ -649,6 +649,7 @@
     <ClCompile Include="..\jit\JITDisassembler.cpp" />
     <ClCompile Include="..\jit\JITExceptions.cpp" />
     <ClCompile Include="..\jit\JITInlineCacheGenerator.cpp" />
+    <ClCompile Include="..\jit\JITMulGenerator.cpp" />
     <ClCompile Include="..\jit\JITOpcodes.cpp" />
     <ClCompile Include="..\jit\JITOpcodes32_64.cpp" />
     <ClCompile Include="..\jit\JITOperations.cpp" />
@@ -1467,6 +1468,7 @@
     <ClInclude Include="..\jit\JITExceptions.h" />
     <ClInclude Include="..\jit\JITInlineCacheGenerator.h" />
     <ClInclude Include="..\jit\JITInlines.h" />
+    <ClInclude Include="..\jit\JITMulGenerator.h" />
     <ClInclude Include="..\jit\JITOperations.h" />
     <ClInclude Include="..\jit\JITStubRoutine.h" />
     <ClInclude Include="..\jit\JITSubGenerator.h" />

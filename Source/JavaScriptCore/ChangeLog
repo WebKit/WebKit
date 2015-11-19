@@ -1,5 +1,76 @@
 2015-11-18  Mark Lam  <mark.lam@apple.com>
 
+        Snippefy op_mul for the baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=151393
+
+        Reviewed by Geoffrey Garen.
+
+        Benchmarks shows that perf is neutral on x86 and x86_64 with the DFG enabled.
+
+        With the DFG disabled (relying on the baseline JIT for perf), LongSpider
+        3d-morph shows a 7.6% regression.  However, there are other benchmarks that shows
+        a progression e.g. on Kraken, audio-beat-detection and audio-fft.
+
+        Upon inspection of the generated code for 3d-morph, the only differences is the
+        added use of a scratch register for the result as well as a jump around the
+        code that handles double types.  It does not look like we're generating bad code.
+        I'll consider the perf acceptable in aggregate.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::boxInt32):
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::AccessCase::emitIntrinsicGetter):
+        - Changed AssemblyHelpers::boxInt32() to take a TagRegistersMode.
+          The pre-existing boxInt32() always assume that the tag registers are not
+          available.  Since we should assume we have tag registers by default, I also
+          changed all the other clients to explicitly specify a more of
+          DoNotHaveTagRegisters.  That is except for the snippet generators that do have
+          the tag registers.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::compileBinaryArithOp): Deleted.
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul): Deleted.
+        (JSC::JIT::emitSlow_op_mul): Deleted.
+        * jit/JITMulGenerator.cpp: Added.
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITMulGenerator.h: Added.
+        (JSC::JITMulGenerator::JITMulGenerator):
+        (JSC::JITMulGenerator::didEmitFastPath):
+        (JSC::JITMulGenerator::endJumpList):
+        (JSC::JITMulGenerator::slowPathJumpList):
+
+        * tests/stress/op_mul.js: Added.
+        (o1.valueOf):
+        (generateScenarios):
+        (printScenarios):
+        (testCases.func):
+        (func):
+        (initializeTestCases):
+        (stringifyIfNeeded):
+        (isIdentical):
+        (runTest):
+        - Tests that JIT op_mul results are equivalent to the expected values as
+          defined by the LLINT.
+
+2015-11-18  Mark Lam  <mark.lam@apple.com>
+
         Remove some unnecessary jumps in snippet code.
         https://bugs.webkit.org/show_bug.cgi?id=151415
 

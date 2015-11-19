@@ -445,6 +445,7 @@ set(JavaScriptCore_SOURCES
     jit/JITDisassembler.cpp
     jit/JITExceptions.cpp
     jit/JITInlineCacheGenerator.cpp
+    jit/JITMulGenerator.cpp
     jit/JITOpcodes.cpp
     jit/JITOpcodes32_64.cpp
     jit/JITOperations.cpp

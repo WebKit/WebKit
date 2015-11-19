@@ -1058,14 +1058,14 @@ void AccessCase::generate(AccessGenerationState& state)
         jit.load32(CCallHelpers::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);
         state.failAndIgnore.append(
             jit.branch32(CCallHelpers::LessThan, scratchGPR, CCallHelpers::TrustedImm32(0)));
-        jit.boxInt32(scratchGPR, valueRegs);
+        jit.boxInt32(scratchGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
         state.succeed();
         return;
     }
 
     case StringLength: {
         jit.load32(CCallHelpers::Address(baseGPR, JSString::offsetOfLength()), valueRegs.payloadGPR());
-        jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
+        jit.boxInt32(valueRegs.payloadGPR(), valueRegs, CCallHelpers::DoNotHaveTagRegisters);
         state.succeed();
         return;
     }

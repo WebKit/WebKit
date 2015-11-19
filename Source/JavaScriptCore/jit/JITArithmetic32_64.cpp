@@ -512,11 +512,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
         // Do the math.
         doTheMath.link(this);
         switch (opcodeID) {
-            case op_mul:
-                emitLoadDouble(op1, fpRegT2);
-                mulDouble(fpRegT2, fpRegT0);
-                emitStoreDouble(dst, fpRegT0);
-                break;
             case op_div: {
                 emitLoadDouble(op1, fpRegT1);
                 divDouble(fpRegT0, fpRegT1);
@@ -603,11 +598,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
 
         // Do the math.
         switch (opcodeID) {
-            case op_mul:
-                emitLoadDouble(op2, fpRegT2);
-                mulDouble(fpRegT2, fpRegT0);
-                emitStoreDouble(dst, fpRegT0);
-                break;
             case op_div: {
                 emitLoadDouble(op2, fpRegT2);
                 divDouble(fpRegT2, fpRegT0);
@@ -674,83 +664,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
     }
 
     end.link(this);
-}
-
-// Multiplication (*)
-
-void JIT::emit_op_mul(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
-
-    m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
-
-    JumpList notInt32Op1;
-    JumpList notInt32Op2;
-
-    emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
-    notInt32Op1.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    notInt32Op2.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
-
-    // Int32 case.
-    move(regT0, regT3);
-    addSlowCase(branchMul32(Overflow, regT2, regT0));
-    addSlowCase(branchTest32(Zero, regT0));
-    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
-
-    if (!supportsFloatingPoint()) {
-        addSlowCase(notInt32Op1);
-        addSlowCase(notInt32Op2);
-        return;
-    }
-    Jump end = jump();
-
-    // Double case.
-    emitBinaryDoubleOp(op_mul, dst, op1, op2, types, notInt32Op1, notInt32Op2);
-    end.link(this);
-}
-
-void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int dst = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
-
-    Jump overflow = getSlowCase(iter); // overflow check
-    linkSlowCase(iter); // zero result check
-
-    Jump negZero = branchOr32(Signed, regT2, regT3);
-    emitStoreInt32(dst, TrustedImm32(0), (op1 == dst || op2 == dst));
-
-    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_mul));
-
-    negZero.link(this);
-    // We only get here if we have a genuine negative zero. Record this,
-    // so that the speculative JIT knows that we failed speculation
-    // because of a negative zero.
-    add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
-    overflow.link(this);
-
-    if (!supportsFloatingPoint()) {
-        linkSlowCase(iter); // int32 check
-        linkSlowCase(iter); // int32 check
-    }
-
-    if (supportsFloatingPoint()) {
-        if (!types.first().definitelyIsNumber())
-            linkSlowCase(iter); // double check
-
-        if (!types.second().definitelyIsNumber()) {
-            linkSlowCase(iter); // int32 check
-            linkSlowCase(iter); // double check
-        }
-    }
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
-    slowPathCall.call();
 }
 
 // Division (/)

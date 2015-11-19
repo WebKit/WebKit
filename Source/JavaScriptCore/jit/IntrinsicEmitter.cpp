@@ -77,7 +77,7 @@ void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
     switch (intrinsic()) {
     case TypedArrayLengthIntrinsic: {
         jit.load32(MacroAssembler::Address(state.baseGPR, JSArrayBufferView::offsetOfLength()), valueGPR);
-        jit.boxInt32(valueGPR, valueRegs);
+        jit.boxInt32(valueGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
         state.succeed();
         return;
     }
@@ -92,7 +92,7 @@ void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
             jit.lshift32(valueGPR, Imm32(logElementSize(type)), valueGPR);
         }
 
-        jit.boxInt32(valueGPR, valueRegs);
+        jit.boxInt32(valueGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
         state.succeed();
         return;
     }
@@ -118,7 +118,7 @@ void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
         
         done.link(&jit);
         
-        jit.boxInt32(valueGPR, valueRegs);
+        jit.boxInt32(valueGPR, valueRegs, CCallHelpers::DoNotHaveTagRegisters);
         state.succeed();
         return;
     }
