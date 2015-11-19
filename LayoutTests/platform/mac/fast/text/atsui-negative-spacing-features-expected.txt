@@ -32,9 +32,9 @@ layer at (0,0) size 800x246
                     text run at (1,1) width 174: "Lore\x{300}m ipsum dolor sit ame\x{300}t,"
                     text run at (1,19) width 175: "consectetuer adipiscing e\x{300}lit."
                 RenderBlock {DIV} at (0,86) size 202x38 [border: (1px solid #008000)]
-                  RenderText {#text} at (1,1) size 177x36
-                    text run at (1,1) width 176: "Lorem ipsum dolor sit amet,"
-                    text run at (1,19) width 177: "consectetuer adipiscing elit."
+                  RenderText {#text} at (1,1) size 175x36
+                    text run at (1,1) width 174: "Lorem ipsum dolor sit amet,"
+                    text run at (1,19) width 175: "consectetuer adipiscing elit."
             RenderTableCell {TD} at (208,24) size 205x126 [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 203x124
                 RenderBlock {DIV} at (0,0) size 202x38 [border: (1px solid #0000FF)]

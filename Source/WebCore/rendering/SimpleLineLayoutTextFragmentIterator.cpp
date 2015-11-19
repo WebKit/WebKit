@@ -41,6 +41,7 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , wrapLines(style.autoWrap())
     , breakWordOnOverflow(style.overflowWrap() == BreakOverflowWrap && (wrapLines || preserveNewline))
     , spaceWidth(font.width(TextRun(StringView(&space, 1))))
+    , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
     , locale(style.locale())
 {
@@ -182,12 +183,12 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
     width = 0;
     if (nextPosition == currentPosition)
         return currentPosition;
+    // Both non-collapsed whitespace and non-whitespace runs need to be measured.
     bool measureText = positionType != NonWhitespace || !m_style.collapseWhitespace;
-    if (measureText) {
-        float textWidth = this->textWidth(currentPosition, nextPosition, xPosition);
-        width += textWidth;
-    } else if (startPosition < nextPosition)
-        width = m_style.spaceWidth;
+    if (measureText)
+        width = this->textWidth(currentPosition, nextPosition, xPosition);
+    else if (startPosition < nextPosition)
+        width = m_style.spaceWidth + m_style.wordSpacing;
     return nextPosition;
 }
 
@@ -207,7 +208,7 @@ float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsig
     run.setTabSize(!!m_style.tabWidth, m_style.tabWidth);
     float width = m_style.font.width(run);
     if (measureWithEndSpace)
-        width -= m_style.spaceWidth;
+        width -= (m_style.spaceWidth + m_style.wordSpacing);
     return std::max<float>(0, width);
 }
 

@@ -46,10 +46,10 @@ layer at (0,0) size 800x372
                     text run at (1,19) width 130: "ame\x{300}t, consectetuer"
                     text run at (1,37) width 105: "adipiscing e\x{300}lit."
                 RenderBlock {DIV} at (0,122) size 202x56 [border: (1px solid #008000)]
-                  RenderText {#text} at (1,1) size 163x54
-                    text run at (1,1) width 163: "Lorem ipsum dolor sit"
-                    text run at (1,19) width 120: "amet, consectetuer"
-                    text run at (1,37) width 95: "adipiscing elit."
+                  RenderText {#text} at (1,1) size 173x54
+                    text run at (1,1) width 173: "Lorem ipsum dolor sit"
+                    text run at (1,19) width 130: "amet, consectetuer"
+                    text run at (1,37) width 105: "adipiscing elit."
             RenderTableCell {TD} at (208,24) size 205x234 [r=1 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 203x232
                 RenderBlock {DIV} at (0,0) size 202x74 [border: (1px solid #0000FF)]

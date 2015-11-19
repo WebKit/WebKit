@@ -122,8 +122,6 @@ static bool canUseForStyle(const RenderStyle& style)
         return false;
     if (!style.textIndent().isZero())
         return false;
-    if (!style.wordSpacing().isZero())
-        return false;
     if (!style.isLeftToRightDirection())
         return false;
     if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
@@ -541,7 +539,7 @@ static void forceFragmentToLine(LineState& line, TextFragmentIterator& textFragm
 static bool createLineRuns(LineState& line, const LineState& previousLine, Layout::RunVector& runs, TextFragmentIterator& textFragmentIterator)
 {
     const auto& style = textFragmentIterator.style();
-    line.setCollapedWhitespaceWidth(style.spaceWidth);
+    line.setCollapedWhitespaceWidth(style.spaceWidth + style.wordSpacing);
     bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
     auto fragment = firstFragment(textFragmentIterator, line, previousLine, runs);
     while (fragment.type() != TextFragmentIterator::TextFragment::ContentEnd) {

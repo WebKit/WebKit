@@ -108,6 +108,7 @@ public:
         bool wrapLines;
         bool breakWordOnOverflow;
         float spaceWidth;
+        float wordSpacing;
         unsigned tabWidth;
         AtomicString locale;
     };
