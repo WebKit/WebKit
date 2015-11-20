@@ -99,7 +99,7 @@ public:
     virtual void setConfiguration(RTCConfiguration&) = 0;
     virtual void addIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&) = 0;
 
-    virtual void getStats(MediaStreamTrack&, PeerConnection::StatsPromise&&) = 0;
+    virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) = 0;
 
     virtual void stop() = 0;
 

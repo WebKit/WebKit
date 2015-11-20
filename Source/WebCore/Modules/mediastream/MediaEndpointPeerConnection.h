@@ -62,7 +62,7 @@ public:
     void setConfiguration(RTCConfiguration&) override;
     void addIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&) override;
 
-    void getStats(MediaStreamTrack&, PeerConnection::StatsPromise&&) override;
+    void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) override;
 
     void stop() override;
 

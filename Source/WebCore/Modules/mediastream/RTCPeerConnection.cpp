@@ -357,8 +357,7 @@ void RTCPeerConnection::setConfiguration(const Dictionary& configuration, Except
 
 void RTCPeerConnection::privateGetStats(MediaStreamTrack* selector, PeerConnection::StatsPromise&& promise)
 {
-    ASSERT(selector);
-    m_backend->getStats(*selector, WTF::move(promise));
+    m_backend->getStats(selector, WTF::move(promise));
 }
 
 void RTCPeerConnection::privateGetStats(PeerConnection::StatsPromise&& promise)

@@ -191,8 +191,6 @@ fast/mediastream/RTCPeerConnection-have-remote-pranswer.html
 fast/mediastream/RTCPeerConnection-ice.html
 fast/mediastream/RTCPeerConnection-localDescription.html
 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html
-fast/mediastream/RTCPeerConnection-overloaded-operations.html
-fast/mediastream/RTCPeerConnection-overloaded-operations-params.html
 fast/mediastream/RTCPeerConnection-remoteDescription.html
 fast/mediastream/RTCPeerConnection-stats.html
 fast/mediastream/RTCPeerConnection-statsSelector.html

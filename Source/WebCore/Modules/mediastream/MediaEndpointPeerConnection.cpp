@@ -146,7 +146,7 @@ void MediaEndpointPeerConnection::addIceCandidate(RTCIceCandidate& rtcCandidate,
     promise.reject(DOMError::create("NotSupportedError"));
 }
 
-void MediaEndpointPeerConnection::getStats(MediaStreamTrack&, PeerConnection::StatsPromise&& promise)
+void MediaEndpointPeerConnection::getStats(MediaStreamTrack*, PeerConnection::StatsPromise&& promise)
 {
     notImplemented();
 
