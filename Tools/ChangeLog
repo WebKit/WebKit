@@ -1,5 +1,11 @@
 2015-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, fix installation of ninja-build after the previous commit
+
+        * gtk/install-dependencies:
+
+2015-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] install-dependencies should run installer exactly once
         https://bugs.webkit.org/show_bug.cgi?id=151477
 

@@ -92,6 +92,7 @@ function installDependenciesWithApt {
         libxt-dev \
         libxtst-dev \
         libwayland-dev \
+        ninja-build \
         ruby \
         xfonts-utils"
 
