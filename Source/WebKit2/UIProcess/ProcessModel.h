@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#if ENABLE(NETWORK_PROCESS)
-
-#include "NetworkProcessProxy.h"
-#include <glib.h>
+#ifndef ProcessModel_h
+#define ProcessModel_h
 
 namespace WebKit {
 
-void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
-{
-#ifndef NDEBUG
-    const char* networkProcessCmdPrefix = g_getenv("NETWORK_PROCESS_CMD_PREFIX");
-    if (networkProcessCmdPrefix && *networkProcessCmdPrefix)
-        launchOptions.processCmdPrefix = String::fromUTF8(networkProcessCmdPrefix);
-#else
-    UNUSED_PARAM(launchOptions);
-#endif
-}
+enum ProcessModel {
+    ProcessModelSharedSecondaryProcess,
+    ProcessModelMultipleSecondaryProcesses
+};
 
-}
+} // namespace WebKit
 
-#endif // ENABLE(NETWORK_PROCESS)
+#endif // ProcessModel_h

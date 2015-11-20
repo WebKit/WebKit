@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkProcessCreationParameters.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "ArgumentCoders.h"
 
 #if PLATFORM(COCOA)
@@ -166,3 +168,5 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

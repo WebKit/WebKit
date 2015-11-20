@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#if ENABLE(NETWORK_PROCESS)
 #include "WebProcessPool.h"
 
 #include "NetworkProcessCreationParameters.h"
@@ -46,3 +47,5 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 }
 
 }
+
+#endif

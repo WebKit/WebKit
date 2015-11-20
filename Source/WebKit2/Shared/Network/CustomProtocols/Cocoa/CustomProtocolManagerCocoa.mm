@@ -30,13 +30,16 @@
 #import "CustomProtocolManagerMessages.h"
 #import "CustomProtocolManagerProxyMessages.h"
 #import "DataReference.h"
-#import "NetworkProcessCreationParameters.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebProcessCreationParameters.h"
 #import <WebCore/URL.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
+
+#if ENABLE(NETWORK_PROCESS)
+#import "NetworkProcessCreationParameters.h"
+#endif
 
 #ifdef __has_include
 #if __has_include(<Foundation/NSURLConnectionPrivate.h>)
@@ -134,11 +137,22 @@ void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
 
 void CustomProtocolManager::initialize(const WebProcessCreationParameters& parameters)
 {
-    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty());
-    m_childProcess->parentProcessConnection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
-    m_messageQueue = nullptr;
+#if ENABLE(NETWORK_PROCESS)
+    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !parameters.usesNetworkProcess);
+    if (parameters.usesNetworkProcess) {
+        m_childProcess->parentProcessConnection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
+        m_messageQueue = nullptr;
+        return;
+    }
+#endif
+
+    [NSURLProtocol registerClass:[WKCustomProtocol class]];
+
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
+        registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
 }
 
+#if ENABLE(NETWORK_PROCESS)
 void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
 {
     [NSURLProtocol registerClass:[WKCustomProtocol class]];
@@ -146,6 +160,7 @@ void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& p
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
         registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
 }
+#endif
 
 void CustomProtocolManager::addCustomProtocol(WKCustomProtocol *customProtocol)
 {

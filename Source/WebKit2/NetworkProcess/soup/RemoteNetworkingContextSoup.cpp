@@ -26,6 +26,7 @@
  */
 
 #include "config.h"
+#if ENABLE(NETWORK_PROCESS)
 #include "RemoteNetworkingContext.h"
 
 #include <WebCore/NetworkStorageSession.h>
@@ -56,3 +57,5 @@ NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 }
 
 }
+
+#endif // ENABLE(NETWORK_PROCESS)

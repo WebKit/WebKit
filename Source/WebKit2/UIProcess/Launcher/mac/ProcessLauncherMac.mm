@@ -105,12 +105,14 @@ static RetainPtr<NSString> computeProcessShimPath(const ProcessLauncher::LaunchO
     }
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
     if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
         NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
         return [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"SecItemShim.dylib"];
     }
+#endif
 
     if (launchOptions.processType == ProcessLauncher::WebProcess) {
         NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"WebProcess.app"];
@@ -165,10 +167,12 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         if (forDevelopment)
             return "com.apple.WebKit.WebContent.Development";
         return "com.apple.WebKit.WebContent";
+#if ENABLE(NETWORK_PROCESS)
     case ProcessLauncher::NetworkProcess:
         if (forDevelopment)
             return "com.apple.WebKit.Networking.Development";
         return "com.apple.WebKit.Networking";
+#endif
 #if ENABLE(DATABASE_PROCESS)
     case ProcessLauncher::DatabaseProcess:
         if (forDevelopment)
@@ -202,9 +206,12 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
     // On iOS, leak a boost onto all child processes
     UNUSED_PARAM(launchOptions);
     return true;
-#else
+#elif ENABLE(NETWORK_PROCESS)
     // On Mac, leak a boost onto the NetworkProcess.
     return launchOptions.processType == ProcessLauncher::NetworkProcess;
+#else
+    UNUSED_PARAM(launchOptions);
+    return false;
 #endif
 }
     
@@ -476,9 +483,11 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
         processPath = [webKitBundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
         break;
 #endif
+#if ENABLE(NETWORK_PROCESS)
     case ProcessLauncher::NetworkProcess:
         processPath = [webKitBundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         break;
+#endif
 #if ENABLE(DATABASE_PROCESS)
     case ProcessLauncher::DatabaseProcess:
         processPath = [webKitBundle pathForAuxiliaryExecutable:@"DatabaseProcess.app"];

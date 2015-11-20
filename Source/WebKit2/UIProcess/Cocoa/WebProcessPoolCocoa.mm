@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
-#import "NetworkProcessCreationParameters.h"
-#import "NetworkProcessProxy.h"
 #import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
 #import "TextChecker.h"
@@ -48,6 +46,11 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <sys/param.h>
+
+#if ENABLE(NETWORK_PROCESS)
+#import "NetworkProcessCreationParameters.h"
+#import "NetworkProcessProxy.h"
+#endif
 
 #if PLATFORM(IOS)
 #import "ArgumentCodersCF.h"
@@ -73,8 +76,10 @@ static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNot
 // FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
 
+#if ENABLE(NETWORK_PROCESS)
 static NSString * const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
 static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
+#endif
 
 #if ENABLE(NETWORK_CACHE)
 static NSString * const WebKitNetworkCacheEnabledDefaultsKey = @"WebKitNetworkCacheEnabled";
@@ -114,8 +119,10 @@ static void registerUserDefaultsIfNeeded()
 
 void WebProcessPool::updateProcessSuppressionState()
 {
-    if (m_networkProcess)
+#if ENABLE(NETWORK_PROCESS)
+    if (usesNetworkProcess() && m_networkProcess)
         m_networkProcess->setProcessSuppressionEnabled(processSuppressionEnabled());
+#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (!m_processSuppressionDisabledForPageCounter.value())
@@ -190,6 +197,15 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
 
+#if ENABLE(NETWORK_PROCESS)
+    if (!usesNetworkProcess()) {
+#endif
+        for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
+            parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
+#if ENABLE(NETWORK_PROCESS)
+    }
+#endif
+
     parameters.fontWhitelist = m_fontWhitelist;
 
     if (m_bundleParameters) {
@@ -220,6 +236,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #endif
 }
 
+#if ENABLE(NETWORK_PROCESS)
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
@@ -254,6 +271,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
 #endif
 }
+#endif
 
 void WebProcessPool::platformInvalidateContext()
 {

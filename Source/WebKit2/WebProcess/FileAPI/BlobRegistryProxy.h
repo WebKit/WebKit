@@ -26,6 +26,8 @@
 #ifndef BlobRegistryProxy_h
 #define BlobRegistryProxy_h
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include <WebCore/BlobRegistry.h>
 
 namespace WebKit {
@@ -41,5 +43,7 @@ public:
 };
 
 }
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // BlobRegistryProxy_h

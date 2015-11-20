@@ -30,13 +30,16 @@
 #include "ChildProcess.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
-#include "NetworkProcessProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationClient.h>
+
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessProxyMessages.h"
+#endif
 
 using namespace WebCore;
 
@@ -125,6 +128,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, c
     m_process->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, challengeID), frame->page()->pageID());
 }
 
+#if ENABLE(NETWORK_PROCESS)
 #if USE(NETWORK_SESSION)
 void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler completionHandler)
 {
@@ -153,6 +157,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
     
     m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, challengeID));
 }
+#endif
 
 #if !USE(NETWORK_SESSION)
 void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download, const AuthenticationChallenge& authenticationChallenge)

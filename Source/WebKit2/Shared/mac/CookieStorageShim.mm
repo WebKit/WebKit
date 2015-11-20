@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CookieStorageShim.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "CookieStorageShimLibrary.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcessConnection.h"
@@ -133,3 +135,5 @@ using CompletionHandlerBlock = void(^)(CFDictionaryRef);
 }
 
 @end
+
+#endif // ENABLE(NETWORK_PROCESS)

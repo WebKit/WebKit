@@ -26,6 +26,8 @@
 #ifndef NetworkResourceLoader_h
 #define NetworkResourceLoader_h
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "MessageSender.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoadClient.h"
@@ -166,5 +168,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkResourceLoader_h

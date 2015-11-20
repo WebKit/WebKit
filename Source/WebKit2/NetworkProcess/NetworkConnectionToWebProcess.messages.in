@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(NETWORK_PROCESS)
+
 messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
@@ -46,3 +48,5 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     UnregisterBlobURL(WebCore::URL url)
     BlobSize(WebCore::URL url) -> (uint64_t resultSize)
 }
+
+#endif // ENABLE(NETWORK_PROCESS)

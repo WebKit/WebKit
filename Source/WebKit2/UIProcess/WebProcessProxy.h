@@ -152,7 +152,9 @@ public:
 
     ProcessThrottler& throttler() { return m_throttler; }
 
+#if ENABLE(NETWORK_PROCESS)
     void reinstateNetworkProcessAssertionState(NetworkProcessProxy&);
+#endif
 
 private:
     explicit WebProcessProxy(WebProcessPool&);
@@ -184,7 +186,9 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void getPluginProcessConnection(uint64_t pluginProcessToken, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
 #endif
+#if ENABLE(NETWORK_PROCESS)
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
+#endif
 #if ENABLE(DATABASE_PROCESS)
     void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
 #endif
@@ -249,7 +253,7 @@ private:
     int m_numberOfTimesSuddenTerminationWasDisabled;
     ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
     ProcessThrottler::ForegroundActivityToken m_foregroundTokenForNetworkProcess;
     ProcessThrottler::BackgroundActivityToken m_backgroundTokenForNetworkProcess;
 #endif

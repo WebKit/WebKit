@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebResourceLoader.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
@@ -219,3 +221,5 @@ void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSp
 #endif
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

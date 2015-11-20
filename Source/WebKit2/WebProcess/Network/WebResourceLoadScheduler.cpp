@@ -52,6 +52,8 @@
 #include <WebCore/SubresourceLoader.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(NETWORK_PROCESS)
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -284,3 +286,5 @@ void WebResourceLoadScheduler::networkProcessCrashed()
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

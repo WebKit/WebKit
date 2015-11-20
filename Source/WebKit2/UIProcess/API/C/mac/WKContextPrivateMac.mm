@@ -166,5 +166,10 @@ bool WKContextShouldSuggestBlockWebGL()
 
 pid_t WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
 {
+#if ENABLE(NETWORK_PROCESS)
     return toImpl(contextRef)->networkProcessIdentifier();
+#else
+    UNUSED_PARAM(contextRef);
+    return 0;
+#endif
 }

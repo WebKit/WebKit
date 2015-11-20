@@ -31,12 +31,15 @@
 #include "AuthenticationChallengeProxy.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
-#include "NetworkProcessMessages.h"
-#include "NetworkProcessProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
+#endif
 
 using namespace WebCore;
 
@@ -71,8 +74,15 @@ void DownloadProxy::cancel()
     if (!m_processPool)
         return;
 
-    if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
-        networkProcess->connection()->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
+#if ENABLE(NETWORK_PROCESS)
+    if (m_processPool->usesNetworkProcess()) {
+        if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
+            networkProcess->connection()->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
+        return;
+    }
+#endif
+
+    m_processPool->sendToAllProcesses(Messages::WebProcess::CancelDownload(m_downloadID));
 }
 
 void DownloadProxy::invalidate()

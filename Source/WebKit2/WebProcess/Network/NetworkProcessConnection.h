@@ -31,6 +31,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(NETWORK_PROCESS)
+
 namespace IPC {
 class DataReference;
 }
@@ -79,5 +81,8 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
+
 
 #endif // NetworkProcessConnection_h

@@ -32,6 +32,8 @@
 #include <WebCore/ResourceLoader.h>
 #include <wtf/RunLoop.h>
 
+#if ENABLE(NETWORK_PROCESS)
+
 namespace WebKit {
 
 class NetworkProcessConnection;
@@ -74,5 +76,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // WebResourceLoadScheduler_h

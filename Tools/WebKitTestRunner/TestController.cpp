@@ -400,6 +400,11 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
 
     m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
+#if PLATFORM(EFL)
+    WKContextSetUsesNetworkProcess(m_context.get(), false);
+    WKContextSetProcessModel(m_context.get(), kWKProcessModelSharedSecondaryProcess);
+#endif
+
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
 

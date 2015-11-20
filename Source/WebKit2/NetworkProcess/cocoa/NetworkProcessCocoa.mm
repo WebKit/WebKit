@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
@@ -265,3 +267,5 @@ void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifi
 }
 
 }
+
+#endif

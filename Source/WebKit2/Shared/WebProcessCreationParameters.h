@@ -154,6 +154,10 @@ struct WebProcessCreationParameters {
     HashMap<String, bool> notificationPermissions;
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
+    bool usesNetworkProcess;
+#endif
+
     HashMap<WebCore::SessionID, HashMap<unsigned, double>> plugInAutoStartOriginHashes;
     Vector<String> plugInAutoStartOrigins;
 

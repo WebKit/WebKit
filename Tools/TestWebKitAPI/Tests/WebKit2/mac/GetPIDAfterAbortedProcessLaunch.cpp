@@ -42,6 +42,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 TEST(WebKit2, GetPIDAfterAbortedProcessLaunch)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKContextSetUsesNetworkProcess(context.get(), true);
 
     PlatformWebView webView(context.get());
 

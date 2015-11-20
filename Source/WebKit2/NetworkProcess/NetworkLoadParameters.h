@@ -26,6 +26,8 @@
 #ifndef NetworkLoadParameters_h
 #define NetworkLoadParameters_h
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
@@ -52,5 +54,7 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkLoadParameters_h

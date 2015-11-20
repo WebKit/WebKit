@@ -1053,7 +1053,11 @@ static void initializeBrowserFuncs(NPNetscapeFuncs &netscapeFuncs)
     netscapeFuncs.popupcontextmenu = 0;
     netscapeFuncs.convertpoint = 0;
 #endif
+#if ENABLE(NETWORK_PROCESS)
     netscapeFuncs.urlredirectresponse = NPN_URLRedirectResponse;
+#else
+    netscapeFuncs.urlredirectresponse = 0;
+#endif
 }
     
 NPNetscapeFuncs* netscapeBrowserFuncs()

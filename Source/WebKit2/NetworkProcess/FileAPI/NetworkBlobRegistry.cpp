@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkBlobRegistry.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "BlobDataFileReferenceWithSandboxExtension.h"
 #include "SandboxExtension.h"
 #include <WebCore/BlobPart.h>
@@ -149,3 +151,5 @@ Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(NetworkCo
 }
 
 }
+
+#endif

@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(NETWORK_PROCESS)
+
 messages -> WebResourceLoader LegacyReceiver {
     WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
@@ -37,3 +39,5 @@ messages -> WebResourceLoader LegacyReceiver {
     DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)
 #endif
 }
+
+#endif // ENABLE(NETWORK_PROCESS)

@@ -30,7 +30,6 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "Logging.h"
-#include "NetworkProcessMessages.h"
 #include "WebCookieManagerProxy.h"
 #include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
@@ -41,6 +40,10 @@
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
+
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessMessages.h"
+#endif
 
 namespace WebKit {
 
@@ -95,6 +98,16 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
         parameters.urlSchemesRegisteredAsLocal.append("resource");
     }
 
+    if (!usesNetworkProcess()) {
+        parameters.urlSchemesRegisteredForCustomProtocols = supplement<WebSoupCustomProtocolRequestManager>()->registeredSchemesForCustomProtocols();
+
+        supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
+        parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
+
+        parameters.ignoreTLSErrors = m_ignoreTLSErrors;
+        parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
+    }
+
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
 }
 
@@ -136,8 +149,13 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;
-    if (networkProcess())
+#if ENABLE(NETWORK_PROCESS)
+    if (usesNetworkProcess() && networkProcess()) {
         networkProcess()->send(Messages::NetworkProcess::SetIgnoreTLSErrors(m_ignoreTLSErrors), 0);
+        return;
+    }
+#endif
+    sendToAllProcesses(Messages::WebProcess::SetIgnoreTLSErrors(m_ignoreTLSErrors));
 }
 
 } // namespace WebKit

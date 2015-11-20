@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(NETWORK_PROCESS)
+
 messages -> NetworkProcessProxy LegacyReceiver {
     DidCreateNetworkConnectionToWebProcess(IPC::Attachment connectionIdentifier)
 
@@ -37,3 +39,5 @@ messages -> NetworkProcessProxy LegacyReceiver {
     LogSampledDiagnosticMessageWithResult(uint64_t pageID, String message, String description, uint32_t result)
     LogSampledDiagnosticMessageWithValue(uint64_t pageID, String message, String description, String value)
 }
+
+#endif // ENABLE(NETWORK_PROCESS)

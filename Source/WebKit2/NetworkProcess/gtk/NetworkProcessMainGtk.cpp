@@ -27,6 +27,8 @@
 #include "config.h"
 #include "NetworkProcessMainUnix.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "ChildProcessMain.h"
 #include "NetworkProcess.h"
 #include <WebCore/SoupNetworkSession.h>
@@ -61,3 +63,5 @@ int NetworkProcessMainUnix(int argc, char** argv)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

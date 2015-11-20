@@ -37,6 +37,8 @@
 #include <WebCore/SessionID.h>
 #include <WebCore/SharedBuffer.h>
 
+#if ENABLE(NETWORK_PROCESS)
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -96,3 +98,5 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 #endif
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

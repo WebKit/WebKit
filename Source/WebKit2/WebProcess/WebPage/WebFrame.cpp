@@ -33,13 +33,10 @@
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
-#include "NetworkConnectionToWebProcessMessages.h"
-#include "NetworkProcessConnection.h"
 #include "PluginView.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebChromeClient.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -82,6 +79,12 @@
 
 #if PLATFORM(COCOA)
 #include <WebCore/LegacyWebArchive.h>
+#endif
+
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
+#include "WebCoreArgumentCoders.h"
 #endif
 
 #ifndef NDEBUG
@@ -254,9 +257,23 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
     m_policyDownloadID = 0;
 
     auto& webProcess = WebProcess::singleton();
+#if USE(NETWORK_SESSION)
+    ASSERT(webProcess.usesNetworkProcess());
+#endif
     SessionID sessionID = page() ? page()->sessionID() : SessionID::defaultSessionID();
-    webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request), 0);
-    return;
+#if ENABLE(NETWORK_PROCESS)
+    if (webProcess.usesNetworkProcess()) {
+        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request), 0);
+        return;
+    }
+#endif
+
+#if USE(NETWORK_SESSION)
+    // Using NETWORK_SESSION requires the use of a network process.
+    RELEASE_ASSERT_NOT_REACHED();
+#else
+    webProcess.downloadManager().startDownload(sessionID, policyDownloadID, request);
+#endif
 }
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
@@ -269,12 +286,39 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
     auto& webProcess = WebProcess::singleton();
-    // Use 0 to indicate that the resource load can't be converted and a new download must be started.
-    // This can happen if there is no loader because the main resource is in the WebCore memory cache,
-    // or because the conversion was attempted when not calling SubresourceLoader::didReceiveResponse().
-    uint64_t mainResourceLoadIdentifier = mainResourceLoader ? mainResourceLoader->identifier() : 0;
+#if ENABLE(NETWORK_PROCESS)
+#if USE(NETWORK_SESSION)
+    ASSERT(webProcess.usesNetworkProcess());
+#endif
+    if (webProcess.usesNetworkProcess()) {
+        // Use 0 to indicate that the resource load can't be converted and a new download must be started.
+        // This can happen if there is no loader because the main resource is in the WebCore memory cache,
+        // or because the conversion was attempted when not calling SubresourceLoader::didReceiveResponse().
+        uint64_t mainResourceLoadIdentifier;
+        if (mainResourceLoader)
+            mainResourceLoadIdentifier = mainResourceLoader->identifier();
+        else
+            mainResourceLoadIdentifier = 0;
 
-    webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(sessionID, mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
+        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(sessionID, mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
+        return;
+    }
+#endif
+
+    if (!mainResourceLoader) {
+        // The main resource has already been loaded. Start a new download instead.
+#if !USE(NETWORK_SESSION)
+        webProcess.downloadManager().startDownload(sessionID, policyDownloadID, request);
+#endif
+        return;
+    }
+
+#if USE(NETWORK_SESSION)
+    // Using NETWORK_SESSION requires the use of a network process.
+    RELEASE_ASSERT_NOT_REACHED();
+#else
+    webProcess.downloadManager().convertHandleToDownload(policyDownloadID, documentLoader->mainResourceLoader()->handle(), request, response);
+#endif
 }
 
 String WebFrame::source() const

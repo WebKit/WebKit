@@ -570,18 +570,29 @@ void ewk_context_message_from_extensions_callback_set(Ewk_Context* ewkContext, E
 
 Eina_Bool ewk_context_process_model_set(Ewk_Context* ewkContext, Ewk_Process_Model processModel)
 {
+#if ENABLE(NETWORK_PROCESS)
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl, false);
 
     impl->setProcessModel(processModel);
 
     return true;
+#else
+    UNUSED_PARAM(ewkContext);
+    UNUSED_PARAM(processModel);
+    return false;
+#endif
 }
 
 Ewk_Process_Model ewk_context_process_model_get(const Ewk_Context* ewkContext)
 {
+#if ENABLE(NETWORK_PROCESS)
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, EWK_PROCESS_MODEL_SHARED_SECONDARY);
 
     return impl->processModel();
+#else
+    UNUSED_PARAM(ewkContext);
+    return EWK_PROCESS_MODEL_SHARED_SECONDARY;
+#endif
 }
 
 Ewk_TLS_Error_Policy ewk_context_tls_error_policy_get(const Ewk_Context* context)

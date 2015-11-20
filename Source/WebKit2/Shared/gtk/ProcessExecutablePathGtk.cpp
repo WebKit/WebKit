@@ -79,10 +79,12 @@ String executablePathOfPluginProcess()
     return findWebKitProcess("WebKitPluginProcess");
 }
 
+#if ENABLE(NETWORK_PROCESS)
 String executablePathOfNetworkProcess()
 {
     return findWebKitProcess("WebKitNetworkProcess");
 }
+#endif
 
 #if ENABLE(DATABASE_PROCESS)
 String executablePathOfDatabaseProcess()

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && ENABLE(NETWORK_PROCESS)
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
@@ -144,4 +144,4 @@ void NetworkProcess::platformTerminate()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(MAC) && ENABLE(NETWORK_PROCESS)

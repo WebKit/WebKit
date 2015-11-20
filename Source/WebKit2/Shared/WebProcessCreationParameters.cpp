@@ -43,6 +43,9 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , shouldEnableJIT(false)
     , shouldEnableFTLJIT(false)
 #endif
+#if ENABLE(NETWORK_PROCESS)
+    , usesNetworkProcess(false)
+#endif
     , memoryCacheDisabled(false)
 #if ENABLE(SERVICE_CONTROLS)
     , hasImageServices(false)
@@ -128,6 +131,10 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     encoder << notificationPermissions;
+#endif
+
+#if ENABLE(NETWORK_PROCESS)
+    encoder << usesNetworkProcess;
 #endif
 
     encoder << plugInAutoStartOriginHashes;
@@ -281,6 +288,11 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!decoder.decode(parameters.notificationPermissions))
+        return false;
+#endif
+
+#if ENABLE(NETWORK_PROCESS)
+    if (!decoder.decode(parameters.usesNetworkProcess))
         return false;
 #endif
 

@@ -26,6 +26,8 @@
 #ifndef NetworkConnectionToWebProcess_h
 #define NetworkConnectionToWebProcess_h
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "BlockingResponseMap.h"
 #include "Connection.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -99,5 +101,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkConnectionToWebProcess_h

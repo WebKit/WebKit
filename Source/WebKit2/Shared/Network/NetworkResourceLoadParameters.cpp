@@ -30,6 +30,8 @@
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -158,3 +160,5 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
 }
     
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

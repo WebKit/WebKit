@@ -38,7 +38,9 @@ messages -> WebProcessProxy LegacyReceiver {
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins, Vector<WebCore::PluginInfo> applicationPlugins)
     GetPluginProcessConnection(uint64_t pluginProcessToken) -> (IPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed
 #endif
+#if ENABLE(NETWORK_PROCESS)
     GetNetworkProcessConnection() -> (IPC::Attachment connectionHandle) Delayed
+#endif
 #if ENABLE(DATABASE_PROCESS)
     GetDatabaseProcessConnection() -> (IPC::Attachment connectionHandle) Delayed
 #endif

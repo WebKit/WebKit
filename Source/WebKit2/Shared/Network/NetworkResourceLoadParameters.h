@@ -32,6 +32,8 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
 
+#if ENABLE(NETWORK_PROCESS)
+
 namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
@@ -65,5 +67,7 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkResourceLoadParameters_h

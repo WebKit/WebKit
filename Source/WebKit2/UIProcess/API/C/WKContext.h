@@ -75,7 +75,6 @@ typedef struct WKContextClientV1 {
     WKContextCopyWebCryptoMasterKeyCallback                             copyWebCryptoMasterKey;
 } WKContextClientV1;
 
-// FIXME: These can be removed once we are no longer supporting Mavericks.
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,
     kWKProcessModelMultipleSecondaryProcesses = 1

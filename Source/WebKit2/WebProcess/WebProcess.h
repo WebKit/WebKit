@@ -28,6 +28,7 @@
 
 #include "CacheModel.h"
 #include "ChildProcess.h"
+#include "DownloadManager.h"
 #include "DrawingArea.h"
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
@@ -70,9 +71,9 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
+class DownloadManager;
 class EventDispatcher;
 class InjectedBundle;
-class NetworkProcessConnection;
 class ObjCObjectGraph;
 class UserData;
 class WebConnectionToUIProcess;
@@ -81,17 +82,22 @@ class WebIconDatabaseProxy;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
-class WebResourceLoadScheduler;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
 
+#if ENABLE(NETWORK_PROCESS)
+class NetworkProcessConnection;
+class WebResourceLoadScheduler;
+#endif
+
 #if ENABLE(DATABASE_PROCESS)
 class WebToDatabaseProcessConnection;
 #endif
 
-class WebProcess : public ChildProcess {
+class WebProcess : public ChildProcess, private DownloadManager::Client {
+    friend class NeverDestroyed<DownloadManager>;
 public:
     static WebProcess& singleton();
 
@@ -141,6 +147,7 @@ public:
 #endif
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
+    DownloadManager& downloadManager();
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
@@ -150,9 +157,13 @@ public:
 
     EventDispatcher& eventDispatcher() { return *m_eventDispatcher; }
 
+    bool usesNetworkProcess() const;
+
+#if ENABLE(NETWORK_PROCESS)
     NetworkProcessConnection* networkConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     WebResourceLoadScheduler& webResourceLoadScheduler();
+#endif
 
 #if ENABLE(DATABASE_PROCESS)
     void webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection*);
@@ -210,6 +221,12 @@ public:
 private:
     WebProcess();
     ~WebProcess();
+
+    // DownloadManager::Client.
+    virtual void didCreateDownload() override;
+    virtual void didDestroyDownload() override;
+    virtual IPC::Connection* downloadProxyConnection() override;
+    virtual AuthenticationManager& downloadsAuthenticationManager() override;
 
     void initializeWebProcess(WebProcessCreationParameters&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&&);
@@ -342,11 +359,14 @@ private:
 
     WebIconDatabaseProxy* m_iconDatabaseProxy;
 
+#if ENABLE(NETWORK_PROCESS)
     void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
+    bool m_usesNetworkProcess;
     WebResourceLoadScheduler* m_webResourceLoadScheduler;
     HashSet<String> m_dnsPrefetchedHosts;
     WebCore::HysteresisActivity m_dnsPrefetchHystereris;
+#endif
 
 #if ENABLE(DATABASE_PROCESS)
     void ensureWebToDatabaseProcessConnection();

@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "CacheModel.h"
+#include "ProcessModel.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -46,6 +47,9 @@ public:
 
     bool shouldHaveLegacyDataStore() const { return m_shouldHaveLegacyDataStore; }
     void setShouldHaveLegacyDataStore(bool shouldHaveLegacyDataStore) { m_shouldHaveLegacyDataStore = shouldHaveLegacyDataStore; }
+
+    WebKit::ProcessModel processModel() const { return m_processModel; }
+    void setProcessModel(WebKit::ProcessModel processModel) { m_processModel = processModel; } 
 
     bool useNetworkProcess() const { return m_useNetworkProcess; }
     void setUseNetworkProcess(bool useNetworkProcess) { m_useNetworkProcess = useNetworkProcess; } 
@@ -92,6 +96,7 @@ public:
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
+    WebKit::ProcessModel m_processModel { WebKit::ProcessModelMultipleSecondaryProcesses };
     bool m_useNetworkProcess { true };
     unsigned m_maximumProcessCount { 0 };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
