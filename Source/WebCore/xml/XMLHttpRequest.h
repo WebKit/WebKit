@@ -176,9 +176,6 @@ private:
     bool initSend(ExceptionCode&);
     void sendBytesData(const void*, size_t, ExceptionCode&);
 
-    String getRequestHeader(const String& name) const;
-    void setRequestHeaderInternal(const String& name, const String& value);
-
     void changeState(State newState);
     void callReadyStateChangeListener();
     void dropProtection();

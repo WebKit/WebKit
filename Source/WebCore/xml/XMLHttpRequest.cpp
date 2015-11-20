@@ -595,11 +595,11 @@ void XMLHttpRequest::send(Document* document, ExceptionCode& ec)
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
 #if ENABLE(DASHBOARD_SUPPORT)
             if (usesDashboardBackwardCompatibilityMode())
-                setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
+                m_requestHeaders.set(HTTPHeaderName::ContentType, ASCIILiteral("application/x-www-form-urlencoded"));
             else
 #endif
                 // FIXME: this should include the charset used for encoding.
-                setRequestHeaderInternal("Content-Type", document->isHTMLDocument() ? "text/html;charset=UTF-8":"application/xml;charset=UTF-8");
+                m_requestHeaders.set(HTTPHeaderName::ContentType, document->isHTMLDocument() ? ASCIILiteral("text/html;charset=UTF-8") : ASCIILiteral("application/xml;charset=UTF-8"));
         }
 
         // FIXME: According to XMLHttpRequest Level 2, this should use the Document.innerHTML algorithm
@@ -620,14 +620,14 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         return;
 
     if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
-        String contentType = getRequestHeader("Content-Type");
+        String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
         if (contentType.isNull()) {
 #if ENABLE(DASHBOARD_SUPPORT)
             if (usesDashboardBackwardCompatibilityMode())
-                setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
+                m_requestHeaders.set(HTTPHeaderName::ContentType, ASCIILiteral("application/x-www-form-urlencoded"));
             else
 #endif
-                setRequestHeaderInternal("Content-Type", "text/plain;charset=UTF-8");
+                m_requestHeaders.set(HTTPHeaderName::ContentType, ASCIILiteral("text/plain;charset=UTF-8"));
         } else {
             replaceCharsetInMediaType(contentType, "UTF-8");
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
@@ -650,10 +650,10 @@ void XMLHttpRequest::send(Blob* body, ExceptionCode& ec)
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType)) {
             const String& blobType = body->type();
             if (!blobType.isEmpty() && isValidContentType(blobType))
-                setRequestHeaderInternal("Content-Type", blobType);
+                m_requestHeaders.set(HTTPHeaderName::ContentType, blobType);
             else {
                 // From FileAPI spec, whenever media type cannot be determined, empty string must be returned.
-                setRequestHeaderInternal("Content-Type", "");
+                m_requestHeaders.set(HTTPHeaderName::ContentType, emptyString());
             }
         }
 
@@ -675,7 +675,7 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
         m_requestEntityBody->generateFiles(document());
 
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
-            setRequestHeaderInternal("Content-Type", makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary().data()));
+            m_requestHeaders.set(HTTPHeaderName::ContentType, makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary().data()));
     }
 
     createRequest(ec);
@@ -955,17 +955,7 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
         return;
     }
 
-    setRequestHeaderInternal(name, normalizedValue);
-}
-
-void XMLHttpRequest::setRequestHeaderInternal(const String& name, const String& value)
-{
-    m_requestHeaders.add(name, value);
-}
-
-String XMLHttpRequest::getRequestHeader(const String& name) const
-{
-    return m_requestHeaders.get(name);
+    m_requestHeaders.add(name, normalizedValue);
 }
 
 String XMLHttpRequest::getAllResponseHeaders() const
