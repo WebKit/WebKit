@@ -1,3 +1,16 @@
+2015-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow more buffer formats in the IOSurface pool
+        https://bugs.webkit.org/show_bug.cgi?id=151516
+
+        Reviewed by Tim Horton.
+        
+        Have RemoteLayerBackingStore go through a static function on IOSurface to return
+        a surface to the pool, rather than knowing about IOSurfacePool directly.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+
 2015-11-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove NETWORK_PROCESS compile flag

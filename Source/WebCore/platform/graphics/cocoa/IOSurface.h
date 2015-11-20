@@ -46,10 +46,12 @@ public:
     };
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, ColorSpace, Format = Format::RGBA);
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, IntSize contextSize, ColorSpace);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, IntSize contextSize, ColorSpace, Format = Format::RGBA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const MachSendRight&, ColorSpace);
     static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, ColorSpace);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
+
+    WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&);
 
     static IntSize maximumSize();
 
@@ -95,10 +97,10 @@ public:
 
 private:
     IOSurface(IntSize, ColorSpace, Format);
-    IOSurface(IntSize, IntSize contextSize, ColorSpace);
+    IOSurface(IntSize, IntSize contextSize, ColorSpace, Format);
     IOSurface(IOSurfaceRef, ColorSpace);
 
-    static std::unique_ptr<IOSurface> surfaceFromPool(IntSize, IntSize contextSize, ColorSpace);
+    static std::unique_ptr<IOSurface> surfaceFromPool(IntSize, IntSize contextSize, ColorSpace, Format);
     IntSize contextSize() const { return m_contextSize; }
     void setContextSize(IntSize);
 

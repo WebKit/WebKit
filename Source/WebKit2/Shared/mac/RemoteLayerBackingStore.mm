@@ -36,7 +36,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/IOSurfacePool.h>
 #import <WebCore/MachSendRight.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebLayer.h>
@@ -469,7 +468,7 @@ void RemoteLayerBackingStore::Buffer::discard()
 {
 #if USE(IOSURFACE)
     if (surface)
-        IOSurfacePool::sharedPool().addSurface(WTF::move(surface));
+        IOSurface::moveToPool(WTF::move(surface));
     isVolatile = false;
 #endif
     bitmap = nullptr;
