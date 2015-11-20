@@ -26,17 +26,6 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
-        "Apple Mavericks Debug (Build)": {platform: Dashboard.Platform.MacOSXMavericks, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Mavericks Release (Build)": {platform: Dashboard.Platform.MacOSXMavericks, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Mavericks Debug WK1 (Tests)": {platform: Dashboard.Platform.MacOSXMavericks, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Mavericks Debug WK2 (Tests)": {platform: Dashboard.Platform.MacOSXMavericks, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple Mavericks Release WK1 (Tests)": {platform: Dashboard.Platform.MacOSXMavericks, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Mavericks Release WK2 (Tests)": {platform: Dashboard.Platform.MacOSXMavericks, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple Mavericks Release WK2 (Perf)": {platform: Dashboard.Platform.MacOSXMavericks, debug: false, performance: true, heading: "Performance"},
-        "Apple Mavericks JSC": {platform: Dashboard.Platform.MacOSXMavericks, heading: "JavaScript", combinedQueues: {
-            "Apple Mavericks 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
-            "Apple Mavericks LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},
-        }},
         "Apple El Capitan Debug (Build)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple El Capitan Release (Build)": {platform: Dashboard.Platform.MacOSXElCapitan, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple El Capitan Release (32-bit Build)": {platform: Dashboard.Platform.MacOSXElCapitan, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},

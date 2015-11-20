@@ -1,22 +1,6 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                    { "name": "bot629", "platform": "mac-mavericks" },
-                    { "name": "bot198", "platform": "mac-mavericks" },
-                    { "name": "bot199", "platform": "mac-mavericks" },
-                    { "name": "bot200", "platform": "mac-mavericks" },
-                    { "name": "bot101", "platform": "mac-mavericks" },
-                    { "name": "bot124", "platform": "mac-mavericks" },
-                    { "name": "bot105", "platform": "mac-mavericks" },
-                    { "name": "bot108", "platform": "mac-mavericks" },
-                    { "name": "bot135", "platform": "mac-mavericks" },
-                    { "name": "bot136", "platform": "mac-mavericks" },
-                    { "name": "bot144", "platform": "mac-mavericks" },
-                    { "name": "bot151", "platform": "mac-mavericks" },
-                    { "name": "bot152", "platform": "mac-mavericks" },
-                    { "name": "bot301", "platform": "mac-mavericks" },
-                    { "name": "bot306", "platform": "mac-mavericks" },
-
                     { "name": "bot139", "platform": "mac-yosemite" },
                     { "name": "bot148", "platform": "mac-yosemite" },
                     { "name": "bot155", "platform": "mac-yosemite" },
@@ -164,49 +148,6 @@
                     { "name": "Apple Yosemite Release (32-bit Build)", "type": "Build", "builddir": "yosemite-32bit-release",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot139"]
-                    },
-                    { "name": "Apple Mavericks Debug (Build)", "type": "Build", "builddir": "mavericks-debug",
-                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["mavericks-debug-tests-wk1", "mavericks-debug-tests-wk2"],
-                      "slavenames": ["bot101", "bot105"]
-                    },
-                    { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "mavericks-debug-tests-wk1",
-                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot124", "bot108"]
-                    },
-                    { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "mavericks-debug-tests-wk2",
-                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot144", "bot198"]
-                    },
-                    { "name": "Apple Mavericks LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "mavericks-cloop-debug",
-                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["bot136"]
-                    },
-                    { "name": "Apple Mavericks 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "mavericks-32bitJSC-debug",
-                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["bot629"]
-                    },
-                    { "name": "Apple Mavericks Release (Build)", "type": "Build", "builddir": "mavericks-release",
-                      "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["mavericks-release-tests-wk1", "mavericks-release-tests-wk2", "mavericks-release-perf"],
-                      "slavenames": ["bot301", "bot306"]
-                    },
-                    { "name": "Apple Mavericks Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "mavericks-release-tests-wk1",
-                      "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot199", "bot151"]
-                    },
-                    { "name": "Apple Mavericks Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "mavericks-release-tests-wk2",
-                      "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot200", "bot152"]
-                    },
-                    {
-                      "name": "Apple Mavericks Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "mavericks-release-perf-tests",
-                      "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["bot135"]
                     },
                     { "name": "Apple Yosemite Debug (Build)", "type": "Build", "builddir": "yosemite-debug",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
@@ -383,9 +324,6 @@
                                        "EFL Linux ARMv7 Thumb2 Release", "EFL Linux ARMv7 Traditional Release", "EFL Linux AArch64 Release",
                                        "EFL Linux 64-bit Release WK2 (Perf)", "WinCairo 64-Bit Release"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-mavericks", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Mavericks Release (Build)", "Apple Mavericks Debug (Build)", "Apple Mavericks LLINT CLoop (BuildAndTest)", "Apple Mavericks 32-bit JSC (BuildAndTest)"]
-                    },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-yosemite", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Yosemite Release (Build)", "Apple Yosemite Debug (Build)", "Apple Yosemite LLINT CLoop (BuildAndTest)", "Apple Yosemite 32-bit JSC (BuildAndTest)", "Apple Yosemite Release (32-bit Build)"]
                     },
@@ -427,21 +365,6 @@
                     },
                     { "type": "Triggerable", "name": "elcapitan-release-perf",
                       "builderNames": ["Apple El Capitan Release WK2 (Perf)"]
-                    },
-                    { "type": "Triggerable", "name": "mavericks-release-tests-wk1",
-                      "builderNames": ["Apple Mavericks Release WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "mavericks-release-tests-wk2",
-                      "builderNames": ["Apple Mavericks Release WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "mavericks-debug-tests-wk1",
-                      "builderNames": ["Apple Mavericks Debug WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "mavericks-debug-tests-wk2",
-                      "builderNames": ["Apple Mavericks Debug WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "mavericks-release-perf",
-                      "builderNames": ["Apple Mavericks Release WK2 (Perf)"]
                     },
                     { "type": "Triggerable", "name": "yosemite-release-tests-jsc",
                       "builderNames": ["Apple Yosemite Release JSC (Tests)"]

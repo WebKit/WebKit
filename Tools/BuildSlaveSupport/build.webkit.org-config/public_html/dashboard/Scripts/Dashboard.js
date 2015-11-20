@@ -27,7 +27,6 @@ Dashboard = {
     Platform: {
         MacOSXElCapitan: { name: "mac-os-x-elcapitan", readableName: "OS X El Capitan", order: 9 },
         MacOSXYosemite: { name: "mac-os-x-yosemite", readableName: "OS X Yosemite", order: 10 },
-        MacOSXMavericks: { name: "mac-os-x-mavericks", readableName: "OS X Mavericks", order: 20 },
         iOS9Simulator: { name: "ios-simulator-9", readableName: "iOS 9 Simulator", order: 30 },
         iOS9Device: { name: "ios-9", readableName: "iOS 9", order: 40 },
         Windows8: { name: "windows-8", readableName: "Windows 8", order: 50 },

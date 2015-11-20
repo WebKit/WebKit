@@ -172,7 +172,6 @@ if ($wksi) {
         ));
     } else {
         push(@librariesToCopy, (
-            "libWebKitSystemInterfaceMavericks.a",
             "libWebKitSystemInterfaceYosemite.a",
             "libWebKitSystemInterfaceElCapitan.a"
         ));
@@ -236,10 +235,7 @@ if ($llvm) {
             $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesIOS$majorSDKVersion.tar.bz2";
             $llvmIncludePackage = "WebKitLibraries/LLVMIncludesIOS$majorSDKVersion.tar.bz2";
         } elsif (isAppleMacWebKit()) {
-            if ($osxVersion eq "10.9") {
-                $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
-                $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
-            } elsif ($osxVersion eq "10.10") {
+            if ($osxVersion eq "10.10") {
                 $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesYosemite.tar.bz2";
                 $llvmIncludePackage = "WebKitLibraries/LLVMIncludesYosemite.tar.bz2";
             } elsif ($osxVersion eq "10.11") {
