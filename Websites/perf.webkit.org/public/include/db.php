@@ -43,7 +43,7 @@ function config_path($key, $path) {
 function generate_data_file($filename, $content) {
     if (!assert(ctype_alnum(str_replace(array('-', '_', '.'), '', $filename))))
         return FALSE;
-    return file_put_contents(config_path('dataDirectory', $filename), $content);
+    return file_put_contents(config_path('dataDirectory', $filename), $content, LOCK_EX);
 }
 
 if (config('debug')) {

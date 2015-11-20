@@ -2,27 +2,6 @@
 
 require('../include/json-header.php');
 
-function fetch_runs_for_config_and_test_group($db, $config, $test_group_id) {
-    return $db->query_and_fetch_all('
-        SELECT test_runs.*, builds.*, array_agg((commit_repository, commit_revision, commit_time)) AS revisions
-            FROM builds
-                LEFT OUTER JOIN build_commits ON commit_build = build_id
-                LEFT OUTER JOIN commits ON build_commit = commit_id,
-                test_runs, build_requests, analysis_test_groups
-            WHERE run_build = build_id AND run_config = $1 AND request_build = build_id AND request_group = $2
-            GROUP BY build_id, run_id', array($config['config_id'], $test_group_id));
-}
-
-function fetch_runs_for_config($db, $config) {
-    return $db->query_and_fetch_all('
-        SELECT test_runs.*, builds.*, array_agg((commit_repository, commit_revision, commit_time)) AS revisions
-            FROM builds
-                LEFT OUTER JOIN build_commits ON commit_build = build_id
-                LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
-            WHERE run_build = build_id AND run_config = $1 AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
-            GROUP BY build_id, run_id', array($config['config_id']));
-}
-
 function main($path) {
     if (count($path) != 1)
         exit_with_error('InvalidRequest');
@@ -52,15 +31,13 @@ function main($path) {
         header("Cache-Control: maxage=$maxage");
     }
 
-    $generator = new RunsGenerator($config_rows);
+    if ($test_group_id)
+        $generator = new RunsGeneratorForTestGroup($db, $test_group_id);
+    else
+        $generator = new RunsGenerator($db);
 
-    foreach ($config_rows as $config) {
-        if ($test_group_id)
-            $raw_runs = fetch_runs_for_config_and_test_group($db, $config, $test_group_id);
-        else
-            $raw_runs = fetch_runs_for_config($db, $config);
-        $generator->add_runs($config['config_type'], $raw_runs);
-    }
+    foreach ($config_rows as $config)
+        $generator->fetch_runs($config['config_type'], $config['config_id'], $config['config_runs_last_modified']);
 
     $content = success_json($generator->results());
     if (!$test_group_id)
@@ -69,12 +46,10 @@ function main($path) {
 }
 
 class RunsGenerator {
-    function __construct($config_rows) {
+    function __construct($db) {
+        $this->db = $db;
         $this->results = array();
-        $last_modified_times = array();
-        foreach ($config_rows as $row)
-            array_push($last_modified_times, Database::to_js_time($row['config_runs_last_modified']));
-        $this->last_modified = max($last_modified_times);
+        $this->last_modified = 0;
         $this->start_time = microtime(true);
     }
 
@@ -85,14 +60,26 @@ class RunsGenerator {
             'elapsedTime' => (microtime(true) - $this->start_time) * 1000);
     }
 
-    function add_runs($name, $raw_runs) {
+    function fetch_runs($name, $config_id, $last_modified) {
+        $this->last_modified = max($this->last_modified, Database::to_js_time($last_modified));
+
+        $results = $this->execute_query($config_id);
+
         $formatted_runs = array();
-        if ($raw_runs) {
-            foreach ($raw_runs as $run)
-                array_push($formatted_runs, self::format_run($run));
-        }
+        while ($row = $this->db->fetch_next_row($results))
+            array_push($formatted_runs, self::format_run($row));
+
         $this->results[$name] = $formatted_runs;
-        return $formatted_runs;
+    }
+
+    function execute_query($config_id) {
+        return $this->db->query('
+            SELECT test_runs.*, builds.*, array_agg((commit_repository, commit_revision, commit_time)) AS revisions
+                FROM builds
+                    LEFT OUTER JOIN build_commits ON commit_build = build_id
+                    LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
+                WHERE run_build = build_id AND run_config = $1 AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
+                GROUP BY build_id, run_id', array($config_id));
     }
 
     private static function format_run($run) {
@@ -122,6 +109,24 @@ class RunsGenerator {
             $revisions[trim($name_and_revision[0], '"')] = array(trim($name_and_revision[1], '"'), $time);
         }
         return $revisions;
+    }
+}
+
+class RunsGeneratorForTestGroup extends RunsGenerator {
+    function __construct($db, $test_group_id) {
+        parent::__construct($db);
+        $this->test_group_id = $test_group_id;
+    }
+
+    function execute_query($config_id) {
+        return $this->db->query('
+            SELECT test_runs.*, builds.*, array_agg((commit_repository, commit_revision, commit_time)) AS revisions
+                FROM builds
+                    LEFT OUTER JOIN build_commits ON commit_build = build_id
+                    LEFT OUTER JOIN commits ON build_commit = commit_id,
+                    test_runs, build_requests, analysis_test_groups
+                WHERE run_build = build_id AND run_config = $1 AND request_build = build_id AND request_group = $2
+                GROUP BY build_id, run_id', array($config_id, $this->test_group_id));
     }
 }
 

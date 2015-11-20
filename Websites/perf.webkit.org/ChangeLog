@@ -1,3 +1,28 @@
+2015-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard's runs API uses more than 128MB of memory
+        https://bugs.webkit.org/show_bug.cgi?id=151478
+
+        Reviewed by Andreas Kling.
+
+        Don't fetch all query results at once to avoid using twice as much memory as needed.
+        Use iterative API to format each result at a time.
+
+        This change is also a 5% runtime performance gain.
+
+        * public/api/runs.php:
+        (RunsGenerator::__construct): Takes a Database instance instead of a list of configurations. The latter is
+        no longer needed as we pass in each configuration type explicitly to fetch_runs.
+        (RunsGenerator::fetch_runs): Renamed from add_runs since it now executes the database query via execute_query.
+        Also moved the logic to compute the last modified time here.
+        (RunsGenerator::execute_query): Moved from fetch_runs_for_config. Use Database::query instead of query_and_fetch_all.
+        (RunsGeneratorForTestGroup):
+        (RunsGeneratorForTestGroup::__construct):
+        (RunsGeneratorForTestGroup::execute_query): Moved from fetch_runs_for_config_and_test_group.
+
+        * public/include/db.php:
+        (generate_data_file): Lock the file to avoid corruption.
+
 2015-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard always fetches charts JSON twice
