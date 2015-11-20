@@ -40,17 +40,14 @@ namespace IDBServer {
 class MemoryObjectStore;
 
 class MemoryObjectStoreCursor : public MemoryCursor {
-    friend std::unique_ptr<MemoryObjectStoreCursor> std::make_unique<MemoryObjectStoreCursor>(WebCore::IDBServer::MemoryObjectStore&, const WebCore::IDBCursorInfo&);
 public:
-    static std::unique_ptr<MemoryObjectStoreCursor> create(MemoryObjectStore&, const IDBCursorInfo&);
+    MemoryObjectStoreCursor(MemoryObjectStore&, const IDBCursorInfo&);
 
     void objectStoreCleared();
     void keyDeleted(const IDBKeyData&);
     void keyAdded(std::set<IDBKeyData>::iterator);
 
 private:
-    MemoryObjectStoreCursor(MemoryObjectStore&, const IDBCursorInfo&);
-
     virtual void currentData(IDBGetResult&) override final;
     virtual void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) override final;
 

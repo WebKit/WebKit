@@ -34,11 +34,6 @@
 namespace WebCore {
 namespace IDBServer {
 
-std::unique_ptr<MemoryObjectStoreCursor> MemoryObjectStoreCursor::create(MemoryObjectStore& objectStore, const IDBCursorInfo& info)
-{
-    return std::make_unique<MemoryObjectStoreCursor>(objectStore, info);
-}
-
 MemoryObjectStoreCursor::MemoryObjectStoreCursor(MemoryObjectStore& objectStore, const IDBCursorInfo& info)
     : MemoryCursor(info)
     , m_objectStore(objectStore)
