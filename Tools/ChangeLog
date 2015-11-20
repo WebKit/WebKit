@@ -1,5 +1,14 @@
 2015-11-20  Alexey Proskuryakov  <ap@apple.com>
 
+        Went a bit too far, revert part of the previous patch.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mavericks.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mavericks@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+
+2015-11-20  Alexey Proskuryakov  <ap@apple.com>
+
         Remove Mavericks bots.
 
         Rubber-stamped by Lucas Forschler.
