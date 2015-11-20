@@ -49,4 +49,6 @@ messages -> WebProcessProxy LegacyReceiver {
 
     RetainIconForPageURL(String pageURL)
     ReleaseIconForPageURL(String pageURL)
+
+    DidReceiveMainThreadPing()
 }

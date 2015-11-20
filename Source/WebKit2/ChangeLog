@@ -1,3 +1,34 @@
+2015-11-20  Geoffrey Garen  <ggaren@apple.com>
+
+        A hung webpage pretends to be responsive if you scroll
+        https://bugs.webkit.org/show_bug.cgi?id=151518
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::didReceiveEvent): Don't treat wheel events as
+        starting or stopping the responsiveness timer. Wheel events usually
+        process on the event dispatch thread, which responds even if the main
+        thread is hung.
+
+        Instead, send an out-of-band ping to the main thread to verify that
+        it is still responsive and we'll be able to paint and respond to clicks
+        after scrolling.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendMainThreadPing):
+        (WebKit::WebProcessProxy::didReceiveMainThreadPing):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in: UI process support for pinging
+        the main thread in the web process.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::mainThreadPing):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Web process support for responding
+        to pings.
+
 2015-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Allow more buffer formats in the IOSurface pool

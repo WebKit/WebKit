@@ -1797,8 +1797,6 @@ void WebPageProxy::processNextQueuedWheelEvent()
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
-    m_process->responsivenessTimer().start();
-
     m_process->send(
         Messages::EventDispatcher::WheelEvent(
             m_pageID,
@@ -1808,6 +1806,8 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
             rubberBandsAtTop(),
             rubberBandsAtBottom()
         ), 0);
+
+    m_process->sendMainThreadPing();
 }
 
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
@@ -4500,6 +4500,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     switch (type) {
     case WebEvent::NoType:
     case WebEvent::MouseMove:
+    case WebEvent::Wheel:
         break;
 
     case WebEvent::MouseDown:
@@ -4507,7 +4508,6 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::MouseForceChanged:
     case WebEvent::MouseForceDown:
     case WebEvent::MouseForceUp:
-    case WebEvent::Wheel:
     case WebEvent::KeyDown:
     case WebEvent::KeyUp:
     case WebEvent::RawKeyDown:
