@@ -355,11 +355,13 @@ App.Pane = Ember.Object.extend({
             var useCache = true;
             App.Manifest.fetchRunsWithPlatformAndMetric(this.get('store'), platformId, metricId, null, useCache)
                 .then(function (result) {
-                    if (result || result.shouldRefetch)
+                    if (!result || !result.data || result.shouldRefetch)
                         self.refetchRuns(platformId, metricId);
-                    if (result)
+                    else
                         self._didFetchRuns(result);
-                }, this._handleFetchErrors.bind(this, platformId, metricId));
+                }, function () {
+                    self.refetchRuns(platformId, metricId);
+                });
             if (!this.get('inDashboard'))
                 this.fetchAnalyticRanges();
         }
