@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Devin Rousso <dcrousso+webkit@gmail.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,95 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.gradient-editing-controller {
-    width: 260px;
-    height: 109px;
+.gradient-editor {
+    position: relative;
+    margin: 5px 11px;
+    padding-bottom: 45px;
 }
 
-.gradient-editing-controller.edits-color {
-    height: 306px;
+.gradient-editor.radial-gradient {
+    padding-bottom: 15px;
 }
 
-.gradient-editing-controller.radial-gradient {
-    height: 78px;
+.gradient-editor.editing-color {
+    padding-bottom: 30px;
 }
 
-.gradient-editing-controller.edits-color.radial-gradient {
-    height: 275px;
+.gradient-editor.radial-gradient.editing-color {
+    padding-bottom: 0;
 }
 
-.gradient-editing-controller select {
-    position: absolute;
-    left: 17px;
-    top: 9px;
+.gradient-editor > .gradient-type-select {
     width: 237px;
-
+    margin-left: 1px;
     font-size: 16px;
 }
 
-.gradient-editing-controller .gradient-slider {
-    left: 16px;
-    right: 26px;
-    top: 42px;
+.gradient-editor > .gradient-slider {
+    position: relative;
+    left: auto;
+    margin-top: 7px;
 }
 
-.gradient-editing-controller .color-picker {
-    position: absolute;
-
-    top: 86px;
-    width: 202px;
-    height: 172px;
-    padding: 0 10px;
+.gradient-editor > .color-picker {
+    width: 238px;
+    height: auto;
+    margin-top: 25px;
+    padding: 0;
 }
 
-.gradient-editing-controller > .color-picker > .slider {
+.gradient-editor > .color-picker > .slider {
     top: 2px;
     width: 186px;
 }
 
-.gradient-editing-controller > .color-picker > .brightness {
-    left: 214px;
+.gradient-editor > .color-picker > .brightness {
+    left: 202px;
 }
 
-.gradient-editing-controller > .color-picker > .opacity {
-    left: 237px;
+.gradient-editor > .color-picker > .opacity {
+    left: 228px;
 }
 
-.gradient-editing-controller > label {
+.gradient-editor > .gradient-angle {
     position: absolute;
-    top: 85px;
-    right: 16px;
-
+    right: 0;
+    bottom: 0;
     text-align: right;
     font-size: 13px;
 }
 
-.gradient-editing-controller.radial-gradient > label {
+.gradient-editor.radial-gradient > .gradient-angle {
     display: none;
 }
 
-.gradient-editing-controller.edits-color > label {
-    top: 283px;
-}
-
-.gradient-editing-controller > label > input {
+.gradient-editor > .gradient-angle > input {
     width: 48px;
-
-    padding-right: 4px;
     margin-left: 5px;
-
+    padding-right: 4px;
+    text-align: right;
+    font-size: 13px;
     background-color: white;
-
     border-radius: 4px;
     border: 1px solid hsl(0, 0%, 60%);
     box-shadow: inset 0 0 1px 1px hsl(0, 0%, 89%);
-    outline: 0;
-
-    font-size: 13px;
-    text-align: right;
-}
-
-.gradient-editing-controller > label.drag-to-adjust,
-.gradient-editing-controller > label.drag-to-adjust > input {
-    cursor: col-resize;
+    outline: none;
 }

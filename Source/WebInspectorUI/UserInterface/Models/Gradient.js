@@ -39,10 +39,8 @@ WebInspector.Gradient = {
             type = WebInspector.Gradient.Types.Linear;
         else if (typeString.indexOf(WebInspector.Gradient.Types.Radial) !== -1)
             type = WebInspector.Gradient.Types.Radial;
-        else {
-            console.error("Couldn't parse angle \"" + typeString + "\"");
+        else
             return null;
-        }
 
         var components = [];
         var currentParams = [];
@@ -112,10 +110,8 @@ WebInspector.Gradient = {
             }
         });
 
-        if (!stops.length) {
-            console.error("Couldn't parse any stops");
+        if (!stops.length)
             return null;
-        }
 
         for (var i = 0, count = stops.length; i < count; ++i) {
             var stop = stops[i];
@@ -190,7 +186,6 @@ WebInspector.LinearGradient = class LinearGradient
                 angle = 315;
                 break;
             default:
-                console.error("Couldn't parse angle \"to " + components[0].join(" ") + "\"");
                 return null;
             }
             components.shift();

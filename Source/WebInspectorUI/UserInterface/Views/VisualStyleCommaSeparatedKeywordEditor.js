@@ -100,9 +100,10 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
             return;
         }
 
-        let values = commaSeparatedValue.split(/\s*,\s*(?![^\(]*\))/);
+        // It is necessary to add the beginning \) to ensure inner parenthesis are not matched.
+        let values = commaSeparatedValue.split(/\)\s*,\s*(?![^\(\)]*\))/);
         for (let value of values)
-            this._addCommaSeparatedKeyword(value);
+            this._addCommaSeparatedKeyword(value + (value.endsWith(")") ? "" : ")"));
 
         this._commaSeparatedKeywords.children[0].select(true);
     }

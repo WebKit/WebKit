@@ -89,7 +89,7 @@
 
 .visual-style-property-editor-link:not(.link-all) > .visual-style-property-editor-link-border {
     width: 10px;
-    top: -webkit-calc(50% - 1px);
+    top: 50%;
 }
 
 .visual-style-property-editor-link:not(.link-all).linked > .visual-style-property-editor-link-border {

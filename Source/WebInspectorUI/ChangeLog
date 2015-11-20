@@ -1,3 +1,116 @@
+2015-11-20  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Add support for Gradients in the Visual sidebar background editor
+        https://bugs.webkit.org/show_bug.cgi?id=150494
+
+        Reviewed by Timothy Hatcher.
+
+        Allows the editors in the Visual sidebar Background Style section to
+        work with gradients and data URIs.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/CodeMirrorGradientEditingController.css: Deleted.
+        Some styling was reused in VisualStyleBackgroundPicker.css.
+
+        * UserInterface/Controllers/CodeMirrorGradientEditingController.js:
+        (WebInspector.CodeMirrorGradientEditingController):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.popoverWillPresent):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.popoverDidPresent):
+        (WebInspector.CodeMirrorGradientEditingController.prototype._gradientEditorGradientChanged):
+        (WebInspector.CodeMirrorGradientEditingController.prototype.handleEvent): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype.gradientSliderStopsDidChange): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype.gradientSliderStopWasSelected): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype.dragToAdjustControllerWasAdjustedByAmount): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype._handleInputEvent): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype._angleInputValueDidChange): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype._handleChangeEvent): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype._colorPickerColorChanged): Deleted.
+        (WebInspector.CodeMirrorGradientEditingController.prototype._updateCSSClassForGradientType): Deleted.
+        Reworked gradient editor popup into WebInspector.GradientEditor.
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/Gradient.js:
+        (WebInspector.Gradient.fromString):
+        (WebInspector.Gradient.stopsWithComponents):
+        (WebInspector.LinearGradient.linearGradientWithComponents):
+        Removed console.error statements as they didn't do anything but clog the console.
+
+        * UserInterface/Views/GradientEditor.css: Added.
+        (.gradient-editor):
+        (.gradient-editor.radial-gradient):
+        (.gradient-editor.editing-color):
+        (.gradient-editor.radial-gradient.editing-color):
+        (.gradient-editor > .gradient-type-select):
+        (.gradient-editor > .gradient-slider):
+        (.gradient-editor > .color-picker):
+        (.gradient-editor > .color-picker > .slider):
+        (.gradient-editor > .color-picker > .brightness):
+        (.gradient-editor > .color-picker > .opacity):
+        (.gradient-editor > .gradient-angle):
+        (.gradient-editor.radial-gradient > .gradient-angle):
+        (.gradient-editor > .gradient-angle > input):
+
+        * UserInterface/Views/GradientEditor.js: Added.
+        (WebInspector.GradientEditor):
+        (WebInspector.GradientEditor.prototype.get element):
+        (WebInspector.GradientEditor.prototype.set gradient):
+        (WebInspector.GradientEditor.prototype.get gradient):
+        (WebInspector.GradientEditor.prototype.gradientSliderStopsDidChange):
+        (WebInspector.GradientEditor.prototype.gradientSliderStopWasSelected):
+        (WebInspector.GradientEditor.prototype.dragToAdjustControllerWasAdjustedByAmount):
+        (WebInspector.GradientEditor.prototype._updateCSSClassForGradientType):
+        (WebInspector.GradientEditor.prototype._gradientTypeChanged):
+        (WebInspector.GradientEditor.prototype._colorPickerColorChanged):
+        (WebInspector.GradientEditor.prototype._angleChanged):
+        (WebInspector.GradientEditor.prototype._angleInputValueDidChange):
+        New standalone editor for CSS Gradients.
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.css: Added.
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-gradient-swatch):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-gradient-swatch:hover):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-gradient-swatch:active):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .color-gradient-swatch > span):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container.gradient-value > .color-gradient-swatch):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container.gradient-value > .color-gradient-swatch + .value-input):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .value-input):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .value-input[disabled]):
+        (.visual-style-property-container.background-picker > .visual-style-property-value-container > .value-type-picker-select):
+
+        * UserInterface/Views/VisualStyleBackgroundPicker.js: Added.
+        (WebInspector.VisualStyleBackgroundPicker):
+        (WebInspector.VisualStyleBackgroundPicker.prototype.get value):
+        (WebInspector.VisualStyleBackgroundPicker.prototype.set value):
+        (WebInspector.VisualStyleBackgroundPicker.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleBackgroundPicker.prototype.parseValue):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._updateValueInput):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._updateGradientSwatch):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._gradientSwatchClicked):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._gradientEditorGradientChanged):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._valueInputValueChanged):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._keywordSelectMouseDown):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._handleKeywordChanged):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._createValueOptions):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._addAdvancedValues):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._removeAdvancedValues):
+        (WebInspector.VisualStyleBackgroundPicker.prototype._toggleTabbingOfSelectableElements):
+        Visual property editor for the CSS background-image property. Supports
+        limited keywords, as well as url() and gradients.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.set value):
+        Fixed regular expression parsing to not match commas inside parenthesis.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBackgroundStyleSection):
+
+        * UserInterface/Views/VisualStylePropertyEditorLink.css:
+        (.visual-style-property-editor-link:not(.link-all) > .visual-style-property-editor-link-border):
+        Fixed spacing of link line.
+
+        * UserInterface/Views/VisualStyleURLInput.js: Removed.
+        Reworked into VisualStyleBackgroundPicker.js.
+
 2015-11-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: yank/kill shortcuts (CTRL+Y, K) don't work in Console / QuickConsole
