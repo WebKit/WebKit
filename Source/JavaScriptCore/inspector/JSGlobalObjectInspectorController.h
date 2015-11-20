@@ -123,7 +123,7 @@ private:
     Ref<FrontendRouter> m_frontendRouter;
     Ref<BackendDispatcher> m_backendDispatcher;
 
-    bool m_includeNativeCallStackWithExceptions { false };
+    bool m_includeNativeCallStackWithExceptions { true };
     bool m_isAutomaticInspection { false };
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
