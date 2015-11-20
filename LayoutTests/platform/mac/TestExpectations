@@ -172,6 +172,8 @@ fast/mediastream/MediaStream-getTracks.html
 fast/mediastream/RTCSessionDescription.html
 fast/mediastream/enabled.html
 fast/mediastream/MediaStreamTrackEvent-constructor.html
+fast/mediastream/argument-types.html
+fast/mediastream/error.html
 
 # WebRTC is not supported yet.
 fast/mediastream/RTCIceCandidate.html
