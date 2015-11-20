@@ -40,7 +40,7 @@ public:
     virtual ~IDBVersionChangeEvent() { }
 
     virtual uint64_t oldVersion() const = 0;
-    virtual uint64_t newVersion() const = 0;
+    virtual uint64_t newVersion(bool& isNull) const = 0;
 
 protected:
     IDBVersionChangeEvent(const AtomicString&);

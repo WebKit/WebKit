@@ -41,6 +41,12 @@ LegacyVersionChangeEvent::~LegacyVersionChangeEvent()
 {
 }
 
+uint64_t LegacyVersionChangeEvent::newVersion(bool& isNull) const
+{
+    isNull = false;
+    return m_newVersion;
+}
+
 EventInterface LegacyVersionChangeEvent::eventInterface() const
 {
     return IDBVersionChangeEventInterfaceType;

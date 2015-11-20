@@ -38,6 +38,12 @@ IDBVersionChangeEvent::IDBVersionChangeEvent(uint64_t oldVersion, uint64_t newVe
 {
 }
 
+uint64_t IDBVersionChangeEvent::newVersion(bool& isNull) const
+{
+    isNull = !m_newVersion;
+    return m_newVersion;
+}
+
 EventInterface IDBVersionChangeEvent::eventInterface() const
 {
     return IDBVersionChangeEventInterfaceType;

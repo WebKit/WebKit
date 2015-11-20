@@ -2,8 +2,8 @@ This tests that if deleteDatabase is called while there is already an open conne
 Initial upgrade old version - 0 new version - 1
 Version change complete
 Requesting deleteDatabase
-First connection received versionchange event: oldVersion 1, newVersion 0
-Delete database success: oldVersion 1, newVersion 0
+First connection received versionchange event: oldVersion 1, newVersion null
+Delete database success: oldVersion 1, newVersion null
 Recreating database to make sure it's new and empty
 Second upgrade old version - 0 new version - 1
 Unable to get object store in second upgrade transaction (which is correct because it should not be there)

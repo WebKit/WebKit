@@ -41,7 +41,7 @@ public:
     }
 
     virtual uint64_t oldVersion() const override final { return m_oldVersion; }
-    virtual uint64_t newVersion() const override final { return m_newVersion; }
+    virtual uint64_t newVersion(bool& isNull) const override final;
 
     virtual EventInterface eventInterface() const override final;
 
