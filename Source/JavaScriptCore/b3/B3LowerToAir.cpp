@@ -804,7 +804,7 @@ private:
             if (!canBeInternal(value) && value != m_value)
                 break;
             bool shouldInvert =
-                (value->opcode() == BitXor && value->child(1)->isInt(1) && value->child(0)->returnsBool())
+                (value->opcode() == BitXor && value->child(1)->hasInt() && (value->child(1)->asInt() & 1) && value->child(0)->returnsBool())
                 || (value->opcode() == Equal && value->child(1)->isInt(0));
             if (!shouldInvert)
                 break;
@@ -1315,6 +1315,10 @@ private:
         }
 
         case BitXor: {
+            if (m_value->child(1)->isInt(-1)) {
+                appendUnOp<Not32, Not64, Air::Oops>(m_value->child(0));
+                return;
+            }
             appendBinOp<Xor32, Xor64, Air::Oops, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
@@ -1368,6 +1372,14 @@ private:
                     break;
                 case BitAnd:
                     matched = tryAppendStoreBinOp<And32, And64, Commutative>(
+                        valueToStore->child(0), valueToStore->child(1));
+                    break;
+                case BitXor:
+                    if (valueToStore->child(1)->isInt(-1)) {
+                        matched = tryAppendStoreUnOp<Not32, Not64>(valueToStore->child(0));
+                        break;
+                    }
+                    matched = tryAppendStoreBinOp<Xor32, Xor64, Commutative>(
                         valueToStore->child(0), valueToStore->child(1));
                     break;
                 default:

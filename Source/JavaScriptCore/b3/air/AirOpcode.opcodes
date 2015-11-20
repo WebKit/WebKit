@@ -195,6 +195,14 @@ Xor64 U:G, UD:G
     Tmp, Addr
     Imm, Tmp
 
+Not32 UD:G
+    Tmp
+    Addr
+
+Not64 UD:G
+    Tmp
+    Addr
+
 ConvertInt32ToDouble U:G, D:F
     Tmp, Tmp
     Addr, Tmp

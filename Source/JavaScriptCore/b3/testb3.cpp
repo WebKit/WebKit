@@ -600,6 +600,21 @@ void testSubArgImm(int64_t a, int64_t b)
     CHECK(compileAndRun<int64_t>(proc, a) == a - b);
 }
 
+void testNegValueSubOne(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* negArgument = root->appendNew<Value>(proc, Sub, Origin(),
+        root->appendNew<Const64Value>(proc, Origin(), 0),
+        argument);
+    Value* negArgumentMinusOne = root->appendNew<Value>(proc, Sub, Origin(),
+        negArgument,
+        root->appendNew<Const64Value>(proc, Origin(), 1));
+    root->appendNew<ControlValue>(proc, Return, Origin(), negArgumentMinusOne);
+    CHECK(compileAndRun<int>(proc, a) == -a - 1);
+}
+
 void testSubImmArg(int a, int b)
 {
     Procedure proc;
@@ -662,6 +677,22 @@ void testSubImmArg32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
 
     CHECK(compileAndRun<int>(proc, b) == a - b);
+}
+
+void testNegValueSubOne32(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* negArgument = root->appendNew<Value>(proc, Sub, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0),
+        argument);
+    Value* negArgumentMinusOne = root->appendNew<Value>(proc, Sub, Origin(),
+        negArgument,
+        root->appendNew<Const32Value>(proc, Origin(), 1));
+    root->appendNew<ControlValue>(proc, Return, Origin(), negArgumentMinusOne);
+    CHECK(compileAndRun<int>(proc, a) == -a - 1);
 }
 
 void testSubArgDouble(double a)
@@ -1409,6 +1440,129 @@ void testBitXorImmBitXorArgImm32(int a, int b, int c)
             innerBitXor));
 
     CHECK(compileAndRun<int>(proc, b) == (a ^ (b ^ c)));
+}
+
+void testBitNotArg(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), -1),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, a), static_cast<int64_t>((static_cast<uint64_t>(a) ^ 0xffffffffffffffff))));
+}
+
+void testBitNotImm(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), -1),
+            root->appendNew<Const64Value>(proc, Origin(), a)));
+
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, a), static_cast<int64_t>((static_cast<uint64_t>(a) ^ 0xffffffffffffffff))));
+}
+
+void testBitNotMem(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* notLoad = root->appendNew<Value>(proc, BitXor, Origin(),
+        root->appendNew<Const64Value>(proc, Origin(), -1),
+        load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), notLoad, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int64_t input = a;
+    compileAndRun<int32_t>(proc, &input);
+    CHECK(isIdentical(input, static_cast<int64_t>((static_cast<uint64_t>(a) ^ 0xffffffffffffffff))));
+}
+
+void testBitNotArg32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, BitXor, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), -1),
+            argument));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, a), static_cast<int32_t>((static_cast<uint32_t>(a) ^ 0xffffffff))));
+}
+
+void testBitNotImm32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitXor, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), -1),
+            root->appendNew<Const32Value>(proc, Origin(), a)));
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, a), static_cast<int32_t>((static_cast<uint32_t>(a) ^ 0xffffffff))));
+}
+
+void testBitNotMem32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* notLoad = root->appendNew<Value>(proc, BitXor, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), -1),
+        load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), notLoad, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t input = a;
+    compileAndRun<int32_t>(proc, &input);
+    CHECK(isIdentical(input, static_cast<int32_t>((static_cast<uint32_t>(a) ^ 0xffffffff))));
+}
+
+void testBitNotOnBooleanAndBranch32(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* argsAreEqual = root->appendNew<Value>(proc, Equal, Origin(), arg1, arg2);
+    Value* argsAreNotEqual = root->appendNew<Value>(proc, BitXor, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), -1),
+        argsAreEqual);
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        argsAreNotEqual,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 42));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), -42));
+
+    int32_t expectedValue = (a != b) ? 42 : -42;
+    CHECK(compileAndRun<int32_t>(proc, a, b) == expectedValue);
 }
 
 void testShlArgs(int64_t a, int64_t b)
@@ -4762,6 +4916,7 @@ struct Operand {
 
 typedef Operand<double> DoubleOperand;
 typedef Operand<int64_t> Int64Operand;
+typedef Operand<int32_t> Int32Operand;
 
 static const std::array<DoubleOperand, 9>& doubleOperands()
 {
@@ -4784,6 +4939,27 @@ static Vector<Int64Operand> int64Operands()
     Vector<Int64Operand> operands;
     for (DoubleOperand doubleOperand : doubleOperands())
         operands.append({ doubleOperand.name, bitwise_cast<int64_t>(doubleOperand.value) });
+    operands.append({ "1", 1 });
+    operands.append({ "-1", -1 });
+    operands.append({ "int64-max", std::numeric_limits<int64_t>::max() });
+    operands.append({ "int64-min", std::numeric_limits<int64_t>::min() });
+    operands.append({ "int32-max", std::numeric_limits<int32_t>::max() });
+    operands.append({ "int32-min", std::numeric_limits<int32_t>::min() });
+
+    return operands;
+}
+
+static Vector<Int32Operand> int32Operands()
+{
+    Vector<Int32Operand> operands({
+        { "0", 0 },
+        { "1", 1 },
+        { "-1", -1 },
+        { "42", 42 },
+        { "-42", -42 },
+        { "int32-max", std::numeric_limits<int32_t>::max() },
+        { "int32-min", std::numeric_limits<int32_t>::min() }
+    });
     return operands;
 }
 
@@ -4965,6 +5141,7 @@ void run(const char* filter)
     RUN(testSubImmArg(1, 2));
     RUN(testSubImmArg(13, -42));
     RUN(testSubImmArg(-13, 42));
+    RUN_UNARY(testNegValueSubOne, int32Operands());
 
     RUN(testSubArgs32(1, 1));
     RUN(testSubArgs32(1, 2));
@@ -4978,6 +5155,7 @@ void run(const char* filter)
     RUN(testSubImmArg32(1, 2));
     RUN(testSubImmArg32(13, -42));
     RUN(testSubImmArg32(-13, 42));
+    RUN_UNARY(testNegValueSubOne32, int64Operands());
 
     RUN_UNARY(testSubArgDouble, doubleOperands());
     RUN_BINARY(testSubArgsDouble, doubleOperands(), doubleOperands());
@@ -5091,26 +5269,11 @@ void run(const char* filter)
     RUN(testBitOrImmBitOrArgImm32(6, 1, 6));
     RUN(testBitOrImmBitOrArgImm32(24, 0xffff, 7));
 
-    RUN(testBitXorArgs(43, 43));
-    RUN(testBitXorArgs(43, 0));
-    RUN(testBitXorArgs(10, 3));
-    RUN(testBitXorArgs(42, 0xffffffffffffffff));
-    RUN(testBitXorSameArg(43));
-    RUN(testBitXorSameArg(0));
-    RUN(testBitXorSameArg(3));
-    RUN(testBitXorSameArg(0xffffffffffffffff));
-    RUN(testBitXorImms(43, 43));
-    RUN(testBitXorImms(43, 0));
-    RUN(testBitXorImms(10, 3));
-    RUN(testBitXorImms(42, 0xffffffffffffffff));
-    RUN(testBitXorArgImm(43, 43));
-    RUN(testBitXorArgImm(43, 0));
-    RUN(testBitXorArgImm(10, 3));
-    RUN(testBitXorArgImm(42, 0xffffffffffffffff));
-    RUN(testBitXorImmArg(43, 43));
-    RUN(testBitXorImmArg(43, 0));
-    RUN(testBitXorImmArg(10, 3));
-    RUN(testBitXorImmArg(42, 0xffffffffffffffff));
+    RUN_BINARY(testBitXorArgs, int64Operands(), int64Operands());
+    RUN_UNARY(testBitXorSameArg, int64Operands());
+    RUN_BINARY(testBitXorImms, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorArgImm, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorImmArg, int64Operands(), int64Operands());
     RUN(testBitXorBitXorArgImmImm(2, 7, 3));
     RUN(testBitXorBitXorArgImmImm(1, 6, 6));
     RUN(testBitXorBitXorArgImmImm(0xffff, 24, 7));
@@ -5143,6 +5306,14 @@ void run(const char* filter)
     RUN(testBitXorImmBitXorArgImm32(7, 2, 3));
     RUN(testBitXorImmBitXorArgImm32(6, 1, 6));
     RUN(testBitXorImmBitXorArgImm32(24, 0xffff, 7));
+
+    RUN_UNARY(testBitNotArg, int64Operands());
+    RUN_UNARY(testBitNotImm, int64Operands());
+    RUN_UNARY(testBitNotMem, int64Operands());
+    RUN_UNARY(testBitNotArg32, int32Operands());
+    RUN_UNARY(testBitNotImm32, int32Operands());
+    RUN_UNARY(testBitNotMem32, int32Operands());
+    RUN_BINARY(testBitNotOnBooleanAndBranch32, int32Operands(), int32Operands());
 
     RUN(testShlArgs(1, 0));
     RUN(testShlArgs(1, 1));

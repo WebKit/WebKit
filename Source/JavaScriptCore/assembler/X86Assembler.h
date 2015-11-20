@@ -622,6 +622,18 @@ public:
         m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_NOT, base, offset);
     }
 
+#if CPU(X86_64)
+    void notq_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP3_Ev, GROUP3_OP_NOT, dst);
+    }
+
+    void notq_m(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_GROUP3_Ev, GROUP3_OP_NOT, base, offset);
+    }
+#endif
+
     void orl_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_OR_EvGv, src, dst);

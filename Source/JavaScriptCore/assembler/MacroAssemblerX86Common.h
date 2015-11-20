@@ -481,6 +481,16 @@ public:
         xor32(imm, dest);
     }
 
+    void not32(RegisterID srcDest)
+    {
+        m_assembler.notl_r(srcDest);
+    }
+
+    void not32(Address dest)
+    {
+        m_assembler.notl_m(dest.offset, dest.base);
+    }
+
     void sqrtDouble(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.sqrtsd_rr(src, dst);

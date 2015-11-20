@@ -145,7 +145,7 @@ public:
     LValue shl(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Shl, origin(), left, castToInt32(right)); }
     LValue aShr(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::SShr, origin(), left, castToInt32(right)); }
     LValue lShr(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ZShr, origin(), left, castToInt32(right)); }
-    LValue bitNot(LValue value) { CRASH(); }
+    LValue bitNot(LValue);
 
     LValue insertElement(LValue vector, LValue element, LValue index) { CRASH(); }
 
@@ -473,6 +473,13 @@ inline void Output::addIncomingToPhi(LValue phi, ValueFromBlock value, Params...
 {
     addIncomingToPhi(phi, value);
     addIncomingToPhi(phi, theRest...);
+}
+
+inline LValue Output::bitNot(LValue value)
+{
+    return m_block->appendNew<B3::Value>(m_proc, B3::BitXor, origin(),
+        value,
+        m_block->appendIntConstant(m_proc, origin(), value->type(), -1));
 }
 
 inline LValue Output::bitCast(LValue value, LType type)

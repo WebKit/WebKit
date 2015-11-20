@@ -502,6 +502,16 @@ public:
         m_assembler.xorq_ir(imm.m_value, srcDest);
     }
 
+    void not64(RegisterID srcDest)
+    {
+        m_assembler.notq_r(srcDest);
+    }
+
+    void not64(Address dest)
+    {
+        m_assembler.notq_m(dest.offset, dest.base);
+    }
+
     void load64(ImplicitAddress address, RegisterID dest)
     {
         m_assembler.movq_mr(address.offset, address.base, dest);

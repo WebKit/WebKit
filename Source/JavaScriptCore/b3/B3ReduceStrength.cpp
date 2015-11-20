@@ -180,6 +180,17 @@ private:
                 m_changed = true;
                 break;
             }
+
+            // Turn this: Integer Add(Sub(0, value), -1)
+            // Into this: BitXor(value, -1)
+            if (m_value->isInteger()
+                && m_value->child(0)->opcode() == Sub
+                && m_value->child(1)->isInt(-1)
+                && m_value->child(0)->child(0)->isInt(0)) {
+                replaceWithNewValue(m_proc.add<Value>(BitXor, m_value->origin(), m_value->child(0)->child(1), m_value->child(1)));
+                break;
+            }
+
             break;
 
         case Sub:
