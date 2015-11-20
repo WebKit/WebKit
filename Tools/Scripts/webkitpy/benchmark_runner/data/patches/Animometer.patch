@@ -1,5 +1,5 @@
 diff --git a/runner/resources/animometer.js b/runner/resources/animometer.js
-index e567681..ba0ab0f 100644
+index d3ac8db..230ac05 100644
 --- a/runner/resources/animometer.js
 +++ b/runner/resources/animometer.js
 @@ -41,14 +41,62 @@ window.benchmarkRunnerClient = {
@@ -8,15 +8,15 @@ index e567681..ba0ab0f 100644
      
 +    _computeTestReport: function(testName, testResults)
 +    {
-+        return [testResults[Strings["JSON_SCORE"][0]]];
++        return [testResults[Strings.json.score]];
 +    },
 +
 +    _computeSuiteReports: function(suiteName, suiteResults)
 +    {
 +        var testsReports = {};
 +
-+        for (var testName in suiteResults[Strings["JSON_RESULTS"][2]]) {
-+            var testReports = this._computeTestReport(testName, suiteResults[Strings["JSON_RESULTS"][2]][testName]);
++        for (var testName in suiteResults[Strings.json.results.tests]) {
++            var testReports = this._computeTestReport(testName, suiteResults[Strings.json.results.tests][testName]);
 +            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
 +        }
 +
@@ -27,31 +27,31 @@ index e567681..ba0ab0f 100644
 +    {
 +        var suitesReports = {};
 +
-+        for (var suiteName in iterationResults[Strings["JSON_RESULTS"][1]]) {
-+            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings["JSON_RESULTS"][1]][suiteName]);
++        for (var suiteName in iterationResults[Strings.json.results.suites]) {
++            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.suites][suiteName]);
 +            suitesReports[suiteName] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
 +        }
 +
 +        return suitesReports;
 +    },
 +
-+    computeResultsReports: function()
++    _computeResultsReports: function()
 +    {
 +        var json = this._resultsDashboard.toJSON(false, false);
-+        var iterationReports = this._computeIterationReports(json[Strings["JSON_RESULTS"][0]][0])
++        var iterationReports = this._computeIterationReports(json[Strings.json.results.iterations][0])
 +        return {"Animometer": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports } };
 +    },
 +
      didFinishLastIteration: function ()
      {
 -        var json = this._resultsDashboard.toJSON(true, true);
--        this.score = json[Strings["JSON_SCORE"]];
--        this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]]);
--        sectionsManager.showJSON("json", json[Strings["JSON_RESULTS"][0]][0]);
--        suitesManager.updateLocalStorageFromJSON(json[Strings["JSON_RESULTS"][0]][0]);
+-        this.score = json[Strings.json.score];
+-        this._resultsTable.showIterations(json[Strings.json.results.iterations], this.options);
+-        sectionsManager.showJSON("json", json[Strings.json.results.iterations][0]);
+-        suitesManager.updateLocalStorageFromJSON(json[Strings.json.results.iterations][0]);
 -        benchmarkController.showResults();
 +        // submit result to server
-+        var results = JSON.stringify(this.computeResultsReports());
++        var results = JSON.stringify(this._computeResultsReports());
 +        var xhr = new XMLHttpRequest();
 +        xhr.open("POST", "/report");
 +
@@ -71,7 +71,7 @@ index e567681..ba0ab0f 100644
      }
  }
  
-@@ -307,6 +355,10 @@ window.suitesManager =
+@@ -287,7 +335,13 @@ window.suitesManager =
  
              suite.tests.forEach(function(test) {
                  var testElement = this._createTestElement(listElement, test, suiteCheckbox);
@@ -80,17 +80,29 @@ index e567681..ba0ab0f 100644
 +                    testCheckbox.checked = true;
 +                }
              }, this);
++            
++            this._updateSuiteCheckboxState(suiteCheckbox);
          }, this);
      },
-@@ -408,10 +460,8 @@ window.benchmarkController =
+     
+@@ -387,10 +441,8 @@ window.benchmarkController =
+ {
      initialize: function()
      {
-         sectionsManager.setupSectionStyle();
 -        optionsManager.updateUIFromLocalStorage();
          suitesManager.createElements();
 -        suitesManager.updateUIFromLocalStorage();
 -        suitesManager.updateEditsElementsState();
-+        setTimeout(this.startTest.bind(this), 3000);
++        setTimeout(benchmarkController.startTest, 3000);
      },
  
      onChangeAdaptiveTestCheckbox: function()
+@@ -411,7 +463,7 @@ window.benchmarkController =
+         var options = optionsManager.updateLocalStorageFromUI();
+         var suites = suitesManager.updateLocalStorageFromUI();
+         sectionsManager.setupRunningSectionStyle(options);
+-        this._runBenchmark(suites, options);
++        benchmarkController._runBenchmark(suites, options);
+         sectionsManager.showSection("running");
+     },
+     

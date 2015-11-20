@@ -1,3 +1,18 @@
+2015-11-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Update the patch and the plan files of the graphics benchmark with the latest revision
+        https://bugs.webkit.org/show_bug.cgi?id=151503
+
+        Reviewed by Ryosuke Niwa.
+        
+        The time for each graphics test has been shortened from 30 seconds to 10
+        seconds. We need to update the graphics benchmark patch and plan files so
+        we can get the results faster. Also this will allow running the benchmark
+        also on the iOS performance bots.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/Animometer.patch:
+        * Scripts/webkitpy/benchmark_runner/data/plans/animometer.plan:
+
 2015-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix installation of ninja-build after the previous commit
