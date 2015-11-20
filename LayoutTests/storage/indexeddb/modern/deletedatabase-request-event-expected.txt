@@ -1,6 +1,5 @@
 ALERT: [object IDBOpenDBRequest]
-ALERT: error [object Event]
+ALERT: success
 ALERT: Done
 This test calls deleteDatabase on window.indexedDB and verifies that an event is fired at the request.
-While at this stage in modern IndexedDB development, that event is hardcoded to be an error.
 

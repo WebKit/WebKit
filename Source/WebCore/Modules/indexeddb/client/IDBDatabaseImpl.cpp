@@ -62,6 +62,11 @@ IDBDatabase::~IDBDatabase()
     m_serverConnection->unregisterDatabaseConnection(*this);
 }
 
+bool IDBDatabase::hasPendingActivity() const
+{
+    return !m_closedInServer;
+}
+
 const String IDBDatabase::name() const
 {
     return m_info.name();
@@ -319,6 +324,9 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
     m_activeTransactions.remove(transaction.info().identifier());
     m_committingTransactions.remove(transaction.info().identifier());
     m_abortingTransactions.remove(transaction.info().identifier());
+
+    if (m_closePending)
+        maybeCloseInServer();
 }
 
 void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)

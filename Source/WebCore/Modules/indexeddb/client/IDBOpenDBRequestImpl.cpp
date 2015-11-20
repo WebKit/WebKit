@@ -101,6 +101,17 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().upgradeneededEvent));
 }
 
+void IDBOpenDBRequest::onDeleteDatabaseSuccess(const IDBResultData& resultData)
+{
+    uint64_t oldVersion = resultData.databaseInfo().version();
+
+    LOG(IndexedDB, "IDBOpenDBRequest::onDeleteDatabaseSuccess() - current version is %" PRIu64, oldVersion);
+
+    m_readyState = IDBRequestReadyState::Done;
+
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, 0, eventNames().successEvent));
+}
+
 void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
@@ -114,6 +125,9 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
         break;
     case IDBResultType::OpenDatabaseUpgradeNeeded:
         onUpgradeNeeded(data);
+        break;
+    case IDBResultType::DeleteDatabaseSuccess:
+        onDeleteDatabaseSuccess(data);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

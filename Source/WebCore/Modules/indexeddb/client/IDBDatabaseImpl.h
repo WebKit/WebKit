@@ -94,6 +94,8 @@ private:
 
     void maybeCloseInServer();
 
+    virtual bool hasPendingActivity() const override final;
+
     Ref<IDBConnectionToServer> m_serverConnection;
     IDBDatabaseInfo m_info;
     uint64_t m_databaseConnectionIdentifier { 0 };

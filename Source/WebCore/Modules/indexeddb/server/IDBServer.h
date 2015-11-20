@@ -83,6 +83,8 @@ public:
     void registerTransaction(UniqueIDBDatabaseTransaction&);
     void unregisterTransaction(UniqueIDBDatabaseTransaction&);
 
+    void deleteUniqueIDBDatabase(UniqueIDBDatabase&);
+
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
 private:

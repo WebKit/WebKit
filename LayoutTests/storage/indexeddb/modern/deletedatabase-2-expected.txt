@@ -1,0 +1,13 @@
+This tests that if deleteDatabase is called while there is already an open connection to the database that the open connection gets the appropriate versionChange event.
+That open connection also has an in-progress transaction at the time it gets the versionChange event.
+Initial upgrade old version - 0 new version - 1
+Requesting deleteDatabase
+First connection received versionchange event: oldVersion 0, newVersion 0
+First version change complete
+Delete database success: oldVersion 1, newVersion 0
+Recreating database to make sure it's new and empty
+Second upgrade old version - 0 new version - 1
+Unable to get object store in second upgrade transaction (which is correct because it should not be there)
+Second database upgrade success
+Done
+

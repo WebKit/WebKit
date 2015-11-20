@@ -74,6 +74,7 @@ public:
 
     const IDBDatabaseInfo& info() const;
     IDBServer& server() { return m_server; }
+    const IDBDatabaseIdentifier& identifier() const { return m_identifier; }
 
     void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback);
     void deleteObjectStore(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback);
@@ -93,15 +94,20 @@ public:
 
     void enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&&);
 
+    void handleDelete(IDBConnectionToClient&, const IDBRequestData&);
+    bool deletePending() const { return m_deletePending; }
+
 private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
     
     void handleOpenDatabaseOperations();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
+    bool maybeDeleteDatabase();
     bool hasAnyOpenConnections() const;
 
     void startVersionChangeTransaction();
-    void notifyConnectionsOfVersionChange();
+    void notifyConnectionsOfVersionChangeForUpgrade();
+    void notifyConnectionsOfVersionChange(uint64_t requestedVersion);
 
     void activateTransactionInBackingStore(UniqueIDBDatabaseTransaction&);
     void inProgressTransactionCompleted(const IDBResourceIdentifier&);
@@ -152,14 +158,17 @@ private:
     void performGetResultCallback(uint64_t callbackIdentifier, const IDBError&, const IDBGetResult&);
     void performCountCallback(uint64_t callbackIdentifier, const IDBError&, uint64_t);
 
-    void invokeTransactionScheduler();
-    void transactionSchedulingTimerFired();
+    bool hasAnyPendingCallbacks() const;
+
+    void invokeDeleteOrRunTransactionTimer();
+    void deleteOrRunTransactionsTimerFired();
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
 
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
     
     Deque<Ref<IDBServerOperation>> m_pendingOpenDatabaseOperations;
+    Deque<Ref<IDBServerOperation>> m_pendingDeleteDatabaseOperations;
 
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_closePendingDatabaseConnections;
@@ -176,7 +185,7 @@ private:
     HashMap<uint64_t, GetResultCallback> m_getResultCallbacks;
     HashMap<uint64_t, CountCallback> m_countCallbacks;
 
-    Timer m_transactionSchedulingTimer;
+    Timer m_deleteOrRunTransactionsTimer;
 
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
@@ -186,6 +195,9 @@ private:
     // This helps make sure opening narrowly scoped transactions (one or two object stores)
     // doesn't continuously block widely scoped write transactions.
     HashCountedSet<uint64_t> m_objectStoreTransactionCounts;
+
+    bool m_deletePending { false };
+    bool m_hasNotifiedConnectionsOfDelete { false };
 };
 
 } // namespace IDBServer

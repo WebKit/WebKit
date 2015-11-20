@@ -135,11 +135,22 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
         // well as no way to message back failure.
         return;
     }
-    
-    // FIXME: During bringup of modern IDB, the database deletion is a no-op, and is
-    // immediately reported back to the WebProcess as failure.
-    auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError(IDBExceptionCode::Unknown));
-    connection->didDeleteDatabase(result);
+
+    auto* database = m_uniqueIDBDatabaseMap.get(requestData.databaseIdentifier());
+    if (!database) {
+        connection->didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(requestData.requestIdentifier(), IDBDatabaseInfo(requestData.databaseIdentifier().databaseName(), 0)));
+        return;
+    }
+
+    database->handleDelete(*connection, requestData);
+}
+
+void IDBServer::deleteUniqueIDBDatabase(UniqueIDBDatabase& database)
+{
+    LOG(IndexedDB, "IDBServer::deleteUniqueIDBDatabase");
+
+    auto deletedDatabase = m_uniqueIDBDatabaseMap.take(database.identifier());
+    ASSERT_UNUSED(deletedDatabase, deletedDatabase.get() == &database);
 }
 
 void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)

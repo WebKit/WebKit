@@ -58,6 +58,7 @@ private:
     void onError(const IDBResultData&);
     void onSuccess(const IDBResultData&);
     void onUpgradeNeeded(const IDBResultData&);
+    void onDeleteDatabaseSuccess(const IDBResultData&);
 
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_version { 0 };

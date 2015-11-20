@@ -205,9 +205,6 @@ bool IDBTransaction::canSuspendForPageCache() const
 
 bool IDBTransaction::hasPendingActivity() const
 {
-    if (m_state == IndexedDB::TransactionState::Inactive)
-        return !m_transactionOperationQueue.isEmpty() || !m_transactionOperationMap.isEmpty();
-
     return m_state != IndexedDB::TransactionState::Finished;
 }
 
