@@ -130,6 +130,7 @@ namespace JSC { namespace FTL {
     macro(Z_JITOperation_EGC, functionType(int32, intPtr, intPtr, intPtr)) \
     macro(Z_JITOperation_EJZ, functionType(int32, intPtr, int64, int32)) \
     macro(Z_JITOperation_ESJss, functionType(int32, intPtr, intPtr, int64)) \
+    macro(V_JITOperation_ECRUiUi, functionType(voidType, intPtr, intPtr, intPtr, int32, int32))
     
 class IntrinsicRepository : public CommonValues {
 public:

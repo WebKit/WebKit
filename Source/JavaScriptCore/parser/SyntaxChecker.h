@@ -75,7 +75,7 @@ public:
         FunctionExpr, ClassExpr, SuperExpr, BracketExpr, DotExpr, CallExpr,
         NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr,
         ConditionalExpr, AssignmentExpr, TypeofExpr, NewTargetExpr,
-        DeleteExpr, ArrayLiteralExpr, BindingDestructuring,
+        DeleteExpr, ArrayLiteralExpr, BindingDestructuring, RestParameter,
         ArrayDestructuring, ObjectDestructuring, SourceElementsResult,
         FunctionBodyResult, SpreadExpr, ArgumentsResult,
         PropertyListResult, ArgumentsListResult, ElementsListResult,
@@ -135,6 +135,7 @@ public:
     typedef int DestructuringPattern;
     typedef DestructuringPattern ArrayPattern;
     typedef DestructuringPattern ObjectPattern;
+    typedef DestructuringPattern RestPattern;
 
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
@@ -345,6 +346,10 @@ public:
     DestructuringPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&, AssignmentContext)
     {
         return BindingDestructuring;
+    }
+    RestPattern createRestParameter(const Identifier&, size_t, const JSTextPosition&, const JSTextPosition&)
+    { 
+        return RestParameter;
     }
     DestructuringPattern createAssignmentElement(const Expression&, const JSTextPosition&, const JSTextPosition&)
     {

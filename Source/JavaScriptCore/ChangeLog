@@ -1,3 +1,146 @@
+2015-11-19  Saam barati  <sbarati@apple.com>
+
+        [ES6] Add support for rest parameters
+        https://bugs.webkit.org/show_bug.cgi?id=38408
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements rest parameters from the ES6 spec.
+        http://www.ecma-international.org/ecma-262/6.0/index.html#sec-function-definitions
+
+        We implement the rest parameter as a new AST node. This AST node
+        lowers to "op_new_array X, op_copy_rest X". Note
+        that the op_copy_rest opcode does not have a result.
+        The bulk of this patch is implementing op_copy_rest.
+        This patch implements this in all four tiers in a straight forward way.
+        The opcode is implemented as a C call that will read the pertinent
+        arguments from the call frame and fill them into the array.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::invalidateForInContextForLocal):
+        (JSC::BytecodeGenerator::emitRestParameter):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignmentElementNode::toString):
+        (JSC::RestParameterNode::collectBoundIdentifiers):
+        (JSC::RestParameterNode::toString):
+        (JSC::RestParameterNode::bindValue):
+        (JSC::RestParameterNode::emit):
+        (JSC::SpreadExpressionNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::setEpoch):
+        (JSC::DFG::Node::numberOfArgumentsToSkip):
+        (JSC::DFG::Node::dumpChildren):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateClonedArguments):
+        (JSC::DFG::SpeculativeJIT::compileCopyRest):
+        (JSC::DFG::SpeculativeJIT::compileNotifyWrite):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateClonedArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCopyRest):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewObject):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_out_of_band_arguments):
+        (JSC::JIT::emit_op_copy_rest):
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createBindingLocation):
+        (JSC::ASTBuilder::createRestParameter):
+        (JSC::ASTBuilder::createAssignmentElement):
+        * parser/NodeConstructors.h:
+        (JSC::AssignmentElementNode::AssignmentElementNode):
+        (JSC::RestParameterNode::RestParameterNode):
+        (JSC::DestructuringAssignmentNode::DestructuringAssignmentNode):
+        * parser/Nodes.h:
+        (JSC::DestructuringPatternNode::isBindingNode):
+        (JSC::DestructuringPatternNode::isRestParameter):
+        (JSC::DestructuringPatternNode::emitDirectBinding):
+        (JSC::RestParameterNode::name):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::declareRestOrNormalParameter):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        * parser/Parser.h:
+        (JSC::Parser::strictMode):
+        (JSC::Parser::isValidStrictMode):
+        (JSC::Parser::declareParameter):
+        (JSC::Parser::breakIsValid):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * tests/es6.yaml:
+        * tests/stress/rest-parameter-and-default-arguments.js: Added.
+        (assert):
+        (shouldThrowTDZ):
+        (foo):
+        (baz):
+        (i.shouldThrowTDZ):
+        * tests/stress/rest-parameter-basics.js: Added.
+        (assert):
+        (foo):
+        (bar):
+        (capture):
+        (baz):
+        (jaz):
+        (kaz):
+        (raz):
+        (restLength):
+        (testArgumentsObject):
+        (strictModeLikeArgumentsObject):
+        * tests/stress/rest-parameter-inlined.js: Added.
+        (assert):
+        (bar):
+        (foo):
+        (baz):
+        (jaz):
+
 2015-11-19  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have a story for Ext/Trunc strength reduction

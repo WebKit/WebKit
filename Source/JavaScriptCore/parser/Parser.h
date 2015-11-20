@@ -1073,6 +1073,8 @@ private:
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode() { return currentScope()->isValidStrictMode(); }
     DeclarationResultMask declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
+    bool declareRestOrNormalParameter(const Identifier&, const Identifier**);
+
     bool breakIsValid()
     {
         ScopeRef current = currentScope();

@@ -967,6 +967,9 @@ private:
         case CheckWatchdogTimer:
             compileCheckWatchdogTimer();
             break;
+        case CopyRest:
+            compileCopyRest();
+            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -3635,6 +3638,28 @@ private:
             getArgumentsStart(), getArgumentsLength().value, getCurrentCallee());
         
         setJSValue(result);
+    }
+
+    void compileCopyRest()
+    {            
+        LBasicBlock doCopyRest = FTL_NEW_BLOCK(m_out, ("CopyRest C call"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("FillRestParameter continuation"));
+
+        LValue numberOfArgumentsToSkip = m_out.constInt32(m_node->numberOfArgumentsToSkip());
+        LValue numberOfArguments = getArgumentsLength().value;
+
+        m_out.branch(
+            m_out.above(numberOfArguments, numberOfArgumentsToSkip),
+            unsure(doCopyRest), unsure(continuation));
+            
+        LBasicBlock lastNext = m_out.appendTo(doCopyRest, continuation);
+        // Arguments: 0:exec, 1:JSCell* array, 2:arguments start, 3:number of arguments to skip, 4:number of arguments
+        vmCall(
+            m_out.voidType,m_out.operation(operationCopyRest), m_callFrame, lowCell(m_node->child1()),
+            getArgumentsStart(), numberOfArgumentsToSkip, numberOfArguments);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
     }
     
     void compileNewObject()

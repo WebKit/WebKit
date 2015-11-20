@@ -1089,15 +1089,15 @@
 - path: es6/RegExp_y_and_u_flags_y_flag_lastIndex.js
   cmd: runES6 :fail
 - path: es6/rest_parameters_arguments_object_interaction.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/rest_parameters_basic_functionality.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/rest_parameters_cant_be_used_in_setters.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/rest_parameters_function_length_property.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/rest_parameters_new_Function_support.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/Set_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/Set_Set[Symbol.species].js

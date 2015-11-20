@@ -983,6 +983,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case CopyRest: {
+        read(Stack);
+        write(Heap);
+        return;
+    }
+
     case NewObject:
     case NewRegexp:
     case NewStringObject:

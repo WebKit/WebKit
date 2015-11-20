@@ -293,6 +293,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_assert);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_lexical_environment);
 SLOW_PATH_HIDDEN_DECL(slow_path_push_with_scope);
 SLOW_PATH_HIDDEN_DECL(slow_path_resolve_scope);
+SLOW_PATH_HIDDEN_DECL(slow_path_copy_rest);
 
 } // namespace JSC
 

@@ -556,6 +556,29 @@ invalid("1 % --");
 invalid("1 % \n++");
 invalid("1 % \n--");
 
+debug("Rest parameter");
+valid("function foo(...a) { }");
+valid("function foo(a, ...b) { }");
+valid("function foo(a = 20, ...b) { }");
+valid("function foo(a, b, c, d, e, f, g, ...h) { }");
+invalid("function foo(a, ...b, c) { }")
+invalid("function foo(a, ...b, ) { }")
+invalid("function foo(a, ...a) { }");
+invalid("function foo(...a, ...b) { }");
+invalid("function foo(...b, ...b) { }");
+invalid("function foo(...b  ...b) { }");
+invalid("function foo(a, a, ...b) { }");
+invalid("function foo(...{b}) { }");
+invalid("function foo(...[b]) { }");
+invalid("function foo(...123) { }");
+invalid("function foo(...123abc) { }");
+valid("function foo(...abc123) { }");
+valid("function foo(...let) { }");
+invalid("'use strict'; function foo(...let) { }");
+valid("function foo(...yield) { }");
+invalid("'use strict'; function foo(...yield) { }");
+invalid("function foo(...if) { }");
+
 
 
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }

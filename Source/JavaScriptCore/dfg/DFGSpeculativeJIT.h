@@ -1221,6 +1221,12 @@ public:
         return appendCall(operation);
     }
 
+    JITCompiler::Call callOperation(V_JITOperation_ECRUiUi operation, GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, GPRReg arg4)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3, arg4);
+        return appendCall(operation);
+    }
+
 #if USE(JSVALUE64)
     JITCompiler::Call callOperation(J_JITOperation_E operation, GPRReg result)
     {
@@ -2238,6 +2244,7 @@ public:
     void compilePutToArguments(Node*);
     void compileCreateScopedArguments(Node*);
     void compileCreateClonedArguments(Node*);
+    void compileCopyRest(Node*);
     void compileNotifyWrite(Node*);
     bool compileRegExpExec(Node*);
     void compileIsObjectOrNull(Node*);

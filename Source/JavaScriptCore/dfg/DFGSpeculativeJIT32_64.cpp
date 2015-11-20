@@ -4438,6 +4438,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case CopyRest: {
+        compileCopyRest(node);
+        break;
+    }
+
     case NewFunction:
     case NewArrowFunction:
         compileNewFunction(node);

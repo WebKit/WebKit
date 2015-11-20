@@ -1029,6 +1029,15 @@ namespace JSC {
     {
     }
 
+    inline RestParameterNode::RestParameterNode(const Identifier& name, unsigned numParametersToSkip, const JSTextPosition& start, const JSTextPosition& end)
+        : DestructuringPatternNode()
+        , m_name(name)
+        , m_numParametersToSkip(numParametersToSkip)
+        , m_divotStart(start)
+        , m_divotEnd(end)
+    {
+    }
+
     inline DestructuringAssignmentNode::DestructuringAssignmentNode(const JSTokenLocation& location, DestructuringPatternNode* bindings, ExpressionNode* initializer)
         : ExpressionNode(location)
         , m_bindings(bindings)

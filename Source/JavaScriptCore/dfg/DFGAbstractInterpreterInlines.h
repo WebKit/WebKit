@@ -2508,6 +2508,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckTierUpAtReturn:
         break;
 
+    case CopyRest:
+        break;
+            
     case Check: {
         // Simplify out checks that don't actually do checking.
         for (unsigned i = 0; i < AdjacencyList::Size; ++i) {

@@ -701,4 +701,20 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
     RETURN(resolvedScope);
 }
 
+SLOW_PATH_DECL(slow_path_copy_rest)
+{
+    BEGIN();
+    unsigned numParamsToSkip = pc[2].u.unsignedValue;
+    unsigned numArgumentsToFunction = exec->argumentCount();
+    if (numArgumentsToFunction <= numParamsToSkip)
+        END();
+
+    JSArray* array = jsCast<JSArray*>(OP(1).jsValue());
+    unsigned arraySize = numArgumentsToFunction - numParamsToSkip;
+    array->setLength(exec, arraySize);
+    for (unsigned i = 0; i < arraySize; i++)
+        array->putDirectIndex(exec, i, exec->uncheckedArgument(i + numParamsToSkip));
+    END();
+}
+
 } // namespace JSC

@@ -857,6 +857,11 @@ public:
         return new (m_parserArena) BindingNode(boundProperty, start, end, context);
     }
 
+    RestParameterNode* createRestParameter(const Identifier& name, size_t numParametersToSkip, const JSTextPosition& start, const JSTextPosition& end)
+    {
+        return new (m_parserArena) RestParameterNode(name, numParametersToSkip, start, end);
+    }
+
     AssignmentElement createAssignmentElement(const Expression& assignmentTarget, const JSTextPosition& start, const JSTextPosition& end)
     {
         return new (m_parserArena) AssignmentElementNode(assignmentTarget, start, end);

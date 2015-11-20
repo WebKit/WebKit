@@ -128,7 +128,8 @@
             { "name" : "op_enumerator_generic_pname", "length" : 4 },
             { "name" : "op_to_index_string", "length" : 3 },
             { "name" : "op_load_arrowfunction_this", "length" : 2 },
-            { "name" : "op_assert", "length" : 3 }
+            { "name" : "op_assert", "length" : 3 },
+            { "name" : "op_copy_rest", "length": 3 }
         ]
     },
     {

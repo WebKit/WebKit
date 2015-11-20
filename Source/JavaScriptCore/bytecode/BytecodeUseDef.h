@@ -70,7 +70,8 @@ void computeUsesForBytecodeOffset(
     case op_jeq_null:
     case op_jneq_null:
     case op_dec:
-    case op_inc: {
+    case op_inc: 
+    case op_copy_rest: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
@@ -247,6 +248,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     OpcodeID opcodeID = interpreter->getOpcodeID(instruction->u.opcode);
     switch (opcodeID) {
     // These don't define anything.
+    case op_copy_rest:
     case op_put_to_scope:
     case op_end:
     case op_profile_will_call:

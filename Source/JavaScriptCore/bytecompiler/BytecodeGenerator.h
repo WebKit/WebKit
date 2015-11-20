@@ -598,6 +598,8 @@ namespace JSC {
         RegisterID* emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node);
         void emitIteratorClose(RegisterID* iterator, const ThrowableExpressionData* node);
 
+        RegisterID* emitRestParameter(RegisterID* result, unsigned numParametersToSkip);
+
         bool emitReadOnlyExceptionIfNeeded(const Variable&);
 
         // Start a try block. 'start' must have been emitted.
@@ -828,6 +830,7 @@ namespace JSC {
         enum FunctionVariableType : uint8_t { NormalFunctionVariable, GlobalFunctionVariable };
         Vector<std::pair<FunctionMetadataNode*, FunctionVariableType>> m_functionsToInitialize;
         bool m_needToInitializeArguments { false };
+        RestParameterNode* m_restParameter { nullptr };
         
         Vector<TryRange> m_tryRanges;
         SegmentedVector<TryData, 8> m_tryData;

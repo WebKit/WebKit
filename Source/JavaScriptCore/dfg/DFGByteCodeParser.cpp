@@ -3330,6 +3330,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewRegexp, OpInfo(currentInstruction[2].u.operand)));
             NEXT_OPCODE(op_new_regexp);
         }
+
+        case op_copy_rest: {
+            noticeArgumentsUse();
+            addToGraph(CopyRest,
+                OpInfo(currentInstruction[2].u.unsignedValue), get(VirtualRegister(currentInstruction[1].u.operand)));
+            NEXT_OPCODE(op_copy_rest);
+        }
             
         // === Bitwise operations ===
 

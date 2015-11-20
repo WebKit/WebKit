@@ -3456,6 +3456,35 @@ void AssignmentElementNode::toString(StringBuilder& builder) const
         builder.append(static_cast<ResolveNode*>(m_assignmentTarget)->identifier().string());
 }
 
+void RestParameterNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
+{
+    identifiers.append(m_name);
+}
+void RestParameterNode::toString(StringBuilder& builder) const
+{
+    builder.append(m_name.string());
+}
+void RestParameterNode::bindValue(BytecodeGenerator&, RegisterID*) const
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+void RestParameterNode::emit(BytecodeGenerator& generator)
+{
+    Variable var = generator.variable(m_name);
+    if (RegisterID* local = var.local()) {
+        generator.emitRestParameter(local, m_numParametersToSkip);
+        generator.emitProfileType(local, var, m_divotStart, m_divotEnd);
+        return;
+    }
+
+    RefPtr<RegisterID> restParameterArray = generator.emitRestParameter(generator.newTemporary(), m_numParametersToSkip);
+    generator.emitProfileType(restParameterArray.get(), var, m_divotStart, m_divotEnd);
+    RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
+    generator.emitExpressionInfo(m_divotEnd, m_divotStart, m_divotEnd);
+    generator.emitPutToScope(scope.get(), var, restParameterArray.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound, Initialization);
+}
+
+
 RegisterID* SpreadExpressionNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
     RELEASE_ASSERT_NOT_REACHED();

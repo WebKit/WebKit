@@ -4427,6 +4427,10 @@ void SpeculativeJIT::compile(Node* node)
         compileCreateClonedArguments(node);
         break;
     }
+    case CopyRest: {
+        compileCopyRest(node);
+        break;
+    }
 
     case NewFunction:
     case NewArrowFunction:

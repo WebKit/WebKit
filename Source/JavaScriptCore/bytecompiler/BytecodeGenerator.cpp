@@ -70,6 +70,9 @@ ParserError BytecodeGenerator::generate()
     if (m_needToInitializeArguments)
         initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
 
+    if (m_restParameter)
+        m_restParameter->emit(*this);
+
     {
         RefPtr<RegisterID> temp = newTemporary();
         RefPtr<RegisterID> globalScope;
@@ -272,8 +275,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // needing destructuring are noted.
     m_parameters.grow(parameters.size() + 1); // reserve space for "this"
     m_thisRegister.setIndex(initializeNextParameter()->index()); // this
-    for (unsigned i = 0; i < parameters.size(); ++i)
-        initializeNextParameter();
+    for (unsigned i = 0; i < parameters.size(); ++i) {
+        auto pattern = parameters.at(i).first;
+        if (pattern->isRestParameter()) {
+            RELEASE_ASSERT(!m_restParameter);
+            m_restParameter = static_cast<RestParameterNode*>(pattern);
+        } else
+            initializeNextParameter();
+    }
     
     // Figure out some interesting facts about our arguments.
     bool capturesAnyArgumentByName = false;
@@ -307,7 +316,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         m_argumentsRegister->ref();
     }
     
-    if (needsArguments && !codeBlock->isStrictMode() && !parameters.hasDefaultParameterValues()) {
+    // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-functiondeclarationinstantiation
+    // This implements IsSimpleParameterList in the Ecma 2015 spec.
+    // If IsSimpleParameterList is false, we will create a strict-mode like arguments object.
+    // IsSimpleParameterList is false if the argument list contains any default parameter values,
+    // a rest parameter, or any destructuring patterns.
+    // FIXME: Take into account destructuring to make isSimpleParameterList false. https://bugs.webkit.org/show_bug.cgi?id=151450
+    bool isSimpleParameterList = !parameters.hasDefaultParameterValues() && !m_restParameter;
+    if (needsArguments && !codeBlock->isStrictMode() && isSimpleParameterList) {
         // If we captured any formal parameter by name, then we use ScopedArguments. Otherwise we
         // use DirectArguments. With ScopedArguments, we lift all of our arguments into the
         // activation.
@@ -389,7 +405,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
     }
     
-    if (needsArguments && (codeBlock->isStrictMode() || parameters.hasDefaultParameterValues())) {
+    if (needsArguments && (codeBlock->isStrictMode() || !isSimpleParameterList)) {
         // Allocate an out-of-bands arguments object.
         emitOpcode(op_create_out_of_band_arguments);
         instructions().append(m_argumentsRegister->index());
@@ -707,6 +723,8 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         RefPtr<RegisterID> temp = newTemporary();
         for (unsigned i = 0; i < parameters.size(); i++) {
             std::pair<DestructuringPatternNode*, ExpressionNode*> parameter = parameters.at(i);
+            if (parameter.first->isRestParameter())
+                continue;
             RefPtr<RegisterID> parameterValue = &registerFor(virtualRegisterForArgument(1 + i));
             emitMove(temp.get(), parameterValue.get());
             if (parameter.second) {
@@ -764,7 +782,7 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         // If we have default parameter values, we handle this case above.
         for (unsigned i = 0; i < parameters.size(); i++) {
             DestructuringPatternNode* pattern = parameters.at(i).first;
-            if (!pattern->isBindingNode()) {
+            if (!pattern->isBindingNode() && !pattern->isRestParameter()) {
                 RefPtr<RegisterID> parameterValue = &registerFor(virtualRegisterForArgument(1 + i));
                 pattern->bindValue(*this, parameterValue.get());
             }
@@ -3811,6 +3829,17 @@ void BytecodeGenerator::invalidateForInContextForLocal(RegisterID* localRegister
         context->invalidate();
         break;
     }
+}
+
+RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned numParametersToSkip)
+{
+    emitNewArray(result, nullptr, 0);
+
+    emitOpcode(op_copy_rest);
+    instructions().append(result->index());
+    instructions().append(numParametersToSkip);
+
+    return result;
 }
 
 } // namespace JSC

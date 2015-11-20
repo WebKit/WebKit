@@ -75,6 +75,13 @@ struct Instruction {
         u.jsCell.clear();
         u.operand = operand;
     }
+    Instruction(unsigned unsignedValue)
+    {
+        // We have to initialize one of the pointer members to ensure that
+        // the entire struct is initialized in 64-bit.
+        u.jsCell.clear();
+        u.unsignedValue = unsignedValue;
+    }
 
     Instruction(PutByIdFlags flags)
     {
@@ -112,6 +119,7 @@ struct Instruction {
     union {
         Opcode opcode;
         int operand;
+        unsigned unsignedValue;
         WriteBarrierBase<Structure> structure;
         StructureID structureID;
         WriteBarrierBase<SymbolTable> symbolTable;

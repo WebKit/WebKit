@@ -2158,7 +2158,13 @@ struct Node {
     {
         m_misc.epoch = epoch.toUnsigned();
     }
-    
+
+    unsigned numberOfArgumentsToSkip()
+    {
+        ASSERT(op() == CopyRest);
+        return static_cast<unsigned>(m_opInfo);
+    }
+
     void dumpChildren(PrintStream& out)
     {
         if (!child1())

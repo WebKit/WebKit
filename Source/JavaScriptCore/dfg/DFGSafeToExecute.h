@@ -322,6 +322,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PhantomClonedArguments:
     case GetMyArgumentByVal:
     case ForwardVarargs:
+    case CopyRest:
         return true;
 
     case BottomValue:

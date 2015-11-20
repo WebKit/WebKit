@@ -1675,6 +1675,12 @@ _llint_op_to_index_string:
     callSlowPath(_slow_path_to_index_string)
     dispatch(3)
 
+_llint_op_copy_rest:
+    traceExecution()
+    callSlowPath(_slow_path_copy_rest)
+    dispatch(3)
+
+
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert
 # as much.

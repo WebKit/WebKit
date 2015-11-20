@@ -1973,6 +1973,7 @@ namespace JSC {
         virtual void toString(StringBuilder&) const = 0;
 
         virtual bool isBindingNode() const { return false; }
+        virtual bool isRestParameter() const { return false; }
         virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID*, ExpressionNode*) { return 0; }
         
     protected:
@@ -2051,6 +2052,27 @@ namespace JSC {
         JSTextPosition m_divotEnd;
         const Identifier& m_boundProperty;
         AssignmentContext m_bindingContext;
+    };
+
+    class RestParameterNode : public DestructuringPatternNode {
+    public:
+        RestParameterNode(const Identifier& boundProperty, unsigned numParametersToSkip, const JSTextPosition& start, const JSTextPosition& end);
+
+        bool isRestParameter() const override { return true; }
+
+        void emit(BytecodeGenerator&);
+
+        const Identifier& name() const { return m_name; }
+
+    private:
+        virtual void collectBoundIdentifiers(Vector<Identifier>&) const override;
+        virtual void bindValue(BytecodeGenerator&, RegisterID*) const override;
+        virtual void toString(StringBuilder&) const override;
+
+        const Identifier& m_name;
+        unsigned m_numParametersToSkip;
+        JSTextPosition m_divotStart; // "f" in "...foo"
+        JSTextPosition m_divotEnd;
     };
 
     class AssignmentElementNode : public DestructuringPatternNode {

@@ -676,6 +676,7 @@ private:
         case ZombieHint:
         case ExitOK:
         case LoadVarargs:
+        case CopyRest:
             break;
             
         // This gets ignored because it only pretends to produce a value.

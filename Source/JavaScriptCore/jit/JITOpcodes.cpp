@@ -1399,6 +1399,12 @@ void JIT::emit_op_create_out_of_band_arguments(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
+void JIT::emit_op_copy_rest(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_copy_rest);
+    slowPathCall.call();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

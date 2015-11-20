@@ -669,6 +669,30 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
 }
 
 template <typename LexerType>
+bool Parser<LexerType>::declareRestOrNormalParameter(const Identifier& name, const Identifier** duplicateIdentifier)
+{
+    DeclarationResultMask declarationResult = declareParameter(&name);
+    if ((declarationResult & DeclarationResult::InvalidStrictMode) && strictMode()) {
+        semanticFailIfTrue(isEvalOrArguments(&name), "Cannot destructure to a parameter name '", name.impl(), "' in strict mode");
+        if (m_lastFunctionName && name == *m_lastFunctionName)
+            semanticFail("Cannot declare a parameter named '", name.impl(), "' as it shadows the name of a strict mode function");
+        semanticFailureDueToKeyword("parameter name");
+        if (hasDeclaredParameter(name))
+            semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode as it has already been declared");
+        semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode");
+    }
+    if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration) {
+        // It's not always an error to define a duplicate parameter.
+        // It's only an error when there are default parameter values or destructuring parameters.
+        // We note this value now so we can check it later.
+        if (duplicateIdentifier)
+            *duplicateIdentifier = &name;
+    }
+
+    return true;
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier& name, JSToken token, AssignmentContext bindingContext, const Identifier** duplicateIdentifier)
 {
     ASSERT(!name.isNull());
@@ -687,23 +711,8 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
             failIfTrue(declarationResult & DeclarationResult::InvalidDuplicateDeclaration, "Cannot declare a lexical variable twice: '", name.impl(), "'");
         }
     } else if (kind == DestructureToParameters) {
-        DeclarationResultMask declarationResult = declareParameter(&name);
-        if ((declarationResult & DeclarationResult::InvalidStrictMode) && strictMode()) {
-            semanticFailIfTrue(isEvalOrArguments(&name), "Cannot destructure to a parameter name '", name.impl(), "' in strict mode");
-            if (m_lastFunctionName && name == *m_lastFunctionName)
-                semanticFail("Cannot declare a parameter named '", name.impl(), "' as it shadows the name of a strict mode function");
-            semanticFailureDueToKeyword("parameter name");
-            if (hasDeclaredParameter(name))
-                semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode as it has already been declared");
-            semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode");
-        }
-        if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration) {
-            // It's not always an error to define a duplicate parameter.
-            // It's only an error when there are default parameter values or destructuring parameters.
-            // We note this value now so we can check it later.
-            if (duplicateIdentifier)
-                *duplicateIdentifier = &name;
-        }
+        declareRestOrNormalParameter(name, duplicateIdentifier);
+        propagateError();
     }
 
     if (exportType == ExportType::Exported) {
@@ -1536,32 +1545,45 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
 template <typename LexerType>
 template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeBuilder& context, TreeFormalParameterList list, unsigned& parameterCount)
 {
-#define failFromDuplicate() \
+#define failIfDuplicateIfViolation() \
     if (duplicateParameter) {\
         semanticFailIfTrue(defaultValue, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with default parameter values");\
         semanticFailIfTrue(hasDestructuringPattern, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with destructuring parameters");\
+        semanticFailIfTrue(isRestParameter, "Duplicate parameter '", duplicateParameter->impl(), "' not allowed in function with a rest parameter");\
     }
 
-    const Identifier* duplicateParameter = nullptr;
     bool hasDestructuringPattern = false;
-    auto parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
-    failIfFalse(parameter, "Cannot parse parameter pattern");
-    auto defaultValue = parseDefaultValueForDestructuringPattern(context);
-    propagateError();
-    failFromDuplicate();
-    context.appendParameter(list, parameter, defaultValue);
-    parameterCount++;
-    while (consume(COMMA)) {
-        parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
+    bool isRestParameter = false;
+    const Identifier* duplicateParameter = nullptr;
+    do {
+        TreeDestructuringPattern parameter = 0;
+        TreeExpression defaultValue = 0;
+
+        if (match(DOTDOTDOT)) {
+            next();
+            failIfFalse(matchSpecIdentifier(), "Rest parameter '...' should be followed by a variable identifier");
+            declareRestOrNormalParameter(*m_token.m_data.ident, &duplicateParameter);
+            propagateError();
+            JSTextPosition identifierStart = tokenStartPosition();
+            JSTextPosition identifierEnd = tokenEndPosition();
+            parameter = context.createRestParameter(*m_token.m_data.ident, parameterCount, identifierStart, identifierEnd);
+            next();
+            failIfTrue(match(COMMA), "Rest parameter should be the last parameter in a function declaration"); // Let's have a good error message for this common case.
+            isRestParameter = true;
+        } else
+            parameter = parseDestructuringPattern(context, DestructureToParameters, ExportType::NotExported, &duplicateParameter, &hasDestructuringPattern);
         failIfFalse(parameter, "Cannot parse parameter pattern");
-        defaultValue = parseDefaultValueForDestructuringPattern(context);
+        if (!isRestParameter)
+            defaultValue = parseDefaultValueForDestructuringPattern(context);
         propagateError();
-        failFromDuplicate();
+        failIfDuplicateIfViolation();
         context.appendParameter(list, parameter, defaultValue);
-        parameterCount++;
-    }
+        if (!isRestParameter)
+            parameterCount++;
+    } while (!isRestParameter && consume(COMMA));
+
     return true;
-#undef failFromDuplicate
+#undef failIfDuplicateIfViolation
 }
 
 template <typename LexerType>
