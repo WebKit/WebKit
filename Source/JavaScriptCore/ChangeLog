@@ -1,3 +1,27 @@
+2015-11-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Super use should be recorded in per-function scope
+        https://bugs.webkit.org/show_bug.cgi?id=151500
+
+        Reviewed by Geoffrey Garen.
+
+        "super" use is prohibited under the non-constructor / non-class-method-related functions.
+        This "super" use should be recorded in per-function scope to check its incorrect use after
+        parsing a function.
+        Currently, we accidentally record it to a lexical current scope. So when using "super" inside
+        a block scope, our "super" use guard miss it.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser::currentVariableScope):
+        (JSC::Parser::currentFunctionScope):
+        (JSC::Parser::declareVariable):
+        * tests/stress/super-in-lexical-scope.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntaxError.test):
+
 2015-11-20  Chris Dumez  <cdumez@apple.com>
 
         Caching of properties on objects that have named property getters is sometimes incorrect

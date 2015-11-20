@@ -787,6 +787,30 @@ private:
     {
         return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
     }
+
+    ScopeRef currentVariableScope()
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size());
+        while (!m_scopeStack[i].allowsVarDeclarations()) {
+            i--;
+            ASSERT(i < m_scopeStack.size());
+        }
+        return ScopeRef(&m_scopeStack, i);
+    }
+
+    ScopeRef currentFunctionScope()
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size());
+        while (i && !m_scopeStack[i].isFunctionBoundary()) {
+            i--;
+            ASSERT(i < m_scopeStack.size());
+        }
+        // When reaching the top level scope (it can be non function scope), we return it.
+        return ScopeRef(&m_scopeStack, i);
+    }
+
     
     ScopeRef pushScope()
     {
@@ -833,18 +857,11 @@ private:
     
     DeclarationResultMask declareVariable(const Identifier* ident, DeclarationType type = DeclarationType::VarDeclaration, DeclarationImportType importType = DeclarationImportType::NotImported)
     {
+        if (type == DeclarationType::VarDeclaration)
+            return currentVariableScope()->declareVariable(ident);
+
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size());
-
-        if (type == DeclarationType::VarDeclaration) {
-            while (!m_scopeStack[i].allowsVarDeclarations()) {
-                i--;
-                ASSERT(i < m_scopeStack.size());
-            }
-
-            return m_scopeStack[i].declareVariable(ident);
-        }
-
         ASSERT(type == DeclarationType::LetDeclaration || type == DeclarationType::ConstDeclaration);
 
         // Lexical variables declared at a top level scope that shadow arguments or vars are not allowed.

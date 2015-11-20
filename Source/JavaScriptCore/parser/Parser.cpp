@@ -3555,7 +3555,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         semanticFailIfFalse(currentScope()->isFunction(), "super is only valid inside functions");
         base = context.createSuperExpr(location);
         next();
-        currentScope()->setNeedsSuperBinding();
+        currentFunctionScope()->setNeedsSuperBinding();
     } else if (!baseIsNewTarget)
         base = parsePrimaryExpression(context);
 
@@ -3590,7 +3590,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 TreeArguments arguments = parseArguments(context, AllowSpread);
                 failIfFalse(arguments, "Cannot parse call arguments");
                 if (baseIsSuper)
-                    currentScope()->setHasDirectSuper();
+                    currentFunctionScope()->setHasDirectSuper();
                 base = context.makeFunctionCallNode(startLocation, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             }
             m_nonLHSCount = nonLHSCount;
