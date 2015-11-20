@@ -982,20 +982,23 @@ sub GenerateHeader
     my $namedGetterFunction = GetNamedGetterFunction($interface);
     my $indexedGetterFunction = GetIndexedGetterFunction($interface);
 
-    my $hasImpureNamedGetter = $interface->extendedAttributes->{"OverrideBuiltins"}
-        && ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"});
+    my $hasNamedGetter = $namedGetterFunction
+        || $interface->extendedAttributes->{"CustomNamedGetter"};
 
     my $hasComplexGetter =
         $indexedGetterFunction
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
         || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
-        || $namedGetterFunction
-        || $interface->extendedAttributes->{"CustomNamedGetter"};
+        || $hasNamedGetter;
     
     my $hasGetter = InstanceOverridesGetOwnPropertySlot($interface);
 
-    if ($hasImpureNamedGetter) {
-        $structureFlags{"JSC::HasImpureGetOwnPropertySlot"} = 1;
+    if ($hasNamedGetter) {
+        if ($interface->extendedAttributes->{"OverrideBuiltins"}) {
+            $structureFlags{"JSC::GetOwnPropertySlotIsImpure"} = 1;
+        } else {
+            $structureFlags{"JSC::GetOwnPropertySlotIsImpureForPropertyAbsence"} = 1;
+        }
     }
     if ($interface->extendedAttributes->{"NewImpurePropertyFiresWatchpoints"}) {
         $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1;

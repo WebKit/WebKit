@@ -283,6 +283,9 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             if (structure->typeInfo().prohibitsPropertyCaching() || structure->isDictionary())
                 return GiveUpOnCache;
             
+            if (slot.isUnset() && structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
+                return GiveUpOnCache;
+
             if (slot.isUnset()) {
                 conditionSet = generateConditionsForPropertyMiss(
                     vm, codeBlock, exec, structure, propertyName.impl());
@@ -485,7 +488,7 @@ static InlineCacheAction tryRepatchIn(
     if (forceICFailure(exec))
         return GiveUpOnCache;
     
-    if (!base->structure()->propertyAccessesAreCacheable())
+    if (!base->structure()->propertyAccessesAreCacheable() || (!wasFound && !base->structure()->propertyAccessesAreCacheableForAbsence()))
         return GiveUpOnCache;
     
     if (wasFound) {

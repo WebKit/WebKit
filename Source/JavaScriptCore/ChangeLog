@@ -1,3 +1,35 @@
+2015-11-20  Chris Dumez  <cdumez@apple.com>
+
+        Caching of properties on objects that have named property getters is sometimes incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=151453
+        <rdar://problem/23049343>
+
+        Reviewed by Gavin Barraclough.
+
+        Add new GetOwnPropertySlotIsImpureForPropertyAbsence TypeInfo flag to be
+        used by objects that have a non-'OverrideBuiltins' named property getter.
+        This flag prevents caching of properties that are missing as a named
+        property with this name may later become available.
+
+        Objects with an 'OverrideBuiltins' named property getter will keep using
+        the GetOwnPropertySlotIsImpure TypeInfo flag, which prevents all property
+        caching since named properties can override own properties or properties
+        on the prototype.
+
+        * bytecode/ComplexGetStatus.cpp:
+        (JSC::ComplexGetStatus::computeFor):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValid):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryRepatchIn):
+        * jsc.cpp:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::getOwnPropertySlotIsImpure):
+        (JSC::TypeInfo::getOwnPropertySlotIsImpureForPropertyAbsence):
+        (JSC::TypeInfo::prohibitsPropertyCaching): Deleted.
+        * runtime/Structure.h:
+
 2015-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r189433) Web Inspector: JSContext inspection exceptions should include native call frames by default

@@ -34,7 +34,7 @@ ComplexGetStatus ComplexGetStatus::computeFor(
     Structure* headStructure, const ObjectPropertyConditionSet& conditionSet, UniquedStringImpl* uid)
 {
     // FIXME: We should assert that we never see a structure that
-    // hasImpureGetOwnPropertySlot() but for which we don't
+    // getOwnPropertySlotIsImpure() but for which we don't
     // newImpurePropertyFiresWatchpoints(). We're not at a point where we can do
     // that, yet.
     // https://bugs.webkit.org/show_bug.cgi?id=131810

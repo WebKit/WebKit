@@ -47,9 +47,10 @@ static const unsigned StructureIsImmortal = 1 << 7;
 
 static const unsigned OverridesGetPropertyNames = 1 << 8;
 static const unsigned ProhibitsPropertyCaching = 1 << 9;
-static const unsigned HasImpureGetOwnPropertySlot = 1 << 10;
+static const unsigned GetOwnPropertySlotIsImpure = 1 << 10;
 static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 11;
 static const unsigned IsEnvironmentRecord = 1 << 12;
+static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 13;
 
 class TypeInfo {
 public:
@@ -91,7 +92,8 @@ public:
     bool structureIsImmortal() const { return isSetOnFlags1(StructureIsImmortal); }
     bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
-    bool hasImpureGetOwnPropertySlot() const { return isSetOnFlags2(HasImpureGetOwnPropertySlot); }
+    bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2(GetOwnPropertySlotIsImpure); }
+    bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2(GetOwnPropertySlotIsImpureForPropertyAbsence); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
     bool isEnvironmentRecord() const { return isSetOnFlags2(IsEnvironmentRecord); }
 

@@ -267,7 +267,7 @@ public:
 
     DECLARE_INFO;
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::HasImpureGetOwnPropertySlot | JSC::OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::OverridesGetOwnPropertySlot;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
