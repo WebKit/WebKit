@@ -338,6 +338,9 @@ function installFedoraDependencies {
         libwayland-client-devel \
         libwayland-server-devel \
         libxslt-devel \
+        llvm \
+        llvm-devel \
+        llvm-static \
         mesa-libGL-devel \
         ninja-build \
 	openssl-devel \
@@ -385,8 +388,6 @@ function installFedoraDependencies {
         libpciaccess-devel \
         libtiff-devel \
         libxkbfile-devel \
-        llvm \
-        llvm-devel \
         mesa-libEGL-devel \
         ragel \
         xorg-x11-font-utils \
