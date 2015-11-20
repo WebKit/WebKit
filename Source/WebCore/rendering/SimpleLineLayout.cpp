@@ -120,8 +120,6 @@ static bool canUseForStyle(const RenderStyle& style)
     // Non-visible overflow should be pretty easy to support.
     if (style.overflowX() != OVISIBLE || style.overflowY() != OVISIBLE)
         return false;
-    if (!style.textIndent().isZero())
-        return false;
     if (!style.isLeftToRightDirection())
         return false;
     if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
@@ -447,12 +445,13 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& ru
     lineState.removeTrailingWhitespace(runs);
 }
 
-static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line)
+static void updateLineConstrains(const RenderBlockFlow& flow, LineState& line, bool isFirstLine)
 {
+    bool shouldApplyTextIndent = !flow.isAnonymous() || flow.parent()->firstChild() == &flow;
     LayoutUnit height = flow.logicalHeight();
     LayoutUnit logicalHeight = flow.minLineHeightForReplacedRenderer(false, 0);
     float logicalRightOffset = flow.logicalRightOffsetForLine(height, false, logicalHeight);
-    line.setLogicalLeftOffset(flow.logicalLeftOffsetForLine(height, false, logicalHeight));
+    line.setLogicalLeftOffset(flow.logicalLeftOffsetForLine(height, false, logicalHeight) + (shouldApplyTextIndent && isFirstLine ? flow.textIndentOffset() : LayoutUnit(0)));
     line.setAvailableWidth(std::max<float>(0, logicalRightOffset - line.logicalLeftOffset()));
 }
 
@@ -626,13 +625,12 @@ static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsig
     LineState line;
     bool isEndOfContent = false;
     TextFragmentIterator textFragmentIterator = TextFragmentIterator(flow);
-
     do {
         flow.setLogicalHeight(lineHeight * lineCount + borderAndPaddingBefore);
         LineState previousLine = line;
         unsigned previousRunCount = runs.size();
         line = LineState();
-        updateLineConstrains(flow, line);
+        updateLineConstrains(flow, line, !lineCount);
         isEndOfContent = createLineRuns(line, previousLine, runs, textFragmentIterator);
         closeLineEndingAndAdjustRuns(line, runs, previousRunCount, lineCount, textFragmentIterator);
     } while (!isEndOfContent);
