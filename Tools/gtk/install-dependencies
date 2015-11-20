@@ -22,17 +22,10 @@ function checkInstaller {
         exit 0
     fi
 
-    # dnf - Fedora 22 and above
+    # dnf - Fedora
     dnf --version &> /dev/null
     if [ $? -eq 0 ]; then
-        installFedoraDependencies dnf
-        exit 0
-    fi
-
-    # yum - Fedora 21 and below
-    yum --version &> /dev/null
-    if [ $? -eq 0 ]; then
-        installFedoraDependencies yum
+        installDependenciesWithDnf
         exit 0
     fi
 
@@ -49,7 +42,7 @@ function checkInstaller {
 
 function installDependenciesWithApt {
     # These are dependencies necessary for building WebKitGTK+.
-    apt-get install \
+    packages=" \
         autoconf \
         automake \
         autopoint \
@@ -100,10 +93,10 @@ function installDependenciesWithApt {
         libxtst-dev \
         libwayland-dev \
         ruby \
-        xfonts-utils
+        xfonts-utils"
 
     # These are dependencies necessary for running tests.
-    apt-get install \
+    packages="$packages \
         apache2 \
         curl \
         dbus-x11 \
@@ -115,10 +108,10 @@ function installDependenciesWithApt {
         ruby \
         ruby-json \
         ruby-highline \
-        xvfb
+        xvfb"
 
     # These are dependencies necessary for building the jhbuild.
-    apt-get install \
+    packages="$packages \
         git \
         gobject-introspection \
         icon-naming-utils \
@@ -153,16 +146,14 @@ function installDependenciesWithApt {
         x11proto-xf86dri-dev \
         xfonts-utils \
         xtrans-dev \
-        xutils-dev
+        xutils-dev"
 
     # These are dependencies necessary for using webkit-patch
-    apt-get install \
+    packages="$packages \
         git-svn \
-        subversion
+        subversion"
 
-    # ninja is a faster build system than GNU make, but it doesn't
-    # exist on Ubuntu 12.04
-    apt-get install ninja-build || true
+    apt-get install $packages
 }
 
 function installDependenciesWithPacman {
@@ -297,9 +288,9 @@ function installDependenciesWithPacman {
     echo "https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts"
 }
 
-function installFedoraDependencies {
+function installDependenciesWithDnf {
     # These are dependencies necessary for building WebKitGTK+.
-    $1 install \
+    packages=" \
         atk-devel \
         autoconf \
         automake \
@@ -351,10 +342,10 @@ function installFedoraDependencies {
         python-devel \
         orc-devel \
         ruby \
-        sqlite-devel
+        sqlite-devel"
 
     # These are dependencies necessary for running tests.
-    $1 install \
+    packages="$packages \
         curl \
         dbus-x11 \
         hunspell-en \
@@ -369,10 +360,10 @@ function installFedoraDependencies {
         ruby \
         rubygem-json \
         rubygem-highline \
-        xorg-x11-server-Xvfb
+        xorg-x11-server-Xvfb"
 
     # These are dependencies necessary for building the jhbuild.
-    $1 install \
+    packages="$packages \
         docbook-utils \
         docbook-utils-pdf \
         git \
@@ -393,12 +384,14 @@ function installFedoraDependencies {
         xorg-x11-font-utils \
         xorg-x11-proto-devel \
         xorg-x11-util-macros \
-        xorg-x11-xtrans-devel
+        xorg-x11-xtrans-devel"
 
     # These are dependencies necessary for using webkit-patch
-    $1 install \
+    packages="$packages
         git-svn \
-        subversion
+        subversion"
+
+    dnf install $packages
 }
 
 checkInstaller
