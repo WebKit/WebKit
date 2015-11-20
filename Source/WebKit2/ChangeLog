@@ -1,3 +1,23 @@
+2015-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Back-buffer to front-buffer copy fails for some buffer formats
+        https://bugs.webkit.org/show_bug.cgi?id=151475
+        rdar://problem/23617899
+
+        Reviewed by Tim Horton.
+        
+        When displaying RemoteLayerBackingStore, we copy the back buffer to the front
+        buffer before painting the updated regions. For buffers using Format::RGB10A8,
+        the CGImage-based copy fails, so in this case, use IOSurface::copyToSurface().
+        
+        Reorganized RemoteLayerBackingStore::drawInContext() to make this a bit easier
+        to understand. First, we either copy the entire surface over, or paint the backImage.
+        Then we clip to the dirty rects, and clear them, then paint the layer contents.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+
 2015-11-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r192667 and r192668.

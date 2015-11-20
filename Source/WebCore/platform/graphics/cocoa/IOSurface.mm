@@ -54,6 +54,7 @@ inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSi
 std::unique_ptr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace, Format pixelFormat)
 {
     // YUV422 IOSurfaces do not go in the pool.
+    // FIXME: Want pooling of RGB10, RGB10A8.
     if (pixelFormat == Format::RGBA) {
         if (auto cachedSurface = surfaceFromPool(size, size, colorSpace))
             return cachedSurface;
@@ -259,8 +260,27 @@ CGContextRef IOSurface::ensurePlatformContext()
         return m_cgContext.get();
 
     CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+
     size_t bitsPerComponent = 8;
     size_t bitsPerPixel = 32;
+    
+    switch (format()) {
+    case Format::RGBA:
+        break;
+    case Format::RGB10:
+        bitsPerComponent = 10;
+        bitsPerPixel = 32;
+        break;
+    case Format::RGB10A8:
+        // FIXME: This doesn't take the two-plane format into account.
+        bitsPerComponent = 10;
+        bitsPerPixel = 32;
+        break;
+    case Format::YUV422:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    
     m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, cachedCGColorSpace(m_colorSpace), bitmapInfo));
 
     return m_cgContext.get();
@@ -310,6 +330,13 @@ IOSurface::Format IOSurface::format() const
     unsigned pixelFormat = IOSurfaceGetPixelFormat(m_surface.get());
     if (pixelFormat == 'BGRA')
         return Format::RGBA;
+
+    if (pixelFormat == 'w30r')
+        return Format::RGB10;
+
+    if (pixelFormat == 'b3a8')
+        return Format::RGB10A8;
+
     if (pixelFormat == 'yuvf')
         return Format::YUV422;
 
@@ -329,6 +356,27 @@ void IOSurface::releaseGraphicsContext()
 }
 
 #if PLATFORM(IOS)
+WEBCORE_EXPORT void IOSurface::copyToSurface(IOSurface& destSurface)
+{
+    if (destSurface.format() != format()) {
+        WTFLogAlways("Trying to copy IOSurface to another surface with a different format");
+        return;
+    }
+
+    if (destSurface.size() != size()) {
+        WTFLogAlways("Trying to copy IOSurface to another surface with a different size");
+        return;
+    }
+
+    static IOSurfaceAcceleratorRef accelerator;
+    if (!accelerator)
+        IOSurfaceAcceleratorCreate(nullptr, nullptr, &accelerator);
+
+    IOReturn ret = IOSurfaceAcceleratorTransformSurface(accelerator, m_surface.get(), destSurface.surface(), nullptr, nullptr, nullptr, nullptr, nullptr);
+    if (ret)
+        WTFLogAlways("IOSurfaceAcceleratorTransformSurface %p to %p failed with error %d", m_surface.get(), destSurface.surface(), ret);
+}
+
 void IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format format, std::function<void(std::unique_ptr<WebCore::IOSurface>)> callback)
 {
     static IOSurfaceAcceleratorRef accelerator;

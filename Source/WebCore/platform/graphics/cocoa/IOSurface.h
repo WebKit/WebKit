@@ -80,7 +80,7 @@ public:
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
     ColorSpace colorSpace() const { return m_colorSpace; }
-    Format format() const;
+    WEBCORE_EXPORT Format format() const;
 
     WEBCORE_EXPORT bool isInUse() const;
 
@@ -89,6 +89,7 @@ public:
     WEBCORE_EXPORT void releaseGraphicsContext();
 
 #if PLATFORM(IOS)
+    WEBCORE_EXPORT void copyToSurface(IOSurface&);
     WEBCORE_EXPORT static void convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, std::function<void(std::unique_ptr<WebCore::IOSurface>)>);
 #endif
 

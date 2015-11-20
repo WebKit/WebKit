@@ -252,8 +252,15 @@ bool RemoteLayerBackingStore::display()
 #if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
         RetainPtr<CGImageRef> backImage;
-        if (m_backBuffer.surface && !willPaintEntireBackingStore)
-            backImage = m_backBuffer.surface->createImage();
+        if (m_backBuffer.surface && !willPaintEntireBackingStore) {
+#if PLATFORM(IOS)
+            if (m_backBuffer.surface->format() == WebCore::IOSurface::Format::RGB10A8) {
+                // FIXME: remove this when rdar://problem/23623670 is fixed.
+                m_backBuffer.surface->copyToSurface(*m_frontBuffer.surface);
+            } else
+#endif
+                backImage = m_backBuffer.surface->createImage();
+        }
 
         GraphicsContext& context = m_frontBuffer.surface->ensureGraphicsContext();
 
@@ -286,16 +293,6 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     scaledSize.scale(m_scale);
     IntRect scaledLayerBounds(IntPoint(), roundedIntSize(scaledSize));
 
-    if (!m_isOpaque)
-        context.clearRect(scaledLayerBounds);
-
-#ifndef NDEBUG
-    if (m_isOpaque)
-        context.fillRect(scaledLayerBounds, Color(255, 0, 0));
-#endif
-
-    CGContextRef cgContext = context.platformContext();
-
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
     // Otherwise, repaint the entire bounding box of the dirty region.
@@ -323,21 +320,25 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
         cgPaintingRects[i] = scaledPaintingRect;
     }
 
+    CGContextRef cgContext = context.platformContext();
+
     if (backImage) {
-        CGContextSaveGState(cgContext);
+        CGContextStateSaver stateSaver(cgContext);
         CGContextSetBlendMode(cgContext, kCGBlendModeCopy);
-
-        CGContextAddRect(cgContext, CGRectInfinite);
-        CGContextAddRects(cgContext, cgPaintingRects, m_paintingRects.size());
-        CGContextEOClip(cgContext);
-
         CGContextTranslateCTM(cgContext, 0, scaledLayerBounds.height());
         CGContextScaleCTM(cgContext, 1, -1);
         CGContextDrawImage(cgContext, scaledLayerBounds, backImage);
-        CGContextRestoreGState(cgContext);
     }
 
     CGContextClipToRects(cgContext, cgPaintingRects, m_paintingRects.size());
+
+    if (!m_isOpaque)
+        context.clearRect(scaledLayerBounds);
+
+#ifndef NDEBUG
+    if (m_isOpaque)
+        context.fillRect(scaledLayerBounds, Color(255, 0, 0));
+#endif
 
     context.scale(FloatSize(m_scale, m_scale));
 
