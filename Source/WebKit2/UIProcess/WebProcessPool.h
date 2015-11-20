@@ -34,9 +34,9 @@
 #include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
+#include "NetworkProcessProxy.h"
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
-#include "ProcessModel.h"
 #include "ProcessThrottler.h"
 #include "StatisticsRequest.h"
 #include "VisitedLinkStore.h"
@@ -57,10 +57,6 @@
 
 #if ENABLE(DATABASE_PROCESS)
 #include "DatabaseProcessProxy.h"
-#endif
-
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessProxy.h"
 #endif
 
 #if ENABLE(MEDIA_SESSION)
@@ -86,14 +82,12 @@ class WebContextSupplement;
 class WebIconDatabase;
 class WebPageGroup;
 class WebPageProxy;
+struct NetworkProcessCreationParameters;
 struct StatisticsData;
 struct WebProcessCreationParameters;
     
 typedef GenericCallback<API::Dictionary*> DictionaryCallback;
 
-#if ENABLE(NETWORK_PROCESS)
-struct NetworkProcessCreationParameters;
-#endif
 
 #if PLATFORM(COCOA)
 int networkProcessLatencyQOS();
@@ -141,9 +135,6 @@ public:
     void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>);
     void setDownloadClient(std::unique_ptr<API::DownloadClient>);
-
-    void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
-    ProcessModel processModel() const { return m_configuration->processModel(); }
 
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfProcesses() const { return !m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount(); }
@@ -193,9 +184,7 @@ public:
     void clearPluginClientPolicies();
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
     PlatformProcessIdentifier networkProcessIdentifier();
-#endif
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
@@ -286,16 +275,11 @@ public:
 
     // Network Process Management
 
-    void setUsesNetworkProcess(bool);
-    bool usesNetworkProcess() const;
-
-#if ENABLE(NETWORK_PROCESS)
     NetworkProcessProxy& ensureNetworkProcess();
     NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
     void networkProcessCrashed(NetworkProcessProxy*);
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
     void ensureDatabaseProcess();
@@ -378,9 +362,7 @@ private:
     void requestWebContentStatistics(StatisticsRequest*);
     void requestNetworkingStatistics(StatisticsRequest*);
 
-#if ENABLE(NETWORK_PROCESS)
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
-#endif
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
@@ -500,11 +482,9 @@ private:
 
     bool m_processTerminationEnabled;
 
-#if ENABLE(NETWORK_PROCESS)
     bool m_canHandleHTTPSServerTrustEvaluation;
     bool m_didNetworkProcessCrash;
     RefPtr<NetworkProcessProxy> m_networkProcess;
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
     RefPtr<DatabaseProcessProxy> m_databaseProcess;
@@ -539,55 +519,15 @@ private:
 template<typename T>
 void WebProcessPool::sendToNetworkingProcess(T&& message)
 {
-    switch (processModel()) {
-    case ProcessModelSharedSecondaryProcess:
-#if ENABLE(NETWORK_PROCESS)
-        if (usesNetworkProcess()) {
-            if (m_networkProcess && m_networkProcess->canSendMessage())
-                m_networkProcess->send(std::forward<T>(message), 0);
-            return;
-        }
-#endif
-        if (!m_processes.isEmpty() && m_processes[0]->canSendMessage())
-            m_processes[0]->send(std::forward<T>(message), 0);
-        return;
-    case ProcessModelMultipleSecondaryProcesses:
-#if ENABLE(NETWORK_PROCESS)
-        if (m_networkProcess && m_networkProcess->canSendMessage())
-            m_networkProcess->send(std::forward<T>(message), 0);
-        return;
-#else
-        break;
-#endif
-    }
-    ASSERT_NOT_REACHED();
+    if (m_networkProcess && m_networkProcess->canSendMessage())
+        m_networkProcess->send(std::forward<T>(message), 0);
 }
 
 template<typename T>
 void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
-    switch (processModel()) {
-    case ProcessModelSharedSecondaryProcess:
-#if ENABLE(NETWORK_PROCESS)
-        if (usesNetworkProcess()) {
-            ensureNetworkProcess();
-            m_networkProcess->send(std::forward<T>(message), 0);
-            return;
-        }
-#endif
-        ensureSharedWebProcess();
-        m_processes[0]->send(std::forward<T>(message), 0);
-        return;
-    case ProcessModelMultipleSecondaryProcesses:
-#if ENABLE(NETWORK_PROCESS)
-        ensureNetworkProcess();
-        m_networkProcess->send(std::forward<T>(message), 0);
-        return;
-#else
-        break;
-#endif
-    }
-    ASSERT_NOT_REACHED();
+    ensureNetworkProcess();
+    m_networkProcess->send(std::forward<T>(message), 0);
 }
 
 template<typename T>
@@ -616,17 +556,12 @@ template<typename T>
 void WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary(const T& message)
 {
     // FIXME (Multi-WebProcess): WebProcessPool doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
-    if (processModel() == ProcessModelSharedSecondaryProcess)
-        ensureSharedWebProcess();
     sendToAllProcesses(message);
 }
 
 template<typename T>
 void WebProcessPool::sendToOneProcess(T&& message)
 {
-    if (processModel() == ProcessModelSharedSecondaryProcess)
-        ensureSharedWebProcess();
-
     bool messageSent = false;
     size_t processCount = m_processes.size();
     for (size_t i = 0; i < processCount; ++i) {
@@ -638,7 +573,7 @@ void WebProcessPool::sendToOneProcess(T&& message)
         }
     }
 
-    if (!messageSent && processModel() == ProcessModelMultipleSecondaryProcesses) {
+    if (!messageSent) {
         warmInitialProcess();
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())

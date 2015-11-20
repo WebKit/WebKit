@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 #import "ChildProcessEntryPoint.h"
 #import "NetworkProcess.h"
 #import "WKBase.h"
@@ -39,5 +37,3 @@ int NetworkProcessMain(int argc, char** argv)
 {
     return ChildProcessMain<NetworkProcess, ChildProcessMainDelegate>(argc, argv);
 }
-
-#endif // ENABLE(NETWORK_PROCESS)

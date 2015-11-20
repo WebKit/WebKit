@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkProcessProxy.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "AuthenticationChallengeProxy.h"
 #include "CustomProtocolManagerProxyMessages.h"
 #include "DownloadProxyMessages.h"
@@ -377,5 +375,3 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

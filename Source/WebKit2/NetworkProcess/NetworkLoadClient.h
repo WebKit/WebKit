@@ -26,8 +26,6 @@
 #ifndef NetworkLoadClient_h
 #define NetworkLoadClient_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -65,8 +63,6 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkLoadClient_h
 

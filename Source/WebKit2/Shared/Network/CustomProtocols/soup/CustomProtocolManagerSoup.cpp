@@ -23,12 +23,9 @@
 #include "ChildProcess.h"
 #include "CustomProtocolManagerImpl.h"
 #include "CustomProtocolManagerMessages.h"
+#include "NetworkProcessCreationParameters.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/NotImplemented.h>
-
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessCreationParameters.h"
-#endif
 
 namespace WebKit {
 
@@ -51,25 +48,16 @@ void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
 
 void CustomProtocolManager::initialize(const WebProcessCreationParameters& parameters)
 {
-#if ENABLE(NETWORK_PROCESS)
-    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !parameters.usesNetworkProcess);
-    if (parameters.usesNetworkProcess) {
-        m_childProcess->parentProcessConnection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
-        m_messageQueue = nullptr;
-        return;
-    }
-#endif
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
-        registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
+    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty());
+    m_childProcess->parentProcessConnection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
+    m_messageQueue = nullptr;
 }
 
-#if ENABLE(NETWORK_PROCESS)
 void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
 {
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
         registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
 }
-#endif
 
 void CustomProtocolManager::registerScheme(const String& scheme)
 {

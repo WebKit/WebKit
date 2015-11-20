@@ -26,8 +26,6 @@
 #ifndef NetworkLoad_h
 #define NetworkLoad_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "NetworkLoadClient.h"
 #include "NetworkLoadParameters.h"
 #include "RemoteNetworkingContext.h"
@@ -125,7 +123,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkLoad_h

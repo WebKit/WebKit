@@ -26,8 +26,6 @@
 #ifndef WebResourceLoader_h
 #define WebResourceLoader_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "Connection.h"
 #include "MessageSender.h"
 #include "ShareableResource.h"
@@ -93,7 +91,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // WebResourceLoader_h

@@ -25,7 +25,6 @@
  */
 
 #include "config.h"
-#if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcess.h"
 
 #include "NetworkCache.h"
@@ -170,5 +169,3 @@ void NetworkProcess::platformTerminate()
 }
 
 } // namespace WebKit
-
-#endif

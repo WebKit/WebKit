@@ -84,10 +84,8 @@ const char* ProcessLauncher::processTypeAsString(ProcessType processType)
     case PluginProcess:
         return "pluginprocess";
 #endif
-#if ENABLE(NETWORK_PROCESS)
     case NetworkProcess:
         return "networkprocess";
-#endif
 #if ENABLE(DATABASE_PROCESS)
     case DatabaseProcess:
         return "databaseprocess";
@@ -112,12 +110,10 @@ bool ProcessLauncher::getProcessTypeFromString(const char* string, ProcessType& 
     }
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
     if (!strcmp(string, "networkprocess")) {
         processType = NetworkProcess;
         return true;
     }
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
     if (!strcmp(string, "databaseprocess")) {

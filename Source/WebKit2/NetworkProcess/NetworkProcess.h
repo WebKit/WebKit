@@ -26,8 +26,6 @@
 #ifndef NetworkProcess_h
 #define NetworkProcess_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DownloadManager.h"
@@ -196,7 +194,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkProcess_h

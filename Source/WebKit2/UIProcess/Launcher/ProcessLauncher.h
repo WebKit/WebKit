@@ -50,9 +50,7 @@ public:
 #if ENABLE(NETSCAPE_PLUGIN_API)
         PluginProcess,
 #endif
-#if ENABLE(NETWORK_PROCESS)
         NetworkProcess,
-#endif
 #if ENABLE(DATABASE_PROCESS)
         DatabaseProcess,
 #endif

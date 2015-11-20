@@ -114,11 +114,9 @@ void ProcessLauncher::launchProcess()
         pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
         break;
 #endif
-#if ENABLE(NETWORK_PROCESS)
     case NetworkProcess:
         executablePath = executablePathOfNetworkProcess();
         break;
-#endif
 #if ENABLE(DATABASE_PROCESS)
     case DatabaseProcess:
         executablePath = executablePathOfDatabaseProcess();

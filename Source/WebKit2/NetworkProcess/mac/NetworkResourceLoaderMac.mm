@@ -26,8 +26,6 @@
 #import "config.h"
 #import "NetworkResourceLoader.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 #import "NetworkDiskCacheMonitor.h"
 #import "ShareableResource.h"
 #import <WebCore/CFNetworkSPI.h>
@@ -90,6 +88,4 @@ void NetworkResourceLoader::willCacheResponseAsync(CFCachedURLResponseRef cfResp
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
 

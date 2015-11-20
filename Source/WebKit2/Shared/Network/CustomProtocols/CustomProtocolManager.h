@@ -83,10 +83,8 @@ private:
     // WebProcessSupplement
     void initialize(const WebProcessCreationParameters&) override;
 
-#if ENABLE(NETWORK_PROCESS)
     // NetworkProcessSupplement
     void initialize(const NetworkProcessCreationParameters&) override;
-#endif
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;

@@ -26,8 +26,6 @@
 #ifndef NetworkProcessCreationParameters_h
 #define NetworkProcessCreationParameters_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include <wtf/Vector.h>
@@ -102,7 +100,5 @@ struct NetworkProcessCreationParameters {
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkProcessCreationParameters_h

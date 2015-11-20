@@ -329,16 +329,6 @@ WKCacheModel WKContextGetCacheModel(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->cacheModel());
 }
 
-void WKContextSetProcessModel(WKContextRef contextRef, WKProcessModel processModel)
-{
-    toImpl(contextRef)->setProcessModel(toProcessModel(processModel));
-}
-
-WKProcessModel WKContextGetProcessModel(WKContextRef contextRef)
-{
-    return toAPI(toImpl(contextRef)->processModel());
-}
-
 void WKContextSetMaximumNumberOfProcesses(WKContextRef contextRef, unsigned numberOfProcesses)
 {
     toImpl(contextRef)->setMaximumNumberOfProcesses(numberOfProcesses);
@@ -552,11 +542,6 @@ void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)
 void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef contextRef, bool enable)
 {
     toImpl(contextRef)->setJavaScriptGarbageCollectorTimerEnabled(enable);
-}
-
-void WKContextSetUsesNetworkProcess(WKContextRef contextRef, bool usesNetworkProcess)
-{
-    toImpl(contextRef)->setUsesNetworkProcess(usesNetworkProcess);
 }
 
 void WKContextUseTestingNetworkSession(WKContextRef context)

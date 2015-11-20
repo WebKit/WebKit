@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkConnectionToWebProcess.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
@@ -274,5 +272,3 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSiz
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

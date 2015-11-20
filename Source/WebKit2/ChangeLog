@@ -1,3 +1,312 @@
+2015-11-19  Alex Christensen  <achristensen@webkit.org>
+
+        Remove the non-NetworkProcess configurations
+        https://bugs.webkit.org/show_bug.cgi?id=151418
+
+        Reviewed by Geoffrey Garen.
+
+        This patch assumes ENABLE(NETWORK_PROCESS) is always 1, usesNetworkProcess is always true, 
+        and ProcessModel is always ProcessModelMultipleSecondaryProcesses.  It does this by removing
+        the checks and the code that would be executed with other configurations.
+
+        * CMakeLists.txt:
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/NetworkProcessMain.mm:
+        (NetworkProcessMain):
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::filesInBlob):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::blobSize):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkLoadParameters.cpp:
+        (WebKit::NetworkLoadParameters::NetworkLoadParameters):
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkResourceLoader.messages.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/efl/NetworkProcessMainEfl.cpp:
+        (WebKit::NetworkProcessMainUnix):
+        * NetworkProcess/gtk/NetworkProcessMainGtk.cpp:
+        (WebKit::NetworkProcessMainUnix):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * NetworkProcess/mac/NetworkLoadMac.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformTerminate):
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        (WebKit::RemoteNetworkingContext::storageSession):
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKInspectorToggleJavaScriptProfiling):
+        (WKContextSetProcessModel):
+        (WKContextGetProcessModel):
+        (WKContextSetUsesNetworkProcess):
+        (WKGraphicsContextGetCGContext):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Network/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm:
+        (WebKit::CustomProtocolManager::initialize):
+        (WebKit::CustomProtocolManager::addCustomProtocol):
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+        (WebKit::CustomProtocolManager::supplementName):
+        (WebKit::CustomProtocolManager::initialize):
+        (WebKit::CustomProtocolManager::registerScheme):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        * Shared/Network/NetworkProcessSupplement.h:
+        (WebKit::NetworkProcessSupplement::initialize):
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        * Shared/ProcessExecutablePath.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/efl/ProcessExecutablePathEfl.cpp:
+        (WebKit::executablePathOfPluginProcess):
+        (WebKit::executablePathOfNetworkProcess):
+        (WebKit::executablePathOfDatabaseProcess):
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::executablePathOfPluginProcess):
+        (WebKit::executablePathOfNetworkProcess):
+        (WebKit::executablePathOfDatabaseProcess):
+        * Shared/mac/CookieStorageShim.h:
+        * Shared/mac/CookieStorageShim.mm:
+        (-[WKNSURLSessionLocal _getCookieHeadersForTask:completionHandler:]):
+        * Shared/mac/CookieStorageShimLibrary.cpp:
+        * Shared/mac/CookieStorageShimLibrary.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APISession.cpp:
+        (API::Session::~Session):
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toFontSmoothingLevel):
+        (WebKit::toProcessModel): Deleted.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetCacheModel):
+        (WKContextSetMaximumNumberOfProcesses):
+        (WKContextSetJavaScriptGarbageCollectorTimerEnabled):
+        (WKContextUseTestingNetworkSession):
+        (WKContextSetProcessModel): Deleted.
+        (WKContextGetProcessModel): Deleted.
+        (WKContextSetUsesNetworkProcess): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextGetNetworkProcessIdentifier):
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_process_model_set):
+        (ewk_context_process_model_get):
+        (ewk_context_tls_error_policy_get):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::updateProcessSuppressionState):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::platformInvalidateContext):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::cancel):
+        (WebKit::DownloadProxy::invalidate):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::processTypeAsString):
+        (WebKit::ProcessLauncher::getProcessTypeFromString):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::computeProcessShimPath):
+        (WebKit::serviceName):
+        (WebKit::shouldLeakBoost):
+        (WebKit::createProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setIsHoldingLockedFiles):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::platformGetLaunchOptions):
+        * UIProcess/Network/soup/NetworkProcessProxySoup.cpp:
+        (WebKit::NetworkProcessProxy::platformGetLaunchOptions):
+        * UIProcess/ProcessModel.h: Removed.
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::shouldTerminate):
+        (WebKit::WebCookieManagerProxy::refWebContextSupplement):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorProcessPool):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::setSessionID):
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::create):
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::~WebProcessPool):
+        (WebKit::WebProcessPool::initializeClient):
+        (WebKit::WebProcessPool::setDownloadClient):
+        (WebKit::WebProcessPool::setMaximumNumberOfProcesses):
+        (WebKit::WebProcessPool::networkingProcessConnection):
+        (WebKit::WebProcessPool::languageChanged):
+        (WebKit::WebProcessPool::textCheckerStateChanged):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::getNetworkProcessConnection):
+        (WebKit::WebProcessPool::ensureDatabaseProcess):
+        (WebKit::WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebProcessPool::processDidCachePage):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::download):
+        (WebKit::WebProcessPool::resumeDownload):
+        (WebKit::WebProcessPool::postMessageToInjectedBundle):
+        (WebKit::WebProcessPool::setAdditionalPluginsDirectory):
+        (WebKit::WebProcessPool::networkProcessIdentifier):
+        (WebKit::WebProcessPool::setAlwaysUsesComplexTextCodePath):
+        (WebKit::WebProcessPool::setCanHandleHTTPSServerTrustEvaluation):
+        (WebKit::WebProcessPool::registerURLSchemeAsLocal):
+        (WebKit::WebProcessPool::setCacheModel):
+        (WebKit::WebProcessPool::setDefaultRequestTimeoutInterval):
+        (WebKit::WebProcessPool::createDownloadProxy):
+        (WebKit::WebProcessPool::addMessageReceiver):
+        (WebKit::WebProcessPool::useTestingNetworkSession):
+        (WebKit::WebProcessPool::allowSpecificHTTPSCertificateForHost):
+        (WebKit::WebProcessPool::requestWebContentStatistics):
+        (WebKit::WebProcessPool::requestNetworkingStatistics):
+        (WebKit::WebProcessPool::handleMessage):
+        (WebKit::WebProcessPool::setProcessModel): Deleted.
+        (WebKit::WebProcessPool::setUsesNetworkProcess): Deleted.
+        (WebKit::WebProcessPool::usesNetworkProcess): Deleted.
+        (WebKit::WebProcessPool::ensureSharedWebProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToNetworkingProcess):
+        (WebKit::WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary):
+        (WebKit::WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary):
+        (WebKit::WebProcessPool::sendToOneProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::getPluginProcessConnection):
+        (WebKit::WebProcessProxy::getNetworkProcessConnection):
+        (WebKit::WebProcessProxy::getDatabaseProcessConnection):
+        (WebKit::WebProcessProxy::updateTextCheckerState):
+        (WebKit::WebProcessProxy::didSaveToPageCache):
+        (WebKit::WebProcessProxy::didCancelProcessSuspension):
+        (WebKit::WebProcessProxy::reinstateNetworkProcessAssertionState):
+        (WebKit::WebProcessProxy::didSetAssertionState):
+        (WebKit::WebProcessProxy::createDownloadProxy): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::throttler):
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::cloneSessionData):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::initInspectorServer):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2Prefix.h:
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURL):
+        (WebKit::BlobRegistryProxy::unregisterBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURLForSlice):
+        (WebKit::BlobRegistryProxy::blobSize):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::networkProcessCrashed):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::initializeBrowserFuncs):
+        (WebKit::netscapeBrowserFuncs):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::registerRedirect):
+        (WebKit::NetscapePlugin::urlRedirectResponse):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookiesForDOM):
+        (WebKit::WebPlatformStrategies::setCookiesFromDOM):
+        (WebKit::WebPlatformStrategies::cookiesEnabled):
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebKit::WebPlatformStrategies::getRawCookies):
+        (WebKit::WebPlatformStrategies::deleteCookie):
+        (WebKit::WebPlatformStrategies::resourceLoadScheduler):
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+        (WebKit::WebPlatformStrategies::createPingHandle):
+        (WebKit::WebPlatformStrategies::createBlobRegistry):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        (WebKit::WebFrame::source):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeConnection):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        (WebKit::WebProcess::registerURLSchemeAsEmptyDocument):
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+        (WebKit::WebProcess::pluginProcessConnectionManager):
+        (WebKit::WebProcess::shouldTerminate):
+        (WebKit::WebProcess::setInjectedBundleParameters):
+        (WebKit::WebProcess::networkConnection):
+        (WebKit::WebProcess::webResourceLoadScheduler):
+        (WebKit::WebProcess::webToDatabaseProcessConnectionClosed):
+        (WebKit::WebProcess::setEnhancedAccessibility):
+        (WebKit::WebProcess::prefetchDNS):
+        (WebKit::WebProcess::didCreateDownload): Deleted.
+        (WebKit::WebProcess::didDestroyDownload): Deleted.
+        (WebKit::WebProcess::downloadProxyConnection): Deleted.
+        (WebKit::WebProcess::downloadsAuthenticationManager): Deleted.
+        (WebKit::WebProcess::downloadManager): Deleted.
+        (WebKit::WebProcess::usesNetworkProcess): Deleted.
+        (WebKit::WebProcess::downloadRequest): Deleted.
+        (WebKit::WebProcess::resumeDownload): Deleted.
+        (WebKit::WebProcess::cancelDownload): Deleted.
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::textCheckerState):
+        (WebKit::WebProcess::eventDispatcher):
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformClearResourceCaches):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformTerminate):
+        (WebKit::WebProcess::setIgnoreTLSErrors):
+        (WebKit::WebProcess::allowSpecificHTTPSCertificateForHost):
+        (WebKit::getCacheDiskFreeSize): Deleted.
+        (WebKit::setSoupSessionAcceptLanguage): Deleted.
+        (WebKit::languageChanged): Deleted.
+        * config.h:
+
 2015-11-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix Wreturn-type clang warning in EWK2UnitTestBase.cpp

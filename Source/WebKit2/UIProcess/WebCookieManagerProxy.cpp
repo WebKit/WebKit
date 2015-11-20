@@ -85,8 +85,8 @@ void WebCookieManagerProxy::processDidClose(NetworkProcessProxy*)
 
 bool WebCookieManagerProxy::shouldTerminate(WebProcessProxy*) const
 {
-    return processPool()->processModel() != ProcessModelSharedSecondaryProcess
-        || (m_arrayCallbacks.isEmpty() && m_httpCookieAcceptPolicyCallbacks.isEmpty());
+    // FIXME: Remove this.
+    return true;
 }
 
 void WebCookieManagerProxy::refWebContextSupplement()
@@ -163,10 +163,7 @@ void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy pol
     // - When testing, we only have one WebProcess and one NetworkProcess, and WebKitTestRunner never restarts them;
     // - When not testing, Cocoa has the policy persisted, and thus new processes use it (even for ephemeral sessions).
     processPool()->sendToAllProcesses(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
-#if ENABLE(NETWORK_PROCESS)
-    if (processPool()->usesNetworkProcess())
-        processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
-#endif
+    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
 }
 
 void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)> callbackFunction)

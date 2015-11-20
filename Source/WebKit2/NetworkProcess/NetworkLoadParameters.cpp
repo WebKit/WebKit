@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(NETWORK_PROCESS)
 #include "NetworkLoadParameters.h"
 
 #include "NetworkResourceLoadParameters.h"
@@ -47,5 +45,3 @@ NetworkLoadParameters::NetworkLoadParameters(const NetworkResourceLoadParameters
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

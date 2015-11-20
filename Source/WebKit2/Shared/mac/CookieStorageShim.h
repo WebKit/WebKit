@@ -26,8 +26,6 @@
 #ifndef CookieStorageShim_h
 #define CookieStorageShim_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include <wtf/Noncopyable.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -48,7 +46,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // CookieStorageShim_h
