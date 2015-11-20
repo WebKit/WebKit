@@ -1,5 +1,46 @@
 2015-11-20  Geoffrey Garen  <ggaren@apple.com>
 
+        A window with a hung tab waits 5s before becoming active
+        https://bugs.webkit.org/show_bug.cgi?id=151426
+
+        Reviewed by Sam Weinig.
+
+        This patch adds an optimization to skip the synchronous web process
+        message to check for a legacy scrollbar when we know that legacy
+        scrollbars are not enabled.
+
+        (Note that legacy scrollbars don't work quite right, due to
+        <rdar://problem/23585420> and <rdar://problem/23605296>. Still, I verified
+        with logging that we do the synchronous message when legacy scrollbars
+        are enabled.)
+
+        A consequence of this change is that we will no longer support
+        click-to-scroll-while-inactive behavior for scrollbars with custom looks
+        on systems with modern scrollbars. I spoke with Beth and Dan, and they
+        agreed that this is a reasonable change to make, since we don't support
+        click-to-scroll-while-inactive behavior for fully custom scrollbars either,
+        and since systems with modern scrollbars typically use swipe to scroll.
+
+        * UIProcess/Cocoa/WebViewImpl.h: Added some helper functions to explain
+        the behaviors we're checking for.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::mightBeginDragWhileInactive): Factored out from
+        shouldDelayWindowOrderingForEvent.
+
+        (WebKit::WebViewImpl::mightBeginScrollWhileInactive): New function.
+
+        (WebKit::WebViewImpl::acceptsFirstMouse): Moved this function next to
+        shouldDelayWindowOrderingForEvent because their responsibilities are
+        very similar. Added a fast path check for when we know that we will
+        not accept first mouse because we can't start a drag or scroll by
+        clicking while inactive.
+
+        (WebKit::WebViewImpl::shouldDelayWindowOrderingForEvent): Refactored
+        to use the helper function. Behavior unchanged.
+
+2015-11-20  Geoffrey Garen  <ggaren@apple.com>
+
         A hung webpage pretends to be responsive if you scroll
         https://bugs.webkit.org/show_bug.cgi?id=151518
 

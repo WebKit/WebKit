@@ -504,6 +504,9 @@ private:
     void mouseUpInternal(NSEvent *);
     void mouseDraggedInternal(NSEvent *);
 
+    bool mightBeginDragWhileInactive();
+    bool mightBeginScrollWhileInactive();
+
     NSView <WebViewImplDelegate> *m_view;
     std::unique_ptr<PageClient> m_pageClient;
     Ref<WebPageProxy> m_page;

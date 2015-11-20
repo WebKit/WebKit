@@ -555,22 +555,6 @@ bool WebViewImpl::isOpaque() const
     return m_page->drawsBackground();
 }
 
-bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
-{
-    // There's a chance that responding to this event will run a nested event loop, and
-    // fetching a new event might release the old one. Retaining and then autoreleasing
-    // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
-
-    if (![m_view hitTest:event.locationInWindow])
-        return false;
-
-    setLastMouseDownEvent(event);
-    bool result = m_page->acceptsFirstMouse(event.eventNumber, WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view));
-    setLastMouseDownEvent(nil);
-    return result;
-}
-
 bool WebViewImpl::acceptsFirstResponder()
 {
     return true;
@@ -1134,11 +1118,48 @@ void WebViewImpl::windowDidChangeOcclusionState()
     m_page->viewStateDidChange(WebCore::ViewState::IsVisible);
 }
 
+bool WebViewImpl::mightBeginDragWhileInactive()
+{
+    if (m_view.window.isKeyWindow)
+        return false;
+
+    if (m_page->editorState().selectionIsNone || !m_page->editorState().selectionIsRange)
+        return false;
+
+    return true;
+}
+
+bool WebViewImpl::mightBeginScrollWhileInactive()
+{
+    // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
+    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
+        return true;
+
+    return false;
+}
+
+bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
+{
+    if (!mightBeginDragWhileInactive() && !mightBeginScrollWhileInactive())
+        return false;
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    if (![m_view hitTest:event.locationInWindow])
+        return false;
+
+    setLastMouseDownEvent(event);
+    bool result = m_page->acceptsFirstMouse(event.eventNumber, WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view));
+    setLastMouseDownEvent(nil);
+    return result;
+}
+
 bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
 {
-    // If this is the active window or we don't have a range selection, there is no need to perform additional checks
-    // and we can avoid making a synchronous call to the WebProcess.
-    if (m_view.window.isKeyWindow || m_page->editorState().selectionIsNone || !m_page->editorState().selectionIsRange)
+    if (!mightBeginDragWhileInactive())
         return false;
 
     // There's a chance that responding to this event will run a nested event loop, and
