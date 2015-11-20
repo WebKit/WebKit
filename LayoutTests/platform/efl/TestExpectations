@@ -1280,7 +1280,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-elemen
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol.html [ Pass ]
-imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html [ Pass ]
 css3/conditional/w3c/at-supports-010.html [ Pass ]
 css3/conditional/w3c/at-supports-014.html [ Pass ]
 fast/borders/border-painting-dashed.html [ Pass ]

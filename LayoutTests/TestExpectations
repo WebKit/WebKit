@@ -292,7 +292,6 @@ imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-syn
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html [ Slow ]
 
 # New W3C ref tests that are failing.
-webkit.org/b/148847 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html [ ImageOnlyFailure ]
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
 # @supports W3C Failures
@@ -356,10 +355,8 @@ imported/w3c/web-platform-tests/domparsing/insert-adjacent.html [ Pass Failure ]
 
 # W3C html timing out tests
 imported/w3c/web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010.html [ Timeout ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_multiple.html [ Timeout ]
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html [ Timeout ]
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style-error-01.html [ Timeout ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-handler.html [ Timeout ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html [ Timeout ]
 
 # Imported W3C canvas failed tests
