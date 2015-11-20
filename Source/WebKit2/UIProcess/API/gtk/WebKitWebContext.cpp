@@ -193,32 +193,6 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
-static inline WebKit::ProcessModel toProcessModel(WebKitProcessModel webKitProcessModel)
-{
-    switch (webKitProcessModel) {
-    case WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS:
-        return ProcessModelSharedSecondaryProcess;
-    case WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES:
-        return ProcessModelMultipleSecondaryProcesses;
-    default:
-        ASSERT_NOT_REACHED();
-        return ProcessModelSharedSecondaryProcess;
-    }
-}
-
-static inline WebKitProcessModel toWebKitProcessModel(WebKit::ProcessModel processModel)
-{
-    switch (processModel) {
-    case ProcessModelSharedSecondaryProcess:
-        return WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS;
-    case ProcessModelMultipleSecondaryProcesses:
-        return WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
-    default:
-        ASSERT_NOT_REACHED();
-        return WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS;
-    }
-}
-
 static const char* injectedBundleDirectory()
 {
 #if ENABLE(DEVELOPER_MODE)
@@ -285,7 +259,6 @@ static void webkitWebContextConstructed(GObject* object)
 
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(WebCore::filenameToString(bundleFilename.get()));
-    configuration.setProcessModel(ProcessModelSharedSecondaryProcess);
     configuration.setUseNetworkProcess(false);
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
@@ -1165,17 +1138,9 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
  *
  * Since: 2.4
  */
-void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProcessModel processModel)
+void webkit_web_context_set_process_model(WebKitWebContext*, WebKitProcessModel)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-
-    ProcessModel newProcessModel(toProcessModel(processModel));
-
-    if (newProcessModel == context->priv->context->processModel())
-        return;
-
-    context->priv->context->setUsesNetworkProcess(newProcessModel == ProcessModelMultipleSecondaryProcesses);
-    context->priv->context->setProcessModel(newProcessModel);
+    // FIXME: This is deprecated. Only WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES is supported now.
 }
 
 /**
@@ -1191,9 +1156,7 @@ void webkit_web_context_set_process_model(WebKitWebContext* context, WebKitProce
  */
 WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* context)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
-
-    return toWebKitProcessModel(context->priv->context->processModel());
+    return WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES;
 }
 
 /**

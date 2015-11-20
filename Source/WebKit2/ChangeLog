@@ -1,5 +1,16 @@
 2015-11-19  Alex Christensen  <achristensen@webkit.org>
 
+        Fix GTK Build after r192667.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_process_model):
+        (webkit_web_context_get_process_model):
+        (toWebKitProcessModel): Deleted.
+        (injectedBundleDirectory): Deleted.
+
+2015-11-19  Alex Christensen  <achristensen@webkit.org>
+
         Remove the non-NetworkProcess configurations
         https://bugs.webkit.org/show_bug.cgi?id=151418
 
