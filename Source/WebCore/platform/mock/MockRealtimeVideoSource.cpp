@@ -43,6 +43,7 @@
 #include "UUID.h"
 #include <math.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -308,12 +309,12 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     unsigned frameMod = m_frameNumber % 60;
     if (frameMod <= 15) {
         context.setFillColor(Color::gray);
-        TextRun run(StringView("Bip"));
-        context.drawText(m_bipBopFont, run, bipBopLocation, 0, -1);
+        String bip(ASCIILiteral("Bip"));
+        context.drawText(m_bipBopFont, TextRun(StringView(bip)), bipBopLocation, 0, -1);
     } else if (frameMod > 30 && frameMod <= 45) {
         context.setFillColor(Color::white);
-        TextRun run(StringView("Bop"));
-        context.drawText(m_bipBopFont, run, bipBopLocation, 0, -1);
+        String bop(ASCIILiteral("Bop"));
+        context.drawText(m_bipBopFont, TextRun(StringView(bop)), bipBopLocation, 0, -1);
     }
 }
 
