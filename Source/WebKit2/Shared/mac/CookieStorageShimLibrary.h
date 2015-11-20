@@ -26,8 +26,6 @@
 #ifndef CookieStorageShimLibrary_h
 #define CookieStorageShimLibrary_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 
 namespace WebKit {
@@ -39,7 +37,5 @@ struct CookieStorageShimCallbacks {
 typedef void (*CookieStorageShimInitializeFunc)(const CookieStorageShimCallbacks&);
 
 }
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // CookieStorageShimLibrary_h

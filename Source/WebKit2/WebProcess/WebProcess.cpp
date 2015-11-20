@@ -37,6 +37,7 @@
 #include "InjectedBundle.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "PluginProcessConnectionManager.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
@@ -60,6 +61,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
+#include "WebResourceLoadScheduler.h"
 #include "WebsiteData.h"
 #include "WebsiteDataTypes.h"
 #include <JavaScriptCore/JSLock.h>
@@ -101,11 +103,8 @@
 #include "ObjCObjectGraph.h"
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
 #if PLATFORM(COCOA)
 #include "CookieStorageShim.h"
-#endif
-#include "NetworkProcessConnection.h"
 #endif
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -122,10 +121,6 @@
 
 #if ENABLE(BATTERY_STATUS)
 #include "WebBatteryManager.h"
-#endif
-
-#if ENABLE(NETWORK_PROCESS)
-#include "WebResourceLoadScheduler.h"
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -161,11 +156,9 @@ WebProcess::WebProcess()
     , m_fullKeyboardAccessEnabled(false)
     , m_textCheckerState()
     , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
-#if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)
     , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
     , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
-#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
@@ -276,9 +269,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {
     ASSERT(m_pageMap.isEmpty());
 
-#if ENABLE(NETWORK_PROCESS)
     m_usesNetworkProcess = parameters.usesNetworkProcess;
-#endif
 
 #if OS(LINUX)
     WebCore::MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
@@ -358,13 +349,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
-#if ENABLE(NETWORK_PROCESS)
     ensureNetworkProcessConnection();
 
 #if PLATFORM(COCOA)
     if (usesNetworkProcess())
         CookieStorageShim::singleton().initialize();
-#endif
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
 
@@ -396,7 +385,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 }
 
-#if ENABLE(NETWORK_PROCESS)
 void WebProcess::ensureNetworkProcessConnection()
 {
     if (!m_usesNetworkProcess)
@@ -422,7 +410,6 @@ void WebProcess::ensureNetworkProcessConnection()
         return;
     m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
 }
-#endif // ENABLE(NETWORK_PROCESS)
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
@@ -1027,14 +1014,9 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
 
 bool WebProcess::usesNetworkProcess() const
 {
-#if ENABLE(NETWORK_PROCESS)
     return m_usesNetworkProcess;
-#else
-    return false;
-#endif
 }
 
-#if ENABLE(NETWORK_PROCESS)
 NetworkProcessConnection* WebProcess::networkConnection()
 {
     ASSERT(m_usesNetworkProcess);
@@ -1064,7 +1046,6 @@ WebResourceLoadScheduler& WebProcess::webResourceLoadScheduler()
 {
     return *m_webResourceLoadScheduler;
 }
-#endif // ENABLED(NETWORK_PROCESS)
 
 #if ENABLE(DATABASE_PROCESS)
 void WebProcess::webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection* connection)
@@ -1470,7 +1451,6 @@ void WebProcess::prefetchDNS(const String& hostname)
     if (hostname.isEmpty())
         return;
 
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess()) {
         if (m_dnsPrefetchedHosts.add(hostname).isNewEntry)
             networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::PrefetchDNS(hostname), 0);
@@ -1480,7 +1460,6 @@ void WebProcess::prefetchDNS(const String& hostname)
         m_dnsPrefetchHystereris.impulse();
         return;
     }
-#endif
     WebCore::prefetchDNS(hostname);
 }
 

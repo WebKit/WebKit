@@ -28,8 +28,6 @@
 
 #import "NetworkProcessMessages.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -59,5 +57,3 @@ void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOption
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

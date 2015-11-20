@@ -1,3 +1,15 @@
+2015-11-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove NETWORK_PROCESS compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=151512
+
+        Reviewed by Tim Horton.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-11-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Enable FTL JIT by default on X86_64

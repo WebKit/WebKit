@@ -803,16 +803,13 @@ if (WebKit2_WebProcess_OUTPUT_NAME)
     set_target_properties(WebProcess PROPERTIES OUTPUT_NAME ${WebKit2_WebProcess_OUTPUT_NAME})
 endif ()
 
-if (ENABLE_NETWORK_PROCESS)
-    add_executable(NetworkProcess ${NetworkProcess_SOURCES})
-    add_webkit2_prefix_header(NetworkProcess)
-    target_link_libraries(NetworkProcess ${NetworkProcess_LIBRARIES})
-    set_target_properties(NetworkProcess PROPERTIES FOLDER "WebKit")
-    install(TARGETS NetworkProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+add_executable(NetworkProcess ${NetworkProcess_SOURCES})
+add_webkit2_prefix_header(NetworkProcess)
+target_link_libraries(NetworkProcess ${NetworkProcess_LIBRARIES})
+set_target_properties(NetworkProcess PROPERTIES FOLDER "WebKit")
 
-    if (WebKit2_NetworkProcess_OUTPUT_NAME)
-        set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit2_NetworkProcess_OUTPUT_NAME})
-    endif ()
+if (WebKit2_NetworkProcess_OUTPUT_NAME)
+    set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit2_NetworkProcess_OUTPUT_NAME})
 endif ()
 
 if (ENABLE_PLUGIN_PROCESS)
@@ -847,7 +844,7 @@ set_target_properties(WebKit2 PROPERTIES VERSION ${WEBKIT2_VERSION} SOVERSION ${
 if (APPLE)
     WEBKIT_FRAMEWORK(WebKit2)
 else ()
-    install(TARGETS WebKit2 WebProcess
+    install(TARGETS WebKit2 WebProcess NetworkProcess
         LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
         RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
     )

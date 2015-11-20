@@ -60,6 +60,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "NavigationActionData.h"
+#include "NetworkProcessMessages.h"
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
@@ -136,10 +137,6 @@
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
-#endif
-
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessMessages.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -487,10 +484,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-#if ENABLE(NETWORK_PROCESS)
     if (m_sessionID.isEphemeral())
         m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(m_sessionID));
-#endif
 
 #if PLATFORM(COCOA)
     const CFIndex viewStateChangeRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit - 1;
@@ -774,10 +769,8 @@ void WebPageProxy::setSessionID(SessionID sessionID)
     m_sessionID = sessionID;
     m_process->send(Messages::WebPage::SetSessionID(sessionID), m_pageID);
 
-#if ENABLE(NETWORK_PROCESS)
     if (sessionID.isEphemeral())
         m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(sessionID));
-#endif
 }
 
 void WebPageProxy::initializeWebPage()

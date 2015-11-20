@@ -26,9 +26,12 @@
 #include "config.h"
 #include "WebPlatformStrategies.h"
 
+#include "BlobRegistryProxy.h"
 #include "BlockingResponseMap.h"
 #include "DataReference.h"
 #include "HangDetectionDisabler.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PluginInfoStore.h"
 #include "SessionTracker.h"
@@ -44,6 +47,7 @@
 #include "WebPasteboardProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include "WebResourceLoadScheduler.h"
 #include <WebCore/Color.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/IDBFactoryBackendInterface.h>
@@ -62,13 +66,6 @@
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/URL.h>
 #include <wtf/Atomics.h>
-
-#if ENABLE(NETWORK_PROCESS)
-#include "BlobRegistryProxy.h"
-#include "NetworkConnectionToWebProcessMessages.h"
-#include "NetworkProcessConnection.h"
-#include "WebResourceLoadScheduler.h"
-#endif
 
 using namespace WebCore;
 
@@ -112,7 +109,6 @@ PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
-#if ENABLE(NETWORK_PROCESS)
     auto& webProcess = WebProcess::singleton();
     if (webProcess.usesNetworkProcess()) {
         String result;
@@ -120,27 +116,23 @@ String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session
             return String();
         return result;
     }
-#endif
 
     return WebCore::cookiesForDOM(session, firstParty, url);
 }
 
 void WebPlatformStrategies::setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieString)
 {
-#if ENABLE(NETWORK_PROCESS)
     auto& webProcess = WebProcess::singleton();
     if (webProcess.usesNetworkProcess()) {
         webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::SetCookiesFromDOM(SessionTracker::sessionID(session), firstParty, url, cookieString), 0);
         return;
     }
-#endif
 
     WebCore::setCookiesFromDOM(session, firstParty, url, cookieString);
 }
 
 bool WebPlatformStrategies::cookiesEnabled(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
-#if ENABLE(NETWORK_PROCESS)
     auto& webProcess = WebProcess::singleton();
     if (webProcess.usesNetworkProcess()) {
         bool result;
@@ -148,14 +140,12 @@ bool WebPlatformStrategies::cookiesEnabled(const NetworkStorageSession& session,
             return false;
         return result;
     }
-#endif
 
     return WebCore::cookiesEnabled(session, firstParty, url);
 }
 
 String WebPlatformStrategies::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
-#if ENABLE(NETWORK_PROCESS)
     auto& webProcess = WebProcess::singleton();
     if (webProcess.usesNetworkProcess()) {
         String result;
@@ -163,41 +153,35 @@ String WebPlatformStrategies::cookieRequestHeaderFieldValue(const NetworkStorage
             return String();
         return result;
     }
-#endif
 
     return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
 }
 
 bool WebPlatformStrategies::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, Vector<Cookie>& rawCookies)
 {
-#if ENABLE(NETWORK_PROCESS)
     auto& webProcess = WebProcess::singleton();
     if (webProcess.usesNetworkProcess()) {
         if (!webProcess.networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(SessionTracker::sessionID(session), firstParty, url), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
             return false;
         return true;
     }
-#endif
 
     return WebCore::getRawCookies(session, firstParty, url, rawCookies);
 }
 
 void WebPlatformStrategies::deleteCookie(const NetworkStorageSession& session, const URL& url, const String& cookieName)
 {
-#if ENABLE(NETWORK_PROCESS)
     auto& webProcess = WebProcess::singleton();
     if (webProcess.usesNetworkProcess()) {
         webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::DeleteCookie(SessionTracker::sessionID(session), url, cookieName), 0);
         return;
     }
-#endif
 
     WebCore::deleteCookie(session, url, cookieName);
 }
 
 // LoaderStrategy
 
-#if ENABLE(NETWORK_PROCESS)
 ResourceLoadScheduler* WebPlatformStrategies::resourceLoadScheduler()
 {
     static ResourceLoadScheduler* scheduler;
@@ -282,7 +266,6 @@ BlobRegistry* WebPlatformStrategies::createBlobRegistry()
         return LoaderStrategy::createBlobRegistry();
     return new BlobRegistryProxy;    
 }
-#endif
 
 // PluginStrategy
 

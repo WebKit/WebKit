@@ -33,10 +33,13 @@
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "PluginView.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebChromeClient.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -79,12 +82,6 @@
 
 #if PLATFORM(COCOA)
 #include <WebCore/LegacyWebArchive.h>
-#endif
-
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkConnectionToWebProcessMessages.h"
-#include "NetworkProcessConnection.h"
-#include "WebCoreArgumentCoders.h"
 #endif
 
 #ifndef NDEBUG
@@ -261,12 +258,10 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
     ASSERT(webProcess.usesNetworkProcess());
 #endif
     SessionID sessionID = page() ? page()->sessionID() : SessionID::defaultSessionID();
-#if ENABLE(NETWORK_PROCESS)
     if (webProcess.usesNetworkProcess()) {
         webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request), 0);
         return;
     }
-#endif
 
 #if USE(NETWORK_SESSION)
     // Using NETWORK_SESSION requires the use of a network process.
@@ -286,7 +281,6 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
     auto& webProcess = WebProcess::singleton();
-#if ENABLE(NETWORK_PROCESS)
 #if USE(NETWORK_SESSION)
     ASSERT(webProcess.usesNetworkProcess());
 #endif
@@ -303,7 +297,6 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
         webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(sessionID, mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
         return;
     }
-#endif
 
     if (!mainResourceLoader) {
         // The main resource has already been loaded. Start a new download instead.

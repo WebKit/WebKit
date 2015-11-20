@@ -400,16 +400,12 @@ bool NetscapePlugin::getAuthenticationInfo(const ProtectionSpace& protectionSpac
 
 void NetscapePlugin::registerRedirect(NetscapePluginStream* stream, const URL& requestURL, int redirectResponseStatus, void* notificationData)
 {
-#if ENABLE(NETWORK_PROCESS)
     // NPP_URLRedirectNotify may synchronously request this stream back out, so set it first
     m_redirects.set(notificationData, std::make_pair(stream, requestURL.string()));
     if (!NPP_URLRedirectNotify(requestURL.string().utf8().data(), redirectResponseStatus, notificationData)) {
         m_redirects.take(notificationData);
         controller()->continueStreamLoad(stream->streamID());
     }
-#else
-    controller()->continueStreamLoad(stream->streamID());
-#endif
 }
 
 void NetscapePlugin::urlRedirectResponse(void* notifyData, bool allow)

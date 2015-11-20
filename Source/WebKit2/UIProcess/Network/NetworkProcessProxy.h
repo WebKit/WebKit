@@ -26,8 +26,6 @@
 #ifndef NetworkProcessProxy_h
 #define NetworkProcessProxy_h
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "ChildProcessProxy.h"
 #include "CustomProtocolManagerProxy.h"
 #include "ProcessLauncher.h"
@@ -131,7 +129,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkProcessProxy_h

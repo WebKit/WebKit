@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#if ENABLE(NETWORK_PROCESS)
 
 #include "NetworkProcessProxy.h"
 #include <glib.h>
@@ -43,5 +42,3 @@ void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOption
 }
 
 }
-
-#endif // ENABLE(NETWORK_PROCESS)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkResourceLoader.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkBlobRegistry.h"
@@ -581,5 +579,3 @@ void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool r
 #endif
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

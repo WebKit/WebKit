@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BlobRegistryProxy.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
@@ -90,5 +88,3 @@ unsigned long long BlobRegistryProxy::blobSize(const URL& url)
 }
 
 }
-
-#endif // ENABLE(NETWORK_PROCESS)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkProcess.h"
 
-#if ENABLE(NETWORK_PROCESS)
-
 #include "ArgumentCoders.h"
 #include "Attachment.h"
 #include "AuthenticationManager.h"
@@ -554,5 +552,3 @@ void NetworkProcess::platformLowMemoryHandler(Critical)
 #endif
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

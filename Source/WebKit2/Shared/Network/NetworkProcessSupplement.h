@@ -33,12 +33,10 @@ namespace WebKit {
 struct NetworkProcessCreationParameters;
 
 class NetworkProcessSupplement : public ChildProcessSupplement {
-#if ENABLE(NETWORK_PROCESS)
 public:
     virtual void initialize(const NetworkProcessCreationParameters&)
     {
     }
-#endif
 };
 
 } // namespace WebKit

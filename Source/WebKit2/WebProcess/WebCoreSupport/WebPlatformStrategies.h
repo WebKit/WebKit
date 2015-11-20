@@ -59,12 +59,10 @@ private:
     virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&) override;
 
     // WebCore::LoaderStrategy
-#if ENABLE(NETWORK_PROCESS)
     virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() override;
     virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
     virtual WebCore::BlobRegistry* createBlobRegistry() override;
     virtual void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, bool shouldUseCredentialStorage) override;
-#endif
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins() override;

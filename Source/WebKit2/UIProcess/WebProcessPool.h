@@ -34,6 +34,7 @@
 #include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
+#include "NetworkProcessProxy.h"
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
@@ -59,10 +60,6 @@
 #include "DatabaseProcessProxy.h"
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessProxy.h"
-#endif
-
 #if ENABLE(MEDIA_SESSION)
 #include "WebMediaSessionFocusManager.h"
 #endif
@@ -86,14 +83,11 @@ class WebContextSupplement;
 class WebIconDatabase;
 class WebPageGroup;
 class WebPageProxy;
+struct NetworkProcessCreationParameters;
 struct StatisticsData;
 struct WebProcessCreationParameters;
     
 typedef GenericCallback<API::Dictionary*> DictionaryCallback;
-
-#if ENABLE(NETWORK_PROCESS)
-struct NetworkProcessCreationParameters;
-#endif
 
 #if PLATFORM(COCOA)
 int networkProcessLatencyQOS();
@@ -193,9 +187,7 @@ public:
     void clearPluginClientPolicies();
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
     PlatformProcessIdentifier networkProcessIdentifier();
-#endif
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
@@ -289,13 +281,11 @@ public:
     void setUsesNetworkProcess(bool);
     bool usesNetworkProcess() const;
 
-#if ENABLE(NETWORK_PROCESS)
     NetworkProcessProxy& ensureNetworkProcess();
     NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
     void networkProcessCrashed(NetworkProcessProxy*);
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
     void ensureDatabaseProcess();
@@ -378,9 +368,7 @@ private:
     void requestWebContentStatistics(StatisticsRequest*);
     void requestNetworkingStatistics(StatisticsRequest*);
 
-#if ENABLE(NETWORK_PROCESS)
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
-#endif
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
@@ -500,11 +488,9 @@ private:
 
     bool m_processTerminationEnabled;
 
-#if ENABLE(NETWORK_PROCESS)
     bool m_canHandleHTTPSServerTrustEvaluation;
     bool m_didNetworkProcessCrash;
     RefPtr<NetworkProcessProxy> m_networkProcess;
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
     RefPtr<DatabaseProcessProxy> m_databaseProcess;
@@ -541,24 +527,18 @@ void WebProcessPool::sendToNetworkingProcess(T&& message)
 {
     switch (processModel()) {
     case ProcessModelSharedSecondaryProcess:
-#if ENABLE(NETWORK_PROCESS)
         if (usesNetworkProcess()) {
             if (m_networkProcess && m_networkProcess->canSendMessage())
                 m_networkProcess->send(std::forward<T>(message), 0);
             return;
         }
-#endif
         if (!m_processes.isEmpty() && m_processes[0]->canSendMessage())
             m_processes[0]->send(std::forward<T>(message), 0);
         return;
     case ProcessModelMultipleSecondaryProcesses:
-#if ENABLE(NETWORK_PROCESS)
         if (m_networkProcess && m_networkProcess->canSendMessage())
             m_networkProcess->send(std::forward<T>(message), 0);
         return;
-#else
-        break;
-#endif
     }
     ASSERT_NOT_REACHED();
 }
@@ -568,24 +548,18 @@ void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
     switch (processModel()) {
     case ProcessModelSharedSecondaryProcess:
-#if ENABLE(NETWORK_PROCESS)
         if (usesNetworkProcess()) {
             ensureNetworkProcess();
             m_networkProcess->send(std::forward<T>(message), 0);
             return;
         }
-#endif
         ensureSharedWebProcess();
         m_processes[0]->send(std::forward<T>(message), 0);
         return;
     case ProcessModelMultipleSecondaryProcesses:
-#if ENABLE(NETWORK_PROCESS)
         ensureNetworkProcess();
         m_networkProcess->send(std::forward<T>(message), 0);
         return;
-#else
-        break;
-#endif
     }
     ASSERT_NOT_REACHED();
 }

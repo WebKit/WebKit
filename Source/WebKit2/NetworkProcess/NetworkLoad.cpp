@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(NETWORK_PROCESS)
 #include "NetworkLoad.h"
 
 #include "AuthenticationManager.h"
@@ -371,5 +370,3 @@ void NetworkLoad::receivedCancellation(ResourceHandle* handle, const Authenticat
 #endif // !USE(NETWORK_SESSION)
 
 } // namespace WebKit
-
-#endif // ENABLE(NETWORK_PROCESS)

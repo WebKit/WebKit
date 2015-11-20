@@ -427,12 +427,10 @@ void WebProcessProxy::getPluginProcessConnection(uint64_t pluginProcessToken, Pa
 }
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
 void WebProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
 {
     m_processPool->getNetworkProcessConnection(reply);
 }
-#endif // ENABLE(NETWORK_PROCESS)
 
 #if ENABLE(DATABASE_PROCESS)
 void WebProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
@@ -704,9 +702,7 @@ void WebProcessProxy::updateTextCheckerState()
 
 DownloadProxy* WebProcessProxy::createDownloadProxy(const ResourceRequest& request)
 {
-#if ENABLE(NETWORK_PROCESS)
     ASSERT(!m_processPool->usesNetworkProcess());
-#endif
 
     if (!m_downloadProxyMap)
         m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
@@ -947,7 +943,6 @@ void WebProcessProxy::didCancelProcessSuspension()
     m_throttler.didCancelProcessSuspension();
 }
 
-#if ENABLE(NETWORK_PROCESS)
 void WebProcessProxy::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
 {
 #if PLATFORM(IOS)
@@ -962,11 +957,10 @@ void WebProcessProxy::reinstateNetworkProcessAssertionState(NetworkProcessProxy&
     UNUSED_PARAM(newNetworkProcessProxy);
 #endif
 }
-#endif
 
 void WebProcessProxy::didSetAssertionState(AssertionState state)
 {
-#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
+#if PLATFORM(IOS)
     ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
 
     switch (state) {

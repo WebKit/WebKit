@@ -74,6 +74,7 @@ namespace WebKit {
 class DownloadManager;
 class EventDispatcher;
 class InjectedBundle;
+class NetworkProcessConnection;
 class ObjCObjectGraph;
 class UserData;
 class WebConnectionToUIProcess;
@@ -82,15 +83,11 @@ class WebIconDatabaseProxy;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
+class WebResourceLoadScheduler;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
-
-#if ENABLE(NETWORK_PROCESS)
-class NetworkProcessConnection;
-class WebResourceLoadScheduler;
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
 class WebToDatabaseProcessConnection;
@@ -159,11 +156,9 @@ public:
 
     bool usesNetworkProcess() const;
 
-#if ENABLE(NETWORK_PROCESS)
     NetworkProcessConnection* networkConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     WebResourceLoadScheduler& webResourceLoadScheduler();
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
     void webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection*);
@@ -359,14 +354,12 @@ private:
 
     WebIconDatabaseProxy* m_iconDatabaseProxy;
 
-#if ENABLE(NETWORK_PROCESS)
     void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     bool m_usesNetworkProcess;
     WebResourceLoadScheduler* m_webResourceLoadScheduler;
     HashSet<String> m_dnsPrefetchedHosts;
     WebCore::HysteresisActivity m_dnsPrefetchHystereris;
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
     void ensureWebToDatabaseProcessConnection();

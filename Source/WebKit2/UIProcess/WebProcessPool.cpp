@@ -35,6 +35,9 @@
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "Logging.h"
+#include "NetworkProcessCreationParameters.h"
+#include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
@@ -76,12 +79,6 @@
 #if ENABLE(DATABASE_PROCESS)
 #include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessMessages.h"
-#endif
-
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessCreationParameters.h"
-#include "NetworkProcessMessages.h"
-#include "NetworkProcessProxy.h"
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -159,10 +156,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
-#if ENABLE(NETWORK_PROCESS)
     , m_canHandleHTTPSServerTrustEvaluation(true)
     , m_didNetworkProcessCrash(false)
-#endif
 #if USE(SOUP)
     , m_ignoreTLSErrors(true)
 #endif
@@ -254,10 +249,8 @@ WebProcessPool::~WebProcessPool()
     processPoolCounter.decrement();
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
     if (m_networkProcess)
         m_networkProcess->shutDownProcess();
-#endif
 }
 
 void WebProcessPool::initializeClient(const WKContextClientBase* client)
@@ -315,18 +308,12 @@ IPC::Connection* WebProcessPool::networkingProcessConnection()
 {
     switch (processModel()) {
     case ProcessModelSharedSecondaryProcess:
-#if ENABLE(NETWORK_PROCESS)
         if (usesNetworkProcess())
             return m_networkProcess->connection();
-#endif
         return m_processes[0]->connection();
     case ProcessModelMultipleSecondaryProcesses:
-#if ENABLE(NETWORK_PROCESS)
         ASSERT(usesNetworkProcess());
         return m_networkProcess->connection();
-#else
-        break;
-#endif
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -340,7 +327,7 @@ void WebProcessPool::languageChanged(void* context)
 void WebProcessPool::languageChanged()
 {
     sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(userPreferredLanguages()));
-#if USE(SOUP) && ENABLE(NETWORK_PROCESS)
+#if USE(SOUP)
     if (usesNetworkProcess() && m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(userPreferredLanguages()), 0);
 #endif
@@ -358,23 +345,14 @@ void WebProcessPool::textCheckerStateChanged()
 
 void WebProcessPool::setUsesNetworkProcess(bool usesNetworkProcess)
 {
-#if ENABLE(NETWORK_PROCESS)
     m_configuration->setUseNetworkProcess(usesNetworkProcess);
-#else
-    UNUSED_PARAM(usesNetworkProcess);
-#endif
 }
 
 bool WebProcessPool::usesNetworkProcess() const
 {
-#if ENABLE(NETWORK_PROCESS)
     return m_configuration->useNetworkProcess();
-#else
-    return false;
-#endif
 }
 
-#if ENABLE(NETWORK_PROCESS)
 NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
 {
     if (m_networkProcess)
@@ -459,7 +437,6 @@ void WebProcessPool::getNetworkProcessConnection(PassRefPtr<Messages::WebProcess
 
     m_networkProcess->getNetworkProcessConnection(reply);
 }
-#endif
 
 #if ENABLE(DATABASE_PROCESS)
 void WebProcessPool::ensureDatabaseProcess()
@@ -527,14 +504,12 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
 {
     m_iconDatabase->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && networkProcess()) {
         if (privateBrowsingEnabled)
             networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
         else
             networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
     }
-#endif // ENABLED(NETWORK_PROCESS)
 
     if (privateBrowsingEnabled)
         sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()));
@@ -579,10 +554,8 @@ WebProcessProxy& WebProcessPool::ensureSharedWebProcess()
 
 WebProcessProxy& WebProcessPool::createNewWebProcess()
 {
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess())
         ensureNetworkProcess();
-#endif
 
     Ref<WebProcessProxy> process = WebProcessProxy::create(*this);
 
@@ -659,9 +632,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     supplement<WebNotificationManagerProxy>()->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
     parameters.usesNetworkProcess = usesNetworkProcess();
-#endif
 
     parameters.plugInAutoStartOriginHashes = m_plugInAutoStartProvider.autoStartOriginHashesCopy();
     copyToVector(m_plugInAutoStartProvider.autoStartOrigins(), parameters.plugInAutoStartOrigins);
@@ -873,13 +844,11 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
     uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
     SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : SessionID::defaultSessionID();
 
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && networkProcess()) {
         // FIXME (NetworkProcess): Replicate whatever FrameLoader::setOriginalURLForDownloadRequest does with the request here.
         networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), request), 0);
         return downloadProxy;
     }
-#endif
 
     m_processes[0]->send(Messages::WebProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), initiatingPageID, request), 0);
     return downloadProxy;
@@ -893,12 +862,10 @@ DownloadProxy* WebProcessPool::resumeDownload(const API::Data* resumeData, const
     if (!path.isEmpty())
         SandboxExtension::createHandle(path, SandboxExtension::ReadWrite, sandboxExtensionHandle);
 
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && networkProcess()) {
         networkProcess()->send(Messages::NetworkProcess::ResumeDownload(downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
         return downloadProxy;
     }
-#endif
 
     m_processes[0]->send(Messages::WebProcess::ResumeDownload(downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
     return downloadProxy;
@@ -940,7 +907,6 @@ void WebProcessPool::setAdditionalPluginsDirectory(const String& directory)
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-#if ENABLE(NETWORK_PROCESS)
 PlatformProcessIdentifier WebProcessPool::networkProcessIdentifier()
 {
     if (!m_networkProcess)
@@ -948,7 +914,6 @@ PlatformProcessIdentifier WebProcessPool::networkProcessIdentifier()
 
     return m_networkProcess->processIdentifier();
 }
-#endif
 
 void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
@@ -988,15 +953,11 @@ void WebProcessPool::setDomainRelaxationForbiddenForURLScheme(const String& urlS
 
 void WebProcessPool::setCanHandleHTTPSServerTrustEvaluation(bool value)
 {
-#if ENABLE(NETWORK_PROCESS)
     m_canHandleHTTPSServerTrustEvaluation = value;
     if (usesNetworkProcess() && m_networkProcess) {
         m_networkProcess->send(Messages::NetworkProcess::SetCanHandleHTTPSServerTrustEvaluation(value), 0);
         return;
     }
-#else
-    UNUSED_PARAM(value);
-#endif
 }
 
 void WebProcessPool::registerURLSchemeAsLocal(const String& urlScheme)
@@ -1064,10 +1025,8 @@ void WebProcessPool::setCacheModel(CacheModel cacheModel)
     m_configuration->setCacheModel(cacheModel);
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(cacheModel));
 
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::SetCacheModel(cacheModel), 0);
-#endif
 }
 
 void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
@@ -1077,13 +1036,11 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
 
 DownloadProxy* WebProcessPool::createDownloadProxy(const ResourceRequest& request)
 {
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess()) {
         ensureNetworkProcess();
         ASSERT(m_networkProcess);
         return m_networkProcess->createDownloadProxy(request);
     }
-#endif
 
     return ensureSharedWebProcess().createDownloadProxy(request);
 }
@@ -1182,12 +1139,10 @@ String WebProcessPool::cookieStorageDirectory() const
 void WebProcessPool::useTestingNetworkSession()
 {
     ASSERT(m_processes.isEmpty());
-#if ENABLE(NETWORK_PROCESS)
     ASSERT(!m_networkProcess);
 
     if (m_networkProcess)
         return;
-#endif
 
     if (!m_processes.isEmpty())
         return;
@@ -1197,12 +1152,10 @@ void WebProcessPool::useTestingNetworkSession()
 
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
-#if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && m_networkProcess) {
         m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
         return;
     }
-#endif
 
 #if USE(SOUP)
     m_processes[0]->send(Messages::WebProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
@@ -1268,25 +1221,14 @@ void WebProcessPool::requestWebContentStatistics(StatisticsRequest* request)
 
 void WebProcessPool::requestNetworkingStatistics(StatisticsRequest* request)
 {
-    bool networkProcessUnavailable;
-#if ENABLE(NETWORK_PROCESS)
-    networkProcessUnavailable = !usesNetworkProcess() || !m_networkProcess;
-#else
-    networkProcessUnavailable = true;
-#endif
-
-    if (networkProcessUnavailable) {
+    if (!usesNetworkProcess() || !m_networkProcess) {
         LOG_ERROR("Attempt to get NetworkProcess statistics but the NetworkProcess is unavailable");
         return;
     }
 
-#if ENABLE(NETWORK_PROCESS)
     uint64_t requestID = request->addOutstandingRequest();
     m_statisticsRequests.set(requestID, request);
     m_networkProcess->send(Messages::NetworkProcess::GetNetworkProcessStatistics(requestID), 0);
-#else
-    UNUSED_PARAM(request);
-#endif
 }
 
 void WebProcessPool::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
