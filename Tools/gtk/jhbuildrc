@@ -17,7 +17,6 @@
 
 import sys
 import os
-import platform
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
 import jhbuildrc_common
@@ -42,6 +41,3 @@ if use_lib64:
     os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(buildroot, 'Mesa', 'lib64', 'gallium'))
 else:
     os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(buildroot, 'Mesa', 'lib', 'gallium'))
-
-if 'x86_64' in platform.machine():
-    conditions.add('x86_64')
