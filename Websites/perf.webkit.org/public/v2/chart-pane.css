@@ -361,7 +361,9 @@ a.outlier-button.show g.hide-outlier-icon {
 .chart .dot {
     fill: #ccc;
     stroke: none;
+    r: 2px;
 }
+
 .chart .dot.foreground {
     fill: #666;
 }
@@ -437,6 +439,7 @@ a.outlier-button.show g.hide-outlier-icon {
     stroke: #f93;
     stroke-width: 2px;
     fill: none;
+    r: 3.6px;
 }
 
 .chart .extent {

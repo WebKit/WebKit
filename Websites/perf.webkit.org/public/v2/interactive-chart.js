@@ -142,8 +142,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .selectAll(".dot")
                 .data(this._currentTimeSeriesData)
             .enter().append("circle")
-                .attr("class", "dot" + foregroundClass)
-                .attr("r", this.get('chartPointRadius') || 1));
+                .attr("class", "dot" + foregroundClass));
 
         if (movingAverageIsVisible) {
             this._paths.push(this._clippedContainer
@@ -611,8 +610,7 @@ App.InteractiveChartComponent = Ember.Component.extend({
             .selectAll(".highlight")
                 .data(data)
             .enter().append("circle")
-                .attr("class", "highlight")
-                .attr("r", (this.get('chartPointRadius') || 1) * 1.8);
+                .attr("class", "highlight");
 
         this._domainChanged();
     }.observes('highlightedItems'),
