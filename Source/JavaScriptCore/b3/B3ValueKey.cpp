@@ -37,7 +37,7 @@ namespace JSC { namespace B3 {
 
 void ValueKey::dump(PrintStream& out) const
 {
-    out.print(m_type, " ", m_opcode, "(", u.indices[0], ", ", u.indices[1], ")");
+    out.print(m_type, " ", m_opcode, "(", u.indices[0], ", ", u.indices[1], ", ", u.indices[2], ")");
 }
 
 Value* ValueKey::materialize(Procedure& proc, Origin origin) const
@@ -77,6 +77,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case BelowEqual:
     case Div:
         return proc.add<Value>(opcode(), type(), origin, child(proc, 0), child(proc, 1));
+    case Select:
+        return proc.add<Value>(opcode(), type(), origin, child(proc, 0), child(proc, 1), child(proc, 2));
     case Const32:
         return proc.add<Const32Value>(origin, static_cast<int32_t>(value()));
     case Const64:

@@ -114,6 +114,10 @@ enum Opcode : int16_t {
     AboveEqual,
     BelowEqual,
 
+    // SSA form of conditional move. The first child is evaluated for truthiness. If true, the second child
+    // is returned. Otherwise, the third child is returned.
+    Select,
+
     // Memory loads. Opcode indicates how we load and the loaded type. These use MemoryValue.
     // These return Int32:
     Load8Z,

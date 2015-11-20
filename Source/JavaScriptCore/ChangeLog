@@ -1,3 +1,98 @@
+2015-11-20  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have a Select opcode
+        https://bugs.webkit.org/show_bug.cgi?id=150762
+
+        Reviewed by Benjamin Poulain.
+
+        This cleans up our conditional move implementation - specifically so that it distinguishes between
+        comparing the low 32 bits of a GPR and all bits of a GPR - and fixes bugs with operand ordering. It
+        then adds a Select opcode to B3 and adds all of the strength reduction and lowering magic that it
+        needs. Finally this change implements FTL::Output::select() in terms of B3::Select.
+
+        This patch lets us run Kraken/imaging-gaussian-blur. Running that benchmark using FTL+B3 is a 17%
+        speed-up. The compile times go down dramatically (by about 7x) and code quality stays about the same.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::moveDoubleConditionally32):
+        (JSC::MacroAssembler::moveDoubleConditionally64):
+        (JSC::MacroAssembler::moveDoubleConditionallyTest32):
+        (JSC::MacroAssembler::moveDoubleConditionallyTest64):
+        (JSC::MacroAssembler::moveDoubleConditionallyDouble):
+        (JSC::MacroAssembler::lea):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::move):
+        (JSC::MacroAssemblerX86Common::moveConditionallyDouble):
+        (JSC::MacroAssemblerX86Common::zeroExtend32ToPtr):
+        (JSC::MacroAssemblerX86Common::moveConditionally32):
+        (JSC::MacroAssemblerX86Common::moveConditionallyTest32):
+        (JSC::MacroAssemblerX86Common::set32):
+        (JSC::MacroAssemblerX86Common::cmov):
+        (JSC::MacroAssemblerX86Common::moveConditionally): Deleted.
+        (JSC::MacroAssemblerX86Common::moveConditionallyTest): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchNeg64):
+        (JSC::MacroAssemblerX86_64::moveConditionally64):
+        (JSC::MacroAssemblerX86_64::moveConditionallyTest64):
+        (JSC::MacroAssemblerX86_64::abortWithReason):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmovl_rr):
+        (JSC::X86Assembler::cmovl_mr):
+        (JSC::X86Assembler::cmovel_rr):
+        (JSC::X86Assembler::cmovnel_rr):
+        (JSC::X86Assembler::cmovpl_rr):
+        (JSC::X86Assembler::cmovnpl_rr):
+        (JSC::X86Assembler::cmovq_rr):
+        (JSC::X86Assembler::cmovq_mr):
+        (JSC::X86Assembler::cmoveq_rr):
+        (JSC::X86Assembler::cmovneq_rr):
+        (JSC::X86Assembler::cmovpq_rr):
+        (JSC::X86Assembler::cmovnpq_rr):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::createSelect):
+        (JSC::B3::Air::LowerToAir::marshallCCallArgument):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::checkOpcode):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::dump):
+        (JSC::B3::ValueKey::materialize):
+        * b3/B3ValueKey.h:
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::hash):
+        (JSC::B3::ValueKey::operator bool):
+        * b3/B3ValueKeyInlines.h:
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::child):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testTruncSExt32):
+        (JSC::B3::testBasicSelect):
+        (JSC::B3::testSelectTest):
+        (JSC::B3::testSelectCompareDouble):
+        (JSC::B3::testSelectDouble):
+        (JSC::B3::testSelectDoubleTest):
+        (JSC::B3::testSelectDoubleCompareDouble):
+        (JSC::B3::zero):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::testIsZeroPtr):
+        (JSC::FTL::Output::testNonZeroPtr):
+        (JSC::FTL::Output::select):
+        (JSC::FTL::Output::extractValue):
+        (JSC::FTL::Output::fence):
+
 2015-11-20  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add Air lowering to BitNot() for Xor(value, -1)

@@ -837,6 +837,30 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    void moveConditionally64(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
+    {
+        m_assembler.cmpq_rr(right, left);
+        cmov(x86Condition(cond), src, dest);
+    }
+
+    void moveConditionallyTest64(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)
+    {
+        m_assembler.testq_rr(testReg, mask);
+        cmov(x86Condition(cond), src, dest);
+    }
+    
+    void moveConditionallyTest64(ResultCondition cond, RegisterID testReg, TrustedImm32 mask, RegisterID src, RegisterID dest)
+    {
+        // if we are only interested in the low seven bits, this can be tested with a testb
+        if (mask.m_value == -1)
+            m_assembler.testq_rr(testReg, testReg);
+        else if ((mask.m_value & ~0x7f) == 0)
+            m_assembler.testb_i8r(mask.m_value, testReg);
+        else
+            m_assembler.testq_i32r(mask.m_value, testReg);
+        cmov(x86Condition(cond), src, dest);
+    }
+    
     void abortWithReason(AbortReason reason)
     {
         move(TrustedImm32(reason), X86Registers::r11);

@@ -188,8 +188,10 @@ private:
     size_t m_heapNameLength;
     ptrdiff_t m_offset;
     size_t m_elementSize;
+#if !FTL_USES_B3
     LValue m_scaleTerm;
     bool m_canShift;
+#endif
     std::array<AbstractField, 16> m_smallIndices;
     
     struct WithoutZeroOrOneHashTraits : WTF::GenericHashTraits<ptrdiff_t> {

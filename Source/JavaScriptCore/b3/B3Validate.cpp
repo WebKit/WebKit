@@ -231,6 +231,12 @@ public:
                 VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
                 VALIDATE(value->type() == Int32, ("At ", *value));
                 break;
+            case Select:
+                VALIDATE(value->numChildren() == 3, ("At ", *value));
+                VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
+                VALIDATE(value->type() == value->child(1)->type(), ("At ", *value));
+                VALIDATE(value->type() == value->child(2)->type(), ("At ", *value));
+                break;
             case Load8Z:
             case Load8S:
             case Load16Z:

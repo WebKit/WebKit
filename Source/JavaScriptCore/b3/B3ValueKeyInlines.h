@@ -49,6 +49,15 @@ inline ValueKey::ValueKey(Opcode opcode, Type type, Value* left, Value* right)
     u.indices[1] = right->index();
 }
 
+inline ValueKey::ValueKey(Opcode opcode, Type type, Value* a, Value* b, Value* c)
+    : m_opcode(opcode)
+    , m_type(type)
+{
+    u.indices[0] = a->index();
+    u.indices[1] = b->index();
+    u.indices[2] = c->index();
+}
+
 inline Value* ValueKey::child(Procedure& proc, unsigned index) const
 {
     return proc.values()[index];

@@ -51,8 +51,10 @@ public:
     void run()
     {
         // Eventually this phase will do smart things. For now, it uses a super simple heuristic: it
-        // places large constants in the block that uses them, and makes sure that each block has
-        // only one materialization for each large constant.
+        // places constants in the block that uses them, and makes sure that each block has only one
+        // materialization for each constant. Note that this mostly only matters for large constants, since
+        // small constants get fused into the instructions that use them. But it might matter for small
+        // constants if they are used in instructions that don't do immediates, like conditional moves.
 
         // FIXME: Implement a better story for constants. At a minimum this should allow the B3
         // client to specify important constants that always get hoisted. Also, the table used to
@@ -147,16 +149,7 @@ private:
 
     bool needsMotion(const Value* value)
     {
-        if (!value->isConstant())
-            return false;
-        
-        // We currently assume that 32-bit int constants are always cheap to materialize.
-        // This is wrong for ARM. We need some abstract query like "isImmediate(int64_t)". On
-        // ARM64 this would take into account the way that ARM64 can encode large constants.
-        if (value->hasInt() && value->representableAs<int32_t>())
-            return false;
-
-        return true;
+        return value->isConstant();
     }
 
     static ValueKey doubleZero()

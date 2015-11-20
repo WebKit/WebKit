@@ -194,6 +194,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case BelowEqual:
         out.print("BelowEqual");
         return;
+    case Select:
+        out.print("Select");
+        return;
     case Load8Z:
         out.print("Load8Z");
         return;

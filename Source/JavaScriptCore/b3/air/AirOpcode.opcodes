@@ -364,6 +364,40 @@ BranchNeg32 U:G, UD:G /branch
 BranchNeg64 U:G, UD:G /branch
     ResCond, Tmp
 
+MoveConditionally32 U:G, U:G, U:G, U:G, UD:G
+    RelCond, Tmp, Tmp, Tmp, Tmp
+
+MoveConditionally64 U:G, U:G, U:G, U:G, UD:G
+    RelCond, Tmp, Tmp, Tmp, Tmp
+
+MoveConditionallyTest32 U:G, U:G, U:G, U:G, UD:G
+    ResCond, Tmp, Tmp, Tmp, Tmp
+    ResCond, Tmp, Imm, Tmp, Tmp
+
+MoveConditionallyTest64 U:G, U:G, U:G, U:G, UD:G
+    ResCond, Tmp, Tmp, Tmp, Tmp
+    ResCond, Tmp, Imm, Tmp, Tmp
+
+MoveConditionallyDouble U:G, U:F, U:F, U:G, UD:G
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
+
+MoveDoubleConditionally32 U:G, U:G, U:G, U:F, UD:F
+    RelCond, Tmp, Tmp, Tmp, Tmp
+
+MoveDoubleConditionally64 U:G, U:G, U:G, U:F, UD:F
+    RelCond, Tmp, Tmp, Tmp, Tmp
+
+MoveDoubleConditionallyTest32 U:G, U:G, U:G, U:F, UD:F
+    ResCond, Tmp, Tmp, Tmp, Tmp
+    ResCond, Tmp, Imm, Tmp, Tmp
+
+MoveDoubleConditionallyTest64 U:G, U:G, U:G, U:F, UD:F
+    ResCond, Tmp, Tmp, Tmp, Tmp
+    ResCond, Tmp, Imm, Tmp, Tmp
+
+MoveDoubleConditionallyDouble U:G, U:F, U:F, U:F, UD:F
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
+
 Jump /branch
 
 Ret /terminal

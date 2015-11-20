@@ -230,12 +230,22 @@ protected:
     }
     // This form is for those opcodes that can infer their type from the opcode and first child:
     template<typename... Arguments>
-    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild, Arguments... arguments)
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild)
         : m_index(index)
         , m_opcode(opcode)
         , m_type(typeFor(opcode, firstChild))
         , m_origin(origin)
-        , m_children{ firstChild, arguments... }
+        , m_children{ firstChild }
+    {
+    }
+    // This form is for those opcodes that can infer their type from the opcode and first and second child:
+    template<typename... Arguments>
+    explicit Value(unsigned index, CheckedOpcodeTag, Opcode opcode, Origin origin, Value* firstChild, Value* secondChild, Arguments... arguments)
+        : m_index(index)
+        , m_opcode(opcode)
+        , m_type(typeFor(opcode, firstChild, secondChild))
+        , m_origin(origin)
+        , m_children{ firstChild, secondChild, arguments... }
     {
     }
     // This form is for those opcodes that can infer their type from the opcode alone, and that don't
@@ -277,7 +287,7 @@ protected:
 private:
     friend class CheckValue; // CheckValue::convertToAdd() modifies m_opcode.
     
-    static Type typeFor(Opcode, Value* firstChild);
+    static Type typeFor(Opcode, Value* firstChild, Value* secondChild = nullptr);
 
     // This group of fields is arranged to fit in 64 bits.
     unsigned m_index;

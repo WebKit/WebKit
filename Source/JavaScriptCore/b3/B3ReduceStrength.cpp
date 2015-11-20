@@ -541,6 +541,45 @@ private:
             }
             break;
 
+        case Select:
+            // Turn this: Select(constant, a, b)
+            // Into this: constant ? a : b
+            if (m_value->child(0)->hasInt32()) {
+                m_value->replaceWithIdentity(
+                    m_value->child(0)->asInt32() ? m_value->child(1) : m_value->child(2));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: Select(Equal(x, 0), a, b)
+            // Into this: Select(x, b, a)
+            if (m_value->child(0)->opcode() == Equal && m_value->child(0)->child(1)->isInt(0)) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                std::swap(m_value->child(1), m_value->child(2));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: Select(BitXor(bool, 1), a, b)
+            // Into this: Select(bool, b, a)
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(0)->child(1)->isInt32(1)
+                && m_value->child(0)->child(0)->returnsBool()) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                std::swap(m_value->child(1), m_value->child(2));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: Select(stuff, x, x)
+            // Into this: x
+            if (m_value->child(1) == m_value->child(2)) {
+                m_value->replaceWithIdentity(m_value->child(1));
+                m_changed = true;
+                break;
+            }
+            break;
+
         case Load8Z:
         case Load8S:
         case Load16Z:

@@ -82,8 +82,10 @@ IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent,
     , m_heapNameLength(strlen(heapName))
     , m_offset(offset)
     , m_elementSize(elementSize)
+#if !FTL_USES_B3
     , m_scaleTerm(0)
     , m_canShift(false)
+#endif
 {
 #if FTL_USES_B3
     UNUSED_PARAM(context);
@@ -112,7 +114,10 @@ TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue ind
 {
     if (indexAsConstant.isInt32())
         return out.address(base, at(indexAsConstant.asInt32()), offset);
-    
+
+#if FTL_USES_B3
+    LValue result = out.add(base, out.mul(index, out.constIntPtr(m_elementSize)));
+#else
     LValue result;
     if (m_canShift) {
         if (!m_scaleTerm)
@@ -121,6 +126,7 @@ TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue ind
             result = out.add(base, out.shl(index, m_scaleTerm));
     } else
         result = out.add(base, out.mul(index, m_scaleTerm));
+#endif
     
     return TypedPointer(atAnyIndex(), out.addPtr(result, m_offset + offset));
 }

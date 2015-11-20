@@ -4886,6 +4886,179 @@ void testTruncSExt32(int32_t value)
     CHECK(compileAndRun<int32_t>(proc, value) == value);
 }
 
+void testBasicSelect()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<ConstPtrValue>(proc, Origin(), 42)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    auto code = compile(proc);
+    CHECK(invoke<intptr_t>(*code, 42, 1, 2) == 1);
+    CHECK(invoke<intptr_t>(*code, 42, 642462, 32533) == 642462);
+    CHECK(invoke<intptr_t>(*code, 43, 1, 2) == 2);
+    CHECK(invoke<intptr_t>(*code, 43, 642462, 32533) == 32533);
+}
+
+void testSelectTest()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    auto code = compile(proc);
+    CHECK(invoke<intptr_t>(*code, 42, 1, 2) == 1);
+    CHECK(invoke<intptr_t>(*code, 42, 642462, 32533) == 642462);
+    CHECK(invoke<intptr_t>(*code, 0, 1, 2) == 2);
+    CHECK(invoke<intptr_t>(*code, 0, 642462, 32533) == 32533);
+}
+
+void testSelectCompareDouble()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<Value>(
+                proc, LessThan, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    auto code = compile(proc);
+    CHECK(invoke<intptr_t>(*code, -1.0, 1.0, 1, 2) == 1);
+    CHECK(invoke<intptr_t>(*code, 42.5, 42.51, 642462, 32533) == 642462);
+    CHECK(invoke<intptr_t>(*code, PNaN, 0.0, 1, 2) == 2);
+    CHECK(invoke<intptr_t>(*code, 42.51, 42.5, 642462, 32533) == 32533);
+    CHECK(invoke<intptr_t>(*code, 42.52, 42.52, 524978245, 352) == 352);
+}
+
+void testSelectDouble()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<ConstPtrValue>(proc, Origin(), 42)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
+
+    auto code = compile(proc);
+    CHECK(invoke<double>(*code, 42, 1.5, 2.6) == 1.5);
+    CHECK(invoke<double>(*code, 42, 642462.7, 32533.8) == 642462.7);
+    CHECK(invoke<double>(*code, 43, 1.9, 2.0) == 2.0);
+    CHECK(invoke<double>(*code, 43, 642462.1, 32533.2) == 32533.2);
+}
+
+void testSelectDoubleTest()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
+
+    auto code = compile(proc);
+    CHECK(invoke<double>(*code, 42, 1.5, 2.6) == 1.5);
+    CHECK(invoke<double>(*code, 42, 642462.7, 32533.8) == 642462.7);
+    CHECK(invoke<double>(*code, 0, 1.9, 2.0) == 2.0);
+    CHECK(invoke<double>(*code, 0, 642462.1, 32533.2) == 32533.2);
+}
+
+void testSelectDoubleCompareDouble()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<Value>(
+                proc, LessThan, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR2),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR3)));
+
+    auto code = compile(proc);
+    CHECK(invoke<double>(*code, -1.0, 1.0, 1.1, 2.2) == 1.1);
+    CHECK(invoke<double>(*code, 42.5, 42.51, 642462.3, 32533.4) == 642462.3);
+    CHECK(invoke<double>(*code, PNaN, 0.0, 1.5, 2.6) == 2.6);
+    CHECK(invoke<double>(*code, 42.51, 42.5, 642462.7, 32533.8) == 32533.8);
+    CHECK(invoke<double>(*code, 42.52, 42.52, 524978245.9, 352.0) == 352.0);
+}
+
+void testSelectFold(intptr_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<ConstPtrValue>(proc, Origin(), value),
+                root->appendNew<ConstPtrValue>(proc, Origin(), 42)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    auto code = compile(proc);
+    CHECK(invoke<intptr_t>(*code, 1, 2) == (value == 42 ? 1 : 2));
+    CHECK(invoke<intptr_t>(*code, 642462, 32533) == (value == 42 ? 642462 : 32533));
+}
+
+void testSelectInvert()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Select, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<Value>(
+                    proc, NotEqual, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                    root->appendNew<ConstPtrValue>(proc, Origin(), 42)),
+                root->appendNew<Const32Value>(proc, Origin(), 0)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
+
+    auto code = compile(proc);
+    CHECK(invoke<intptr_t>(*code, 42, 1, 2) == 1);
+    CHECK(invoke<intptr_t>(*code, 42, 642462, 32533) == 642462);
+    CHECK(invoke<intptr_t>(*code, 43, 1, 2) == 2);
+    CHECK(invoke<intptr_t>(*code, 43, 642462, 32533) == 32533);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -5695,6 +5868,16 @@ void run(const char* filter)
     RUN(testTruncSExt32(-1));
     RUN(testTruncSExt32(1000000000ll));
     RUN(testTruncSExt32(-1000000000ll));
+
+    RUN(testBasicSelect());
+    RUN(testSelectTest());
+    RUN(testSelectCompareDouble());
+    RUN(testSelectDouble());
+    RUN(testSelectDoubleTest());
+    RUN(testSelectDoubleCompareDouble());
+    RUN(testSelectFold(42));
+    RUN(testSelectFold(43));
+    RUN(testSelectInvert());
 
     if (tasks.isEmpty())
         usage();

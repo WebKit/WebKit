@@ -185,7 +185,11 @@ public:
     LValue unsignedToFP(LValue value, LType type) { CRASH(); }
     LValue unsignedToDouble(LValue value) { CRASH(); }
     LValue intCast(LValue value, LType type) { CRASH(); }
-    LValue castToInt32(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Trunc, origin(), value); }
+    LValue castToInt32(LValue value)
+    {
+        return value->type() == B3::Int32 ? value :
+            m_block->appendNew<B3::Value>(m_proc, B3::Trunc, origin(), value);
+    }
     LValue fpCast(LValue value, LType type) { CRASH(); }
     LValue intToPtr(LValue value, LType type) { CRASH(); }
     LValue ptrToInt(LValue value, LType type) { CRASH(); }
@@ -344,7 +348,7 @@ public:
     LValue testIsZeroPtr(LValue value, LValue mask) { return isNull(bitAnd(value, mask)); }
     LValue testNonZeroPtr(LValue value, LValue mask) { return notNull(bitAnd(value, mask)); }
 
-    LValue select(LValue value, LValue taken, LValue notTaken) { CRASH(); }
+    LValue select(LValue value, LValue taken, LValue notTaken) { return m_block->appendNew<B3::Value>(m_proc, B3::Select, origin(), value, taken, notTaken); }
     LValue extractValue(LValue aggVal, unsigned index) { CRASH(); }
 
     LValue fence(LAtomicOrdering ordering = LLVMAtomicOrderingSequentiallyConsistent, SynchronizationScope scope = CrossThread) { CRASH(); }
