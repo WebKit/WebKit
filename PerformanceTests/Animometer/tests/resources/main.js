@@ -6,11 +6,11 @@ function BenchmarkState(testInterval)
 
 // The enum values and the messages should be in the same order
 BenchmarkState.stages = {
-    WARMING_UP: 0,
+    WARMING: 0,
     SAMPLING: 1,
     FINISHED: 2,
     messages: [ 
-        Strings.text.runningState.warmingup,
+        Strings.text.runningState.warming,
         Strings.text.runningState.sampling,
         Strings.text.runningState.finished
     ]
@@ -45,7 +45,7 @@ BenchmarkState.prototype =
     
     currentStage: function()
     {
-        for (var stage = BenchmarkState.stages.WARMING_UP; stage < BenchmarkState.stages.FINISHED; ++stage) {
+        for (var stage = BenchmarkState.stages.WARMING; stage < BenchmarkState.stages.FINISHED; ++stage) {
             if (this._currentTimeOffset < this._timeOffset(stage + 1))
                 return stage;
         }
@@ -136,11 +136,7 @@ function Benchmark(options)
     this._recordInterval = 200;    
     this._isSampling = false;
 
-    var gain = parseInt(this._options["gain"]) || 1;
-    var lowValue = -parseInt(this._options["addLimit"]) || 1;
-    var highValue = parseInt(this._options["removeLimit"]) || 1;
-    
-    this._controller = new PIDController(gain, this._options["frame-rate"], lowValue, highValue);
+    this._controller = new PIDController(this._options["frame-rate"]);
     this._sampler = new Sampler(2);
     this._state = new BenchmarkState(this._options["test-interval"] * 1000);
 }
@@ -177,7 +173,7 @@ Benchmark.prototype =
         else if (!(this._isSampling && this._options["fix-test-complexity"])) {
             // The relationship between frameRate and test complexity is inverse-proportional so we
             // need to use the negative of PIDController.tune() to change the complexity of the test.
-            tuneValue = -this._controller.tune(currentFrameRate, timeDelta / 1000);
+            tuneValue = -this._controller.tune(currentTimeOffset, timeDelta, currentFrameRate);
             tuneValue = tuneValue > 0 ? Math.floor(tuneValue) : Math.ceil(tuneValue);
         }
 

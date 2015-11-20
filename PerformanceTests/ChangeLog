@@ -1,3 +1,46 @@
+2015-11-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Calculate the graphics benchmark test gain adaptively
+        https://bugs.webkit.org/show_bug.cgi?id=151208
+
+        Reviewed by Darin Adler.
+
+        We need to calculate the gain of the graphics benchmark tests adaptively
+        and get rid of the gain and limits parameters we have to choose manually
+        for every test. We are going to use the classic Ziegler–Nichols method for
+        calculating the gain and integral and derivative times. We are going to
+        try moving on a cubic curve during the manual stage from y0 to reach ysp.
+        We also going to use a saturation actuator to ensure the system does not
+        fluctuate.
+
+        * Animometer/resources/extensions.js:
+        (ResultsTable.prototype._isNoisyMeasurement): Fix a parameter name.
+        (ResultsTable.prototype._isNoisyTest): Since score is a member of testResults, we need to limit our search to frame rate and complexity.
+        (ResultsTable.prototype._showTest): Pass the correct parameter to _isNoisyMeasurement(). 
+        
+        * Animometer/resources/strings.js: Fix the indentation and name and value of a string.
+
+        * Animometer/runner/resources/tests.js: Remove all the manual gains and limits parameters which had to be passed to every test.
+        
+        * Animometer/tests/resources/main.js:
+        (BenchmarkState.prototype.currentStage): Fix an enum name.
+        (Benchmark): Get rid of manual gain and limits.
+        (Benchmark.prototype.update): Simplify the calculation by having all the times in ms.
+        
+        * Animometer/tests/resources/math.js:
+        (PIDController): Get rid of the manual gain and limits and the magic numbers for Ti and Td.
+        (PIDController.prototype._yPosition): Tells whether the test current output is moving towards the set-point or away from it.
+        (PIDController.prototype._distanceUltimate): Calculates the ultimate distance from y0 after time t using a cubic formula.
+        (PIDController.prototype._distance): Calculates the distance of y relative to y0.
+        (PIDController.prototype._gainIncrement): Decides how much the proportional gain should be increased during the manual gain stage.
+        (PIDController.prototype._updateStage): Updates the stage of the controller based on its current stage and the system output.
+        (PIDController.prototype._tuneP): Tunes the system before calculating the PID controller gains.
+        (PIDController.prototype._tunePID): PID tuning function.
+        (PIDController.prototype._tune):
+        (PIDController.prototype._saturate):
+        (PIDController.prototype.tune): Manages calculating the controller parameters. It then returns a PID tuning value.
+        (PIDController.prototype._sat): Deleted. We may need to return it back but the limits have to be calculated adaptively not manually. 
+
 2015-11-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Reorganize the graphics benchmark string table

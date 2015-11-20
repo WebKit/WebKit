@@ -1,12 +1,12 @@
 var Strings = {
     text: {
-       testName: "Test Name",
-       score: "Score",
-       samples: "Samples",
+        testName: "Test Name",
+        score: "Score",
+        samples: "Samples",
 
-       runningState: {
-           warmingup: "Warming up",
-           sampling: "Sampling",
+        runningState: {
+            warming: "Warming",
+            sampling: "Sampling",
             finished: "Finished"
         },
 
@@ -55,5 +55,4 @@ var Strings = {
             samplingTimeOffset: "samplingTimeOffset"
         }
     }
-
 };

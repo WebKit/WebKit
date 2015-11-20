@@ -361,7 +361,7 @@ ResultsTable.prototype =
         button.textContent = Strings.text.results.json + "...";
     },
     
-    _isNoisyMeasurement: function(experiment, data, measurement, options)
+    _isNoisyMeasurement: function(jsonExperiment, data, measurement, options)
     {
         const percentThreshold = 10;
         const averageThreshold = 2;
@@ -369,7 +369,7 @@ ResultsTable.prototype =
         if (measurement == Strings.json.measurements.percent)
             return data[Strings.json.measurements.percent] >= percentThreshold;
             
-        if (experiment == Strings.json.experiments.frameRate && measurement == Strings.json.measurements.average)
+        if (jsonExperiment == Strings.json.experiments.frameRate && measurement == Strings.json.measurements.average)
             return Math.abs(data[Strings.json.measurements.average] - options["frame-rate"]) >= averageThreshold;
 
         return false;
@@ -377,10 +377,11 @@ ResultsTable.prototype =
 
     _isNoisyTest: function(testResults, options)
     {
-        for (var experiment in testResults) {
-            var data = testResults[experiment];
+        for (var index = 0; index < 2; ++index) {
+            var jsonExperiment = !index ? Strings.json.experiments.complexity : Strings.json.experiments.frameRate;
+            var data = testResults[jsonExperiment];
             for (var measurement in data) {
-                if (this._isNoisyMeasurement(experiment, data, measurement, options))
+                if (this._isNoisyMeasurement(jsonExperiment, data, measurement, options))
                     return true;
             }
         }
@@ -422,9 +423,10 @@ ResultsTable.prototype =
 
             case 2:
             case 3:
-                var data = testResults[index == 2 ? Strings.json.experiments.complexity : Strings.json.experiments.frameRate];
+                var jsonExperiment = index == 2 ? Strings.json.experiments.complexity : Strings.json.experiments.frameRate;
+                var data = testResults[jsonExperiment];
                 for (var measurement in data)
-                    this._showFixedNumber(row, data[measurement], 2, this._isNoisyMeasurement(index - 2, data, measurement, options) ? className : "");
+                    this._showFixedNumber(row, data[measurement], 2, this._isNoisyMeasurement(jsonExperiment, data, measurement, options) ? className : "");
                 break;
                 
             case 4:
