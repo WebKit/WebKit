@@ -1,0 +1,11 @@
+This test makes sure that IDBRequest.readyState returns expected values.
+After calling indexedDB.open(), create request readyState is: pending
+Initial upgrade needed: Old version - 0 New version - 1
+Create request readyState is: done
+After calling openCursor, request readyState is: pending
+After successful opening of the cursor, request readyState is: done
+After calling continue(), request readyState is: pending
+After continue() completed, request readyState is: done
+Initial upgrade versionchange transaction complete
+Done
+

@@ -150,8 +150,17 @@ RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
 
 const String& IDBRequest::readyState() const
 {
-    static WTF::NeverDestroyed<String> readyState;
-    return readyState;
+    static WTF::NeverDestroyed<String> pendingString("pending");
+    static WTF::NeverDestroyed<String> doneString("done");
+
+    switch (m_readyState) {
+    case IDBRequestReadyState::Pending:
+        return pendingString;
+    case IDBRequestReadyState::Done:
+        return doneString;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 uint64_t IDBRequest::sourceObjectStoreIdentifier() const
