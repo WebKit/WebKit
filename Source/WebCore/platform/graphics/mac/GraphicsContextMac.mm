@@ -305,9 +305,9 @@ CGColorSpaceRef linearRGBColorSpaceRef()
     if (iccProfileData)
         linearSRGBSpace = CGColorSpaceCreateWithICCProfile((CFDataRef)iccProfileData.get());
 
-    // If we fail to load the linearized sRGB ICC profile, fall back to DeviceRGB.
+    // If we fail to load the linearized sRGB ICC profile, fall back to sRGB.
     if (!linearSRGBSpace)
-        return deviceRGBColorSpaceRef();
+        return sRGBColorSpaceRef();
 
     return linearSRGBSpace;
 }

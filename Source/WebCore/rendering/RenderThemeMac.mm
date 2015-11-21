@@ -1225,7 +1225,7 @@ void RenderThemeMac::paintMenuListButtonGradients(const RenderObject& o, const P
     FloatRoundedRect border = FloatRoundedRect(o.style().getRoundedBorderFor(r));
     int radius = border.radii().topLeft().width();
 
-    CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
+    CGColorSpaceRef cspace = sRGBColorSpaceRef();
 
     FloatRect topGradient(r.x(), r.y(), r.width(), r.height() / 2.0f);
     struct CGFunctionCallbacks topCallbacks = { 0, TopGradientInterpolate, NULL };
@@ -1500,7 +1500,7 @@ bool RenderThemeMac::paintSliderTrack(const RenderObject& o, const PaintInfo& pa
 
     LocalCurrentGraphicsContext localContext(paintInfo.context());
     CGContextRef context = localContext.cgContext();
-    CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
+    CGColorSpaceRef cspace = sRGBColorSpaceRef();
 
 #if ENABLE(DATALIST_ELEMENT)
     paintSliderTicks(o, paintInfo, r);

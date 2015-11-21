@@ -81,16 +81,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static RetainPtr<CGColorRef> cgColorFromColor(Color color)
+static CGColorRef cgColorFromColor(const Color& color)
 {
     if (!color.isValid())
         return nil;
 
-    CGFloat components[4];
-    color.getRGBA(components[0], components[1], components[2], components[3]);
-
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    return adoptCF(CGColorCreate(colorSpace.get(), components));
+    return cachedCGColor(color);
 }
 
 static NSString *toCAFilterType(PlatformCALayer::FilterType type)
@@ -149,10 +145,10 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
         layer.bounds = properties.bounds;
     
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
-        layer.backgroundColor = cgColorFromColor(properties.backgroundColor).get();
+        layer.backgroundColor = cgColorFromColor(properties.backgroundColor);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged)
-        layer.borderColor = cgColorFromColor(properties.borderColor).get();
+        layer.borderColor = cgColorFromColor(properties.borderColor);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
         layer.borderWidth = properties.borderWidth;

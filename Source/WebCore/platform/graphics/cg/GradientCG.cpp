@@ -62,7 +62,7 @@ CGGradientRef Gradient::platformGradient()
         locations.uncheckedAppend(m_stops[i].stop);
     }
     
-    m_gradient = CGGradientCreateWithColorComponents(deviceRGBColorSpaceRef(), colorComponents.data(), locations.data(), m_stops.size());
+    m_gradient = CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), m_stops.size());
 
     return m_gradient;
 }

@@ -1,3 +1,25 @@
+2015-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        More deviceRGB color cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=151523
+        <rdar://problem/23638597>
+
+        Reviewed by Tim Horton.
+
+        Replace calls to deviceRGBColorSpaceRef() with sRGBColorSpaceRef(), and use
+        sRGBColorSpaceRef() in a few places that were manually creating the colorspace.
+
+        Also use cachedCGColor() in a more places that were manually constructing CGColorRefs
+        from Colors.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::createCGImage):
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::cgColorFromColor):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator):
+
 2015-11-20  Geoffrey Garen  <ggaren@apple.com>
 
         A window with a hung tab waits 5s before becoming active

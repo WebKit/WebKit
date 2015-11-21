@@ -347,7 +347,7 @@ RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameCGImage()
     size_t height = CVPixelBufferGetHeight(pixelBuffer);
 
     RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(NULL, baseAddress, bytesPerRow * height, NULL));
-    m_lastImage = adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst, provider.get(), NULL, true, kCGRenderingIntentDefault));
+    m_lastImage = adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst, provider.get(), NULL, true, kCGRenderingIntentDefault));
 
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 
