@@ -1,5 +1,28 @@
 2015-11-20  Andreas Kling  <akling@apple.com>
 
+        REGRESSION(r192536): Null pointer dereference in JSPropertyNameEnumerator::visitChildren().
+        <https://webkit.org/b/151495>
+
+        Reviewed by Mark Lam.
+
+        The copied space allocation in JSPropertyNameEnumerator::finishCreation()
+        may end up triggering a GC, and so JSPropertyNameEnumerator::visitChildren()
+        would get called while m_propertyNames was still null.
+
+        This patch fixes that by having visitChildren() check for pointer nullity
+        instead of the number of names, since that is non-zero even before the
+        allocation is made.
+
+        Added a test that induces GC during JSPropertyNameEnumerator construction
+        to cover this bug.
+
+        Test: property-name-enumerator-gc-151495.js
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+
+2015-11-20  Andreas Kling  <akling@apple.com>
+
         GC timers should carry on gracefully when Heap claims it grew from GC.
         <https://webkit.org/b/151521>
 

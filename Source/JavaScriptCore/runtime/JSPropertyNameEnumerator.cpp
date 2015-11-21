@@ -89,12 +89,12 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
     visitor.append(&thisObject->m_prototypeChain);
 
-    if (thisObject->cachedPropertyNameCount()) {
+    if (auto* propertyNames = thisObject->m_propertyNames.getWithoutBarrier()) {
         for (unsigned i = 0; i < thisObject->cachedPropertyNameCount(); ++i)
-            visitor.append(&thisObject->m_propertyNames.getWithoutBarrier()[i]);
+            visitor.append(&propertyNames[i]);
         visitor.copyLater(
             thisObject, JSPropertyNameEnumeratorCopyToken,
-            thisObject->m_propertyNames.getWithoutBarrier(), thisObject->propertyNameCacheSize());
+            propertyNames, thisObject->propertyNameCacheSize());
     }
 }
 
