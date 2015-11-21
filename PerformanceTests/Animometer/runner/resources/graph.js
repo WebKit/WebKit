@@ -30,12 +30,10 @@ function graph(selector, margins, axes, samples, samplingTimeOffset)
             .orient("right");
 
     var lineLeft = d3.svg.line()
-            .interpolate("basis")
             .x(function(d) { return x(d.timeOffset); })
             .y(function(d) { return yLeft(d.values[0]); });
 
     var lineRight = d3.svg.line()
-            .interpolate("basis")
             .x(function(d) { return x(d.timeOffset); })
             .y(function(d) { return yRight(d.values[1]); });
 

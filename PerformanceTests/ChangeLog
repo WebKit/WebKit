@@ -1,3 +1,19 @@
+2015-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Animometer: graphs should not do interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=151526
+
+        Reviewed by Simon Fraser.
+        
+        Having the graphs do interpolation is misleading, because you can't see the actual data.
+        
+        Also remove "shape-rendering: crispEdges;" so the lines get antialiased.
+
+        * Animometer/runner/resources/animometer.css:
+        (section#test-graph > data > svg): Deleted.
+        * Animometer/runner/resources/graph.js:
+        (graph): Deleted.
+
 2015-11-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Calculate the graphics benchmark test gain adaptively

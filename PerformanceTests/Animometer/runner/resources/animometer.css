@@ -419,7 +419,6 @@ section#test-graph > data {
 
 section#test-graph > data > svg {
     fill: none;
-    shape-rendering: crispEdges;  
 }
 
 .axis path,
