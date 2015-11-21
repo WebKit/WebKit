@@ -68,7 +68,7 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
 {
     ASSERT(hasTagName(SVGNames::svgTag));
     registerAnimatedPropertiesForSVGSVGElement();
-    document.registerForPageCacheSuspensionCallbacks(this);
+    document.registerForDocumentSuspensionCallbacks(this);
 }
 
 Ref<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document& document)
@@ -85,15 +85,15 @@ SVGSVGElement::~SVGSVGElement()
 {
     if (m_viewSpec)
         m_viewSpec->resetContextElement();
-    document().unregisterForPageCacheSuspensionCallbacks(this);
+    document().unregisterForDocumentSuspensionCallbacks(this);
     document().accessSVGExtensions().removeTimeContainer(this);
 }
 
 void SVGSVGElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (oldDocument)
-        oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
-    document().registerForPageCacheSuspensionCallbacks(this);
+        oldDocument->unregisterForDocumentSuspensionCallbacks(this);
+    document().registerForDocumentSuspensionCallbacks(this);
     SVGGraphicsElement::didMoveToNewDocument(oldDocument);
 }
 
@@ -658,12 +658,12 @@ void SVGSVGElement::inheritViewAttributes(const SVGViewElement& viewElement)
         view.setZoomAndPanBaseValue(zoomAndPan());
 }
 
-void SVGSVGElement::documentWillSuspendForPageCache()
+void SVGSVGElement::prepareForDocumentSuspension()
 {
     pauseAnimations();
 }
 
-void SVGSVGElement::documentDidResumeFromPageCache()
+void SVGSVGElement::resumeFromDocumentSuspension()
 {
     unpauseAnimations();
 }

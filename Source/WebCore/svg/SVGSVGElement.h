@@ -139,8 +139,8 @@ private:
     virtual void removedFrom(ContainerNode&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;
     virtual bool selfHasRelativeLengths() const override;
-    virtual void documentWillSuspendForPageCache() override;
-    virtual void documentDidResumeFromPageCache() override;
+    virtual void prepareForDocumentSuspension() override;
+    virtual void resumeFromDocumentSuspension() override;
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
 
     Frame* frameForCurrentScale() const;

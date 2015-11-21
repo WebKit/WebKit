@@ -120,8 +120,8 @@ private:
     virtual void didAttachRenderers() override final;
     virtual void willDetachRenderers() override final;
 
-    virtual void documentWillSuspendForPageCache() override final;
-    virtual void documentDidResumeFromPageCache() override final;
+    virtual void prepareForDocumentSuspension() override final;
+    virtual void resumeFromDocumentSuspension() override final;
 
     virtual void defaultEventHandler(Event*) override final;
     virtual void dispatchPendingMouseClick() override final;

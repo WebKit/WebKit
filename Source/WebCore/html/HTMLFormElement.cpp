@@ -84,7 +84,7 @@ HTMLFormElement::~HTMLFormElement()
 {
     document().formController().willDeleteForm(this);
     if (!shouldAutocomplete())
-        document().unregisterForPageCacheSuspensionCallbacks(this);
+        document().unregisterForDocumentSuspensionCallbacks(this);
 
     for (auto& associatedElement : m_associatedElements)
         associatedElement->formWillBeDestroyed();
@@ -492,9 +492,9 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicStri
         m_attributes.setAcceptCharset(value);
     else if (name == autocompleteAttr) {
         if (!shouldAutocomplete())
-            document().registerForPageCacheSuspensionCallbacks(this);
+            document().registerForDocumentSuspensionCallbacks(this);
         else
-            document().unregisterForPageCacheSuspensionCallbacks(this);
+            document().unregisterForDocumentSuspensionCallbacks(this);
     }
     else
         HTMLElement::parseAttribute(name, value);
@@ -810,7 +810,7 @@ Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomicString& name)
     return namedItems;
 }
 
-void HTMLFormElement::documentDidResumeFromPageCache()
+void HTMLFormElement::resumeFromDocumentSuspension()
 {
     ASSERT(!shouldAutocomplete());
 
@@ -824,8 +824,8 @@ void HTMLFormElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (!shouldAutocomplete()) {
         if (oldDocument)
-            oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
-        document().registerForPageCacheSuspensionCallbacks(this);
+            oldDocument->unregisterForDocumentSuspensionCallbacks(this);
+        document().registerForDocumentSuspensionCallbacks(this);
     }
 
     HTMLElement::didMoveToNewDocument(oldDocument);

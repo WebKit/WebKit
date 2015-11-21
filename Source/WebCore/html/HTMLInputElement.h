@@ -376,9 +376,9 @@ private:
     virtual bool isInRange() const override final;
     virtual bool isOutOfRange() const override final;
 
-    virtual void documentDidResumeFromPageCache() override final;
+    virtual void resumeFromDocumentSuspension() override final;
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual void documentWillSuspendForPageCache() override final;
+    virtual void prepareForDocumentSuspension() override final;
 #endif
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override final;

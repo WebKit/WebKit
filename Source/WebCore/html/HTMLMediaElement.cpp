@@ -545,7 +545,7 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    document.registerForPageCacheSuspensionCallbacks(this);
+    document.registerForDocumentSuspensionCallbacks(this);
 #endif
 
     document.registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks(*this);
@@ -579,7 +579,7 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    document.unregisterForPageCacheSuspensionCallbacks(this);
+    document.unregisterForDocumentSuspensionCallbacks(this);
 #endif
 
     document.unregisterForAllowsMediaDocumentInlinePlaybackChangedCallbacks(*this);
@@ -605,12 +605,12 @@ void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void HTMLMediaElement::documentWillSuspendForPageCache()
+void HTMLMediaElement::prepareForDocumentSuspension()
 {
     m_mediaSession->unregisterWithDocument(document());
 }
 
-void HTMLMediaElement::documentDidResumeFromPageCache()
+void HTMLMediaElement::resumeFromDocumentSuspension()
 {
     m_mediaSession->registerWithDocument(document());
 }

@@ -123,7 +123,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
 HTMLPlugInImageElement::~HTMLPlugInImageElement()
 {
     if (m_needsDocumentActivationCallbacks)
-        document().unregisterForPageCacheSuspensionCallbacks(this);
+        document().unregisterForDocumentSuspensionCallbacks(this);
 }
 
 void HTMLPlugInImageElement::setDisplayState(DisplayState state)
@@ -200,7 +200,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(Ref<Rende
     // inactive or reactivates so it can clear the renderer before going into the page cache.
     if (!m_needsDocumentActivationCallbacks) {
         m_needsDocumentActivationCallbacks = true;
-        document().registerForPageCacheSuspensionCallbacks(this);
+        document().registerForDocumentSuspensionCallbacks(this);
     }
 
     if (displayState() == DisplayingSnapshot) {
@@ -301,8 +301,8 @@ void HTMLPlugInImageElement::finishParsingChildren()
 void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (m_needsDocumentActivationCallbacks) {
-        oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
-        document().registerForPageCacheSuspensionCallbacks(this);
+        oldDocument->unregisterForDocumentSuspensionCallbacks(this);
+        document().registerForDocumentSuspensionCallbacks(this);
     }
 
     if (m_imageLoader)
@@ -311,19 +311,19 @@ void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
     HTMLPlugInElement::didMoveToNewDocument(oldDocument);
 }
 
-void HTMLPlugInImageElement::documentWillSuspendForPageCache()
+void HTMLPlugInImageElement::prepareForDocumentSuspension()
 {
     if (renderer())
         Style::detachRenderTree(*this);
 
-    HTMLPlugInElement::documentWillSuspendForPageCache();
+    HTMLPlugInElement::prepareForDocumentSuspension();
 }
 
-void HTMLPlugInImageElement::documentDidResumeFromPageCache()
+void HTMLPlugInImageElement::resumeFromDocumentSuspension()
 {
     setNeedsStyleRecalc(ReconstructRenderTree);
 
-    HTMLPlugInElement::documentDidResumeFromPageCache();
+    HTMLPlugInElement::resumeFromDocumentSuspension();
 }
 
 void HTMLPlugInImageElement::startLoadingImage()

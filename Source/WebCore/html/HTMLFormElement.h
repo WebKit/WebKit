@@ -150,7 +150,7 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual bool isURLAttribute(const Attribute&) const override;
 
-    virtual void documentDidResumeFromPageCache() override;
+    virtual void resumeFromDocumentSuspension() override;
 
     virtual void didMoveToNewDocument(Document* oldDocument) override;
 

@@ -4504,12 +4504,12 @@ void Document::documentWillBecomeInactive()
         renderView()->setIsInWindow(false);
 }
 
-void Document::documentWillSuspendForPageCache()
+void Document::suspend()
 {
     documentWillBecomeInactive();
 
     for (auto* element : m_documentSuspensionCallbackElements)
-        element->documentWillSuspendForPageCache();
+        element->prepareForDocumentSuspension();
 
 #ifndef NDEBUG
     // Clear the update flag to be able to check if the viewport arguments update
@@ -4523,12 +4523,12 @@ void Document::documentWillSuspendForPageCache()
     }
 }
 
-void Document::documentDidResumeFromPageCache() 
+void Document::resume()
 {
     Vector<Element*> elements;
     copyToVector(m_documentSuspensionCallbackElements, elements);
     for (auto* element : elements)
-        element->documentDidResumeFromPageCache();
+        element->resumeFromDocumentSuspension();
 
     if (renderView())
         renderView()->setIsInWindow(true);
@@ -4540,12 +4540,12 @@ void Document::documentDidResumeFromPageCache()
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
 }
 
-void Document::registerForPageCacheSuspensionCallbacks(Element* e)
+void Document::registerForDocumentSuspensionCallbacks(Element* e)
 {
     m_documentSuspensionCallbackElements.add(e);
 }
 
-void Document::unregisterForPageCacheSuspensionCallbacks(Element* e)
+void Document::unregisterForDocumentSuspensionCallbacks(Element* e)
 {
     m_documentSuspensionCallbackElements.remove(e);
 }

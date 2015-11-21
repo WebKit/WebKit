@@ -1002,14 +1002,14 @@ public:
     bool inPageCache() const { return m_inPageCache; }
     void setInPageCache(bool flag);
 
-    // Elements can register themselves for the "documentWillSuspendForPageCache()" and  
-    // "documentDidResumeFromPageCache()" callbacks
-    void registerForPageCacheSuspensionCallbacks(Element*);
-    void unregisterForPageCacheSuspensionCallbacks(Element*);
+    // Elements can register themselves for the "suspend()" and
+    // "resume()" callbacks
+    void registerForDocumentSuspensionCallbacks(Element*);
+    void unregisterForDocumentSuspensionCallbacks(Element*);
 
     void documentWillBecomeInactive();
-    void documentWillSuspendForPageCache();
-    void documentDidResumeFromPageCache();
+    void suspend();
+    void resume();
 
     void registerForMediaVolumeCallbacks(Element*);
     void unregisterForMediaVolumeCallbacks(Element*);
