@@ -1,5 +1,23 @@
 2015-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard's should not include results more than 366 days old in JSON
+        https://bugs.webkit.org/show_bug.cgi?id=151529
+
+        Reviewed by Timothy Hatcher.
+
+        Don't return results more than 366 days old in /api/runs/ JSON API.
+        This is a ~5% runtime improvement and reduces the JSON file size by 20-50% in the internal perf dashboard.
+
+        * public/api/runs.php:
+        (main): Added the support for "?noResults" to avoid echoing results. This is useful for debugging.
+        Also instantiate RunsGenerator before issuing the query to find all configurations so that the runtime cost
+        of doing so will be included in elapsedTime.
+        (RunsGenerator::fetch_runs): Skip a row when its build and commit times are more than 366 days old.
+        (RunsGenerator::format_run): Takes build_time and revisions as arguments since fetch_runs uses them now.
+        (RunsGenerator::parse_revisions_array): Compute the max of commit times.
+
+2015-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove chartPointRadius from interactive chart component
         https://bugs.webkit.org/show_bug.cgi?id=151480
 
