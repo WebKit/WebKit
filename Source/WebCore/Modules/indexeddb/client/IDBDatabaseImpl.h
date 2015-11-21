@@ -72,7 +72,7 @@ public:
     const IDBDatabaseInfo& info() const { return m_info; }
     uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
 
-    Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&);
+    Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&, IDBOpenDBRequest&);
     void didStartTransaction(IDBTransaction&);
 
     void willCommitTransaction(IDBTransaction&);

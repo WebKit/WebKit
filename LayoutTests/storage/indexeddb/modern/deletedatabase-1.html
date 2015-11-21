@@ -22,8 +22,7 @@ function log(message)
 var request = window.indexedDB.open("DeleteDatabase1TestDatabase");
 request.onsuccess = function()
 {
-    log("Unexpected success");
-	done();
+    log("open db success");
 }
 request.onerror = function(e)
 {

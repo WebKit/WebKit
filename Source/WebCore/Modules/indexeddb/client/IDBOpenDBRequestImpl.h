@@ -51,6 +51,7 @@ public:
     uint64_t version() const { return m_version; }
 
     void requestCompleted(const IDBResultData&);
+    void fireSuccessAfterVersionChangeCommit();
 
 private:
     IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);

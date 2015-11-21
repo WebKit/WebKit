@@ -18,8 +18,7 @@ alert(request + " (firstPhase)");
 
 request.onsuccess = function()
 {
-    alert("Unexpected success (firstPhase)");
-	done();
+    alert("First version change successful");
 }
 request.onerror = function(e)
 {
@@ -78,8 +77,7 @@ function thirdPhase()
     alert(request + " (thirdPhase)");
     request.onsuccess = function()
     {
-        alert("Unexpected success (thirdPhase)");
-        done();
+        alert("Version change to version 2 successful");
     }
     request.onerror = function(e)
     {

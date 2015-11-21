@@ -25,8 +25,7 @@ var stopSpinning = false;
 var request = window.indexedDB.open("DeleteDatabase2TestDatabase");
 request.onsuccess = function()
 {
-    log("Unexpected success");
-	done();
+    log("open db success");
 }
 request.onerror = function(e)
 {

@@ -2,6 +2,7 @@ This tests that if deleteDatabase is called while there is already an open conne
 Initial upgrade old version - 0 new version - 1
 Version change complete
 Requesting deleteDatabase
+open db success
 First connection received versionchange event: oldVersion 1, newVersion null
 Delete database success: oldVersion 1, newVersion null
 Recreating database to make sure it's new and empty

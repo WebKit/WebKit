@@ -239,14 +239,14 @@ bool IDBDatabase::canSuspendForPageCache() const
     return true;
 }
 
-Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransactionInfo& info)
+Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransactionInfo& info, IDBOpenDBRequest& request)
 {
     LOG(IndexedDB, "IDBDatabase::startVersionChangeTransaction");
 
     ASSERT(!m_versionChangeTransaction);
     ASSERT(info.mode() == IndexedDB::TransactionMode::VersionChange);
 
-    Ref<IDBTransaction> transaction = IDBTransaction::create(*this, info);
+    Ref<IDBTransaction> transaction = IDBTransaction::create(*this, info, request);
     m_versionChangeTransaction = &transaction.get();
 
     m_activeTransactions.set(transaction->info().identifier(), &transaction.get());

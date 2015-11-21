@@ -1,0 +1,10 @@
+This test verifies that:
+- Opening a new database results in the onupgradeneeded handler being called on the IDBOpenDBRequest.
+- The versionchange transaction representing the upgrade commits successfully.
+- After that transaction commits, the onsuccess handler on the original IDBOpenDBRequest is called.
+upgradeneeded: old version - 0 new version - 1
+[object IDBTransaction]
+Version change complete
+Got the onsuccess handler as expected.
+Done
+

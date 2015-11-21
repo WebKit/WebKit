@@ -54,11 +54,13 @@ namespace IDBClient {
 class IDBCursor;
 class IDBDatabase;
 class IDBIndex;
+class IDBOpenDBRequest;
 class TransactionOperation;
 
 class IDBTransaction : public WebCore::IDBTransaction {
 public:
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
+    static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest&);
 
     virtual ~IDBTransaction() override final;
 
@@ -122,7 +124,7 @@ public:
     void operationDidComplete(TransactionOperation&);
 
 private:
-    IDBTransaction(IDBDatabase&, const IDBTransactionInfo&);
+    IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);
 
     bool isFinishedOrFinishing() const;
 
@@ -193,6 +195,8 @@ private:
 
     Timer m_operationTimer;
     std::unique_ptr<Timer> m_activationTimer;
+
+    RefPtr<IDBOpenDBRequest> m_openDBRequest;
 
     Deque<RefPtr<TransactionOperation>> m_transactionOperationQueue;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_transactionOperationMap;

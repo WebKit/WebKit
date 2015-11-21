@@ -37,6 +37,7 @@
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBObjectStore.h"
+#include "IDBOpenDBRequestImpl.h"
 #include "IDBRequestImpl.h"
 #include "IDBResultData.h"
 #include "JSDOMWindowBase.h"
@@ -49,19 +50,26 @@ namespace IDBClient {
 
 Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTransactionInfo& info)
 {
-    return adoptRef(*new IDBTransaction(database, info));
+    return adoptRef(*new IDBTransaction(database, info, nullptr));
 }
 
-IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& info)
+Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTransactionInfo& info, IDBOpenDBRequest& request)
+{
+    return adoptRef(*new IDBTransaction(database, info, &request));
+}
+
+IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& info, IDBOpenDBRequest* request)
     : WebCore::IDBTransaction(database.scriptExecutionContext())
     , m_database(database)
     , m_info(info)
     , m_operationTimer(*this, &IDBTransaction::operationTimerFired)
+    , m_openDBRequest(request)
 
 {
     relaxAdoptionRequirement();
 
     if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
+        ASSERT(m_openDBRequest);
         m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_database->info());
         m_startedOnServer = true;
     } else {
@@ -381,7 +389,14 @@ bool IDBTransaction::dispatchEvent(Event& event)
     targets.append(this);
     targets.append(db());
 
-    return IDBEventDispatcher::dispatch(event, targets);
+    bool result = IDBEventDispatcher::dispatch(event, targets);
+
+    if (isVersionChange() && event.type() == eventNames().completeEvent) {
+        ASSERT(m_openDBRequest);
+        m_openDBRequest->fireSuccessAfterVersionChangeCommit();
+    }
+
+    return result;
 }
 
 Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& info)

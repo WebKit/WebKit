@@ -67,6 +67,17 @@ void IDBOpenDBRequest::onError(const IDBResultData& data)
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 
+void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()");
+
+    ASSERT(m_result);
+    ASSERT(m_result->type() == IDBAny::Type::IDBDatabase);
+    m_transaction->addRequest(*this);
+
+    enqueueEvent(Event::create(eventNames().successEvent, false, false));
+}
+
 void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::onSuccess()");
@@ -84,7 +95,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
 {
     Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connection(), resultData);
-    Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo());
+    Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
 
     ASSERT(transaction->info().mode() == IndexedDB::TransactionMode::VersionChange);
 

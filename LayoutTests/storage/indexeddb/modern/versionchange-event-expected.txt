@@ -1,5 +1,6 @@
 ALERT: upgradeneeded (firstPhase): old version - 0 new version - 1
 ALERT: Version change complete (firstPhase). Database version is now - 1
+ALERT: First version change successful
 ALERT: Open success (secondPhase)
 ALERT: thirdPhase - Requested database connection with version 2
 ALERT: Expected upgrade needed (thirdPhase)
