@@ -168,7 +168,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this._currentContentViewDidChange();
 
         if (!this._updating && WebInspector.timelineManager.activeRecording === this._recording && WebInspector.timelineManager.isCapturing())
-            this._startUpdatingCurrentTime();
+            this._startUpdatingCurrentTime(this._currentTime);
     }
 
     hidden()
@@ -408,7 +408,8 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         // Only stop updating if the current time is greater than the end time, or the end time is NaN.
         // The recording end time will be NaN if no records were added.
         if (!this._updating && (currentTime >= endTime || isNaN(endTime))) {
-            this._lastUpdateTimestamp = NaN;
+            if (this.visible)
+                this._lastUpdateTimestamp = NaN;
             return;
         }
 
