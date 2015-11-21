@@ -313,9 +313,7 @@ void ComplexTextController::collectComplexTextRuns()
     const UChar* end = cp + m_end;
 
     const Font* font;
-    bool isMissingGlyph;
     const Font* nextFont;
-    bool nextIsMissingGlyph;
 
     unsigned markCount;
     const UChar* sequenceStart = curr;
@@ -335,14 +333,10 @@ void ComplexTextController::collectComplexTextRuns()
             m_smallCapsBuffer[sequenceStart - cp + i + 1] = sequenceStart[i + 1];
     }
 
-    nextIsMissingGlyph = false;
     nextFont = m_font.fontForCombiningCharacterSequence(sequenceStart, curr - sequenceStart, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
-    if (!nextFont)
-        nextIsMissingGlyph = true;
 
     while (curr < end) {
         font = nextFont;
-        isMissingGlyph = nextIsMissingGlyph;
         isSmallCaps = nextIsSmallCaps;
         int index = curr - cp;
 
@@ -360,19 +354,15 @@ void ComplexTextController::collectComplexTextRuns()
             }
         }
 
-        nextIsMissingGlyph = false;
         if (baseCharacter == zeroWidthJoiner)
             nextFont = font;
-        else {
+        else
             nextFont = m_font.fontForCombiningCharacterSequence(cp + index, curr - cp - index, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
-            if (!nextFont)
-                nextIsMissingGlyph = true;
-        }
 
-        if (nextFont != font || nextIsMissingGlyph != isMissingGlyph) {
+        if (nextFont != font) {
             int itemStart = static_cast<int>(indexOfFontTransition);
             int itemLength = index - indexOfFontTransition;
-            collectComplexTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, !isMissingGlyph ? font : 0);
+            collectComplexTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, font);
             indexOfFontTransition = index;
         }
     }
@@ -380,7 +370,7 @@ void ComplexTextController::collectComplexTextRuns()
     int itemLength = m_end - indexOfFontTransition;
     if (itemLength) {
         int itemStart = indexOfFontTransition;
-        collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, !nextIsMissingGlyph ? nextFont : 0);
+        collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, nextFont);
     }
 
     if (!m_run.ltr())

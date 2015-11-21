@@ -1,1 +1,16 @@
+2015-11-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Tiny cleanup in ComplexTextController::collectComplexTextRuns()
+        https://bugs.webkit.org/show_bug.cgi?id=151534
+
+        Reviewed by Zalan Bujtas.
+
+        The isMissingGlyph boolean is completely unnecessary. Its entire
+        responsiblity is duplicated by the "font" pointer.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+
 == Rolled over to ChangeLog-2015-11-21 ==
