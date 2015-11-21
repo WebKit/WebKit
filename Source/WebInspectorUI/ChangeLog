@@ -1,3 +1,16 @@
+2015-11-20  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove "Show only resources with breakpoints" filter button
+        https://bugs.webkit.org/show_bug.cgi?id=151517
+
+        Reviewed by Timothy Hatcher.
+
+        Removed filter button in preparation for https://bugs.webkit.org/show_bug.cgi?id=151119.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.showResourcesWithBreakpointsOnlyFilterFunction): Deleted.
+        (WebInspector.DebuggerSidebarPanel): Deleted.
+
 2015-11-20  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Add support for Gradients in the Visual sidebar background editor

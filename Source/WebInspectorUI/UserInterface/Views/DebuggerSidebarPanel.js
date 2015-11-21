@@ -93,21 +93,6 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._allUncaughtExceptionsBreakpointTreeElement = new WebInspector.BreakpointTreeElement(WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint, WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName, WebInspector.UIString("All Uncaught Exceptions"));
 
         this.filterBar.placeholder = WebInspector.UIString("Filter Breakpoint List");
-        var showResourcesWithBreakpointsOnlyFilterFunction = function(treeElement)
-        {
-            // Keep breakpoints.
-            if (treeElement instanceof WebInspector.BreakpointTreeElement)
-                return true;
-
-            // Keep resources with breakpoints.
-            if (treeElement.hasChildren) {
-                for (var child of treeElement.children) {
-                    if (child instanceof WebInspector.BreakpointTreeElement)
-                        return true;
-                }
-            }
-            return false;
-        };
 
         var showResourcesWithIssuesOnlyFilterFunction = function(treeElement)
         {
@@ -125,7 +110,6 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             return false;
         };
 
-        this.filterBar.addFilterBarButton("debugger-show-resources-with-breakpoints-only", showResourcesWithBreakpointsOnlyFilterFunction, true, WebInspector.UIString("Show only resources with breakpoints."), WebInspector.UIString("Show resources with and without breakpoints."), "Images/Breakpoints.svg", 15, 15);
         this.filterBar.addFilterBarButton("debugger-show-resources-with-issues-only", showResourcesWithIssuesOnlyFilterFunction, true, WebInspector.UIString("Show only resources with issues."), WebInspector.UIString("Show resources with and without issues."), "Images/Errors.svg", 15, 15);
 
         this._breakpointsContentTreeOutline = this.contentTreeOutline;
