@@ -1,5 +1,11 @@
 2015-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix for old version of PHP.
+
+        * public/api/runs.php:
+
+2015-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard's should not include results more than 366 days old in JSON
         https://bugs.webkit.org/show_bug.cgi?id=151529
 

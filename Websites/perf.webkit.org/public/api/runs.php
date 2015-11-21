@@ -41,9 +41,10 @@ function main($path) {
     foreach ($config_rows as $config)
         $generator->fetch_runs($config['config_type'], $config['config_id'], $config['config_runs_last_modified']);
 
-    $content = success_json($generator->results());
+    $results = $generator->results();
+    $content = success_json($results);
     if (!$should_echo_results) {
-        echo $generator->results()['elapsedTime'];
+        echo $results['elapsedTime'];
         return;
     }
 
