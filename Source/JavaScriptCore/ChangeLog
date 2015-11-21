@@ -1,3 +1,50 @@
+2015-11-20  Andreas Kling  <akling@apple.com>
+
+        GC timers should carry on gracefully when Heap claims it grew from GC.
+        <https://webkit.org/b/151521>
+
+        Reviewed by Mark Lam.
+
+        TL;DR the Heap "extra memory" reporting APIs are hard to use 100% correctly
+        and GC scheduling shouldn't break if someone makes a mistake with it.
+
+        The JSC::Heap allows you to report an extra memory cost for any GC object.
+        This is reported first when allocating the memory, and then each time the
+        object is visited during the marking phase.
+
+        When reporting an allocation, it's added to the Heap's "bytes allocated in
+        this cycle" counter. This contributes to the computed heap size at the start
+        of a collection.
+
+        When visiting a GC object that reports extra memory, it's added to the Heap's
+        "extra memory visited in this collection" counter. This contributes to the
+        computed heap size at the end of a collection.
+
+        As you can see, this means that visiting more memory than we said we allocated
+        can lead to the Heap thinking it's bigger after a collection than it was before.
+
+        Clients of this API do some sketchy things to compute costs, for instance
+        StringImpl cost is determined by dividing the number of bytes used for the
+        characters, and dividing it by the StringImpl's ref count. Since a JSString
+        could be backed by any StringImpl, any code that modifies a StringImpl's
+        ref count during collection will change the extra memory reported by all
+        JSString objects that wrap that StringImpl.
+
+        So anyways...
+
+        The object death rate, which is the basis for when to schedule the next
+        collection is computed like so:
+
+            deathRate = (sizeBeforeGC - sizeAfterGC) / sizeBeforeGC
+
+        This patch adds a safety mechanism that returns a zero death rate when the Heap
+        claims it grew from collection.
+
+        * heap/EdenGCActivityCallback.cpp:
+        (JSC::EdenGCActivityCallback::deathRate):
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::deathRate):
+
 2015-11-20  Mark Lam  <mark.lam@apple.com>
 
         New JSC tests introduced in r192664 fail on ARM.
