@@ -175,7 +175,7 @@ static GtkStyleContext* getStyleContext(GType widgetType)
         gtk_widget_path_iter_add_class(path, 0, "arrow");
     else if (widgetType == GTK_TYPE_BUTTON) {
         gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_BUTTON);
-        gtk_widget_path_iter_add_class(path, 1, "text-button");
+        gtk_widget_path_iter_add_class(path, 0, "text-button");
     } else if (widgetType == GTK_TYPE_SCALE)
         gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SCALE);
     else if (widgetType == GTK_TYPE_SEPARATOR)
