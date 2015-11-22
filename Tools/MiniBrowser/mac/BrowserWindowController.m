@@ -174,4 +174,12 @@
     return nil;
 }
 
++ (NSString *)contentFilteringBlockedString
+{
+    static NSString *blockedString;
+    if (!blockedString)
+        blockedString = [[NSString alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"blocked-page" withExtension:@"html"] encoding:NSUTF8StringEncoding error:NULL];
+    return blockedString;
+}
+
 @end

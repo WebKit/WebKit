@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MiniBrowserWebProcessPlugIn.h"
+#import "MockContentFilterSettings.h"
+#import <WebCore/PlatformExportMacros.h>
 
-#if WK_API_ENABLED
-
-#import "MockContentFilterEnabler.h"
-
-@implementation MiniBrowserWebProcessPlugIn {
-    WebMockContentFilterEnabler *_contentFilterEnabler;
-    WKWebProcessPlugInController *_plugInController;
+WEBCORE_EXPORT @interface WebMockContentFilterEnabler : NSObject <NSCopying, NSSecureCoding> {
+    BOOL _enabled;
+    WebMockContentFilterDecision _decision;
+    WebMockContentFilterDecisionPoint _decisionPoint;
+    NSString *_blockedString;
 }
 
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject
-{
-    _plugInController = [plugInController retain];
-    [_plugInController.parameters addObserver:self forKeyPath:NSStringFromClass([WebMockContentFilterEnabler class]) options:NSKeyValueObservingOptionInitial context:NULL];
-}
-
-- (void)dealloc
-{
-    [_plugInController.parameters removeObserver:self forKeyPath:NSStringFromClass([WebMockContentFilterEnabler class])];
-    [_plugInController release];
-    [_contentFilterEnabler release];
-    [super dealloc];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    WebMockContentFilterEnabler *enabler = [[object valueForKeyPath:keyPath] retain];
-    [_contentFilterEnabler release];
-    _contentFilterEnabler = enabler;
-    [_contentFilterEnabler enable];
-}
-
+- (instancetype)initWithDecision:(WebMockContentFilterDecision)decision decisionPoint:(WebMockContentFilterDecisionPoint)decisionPoint blockedString:(NSString *)blockedString;
+- (void)enable;
 @end
-
-#endif // WK_API_ENABLED

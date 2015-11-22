@@ -25,10 +25,12 @@
 
 #import "BrowserWindowController.h"
 
+@class WebMockContentFilterEnabler;
 @class WebView;
 
 @interface WK1BrowserWindowController : BrowserWindowController {
     WebView *_webView;
+    WebMockContentFilterEnabler *_contentFilterEnabler;
 }
 
 

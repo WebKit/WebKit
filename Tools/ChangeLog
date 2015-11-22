@@ -1,3 +1,63 @@
+2015-11-22  Andy Estes  <aestes@apple.com>
+
+        Teach MiniBrowser how to enable the mock content filter
+        https://bugs.webkit.org/show_bug.cgi?id=151540
+
+        Reviewed by Andreas Kling.
+
+        * MiniBrowser/Configurations/Base.xcconfig: Added WebCoreTestSupport and WTF to HEADER_SEARCH_PATHS.
+        * MiniBrowser/Configurations/MiniBrowser.xcconfig: Linked against libWebCoreTestSupport.
+        * MiniBrowser/Configurations/MiniBrowserBundle.xcconfig: Ditto.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj: Added blocked-page.html.
+        * MiniBrowser/MiniBrowserWebProcessPlugIn.m:
+        (-[MiniBrowserWebProcessPlugIn webProcessPlugIn:initializeWithObject:]): Observed the WebMockContentFilterEnabler key path.
+        (-[MiniBrowserWebProcessPlugIn dealloc]):
+        (-[MiniBrowserWebProcessPlugIn observeValueForKeyPath:ofObject:change:context:]): Stored the value in _contentFilterEnabler.
+        * MiniBrowser/blocked-page.html: Added.
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration): Created a _WKProcessPoolConfiguration with MiniBrowser.wkbundle as the injected bundle.
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (+[BrowserWindowController contentFilteringBlockedString]): Returned an NSString containing blocked-page.html.
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]): Added [self _contentFilteringMenuItem] to the Settings menu.
+        (-[SettingsController validateMenuItem:]): Validated the new menu items. Disabled Decision and Decision Point items if filtering is disabled.
+        (-[SettingsController _contentFilteringMenuItem]): Returned a new Content Filtering menu item with a submenu.
+        (-[SettingsController toggleContentFilteringEnabled:]): Toggled ContentFilteringEnabledKey.
+        (-[SettingsController contentFilteringEnabled]): Returned value of ContentFilteringEnabledKey.
+        (-[SettingsController setContentFilteringDecision:]): Set ContentFilterDecisionKey and called -[BrowserAppDelegate didChangeSettings].
+        (-[SettingsController contentFilteringDecision]): Returned the value of ContentFilterDecisionKey as a WebMockContentFilterDecision.
+        Defaulted to WebMockContentFilterDecisionAllow if the value is invalid.
+        (-[SettingsController setContentFilteringDecisionPoint:]): Set ContentFilterDecisionPointKey and called -[BrowserAppDelegate didChangeSettings].
+        (-[SettingsController contentFilteringDecisionPoint]): Returned the value of ContentFilterDecisionPointKey as a WebMockContentFilterDecisionPoint.
+        Defaulted to WebMockContentFilterDecisionPointAfterWillSendRequest if the value is invalid.
+        * MiniBrowser/mac/WK1BrowserWindowController.h:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController dealloc]):
+        (-[WK1BrowserWindowController didChangeSettings]): Created a WebMockContentFilterEnabler with the current settings and stored it in _contentFilterEnabler.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]): Created a WebMockContentFilterEnabler and set it as the object for the eponymous bundle parameter.
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig: Linked against libWebCoreTestSupport.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+        (configurationWithContentFilterSettings): Converted to use WebMockContentFilterEnabler, WebMockContentFilterDecision, and WebMockContentFilterDecisionPoint.
+        (TEST): Ditto.
+        (downloadTest): Ditto.
+        (+[MockContentFilterEnabler supportsSecureCoding]): Deleted.
+        (-[MockContentFilterEnabler copyWithZone:]): Deleted.
+        (-[MockContentFilterEnabler initWithCoder:]): Deleted.
+        (-[MockContentFilterEnabler initWithDecision:decisionPoint:]): Deleted.
+        (-[MockContentFilterEnabler encodeWithCoder:]): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFilteringPlugIn.mm:
+        (-[ContentFilteringPlugIn webProcessPlugIn:initializeWithObject:]): Converted to use WebMockContentFilterEnabler.
+        (-[ContentFilteringPlugIn dealloc]): Ditto.
+        (-[ContentFilteringPlugIn observeValueForKeyPath:ofObject:change:context:]): Ditto.
+        (+[MockContentFilterEnabler supportsSecureCoding]): Deleted.
+        (-[MockContentFilterEnabler copyWithZone:]): Deleted.
+        (-[MockContentFilterEnabler initWithCoder:]): Deleted.
+        (-[MockContentFilterEnabler dealloc]): Deleted.
+        (-[MockContentFilterEnabler encodeWithCoder:]): Deleted.
+
 2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Some unit tests fail when using the network process

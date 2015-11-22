@@ -57,7 +57,7 @@ private:
     };
 
     MockContentFilter() = default;
-    void maybeDetermineStatus(MockContentFilterSettings::DecisionPoint);
+    void maybeDetermineStatus(WebMockContentFilterDecisionPoint);
 
     Vector<char> m_replacementData;
     Status m_status { Status::NeedsMoreData };

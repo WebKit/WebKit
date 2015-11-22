@@ -1,3 +1,50 @@
+2015-11-22  Andy Estes  <aestes@apple.com>
+
+        Teach MiniBrowser how to enable the mock content filter
+        https://bugs.webkit.org/show_bug.cgi?id=151540
+
+        Reviewed by Andreas Kling.
+
+        Moved the implementation of MockContentFilterEnabler from TestWebKitAPI to here, renamed it to
+        WebMockContentFilterEnabler, and made it compatible with the legacy Objective-C runtime. Renamed Decision and
+        DecisionPoint to WebMockContentFilterDecision and WebMockContentFilterDecisionPoint, and changed them from enum
+        classes to CF_ENUMs so that they can be used by both C++ and Objective-C source files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp:
+        (WebCore::JSMockContentFilterSettings::decisionPoint):
+        (WebCore::JSMockContentFilterSettings::setDecisionPoint):
+        (WebCore::toDecision):
+        (WebCore::JSMockContentFilterSettings::decision):
+        (WebCore::JSMockContentFilterSettings::setDecision):
+        (WebCore::JSMockContentFilterSettings::unblockRequestDecision):
+        (WebCore::JSMockContentFilterSettings::setUnblockRequestDecision):
+        (WebCore::toJSValue): Deleted.
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::willSendRequest):
+        (WebCore::MockContentFilter::responseReceived):
+        (WebCore::MockContentFilter::addData):
+        (WebCore::MockContentFilter::finishedAddingData):
+        (WebCore::MockContentFilter::unblockHandler):
+        (WebCore::MockContentFilter::maybeDetermineStatus):
+        * testing/MockContentFilter.h:
+        * testing/MockContentFilterEnabler.h: Added.
+        * testing/MockContentFilterEnabler.mm: Added.
+        (-[WebMockContentFilterEnabler initWithDecision:decisionPoint:blockedString:]):
+        (-[WebMockContentFilterEnabler initWithCoder:]):
+        (-[WebMockContentFilterEnabler encodeWithCoder:]):
+        (-[WebMockContentFilterEnabler enable]):
+        (-[WebMockContentFilterEnabler dealloc]):
+        (+[WebMockContentFilterEnabler supportsSecureCoding]):
+        (-[WebMockContentFilterEnabler copyWithZone:]):
+        * testing/MockContentFilterSettings.h:
+        (WebCore::MockContentFilterSettings::decisionPoint):
+        (WebCore::MockContentFilterSettings::setDecisionPoint):
+        (WebCore::MockContentFilterSettings::decision):
+        (WebCore::MockContentFilterSettings::setDecision):
+        (WebCore::MockContentFilterSettings::unblockRequestDecision):
+        (WebCore::MockContentFilterSettings::setUnblockRequestDecision):
+
 2015-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font selection should not consult font-variant property
