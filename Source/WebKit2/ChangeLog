@@ -1,1 +1,7 @@
+2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing inspector file to GTK+ compilation.
+
+        * PlatformGTK.cmake:
+
 == Rolled over to ChangeLog-2015-11-21 ==
