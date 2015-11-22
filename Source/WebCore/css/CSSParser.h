@@ -265,7 +265,6 @@ public:
 
     bool parseLineHeight(bool important);
     bool parseFontSize(bool important);
-    bool parseFontVariant(bool important);
     bool parseFontWeight(bool important);
     bool parseFontSynthesis(bool important);
     bool parseFontFaceSrc();
@@ -417,7 +416,6 @@ public:
     CSSPropertyID m_currentShorthand;
     bool m_implicitShorthand;
 
-    bool m_hasFontFaceOnlyValues;
     bool m_hadSyntacticallyValidCSSRule;
     bool m_logErrors;
     bool m_ignoreErrorsInDeclaration;
@@ -564,8 +562,6 @@ private:
     bool inShorthand() const { return m_inParseShorthand; }
 
     bool isValidSize(ValueWithCalculation&);
-
-    void deleteFontFaceOnlyValues();
 
     bool isGeneratedImageValue(CSSParserValue&) const;
     bool parseGeneratedImage(CSSParserValueList&, RefPtr<CSSValue>&);

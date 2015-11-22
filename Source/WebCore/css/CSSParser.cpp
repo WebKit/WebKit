@@ -323,7 +323,6 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_inParseShorthand(0)
     , m_currentShorthand(CSSPropertyInvalid)
     , m_implicitShorthand(false)
-    , m_hasFontFaceOnlyValues(false)
     , m_hadSyntacticallyValidCSSRule(false)
     , m_logErrors(false)
     , m_ignoreErrorsInDeclaration(false)
@@ -1064,6 +1063,10 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueHistoricalForms)
             return true;
         break;
+    case CSSPropertyFontVariant: // normal | small-caps
+        if (valueID == CSSValueNormal || valueID == CSSValueSmallCaps)
+            return true;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -1196,6 +1199,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFontVariantPosition:
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantAlternates:
+    case CSSPropertyFontVariant:
         return true;
     default:
         return false;
@@ -1400,8 +1404,6 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties* declaration
     m_rule = nullptr;
 
     ParseResult result = ParseResult::Error;
-    if (m_hasFontFaceOnlyValues)
-        deleteFontFaceOnlyValues();
 
     if (!m_parsedProperties.isEmpty()) {
         result = declaration->addParsedProperties(m_parsedProperties) ? ParseResult::Changed : ParseResult::Unchanged;
@@ -1494,9 +1496,6 @@ Ref<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, 
     cssyyparse(this);
     m_rule = nullptr;
 
-    if (m_hasFontFaceOnlyValues)
-        deleteFontFaceOnlyValues();
-
     Ref<ImmutableStyleProperties> style = createStyleProperties();
     clearProperties();
     return style;
@@ -1521,8 +1520,6 @@ bool CSSParser::parseDeclaration(MutableStyleProperties* declaration, const Stri
     m_rule = nullptr;
 
     bool ok = false;
-    if (m_hasFontFaceOnlyValues)
-        deleteFontFaceOnlyValues();
     if (!m_parsedProperties.isEmpty()) {
         ok = true;
         declaration->addParsedProperties(m_parsedProperties);
@@ -1699,7 +1696,6 @@ void CSSParser::clearProperties()
 {
     m_parsedProperties.clear();
     m_numParsedPropertiesBeforeMarginBox = INVALID_NUM_PARSED_PROPERTIES;
-    m_hasFontFaceOnlyValues = false;
 }
 
 URL CSSParser::completeURL(const CSSParserContext& context, const String& url)
@@ -2370,9 +2366,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 
     case CSSPropertyFontSize:
         return parseFontSize(important);
-
-    case CSSPropertyFontVariant:         // normal | small-caps | inherit
-        return parseFontVariant(important);
 
     case CSSPropertyVerticalAlign:
         // baseline | sub | super | top | text-top | middle | bottom | text-bottom |
@@ -7032,53 +7025,6 @@ bool CSSParser::parseFontSize(bool important)
     if (validPrimitive && (!m_valueList->next() || inShorthand()))
         addProperty(CSSPropertyFontSize, parseValidPrimitive(id, valueWithCalculation), important);
     return validPrimitive;
-}
-
-bool CSSParser::parseFontVariant(bool important)
-{
-    RefPtr<CSSValueList> values;
-    if (m_valueList->size() > 1)
-        values = CSSValueList::createCommaSeparated();
-    CSSParserValue* val;
-    bool expectComma = false;
-    while ((val = m_valueList->current())) {
-        RefPtr<CSSPrimitiveValue> parsedValue;
-        if (!expectComma) {
-            expectComma = true;
-            if (val->id == CSSValueNormal || val->id == CSSValueSmallCaps)
-                parsedValue = CSSValuePool::singleton().createIdentifierValue(val->id);
-            else if (val->id == CSSValueAll && !values) {
-                // 'all' is only allowed in @font-face and with no other values. Make a value list to
-                // indicate that we are in the @font-face case.
-                values = CSSValueList::createCommaSeparated();
-                parsedValue = CSSValuePool::singleton().createIdentifierValue(val->id);
-            }
-        } else if (val->unit == CSSParserValue::Operator && val->iValue == ',') {
-            expectComma = false;
-            m_valueList->next();
-            continue;
-        }
-
-        if (!parsedValue)
-            return false;
-
-        m_valueList->next();
-
-        if (values)
-            values->append(parsedValue.releaseNonNull());
-        else {
-            addProperty(CSSPropertyFontVariant, parsedValue.release(), important);
-            return true;
-        }
-    }
-
-    if (values && values->length()) {
-        m_hasFontFaceOnlyValues = true;
-        addProperty(CSSPropertyFontVariant, values.release(), important);
-        return true;
-    }
-
-    return false;
 }
 
 static CSSValueID createFontWeightValueKeyword(int weight)
@@ -12642,8 +12588,6 @@ RefPtr<StyleRuleBase> CSSParser::createStyleRule(Vector<std::unique_ptr<CSSParse
     if (selectors) {
         m_allowImportRules = false;
         m_allowNamespaceDeclarations = false;
-        if (m_hasFontFaceOnlyValues)
-            deleteFontFaceOnlyValues();
         rule = StyleRule::create(m_lastSelectorLineNumber, createStyleProperties());
         rule->parserAdoptSelectorVector(*selectors);
         processAndAddNewRuleToSourceTreeIfNeeded();
@@ -12658,9 +12602,7 @@ RefPtr<StyleRuleBase> CSSParser::createFontFaceRule()
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
         CSSProperty& property = m_parsedProperties[i];
-        if (property.id() == CSSPropertyFontVariant && property.value()->isPrimitiveValue())
-            property.wrapValueInCommaSeparatedList();
-        else if (property.id() == CSSPropertyFontFamily && (!is<CSSValueList>(*property.value()) || downcast<CSSValueList>(*property.value()).length() != 1)) {
+        if (property.id() == CSSPropertyFontFamily && (!is<CSSValueList>(*property.value()) || downcast<CSSValueList>(*property.value()).length() != 1)) {
             // Unlike font-family property, font-family descriptor in @font-face rule
             // has to be a value list with exactly one family name. It cannot have a
             // have 'initial' value and cannot 'inherit' from parent.
@@ -12816,14 +12758,6 @@ void CSSParser::endDeclarationsForMarginBox()
 {
     rollbackLastProperties(m_parsedProperties.size() - m_numParsedPropertiesBeforeMarginBox);
     m_numParsedPropertiesBeforeMarginBox = INVALID_NUM_PARSED_PROPERTIES;
-}
-
-void CSSParser::deleteFontFaceOnlyValues()
-{
-    ASSERT(m_hasFontFaceOnlyValues);
-    m_parsedProperties.removeAllMatching([] (const CSSProperty& property) {
-        return property.id() == CSSPropertyFontVariant && property.value()->isValueList();
-    });
 }
 
 RefPtr<StyleKeyframe> CSSParser::createKeyframe(CSSParserValueList& keys)

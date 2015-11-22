@@ -79,7 +79,6 @@ FontDescription::FontDescription()
 FontTraitsMask FontDescription::traitsMask() const
 {
     return static_cast<FontTraitsMask>((m_italic ? FontStyleItalicMask : FontStyleNormalMask)
-        | (m_smallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask)
         | (FontWeight100Mask << (m_weight - FontWeight100)));
     
 }

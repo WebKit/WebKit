@@ -476,8 +476,7 @@ static inline FontTraitsMask toTraitsMask(CTFontSymbolicTraits ctFontTraits, CGF
         weightMask = FontWeight900Mask;
         break;
     }
-    return static_cast<FontTraitsMask>(((ctFontTraits & kCTFontTraitItalic) ? FontStyleItalicMask : FontStyleNormalMask)
-        | FontVariantNormalMask | weightMask);
+    return static_cast<FontTraitsMask>(((ctFontTraits & kCTFontTraitItalic) ? FontStyleItalicMask : FontStyleNormalMask) | weightMask);
 }
 
 bool isFontWeightBold(FontWeight fontWeight)
