@@ -1348,9 +1348,8 @@ enum StyleColorType { StyleColorBackground, StyleColorForeground };
 
 static Color styleColor(GType widgetType, GtkStateFlags state, StyleColorType colorType)
 {
-
     GtkStyleContext* context = getStyleContext(widgetType);
-    // Recent GTK+ versions (> 3.14) require to explicitly set the state before getting the color.
+    gtk_style_context_save(context);
     gtk_style_context_set_state(context, state);
 
     GdkRGBA gdkRGBAColor;
@@ -1358,6 +1357,8 @@ static Color styleColor(GType widgetType, GtkStateFlags state, StyleColorType co
         gtk_style_context_get_background_color(context, gtk_style_context_get_state(context), &gdkRGBAColor);
     else
         gtk_style_context_get_color(context, gtk_style_context_get_state(context), &gdkRGBAColor);
+
+    gtk_style_context_restore(context);
     return gdkRGBAColor;
 }
 

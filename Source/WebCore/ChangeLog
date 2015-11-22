@@ -1,3 +1,30 @@
+2015-11-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] RenderThemeGtk::platformActiveSelectionBackgroundColor, et. al. should not clobber state of cached GtkStyleContexts
+        https://bugs.webkit.org/show_bug.cgi?id=151533
+
+        Reviewed by Carlos Garcia Campos.
+
+        platformActiveSelectionBackgroundColor(), platformInactiveSelectionBackgroundColor(), etc.
+        are const functions intended only to return a color used for painting, but since r174929
+        they also change the state of the cached style contexts we use for GTK_TYPE_ENTRY and
+        GTK_TYPE_TREE_VIEW. That's wrong; those style contexts should not have any state set. This
+        could cause theme colors returned by those GtkStyleContexts to change unexpectedly,
+        depending on whether the state is explicitly set before each use, or whether the theme
+        actually uses the states.
+
+        This didn't cause any regression only because every place using these style contexts
+        explicitly sets the state of the style contexts before use. In fact, the GtkTreeView style
+        context is not used anywhere else, and the GtkEntry style context is only used in
+        paintTextField, which does set the state before use (and then reverts it using
+        save/restore), so this cannot have broken anything in practice. But it's a landmine waiting
+        for the next programmer to trip it.
+
+        Fix this with a gtk_style_context_save()/gtk_style_context_restore() pair.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::styleColor):
+
 2015-11-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Tiny cleanup in ComplexTextController::collectComplexTextRuns()
