@@ -64,23 +64,27 @@ GdkPixbuf* readPixbufFromStdin(long imageSize)
     }
 
     gdk_pixbuf_loader_close(loader, 0);
-    GdkPixbuf* decodedImage = gdk_pixbuf_loader_get_pixbuf(loader);
-    g_object_ref(decodedImage);
+    GdkPixbuf* decodedImage = GDK_PIXBUF(g_object_ref(gdk_pixbuf_loader_get_pixbuf(loader)));
+    g_object_unref(loader);
     return decodedImage;
 }
 
-GdkPixbuf* differenceImageFromDifferenceBuffer(unsigned char* buffer, int width, int height)
+GdkPixbuf* differenceImageFromDifferenceBuffer(unsigned char* buffer, int width, int height, float maxDistance)
 {
     GdkPixbuf* image = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, width, height);
     if (!image)
         return image;
 
+    bool shouldNormalize = maxDistance > 0 && maxDistance < 1;
     int rowStride = gdk_pixbuf_get_rowstride(image);
     unsigned char* diffPixels = gdk_pixbuf_get_pixels(image);
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
             unsigned char* diffPixel = diffPixels + (y * rowStride) + (x * 3);
-            diffPixel[0] = diffPixel[1] = diffPixel[2] = *buffer++;
+            unsigned char bufferPixel = *buffer++;
+            if (shouldNormalize)
+                bufferPixel /= maxDistance;
+            diffPixel[0] = diffPixel[1] = diffPixel[2] = bufferPixel;
         }
     }
 
@@ -141,7 +145,7 @@ float calculateDifference(GdkPixbuf* baselineImage, GdkPixbuf* actualImage, GdkP
     else {
         difference = roundf(difference * 100.0f) / 100.0f;
         difference = max(difference, 0.01f); // round to 2 decimal places
-        *differenceImage = differenceImageFromDifferenceBuffer(diffBuffer, width, height);
+        *differenceImage = differenceImageFromDifferenceBuffer(diffBuffer, width, height, maxDistance);
     }
 
     free(diffBuffer);

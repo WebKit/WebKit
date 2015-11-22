@@ -1,1 +1,13 @@
+2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ImageDiff should normalize the diff image
+        https://bugs.webkit.org/show_bug.cgi?id=151261
+
+        Reviewed by Sergio Villar Senin.
+
+        * ImageDiff/gtk/ImageDiff.cpp:
+        (readPixbufFromStdin): Fix memory leak.
+        (differenceImageFromDifferenceBuffer): Normalize diff buffer.
+        (calculateDifference): Pass max distance to differenceImageFromDifferenceBuffer.
+
 == Rolled over to ChangeLog-2015-11-21 ==
