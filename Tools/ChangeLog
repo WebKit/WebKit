@@ -1,5 +1,28 @@
 2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Some unit tests fail when using the network process
+        https://bugs.webkit.org/show_bug.cgi?id=151490
+
+        Reviewed by Martin Robinson.
+
+        Run the soup server in a separate thread in TestResources test to
+        avoid deadlocks.
+
+        This fixes /webkit2/WebKitWebView/sync-request-on-max-conns and
+        /webkit2/WebKitWebResource/get-data when using the network process.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (beforeAll): Create the WebKitTestServer with ServerRunInThread flag.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.cpp:
+        (WebKitTestServer::WebKitTestServer): When ServerRunInThread is
+        present, create a WorkQueue to run the server.
+        (WebKitTestServer::run): Run the server in the work queue if it
+        has been created.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.h: Convert server
+        type into server options as flags.
+
+2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] ImageDiff should normalize the diff image
         https://bugs.webkit.org/show_bug.cgi?id=151261
 

@@ -21,13 +21,19 @@
 #include "WebKitTestServer.h"
 
 #include "TestMain.h"
+#include <wtf/Threading.h>
 #include <wtf/glib/GUniquePtr.h>
 
-WebKitTestServer::WebKitTestServer(ServerType type)
+WebKitTestServer::WebKitTestServer(ServerOptions options)
 {
+    if (options & ServerRunInThread) {
+        WTF::initializeThreading();
+        m_queue = WorkQueue::create("WebKitTestServer");
+    }
+
     GUniquePtr<char> sslCertificateFile;
     GUniquePtr<char> sslKeyFile;
-    if (type == ServerHTTPS) {
+    if (options & ServerHTTPS) {
         CString resourcesDir = Test::getResourcesDir();
         sslCertificateFile.reset(g_build_filename(resourcesDir.data(), "test-cert.pem", NULL));
         sslKeyFile.reset(g_build_filename(resourcesDir.data(), "test-key.pem", NULL));
@@ -37,9 +43,10 @@ WebKitTestServer::WebKitTestServer(ServerType type)
     soup_address_resolve_sync(address.get(), 0);
 
     m_soupServer = adoptGRef(soup_server_new(SOUP_SERVER_INTERFACE, address.get(),
+        SOUP_SERVER_ASYNC_CONTEXT, m_queue ? m_queue->runLoop().mainContext() : nullptr,
         SOUP_SERVER_SSL_CERT_FILE, sslCertificateFile.get(),
         SOUP_SERVER_SSL_KEY_FILE, sslKeyFile.get(), nullptr));
-    m_baseURI = type == ServerHTTPS ? soup_uri_new("https://127.0.0.1/") : soup_uri_new("http://127.0.0.1/");
+    m_baseURI = options & ServerHTTPS ? soup_uri_new("https://127.0.0.1/") : soup_uri_new("http://127.0.0.1/");
     soup_uri_set_port(m_baseURI, soup_server_get_port(m_soupServer.get()));
 }
 
@@ -50,8 +57,15 @@ WebKitTestServer::~WebKitTestServer()
 
 void WebKitTestServer::run(SoupServerCallback serverCallback)
 {
-    soup_server_run_async(m_soupServer.get());
-    soup_server_add_handler(m_soupServer.get(), 0, serverCallback, 0, 0);
+    if (m_queue) {
+        m_queue->dispatch([this, serverCallback] {
+            soup_server_run_async(m_soupServer.get());
+            soup_server_add_handler(m_soupServer.get(), nullptr, serverCallback, nullptr, nullptr);
+        });
+    } else {
+        soup_server_run_async(m_soupServer.get());
+        soup_server_add_handler(m_soupServer.get(), nullptr, serverCallback, nullptr, nullptr);
+    }
 }
 
 CString WebKitTestServer::getURIForPath(const char* path)

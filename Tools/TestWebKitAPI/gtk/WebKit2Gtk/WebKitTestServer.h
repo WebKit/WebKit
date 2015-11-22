@@ -22,18 +22,20 @@
 
 #include <libsoup/soup.h>
 #include <webkit2/webkit2.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 class WebKitTestServer {
 public:
 
-    enum ServerType {
-        ServerHTTP,
-        ServerHTTPS
+    enum ServerOptions {
+        ServerHTTP = 0,
+        ServerHTTPS = 1 << 1,
+        ServerRunInThread = 1 << 2,
     };
 
-    WebKitTestServer(ServerType = ServerHTTP);
+    WebKitTestServer(ServerOptions = ServerHTTP);
     virtual ~WebKitTestServer();
 
     SoupURI* baseURI() { return m_baseURI; }
@@ -44,6 +46,7 @@ public:
 private:
     GRefPtr<SoupServer> m_soupServer;
     SoupURI* m_baseURI;
+    RefPtr<WorkQueue> m_queue;
 };
 
 #endif // WebKitTestServer_h

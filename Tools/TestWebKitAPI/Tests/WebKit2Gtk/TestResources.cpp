@@ -835,7 +835,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 void beforeAll()
 {
-    kServer = new WebKitTestServer();
+    kServer = new WebKitTestServer(WebKitTestServer::ServerOptions::ServerRunInThread);
     kServer->run(serverCallback);
 
     ResourcesTest::add("WebKitWebView", "resources", testWebViewResources);
