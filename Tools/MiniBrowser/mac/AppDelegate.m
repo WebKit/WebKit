@@ -74,11 +74,12 @@ static WKWebViewConfiguration *defaultConfiguration()
         configuration.preferences._fullScreenEnabled = YES;
         configuration.preferences._developerExtrasEnabled = YES;
 
-        _WKProcessPoolConfiguration *processPoolConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
-        processPoolConfiguration.injectedBundleURL = [[NSBundle mainBundle] URLForAuxiliaryExecutable:@"MiniBrowser.wkbundle"];
-        if ([SettingsController shared].perWindowWebProcessesDisabled)
-            processPoolConfiguration.maximumProcessCount = 1;
-        configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration] autorelease];
+        if ([SettingsController shared].perWindowWebProcessesDisabled) {
+            _WKProcessPoolConfiguration *singleProcessConfiguration = [[_WKProcessPoolConfiguration alloc] init];
+            singleProcessConfiguration.maximumProcessCount = 1;
+            configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:singleProcessConfiguration] autorelease];
+            [singleProcessConfiguration release];
+        }
     }
 
     configuration.suppressesIncrementalRendering = [SettingsController shared].incrementalRenderingSuppressed;

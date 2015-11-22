@@ -28,12 +28,10 @@
 #if WK_API_ENABLED
 
 #import "AppDelegate.h"
-#import "MockContentFilterEnabler.h"
 #import "SettingsController.h"
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -374,9 +372,6 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
         visibleOverlayRegions |= _WKWheelEventHandlerRegion;
     
     preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
-
-    WebMockContentFilterEnabler *enabler = settings.contentFilteringEnabled ? [[[WebMockContentFilterEnabler alloc] initWithDecision:settings.contentFilteringDecision decisionPoint:settings.contentFilteringDecisionPoint blockedString:[BrowserWindowController contentFilteringBlockedString]] autorelease] : nil;
-    [_webView.configuration.processPool _setObject:enabler forBundleParameter:NSStringFromClass([WebMockContentFilterEnabler class])];
 }
 
 - (void)updateTitle:(NSString *)title

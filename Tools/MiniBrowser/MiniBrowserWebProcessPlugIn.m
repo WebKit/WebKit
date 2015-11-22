@@ -27,34 +27,11 @@
 
 #if WK_API_ENABLED
 
-#import "MockContentFilterEnabler.h"
-
-@implementation MiniBrowserWebProcessPlugIn {
-    WebMockContentFilterEnabler *_contentFilterEnabler;
-    WKWebProcessPlugInController *_plugInController;
-}
+@implementation MiniBrowserWebProcessPlugIn
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject
 {
-    _plugInController = [plugInController retain];
-    [_plugInController.parameters addObserver:self forKeyPath:NSStringFromClass([WebMockContentFilterEnabler class]) options:NSKeyValueObservingOptionInitial context:NULL];
-}
-
-- (void)dealloc
-{
-    [_plugInController.parameters removeObserver:self forKeyPath:NSStringFromClass([WebMockContentFilterEnabler class])];
-    [_plugInController release];
-    [_contentFilterEnabler release];
-    [super dealloc];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    WebMockContentFilterEnabler *enabler = [[object valueForKeyPath:keyPath] retain];
-    [_contentFilterEnabler release];
-    _contentFilterEnabler = enabler;
-    [_contentFilterEnabler enable];
-}
+}   
 
 @end
 

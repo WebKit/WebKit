@@ -27,14 +27,57 @@
 
 #if WK_API_ENABLED
 
-#import "MockContentFilterEnabler.h"
+#import "MockContentFilterSettings.h"
 #import <WebKit/WKWebProcessPlugIn.h>
+
+using MockContentFilterSettings = WebCore::MockContentFilterSettings;
+using Decision = MockContentFilterSettings::Decision;
+using DecisionPoint = MockContentFilterSettings::DecisionPoint;
+
+@interface MockContentFilterEnabler : NSObject <NSCopying, NSSecureCoding>
+@end
+
+@implementation MockContentFilterEnabler
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder
+{
+    if (!(self = [super init]))
+        return nil;
+
+    auto& settings = MockContentFilterSettings::singleton();
+    settings.setEnabled(true);
+    settings.setDecision(static_cast<Decision>([decoder decodeIntForKey:@"Decision"]));
+    settings.setDecisionPoint(static_cast<DecisionPoint>([decoder decodeIntForKey:@"DecisionPoint"]));
+    return self;
+}
+
+- (void)dealloc
+{
+    MockContentFilterSettings::singleton().setEnabled(false);
+    [super dealloc];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+}
+
+@end
 
 @interface ContentFilteringPlugIn : NSObject <WKWebProcessPlugIn>
 @end
 
 @implementation ContentFilteringPlugIn {
-    RetainPtr<WebMockContentFilterEnabler> _contentFilterEnabler;
+    RetainPtr<MockContentFilterEnabler> _contentFilterEnabler;
     RetainPtr<WKWebProcessPlugInController> _plugInController;
 }
 
@@ -42,21 +85,20 @@
 {
     ASSERT(!_plugInController);
     _plugInController = plugInController;
-    [plugInController.parameters addObserver:self forKeyPath:NSStringFromClass([WebMockContentFilterEnabler class]) options:NSKeyValueObservingOptionInitial context:NULL];
+    [plugInController.parameters addObserver:self forKeyPath:NSStringFromClass([MockContentFilterEnabler class]) options:NSKeyValueObservingOptionInitial context:NULL];
 }
 
 - (void)dealloc
 {
-    [[_plugInController parameters] removeObserver:self forKeyPath:NSStringFromClass([WebMockContentFilterEnabler class])];
+    [[_plugInController parameters] removeObserver:self forKeyPath:NSStringFromClass([MockContentFilterEnabler class])];
     [super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     id contentFilterEnabler = [object valueForKeyPath:keyPath];
-    ASSERT(!contentFilterEnabler || [contentFilterEnabler isKindOfClass:[WebMockContentFilterEnabler class]]);
+    ASSERT([contentFilterEnabler isKindOfClass:[MockContentFilterEnabler class]]);
     _contentFilterEnabler = contentFilterEnabler;
-    [_contentFilterEnabler enable];
 }
 
 @end
