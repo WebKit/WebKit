@@ -1,3 +1,17 @@
+2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r192727.
+
+        It made the selections transparent again and broke
+        /webkit2/WebKitWebView/snapshot
+
+        Reverted changeset:
+
+        "[GTK] RenderThemeGtk::platformActiveSelectionBackgroundColor,
+        et. al. should not clobber state of cached GtkStyleContexts"
+        https://bugs.webkit.org/show_bug.cgi?id=151533
+        http://trac.webkit.org/changeset/192727
+
 2015-11-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] RenderThemeGtk::platformActiveSelectionBackgroundColor, et. al. should not clobber state of cached GtkStyleContexts
