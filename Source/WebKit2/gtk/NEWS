@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 2.11.2
+=================
+
+What's new in WebKitGTK+ 2.11.2?
+
+  - Enable FTL by default in JavaScriptCore for x86_64.
+  - Improved media backend performance by better handling glib main loop sources.
+  - Fix rendering of lines when using solid colors.
+  - Fix web process crashes due to BadDrawable X errors in accelerated compositing mode.
+  - Translation updates: Italian.
+
+=================
 WebKitGTK+ 2.11.1
 =================
 
