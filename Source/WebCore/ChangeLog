@@ -1,3 +1,47 @@
+2015-11-23  Nikos Andronikos <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        Add WebCore namespace for generated bindings for supplemental method calls
+        https://bugs.webkit.org/show_bug.cgi?id=151431
+
+        Reviewed by Alex Christensen.
+
+        Address build failures for generated supplemental method calls which are in the WebCore namespace. 
+        The bindings are outside the WebCore namespace - so add WebCore namespace specifier where required.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr):
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::jsTestInterfaceSupplementalStr1):
+        (WebCore::jsTestInterfaceSupplementalStr2):
+        (WebCore::jsTestInterfaceSupplementalNode):
+        (WebCore::setJSTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::setJSTestInterfaceSupplementalStr2):
+        (WebCore::setJSTestInterfaceSupplementalNode):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        (WebCore::jsTestInterfaceConstructorFunctionSupplementalMethod4):
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm:
+        (-[DOMTestInterface supplementalStr1]):
+        (-[DOMTestInterface supplementalStr2]):
+        (-[DOMTestInterface setSupplementalStr2:]):
+        (-[DOMTestInterface supplementalStr3]):
+        (-[DOMTestInterface setSupplementalStr3:]):
+        (-[DOMTestInterface supplementalNode]):
+        (-[DOMTestInterface setSupplementalNode:]):
+        (-[DOMTestInterface builtinAttribute]):
+        (-[DOMTestInterface setBuiltinAttribute:]):
+        (-[DOMTestInterface supplementalMethod1]):
+        (-[DOMTestInterface supplementalMethod2:objArg:]):
+        (-[DOMTestInterface supplementalMethod3]):
+        (-[DOMTestInterface supplementalMethod4]):
+        (-[DOMTestInterface builtinFunction]):
+
 2015-11-23  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: When a transaction is aborted, call onerror handlers for all in-progress requests.

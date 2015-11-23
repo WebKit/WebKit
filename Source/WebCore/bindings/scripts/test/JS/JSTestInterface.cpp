@@ -525,7 +525,7 @@ EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecStat
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    JSValue result = jsNumber(TestSupplemental::supplementalStaticReadOnlyAttr());
+    JSValue result = jsNumber(WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
     return JSValue::encode(result);
 }
 
@@ -537,7 +537,7 @@ EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state
     UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
-    JSValue result = jsStringWithCache(state, TestSupplemental::supplementalStaticAttr());
+    JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStaticAttr());
     return JSValue::encode(result);
 }
 
@@ -556,7 +556,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* state, JSObject* slotB
         return throwGetterTypeError(*state, "TestInterface", "supplementalStr1");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, TestSupplemental::supplementalStr1(&impl));
+    JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStr1(&impl));
     return JSValue::encode(result);
 }
 
@@ -575,7 +575,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* state, JSObject* slotB
         return throwGetterTypeError(*state, "TestInterface", "supplementalStr2");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, TestSupplemental::supplementalStr2(&impl));
+    JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStr2(&impl));
     return JSValue::encode(result);
 }
 
@@ -606,7 +606,7 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, JSObject* slotB
         return throwGetterTypeError(*state, "TestInterface", "supplementalNode");
     }
     auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(&impl)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalNode(&impl)));
     return JSValue::encode(result);
 }
 
@@ -719,7 +719,7 @@ void setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, JSObj
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return;
-    TestSupplemental::setSupplementalStaticAttr(nativeValue);
+    WebCore::TestSupplemental::setSupplementalStaticAttr(nativeValue);
 }
 
 #endif
@@ -741,7 +741,7 @@ void setJSTestInterfaceSupplementalStr2(ExecState* state, JSObject* baseObject, 
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return;
-    TestSupplemental::setSupplementalStr2(&impl, nativeValue);
+    WebCore::TestSupplemental::setSupplementalStr2(&impl, nativeValue);
 }
 
 #endif
@@ -777,7 +777,7 @@ void setJSTestInterfaceSupplementalNode(ExecState* state, JSObject* baseObject, 
     Node* nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return;
-    TestSupplemental::setSupplementalNode(&impl, nativeValue);
+    WebCore::TestSupplemental::setSupplementalNode(&impl, nativeValue);
 }
 
 #endif
@@ -862,7 +862,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
         return throwThisTypeError(*state, "TestInterface", "supplementalMethod1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     auto& impl = castedThis->wrapped();
-    TestSupplemental::supplementalMethod1(&impl);
+    WebCore::TestSupplemental::supplementalMethod1(&impl);
     return JSValue::encode(jsUndefined());
 }
 
@@ -889,7 +889,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     TestObj* objArg = JSTestObj::toWrapped(state->argument(1));
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
 
     setDOMException(state, ec);
     return JSValue::encode(result);
@@ -913,7 +913,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3
 #if ENABLE(Condition11) || ENABLE(Condition12)
 EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMethod4(ExecState* state)
 {
-    TestSupplemental::supplementalMethod4();
+    WebCore::TestSupplemental::supplementalMethod4();
     return JSValue::encode(jsUndefined());
 }
 
