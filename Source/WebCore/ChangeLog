@@ -1,3 +1,12 @@
+2015-11-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: when inspecting the inspector, add the inspection level to the title bar
+        https://bugs.webkit.org/show_bug.cgi?id=151555
+
+        Reviewed by Timothy Hatcher.
+
+        * English.lproj/Localizable.strings: add new localized string for alternate inspector title.
+
 2015-11-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] No need to assert the pipeline's bus presence in MediaPlayerPrivateGStreamerBase dtor

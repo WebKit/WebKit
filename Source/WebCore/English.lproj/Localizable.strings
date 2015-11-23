@@ -685,6 +685,9 @@
 /* Description of WebCrypto master keys in Keychain */
 "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB" = "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB";
 
+/* Web Inspector window title when inspecting Web Inspector */
+"Web Inspector [%d] — %@" = "Web Inspector [%d] — %@";
+
 /* Web Inspector window title */
 "Web Inspector — %@" = "Web Inspector — %@";
 
