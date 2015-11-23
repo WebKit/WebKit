@@ -94,6 +94,12 @@ bool IDBResourceIdentifier::isHashTableDeletedValue() const
         && m_resourceNumber == std::numeric_limits<uint64_t>::max();
 }
 
+#ifndef NDEBUG
+String IDBResourceIdentifier::loggingString() const
+{
+    return String::format("<%" PRIu64", %" PRIu64">", m_idbConnectionIdentifier, m_resourceNumber);
+}
+#endif
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

@@ -30,9 +30,8 @@ request.onupgradeneeded = function(event)
 
     var putRequest = os1.put("bar", "foo");
     
-    putRequest.onerror = function(event) {
-        alert("put unexpectedly failed - " + event);
-        done();
+    putRequest.onerror = function() {
+        alert("put failed (because transaction was aborted)");
     }
     
     try {

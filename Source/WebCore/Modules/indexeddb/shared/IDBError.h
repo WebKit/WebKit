@@ -44,6 +44,7 @@ enum class IDBExceptionCode {
     // Indexed DB existing exception codes with IDB-specific error messages:
     InvalidStateError,
     DataCloneError,
+    AbortError,
 };
 
 class IDBError {

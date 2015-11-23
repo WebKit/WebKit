@@ -5,7 +5,8 @@ ALERT: Caught attempt to access empty-named object store on the transaction
 ALERT: Caught attempt to access null-named object store on the transaction
 ALERT: Caught attempt to access non-existant object store on the transaction
 ALERT: Caught attempt to access valid object store on a transaction that is already finishing
-ALERT: First version change transaction abort
+ALERT: put failed (because transaction was aborted)
+ALERT: First version change transaction unexpected error - [object Event]
 ALERT: Done
 This tests some obvious failures that can happen while calling transaction.objectStore()
 

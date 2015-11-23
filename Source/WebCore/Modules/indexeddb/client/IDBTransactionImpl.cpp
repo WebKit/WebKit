@@ -165,20 +165,6 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
     return adoptRef(&objectStore.leakRef());
 }
 
-void IDBTransaction::immediateAbort()
-{
-    LOG(IndexedDB, "IDBTransaction::immediateAbort");
-
-    if (isFinishedOrFinishing())
-        return;
-
-    m_state = IndexedDB::TransactionState::Aborting;
-    m_database->willAbortTransaction(*this);
-
-    auto operation = createTransactionOperation(*this, nullptr, &IDBTransaction::abortOnServer);
-    abortOnServer(*operation);
-}
-
 void IDBTransaction::abort(ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBTransaction::abort");
@@ -191,14 +177,28 @@ void IDBTransaction::abort(ExceptionCode& ec)
     m_state = IndexedDB::TransactionState::Aborting;
     m_database->willAbortTransaction(*this);
 
-    auto operation = createTransactionOperation(*this, nullptr, &IDBTransaction::abortOnServer);
+    m_abortQueue.swap(m_transactionOperationQueue);
+
+    auto operation = createTransactionOperation(*this, nullptr, &IDBTransaction::abortOnServerAndCancelRequests);
     scheduleOperation(WTF::move(operation));
 }
 
-void IDBTransaction::abortOnServer(TransactionOperation&)
+void IDBTransaction::abortOnServerAndCancelRequests(TransactionOperation&)
 {
-    LOG(IndexedDB, "IDBTransaction::abortOnServer");
+    LOG(IndexedDB, "IDBTransaction::abortOnServerAndCancelRequests");
+
+    ASSERT(m_transactionOperationQueue.isEmpty());
+
     serverConnection().abortTransaction(*this);
+
+    IDBError error(IDBExceptionCode::AbortError);
+    for (auto& operation : m_abortQueue)
+        operation->completed(IDBResultData::error(operation->identifier(), error));
+
+    // Since we're aborting, this abortOnServerAndCancelRequests() operation should be the only
+    // in-progress operation, and it should be impossible to have queued any further operations.
+    ASSERT(m_transactionOperationMap.size() == 1);
+    ASSERT(m_transactionOperationQueue.isEmpty());
 }
 
 const char* IDBTransaction::activeDOMObjectName() const
@@ -426,7 +426,7 @@ void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultDat
 {
     LOG(IndexedDB, "IDBTransaction::didCreateObjectStoreOnServer");
 
-    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess);
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess || resultData.type() == IDBResultType::Error);
 }
 
 Ref<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStore, const IDBIndexInfo& info)
@@ -458,8 +458,15 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
     if (resultData.type() == IDBResultType::CreateIndexSuccess)
         return;
 
-    // If index creation failed, the transaction is aborted.
-    immediateAbort();
+    ASSERT(resultData.type() == IDBResultType::Error);
+
+    // This operation might have failed because the transaction is already aborting.
+    if (m_state == IndexedDB::TransactionState::Aborting)
+        return;
+
+    // Otherwise, failure to create an index forced abortion of the transaction.
+    ExceptionCode ec;
+    abort(ec);
 }
 
 Ref<IDBRequest> IDBTransaction::requestOpenCursor(ScriptExecutionContext& context, IDBObjectStore& objectStore, const IDBCursorInfo& info)
@@ -584,6 +591,13 @@ void IDBTransaction::getRecordOnServer(TransactionOperation& operation, const ID
 void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didGetRecordOnServer");
+
+    if (resultData.type() == IDBResultType::Error) {
+        request.requestCompleted(resultData);
+        return;
+    }
+
+    ASSERT(resultData.type() == IDBResultType::GetRecordSuccess);
 
     const IDBGetResult& result = resultData.getResult();
 
@@ -760,7 +774,7 @@ void IDBTransaction::deleteObjectStoreOnServer(TransactionOperation& operation, 
 void IDBTransaction::didDeleteObjectStoreOnServer(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didDeleteObjectStoreOnServer");
-    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteObjectStoreSuccess);
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteObjectStoreSuccess || resultData.type() == IDBResultType::Error);
 }
 
 void IDBTransaction::deleteIndex(uint64_t objectStoreIdentifier, const String& indexName)
@@ -784,7 +798,7 @@ void IDBTransaction::deleteIndexOnServer(TransactionOperation& operation, const 
 void IDBTransaction::didDeleteIndexOnServer(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBTransaction::didDeleteIndexOnServer");
-    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteIndexSuccess);
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteIndexSuccess || resultData.type() == IDBResultType::Error);
 }
 
 void IDBTransaction::operationDidComplete(TransactionOperation& operation)

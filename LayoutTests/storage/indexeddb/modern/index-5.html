@@ -29,6 +29,10 @@ function checkIndexValues()
     countRequest.onsuccess = function() {
         log("Count is: " + countRequest.result);
     }
+    countRequest.onerror = function(e) {
+        log("Error getting cursor count");
+        e.stopPropagation();
+    }
 
     var cursorRequest = index.openCursor();
     cursorRequest.onsuccess = function() {
@@ -41,9 +45,8 @@ function checkIndexValues()
             done();
     }
     cursorRequest.onerror = function(e) {
-        log("Unexpected error opening or iterating cursor");
-        logCursor(cursorRequest.result);
-        done();
+        log("Error opening or iterating cursor");
+        e.stopPropagation();
     } 
 }
 

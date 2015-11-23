@@ -72,6 +72,10 @@ public:
 
     IDBResourceIdentifier isolatedCopy() const;
 
+#ifndef NDEBUG
+    String loggingString() const;
+#endif
+
 private:
     IDBResourceIdentifier() = delete;
     IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier);

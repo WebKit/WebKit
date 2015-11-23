@@ -142,7 +142,7 @@ private:
     Ref<IDBRequest> requestIndexRecord(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
 
     void commitOnServer(TransactionOperation&);
-    void abortOnServer(TransactionOperation&);
+    void abortOnServerAndCancelRequests(TransactionOperation&);
 
     void createObjectStoreOnServer(TransactionOperation&, const IDBObjectStoreInfo&);
     void didCreateObjectStoreOnServer(const IDBResultData&);
@@ -182,8 +182,6 @@ private:
 
     void scheduleOperationTimer();
 
-    void immediateAbort();
-
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
@@ -199,6 +197,7 @@ private:
     RefPtr<IDBOpenDBRequest> m_openDBRequest;
 
     Deque<RefPtr<TransactionOperation>> m_transactionOperationQueue;
+    Deque<RefPtr<TransactionOperation>> m_abortQueue;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_transactionOperationMap;
 
     HashMap<String, RefPtr<IDBObjectStore>> m_referencedObjectStores;

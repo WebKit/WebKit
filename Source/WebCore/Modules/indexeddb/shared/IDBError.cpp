@@ -67,6 +67,10 @@ static const String& idbErrorName(IDBExceptionCode code)
         static NeverDestroyed<String> entry = ASCIILiteral("DataCloneError");
         return entry;
     }
+    case IDBExceptionCode::AbortError: {
+        static NeverDestroyed<String> entry = ASCIILiteral("AbortError");
+        return entry;
+    }
     case IDBExceptionCode::None:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -107,6 +111,10 @@ static const String& idbErrorDescription(IDBExceptionCode code)
     }
     case IDBExceptionCode::DataCloneError: {
         static NeverDestroyed<String> entry = ASCIILiteral("Data being stored could not be cloned by the structured cloning algorithm.");
+        return entry;
+    }
+    case IDBExceptionCode::AbortError: {
+        static NeverDestroyed<String> entry = ASCIILiteral("Transaction was aborted");
         return entry;
     }
     case IDBExceptionCode::None:

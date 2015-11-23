@@ -95,7 +95,7 @@ IDBError MemoryIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
 
 IDBError MemoryIDBBackingStore::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
-    LOG(IndexedDB, "MemoryIDBBackingStore::abortTransaction");
+    LOG(IndexedDB, "MemoryIDBBackingStore::abortTransaction - %s", transactionIdentifier.loggingString().utf8().data());
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
@@ -108,7 +108,7 @@ IDBError MemoryIDBBackingStore::abortTransaction(const IDBResourceIdentifier& tr
 
 IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
-    LOG(IndexedDB, "MemoryIDBBackingStore::commitTransaction");
+    LOG(IndexedDB, "MemoryIDBBackingStore::commitTransaction - %s", transactionIdentifier.loggingString().utf8().data());
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
