@@ -40,7 +40,7 @@ def doc_root(port_obj):
 
 
 def base_url(port_obj):
-    config_wk_filepath = port_obj.path_from_webkit_base("LayoutTests", "imported", "w3c", "resources", "config.json")
+    config_wk_filepath = port_obj._filesystem.join(port_obj.layout_tests_dir(), "imported", "w3c", "resources", "config.json")
     if not port_obj.host.filesystem.isfile(config_wk_filepath):
         # This should only be hit by webkitpy unit tests
         _log.debug("No WPT config file found")
@@ -52,9 +52,9 @@ def base_url(port_obj):
 
 
 class WebPlatformTestServer(http_server_base.HttpServerBase):
-    def __init__(self, port_obj, name, layout_test_results_dir, pidfile=None):
+    def __init__(self, port_obj, name, pidfile=None):
         http_server_base.HttpServerBase.__init__(self, port_obj)
-        self._output_dir = layout_test_results_dir
+        self._output_dir = port_obj.results_directory()
 
         self._name = name
         self._log_file_name = '%s_process_log.out.txt' % (self._name)
@@ -69,14 +69,14 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._stdout_data = None
         self._stderr_data = None
         self._filesystem = port_obj.host.filesystem
-        self._layout_root = port_obj.path_from_webkit_base("LayoutTests")
+        self._layout_root = port_obj.layout_tests_dir()
         self._doc_root = self._filesystem.join(self._layout_root, doc_root(port_obj))
 
         self._resources_files_to_copy = ['testharness.css', 'testharnessreport.js']
 
         current_dir_path = self._filesystem.abspath(self._filesystem.split(__file__)[0])
         self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py"), self._servers_file]
-        self._doc_root_path = port_obj.path_from_webkit_base("LayoutTests", self._doc_root)
+        self._doc_root_path = self._filesystem.join(self._layout_root, self._doc_root)
 
     def _install_modules(self):
         modules_file_path = self._filesystem.join(self._doc_root_path, "..", "resources", "web-platform-tests-modules.json")

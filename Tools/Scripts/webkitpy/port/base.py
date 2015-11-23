@@ -911,7 +911,7 @@ class Port(object):
     def start_web_platform_test_server(self, additional_dirs=None, number_of_servers=None):
         assert not self._web_platform_test_server, 'Already running a Web Platform Test server.'
 
-        self._web_platform_test_server = web_platform_test_server.WebPlatformTestServer(self, "wptwk", self.results_directory())
+        self._web_platform_test_server = web_platform_test_server.WebPlatformTestServer(self, "wptwk")
         self._web_platform_test_server.start()
 
     def web_platform_test_server_doc_root(self):

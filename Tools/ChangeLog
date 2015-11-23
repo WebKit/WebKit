@@ -1,3 +1,32 @@
+2015-11-22  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests: http server for imported W3C tests doesn't work with --layout-tests-directory switch
+        <http://webkit.org/b/151542>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (base_url): Use the Port object (already passed in) to give us
+        the path to the LayoutTests directory, which already checks for a
+        --layout-tests-directory command-line switch.
+        (WebPlatformTestServer.__init__): Remove layout_test_results_dir
+        argument since we can get this from the Port object already
+        passed in via Port.results_directory().  Also switch to use
+        Port.layout_tests_dir() to get the LayoutTests directory.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server_unittest.py:
+        (TestWebPlatformTestServer.test_custom_layout_tests_directory):
+        Add test case for custom LayoutTests directory.
+        (TestWebPlatformTestServer.test_previously_spawned_instance):
+        Update Port object to set mock results directory as if it was
+        set on the command-line.  Remove unneeded argument from
+        WebPlatformTestServer constructor.
+        (TestWebPlatformTestServer.test_corrupted_subserver_files): Ditto.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.start_web_platform_test_server): Remove unneeded
+        argument from WebPlatformTestServer constuctor.
+
 2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Some unit tests fail when using the network process
