@@ -1,3 +1,14 @@
+2015-11-23  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Unskip all indexeddb/mozilla tests that pass.
+        https://bugs.webkit.org/show_bug.cgi?id=151568
+        
+        Reviewed by Alex Christensen.
+
+        No new tests (Lots of skipped existing tests now pass).
+
+        * Modules/indexeddb/shared/IDBError.h:
+
 2015-11-23  Nikos Andronikos <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Add WebCore namespace for generated bindings for supplemental method calls

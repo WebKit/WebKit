@@ -32,8 +32,10 @@
 
 namespace WebCore {
 
+static const int IDBExceptionCodeOffset = 1200;
+
 enum class IDBExceptionCode {
-    None = 0,
+    None = IDBExceptionCodeOffset,
     Unknown,
     ConstraintError,
     DataError,
