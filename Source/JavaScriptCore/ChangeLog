@@ -1,1 +1,18 @@
+2015-11-23  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r192536): Null pointer dereference in JSPropertyNameEnumerator::visitChildren().
+        <https://webkit.org/b/151495>
+
+        Reviewed by Mark Lam
+
+        The test I added when fixing this bug the first time caught another bug when
+        run on 32-bit: jsString() can also cause GC, so we have to make sure that
+        JSPropertyNameEnumerator::m_propertyNames is null until after the array it
+        points to has been populated.
+
+        Test: property-name-enumerator-gc-151495.js
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+
 == Rolled over to ChangeLog-2015-11-21 ==

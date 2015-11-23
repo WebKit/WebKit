@@ -76,10 +76,11 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, uint32_t indexedLength, ui
         void* backingStore;
         RELEASE_ASSERT(vm.heap.tryAllocateStorage(this, propertyNameCacheSize(), &backingStore));
         WriteBarrier<JSString>* propertyNames = reinterpret_cast<WriteBarrier<JSString>*>(backingStore);
-        m_propertyNames.set(vm, this, propertyNames);
 
         for (unsigned i = 0; i < vector.size(); ++i)
             propertyNames[i].set(vm, this, jsString(&vm, vector[i].string()));
+
+        m_propertyNames.set(vm, this, propertyNames);
     }
 }
 
