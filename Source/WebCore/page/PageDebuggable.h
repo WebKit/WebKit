@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,29 +28,29 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include <JavaScriptCore/RemoteInspectorDebuggable.h>
+#include <JavaScriptCore/RemoteInspectionTarget.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class Page;
 
-class PageDebuggable final : public Inspector::RemoteInspectorDebuggable {
+class PageDebuggable final : public Inspector::RemoteInspectionTarget {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PageDebuggable);
 public:
     PageDebuggable(Page&);
     ~PageDebuggable() { }
 
-    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const override { return Inspector::RemoteInspectorDebuggable::Web; }
+    virtual Inspector::RemoteControllableTarget::Type type() const override { return Inspector::RemoteControllableTarget::Type::Web; }
 
     virtual String name() const override;
     virtual String url() const override;
     virtual bool hasLocalDebugger() const override;
 
-    virtual void connect(Inspector::FrontendChannel*, bool isAutomaticInspection) override;
+    virtual void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false) override;
     virtual void disconnect(Inspector::FrontendChannel*) override;
-    virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
+    virtual void dispatchMessageFromRemote(const String& message) override;
     virtual void setIndicating(bool) override;
 
     String nameOverride() const { return m_nameOverride; }
@@ -63,6 +63,8 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebCore::PageDebuggable, Web);
 
 #endif // ENABLE(REMOTE_INSPECTOR)
 

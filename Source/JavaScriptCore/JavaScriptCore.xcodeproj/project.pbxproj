@@ -1376,6 +1376,7 @@
 		978801411471AD920041B016 /* JSDateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9788FC231471AD0C0068CE2D /* JSDateMath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9928FF3B18AC4AEC00B8CF12 /* JSReplayInputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9928FF3918AC4AEC00B8CF12 /* JSReplayInputs.cpp */; };
 		9928FF3C18AC4AEC00B8CF12 /* JSReplayInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		992ABCF91BEA9BD2006403A0 /* RemoteAutomationTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 992ABCF51BEA94CA006403A0 /* RemoteAutomationTarget.cpp */; };
 		9959E92B1BD17FA4001AA413 /* cssmin.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9271BD17FA0001AA413 /* cssmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E92D1BD17FA4001AA413 /* jsmin.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9291BD17FA0001AA413 /* jsmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E92E1BD17FA4001AA413 /* xxd.pl in Headers */ = {isa = PBXBuildFile; fileRef = 9959E92A1BD17FA0001AA413 /* xxd.pl */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1400,8 +1401,11 @@
 		996B73261BDA08EF00331B84 /* StringIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */; };
 		996B73271BDA08EF00331B84 /* SymbolConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */; };
 		996B73281BDA08EF00331B84 /* SymbolPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */; };
+		998ED6741BED70AC00DD8017 /* RemoteControllableTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 998ED6721BED659A00DD8017 /* RemoteControllableTarget.cpp */; };
+		998ED6751BED768C00DD8017 /* RemoteControllableTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 998ED6731BED659A00DD8017 /* RemoteControllableTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99CC0B6218BE9946006CEBCC /* CodeGeneratorReplayInputsTemplates.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1E18A1B1E70026D88F /* CodeGeneratorReplayInputsTemplates.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1D18A1B1E70026D88F /* CodeGeneratorReplayInputs.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99D6A1161BEAD34D00E25C37 /* RemoteAutomationTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 992ABCF61BEA94CA006403A0 /* RemoteAutomationTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009A1BD5992700F4575C /* builtins_generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A41BD5993100F4575C /* builtins_model.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009B1BD5992700F4575C /* builtins_model.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009C1BD5992700F4575C /* builtins_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1534,7 +1538,7 @@
 		A593CF831840377100BFCE27 /* InspectorValues.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF811840377100BFCE27 /* InspectorValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A593CF86184038CA00BFCE27 /* InspectorAgentRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A593CF84184038CA00BFCE27 /* InspectorAgentRegistry.cpp */; };
 		A593CF87184038CA00BFCE27 /* InspectorAgentRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A594558F18245EFD00CC3843 /* RemoteInspectorDebuggable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A594558E18245EDE00CC3843 /* RemoteInspectorDebuggable.cpp */; };
+		A594558F18245EFD00CC3843 /* RemoteInspectionTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A594558E18245EDE00CC3843 /* RemoteInspectionTarget.cpp */; };
 		A59455921824744700CC3843 /* JSGlobalObjectDebuggable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59455901824744700CC3843 /* JSGlobalObjectDebuggable.cpp */; };
 		A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */; };
 		A5945595182479EB00CC3843 /* InspectorFrontendChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1544,11 +1548,11 @@
 		A5BA15E8182340B300A82E69 /* RemoteInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E1182340B300A82E69 /* RemoteInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5BA15E9182340B300A82E69 /* RemoteInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15E2182340B300A82E69 /* RemoteInspector.mm */; };
 		A5BA15EA182340B400A82E69 /* RemoteInspectorConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5BA15EB182340B400A82E69 /* RemoteInspectorDebuggableConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E4182340B300A82E69 /* RemoteInspectorDebuggableConnection.h */; };
-		A5BA15EC182340B400A82E69 /* RemoteInspectorDebuggableConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15E5182340B300A82E69 /* RemoteInspectorDebuggableConnection.mm */; };
+		A5BA15EB182340B400A82E69 /* RemoteConnectionToTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E4182340B300A82E69 /* RemoteConnectionToTarget.h */; };
+		A5BA15EC182340B400A82E69 /* RemoteConnectionToTarget.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15E5182340B300A82E69 /* RemoteConnectionToTarget.mm */; };
 		A5BA15ED182340B400A82E69 /* RemoteInspectorXPCConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5BA15EE182340B400A82E69 /* RemoteInspectorXPCConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */; };
-		A5BA15F0182345AF00A82E69 /* RemoteInspectorDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5BA15F0182345AF00A82E69 /* RemoteInspectionTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BA15EF182345AF00A82E69 /* RemoteInspectionTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5C3A1A518C0490200C9593A /* JSGlobalObjectConsoleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C3A1A318C0490200C9593A /* JSGlobalObjectConsoleClient.cpp */; };
 		A5C3A1A618C0490200C9593A /* JSGlobalObjectConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C3A1A418C0490200C9593A /* JSGlobalObjectConsoleClient.h */; };
 		A5CEEE14187F3BAD00E55C99 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */; };
@@ -3482,6 +3486,8 @@
 		9928FF3918AC4AEC00B8CF12 /* JSReplayInputs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReplayInputs.cpp; sourceTree = "<group>"; };
 		9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReplayInputs.h; sourceTree = "<group>"; };
 		9928FF3D18AC4B1C00B8CF12 /* JSInputs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = JSInputs.json; sourceTree = "<group>"; };
+		992ABCF51BEA94CA006403A0 /* RemoteAutomationTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAutomationTarget.cpp; sourceTree = "<group>"; };
+		992ABCF61BEA94CA006403A0 /* RemoteAutomationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAutomationTarget.h; sourceTree = "<group>"; };
 		9959E9271BD17FA0001AA413 /* cssmin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = cssmin.py; sourceTree = "<group>"; };
 		9959E9291BD17FA0001AA413 /* jsmin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = jsmin.py; sourceTree = "<group>"; };
 		9959E92A1BD17FA0001AA413 /* xxd.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = xxd.pl; sourceTree = "<group>"; };
@@ -3503,6 +3509,8 @@
 		996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolPrototype.lut.h; sourceTree = "<group>"; };
 		996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayConstructor.lut.h; sourceTree = "<group>"; };
 		996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayIteratorPrototype.lut.h; sourceTree = "<group>"; };
+		998ED6721BED659A00DD8017 /* RemoteControllableTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteControllableTarget.cpp; sourceTree = "<group>"; };
+		998ED6731BED659A00DD8017 /* RemoteControllableTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteControllableTarget.h; sourceTree = "<group>"; };
 		99DA00991BD5992700F4575C /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
 		99DA009A1BD5992700F4575C /* builtins_generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generator.py; sourceTree = "<group>"; };
 		99DA009B1BD5992700F4575C /* builtins_model.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_model.py; sourceTree = "<group>"; };
@@ -3636,7 +3644,7 @@
 		A593CF811840377100BFCE27 /* InspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorValues.h; sourceTree = "<group>"; };
 		A593CF84184038CA00BFCE27 /* InspectorAgentRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgentRegistry.cpp; sourceTree = "<group>"; };
 		A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentRegistry.h; sourceTree = "<group>"; };
-		A594558E18245EDE00CC3843 /* RemoteInspectorDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteInspectorDebuggable.cpp; sourceTree = "<group>"; };
+		A594558E18245EDE00CC3843 /* RemoteInspectionTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteInspectionTarget.cpp; sourceTree = "<group>"; };
 		A59455901824744700CC3843 /* JSGlobalObjectDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectDebuggable.cpp; sourceTree = "<group>"; };
 		A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectDebuggable.h; sourceTree = "<group>"; };
 		A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendChannel.h; sourceTree = "<group>"; };
@@ -3646,11 +3654,11 @@
 		A5BA15E1182340B300A82E69 /* RemoteInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspector.h; sourceTree = "<group>"; };
 		A5BA15E2182340B300A82E69 /* RemoteInspector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspector.mm; sourceTree = "<group>"; };
 		A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorConstants.h; sourceTree = "<group>"; };
-		A5BA15E4182340B300A82E69 /* RemoteInspectorDebuggableConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorDebuggableConnection.h; sourceTree = "<group>"; };
-		A5BA15E5182340B300A82E69 /* RemoteInspectorDebuggableConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspectorDebuggableConnection.mm; sourceTree = "<group>"; };
+		A5BA15E4182340B300A82E69 /* RemoteConnectionToTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteConnectionToTarget.h; sourceTree = "<group>"; };
+		A5BA15E5182340B300A82E69 /* RemoteConnectionToTarget.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteConnectionToTarget.mm; sourceTree = "<group>"; };
 		A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorXPCConnection.h; sourceTree = "<group>"; };
 		A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspectorXPCConnection.mm; sourceTree = "<group>"; };
-		A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorDebuggable.h; sourceTree = "<group>"; };
+		A5BA15EF182345AF00A82E69 /* RemoteInspectionTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectionTarget.h; sourceTree = "<group>"; };
 		A5C3A1A318C0490200C9593A /* JSGlobalObjectConsoleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectConsoleClient.cpp; sourceTree = "<group>"; };
 		A5C3A1A418C0490200C9593A /* JSGlobalObjectConsoleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectConsoleClient.h; sourceTree = "<group>"; };
 		A5CEEE12187F3BAD00E55C99 /* InspectorAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgent.cpp; sourceTree = "<group>"; };
@@ -6507,13 +6515,17 @@
 		A5BA15E01823409D00A82E69 /* remote */ = {
 			isa = PBXGroup;
 			children = (
+				992ABCF51BEA94CA006403A0 /* RemoteAutomationTarget.cpp */,
+				992ABCF61BEA94CA006403A0 /* RemoteAutomationTarget.h */,
+				A5BA15E4182340B300A82E69 /* RemoteConnectionToTarget.h */,
+				A5BA15E5182340B300A82E69 /* RemoteConnectionToTarget.mm */,
+				998ED6721BED659A00DD8017 /* RemoteControllableTarget.cpp */,
+				998ED6731BED659A00DD8017 /* RemoteControllableTarget.h */,
 				A5BA15E1182340B300A82E69 /* RemoteInspector.h */,
 				A5BA15E2182340B300A82E69 /* RemoteInspector.mm */,
 				A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */,
-				A594558E18245EDE00CC3843 /* RemoteInspectorDebuggable.cpp */,
-				A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */,
-				A5BA15E4182340B300A82E69 /* RemoteInspectorDebuggableConnection.h */,
-				A5BA15E5182340B300A82E69 /* RemoteInspectorDebuggableConnection.mm */,
+				A594558E18245EDE00CC3843 /* RemoteInspectionTarget.cpp */,
+				A5BA15EF182345AF00A82E69 /* RemoteInspectionTarget.h */,
 				A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */,
 				A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */,
 			);
@@ -6850,6 +6862,7 @@
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
 				0FD3E4021B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.h in Headers */,
 				0F18D3D01B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.h in Headers */,
+				998ED6751BED768C00DD8017 /* RemoteControllableTarget.h in Headers */,
 				0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */,
 				0FFB921816D02EB20055A5DB /* DFGAllocator.h in Headers */,
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
@@ -6937,6 +6950,7 @@
 				A73A535B1799CD5D00170C19 /* DFGLazyJSValue.h in Headers */,
 				62F2AA381B0BEDE300610C7A /* DFGLazyNode.h in Headers */,
 				A7D9A29817A0BC7400EE2618 /* DFGLICMPhase.h in Headers */,
+				99D6A1161BEAD34D00E25C37 /* RemoteAutomationTarget.h in Headers */,
 				79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */,
 				A7D89CFC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h in Headers */,
 				0FF0F19B16B729FA005DF95B /* DFGLongLivedState.h in Headers */,
@@ -7575,8 +7589,8 @@
 				0FB7F39D15ED8E4600F167B2 /* Reject.h in Headers */,
 				A5BA15E8182340B300A82E69 /* RemoteInspector.h in Headers */,
 				A5BA15EA182340B400A82E69 /* RemoteInspectorConstants.h in Headers */,
-				A5BA15F0182345AF00A82E69 /* RemoteInspectorDebuggable.h in Headers */,
-				A5BA15EB182340B400A82E69 /* RemoteInspectorDebuggableConnection.h in Headers */,
+				A5BA15F0182345AF00A82E69 /* RemoteInspectionTarget.h in Headers */,
+				A5BA15EB182340B400A82E69 /* RemoteConnectionToTarget.h in Headers */,
 				A5BA15ED182340B400A82E69 /* RemoteInspectorXPCConnection.h in Headers */,
 				0F24E55117EE274900ABB217 /* Repatch.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
@@ -8465,6 +8479,7 @@
 				0F2B9CE619D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.cpp in Sources */,
 				0F2B9CE819D0BA7D00B1D1B5 /* DFGObjectMaterializationData.cpp in Sources */,
 				86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */,
+				998ED6741BED70AC00DD8017 /* RemoteControllableTarget.cpp in Sources */,
 				A7D89CFD17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.cpp in Sources */,
 				0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */,
 				0FD8A32517D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp in Sources */,
@@ -8884,8 +8899,8 @@
 				0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */,
 				A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */,
 				A5BA15E9182340B300A82E69 /* RemoteInspector.mm in Sources */,
-				A594558F18245EFD00CC3843 /* RemoteInspectorDebuggable.cpp in Sources */,
-				A5BA15EC182340B400A82E69 /* RemoteInspectorDebuggableConnection.mm in Sources */,
+				A594558F18245EFD00CC3843 /* RemoteInspectionTarget.cpp in Sources */,
+				A5BA15EC182340B400A82E69 /* RemoteConnectionToTarget.mm in Sources */,
 				A5BA15EE182340B400A82E69 /* RemoteInspectorXPCConnection.mm in Sources */,
 				0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */,
 				527773DE1AAF83AC00BDE7E8 /* RuntimeType.cpp in Sources */,
@@ -8893,6 +8908,7 @@
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
 				0FE050271AA9095600D33B33 /* ScopedArguments.cpp in Sources */,
 				0FE0502F1AAA806900D33B33 /* ScopedArgumentsTable.cpp in Sources */,
+				992ABCF91BEA9BD2006403A0 /* RemoteAutomationTarget.cpp in Sources */,
 				0FE0502A1AA9095600D33B33 /* ScopeOffset.cpp in Sources */,
 				0FA7A8EE18CE4FD80052371D /* ScratchRegisterAllocator.cpp in Sources */,
 				A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */,

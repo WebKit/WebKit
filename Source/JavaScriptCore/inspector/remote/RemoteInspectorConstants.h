@@ -72,6 +72,7 @@
 #define WIRTypeKey                              @"WIRTypeKey"
 #define WIRTypeJavaScript                       @"WIRTypeJavaScript"
 #define WIRTypeWeb                              @"WIRTypeWeb"
+#define WIRTypeAutomation                       @"WIRTypeAutomation"
 #define WIRAutomaticallyPause                   @"WIRAutomaticallyPause"
 
 #define WIRAutomaticInspectionEnabledKey           @"WIRAutomaticInspectionEnabledKey"

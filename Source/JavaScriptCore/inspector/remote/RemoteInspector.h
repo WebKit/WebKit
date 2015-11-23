@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,16 +33,18 @@
 #import <wtf/HashMap.h>
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSString;
 
 namespace Inspector {
 
+class RemoteAutomationTarget;
+class RemoteConnectionToTarget;
+class RemoteControllableTarget;
+class RemoteInspectionTarget;
 class RemoteInspectorClient;
-class RemoteInspectorDebuggable;
-class RemoteInspectorDebuggableConnection;
-struct RemoteInspectorDebuggableInfo;
 
 class JS_EXPORT_PRIVATE RemoteInspector final : public RemoteInspectorXPCConnection::Client {
 public:
@@ -50,11 +52,13 @@ public:
     static RemoteInspector& singleton();
     friend class NeverDestroyed<RemoteInspector>;
 
-    void registerDebuggable(RemoteInspectorDebuggable*);
-    void unregisterDebuggable(RemoteInspectorDebuggable*);
-    void updateDebuggable(RemoteInspectorDebuggable*);
-    void updateDebuggableAutomaticInspectCandidate(RemoteInspectorDebuggable*);
-    void sendMessageToRemoteFrontend(unsigned identifier, const String& message);
+    void registerTarget(RemoteControllableTarget*);
+    void unregisterTarget(RemoteControllableTarget*);
+    void updateTarget(RemoteControllableTarget*);
+    void sendMessageToRemote(unsigned identifier, const String& message);
+
+    void updateAutomaticInspectionCandidate(RemoteInspectionTarget*);
+
     void setupFailed(unsigned identifier);
     void setupCompleted(unsigned identifier);
     bool waitingForAutomaticInspection(unsigned identifier);
@@ -81,9 +85,11 @@ private:
 
     void setupXPCConnectionIfNeeded();
 
-    NSDictionary *listingForDebuggable(const RemoteInspectorDebuggableInfo&) const;
-    void pushListingNow();
-    void pushListingSoon();
+    RetainPtr<NSDictionary> listingForTarget(const RemoteControllableTarget&) const;
+    RetainPtr<NSDictionary> listingForInspectionTarget(const RemoteInspectionTarget&) const;
+    RetainPtr<NSDictionary> listingForAutomationTarget(const RemoteAutomationTarget&) const;
+    void pushListingsNow();
+    void pushListingsSoon();
 
     void updateHasActiveDebugSession();
 
@@ -105,29 +111,31 @@ private:
 
     static bool startEnabled;
 
-    // Debuggables can be registered from any thread at any time.
-    // Any debuggable can send messages over the XPC connection.
+    // Targets can be registered from any thread at any time.
+    // Any target can send messages over the XPC connection.
     // So lock access to all maps and state as they can change
     // from any thread.
     Lock m_mutex;
 
-    HashMap<unsigned, std::pair<RemoteInspectorDebuggable*, RemoteInspectorDebuggableInfo>> m_debuggableMap;
-    HashMap<unsigned, RefPtr<RemoteInspectorDebuggableConnection>> m_connectionMap;
+    HashMap<unsigned, RemoteControllableTarget*> m_targetMap;
+    HashMap<unsigned, RetainPtr<NSDictionary>> m_listingMap;
+    HashMap<unsigned, RefPtr<RemoteConnectionToTarget>> m_connectionMap;
+
     RefPtr<RemoteInspectorXPCConnection> m_xpcConnection;
 
     dispatch_queue_t m_xpcQueue;
-    unsigned m_nextAvailableIdentifier;
-    int m_notifyToken;
-    bool m_enabled;
-    bool m_hasActiveDebugSession;
-    bool m_pushScheduled;
+    unsigned m_nextAvailableIdentifier { 1 };
+    int m_notifyToken { 0 };
+    bool m_enabled { false };
+    bool m_hasActiveDebugSession { false };
+    bool m_pushScheduled { false };
 
-    pid_t m_parentProcessIdentifier;
+    pid_t m_parentProcessIdentifier { 0 };
     RetainPtr<CFDataRef> m_parentProcessAuditData;
-    bool m_shouldSendParentProcessInformation;
-    bool m_automaticInspectionEnabled;
-    bool m_automaticInspectionPaused;
-    unsigned m_automaticInspectionCandidateIdentifier;
+    bool m_shouldSendParentProcessInformation { false };
+    bool m_automaticInspectionEnabled { false };
+    bool m_automaticInspectionPaused { false };
+    unsigned m_automaticInspectionCandidateIdentifier { 0 };
 };
 
 } // namespace Inspector

@@ -1,3 +1,20 @@
+2015-11-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RemoteInspector should track targets and connections for remote automation
+        https://bugs.webkit.org/show_bug.cgi?id=151042
+
+        Reviewed by Joseph Pecoraro.
+
+        Use the new RemoteControllableTarget API method names.
+
+        No new tests, no behavior change.
+
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::connect):
+        (WebCore::PageDebuggable::dispatchMessageFromRemote):
+        (WebCore::PageDebuggable::dispatchMessageFromRemoteFrontend): Deleted.
+        * page/PageDebuggable.h:
+
 2015-11-23  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Unskip all indexeddb/mozilla tests that pass.

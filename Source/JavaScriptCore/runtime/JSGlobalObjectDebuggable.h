@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "JSGlobalObjectInspectorController.h"
-#include "RemoteInspectorDebuggable.h"
+#include "RemoteInspectionTarget.h"
 #include <wtf/Noncopyable.h>
 
 namespace Inspector {
@@ -41,21 +41,21 @@ namespace JSC {
 
 class JSGlobalObject;
 
-class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectorDebuggable {
+class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectionTarget {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
 public:
     JSGlobalObjectDebuggable(JSGlobalObject&);
     ~JSGlobalObjectDebuggable() { }
 
-    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const override { return Inspector::RemoteInspectorDebuggable::JavaScript; }
+    virtual Inspector::RemoteControllableTarget::Type type() const override { return Inspector::RemoteControllableTarget::Type::JavaScript; }
 
     virtual String name() const override;
     virtual bool hasLocalDebugger() const override { return false; }
 
     virtual void connect(Inspector::FrontendChannel*, bool automaticInspection) override;
     virtual void disconnect(Inspector::FrontendChannel*) override;
-    virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
+    virtual void dispatchMessageFromRemote(const String& message) override;
     virtual void pause() override;
 
     virtual bool automaticInspectionAllowed() const override { return true; }
@@ -66,6 +66,8 @@ private:
 };
 
 } // namespace JSC
+
+SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(JSC::JSGlobalObjectDebuggable, JavaScript);
 
 #endif // ENABLE(REMOTE_INSPECTOR)
 

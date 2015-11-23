@@ -70,7 +70,7 @@ bool PageDebuggable::hasLocalDebugger() const
     return m_page.inspectorController().hasLocalFrontend();
 }
 
-void PageDebuggable::connect(Inspector::FrontendChannel* channel, bool isAutomaticInspection)
+void PageDebuggable::connect(Inspector::FrontendChannel* channel, bool isAutomaticConnection)
 {
     if (!m_page.settings().developerExtrasEnabled()) {
         m_forcedDeveloperExtrasEnabled = true;
@@ -79,7 +79,7 @@ void PageDebuggable::connect(Inspector::FrontendChannel* channel, bool isAutomat
         m_forcedDeveloperExtrasEnabled = false;
 
     InspectorController& inspectorController = m_page.inspectorController();
-    inspectorController.connectFrontend(channel, isAutomaticInspection);
+    inspectorController.connectFrontend(channel, isAutomaticConnection);
 }
 
 void PageDebuggable::disconnect(Inspector::FrontendChannel* channel)
@@ -93,7 +93,7 @@ void PageDebuggable::disconnect(Inspector::FrontendChannel* channel)
     }
 }
 
-void PageDebuggable::dispatchMessageFromRemoteFrontend(const String& message)
+void PageDebuggable::dispatchMessageFromRemote(const String& message)
 {
     m_page.inspectorController().dispatchMessageFromFrontend(message);
 }

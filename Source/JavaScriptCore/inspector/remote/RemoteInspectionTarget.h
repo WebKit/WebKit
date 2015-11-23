@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,30 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#ifndef RemoteInspectorDebuggable_h
-#define RemoteInspectorDebuggable_h
+#ifndef RemoteInspectionTarget_h
+#define RemoteInspectionTarget_h
 
-#include <CoreFoundation/CFRunLoop.h>
+#include "RemoteControllableTarget.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
 class FrontendChannel;
 
-struct RemoteInspectorDebuggableInfo;
-
-class JS_EXPORT_PRIVATE RemoteInspectorDebuggable {
+class JS_EXPORT_PRIVATE RemoteInspectionTarget : public RemoteControllableTarget {
 public:
-    RemoteInspectorDebuggable();
-    virtual ~RemoteInspectorDebuggable();
-
-    void init();
-    void update();
-
-    unsigned identifier() const { return m_identifier; }
-    void setIdentifier(unsigned identifier) { m_identifier = identifier; }
-
     bool remoteDebuggingAllowed() const { return m_allowed; }
     void setRemoteDebuggingAllowed(bool);
 
-    CFRunLoopRef debuggerRunLoop() { return m_runLoop.get(); }
-    void setDebuggerRunLoop(CFRunLoopRef runLoop) { m_runLoop = runLoop; }
+    CFRunLoopRef targetRunLoop() override { return m_runLoop.get(); }
+    void setTargetRunLoop(CFRunLoopRef runLoop) { m_runLoop = runLoop; }
 
-    RemoteInspectorDebuggableInfo info() const;
-
-    enum DebuggableType { JavaScript, Web };
-    virtual DebuggableType type() const = 0;
     virtual String name() const { return String(); } // JavaScript and Web
     virtual String url() const { return String(); } // Web
     virtual bool hasLocalDebugger() const = 0;
 
-    virtual void connect(FrontendChannel*, bool isAutomaticInspection) = 0;
-    virtual void disconnect(FrontendChannel*) = 0;
-    virtual void dispatchMessageFromRemoteFrontend(const String& message) = 0;
     virtual void setIndicating(bool) { } // Default is to do nothing.
     virtual void pause() { };
 
@@ -73,31 +56,23 @@ public:
     virtual void pauseWaitingForAutomaticInspection();
     virtual void unpauseForInitializedInspector();
 
+    // RemoteControllableTarget overrides.
+    virtual bool remoteControlAllowed() const override;
 private:
-    unsigned m_identifier;
-    bool m_allowed;
+    bool m_allowed {false};
     RetainPtr<CFRunLoopRef> m_runLoop;
-};
-
-struct RemoteInspectorDebuggableInfo {
-    RemoteInspectorDebuggableInfo()
-        : identifier(0)
-        , type(RemoteInspectorDebuggable::JavaScript)
-        , hasLocalDebugger(false)
-        , remoteDebuggingAllowed(false)
-    {
-    }
-
-    unsigned identifier;
-    RemoteInspectorDebuggable::DebuggableType type;
-    String name;
-    String url;
-    bool hasLocalDebugger;
-    bool remoteDebuggingAllowed;
 };
 
 } // namespace Inspector
 
-#endif // RemoteInspectorDebuggable_h
+SPECIALIZE_TYPE_TRAITS_BEGIN(Inspector::RemoteInspectionTarget) \
+    static bool isType(const Inspector::RemoteControllableTarget& target) \
+    { \
+        return target.type() == Inspector::RemoteControllableTarget::Type::JavaScript \
+            || target.type() == Inspector::RemoteControllableTarget::Type::Web; \
+    }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // RemoteInspectionTarget_h
 
 #endif // ENABLE(REMOTE_INSPECTOR)

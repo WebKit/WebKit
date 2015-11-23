@@ -30,6 +30,9 @@
 
 namespace Inspector {
 
+// Represents a one-way connection from an Inspection or Automation target to
+// a local or remote controller (such as a debugger or UI automation script).
+
 class FrontendChannel {
 public:
 

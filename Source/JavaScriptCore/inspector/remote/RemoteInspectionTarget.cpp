@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "RemoteInspectorDebuggable.h"
+#include "RemoteInspectionTarget.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
 
@@ -33,28 +33,12 @@
 
 namespace Inspector {
 
-RemoteInspectorDebuggable::RemoteInspectorDebuggable()
-    : m_identifier(0)
-    , m_allowed(false)
+bool RemoteInspectionTarget::remoteControlAllowed() const
 {
+    return remoteDebuggingAllowed() || hasLocalDebugger();
 }
 
-RemoteInspectorDebuggable::~RemoteInspectorDebuggable()
-{
-    RemoteInspector::singleton().unregisterDebuggable(this);
-}
-
-void RemoteInspectorDebuggable::init()
-{
-    RemoteInspector::singleton().registerDebuggable(this);
-}
-
-void RemoteInspectorDebuggable::update()
-{
-    RemoteInspector::singleton().updateDebuggable(this);
-}
-
-void RemoteInspectorDebuggable::setRemoteDebuggingAllowed(bool allowed)
+void RemoteInspectionTarget::setRemoteDebuggingAllowed(bool allowed)
 {
     if (m_allowed == allowed)
         return;
@@ -62,26 +46,14 @@ void RemoteInspectorDebuggable::setRemoteDebuggingAllowed(bool allowed)
     m_allowed = allowed;
 
     if (m_allowed && automaticInspectionAllowed())
-        RemoteInspector::singleton().updateDebuggableAutomaticInspectCandidate(this);
+        RemoteInspector::singleton().updateAutomaticInspectionCandidate(this);
     else
-        RemoteInspector::singleton().updateDebuggable(this);
+        RemoteInspector::singleton().updateTarget(this);
 }
 
-RemoteInspectorDebuggableInfo RemoteInspectorDebuggable::info() const
+void RemoteInspectionTarget::pauseWaitingForAutomaticInspection()
 {
-    RemoteInspectorDebuggableInfo info;
-    info.identifier = identifier();
-    info.type = type();
-    info.name = name();
-    info.url = url();
-    info.hasLocalDebugger = hasLocalDebugger();
-    info.remoteDebuggingAllowed = remoteDebuggingAllowed();
-    return info;
-}
-
-void RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection()
-{
-    ASSERT(m_identifier);
+    ASSERT(identifier());
     ASSERT(m_allowed);
     ASSERT(automaticInspectionAllowed());
 
@@ -90,7 +62,7 @@ void RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection()
         loop.cycle();
 }
 
-void RemoteInspectorDebuggable::unpauseForInitializedInspector()
+void RemoteInspectionTarget::unpauseForInitializedInspector()
 {
     RemoteInspector::singleton().setupCompleted(identifier());
 }

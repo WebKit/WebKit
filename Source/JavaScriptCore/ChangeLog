@@ -1,3 +1,108 @@
+2015-11-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RemoteInspector should track targets and connections for remote automation
+        https://bugs.webkit.org/show_bug.cgi?id=151042
+
+        Reviewed by Joseph Pecoraro.
+
+        Refactor RemoteInspector so it can be used to send listings of different target types.
+        First, rename Debuggable to RemoteInspectionTarget, and pull things not specific to
+        remote inspection into the base class RemoteControllableTarget and its Connection class.
+
+        Add a new RemoteControllableTarget called RemoteAutomationTarget, used by UIProcess
+        to support remote UI automation via webinspectord. On the protocol side, this target
+        uses a new WIRTypeKey called WIRTypeAutomation to distiguish the listing from
+        Web and JavaScript listings and avoid inventing a new listing mechanism.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextGetDebuggerRunLoop):
+        (JSGlobalContextSetDebuggerRunLoop):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorFrontendChannel.h:
+        * inspector/remote/RemoteAutomationTarget.cpp: Added.
+        (Inspector::RemoteAutomationTarget::setAutomationAllowed): Added.
+        * inspector/remote/RemoteAutomationTarget.h: Added.
+        * inspector/remote/RemoteConnectionToTarget.h: Renamed from Source/JavaScriptCore/inspector/remote/RemoteInspectorDebuggableConnection.h.
+        (Inspector::RemoteTargetBlock::RemoteTargetBlock):
+        (Inspector::RemoteTargetBlock::~RemoteTargetBlock):
+        (Inspector::RemoteTargetBlock::operator=):
+        (Inspector::RemoteTargetBlock::operator()):
+        * inspector/remote/RemoteConnectionToTarget.mm: Renamed from Source/JavaScriptCore/inspector/remote/RemoteInspectorDebuggableConnection.mm.
+        (Inspector::RemoteTargetHandleRunSourceGlobal):
+        (Inspector::RemoteTargetQueueTaskOnGlobalQueue):
+        (Inspector::RemoteTargetInitializeGlobalQueue):
+        (Inspector::RemoteTargetHandleRunSourceWithInfo):
+        (Inspector::RemoteConnectionToTarget::RemoteConnectionToTarget):
+        (Inspector::RemoteConnectionToTarget::~RemoteConnectionToTarget):
+        (Inspector::RemoteConnectionToTarget::destination):
+        (Inspector::RemoteConnectionToTarget::connectionIdentifier):
+        (Inspector::RemoteConnectionToTarget::dispatchAsyncOnTarget):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::sendMessageToFrontend):
+        (Inspector::RemoteConnectionToTarget::setupRunLoop):
+        (Inspector::RemoteConnectionToTarget::teardownRunLoop):
+        (Inspector::RemoteConnectionToTarget::queueTaskOnPrivateRunLoop):
+        * inspector/remote/RemoteControllableTarget.cpp: Added.
+        (Inspector::RemoteControllableTarget::~RemoteControllableTarget):
+        (Inspector::RemoteControllableTarget::init):
+        (Inspector::RemoteControllableTarget::update):
+        * inspector/remote/RemoteControllableTarget.h: Added.
+        * inspector/remote/RemoteInspectionTarget.cpp: Renamed from Source/JavaScriptCore/inspector/remote/RemoteInspectorDebuggable.cpp.
+        (Inspector::RemoteInspectionTarget::remoteControlAllowed):
+        (Inspector::RemoteInspectionTarget::setRemoteDebuggingAllowed):
+        (Inspector::RemoteInspectionTarget::pauseWaitingForAutomaticInspection):
+        (Inspector::RemoteInspectionTarget::unpauseForInitializedInspector):
+        * inspector/remote/RemoteInspectionTarget.h: Renamed from Source/JavaScriptCore/inspector/remote/RemoteInspectorDebuggable.h.
+        (isType):
+        * inspector/remote/RemoteInspector.h:
+
+            Code to manage Debuggables now works with RemoteControllableTargets and doesn't
+            care whether the target is for Inspection or Automation. Listing data with target-
+            and type-specific information are captured when clients call into RemoteInspector
+            since that's the easiest time to gather this information on the right thread.
+            Use the is<> / downcast<> machinery when we need a concrete Target type.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::nextAvailableIdentifier):
+        (Inspector::RemoteInspector::registerTarget): renamed from registerDebuggable.
+        (Inspector::RemoteInspector::unregisterTarget): renamed from unregisterDebuggable.
+        (Inspector::RemoteInspector::updateTarget): renamed from updateDebuggable.
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::stopInternal):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::listingForTarget):
+        (Inspector::RemoteInspector::listingForInspectionTarget):
+        (Inspector::RemoteInspector::listingForAutomationTarget):
+        (Inspector::RemoteInspector::pushListingsNow):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedDidCloseMessage):
+        (Inspector::RemoteInspector::receivedGetListingMessage):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedConnectionDiedMessage):
+        (Inspector::RemoteInspector::RemoteInspector): Deleted.
+        (Inspector::RemoteInspector::registerDebuggable): Deleted.
+        (Inspector::RemoteInspector::unregisterDebuggable): Deleted.
+        (Inspector::RemoteInspector::updateDebuggable): Deleted.
+        (Inspector::RemoteInspector::updateDebuggableAutomaticInspectCandidate): Deleted.
+        (Inspector::RemoteInspector::sendMessageToRemoteFrontend): Deleted.
+        (Inspector::RemoteInspector::listingForDebuggable): Deleted.
+        (Inspector::RemoteInspector::pushListingNow): Deleted.
+        (Inspector::RemoteInspector::pushListingSoon): Deleted.
+        * inspector/remote/RemoteInspectorConstants.h:
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::dispatchMessageFromRemote):
+        (JSC::JSGlobalObjectDebuggable::pauseWaitingForAutomaticInspection):
+        (JSC::JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend): Deleted.
+        * runtime/JSGlobalObjectDebuggable.h:
+
 2015-11-23  Brian Burg  <bburg@apple.com>
 
         Rename JavaScriptCore builtins files to match exposed object names

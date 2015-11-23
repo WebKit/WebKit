@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,10 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #import "InitializeThreading.h"
+#import "RemoteAutomationTarget.h"
+#import "RemoteConnectionToTarget.h"
+#import "RemoteInspectionTarget.h"
 #import "RemoteInspectorConstants.h"
-#import "RemoteInspectorDebuggable.h"
-#import "RemoteInspectorDebuggableConnection.h"
 #import <Foundation/Foundation.h>
 #import <dispatch/dispatch.h>
 #import <notify.h>
@@ -107,16 +108,6 @@ RemoteInspector& RemoteInspector::singleton()
 
 RemoteInspector::RemoteInspector()
     : m_xpcQueue(dispatch_queue_create("com.apple.JavaScriptCore.remote-inspector-xpc", DISPATCH_QUEUE_SERIAL))
-    , m_nextAvailableIdentifier(1)
-    , m_notifyToken(0)
-    , m_enabled(false)
-    , m_hasActiveDebugSession(false)
-    , m_pushScheduled(false)
-    , m_parentProcessIdentifier(0)
-    , m_shouldSendParentProcessInformation(false)
-    , m_automaticInspectionEnabled(false)
-    , m_automaticInspectionPaused(false)
-    , m_automaticInspectionCandidateIdentifier(0)
 {
 }
 
@@ -125,71 +116,93 @@ unsigned RemoteInspector::nextAvailableIdentifier()
     unsigned nextValidIdentifier;
     do {
         nextValidIdentifier = m_nextAvailableIdentifier++;
-    } while (!nextValidIdentifier || nextValidIdentifier == std::numeric_limits<unsigned>::max() || m_debuggableMap.contains(nextValidIdentifier));
+    } while (!nextValidIdentifier || nextValidIdentifier == std::numeric_limits<unsigned>::max() || m_targetMap.contains(nextValidIdentifier));
     return nextValidIdentifier;
 }
 
-void RemoteInspector::registerDebuggable(RemoteInspectorDebuggable* debuggable)
+void RemoteInspector::registerTarget(RemoteControllableTarget* target)
 {
+    ASSERT_ARG(target, target);
+
     std::lock_guard<Lock> lock(m_mutex);
 
     unsigned identifier = nextAvailableIdentifier();
-    debuggable->setIdentifier(identifier);
+    target->setIdentifier(identifier);
 
-    auto result = m_debuggableMap.set(identifier, std::make_pair(debuggable, debuggable->info()));
-    ASSERT_UNUSED(result, result.isNewEntry);
+    {
+        auto result = m_targetMap.set(identifier, target);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
+    
+    // If remote control is not allowed, a null listing is returned.
+    if (RetainPtr<NSDictionary> listing = listingForTarget(*target)) {
+        auto result = m_listingMap.set(identifier, listing);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
 
-    if (debuggable->remoteDebuggingAllowed())
-        pushListingSoon();
+    pushListingsSoon();
 }
 
-void RemoteInspector::unregisterDebuggable(RemoteInspectorDebuggable* debuggable)
+void RemoteInspector::unregisterTarget(RemoteControllableTarget* target)
 {
+    ASSERT_ARG(target, target);
+
     std::lock_guard<Lock> lock(m_mutex);
 
-    unsigned identifier = debuggable->identifier();
+    unsigned identifier = target->identifier();
     if (!identifier)
         return;
 
-    bool wasRemoved = m_debuggableMap.remove(identifier);
+    bool wasRemoved = m_targetMap.remove(identifier);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 
-    if (RefPtr<RemoteInspectorDebuggableConnection> connection = m_connectionMap.take(identifier))
-        connection->closeFromDebuggable();
+    // The listing may never have been added if remote control isn't allowed.
+    m_listingMap.remove(identifier);
 
-    if (debuggable->remoteDebuggingAllowed())
-        pushListingSoon();
+    if (auto connection = m_connectionMap.take(identifier))
+        connection->targetClosed();
+
+    pushListingsSoon();
 }
 
-void RemoteInspector::updateDebuggable(RemoteInspectorDebuggable* debuggable)
+void RemoteInspector::updateTarget(RemoteControllableTarget* target)
 {
+    ASSERT_ARG(target, target);
+
     std::lock_guard<Lock> lock(m_mutex);
 
-    unsigned identifier = debuggable->identifier();
+    unsigned identifier = target->identifier();
     if (!identifier)
         return;
 
-    auto result = m_debuggableMap.set(identifier, std::make_pair(debuggable, debuggable->info()));
-    ASSERT_UNUSED(result, !result.isNewEntry);
+    {
+        auto result = m_targetMap.set(identifier, target);
+        ASSERT_UNUSED(result, !result.isNewEntry);
+    }
 
-    pushListingSoon();
+    // If the target has just allowed remote control, then the listing won't exist yet.
+    if (RetainPtr<NSDictionary> listing = listingForTarget(*target))
+        m_listingMap.set(identifier, listing);
+
+    pushListingsSoon();
 }
 
-void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorDebuggable* debuggable)
+void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget* target)
 {
+    ASSERT_ARG(target, target);
     {
         std::lock_guard<Lock> lock(m_mutex);
 
-        unsigned identifier = debuggable->identifier();
+        unsigned identifier = target->identifier();
         if (!identifier)
             return;
 
-        auto result = m_debuggableMap.set(identifier, std::make_pair(debuggable, debuggable->info()));
+        auto result = m_targetMap.set(identifier, target);
         ASSERT_UNUSED(result, !result.isNewEntry);
 
         // Don't allow automatic inspection unless it is allowed or we are stopped.
         if (!m_automaticInspectionEnabled || !m_enabled) {
-            pushListingSoon();
+            pushListingsSoon();
             return;
         }
 
@@ -198,7 +211,7 @@ void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorD
         // Multiple attempts on the same thread should not be possible because our nested run loop is in a special RWI mode.
         if (m_automaticInspectionPaused) {
             LOG_ERROR("Skipping Automatic Inspection Candidate with pageId(%u) because we are already paused waiting for pageId(%u)", identifier, m_automaticInspectionCandidateIdentifier);
-            pushListingSoon();
+            pushListingsSoon();
             return;
         }
 
@@ -207,7 +220,7 @@ void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorD
 
         // If we are pausing before we have connected to webinspectord the candidate message will be sent as soon as the connection is established.
         if (m_xpcConnection) {
-            pushListingNow();
+            pushListingsNow();
             sendAutomaticInspectionCandidateMessage();
         }
 
@@ -221,7 +234,7 @@ void RemoteInspector::updateDebuggableAutomaticInspectCandidate(RemoteInspectorD
         });
     }
 
-    debuggable->pauseWaitingForAutomaticInspection();
+    target->pauseWaitingForAutomaticInspection();
 
     {
         std::lock_guard<Lock> lock(m_mutex);
@@ -243,16 +256,14 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
     m_xpcConnection->sendMessage(WIRAutomaticInspectionCandidateMessage, details);
 }
 
-void RemoteInspector::sendMessageToRemoteFrontend(unsigned identifier, const String& message)
+void RemoteInspector::sendMessageToRemote(unsigned identifier, const String& message)
 {
     std::lock_guard<Lock> lock(m_mutex);
 
     if (!m_xpcConnection)
         return;
 
-    RefPtr<RemoteInspectorDebuggableConnection> connection = m_connectionMap.get(identifier);
-    if (!connection)
-        return;
+    auto connection = m_connectionMap.get(identifier);
 
     NSDictionary *userInfo = @{
         WIRRawDataKey: [static_cast<NSString *>(message) dataUsingEncoding:NSUTF8StringEncoding],
@@ -274,7 +285,7 @@ void RemoteInspector::setupFailed(unsigned identifier)
     if (identifier == m_automaticInspectionCandidateIdentifier)
         m_automaticInspectionPaused = false;
 
-    pushListingSoon();
+    pushListingsSoon();
 }
 
 void RemoteInspector::setupCompleted(unsigned identifier)
@@ -329,8 +340,8 @@ void RemoteInspector::stopInternal(StopSource source)
 
     m_pushScheduled = false;
 
-    for (auto it = m_connectionMap.begin(), end = m_connectionMap.end(); it != end; ++it)
-        it->value->close();
+    for (auto connection : m_connectionMap.values())
+        connection->close();
     m_connectionMap.clear();
 
     updateHasActiveDebugSession();
@@ -370,10 +381,10 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
 
     if (m_automaticInspectionCandidateIdentifier) {
         // We already have a debuggable waiting to be automatically inspected.
-        pushListingNow();
+        pushListingsNow();
         sendAutomaticInspectionCandidateMessage();
     } else
-        pushListingSoon();
+        pushListingsSoon();
 }
 
 #pragma mark - Proxy Application Information
@@ -435,8 +446,8 @@ void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* connecti
 
     m_pushScheduled = false;
 
-    for (auto it = m_connectionMap.begin(), end = m_connectionMap.end(); it != end; ++it)
-        it->value->close();
+    for (auto connection : m_connectionMap.values())
+        connection->close();
     m_connectionMap.clear();
 
     updateHasActiveDebugSession();
@@ -454,42 +465,73 @@ void RemoteInspector::xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection
 
 #pragma mark - Listings
 
-NSDictionary *RemoteInspector::listingForDebuggable(const RemoteInspectorDebuggableInfo& debuggableInfo) const
+RetainPtr<NSDictionary> RemoteInspector::listingForTarget(const RemoteControllableTarget& target) const
 {
-    NSMutableDictionary *debuggableDetails = [NSMutableDictionary dictionary];
+    if (is<RemoteInspectionTarget>(target))
+        return listingForInspectionTarget(downcast<RemoteInspectionTarget>(target));
+    if (is<RemoteAutomationTarget>(target))
+        return listingForAutomationTarget(downcast<RemoteAutomationTarget>(target));
 
-    [debuggableDetails setObject:@(debuggableInfo.identifier) forKey:WIRPageIdentifierKey];
+    ASSERT_NOT_REACHED();
+    return nil;
+}
 
-    switch (debuggableInfo.type) {
-    case RemoteInspectorDebuggable::JavaScript: {
-        NSString *name = debuggableInfo.name;
-        [debuggableDetails setObject:name forKey:WIRTitleKey];
-        [debuggableDetails setObject:WIRTypeJavaScript forKey:WIRTypeKey];
+RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
+{
+    // Must collect target information on the WebThread, Main, or Worker thread since RemoteTargets are
+    // implemented by non-threadsafe JSC / WebCore classes such as JSGlobalObject or WebCore::Page.
+
+    if (!target.remoteDebuggingAllowed())
+        return nil;
+
+    RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
+    [listing setObject:@(target.identifier()) forKey:WIRPageIdentifierKey];
+
+    switch (target.type()) {
+    case RemoteInspectionTarget::Type::JavaScript:
+        [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:WIRTypeJavaScript forKey:WIRTypeKey];
         break;
-    }
-    case RemoteInspectorDebuggable::Web: {
-        NSString *url = debuggableInfo.url;
-        NSString *title = debuggableInfo.name;
-        [debuggableDetails setObject:url forKey:WIRURLKey];
-        [debuggableDetails setObject:title forKey:WIRTitleKey];
-        [debuggableDetails setObject:WIRTypeWeb forKey:WIRTypeKey];
+    case RemoteInspectionTarget::Type::Web:
+        [listing setObject:target.url() forKey:WIRURLKey];
+        [listing setObject:target.name() forKey:WIRTitleKey];
+        [listing setObject:WIRTypeWeb forKey:WIRTypeKey];
         break;
-    }
     default:
         ASSERT_NOT_REACHED();
         break;
     }
 
-    if (RefPtr<RemoteInspectorDebuggableConnection> connection = m_connectionMap.get(debuggableInfo.identifier))
-        [debuggableDetails setObject:connection->connectionIdentifier() forKey:WIRConnectionIdentifierKey];
+    if (auto* connection = m_connectionMap.get(target.identifier()))
+        [listing setObject:connection->connectionIdentifier() forKey:WIRConnectionIdentifierKey];
 
-    if (debuggableInfo.hasLocalDebugger)
-        [debuggableDetails setObject:@YES forKey:WIRHasLocalDebuggerKey];
+    if (target.hasLocalDebugger())
+        [listing setObject:@YES forKey:WIRHasLocalDebuggerKey];
 
-    return debuggableDetails;
+    return listing;
 }
 
-void RemoteInspector::pushListingNow()
+RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const RemoteAutomationTarget& target) const
+{
+    // Must collect target information on the WebThread or Main thread since RemoteTargets are
+    // implemented by non-threadsafe JSC / WebCore classes such as JSGlobalObject or WebCore::Page.
+    ASSERT(isMainThread());
+
+    if (!target.automationAllowed())
+        return nil;
+
+    RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
+    [listing setObject:@(target.identifier()) forKey:WIRPageIdentifierKey];
+    [listing setObject:target.name() forKey:WIRTitleKey];
+    [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
+
+    if (auto connection = m_connectionMap.get(target.identifier()))
+        [listing setObject:connection->connectionIdentifier() forKey:WIRConnectionIdentifierKey];
+
+    return listing;
+}
+
+void RemoteInspector::pushListingsNow()
 {
     ASSERT(m_xpcConnection);
     if (!m_xpcConnection)
@@ -497,22 +539,19 @@ void RemoteInspector::pushListingNow()
 
     m_pushScheduled = false;
 
-    RetainPtr<NSMutableDictionary> response = adoptNS([[NSMutableDictionary alloc] init]);
-    for (auto it = m_debuggableMap.begin(), end = m_debuggableMap.end(); it != end; ++it) {
-        const RemoteInspectorDebuggableInfo& debuggableInfo = it->value.second;
-        if (debuggableInfo.remoteDebuggingAllowed) {
-            NSDictionary *details = listingForDebuggable(debuggableInfo);
-            [response setObject:details forKey:[NSString stringWithFormat:@"%u", debuggableInfo.identifier]];
-        }
+    RetainPtr<NSMutableDictionary> listings = adoptNS([[NSMutableDictionary alloc] init]);
+    for (RetainPtr<NSDictionary> listing : m_listingMap.values()) {
+        NSString *identifier = [listing.get() objectForKey:WIRPageIdentifierKey];
+        [listings setObject:listing.get() forKey:identifier];
     }
 
-    RetainPtr<NSMutableDictionary> outgoing = adoptNS([[NSMutableDictionary alloc] init]);
-    [outgoing setObject:response.get() forKey:WIRListingKey];
+    RetainPtr<NSMutableDictionary> message = adoptNS([[NSMutableDictionary alloc] init]);
+    [message setObject:listings.get() forKey:WIRListingKey];
 
-    m_xpcConnection->sendMessage(WIRListingMessage, outgoing.get());
+    m_xpcConnection->sendMessage(WIRListingMessage, message.get());
 }
 
-void RemoteInspector::pushListingSoon()
+void RemoteInspector::pushListingsSoon()
 {
     if (!m_xpcConnection)
         return;
@@ -524,7 +563,7 @@ void RemoteInspector::pushListingSoon()
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         std::lock_guard<Lock> lock(m_mutex);
         if (m_pushScheduled)
-            pushListingNow();
+            pushListingsNow();
     });
 }
 
@@ -547,8 +586,8 @@ void RemoteInspector::updateHasActiveDebugSession()
 
 void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
 {
-    NSNumber *pageId = [userInfo objectForKey:WIRPageIdentifierKey];
-    if (!pageId)
+    unsigned identifier = [[userInfo objectForKey:WIRPageIdentifierKey] unsignedIntegerValue];
+    if (!identifier)
         return;
 
     NSString *connectionIdentifier = [userInfo objectForKey:WIRConnectionIdentifierKey];
@@ -559,65 +598,66 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     if (!sender)
         return;
 
-    unsigned identifier = [pageId unsignedIntValue];
     if (m_connectionMap.contains(identifier))
         return;
 
-    auto it = m_debuggableMap.find(identifier);
-    if (it == m_debuggableMap.end())
+    auto findResult = m_targetMap.find(identifier);
+    if (findResult == m_targetMap.end())
         return;
 
     // Attempt to create a connection. This may fail if the page already has an inspector or if it disallows inspection.
-    RemoteInspectorDebuggable* debuggable = it->value.first;
-    RemoteInspectorDebuggableInfo debuggableInfo = it->value.second;
-    RefPtr<RemoteInspectorDebuggableConnection> connection = adoptRef(new RemoteInspectorDebuggableConnection(debuggable, connectionIdentifier, sender, debuggableInfo.type));
-    bool isAutomaticInspection = m_automaticInspectionCandidateIdentifier == debuggable->identifier();
+    RemoteControllableTarget* target = findResult->value;
+    RefPtr<RemoteConnectionToTarget> connection = adoptRef(new RemoteConnectionToTarget(downcast<RemoteInspectionTarget>(target), connectionIdentifier, sender));
 
-    bool automaticallyPause = false;
-    NSNumber *automaticallyPauseObject = [userInfo objectForKey:WIRAutomaticallyPause];
-    if ([automaticallyPauseObject isKindOfClass:[NSNumber class]])
-        automaticallyPause = [automaticallyPauseObject boolValue];
+    if (is<RemoteInspectionTarget>(target)) {
+        bool isAutomaticInspection = m_automaticInspectionCandidateIdentifier == target->identifier();
+        bool automaticallyPause = [[userInfo objectForKey:WIRAutomaticallyPause] boolValue];
 
-    if (!connection->setup(isAutomaticInspection, automaticallyPause)) {
-        connection->close();
-        return;
-    }
+        if (!connection->setup(isAutomaticInspection, automaticallyPause)) {
+            connection->close();
+            return;
+        }
+        m_connectionMap.set(identifier, connection.release());
+        updateHasActiveDebugSession();
+    } else if (is<RemoteAutomationTarget>(target)) {
+        if (!connection->setup()) {
+            connection->close();
+            return;
+        }
+        m_connectionMap.set(identifier, connection.release());
+        updateHasActiveDebugSession();
+    } else
+        ASSERT_NOT_REACHED();
 
-    m_connectionMap.set(identifier, connection.release());
-
-    updateHasActiveDebugSession();
-
-    pushListingSoon();
+    pushListingsSoon();
 }
 
 void RemoteInspector::receivedDataMessage(NSDictionary *userInfo)
 {
-    NSNumber *pageId = [userInfo objectForKey:WIRPageIdentifierKey];
-    if (!pageId)
+    unsigned identifier = [[userInfo objectForKey:WIRPageIdentifierKey] unsignedIntegerValue];
+    if (!identifier)
         return;
 
-    unsigned pageIdentifier = [pageId unsignedIntValue];
-    RefPtr<RemoteInspectorDebuggableConnection> connection = m_connectionMap.get(pageIdentifier);
+    auto connection = m_connectionMap.get(identifier);
     if (!connection)
         return;
 
     NSData *data = [userInfo objectForKey:WIRSocketDataKey];
     RetainPtr<NSString> message = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    connection->sendMessageToBackend(message.get());
+    connection->sendMessageToTarget(message.get());
 }
 
 void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
 {
-    NSNumber *pageId = [userInfo objectForKey:WIRPageIdentifierKey];
-    if (!pageId)
+    unsigned identifier = [[userInfo objectForKey:WIRPageIdentifierKey] unsignedIntegerValue];
+    if (!identifier)
         return;
 
     NSString *connectionIdentifier = [userInfo objectForKey:WIRConnectionIdentifierKey];
     if (!connectionIdentifier)
         return;
 
-    unsigned identifier = [pageId unsignedIntValue];
-    RefPtr<RemoteInspectorDebuggableConnection> connection = m_connectionMap.get(identifier);
+    auto connection = m_connectionMap.get(identifier);
     if (!connection)
         return;
 
@@ -629,35 +669,37 @@ void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
 
     updateHasActiveDebugSession();
 
-    pushListingSoon();
+    pushListingsSoon();
 }
 
 void RemoteInspector::receivedGetListingMessage(NSDictionary *)
 {
-    pushListingNow();
+    pushListingsNow();
 }
 
 void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
 {
-    NSNumber *pageId = [userInfo objectForKey:WIRPageIdentifierKey];
-    if (!pageId)
+    unsigned identifier = [[userInfo objectForKey:WIRPageIdentifierKey] unsignedIntegerValue];
+    if (!identifier)
         return;
 
-    unsigned identifier = [pageId unsignedIntValue];
     BOOL indicateEnabled = [[userInfo objectForKey:WIRIndicateEnabledKey] boolValue];
 
+    std::lock_guard<Lock> lock(m_mutex);
+
     callOnWebThreadOrDispatchAsyncOnMainThread(^{
-        RemoteInspectorDebuggable* debuggable = nullptr;
+        RemoteControllableTarget* target = nullptr;
         {
             std::lock_guard<Lock> lock(m_mutex);
 
-            auto it = m_debuggableMap.find(identifier);
-            if (it == m_debuggableMap.end())
+            auto findResult = m_targetMap.find(identifier);
+            if (findResult == m_targetMap.end())
                 return;
 
-            debuggable = it->value.first;
+            target = findResult->value;
         }
-        debuggable->setIndicating(indicateEnabled);
+        if (is<RemoteInspectionTarget>(target))
+            downcast<RemoteInspectionTarget>(target)->setIndicating(indicateEnabled);
     });
 }
 
@@ -703,7 +745,7 @@ void RemoteInspector::receivedConnectionDiedMessage(NSDictionary *userInfo)
     if (it == end)
         return;
 
-    RefPtr<RemoteInspectorDebuggableConnection> connection = it->value;
+    auto connection = it->value;
     connection->close();
     m_connectionMap.remove(it);
 

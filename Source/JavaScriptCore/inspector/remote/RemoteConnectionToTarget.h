@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,12 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#ifndef RemoteInspectorDebuggableConnection_h
-#define RemoteInspectorDebuggableConnection_h
+#ifndef RemoteConnectionToTarget_h
+#define RemoteConnectionToTarget_h
 
 #import "InspectorFrontendChannel.h"
-#import "RemoteInspectorDebuggable.h"
+#import "RemoteConnectionToTarget.h"
+#import "RemoteInspector.h"
 #import <mutex>
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
@@ -38,25 +39,25 @@
 OBJC_CLASS NSString;
 
 namespace Inspector {
-    
-class RemoteInspectorBlock {
+
+class RemoteTargetBlock {
 public:
-    RemoteInspectorBlock(void (^task)())
+    RemoteTargetBlock(void (^task)())
         : m_task(Block_copy(task))
     {
     }
 
-    RemoteInspectorBlock(const RemoteInspectorBlock& other)
+    RemoteTargetBlock(const RemoteTargetBlock& other)
         : m_task(Block_copy(other.m_task))
     {
     }
 
-    ~RemoteInspectorBlock()
+    ~RemoteTargetBlock()
     {
         Block_release(m_task);
     }
 
-    RemoteInspectorBlock& operator=(const RemoteInspectorBlock& other)
+    RemoteTargetBlock& operator=(const RemoteTargetBlock& other)
     {
         void (^oldTask)() = m_task;
         m_task = Block_copy(other.m_task);
@@ -73,59 +74,59 @@ private:
     void (^m_task)();
 };
 
-typedef Vector<RemoteInspectorBlock> RemoteInspectorQueue;
+typedef Vector<RemoteTargetBlock> RemoteTargetQueue;
 
-class RemoteInspectorDebuggableConnection final : public ThreadSafeRefCounted<RemoteInspectorDebuggableConnection>, public FrontendChannel {
+class RemoteConnectionToTarget final : public ThreadSafeRefCounted<RemoteConnectionToTarget>, public FrontendChannel {
 public:
-    RemoteInspectorDebuggableConnection(RemoteInspectorDebuggable*, NSString *connectionIdentifier, NSString *destination, RemoteInspectorDebuggable::DebuggableType);
-    virtual ~RemoteInspectorDebuggableConnection();
+    RemoteConnectionToTarget(RemoteControllableTarget*, NSString *connectionIdentifier, NSString *destination);
+    virtual ~RemoteConnectionToTarget();
 
-    NSString *destination() const;
-    NSString *connectionIdentifier() const;
+    // Main API.
+    bool setup(bool isAutomaticInspection = false, bool automaticallyPause = false);
+    virtual void sendMessageToTarget(NSString *);
+    virtual void close();
+    virtual void targetClosed();
+
     unsigned identifier() const { return m_identifier; }
-
-    bool setup(bool isAutomaticInspection, bool automaticallyPause);
-
-    void close();
-    void closeFromDebuggable();
-
-    void sendMessageToBackend(NSString *);
-    virtual bool sendMessageToFrontend(const String&) override;
-
-    virtual ConnectionType connectionType() const override { return ConnectionType::Remote; }
+    NSString *connectionIdentifier() const;
+    NSString *destination() const;
 
     Lock& queueMutex() { return m_queueMutex; }
-    RemoteInspectorQueue queue() const { return m_queue; }
+    RemoteTargetQueue queue() const { return m_queue; }
     void clearQueue() { m_queue.clear(); }
 
+    // FrontendChannel overrides.
+    virtual ConnectionType connectionType() const override { return ConnectionType::Remote; }
+    virtual bool sendMessageToFrontend(const String&) override;
+
 private:
-    void dispatchAsyncOnDebuggable(void (^block)());
+    void dispatchAsyncOnTarget(void (^block)());
 
     void setupRunLoop();
     void teardownRunLoop();
     void queueTaskOnPrivateRunLoop(void (^block)());
 
-    // This connection from the RemoteInspector singleton to the Debuggable
-    // can be used on multiple threads. So any access to the debuggable
-    // itself must take this mutex to ensure m_debuggable is valid.
-    Lock m_debuggableMutex;
+    // This connection from the RemoteInspector singleton to the InspectionTarget
+    // can be used on multiple threads. So any access to the target
+    // itself must take this mutex to ensure m_target is valid.
+    Lock m_targetMutex;
 
-    // If a debuggable has a specific run loop it wants to evaluate on
+    // If a target has a specific run loop it wants to evaluate on
     // we setup our run loop sources on that specific run loop.
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
-    RemoteInspectorQueue m_queue;
+    RemoteTargetQueue m_queue;
     Lock m_queueMutex;
 
-    RemoteInspectorDebuggable* m_debuggable;
+    RemoteControllableTarget* m_target { nullptr };
+    unsigned m_identifier { 0 };
     RetainPtr<NSString> m_connectionIdentifier;
     RetainPtr<NSString> m_destination;
-    unsigned m_identifier;
-    bool m_connected;
+    bool m_connected { false };
 };
 
 } // namespace Inspector
 
-#endif // RemoteInspectorDebuggableConnection_h
+#endif // RemoteConnectionToTarget_h
 
 #endif // ENABLE(REMOTE_INSPECTOR)
