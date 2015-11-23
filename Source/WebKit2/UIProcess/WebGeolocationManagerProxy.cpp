@@ -57,8 +57,12 @@ void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProviderB
 
 void WebGeolocationManagerProxy::processPoolDestroyed()
 {
+    bool wasUpdating = isUpdating();
     m_updateRequesters.clear();
-    m_provider.stopUpdating(this);
+
+    ASSERT(!isUpdating());
+    if (wasUpdating)
+        m_provider.stopUpdating(this);
 }
 
 void WebGeolocationManagerProxy::processDidClose(WebProcessProxy* webProcessProxy)

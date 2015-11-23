@@ -1,3 +1,17 @@
+2015-11-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crash in ~WebProcessPool when using Geolocation with useNetworkProcess=true
+        https://bugs.webkit.org/show_bug.cgi?id=151532
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::processPoolDestroyed):
+        (WebKit::WebGeolocationManagerProxy::processDidClose):
+        When a WebProcessPool is destroyed, only call stopUpdating if m_updateRequesters.clear()
+        stopped the updating, like we do in WebGeolocationManagerProxy::removeRequester.
+        Otherwise, call setEnableHighAccuracy if needed, also like we do in WebGeolocationManagerProxy::removeRequester.
+
 2015-11-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: when inspecting the inspector, add the inspection level to the title bar

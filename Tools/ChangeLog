@@ -1,3 +1,22 @@
+2015-11-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crash in ~WebProcessPool when using Geolocation with useNetworkProcess=true
+        https://bugs.webkit.org/show_bug.cgi?id=151532
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebKit2/Geolocation.cpp:
+        (TestWebKitAPI::GeolocationTransitionToHighAccuracyStateTracker::eventsChanged):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::GeolocationTransitionToLowAccuracyStateTracker::eventsChanged):
+        (TestWebKitAPI::GeolocationTransitionToHighAccuracyStateTracker::GeolocationTransitionToHighAccuracyStateTracker): Deleted.
+        (TestWebKitAPI::GeolocationTransitionToLowAccuracyStateTracker::GeolocationTransitionToLowAccuracyStateTracker): Deleted.
+        Properly load about:blank in all WebViews to clean up.  Without this change, we had a 
+        Geolocation provider stopping after its state tracker was destroyed with its stack frame,
+        so it was calling a function on a test object that had gone out of scope.
+        Also, call WKContextSetUsesNetworkProcess(context, true) to show what crash this fixed,
+        but that will become the default soon and that call will be removed.
+
 2015-11-22  David Kilzer  <ddkilzer@apple.com>
 
         run-webkit-tests: http server for imported W3C tests doesn't work with --layout-tests-directory switch

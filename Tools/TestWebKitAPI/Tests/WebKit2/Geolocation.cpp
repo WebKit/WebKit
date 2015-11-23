@@ -30,6 +30,7 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
+#include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <string.h>
 #include <vector>
@@ -212,14 +213,9 @@ TEST(WebKit2, GeolocationBasicWithHighAccuracy)
 
 // Geolocation start without High Accuracy, then requires High Accuracy.
 struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker {
-    bool finishedFirstStep;
-    bool finished;
-
-    GeolocationTransitionToHighAccuracyStateTracker()
-        : finishedFirstStep(false)
-        , finished(false)
-    {
-    }
+    bool finishedFirstStep { false };
+    bool enabledHighAccuracy { false };
+    bool finished { false };
 
     virtual void eventsChanged()
     {
@@ -233,11 +229,19 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
             break;
         case 3:
             EXPECT_EQ(GeolocationEvent::EnableHighAccuracy, events[2]);
+            enabledHighAccuracy = true;
+            break;
+        case 4:
+            EXPECT_EQ(GeolocationEvent::DisableHighAccuracy, events[3]);
+            break;
+        case 5:
+            EXPECT_EQ(GeolocationEvent::StopUpdating, events[4]);
             finished = true;
             break;
         default:
             EXPECT_TRUE(false);
             finishedFirstStep = true;
+            enabledHighAccuracy = true;
             finished = true;
         }
     }
@@ -246,6 +250,7 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
 TEST(WebKit2, GeolocationTransitionToHighAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKContextSetUsesNetworkProcess(context.get(), true);
 
     GeolocationTransitionToHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -260,19 +265,20 @@ TEST(WebKit2, GeolocationTransitionToHighAccuracy)
     setupView(highAccuracyWebView);
     WKRetainPtr<WKURLRef> highAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPositionWithHighAccuracy", "html"));
     WKPageLoadURL(highAccuracyWebView.page(), highAccuracyURL.get());
+    Util::run(&stateTracker.enabledHighAccuracy);
+    
+    WKRetainPtr<WKURLRef> resetUrl = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
+    WKPageLoadURL(highAccuracyWebView.page(), resetUrl.get());
+    Util::run(&stateTracker.enabledHighAccuracy);
+    WKPageLoadURL(lowAccuracyWebView.page(), resetUrl.get());
     Util::run(&stateTracker.finished);
 }
 
 // Geolocation start with High Accuracy, then should fall back to low accuracy.
 struct GeolocationTransitionToLowAccuracyStateTracker : GeolocationStateTracker {
-    bool finishedFirstStep;
-    bool finished;
-
-    GeolocationTransitionToLowAccuracyStateTracker()
-        : finishedFirstStep(false)
-        , finished(false)
-    {
-    }
+    bool finishedFirstStep { false };
+    bool disabledHighAccuracy { false };
+    bool finished { false };
 
     virtual void eventsChanged()
     {
@@ -286,11 +292,16 @@ struct GeolocationTransitionToLowAccuracyStateTracker : GeolocationStateTracker 
             break;
         case 3:
             EXPECT_EQ(GeolocationEvent::DisableHighAccuracy, events[2]);
+            disabledHighAccuracy = true;
+            break;
+        case 4:
+            EXPECT_EQ(GeolocationEvent::StopUpdating, events[3]);
             finished = true;
             break;
         default:
             EXPECT_TRUE(false);
             finishedFirstStep = true;
+            disabledHighAccuracy = true;
             finished = true;
         }
     }
@@ -334,6 +345,8 @@ TEST(WebKit2, GeolocationTransitionToLowAccuracy)
 
     WKRetainPtr<WKURLRef> resetUrl = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
     WKPageLoadURL(highAccuracyWebView.page(), resetUrl.get());
+    Util::run(&stateTracker.disabledHighAccuracy);
+    WKPageLoadURL(lowAccuracyWebView.page(), resetUrl.get());
     Util::run(&stateTracker.finished);
 }
 
