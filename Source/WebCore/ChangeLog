@@ -1,3 +1,22 @@
+2015-11-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: freeSpace >= 0 in WebCore::RenderGrid::computeTrackSizesForDirection
+        https://bugs.webkit.org/show_bug.cgi?id=151254
+
+        Reviewed by Darin Adler.
+
+        When in quirks mode, abnormally huge margins could lead to
+        negative computations of available logical sizes. We could add
+        an !document.inQuirksMode() check in the assertion but since
+        negative freeSpace values are valid (i.e. the condition is not
+        really part of the contract and everything will work as
+        expected) I've decided to simply remove it.
+
+        Test: fast/css-grid-layout/grid-quirks-mode-huge-margin-crash.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeTrackSizesForDirection): Deleted.
+
 2015-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font selection should not consult font-variant property
