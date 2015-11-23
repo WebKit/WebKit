@@ -72,6 +72,7 @@ inspector/indexeddb
 
 # But Modern IndexedDB is.
 storage/indexeddb/modern [ Pass ]
+storage/indexeddb/mozilla/global-data.html [ Pass ]
 
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]

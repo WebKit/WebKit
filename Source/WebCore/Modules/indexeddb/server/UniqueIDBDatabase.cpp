@@ -45,6 +45,7 @@ UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentif
     : m_server(server)
     , m_identifier(identifier)
     , m_deleteOrRunTransactionsTimer(*this, &UniqueIDBDatabase::deleteOrRunTransactionsTimerFired)
+    , m_handleOpenDatabaseOperationsTimer(*this, &UniqueIDBDatabase::handleOpenDatabaseOperations)
 {
 }
 
@@ -113,6 +114,9 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
     // If a version change transaction is currently in progress, no new connections can be opened right now.
     // We will try again later.
     if (m_versionChangeDatabaseConnection)
+        return;
+
+    if (m_pendingOpenDatabaseOperations.isEmpty())
         return;
 
     auto operation = m_pendingOpenDatabaseOperations.takeFirst();
@@ -713,6 +717,9 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
         m_databaseInfo->setVersion(transaction.info().newVersion());
         m_versionChangeTransaction = nullptr;
         m_versionChangeDatabaseConnection = nullptr;
+
+        if (!m_handleOpenDatabaseOperationsTimer.isActive())
+            m_handleOpenDatabaseOperationsTimer.startOneShot(0);
     }
 
     uint64_t callbackID = storeCallback(callback);

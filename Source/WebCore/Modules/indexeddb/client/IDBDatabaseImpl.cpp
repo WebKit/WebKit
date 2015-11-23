@@ -156,7 +156,7 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
         return nullptr;
     }
 
-    if (m_versionChangeTransaction) {
+    if (m_versionChangeTransaction && !m_versionChangeTransaction->isFinishedOrFinishing()) {
         ec = INVALID_STATE_ERR;
         return nullptr;
     }

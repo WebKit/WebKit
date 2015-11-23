@@ -55,7 +55,7 @@ MemoryObjectStore::MemoryObjectStore(const IDBObjectStoreInfo& info)
 
 MemoryObjectStore::~MemoryObjectStore()
 {
-    ASSERT(!m_writeTransaction);
+    m_writeTransaction = nullptr;
 }
 
 MemoryIndex* MemoryObjectStore::indexForIdentifier(uint64_t identifier)

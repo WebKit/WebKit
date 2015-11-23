@@ -186,6 +186,7 @@ private:
     HashMap<uint64_t, CountCallback> m_countCallbacks;
 
     Timer m_deleteOrRunTransactionsTimer;
+    Timer m_handleOpenDatabaseOperationsTimer;
 
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;

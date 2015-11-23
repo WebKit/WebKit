@@ -123,10 +123,10 @@ public:
 
     void operationDidComplete(TransactionOperation&);
 
+    bool isFinishedOrFinishing() const;
+
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);
-
-    bool isFinishedOrFinishing() const;
 
     void commit();
 

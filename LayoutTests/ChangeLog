@@ -1,3 +1,12 @@
+2015-11-23  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Unskip storage/indexeddb/mozilla/global-data.html.
+        https://bugs.webkit.org/show_bug.cgi?id=151557
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2015-11-17  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: freeSpace >= 0 in WebCore::RenderGrid::computeTrackSizesForDirection

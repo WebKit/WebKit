@@ -62,8 +62,6 @@ void MemoryObjectStoreCursor::keyDeleted(const IDBKeyData& key)
 
 void MemoryObjectStoreCursor::keyAdded(std::set<IDBKeyData>::iterator iterator)
 {
-    ASSERT(m_currentPositionKey.isValid());
-
     if (hasIterators())
         return;
 

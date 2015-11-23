@@ -1,3 +1,34 @@
+2015-11-23  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Unskip storage/indexeddb/mozilla/global-data.html.
+        https://bugs.webkit.org/show_bug.cgi?id=151557
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Unskipping existing test storage/indexeddb/mozilla/global-data.html).
+
+        - Reworking some invalid ASSERTS
+        - Actually opening pending open-database-requests after a version change transaction completes
+        - Allow starting new transactions when the version change transaction has *started* finishing, 
+          but before it finishes finishing.
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::transaction):
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+        
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::~MemoryObjectStore):
+        
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        (WebCore::IDBServer::MemoryObjectStoreCursor::keyAdded): Deleted.
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleOpenDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2015-11-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove DOMPromiseWithCallback
