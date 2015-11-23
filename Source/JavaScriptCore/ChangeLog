@@ -1,3 +1,29 @@
+2015-11-23  Brian Burg  <bburg@apple.com>
+
+        Rename JavaScriptCore builtins files to match exposed object names
+        https://bugs.webkit.org/show_bug.cgi?id=151549
+
+        Reviewed by Youenn Fablet.
+
+        As a subtask of unifying code generation for WebCore and JSC builtins, we need to get rid of
+        differences between builtins filenames (e.g., Promise.prototype.js) and the name of the
+        generated Builtin object (PromisePrototype).
+
+        If we don't do this, then both build systems need special hacks to normalize the object name
+        from the file name. It's easier to just normalize the filename.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ArrayIteratorPrototype.js: Renamed from Source/JavaScriptCore/builtins/ArrayIterator.prototype.js.
+        * builtins/ArrayPrototype.js: Renamed from Source/JavaScriptCore/builtins/Array.prototype.js.
+        * builtins/FunctionPrototype.js: Renamed from Source/JavaScriptCore/builtins/Function.prototype.js.
+        * builtins/IteratorPrototype.js: Renamed from Source/JavaScriptCore/builtins/Iterator.prototype.js.
+        * builtins/PromiseOperations.js: Renamed from Source/JavaScriptCore/builtins/Operations.Promise.js.
+        * builtins/PromisePrototype.js: Renamed from Source/JavaScriptCore/builtins/Promise.prototype.js.
+        * builtins/StringIteratorPrototype.js: Renamed from Source/JavaScriptCore/builtins/StringIterator.prototype.js.
+        * builtins/TypedArrayPrototype.js: Renamed from Source/JavaScriptCore/builtins/TypedArray.prototype.js.
+
 2015-11-23  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r192536): Null pointer dereference in JSPropertyNameEnumerator::visitChildren().

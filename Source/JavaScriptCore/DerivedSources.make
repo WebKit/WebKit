@@ -81,23 +81,23 @@ BUILTINS_GENERATOR_SCRIPTS = \
 
 JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/ArrayConstructor.js \
-    $(JavaScriptCore)/builtins/ArrayIterator.prototype.js \
-    $(JavaScriptCore)/builtins/Array.prototype.js \
-    $(JavaScriptCore)/builtins/Function.prototype.js \
+    $(JavaScriptCore)/builtins/ArrayIteratorPrototype.js \
+    $(JavaScriptCore)/builtins/ArrayPrototype.js \
+    $(JavaScriptCore)/builtins/FunctionPrototype.js \
     $(JavaScriptCore)/builtins/GlobalObject.js \
     $(JavaScriptCore)/builtins/InspectorInstrumentationObject.js \
     $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
-    $(JavaScriptCore)/builtins/Iterator.prototype.js \
+    $(JavaScriptCore)/builtins/IteratorPrototype.js \
     $(JavaScriptCore)/builtins/ModuleLoaderObject.js \
     $(JavaScriptCore)/builtins/ObjectConstructor.js \
-    $(JavaScriptCore)/builtins/Operations.Promise.js \
     $(JavaScriptCore)/builtins/PromiseConstructor.js \
-    $(JavaScriptCore)/builtins/Promise.prototype.js \
+    $(JavaScriptCore)/builtins/PromiseOperations.js \
+    $(JavaScriptCore)/builtins/PromisePrototype.js \
     $(JavaScriptCore)/builtins/ReflectObject.js \
     $(JavaScriptCore)/builtins/StringConstructor.js \
-    $(JavaScriptCore)/builtins/StringIterator.prototype.js \
+    $(JavaScriptCore)/builtins/StringIteratorPrototype.js \
     $(JavaScriptCore)/builtins/TypedArrayConstructor.js \
-    $(JavaScriptCore)/builtins/TypedArray.prototype.js \
+    $(JavaScriptCore)/builtins/TypedArrayPrototype.js \
 #
 
 # The combined output file depends on the contents of builtins and generator scripts, so
