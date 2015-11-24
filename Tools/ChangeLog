@@ -1,3 +1,18 @@
+2015-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use the network process unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=151541
+
+        Reviewed by Alex Christensen.
+
+        Fix TestInspectorServer test. Do not assume we already have the
+        title we want when the page has been loaded, since the title is
+        changed afterwards. So, check if the title has already been set,
+        and if not wait for it.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp:
+        (openRemoteDebuggingSession):
+
 2015-11-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix crash in ~WebProcessPool when using Geolocation with useNetworkProcess=true

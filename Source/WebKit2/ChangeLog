@@ -1,3 +1,30 @@
+2015-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use the network process unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=151541
+
+        Reviewed by Alex Christensen.
+
+        Make the shared secondary process model become multiple secondary
+        process model with a limit of 1 web process. Use the same options
+        when creating a context with legacy configuration (unit tests and
+        inspector proxy).
+
+        * NetworkProcess/gtk/NetworkProcessMainGtk.cpp:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_process_model):
+        (webkit_web_context_get_process_model):
+        (webkit_web_context_set_web_process_count_limit):
+        (webkit_web_context_get_web_process_count_limit):
+        (toWebKitProcessModel): Deleted.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2015-11-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: inspector settings should not be shared between different inspection levels
