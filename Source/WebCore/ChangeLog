@@ -1,3 +1,39 @@
+2015-11-23  David Kilzer  <ddkilzer@apple.com>
+
+        Hardening against CSSSelector double frees
+        <http://webkit.org/b/56124>
+        <rdar://problem/9119036>
+
+        Reviewed by Antti Koivisto.
+
+        Add some security assertions to catch this issue if it ever
+        happens in Debug builds, and make changes in
+        CSSSelector::~CSSSelector() and
+        CSSSelectorList::deleteSelectors() to prevent obvious issues if
+        they're ever called twice in Release builds.
+
+        No new tests because we don't know how to reproduce this.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::CSSSelector): Initialize
+        m_destructorHasBeenCalled.
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::m_destructorHasBeenCalled): Add bitfield.
+        (WebCore::CSSSelector::CSSSelector): Initialize
+        m_destructorHasBeenCalled.
+        (WebCore::CSSSelector::~CSSSelector): Add security assertion
+        that this is never called twice.  Clear out any fields that
+        would have caused us to dereference an object twice.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::deleteSelectors): Clear
+        m_selectorArray when freeing the memory to which it was
+        pointing.  This prevents re-entrancy issues or calling this
+        method twice on the same thread.  Also restructure the for()
+        loop to prevent calling CSSSelector::isLastInSelectorList()
+        after CSSSelector::~CSSSelector() has been called (via CRBug
+        241892).
+
 2015-11-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: inspector settings should not be shared between different inspection levels

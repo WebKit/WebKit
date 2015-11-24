@@ -64,6 +64,9 @@ CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRu
     , m_descendantDoubleChildSyntax(false)
 #endif
     , m_caseInsensitiveAttributeValueMatching(false)
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    , m_destructorHasBeenCalled(false)
+#endif
 {
     const AtomicString& tagLocalName = tagQName.localName();
     const AtomicString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
