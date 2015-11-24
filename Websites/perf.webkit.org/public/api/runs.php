@@ -10,18 +10,9 @@ function main($path) {
     if (count($parts) != 2)
         exit_with_error('InvalidRequest');
 
-    $test_group_id = array_get($_GET, 'testGroup');
-    $should_cache = array_get($_GET, 'cache');
-    $should_echo_results = !array_key_exists('noResult', $_GET);
-
     $db = new Database;
     if (!$db->connect())
         exit_with_error('DatabaseConnectionFailure');
-
-    if ($test_group_id)
-        $generator = new RunsGeneratorForTestGroup($db, $test_group_id);
-    else
-        $generator = new RunsGenerator($db);
 
     $platform_id = intval($parts[0]);
     $metric_id = intval($parts[1]);
@@ -30,6 +21,8 @@ function main($path) {
     if (!$config_rows)
         exit_with_error('ConfigurationNotFound');
 
+    $test_group_id = array_get($_GET, 'testGroup');
+    $should_cache = array_get($_GET, 'cache');
     if ($test_group_id)
         $test_group_id = intval($test_group_id);
     else if ($should_cache) { // Only v1 UI needs caching.
@@ -38,16 +31,15 @@ function main($path) {
         header("Cache-Control: maxage=$maxage");
     }
 
+    if ($test_group_id)
+        $generator = new RunsGeneratorForTestGroup($db, $test_group_id);
+    else
+        $generator = new RunsGenerator($db);
+
     foreach ($config_rows as $config)
         $generator->fetch_runs($config['config_type'], $config['config_id'], $config['config_runs_last_modified']);
 
-    $results = $generator->results();
-    $content = success_json($results);
-    if (!$should_echo_results) {
-        echo $results['elapsedTime'];
-        return;
-    }
-
+    $content = success_json($generator->results());
     if (!$test_group_id)
         generate_data_file("$platform_id-$metric_id.json", $content);
     echo $content;
@@ -71,19 +63,11 @@ class RunsGenerator {
     function fetch_runs($name, $config_id, $last_modified) {
         $this->last_modified = max($this->last_modified, Database::to_js_time($last_modified));
 
-        $beginning_of_time = intval(time() - 366 * 24 * 3600) * 1000;
-
         $results = $this->execute_query($config_id);
 
         $formatted_runs = array();
-        while ($row = $this->db->fetch_next_row($results)) {
-            $build_time = Database::to_js_time($row['build_time']);
-            $max_time = $build_time;
-            $revisions = self::parse_revisions_array($row['revisions'], $max_time);
-            if ($max_time < $beginning_of_time)
-                continue;
-            array_push($formatted_runs, self::format_run($row, $build_time, $revisions));
-        }
+        while ($row = $this->db->fetch_next_row($results))
+            array_push($formatted_runs, self::format_run($row));
 
         $this->results[$name] = $formatted_runs;
     }
@@ -98,7 +82,7 @@ class RunsGenerator {
                 GROUP BY build_id, run_id', array($config_id));
     }
 
-    private static function format_run($run, $build_time, $revisions) {
+    private static function format_run($run) {
         return array(
             'id' => intval($run['run_id']),
             'mean' => floatval($run['run_mean_cache']),
@@ -106,14 +90,14 @@ class RunsGenerator {
             'sum' => floatval($run['run_sum_cache']),
             'squareSum' => floatval($run['run_square_sum_cache']),
             'markedOutlier' => Database::is_true($run['run_marked_outlier']),
-            'revisions' => $revisions,
+            'revisions' => self::parse_revisions_array($run['revisions']),
             'build' => $run['build_id'],
-            'buildTime' => $build_time,
+            'buildTime' => Database::to_js_time($run['build_time']),
             'buildNumber' => intval($run['build_number']),
             'builder' => $run['build_builder']);
     }
 
-    private static function parse_revisions_array($postgres_array, &$max_time) {
+    private static function parse_revisions_array($postgres_array) {
         // e.g. {"(WebKit,131456,\"2012-10-16 14:53:00\")","(Chromium,162004,)"}
         $outer_array = json_decode('[' . trim($postgres_array, '{}') . ']');
         $revisions = array();
@@ -122,7 +106,6 @@ class RunsGenerator {
             if (!$name_and_revision[0])
                 continue;
             $time = Database::to_js_time(trim($name_and_revision[2], '"'));
-            $max_time = max($max_time, $time);
             $revisions[trim($name_and_revision[0], '"')] = array(trim($name_and_revision[1], '"'), $time);
         }
         return $revisions;
