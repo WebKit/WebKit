@@ -9,9 +9,11 @@ list(APPEND JavaScriptCore_SOURCES
     API/JSWrapperMap.mm
     API/ObjCCallbackFunction.mm
 
+    inspector/remote/RemoteAutomationTarget.cpp
+    inspector/remote/RemoteConnectionToTarget.mm
+    inspector/remote/RemoteControllableTarget.cpp
+    inspector/remote/RemoteInspectionTarget.cpp
     inspector/remote/RemoteInspector.mm
-    inspector/remote/RemoteInspectorDebuggable.cpp
-    inspector/remote/RemoteInspectorDebuggableConnection.mm
     inspector/remote/RemoteInspectorXPCConnection.mm
 )
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF)

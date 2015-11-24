@@ -1,3 +1,9 @@
+2015-11-23  Brian Burg  <bburg@apple.com>
+
+        Unreviewed, fix the Mac CMake build after r192793.
+
+        * PlatformMac.cmake:
+
 2015-11-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RemoteInspector should track targets and connections for remote automation
