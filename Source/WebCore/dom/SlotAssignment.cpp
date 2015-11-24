@@ -43,8 +43,9 @@ static const AtomicString& slotNameFromAttributeValue(const AtomicString& value)
 
 static const AtomicString& slotNameFromSlotAttribute(const Node& child)
 {
-    if (!is<Element>(child))
+    if (is<Text>(child))
         return SlotAssignment::defaultSlotName();
+
     return slotNameFromAttributeValue(downcast<Element>(child).fastGetAttribute(slotAttr));
 }
 
@@ -60,6 +61,9 @@ SlotAssignment::SlotAssignment(SlotNameFunction function)
 
 HTMLSlotElement* SlotAssignment::findAssignedSlot(const Node& node, ShadowRoot& shadowRoot)
 {
+    if (!is<Text>(node) && !is<Element>(node))
+        return nullptr;
+
     if (!m_slotAssignmentsIsValid)
         assignSlots(shadowRoot);
 
@@ -220,6 +224,8 @@ void SlotAssignment::assignSlots(ShadowRoot& shadowRoot)
 
     auto& host = *shadowRoot.host();
     for (auto* child = host.firstChild(); child; child = child->nextSibling()) {
+        if (!is<Text>(*child) && !is<Element>(*child))
+            continue;
         auto slotName = m_slotNameFunction(*child);
         if (!slotName)
             continue;

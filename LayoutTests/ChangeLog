@@ -1,3 +1,14 @@
+2015-11-24  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r190983): Non-element, non-text nodes should not be distributed to slots
+        https://bugs.webkit.org/show_bug.cgi?id=151566
+        rdar://problem/23430177
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/html/details-comment-crash-expected.html: Added.
+        * fast/html/details-comment-crash.html: Added.
+
 2015-11-23  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Unskip all indexeddb/mozilla tests that pass.

@@ -1,0 +1,11 @@
+<details>
+<summary>text<!--comment-->text</summary>
+</details>
+<script>
+document.body.offsetLeft;
+var details = document.querySelector("details");
+var summary = document.querySelector("summary");
+var comment = summary.firstChild.nextSibling;
+summary.removeChild(comment);
+details.open = true;
+</script>

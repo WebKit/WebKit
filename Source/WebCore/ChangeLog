@@ -1,3 +1,21 @@
+2015-11-24  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r190983): Non-element, non-text nodes should not be distributed to slots
+        https://bugs.webkit.org/show_bug.cgi?id=151566
+        rdar://problem/23430177
+
+        Reviewed by Zalan Bujtas.
+
+        We don't invalidate slot assignments except for text or element children. Fix by not
+        not assigning other nodes to slots as it is not useful.
+
+        Test: fast/html/details-comment-crash.html
+
+        * dom/SlotAssignment.cpp:
+        (WebCore::slotNameFromSlotAttribute):
+        (WebCore::SlotAssignment::findAssignedSlot):
+        (WebCore::SlotAssignment::assignSlots):
+
 2015-11-23  David Kilzer  <ddkilzer@apple.com>
 
         Hardening against CSSSelector double frees
