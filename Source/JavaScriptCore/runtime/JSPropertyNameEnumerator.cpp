@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSPropertyNameEnumerator.h"
 
-#include "CopiedBlockInlines.h"
-#include "CopyVisitorInlines.h"
 #include "JSCInlines.h"
 #include "StrongInlines.h"
 
@@ -72,47 +70,25 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, uint32_t indexedLength, ui
     m_endStructurePropertyIndex = endStructurePropertyIndex;
     m_endGenericPropertyIndex = vector.size();
 
-    if (!vector.isEmpty()) {
-        void* backingStore;
-        RELEASE_ASSERT(vm.heap.tryAllocateStorage(this, propertyNameCacheSize(), &backingStore));
-        WriteBarrier<JSString>* propertyNames = reinterpret_cast<WriteBarrier<JSString>*>(backingStore);
-
-        for (unsigned i = 0; i < vector.size(); ++i)
-            propertyNames[i].set(vm, this, jsString(&vm, vector[i].string()));
-
-        m_propertyNames.set(vm, this, propertyNames);
+    m_propertyNames.resizeToFit(vector.size());
+    for (unsigned i = 0; i < vector.size(); ++i) {
+        const Identifier& identifier = vector[i];
+        m_propertyNames[i].set(vm, this, jsString(&vm, identifier.string()));
     }
+}
+
+void JSPropertyNameEnumerator::destroy(JSCell* cell)
+{
+    jsCast<JSPropertyNameEnumerator*>(cell)->JSPropertyNameEnumerator::~JSPropertyNameEnumerator();
 }
 
 void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);
     JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
+    for (unsigned i = 0; i < thisObject->m_propertyNames.size(); ++i)
+        visitor.append(&thisObject->m_propertyNames[i]);
     visitor.append(&thisObject->m_prototypeChain);
-
-    if (auto* propertyNames = thisObject->m_propertyNames.getWithoutBarrier()) {
-        for (unsigned i = 0; i < thisObject->cachedPropertyNameCount(); ++i)
-            visitor.append(&propertyNames[i]);
-        visitor.copyLater(
-            thisObject, JSPropertyNameEnumeratorCopyToken,
-            propertyNames, thisObject->propertyNameCacheSize());
-    }
-}
-
-void JSPropertyNameEnumerator::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
-{
-    JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-
-    RELEASE_ASSERT(token == JSPropertyNameEnumeratorCopyToken);
-
-    void* oldPropertyNames = thisObject->m_propertyNames.getWithoutBarrier();
-    if (visitor.checkIfShouldCopy(oldPropertyNames)) {
-        WriteBarrier<JSString>* newPropertyNames = static_cast<WriteBarrier<JSString>*>(visitor.allocateNewSpace(thisObject->propertyNameCacheSize()));
-        memcpy(newPropertyNames, oldPropertyNames, thisObject->propertyNameCacheSize());
-        thisObject->m_propertyNames.setWithoutBarrier(newPropertyNames);
-        visitor.didCopy(oldPropertyNames, thisObject->propertyNameCacheSize());
-    }
 }
 
 } // namespace JSC
