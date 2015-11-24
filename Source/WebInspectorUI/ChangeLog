@@ -1,5 +1,18 @@
 2015-11-23  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: use Cmd-Option-L and Cmd-Option-R for toggling navigation and details sidebars
+        https://bugs.webkit.org/show_bug.cgi?id=151572
+
+        Reviewed by Timothy Hatcher.
+
+        The previous shortcuts were Cmd-0 and Cmd-Option-0, but these didn't match Safari's
+        sidebar shortcuts and conflict with Cmd-0 as the cross-browser way to reset page zoom.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+
+2015-11-23  Brian Burg  <bburg@apple.com>
+
         Web Inspector: when inspecting the inspector, add the inspection level to the title bar
         https://bugs.webkit.org/show_bug.cgi?id=151555
 
