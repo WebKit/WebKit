@@ -1,1 +1,13 @@
+2015-11-24  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Implement methods to get and set inner html.
+        https://bugs.webkit.org/show_bug.cgi?id=151569
+
+        Reviewed by Alex Christensen.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::innerHTML):
+        (DOMHTMLElement::setInnerHTML):
+        (DOMHTMLElement::innerText):
+
 == Rolled over to ChangeLog-2015-11-21 ==

@@ -502,17 +502,21 @@ HRESULT DOMHTMLElement::setClassName(_In_ BSTR /*className*/)
 
 HRESULT DOMHTMLElement::innerHTML(__deref_opt_out BSTR* result)
 {
-    ASSERT_NOT_REACHED();
     if (!result)
         return E_POINTER;
-    *result = nullptr;
-    return E_NOTIMPL;
+    String innerHtmlString = downcast<HTMLElement>(m_element)->innerHTML();
+    *result = BString(innerHtmlString).release();
+    return S_OK;
 }
         
-HRESULT DOMHTMLElement::setInnerHTML(_In_ BSTR /*html*/)
+HRESULT DOMHTMLElement::setInnerHTML(_In_ BSTR html)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    ASSERT(is<HTMLElement>(m_element));
+    HTMLElement* htmlElement = downcast<HTMLElement>(m_element);
+    String htmlString(html, SysStringLen(html));
+    ExceptionCode ec = 0;
+    htmlElement->setInnerHTML(htmlString, ec);
+    return S_OK;
 }
         
 HRESULT DOMHTMLElement::innerText(__deref_opt_out BSTR* result)
@@ -528,10 +532,10 @@ HRESULT DOMHTMLElement::innerText(__deref_opt_out BSTR* result)
 HRESULT DOMHTMLElement::setInnerText(_In_ BSTR text)
 {
     ASSERT(is<HTMLElement>(m_element));
-    HTMLElement* htmlEle = downcast<HTMLElement>(m_element);
+    HTMLElement* htmlElement = downcast<HTMLElement>(m_element);
     WTF::String textString(text, SysStringLen(text));
     WebCore::ExceptionCode ec = 0;
-    htmlEle->setInnerText(textString, ec);
+    htmlElement->setInnerText(textString, ec);
     return S_OK;
 }
 
