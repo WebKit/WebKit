@@ -1,3 +1,15 @@
+2015-11-24  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Cmd-1 to Cmd-9 shortcuts should select tabs by ordinal
+        https://bugs.webkit.org/show_bug.cgi?id=151577
+
+        Reviewed by Timothy Hatcher.
+
+        The shortcuts only work if a tab at the specified ordinal exists.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+
 2015-11-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Add a keyboard shortcut to restore the default zoom level
