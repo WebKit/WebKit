@@ -25,7 +25,7 @@ test(function() {
 function fakeReadableStream() {
     return {
         cancel: function(reason) { return Promise.resolve(); },
-        getReader: function() { return new ReadableStream(new ReadableStream()); },
+        getReader: function() { return new ReadableStreamReader(new ReadableStream()); },
         pipeThrough: function(obj, options) { return obj.readable; },
         pipeTo: function() { return Promise.resolve(); },
         tee: function() { return [realReadableStream(), realReadableStream()]; }

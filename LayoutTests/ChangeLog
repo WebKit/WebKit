@@ -1,3 +1,27 @@
+2015-11-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Implement pipeTo method in readable Stream
+        https://bugs.webkit.org/show_bug.cgi?id=151588
+
+        Reviewed by Darin Adler.
+
+        Test "Piping to a writable stream that does not consume the writes fast enough exerts backpressure on the
+        source" was moved to its own file because it causes timing issues.
+
+        * streams/reference-implementation/pipe-to.html: Moved "Piping to a writable stream that does not consume the
+        writes fast enough exerts backpressure on the source" test to its own file.
+        * streams/pipe-to.html: Added with "Piping to a writable stream that does not consume the writes fast enough
+        exerts backpressure on the source" test.
+        * streams/reference-implementation/brand-checks.html: Fixed issue with the creation of a ReadableStreamReader.
+        * streams/pipe-to-expected.txt:
+        * streams/reference-implementation/brand-checks-expected.txt:
+        * streams/reference-implementation/pipe-through-expected.txt:
+        * streams/reference-implementation/pipe-to-expected.txt:
+        * streams/reference-implementation/pipe-to-options-expected.txt:
+        * streams/reference-implementation/readable-stream-templated-expected.txt: Expectations.
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations: Flagged pipe-to test because of webkit.org/b/147933.
+
 2015-11-24  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r190983): Non-element, non-text nodes should not be distributed to slots

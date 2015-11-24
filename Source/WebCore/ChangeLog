@@ -1,3 +1,26 @@
+2015-11-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Implement pipeTo method in readable Stream
+        https://bugs.webkit.org/show_bug.cgi?id=151588
+
+        Reviewed by Darin Adler.
+
+        Implemented pipeTo method according to the reference implementation in the spec as the spec is not written
+        yet. It can be found at https://github.com/whatwg/streams/blob/632b26a05f3106650b1ec91239ad5b012e6c64af/reference-implementation/lib/readable-stream.js#L75.
+
+        Tests: streams/pipe-to.html
+               streams/reference-implementation/brand-checks.html
+               streams/reference-implementation/pipe-through.html
+               streams/reference-implementation/pipe-to.html
+               streams/reference-implementation/pipe-to-options.html
+               streams/reference-implementation/readable-stream-templated
+
+        * Modules/streams/ReadableStream.js:
+        (doPipe): Internal function of pipeTo.
+        (closeDest): Internal function of pipeTo.
+        (abortDest): Internal function of pipeTo.
+        (pipeTo): Implemented as per spec with some other internal functions as helpers.
+
 2015-11-24  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r190983): Non-element, non-text nodes should not be distributed to slots

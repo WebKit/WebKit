@@ -4,7 +4,7 @@ PASS Can get the ReadableStreamController constructor indirectly
 PASS ReadableStream.prototype.cancel enforces a brand check 
 PASS ReadableStream.prototype.getReader enforces a brand check 
 PASS ReadableStream.prototype.pipeThrough works generically on its this and its arguments 
-FAIL ReadableStream.prototype.pipeTo works generically on its this and its arguments pipeTo is not implemented
+PASS ReadableStream.prototype.pipeTo works generically on its this and its arguments 
 PASS ReadableStream.prototype.tee enforces a brand check 
 PASS ReadableStreamReader enforces a brand check on its argument 
 PASS ReadableStreamReader.prototype.closed enforces a brand check 
