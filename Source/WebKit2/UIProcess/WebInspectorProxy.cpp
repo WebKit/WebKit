@@ -81,7 +81,7 @@ WebInspectorProxy::~WebInspectorProxy()
 {
 }
 
-unsigned WebInspectorProxy::inspectorLevel() const
+unsigned WebInspectorProxy::inspectionLevel() const
 {
     auto findResult = pageLevelMap().find(inspectedPage());
     if (findResult != pageLevelMap().end())
@@ -92,7 +92,7 @@ unsigned WebInspectorProxy::inspectorLevel() const
 
 String WebInspectorProxy::inspectorPageGroupIdentifier() const
 {
-    return String::format("__WebInspectorPageGroupLevel%u__", inspectorLevel());
+    return String::format("__WebInspectorPageGroupLevel%u__", inspectionLevel());
 }
 
 WebPreferences& WebInspectorProxy::inspectorPagePreferences() const
@@ -186,7 +186,7 @@ void WebInspectorProxy::didRelaunchInspectorPageProcess()
     // When didRelaunchInspectorPageProcess is called we can assume it is during a load request.
     // Any messages we would have sent to a terminated process need to be re-sent.
 
-    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest), m_inspectorPage->pageID());
+    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest, inspectionLevel()), m_inspectorPage->pageID());
 }
 
 void WebInspectorProxy::showConsole()
@@ -442,7 +442,7 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
     if (!m_inspectorPage)
         return;
 
-    pageLevelMap().set(m_inspectorPage, inspectorLevel());
+    pageLevelMap().set(m_inspectorPage, inspectionLevel());
 
     WKPagePolicyClientV1 policyClient = {
         { 1, this },
@@ -530,7 +530,7 @@ void WebInspectorProxy::createInspectorPage(IPC::Attachment connectionIdentifier
 
     m_connectionIdentifier = WTF::move(connectionIdentifier);
 
-    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest), m_inspectorPage->pageID());
+    m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_connectionIdentifier, m_inspectedPage->pageID(), m_underTest, inspectionLevel()), m_inspectorPage->pageID());
 
     if (!m_underTest) {
         m_canAttach = platformCanAttach(canAttach);

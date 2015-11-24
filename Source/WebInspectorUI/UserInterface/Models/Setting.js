@@ -36,7 +36,10 @@ WebInspector.Setting = class Setting extends WebInspector.Object
         super();
 
         this._name = name;
-        this._localStorageKey = WebInspector.Setting.LocalStorageKeyPrefix + name;
+
+        let inspectionLevel = InspectorFrontendHost.inspectionLevel();
+        let levelString = inspectionLevel > 1 ? "-" + inspectionLevel : "";
+        this._localStorageKey = `com.apple.WebInspector${levelString}.${name}`;
         this._defaultValue = defaultValue;
     }
 
@@ -85,8 +88,6 @@ WebInspector.Setting = class Setting extends WebInspector.Object
         this.dispatchEventToListeners(WebInspector.Setting.Event.Changed, this._value, {name: this._name});
     }
 };
-
-WebInspector.Setting.LocalStorageKeyPrefix = "com.apple.WebInspector.";
 
 WebInspector.Setting.Event = {
     Changed: "setting-changed"

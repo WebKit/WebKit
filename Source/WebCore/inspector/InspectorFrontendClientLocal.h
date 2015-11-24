@@ -79,6 +79,7 @@ public:
     WEBCORE_EXPORT virtual void sendMessageToBackend(const String& message) override final;
 
     WEBCORE_EXPORT virtual bool isUnderTest() override final;
+    WEBCORE_EXPORT virtual unsigned inspectionLevel() const override final;
 
     WEBCORE_EXPORT bool canAttachWindow();
     WEBCORE_EXPORT void setDockingUnavailable(bool);

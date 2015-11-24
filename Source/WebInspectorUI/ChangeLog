@@ -1,5 +1,38 @@
 2015-11-23  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: inspector settings should not be shared between different inspection levels
+        https://bugs.webkit.org/show_bug.cgi?id=151151
+
+        Reviewed by Timothy Hatcher.
+
+        It's really annoying to have shared settings between Inspector^1 and Inspector^2, because
+        they are not designed to respond to external changes to local storage keys. As a result,
+        the two inspectors seemingly have different settings while both are open, but the settings
+        clobber each other depending on which inspector is closed first. On the next inspector
+        being opened, it has settings that reflect whichever inspector closed last.
+
+        To fix this, alter the local storage key prefix to incude the inspection level when it is
+        greater than 1 (i.e., inspecting the inspector). The storage prefix becomes
+        "com.apple.WebInspector-${inspectionLevel}." in this case.
+        This is backwards-compatible for normal Inspector, who keeps the same storage prefix. 
+
+        Alternate approaches that were considered and abandoned:
+
+         - Use separate WKWebSiteDataStores for each inspection level. This API (as it currently is)
+        does not support multiple on-disk storage locations. We don't want to add an entirely new
+        Library directory for each inspector level, and sharing a single location doesn't fix the
+        shared-settings bug. Changing storage location would lose all existing Inspector settings.
+
+         - Sync settings between multiple open Inspectors. This would be catastrophic, as changing
+        the active tab on one inspector would immediately propagate to the other open inspectors.
+
+        * UserInterface/Models/Setting.js:
+        (WebInspector.Setting):
+        * UserInterface/Protocol/InspectorFrontendHostStub.js:
+        (window.InspectorFrontendHost.WebInspector.InspectorFrontendHostStub.prototype.inspectionLevel):
+
+2015-11-23  Brian Burg  <bburg@apple.com>
+
         Web Inspector: use Cmd-Option-L and Cmd-Option-R for toggling navigation and details sidebars
         https://bugs.webkit.org/show_bug.cgi?id=151572
 

@@ -236,6 +236,11 @@ String InspectorFrontendHost::debuggableType()
     return ASCIILiteral("web");
 }
 
+unsigned InspectorFrontendHost::inspectionLevel()
+{
+    return m_client ? m_client->inspectionLevel() : 1;
+}
+
 String InspectorFrontendHost::platform()
 {
 #if PLATFORM(MAC) || PLATFORM(IOS)

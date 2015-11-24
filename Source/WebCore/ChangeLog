@@ -1,3 +1,46 @@
+2015-11-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: inspector settings should not be shared between different inspection levels
+        https://bugs.webkit.org/show_bug.cgi?id=151151
+
+        Reviewed by Timothy Hatcher.
+
+        InspectorController and InspectorFrontendClient should know how to compute their
+        inspection levels, so that this level can be exposed to the Inspector frontend for
+        preference disambiguation by inspection level.
+
+         - A Page with normal web content has an inspection level of 0.
+         - The first Web Inspector has an inspection level of 1.
+         - The second Web Inspector that inspects the Inspector has an inspection level of 2.
+         - And so forth...
+
+        For local frontend clients (WK1 and the ProtocolTestStub), the inspection level of
+        a Page computed as follows:
+
+        - If the page's inspector controller has no frontend client, then the Page
+        is normal web content (level 0).
+        - If the page's inspector controller has a frontend client, ask for its inspection level.
+        A frontend client looks at the inspection level reported by inspected page's inspector
+        controller and increments by one to account for the crossed inspection boundary.
+
+        No new tests, this is blocked by test infrastructure fixes (https://webkit.org/b/151573).
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspectionLevel): Added.
+        (WebCore::InspectorController::hasInspectorFrontendClient): Deleted.
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::canAttachWindow): Check inspectionLevel().
+        (WebCore::InspectorFrontendClientLocal::inspectionLevel): Added.
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::inspectionLevel): Added.
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate): Check inspectionLevel().
+
 2015-11-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RemoteInspector should track targets and connections for remote automation

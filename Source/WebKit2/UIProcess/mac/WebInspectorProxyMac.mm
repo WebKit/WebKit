@@ -328,9 +328,9 @@ void WebInspectorProxy::updateInspectorWindowTitle() const
     if (!m_inspectorWindow)
         return;
 
-    unsigned inspectionLevel = inspectorLevel();
-    if (inspectionLevel > 1) {
-        NSString *debugTitle = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector [%d] — %@", "Web Inspector window title when inspecting Web Inspector"), inspectionLevel, (NSString *)m_urlString];
+    unsigned level = inspectionLevel();
+    if (level > 1) {
+        NSString *debugTitle = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector [%d] — %@", "Web Inspector window title when inspecting Web Inspector"), level, (NSString *)m_urlString];
         [m_inspectorWindow setTitle:debugTitle];
     } else {
         NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_urlString];

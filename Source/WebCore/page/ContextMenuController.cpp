@@ -897,7 +897,7 @@ void ContextMenuController::populate()
                 appendItem(SpeechMenuItem, m_contextMenu.get());
 #endif                
             } else {
-                if (!(frame->page() && (frame->page()->inspectorController().hasInspectorFrontendClient() || frame->page()->inspectorController().hasRemoteFrontend()))) {
+                if (!(frame->page() && (frame->page()->inspectorController().inspectionLevel() > 0 || frame->page()->inspectorController().hasRemoteFrontend()))) {
 
                 // In GTK+ unavailable items are not hidden but insensitive.
 #if PLATFORM(GTK)

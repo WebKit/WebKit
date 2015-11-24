@@ -52,7 +52,7 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
 {
 }
 
-void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest)
+void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
 {
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.releaseFileDescriptor());
@@ -69,6 +69,7 @@ void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdenti
     m_inspectedPageIdentifier = inspectedPageIdentifier;
     m_frontendAPIDispatcher.reset();
     m_underTest = underTest;
+    m_inspectionLevel = inspectionLevel;
 
     m_frontendController = &m_page.corePage()->inspectorController();
     m_frontendController->setInspectorFrontendClient(this);

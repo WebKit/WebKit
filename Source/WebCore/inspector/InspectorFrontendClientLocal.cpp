@@ -185,7 +185,7 @@ void InspectorFrontendClientLocal::requestSetDockSide(DockSide dockSide)
 bool InspectorFrontendClientLocal::canAttachWindow()
 {
     // Don't allow attaching to another inspector -- two inspectors in one window is too much!
-    bool isInspectorPage = m_inspectedPageController->hasInspectorFrontendClient();
+    bool isInspectorPage = m_inspectedPageController->inspectionLevel() > 0;
     if (isInspectorPage)
         return false;
 
@@ -355,6 +355,11 @@ void InspectorFrontendClientLocal::sendMessageToBackend(const String& message)
 bool InspectorFrontendClientLocal::isUnderTest()
 {
     return m_inspectedPageController->isUnderTest();
+}
+
+unsigned InspectorFrontendClientLocal::inspectionLevel() const
+{
+    return m_inspectedPageController->inspectionLevel() + 1;
 }
 
 bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)

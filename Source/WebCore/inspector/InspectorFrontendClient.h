@@ -55,6 +55,7 @@ public:
     virtual void moveWindowBy(float x, float y) = 0;
 
     virtual String localizedStringsURL() = 0;
+    virtual unsigned inspectionLevel() const = 0;
 
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;

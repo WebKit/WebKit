@@ -53,6 +53,7 @@
 
     DOMString localizedStringsURL();
     DOMString debuggableType();
+    unsigned long inspectionLevel();
 
     void copyText(DOMString text);
     void killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);

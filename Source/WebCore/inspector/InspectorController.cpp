@@ -219,9 +219,9 @@ bool InspectorController::hasRemoteFrontend() const
     return m_frontendRouter->hasRemoteFrontend();
 }
 
-bool InspectorController::hasInspectorFrontendClient() const
+unsigned InspectorController::inspectionLevel() const
 {
-    return m_inspectorFrontendClient;
+    return m_inspectorFrontendClient ? m_inspectorFrontendClient->inspectionLevel() : 0;
 }
 
 void InspectorController::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)

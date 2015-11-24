@@ -110,6 +110,11 @@ if (!window.InspectorFrontendHost) {
             return "web";
         },
 
+        inspectionLevel: function()
+        {
+            return 1;
+        },
+
         inspectedURLChanged: function(title)
         {
             document.title = title;

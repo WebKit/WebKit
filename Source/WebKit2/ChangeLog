@@ -1,3 +1,29 @@
+2015-11-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: inspector settings should not be shared between different inspection levels
+        https://bugs.webkit.org/show_bug.cgi?id=151151
+
+        Reviewed by Timothy Hatcher.
+
+        In WebKit2, we already track the inspection level of WebPages in order to give inspectors
+        different page groups. Send the inspection level to WebInspectorUI WebProcess when
+        establishing a connection from the UIProcess. Use this number in the FrontendClient.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectionLevel): Renamed from inspectorLevel to be consistent.
+        (WebKit::WebInspectorProxy::inspectorPageGroupIdentifier):
+        (WebKit::WebInspectorProxy::didRelaunchInspectorPageProcess):
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::inspectorLevel): Deleted.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::updateInspectorWindowTitle):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+
 2015-11-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         REGRESSION(r188206): [EFL] Missing to adjust scrollbar size to ewk_view_contents_size_get API test

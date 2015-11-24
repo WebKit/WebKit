@@ -71,6 +71,7 @@ public:
 
     String localizedStringsURL();
     String debuggableType();
+    unsigned inspectionLevel();
 
     String platform();
     String port();
