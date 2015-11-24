@@ -1,3 +1,17 @@
+2015-11-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        REGRESSION(r188206): [EFL] Missing to adjust scrollbar size to ewk_view_contents_size_get API test
+        https://bugs.webkit.org/show_bug.cgi?id=148735
+
+        Reviewed by Csaba Osztrogonác.
+
+        r189256 missed to adjust scrollbar size to other tests in ewk_view_contents_size_get() API test.
+        In this case we need to apply scrollbar size to both width and height unlike previous fix. Because
+        horizontal scrollbar is also shown since device pixel ratio(= 2.0) is adjusted.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2015-11-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix crash in ~WebProcessPool when using Geolocation with useNetworkProcess=true

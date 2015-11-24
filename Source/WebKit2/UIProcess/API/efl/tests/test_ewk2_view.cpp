@@ -1325,8 +1325,8 @@ TEST_F(EWK2ViewTest, ewk_view_contents_size_get)
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
     ewk_view_contents_size_get(webView(), &contentsWidth, &contentsHeight);
 
-    EXPECT_EQ(environment->defaultWidth() / 2, contentsWidth);
-    EXPECT_EQ(environment->defaultHeight() / 2, contentsHeight);
+    EXPECT_EQ(environment->defaultWidth() / 2 - scrollBarWidth, contentsWidth);
+    EXPECT_EQ(environment->defaultHeight() / 2 - scrollBarWidth, contentsHeight);
 #endif
 
     const char fixedContentsSize[] =
