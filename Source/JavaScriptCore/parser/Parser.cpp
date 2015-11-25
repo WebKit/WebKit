@@ -861,6 +861,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 break;
 
             const Identifier* propertyName = nullptr;
+            TreeExpression propertyExpression = 0;
             TreeDestructuringPattern innerPattern = 0;
             JSTokenLocation location = m_token.m_location;
             if (matchSpecIdentifier()) {
@@ -882,6 +883,12 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 case STRING:
                     propertyName = m_token.m_data.ident;
                     wasString = true;
+                    break;
+                case OPENBRACKET:
+                    next();
+                    propertyExpression = parseAssignmentExpression(context);
+                    failIfFalse(propertyExpression, "Cannot parse computed property name");
+                    matchOrFail(CLOSEBRACKET, "Expected ']' to end end a computed property name");
                     break;
                 default:
                     if (m_token.m_type != RESERVED && m_token.m_type != RESERVED_IF_STRICT && !(m_token.m_type & KeywordTokenFlag)) {
@@ -908,8 +915,12 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
             TreeExpression defaultValue = parseDefaultValueForDestructuringPattern(context);
-            ASSERT(propertyName);
-            context.appendObjectPatternEntry(objectPattern, location, wasString, *propertyName, innerPattern, defaultValue);
+            if (propertyExpression)
+                context.appendObjectPatternEntry(objectPattern, location, propertyExpression, innerPattern, defaultValue);
+            else {
+                ASSERT(propertyName);
+                context.appendObjectPatternEntry(objectPattern, location, wasString, *propertyName, innerPattern, defaultValue);
+            }
         } while (consume(COMMA));
 
         if (kind == DestructureToExpressions && !match(CLOSEBRACE))

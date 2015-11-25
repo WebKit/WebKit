@@ -3340,7 +3340,13 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         auto& target = m_targetPatterns[i];
         RefPtr<RegisterID> temp = generator.newTemporary();
-        generator.emitGetById(temp.get(), rhs, target.propertyName);
+        if (!target.propertyExpression)
+            generator.emitGetById(temp.get(), rhs, target.propertyName);
+        else {
+            RefPtr<RegisterID> propertyName = generator.emitNode(target.propertyExpression);
+            generator.emitGetByVal(temp.get(), rhs, propertyName.get());
+        }
+
         if (target.defaultValue)
             assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
         target.pattern->bindValue(generator, temp.get());

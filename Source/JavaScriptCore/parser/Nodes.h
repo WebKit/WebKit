@@ -2017,7 +2017,12 @@ namespace JSC {
         ObjectPatternNode();
         void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
         {
-            m_targetPatterns.append(Entry{ identifier, wasString, pattern, defaultValue });
+            m_targetPatterns.append(Entry{ identifier, nullptr, wasString, pattern, defaultValue });
+        }
+
+        void appendEntry(const JSTokenLocation&, ExpressionNode* propertyExpression, DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
+        {
+            m_targetPatterns.append(Entry{ Identifier(), propertyExpression, false, pattern, defaultValue });
         }
 
     private:
@@ -2026,6 +2031,7 @@ namespace JSC {
         virtual void toString(StringBuilder&) const override;
         struct Entry {
             const Identifier& propertyName;
+            ExpressionNode* propertyExpression;
             bool wasString;
             DestructuringPatternNode* pattern;
             ExpressionNode* defaultValue;

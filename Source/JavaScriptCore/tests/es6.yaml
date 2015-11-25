@@ -216,6 +216,12 @@
   cmd: runES6 :normal
 - path: es6/destructuring_assignment_non_simple_target.js
   cmd: runES6 :normal
+- path: es6/destructuring_assignment_computed_properties.js
+  cmd: runES6 :normal
+- path: es6/destructuring_assignment_computed_property_simple.js
+  cmd: runES6 :normal
+- path: es6/destructuring_assignment_computed_property_default.js
+  cmd: runES6 :normal
 - path: es6/destructuring_initializer_scoping.js
   cmd: runES6 :normal
 - path: es6/for..of_loops_with_arrays.js
@@ -745,7 +751,7 @@
 - path: es6/block-level_function_declaration.js
   cmd: runES6 :fail
 - path: es6/destructuring_computed_properties.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/destructuring_defaults_in_parameters_separate_scope.js
   cmd: runES6 :fail
 - path: es6/destructuring_iterator_closing.js
