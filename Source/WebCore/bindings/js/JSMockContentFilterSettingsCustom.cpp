@@ -35,84 +35,55 @@ using namespace JSC;
 
 namespace WebCore {
 
-using Decision = MockContentFilterSettings::Decision;
-using DecisionPoint = MockContentFilterSettings::DecisionPoint;
-
 JSValue JSMockContentFilterSettings::decisionPoint(ExecState&) const
 {
-    DecisionPoint decisionPoint = wrapped().decisionPoint();
-    switch (decisionPoint) {
-    case DecisionPoint::AfterWillSendRequest:
-    case DecisionPoint::AfterRedirect:
-    case DecisionPoint::AfterResponse:
-    case DecisionPoint::AfterAddData:
-    case DecisionPoint::AfterFinishedAddingData:
-    case DecisionPoint::Never:
-        return jsNumber(static_cast<uint8_t>(decisionPoint));
-    }
-
-    ASSERT_NOT_REACHED();
-    return jsUndefined();
+    return jsNumber(static_cast<uint8_t>(wrapped().decisionPoint()));
 }
 
 void JSMockContentFilterSettings::setDecisionPoint(ExecState& state, JSValue value)
 {
-    uint8_t nativeValue { toUInt8(&state, value, EnforceRange) };
+    uint8_t decisionPoint { toUInt8(&state, value, EnforceRange) };
     if (state.hadException())
         return;
-
-    DecisionPoint decisionPoint { static_cast<DecisionPoint>(nativeValue) };
+    
     switch (decisionPoint) {
-    case DecisionPoint::AfterWillSendRequest:
-    case DecisionPoint::AfterRedirect:
-    case DecisionPoint::AfterResponse:
-    case DecisionPoint::AfterAddData:
-    case DecisionPoint::AfterFinishedAddingData:
-    case DecisionPoint::Never:
-        wrapped().setDecisionPoint(decisionPoint);
+    case static_cast<uint8_t>(WebMockContentFilterDecisionPointAfterWillSendRequest):
+    case static_cast<uint8_t>(WebMockContentFilterDecisionPointAfterRedirect):
+    case static_cast<uint8_t>(WebMockContentFilterDecisionPointAfterResponse):
+    case static_cast<uint8_t>(WebMockContentFilterDecisionPointAfterAddData):
+    case static_cast<uint8_t>(WebMockContentFilterDecisionPointAfterFinishedAddingData):
+    case static_cast<uint8_t>(WebMockContentFilterDecisionPointNever):
+        wrapped().setDecisionPoint(static_cast<WebMockContentFilterDecisionPoint>(decisionPoint));
         return;
+    default:
+        throwTypeError(&state, String::format("%u is not a valid decisionPoint value.", decisionPoint));
     }
-
-    throwTypeError(&state, String::format("%u is not a valid decisionPoint value.", nativeValue));
 }
 
-static inline JSValue toJSValue(Decision decision)
+static inline WebMockContentFilterDecision toDecision(ExecState& state, JSValue value)
 {
-    switch (decision) {
-    case Decision::Allow:
-    case Decision::Block:
-        return jsNumber(static_cast<uint8_t>(decision));
-    }
-
-    ASSERT_NOT_REACHED();
-    return jsUndefined();
-}
-
-static inline Decision toDecision(ExecState& state, JSValue value)
-{
-    uint8_t nativeValue { toUInt8(&state, value, EnforceRange) };
+    uint8_t decision { toUInt8(&state, value, EnforceRange) };
     if (state.hadException())
-        return Decision::Allow;
+        return WebMockContentFilterDecisionAllow;
 
-    Decision decision { static_cast<Decision>(nativeValue) };
     switch (decision) {
-    case Decision::Allow:
-    case Decision::Block:
-        return decision;
+    case static_cast<uint8_t>(WebMockContentFilterDecisionAllow):
+    case static_cast<uint8_t>(WebMockContentFilterDecisionBlock):
+        return static_cast<WebMockContentFilterDecision>(decision);
+    default:
+        throwTypeError(&state, String::format("%u is not a valid decision value.", decision));
+        return WebMockContentFilterDecisionAllow;
     }
-
-    throwTypeError(&state, String::format("%u is not a valid decision value.", nativeValue));
-    return Decision::Allow;
 }
 
 JSValue JSMockContentFilterSettings::decision(ExecState&) const
 {
-    return toJSValue(wrapped().decision());
+    return jsNumber(static_cast<uint8_t>(wrapped().decision()));
 }
 
 void JSMockContentFilterSettings::setDecision(ExecState& state, JSValue value)
 {
-    Decision decision { toDecision(state, value) };
+    WebMockContentFilterDecision decision { toDecision(state, value) };
     if (state.hadException())
         return;
 
@@ -121,12 +92,12 @@ void JSMockContentFilterSettings::setDecision(ExecState& state, JSValue value)
 
 JSValue JSMockContentFilterSettings::unblockRequestDecision(ExecState&) const
 {
-    return toJSValue(wrapped().unblockRequestDecision());
+    return jsNumber(static_cast<uint8_t>(wrapped().unblockRequestDecision()));
 }
 
 void JSMockContentFilterSettings::setUnblockRequestDecision(ExecState& state, JSValue value)
 {
-    Decision unblockRequestDecision { toDecision(state, value) };
+    WebMockContentFilterDecision unblockRequestDecision { toDecision(state, value) };
     if (state.hadException())
         return;
 

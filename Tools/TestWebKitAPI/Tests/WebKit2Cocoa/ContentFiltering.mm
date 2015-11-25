@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 
-#import "MockContentFilterSettings.h"
+#import "MockContentFilterEnabler.h"
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -38,58 +38,13 @@
 #import <WebKit/_WKDownloadDelegate.h>
 #import <wtf/RetainPtr.h>
 
-using Decision = WebCore::MockContentFilterSettings::Decision;
-using DecisionPoint = WebCore::MockContentFilterSettings::DecisionPoint;
-
 static bool isDone;
 
-@interface MockContentFilterEnabler : NSObject <NSCopying, NSSecureCoding>
-- (instancetype)initWithDecision:(Decision)decision decisionPoint:(DecisionPoint)decisionPoint;
-@end
-
-@implementation MockContentFilterEnabler {
-    Decision _decision;
-    DecisionPoint _decisionPoint;
-}
-
-+ (BOOL)supportsSecureCoding
-{
-    return YES;
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-- (instancetype)initWithCoder:(NSCoder *)decoder
-{
-    return [super init];
-}
-
-- (instancetype)initWithDecision:(Decision)decision decisionPoint:(DecisionPoint)decisionPoint
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _decision = decision;
-    _decisionPoint = decisionPoint;
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    [coder encodeInt:static_cast<int>(_decision) forKey:@"Decision"];
-    [coder encodeInt:static_cast<int>(_decisionPoint) forKey:@"DecisionPoint"];
-}
-
-@end
-
-static RetainPtr<WKWebViewConfiguration> configurationWithContentFilterSettings(Decision decision, DecisionPoint decisionPoint)
+static RetainPtr<WKWebViewConfiguration> configurationWithContentFilterSettings(WebMockContentFilterDecision decision, WebMockContentFilterDecisionPoint decisionPoint)
 {
     auto configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"ContentFilteringPlugIn"]);
-    auto contentFilterEnabler = adoptNS([[MockContentFilterEnabler alloc] initWithDecision:decision decisionPoint:decisionPoint]);
-    [[configuration processPool] _setObject:contentFilterEnabler.get() forBundleParameter:NSStringFromClass([MockContentFilterEnabler class])];
+    auto contentFilterEnabler = adoptNS([[WebMockContentFilterEnabler alloc] initWithDecision:decision decisionPoint:decisionPoint blockedString:nil]);
+    [[configuration processPool] _setObject:contentFilterEnabler.get() forBundleParameter:NSStringFromClass([WebMockContentFilterEnabler class])];
     return configuration;
 }
 
@@ -121,7 +76,7 @@ TEST(ContentFiltering, URLAfterServerRedirect)
         [NSURLProtocol registerClass:[TestProtocol class]];
         [WKBrowsingContextController registerSchemeForCustomProtocol:[TestProtocol scheme]];
 
-        auto configuration = configurationWithContentFilterSettings(Decision::Allow, DecisionPoint::AfterAddData);
+        auto configuration = configurationWithContentFilterSettings(WebMockContentFilterDecisionAllow, WebMockContentFilterDecisionPointAfterAddData);
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto navigationDelegate = adoptNS([[ServerRedirectNavigationDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];
@@ -169,7 +124,7 @@ static bool downloadDidStart;
 
 @end
 
-static void downloadTest(Decision decision, DecisionPoint decisionPoint)
+static void downloadTest(WebMockContentFilterDecision decision, WebMockContentFilterDecisionPoint decisionPoint)
 {
     @autoreleasepool {
         [NSURLProtocol registerClass:[TestProtocol class]];
@@ -185,7 +140,7 @@ static void downloadTest(Decision decision, DecisionPoint decisionPoint)
 
         isDone = false;
         downloadDidStart = false;
-        const bool downloadShouldStart = decision == Decision::Allow || decisionPoint > DecisionPoint::AfterResponse;
+        const bool downloadShouldStart = decision == WebMockContentFilterDecisionAllow || decisionPoint > WebMockContentFilterDecisionPointAfterResponse;
         if (downloadShouldStart)
             TestWebKitAPI::Util::run(&downloadDidStart);
         else
@@ -200,62 +155,62 @@ static void downloadTest(Decision decision, DecisionPoint decisionPoint)
 
 TEST(ContentFiltering, AllowDownloadAfterWillSendRequest)
 {
-    downloadTest(Decision::Allow, DecisionPoint::AfterWillSendRequest);
+    downloadTest(WebMockContentFilterDecisionAllow, WebMockContentFilterDecisionPointAfterWillSendRequest);
 }
 
 TEST(ContentFiltering, BlockDownloadAfterWillSendRequest)
 {
-    downloadTest(Decision::Block, DecisionPoint::AfterWillSendRequest);
+    downloadTest(WebMockContentFilterDecisionBlock, WebMockContentFilterDecisionPointAfterWillSendRequest);
 }
 
 TEST(ContentFiltering, AllowDownloadAfterRedirect)
 {
-    downloadTest(Decision::Allow, DecisionPoint::AfterRedirect);
+    downloadTest(WebMockContentFilterDecisionAllow, WebMockContentFilterDecisionPointAfterRedirect);
 }
 
 TEST(ContentFiltering, BlockDownloadAfterRedirect)
 {
-    downloadTest(Decision::Block, DecisionPoint::AfterRedirect);
+    downloadTest(WebMockContentFilterDecisionBlock, WebMockContentFilterDecisionPointAfterRedirect);
 }
 
 TEST(ContentFiltering, AllowDownloadAfterResponse)
 {
-    downloadTest(Decision::Allow, DecisionPoint::AfterResponse);
+    downloadTest(WebMockContentFilterDecisionAllow, WebMockContentFilterDecisionPointAfterResponse);
 }
 
 TEST(ContentFiltering, BlockDownloadAfterResponse)
 {
-    downloadTest(Decision::Block, DecisionPoint::AfterResponse);
+    downloadTest(WebMockContentFilterDecisionBlock, WebMockContentFilterDecisionPointAfterResponse);
 }
 
 TEST(ContentFiltering, AllowDownloadAfterAddData)
 {
-    downloadTest(Decision::Allow, DecisionPoint::AfterAddData);
+    downloadTest(WebMockContentFilterDecisionAllow, WebMockContentFilterDecisionPointAfterAddData);
 }
 
 TEST(ContentFiltering, BlockDownloadAfterAddData)
 {
-    downloadTest(Decision::Block, DecisionPoint::AfterAddData);
+    downloadTest(WebMockContentFilterDecisionBlock, WebMockContentFilterDecisionPointAfterAddData);
 }
 
 TEST(ContentFiltering, AllowDownloadAfterFinishedAddingData)
 {
-    downloadTest(Decision::Allow, DecisionPoint::AfterFinishedAddingData);
+    downloadTest(WebMockContentFilterDecisionAllow, WebMockContentFilterDecisionPointAfterFinishedAddingData);
 }
 
 TEST(ContentFiltering, BlockDownloadAfterFinishedAddingData)
 {
-    downloadTest(Decision::Block, DecisionPoint::AfterFinishedAddingData);
+    downloadTest(WebMockContentFilterDecisionBlock, WebMockContentFilterDecisionPointAfterFinishedAddingData);
 }
 
 TEST(ContentFiltering, AllowDownloadNever)
 {
-    downloadTest(Decision::Allow, DecisionPoint::Never);
+    downloadTest(WebMockContentFilterDecisionAllow, WebMockContentFilterDecisionPointNever);
 }
 
 TEST(ContentFiltering, BlockDownloadNever)
 {
-    downloadTest(Decision::Block, DecisionPoint::Never);
+    downloadTest(WebMockContentFilterDecisionBlock, WebMockContentFilterDecisionPointNever);
 }
 
 #endif // WK_API_ENABLED

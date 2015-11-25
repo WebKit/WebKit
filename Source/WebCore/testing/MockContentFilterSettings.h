@@ -26,6 +26,24 @@
 #ifndef MockContentFilterSettings_h
 #define MockContentFilterSettings_h
 
+#include <CoreFoundation/CoreFoundation.h>
+
+typedef CF_ENUM(int, WebMockContentFilterDecision) {
+    WebMockContentFilterDecisionAllow,
+    WebMockContentFilterDecisionBlock
+};
+
+typedef CF_ENUM(int, WebMockContentFilterDecisionPoint) {
+    WebMockContentFilterDecisionPointAfterWillSendRequest,
+    WebMockContentFilterDecisionPointAfterRedirect,
+    WebMockContentFilterDecisionPointAfterResponse,
+    WebMockContentFilterDecisionPointAfterAddData,
+    WebMockContentFilterDecisionPointAfterFinishedAddingData,
+    WebMockContentFilterDecisionPointNever
+};
+
+#ifdef __cplusplus
+
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
@@ -35,20 +53,6 @@ class MockContentFilterSettings {
     friend class NeverDestroyed<MockContentFilterSettings>;
 
 public:
-    enum class DecisionPoint {
-        AfterWillSendRequest,
-        AfterRedirect,
-        AfterResponse,
-        AfterAddData,
-        AfterFinishedAddingData,
-        Never
-    };
-
-    enum class Decision {
-        Allow,
-        Block
-    };
-
     WTF_EXPORT_PRIVATE static MockContentFilterSettings& singleton();
     static void reset();
     static const char* unblockURLHost() { return "mock-unblock"; }
@@ -63,14 +67,14 @@ public:
     const String& blockedString() const { return m_blockedString; }
     void setBlockedString(const String& blockedString) { m_blockedString = blockedString; }
 
-    DecisionPoint decisionPoint() const { return m_decisionPoint; }
-    void setDecisionPoint(DecisionPoint decisionPoint) { m_decisionPoint = decisionPoint; }
+    WebMockContentFilterDecisionPoint decisionPoint() const { return m_decisionPoint; }
+    void setDecisionPoint(WebMockContentFilterDecisionPoint decisionPoint) { m_decisionPoint = decisionPoint; }
 
-    Decision decision() const { return m_decision; }
-    void setDecision(Decision decision) { m_decision = decision; }
+    WebMockContentFilterDecision decision() const { return m_decision; }
+    void setDecision(WebMockContentFilterDecision decision) { m_decision = decision; }
 
-    Decision unblockRequestDecision() const { return m_unblockRequestDecision; }
-    void setUnblockRequestDecision(Decision unblockRequestDecision) { m_unblockRequestDecision = unblockRequestDecision; }
+    WebMockContentFilterDecision unblockRequestDecision() const { return m_unblockRequestDecision; }
+    void setUnblockRequestDecision(WebMockContentFilterDecision unblockRequestDecision) { m_unblockRequestDecision = unblockRequestDecision; }
 
     const String& unblockRequestURL() const;
 
@@ -83,13 +87,15 @@ private:
     MockContentFilterSettings& operator=(const MockContentFilterSettings&) = default;
 
     bool m_enabled { false };
-    DecisionPoint m_decisionPoint { DecisionPoint::AfterResponse };
-    Decision m_decision { Decision::Allow };
-    Decision m_unblockRequestDecision { Decision::Block };
+    WebMockContentFilterDecisionPoint m_decisionPoint { WebMockContentFilterDecisionPointAfterResponse };
+    WebMockContentFilterDecision m_decision { WebMockContentFilterDecisionAllow };
+    WebMockContentFilterDecision m_unblockRequestDecision { WebMockContentFilterDecisionBlock };
     String m_blockedString;
     String m_modifiedRequestURL;
 };
 
 } // namespace WebCore
+
+#endif // __cplusplus
 
 #endif // MockContentFilterSettings_h

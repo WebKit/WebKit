@@ -16,6 +16,9 @@
 		51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E244F911EFCE07008228D1 /* MBToolbarItem.m */; };
 		7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */; };
 		7CA379431AC381C10079DC37 /* ExtensionManagerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */; };
+		A138DE441C007D240029832B /* blocked-page.html in Resources */ = {isa = PBXBuildFile; fileRef = A138DE431C007D240029832B /* blocked-page.html */; };
+		A138DE491C02E58E0029832B /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A138DE481C02E58E0029832B /* libWebCoreTestSupport.dylib */; };
+		A138DE4A1C02E5920029832B /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A138DE481C02E58E0029832B /* libWebCoreTestSupport.dylib */; };
 		BC329487116A92E2008635D0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329486116A92E2008635D0 /* main.m */; };
 		BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329497116A941B008635D0 /* WK2BrowserWindowController.m */; };
 		BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58150DA1D0A300B32029 /* MainMenu.xib */; };
@@ -73,6 +76,8 @@
 		7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExtensionManagerWindowController.m; path = mac/ExtensionManagerWindowController.m; sourceTree = "<group>"; };
 		7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ExtensionManagerWindowController.xib; path = mac/ExtensionManagerWindowController.xib; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MiniBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A138DE431C007D240029832B /* blocked-page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "blocked-page.html"; sourceTree = "<group>"; };
+		A138DE481C02E58E0029832B /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libWebCoreTestSupport.dylib; path = ../../WebKitBuild/Debug/libWebCoreTestSupport.dylib; sourceTree = "<group>"; };
 		BC329486116A92E2008635D0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mac/main.m; sourceTree = "<group>"; };
 		BC329496116A941B008635D0 /* WK2BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK2BrowserWindowController.h; path = mac/WK2BrowserWindowController.h; sourceTree = "<group>"; };
 		BC329497116A941B008635D0 /* WK2BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WK2BrowserWindowController.m; path = mac/WK2BrowserWindowController.m; sourceTree = "<group>"; };
@@ -88,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A138DE4A1C02E5920029832B /* libWebCoreTestSupport.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A138DE491C02E58E0029832B /* libWebCoreTestSupport.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +181,7 @@
 				BC3294A2116A9852008635D0 /* BrowserWindow.xib */,
 				1DDD58150DA1D0A300B32029 /* MainMenu.xib */,
 				7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */,
+				A138DE431C007D240029832B /* blocked-page.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -181,6 +189,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A138DE481C02E58E0029832B /* libWebCoreTestSupport.dylib */,
 				1AFFEF761860EE6800DA465E /* Cocoa.framework */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
@@ -291,6 +300,7 @@
 			files = (
 				BC72B89611E57E0F001EB4EA /* BrowserWindow.xib in Resources */,
 				7CA379431AC381C10079DC37 /* ExtensionManagerWindowController.xib in Resources */,
+				A138DE441C007D240029832B /* blocked-page.html in Resources */,
 				BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

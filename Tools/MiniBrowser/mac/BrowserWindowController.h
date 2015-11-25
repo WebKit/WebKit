@@ -76,5 +76,7 @@
 
 - (NSURL *)currentURL;
 
++ (NSString *)contentFilteringBlockedString;
+
 @end
 

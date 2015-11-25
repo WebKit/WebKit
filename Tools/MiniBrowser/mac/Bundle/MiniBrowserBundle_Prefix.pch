@@ -26,3 +26,5 @@
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
 #endif
+
+#define WTF_EXPORT_PRIVATE

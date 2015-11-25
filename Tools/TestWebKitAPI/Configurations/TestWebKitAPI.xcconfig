@@ -26,8 +26,11 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZN7testing4Test16TearDownTestCaseEv -Wl,-unexported_symbol -Wl,__ZN7testing4Test13SetUpTestCaseEv
 
-OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit $(OTHER_LDFLAGS_PLATFORM);
+OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.
 OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework WebCore -framework CoreGraphics;
+
+LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
+

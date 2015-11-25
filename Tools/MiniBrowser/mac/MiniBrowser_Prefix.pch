@@ -35,3 +35,5 @@
 #else
 #define LOG(...) ((void)0)
 #endif
+
+#define WTF_EXPORT_PRIVATE
