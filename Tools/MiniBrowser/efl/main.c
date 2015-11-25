@@ -2037,8 +2037,7 @@ on_home_button_clicked(void *user_data, Evas_Object *home_button, void *event_in
 static void
 on_window_deletion(void *user_data, Evas_Object *elm_window, void *event_info)
 {
-    Browser_Window *window = (Browser_Window *)user_data;
-    ewk_view_try_close(window->ewk_view);
+    window_close(window_find_with_elm_window(elm_window));
 }
 
 static Evas_Object *
