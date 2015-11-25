@@ -41,8 +41,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        window.addEventListener("pagehide", this._inspectorClosing.bind(this));
-
         this._allExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-exceptions", false);
         this._allUncaughtExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-uncaught-exceptions", false);
 
@@ -362,6 +360,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         if (!breakpoint.disabled)
             this._setBreakpoint(breakpoint, shouldSpeculativelyResolve ? speculativelyResolveBreakpoint.bind(null, breakpoint) : null);
 
+        this._saveBreakpoints();
+
         if (!skipEventDispatch)
             this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointAdded, {breakpoint});
     }
@@ -402,6 +402,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         // Disable the breakpoint first, so removing actions doesn't re-add the breakpoint.
         breakpoint.disabled = true;
         breakpoint.clearActions();
+
+        this._saveBreakpoints();
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointRemoved, {breakpoint});
     }
@@ -764,8 +766,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
     _breakpointDisabledStateDidChange(event)
     {
-        var breakpoint = event.target;
+        this._saveBreakpoints();
 
+        let breakpoint = event.target;
         if (breakpoint === this._allExceptionsBreakpoint) {
             if (!breakpoint.disabled)
                 this.breakpointsEnabled = true;
@@ -790,7 +793,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
     _breakpointEditablePropertyDidChange(event)
     {
-        var breakpoint = event.target;
+        this._saveBreakpoints();
+
+        let breakpoint = event.target;
         if (breakpoint.disabled)
             return;
 
@@ -862,26 +867,14 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         DebuggerAgent.setPauseOnExceptions(state);
     }
 
-    _inspectorClosing(event)
-    {
-        this._saveBreakpoints();
-    }
-
     _saveBreakpoints()
     {
-        var savedBreakpoints = [];
+        if (this._restoringBreakpoints)
+            return;
 
-        for (var i = 0; i < this._breakpoints.length; ++i) {
-            var breakpoint = this._breakpoints[i];
-
-            // Only breakpoints with URLs can be saved. Breakpoints for transient scripts can't.
-            if (!breakpoint.url)
-                continue;
-
-            savedBreakpoints.push(breakpoint.info);
-        }
-
-        this._breakpointsSetting.value = savedBreakpoints;
+        let breakpointsToSave = this._breakpoints.filter((breakpoint) => !!breakpoint.url);
+        let serializedBreakpoints = breakpointsToSave.map((breakpoint) => breakpoint.info);
+        this._breakpointsSetting.value = serializedBreakpoints;
     }
 
     _associateBreakpointsWithSourceCode(breakpoints, sourceCode)
