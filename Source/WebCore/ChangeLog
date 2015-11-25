@@ -1,3 +1,16 @@
+2015-11-25  Pranjal Jumde  <pjumde@apple.com>
+
+        Checks for buffer-overflows when reading characters from textRun
+        https://bugs.webkit.org/show_bug.cgi?id=151055
+        <rdar://problem/23251789>
+
+        Reviewed by Myles C. Maxfield.
+
+        Prevents an off by one error when adding the last font data to the GlyphBuffer.
+
+        * Source/WebCore/platform/graphics/WidthIterator.cpp:
+        * Source/WebCore/platform/graphics/FontCascade.cpp:
+
 2015-11-22  Andy Estes  <aestes@apple.com>
 
         Teach MiniBrowser how to enable the mock content filter
