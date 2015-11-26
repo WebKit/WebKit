@@ -1,3 +1,25 @@
+2015-11-26  David Kilzer  <ddkilzer@apple.com>
+
+        Extract prependToEnvironmentVariableList
+        <http://webkit.org/b/151536>
+
+        Reviewed by Daniel Bates.
+
+        Tests: webkitdirs_unittest/appendToEnvironmentVariableList.pl
+               webkitdirs_unittest/prependToEnvironmentVariableList.pl
+
+        * Scripts/webkitdirs.pm: Export appendToEnvironmentVariableList
+        and prependToEnvironmentVariableList.
+        (appendToEnvironmentVariableList): Simplify variable name.
+        Switch to use $Config{path_sep}.
+        (prependToEnvironmentVariableList): Add new method.
+        (setupMacWebKitEnvironment): Switch to use
+        prependToEnvironmentVariableList().
+        (setupIOSWebKitEnvironment): Ditto.
+
+        * Scripts/webkitperl/webkitdirs_unittest/appendToEnvironmentVariableList.pl: Added.
+        * Scripts/webkitperl/webkitdirs_unittest/prependToEnvironmentVariableList.pl: Added.
+
 2015-11-22  Andy Estes  <aestes@apple.com>
 
         Teach MiniBrowser how to enable the mock content filter

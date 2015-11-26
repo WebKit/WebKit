@@ -58,6 +58,7 @@ BEGIN {
        &XcodeOptions
        &XcodeStaticAnalyzerOption
        &appDisplayNameFromBundle
+       &appendToEnvironmentVariableList
        &baseProductDir
        &chdirWebKit
        &checkFrameworks
@@ -70,6 +71,7 @@ BEGIN {
        &iosSimulatorDeviceByName
        &nmPath
        &passedConfiguration
+       &prependToEnvironmentVariableList
        &printHelpAndExitForRunAndDebugWebKitAppIfNeeded
        &productDir
        &quitIOSSimulator
@@ -1377,14 +1379,25 @@ sub determineDebugger
     }
 }
 
-sub appendToEnvironmentVariableList
+sub appendToEnvironmentVariableList($$)
 {
-    my ($environmentVariableName, $value) = @_;
+    my ($name, $value) = @_;
 
-    if (defined($ENV{$environmentVariableName})) {
-        $ENV{$environmentVariableName} .= ":" . $value;
+    if (defined($ENV{$name})) {
+        $ENV{$name} .= $Config{path_sep} . $value;
     } else {
-        $ENV{$environmentVariableName} = $value;
+        $ENV{$name} = $value;
+    }
+}
+
+sub prependToEnvironmentVariableList($$)
+{
+    my ($name, $value) = @_;
+
+    if (defined($ENV{$name})) {
+        $ENV{$name} = $value . $Config{path_sep} . $ENV{$name};
+    } else {
+        $ENV{$name} = $value;
     }
 }
 
@@ -2150,8 +2163,8 @@ sub setupMacWebKitEnvironment($)
 
     $dyldFrameworkPath = File::Spec->rel2abs($dyldFrameworkPath);
 
-    $ENV{DYLD_FRAMEWORK_PATH} = $ENV{DYLD_FRAMEWORK_PATH} ? join(":", $dyldFrameworkPath, $ENV{DYLD_FRAMEWORK_PATH}) : $dyldFrameworkPath;
-    $ENV{__XPC_DYLD_FRAMEWORK_PATH} = $dyldFrameworkPath;
+    prependToEnvironmentVariableList("DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
+    prependToEnvironmentVariableList("__XPC_DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 
     setUpGuardMallocIfNeeded();
@@ -2162,8 +2175,8 @@ sub setupIOSWebKitEnvironment($)
     my ($dyldFrameworkPath) = @_;
     $dyldFrameworkPath = File::Spec->rel2abs($dyldFrameworkPath);
 
-    $ENV{DYLD_FRAMEWORK_PATH} = $dyldFrameworkPath;
-    $ENV{DYLD_LIBRARY_PATH} = $dyldFrameworkPath;
+    prependToEnvironmentVariableList("DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
+    prependToEnvironmentVariableList("DYLD_LIBRARY_PATH", $dyldFrameworkPath);
 
     setUpGuardMallocIfNeeded();
 }
