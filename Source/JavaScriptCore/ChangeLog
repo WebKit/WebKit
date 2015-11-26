@@ -1,3 +1,32 @@
+2015-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Implement garbage collector timers
+        https://bugs.webkit.org/show_bug.cgi?id=151391
+
+        Reviewed by Žan Doberšek.
+
+        Add GLib implementation using GSource.
+
+        * heap/EdenGCActivityCallback.cpp:
+        * heap/FullGCActivityCallback.cpp:
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::GCActivityCallback):
+        (JSC::GCActivityCallback::scheduleTimer):
+        (JSC::GCActivityCallback::cancelTimer):
+        * heap/GCActivityCallback.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::HeapTimer):
+        (JSC::HeapTimer::~HeapTimer):
+        (JSC::HeapTimer::timerDidFire):
+        * heap/HeapTimer.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::cancelTimer):
+        * heap/IncrementalSweeper.h:
+
 2015-11-24  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] support Computed Property Names in destructuring Patterns

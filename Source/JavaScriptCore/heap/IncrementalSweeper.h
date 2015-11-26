@@ -40,7 +40,7 @@ public:
 #if USE(CF)
     JS_EXPORT_PRIVATE IncrementalSweeper(Heap*, CFRunLoopRef);
 #else
-    explicit IncrementalSweeper(VM*);
+    explicit IncrementalSweeper(Heap*);
 #endif
 
     void startSweeping();
@@ -49,7 +49,7 @@ public:
     bool sweepNextBlock();
     void willFinishSweeping();
 
-#if USE(CF)
+#if USE(CF) || (USE(GLIB) && !PLATFORM(EFL))
 private:
     void doSweep(double startTime);
     void scheduleTimer();

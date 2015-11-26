@@ -34,8 +34,13 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#if USE(GLIB) && !PLATFORM(EFL)
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 namespace JSC {
 
+class JSLock;
 class VM;
 
 class HeapTimer {
@@ -66,6 +71,10 @@ protected:
     Ecore_Timer* add(double delay, void* agent);
     void stop();
     Ecore_Timer* m_timer;
+#elif USE(GLIB)
+    void timerDidFire();
+    RefPtr<JSLock> m_apiLock;
+    GRefPtr<GSource> m_timer;
 #endif
     
 private:

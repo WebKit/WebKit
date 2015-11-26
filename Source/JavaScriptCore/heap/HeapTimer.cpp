@@ -36,6 +36,8 @@
 
 #if PLATFORM(EFL)
 #include <Ecore.h>
+#elif USE(GLIB)
+#include <glib.h>
 #endif
 
 namespace JSC {
@@ -140,6 +142,61 @@ bool HeapTimer::timerEvent(void* info)
     
     return ECORE_CALLBACK_CANCEL;
 }
+
+#elif USE(GLIB)
+
+static GSourceFuncs heapTimerSourceFunctions = {
+    nullptr, // prepare
+    nullptr, // check
+    // dispatch
+    [](GSource* source, GSourceFunc callback, gpointer userData) -> gboolean
+    {
+        if (g_source_get_ready_time(source) == -1)
+            return G_SOURCE_CONTINUE;
+        g_source_set_ready_time(source, -1);
+        return callback(userData);
+    },
+    nullptr, // finalize
+    nullptr, // closure_callback
+    nullptr, // closure_marshall
+};
+
+HeapTimer::HeapTimer(VM* vm)
+    : m_vm(vm)
+    , m_apiLock(&vm->apiLock())
+    , m_timer(adoptGRef(g_source_new(&heapTimerSourceFunctions, sizeof(GSource))))
+{
+    g_source_set_name(m_timer.get(), "[JavaScriptCore] HeapTimer");
+    g_source_set_callback(m_timer.get(), [](gpointer userData) -> gboolean {
+        static_cast<HeapTimer*>(userData)->timerDidFire();
+        return G_SOURCE_CONTINUE;
+    }, this, nullptr);
+    g_source_attach(m_timer.get(), g_main_context_get_thread_default());
+}
+
+HeapTimer::~HeapTimer()
+{
+    g_source_destroy(m_timer.get());
+}
+
+void HeapTimer::timerDidFire()
+{
+    m_apiLock->lock();
+
+    if (!m_apiLock->vm()) {
+        // The VM has been destroyed, so we should just give up.
+        m_apiLock->unlock();
+        return;
+    }
+
+    {
+        JSLockHolder locker(m_vm);
+        doWork();
+    }
+
+    m_apiLock->unlock();
+}
+
 #else
 HeapTimer::HeapTimer(VM* vm)
     : m_vm(vm)

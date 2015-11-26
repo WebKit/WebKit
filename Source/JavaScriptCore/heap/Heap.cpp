@@ -347,7 +347,7 @@ Heap::Heap(VM* vm, HeapType heapType)
 #if USE(CF)
     , m_sweeper(std::make_unique<IncrementalSweeper>(this, CFRunLoopGetCurrent()))
 #else
-    , m_sweeper(std::make_unique<IncrementalSweeper>(this->vm()))
+    , m_sweeper(std::make_unique<IncrementalSweeper>(this))
 #endif
     , m_deferralDepth(0)
 #if USE(CF)
