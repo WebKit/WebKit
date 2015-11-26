@@ -963,7 +963,8 @@ void DocumentLoader::detachFromFrame()
     if (m_mainResource && m_mainResource->hasClient(this))
         m_mainResource->removeClient(this);
 #if ENABLE(CONTENT_FILTERING)
-    m_contentFilter = nullptr;
+    if (m_contentFilter)
+        m_contentFilter->stopFilteringMainResource();
 #endif
 
     m_applicationCacheHost->setDOMApplicationCache(nullptr);
@@ -1524,7 +1525,8 @@ void DocumentLoader::clearMainResource()
     if (m_mainResource && m_mainResource->hasClient(this))
         m_mainResource->removeClient(this);
 #if ENABLE(CONTENT_FILTERING)
-    m_contentFilter = nullptr;
+    if (m_contentFilter)
+        m_contentFilter->stopFilteringMainResource();
 #endif
 
     m_mainResource = nullptr;

@@ -55,12 +55,14 @@ public:
 
     void willSendRequest(ResourceRequest&, const ResourceResponse&);
     void startFilteringMainResource(CachedRawResource&);
+    void stopFilteringMainResource();
 
     enum class State {
         Initialized,
         Filtering,
         Allowed,
-        Blocked
+        Blocked,
+        Stopped
     };
     State state() const { return m_state; }
     ContentFilterUnblockHandler unblockHandler() const;

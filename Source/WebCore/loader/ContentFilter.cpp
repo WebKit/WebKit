@@ -122,6 +122,17 @@ void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
     m_mainResource->addClient(this);
 }
 
+void ContentFilter::stopFilteringMainResource()
+{
+    m_state = State::Stopped;
+    if (!m_mainResource)
+        return;
+
+    ASSERT(m_mainResource->hasClient(this));
+    m_mainResource->removeClient(this);
+    m_mainResource = nullptr;
+}
+
 ContentFilterUnblockHandler ContentFilter::unblockHandler() const
 {
     ASSERT(m_state == State::Blocked);
@@ -216,6 +227,9 @@ void ContentFilter::notifyFinished(CachedResource* resource)
 
         if (m_state != State::Blocked)
             deliverResourceData(*resource);
+        
+        if (m_state == State::Stopped)
+            return;
     }
 
     if (m_state != State::Blocked)

@@ -1,3 +1,15 @@
+2015-11-18  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Crash in DocumentLoader::notifyFinished() when allowing a media document to load
+        https://bugs.webkit.org/show_bug.cgi?id=151433
+        rdar://problem/23506594
+
+        Reviewed by Alexey Proskuryakov.
+
+        * contentfiltering/allow-media-document-expected.txt: Added.
+        * contentfiltering/allow-media-document.html: Added.
+        * contentfiltering/resources/test.mp4: Added.
+
 2015-11-25  Pranjal Jumde  <pjumde@apple.com>
 
         Checks for buffer-overflows when reading characters from textRun
