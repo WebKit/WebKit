@@ -39,3 +39,12 @@ endif ()
 if (WIN32)
     add_dependencies(jsc jscLib)
 endif ()
+
+if (NOT WIN32)
+    set(TESTB3_SOURCES
+        ../b3/testb3.cpp
+    )
+
+    add_executable(testb3 ${TESTB3_SOURCES})
+    target_link_libraries(testb3 ${JSC_LIBRARIES})
+endif ()

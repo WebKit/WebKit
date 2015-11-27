@@ -1,5 +1,14 @@
 2015-11-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [cmake] Add testb3 to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=151619
+
+        Reviewed by Gyuyoung Kim.
+
+        * shell/CMakeLists.txt:
+
+2015-11-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         Use mark pragmas only if it is supported
         https://bugs.webkit.org/show_bug.cgi?id=151621
 
