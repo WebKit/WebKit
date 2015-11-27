@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3OpaqueByproducts.h"
 #include "B3Origin.h"
 #include "B3Type.h"
 #include "PureNaN.h"
@@ -43,7 +44,6 @@ namespace JSC { namespace B3 {
 
 class BasicBlock;
 class BlockInsertionSet;
-class OpaqueByproducts;
 class Value;
 
 namespace Air { class Code; }

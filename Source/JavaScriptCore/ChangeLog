@@ -1,5 +1,14 @@
 2015-11-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix the ENABLE(B3_JIT) build with GCC in B3Procedure.h
+        https://bugs.webkit.org/show_bug.cgi?id=151620
+
+        Reviewed by Mark Lam.
+
+        * b3/B3Procedure.h:
+
+2015-11-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [cmake] Add new B3 source files to the build system
         https://bugs.webkit.org/show_bug.cgi?id=151618
 
