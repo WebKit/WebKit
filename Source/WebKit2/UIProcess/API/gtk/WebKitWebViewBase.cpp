@@ -65,7 +65,6 @@
 #include <glib/gi18n-lib.h>
 #include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/glib/GMainLoopSource.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -149,6 +148,19 @@ typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
 typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 
 struct _WebKitWebViewBasePrivate {
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    _WebKitWebViewBasePrivate()
+        : clearRedirectedWindowSoonTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::clearRedirectedWindowSoonTimerFired)
+    {
+    }
+
+    void clearRedirectedWindowSoonTimerFired()
+    {
+        if (redirectedWindow)
+            redirectedWindow->resize(IntSize());
+    }
+#endif
+
     WebKitWebViewChildrenMap children;
     std::unique_ptr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
@@ -190,7 +202,7 @@ struct _WebKitWebViewBasePrivate {
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     std::unique_ptr<RedirectedXCompositeWindow> redirectedWindow;
-    GMainLoopSource clearRedirectedWindowSoon;
+    RunLoop::Timer<WebKitWebViewBasePrivate> clearRedirectedWindowSoonTimer;
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1358,12 +1370,8 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 static void webkitWebViewBaseClearRedirectedWindowSoon(WebKitWebViewBase* webkitWebViewBase)
 {
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    static const std::chrono::seconds clearRedirectedWindowSoonDelay = 2_s;
-    priv->clearRedirectedWindowSoon.scheduleAfterDelay("[WebKit] Clear RedirectedWindow soon", [priv]() {
-        if (priv->redirectedWindow)
-            priv->redirectedWindow->resize(IntSize());
-    }, clearRedirectedWindowSoonDelay);
+    static const double clearRedirectedWindowSoonDelay = 2;
+    webkitWebViewBase->priv->clearRedirectedWindowSoonTimer.startOneShot(clearRedirectedWindowSoonDelay);
 }
 #endif
 
@@ -1390,7 +1398,7 @@ void webkitWebViewBaseWillEnterAcceleratedCompositingMode(WebKitWebViewBase* web
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
 {
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    webkitWebViewBase->priv->clearRedirectedWindowSoon.cancel();
+    webkitWebViewBase->priv->clearRedirectedWindowSoonTimer.stop();
 #else
     UNUSED_PARAM(webkitWebViewBase);
 #endif

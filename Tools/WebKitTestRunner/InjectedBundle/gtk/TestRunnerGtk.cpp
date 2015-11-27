@@ -40,16 +40,15 @@ void TestRunner::platformInitialize()
 
 void TestRunner::invalidateWaitToDumpWatchdogTimer()
 {
-    m_waitToDumpWatchdogTimer.cancel();
+    m_waitToDumpWatchdogTimer.stop();
 }
 
 void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
-    if (m_waitToDumpWatchdogTimer.isScheduled())
+    if (m_waitToDumpWatchdogTimer.isActive())
         return;
 
-    m_waitToDumpWatchdogTimer.scheduleAfterDelay("[WTR] waitToDumpWatchdogTimerCallback", [this] { waitToDumpWatchdogTimerFired(); },
-        std::chrono::milliseconds(m_timeout));
+    m_waitToDumpWatchdogTimer.startOneShot(m_timeout / 1000.0);
 }
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)

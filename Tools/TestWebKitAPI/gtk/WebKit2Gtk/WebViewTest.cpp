@@ -23,7 +23,6 @@
 
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/GUniquePtrGtk.h>
-#include <wtf/glib/GMainLoopSource.h>
 
 WebViewTest::WebViewTest(WebKitUserContentManager* userContentManager)
     : m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(g_object_new(WEBKIT_TYPE_WEB_VIEW, "web-context", m_webContext.get(), "user-content-manager", userContentManager, nullptr))))

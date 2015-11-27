@@ -22,7 +22,6 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
-#include <wtf/glib/GMainLoopSource.h>
 #include <wtf/glib/GMutexLocker.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -706,12 +705,27 @@ static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gc
     }
 
     // By default sync XHRs have a 10 seconds timeout, we don't want to wait all that so use our own timeout.
-    GMainLoopSource timeoutSource;
-    timeoutSource.scheduleAfterDelay("Timeout", [] { g_assert_not_reached(); }, std::chrono::seconds(1));
+    guint timeoutSourceID = g_timeout_add(1000, [] (gpointer) -> gboolean {
+        g_assert_not_reached();
+        return G_SOURCE_REMOVE;
+    }, nullptr);
 
-    GMainLoopSource unlockServerSource;
-    unlockServerSource.schedule("Unlock Server Idle", [&lock] { lock.unlock(); });
+    struct UnlockServerSourceContext {
+        WTF::GMutexLocker<GMutex>& lock;
+        guint unlockServerSourceID;
+    } context = {
+        lock,
+        g_idle_add_full(G_PRIORITY_DEFAULT, [](gpointer userData) -> gboolean {
+            auto& context = *static_cast<UnlockServerSourceContext*>(userData);
+            context.unlockServerSourceID = 0;
+            context.lock.unlock();
+            return G_SOURCE_REMOVE;
+        }, &context, nullptr)
+    };
     test->waitUntilResourcesLoaded(s_maxConnectionsPerHost + 3); // s_maxConnectionsPerHost resource + main resource + 2 XHR.
+    g_source_remove(timeoutSourceID);
+    if (context.unlockServerSourceID)
+        g_source_remove(context.unlockServerSourceID);
 }
 
 static void addCacheHTTPHeadersToResponse(SoupMessage* message)
