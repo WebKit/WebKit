@@ -1,3 +1,12 @@
+2015-11-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix build warning in bignum.cc
+        https://bugs.webkit.org/show_bug.cgi?id=150797
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/dtoa/bignum.cc:
+
 2015-11-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] ASSERTION FAILED: temporaryFilePath.last() == '/' in WebCore::openTemporaryFile()

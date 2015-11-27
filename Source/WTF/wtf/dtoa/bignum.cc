@@ -93,8 +93,8 @@ namespace double_conversion {
                                int from,
                                int digits_to_read) {
         uint64_t result = 0;
-        for (int i = from; i < from + digits_to_read; ++i) {
-            int digit = buffer[i] - '0';
+        for (int i = 0; i < digits_to_read; ++i) {
+            int digit = buffer[from + i] - '0';
             ASSERT(0 <= digit && digit <= 9);
             result = result * 10 + digit;
         }
