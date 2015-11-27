@@ -46,11 +46,11 @@ class DataReference;
 
 namespace WebCore {
 class CrossThreadTask;
+class IDBGetResult;
 class IDBKeyData;
 class SharedBuffer;
 
 struct IDBDatabaseMetadata;
-struct IDBGetResult;
 struct IDBKeyRangeData;
 struct SecurityOriginData;
 }

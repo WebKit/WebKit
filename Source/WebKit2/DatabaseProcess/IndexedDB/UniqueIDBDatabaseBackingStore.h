@@ -32,13 +32,13 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+class IDBGetResult;
 class IDBKey;
 class IDBKeyData;
 class IDBKeyRange;
 class SharedBuffer;
 
 struct IDBDatabaseMetadata;
-struct IDBGetResult;
 struct IDBObjectStoreMetadata;
 }
 

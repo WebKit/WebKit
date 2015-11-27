@@ -1,3 +1,26 @@
+2015-11-27  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Class-ify IDBGetResult making it impossible to get the data members wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=151627
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord):
+        
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBGetResult>::encode):
+        (IPC::ArgumentCoder<IDBGetResult>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
 2015-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove the remaining uses of GMainLoopSource

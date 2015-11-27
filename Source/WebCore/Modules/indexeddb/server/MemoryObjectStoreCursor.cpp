@@ -174,9 +174,7 @@ void MemoryObjectStoreCursor::currentData(IDBGetResult& data)
         }
 
         m_currentPositionKey = **m_forwardIterator;
-        data.keyData = **m_forwardIterator;
-        data.primaryKeyData = **m_forwardIterator;
-        data.valueBuffer = m_objectStore.valueForKeyRange(**m_forwardIterator);
+        data = { **m_forwardIterator, **m_forwardIterator, m_objectStore.valueForKeyRange(**m_forwardIterator) };
     } else {
         if (!m_reverseIterator || *m_reverseIterator == set->rend()) {
             data = { };
@@ -184,9 +182,7 @@ void MemoryObjectStoreCursor::currentData(IDBGetResult& data)
         }
 
         m_currentPositionKey = **m_reverseIterator;
-        data.keyData = **m_reverseIterator;
-        data.primaryKeyData = **m_reverseIterator;
-        data.valueBuffer = m_objectStore.valueForKeyRange(**m_reverseIterator);
+        data = { **m_reverseIterator, **m_reverseIterator, m_objectStore.valueForKeyRange(**m_reverseIterator) };
     }
 }
 

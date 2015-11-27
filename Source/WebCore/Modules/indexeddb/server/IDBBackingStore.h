@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class IDBCursorInfo;
+class IDBGetResult;
 class IDBIndexInfo;
 class IDBKeyData;
 class IDBObjectStoreInfo;
@@ -41,7 +42,6 @@ class IDBResourceIdentifier;
 class IDBTransactionInfo;
 class ThreadSafeDataBuffer;
 
-struct IDBGetResult;
 struct IDBKeyRangeData;
 
 namespace IndexedDB {

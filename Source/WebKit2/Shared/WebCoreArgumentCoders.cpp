@@ -1827,13 +1827,13 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
 
 void ArgumentCoder<IDBGetResult>::encode(ArgumentEncoder& encoder, const IDBGetResult& result)
 {
-    bool nullData = !result.valueBuffer.data();
+    bool nullData = !result.valueBuffer().data();
     encoder << nullData;
 
     if (!nullData)
-        encoder << DataReference(result.valueBuffer.data()->data(), result.valueBuffer.data()->size());
+        encoder << DataReference(result.valueBuffer().data()->data(), result.valueBuffer().data()->size());
 
-    encoder << result.keyData << result.keyPath;
+    encoder << result.keyData() << result.keyPath();
 }
 
 bool ArgumentCoder<IDBGetResult>::decode(ArgumentDecoder& decoder, IDBGetResult& result)
@@ -1843,7 +1843,7 @@ bool ArgumentCoder<IDBGetResult>::decode(ArgumentDecoder& decoder, IDBGetResult&
         return false;
 
     if (nullData)
-        result.valueBuffer = { };
+        result.setValueBuffer({ });
     else {
         DataReference data;
         if (!decoder.decode(data))
@@ -1851,14 +1851,20 @@ bool ArgumentCoder<IDBGetResult>::decode(ArgumentDecoder& decoder, IDBGetResult&
 
         Vector<uint8_t> vector(data.size());
         memcpy(vector.data(), data.data(), data.size());
-        result.valueBuffer = ThreadSafeDataBuffer::adoptVector(vector);
+        result.setValueBuffer(ThreadSafeDataBuffer::adoptVector(vector));
     }
 
-    if (!decoder.decode(result.keyData))
+    IDBKeyData keyData;
+    if (!decoder.decode(keyData))
         return false;
 
-    if (!decoder.decode(result.keyPath))
+    result.setKeyData(keyData);
+
+    IDBKeyPath keyPath;
+    if (!decoder.decode(keyPath))
         return false;
+
+    result.setKeyPath(keyPath);
 
     return true;
 }

@@ -1066,7 +1066,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getIndexRecord(const IDBIdentifier& tr
         result = IDBGetResult(cursor->currentPrimaryKey());
     else {
         result = IDBGetResult(SharedBuffer::create(cursor->currentValueBuffer().data(), cursor->currentValueBuffer().size()));
-        result.keyData = cursor->currentPrimaryKey();
+        result.setKeyData(cursor->currentPrimaryKey());
     }
 
     // Closing the cursor will destroy the cursor object and remove it from our cursor set.

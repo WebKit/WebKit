@@ -36,7 +36,8 @@
 
 namespace WebCore {
 
-struct IDBGetResult {
+class IDBGetResult {
+public:
     IDBGetResult()
     {
     }
@@ -48,50 +49,63 @@ struct IDBGetResult {
     }
 
     IDBGetResult(const ThreadSafeDataBuffer& buffer)
-        : valueBuffer(buffer)
+        : m_valueBuffer(buffer)
     {
     }
 
     IDBGetResult(PassRefPtr<IDBKey> key)
-        : keyData(key.get())
+        : m_keyData(key.get())
     {
     }
 
     IDBGetResult(const IDBKeyData& keyData)
-        : keyData(keyData)
+        : m_keyData(keyData)
     {
     }
 
     IDBGetResult(PassRefPtr<SharedBuffer> buffer, PassRefPtr<IDBKey> key, const IDBKeyPath& path)
-        : keyData(key.get())
-        , keyPath(path)
+        : m_keyData(key.get())
+        , m_keyPath(path)
     {
         if (buffer)
             dataFromBuffer(*buffer);
     }
 
-    void dataFromBuffer(SharedBuffer& buffer)
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData)
+        : m_keyData(keyData)
+        , m_primaryKeyData(primaryKeyData)
     {
-        Vector<uint8_t> data(buffer.size());
-        memcpy(data.data(), buffer.data(), buffer.size());
-
-        valueBuffer = ThreadSafeDataBuffer::adoptVector(data);
     }
 
-    IDBGetResult isolatedCopy() const
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, const ThreadSafeDataBuffer& valueBuffer)
+        : m_valueBuffer(valueBuffer)
+        , m_keyData(keyData)
+        , m_primaryKeyData(primaryKeyData)
     {
-        IDBGetResult result;
-        result.valueBuffer = valueBuffer;
-        result.keyData = keyData.isolatedCopy();
-        result.primaryKeyData = primaryKeyData.isolatedCopy();
-        result.keyPath = keyPath.isolatedCopy();
-        return result;
     }
 
-    ThreadSafeDataBuffer valueBuffer;
-    IDBKeyData keyData;
-    IDBKeyData primaryKeyData;
-    IDBKeyPath keyPath;
+    IDBGetResult isolatedCopy() const;
+
+    const ThreadSafeDataBuffer& valueBuffer() const { return m_valueBuffer; }
+    const IDBKeyData& keyData() const { return m_keyData; }
+    const IDBKeyData& primaryKeyData() const { return m_primaryKeyData; }
+    const IDBKeyPath& keyPath() const { return m_keyPath; }
+
+    // FIXME: When removing LegacyIDB, remove these setters.
+    // https://bugs.webkit.org/show_bug.cgi?id=150854
+
+    void setValueBuffer(const ThreadSafeDataBuffer& valueBuffer) { m_valueBuffer = valueBuffer; }
+    void setKeyData(const IDBKeyData& keyData) { m_keyData = keyData; }
+    void setPrimaryKeyData(const IDBKeyData& keyData) { m_primaryKeyData = keyData; }
+    void setKeyPath(const IDBKeyPath& keyPath) { m_keyPath = keyPath; }
+
+private:
+    WEBCORE_EXPORT void dataFromBuffer(SharedBuffer&);
+
+    ThreadSafeDataBuffer m_valueBuffer;
+    IDBKeyData m_keyData;
+    IDBKeyData m_primaryKeyData;
+    IDBKeyPath m_keyPath;
 };
 
 } // namespace WebCore

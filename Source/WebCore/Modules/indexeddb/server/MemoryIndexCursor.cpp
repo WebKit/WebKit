@@ -65,12 +65,10 @@ MemoryIndexCursor::~MemoryIndexCursor()
 
 void MemoryIndexCursor::currentData(IDBGetResult& getResult)
 {
-    getResult.keyData = m_currentKey;
-    getResult.primaryKeyData = m_currentPrimaryKey;
     if (m_info.cursorType() == IndexedDB::CursorType::KeyOnly)
-        return;
-
-    getResult.valueBuffer = m_index.objectStore().valueForKey(m_currentPrimaryKey);
+        getResult = { m_currentKey, m_currentPrimaryKey };
+    else
+        getResult = { m_currentKey, m_currentPrimaryKey, m_index.objectStore().valueForKey(m_currentPrimaryKey) };
 }
 
 void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetResult& getResult)

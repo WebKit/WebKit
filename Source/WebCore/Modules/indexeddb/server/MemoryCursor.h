@@ -32,10 +32,9 @@
 
 namespace WebCore {
 
+class IDBGetResult;
 class IDBKeyData;
 class IDBResourceIdentifier;
-
-struct IDBGetResult;
 
 namespace IDBServer {
 

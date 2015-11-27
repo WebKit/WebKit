@@ -938,7 +938,7 @@ void UniqueIDBDatabase::getRecordFromBackingStore(uint64_t requestID, const IDBI
     }
 
     // We must return a key path to know how to inject the result key into the result value object.
-    result.keyPath = objectStoreMetadata.keyPath;
+    result.setKeyPath(objectStoreMetadata.keyPath);
 
     postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didGetRecordFromBackingStore, requestID, result, 0, String(StringImpl::empty())));
 }

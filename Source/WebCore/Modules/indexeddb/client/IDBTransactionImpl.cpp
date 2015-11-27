@@ -602,13 +602,13 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
     const IDBGetResult& result = resultData.getResult();
 
     if (request.sourceIndexIdentifier() && request.requestedIndexRecordType() == IndexedDB::IndexRecordType::Key) {
-        if (!result.keyData.isNull())
-            request.setResult(&result.keyData);
+        if (!result.keyData().isNull())
+            request.setResult(&result.keyData());
         else
             request.setResultToUndefined();
     } else {
-        if (resultData.getResult().valueBuffer.data())
-            request.setResultToStructuredClone(resultData.getResult().valueBuffer);
+        if (resultData.getResult().valueBuffer().data())
+            request.setResultToStructuredClone(resultData.getResult().valueBuffer());
         else
             request.setResultToUndefined();
     }

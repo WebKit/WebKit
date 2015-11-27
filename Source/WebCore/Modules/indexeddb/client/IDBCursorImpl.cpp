@@ -282,20 +282,20 @@ RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* co
 
 void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 {
-    LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData.loggingString().utf8().data());
+    LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData().loggingString().utf8().data());
 
     auto* context = request.scriptExecutionContext();
     if (!context)
         return;
 
-    m_deprecatedCurrentKey = idbKeyDataToScriptValue(context, getResult.keyData);
-    m_deprecatedCurrentPrimaryKey = idbKeyDataToScriptValue(context, getResult.primaryKeyData);
-    m_currentPrimaryKeyData = getResult.primaryKeyData;
+    m_deprecatedCurrentKey = idbKeyDataToScriptValue(context, getResult.keyData());
+    m_deprecatedCurrentPrimaryKey = idbKeyDataToScriptValue(context, getResult.primaryKeyData());
+    m_currentPrimaryKeyData = getResult.primaryKeyData();
 
     if (isKeyCursor())
         m_deprecatedCurrentValue = { };
     else
-        m_deprecatedCurrentValue = deserializeIDBValueData(*context, getResult.valueBuffer);
+        m_deprecatedCurrentValue = deserializeIDBValueData(*context, getResult.valueBuffer());
 
     m_gotValue = true;
 }

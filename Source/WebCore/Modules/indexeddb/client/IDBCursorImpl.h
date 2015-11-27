@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-struct IDBGetResult;
+class IDBGetResult;
 
 namespace IDBClient {
 

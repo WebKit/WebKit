@@ -167,7 +167,7 @@ namespace WebCore {
         static Type copy(const IDBDatabaseMetadata&);
     };
 
-    struct IDBGetResult;
+    class IDBGetResult;
     template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBGetResult> {
         typedef IDBGetResult Type;
         static Type copy(const IDBGetResult&);
