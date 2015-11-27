@@ -1,3 +1,13 @@
+2015-11-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [jhbuild] Fix pixman build with clang
+        https://bugs.webkit.org/show_bug.cgi?id=151441
+
+        Reviewed by Carlos Garcia Campos.
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2015-11-26  David Kilzer  <ddkilzer@apple.com>
 
         Extract prependToEnvironmentVariableList
