@@ -684,7 +684,9 @@ private:
             m_coloredTmp.clear();
     }
 
+#if PLATFORM(COCOA)
 #pragma mark - Debugging helpers.
+#endif
 
     void dumpInterferenceGraphInDot(PrintStream& out)
     {
@@ -718,7 +720,9 @@ private:
             out.print("    ", tmp, "\n");
     }
 
+#if PLATFORM(COCOA)
 #pragma mark -
+#endif
 
     // Interference edges are not directed. An edge between any two Tmps is represented
     // by the concatenated values of the smallest Tmp followed by the bigger Tmp.
