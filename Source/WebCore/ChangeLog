@@ -1,3 +1,17 @@
+2015-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not use the WebCore garbage collector timer
+        https://bugs.webkit.org/show_bug.cgi?id=151623
+
+        Reviewed by Martin Robinson.
+
+        Now that garbage collector timers have been implemented in
+        JavaScriptCore for glib, we don't need to use another Timer in WebCore.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectSoon):
+        (WebCore::GCController::garbageCollectNowIfNotDoneRecently):
+
 2015-11-18  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Crash in DocumentLoader::notifyFinished() when allowing a media document to load
