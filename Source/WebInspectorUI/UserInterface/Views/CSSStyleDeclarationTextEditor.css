@@ -37,7 +37,7 @@
 }
 
 .css-style-text-editor > .CodeMirror .CodeMirror-placeholder {
-    padding: 0 5px 0 25px;
+    text-indent: 0;
 }
 
 .css-style-text-editor > .CodeMirror pre {
