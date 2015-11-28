@@ -223,7 +223,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, fetchedComputedStyle.bind(this));
     }
 
-    addEmptyRule()
+    addRule(selector = this._node.appropriateSelectorFor(true))
     {
         function addedRule(error, rulePayload)
         {
@@ -234,8 +234,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
             this.refresh();
         }
-
-        let selector = this._node.appropriateSelectorFor(true);
 
         // COMPATIBILITY (iOS 9): Before CSS.createStyleSheet, CSS.addRule could be called with a contextNode.
         if (!CSSAgent.createStyleSheet) {
@@ -249,24 +247,6 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         }
 
         WebInspector.cssStyleManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
-    }
-
-    addRuleWithSelector(selector)
-    {
-        if (!selector)
-            return;
-
-        function addedRule(error, rulePayload)
-        {
-            if (error)
-                return;
-
-            DOMAgent.markUndoableState();
-
-            this.refresh();
-        }
-
-        CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
     }
 
     get matchedRules()

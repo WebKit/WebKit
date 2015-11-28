@@ -1,3 +1,29 @@
+2015-11-28  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: REGRESSION: "Duplicate Selector" context menu item doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=151628
+
+        Reviewed by Brian Burg.
+
+        Merged the two "add rule" functions inside DOMNodeStyles to create a
+        new rule with the given selector and use the generated best selector
+        for that node otherwise. This also preserves all fallbacks across all
+        functions for creating new CSS rules.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.addEmptyRule): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.addRuleWithSelector): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.addRule):
+        Creates a new CSS rule using either the provided selector or the best
+        selector for the current node.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleContextMenuEvent):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.newRuleButtonClicked):
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection.prototype._addNewRule):
+
 2015-11-24  Brian Burg  <bburg@apple.com>
 
         Web Inspector: save Inspector's breakpoints to localStorage whenever they are modified

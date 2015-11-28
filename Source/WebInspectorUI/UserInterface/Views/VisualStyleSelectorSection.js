@@ -240,7 +240,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         if (!this._nodeStyles)
             return;
 
-        this._nodeStyles.addEmptyRule();
+        this._nodeStyles.addRule();
         this._focusNextNewInspectorRule = true;
     }
 
