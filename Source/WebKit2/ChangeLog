@@ -1,3 +1,32 @@
+2015-11-28  Tim Horton  <timothy_horton@apple.com>
+
+        Stop unnecessarily copying WKWebViewConfiguration in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=151639
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView dealloc]):
+        (-[WKWebView _contentProviderRegistry]):
+        (-[WKWebView _selectionGranularity]):
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::mimeTypesWithCustomContentProviders):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _stopAssistingKeyboard]):
+        Looking at allocation traces I noticed that we were making way more
+        WKWebViewConfigurations than made sense; looking at backtraces I found
+        a few internal callers of -[WKWebView configuration], which copies the
+        configuration. There's no reason for these internal callers to make 
+        such a copy, though.
+
+        I'm not exactly sure what the usual approach is here, but I added
+        getters so WKContentViewInteraction and PageClientImplIOS can get to
+        the values they're looking for without using the configuration property.
+
 2015-11-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Class-ify IDBGetResult making it impossible to get the data members wrong.

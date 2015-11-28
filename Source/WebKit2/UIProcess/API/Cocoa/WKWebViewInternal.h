@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import "SameDocumentNavigationType.h"
+#import "WKWebViewConfiguration.h"
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -54,6 +55,7 @@ class WebPageProxy;
 struct PrintInfo;
 }
 
+@class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
@@ -108,6 +110,10 @@ struct PrintInfo;
 
 - (void)_navigationGestureDidBegin;
 - (void)_navigationGestureDidEnd;
+
+@property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
+
+@property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;
 
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;

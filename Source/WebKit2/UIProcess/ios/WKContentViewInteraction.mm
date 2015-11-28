@@ -484,7 +484,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _showingTextStyleOptions = NO;
 
     // FIXME: This should be called when we get notified that loading has completed.
-    [self useSelectionAssistantWithMode:toUIWebSelectionMode([[_webView configuration] selectionGranularity])];
+    [self useSelectionAssistantWithMode:toUIWebSelectionMode([_webView _selectionGranularity])];
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
@@ -3179,7 +3179,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (void)_stopAssistingKeyboard
 {
-    [self useSelectionAssistantWithMode:toUIWebSelectionMode([[_webView configuration] selectionGranularity])];
+    [self useSelectionAssistantWithMode:toUIWebSelectionMode([_webView _selectionGranularity])];
 }
 
 - (const AssistedNodeInformation&)assistedNodeInformation

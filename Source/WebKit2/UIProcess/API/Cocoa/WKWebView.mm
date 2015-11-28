@@ -805,6 +805,16 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     return _customContentView ? _customContentView.get() : _contentView.get();
 }
 
+- (WKWebViewContentProviderRegistry *)_contentProviderRegistry
+{
+    return [_configuration _contentProviderRegistry];
+}
+
+- (WKSelectionGranularity)_selectionGranularity
+{
+    return [_configuration selectionGranularity];
+}
+
 - (void)_setHasCustomContentView:(BOOL)pageHasCustomContentView loadedMIMEType:(const WTF::String&)mimeType
 {
     if (pageHasCustomContentView) {
