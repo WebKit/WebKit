@@ -1,3 +1,19 @@
+2015-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Use SVGTransform::SVGTransformType instead of an unsigned short
+        https://bugs.webkit.org/show_bug.cgi?id=151637
+
+        Reviewed by Brady Eidson.
+
+        Make 'type' more strongly typed.
+
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseTransformValue):
+        (WebCore::parseAndSkipType):
+        (WebCore::SVGTransformable::parseTransformType):
+        (WebCore::SVGTransformable::parseTransformAttribute):
+        * svg/SVGTransformable.h:
+
 2015-11-27  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Class-ify IDBGetResult making it impossible to get the data members wrong.

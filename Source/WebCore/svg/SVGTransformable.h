@@ -40,7 +40,7 @@ public:
     virtual ~SVGTransformable();
 
     static bool parseTransformAttribute(SVGTransformList&, const UChar*& ptr, const UChar* end, TransformParsingMode mode = ClearList);
-    static bool parseTransformValue(unsigned type, const UChar*& ptr, const UChar* end, SVGTransform&);
+    static bool parseTransformValue(SVGTransform::SVGTransformType, const UChar*& ptr, const UChar* end, SVGTransform&);
     static SVGTransform::SVGTransformType parseTransformType(const String&);
 
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override { return animatedLocalTransform(); }
