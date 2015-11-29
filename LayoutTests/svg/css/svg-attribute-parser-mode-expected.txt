@@ -5,13 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 0, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 0, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 0, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 0, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).fill is null
+PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 0, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 128, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 0, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 128, 0)"
@@ -21,13 +21,13 @@ PASS document.defaultView.getComputedStyle(rect, null).fill is "url(#reference) 
 PASS document.defaultView.getComputedStyle(rect, null).fill is "rgb(0, 128, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "rgb(0, 128, 0)"
-PASS document.defaultView.getComputedStyle(rect, null).stroke is null
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "rgb(0, 128, 0)"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "none"
 PASS document.defaultView.getComputedStyle(rect, null).stroke is "rgb(0, 128, 0)"

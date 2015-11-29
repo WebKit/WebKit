@@ -43,11 +43,6 @@ public:
         SVG_PAINTTYPE_URI = 107
     };
 
-    static Ref<SVGPaint> createUnknown()
-    {
-        return adoptRef(*new SVGPaint(SVG_PAINTTYPE_UNKNOWN));
-    }
-
     static Ref<SVGPaint> createNone()
     {
         return adoptRef(*new SVGPaint(SVG_PAINTTYPE_NONE));

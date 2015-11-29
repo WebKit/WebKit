@@ -1,3 +1,23 @@
+2015-11-29  Antoine Quint  <graouts@apple.com>
+
+        Browser does not fall back to SVG attribute value when CSS style value is invalid or not supported
+        https://bugs.webkit.org/show_bug.cgi?id=147932
+
+        Reviewed by Dean Jackson.
+
+        Instead of returning an SVGPaint object of type SVG_PAINTTYPE_UNKNOWN when we encounter an SVG paint
+        value that cannot be parsed, we now return `nullptr` which will cause that value to be ignored and
+        let another paint value in the cascade be used instead. This is the same approach used for SVGColor.
+        Since we're removing the only call site for `SVGPaint::createUnknown()`, we remove that function entirely.
+
+        Tests: svg/css/invalid-color-cascade.svg
+               svg/css/invalid-paint-cascade.svg
+
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGPaint):
+        * svg/SVGPaint.h:
+        (WebCore::SVGPaint::createUnknown): Deleted.
+
 2015-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Use SVGTransform::SVGTransformType instead of an unsigned short

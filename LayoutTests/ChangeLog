@@ -1,3 +1,23 @@
+2015-11-29  Antoine Quint  <graouts@apple.com>
+
+        Browser does not fall back to SVG attribute value when CSS style value is invalid or not supported
+        https://bugs.webkit.org/show_bug.cgi?id=147932
+
+        Reviewed by Dean Jackson.
+
+        Testing that we correctly fall back to the presentation attribute for SVGPaint and SVGColor values
+        specified with an invalid keyword in a `style` attribute. We also update the expected output for
+        svg/css/svg-attribute-parser-mode.html which is now in line with values returned by Firefox and
+        Chrome, where we correctly use the default value instead of null objects, which was definitely
+        an error.
+
+        * svg/css/invalid-color-cascade-expected.svg: Added.
+        * svg/css/invalid-color-cascade.svg: Added.
+        * svg/css/invalid-paint-cascade-expected.svg: Added.
+        * svg/css/invalid-paint-cascade.svg: Added.
+        * svg/css/script-tests/svg-attribute-parser-mode.js:
+        * svg/css/svg-attribute-parser-mode-expected.txt:
+
 2015-11-18  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Crash in DocumentLoader::notifyFinished() when allowing a media document to load
