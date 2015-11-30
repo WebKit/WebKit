@@ -1,3 +1,18 @@
+2015-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Option-up and Option-down should scroll a little less than a full page
+        https://bugs.webkit.org/show_bug.cgi?id=151538
+        <rdar://problem/23642675>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _scrollOffsetForEvent:]):
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+        Clean up the code a little, and adjust so that we *always* use pageStep
+        instead of just scrolling by the unobscured rect when scrolling by a page.
+        Previously, we did for the spacebar, but not for option-up and option-down.
+
 2015-11-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: using "Reload Web Inspector" when docked breaks dock-specific styles

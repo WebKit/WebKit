@@ -2865,6 +2865,70 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     _uiEventBeingResent = nil;
 }
 
+- (Optional<FloatPoint>)_scrollOffsetForEvent:(WebIOSEvent *)event
+{
+    static const unsigned kWebSpaceKey = 0x20;
+
+    if (_page->editorState().isContentEditable)
+        return Nullopt;
+
+    NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
+    if (!charactersIgnoringModifiers.length)
+        return Nullopt;
+
+    enum ScrollingIncrement { Document, Page, Line };
+    enum ScrollingDirection { Up, Down, Left, Right };
+
+    auto computeOffset = ^(ScrollingIncrement increment, ScrollingDirection direction) {
+        bool isHorizontal = (direction == Left || direction == Right);
+
+        CGFloat scrollDistance = ^ CGFloat {
+            switch (increment) {
+            case Document:
+                ASSERT(!isHorizontal);
+                return self.bounds.size.height;
+            case Page:
+                ASSERT(!isHorizontal);
+                return Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height);
+            case Line:
+                return Scrollbar::pixelsPerLineStep();
+            }
+            ASSERT_NOT_REACHED();
+            return 0;
+        }();
+
+        if (direction == Up || direction == Left)
+            scrollDistance = -scrollDistance;
+        
+        return (isHorizontal ? FloatPoint(scrollDistance, 0) : FloatPoint(0, scrollDistance));
+    };
+
+    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputLeftArrow])
+        return computeOffset(Line, Left);
+    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputRightArrow])
+        return computeOffset(Line, Right);
+
+    ScrollingIncrement incrementForVerticalArrowKey = Line;
+    if (event.modifierFlags & WebEventFlagMaskAlternate)
+        incrementForVerticalArrowKey = Page;
+    else if (event.modifierFlags & WebEventFlagMaskCommand)
+        incrementForVerticalArrowKey = Document;
+    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputUpArrow])
+        return computeOffset(incrementForVerticalArrowKey, Up);
+    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputDownArrow])
+        return computeOffset(incrementForVerticalArrowKey, Down);
+
+    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageDown])
+        return computeOffset(Page, Down);
+    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageUp])
+        return computeOffset(Page, Up);
+
+    if ([charactersIgnoringModifiers characterAtIndex:0] == kWebSpaceKey)
+        return computeOffset(Page, (event.modifierFlags & WebEventFlagMaskShift) ? Up : Down);
+
+    return Nullopt;
+}
+
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)event isCharEvent:(BOOL)isCharEvent
 {
     static const unsigned kWebEnterKey = 0x0003;
@@ -2875,52 +2939,19 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     static const unsigned kWebSpaceKey = 0x20;
 
     BOOL contentEditable = _page->editorState().isContentEditable;
-    WebCore::FloatRect unobscuredContentRect = _page->unobscuredContentRect();
 
     if (!contentEditable && event.isTabKey)
         return NO;
 
-    BOOL shift = event.modifierFlags & WebEventFlagMaskShift;
-    BOOL command = event.modifierFlags & WebEventFlagMaskCommand;
-    BOOL option = event.modifierFlags & WebEventFlagMaskAlternate;
-    NSString *charactersIgnoringModifiers = [event charactersIgnoringModifiers];
-    BOOL shouldScroll = YES;
-    FloatPoint scrollOffset;
-
-    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputLeftArrow])
-        scrollOffset.setX(-Scrollbar::pixelsPerLineStep());
-    else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputUpArrow]) {
-        if (option)
-            scrollOffset.setY(-unobscuredContentRect.height());
-        else if (command)
-            scrollOffset.setY(-self.bounds.size.height);
-        else
-            scrollOffset.setY(-Scrollbar::pixelsPerLineStep());
-    } else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputRightArrow])
-            scrollOffset.setX(Scrollbar::pixelsPerLineStep());
-    else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputDownArrow]) {
-        if (option)
-            scrollOffset.setY(unobscuredContentRect.height());
-        else if (command)
-            scrollOffset.setY(self.bounds.size.height);
-        else
-            scrollOffset.setY(Scrollbar::pixelsPerLineStep());
-    } else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageDown])
-        scrollOffset.setY(unobscuredContentRect.height());
-    else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageUp])
-        scrollOffset.setY(-unobscuredContentRect.height());
-    else
-        shouldScroll = NO;
-
-    if (shouldScroll) {
-        [_webView _scrollByContentOffset:scrollOffset];
+    if (Optional<FloatPoint> scrollOffset = [self _scrollOffsetForEvent:event]) {
+        [_webView _scrollByContentOffset:*scrollOffset];
         return YES;
     }
 
     UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
-    NSString *characters = [event characters];
+    NSString *characters = event.characters;
     
-    if (![characters length])
+    if (!characters.length)
         return NO;
 
     switch ([characters characterAtIndex:0]) {
@@ -2937,12 +2968,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         break;
 
     case kWebSpaceKey:
-        if (!contentEditable) {
-            int pageStep = Scrollbar::pageStep(unobscuredContentRect.height(), self.bounds.size.height);
-            [_webView _scrollByContentOffset:FloatPoint(0, shift ? -pageStep : pageStep)];
-            return YES;
-        }
-        if (isCharEvent) {
+        if (contentEditable && isCharEvent) {
             [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
             return YES;
         }
