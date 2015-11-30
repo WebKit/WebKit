@@ -1,3 +1,17 @@
+2015-11-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Add font service permission to the sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=151509
+        <rdar://problem/23508753>
+
+        Reviewed by Anders Carlsson.
+
+        Update the sandbox profile for Mac WebKit to allow access to the
+        "com.apple.fonts" service.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2015-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Make usesNetworkProcess always true
