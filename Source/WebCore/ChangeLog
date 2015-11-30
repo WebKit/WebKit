@@ -1,3 +1,35 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Support keyPath injection into object store records.
+        https://bugs.webkit.org/show_bug.cgi?id=151640
+
+        Reviewed by Andy Estes.
+
+        No new tests (At least one existing failure now passes and is unskipped,
+        while many other existing failures are now closer to passing).
+
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord): Use the new UniqueIDBDatabase VM/ExecState.
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords): Ditto
+        (WebCore::IDBServer::indexVM): Deleted.
+        (WebCore::IDBServer::indexGlobalExec): Deleted.
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadVM):
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadExecState):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd): If appropriate, inject the key that will be used into
+          the value before storing the record.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        Add modern JSValue/ExecState& version of some binding utilities, for use today and in preparation of getting 
+        rid of the DOMRequestState and Deprecated::ScriptValue versions later:
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyToJSValue):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        (WebCore::deserializeIDBValueData):
+        (WebCore::deserializeIDBValueDataToJSValue):
+        * bindings/js/IDBBindingUtilities.h:
+
 2015-11-25  Andy Estes  <aestes@apple.com>
 
         [Content Filtering] Avoid creating a ContentFilter when loading the empty document

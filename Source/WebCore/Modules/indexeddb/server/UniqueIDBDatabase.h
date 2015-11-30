@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStore.h"
+#include "IDBBindingUtilities.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBGetResult.h"
@@ -96,6 +97,9 @@ public:
 
     void handleDelete(IDBConnectionToClient&, const IDBRequestData&);
     bool deletePending() const { return m_deletePending; }
+
+    static JSC::VM& databaseThreadVM();
+    static JSC::ExecState& databaseThreadExecState();
 
 private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);

@@ -35,6 +35,7 @@
 #include "IndexKey.h"
 #include "Logging.h"
 #include "MemoryBackingStoreTransaction.h"
+#include "UniqueIDBDatabase.h"
 
 #include <wtf/NeverDestroyed.h>
 
@@ -267,27 +268,6 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
     return error;
 }
 
-static VM& indexVM()
-{
-    ASSERT(!isMainThread());
-    static NeverDestroyed<RefPtr<VM>> vm = VM::create();
-    return *vm.get();
-}
-
-static ExecState& indexGlobalExec()
-{
-    ASSERT(!isMainThread());
-    static NeverDestroyed<Strong<JSGlobalObject>> globalObject;
-    static bool initialized = false;
-    if (!initialized) {
-        globalObject.get().set(indexVM(), JSGlobalObject::create(indexVM(), JSGlobalObject::createStructure(indexVM(), jsNull())));
-        initialized = true;
-    }
-
-    RELEASE_ASSERT(globalObject.get()->globalExec());
-    return *globalObject.get()->globalExec();
-}
-
 void MemoryObjectStore::updateCursorsForPutRecord(std::set<IDBKeyData>::iterator iterator)
 {
     for (auto& cursor : m_cursors.values())
@@ -308,9 +288,9 @@ void MemoryObjectStore::updateIndexesForDeleteRecord(const IDBKeyData& value)
 
 IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, const ThreadSafeDataBuffer& value)
 {
-    JSLockHolder locker(indexVM());
+    JSLockHolder locker(UniqueIDBDatabase::databaseThreadVM());
 
-    auto jsValue = idbValueDataToJSValue(indexGlobalExec(), value);
+    auto jsValue = idbValueDataToJSValue(UniqueIDBDatabase::databaseThreadExecState(), value);
     if (jsValue.isUndefinedOrNull())
         return { };
 
@@ -319,7 +299,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
 
     for (auto* index : m_indexesByName.values()) {
         IndexKey indexKey;
-        generateIndexKeyForValue(indexGlobalExec(), index->info(), jsValue, indexKey);
+        generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index->info(), jsValue, indexKey);
 
         if (indexKey.isNull())
             continue;
@@ -340,21 +320,20 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
     return error;
 }
 
-
 IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
 {
     if (!m_keyValueStore)
         return { };
 
-    JSLockHolder locker(indexVM());
+    JSLockHolder locker(UniqueIDBDatabase::databaseThreadVM());
 
     for (auto iterator : *m_keyValueStore) {
-        auto jsValue = idbValueDataToJSValue(indexGlobalExec(), iterator.value);
+        auto jsValue = idbValueDataToJSValue(UniqueIDBDatabase::databaseThreadExecState(), iterator.value);
         if (jsValue.isUndefinedOrNull())
             return { };
 
         IndexKey indexKey;
-        generateIndexKeyForValue(indexGlobalExec(), index.info(), jsValue, indexKey);
+        generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index.info(), jsValue, indexKey);
 
         if (indexKey.isNull())
             continue;

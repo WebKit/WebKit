@@ -115,7 +115,7 @@ JSValue idbKeyDataToJSValue(JSC::ExecState& exec, const IDBKeyData& keyData)
 
 }
 
-static JSValue idbKeyToJSValue(ExecState* exec, JSDOMGlobalObject* globalObject, IDBKey* key)
+static JSValue idbKeyToJSValue(ExecState* exec, JSGlobalObject* globalObject, IDBKey* key)
 {
     if (!key || !exec) {
         // This should be undefined, not null.
@@ -294,7 +294,35 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKe
     if (parent.isUndefined())
         return false;
 
-    if (!set(exec, parent, keyPathElements.last(), idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get())))
+    if (!set(exec, parent, keyPathElements.last(), idbKeyToJSValue(exec, exec->lexicalGlobalObject(), key.get())))
+        return false;
+
+    return true;
+}
+
+bool injectIDBKeyIntoScriptValue(JSC::ExecState& exec, const IDBKeyData& keyData, JSC::JSValue value, const IDBKeyPath& keyPath)
+{
+    LOG(IndexedDB, "injectIDBKeyIntoScriptValue");
+
+    ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
+
+    Vector<String> keyPathElements;
+    IDBKeyPathParseError error;
+    IDBParseKeyPath(keyPath.string(), keyPathElements, error);
+    ASSERT(error == IDBKeyPathParseError::None);
+
+    if (keyPathElements.isEmpty())
+        return false;
+
+    JSValue parent = ensureNthValueOnKeyPath(&exec, value, keyPathElements, keyPathElements.size() - 1);
+    if (parent.isUndefined())
+        return false;
+
+    auto key = keyData.maybeCreateIDBKey();
+    if (!key)
+        return false;
+
+    if (!set(&exec, parent, keyPathElements.last(), idbKeyToJSValue(&exec, exec.lexicalGlobalObject(), key.get())))
         return false;
 
     return true;
@@ -409,21 +437,26 @@ Deprecated::ScriptValue deserializeIDBValueData(ScriptExecutionContext& context,
     if (!execState)
         return Deprecated::ScriptValue();
 
+    return Deprecated::ScriptValue(execState->vm(), deserializeIDBValueDataToJSValue(*execState, valueData));
+}
+
+JSC::JSValue deserializeIDBValueDataToJSValue(JSC::ExecState& exec, const ThreadSafeDataBuffer& valueData)
+{
     if (!valueData.data())
-        return Deprecated::ScriptValue(execState->vm(), jsUndefined());
+        return jsUndefined();
 
     const Vector<uint8_t>& data = *valueData.data();
     JSValue result;
     if (data.size()) {
         RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(data);
 
-        execState->vm().apiLock().lock();
-        result = serializedValue->deserialize(execState, execState->lexicalGlobalObject(), 0, NonThrowing);
-        execState->vm().apiLock().unlock();
+        exec.vm().apiLock().lock();
+        result = serializedValue->deserialize(&exec, exec.lexicalGlobalObject(), 0, NonThrowing);
+        exec.vm().apiLock().unlock();
     } else
         result = jsNull();
 
-    return Deprecated::ScriptValue(execState->vm(), result);
+    return result;
 }
 
 Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<SharedBuffer> prpBuffer, bool keyIsDefined)
