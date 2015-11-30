@@ -34,11 +34,12 @@ import jhbuildutils
 class SkippedTest:
     ENTIRE_SUITE = None
 
-    def __init__(self, test, test_case, reason, bug=None):
+    def __init__(self, test, test_case, reason, bug, build_type=None):
         self.test = test
         self.test_case = test_case
         self.reason = reason
         self.bug = bug
+        self.build_type = build_type
 
     def __str__(self):
         skipped_test_str = "%s" % self.test
@@ -46,13 +47,17 @@ class SkippedTest:
         if not(self.skip_entire_suite()):
             skipped_test_str += " [%s]" % self.test_case
 
-        skipped_test_str += ": %s " % self.reason
-        if self.bug is not None:
-            skipped_test_str += "(https://bugs.webkit.org/show_bug.cgi?id=%d)" % self.bug
+        skipped_test_str += ": %s (https://bugs.webkit.org/show_bug.cgi?id=%d)" % (self.reason, self.bug)
         return skipped_test_str
 
     def skip_entire_suite(self):
         return self.test_case == SkippedTest.ENTIRE_SUITE
+
+    def skip_for_build_type(self, build_type):
+        if self.build_type is None:
+            return True;
+
+        return self.build_type == build_type
 
 class TestTimeout(Exception):
     pass
@@ -63,6 +68,7 @@ class TestRunner:
     SKIPPED = [
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
         SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
+        SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/editable/editable", "Test hits an assertion in Debug builds", 151654, "Debug"),
         SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebView/install-missing-plugins-permission-request", "Test times out", 147822),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
@@ -91,7 +97,7 @@ class TestRunner:
 
         self._programs_path = common.binary_build_path()
         self._tests = self._get_tests(tests)
-        self._skipped_tests = TestRunner.SKIPPED
+        self._skipped_tests = [skipped for skipped in TestRunner.SKIPPED if skipped.skip_for_build_type(self._build_type)]
         self._disabled_tests = []
 
         # These SPI daemons need to be active for the accessibility tests to work.

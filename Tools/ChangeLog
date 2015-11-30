@@ -1,5 +1,21 @@
 2015-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Skip GTK+ test /webkit2/WebKitWebView/editable/editable in Debug.
+
+        Add a way to skip unit tests only for Debug or Release builds and
+        skipt the test /webkit2/WebKitWebView/editable/editable only for Debug.
+
+        * Scripts/run-gtk-tests:
+        (SkippedTest):
+        (SkippedTest.__init__):
+        (SkippedTest.__str__):
+        (SkippedTest.skip_entire_suite):
+        (SkippedTest.skip_for_build_type):
+        (TestRunner):
+        (TestRunner.__init__):
+
+2015-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix a crash in GTK+ test /webkit2/WebKitWebView/custom-charset.
 
         It's an assert hit because we are reloading a view loaded with
