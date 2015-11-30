@@ -1316,16 +1316,6 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(WTF::Optional<WebCore::Scrol
     return _data->_impl->pageExtendedBackgroundColor();
 }
 
-- (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size
-{
-    _data->_impl->forceAsyncDrawingAreaSizeUpdate(NSSizeToCGSize(size));
-}
-
-- (void)waitForAsyncDrawingAreaSizeUpdate
-{
-    _data->_impl->waitForAsyncDrawingAreaSizeUpdate();
-}
-
 - (BOOL)isUsingUISideCompositing
 {
     return _data->_impl->isUsingUISideCompositing();

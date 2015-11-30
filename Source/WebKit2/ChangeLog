@@ -1,5 +1,21 @@
 2015-11-30  Tim Horton  <timothy_horton@apple.com>
 
+        Remove some unused synchronous drawing SPI
+        https://bugs.webkit.org/show_bug.cgi?id=151672
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView forceAsyncDrawingAreaSizeUpdate:]): Deleted.
+        (-[WKView waitForAsyncDrawingAreaSizeUpdate]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::forceAsyncDrawingAreaSizeUpdate): Deleted.
+        (WebKit::WebViewImpl::waitForAsyncDrawingAreaSizeUpdate): Deleted.
+
+2015-11-30  Tim Horton  <timothy_horton@apple.com>
+
         Get rid of the legacy swipe shadow style
         https://bugs.webkit.org/show_bug.cgi?id=151671
 

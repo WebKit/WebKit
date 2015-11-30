@@ -101,9 +101,6 @@
 - (BOOL)windowOcclusionDetectionEnabled;
 - (void)setWindowOcclusionDetectionEnabled:(BOOL)flag;
 
-- (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size;
-- (void)waitForAsyncDrawingAreaSizeUpdate;
-
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point;
 
 - (void)setAllowsLinkPreview:(BOOL)allowsLinkPreview;

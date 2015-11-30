@@ -147,8 +147,6 @@ public:
     std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy();
     bool isUsingUISideCompositing() const;
     void setDrawingAreaSize(CGSize);
-    void forceAsyncDrawingAreaSizeUpdate(CGSize);
-    void waitForAsyncDrawingAreaSizeUpdate();
     void updateLayer();
     static bool wantsUpdateLayer() { return true; }
 
