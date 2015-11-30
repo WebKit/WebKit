@@ -1,3 +1,19 @@
+2015-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] UI process crash when the screensaver DBus proxy is being created while the web view is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=151653
+
+        Reviewed by Martin Robinson.
+
+        We correctly cancel the proxy creation, but when the async ready
+        callback is called, the view could be destroyed already. In that
+        case g_dbus_proxy_new_for_bus_finish() will return nullptr and
+        fail with cancelled error, but we are using the passed web view
+        without checking first if the creation failed or not.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (screenSaverProxyCreatedCallback):
+
 2015-11-28  Tim Horton  <timothy_horton@apple.com>
 
         Stop unnecessarily copying WKWebViewConfiguration in a few places

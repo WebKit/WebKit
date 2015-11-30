@@ -1170,11 +1170,15 @@ static void webkitWebViewBaseSendInhibitMessageToScreenSaver(WebKitWebViewBase* 
 
 static void screenSaverProxyCreatedCallback(GObject*, GAsyncResult* result, WebKitWebViewBase* webViewBase)
 {
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    priv->screenSaverProxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, nullptr));
-    if (!priv->screenSaverProxy)
+    // WebKitWebViewBase cancels the proxy creation on dispose, which means this could be called
+    // after the web view has been destroyed and g_dbus_proxy_new_for_bus_finish will return nullptr.
+    // So, make sure we don't use the web view unless we have a valid proxy.
+    // See https://bugs.webkit.org/show_bug.cgi?id=151653.
+    GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, nullptr));
+    if (!proxy)
         return;
 
+    webViewBase->priv->screenSaverProxy = proxy;
     webkitWebViewBaseSendInhibitMessageToScreenSaver(webViewBase);
 }
 
