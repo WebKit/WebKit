@@ -980,6 +980,11 @@ ALWAYS_INLINE int32_t JIT::getOperandConstantInt(int src)
     return getConstantOperand(src).asInt32();
 }
 
+ALWAYS_INLINE double JIT::getOperandConstantDouble(int src)
+{
+    return getConstantOperand(src).asDouble();
+}
+
 #if USE(JSVALUE32_64)
 
 inline void JIT::emitLoadTag(int index, RegisterID tag)

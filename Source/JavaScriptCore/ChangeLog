@@ -1,3 +1,67 @@
+2015-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Snippefy op_div for the baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=151607
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emitSlow_op_div):
+        (JSC::JIT::compileBinaryArithOpSlowCase): Deleted.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_div): Deleted.
+        (JSC::JIT::emitSlow_op_div): Deleted.
+        - Removed the 32-bit specific op_div implementation.  The 64-bit version with the
+          op_div snippet can now service both 32-bit and 64-bit.
+ 
+        * jit/JITDivGenerator.cpp: Added.
+        (JSC::JITDivGenerator::loadOperand):
+        (JSC::JITDivGenerator::generateFastPath):
+        * jit/JITDivGenerator.h: Added.
+        (JSC::JITDivGenerator::JITDivGenerator):
+        (JSC::JITDivGenerator::didEmitFastPath):
+        (JSC::JITDivGenerator::endJumpList):
+        (JSC::JITDivGenerator::slowPathJumpList):
+ 
+        * jit/JITInlines.h:
+        (JSC::JIT::getOperandConstantDouble): Added.
+ 
+        * jit/SnippetOperand.h: Added.
+        (JSC::SnippetOperand::SnippetOperand):
+        (JSC::SnippetOperand::mightBeNumber):
+        (JSC::SnippetOperand::definitelyIsNumber):
+        (JSC::SnippetOperand::isConst):
+        (JSC::SnippetOperand::isConstInt32):
+        (JSC::SnippetOperand::isConstDouble):
+        (JSC::SnippetOperand::asRawBits):
+        (JSC::SnippetOperand::asConstInt32):
+        (JSC::SnippetOperand::asConstDouble):
+        (JSC::SnippetOperand::setConstInt32):
+        (JSC::SnippetOperand::setConstDouble):
+        - The SnippetOperand encapsulates operand constness, const type, and profiling
+          information.  As a result:
+          1. The argument list to the JITDivGenerator constructor is now more concise.
+          2. The logic of the JITDivGenerator is now less verbose and easier to express.
+
+        * parser/ResultType.h:
+        (JSC::ResultType::isInt32):
+        (JSC::ResultType::definitelyIsNumber):
+        (JSC::ResultType::definitelyIsString):
+        (JSC::ResultType::definitelyIsBoolean):
+        (JSC::ResultType::mightBeNumber):
+        (JSC::ResultType::isNotNumber):
+        - Made these functions const because they were always meant to be const.
+          This also allows me to enforce constness in the SnippetOperand.
+
 2015-11-30  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Fix coding style of Intl code

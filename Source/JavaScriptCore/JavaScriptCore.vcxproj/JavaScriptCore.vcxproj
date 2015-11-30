@@ -647,6 +647,7 @@
     <ClCompile Include="..\jit\JITCall32_64.cpp" />
     <ClCompile Include="..\jit\JITCode.cpp" />
     <ClCompile Include="..\jit\JITDisassembler.cpp" />
+    <ClCompile Include="..\jit\JITDivGenerator.cpp" />
     <ClCompile Include="..\jit\JITExceptions.cpp" />
     <ClCompile Include="..\jit\JITInlineCacheGenerator.cpp" />
     <ClCompile Include="..\jit\JITMulGenerator.cpp" />
@@ -1465,6 +1466,7 @@
     <ClInclude Include="..\jit\JITCode.h" />
     <ClInclude Include="..\jit\JITCompilationEffort.h" />
     <ClInclude Include="..\jit\JITDisassembler.h" />
+    <ClInclude Include="..\jit\JITDivGenerator.h" />
     <ClInclude Include="..\jit\JITExceptions.h" />
     <ClInclude Include="..\jit\JITInlineCacheGenerator.h" />
     <ClInclude Include="..\jit\JITInlines.h" />
@@ -1485,6 +1487,7 @@
     <ClInclude Include="..\jit\RegisterSet.h" />
     <ClInclude Include="..\jit\Repatch.h" />
     <ClInclude Include="..\jit\ScratchRegisterAllocator.h" />
+    <ClInclude Include="..\jit\SnippetOperand.h" />
     <ClInclude Include="..\jit\SpecializedThunkJIT.h" />
     <ClInclude Include="..\jit\TempRegisterSet.h" />
     <ClInclude Include="..\jit\ThunkGenerator.h" />

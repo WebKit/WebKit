@@ -441,6 +441,9 @@
     <ClCompile Include="..\jit\JITDisassembler.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\JITDivGenerator.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\JITExceptions.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -2516,6 +2519,9 @@
     <ClInclude Include="..\jit\JITDisassembler.h">
       <Filter>jit</Filter>
     </ClInclude>
+    <ClInclude Include="..\jit\JITDivGenerator.h">
+      <Filter>jit</Filter>
+    </ClInclude>
     <ClInclude Include="..\jit\JITExceptions.h">
       <Filter>jit</Filter>
     </ClInclude>
@@ -2541,6 +2547,9 @@
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\SpecializedThunkJIT.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\SnippetOperand.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\ThunkGenerator.h">

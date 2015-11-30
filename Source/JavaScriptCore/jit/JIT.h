@@ -404,6 +404,7 @@ namespace JSC {
         void emitPutVirtualRegister(int dst, JSValueRegs src);
 
         int32_t getOperandConstantInt(int src);
+        double getOperandConstantDouble(int src);
 
 #if USE(JSVALUE32_64)
         bool getOperandConstantInt(int op1, int op2, int& op, int32_t& constant);
@@ -462,7 +463,6 @@ namespace JSC {
         void emitJumpSlowCaseIfNotInt(RegisterID, RegisterID, RegisterID scratch);
 
         void emitTagBool(RegisterID);
-        void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, int dst, int src1, int src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
         void compileGetByIdHotPath(int baseVReg, const Identifier*);
 

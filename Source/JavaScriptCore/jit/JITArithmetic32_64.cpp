@@ -478,8 +478,6 @@ void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>
     slowPathCall.call();
 }
 
-// Addition (+)
-
 void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, OperandTypes types, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters, bool op2IsInRegisters)
 {
     JumpList end;
@@ -512,35 +510,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
         // Do the math.
         doTheMath.link(this);
         switch (opcodeID) {
-            case op_div: {
-                emitLoadDouble(op1, fpRegT1);
-                divDouble(fpRegT0, fpRegT1);
-
-                // Is the result actually an integer? The DFG JIT would really like to know. If it's
-                // not an integer, we increment a count. If this together with the slow case counter
-                // are below threshold then the DFG JIT will compile this division with a specualtion
-                // that the remainder is zero.
-                
-                // As well, there are cases where a double result here would cause an important field
-                // in the heap to sometimes have doubles in it, resulting in double predictions getting
-                // propagated to a use site where it might cause damage (such as the index to an array
-                // access). So if we are DFG compiling anything in the program, we want this code to
-                // ensure that it produces integers whenever possible.
-                
-                // FIXME: This will fail to convert to integer if the result is zero. We should
-                // distinguish between positive zero and negative zero here.
-                
-                JumpList notInteger;
-                branchConvertDoubleToInt32(fpRegT1, regT2, notInteger, fpRegT0);
-                // If we've got an integer, we might as well make that the result of the division.
-                emitStoreInt32(dst, regT2);
-                Jump isInteger = jump();
-                notInteger.link(this);
-                add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
-                emitStoreDouble(dst, fpRegT1);
-                isInteger.link(this);
-                break;
-            }
             case op_jless:
                 emitLoadDouble(op1, fpRegT2);
                 addJump(branchDouble(DoubleLessThan, fpRegT2, fpRegT0), dst);
@@ -598,34 +567,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
 
         // Do the math.
         switch (opcodeID) {
-            case op_div: {
-                emitLoadDouble(op2, fpRegT2);
-                divDouble(fpRegT2, fpRegT0);
-                // Is the result actually an integer? The DFG JIT would really like to know. If it's
-                // not an integer, we increment a count. If this together with the slow case counter
-                // are below threshold then the DFG JIT will compile this division with a specualtion
-                // that the remainder is zero.
-                
-                // As well, there are cases where a double result here would cause an important field
-                // in the heap to sometimes have doubles in it, resulting in double predictions getting
-                // propagated to a use site where it might cause damage (such as the index to an array
-                // access). So if we are DFG compiling anything in the program, we want this code to
-                // ensure that it produces integers whenever possible.
-                
-                // FIXME: This will fail to convert to integer if the result is zero. We should
-                // distinguish between positive zero and negative zero here.
-                
-                JumpList notInteger;
-                branchConvertDoubleToInt32(fpRegT0, regT2, notInteger, fpRegT1);
-                // If we've got an integer, we might as well make that the result of the division.
-                emitStoreInt32(dst, regT2);
-                Jump isInteger = jump();
-                notInteger.link(this);
-                add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
-                emitStoreDouble(dst, fpRegT0);
-                isInteger.link(this);
-                break;
-            }
             case op_jless:
                 emitLoadDouble(op2, fpRegT1);
                 addJump(branchDouble(DoubleLessThan, fpRegT0, fpRegT1), dst);
@@ -664,85 +605,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
     }
 
     end.link(this);
-}
-
-// Division (/)
-
-void JIT::emit_op_div(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
-
-    m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
-
-    if (!supportsFloatingPoint()) {
-        addSlowCase(jump());
-        return;
-    }
-
-    // Int32 divide.
-    JumpList notInt32Op1;
-    JumpList notInt32Op2;
-
-    JumpList end;
-
-    emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
-
-    notInt32Op1.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    notInt32Op2.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
-
-    convertInt32ToDouble(regT0, fpRegT0);
-    convertInt32ToDouble(regT2, fpRegT1);
-    divDouble(fpRegT1, fpRegT0);
-    // Is the result actually an integer? The DFG JIT would really like to know. If it's
-    // not an integer, we increment a count. If this together with the slow case counter
-    // are below threshold then the DFG JIT will compile this division with a specualtion
-    // that the remainder is zero.
-    
-    // As well, there are cases where a double result here would cause an important field
-    // in the heap to sometimes have doubles in it, resulting in double predictions getting
-    // propagated to a use site where it might cause damage (such as the index to an array
-    // access). So if we are DFG compiling anything in the program, we want this code to
-    // ensure that it produces integers whenever possible.
-    
-    // FIXME: This will fail to convert to integer if the result is zero. We should
-    // distinguish between positive zero and negative zero here.
-    
-    JumpList notInteger;
-    branchConvertDoubleToInt32(fpRegT0, regT2, notInteger, fpRegT1);
-    // If we've got an integer, we might as well make that the result of the division.
-    emitStoreInt32(dst, regT2);
-    end.append(jump());
-    notInteger.link(this);
-    add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
-    emitStoreDouble(dst, fpRegT0);
-    end.append(jump());
-
-    // Double divide.
-    emitBinaryDoubleOp(op_div, dst, op1, op2, types, notInt32Op1, notInt32Op2);
-    end.link(this);
-}
-
-void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
-
-    if (!supportsFloatingPoint())
-        linkSlowCase(iter);
-    else {
-        if (!types.first().definitelyIsNumber())
-            linkSlowCase(iter); // double check
-
-        if (!types.second().definitelyIsNumber()) {
-            linkSlowCase(iter); // int32 check
-            linkSlowCase(iter); // double check
-        }
-    }
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
-    slowPathCall.call();
 }
 
 // Mod (%)
