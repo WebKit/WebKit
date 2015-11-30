@@ -1,3 +1,19 @@
+2015-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Remove GMainLoopSource and GThreadSafeMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=151633
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/glib/GMainLoopSource.cpp: Removed.
+        * wtf/glib/GMainLoopSource.h: Removed.
+        * wtf/glib/GThreadSafeMainLoopSource.cpp: Removed.
+        * wtf/glib/GThreadSafeMainLoopSource.h: Removed.
+
 2015-11-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix build warning in bignum.cc
