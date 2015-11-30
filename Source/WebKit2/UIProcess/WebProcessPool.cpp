@@ -158,9 +158,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_processTerminationEnabled(true)
     , m_canHandleHTTPSServerTrustEvaluation(true)
     , m_didNetworkProcessCrash(false)
-#if USE(SOUP)
-    , m_ignoreTLSErrors(true)
-#endif
     , m_memoryCacheDisabled(false)
     , m_userObservablePageCounter([this](bool) { updateProcessSuppressionState(); })
     , m_processSuppressionDisabledForPageCounter([this](bool) { updateProcessSuppressionState(); })
@@ -306,17 +303,7 @@ void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcess
 
 IPC::Connection* WebProcessPool::networkingProcessConnection()
 {
-    switch (processModel()) {
-    case ProcessModelSharedSecondaryProcess:
-        if (usesNetworkProcess())
-            return m_networkProcess->connection();
-        return m_processes[0]->connection();
-    case ProcessModelMultipleSecondaryProcesses:
-        ASSERT(usesNetworkProcess());
-        return m_networkProcess->connection();
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
+    return m_networkProcess->connection();
 }
 
 void WebProcessPool::languageChanged(void* context)
@@ -328,7 +315,7 @@ void WebProcessPool::languageChanged()
 {
     sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(userPreferredLanguages()));
 #if USE(SOUP)
-    if (usesNetworkProcess() && m_networkProcess)
+    if (m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(userPreferredLanguages()), 0);
 #endif
 }
@@ -341,16 +328,6 @@ void WebProcessPool::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnable
 void WebProcessPool::textCheckerStateChanged()
 {
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
-}
-
-void WebProcessPool::setUsesNetworkProcess(bool usesNetworkProcess)
-{
-    m_configuration->setUseNetworkProcess(usesNetworkProcess);
-}
-
-bool WebProcessPool::usesNetworkProcess() const
-{
-    return m_configuration->useNetworkProcess();
 }
 
 NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
@@ -504,7 +481,7 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
 {
     m_iconDatabase->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 
-    if (usesNetworkProcess() && networkProcess()) {
+    if (networkProcess()) {
         if (privateBrowsingEnabled)
             networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
         else
@@ -554,8 +531,7 @@ WebProcessProxy& WebProcessPool::ensureSharedWebProcess()
 
 WebProcessProxy& WebProcessPool::createNewWebProcess()
 {
-    if (usesNetworkProcess())
-        ensureNetworkProcess();
+    ensureNetworkProcess();
 
     Ref<WebProcessProxy> process = WebProcessProxy::create(*this);
 
@@ -631,8 +607,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     // FIXME: There should be a generic way for supplements to add to the intialization parameters.
     supplement<WebNotificationManagerProxy>()->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
 #endif
-
-    parameters.usesNetworkProcess = usesNetworkProcess();
 
     parameters.plugInAutoStartOriginHashes = m_plugInAutoStartProvider.autoStartOriginHashesCopy();
     copyToVector(m_plugInAutoStartProvider.autoStartOrigins(), parameters.plugInAutoStartOrigins);
@@ -841,16 +815,14 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
 {
     DownloadProxy* downloadProxy = createDownloadProxy(request);
-    uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
     SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : SessionID::defaultSessionID();
 
-    if (usesNetworkProcess() && networkProcess()) {
+    if (networkProcess()) {
         // FIXME (NetworkProcess): Replicate whatever FrameLoader::setOriginalURLForDownloadRequest does with the request here.
         networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), request), 0);
         return downloadProxy;
     }
 
-    m_processes[0]->send(Messages::WebProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), initiatingPageID, request), 0);
     return downloadProxy;
 }
 
@@ -862,12 +834,11 @@ DownloadProxy* WebProcessPool::resumeDownload(const API::Data* resumeData, const
     if (!path.isEmpty())
         SandboxExtension::createHandle(path, SandboxExtension::ReadWrite, sandboxExtensionHandle);
 
-    if (usesNetworkProcess() && networkProcess()) {
+    if (networkProcess()) {
         networkProcess()->send(Messages::NetworkProcess::ResumeDownload(downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
         return downloadProxy;
     }
 
-    m_processes[0]->send(Messages::WebProcess::ResumeDownload(downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
     return downloadProxy;
 }
 
@@ -954,7 +925,7 @@ void WebProcessPool::setDomainRelaxationForbiddenForURLScheme(const String& urlS
 void WebProcessPool::setCanHandleHTTPSServerTrustEvaluation(bool value)
 {
     m_canHandleHTTPSServerTrustEvaluation = value;
-    if (usesNetworkProcess() && m_networkProcess) {
+    if (m_networkProcess) {
         m_networkProcess->send(Messages::NetworkProcess::SetCanHandleHTTPSServerTrustEvaluation(value), 0);
         return;
     }
@@ -1025,7 +996,7 @@ void WebProcessPool::setCacheModel(CacheModel cacheModel)
     m_configuration->setCacheModel(cacheModel);
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(cacheModel));
 
-    if (usesNetworkProcess() && m_networkProcess)
+    if (m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::SetCacheModel(cacheModel), 0);
 }
 
@@ -1036,13 +1007,7 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
 
 DownloadProxy* WebProcessPool::createDownloadProxy(const ResourceRequest& request)
 {
-    if (usesNetworkProcess()) {
-        ensureNetworkProcess();
-        ASSERT(m_networkProcess);
-        return m_networkProcess->createDownloadProxy(request);
-    }
-
-    return ensureSharedWebProcess().createDownloadProxy(request);
+    return ensureNetworkProcess().createDownloadProxy(request);
 }
 
 void WebProcessPool::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
@@ -1152,22 +1117,8 @@ void WebProcessPool::useTestingNetworkSession()
 
 void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
-    if (usesNetworkProcess() && m_networkProcess) {
+    if (m_networkProcess)
         m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
-        return;
-    }
-
-#if USE(SOUP)
-    m_processes[0]->send(Messages::WebProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
-    return;
-#else
-    UNUSED_PARAM(certificate);
-    UNUSED_PARAM(host);
-#endif
-
-#if !PLATFORM(IOS)
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void WebProcessPool::setHTTPPipeliningEnabled(bool enabled)
@@ -1221,7 +1172,7 @@ void WebProcessPool::requestWebContentStatistics(StatisticsRequest* request)
 
 void WebProcessPool::requestNetworkingStatistics(StatisticsRequest* request)
 {
-    if (!usesNetworkProcess() || !m_networkProcess) {
+    if (!m_networkProcess) {
         LOG_ERROR("Attempt to get NetworkProcess statistics but the NetworkProcess is unavailable");
         return;
     }

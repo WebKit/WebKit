@@ -93,8 +93,13 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
     if (SessionTracker::storageSession(sessionID))
         return;
 
-    ASSERT(!SessionTracker::getIdentifierBase().isNull());
-    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(SessionTracker::getIdentifierBase() + '.' + String::number(sessionID.sessionID()))
+    String base;
+    if (SessionTracker::getIdentifierBase().isNull())
+        base = [[NSBundle mainBundle] bundleIdentifier];
+    else
+        base = SessionTracker::getIdentifierBase();
+
+    SessionTracker::setSession(sessionID, NetworkStorageSession::createPrivateBrowsingSession(base + '.' + String::number(sessionID.sessionID()))
 #if USE(NETWORK_SESSION)
         , std::make_unique<NetworkSession>(NetworkSession::Type::Ephemeral, sessionID)
 #endif

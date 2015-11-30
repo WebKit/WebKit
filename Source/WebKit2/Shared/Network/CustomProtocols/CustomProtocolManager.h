@@ -28,7 +28,6 @@
 
 #include "Connection.h"
 #include "NetworkProcessSupplement.h"
-#include "WebProcessSupplement.h"
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
@@ -58,7 +57,7 @@ namespace WebKit {
 class ChildProcess;
 struct NetworkProcessCreationParameters;
 
-class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::Connection::WorkQueueMessageReceiver {
+class CustomProtocolManager : public NetworkProcessSupplement, public IPC::Connection::WorkQueueMessageReceiver {
     WTF_MAKE_NONCOPYABLE(CustomProtocolManager);
 public:
     explicit CustomProtocolManager(ChildProcess*);
@@ -79,9 +78,6 @@ public:
 private:
     // ChildProcessSupplement
     void initializeConnection(IPC::Connection*) override;
-
-    // WebProcessSupplement
-    void initialize(const WebProcessCreationParameters&) override;
 
     // NetworkProcessSupplement
     void initialize(const NetworkProcessCreationParameters&) override;

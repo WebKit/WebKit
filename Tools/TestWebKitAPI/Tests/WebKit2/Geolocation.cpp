@@ -250,7 +250,6 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
 TEST(WebKit2, GeolocationTransitionToHighAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKContextSetUsesNetworkProcess(context.get(), true);
 
     GeolocationTransitionToHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);

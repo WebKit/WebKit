@@ -277,7 +277,6 @@ void EwkContext::setProcessModel(Ewk_Process_Model processModel)
     if (WKContextGetProcessModel(m_context.get()) == newWKProcessModel)
         return;
 
-    WKContextSetUsesNetworkProcess(m_context.get(), newWKProcessModel == kWKProcessModelMultipleSecondaryProcesses);
     WKContextSetProcessModel(m_context.get(), newWKProcessModel);
 }
 

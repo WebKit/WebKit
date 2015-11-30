@@ -114,7 +114,7 @@ static void registerUserDefaultsIfNeeded()
 
 void WebProcessPool::updateProcessSuppressionState()
 {
-    if (usesNetworkProcess() && m_networkProcess)
+    if (m_networkProcess)
         m_networkProcess->setProcessSuppressionEnabled(processSuppressionEnabled());
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -189,11 +189,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     SandboxExtension::createHandle(parameters.uiProcessBundleResourcePath, SandboxExtension::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
-
-    if (!usesNetworkProcess()) {
-        for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
-            parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
-    }
 
     parameters.fontWhitelist = m_fontWhitelist;
 

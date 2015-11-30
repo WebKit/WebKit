@@ -46,10 +46,8 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
     // See https://bugs.webkit.org/show_bug.cgi?id=151418.
     configuration->m_processModel = WebKit::ProcessModelMultipleSecondaryProcesses;
     configuration->m_maximumProcessCount = 1;
-    configuration->m_useNetworkProcess = true;
 #else
     configuration->m_processModel = WebKit::ProcessModelSharedSecondaryProcess;
-    configuration->m_useNetworkProcess = false;
 #endif
     configuration->m_cacheModel = WebKit::CacheModelDocumentViewer;
 
@@ -83,7 +81,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 
     copy->m_shouldHaveLegacyDataStore = this->m_shouldHaveLegacyDataStore;
     copy->m_processModel = this->m_processModel;
-    copy->m_useNetworkProcess = this->m_useNetworkProcess;
     copy->m_maximumProcessCount = this->m_maximumProcessCount;
     copy->m_cacheModel = this->m_cacheModel;
     copy->m_diskCacheSizeOverride = this->m_diskCacheSizeOverride;

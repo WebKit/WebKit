@@ -46,18 +46,6 @@ void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
     connection->addWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), m_messageQueue.get(), this);
 }
 
-void CustomProtocolManager::initialize(const WebProcessCreationParameters& parameters)
-{
-    ASSERT(parameters.urlSchemesRegisteredForCustomProtocols.isEmpty() || !parameters.usesNetworkProcess);
-    if (parameters.usesNetworkProcess) {
-        m_childProcess->parentProcessConnection()->removeWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName());
-        m_messageQueue = nullptr;
-        return;
-    }
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
-        registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
-}
-
 void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
 {
     for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)

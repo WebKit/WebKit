@@ -58,7 +58,6 @@ struct PluginInfo;
 
 namespace WebKit {
 
-class DownloadProxyMap;
 class NetworkProcessProxy;
 class WebBackForwardListItem;
 class WebPageGroup;
@@ -119,8 +118,6 @@ public:
     bool checkURLReceivedFromWebProcess(const WebCore::URL&);
 
     static bool fullKeyboardAccessEnabled();
-
-    DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
 
     void didSaveToPageCache();
     void releasePageCache();
@@ -242,7 +239,6 @@ private:
     HashSet<VisitedLinkStore*> m_visitedLinkStores;
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 
-    std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
 
     HashMap<uint64_t, std::function<void (WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;

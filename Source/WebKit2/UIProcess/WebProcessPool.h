@@ -277,10 +277,6 @@ public:
     void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, double time);
 
     // Network Process Management
-
-    void setUsesNetworkProcess(bool);
-    bool usesNetworkProcess() const;
-
     NetworkProcessProxy& ensureNetworkProcess();
     NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
     void networkProcessCrashed(NetworkProcessProxy*);
@@ -525,43 +521,15 @@ private:
 template<typename T>
 void WebProcessPool::sendToNetworkingProcess(T&& message)
 {
-    switch (processModel()) {
-    case ProcessModelSharedSecondaryProcess:
-        if (usesNetworkProcess()) {
-            if (m_networkProcess && m_networkProcess->canSendMessage())
-                m_networkProcess->send(std::forward<T>(message), 0);
-            return;
-        }
-        if (!m_processes.isEmpty() && m_processes[0]->canSendMessage())
-            m_processes[0]->send(std::forward<T>(message), 0);
-        return;
-    case ProcessModelMultipleSecondaryProcesses:
-        if (m_networkProcess && m_networkProcess->canSendMessage())
-            m_networkProcess->send(std::forward<T>(message), 0);
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    if (m_networkProcess && m_networkProcess->canSendMessage())
+        m_networkProcess->send(std::forward<T>(message), 0);
 }
 
 template<typename T>
 void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
-    switch (processModel()) {
-    case ProcessModelSharedSecondaryProcess:
-        if (usesNetworkProcess()) {
-            ensureNetworkProcess();
-            m_networkProcess->send(std::forward<T>(message), 0);
-            return;
-        }
-        ensureSharedWebProcess();
-        m_processes[0]->send(std::forward<T>(message), 0);
-        return;
-    case ProcessModelMultipleSecondaryProcesses:
-        ensureNetworkProcess();
-        m_networkProcess->send(std::forward<T>(message), 0);
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    ensureNetworkProcess();
+    m_networkProcess->send(std::forward<T>(message), 0);
 }
 
 template<typename T>

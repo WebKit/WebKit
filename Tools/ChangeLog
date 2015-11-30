@@ -1,3 +1,17 @@
+2015-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Make usesNetworkProcess always true
+        https://bugs.webkit.org/show_bug.cgi?id=151580
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2/Geolocation.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/mac/GetPIDAfterAbortedProcessLaunch.cpp:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+
 2015-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Skip GTK+ test /webkit2/WebKitWebView/editable/editable in Debug.

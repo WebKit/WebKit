@@ -254,21 +254,8 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
     m_policyDownloadID = 0;
 
     auto& webProcess = WebProcess::singleton();
-#if USE(NETWORK_SESSION)
-    ASSERT(webProcess.usesNetworkProcess());
-#endif
     SessionID sessionID = page() ? page()->sessionID() : SessionID::defaultSessionID();
-    if (webProcess.usesNetworkProcess()) {
-        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request), 0);
-        return;
-    }
-
-#if USE(NETWORK_SESSION)
-    // Using NETWORK_SESSION requires the use of a network process.
-    RELEASE_ASSERT_NOT_REACHED();
-#else
-    webProcess.downloadManager().startDownload(sessionID, policyDownloadID, request);
-#endif
+    webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request), 0);
 }
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
@@ -281,37 +268,16 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
     auto& webProcess = WebProcess::singleton();
-#if USE(NETWORK_SESSION)
-    ASSERT(webProcess.usesNetworkProcess());
-#endif
-    if (webProcess.usesNetworkProcess()) {
-        // Use 0 to indicate that the resource load can't be converted and a new download must be started.
-        // This can happen if there is no loader because the main resource is in the WebCore memory cache,
-        // or because the conversion was attempted when not calling SubresourceLoader::didReceiveResponse().
-        uint64_t mainResourceLoadIdentifier;
-        if (mainResourceLoader)
-            mainResourceLoadIdentifier = mainResourceLoader->identifier();
-        else
-            mainResourceLoadIdentifier = 0;
+    // Use 0 to indicate that the resource load can't be converted and a new download must be started.
+    // This can happen if there is no loader because the main resource is in the WebCore memory cache,
+    // or because the conversion was attempted when not calling SubresourceLoader::didReceiveResponse().
+    uint64_t mainResourceLoadIdentifier;
+    if (mainResourceLoader)
+        mainResourceLoadIdentifier = mainResourceLoader->identifier();
+    else
+        mainResourceLoadIdentifier = 0;
 
-        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(sessionID, mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
-        return;
-    }
-
-    if (!mainResourceLoader) {
-        // The main resource has already been loaded. Start a new download instead.
-#if !USE(NETWORK_SESSION)
-        webProcess.downloadManager().startDownload(sessionID, policyDownloadID, request);
-#endif
-        return;
-    }
-
-#if USE(NETWORK_SESSION)
-    // Using NETWORK_SESSION requires the use of a network process.
-    RELEASE_ASSERT_NOT_REACHED();
-#else
-    webProcess.downloadManager().convertHandleToDownload(policyDownloadID, documentLoader->mainResourceLoader()->handle(), request, response);
-#endif
+    webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(sessionID, mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
 }
 
 String WebFrame::source() const

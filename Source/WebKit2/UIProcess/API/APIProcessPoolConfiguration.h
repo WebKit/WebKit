@@ -51,9 +51,6 @@ public:
     WebKit::ProcessModel processModel() const { return m_processModel; }
     void setProcessModel(WebKit::ProcessModel processModel) { m_processModel = processModel; } 
 
-    bool useNetworkProcess() const { return m_useNetworkProcess; }
-    void setUseNetworkProcess(bool useNetworkProcess) { m_useNetworkProcess = useNetworkProcess; } 
-
     unsigned maximumProcessCount() const { return m_maximumProcessCount; }
     void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; } 
 
@@ -97,7 +94,6 @@ private:
     bool m_shouldHaveLegacyDataStore { false };
 
     WebKit::ProcessModel m_processModel { WebKit::ProcessModelMultipleSecondaryProcesses };
-    bool m_useNetworkProcess { true };
     unsigned m_maximumProcessCount { 0 };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
     int64_t m_diskCacheSizeOverride { -1 };

@@ -31,7 +31,6 @@
 #include "APIPageHandle.h"
 #include "AuthenticationManager.h"
 #include "ChildProcessMessages.h"
-#include "CustomProtocolManager.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
@@ -156,7 +155,6 @@ WebProcess::WebProcess()
     , m_fullKeyboardAccessEnabled(false)
     , m_textCheckerState()
     , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
-    , m_usesNetworkProcess(false)
     , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
     , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -187,7 +185,6 @@ WebProcess::WebProcess()
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
 #endif
-    addSupplement<CustomProtocolManager>();
 #if ENABLE(BATTERY_STATUS)
     addSupplement<WebBatteryManager>();
 #endif
@@ -245,31 +242,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
 }
 
-void WebProcess::didCreateDownload()
-{
-    disableTermination();
-}
-
-void WebProcess::didDestroyDownload()
-{
-    enableTermination();
-}
-
-IPC::Connection* WebProcess::downloadProxyConnection()
-{
-    return parentProcessConnection();
-}
-
-AuthenticationManager& WebProcess::downloadsAuthenticationManager()
-{
-    return *supplement<AuthenticationManager>();
-}
-
 void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {
     ASSERT(m_pageMap.isEmpty());
-
-    m_usesNetworkProcess = parameters.usesNetworkProcess;
 
 #if OS(LINUX)
     WebCore::MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
@@ -352,8 +327,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     ensureNetworkProcessConnection();
 
 #if PLATFORM(COCOA)
-    if (usesNetworkProcess())
-        CookieStorageShim::singleton().initialize();
+    CookieStorageShim::singleton().initialize();
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
 
@@ -387,9 +361,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
 void WebProcess::ensureNetworkProcessConnection()
 {
-    if (!m_usesNetworkProcess)
-        return;
-
     if (m_networkProcessConnection)
         return;
 
@@ -498,14 +469,6 @@ void WebProcess::destroyPrivateBrowsingSession(SessionID sessionID)
 #endif
 }
 
-DownloadManager& WebProcess::downloadManager()
-{
-    ASSERT(!usesNetworkProcess());
-
-    static NeverDestroyed<DownloadManager> downloadManager(this);
-    return downloadManager;
-}
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 {
@@ -568,7 +531,6 @@ void WebProcess::removeWebPage(uint64_t pageID)
 bool WebProcess::shouldTerminate()
 {
     ASSERT(m_pageMap.isEmpty());
-    ASSERT(usesNetworkProcess() || !downloadManager().isDownloading());
 
     // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
     bool shouldTerminate = false;
@@ -1017,15 +979,8 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
     injectedBundle->setBundleParameters(value);
 }
 
-bool WebProcess::usesNetworkProcess() const
-{
-    return m_usesNetworkProcess;
-}
-
 NetworkProcessConnection* WebProcess::networkConnection()
 {
-    ASSERT(m_usesNetworkProcess);
-
     // If we've lost our connection to the network process (e.g. it crashed) try to re-establish it.
     if (!m_networkProcessConnection)
         ensureNetworkProcessConnection();
@@ -1093,27 +1048,6 @@ void WebProcess::ensureWebToDatabaseProcessConnection()
 }
 
 #endif // ENABLED(DATABASE_PROCESS)
-
-void WebProcess::downloadRequest(SessionID sessionID, uint64_t downloadID, uint64_t initiatingPageID, const ResourceRequest& request)
-{
-    WebPage* initiatingPage = initiatingPageID ? webPage(initiatingPageID) : 0;
-
-    ResourceRequest requestWithOriginalURL = request;
-    if (initiatingPage)
-        initiatingPage->mainFrame()->loader().setOriginalURLForDownloadRequest(requestWithOriginalURL);
-
-    downloadManager().startDownload(sessionID, downloadID, requestWithOriginalURL);
-}
-
-void WebProcess::resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
-{
-    downloadManager().resumeDownload(downloadID, resumeData, path, sandboxExtensionHandle);
-}
-
-void WebProcess::cancelDownload(uint64_t downloadID)
-{
-    downloadManager().cancelDownload(downloadID);
-}
 
 void WebProcess::setEnhancedAccessibility(bool flag)
 {
@@ -1456,16 +1390,12 @@ void WebProcess::prefetchDNS(const String& hostname)
     if (hostname.isEmpty())
         return;
 
-    if (usesNetworkProcess()) {
-        if (m_dnsPrefetchedHosts.add(hostname).isNewEntry)
-            networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::PrefetchDNS(hostname), 0);
-        // The DNS prefetched hosts cache is only to avoid asking for the same hosts too many times
-        // in a very short period of time, producing a lot of IPC traffic. So we clear this cache after
-        // some time of no DNS requests.
-        m_dnsPrefetchHystereris.impulse();
-        return;
-    }
-    WebCore::prefetchDNS(hostname);
+    if (m_dnsPrefetchedHosts.add(hostname).isNewEntry)
+        networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::PrefetchDNS(hostname), 0);
+    // The DNS prefetched hosts cache is only to avoid asking for the same hosts too many times
+    // in a very short period of time, producing a lot of IPC traffic. So we clear this cache after
+    // some time of no DNS requests.
+    m_dnsPrefetchHystereris.impulse();
 }
 
 } // namespace WebKit

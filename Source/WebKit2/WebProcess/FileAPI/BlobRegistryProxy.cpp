@@ -38,8 +38,6 @@ namespace WebKit {
 
 void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, PassRefPtr<BlobDataFileReference> file, const String& contentType)
 {
-    ASSERT(WebProcess::singleton().usesNetworkProcess());
-
     SandboxExtension::Handle extensionHandle;
 
     // File path can be empty when submitting a form file input without a file, see bug 111778.
@@ -51,36 +49,26 @@ void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, PassRefPtr<
 
 void BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
 {
-    ASSERT(WebProcess::singleton().usesNetworkProcess());
-
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, blobParts, contentType), 0);
 }
 
 void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL)
 {
-    ASSERT(WebProcess::singleton().usesNetworkProcess());
-
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLFromURL(url, srcURL), 0);
 }
 
 void BlobRegistryProxy::unregisterBlobURL(const URL& url)
 {
-    ASSERT(WebProcess::singleton().usesNetworkProcess());
-
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURL(url), 0);
 }
 
 void BlobRegistryProxy::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
 {
-    ASSERT(WebProcess::singleton().usesNetworkProcess());
-
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(url, srcURL, start, end), 0);
 }
 
 unsigned long long BlobRegistryProxy::blobSize(const URL& url)
 {
-    ASSERT(WebProcess::singleton().usesNetworkProcess());
-
     uint64_t resultSize;
     if (!WebProcess::singleton().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::BlobSize(url), Messages::NetworkConnectionToWebProcess::BlobSize::Reply(resultSize), 0))
         return 0;

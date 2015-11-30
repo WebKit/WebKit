@@ -71,13 +71,8 @@ void DownloadProxy::cancel()
     if (!m_processPool)
         return;
 
-    if (m_processPool->usesNetworkProcess()) {
-        if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
-            networkProcess->connection()->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
-        return;
-    }
-
-    m_processPool->sendToAllProcesses(Messages::WebProcess::CancelDownload(m_downloadID));
+    if (NetworkProcessProxy* networkProcess = m_processPool->networkProcess())
+        networkProcess->connection()->send(Messages::NetworkProcess::CancelDownload(m_downloadID), 0);
 }
 
 void DownloadProxy::invalidate()

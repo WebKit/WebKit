@@ -554,11 +554,6 @@ void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef contextRef,
     toImpl(contextRef)->setJavaScriptGarbageCollectorTimerEnabled(enable);
 }
 
-void WKContextSetUsesNetworkProcess(WKContextRef contextRef, bool usesNetworkProcess)
-{
-    toImpl(contextRef)->setUsesNetworkProcess(usesNetworkProcess);
-}
-
 void WKContextUseTestingNetworkSession(WKContextRef context)
 {
     toImpl(context)->useTestingNetworkSession();

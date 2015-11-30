@@ -89,12 +89,6 @@ String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     initializeInspectorServer();
-
-    parameters.urlSchemesRegisteredForCustomProtocols = supplement<WebSoupCustomProtocolRequestManager>()->registeredSchemesForCustomProtocols();
-    supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
-    parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
-    parameters.ignoreTLSErrors = m_ignoreTLSErrors;
-    parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
 }
 
 void WebProcessPool::platformInvalidateContext()
@@ -146,7 +140,6 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;
-    sendToAllProcesses(Messages::WebProcess::SetIgnoreTLSErrors(m_ignoreTLSErrors));
 }
 
 } // namespace WebKit

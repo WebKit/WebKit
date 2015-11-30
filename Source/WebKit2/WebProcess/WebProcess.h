@@ -28,7 +28,6 @@
 
 #include "CacheModel.h"
 #include "ChildProcess.h"
-#include "DownloadManager.h"
 #include "DrawingArea.h"
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
@@ -71,7 +70,6 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
-class DownloadManager;
 class EventDispatcher;
 class InjectedBundle;
 class NetworkProcessConnection;
@@ -93,8 +91,7 @@ struct WebProcessCreationParameters;
 class WebToDatabaseProcessConnection;
 #endif
 
-class WebProcess : public ChildProcess, private DownloadManager::Client {
-    friend class NeverDestroyed<DownloadManager>;
+class WebProcess : public ChildProcess {
 public:
     static WebProcess& singleton();
 
@@ -144,7 +141,6 @@ public:
 #endif
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
-    DownloadManager& downloadManager();
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
@@ -153,8 +149,6 @@ public:
 #endif
 
     EventDispatcher& eventDispatcher() { return *m_eventDispatcher; }
-
-    bool usesNetworkProcess() const;
 
     NetworkProcessConnection* networkConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
@@ -180,10 +174,6 @@ public:
 #endif
 
     void updateActivePages();
-
-#if USE(SOUP)
-    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
-#endif
 
     void processWillSuspendImminently(bool& handled);
     void prepareToSuspend();
@@ -216,12 +206,6 @@ public:
 private:
     WebProcess();
     ~WebProcess();
-
-    // DownloadManager::Client.
-    virtual void didCreateDownload() override;
-    virtual void didDestroyDownload() override;
-    virtual IPC::Connection* downloadProxyConnection() override;
-    virtual AuthenticationManager& downloadsAuthenticationManager() override;
 
     void initializeWebProcess(WebProcessCreationParameters&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&&);
@@ -258,10 +242,6 @@ private:
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
     void stopMemorySampler();
 
-    void downloadRequest(WebCore::SessionID, uint64_t downloadID, uint64_t initiatingPageID, const WebCore::ResourceRequest&);
-    void resumeDownload(uint64_t downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
-    void cancelDownload(uint64_t downloadID);
-
     void setTextCheckerState(const TextCheckerState&);
     
     void getWebCoreStatistics(uint64_t callbackID);
@@ -275,10 +255,6 @@ private:
     void fetchWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
-
-#if USE(SOUP)
-    void setIgnoreTLSErrors(bool);
-#endif
 
     void setMemoryCacheDisabled(bool);
 
@@ -358,7 +334,6 @@ private:
 
     void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
-    bool m_usesNetworkProcess;
     WebResourceLoadScheduler* m_webResourceLoadScheduler;
     HashSet<String> m_dnsPrefetchedHosts;
     WebCore::HysteresisActivity m_dnsPrefetchHystereris;

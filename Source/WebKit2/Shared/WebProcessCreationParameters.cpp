@@ -43,7 +43,6 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , shouldEnableJIT(false)
     , shouldEnableFTLJIT(false)
 #endif
-    , usesNetworkProcess(false)
     , memoryCacheDisabled(false)
 #if ENABLE(SERVICE_CONTROLS)
     , hasImageServices(false)
@@ -91,14 +90,6 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if ENABLE(CACHE_PARTITIONING)
     encoder << urlSchemesRegisteredAsCachePartitioned;
 #endif
-    encoder << urlSchemesRegisteredForCustomProtocols;
-#if USE(SOUP)
-    encoder << diskCacheDirectory;
-    encoder << cookiePersistentStoragePath;
-    encoder << cookiePersistentStorageType;
-    encoder.encodeEnum(cookieAcceptPolicy);
-    encoder << ignoreTLSErrors;
-#endif
     encoder.encodeEnum(cacheModel);
     encoder << shouldAlwaysUseComplexTextCodePath;
     encoder << shouldEnableMemoryPressureReliefLogging;
@@ -130,8 +121,6 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     encoder << notificationPermissions;
 #endif
-
-    encoder << usesNetworkProcess;
 
     encoder << plugInAutoStartOriginHashes;
     encoder << plugInAutoStartOrigins;
@@ -210,20 +199,6 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.urlSchemesRegisteredAsCachePartitioned))
         return false;
 #endif
-    if (!decoder.decode(parameters.urlSchemesRegisteredForCustomProtocols))
-        return false;
-#if USE(SOUP)
-    if (!decoder.decode(parameters.diskCacheDirectory))
-        return false;
-    if (!decoder.decode(parameters.cookiePersistentStoragePath))
-        return false;
-    if (!decoder.decode(parameters.cookiePersistentStorageType))
-        return false;
-    if (!decoder.decodeEnum(parameters.cookieAcceptPolicy))
-        return false;
-    if (!decoder.decode(parameters.ignoreTLSErrors))
-        return false;
-#endif
     if (!decoder.decodeEnum(parameters.cacheModel))
         return false;
     if (!decoder.decode(parameters.shouldAlwaysUseComplexTextCodePath))
@@ -286,9 +261,6 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.notificationPermissions))
         return false;
 #endif
-
-    if (!decoder.decode(parameters.usesNetworkProcess))
-        return false;
 
     if (!decoder.decode(parameters.plugInAutoStartOriginHashes))
         return false;

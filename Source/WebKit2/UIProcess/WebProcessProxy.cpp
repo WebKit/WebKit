@@ -202,9 +202,6 @@ void WebProcessProxy::shutDown()
         frames[i]->webProcessWillShutDown();
     m_frameMap.clear();
 
-    if (m_downloadProxyMap)
-        m_downloadProxyMap->processDidClose();
-
     for (VisitedLinkStore* visitedLinkStore : m_visitedLinkStores)
         visitedLinkStore->removeProcess(*this);
     m_visitedLinkStores.clear();
@@ -256,7 +253,7 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
 
     // If this was the last WebPage open in that web process, and we have no other reason to keep it alive, let it go.
     // We only allow this when using a network process, as otherwise the WebProcess needs to preserve its session state.
-    if (!m_processPool->usesNetworkProcess() || state() == State::Terminated || !canTerminateChildProcess())
+    if (state() == State::Terminated || !canTerminateChildProcess())
         return;
 
     shutDown();
@@ -655,9 +652,6 @@ bool WebProcessProxy::canTerminateChildProcess()
     if (!m_pageMap.isEmpty())
         return false;
 
-    if (m_downloadProxyMap && !m_downloadProxyMap->isEmpty())
-        return false;
-
     if (!m_pendingDeleteWebsiteDataCallbacks.isEmpty())
         return false;
 
@@ -698,16 +692,6 @@ void WebProcessProxy::updateTextCheckerState()
 {
     if (canSendMessage())
         send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
-}
-
-DownloadProxy* WebProcessProxy::createDownloadProxy(const ResourceRequest& request)
-{
-    ASSERT(!m_processPool->usesNetworkProcess());
-
-    if (!m_downloadProxyMap)
-        m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
-
-    return m_downloadProxyMap->createDownloadProxy(m_processPool, request);
 }
 
 void WebProcessProxy::didSaveToPageCache()
@@ -972,14 +956,12 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
         break;
 
     case AssertionState::Background:
-        if (processPool().usesNetworkProcess())
-            m_backgroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().backgroundActivityToken();
+        m_backgroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().backgroundActivityToken();
         m_foregroundTokenForNetworkProcess = nullptr;
         break;
     
     case AssertionState::Foreground:
-        if (processPool().usesNetworkProcess())
-            m_foregroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
+        m_foregroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
         m_backgroundTokenForNetworkProcess = nullptr;
         for (auto& page : m_pageMap.values())
             page->processWillBecomeForeground();

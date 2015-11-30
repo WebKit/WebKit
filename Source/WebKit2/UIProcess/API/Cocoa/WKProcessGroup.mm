@@ -193,7 +193,6 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
     configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
 #if PLATFORM(IOS)
-    configuration->setUseNetworkProcess(true);
     configuration->setProcessModel(ProcessModelMultipleSecondaryProcesses);
 #endif
 
