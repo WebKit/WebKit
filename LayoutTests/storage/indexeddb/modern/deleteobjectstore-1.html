@@ -52,8 +52,7 @@ function continueTest1()
     var openRequest = window.indexedDB.open("DeleteObjectStore1Database", 2);
 
     openRequest.onerror = function(event) {
-        alert("Request unexpected error - " + event);
-        done();
+        alert("Request error - " + event);
     }
     openRequest.onblocked = function(event) {
         alert("Request unexpected blocked - " + event);
@@ -87,8 +86,7 @@ function continueTest1()
         }
 
         versionTransaction.onerror = function(event) {
-            alert("Second version change transaction unexpected error - " + event);
-            done();
+            alert("Second version change transaction error - " + event);
         }
     }
 }

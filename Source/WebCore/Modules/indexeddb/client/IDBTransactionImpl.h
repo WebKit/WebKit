@@ -130,6 +130,7 @@ private:
 
     void commit();
 
+    void notifyDidAbort(const IDBError&);
     void finishAbortOrCommit();
 
     void scheduleOperation(RefPtr<TransactionOperation>&&);

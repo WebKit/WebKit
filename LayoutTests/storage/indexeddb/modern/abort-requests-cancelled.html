@@ -64,8 +64,7 @@ function startTest() {
         }
 
         versionTransaction.onerror = function(event) {
-            log("Initial upgrade versionchange transaction unexpected error" + event);
-            done();
+            log("Initial upgrade versionchange transaction error " + event);
         }
     }
 }

@@ -142,8 +142,7 @@ function continueTest1()
         }
 
         tx.onerror = function(event) {
-            alert("Second version change transaction unexpected error - " + event);
-            done();
+            alert("Second version change transaction error - " + event);
         }
     }
 }

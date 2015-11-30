@@ -79,6 +79,19 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
     enqueueEvent(Event::create(eventNames().successEvent, false, false));
 }
 
+void IDBOpenDBRequest::fireErrorAfterVersionChangeAbort()
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::fireErrorAfterVersionChangeAbort()");
+
+    ASSERT(hasPendingActivity());
+
+    IDBError idbError(IDBExceptionCode::AbortError);
+    m_domError = DOMError::create(idbError.name());
+
+    m_transaction->addRequest(*this);
+    enqueueEvent(Event::create(eventNames().errorEvent, true, true));
+}
+
 void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::onSuccess()");

@@ -102,8 +102,7 @@ function continueTest1() {
         }
 
         versionTransaction.onerror = function(event) {
-            log("Second upgrade versionchange transaction unexpected error" + event);
-            done();
+            log("Second upgrade versionchange transaction error " + event);
         }
     }
 }

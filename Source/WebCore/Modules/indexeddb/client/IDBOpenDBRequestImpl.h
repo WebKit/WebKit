@@ -52,6 +52,7 @@ public:
 
     void requestCompleted(const IDBResultData&);
     void fireSuccessAfterVersionChangeCommit();
+    void fireErrorAfterVersionChangeAbort();
 
 private:
     IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);

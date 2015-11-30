@@ -321,6 +321,18 @@ void IDBTransaction::didStart(const IDBError& error)
     scheduleOperationTimer();
 }
 
+void IDBTransaction::notifyDidAbort(const IDBError& error)
+{
+    m_database->didAbortTransaction(*this);
+    m_idbError = error;
+    fireOnAbort();
+
+    if (isVersionChange()) {
+        ASSERT(m_openDBRequest);
+        m_openDBRequest->fireErrorAfterVersionChangeAbort();
+    }
+}
+
 void IDBTransaction::didAbort(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::didAbort");
@@ -328,10 +340,7 @@ void IDBTransaction::didAbort(const IDBError& error)
     if (m_state == IndexedDB::TransactionState::Finished)
         return;
 
-    m_database->didAbortTransaction(*this);
-
-    m_idbError = error;
-    fireOnAbort();
+    notifyDidAbort(error);
 
     finishAbortOrCommit();
 }
@@ -345,11 +354,8 @@ void IDBTransaction::didCommit(const IDBError& error)
     if (error.isNull()) {
         m_database->didCommitTransaction(*this);
         fireOnComplete();
-    } else {
-        m_database->didAbortTransaction(*this);
-        m_idbError = error;
-        fireOnAbort();
-    }
+    } else
+        notifyDidAbort(error);
 
     finishAbortOrCommit();
 }

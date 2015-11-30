@@ -56,8 +56,7 @@ createRequest.onupgradeneeded = function(event) {
     }
 
     versionTransaction.onerror = function(event) {
-        alert("Initial upgrade versionchange transaction unexpected error" + event);
-        done();
+        alert("Initial upgrade versionchange transaction error " + event);
     }
 }
 

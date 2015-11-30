@@ -1,3 +1,25 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: After versionchange transactions abort, fire onerror on the original IDBOpenDBRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=151648
+
+        Reviewed by Andy Estes.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/abort-requests-cancelled-expected.txt:
+        * storage/indexeddb/modern/abort-requests-cancelled.html:
+        * storage/indexeddb/modern/aborted-put-expected.txt:
+        * storage/indexeddb/modern/aborted-put.html:
+        * storage/indexeddb/modern/createobjectstore-basic-expected.txt:
+        * storage/indexeddb/modern/createobjectstore-basic.html:
+        * storage/indexeddb/modern/deleteindex-2-expected.txt:
+        * storage/indexeddb/modern/deleteindex-2.html:
+        * storage/indexeddb/modern/deleteobjectstore-1-expected.txt:
+        * storage/indexeddb/modern/deleteobjectstore-1.html:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-expected.txt:
+        * storage/indexeddb/modern/versionchange-abort-then-reopen-expected.txt:
+        * storage/indexeddb/modern/versionchange-abort-then-reopen.html:
+
 2015-11-30  Chris Dumez  <cdumez@apple.com>
 
         location.origin is undefined in a web worker

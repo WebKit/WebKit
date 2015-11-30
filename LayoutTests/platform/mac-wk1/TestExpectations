@@ -71,6 +71,7 @@ crypto/subtle/rsa-indexeddb-non-exportable.html
 inspector/indexeddb
 
 # But Modern IndexedDB is.
+storage/indexeddb/aborted-versionchange-closes.html [ Pass ]
 storage/indexeddb/modern [ Pass ]
 storage/indexeddb/mozilla/add-twice-failure.html [ Pass ]
 storage/indexeddb/mozilla/autoincrement-indexes.html [ Pass ]

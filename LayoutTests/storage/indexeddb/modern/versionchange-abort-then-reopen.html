@@ -38,8 +38,7 @@ createRequest.onupgradeneeded = function(event) {
     }
 
     versionTransaction.onerror = function(event) {
-        alert("Initial upgrade versionchange transaction unexpected error" + event);
-        done();
+        alert("Initial upgrade versionchange transaction error " + event);
     }
 }
 
@@ -95,8 +94,7 @@ function continueTest2()
         }
 
         versionTransaction.onerror = function(event) {
-            alert("Third upgrade versionchange transaction unexpected error" + event);
-            done();
+            alert("Third upgrade versionchange transaction error" + event);
         }
     }
 }
