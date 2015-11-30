@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "CacheModel.h"
-#include "ProcessModel.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -47,9 +46,6 @@ public:
 
     bool shouldHaveLegacyDataStore() const { return m_shouldHaveLegacyDataStore; }
     void setShouldHaveLegacyDataStore(bool shouldHaveLegacyDataStore) { m_shouldHaveLegacyDataStore = shouldHaveLegacyDataStore; }
-
-    WebKit::ProcessModel processModel() const { return m_processModel; }
-    void setProcessModel(WebKit::ProcessModel processModel) { m_processModel = processModel; } 
 
     unsigned maximumProcessCount() const { return m_maximumProcessCount; }
     void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; } 
@@ -93,7 +89,6 @@ public:
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
-    WebKit::ProcessModel m_processModel { WebKit::ProcessModelMultipleSecondaryProcesses };
     unsigned m_maximumProcessCount { 0 };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
     int64_t m_diskCacheSizeOverride { -1 };

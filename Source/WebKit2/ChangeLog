@@ -1,3 +1,73 @@
+2015-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Make ProcessModel always MultipleSecondaryProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=151662
+
+        Reviewed by Antti Koivisto.
+
+        Single WebProcess behavior can still be achieved by setting the maximum number of WebProcesses to 1.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKContextSetUsesNetworkProcess):
+        (WKContextSetProcessModel):
+        (WKContextGetProcessModel):
+        (WKGraphicsContextGetCGContext):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toFontSmoothingLevel):
+        (WebKit::toProcessModel): Deleted.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetCacheModel):
+        (WKContextSetMaximumNumberOfProcesses):
+        (WKContextSetProcessModel): Deleted.
+        (WKContextGetProcessModel): Deleted.
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::cacheModel):
+        (EwkContext::setProcessModel):
+        (EwkContext::processModel):
+        (EwkContext::clearResourceCache):
+        (EwkContext::jsGlobalContext):
+        (ewk_context_message_from_extensions_callback_set):
+        (ewk_context_process_model_set):
+        (ewk_context_process_model_get):
+        (ewk_context_tls_error_policy_get):
+        (toWKProcessModel): Deleted.
+        (toEwkProcessModel): Deleted.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        * UIProcess/ProcessModel.h: Removed.
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::shouldTerminate):
+        (WebKit::WebCookieManagerProxy::refWebContextSupplement):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorProcessPool):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::create):
+        (WebKit::WebProcessPool::setDownloadClient):
+        (WebKit::WebProcessPool::setMaximumNumberOfProcesses):
+        (WebKit::WebProcessPool::processDidCachePage):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::postMessageToInjectedBundle):
+        (WebKit::WebProcessPool::requestWebContentStatistics):
+        (WebKit::WebProcessPool::requestNetworkingStatistics):
+        (WebKit::WebProcessPool::setProcessModel): Deleted.
+        (WebKit::WebProcessPool::ensureSharedWebProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary):
+        (WebKit::WebProcessPool::sendToOneProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-11-30  Chris Dumez  <cdumez@apple.com>
 
         [WK2][Cache] We should not speculatively revalidate transient resources

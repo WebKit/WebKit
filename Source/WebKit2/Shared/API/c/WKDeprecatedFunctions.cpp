@@ -139,6 +139,15 @@ void WKContextSetUsesNetworkProcess(WKContextRef, bool)
 {
 }
 
+void WKContextSetProcessModel(WKContextRef, WKProcessModel)
+{
+}
+
+WKProcessModel WKContextGetProcessModel(WKContextRef)
+{
+    return kWKProcessModelMultipleSecondaryProcesses;
+}
+
 #if PLATFORM(MAC)
 CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext)
 {

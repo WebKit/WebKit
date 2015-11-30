@@ -85,8 +85,7 @@ void WebCookieManagerProxy::processDidClose(NetworkProcessProxy*)
 
 bool WebCookieManagerProxy::shouldTerminate(WebProcessProxy*) const
 {
-    return processPool()->processModel() != ProcessModelSharedSecondaryProcess
-        || (m_arrayCallbacks.isEmpty() && m_httpCookieAcceptPolicyCallbacks.isEmpty());
+    return true;
 }
 
 void WebCookieManagerProxy::refWebContextSupplement()

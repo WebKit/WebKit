@@ -312,7 +312,6 @@ WebProcessPool& WebInspectorProxy::inspectorProcessPool()
     // guarantees no process sharing for our user interface.
     if (!s_processPool) {
         auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
-        configuration->setProcessModel(ProcessModelMultipleSecondaryProcesses);
         s_processPool = &WebProcessPool::create(configuration.get()).leakRef();
     };
 

@@ -75,6 +75,7 @@ typedef struct WKContextClientV1 {
     WKContextCopyWebCryptoMasterKeyCallback                             copyWebCryptoMasterKey;
 } WKContextClientV1;
 
+// FIXME: Remove these once support for Mavericks has been dropped.
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,
     kWKProcessModelMultipleSecondaryProcesses = 1
@@ -111,8 +112,9 @@ WK_EXPORT void WKContextClearVisitedLinks(WKContextRef contextRef);
 WK_EXPORT void WKContextSetCacheModel(WKContextRef context, WKCacheModel cacheModel);
 WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 
-WK_EXPORT void WKContextSetProcessModel(WKContextRef context, WKProcessModel processModel);
-WK_EXPORT WKProcessModel WKContextGetProcessModel(WKContextRef context);
+// FIXME: Move these to WKDeprecatedFunctions.cpp once support for Mavericks has been dropped.
+WK_EXPORT void WKContextSetProcessModel(WKContextRef, WKProcessModel);
+WK_EXPORT WKProcessModel WKContextGetProcessModel(WKContextRef);
 
 WK_EXPORT void WKContextSetMaximumNumberOfProcesses(WKContextRef context, unsigned numberOfProcesses);
 WK_EXPORT unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef context);

@@ -250,6 +250,7 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
 TEST(WebKit2, GeolocationTransitionToHighAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKContextSetMaximumNumberOfProcesses(context.get(), 1);
 
     GeolocationTransitionToHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -314,6 +315,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 TEST(WebKit2, GeolocationTransitionToLowAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKContextSetMaximumNumberOfProcesses(context.get(), 1);
 
     GeolocationTransitionToLowAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);

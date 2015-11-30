@@ -102,8 +102,6 @@ using namespace WebKit;
 
 namespace WebKit {
 
-static const double sharedSecondaryProcessShutdownTimeout = 60;
-
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, processPoolCounter, ("WebProcessPool"));
 
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
@@ -279,17 +277,6 @@ void WebProcessPool::setDownloadClient(std::unique_ptr<API::DownloadClient> down
         m_downloadClient = std::make_unique<API::DownloadClient>();
     else
         m_downloadClient = WTF::move(downloadClient);
-}
-
-void WebProcessPool::setProcessModel(ProcessModel processModel)
-{
-    // Guard against API misuse.
-    if (!m_processes.isEmpty())
-        CRASH();
-    if (processModel != ProcessModelSharedSecondaryProcess && !m_messagesToInjectedBundlePostedToEmptyContext.isEmpty())
-        CRASH();
-
-    m_configuration->setProcessModel(processModel);
 }
 
 void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
@@ -521,14 +508,6 @@ void WebProcessPool::processDidCachePage(WebProcessProxy* process)
     m_processWithPageCache = process;
 }
 
-WebProcessProxy& WebProcessPool::ensureSharedWebProcess()
-{
-    ASSERT(processModel() == ProcessModelSharedSecondaryProcess);
-    if (m_processes.isEmpty())
-        createNewWebProcess();
-    return *m_processes[0];
-}
-
 WebProcessProxy& WebProcessPool::createNewWebProcess()
 {
     ensureNetworkProcess();
@@ -595,7 +574,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     // iconDatabasePath is non-empty by default, but m_iconDatabase isn't enabled in UI process unless setDatabasePath is called explicitly.
     parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
-    parameters.terminationTimeout = (processModel() == ProcessModelSharedSecondaryProcess) ? sharedSecondaryProcessShutdownTimeout : 0;
+    parameters.terminationTimeout = 0;
 
     parameters.textCheckerState = TextChecker::state();
 
@@ -651,15 +630,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
     m_processes.append(process.ptr());
 
-    if (processModel() == ProcessModelSharedSecondaryProcess) {
-        for (size_t i = 0; i != m_messagesToInjectedBundlePostedToEmptyContext.size(); ++i) {
-            auto& messageNameAndBody = m_messagesToInjectedBundlePostedToEmptyContext[i];
-
-            process->send(Messages::WebProcess::HandleInjectedBundleMessage(messageNameAndBody.first, UserData(process->transformObjectsToHandles(messageNameAndBody.second.get()).get())), 0);
-        }
-        m_messagesToInjectedBundlePostedToEmptyContext.clear();
-    } else
-        ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
+    ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
@@ -741,30 +712,14 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_haveInitialEmptyProcess && process == m_processes.last())
         m_haveInitialEmptyProcess = false;
 
-    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls below are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
+    // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
-    if (processModel() != ProcessModelSharedSecondaryProcess) {
-        RefPtr<WebProcessProxy> protect(process);
-        if (m_processWithPageCache == process)
-            m_processWithPageCache = 0;
-
-        static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
-
-        m_processes.removeFirst(process);
-        return;
-    }
-
-    WebContextSupplementMap::const_iterator it = m_supplements.begin();
-    WebContextSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it)
-        it->value->processDidClose(process);
-
-    // The vector may have the last reference to process proxy, which in turn may have the last reference to the context.
-    // Since vector elements are destroyed in place, we would recurse into WebProcessProxy destructor
-    // if it were invoked from Vector::remove(). RefPtr delays destruction until it's safe.
     RefPtr<WebProcessProxy> protect(process);
     if (m_processWithPageCache == process)
         m_processWithPageCache = nullptr;
+
+    static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
+
     m_processes.removeFirst(process);
 }
 
@@ -796,18 +751,14 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     }
 
     RefPtr<WebProcessProxy> process;
-    if (processModel() == ProcessModelSharedSecondaryProcess) {
-        process = &ensureSharedWebProcess();
-    } else {
-        if (m_haveInitialEmptyProcess) {
-            process = m_processes.last();
-            m_haveInitialEmptyProcess = false;
-        } else if (pageConfiguration->relatedPage()) {
-            // Sharing processes, e.g. when creating the page via window.open().
-            process = &pageConfiguration->relatedPage()->process();
-        } else
-            process = &createNewWebProcessRespectingProcessCountLimit();
-    }
+    if (m_haveInitialEmptyProcess) {
+        process = m_processes.last();
+        m_haveInitialEmptyProcess = false;
+    } else if (pageConfiguration->relatedPage()) {
+        // Sharing processes, e.g. when creating the page via window.open().
+        process = &pageConfiguration->relatedPage()->process();
+    } else
+        process = &createNewWebProcessRespectingProcessCountLimit();
 
     return process->createWebPage(pageClient, WTF::move(pageConfiguration));
 }
@@ -844,12 +795,6 @@ DownloadProxy* WebProcessPool::resumeDownload(const API::Data* resumeData, const
 
 void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
 {
-    if (m_processes.isEmpty()) {
-        if (processModel() == ProcessModelSharedSecondaryProcess)
-            m_messagesToInjectedBundlePostedToEmptyContext.append(std::make_pair(messageName, messageBody));
-        return;
-    }
-
     for (auto& process : m_processes) {
         // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
         process->send(Messages::WebProcess::HandleInjectedBundleMessage(messageName, UserData(process->transformObjectsToHandles(messageBody).get())), 0);
@@ -1157,17 +1102,7 @@ void WebProcessPool::getStatistics(uint32_t statisticsMask, std::function<void (
 
 void WebProcessPool::requestWebContentStatistics(StatisticsRequest* request)
 {
-    if (processModel() == ProcessModelSharedSecondaryProcess) {
-        if (m_processes.isEmpty())
-            return;
-        
-        uint64_t requestID = request->addOutstandingRequest();
-        m_statisticsRequests.set(requestID, request);
-        m_processes[0]->send(Messages::WebProcess::GetWebCoreStatistics(requestID), 0);
-
-    } else {
-        // FIXME (Multi-WebProcess) <rdar://problem/13200059>: Make getting statistics from multiple WebProcesses work.
-    }
+    // FIXME (Multi-WebProcess) <rdar://problem/13200059>: Make getting statistics from multiple WebProcesses work.
 }
 
 void WebProcessPool::requestNetworkingStatistics(StatisticsRequest* request)

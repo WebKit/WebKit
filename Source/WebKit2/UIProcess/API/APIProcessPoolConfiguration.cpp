@@ -41,14 +41,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
     auto configuration = ProcessPoolConfiguration::create();
 
     configuration->m_shouldHaveLegacyDataStore = true;
-#if PLATFORM(GTK)
-    // FIXME: Remove this ifdef once all ports have switched to use always NetworkProcess.
-    // See https://bugs.webkit.org/show_bug.cgi?id=151418.
-    configuration->m_processModel = WebKit::ProcessModelMultipleSecondaryProcesses;
     configuration->m_maximumProcessCount = 1;
-#else
-    configuration->m_processModel = WebKit::ProcessModelSharedSecondaryProcess;
-#endif
     configuration->m_cacheModel = WebKit::CacheModelDocumentViewer;
 
     configuration->m_applicationCacheDirectory = WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory();
@@ -80,7 +73,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     auto copy = this->create();
 
     copy->m_shouldHaveLegacyDataStore = this->m_shouldHaveLegacyDataStore;
-    copy->m_processModel = this->m_processModel;
     copy->m_maximumProcessCount = this->m_maximumProcessCount;
     copy->m_cacheModel = this->m_cacheModel;
     copy->m_diskCacheSizeOverride = this->m_diskCacheSizeOverride;

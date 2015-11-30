@@ -37,7 +37,6 @@
 #include "NetworkProcessProxy.h"
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
-#include "ProcessModel.h"
 #include "ProcessThrottler.h"
 #include "StatisticsRequest.h"
 #include "VisitedLinkStore.h"
@@ -135,9 +134,6 @@ public:
     void initializeConnectionClient(const WKContextConnectionClientBase*);
     void setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient>);
     void setDownloadClient(std::unique_ptr<API::DownloadClient>);
-
-    void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
-    ProcessModel processModel() const { return m_configuration->processModel(); }
 
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
     unsigned maximumNumberOfProcesses() const { return !m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount(); }
@@ -245,7 +241,6 @@ public:
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
-    WebProcessProxy& ensureSharedWebProcess();
     WebProcessProxy& createNewWebProcessRespectingProcessCountLimit(); // Will return an existing one if limit is met.
     void warmInitialProcess();
 
@@ -558,17 +553,12 @@ template<typename T>
 void WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary(const T& message)
 {
     // FIXME (Multi-WebProcess): WebProcessPool doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
-    if (processModel() == ProcessModelSharedSecondaryProcess)
-        ensureSharedWebProcess();
     sendToAllProcesses(message);
 }
 
 template<typename T>
 void WebProcessPool::sendToOneProcess(T&& message)
 {
-    if (processModel() == ProcessModelSharedSecondaryProcess)
-        ensureSharedWebProcess();
-
     bool messageSent = false;
     size_t processCount = m_processes.size();
     for (size_t i = 0; i < processCount; ++i) {
@@ -580,7 +570,7 @@ void WebProcessPool::sendToOneProcess(T&& message)
         }
     }
 
-    if (!messageSent && processModel() == ProcessModelMultipleSecondaryProcesses) {
+    if (!messageSent) {
         warmInitialProcess();
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())
