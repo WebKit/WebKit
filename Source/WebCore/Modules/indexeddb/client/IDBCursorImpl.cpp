@@ -288,6 +288,16 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
     if (!context)
         return;
 
+    if (!getResult.isDefined()) {
+        m_deprecatedCurrentKey = { };
+        m_deprecatedCurrentPrimaryKey = { };
+        m_currentPrimaryKeyData = { };
+        m_deprecatedCurrentValue = { };
+
+        m_gotValue = false;
+        return;
+    }
+
     m_deprecatedCurrentKey = idbKeyDataToScriptValue(context, getResult.keyData());
     m_deprecatedCurrentPrimaryKey = idbKeyDataToScriptValue(context, getResult.primaryKeyData());
     m_currentPrimaryKeyData = getResult.primaryKeyData();

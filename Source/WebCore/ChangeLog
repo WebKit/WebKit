@@ -1,3 +1,18 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Correct handling of cursors finishing iteration.
+        https://bugs.webkit.org/show_bug.cgi?id=151664
+
+        Reviewed by Andy Estes.
+
+        No new tests (At least one previously failing test now passes).
+
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::setGetResult):
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd):
+
 2015-11-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unify font-variant-* with font-variant shorthand

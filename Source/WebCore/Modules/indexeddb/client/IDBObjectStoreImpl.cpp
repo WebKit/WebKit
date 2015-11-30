@@ -233,34 +233,34 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC:
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
 
     if (m_transaction->isReadOnly()) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::ReadOnlyError);
+        ec = IDBDatabaseException::ReadOnlyError;
         return nullptr;
     }
 
     if (!m_transaction->isActive()) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        ec = IDBDatabaseException::TransactionInactiveError;
         return nullptr;
     }
 
     if (m_deleted) {
-        ec = INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return nullptr;
     }
 
     RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(&state, value, nullptr, nullptr);
     if (state.hadException()) {
-        ec = DATA_CLONE_ERR;
+        ec = IDBDatabaseException::DataCloneError;
         return nullptr;
     }
 
     if (serializedValue->hasBlobURLs()) {
         // FIXME: Add Blob/File/FileList support
-        ec = DATA_CLONE_ERR;
+        ec = IDBDatabaseException::DataCloneError;
         return nullptr;
     }
 
     if (key && key->type() == KeyType::Invalid) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = IDBDatabaseException::DataError;
         return nullptr;
     }
 
@@ -268,24 +268,24 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC:
     bool usesKeyGenerator = autoIncrement();
     if (usesInlineKeys && inlineKeyCheck == InlineKeyCheck::Perform) {
         if (key) {
-            ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+            ec = IDBDatabaseException::DataError;
             return nullptr;
         }
 
         RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, value, m_info.keyPath());
         if (keyPathKey && !keyPathKey->isValid()) {
-            ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+            ec = IDBDatabaseException::DataError;
             return nullptr;
         }
 
         if (!keyPathKey) {
             if (usesKeyGenerator) {
                 if (!canInjectIDBKeyIntoScriptValue(state, value, m_info.keyPath())) {
-                    ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+                    ec = IDBDatabaseException::DataError;
                     return nullptr;
                 }
             } else {
-                ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+                ec = IDBDatabaseException::DataError;
                 return nullptr;
             }
         }
@@ -295,13 +295,13 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC:
             key = keyPathKey;
         }
     } else if (!usesKeyGenerator && !key) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = IDBDatabaseException::DataError;
         return nullptr;
     }
 
     auto context = scriptExecutionContextFromExecState(&state);
     if (!context) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::Unknown);
+        ec = IDBDatabaseException::UnknownError;
         return nullptr;
     }
 
