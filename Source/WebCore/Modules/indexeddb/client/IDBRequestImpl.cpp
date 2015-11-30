@@ -238,6 +238,8 @@ bool IDBRequest::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().characters8(), this);
 
+    ASSERT(m_hasPendingActivity);
+
     if (event.type() != eventNames().blockedEvent)
         m_readyState = IDBRequestReadyState::Done;
 
@@ -249,16 +251,22 @@ bool IDBRequest::dispatchEvent(Event& event)
         targets.append(m_transaction->db());
     }
 
+    m_hasPendingActivity = false;
+
     bool dontPreventDefault;
     {
         TransactionActivator activator(m_transaction.get());
         dontPreventDefault = IDBEventDispatcher::dispatch(event, targets);
     }
 
-    if (m_transaction && !m_pendingCursor) {
+    // IDBEventDispatcher::dispatch() might have set the pending activity flag back to true, suggesting the request will be reused.
+    // We might also re-use the request if this event was the upgradeneeded event for an IDBOpenDBRequest.
+    if (!m_hasPendingActivity)
+        m_hasPendingActivity = isOpenDBRequest() && event.type() == eventNames().upgradeneededEvent;
+
+    // The request should only remain in the transaction's request list if it represents a pending cursor operation.
+    if (m_transaction && !m_pendingCursor)
         m_transaction->removeRequest(*this);
-        m_hasPendingActivity = false;
-    }
 
     return dontPreventDefault;
 }
@@ -315,6 +323,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     ASSERT(&cursor == resultCursor());
 
     m_pendingCursor = &cursor;
+    m_hasPendingActivity = true;
     m_result = nullptr;
     m_readyState = IDBRequestReadyState::Pending;
     m_domError = nullptr;

@@ -1,3 +1,31 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Resolve flaky GC-vs-wrapper issue with IDBOpenDBRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=151645
+
+        Reviewed by Andy Estes.
+
+        No new tests (Resolves flakiness with hundreds of existing IDB tests).
+
+        Do to improper management of the m_hasPendingActivity flag on IDBRequestImpl,
+        the request wrapper for an IDBOpenDBRequest might be garbage collected in between the
+        onUpgradeNeeded event and onSuccess event.
+        
+        This manifested as flakiness in many tests, some more than others.
+        
+        I tried to write a targeted 100% reproducible case manually forcing GC, but could not get
+        the timing right.
+        
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit):
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::dispatchEvent):
+        (WebCore::IDBClient::IDBRequest::willIterateCursor):
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        (WebCore::IDBClient::IDBRequest::isOpenDBRequest):
+
 2015-11-30  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Implement seek.

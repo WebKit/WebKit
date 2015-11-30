@@ -61,6 +61,8 @@ private:
     void onUpgradeNeeded(const IDBResultData&);
     void onDeleteDatabaseSuccess(const IDBResultData&);
 
+    virtual bool isOpenDBRequest() const override { return true; }
+
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_version { 0 };
 };

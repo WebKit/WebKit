@@ -113,6 +113,8 @@ protected:
     virtual void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
     virtual void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
 
+    virtual bool isOpenDBRequest() const { return false; }
+
     IDBRequestReadyState m_readyState { IDBRequestReadyState::Pending };
     RefPtr<IDBAny> m_result;
     RefPtr<IDBTransaction> m_transaction;

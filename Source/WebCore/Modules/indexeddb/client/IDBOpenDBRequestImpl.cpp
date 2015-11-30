@@ -71,6 +71,7 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 {
     LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()");
 
+    ASSERT(hasPendingActivity());
     ASSERT(m_result);
     ASSERT(m_result->type() == IDBAny::Type::IDBDatabase);
     m_transaction->addRequest(*this);
