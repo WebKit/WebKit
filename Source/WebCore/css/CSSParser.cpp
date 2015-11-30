@@ -1063,10 +1063,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueHistoricalForms)
             return true;
         break;
-    case CSSPropertyFontVariant: // normal | small-caps
-        if (valueID == CSSValueNormal || valueID == CSSValueSmallCaps)
-            return true;
-        break;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -1199,7 +1195,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFontVariantPosition:
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantAlternates:
-    case CSSPropertyFontVariant:
         return true;
     default:
         return false;
@@ -3120,20 +3115,37 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueNormal || id == CSSValueNone)
             validPrimitive = true;
         else
-            return parseFontVariantLigatures(important);
+            return parseFontVariantLigatures(important, UnknownIsFailure::Yes);
         break;
     case CSSPropertyFontVariantNumeric:
         if (id == CSSValueNormal)
             validPrimitive = true;
         else
-            return parseFontVariantNumeric(important);
+            return parseFontVariantNumeric(important, UnknownIsFailure::Yes);
         break;
     case CSSPropertyFontVariantEastAsian:
         if (id == CSSValueNormal)
             validPrimitive = true;
         else
-            return parseFontVariantEastAsian(important);
+            return parseFontVariantEastAsian(important, UnknownIsFailure::Yes);
         break;
+    case CSSPropertyFontVariant:
+        if (id == CSSValueNormal) {
+            ShorthandScope scope(this, CSSPropertyFontVariant);
+            addProperty(CSSPropertyFontVariantLigatures, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+            addProperty(CSSPropertyFontVariantPosition, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+            addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+            addProperty(CSSPropertyFontVariantNumeric, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+            addProperty(CSSPropertyFontVariantAlternates, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+            addProperty(CSSPropertyFontVariantEastAsian, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+            return true;
+        }
+        if (id == CSSValueNone) {
+            ShorthandScope scope(this, CSSPropertyFontVariant);
+            addProperty(CSSPropertyFontVariantLigatures, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important, true);
+            return true;
+        }
+        return parseFontVariant(important);
 
     case CSSPropertyWebkitClipPath:
         parsedValue = parseClipPath();
@@ -6806,7 +6818,7 @@ bool CSSParser::parseFont(bool important)
             fontStyleParsed = true;
         } else if (!fontVariantParsed && (value->id == CSSValueNormal || value->id == CSSValueSmallCaps)) {
             // Font variant in the shorthand is particular, it only accepts normal or small-caps.
-            addProperty(CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(value->id), important);
+            addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(value->id), important);
             fontVariantParsed = true;
         } else if (!fontWeightParsed && parseFontWeight(important))
             fontWeightParsed = true;
@@ -6821,7 +6833,7 @@ bool CSSParser::parseFont(bool important)
     if (!fontStyleParsed)
         addProperty(CSSPropertyFontStyle, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
     if (!fontVariantParsed)
-        addProperty(CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+        addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
     if (!fontWeightParsed)
         addProperty(CSSPropertyFontWeight, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
 
@@ -6880,7 +6892,7 @@ void CSSParser::parseSystemFont(bool important)
     Ref<CSSValueList> fontFamilyList = CSSValueList::createCommaSeparated();
     fontFamilyList->append(CSSValuePool::singleton().createFontFamilyValue(fontDescription.familyAt(0), FromSystemFontID::Yes));
     addProperty(CSSPropertyFontFamily, WTF::move(fontFamilyList), important);
-    addProperty(CSSPropertyFontVariant, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
     addProperty(CSSPropertyLineHeight, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
 }
 
@@ -10607,13 +10619,312 @@ bool CSSParser::parseFontFeatureSettings(bool important)
     return false;
 }
 
-bool CSSParser::parseFontVariantLigatures(bool important)
+bool CSSParser::parseFontVariantLigatures(bool important, UnknownIsFailure unknownIsFailure)
 {
     auto values = CSSValueList::createSpaceSeparated();
-    bool sawCommonValue = false;
-    bool sawDiscretionaryValue = false;
-    bool sawHistoricalValue = false;
-    bool sawContextualValue = false;
+    FontVariantLigatures commonLigatures = FontVariantLigatures::Normal;
+    FontVariantLigatures discretionaryLigatures = FontVariantLigatures::Normal;
+    FontVariantLigatures historicalLigatures = FontVariantLigatures::Normal;
+    FontVariantLigatures contextualAlternates = FontVariantLigatures::Normal;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+
+        switch (value->id) {
+        case CSSValueNoCommonLigatures:
+            commonLigatures = FontVariantLigatures::No;
+            break;
+        case CSSValueCommonLigatures:
+            commonLigatures = FontVariantLigatures::Yes;
+            break;
+        case CSSValueNoDiscretionaryLigatures:
+            discretionaryLigatures = FontVariantLigatures::No;
+            break;
+        case CSSValueDiscretionaryLigatures:
+            discretionaryLigatures = FontVariantLigatures::Yes;
+            break;
+        case CSSValueNoHistoricalLigatures:
+            historicalLigatures = FontVariantLigatures::No;
+            break;
+        case CSSValueHistoricalLigatures:
+            historicalLigatures = FontVariantLigatures::Yes;
+            break;
+        case CSSValueContextual:
+            contextualAlternates = FontVariantLigatures::Yes;
+            break;
+        case CSSValueNoContextual:
+            contextualAlternates = FontVariantLigatures::No;
+            break;
+        default:
+            if (unknownIsFailure == UnknownIsFailure::Yes)
+                return false;
+            continue;
+        }
+    }
+
+    switch (commonLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueCommonLigatures));
+        break;
+    case FontVariantLigatures::No:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoCommonLigatures));
+        break;
+    }
+
+    switch (discretionaryLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueDiscretionaryLigatures));
+        break;
+    case FontVariantLigatures::No:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoDiscretionaryLigatures));
+        break;
+    }
+
+    switch (historicalLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueHistoricalLigatures));
+        break;
+    case FontVariantLigatures::No:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoHistoricalLigatures));
+        break;
+    }
+
+    switch (contextualAlternates) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueContextual));
+        break;
+    case FontVariantLigatures::No:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueNoContextual));
+        break;
+    }
+
+    if (!values->length())
+        return unknownIsFailure == UnknownIsFailure::No;
+
+    addProperty(CSSPropertyFontVariantLigatures, WTF::move(values), important, false);
+    return true;
+}
+
+bool CSSParser::parseFontVariantNumeric(bool important, UnknownIsFailure unknownIsFailure)
+{
+    auto values = CSSValueList::createSpaceSeparated();
+    FontVariantNumericFigure figure = FontVariantNumericFigure::Normal;
+    FontVariantNumericSpacing spacing = FontVariantNumericSpacing::Normal;
+    FontVariantNumericFraction fraction = FontVariantNumericFraction::Normal;
+    FontVariantNumericOrdinal ordinal = FontVariantNumericOrdinal::Normal;
+    FontVariantNumericSlashedZero slashedZero = FontVariantNumericSlashedZero::Normal;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+
+        switch (value->id) {
+        case CSSValueLiningNums:
+            figure = FontVariantNumericFigure::LiningNumbers;
+            break;
+        case CSSValueOldstyleNums:
+            figure = FontVariantNumericFigure::OldStyleNumbers;
+            break;
+        case CSSValueProportionalNums:
+            spacing = FontVariantNumericSpacing::ProportionalNumbers;
+            break;
+        case CSSValueTabularNums:
+            spacing = FontVariantNumericSpacing::TabularNumbers;
+            break;
+        case CSSValueDiagonalFractions:
+            fraction = FontVariantNumericFraction::DiagonalFractions;
+            break;
+        case CSSValueStackedFractions:
+            fraction = FontVariantNumericFraction::StackedFractions;
+            break;
+        case CSSValueOrdinal:
+            ordinal = FontVariantNumericOrdinal::Yes;
+            break;
+        case CSSValueSlashedZero:
+            slashedZero = FontVariantNumericSlashedZero::Yes;
+            break;
+        default:
+            if (unknownIsFailure == UnknownIsFailure::Yes)
+                return false;
+            continue;
+        }
+    }
+
+    switch (figure) {
+    case FontVariantNumericFigure::Normal:
+        break;
+    case FontVariantNumericFigure::LiningNumbers:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueLiningNums));
+        break;
+    case FontVariantNumericFigure::OldStyleNumbers:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueOldstyleNums));
+        break;
+    }
+
+    switch (spacing) {
+    case FontVariantNumericSpacing::Normal:
+        break;
+    case FontVariantNumericSpacing::ProportionalNumbers:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueProportionalNums));
+        break;
+    case FontVariantNumericSpacing::TabularNumbers:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueTabularNums));
+        break;
+    }
+
+    switch (fraction) {
+    case FontVariantNumericFraction::Normal:
+        break;
+    case FontVariantNumericFraction::DiagonalFractions:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueDiagonalFractions));
+        break;
+    case FontVariantNumericFraction::StackedFractions:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStackedFractions));
+        break;
+    }
+
+    switch (ordinal) {
+    case FontVariantNumericOrdinal::Normal:
+        break;
+    case FontVariantNumericOrdinal::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueOrdinal));
+        break;
+    }
+
+    switch (slashedZero) {
+    case FontVariantNumericSlashedZero::Normal:
+        break;
+    case FontVariantNumericSlashedZero::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSlashedZero));
+        break;
+    }
+
+    if (!values->length())
+        return unknownIsFailure == UnknownIsFailure::No;
+
+    addProperty(CSSPropertyFontVariantNumeric, WTF::move(values), important, false);
+    return true;
+}
+
+bool CSSParser::parseFontVariantEastAsian(bool important, UnknownIsFailure unknownIsFailure)
+{
+    auto values = CSSValueList::createSpaceSeparated();
+    FontVariantEastAsianVariant variant = FontVariantEastAsianVariant::Normal;
+    FontVariantEastAsianWidth width = FontVariantEastAsianWidth::Normal;
+    FontVariantEastAsianRuby ruby = FontVariantEastAsianRuby::Normal;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+
+        switch (value->id) {
+        case CSSValueJis78:
+            variant = FontVariantEastAsianVariant::Jis78;
+            break;
+        case CSSValueJis83:
+            variant = FontVariantEastAsianVariant::Jis83;
+            break;
+        case CSSValueJis90:
+            variant = FontVariantEastAsianVariant::Jis90;
+            break;
+        case CSSValueJis04:
+            variant = FontVariantEastAsianVariant::Jis04;
+            break;
+        case CSSValueSimplified:
+            variant = FontVariantEastAsianVariant::Simplified;
+            break;
+        case CSSValueTraditional:
+            variant = FontVariantEastAsianVariant::Traditional;
+            break;
+        case CSSValueFullWidth:
+            width = FontVariantEastAsianWidth::Full;
+            break;
+        case CSSValueProportionalWidth:
+            width = FontVariantEastAsianWidth::Proportional;
+            break;
+        case CSSValueRuby:
+            ruby = FontVariantEastAsianRuby::Yes;
+            break;
+        default:
+            if (unknownIsFailure == UnknownIsFailure::Yes)
+                return false;
+            continue;
+        }
+    }
+
+    switch (variant) {
+    case FontVariantEastAsianVariant::Normal:
+        break;
+    case FontVariantEastAsianVariant::Jis78:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis78));
+        break;
+    case FontVariantEastAsianVariant::Jis83:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis83));
+        break;
+    case FontVariantEastAsianVariant::Jis90:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis90));
+        break;
+    case FontVariantEastAsianVariant::Jis04:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueJis04));
+        break;
+    case FontVariantEastAsianVariant::Simplified:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSimplified));
+        break;
+    case FontVariantEastAsianVariant::Traditional:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueTraditional));
+        break;
+    }
+
+    switch (width) {
+    case FontVariantEastAsianWidth::Normal:
+        break;
+    case FontVariantEastAsianWidth::Full:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueFullWidth));
+        break;
+    case FontVariantEastAsianWidth::Proportional:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueProportionalWidth));
+        break;
+    }
+
+    switch (ruby) {
+    case FontVariantEastAsianRuby::Normal:
+        break;
+    case FontVariantEastAsianRuby::Yes:
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueRuby));
+    }
+
+    if (!values->length())
+        return unknownIsFailure == UnknownIsFailure::No;
+
+    addProperty(CSSPropertyFontVariantEastAsian, WTF::move(values), important, false);
+    return true;
+}
+
+bool CSSParser::parseFontVariant(bool important)
+{
+    ShorthandScope scope(this, CSSPropertyFontVariant);
+    if (!parseFontVariantLigatures(important, UnknownIsFailure::No))
+        return false;
+    m_valueList->setCurrentIndex(0);
+    if (!parseFontVariantNumeric(important, UnknownIsFailure::No))
+        return false;
+    m_valueList->setCurrentIndex(0);
+    if (!parseFontVariantEastAsian(important, UnknownIsFailure::No))
+        return false;
+    m_valueList->setCurrentIndex(0);
+
+    FontVariantPosition position = FontVariantPosition::Normal;
+    FontVariantCaps caps = FontVariantCaps::Normal;
+    FontVariantAlternates alternates = FontVariantAlternates::Normal;
 
     for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
         if (value->unit != CSSPrimitiveValue::CSS_IDENT)
@@ -10622,148 +10933,104 @@ bool CSSParser::parseFontVariantLigatures(bool important)
         switch (value->id) {
         case CSSValueNoCommonLigatures:
         case CSSValueCommonLigatures:
-            if (sawCommonValue)
-                return false;
-            sawCommonValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueNoDiscretionaryLigatures:
         case CSSValueDiscretionaryLigatures:
-            if (sawDiscretionaryValue)
-                return false;
-            sawDiscretionaryValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueNoHistoricalLigatures:
         case CSSValueHistoricalLigatures:
-            if (sawHistoricalValue)
-                return false;
-            sawHistoricalValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueContextual:
         case CSSValueNoContextual:
-            if (sawContextualValue)
-                return false;
-            sawContextualValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
-        default:
-            return false;
-        }
-    }
-
-    if (!values->length())
-        return false;
-
-    addProperty(CSSPropertyFontVariantLigatures, WTF::move(values), important);
-    return true;
-}
-
-bool CSSParser::parseFontVariantNumeric(bool important)
-{
-    auto values = CSSValueList::createSpaceSeparated();
-    bool sawFigureValue = false;
-    bool sawSpacingValue = false;
-    bool sawFractionValue = false;
-    bool sawOrdinal = false;
-    bool sawSlashedZero = false;
-
-    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
-        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
-            return false;
-
-        switch (value->id) {
         case CSSValueLiningNums:
         case CSSValueOldstyleNums:
-            if (sawFigureValue)
-                return false;
-            sawFigureValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueProportionalNums:
         case CSSValueTabularNums:
-            if (sawSpacingValue)
-                return false;
-            sawSpacingValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueDiagonalFractions:
         case CSSValueStackedFractions:
-            if (sawFractionValue)
-                return false;
-            sawFractionValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueOrdinal:
-            if (sawOrdinal)
-                return false;
-            sawOrdinal = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueSlashedZero:
-            if (sawSlashedZero)
-                return false;
-            sawSlashedZero = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
-        default:
-            return false;
-        }
-    }
-
-    if (!values->length())
-        return false;
-
-    addProperty(CSSPropertyFontVariantNumeric, WTF::move(values), important);
-    return true;
-}
-
-bool CSSParser::parseFontVariantEastAsian(bool important)
-{
-    auto values = CSSValueList::createSpaceSeparated();
-    bool sawVariantValue = false;
-    bool sawWidthValue = false;
-    bool sawRuby = false;
-
-    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
-        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
-            return false;
-
-        switch (value->id) {
         case CSSValueJis78:
         case CSSValueJis83:
         case CSSValueJis90:
         case CSSValueJis04:
         case CSSValueSimplified:
         case CSSValueTraditional:
-            if (sawVariantValue)
-                return false;
-            sawVariantValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueFullWidth:
         case CSSValueProportionalWidth:
-            if (sawWidthValue)
-                return false;
-            sawWidthValue = true;
-            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
-            break;
         case CSSValueRuby:
-            sawRuby = true;
+            break;
+        case CSSValueSub:
+            position = FontVariantPosition::Subscript;
+            break;
+        case CSSValueSuper:
+            position = FontVariantPosition::Superscript;
+            break;
+        case CSSValueSmallCaps:
+            caps = FontVariantCaps::Small;
+            break;
+        case CSSValueAllSmallCaps:
+            caps = FontVariantCaps::AllSmall;
+            break;
+        case CSSValuePetiteCaps:
+            caps = FontVariantCaps::Petite;
+            break;
+        case CSSValueAllPetiteCaps:
+            caps = FontVariantCaps::AllPetite;
+            break;
+        case CSSValueUnicase:
+            caps = FontVariantCaps::Unicase;
+            break;
+        case CSSValueTitlingCaps:
+            caps = FontVariantCaps::Titling;
+            break;
+        case CSSValueHistoricalForms:
+            alternates = FontVariantAlternates::HistoricalForms;
             break;
         default:
             return false;
         }
     }
 
-    if (sawRuby)
-        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueRuby));
+    switch (position) {
+    case FontVariantPosition::Normal:
+        break;
+    case FontVariantPosition::Subscript:
+        addProperty(CSSPropertyFontVariantPosition, CSSValuePool::singleton().createIdentifierValue(CSSValueSub), important, false);
+        break;
+    case FontVariantPosition::Superscript:
+        addProperty(CSSPropertyFontVariantPosition, CSSValuePool::singleton().createIdentifierValue(CSSValueSuper), important, false);
+        break;
+    }
 
-    if (!values->length())
-        return false;
+    switch (caps) {
+    case FontVariantCaps::Normal:
+        break;
+    case FontVariantCaps::Small:
+        addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps), important, false);
+        break;
+    case FontVariantCaps::AllSmall:
+        addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueAllSmallCaps), important, false);
+        break;
+    case FontVariantCaps::Petite:
+        addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValuePetiteCaps), important, false);
+        break;
+    case FontVariantCaps::AllPetite:
+        addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueAllPetiteCaps), important, false);
+        break;
+    case FontVariantCaps::Unicase:
+        addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueUnicase), important, false);
+        break;
+    case FontVariantCaps::Titling:
+        addProperty(CSSPropertyFontVariantCaps, CSSValuePool::singleton().createIdentifierValue(CSSValueTitlingCaps), important, false);
+        break;
+    }
 
-    addProperty(CSSPropertyFontVariantEastAsian, WTF::move(values), important);
+    switch (alternates) {
+    case FontVariantAlternates::Normal:
+        break;
+    case FontVariantAlternates::HistoricalForms:
+        addProperty(CSSPropertyFontVariantAlternates, CSSValuePool::singleton().createIdentifierValue(CSSValueHistoricalForms), important, false);
+        break;
+    }
+
     return true;
 }
 

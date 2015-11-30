@@ -1805,7 +1805,7 @@ inline bool StyleResolver::isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyFontFamily:
     case CSSPropertyFontSize:
     case CSSPropertyFontStyle:
-    case CSSPropertyFontVariant:
+    case CSSPropertyFontVariantCaps:
     case CSSPropertyFontWeight:
     case CSSPropertyLineHeight:
     case CSSPropertyOpacity:

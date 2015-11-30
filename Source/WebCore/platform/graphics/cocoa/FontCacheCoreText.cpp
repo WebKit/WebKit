@@ -342,10 +342,10 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
     switch (variantSettings.eastAsianWidth) {
     case FontVariantEastAsianWidth::Normal:
         break;
-    case FontVariantEastAsianWidth::FullWidth:
+    case FontVariantEastAsianWidth::Full:
         result.add(fontFeatureTag("fwid"), 1);
         break;
-    case FontVariantEastAsianWidth::ProportionalWidth:
+    case FontVariantEastAsianWidth::Proportional:
         result.add(fontFeatureTag("pwid"), 1);
         break;
     default:

@@ -1,3 +1,87 @@
+2015-11-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unify font-variant-* with font-variant shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=149773
+
+        Reviewed by Darin Adler.
+
+        This patch makes font-variant a shorthand for the following properties:
+        font-variant-ligatures
+        font-variant-position
+        font-variant-caps
+        font-variant-numeric
+        font-variant-alternates
+        font-variant-east-asian
+
+        This is consistent with the CSS Fonts Level 3 spec.
+
+        This patch also migrates the "font" longhand to use the font-variant-caps
+        property.
+
+        Test: fast/text/font-variant-shorthand.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontVariantEastAsianPropertyValue): Rename FontVariantEastAsian values.
+        (WebCore::fontVariantFromStyle): We must consult with the longhand properties to determine
+        font-variant computed style.
+        (WebCore::ComputedStyleExtractor::propertyValue): Don't put any-old font-variant-caps inside
+        the font shorthand.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Guard against incorrect downcasts (due to inherit
+        of the new shorthand property).
+        * css/CSSParser.cpp: Parse font-variant as a shorthand. Also implement its "normal" and "none" values.
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseSystemFont):
+        (WebCore::CSSParser::parseFontVariantLigatures):
+        (WebCore::CSSParser::parseFontVariantNumeric):
+        (WebCore::CSSParser::parseFontVariantEastAsian):
+        (WebCore::CSSParser::parseFontVariant):
+        (WebCore::isValidKeywordPropertyAndValue): Deleted.
+        (WebCore::isKeywordPropertyID): Deleted.
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in: Turn font-variant into a shorthand property.
+        * css/FontVariantBuilder.h: Guard against incorrect downcasts. Also update for renamed
+        FontVariantEastAsian type.
+        (WebCore::applyValueFontVariantLigatures):
+        (WebCore::applyValueFontVariantNumeric):
+        (WebCore::applyValueFontVariantEastAsian):
+        * css/StyleProperties.cpp: Update to use the more specific property.
+        (WebCore::StyleProperties::appendFontLonghandValueIfExplicit):
+        (WebCore::StyleProperties::fontValue):
+        (WebCore::StyleProperties::asText):
+        * css/StyleResolver.cpp: Ditto.
+        (WebCore::StyleResolver::isValidCueStyleProperty):
+        * editing/EditingStyle.cpp: Ditto.
+        * editing/cocoa/HTMLConverter.mm: Ditto.
+        (HTMLConverterCaches::propertyValueForNode):
+        (HTMLConverter::computedAttributesForElement):
+        * editing/ios/EditorIOS.mm: Ditto.
+        (WebCore::Editor::removeUnchangeableStyles):
+        * html/canvas/CanvasRenderingContext2D.cpp: Ditto.
+        (WebCore::CanvasRenderingContext2D::font):
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * platform/graphics/FontCache.h: Removing duplicate cache key value.
+        (WebCore::FontDescriptionKey::makeFlagsKey):
+        * platform/graphics/FontCascade.cpp: Migrate to the new font-variant-caps from the old member variable.
+        (WebCore::FontCascade::glyphDataForCharacter):
+        * platform/graphics/FontCascade.h: Ditto.
+        (WebCore::FontCascade::isSmallCaps):
+        * platform/graphics/FontDescription.cpp: Ditto.
+        (WebCore::FontDescription::FontDescription):
+        * platform/graphics/FontDescription.h: Ditto.
+        (WebCore::FontCascadeDescription::equalForTextAutoSizing):
+        (WebCore::FontDescription::smallCaps): Deleted.
+        (WebCore::FontDescription::setSmallCaps): Deleted.
+        (WebCore::FontDescription::setIsSmallCaps): Deleted.
+        (WebCore::FontDescription::operator==): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp: Rename FontVariantEastAsianWidth.
+        (WebCore::computeFeatureSettingsFromVariants):
+        * platform/text/TextFlags.h: Ditto.
+        (WebCore::FontVariantSettings::operator==):
+        * rendering/RenderText.cpp: Migrage to the new font-variant-caps from the old member variable.
+        (WebCore::RenderText::widthFromCache):
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: After versionchange transactions abort, fire onerror on the original IDBOpenDBRequest.

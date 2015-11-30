@@ -48,7 +48,6 @@ public:
     float computedSize() const { return m_computedSize; }
     FontItalic italic() const { return static_cast<FontItalic>(m_italic); }
     int computedPixelSize() const { return int(m_computedSize + 0.5f); }
-    FontSmallCaps smallCaps() const { return static_cast<FontSmallCaps>(m_smallCaps); }
     FontWeight weight() const { return static_cast<FontWeight>(m_weight); }
     FontWeight lighterWeight() const;
     FontWeight bolderWeight() const;
@@ -99,8 +98,6 @@ public:
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(FontItalic i) { m_italic = i; }
     void setIsItalic(bool i) { setItalic(i ? FontItalicOn : FontItalicOff); }
-    void setSmallCaps(FontSmallCaps c) { m_smallCaps = c; }
-    void setIsSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
     void setWeight(FontWeight w) { m_weight = w; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
@@ -137,7 +134,6 @@ private:
     unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
     unsigned m_widthVariant : 2; // FontWidthVariant
     unsigned m_italic : 1; // FontItalic
-    unsigned m_smallCaps : 1; // FontSmallCaps
     unsigned m_weight : 8; // FontWeight
     unsigned m_renderingMode : 1; // Used to switch between CG and GDI text on Windows.
     unsigned m_textRendering : 2; // TextRenderingMode
@@ -164,7 +160,6 @@ inline bool FontDescription::operator==(const FontDescription& other) const
 {
     return m_computedSize == other.m_computedSize
         && m_italic == other.m_italic
-        && m_smallCaps == other.m_smallCaps
         && m_weight == other.m_weight
         && m_renderingMode == other.m_renderingMode
         && m_textRendering == other.m_textRendering
@@ -251,7 +246,7 @@ public:
     {
         return familiesEqualForTextAutoSizing(other)
             && m_specifiedSize == other.m_specifiedSize
-            && smallCaps() == other.smallCaps()
+            && variantSettings() == other.variantSettings()
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
 #endif

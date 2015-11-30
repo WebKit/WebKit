@@ -16,7 +16,7 @@ margin-bottom: 1em (original property was margin and property was implicitly set
 margin-left: 1em (original property was margin and property was implicitly set.)
 color: white
 font-style: normal (original property was font and property was implicitly set.)
-font-variant: normal (original property was font and property was implicitly set.)
+font-variant-caps: normal (original property was font and property was implicitly set.)
 font-weight: normal (original property was font and property was implicitly set.)
 font-size: 24px (original property was font)
 line-height: normal (original property was font and property was implicitly set.)

@@ -1,3 +1,25 @@
+2015-11-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unify font-variant-* with font-variant shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=149773
+
+        Reviewed by Darin Adler.
+
+        Update tests. Also temporarily skip existing font-features tests until
+        https://bugs.webkit.org/show_bug.cgi?id=149774 is fixed.
+
+        * css3/font-variant-parsing-expected.txt:
+        * css3/font-variant-parsing.html:
+        * fast/css/font-property-priority-expected.txt:
+        * fast/css/font-shorthand-expected.txt:
+        * fast/css/parsing-font-variant-ligatures-expected.txt:
+        * fast/css/parsing-font-variant-ligatures.html:
+        * fast/inspector-support/style-expected.txt:
+        * fast/text/font-variant-shorthand-expected.txt: Added.
+        * fast/text/font-variant-shorthand.html: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/writing-mode/broken-ideograph-small-caps-expected.txt:
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: After versionchange transactions abort, fire onerror on the original IDBOpenDBRequest.

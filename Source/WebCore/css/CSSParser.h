@@ -348,9 +348,11 @@ public:
     bool parseFlowThread(CSSPropertyID, bool important);
     bool parseRegionThread(CSSPropertyID, bool important);
 
-    bool parseFontVariantLigatures(bool important);
-    bool parseFontVariantNumeric(bool important);
-    bool parseFontVariantEastAsian(bool important);
+    enum class UnknownIsFailure { Yes, No };
+    bool parseFontVariantLigatures(bool important, UnknownIsFailure);
+    bool parseFontVariantNumeric(bool important, UnknownIsFailure);
+    bool parseFontVariantEastAsian(bool important, UnknownIsFailure);
+    bool parseFontVariant(bool important);
 
     bool parseWillChange(bool important);
 
