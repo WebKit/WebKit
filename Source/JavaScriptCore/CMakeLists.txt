@@ -121,6 +121,7 @@ set(JavaScriptCore_SOURCES
     b3/B3PatchpointSpecial.cpp
     b3/B3PatchpointValue.cpp
     b3/B3PhaseScope.cpp
+    b3/B3PhiChildren.cpp
     b3/B3Procedure.cpp
     b3/B3ReduceStrength.cpp
     b3/B3StackmapSpecial.cpp

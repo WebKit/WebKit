@@ -24,40 +24,28 @@
  */
 
 #include "config.h"
-#include "B3UseCounts.h"
+#include "B3PhiChildren.h"
 
 #if ENABLE(B3_JIT)
 
-#include "B3Procedure.h"
+#include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 
-UseCounts::UseCounts(Procedure& procedure)
-    : m_counts(procedure.values().size())
+PhiChildren::PhiChildren(Procedure& proc)
+    : m_upsilons(proc.values().size())
 {
-    Vector<Value*, 64> children;
-    for (Value* value : procedure.values()) {
-        children.resize(0);
-        for (Value* child : value->children()) {
-            m_counts[child].numUses++;
-            children.append(child);
-        }
-        std::sort(children.begin(), children.end());
-        Value* last = nullptr;
-        for (Value* child : children) {
-            if (child == last)
-                continue;
-
-            m_counts[child].numUsingInstructions++;
-            last = child;
-        }
+    for (Value* value : proc.values()) {
+        if (UpsilonValue* upsilon = value->as<UpsilonValue>())
+            m_upsilons[upsilon->phi()].append(upsilon);
     }
 }
 
-UseCounts::~UseCounts()
+PhiChildren::~PhiChildren()
 {
 }
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

@@ -1,5 +1,103 @@
 2015-11-30  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 should be be clever about choosing which child to reuse for result in two-operand commutative operations
+        https://bugs.webkit.org/show_bug.cgi?id=151321
+
+        Reviewed by Geoffrey Garen.
+
+        When lowering a commutative operation to a two-operand instruction, you have a choice of which
+        child value to move into the result tmp. For example we might have:
+
+            @x = Add(@y, @z)
+
+        Assuming no three-operand add is available, we could either lower it to this:
+
+            Move %y, %x
+            Add %z, %x
+
+        or to this:
+
+            Move %z, %x
+            Add %y, %x
+
+        Which is better depends on the likelihood of coalescing with %x. If it's more likely that %y will
+        coalesce with %x, then we want to use the first form. Otherwise, we should use the second form.
+
+        This implements two heuristics for selecting the right form, and makes those heuristics reusable
+        within the B3->Air lowering by abstracting it as preferRightForResult(). For non-commutative
+        operations we must use the first form, so the first form is the default. The heuristics are:
+
+        - If the right child has only one user, then use the second form instead. This is profitable because
+          that means that @z dies at the Add, so using the second form means that the Move will be coalesced
+          away.
+
+        - If one of the children is a Phi that this operation (the Add in this case) flows into via some
+          Upsilon - possibly transitively through other Phis - then use the form that cases a Move on that
+          child. This overrides everything else, and is meant to optimize variables that accumulate in a
+          loop.
+
+        This required adding a reusable PhiChildren analysis, so I wrote one. It has an API that is mostly
+        based on iterators, and a higher-level API for looking at transitive children that is based on
+        functors.
+
+        I was originally implementing this for completeness, but when looking at how it interacted with
+        imaging-gaussian-blur, I realized the need for some heuristic for the loop-accumulator case. This
+        helps a lot on that benchmark. This widens the overall lead that B3 has on imaging-gaussian-blur, but
+        steady-state runs that exclude compile latency still show a slight deficit. That will most likely get
+        fixed by https://bugs.webkit.org/show_bug.cgi?id=151174.
+
+        No new tests because the commutativity appears to be covered by existing tests, and anyway, there are
+        no correctness implications to commuting a commutative operation.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::Air::LowerToAir::canBeInternal):
+        (JSC::B3::Air::LowerToAir::appendUnOp):
+        (JSC::B3::Air::LowerToAir::preferRightForResult):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3PhiChildren.cpp: Added.
+        (JSC::B3::PhiChildren::PhiChildren):
+        (JSC::B3::PhiChildren::~PhiChildren):
+        * b3/B3PhiChildren.h: Added.
+        (JSC::B3::PhiChildren::ValueCollection::ValueCollection):
+        (JSC::B3::PhiChildren::ValueCollection::size):
+        (JSC::B3::PhiChildren::ValueCollection::at):
+        (JSC::B3::PhiChildren::ValueCollection::operator[]):
+        (JSC::B3::PhiChildren::ValueCollection::contains):
+        (JSC::B3::PhiChildren::ValueCollection::iterator::iterator):
+        (JSC::B3::PhiChildren::ValueCollection::iterator::operator*):
+        (JSC::B3::PhiChildren::ValueCollection::iterator::operator++):
+        (JSC::B3::PhiChildren::ValueCollection::iterator::operator==):
+        (JSC::B3::PhiChildren::ValueCollection::iterator::operator!=):
+        (JSC::B3::PhiChildren::ValueCollection::begin):
+        (JSC::B3::PhiChildren::ValueCollection::end):
+        (JSC::B3::PhiChildren::UpsilonCollection::UpsilonCollection):
+        (JSC::B3::PhiChildren::UpsilonCollection::size):
+        (JSC::B3::PhiChildren::UpsilonCollection::at):
+        (JSC::B3::PhiChildren::UpsilonCollection::operator[]):
+        (JSC::B3::PhiChildren::UpsilonCollection::contains):
+        (JSC::B3::PhiChildren::UpsilonCollection::begin):
+        (JSC::B3::PhiChildren::UpsilonCollection::end):
+        (JSC::B3::PhiChildren::UpsilonCollection::values):
+        (JSC::B3::PhiChildren::UpsilonCollection::forAllTransitiveIncomingValues):
+        (JSC::B3::PhiChildren::UpsilonCollection::transitivelyUses):
+        (JSC::B3::PhiChildren::at):
+        (JSC::B3::PhiChildren::operator[]):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        * b3/B3Procedure.h:
+        * b3/B3UseCounts.cpp:
+        (JSC::B3::UseCounts::UseCounts):
+        * b3/B3UseCounts.h:
+        (JSC::B3::UseCounts::numUses):
+        (JSC::B3::UseCounts::numUsingInstructions):
+        (JSC::B3::UseCounts::operator[]): Deleted.
+
+2015-11-30  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(r192812): This change seems to have broken the iOS builds (Requested by ryanhaddad on #webkit).
         https://bugs.webkit.org/show_bug.cgi?id=151669
 

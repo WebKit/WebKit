@@ -44,6 +44,7 @@
 #include "B3PatchpointSpecial.h"
 #include "B3PatchpointValue.h"
 #include "B3PhaseScope.h"
+#include "B3PhiChildren.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
 #include "B3UpsilonValue.h"
@@ -65,6 +66,7 @@ public:
         : m_valueToTmp(procedure.values().size())
         , m_blockToBlock(procedure.size())
         , m_useCounts(procedure)
+        , m_phiChildren(procedure)
         , m_procedure(procedure)
         , m_code(procedure.code())
     {
@@ -317,8 +319,11 @@ private:
         if (m_valueToTmp[value])
             return false;
         
-        // We require internals to have only one use - us.
-        if (m_useCounts[value] != 1)
+        // We require internals to have only one use - us. It's not clear if this should be numUses() or
+        // numUsingInstructions(). Ideally, it would be numUsingInstructions(), except that it's not clear
+        // if we'd actually do the right thing when matching over such a DAG pattern. For now, it simply
+        // doesn't matter because we don't implement patterns that would trigger this.
+        if (m_useCounts.numUses(value) != 1)
             return false;
 
         return true;
@@ -525,6 +530,36 @@ private:
         append(opcode, result);
     }
 
+    // Call this method when doing two-operand lowering of a commutative operation. You have a choice of
+    // which incoming Value is moved into the result. This will select which one is likely to be most
+    // profitable to use as the result. Doing the right thing can have big performance consequences in tight
+    // kernels.
+    bool preferRightForResult(Value* left, Value* right)
+    {
+        // The default is to move left into result, because that's required for non-commutative instructions.
+        // The value that we want to move into result position is the one that dies here. So, if we're
+        // compiling a commutative operation and we know that actually right is the one that dies right here,
+        // then we can flip things around to help coalescing, which then kills the move instruction.
+        //
+        // But it's more complicated:
+        // - Used-once is a bad estimate of whether the variable dies here.
+        // - A child might be a candidate for coalescing with this value.
+        //
+        // Currently, we have machinery in place to recognize super obvious forms of the latter issue.
+
+        bool result = m_useCounts.numUsingInstructions(right) == 1;
+        
+        // We recognize when a child is a Phi that has this value as one of its children. We're very
+        // conservative about this; for example we don't even consider transitive Phi children.
+        bool leftIsPhiWithThis = m_phiChildren[left].transitivelyUses(m_value);
+        bool rightIsPhiWithThis = m_phiChildren[right].transitivelyUses(m_value);
+        
+        if (leftIsPhiWithThis != rightIsPhiWithThis)
+            result = rightIsPhiWithThis;
+
+        return result;
+    }
+
     template<
         Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble,
         Commutativity commutativity = NotCommutative>
@@ -598,9 +633,11 @@ private:
             return;
         }
 
-        // FIXME: If we're going to use a two-operand instruction, and the operand is commutative, we
-        // should coalesce the result with the operand that is killed.
-        // https://bugs.webkit.org/show_bug.cgi?id=151321
+        if (commutativity == Commutative && preferRightForResult(left, right)) {
+            append(relaxedMoveForType(m_value->type()), tmp(right), result);
+            append(opcode, tmp(left), result);
+            return;
+        }
         
         append(relaxedMoveForType(m_value->type()), tmp(left), result);
         append(opcode, tmp(right), result);
@@ -1658,7 +1695,8 @@ private:
         }
 
         case CheckAdd:
-        case CheckSub: {
+        case CheckSub:
+        case CheckMul: {
             CheckValue* checkValue = m_value->as<CheckValue>();
 
             Value* left = checkValue->child(0);
@@ -1684,18 +1722,20 @@ private:
                 return;
             }
 
-            // FIXME: Use commutativity of CheckAdd to increase the likelihood of coalescing.
-            // https://bugs.webkit.org/show_bug.cgi?id=151321
-
-            append(Move, tmp(left), result);
-            
             Air::Opcode opcode = Air::Oops;
+            Commutativity commutativity = NotCommutative;
+            Arg::Role stackmapRole = Arg::Use;
             switch (m_value->opcode()) {
             case CheckAdd:
                 opcode = opcodeForType(BranchAdd32, BranchAdd64, Air::Oops, m_value->type());
+                commutativity = Commutative;
                 break;
             case CheckSub:
                 opcode = opcodeForType(BranchSub32, BranchSub64, Air::Oops, m_value->type());
+                break;
+            case CheckMul:
+                opcode = opcodeForType(BranchMul32, BranchMul64, Air::Oops, checkValue->type());
+                stackmapRole = Arg::LateUse;
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1707,11 +1747,20 @@ private:
             // this rule here.
             // https://bugs.webkit.org/show_bug.cgi?id=151228
 
-            Arg source;
-            if (imm(right) && isValidForm(opcode, Arg::ResCond, Arg::Imm, Arg::Tmp))
-                source = imm(right);
-            else
-                source = tmp(right);
+            Vector<Arg, 2> sources;
+            if (imm(right) && isValidForm(opcode, Arg::ResCond, Arg::Tmp, Arg::Imm, Arg::Tmp)) {
+                sources.append(tmp(left));
+                sources.append(imm(right));
+            } else if (imm(right) && isValidForm(opcode, Arg::ResCond, Arg::Imm, Arg::Tmp)) {
+                sources.append(imm(right));
+                append(Move, tmp(left), result);
+            } else if (commutativity == Commutative && preferRightForResult(left, right)) {
+                sources.append(tmp(left));
+                append(Move, tmp(right), result);
+            } else {
+                sources.append(tmp(right));
+                append(Move, tmp(left), result);
+            }
 
             // There is a really hilarious case that arises when we do BranchAdd32(%x, %x). We won't emit
             // such code, but the coalescing in our register allocator also does copy propagation, so
@@ -1736,45 +1785,17 @@ private:
             // optimizations remove other Move's or identity-like operations. That's why we don't use
             // LateUse here to take care of add-to-self.
             
-            CheckSpecial* special = ensureCheckSpecial(opcode, 3);
+            CheckSpecial* special = ensureCheckSpecial(opcode, 2 + sources.size(), stackmapRole);
             
             Inst inst(Patch, checkValue, Arg::special(special));
 
             inst.args.append(Arg::resCond(MacroAssembler::Overflow));
 
-            inst.args.append(source);
+            inst.args.appendVector(sources);
             inst.args.append(result);
 
             fillStackmap(inst, checkValue, 2);
 
-            m_insts.last().append(WTF::move(inst));
-            return;
-        }
-
-        case CheckMul: {
-            CheckValue* checkValue = m_value->as<CheckValue>();
-
-            Value* left = checkValue->child(0);
-            Value* right = checkValue->child(1);
-
-            Tmp result = tmp(m_value);
-
-            Air::Opcode opcode =
-                opcodeForType(BranchMul32, BranchMul64, Air::Oops, checkValue->type());
-            CheckSpecial* special = ensureCheckSpecial(opcode, 3, Arg::LateUse);
-
-            // FIXME: Handle immediates.
-            // https://bugs.webkit.org/show_bug.cgi?id=151230
-
-            append(Move, tmp(left), result);
-
-            Inst inst(Patch, checkValue, Arg::special(special));
-            inst.args.append(Arg::resCond(MacroAssembler::Overflow));
-            inst.args.append(tmp(right));
-            inst.args.append(result);
-
-            fillStackmap(inst, checkValue, 2);
-            
             m_insts.last().append(WTF::move(inst));
             return;
         }
@@ -1858,6 +1879,7 @@ private:
     HashMap<StackSlotValue*, Air::StackSlot*> m_stackToStack;
 
     UseCounts m_useCounts;
+    PhiChildren m_phiChildren;
 
     Vector<Vector<Inst, 4>> m_insts;
     Vector<Inst> m_prologue;

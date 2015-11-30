@@ -40,12 +40,16 @@ public:
     UseCounts(Procedure&);
     ~UseCounts();
 
-    unsigned operator[](Value* value) const
-    {
-        return m_counts[value];
-    }
+    unsigned numUses(Value* value) const { return m_counts[value].numUses; }
+    unsigned numUsingInstructions(Value* value) const { return m_counts[value].numUsingInstructions; }
+    
 private:
-    IndexMap<Value, unsigned> m_counts;
+    struct Counts {
+        unsigned numUses { 0 };
+        unsigned numUsingInstructions { 0 };
+    };
+    
+    IndexMap<Value, Counts> m_counts;
 };
 
 } } // namespace JSC::B3
