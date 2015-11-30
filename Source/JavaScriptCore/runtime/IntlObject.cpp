@@ -119,23 +119,23 @@ static String defaultLocale()
     return ASCIILiteral("en");
 }
 
-bool getIntlBooleanOption(ExecState* exec, JSValue options, PropertyName property, bool& usesFallback)
+bool intlBooleanOption(ExecState& state, JSValue options, PropertyName property, bool& usesFallback)
 {
     // 9.2.9 GetOption (options, property, type, values, fallback)
     // For type="boolean". values is always undefined.
 
     // 1. Let opts be ToObject(options).
-    JSObject* opts = options.toObject(exec);
+    JSObject* opts = options.toObject(&state);
 
     // 2. ReturnIfAbrupt(opts).
-    if (exec->hadException())
+    if (state.hadException())
         return false;
 
     // 3. Let value be Get(opts, property).
-    JSValue value = opts->get(exec, property);
+    JSValue value = opts->get(&state, property);
 
     // 4. ReturnIfAbrupt(value).
-    if (exec->hadException())
+    if (state.hadException())
         return false;
 
     // 5. If value is not undefined, then
@@ -145,7 +145,7 @@ bool getIntlBooleanOption(ExecState* exec, JSValue options, PropertyName propert
 
         // b. If type is "boolean", then
         // i. Let value be ToBoolean(value).
-        bool booleanValue = value.toBoolean(exec);
+        bool booleanValue = value.toBoolean(&state);
 
         // e. Return value.
         usesFallback = false;
@@ -158,23 +158,23 @@ bool getIntlBooleanOption(ExecState* exec, JSValue options, PropertyName propert
     return false;
 }
 
-String getIntlStringOption(ExecState* exec, JSValue options, PropertyName property, const HashSet<String>& values, const char* notFound, String fallback)
+String intlStringOption(ExecState& state, JSValue options, PropertyName property, const HashSet<String>& values, const char* notFound, String fallback)
 {
     // 9.2.9 GetOption (options, property, type, values, fallback)
     // For type="string".
 
     // 1. Let opts be ToObject(options).
-    JSObject* opts = options.toObject(exec);
+    JSObject* opts = options.toObject(&state);
 
     // 2. ReturnIfAbrupt(opts).
-    if (exec->hadException())
+    if (state.hadException())
         return String();
 
     // 3. Let value be Get(opts, property).
-    JSValue value = opts->get(exec, property);
+    JSValue value = opts->get(&state, property);
 
     // 4. ReturnIfAbrupt(value).
-    if (exec->hadException())
+    if (state.hadException())
         return String();
 
     // 5. If value is not undefined, then
@@ -184,28 +184,28 @@ String getIntlStringOption(ExecState* exec, JSValue options, PropertyName proper
 
         // c. If type is "string", then
         // i. Let value be ToString(value).
-        JSString* stringValue = value.toString(exec);
+        JSString* stringValue = value.toString(&state);
 
         // ii. ReturnIfAbrupt(value).
-        if (exec->hadException())
+        if (state.hadException())
             return String();
 
         // d. If values is not undefined, then
         // i. If values does not contain an element equal to value, throw a RangeError exception.
-        if (!values.isEmpty() && !values.contains(stringValue->value(exec))) {
-            exec->vm().throwException(exec, createRangeError(exec, String(notFound)));
+        if (!values.isEmpty() && !values.contains(stringValue->value(&state))) {
+            state.vm().throwException(&state, createRangeError(&state, String(notFound)));
             return String();
         }
 
         // e. Return value.
-        return stringValue->value(exec);
+        return stringValue->value(&state);
     }
 
     // 6. Else return fallback.
     return fallback;
 }
 
-static String getPrivateUseLangTag(const Vector<String>& parts, size_t startIndex)
+static String privateUseLangTag(const Vector<String>& parts, size_t startIndex)
 {
     size_t numParts = parts.size();
     size_t currentIndex = startIndex;
@@ -252,7 +252,7 @@ static String getPrivateUseLangTag(const Vector<String>& parts, size_t startInde
     return privateuse.toString();
 }
 
-static String getCanonicalLangTag(const Vector<String>& parts)
+static String canonicalLangTag(const Vector<String>& parts)
 {
     ASSERT(!parts.isEmpty());
 
@@ -401,7 +401,7 @@ static String getCanonicalLangTag(const Vector<String>& parts)
 
     // Check for privateuse.
     if (currentIndex < numParts) {
-        String privateuse = getPrivateUseLangTag(parts, currentIndex);
+        String privateuse = privateUseLangTag(parts, currentIndex);
         if (privateuse.isNull())
             return String();
         canonical.append('-');
@@ -413,7 +413,7 @@ static String getCanonicalLangTag(const Vector<String>& parts)
     return canonical.toString();
 }
 
-static String getGrandfatheredLangTag(const String& locale)
+static String grandfatheredLangTag(const String& locale)
 {
     // grandfathered = irregular / regular
     // FIXME: convert to a compile time hash table if this is causing performance issues.
@@ -459,7 +459,7 @@ static String canonicalizeLanguageTag(const String& locale)
     // https://www.rfc-editor.org/rfc/bcp/bcp47.txt
 
     // Language-Tag = langtag / privateuse / grandfathered
-    String grandfather = getGrandfatheredLangTag(locale);
+    String grandfather = grandfatheredLangTag(locale);
     if (!grandfather.isNull())
         return grandfather;
 
@@ -468,11 +468,11 @@ static String canonicalizeLanguageTag(const String& locale)
     Vector<String> parts;
     locale.split('-', true, parts);
     if (!parts.isEmpty()) {
-        String langtag = getCanonicalLangTag(parts);
+        String langtag = canonicalLangTag(parts);
         if (!langtag.isNull())
             return langtag;
 
-        String privateuse = getPrivateUseLangTag(parts, 0);
+        String privateuse = privateUseLangTag(parts, 0);
         if (!privateuse.isNull())
             return privateuse;
     }
@@ -480,11 +480,11 @@ static String canonicalizeLanguageTag(const String& locale)
     return String();
 }
 
-Vector<String> canonicalizeLocaleList(ExecState* exec, JSValue locales)
+Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
 {
     // 9.2.1 CanonicalizeLocaleList (locales)
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    VM& vm = state.vm();
+    JSGlobalObject* globalObject = state.callee()->globalObject();
     Vector<String> seen;
 
     // 1. If locales is undefined, then a. Return a new empty List.
@@ -504,20 +504,20 @@ Vector<String> canonicalizeLocaleList(ExecState* exec, JSValue locales)
         localesObject = localesArray;
     } else {
         // 4. Let O be ToObject(aLocales).
-        localesObject = locales.toObject(exec);
+        localesObject = locales.toObject(&state);
     }
 
     // 5. ReturnIfAbrupt(O).
-    if (exec->hadException())
+    if (state.hadException())
         return Vector<String>();
 
     // 6. Let len be ToLength(Get(O, "length")).
-    JSValue lengthProperty = localesObject->get(exec, vm.propertyNames->length);
-    if (exec->hadException())
+    JSValue lengthProperty = localesObject->get(&state, vm.propertyNames->length);
+    if (state.hadException())
         return Vector<String>();
 
-    double length = lengthProperty.toLength(exec);
-    if (exec->hadException())
+    double length = lengthProperty.toLength(&state);
+    if (state.hadException())
         return Vector<String>();
 
     // Keep track of locales that have been added to the list.
@@ -530,39 +530,39 @@ Vector<String> canonicalizeLocaleList(ExecState* exec, JSValue locales)
         // Not needed because hasProperty and get take an int for numeric key.
 
         // b. Let kPresent be HasProperty(O, Pk).
-        bool kPresent = localesObject->hasProperty(exec, k);
+        bool kPresent = localesObject->hasProperty(&state, k);
 
         // c. ReturnIfAbrupt(kPresent).
-        if (exec->hadException())
+        if (state.hadException())
             return Vector<String>();
 
         // d. If kPresent is true, then
         if (kPresent) {
             // i. Let kValue be Get(O, Pk).
-            JSValue kValue = localesObject->get(exec, k);
+            JSValue kValue = localesObject->get(&state, k);
 
             // ii. ReturnIfAbrupt(kValue).
-            if (exec->hadException())
+            if (state.hadException())
                 return Vector<String>();
 
             // iii. If Type(kValue) is not String or Object, throw a TypeError exception.
             if (!kValue.isString() && !kValue.isObject()) {
-                throwTypeError(exec, ASCIILiteral("locale value must be a string or object"));
+                throwTypeError(&state, ASCIILiteral("locale value must be a string or object"));
                 return Vector<String>();
             }
 
             // iv. Let tag be ToString(kValue).
-            JSString* tag = kValue.toString(exec);
+            JSString* tag = kValue.toString(&state);
 
             // v. ReturnIfAbrupt(tag).
-            if (exec->hadException())
+            if (state.hadException())
                 return Vector<String>();
 
             // vi. If IsStructurallyValidLanguageTag(tag) is false, throw a RangeError exception.
             // vii. Let canonicalizedTag be CanonicalizeLanguageTag(tag).
-            String canonicalizedTag = canonicalizeLanguageTag(tag->value(exec));
+            String canonicalizedTag = canonicalizeLanguageTag(tag->value(&state));
             if (canonicalizedTag.isNull()) {
-                exec->vm().throwException(exec, createRangeError(exec, String::format("invalid language tag: %s", tag->value(exec).utf8().data())));
+                state.vm().throwException(&state, createRangeError(&state, String::format("invalid language tag: %s", tag->value(&state).utf8().data())));
                 return Vector<String>();
             }
 
@@ -801,7 +801,7 @@ HashMap<String, String> resolveLocale(const HashSet<String>& availableLocales, c
     return result;
 }
 
-static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // 9.2.6 LookupSupportedLocales (availableLocales, requestedLocales)
 
@@ -812,11 +812,11 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
     size_t len = requestedLocales.size();
 
     // 3. Let subset be an empty List.
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    VM& vm = state.vm();
+    JSGlobalObject* globalObject = state.callee()->globalObject();
     JSArray* subset = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
     if (!subset) {
-        throwOutOfMemoryError(exec);
+        throwOutOfMemoryError(&state);
         return nullptr;
     }
 
@@ -836,7 +836,7 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
 
         // f. If availableLocale is not undefined, then append locale to the end of subset.
         if (!availableLocale.isNull())
-            subset->push(exec, jsString(exec, locale));
+            subset->push(&state, jsString(&state, locale));
 
         // g. Increment k by 1.
     }
@@ -845,26 +845,26 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
     return subset;
 }
 
-static JSArray* bestFitSupportedLocales(ExecState* exec, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static JSArray* bestFitSupportedLocales(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // 9.2.7 BestFitSupportedLocales (availableLocales, requestedLocales)
     // FIXME: Implement something better than lookup.
-    return lookupSupportedLocales(exec, availableLocales, requestedLocales);
+    return lookupSupportedLocales(state, availableLocales, requestedLocales);
 }
 
-JSValue supportedLocales(ExecState* exec, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options)
+JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options)
 {
     // 9.2.8 SupportedLocales (availableLocales, requestedLocales, options)
-    VM& vm = exec->vm();
+    VM& vm = state.vm();
     String matcher;
 
     // 1. If options is not undefined, then
     if (!options.isUndefined()) {
         // a. Let matcher be GetOption(options, "localeMatcher", "string", « "lookup", "best fit" », "best fit").
         const HashSet<String> matchers({ ASCIILiteral("lookup"), ASCIILiteral("best fit") });
-        matcher = getIntlStringOption(exec, options, vm.propertyNames->localeMatcher, matchers, "localeMatcher must be either \"lookup\" or \"best fit\"", ASCIILiteral("best fit"));
+        matcher = intlStringOption(state, options, vm.propertyNames->localeMatcher, matchers, "localeMatcher must be either \"lookup\" or \"best fit\"", ASCIILiteral("best fit"));
         // b. ReturnIfAbrupt(matcher).
-        if (exec->hadException())
+        if (state.hadException())
             return jsUndefined();
     } else {
         // 2. Else, let matcher be "best fit".
@@ -876,23 +876,23 @@ JSValue supportedLocales(ExecState* exec, const HashSet<String>& availableLocale
     if (matcher == "best fit") {
         // a. Let MatcherOperation be the abstract operation BestFitSupportedLocales.
         // 5. Let supportedLocales be MatcherOperation(availableLocales, requestedLocales).
-        supportedLocales = bestFitSupportedLocales(exec, availableLocales, requestedLocales);
+        supportedLocales = bestFitSupportedLocales(state, availableLocales, requestedLocales);
     } else {
         // 4. Else
         // a. Let MatcherOperation be the abstract operation LookupSupportedLocales.
         // 5. Let supportedLocales be MatcherOperation(availableLocales, requestedLocales).
-        supportedLocales = lookupSupportedLocales(exec, availableLocales, requestedLocales);
+        supportedLocales = lookupSupportedLocales(state, availableLocales, requestedLocales);
     }
 
-    if (exec->hadException())
+    if (state.hadException())
         return jsUndefined();
 
     // 6. Let subset be CreateArrayFromList(supportedLocales).
     // Already an array.
 
     // 7. Let keys be subset.[[OwnPropertyKeys]]().
-    PropertyNameArray keys(exec, PropertyNameMode::Strings);
-    supportedLocales->getOwnPropertyNames(supportedLocales, exec, keys, EnumerationMode());
+    PropertyNameArray keys(&state, PropertyNameMode::Strings);
+    supportedLocales->getOwnPropertyNames(supportedLocales, &state, keys, EnumerationMode());
 
     PropertyDescriptor desc;
     desc.setConfigurable(false);
@@ -905,10 +905,10 @@ JSValue supportedLocales(ExecState* exec, const HashSet<String>& availableLocale
         // Created above for reuse.
 
         // b. Let status be DefinePropertyOrThrow(subset, P, desc).
-        supportedLocales->defineOwnProperty(supportedLocales, exec, keys[i], desc, true);
+        supportedLocales->defineOwnProperty(supportedLocales, &state, keys[i], desc, true);
 
         // c. Assert: status is not abrupt completion.
-        if (exec->hadException())
+        if (state.hadException())
             return jsUndefined();
     }
 

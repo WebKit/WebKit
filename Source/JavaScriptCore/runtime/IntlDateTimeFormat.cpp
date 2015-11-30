@@ -86,28 +86,28 @@ void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* state)
 {
     // 12.3.4 DateTime Format Functions (ECMA-402 2.0)
     // 1. Let dtf be the this value.
-    IntlDateTimeFormat* format = jsDynamicCast<IntlDateTimeFormat*>(exec->thisValue());
+    IntlDateTimeFormat* format = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue());
     // 2. Assert: Type(dtf) is Object and dtf has an [[initializedDateTimeFormat]] internal slot whose value is true.
     if (!format)
-        return JSValue::encode(throwTypeError(exec));
+        return JSValue::encode(throwTypeError(state));
 
-    JSValue date = exec->argument(0);
+    JSValue date = state->argument(0);
     double value;
 
     // 3. If date is not provided or is undefined, then
     if (date.isUndefined()) {
         // a. Let x be %Date_now%().
-        value = JSValue::decode(dateNow(exec)).toNumber(exec);
+        value = JSValue::decode(dateNow(state)).toNumber(state);
     } else {
         // 4. Else
         // a. Let x be ToNumber(date).
-        value = date.toNumber(exec);
+        value = date.toNumber(state);
         // b. ReturnIfAbrupt(x).
-        if (exec->hadException())
+        if (state->hadException())
             return JSValue::encode(jsUndefined());
     }
 
@@ -117,15 +117,15 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatFuncFormatDateTime(ExecState* exe
 
     // 1. If x is not a finite Number, then throw a RangeError exception.
     if (!std::isfinite(value))
-        return JSValue::encode(throwRangeError(exec, ASCIILiteral("date value is not finite in DateTimeFormat.format()")));
+        return JSValue::encode(throwRangeError(state, ASCIILiteral("date value is not finite in DateTimeFormat.format()")));
 
     // FIXME: implement 2 - 9
 
     // Return new Date(value).toString() until properly implemented.
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    VM& vm = state->vm();
+    JSGlobalObject* globalObject = state->callee()->globalObject();
     DateInstance* d = DateInstance::create(vm, globalObject->dateStructure(), value);
-    return JSValue::encode(JSValue(d).toString(exec));
+    return JSValue::encode(JSValue(d).toString(state));
 }
 
 } // namespace JSC

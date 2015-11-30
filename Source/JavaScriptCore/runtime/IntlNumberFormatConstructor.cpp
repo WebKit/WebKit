@@ -84,20 +84,20 @@ void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototy
     m_numberFormatStructure.set(vm, this, numberFormatStructure);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* state)
 {
     // 11.1.2 Intl.NumberFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
-    JSValue newTarget = exec->newTarget();
+    JSValue newTarget = state->newTarget();
     if (newTarget.isUndefined())
-        newTarget = exec->callee();
+        newTarget = state->callee();
 
     // 2. Let numberFormat be OrdinaryCreateFromConstructor(newTarget, %NumberFormatPrototype%).
-    VM& vm = exec->vm();
-    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, jsCast<IntlNumberFormatConstructor*>(exec->callee()));
+    VM& vm = state->vm();
+    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, jsCast<IntlNumberFormatConstructor*>(state->callee()));
     if (numberFormat && !jsDynamicCast<IntlNumberFormatConstructor*>(newTarget)) {
         JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(numberFormat)->setPrototypeWithCycleCheck(exec, proto);
+        asObject(numberFormat)->setPrototypeWithCycleCheck(state, proto);
     }
 
     // 3. ReturnIfAbrupt(numberFormat).
@@ -109,15 +109,15 @@ static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* exec)
     return JSValue::encode(numberFormat);
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState* state)
 {
     // 11.1.2 Intl.NumberFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
     // 2. Let numberFormat be OrdinaryCreateFromConstructor(newTarget, %NumberFormatPrototype%).
-    VM& vm = exec->vm();
-    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, jsCast<IntlNumberFormatConstructor*>(exec->callee()));
+    VM& vm = state->vm();
+    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, jsCast<IntlNumberFormatConstructor*>(state->callee()));
 
     // 3. ReturnIfAbrupt(numberFormat).
     ASSERT(numberFormat);
@@ -140,26 +140,26 @@ CallType IntlNumberFormatConstructor::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool IntlNumberFormatConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool IntlNumberFormatConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, numberFormatConstructorTable, jsCast<IntlNumberFormatConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(state, numberFormatConstructorTable, jsCast<IntlNumberFormatConstructor*>(object), propertyName, slot);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(ExecState* state)
 {
     // 11.2.2 Intl.NumberFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let availableLocales be %NumberFormat%.[[availableLocales]].
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    JSGlobalObject* globalObject = state->callee()->globalObject();
     const HashSet<String> availableLocales = globalObject->intlNumberFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
-    if (exec->hadException())
+    Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));
+    if (state->hadException())
         return JSValue::encode(jsUndefined());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).
-    return JSValue::encode(supportedLocales(exec, availableLocales, requestedLocales, exec->argument(1)));
+    return JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1)));
 }
 
 void IntlNumberFormatConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

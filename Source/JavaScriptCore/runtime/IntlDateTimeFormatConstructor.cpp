@@ -84,20 +84,20 @@ void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPro
     m_dateTimeFormatStructure.set(vm, this, dateTimeFormatStructure);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* state)
 {
     // 12.1.2 Intl.DateTimeFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
-    JSValue newTarget = exec->newTarget();
+    JSValue newTarget = state->newTarget();
     if (newTarget.isUndefined())
-        newTarget = exec->callee();
+        newTarget = state->callee();
 
     // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
-    VM& vm = exec->vm();
-    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, jsCast<IntlDateTimeFormatConstructor*>(exec->callee()));
+    VM& vm = state->vm();
+    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, jsCast<IntlDateTimeFormatConstructor*>(state->callee()));
     if (dateTimeFormat && !jsDynamicCast<IntlDateTimeFormatConstructor*>(newTarget)) {
         JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(dateTimeFormat)->setPrototypeWithCycleCheck(exec, proto);
+        asObject(dateTimeFormat)->setPrototypeWithCycleCheck(state, proto);
     }
 
     // 3. ReturnIfAbrupt(dateTimeFormat).
@@ -109,15 +109,15 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* exec)
     return JSValue::encode(dateTimeFormat);
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* state)
 {
     // 12.1.2 Intl.DateTimeFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
     // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
-    VM& vm = exec->vm();
-    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, jsCast<IntlDateTimeFormatConstructor*>(exec->callee()));
+    VM& vm = state->vm();
+    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, jsCast<IntlDateTimeFormatConstructor*>(state->callee()));
 
     // 3. ReturnIfAbrupt(dateTimeFormat).
     ASSERT(dateTimeFormat);
@@ -140,26 +140,26 @@ CallType IntlDateTimeFormatConstructor::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool IntlDateTimeFormatConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool IntlDateTimeFormatConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, dateTimeFormatConstructorTable, jsCast<IntlDateTimeFormatConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(state, dateTimeFormatConstructorTable, jsCast<IntlDateTimeFormatConstructor*>(object), propertyName, slot);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf(ExecState* state)
 {
     // 12.2.2 Intl.DateTimeFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let availableLocales be %DateTimeFormat%.[[availableLocales]].
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    JSGlobalObject* globalObject = state->callee()->globalObject();
     const HashSet<String> availableLocales = globalObject->intlDateTimeFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
-    if (exec->hadException())
+    Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));
+    if (state->hadException())
         return JSValue::encode(jsUndefined());
 
     // 3. Return SupportedLocales(availableLocales, requestedLocales, options).
-    return JSValue::encode(supportedLocales(exec, availableLocales, requestedLocales, exec->argument(1)));
+    return JSValue::encode(supportedLocales(*state, availableLocales, requestedLocales, state->argument(1)));
 }
     
 void IntlDateTimeFormatConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -84,20 +84,20 @@ void IntlNumberFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
     m_boundFormat.set(vm, this, format);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* state)
 {
     // 11.3.4 Format Number Functions (ECMA-402 2.0)
     // 1. Let nf be the this value.
-    IntlNumberFormat* format = jsDynamicCast<IntlNumberFormat*>(exec->thisValue());
+    IntlNumberFormat* format = jsDynamicCast<IntlNumberFormat*>(state->thisValue());
     // 2. Assert: Type(nf) is Object and nf has an [[initializedNumberFormat]] internal slot whose value is true.
     if (!format)
-        return JSValue::encode(throwTypeError(exec));
+        return JSValue::encode(throwTypeError(state));
 
     // 3. If value is not provided, let value be undefined.
     // 4. Let x be ToNumber(value).
-    double value = exec->argument(0).toNumber(exec);
+    double value = state->argument(0).toNumber(state);
     // 5. ReturnIfAbrupt(x).
-    if (exec->hadException())
+    if (state->hadException())
         return JSValue::encode(jsUndefined());
 
     // 6. Return FormatNumber(nf, x).
@@ -105,7 +105,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatFuncFormatNumber(ExecState* exec)
     // 11.3.4 FormatNumber abstract operation (ECMA-402 2.0)
     // FIXME: Implement FormatNumber.
 
-    return JSValue::encode(jsNumber(value).toString(exec));
+    return JSValue::encode(jsNumber(value).toString(state));
 }
 
 } // namespace JSC

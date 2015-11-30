@@ -120,7 +120,7 @@ static Vector<String> searchLocaleData(const String&, const String& key)
     return keyLocaleData;
 }
 
-static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator, JSValue locales, JSValue optionsValue)
+static IntlCollator* initializeCollator(ExecState& state, IntlCollator& collator, JSValue locales, JSValue optionsValue)
 {
     // 10.1.1 InitializeCollator (collator, locales, options) (ECMA-402 2.0)
 
@@ -128,32 +128,32 @@ static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator,
     // 2. Set collator.[[initializedIntlObject]] to true.
 
     // 3. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(exec, locales);
+    Vector<String> requestedLocales = canonicalizeLocaleList(state, locales);
     // 4. ReturnIfAbrupt(requestedLocales).
-    if (exec->hadException())
+    if (state.hadException())
         return nullptr;
 
     // 5. If options is undefined, then
     JSObject* options;
     if (optionsValue.isUndefined()) {
         // a. Let options be ObjectCreate(%ObjectPrototype%).
-        options = constructEmptyObject(exec);
+        options = constructEmptyObject(&state);
     } else { // 6. Else
         // a. Let options be ToObject(options).
-        options = optionsValue.toObject(exec);
+        options = optionsValue.toObject(&state);
         // b. ReturnIfAbrupt(options).
-        if (exec->hadException())
+        if (state.hadException())
             return nullptr;
     }
 
     // 7. Let u be GetOption(options, "usage", "string", «"sort", "search"», "sort").
     const HashSet<String> usages({ ASCIILiteral("sort"), ASCIILiteral("search") });
-    String usage = getIntlStringOption(exec, options, exec->vm().propertyNames->usage, usages, "usage must be either \"sort\" or \"search\"", ASCIILiteral("sort"));
+    String usage = intlStringOption(state, options, state.vm().propertyNames->usage, usages, "usage must be either \"sort\" or \"search\"", ASCIILiteral("sort"));
     // 8. ReturnIfAbrupt(u).
-    if (exec->hadException())
+    if (state.hadException())
         return nullptr;
     // 9. Set collator.[[usage]] to u.
-    collator->setUsage(usage);
+    collator.setUsage(usage);
 
     // 10. If u is "sort", then
     // a. Let localeData be the value of %Collator%.[[sortLocaleData]];
@@ -170,9 +170,9 @@ static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator,
 
     // 13. Let matcher be GetOption(options, "localeMatcher", "string", «"lookup", "best fit"», "best fit").
     const HashSet<String> matchers({ ASCIILiteral("lookup"), ASCIILiteral("best fit") });
-    String matcher = getIntlStringOption(exec, options, exec->vm().propertyNames->localeMatcher, matchers, "localeMatcher must be either \"lookup\" or \"best fit\"", ASCIILiteral("best fit"));
+    String matcher = intlStringOption(state, options, state.vm().propertyNames->localeMatcher, matchers, "localeMatcher must be either \"lookup\" or \"best fit\"", ASCIILiteral("best fit"));
     // 14. ReturnIfAbrupt(matcher).
-    if (exec->hadException())
+    if (state.hadException())
         return nullptr;
     // 15. Set opt.[[localeMatcher]] to matcher.
     opt.set(ASCIILiteral("localeMatcher"), matcher);
@@ -191,8 +191,8 @@ static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator,
     {
         String numericString;
         bool usesFallback;
-        bool numeric = getIntlBooleanOption(exec, options, exec->vm().propertyNames->numeric, usesFallback);
-        if (exec->hadException())
+        bool numeric = intlBooleanOption(state, options, state.vm().propertyNames->numeric, usesFallback);
+        if (state.hadException())
             return nullptr;
         if (!usesFallback)
             numericString = ASCIILiteral(numeric ? "true" : "false");
@@ -200,8 +200,8 @@ static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator,
     }
     {
         const HashSet<String> caseFirsts({ ASCIILiteral("upper"), ASCIILiteral("lower"), ASCIILiteral("false") });
-        String caseFirst = getIntlStringOption(exec, options, exec->vm().propertyNames->caseFirst, caseFirsts, "caseFirst must be either \"upper\", \"lower\", or \"false\"", String());
-        if (exec->hadException())
+        String caseFirst = intlStringOption(state, options, state.vm().propertyNames->caseFirst, caseFirsts, "caseFirst must be either \"upper\", \"lower\", or \"false\"", String());
+        if (state.hadException())
             return nullptr;
         opt.set(ASCIILiteral("kf"), caseFirst);
     }
@@ -211,11 +211,11 @@ static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator,
     const Vector<String> relevantExtensionKeys { ASCIILiteral("co"), ASCIILiteral("kn") };
 
     // 18. Let r be ResolveLocale(%Collator%.[[availableLocales]], requestedLocales, opt, relevantExtensionKeys, localeData).
-    const HashSet<String>& availableLocales = exec->callee()->globalObject()->intlCollatorAvailableLocales();
+    const HashSet<String>& availableLocales = state.callee()->globalObject()->intlCollatorAvailableLocales();
     HashMap<String, String> result = resolveLocale(availableLocales, requestedLocales, opt, relevantExtensionKeys, localeData);
 
     // 19. Set collator.[[locale]] to the value of r.[[locale]].
-    collator->setLocale(result.get(ASCIILiteral("locale")));
+    collator.setLocale(result.get(ASCIILiteral("locale")));
 
     // 20. Let k be 0.
     // 21. Let lenValue be Get(relevantExtensionKeys, "length").
@@ -238,19 +238,19 @@ static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator,
     {
         ASSERT(relevantExtensionKeys[0] == "co");
         const String& value = result.get(ASCIILiteral("co"));
-        collator->setCollation(value.isNull() ? ASCIILiteral("default") : value);
+        collator.setCollation(value.isNull() ? ASCIILiteral("default") : value);
     }
     {
         ASSERT(relevantExtensionKeys[1] == "kn");
         const String& value = result.get(ASCIILiteral("kn"));
-        collator->setNumeric(value == "true");
+        collator.setNumeric(value == "true");
     }
 
     // 24. Let s be GetOption(options, "sensitivity", "string", «"base", "accent", "case", "variant"», undefined).
     const HashSet<String> sensitivities({ ASCIILiteral("base"), ASCIILiteral("accent"), ASCIILiteral("case"), ASCIILiteral("variant") });
-    String sensitivity = getIntlStringOption(exec, options, exec->vm().propertyNames->sensitivity, sensitivities, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\"", String());
+    String sensitivity = intlStringOption(state, options, state.vm().propertyNames->sensitivity, sensitivities, "sensitivity must be either \"base\", \"accent\", \"case\", or \"variant\"", String());
     // 25. ReturnIfAbrupt(s).
-    if (exec->hadException())
+    if (state.hadException())
         return nullptr;
     // 26. If s is undefined, then
     if (sensitivity.isNull()) {
@@ -267,23 +267,23 @@ static IntlCollator* initializeCollator(ExecState* exec, IntlCollator* collator,
         }
     }
     // 27. Set collator.[[sensitivity]] to s.
-    collator->setSensitivity(sensitivity);
+    collator.setSensitivity(sensitivity);
 
     // 28. Let ip be GetOption(options, "ignorePunctuation", "boolean", undefined, false).
     bool usesFallback;
-    bool ignorePunctuation = getIntlBooleanOption(exec, options, exec->vm().propertyNames->ignorePunctuation, usesFallback);
+    bool ignorePunctuation = intlBooleanOption(state, options, state.vm().propertyNames->ignorePunctuation, usesFallback);
     if (usesFallback)
         ignorePunctuation = false;
     // 29. ReturnIfAbrupt(ip).
-    if (exec->hadException())
+    if (state.hadException())
         return nullptr;
     // 30. Set collator.[[ignorePunctuation]] to ip.
-    collator->setIgnorePunctuation(ignorePunctuation);
+    collator.setIgnorePunctuation(ignorePunctuation);
 
     // 31. Set collator.[[boundCompare]] to undefined.
     // 32. Set collator.[[initializedCollator]] to true.
     // 33. Return collator.
-    return collator;
+    return &collator;
 }
 
 IntlCollatorConstructor* IntlCollatorConstructor::create(VM& vm, Structure* structure, IntlCollatorPrototype* collatorPrototype, Structure* collatorStructure)
@@ -311,48 +311,48 @@ void IntlCollatorConstructor::finishCreation(VM& vm, IntlCollatorPrototype* coll
     m_collatorStructure.set(vm, this, collatorStructure);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* state)
 {
     // 10.1.2 Intl.Collator ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
-    JSValue newTarget = exec->newTarget();
+    JSValue newTarget = state->newTarget();
     if (newTarget.isUndefined())
-        newTarget = exec->callee();
+        newTarget = state->callee();
 
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
-    VM& vm = exec->vm();
-    IntlCollator* collator = IntlCollator::create(vm, jsCast<IntlCollatorConstructor*>(exec->callee()));
+    VM& vm = state->vm();
+    IntlCollator* collator = IntlCollator::create(vm, jsCast<IntlCollatorConstructor*>(state->callee()));
     if (collator && !jsDynamicCast<IntlCollatorConstructor*>(newTarget)) {
         JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
-        asObject(collator)->setPrototypeWithCycleCheck(exec, proto);
+        asObject(collator)->setPrototypeWithCycleCheck(state, proto);
     }
 
     // 3. ReturnIfAbrupt(collator).
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).
-    JSValue locales = exec->argument(0);
-    JSValue options = exec->argument(1);
-    return JSValue::encode(initializeCollator(exec, collator, locales, options));
+    JSValue locales = state->argument(0);
+    JSValue options = state->argument(1);
+    return JSValue::encode(initializeCollator(*state, *collator, locales, options));
 }
 
-static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* state)
 {
     // 10.1.2 Intl.Collator ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
-    VM& vm = exec->vm();
-    IntlCollator* collator = IntlCollator::create(vm, jsCast<IntlCollatorConstructor*>(exec->callee()));
+    VM& vm = state->vm();
+    IntlCollator* collator = IntlCollator::create(vm, jsCast<IntlCollatorConstructor*>(state->callee()));
 
     // 3. ReturnIfAbrupt(collator).
     ASSERT(collator);
 
     // 4. Return InitializeCollator(collator, locales, options).
-    JSValue locales = exec->argument(0);
-    JSValue options = exec->argument(1);
-    return JSValue::encode(initializeCollator(exec, collator, locales, options));
+    JSValue locales = state->argument(0);
+    JSValue options = state->argument(1);
+    return JSValue::encode(initializeCollator(*state, *collator, locales, options));
 }
 
 ConstructType IntlCollatorConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -367,25 +367,25 @@ CallType IntlCollatorConstructor::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool IntlCollatorConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool IntlCollatorConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, collatorConstructorTable, jsCast<IntlCollatorConstructor*>(object), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(state, collatorConstructorTable, jsCast<IntlCollatorConstructor*>(object), propertyName, slot);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecState* state)
 {
     // 10.2.2 Intl.Collator.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let requestedLocales be CanonicalizeLocaleList(locales).
-    Vector<String> requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
+    Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));
 
     // 2. ReturnIfAbrupt(requestedLocales).
-    if (exec->hadException())
+    if (state->hadException())
         return JSValue::encode(jsUndefined());
 
     // 3. Return SupportedLocales(%Collator%.[[availableLocales]], requestedLocales, options).
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
-    return JSValue::encode(supportedLocales(exec, globalObject->intlCollatorAvailableLocales(), requestedLocales, exec->argument(1)));
+    JSGlobalObject* globalObject = state->callee()->globalObject();
+    return JSValue::encode(supportedLocales(*state, globalObject->intlCollatorAvailableLocales(), requestedLocales, state->argument(1)));
 }
 
 void IntlCollatorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

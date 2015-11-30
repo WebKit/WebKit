@@ -84,28 +84,28 @@ void IntlCollator::setBoundCompare(VM& vm, JSBoundFunction* format)
     m_boundCompare.set(vm, this, format);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* state)
 {
     // 10.3.4 Collator Compare Functions (ECMA-402 2.0)
     // 1. Let collator be the this value.
-    IntlCollator* collator = jsDynamicCast<IntlCollator*>(exec->thisValue());
+    IntlCollator* collator = jsDynamicCast<IntlCollator*>(state->thisValue());
 
     // 2. Assert: Type(collator) is Object and collator has an [[initializedCollator]] internal slot whose value is true.
     if (!collator)
-        return JSValue::encode(throwTypeError(exec));
+        return JSValue::encode(throwTypeError(state));
 
     // 3. If x is not provided, let x be undefined.
     // 4. If y is not provided, let y be undefined.
     // 5. Let X be ToString(x).
-    JSString* a = exec->argument(0).toString(exec);
+    JSString* a = state->argument(0).toString(state);
     // 6. ReturnIfAbrupt(X).
-    if (exec->hadException())
+    if (state->hadException())
         return JSValue::encode(jsUndefined());
 
     // 7. Let Y be ToString(y).
-    JSString* b = exec->argument(1).toString(exec);
+    JSString* b = state->argument(1).toString(state);
     // 8. ReturnIfAbrupt(Y).
-    if (exec->hadException())
+    if (state->hadException())
         return JSValue::encode(jsUndefined());
 
     // 9. Return CompareStrings(collator, X, Y).
@@ -114,7 +114,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState* exec)
     // FIXME: Implement CompareStrings.
 
     // Return simple check until properly implemented.
-    return JSValue::encode(jsNumber(codePointCompare(a->value(exec).impl(), b->value(exec).impl())));
+    return JSValue::encode(jsNumber(codePointCompare(a->value(state).impl(), b->value(state).impl())));
 }
 
 } // namespace JSC

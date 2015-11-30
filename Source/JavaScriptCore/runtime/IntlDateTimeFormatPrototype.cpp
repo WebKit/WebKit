@@ -81,31 +81,31 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, Structure*)
     Base::finishCreation(vm);
 }
 
-bool IntlDateTimeFormatPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool IntlDateTimeFormatPrototype::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, dateTimeFormatPrototypeTable, jsCast<IntlDateTimeFormatPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(state, dateTimeFormatPrototypeTable, jsCast<IntlDateTimeFormatPrototype*>(object), propertyName, slot);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* state)
 {
     // 12.3.3 Intl.DateTimeFormat.prototype.format (ECMA-402 2.0)
     // 1. Let dtf be this DateTimeFormat object.
-    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(exec->thisValue());
+    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue());
     // 2. ReturnIfAbrupt(dtf).
     if (!dtf)
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat")));
+        return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat")));
     
     JSBoundFunction* boundFormat = dtf->boundFormat();
     // 3. If the [[boundFormat]] internal slot of this DateTimeFormat object is undefined,
     if (!boundFormat) {
-        VM& vm = exec->vm();
+        VM& vm = state->vm();
         JSGlobalObject* globalObject = dtf->globalObject();
         // a. Let F be a new built-in function object as defined in 12.3.4.
         // b. The value of F’s length property is 1. (Note: F’s length property was 0 in ECMA-402 1.0)
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, ASCIILiteral("format"), IntlDateTimeFormatFuncFormatDateTime, NoIntrinsic);
         JSArray* boundArgs = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
         if (!boundArgs)
-            return JSValue::encode(throwOutOfMemoryError(exec));
+            return JSValue::encode(throwOutOfMemoryError(state));
         
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, dtf, boundArgs, 1, ASCIILiteral("format"));
@@ -116,17 +116,17 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
     return JSValue::encode(boundFormat);
 }
 
-EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeFuncResolvedOptions(ExecState* state)
 {
     // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions() (ECMA-402 2.0)
-    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(exec->thisValue());
+    IntlDateTimeFormat* dtf = jsDynamicCast<IntlDateTimeFormat*>(state->thisValue());
     if (!dtf)
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat")));
+        return JSValue::encode(throwTypeError(state, ASCIILiteral("Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat")));
 
     // The function returns a new object whose properties and attributes are set as if constructed by an object literal assigning to each of the following properties the value of the corresponding internal slot of this DateTimeFormat object (see 12.4): locale, calendar, numberingSystem, timeZone, hour12, weekday, era, year, month, day, hour, minute, second, and timeZoneName. Properties whose corresponding internal slots are not present are not assigned.
     // Note: In this version of the ECMAScript 2015 Internationalization API, the timeZone property will be the name of the default time zone if no timeZone property was provided in the options object provided to the Intl.DateTimeFormat constructor. The previous version left the timeZone property undefined in this case.
 
-    JSObject* options = constructEmptyObject(exec);
+    JSObject* options = constructEmptyObject(state);
 
     // FIXME: Populate object from internal slots.
 

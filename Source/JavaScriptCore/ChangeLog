@@ -1,3 +1,65 @@
+2015-11-30  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Fix coding style of Intl code
+        https://bugs.webkit.org/show_bug.cgi?id=151491
+
+        Reviewed by Darin Adler.
+
+        This patch does three things:
+        1. Rename pointers and references to ExecState from "exec" to "state".
+        2. Pass parameters by references instead of pointers if the parameters
+           are required.
+        3. Remove the word "get" from the names of functions that don't return
+           values through out arguments.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollatorFuncCompare):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::initializeCollator):
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        (JSC::IntlCollatorConstructor::getOwnPropertySlot):
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormatFuncFormatDateTime):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::callIntlDateTimeFormat):
+        (JSC::IntlDateTimeFormatConstructor::getOwnPropertySlot):
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::getOwnPropertySlot):
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat):
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormatFuncFormatNumber):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        (JSC::callIntlNumberFormat):
+        (JSC::IntlNumberFormatConstructor::getOwnPropertySlot):
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::getOwnPropertySlot):
+        (JSC::IntlNumberFormatPrototypeGetterFormat):
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::intlBooleanOption):
+        (JSC::intlStringOption):
+        (JSC::privateUseLangTag):
+        (JSC::canonicalLangTag):
+        (JSC::grandfatheredLangTag):
+        (JSC::canonicalizeLanguageTag):
+        (JSC::canonicalizeLocaleList):
+        (JSC::lookupSupportedLocales):
+        (JSC::bestFitSupportedLocales):
+        (JSC::supportedLocales):
+        (JSC::getIntlBooleanOption): Deleted.
+        (JSC::getIntlStringOption): Deleted.
+        (JSC::getPrivateUseLangTag): Deleted.
+        (JSC::getCanonicalLangTag): Deleted.
+        (JSC::getGrandfatheredLangTag): Deleted.
+        * runtime/IntlObject.h:
+
 2015-11-30  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Simplify the loop that remove useless Air instructions
