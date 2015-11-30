@@ -96,7 +96,8 @@ static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
 
 static void testWebViewCustomCharset(WebViewTest* test, gconstpointer)
 {
-    test->loadHtml("<html><body>WebKitGTK+ custom encoding test</body></html>", nullptr);
+    test->loadURI(gServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
     g_assert(!webkit_web_view_get_custom_charset(test->m_webView));
     webkit_web_view_set_custom_charset(test->m_webView, "utf8");
     // Changing the charset reloads the page, so wait until reloaded.
