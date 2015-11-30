@@ -1,5 +1,24 @@
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Support updating cursor values when the object store uses inline keys.
+        https://bugs.webkit.org/show_bug.cgi?id=151647
+
+        Reviewed by Andy Estes.
+
+        No new tests (At least two previously failing tests now pass and are unskipped).
+
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::update): Use putForCursorUpdate() instead of put()
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::add):
+        (WebCore::IDBClient::IDBObjectStore::put):
+        (WebCore::IDBClient::IDBObjectStore::putForCursorUpdate): Use the flag to skip the inline-key check.
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd): Add a flag to skip the inline-key check.
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Resolve flaky GC-vs-wrapper issue with IDBOpenDBRequest.
         https://bugs.webkit.org/show_bug.cgi?id=151645
 

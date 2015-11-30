@@ -139,7 +139,7 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::
         return nullptr;
     }
 
-    return effectiveObjectStore().put(exec, value.jsValue(), m_deprecatedCurrentPrimaryKey.jsValue(), ec);
+    return effectiveObjectStore().putForCursorUpdate(exec, value.jsValue(), m_deprecatedCurrentPrimaryKey.jsValue(), ec);
 }
 
 void IDBCursor::advance(unsigned long count, ExceptionCode& ec)

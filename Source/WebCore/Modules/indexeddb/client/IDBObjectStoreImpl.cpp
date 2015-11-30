@@ -203,27 +203,32 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
 {
-    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
+    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
 {
     auto idbKey = scriptValueToIDBKey(execState, key);
-    return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
+    return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
 {
     auto idbKey = scriptValueToIDBKey(execState, key);
-    return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, ec);
+    return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
 {
-    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::Overwrite, ec);
+    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, ExceptionCode& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::putForCursorUpdate(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
+{
+    return putOrAdd(state, value, scriptValueToIDBKey(state, key), IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::DoNotPerform, ec);
+}
+
+RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, InlineKeyCheck inlineKeyCheck, ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
 
@@ -261,7 +266,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC:
 
     bool usesInlineKeys = !m_info.keyPath().isNull();
     bool usesKeyGenerator = autoIncrement();
-    if (usesInlineKeys) {
+    if (usesInlineKeys && inlineKeyCheck == InlineKeyCheck::Perform) {
         if (key) {
             ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
             return nullptr;
