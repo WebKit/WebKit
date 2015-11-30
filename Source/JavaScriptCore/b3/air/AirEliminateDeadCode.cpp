@@ -134,21 +134,15 @@ bool eliminateDeadCode(Code& code)
             break;
     }
 
-    changed = false;
+    unsigned removedInstCount = 0;
     for (BasicBlock* block : code) {
-        unsigned sourceIndex = 0;
-        unsigned targetIndex = 0;
-        while (sourceIndex < block->size()) {
-            Inst inst = WTF::move(block->at(sourceIndex++));
-            if (isInstLive(inst))
-                block->at(targetIndex++) = WTF::move(inst);
-            else
-                changed = true;
-        }
-        block->resize(targetIndex);
+        removedInstCount += block->insts().removeAllMatching(
+            [&] (Inst& inst) -> bool {
+                return !isInstLive(inst);
+            });
     }
 
-    return changed;
+    return !!removedInstCount;
 }
 
 } } } // namespace JSC::B3::Air

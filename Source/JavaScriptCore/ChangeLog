@@ -1,3 +1,17 @@
+2015-11-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Simplify the loop that remove useless Air instructions
+        https://bugs.webkit.org/show_bug.cgi?id=151652
+
+        Reviewed by Andreas Kling.
+
+        * b3/air/AirEliminateDeadCode.cpp:
+        (JSC::B3::Air::eliminateDeadCode):
+        Use Vector's removeAllMatching() instead of custom code.
+
+        It is likely faster too since we remove few values and Vector
+        is good at doing that.
+
 2015-11-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be be clever about choosing which child to reuse for result in two-operand commutative operations
