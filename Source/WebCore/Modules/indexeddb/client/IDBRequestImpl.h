@@ -97,6 +97,8 @@ public:
 
     const IDBCursor* pendingCursor() const { return m_pendingCursor.get(); }
 
+    void setSource(IDBCursor&);
+
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);

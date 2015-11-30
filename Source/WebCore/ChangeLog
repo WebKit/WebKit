@@ -1,3 +1,25 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Set the correct source on the IDBRequest for cursor updates
+        https://bugs.webkit.org/show_bug.cgi?id=151665
+
+        Reviewed by Andy Estes.
+
+        No new tests (At least one existing failing test now passes).
+
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::update):
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::putForCursorUpdate):
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+        
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::IDBRequest):
+        (WebCore::IDBClient::IDBRequest::setSource):
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+
 2015-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Get rid of the legacy TextIndicatorWindow style

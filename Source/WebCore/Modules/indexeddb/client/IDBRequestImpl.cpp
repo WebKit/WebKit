@@ -86,16 +86,12 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
     , m_transaction(&transaction)
     , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
+    , m_source(IDBAny::create(cursor))
     , m_pendingCursor(&cursor)
 {
     suspendIfNeeded();
 
     cursor.setRequest(*this);
-
-    auto* cursorSource = cursor.source();
-    ASSERT(cursorSource);
-    ASSERT(cursorSource->type() == IDBAny::Type::IDBObjectStore || cursorSource->type() == IDBAny::Type::IDBIndex);
-    m_source = cursorSource;
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTransaction& transaction)
@@ -141,6 +137,11 @@ RefPtr<DOMError> IDBRequest::error(ExceptionCode&) const
 RefPtr<WebCore::IDBAny> IDBRequest::source() const
 {
     return m_source;
+}
+
+void IDBRequest::setSource(IDBCursor& cursor)
+{
+    m_source = IDBAny::create(cursor);
 }
 
 RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
