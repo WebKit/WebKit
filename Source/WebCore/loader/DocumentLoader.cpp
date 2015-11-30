@@ -144,9 +144,6 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_dataLoadTimer(*this, &DocumentLoader::handleSubstituteDataLoadNow)
     , m_subresourceLoadersArePageCacheAcceptable(false)
     , m_applicationCacheHost(std::make_unique<ApplicationCacheHost>(*this))
-#if ENABLE(CONTENT_FILTERING)
-    , m_contentFilter(!substituteData.isValid() ? ContentFilter::createIfEnabled(*this) : nullptr)
-#endif
 {
 }
 
@@ -1419,6 +1416,10 @@ void DocumentLoader::startLoadingMainResource()
 
     if (maybeLoadEmpty())
         return;
+
+#if ENABLE(CONTENT_FILTERING)
+    m_contentFilter = !m_originalSubstituteDataWasValid ? ContentFilter::createIfEnabled(*this) : nullptr;
+#endif
 
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.

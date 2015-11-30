@@ -1,3 +1,21 @@
+2015-11-25  Andy Estes  <aestes@apple.com>
+
+        [Content Filtering] Avoid creating a ContentFilter when loading the empty document
+        https://bugs.webkit.org/show_bug.cgi?id=151615
+
+        Reviewed by Daniel Bates.
+
+        It's expensive to create the first ContentFilter since two frameworks must be soft-linked. There's no reason to
+        pay this cost if we're just loading the empty document.
+
+        No new tests. It's not possible to write a test that would fail without this change since ContentFilter is not
+        notified of empty document loads.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource): Don't initialize m_contentFilter until we know we aren't
+        loading the empty document.
+        (WebCore::DocumentLoader::DocumentLoader):
+
 2015-11-29  Antoine Quint  <graouts@apple.com>
 
         Browser does not fall back to SVG attribute value when CSS style value is invalid or not supported
