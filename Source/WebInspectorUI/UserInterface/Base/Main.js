@@ -175,6 +175,10 @@ WebInspector.loaded = function()
 
 WebInspector.contentLoaded = function()
 {
+    // If a loading error page was already shown, then don't set up the Inspector UI.
+    if (window.__earlyErrors)
+        return;
+
     // Register for global events.
     document.addEventListener("beforecopy", this._beforecopy.bind(this));
     document.addEventListener("copy", this._copy.bind(this));

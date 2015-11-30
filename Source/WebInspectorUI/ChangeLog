@@ -1,5 +1,30 @@
 2015-11-30  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: show something useful when the inspector frontend fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=151643
+
+        Reviewed by Timothy Hatcher.
+
+        When a parse error or other early error happens before the inspector
+        is fully loaded, we can't use the second-level inspector to tell what's
+        going on. It would be better to catch any early errors and list them.
+
+        This patch adds an error page that shows the early errors that happened
+        during loading. It provides a list of errors, a link to reload the
+        inspector, and a link to submit a pre-filled bug report about the error.
+
+        For now, this page only shows up in engineering builds because it's
+        located in the Debug/ directory. We can move it later when it works
+        better in all cases. Follow-up patches can address smaller issues,
+        such as the transparent title bar and broken text selection.
+
+         * UserInterface/Debug/CatchEarlyErrors.css: Added.
+         * UserInterface/Debug/CatchEarlyErrors.js: Added.
+         * UserInterface/Main.html:
+         * UserInterface/Main.js: Abort setting up the UI if something happened.
+
+2015-11-30  Brian Burg  <bburg@apple.com>
+
         Web Inspector: delete-by-word and similar shortcuts should add text to the WebCore kill ring
         https://bugs.webkit.org/show_bug.cgi?id=151312
 
