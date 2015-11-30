@@ -324,10 +324,14 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
 void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
 {
     ASSERT(m_pendingCursor);
-    if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess)
-        m_pendingCursor->setGetResult(*this, resultData.getResult());
+    m_result = nullptr;
 
-    m_result = IDBAny::create(*m_pendingCursor);
+    if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess) {
+        m_pendingCursor->setGetResult(*this, resultData.getResult());
+        if (resultData.getResult().isDefined())
+            m_result = IDBAny::create(*m_pendingCursor);
+    }
+
     m_pendingCursor = nullptr;
 
     requestCompleted(resultData);

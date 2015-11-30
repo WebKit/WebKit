@@ -39,13 +39,6 @@ Success iterating cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prev
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
-Cursor key is: undefined
-Cursor value is: undefined
-Cursor primary key is: undefined
-Success iterating cursor
-Cursor is: [object IDBCursorWithValue]
-Cursor direction is: prev
-Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: 9
 Cursor value is: Record 9
 Cursor primary key is: 9
@@ -70,13 +63,6 @@ Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: 0
 Cursor value is: Record 0
 Cursor primary key is: 0
-Success iterating cursor
-Cursor is: [object IDBCursorWithValue]
-Cursor direction is: prev
-Cursor source is: [object IDBObjectStore] (TestObjectStore)
-Cursor key is: undefined
-Cursor value is: undefined
-Cursor primary key is: undefined
 Initial upgrade versionchange transaction complete
 Done
 

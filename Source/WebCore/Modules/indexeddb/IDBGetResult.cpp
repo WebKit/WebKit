@@ -45,6 +45,7 @@ IDBGetResult IDBGetResult::isolatedCopy() const
     result.m_keyData = m_keyData.isolatedCopy();
     result.m_primaryKeyData = m_primaryKeyData.isolatedCopy();
     result.m_keyPath = m_keyPath.isolatedCopy();
+    result.m_isDefined = m_isDefined;
     return result;
 }
 

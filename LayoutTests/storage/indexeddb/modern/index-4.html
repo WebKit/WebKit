@@ -32,12 +32,13 @@ function checkIndexValues()
     var cursorRequest = index.openCursor();
     cursorRequest.onsuccess = function() {
         var cursor = cursorRequest.result;
-        log("Cursor at record: " + cursor.key + " / " + cursor.primaryKey);
-        
-        if (cursor.key != undefined)
-            cursor.continue();
-        else
+        if (!cursor) {
             done();
+            return;
+        }
+        log("Cursor at record: " + cursor.key + " / " + cursor.primaryKey);
+        cursor.continue();
+
     }
     cursorRequest.onerror = function(e) {
         log("Unexpected error opening or iterating cursor");

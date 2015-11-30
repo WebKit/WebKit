@@ -32,19 +32,23 @@ function logCursor(cursor)
 }
 
 var objectStore;
-
+var shouldStartPrevious = true;
 function setupRequest(request)
 {
     request.onsuccess = function() {
+        if (!request.result) {
+            if (shouldStartPrevious) {
+                setupRequest(objectStore.openCursor(IDBKeyRange.lowerBound(-Infinity), "prev"));
+                shouldStartPrevious = false;
+            }
+            return;
+        }
+
         log("Success iterating " + request.result.direction + " cursor");
         logCursor(request.result);
-        if (request.result.key != undefined)
-            request.result.continue();
-        else if (request.result.direction == "next")
-            setupRequest(objectStore.openCursor(IDBKeyRange.lowerBound(-Infinity), "prev"));
-        // else
-        //     log("OKAY how?");
+        request.result.continue();
     }
+
     request.onerror = function(e) {
         log("Error iterating cursor");
         done();

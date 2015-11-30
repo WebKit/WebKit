@@ -1,5 +1,24 @@
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: openCursor() fix resulting in at least 4 more passing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=151630
+
+        Reviewed by Andy Estes.
+
+        No new tests (At least 4 failing tests now pass, and 9 other incorrect tests updated).
+
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::isolatedCopy):
+        * Modules/indexeddb/IDBGetResult.h:
+        (WebCore::IDBGetResult::IDBGetResult):
+        (WebCore::IDBGetResult::isDefined):
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::didOpenOrIterateCursor): If the IDBGetResult is undefined,
+          do not expose the cursor as the result property of the IDBRequest.
+
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Support keyPath injection into object store records.
         https://bugs.webkit.org/show_bug.cgi?id=151640
 

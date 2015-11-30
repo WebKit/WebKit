@@ -83,11 +83,6 @@ Cursor primary key is: 18
 Cursor value is: [object Object]
 Deleted key 18 from object store
 Success opening or iterating cursor
-Cursor direction is: next
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection(index, 'prev')
 
@@ -171,11 +166,6 @@ Cursor primary key is: 1
 Cursor value is: [object Object]
 Deleted key 1 from object store
 Success opening or iterating cursor
-Cursor direction is: prev
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection(index, 'nextunique')
 
@@ -241,11 +231,6 @@ Cursor value is: [object Object]
 Deleted key 18 from object store
 Deleted key 1 from object store
 Success opening or iterating cursor
-Cursor direction is: nextunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection(index, 'prevunique')
 
@@ -310,10 +295,5 @@ Cursor primary key is: 1
 Cursor value is: [object Object]
 Deleted key 1 from object store
 Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 Done
 

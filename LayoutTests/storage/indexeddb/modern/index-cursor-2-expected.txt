@@ -21,12 +21,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 9
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: next
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('nextunique', IDBKeyRange.bound('B', 'D', true, true))
 Success opening or iterating cursor
@@ -35,12 +29,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 7
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: nextunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prev', IDBKeyRange.bound('B', 'D', true, true))
 Success opening or iterating cursor
@@ -61,12 +49,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 7
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prev
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prevunique', IDBKeyRange.bound('B', 'D', true, true))
 Success opening or iterating cursor
@@ -75,12 +57,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 9
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.bound('B', 'C'))
 Success opening or iterating cursor
@@ -119,12 +95,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 9
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: next
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('nextunique', IDBKeyRange.bound('B', 'C'))
 Success opening or iterating cursor
@@ -139,12 +109,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 7
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: nextunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prev', IDBKeyRange.bound('B', 'C'))
 Success opening or iterating cursor
@@ -183,12 +147,6 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 4
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prev
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prevunique', IDBKeyRange.bound('B', 'C'))
 Success opening or iterating cursor
@@ -203,12 +161,6 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 6
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.upperBound('B'))
 Success opening or iterating cursor
@@ -247,12 +199,6 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 6
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: next
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('nextunique', IDBKeyRange.upperBound('B'))
 Success opening or iterating cursor
@@ -267,12 +213,6 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 4
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: nextunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prev', IDBKeyRange.upperBound('B'))
 Success opening or iterating cursor
@@ -311,12 +251,6 @@ Cursor source is: TestIndex1
 Cursor key is: A
 Cursor primary key is: 1
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prev
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prevunique', IDBKeyRange.upperBound('B'))
 Success opening or iterating cursor
@@ -331,12 +265,6 @@ Cursor source is: TestIndex1
 Cursor key is: A
 Cursor primary key is: 3
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.lowerBound('C'))
 Success opening or iterating cursor
@@ -375,12 +303,6 @@ Cursor source is: TestIndex1
 Cursor key is: D
 Cursor primary key is: 12
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: next
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('nextunique', IDBKeyRange.lowerBound('C'))
 Success opening or iterating cursor
@@ -395,12 +317,6 @@ Cursor source is: TestIndex1
 Cursor key is: D
 Cursor primary key is: 10
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: nextunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prev', IDBKeyRange.lowerBound('C'))
 Success opening or iterating cursor
@@ -439,12 +355,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 7
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prev
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prevunique', IDBKeyRange.lowerBound('C'))
 Success opening or iterating cursor
@@ -459,12 +369,6 @@ Cursor source is: TestIndex1
 Cursor key is: C
 Cursor primary key is: 9
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.only('B'))
 Success opening or iterating cursor
@@ -485,12 +389,6 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 6
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: next
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('nextunique', IDBKeyRange.only('B'))
 Success opening or iterating cursor
@@ -499,12 +397,6 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 4
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: nextunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prev', IDBKeyRange.only('B'))
 Success opening or iterating cursor
@@ -525,12 +417,6 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 4
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prev
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 
 Starting a new cursor: testCursorDirection('prevunique', IDBKeyRange.only('B'))
 Success opening or iterating cursor
@@ -539,11 +425,5 @@ Cursor source is: TestIndex1
 Cursor key is: B
 Cursor primary key is: 6
 Cursor value is: [object Object]
-Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: undefined
-Cursor primary key is: undefined
-Cursor value is: undefined
 Done
 

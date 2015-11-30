@@ -19,6 +19,5 @@ Cursor at record: H / 15
 Cursor at record: H / 16
 Cursor at record: I / 17
 Cursor at record: I / 18
-Cursor at record: undefined / undefined
 Done
 

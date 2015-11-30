@@ -1,3 +1,30 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: openCursor() fix resulting in at least 4 more passing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=151630
+
+        Reviewed by Andy Estes.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/cursor-2-expected.txt:
+        * storage/indexeddb/modern/cursor-2.html:
+        * storage/indexeddb/modern/cursor-3-expected.txt:
+        * storage/indexeddb/modern/cursor-3.html:
+        * storage/indexeddb/modern/cursor-4-expected.txt:
+        * storage/indexeddb/modern/cursor-4.html:
+        * storage/indexeddb/modern/deleteindex-1-expected.txt:
+        * storage/indexeddb/modern/deleteindex-1.html:
+        * storage/indexeddb/modern/deleteindex-2-expected.txt:
+        * storage/indexeddb/modern/deleteindex-2.html:
+        * storage/indexeddb/modern/index-4-expected.txt:
+        * storage/indexeddb/modern/index-4.html:
+        * storage/indexeddb/modern/index-cursor-1-expected.txt:
+        * storage/indexeddb/modern/index-cursor-1.html:
+        * storage/indexeddb/modern/index-cursor-2-expected.txt:
+        * storage/indexeddb/modern/index-cursor-2.html:
+        * storage/indexeddb/modern/index-cursor-3-expected.txt:
+        * storage/indexeddb/modern/index-cursor-3.html:
+
 2015-11-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/cache/disk-cache/disk-cache-request-max-stale.html as flaky on Yosemite WK2

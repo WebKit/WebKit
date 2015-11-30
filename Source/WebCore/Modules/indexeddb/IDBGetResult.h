@@ -39,6 +39,7 @@ namespace WebCore {
 class IDBGetResult {
 public:
     IDBGetResult()
+        : m_isDefined(false)
     {
     }
 
@@ -90,6 +91,7 @@ public:
     const IDBKeyData& keyData() const { return m_keyData; }
     const IDBKeyData& primaryKeyData() const { return m_primaryKeyData; }
     const IDBKeyPath& keyPath() const { return m_keyPath; }
+    bool isDefined() const { return m_isDefined; }
 
     // FIXME: When removing LegacyIDB, remove these setters.
     // https://bugs.webkit.org/show_bug.cgi?id=150854
@@ -106,6 +108,7 @@ private:
     IDBKeyData m_keyData;
     IDBKeyData m_primaryKeyData;
     IDBKeyPath m_keyPath;
+    bool m_isDefined { true };
 };
 
 } // namespace WebCore

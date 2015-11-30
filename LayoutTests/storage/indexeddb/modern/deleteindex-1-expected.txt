@@ -3,7 +3,6 @@ Initial upgrade needed: Old version - 0 New version - 1
 Count is: 2
 Cursor at record: A / 1
 Cursor at record: A / 2
-Cursor at record: undefined / undefined
 Deleted the index
 Initial upgrade versionchange transaction complete
 Object store has indexes:

@@ -31,12 +31,13 @@ function logCursor(cursor)
 function setupRequest(request)
 {
     request.onsuccess = function() {
+        if (!request.result) {
+            startNextCursor();
+            return;
+        }
         log("Success opening or iterating cursor");
         logCursor(request.result);  
-        if (request.result.key != undefined)
-            request.result.continue();
-        else
-            startNextCursor();
+        request.result.continue();
     }
     request.onerror = function(e) {
         log("Unexpected error opening or iterating cursor");

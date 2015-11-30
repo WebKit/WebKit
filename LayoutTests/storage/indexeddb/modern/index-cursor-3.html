@@ -35,9 +35,10 @@ function setupRequest(request)
 {
     request.onsuccess = function() {
         log("Success opening or iterating cursor");
-        logCursor(request.result);
+        if (request.result)
+            logCursor(request.result);
 
-        if (request.iteratedOnce) {
+        if (request.result && request.iteratedOnce) {
             var primaryKey = request.result.primaryKey;
             if (primaryKey) {
                 objectStore.delete(primaryKey).onsuccess = function() {
@@ -79,7 +80,7 @@ function setupRequest(request)
      
         request.iteratedOnce = true;
 
-        if (request.result.key != undefined)
+        if (request.result)
             request.result.continue();
         else
             startNextCursor();

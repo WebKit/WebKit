@@ -36,12 +36,13 @@ var objectStore;
 function setupRequest1(request)
 {
     request.onsuccess = function() {
+        if (!request.result) {
+            setupRequest2(objectStore.openCursor(IDBKeyRange.lowerBound(-Infinity), "prev"));
+            return;
+        }
         log("Success iterating cursor");
         logCursor(request.result);
-        if (request.result.key != undefined)
-            request.result.continue(request.result.key - 2);
-        else
-          setupRequest2(objectStore.openCursor(IDBKeyRange.lowerBound(-Infinity), "prev"));
+        request.result.continue(request.result.key - 2);
     }
     request.onerror = function(e) {
         log("Error iterating cursor");
@@ -52,10 +53,11 @@ function setupRequest1(request)
 function setupRequest2(request)
 {
     request.onsuccess = function() {
+        if (!request.result)
+            return;
         log("Success iterating cursor");
         logCursor(request.result);
-        if (request.result.key != undefined)
-            request.result.advance(3);        
+        request.result.advance(3);        
     }
     request.onerror = function(e) {
         log("Error iterating cursor");
