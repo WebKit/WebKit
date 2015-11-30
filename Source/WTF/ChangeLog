@@ -1,3 +1,12 @@
+2015-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Get rid of the !USE(ASYNC_NSTEXTINPUTCLIENT) codepath
+        https://bugs.webkit.org/show_bug.cgi?id=151673
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Platform.h:
+
 2015-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Remove GMainLoopSource and GThreadSafeMainLoopSource

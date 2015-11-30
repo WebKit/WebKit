@@ -568,20 +568,6 @@ public:
     void setFont(const String& fontFamily, double fontSize, uint64_t fontTraits);
     void fontAtSelection(std::function<void (const String&, double, bool, CallbackBase::Error)>);
 
-#if !USE(ASYNC_NSTEXTINPUTCLIENT)
-    bool insertText(const String& text, const EditingRange& replacementRange);
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
-    void confirmComposition();
-    bool insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
-    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
-    void getMarkedRange(EditingRange&);
-    void getSelectedRange(EditingRange&);
-    uint64_t characterIndexForPoint(const WebCore::IntPoint);
-    WebCore::IntRect firstRectForCharacterRange(const EditingRange&);
-    bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);
-    void cancelComposition();
-#endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
-
     void startWindowDrag();
     NSWindow *platformWindow();
 
@@ -1583,9 +1569,6 @@ private:
 
     EditorState m_editorState;
     bool m_isEditable;
-#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
-    bool m_temporarilyClosedComposition; // Editor state changed from hasComposition to !hasComposition, but that was only with shouldIgnoreCompositionSelectionChange yet.
-#endif
 
     double m_textZoomFactor;
     double m_pageZoomFactor;

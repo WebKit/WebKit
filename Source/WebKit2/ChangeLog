@@ -1,5 +1,72 @@
 2015-11-30  Tim Horton  <timothy_horton@apple.com>
 
+        Get rid of the !USE(ASYNC_NSTEXTINPUTCLIENT) codepath
+        https://bugs.webkit.org/show_bug.cgi?id=151673
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::resignFirstResponder): Deleted.
+        (WebKit::WebViewImpl::interpretKeyEvent): Deleted.
+        (WebKit::WebViewImpl::executeSavedKeypressCommands): Deleted.
+        (WebKit::WebViewImpl::doCommandBySelector): Deleted.
+        (WebKit::WebViewImpl::insertText): Deleted.
+        (WebKit::WebViewImpl::inputContext): Deleted.
+        (WebKit::WebViewImpl::selectedRange): Deleted.
+        (WebKit::WebViewImpl::hasMarkedText): Deleted.
+        (WebKit::WebViewImpl::unmarkText): Deleted.
+        (WebKit::WebViewImpl::setMarkedText): Deleted.
+        (WebKit::WebViewImpl::markedRange): Deleted.
+        (WebKit::WebViewImpl::attributedSubstringForProposedRange): Deleted.
+        (WebKit::WebViewImpl::characterIndexForPoint): Deleted.
+        (WebKit::WebViewImpl::firstRectForCharacterRange): Deleted.
+        (WebKit::WebViewImpl::performKeyEquivalent): Deleted.
+        (WebKit::WebViewImpl::keyUp): Deleted.
+        (WebKit::WebViewImpl::keyDown): Deleted.
+        (WebKit::WebViewImpl::flagsChanged): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Deleted.
+        (WebKit::WebPageProxy::resetStateAfterProcessExited): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::notifyApplicationAboutInputContextChange): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setComposition): Deleted.
+        (WebKit::WebPageProxy::confirmComposition): Deleted.
+        (WebKit::WebPageProxy::insertText): Deleted.
+        (WebKit::WebPageProxy::insertDictatedText): Deleted.
+        (WebKit::WebPageProxy::getMarkedRange): Deleted.
+        (WebKit::WebPageProxy::getSelectedRange): Deleted.
+        (WebKit::WebPageProxy::getAttributedSubstringFromRange): Deleted.
+        (WebKit::WebPageProxy::characterIndexForPoint): Deleted.
+        (WebKit::WebPageProxy::firstRectForCharacterRange): Deleted.
+        (WebKit::WebPageProxy::executeKeypressCommands): Deleted.
+        (WebKit::WebPageProxy::cancelComposition): Deleted.
+        (WebKit::WebPageProxy::editorStateChanged): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeSelection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setComposition): Deleted.
+        (WebKit::WebPage::confirmComposition): Deleted.
+        (WebKit::WebPage::insertText): Deleted.
+        (WebKit::WebPage::insertDictatedText): Deleted.
+        (WebKit::WebPage::getMarkedRange): Deleted.
+        (WebKit::WebPage::getSelectedRange): Deleted.
+        (WebKit::WebPage::getAttributedSubstringFromRange): Deleted.
+        (WebKit::WebPage::characterIndexForPoint): Deleted.
+        (WebKit::WebPage::firstRectForCharacterRange): Deleted.
+        (WebKit::WebPage::executeKeypressCommands): Deleted.
+        (WebKit::WebPage::cancelComposition): Deleted.
+
+2015-11-30  Tim Horton  <timothy_horton@apple.com>
+
         Remove some unused synchronous drawing SPI
         https://bugs.webkit.org/show_bug.cgi?id=151672
 

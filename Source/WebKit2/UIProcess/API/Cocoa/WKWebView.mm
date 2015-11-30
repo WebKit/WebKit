@@ -2400,8 +2400,6 @@ WEBCORE_COMMAND(yankAndSelect)
     return _impl->firstRectForCharacterRange(theRange, actualRange);
 }
 
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
-
 - (void)selectedRangeWithCompletionHandler:(void(^)(NSRange selectedRange))completionHandlerPtr
 {
     _impl->selectedRangeWithCompletionHandler(completionHandlerPtr);
@@ -2431,8 +2429,6 @@ WEBCORE_COMMAND(yankAndSelect)
 {
     _impl->characterIndexForPoint(thePoint, completionHandlerPtr);
 }
-
-#endif // USE(ASYNC_NSTEXTINPUTCLIENT)
 
 - (NSArray *)validAttributesForMarkedText
 {

@@ -4470,7 +4470,7 @@ void WebPage::didChangeSelection()
     auto editorState = this->editorState(view && view->needsLayout() ? IncludePostLayoutDataHint::No : IncludePostLayoutDataHint::Yes);
     m_isEditorStateMissingPostLayoutData = editorState.isMissingPostLayoutData;
 
-#if PLATFORM(MAC) && USE(ASYNC_NSTEXTINPUTCLIENT)
+#if PLATFORM(MAC)
     // Abandon the current inline input session if selection changed for any other reason but an input method direct action.
     // FIXME: This logic should be in WebCore.
     // FIXME: Many changes that affect composition node do not go through didChangeSelection(). We need to do something when DOM manipulation affects the composition, because otherwise input method's idea about it will be different from Editor's.
@@ -4480,8 +4480,6 @@ void WebPage::didChangeSelection()
         send(Messages::WebPageProxy::CompositionWasCanceled(editorState));
     } else
         send(Messages::WebPageProxy::EditorStateChanged(editorState));
-#else
-    send(Messages::WebPageProxy::EditorStateChanged(editorState), pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 #endif
 
 #if PLATFORM(IOS)

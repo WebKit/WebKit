@@ -653,19 +653,6 @@ public:
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup = false);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
     void fontAtSelection(uint64_t callbackID);
-#if !USE(ASYNC_NSTEXTINPUTCLIENT)
-    void insertText(const String& text, const EditingRange& replacementRange, bool& handled, EditorState& newState);
-    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange, EditorState& newState);
-    void confirmComposition(EditorState& newState);
-    void insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState);
-    void getAttributedSubstringFromRange(const EditingRange&, AttributedString&);
-    void getMarkedRange(EditingRange&);
-    void getSelectedRange(EditingRange&);
-    void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
-    void firstRectForCharacterRange(const EditingRange&, WebCore::IntRect& resultRect);
-    void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, EditorState& newState);
-    void cancelComposition(EditorState& newState);
-#endif
 #endif
 
     void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);

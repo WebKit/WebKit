@@ -368,19 +368,6 @@ messages -> WebPage LegacyReceiver {
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range, uint64_t callbackID);
     FontAtSelection(uint64_t callbackID);
 #endif
-#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
-    InsertText(String text, struct WebKit::EditingRange replacementRange) -> (bool handled, struct WebKit::EditorState newState)
-    SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, struct WebKit::EditingRange selectionRange, struct WebKit::EditingRange replacementRange) -> (struct WebKit::EditorState newState)
-    ConfirmComposition() -> (struct WebKit::EditorState newState)
-    InsertDictatedText(String text, struct WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives) -> (bool handled, struct WebKit::EditorState newState)
-    GetAttributedSubstringFromRange(struct WebKit::EditingRange range) -> (struct WebKit::AttributedString result)
-    GetMarkedRange() -> (struct WebKit::EditingRange range)
-    GetSelectedRange() -> (struct WebKit::EditingRange range)
-    CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
-    FirstRectForCharacterRange(struct WebKit::EditingRange range) -> (WebCore::IntRect resultRect)
-    ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, struct WebKit::EditorState newState)
-    CancelComposition() -> (struct WebKit::EditorState newState)
-#endif
 
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)

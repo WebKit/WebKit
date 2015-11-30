@@ -630,8 +630,6 @@ Some other editing-related methods still unimplemented:
     return _data->_impl->firstRectForCharacterRange(theRange, actualRange);
 }
 
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
-
 - (void)selectedRangeWithCompletionHandler:(void(^)(NSRange selectedRange))completionHandlerPtr
 {
     _data->_impl->selectedRangeWithCompletionHandler(completionHandlerPtr);
@@ -661,8 +659,6 @@ Some other editing-related methods still unimplemented:
 {
     _data->_impl->characterIndexForPoint(thePoint, completionHandlerPtr);
 }
-
-#endif // USE(ASYNC_NSTEXTINPUTCLIENT)
 
 - (NSArray *)validAttributesForMarkedText
 {

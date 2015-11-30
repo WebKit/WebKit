@@ -143,142 +143,6 @@ void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
     process().send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), m_pageID);
 }
 
-#if !USE(ASYNC_NSTEXTINPUTCLIENT)
-
-void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, const EditingRange& selectionRange, const EditingRange& replacementRange)
-{
-    if (!isValid()) {
-        // If this fails, we should call -discardMarkedText on input context to notify the input method.
-        // This will happen naturally later, as part of reloading the page.
-        return;
-    }
-
-    process().sendSync(Messages::WebPage::SetComposition(text, underlines, selectionRange, replacementRange), Messages::WebPage::SetComposition::Reply(m_editorState), m_pageID);
-}
-
-void WebPageProxy::confirmComposition()
-{
-    if (!isValid())
-        return;
-
-    process().sendSync(Messages::WebPage::ConfirmComposition(), Messages::WebPage::ConfirmComposition::Reply(m_editorState), m_pageID);
-}
-
-bool WebPageProxy::insertText(const String& text, const EditingRange& replacementRange)
-{
-    if (!isValid())
-        return true;
-
-    bool handled = true;
-    process().sendSync(Messages::WebPage::InsertText(text, replacementRange), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
-#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
-    m_temporarilyClosedComposition = false;
-#endif
-
-    return handled;
-}
-
-bool WebPageProxy::insertDictatedText(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange)
-{
-#if USE(DICTATION_ALTERNATIVES)
-    if (dictationAlternativesWithRange.isEmpty())
-        return insertText(text, replacementRange);
-
-    if (!isValid())
-        return true;
-
-    Vector<DictationAlternative> dictationAlternatives;
-
-    for (size_t i = 0; i < dictationAlternativesWithRange.size(); ++i) {
-        const TextAlternativeWithRange& alternativeWithRange = dictationAlternativesWithRange[i];
-        uint64_t dictationContext = m_pageClient.addDictationAlternatives(alternativeWithRange.alternatives);
-        if (dictationContext)
-            dictationAlternatives.append(DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
-    }
-
-    if (dictationAlternatives.isEmpty())
-        return insertText(text, replacementRange);
-
-    bool handled = true;
-    process().sendSync(Messages::WebPage::InsertDictatedText(text, replacementRange, dictationAlternatives), Messages::WebPage::InsertDictatedText::Reply(handled, m_editorState), m_pageID);
-    return handled;
-#else
-    return insertText(text, replacementRange);
-#endif
-}
-
-void WebPageProxy::getMarkedRange(EditingRange& result)
-{
-    result = EditingRange();
-
-    if (!isValid())
-        return;
-
-    process().sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(result), m_pageID);
-    MESSAGE_CHECK(result.isValid());
-}
-
-void WebPageProxy::getSelectedRange(EditingRange& result)
-{
-    result = EditingRange();
-
-    if (!isValid())
-        return;
-
-    process().sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(result), m_pageID);
-    MESSAGE_CHECK(result.isValid());
-}
-
-void WebPageProxy::getAttributedSubstringFromRange(const EditingRange& range, AttributedString& result)
-{
-    if (!isValid())
-        return;
-    process().sendSync(Messages::WebPage::GetAttributedSubstringFromRange(range), Messages::WebPage::GetAttributedSubstringFromRange::Reply(result), m_pageID);
-}
-
-uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
-{
-    if (!isValid())
-        return 0;
-
-    uint64_t result = 0;
-    process().sendSync(Messages::WebPage::CharacterIndexForPoint(point), Messages::WebPage::CharacterIndexForPoint::Reply(result), m_pageID);
-    return result;
-}
-
-IntRect WebPageProxy::firstRectForCharacterRange(const EditingRange& range)
-{
-    if (!isValid())
-        return IntRect();
-
-    IntRect resultRect;
-    process().sendSync(Messages::WebPage::FirstRectForCharacterRange(range), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
-    return resultRect;
-}
-
-bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& commands)
-{
-    if (!isValid())
-        return false;
-
-    bool result = false;
-    process().sendSync(Messages::WebPage::ExecuteKeypressCommands(commands), Messages::WebPage::ExecuteKeypressCommands::Reply(result, m_editorState), m_pageID);
-#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
-    m_temporarilyClosedComposition = false;
-#endif
-    return result;
-}
-
-void WebPageProxy::cancelComposition()
-{
-    if (!isValid())
-        return;
-
-    process().sendSync(Messages::WebPage::CancelComposition(), Messages::WebPage::CancelComposition::Reply(m_editorState), m_pageID);
-}
-
-#endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
-
 void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange, bool registerUndoGroup)
 {
 #if USE(DICTATION_ALTERNATIVES)
@@ -697,11 +561,6 @@ void WebPageProxy::setFont(const String& fontFamily, double fontSize, uint64_t f
 void WebPageProxy::editorStateChanged(const EditorState& editorState)
 {
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
-#if !USE(ASYNC_NSTEXTINPUTCLIENT)
-    bool closedComposition = !editorState.shouldIgnoreCompositionSelectionChange && !editorState.hasComposition && (m_editorState.hasComposition || m_temporarilyClosedComposition);
-    m_temporarilyClosedComposition = editorState.shouldIgnoreCompositionSelectionChange && (m_temporarilyClosedComposition || m_editorState.hasComposition) && !editorState.hasComposition;
-    bool editabilityChanged = m_editorState.isContentEditable != editorState.isContentEditable;
-#endif
     
     m_editorState = editorState;
     
@@ -713,21 +572,6 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
         return;
     
     m_pageClient.selectionDidChange();
-
-#if !USE(ASYNC_NSTEXTINPUTCLIENT)
-    if (closedComposition)
-        m_pageClient.notifyInputContextAboutDiscardedComposition();
-    if (editabilityChanged) {
-        // This is only needed in sync code path, because AppKit automatically refreshes input context for async clients (<rdar://problem/18604360>).
-        m_pageClient.notifyApplicationAboutInputContextChange();
-    }
-    if (editorState.hasComposition) {
-        // Abandon the current inline input session if selection changed for any other reason but an input method changing the composition.
-        // FIXME: This logic should be in WebCore, no need to round-trip to UI process to cancel the composition.
-        cancelComposition();
-        m_pageClient.notifyInputContextAboutDiscardedComposition();
-    }
-#endif
 }
 
 void WebPageProxy::startWindowDrag()

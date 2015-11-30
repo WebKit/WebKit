@@ -95,15 +95,6 @@ typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
 
-#if !USE(ASYNC_NSTEXTINPUTCLIENT)
-struct WKViewInterpretKeyEventsParameters {
-    bool eventInterpretationHadSideEffects;
-    bool consumedByIM;
-    bool executingSavedKeypressCommands;
-    Vector<WebCore::KeypressCommand>* commands;
-};
-#endif
-
 class WebViewImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
@@ -448,14 +439,12 @@ public:
     // support them via the key bindings mechanism.
     static bool wantsKeyDownForEvent(NSEvent *) { return true; }
 
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
     void selectedRangeWithCompletionHandler(void(^)(NSRange));
     void hasMarkedTextWithCompletionHandler(void(^)(BOOL hasMarkedText));
     void markedRangeWithCompletionHandler(void(^)(NSRange));
     void attributedSubstringForProposedRange(NSRange, void(^)(NSAttributedString *attrString, NSRange actualRange));
     void firstRectForCharacterRange(NSRange, void(^)(NSRect firstRect, NSRange actualRange));
     void characterIndexForPoint(NSPoint, void(^)(NSUInteger));
-#endif // USE(ASYNC_NSTEXTINPUTCLIENT)
 
     void mouseMoved(NSEvent *);
     void mouseDown(NSEvent *);
@@ -489,13 +478,8 @@ private:
 
     void setUserInterfaceItemState(NSString *commandName, bool enabled, int state);
 
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
     Vector<WebCore::KeypressCommand> collectKeyboardLayoutCommandsForEvent(NSEvent *);
     void interpretKeyEvent(NSEvent *, void(^completionHandler)(BOOL handled, const Vector<WebCore::KeypressCommand>&));
-#else
-    void executeSavedKeypressCommands();
-    bool interpretKeyEvent(NSEvent *, Vector<WebCore::KeypressCommand>&);
-#endif
 
     void mouseMovedInternal(NSEvent *);
     void mouseDownInternal(NSEvent *);
@@ -615,11 +599,7 @@ private:
     // the application to distinguish the case of a new event from one
     // that has been already sent to WebCore.
     RetainPtr<NSEvent> m_keyDownEventBeingResent;
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
     Vector<WebCore::KeypressCommand>* m_collectedKeypressCommands { nullptr };
-#else
-    WKViewInterpretKeyEventsParameters* m_interpretKeyEventsParameters { nullptr };
-#endif
 };
     
 } // namespace WebKit
