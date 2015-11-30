@@ -1,5 +1,18 @@
 2015-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Fix the graphics benchmark complexity bounds adjustment
+        https://bugs.webkit.org/show_bug.cgi?id=151670
+
+        Reviewed by Simon Fraser.
+
+        Make sure the graphics benchmark complexity bounds adjustment is applied
+        to the absolute lower bound.
+
+        * Animometer/tests/resources/math.js:
+        (PIDController.prototype._saturate):
+
+2015-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Add an option to select the results form the graphics benchmark
         https://bugs.webkit.org/show_bug.cgi?id=151666
 

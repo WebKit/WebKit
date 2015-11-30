@@ -391,9 +391,10 @@ PIDController.prototype =
             break;
         
         case PIDController.stages.SATURATE:
+            const limitPercentage = 0.90;
+            var min = this._min > 0 ? Math.min(this._min, this._max * limitPercentage) : this._min;
+            var max = this._max < 0 ? Math.max(this._max, this._min * limitPercentage) : this._max;
             var out = this._out + u;
-            var min = Math.min(this._min, this._max * 0.70);
-            var max = this._max;
 
             // Clip the controller output to the min-max values
             out = Math.max(Math.min(max, out), min);
