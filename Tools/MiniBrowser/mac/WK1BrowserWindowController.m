@@ -26,7 +26,6 @@
 #import "WK1BrowserWindowController.h"
 
 #import "AppDelegate.h"
-#import "MockContentFilterEnabler.h"
 #import "SettingsController.h"
 #import <WebKit/WebKit.h>
 #import <WebKit/WebPreferences.h>
@@ -68,7 +67,6 @@
     [_webView setUIDelegate:nil];
     [_webView setResourceLoadDelegate:nil];
     [_webView release];
-    [_contentFilterEnabler release];
 
     [super dealloc];
 }
@@ -283,10 +281,6 @@
         } else
             [_webView _setPaginationMode:WebPaginationModeUnpaginated];
     }
-
-    [_contentFilterEnabler release];
-    _contentFilterEnabler = settings.contentFilteringEnabled ? [[WebMockContentFilterEnabler alloc] initWithDecision:settings.contentFilteringDecision decisionPoint:settings.contentFilteringDecisionPoint blockedString:[BrowserWindowController contentFilteringBlockedString]] : nil;
-    [_contentFilterEnabler enable];
 }
 
 - (IBAction)printWebView:(id)sender

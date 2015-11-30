@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MockContentFilterSettings.h"
 #import <Cocoa/Cocoa.h>
 
 @interface SettingsController : NSObject {
@@ -49,8 +48,5 @@
 @property (nonatomic, readonly) BOOL subPixelCSSOMMetricsEnabled;
 @property (nonatomic, readonly) BOOL acceleratedDrawingEnabled;
 @property (nonatomic, readonly) NSString *defaultURL;
-@property (nonatomic, readonly) BOOL contentFilteringEnabled;
-@property (nonatomic, readonly) WebMockContentFilterDecision contentFilteringDecision;
-@property (nonatomic, readonly) WebMockContentFilterDecisionPoint contentFilteringDecisionPoint;
 
 @end

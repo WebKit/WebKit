@@ -40,6 +40,9 @@
 
 namespace WebCore {
 
+using Decision = MockContentFilterSettings::Decision;
+using DecisionPoint = MockContentFilterSettings::DecisionPoint;
+
 void MockContentFilter::ensureInstalled()
 {
     static std::once_flag onceFlag;
@@ -68,9 +71,9 @@ std::unique_ptr<MockContentFilter> MockContentFilter::create()
 void MockContentFilter::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (redirectResponse.isNull())
-        maybeDetermineStatus(WebMockContentFilterDecisionPointAfterWillSendRequest);
+        maybeDetermineStatus(DecisionPoint::AfterWillSendRequest);
     else
-        maybeDetermineStatus(WebMockContentFilterDecisionPointAfterRedirect);
+        maybeDetermineStatus(DecisionPoint::AfterRedirect);
 
     if (m_status == Status::NeedsMoreData)
         return;
@@ -90,17 +93,17 @@ void MockContentFilter::willSendRequest(ResourceRequest& request, const Resource
 
 void MockContentFilter::responseReceived(const ResourceResponse&)
 {
-    maybeDetermineStatus(WebMockContentFilterDecisionPointAfterResponse);
+    maybeDetermineStatus(DecisionPoint::AfterResponse);
 }
 
 void MockContentFilter::addData(const char*, int)
 {
-    maybeDetermineStatus(WebMockContentFilterDecisionPointAfterAddData);
+    maybeDetermineStatus(DecisionPoint::AfterAddData);
 }
 
 void MockContentFilter::finishedAddingData()
 {
-    maybeDetermineStatus(WebMockContentFilterDecisionPointAfterFinishedAddingData);
+    maybeDetermineStatus(DecisionPoint::AfterFinishedAddingData);
 }
 
 bool MockContentFilter::needsMoreData() const
@@ -126,9 +129,9 @@ ContentFilterUnblockHandler MockContentFilter::unblockHandler() const
 
     return ContentFilterUnblockHandler {
         MockContentFilterSettings::unblockURLHost(), [](DecisionHandlerFunction decisionHandler) {
-            bool shouldAllow { settings().unblockRequestDecision() == WebMockContentFilterDecisionAllow };
+            bool shouldAllow { settings().unblockRequestDecision() == Decision::Allow };
             if (shouldAllow)
-                settings().setDecision(WebMockContentFilterDecisionAllow);
+                settings().setDecision(Decision::Allow);
             LOG(ContentFiltering, "MockContentFilter %s the unblock request.\n", shouldAllow ? "allowed" : "did not allow");
             decisionHandler(shouldAllow);
         }
@@ -140,14 +143,14 @@ String MockContentFilter::unblockRequestDeniedScript() const
     return ASCIILiteral("unblockRequestDenied()");
 }
 
-void MockContentFilter::maybeDetermineStatus(WebMockContentFilterDecisionPoint decisionPoint)
+void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
 {
     if (m_status != Status::NeedsMoreData || decisionPoint != settings().decisionPoint())
         return;
 
     LOG(ContentFiltering, "MockContentFilter stopped buffering with status %u at decision point %u.\n", m_status, decisionPoint);
 
-    m_status = settings().decision() == WebMockContentFilterDecisionAllow ? Status::Allowed : Status::Blocked;
+    m_status = settings().decision() == Decision::Allow ? Status::Allowed : Status::Blocked;
     if (m_status != Status::Blocked)
         return;
 
