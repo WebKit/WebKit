@@ -1,3 +1,27 @@
+2015-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add an option to select the results form the graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=151666
+
+        Reviewed by Ryosuke Niwa.
+
+        We need an easy way to select the graphics benchmark results table such
+        that when it is copied to the clipboard, rich text format is set to the
+        clipboard.
+
+        * Animometer/runner/animometer.html: Add a new button to select the results table or JSON.
+        
+        * Animometer/runner/resources/animometer.js:
+        (window.sectionsManager._sectionDataElement): Selects the container <data> element.
+        (window.sectionsManager._sectionDataDivElement): Replace a literal string with a string table entry.
+        (window.sectionsManager.showTestName): Replace a literal string with a string table entry.
+        (window.sectionsManager.selectData): Selects the container <data> element in a selection.
+        (window.sectionsManager.selectDataContents): Select the contents of container <data> element in a selection.
+        (window.benchmarkController.selectResults): Selects the results table.
+        (window.benchmarkController.showJSON): Function rename.
+        (window.benchmarkController.selectJSON): Selects the contents of the results JSON.
+        (window.benchmarkController.showJson): Deleted.
+
 2015-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Animometer: graphs should not do interpolation

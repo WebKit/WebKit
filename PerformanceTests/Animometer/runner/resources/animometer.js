@@ -58,6 +58,11 @@ window.sectionsManager =
     {
         return document.querySelector("#" + sectionIdentifier + " > header > h1");
     },
+
+    _sectionDataElement: function(sectionIdentifier)
+    {
+        return document.querySelector("#" + sectionIdentifier + " > data");
+    },
     
     _sectionDataDivElement: function(sectionIdentifier)
     {
@@ -70,7 +75,7 @@ window.sectionsManager =
         element.textContent = title + ":";
 
         var score = benchmarkRunnerClient.score.toFixed(2);
-        element.textContent += " [Score = " + score + "]";
+        element.textContent += " [" + Strings.text.score + " = " + score + "]";
     },
     
     showTestName: function(sectionIdentifier, title, testName)
@@ -81,7 +86,7 @@ window.sectionsManager =
         if (!testName.length)
             return;
             
-        element.textContent += " [test = " + testName + "]";
+        element.textContent += " [" + Strings.text.testName + " = " + testName + "]";
     },
     
     showJSON: function(sectionIdentifier, json)
@@ -94,6 +99,24 @@ window.sectionsManager =
         }, 4);
     },
     
+    selectData: function(sectionIdentifier)
+    {
+        window.getSelection().removeAllRanges();
+        var element = this._sectionDataElement(sectionIdentifier);
+        var range = document.createRange();
+        range.selectNode(element);
+        window.getSelection().addRange(range);  
+    },
+    
+    selectDataContents: function(sectionIdentifier)
+    {
+        window.getSelection().removeAllRanges();
+        var element = this._sectionDataDivElement(sectionIdentifier);
+        var range = document.createRange();
+        range.selectNodeContents(element);
+        window.getSelection().addRange(range);
+    },
+        
     showSection: function(sectionIdentifier, pushState)
     {
         var currentSectionElement = document.querySelector("section.selected");
@@ -414,6 +437,11 @@ window.benchmarkController =
         this._runBenchmark(suites, options);
         sectionsManager.showSection("running");
     },
+
+    selectResults: function()
+    {
+        sectionsManager.selectData("results");
+    },
     
     showResults: function()
     {
@@ -421,12 +449,12 @@ window.benchmarkController =
         sectionsManager.showSection("results", true);
     },
     
-    showJson: function()
+    showJSON: function()
     {
         sectionsManager.showScore("json", Strings.text.results.results);
         sectionsManager.showSection("json", true);
     },
-    
+
     showTestGraph: function(testName, axes, samples, samplingTimeOffset)
     {
         sectionsManager.showTestName("test-graph", Strings.text.results.graph, testName);
@@ -439,7 +467,12 @@ window.benchmarkController =
         sectionsManager.showTestName("test-json", Strings.text.results.graph, testName);
         sectionsManager.showJSON("test-json", json);
         sectionsManager.showSection("test-json", true);
-    }
+    },
+    
+    selectJSON: function(sectionIdentifier)
+    {
+        sectionsManager.selectDataContents(sectionIdentifier);
+    },
 }
 
 window.addEventListener("load", benchmarkController.initialize);

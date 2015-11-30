@@ -55,7 +55,8 @@
                 <table class="results-table"></table>
             </data>
             <footer>
-                <button class="large-button" onclick="benchmarkController.showJson()">JSON</button>
+                <button class="large-button" onclick="benchmarkController.selectResults()">Select</button>
+                <button class="large-button" onclick="benchmarkController.showJSON()">JSON</button>
                 <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
             </footer>
         </section>  
@@ -67,6 +68,7 @@
                 <div class="results-json" contentEditable="true"></div>
             </data>
             <footer>
+                <button class="large-button" onclick="benchmarkController.selectJSON('json')">Select</button>
                 <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
                 <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
             </footer>
@@ -79,6 +81,7 @@
                 <div class="results-json" contentEditable="true"></div>
             </data>
             <footer>
+                <button class="large-button" onclick="benchmarkController.selectJSON('test-json')">Select</button>
                 <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
                 <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>        
             </footer>
