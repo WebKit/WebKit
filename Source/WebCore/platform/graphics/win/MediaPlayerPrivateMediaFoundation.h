@@ -81,6 +81,8 @@ public:
     virtual MediaPlayer::NetworkState networkState() const;
     virtual MediaPlayer::ReadyState readyState() const;
 
+    virtual float maxTimeSeekable() const override;
+
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const;
 
     virtual bool didLoadingProgress() const;
@@ -392,6 +394,8 @@ private:
 
         float currentTime();
 
+        float maxTimeLoaded() const { return m_maxTimeLoaded; }
+
     private:
         ULONG m_refCount { 0 };
         Lock m_lock;
@@ -419,6 +423,7 @@ private:
         VideoSamplePool m_samplePool;
         unsigned m_tokenCounter { 0 };
         float m_rate { 1.0f };
+        float m_maxTimeLoaded { 0.0f };
 
         bool isActive() const;
 

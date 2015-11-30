@@ -1,3 +1,24 @@
+2015-11-30  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Implement seek.
+        https://bugs.webkit.org/show_bug.cgi?id=151609
+
+        Reviewed by Alex Christensen.
+
+        The methods maxTimeSeekable() and buffered() needs to be implemented.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::seekDouble):
+        (WebCore::MediaPlayerPrivateMediaFoundation::durationDouble):
+        (WebCore::MediaPlayerPrivateMediaFoundation::readyState):
+        (WebCore::MediaPlayerPrivateMediaFoundation::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivateMediaFoundation::buffered):
+        (WebCore::MediaPlayerPrivateMediaFoundation::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::currentTime):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::isActive):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::maxTimeLoaded):
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: openCursor() fix resulting in at least 4 more passing tests.

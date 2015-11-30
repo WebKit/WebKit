@@ -217,6 +217,8 @@ void MediaPlayerPrivateMediaFoundation::seekDouble(double time)
     HRESULT hr = m_mediaSession->Start(&GUID_NULL, &propVariant);
     ASSERT(SUCCEEDED(hr));
     PropVariantClear(&propVariant);
+
+    m_player->timeChanged();
 }
 
 double MediaPlayerPrivateMediaFoundation::durationDouble() const
@@ -260,10 +262,17 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaFoundation::readyState() const
     return m_readyState;
 }
 
+float MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
+{
+    return durationDouble();
+}
+
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaFoundation::buffered() const
 { 
-    notImplemented();
-    return std::make_unique<PlatformTimeRanges>();
+    auto ranges = std::make_unique<PlatformTimeRanges>();
+    if (m_presenter && m_presenter->maxTimeLoaded() > 0)
+        ranges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(m_presenter->maxTimeLoaded()));
+    return ranges;
 }
 
 bool MediaPlayerPrivateMediaFoundation::didLoadingProgress() const
@@ -1279,7 +1288,12 @@ float MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::currentTime()
         return 0.0f;
 
     // clockTime is in 100 nanoseconds, we need to convert to seconds.
-    return clockTime / tenMegahertz;
+    float currentTime = clockTime / tenMegahertz;
+
+    if (currentTime > m_maxTimeLoaded)
+        m_maxTimeLoaded = currentTime;
+
+    return currentTime;
 }
 
 bool MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::isActive() const
