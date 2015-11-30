@@ -883,6 +883,14 @@ WebInspector.showTimelineTab = function()
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
+WebInspector.unlocalizedString = function(string)
+{
+    // Intentionally do nothing, since this is for engineering builds
+    // (such as in Debug UI) or in text that is standardized in English.
+    // For example, CSS property names and values are never localized.
+    return string;
+}
+
 WebInspector.UIString = function(string, vararg)
 {
     if (WebInspector.dontLocalizeUserInterface)
@@ -1328,8 +1336,21 @@ WebInspector._pageHidden = function(event)
 
 WebInspector._contextMenuRequested = function(event)
 {
-    const onlyExisting = true;
-    let proposedContextMenu = WebInspector.ContextMenu.createFromEvent(event, onlyExisting);
+    let proposedContextMenu;
+
+    // This is setting is only defined in engineering builds.
+    let showDebugUI = WebInspector.showDebugUISetting && WebInspector.showDebugUISetting.value;
+    if (showDebugUI) {
+        proposedContextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        proposedContextMenu.appendSeparator();
+        proposedContextMenu.appendItem(WebInspector.unlocalizedString("Reload Web Inspector"), () => {
+            window.location.reload();
+        });
+    } else {
+        const onlyExisting = true;
+        proposedContextMenu = WebInspector.ContextMenu.createFromEvent(event, onlyExisting);
+    }
+
     if (proposedContextMenu)
         proposedContextMenu.show();
 };

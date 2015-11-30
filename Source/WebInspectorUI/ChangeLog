@@ -1,5 +1,36 @@
 2015-11-29  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: Add context menu item to Reload the Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=141742
+
+        Reviewed by Timothy Hatcher.
+
+        Add a global context menu and global shortcut (Cmd-Opt-Shift-R) to
+        reload the Web Inspector frontend without closing the browser.
+
+        This should make it possible to more quickly fix typos, small nits,
+        etc. without having to relaunch. It might also make state
+        restoration bugs more visible in engineering builds, since there
+        is hardly any delay between seeing the old and reloaded frontends.
+
+        Note that this functionality reloads scripts from the configuration's
+        build directory, so you still need to "build" WebInspectorUI to ensure
+        that any changed files are properly minified and staged.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.unlocalizedString):
+
+            Added. Make it obvious when strings are intentionally not localized.
+
+        (WebInspector._contextMenuRequested):
+
+            If the "Show Debug UI" setting is available and true, add
+            a global "Reload Web Inspector" menu item to every context
+            menu. Otherwise, don't eagerly create a context menu.
+        * UserInterface/Debug/Bootstrap.js: Add Cmd-Opt-Shift-R shortcut.
+
+2015-11-29  Brian Burg  <bburg@apple.com>
+
         Web Inspector: allow multiple UI components to add menu items upon getting a "contextmenu" event
         https://bugs.webkit.org/show_bug.cgi?id=151629
 

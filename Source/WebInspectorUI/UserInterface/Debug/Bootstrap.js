@@ -26,8 +26,15 @@
 // This function is invoked after the inspector has loaded.
 WebInspector.runBootstrapOperations = function() {
     WebInspector.showDebugUISetting = new WebInspector.Setting("show-debug-ui", false);
+
+    // Toggle Debug UI setting.
     new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Option | WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "D", () => {
         WebInspector.showDebugUISetting.value = !WebInspector.showDebugUISetting.value;
+    });
+
+    // Reload the Web Inspector.
+    new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Option | WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "R", () => {
+        window.location.reload();
     });
 
     let toolTip = "Enable dump inspector messages to console";
