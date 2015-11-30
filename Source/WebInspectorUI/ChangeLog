@@ -1,3 +1,28 @@
+2015-11-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: delete-by-word and similar shortcuts should add text to the WebCore kill ring
+        https://bugs.webkit.org/show_bug.cgi?id=151312
+
+        Reviewed by Darin Adler.
+
+        Add support for other kill ring-eligible keybindinsg, such as
+        deleting by word, group, or line forwards and backwards.
+
+        * UserInterface/Controllers/CodeMirrorTextKillController.js:
+        (WebInspector.CodeMirrorTextKillController):
+        (WebInspector.CodeMirrorTextKillController.prototype._handleTextKillCommand): Renamed from _handleKillLine.
+
+            Parameterize the function so it can handle any keybinding and
+            command. Take a kill ring insertion mode argument, too.
+
+        (WebInspector.CodeMirrorTextKillController.prototype._handleTextChange):
+
+            Add some special casing for changes received from Delete Line
+            (Cmd-D) so the right text is added to the kill ring. Thread the
+            kill ring insertion mode to the frontend host call.
+
+        (WebInspector.CodeMirrorTextKillController.prototype._handleKillLine): Deleted.
+
 2015-11-29  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Add context menu item to Reload the Inspector

@@ -34,30 +34,44 @@ WebInspector.CodeMirrorTextKillController = class CodeMirrorTextKillController e
         this._codeMirror = codeMirror;
         this._expectingChangeEventForKill = false;
         this._nextKillStartsNewSequence = true;
+        this._shouldPrependToKillRing = false;
 
         this._handleTextChangeListener = this._handleTextChange.bind(this);
         this._handleEditorBlurListener = this._handleEditorBlur.bind(this);
         this._handleSelectionOrCaretChangeListener = this._handleSelectionOrCaretChange.bind(this);
 
+        // FIXME: these keybindings match CodeMirror's default keymap for OS X.
+        // They should probably be altered for Windows / Linux someday.
         this._codeMirror.addKeyMap({
-            "Ctrl-K": this._handleKillLine.bind(this),
+            // Overrides for the 'emacsy' keymap.
+            "Ctrl-K": this._handleTextKillCommand.bind(this, "killLine", false),
+            "Alt-D": this._handleTextKillCommand.bind(this, "delWordAfter", false),
+            "Cmd-D": this._handleTextKillCommand.bind(this, "deleteLine", false),
+            // Overrides for the 'macDefault' keymap.
+            "Alt-Delete": this._handleTextKillCommand.bind(this, "delGroupAfter", false),
+            "Cmd-Backspace": this._handleTextKillCommand.bind(this, "delWrappedLineLeft", true),
+            "Cmd-Delete": this._handleTextKillCommand.bind(this, "delWrappedLineRight", false),
+            "Alt-Backspace": this._handleTextKillCommand.bind(this, "delGroupBefore", true),
+            "Ctrl-Alt-Backspace": this._handleTextKillCommand.bind(this, "delGroupAfter", false),
         });
     }
 
-    _handleKillLine(codeMirror)
+    _handleTextKillCommand(command, prependsToKillRing, codeMirror)
     {
         // Read-only mode is dynamic in some editors, so check every time
         // and ignore the shortcut if in read-only mode.
         if (this._codeMirror.getOption("readOnly"))
             return;
 
+        this._shouldPrependToKillRing = prependsToKillRing;
+
         // Don't add the listener if it's still registered because
         // a previous empty kill didn't generate change events.
         if (!this._expectingChangeEventForKill)
-            codeMirror.on("changes", this._handleTextChangeListener);
+            this._codeMirror.on("changes", this._handleTextChangeListener);
 
         this._expectingChangeEventForKill = true;
-        codeMirror.execCommand("killLine");
+        this._codeMirror.execCommand(command);
     }
 
     _handleTextChange(codeMirror, changes)
@@ -81,18 +95,22 @@ WebInspector.CodeMirrorTextKillController = class CodeMirrorTextKillController e
         if (change.origin !== "+delete")
             return;
 
-        // Killing a newline by itself is reported as deletion of two
-        // empty strings, so check the change's ranges to detect this.
+        // When killed text includes a newline, CodeMirror returns
+        // strange change objects. Special-case for when this could happen.
         let killedText;
-        if (change.to.line === change.from.line + 1)
-            killedText = "\n";
-        else {
+        if (change.to.line === change.from.line + 1 && change.removed.length === 2) {
+            // An entire line was deleted, including newline (Cmd-D).
+            if (change.removed[0].length && !change.removed[1].length) 
+                killedText = change.removed[0] + "\n";
+            // A newline was killed by itself (Ctrl-K).
+            else
+                killedText = "\n";
+        } else {
             console.assert(change.removed.length === 1);
             killedText = change.removed[0];
         }
 
-        const shouldPrependToKillRing = false;
-        InspectorFrontendHost.killText(killedText, shouldPrependToKillRing, this._nextKillStartsNewSequence);
+        InspectorFrontendHost.killText(killedText, this._shouldPrependToKillRing, this._nextKillStartsNewSequence);
 
         // If the editor loses focus or the caret / selection changes
         // (not as a result of the kill), then the next kill should
