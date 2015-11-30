@@ -1,3 +1,14 @@
+2015-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Get rid of the legacy TextIndicatorWindow style
+        https://bugs.webkit.org/show_bug.cgi?id=151674
+
+        Reviewed by Anders Carlsson.
+
+        * page/TextIndicator.h:
+        * page/mac/TextIndicatorWindow.mm:
+        (-[WebTextIndicatorView initWithFrame:textIndicator:margin:offset:]): Deleted.
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Correct handling of cursors finishing iteration.

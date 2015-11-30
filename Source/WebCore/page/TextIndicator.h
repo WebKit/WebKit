@@ -32,12 +32,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 1
-#else
-#define ENABLE_LEGACY_TEXT_INDICATOR_STYLE 0
-#endif
-
 namespace WebCore {
 
 class Frame;
@@ -107,11 +101,7 @@ public:
     // FIXME: These are fairly Mac-specific, and they don't really belong here.
     // But they're needed at TextIndicator creation time, so they can't go in TextIndicatorWindow.
     // Maybe they can live in some Theme code somewhere?
-#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-    constexpr static float defaultHorizontalMargin { 3 };
-#else
     constexpr static float defaultHorizontalMargin { 2 };
-#endif
     constexpr static float defaultVerticalMargin { 1 };
 
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);

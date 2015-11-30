@@ -42,14 +42,6 @@ const CFTimeInterval fadeInAnimationDuration = 0.15;
 const CFTimeInterval timeBeforeFadeStarts = bounceAnimationDuration + 0.2;
 const CFTimeInterval fadeOutAnimationDuration = 0.3;
 
-#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-const CGFloat midBounceScale = 1.5;
-const CGFloat borderWidth = 1.0;
-const CGFloat cornerRadius = 3;
-const CGFloat dropShadowOffsetX = 0;
-const CGFloat dropShadowOffsetY = 1;
-const CGFloat dropShadowBlurRadius = 1.5;
-#else
 const CGFloat midBounceScale = 1.25;
 const CGFloat borderWidth = 0;
 const CGFloat cornerRadius = 0;
@@ -57,7 +49,6 @@ const CGFloat dropShadowOffsetX = 0;
 const CGFloat dropShadowOffsetY = 1;
 const CGFloat dropShadowBlurRadius = 2;
 const CGFloat rimShadowBlurRadius = 1;
-#endif
 
 NSString *textLayerKey = @"TextLayer";
 NSString *dropShadowLayerKey = @"DropShadowLayer";
@@ -182,8 +173,6 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
     RetainPtr<CGColorRef> dropShadowColor = [NSColor colorWithDeviceWhite:0 alpha:0.2].CGColor;
 
     RetainPtr<CGColorRef> borderColor = [NSColor colorWithDeviceRed:.96 green:.90 blue:0 alpha:1].CGColor;
-    RetainPtr<CGColorRef> gradientDarkColor = [NSColor colorWithDeviceRed:.929 green:.8 blue:0 alpha:1].CGColor;
-    RetainPtr<CGColorRef> gradientLightColor = [NSColor colorWithDeviceRed:.949 green:.937 blue:0 alpha:1].CGColor;
 
     Vector<FloatRect> textRectsInBoundingRectCoordinates = _textIndicator->textRectsInBoundingRectCoordinates();
 
@@ -222,7 +211,6 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [bounceLayer addSublayer:dropShadowLayer.get()];
         [bounceLayer setValue:dropShadowLayer.get() forKey:dropShadowLayerKey];
 
-#if !ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
         RetainPtr<CALayer> rimShadowLayer = adoptNS([[CALayer alloc] init]);
         [rimShadowLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [rimShadowLayer setFrame:yellowHighlightRect];
@@ -234,14 +222,8 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
         [rimShadowLayer setFrame:yellowHighlightRect];
         [bounceLayer addSublayer:rimShadowLayer.get()];
         [bounceLayer setValue:rimShadowLayer.get() forKey:rimShadowLayerKey];
-#endif
 
-#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-        RetainPtr<CAGradientLayer> textLayer = adoptNS([[CAGradientLayer alloc] init]);
-        [textLayer setColors:@[ (id)gradientLightColor.get(), (id)gradientDarkColor.get() ]];
-#else
         RetainPtr<CALayer> textLayer = adoptNS([[CALayer alloc] init]);
-#endif
         [textLayer setBackgroundColor:highlightColor.get()];
         [textLayer setBorderColor:borderColor.get()];
         [textLayer setBorderWidth:borderWidth];
