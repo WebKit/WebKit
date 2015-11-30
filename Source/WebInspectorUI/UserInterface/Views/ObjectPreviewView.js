@@ -261,20 +261,18 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
 
     _contextMenuHandler(event)
     {
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
-        contextMenu.appendItem(WebInspector.UIString("Log Value"), function() {
-            var remoteObject = this._remoteObject;
-            var isImpossible = !this._propertyPath || this._propertyPath.isFullPathImpossible();
-            var text = isImpossible ? WebInspector.UIString("Selected Value") : this._propertyPath.displayPath(WebInspector.PropertyPath.Type.Value);
+        contextMenu.appendItem(WebInspector.UIString("Log Value"), () => {
+            let remoteObject = this._remoteObject;
+            let isImpossible = !this._propertyPath || this._propertyPath.isFullPathImpossible();
+            let text = isImpossible ? WebInspector.UIString("Selected Value") : this._propertyPath.displayPath(WebInspector.PropertyPath.Type.Value);
 
             if (!isImpossible)
                 WebInspector.quickConsole.prompt.pushHistoryItem(text);
 
             WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject, isImpossible);
-        }.bind(this));
-
-        contextMenu.show();        
+        });
     }
 };
 

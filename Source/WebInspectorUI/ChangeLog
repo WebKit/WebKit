@@ -1,3 +1,97 @@
+2015-11-29  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: allow multiple UI components to add menu items upon getting a "contextmenu" event
+        https://bugs.webkit.org/show_bug.cgi?id=151629
+
+        Reviewed by Timothy Hatcher.
+
+        The existing Context Menu system assumes that only one UI component
+        will need to provide context menu items. But in some scenarios, there
+        are multiple UI components that could provide relevant menu items. For
+        example, right-clicking on an DOM element in the console should show
+        menu items relevant to 1) the DOM element, 2) the console in general,
+        and 3) global menu items. Existing code shows menu items provided by
+        the first object that handles the event and calls ContextMenu.show().
+
+        This patch changes behavior so that a context menu can be built up
+        by multiple 'contextmenu' event handlers. A ContextMenu instance is
+        hidden on the 'contextmenu' event object; client code calls a
+        factory method that digs out this existing context menu or creates a
+        new one as needed. To actually show the context menu through the
+        InspectorFrontendHost methods, the top-level app controller adds a
+        bubbling listener for 'contextmenu' and shows the event's context
+        menu if one has been created.
+
+        Along the way, do some cleanup. Do s/var/let/, arrowize some functions,
+        use Array.{map,some}, and simplify some other code as a result.
+
+        No new tests yet, since we can't trigger context menu easily from
+        an inspector test. All affected context menus were manually verified.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems):
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.editBreakpoint): Deleted.
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.removeBreakpoint): Deleted.
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.toggleBreakpoint): Deleted.
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.toggleAutoContinue): Deleted.
+        (WebInspector.BreakpointPopoverController.prototype.appendContextMenuItems.revealOriginalSourceCodeLocation): Deleted.
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.oncontextmenu):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        * UserInterface/Views/ContextMenu.js:
+        (WebInspector.ContextMenuItem.prototype._buildDescriptor):
+        (WebInspector.ContextMenuItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendSubMenuItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendCheckboxItem):
+        (WebInspector.ContextSubMenuItem.prototype._pushItem):
+        (WebInspector.ContextSubMenuItem.prototype._buildDescriptor):
+        (WebInspector.ContextSubMenuItem):
+        (WebInspector.ContextMenu.createFromEvent):
+        (WebInspector.ContextMenu.prototype.show):
+        (WebInspector.ContextMenu.prototype.handleEvent):
+        (WebInspector.ContextMenu.prototype._buildDescriptor):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._contextMenuEventFired):
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu.logElement):
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointTreeOutlineContextMenuTreeElement):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointTreeOutlineContextMenuTreeElement.removeAllResourceBreakpoints): Deleted.
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointTreeOutlineContextMenuTreeElement.toggleAllResourceBreakpoints): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._handleContextMenuEvent):
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._contextMenuHandler):
+        (WebInspector.ObjectPreviewView):
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._contextMenuHandler):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._appendMenusItemsForObject):
+        (WebInspector.ObjectTreeBaseTreeElement):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu.continueToLocation): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu.addBreakpoint): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu.revealInSidebar): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu.removeBreakpoints): Deleted.
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu.toggleBreakpoints): Deleted.
+        * UserInterface/Views/TabBarItem.js:
+        (WebInspector.TabBarItem.prototype._handleContextMenuEvent):
+        (WebInspector.TabBarItem):
+        (WebInspector.TabBarItem.prototype._handleContextMenuEvent.closeTab): Deleted.
+        (WebInspector.TabBarItem.prototype._handleContextMenuEvent.closeOtherTabs): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._contextMenuNavigationBarOrStatusBar):
+        (WebInspector.TimelineSidebarPanel.prototype._contextMenuNavigationBarOrStatusBar.toggleReplayInterface): Deleted.
+        * UserInterface/Views/Toolbar.js:
+        (WebInspector.Toolbar.prototype._handleContextMenuEvent):
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+
 2015-11-28  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Styles sidebar placeholder is misaligned

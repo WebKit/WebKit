@@ -132,27 +132,25 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
     _handleContextMenuEvent(event)
     {
-        let contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
         if (this.representedObject.ownerRule) {
-            contextMenu.appendItem(WebInspector.UIString("Show Source"), function() {
+            contextMenu.appendItem(WebInspector.UIString("Show Source"), () => {
                 if (event.metaKey)
                     WebInspector.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation);
                 else
                     WebInspector.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation);
-            }.bind(this));
+            });
         }
 
-        contextMenu.appendItem(WebInspector.UIString("Copy Rule"), function() {
+        contextMenu.appendItem(WebInspector.UIString("Copy Rule"), () => {
             InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString());
-        }.bind(this));
+        });
 
-        contextMenu.appendItem(WebInspector.UIString("Reset"), function() {
+        contextMenu.appendItem(WebInspector.UIString("Reset"), () => {
             this.representedObject.resetText();
             this.dispatchEventToListeners(WebInspector.VisualStyleSelectorTreeItem.Event.StyleTextReset);
-        }.bind(this));
-
-        contextMenu.show();
+        });
     }
 
     _handleCheckboxChanged(event)

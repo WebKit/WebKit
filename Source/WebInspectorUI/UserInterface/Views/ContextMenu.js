@@ -73,11 +73,11 @@ WebInspector.ContextMenuItem = class ContextMenuItem extends WebInspector.Object
     {
         switch (this._type) {
         case "item":
-            return { type: "item", id: this._id, label: this._label, enabled: !this._disabled };
+            return {type: "item", id: this._id, label: this._label, enabled: !this._disabled};
         case "separator":
-            return { type: "separator" };
+            return {type: "separator"};
         case "checkbox":
-            return { type: "checkbox", id: this._id, label: this._label, checked: !!this._checked, enabled: !this._disabled };
+            return {type: "checkbox", id: this._id, label: this._label, checked: !!this._checked, enabled: !this._disabled};
         }
     }
 };
@@ -95,7 +95,7 @@ WebInspector.ContextSubMenuItem = class ContextSubMenuItem extends WebInspector.
 
     appendItem(label, handler, disabled)
     {
-        var item = new WebInspector.ContextMenuItem(this._contextMenu, "item", label, disabled);
+        let item = new WebInspector.ContextMenuItem(this._contextMenu, "item", label, disabled);
         this._pushItem(item);
         this._contextMenu._setHandler(item.id(), handler);
         return item;
@@ -103,14 +103,14 @@ WebInspector.ContextSubMenuItem = class ContextSubMenuItem extends WebInspector.
 
     appendSubMenuItem(label, disabled)
     {
-        var item = new WebInspector.ContextSubMenuItem(this._contextMenu, label, disabled);
+        let item = new WebInspector.ContextSubMenuItem(this._contextMenu, label, disabled);
         this._pushItem(item);
         return item;
     }
 
     appendCheckboxItem(label, handler, checked, disabled)
     {
-        var item = new WebInspector.ContextMenuItem(this._contextMenu, "checkbox", label, disabled, checked);
+        let item = new WebInspector.ContextMenuItem(this._contextMenu, "checkbox", label, disabled, checked);
         this._pushItem(item);
         this._contextMenu._setHandler(item.id(), handler);
         return item;
@@ -126,7 +126,7 @@ WebInspector.ContextSubMenuItem = class ContextSubMenuItem extends WebInspector.
     {
         if (this._pendingSeparator) {
             this._items.push(new WebInspector.ContextMenuItem(this._contextMenu, "separator"));
-            delete this._pendingSeparator;
+            this._pendingSeparator = null;
         }
         this._items.push(item);
     }
@@ -138,10 +138,8 @@ WebInspector.ContextSubMenuItem = class ContextSubMenuItem extends WebInspector.
 
     _buildDescriptor()
     {
-        var result = { type: "subMenu", label: this._label, enabled: !this._disabled, subItems: [] };
-        for (var i = 0; i < this._items.length; ++i)
-            result.subItems.push(this._items[i]._buildDescriptor());
-        return result;
+        let subItems = this._items.map((item) => item._buildDescriptor());
+        return {type: "subMenu", label: this._label, enabled: !this._disabled, subItems};
     }
 };
 
@@ -157,6 +155,14 @@ WebInspector.ContextMenu = class ContextMenu extends WebInspector.ContextSubMenu
     }
 
     // Static
+
+    static createFromEvent(event, onlyExisting = false)
+    {
+        if (!event[WebInspector.ContextMenu.ProposedMenuSymbol] && !onlyExisting)
+            event[WebInspector.ContextMenu.ProposedMenuSymbol] = new WebInspector.ContextMenu(event);
+
+        return event[WebInspector.ContextMenu.ProposedMenuSymbol] || null;
+    }
 
     static contextMenuItemSelected(id)
     {
@@ -181,8 +187,7 @@ WebInspector.ContextMenu = class ContextMenu extends WebInspector.ContextSubMenu
     {
         console.assert(this._event instanceof MouseEvent);
 
-        var menuObject = this._buildDescriptor();
-
+        let menuObject = this._buildDescriptor();
         if (menuObject.length) {
             WebInspector.ContextMenu._lastContextMenu = this;
 
@@ -204,7 +209,7 @@ WebInspector.ContextMenu = class ContextMenu extends WebInspector.ContextSubMenu
     {
         this._event.target.removeEventListener("contextmenu", this, true);
         InspectorFrontendHost.showContextMenu(event, this._menuObject);
-        delete this._menuObject;
+        this._menuObject = null;
 
         event.stopImmediatePropagation();
     }
@@ -219,10 +224,7 @@ WebInspector.ContextMenu = class ContextMenu extends WebInspector.ContextSubMenu
 
     _buildDescriptor()
     {
-        var result = [];
-        for (var i = 0; i < this._items.length; ++i)
-            result.push(this._items[i]._buildDescriptor());
-        return result;
+        return this._items.map((item) => item._buildDescriptor());
     }
 
     _itemSelected(id)
@@ -231,3 +233,5 @@ WebInspector.ContextMenu = class ContextMenu extends WebInspector.ContextSubMenu
             this._handlers[id].call(this);
     }
 };
+
+WebInspector.ContextMenu.ProposedMenuSymbol = Symbol("context-menu-proposed-menu");

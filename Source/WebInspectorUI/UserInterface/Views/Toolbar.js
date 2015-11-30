@@ -199,7 +199,7 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
 
     _handleContextMenuEvent(event)
     {
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
         contextMenu.appendCheckboxItem(WebInspector.UIString("Icon and Text (Vertical)"), this._changeDisplayMode.bind(this, WebInspector.Toolbar.DisplayMode.IconAndLabelVertical), this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelVertical);
         contextMenu.appendCheckboxItem(WebInspector.UIString("Icon and Text (Horizontal)"), this._changeDisplayMode.bind(this, WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal), this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
@@ -210,8 +210,6 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
             contextMenu.appendSeparator();
             contextMenu.appendCheckboxItem(WebInspector.UIString("Small Icons"), this._toggleSmallIcons.bind(this), this._sizeMode === WebInspector.Toolbar.SizeMode.Small);
         }
-
-        contextMenu.show();
     }
 
     _changeDisplayMode(displayMode)

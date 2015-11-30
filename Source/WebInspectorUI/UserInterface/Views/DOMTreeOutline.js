@@ -485,13 +485,12 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     _contextMenuEventFired(event)
     {
-        var treeElement = this._treeElementFromEvent(event);
+        let treeElement = this._treeElementFromEvent(event);
         if (!treeElement)
             return;
 
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
         this.populateContextMenu(contextMenu, event, treeElement);
-        contextMenu.show();
     }
 
     _updateModifiedNodes()
@@ -512,7 +511,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             WebInspector.RemoteObject.resolveNode(domNode, WebInspector.RuntimeManager.ConsoleObjectGroup, function(remoteObject) {
                 if (!remoteObject)
                     return;
-                var text = WebInspector.UIString("Selected Element");
+                let text = WebInspector.UIString("Selected Element");
                 WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, true);
             });
         }

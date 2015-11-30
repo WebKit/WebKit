@@ -431,22 +431,20 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         if (window.getSelection().toString().length)
             return;
 
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
         if (!this._style.inherited) {
-            contextMenu.appendItem(WebInspector.UIString("Duplicate Selector"), function() {
+            contextMenu.appendItem(WebInspector.UIString("Duplicate Selector"), () => {
                 if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
                     this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
 
                 this._style.nodeStyles.addRule(this._currentSelectorText);
-            }.bind(this));
+            });
         }
 
-        contextMenu.appendItem(WebInspector.UIString("Copy Rule"), function() {
+        contextMenu.appendItem(WebInspector.UIString("Copy Rule"), () => {
             InspectorFrontendHost.copyText(this._style.generateCSSRuleString());
-        }.bind(this));
-
-        contextMenu.show();
+        });
     }
 
     _toggleRuleOnOff()

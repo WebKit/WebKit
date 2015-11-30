@@ -579,32 +579,23 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (!(treeElement instanceof WebInspector.ResourceTreeElement) && !(treeElement instanceof WebInspector.ScriptTreeElement))
             return;
 
-        var breakpoints = this._breakpointsBeneathTreeElement(treeElement);
-        var shouldDisable = false;
-        for (var i = 0; i < breakpoints.length; ++i) {
-            if (!breakpoints[i].disabled) {
-                shouldDisable = true;
-                break;
-            }
-        }
+        let breakpoints = this._breakpointsBeneathTreeElement(treeElement);
+        let shouldDisable = breakpoints.some((breakpoint) => !breakpoint.disabled);
 
-        function removeAllResourceBreakpoints()
-        {
+        let removeAllResourceBreakpoints = () => {
             this._removeAllBreakpoints(breakpoints);
-        }
+        };
 
-        function toggleAllResourceBreakpoints()
-        {
+        let toggleAllResourceBreakpoints = () => {
             this._toggleAllBreakpoints(breakpoints, shouldDisable);
-        }
+        };
 
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
         if (shouldDisable)
-            contextMenu.appendItem(WebInspector.UIString("Disable Breakpoints"), toggleAllResourceBreakpoints.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Disable Breakpoints"), toggleAllResourceBreakpoints);
         else
-            contextMenu.appendItem(WebInspector.UIString("Enable Breakpoints"), toggleAllResourceBreakpoints.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("Delete Breakpoints"), removeAllResourceBreakpoints.bind(this));
-        contextMenu.show();
+            contextMenu.appendItem(WebInspector.UIString("Enable Breakpoints"), toggleAllResourceBreakpoints);
+        contextMenu.appendItem(WebInspector.UIString("Delete Breakpoints"), removeAllResourceBreakpoints);
     }
 
     _treeElementSelected(treeElement, selectedByUser)

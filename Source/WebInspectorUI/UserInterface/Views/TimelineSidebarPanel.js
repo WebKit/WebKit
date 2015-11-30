@@ -944,16 +944,15 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         if (!window.ReplayAgent)
             return;
 
-        function toggleReplayInterface() {
+        let toggleReplayInterface = () => {
             WebInspector.showReplayInterfaceSetting.value = !WebInspector.showReplayInterfaceSetting.value;
-        }
+        };
 
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
         if (WebInspector.showReplayInterfaceSetting.value)
             contextMenu.appendItem(WebInspector.UIString("Hide Replay Controls"), toggleReplayInterface);
         else
             contextMenu.appendItem(WebInspector.UIString("Show Replay Controls"), toggleReplayInterface);
-        contextMenu.show();
     }
 
     _replayCaptureButtonClicked()

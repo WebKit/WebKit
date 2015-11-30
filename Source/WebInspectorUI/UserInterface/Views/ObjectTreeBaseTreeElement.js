@@ -182,7 +182,7 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
 
     _contextMenuHandler(event)
     {
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
         if (typeof this.treeOutline.objectTreeElementAddContextMenuItems === "function") {
             this.treeOutline.objectTreeElementAddContextMenuItems(this, contextMenu);
@@ -190,30 +190,24 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
                 contextMenu.appendSeparator();
         }             
 
-        var resolvedValue = this.resolvedValue();
-        if (!resolvedValue) {
-            if (!contextMenu.isEmpty())
-                contextMenu.show();
+        if (!this.resolvedValue())
             return;
-        }
 
         if (this._property && this._property.symbol)
             contextMenu.appendItem(WebInspector.UIString("Log Symbol"), this._logSymbolProperty.bind(this));
 
         contextMenu.appendItem(WebInspector.UIString("Log Value"), this._logValue.bind(this));
 
-        var propertyPath = this.resolvedValuePropertyPath();
+        let propertyPath = this.resolvedValuePropertyPath();
         if (propertyPath && !propertyPath.isFullPathImpossible()) {
-            contextMenu.appendItem(WebInspector.UIString("Copy Path to Property"), function() {
+            contextMenu.appendItem(WebInspector.UIString("Copy Path to Property"), () => {
                 InspectorFrontendHost.copyText(propertyPath.displayPath(WebInspector.PropertyPath.Type.Value));
-            }.bind(this));
+            });
         }
 
         contextMenu.appendSeparator();
 
         this._appendMenusItemsForObject(contextMenu, resolvedValue);
-
-        contextMenu.show();
     }
 
     _appendMenusItemsForObject(contextMenu, resolvedValue)
@@ -226,12 +220,12 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
                         if (error)
                             return;
 
-                        var location = response.location;
-                        var sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                        let location = response.location;
+                        let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
                         if (!sourceCode)
                             return;
 
-                        var sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
+                        let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
                         WebInspector.showSourceCodeLocation(sourceCodeLocation);
                     });
                 });

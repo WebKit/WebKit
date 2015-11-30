@@ -1101,9 +1101,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
 
     _contextMenuInDataTable(event)
     {
-        var contextMenu = new WebInspector.ContextMenu(event);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
 
-        var gridNode = this.dataGridNodeFromNode(event.target);
+        let gridNode = this.dataGridNodeFromNode(event.target);
         if (this.dataGrid._refreshCallback && (!gridNode || gridNode !== this.placeholderNode))
             contextMenu.appendItem(WebInspector.UIString("Refresh"), this._refreshCallback.bind(this));
 
@@ -1114,17 +1114,15 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.View
                 if (gridNode === this.placeholderNode)
                     contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
                 else {
-                    var element = event.target.enclosingNodeOrSelfWithNodeName("td");
-                    var columnIdentifier = element.__columnIdentifier;
-                    var columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
+                    let element = event.target.enclosingNodeOrSelfWithNodeName("td");
+                    let columnIdentifier = element.__columnIdentifier;
+                    let columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
                     contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
                 }
             }
             if (this.dataGrid._deleteCallback && gridNode !== this.placeholderNode)
                 contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
         }
-
-        contextMenu.show();
     }
 
     _clickInDataTable(event)

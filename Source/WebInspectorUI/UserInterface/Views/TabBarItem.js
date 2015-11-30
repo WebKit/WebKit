@@ -180,34 +180,24 @@ WebInspector.TabBarItem = class TabBarItem extends WebInspector.Object
         if (!this._parentTabBar)
             return;
 
-        var hasOtherNonPinnedTabs = false;
-        for (var item of this._parentTabBar.tabBarItems) {
-            if (item === this || item.pinned)
-                continue;
-            hasOtherNonPinnedTabs = true;
-            break; 
-        }
-
-        function closeTab()
-        {
+        let closeTab = () => {
             this._parentTabBar.removeTabBarItem(this);
-        }
+        };
 
-        function closeOtherTabs()
-        {
-            var tabBarItems = this._parentTabBar.tabBarItems;
-            for (var i = tabBarItems.length - 1; i >= 0; --i) {
-                var item = tabBarItems[i];
+        let closeOtherTabs = () => {
+            let tabBarItems = this._parentTabBar.tabBarItems;
+            for (let i = tabBarItems.length - 1; i >= 0; --i) {
+                let item = tabBarItems[i];
                 if (item === this || item.pinned)
                     continue;
                 this._parentTabBar.removeTabBarItem(item);
             }
-        }
+        };
 
-        var contextMenu = new WebInspector.ContextMenu(event);
-        contextMenu.appendItem(WebInspector.UIString("Close Tab"), closeTab.bind(this), !hasOtherNonPinnedTabs);
-        contextMenu.appendItem(WebInspector.UIString("Close Other Tabs"), closeOtherTabs.bind(this), !hasOtherNonPinnedTabs);
-        contextMenu.show();
+        let hasOtherNonPinnedTabs = this._parentTabBar.tabBarItems.some((item) => item !== this && !item.pinned);
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        contextMenu.appendItem(WebInspector.UIString("Close Tab"), closeTab, !hasOtherNonPinnedTabs);
+        contextMenu.appendItem(WebInspector.UIString("Close Other Tabs"), closeOtherTabs, !hasOtherNonPinnedTabs);
     }
 };
 

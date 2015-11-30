@@ -40,8 +40,7 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
     {
         console.assert(document.body.contains(breakpointDisplayElement), "Breakpoint popover display element must be in the DOM.");
 
-        function editBreakpoint()
-        {
+        const editBreakpoint = () => {
             console.assert(!this._popover, "Breakpoint popover already exists.");
             if (this._popover)
                 return;
@@ -53,50 +52,46 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
             let bounds = WebInspector.Rect.rectFromClientRect(breakpointDisplayElement.getBoundingClientRect());
             bounds.origin.x -= 1; // Move the anchor left one pixel so it looks more centered.
             this._popover.present(bounds.pad(2), [WebInspector.RectEdge.MAX_Y]);
-        }
+        };
 
-        function removeBreakpoint()
-        {
+        const removeBreakpoint = () => {
             WebInspector.debuggerManager.removeBreakpoint(breakpoint);
-        }
+        };
 
-        function toggleBreakpoint()
-        {
+        const toggleBreakpoint = () => {
             breakpoint.disabled = !breakpoint.disabled;
-        }
+        };
 
-        function toggleAutoContinue()
-        {
+        const toggleAutoContinue = () => {
             breakpoint.autoContinue = !breakpoint.autoContinue;
-        }
+        };
 
-        function revealOriginalSourceCodeLocation()
-        {
+        const revealOriginalSourceCodeLocation = () => {
             WebInspector.showOriginalOrFormattedSourceCodeLocation(breakpoint.sourceCodeLocation);
-        }
+        };
 
         if (WebInspector.debuggerManager.isBreakpointEditable(breakpoint))
-            contextMenu.appendItem(WebInspector.UIString("Edit Breakpoint…"), editBreakpoint.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Edit Breakpoint…"), editBreakpoint);
 
         if (breakpoint.autoContinue && !breakpoint.disabled) {
-            contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), toggleBreakpoint.bind(this));
-            contextMenu.appendItem(WebInspector.UIString("Cancel Automatic Continue"), toggleAutoContinue.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), toggleBreakpoint);
+            contextMenu.appendItem(WebInspector.UIString("Cancel Automatic Continue"), toggleAutoContinue);
         } else if (!breakpoint.disabled)
-            contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), toggleBreakpoint.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), toggleBreakpoint);
         else
-            contextMenu.appendItem(WebInspector.UIString("Enable Breakpoint"), toggleBreakpoint.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Enable Breakpoint"), toggleBreakpoint);
 
         if (!breakpoint.autoContinue && !breakpoint.disabled && breakpoint.actions.length)
-            contextMenu.appendItem(WebInspector.UIString("Set to Automatically Continue"), toggleAutoContinue.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Set to Automatically Continue"), toggleAutoContinue);
 
         if (WebInspector.debuggerManager.isBreakpointRemovable(breakpoint)) {
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("Delete Breakpoint"), removeBreakpoint.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Delete Breakpoint"), removeBreakpoint);
         }
 
         if (breakpoint._sourceCodeLocation.hasMappedLocation()) {
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("Reveal in Original Resource"), revealOriginalSourceCodeLocation.bind(this));
+            contextMenu.appendItem(WebInspector.UIString("Reveal in Original Resource"), revealOriginalSourceCodeLocation);
         }
     }
 

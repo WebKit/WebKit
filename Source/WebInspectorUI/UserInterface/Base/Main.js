@@ -190,6 +190,7 @@ WebInspector.contentLoaded = function()
     window.addEventListener("keyup", this._windowKeyUp.bind(this));
     window.addEventListener("mousemove", this._mouseMoved.bind(this), true);
     window.addEventListener("pagehide", this._pageHidden.bind(this));
+    window.addEventListener("contextmenu", this._contextMenuRequested.bind(this));
 
     // Add platform style classes so the UI can be tweaked per-platform.
     document.body.classList.add(WebInspector.Platform.name + "-platform");
@@ -1323,6 +1324,14 @@ WebInspector._mouseMoved = function(event)
 WebInspector._pageHidden = function(event)
 {
     this._saveCookieForOpenTabs();
+};
+
+WebInspector._contextMenuRequested = function(event)
+{
+    const onlyExisting = true;
+    let proposedContextMenu = WebInspector.ContextMenu.createFromEvent(event, onlyExisting);
+    if (proposedContextMenu)
+        proposedContextMenu.show();
 };
 
 WebInspector._undock = function(event)
