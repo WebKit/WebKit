@@ -1,3 +1,90 @@
+2015-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Split platform-independent logic in AVCaptureDeviceManager out into a new class
+        https://bugs.webkit.org/show_bug.cgi?id=151388
+        <rdar://problem/23593980>
+
+        Reviewed by Eric Carlson.
+
+        To prepare for creating a MockCaptureDeviceManager to be able to test
+        MediaDevices.getUserMedia, we create a platform-independent capture device manager
+        which all platforms should extend and add platform-specific logic to.
+
+        The methods CaptureDeviceManager::createMediaSourceForCaptureDeviceWithConstraints and
+        CaptureDeviceManager::captureDeviceList should be overridden by each platform
+        CaptureDeviceManager to respectively create a RealtimeMediaSource and return a list of
+        capture devices. createMediaSourceForCaptureDeviceWithConstraints attempts to create
+        a media source for a given device with some constraints; if the contraints cannot be
+        satisfied, this returns null.
+
+        The refactored capture device manager also introduces the notion of a platform-
+        independent capture session which may be extended by platform device managers for
+        determining whether a given constraint name, value and media type is valid.
+
+        A platform-independent CaptureDeviceInfo now represents either the video or audio
+        component of a capture device, but not both at once. This means a capture device that
+        supports both video and audio will emit two separate capture devices.
+
+        No new tests, since there should be no behavior change.
+
+        * Modules/mediastream/CaptureDeviceInfo.h: Added.
+        (WebCore::CaptureSessionInfo::~CaptureSessionInfo):
+        (WebCore::CaptureSessionInfo::supportsVideoSize):
+        (WebCore::CaptureSessionInfo::bestSessionPresetForVideoDimensions):
+        * Modules/mediastream/CaptureDeviceManager.cpp: Added.
+        (CaptureDeviceManager::~CaptureDeviceManager):
+        (CaptureDeviceManager::getSourcesInfo):
+        (CaptureDeviceManager::captureDeviceFromDeviceID):
+        (CaptureDeviceManager::verifyConstraintsForMediaType):
+        (CaptureDeviceManager::bestSourcesForTypeAndConstraints):
+        (CaptureDeviceManager::sourceWithUID):
+        (CaptureDeviceManager::bestDeviceForFacingMode):
+        (facingModeFromString):
+        (CaptureDeviceManager::sessionSupportsConstraint):
+        (CaptureDeviceManager::isSupportedFrameRate):
+        * Modules/mediastream/CaptureDeviceManager.h: Added.
+        (WebCore::CaptureDeviceManager::refreshCaptureDeviceList):
+        (WebCore::CaptureDeviceManager::defaultCaptureSession):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp: Added.
+        (WebCore::RealtimeMediaSourceSupportedConstraints::nameForConstraint):
+        (WebCore::RealtimeMediaSourceSupportedConstraints::constraintFromName):
+        (WebCore::RealtimeMediaSourceSupportedConstraints::supportsConstraint):
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureSessionInfo::AVCaptureSessionInfo):
+        (WebCore::AVCaptureSessionInfo::supportsVideoSize):
+        (WebCore::AVCaptureSessionInfo::bestSessionPresetForVideoDimensions):
+        (WebCore::AVCaptureDeviceManager::captureDeviceList):
+        (WebCore::shouldConsiderDeviceInDeviceList):
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDeviceList):
+        (WebCore::AVCaptureDeviceManager::AVCaptureDeviceManager):
+        (WebCore::AVCaptureDeviceManager::bestSourcesForTypeAndConstraints):
+        (WebCore::AVCaptureDeviceManager::sourceWithUID):
+        (WebCore::AVCaptureDeviceManager::getSourcesInfo):
+        (WebCore::AVCaptureDeviceManager::verifyConstraintsForMediaType):
+        (WebCore::AVCaptureDeviceManager::defaultCaptureSession):
+        (WebCore::AVCaptureDeviceManager::sessionSupportsConstraint):
+        (WebCore::AVCaptureDeviceManager::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebCore::AVCaptureDeviceManager::deviceDisconnected):
+        (WebCore::AVCaptureDeviceManager::isSupportedFrameRate):
+        (WebCore::CaptureDevice:::m_enabled): Deleted.
+        (WebCore::captureDeviceList): Deleted.
+        (WebCore::captureDeviceFromDeviceID): Deleted.
+        (WebCore::refreshCaptureDeviceList): Deleted.
+        (WebCore::AVCaptureDeviceManager::bestSessionPresetForVideoSize): Deleted.
+        (WebCore::AVCaptureDeviceManager::deviceSupportsFacingMode): Deleted.
+        (WebCore::AVCaptureDeviceManager::bestDeviceForFacingMode): Deleted.
+        (WebCore::AVCaptureDeviceManager::isValidConstraint): Deleted.
+        (WebCore::AVCaptureDeviceManager::validConstraintNames): Deleted.
+        (WebCore::AVCaptureDeviceManager::validFacingModes): Deleted.
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::applyConstraints):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::validateRequestConstraints):
+        (WebCore::RealtimeMediaSourceCenterMac::createMediaStream):
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Set the correct source on the IDBRequest for cursor updates

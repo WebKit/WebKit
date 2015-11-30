@@ -37,6 +37,7 @@
 #import "MediaConstraints.h"
 #import "NotImplemented.h"
 #import "PlatformLayer.h"
+#import "RealtimeMediaSourceCenter.h"
 #import "RealtimeMediaSourceStates.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
@@ -179,36 +180,39 @@ bool AVVideoCaptureSource::applyConstraints(MediaConstraints* constraints)
 {
     ASSERT(constraints);
 
-    const Vector<AtomicString>& constraintNames = AVCaptureDeviceManager::validConstraintNames();
-    String widthConstraint;
-    String heightConstraint;
+    const RealtimeMediaSourceSupportedConstraints& supportedConstraints = RealtimeMediaSourceCenter::singleton().supportedConstraints();
+    String widthConstraintValue;
+    String heightConstraintValue;
+    String widthConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::Width);
+    String heightConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::Height);
 
-    constraints->getMandatoryConstraintValue(constraintNames[AVCaptureDeviceManager::Width], widthConstraint);
-    constraints->getMandatoryConstraintValue(constraintNames[AVCaptureDeviceManager::Height], heightConstraint);
+    constraints->getMandatoryConstraintValue(widthConstraintName, widthConstraintValue);
+    constraints->getMandatoryConstraintValue(heightConstraintName, heightConstraintValue);
 
-    int width = widthConstraint.toInt();
-    int height = heightConstraint.toInt();
+    int width = widthConstraintValue.toInt();
+    int height = heightConstraintValue.toInt();
     if (!width && !height) {
-        constraints->getOptionalConstraintValue(constraintNames[AVCaptureDeviceManager::Width], widthConstraint);
-        constraints->getOptionalConstraintValue(constraintNames[AVCaptureDeviceManager::Height], heightConstraint);
-        width = widthConstraint.toInt();
-        height = heightConstraint.toInt();
+        constraints->getOptionalConstraintValue(widthConstraintName, widthConstraintValue);
+        constraints->getOptionalConstraintValue(heightConstraintName, heightConstraintValue);
+        width = widthConstraintValue.toInt();
+        height = heightConstraintValue.toInt();
     }
     
     if (width || height) {
-        NSString *preset = AVCaptureDeviceManager::bestSessionPresetForVideoSize(session(), width, height);
+        NSString *preset = AVCaptureSessionInfo(session()).bestSessionPresetForVideoDimensions(width, height);
         if (!preset || ![session() canSetSessionPreset:preset])
             return false;
         
         [session() setSessionPreset:preset];
     }
 
-    String frameRateConstraint;
-    constraints->getMandatoryConstraintValue(constraintNames[AVCaptureDeviceManager::FrameRate], frameRateConstraint);
-    float frameRate = frameRateConstraint.toFloat();
+    String frameRateConstraintValue;
+    String frameRateConstraintName = supportedConstraints.nameForConstraint(MediaConstraintType::FrameRate);
+    constraints->getMandatoryConstraintValue(frameRateConstraintName, frameRateConstraintValue);
+    float frameRate = frameRateConstraintValue.toFloat();
     if (!frameRate) {
-        constraints->getOptionalConstraintValue(constraintNames[AVCaptureDeviceManager::FrameRate], frameRateConstraint);
-        frameRate = frameRateConstraint.toFloat();
+        constraints->getOptionalConstraintValue(frameRateConstraintName, frameRateConstraintValue);
+        frameRate = frameRateConstraintValue.toFloat();
     }
     if (frameRate && !setFrameRateConstraint(frameRate, 0))
         return false;

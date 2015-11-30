@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#include "CaptureDeviceManager.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/RetainPtr.h>
@@ -40,38 +41,46 @@ OBJC_CLASS WebCoreAVCaptureDeviceManagerObserver;
 
 namespace WebCore {
 
-class CaptureDevice;
-
-class AVCaptureDeviceManager {
+class AVCaptureSessionInfo : public CaptureSessionInfo {
 public:
+    AVCaptureSessionInfo(AVCaptureSession*);
+    virtual bool supportsVideoSize(const String&) const override;
+    virtual String bestSessionPresetForVideoDimensions(int width, int height) const override;
+
+private:
+    AVCaptureSession *m_platformSession;
+};
+
+class AVCaptureDeviceManager final : public CaptureDeviceManager {
+public:
+    virtual Vector<CaptureDeviceInfo>& captureDeviceList() override;
+
     static AVCaptureDeviceManager& singleton();
-    static bool isAvailable();
 
-    TrackSourceInfoVector getSourcesInfo(const String&);
-    bool verifyConstraintsForMediaType(AVCaptureSession *, RealtimeMediaSource::Type, MediaConstraints*, String&);
-    Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
-    RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*);
+    virtual RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
+    virtual Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>) override;
 
-    enum ValidConstraints { Width = 0, Height, FrameRate, FacingMode, Gain };
-    static const Vector<AtomicString>& validConstraintNames();
-    static const Vector<AtomicString>& validFacingModes();
+    virtual TrackSourceInfoVector getSourcesInfo(const String&) override;
+    virtual bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, MediaConstraints*, const CaptureSessionInfo*, String&) override;
 
-    static bool deviceSupportsFacingMode(AVCaptureDevice*, RealtimeMediaSourceStates::VideoFacingMode);
-    static bool isValidConstraint(RealtimeMediaSource::Type, const String&);
-    static String bestSessionPresetForVideoSize(AVCaptureSession*, int width, int height);
-
-    void registerForDeviceNotifications();
     void deviceConnected();
     void deviceDisconnected(AVCaptureDevice*);
 
 protected:
-    AVCaptureDeviceManager();
-    ~AVCaptureDeviceManager();
+    static bool isAvailable();
 
-    CaptureDevice* bestDeviceForFacingMode(RealtimeMediaSourceStates::VideoFacingMode);
-    bool sessionSupportsConstraint(AVCaptureSession*, RealtimeMediaSource::Type, const String& name, const String& value);
+    AVCaptureDeviceManager();
+    virtual ~AVCaptureDeviceManager() override;
+    virtual bool sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type, const String& name, const String& value) override;
+    virtual RealtimeMediaSource* createMediaSourceForCaptureDeviceWithConstraints(const CaptureDeviceInfo&, MediaConstraints*) override;
+    virtual CaptureSessionInfo defaultCaptureSession() const override;
+    virtual void refreshCaptureDeviceList() override;
+    virtual bool isSupportedFrameRate(float frameRate) const override;
+
+    void registerForDeviceNotifications();
 
     RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
+    Vector<CaptureDeviceInfo> m_devices;
 };
 
 } // namespace WebCore

@@ -33,7 +33,24 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
+
+enum class MediaConstraintType {
+    Unknown,
+    Width,
+    Height,
+    AspectRatio,
+    FrameRate,
+    FacingMode,
+    Volume,
+    SampleRate,
+    SampleSize,
+    EchoCancellation,
+    DeviceId,
+    GroupId
+};
 
 class RealtimeMediaSourceSupportedConstraints {
 public:
@@ -73,6 +90,10 @@ public:
 
     bool supportsGroupId() const { return m_supportsGroupId; }
     void setSupportsGroupId(bool value) { m_supportsGroupId = value; }
+
+    const AtomicString& nameForConstraint(MediaConstraintType) const;
+    MediaConstraintType constraintFromName(const String& constraintName) const;
+    bool supportsConstraint(MediaConstraintType) const;
 
 private:
     bool m_supportsWidth { false };
