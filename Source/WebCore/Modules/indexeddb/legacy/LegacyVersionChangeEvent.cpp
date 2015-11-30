@@ -37,13 +37,8 @@ LegacyVersionChangeEvent::LegacyVersionChangeEvent(unsigned long long oldVersion
 {
 }
 
-LegacyVersionChangeEvent::~LegacyVersionChangeEvent()
+Optional<uint64_t> LegacyVersionChangeEvent::newVersion() const
 {
-}
-
-uint64_t LegacyVersionChangeEvent::newVersion(bool& isNull) const
-{
-    isNull = false;
     return m_newVersion;
 }
 

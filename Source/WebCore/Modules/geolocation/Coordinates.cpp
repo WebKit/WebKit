@@ -28,40 +28,32 @@
 
 namespace WebCore {
 
-double Coordinates::altitude(bool& isNull) const
+Optional<double> Coordinates::altitude() const
 {
-    if (m_canProvideAltitude)
-        return m_altitude;
-
-    isNull = true;
-    return 0;
+    if (!m_canProvideAltitude)
+        return Nullopt;
+    return m_altitude;
 }
 
-double Coordinates::altitudeAccuracy(bool& isNull) const
+Optional<double> Coordinates::altitudeAccuracy() const
 {
-    if (m_canProvideAltitudeAccuracy)
-        return m_altitudeAccuracy;
-
-    isNull = true;
-    return 0;
+    if (!m_canProvideAltitudeAccuracy)
+        return Nullopt;
+    return m_altitudeAccuracy;
 }
 
-double Coordinates::heading(bool& isNull) const
+Optional<double> Coordinates::heading() const
 {
-    if (m_canProvideHeading)
-        return m_heading;
-
-    isNull = true;
-    return 0;
+    if (!m_canProvideHeading)
+        return Nullopt;
+    return m_heading;
 }
 
-double Coordinates::speed(bool& isNull) const
+Optional<double> Coordinates::speed() const
 {
-    if (m_canProvideSpeed)
-        return m_speed;
-
-    isNull = true;
-    return 0;
+    if (!m_canProvideSpeed)
+        return Nullopt;
+    return m_speed;
 }
     
 } // namespace WebCore

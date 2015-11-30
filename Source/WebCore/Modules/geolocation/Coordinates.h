@@ -27,6 +27,7 @@
 #define Coordinates_h
 
 #include "Event.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,11 +43,11 @@ public:
 
     double latitude() const { return m_latitude; }
     double longitude() const { return m_longitude; }
-    double altitude(bool& isNull) const;
+    Optional<double> altitude() const;
     double accuracy() const { return m_accuracy; }
-    double altitudeAccuracy(bool& isNull) const;
-    double heading(bool& isNull) const;
-    double speed(bool& isNull) const;
+    Optional<double> altitudeAccuracy() const;
+    Optional<double> heading() const;
+    Optional<double> speed() const;
     
 private:
     Coordinates(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)

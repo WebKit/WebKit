@@ -28,11 +28,21 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "EventNames.h"
+#include "IDBVersionChangeEventImpl.h"
+
 namespace WebCore {
 
 IDBVersionChangeEvent::IDBVersionChangeEvent(const AtomicString& name)
     : Event(name, false /*canBubble*/, false /*cancelable*/)
 {
+}
+
+Ref<IDBVersionChangeEvent> IDBVersionChangeEvent::create()
+{
+    // FIXME: This is called only by document.createEvent. I don't see how it's valuable to create an event with
+    // read-only oldVersion attribute of 0 and newVersion of null; preserving that behavior for now.
+    return IDBClient::IDBVersionChangeEvent::create(0, 0, eventNames().versionchangeEvent);
 }
 
 } // namespace WebCore

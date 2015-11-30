@@ -33,22 +33,19 @@
 
 namespace WebCore {
 
-class LegacyVersionChangeEvent : public IDBVersionChangeEvent {
+class LegacyVersionChangeEvent final : public IDBVersionChangeEvent {
 public:
-    static Ref<LegacyVersionChangeEvent> create(unsigned long long oldVersion = 0, unsigned long long newVersion = 0, const AtomicString& eventType = AtomicString())
+    static Ref<LegacyVersionChangeEvent> create(unsigned long long oldVersion, unsigned long long newVersion, const AtomicString& eventType)
     {
         return adoptRef(*new LegacyVersionChangeEvent(oldVersion, newVersion, eventType));
     }
 
-    virtual ~LegacyVersionChangeEvent();
-
-    virtual uint64_t oldVersion() const override final { return m_oldVersion; }
-    virtual uint64_t newVersion(bool& isNull) const override final;
-
-    virtual EventInterface eventInterface() const override final;
-
 private:
     LegacyVersionChangeEvent(unsigned long long oldVersion, unsigned long long newVersion, const AtomicString& eventType);
+
+    virtual uint64_t oldVersion() const override { return m_oldVersion; }
+    virtual Optional<uint64_t> newVersion() const override;
+    virtual EventInterface eventInterface() const override;
 
     uint64_t m_oldVersion;
     uint64_t m_newVersion;

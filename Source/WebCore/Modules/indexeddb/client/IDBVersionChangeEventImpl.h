@@ -33,23 +33,22 @@
 namespace WebCore {
 namespace IDBClient {
 
-class IDBVersionChangeEvent : public WebCore::IDBVersionChangeEvent {
+class IDBVersionChangeEvent final : public WebCore::IDBVersionChangeEvent {
 public:
-    static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion = 0, uint64_t newVersion = 0, const AtomicString& eventType = AtomicString())
+    static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType)
     {
         return adoptRef(*new IDBVersionChangeEvent(oldVersion, newVersion, eventType));
     }
 
-    virtual uint64_t oldVersion() const override final { return m_oldVersion; }
-    virtual uint64_t newVersion(bool& isNull) const override final;
-
-    virtual EventInterface eventInterface() const override final;
-
 private:
     IDBVersionChangeEvent(uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);
 
-    uint64_t m_oldVersion { 0 };
-    uint64_t m_newVersion { 0 };
+    virtual uint64_t oldVersion() const override { return m_oldVersion; }
+    virtual Optional<uint64_t> newVersion() const override;
+    virtual EventInterface eventInterface() const override;
+
+    uint64_t m_oldVersion;
+    uint64_t m_newVersion;
 };
 
 } // namespace IDBClient

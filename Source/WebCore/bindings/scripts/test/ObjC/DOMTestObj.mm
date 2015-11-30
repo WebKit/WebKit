@@ -800,31 +800,31 @@
 - (double)nullableDoubleAttribute
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->nullableDoubleAttribute(isNull);
+    return IMPL->nullableDoubleAttribute();
 }
 
 - (int)nullableLongAttribute
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->nullableLongAttribute(isNull);
+    return IMPL->nullableLongAttribute();
 }
 
 - (BOOL)nullableBooleanAttribute
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->nullableBooleanAttribute(isNull);
+    return IMPL->nullableBooleanAttribute();
 }
 
 - (NSString *)nullableStringAttribute
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->nullableStringAttribute(isNull);
+    return IMPL->nullableStringAttribute();
 }
 
 - (int)nullableLongSettableAttribute
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->nullableLongSettableAttribute(isNull);
+    return IMPL->nullableLongSettableAttribute();
 }
 
 - (void)setNullableLongSettableAttribute:(int)newNullableLongSettableAttribute
@@ -837,7 +837,7 @@
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
-    int result = IMPL->nullableStringValue(isNull, ec);
+    int result = IMPL->nullableStringValue(ec);
     WebCore::raiseOnDOMError(ec);
     return result;
 }
@@ -863,7 +863,7 @@
 - (DOMTestNode *)putForwardsNullableAttribute
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->putForwardsNullableAttribute(isNull)));
+    return kit(WTF::getPtr(IMPL->putForwardsNullableAttribute()));
 }
 
 - (void)voidMethod

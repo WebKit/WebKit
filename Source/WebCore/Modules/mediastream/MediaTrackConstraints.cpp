@@ -48,7 +48,7 @@ MediaTrackConstraints::MediaTrackConstraints(PassRefPtr<MediaConstraintsImpl> co
 {
 }
 
-Vector<PassRefPtr<MediaTrackConstraint>> MediaTrackConstraints::optional(bool) const
+Vector<PassRefPtr<MediaTrackConstraint>> MediaTrackConstraints::optional() const
 {
     // https://bugs.webkit.org/show_bug.cgi?id=121954
     notImplemented();

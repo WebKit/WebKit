@@ -1824,11 +1824,8 @@ EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* state, JSObject* slot
             return reportDeprecatedGetterError(*state, "TestObj", "nullableDoubleAttribute");
         return throwGetterTypeError(*state, "TestObj", "nullableDoubleAttribute");
     }
-    bool isNull = false;
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.nullableDoubleAttribute(isNull));
-    if (isNull)
-        return JSValue::encode(jsNull());
+    JSValue result = toNullableJSNumber(impl.nullableDoubleAttribute());
     return JSValue::encode(result);
 }
 
@@ -1844,11 +1841,8 @@ EncodedJSValue jsTestObjNullableLongAttribute(ExecState* state, JSObject* slotBa
             return reportDeprecatedGetterError(*state, "TestObj", "nullableLongAttribute");
         return throwGetterTypeError(*state, "TestObj", "nullableLongAttribute");
     }
-    bool isNull = false;
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.nullableLongAttribute(isNull));
-    if (isNull)
-        return JSValue::encode(jsNull());
+    JSValue result = toNullableJSNumber(impl.nullableLongAttribute());
     return JSValue::encode(result);
 }
 
@@ -1864,11 +1858,8 @@ EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* state, JSObject* slo
             return reportDeprecatedGetterError(*state, "TestObj", "nullableBooleanAttribute");
         return throwGetterTypeError(*state, "TestObj", "nullableBooleanAttribute");
     }
-    bool isNull = false;
     auto& impl = castedThis->wrapped();
-    JSValue result = jsBoolean(impl.nullableBooleanAttribute(isNull));
-    if (isNull)
-        return JSValue::encode(jsNull());
+    JSValue result = jsBoolean(impl.nullableBooleanAttribute());
     return JSValue::encode(result);
 }
 
@@ -1884,11 +1875,8 @@ EncodedJSValue jsTestObjNullableStringAttribute(ExecState* state, JSObject* slot
             return reportDeprecatedGetterError(*state, "TestObj", "nullableStringAttribute");
         return throwGetterTypeError(*state, "TestObj", "nullableStringAttribute");
     }
-    bool isNull = false;
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.nullableStringAttribute(isNull));
-    if (isNull)
-        return JSValue::encode(jsNull());
+    JSValue result = jsStringWithCache(state, impl.nullableStringAttribute());
     return JSValue::encode(result);
 }
 
@@ -1904,11 +1892,8 @@ EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* state, JSObject
             return reportDeprecatedGetterError(*state, "TestObj", "nullableLongSettableAttribute");
         return throwGetterTypeError(*state, "TestObj", "nullableLongSettableAttribute");
     }
-    bool isNull = false;
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.nullableLongSettableAttribute(isNull));
-    if (isNull)
-        return JSValue::encode(jsNull());
+    JSValue result = toNullableJSNumber(impl.nullableLongSettableAttribute());
     return JSValue::encode(result);
 }
 
@@ -1925,12 +1910,9 @@ EncodedJSValue jsTestObjNullableStringValue(ExecState* state, JSObject* slotBase
         return throwGetterTypeError(*state, "TestObj", "nullableStringValue");
     }
     ExceptionCode ec = 0;
-    bool isNull = false;
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.nullableStringValue(isNull, ec));
+    JSValue result = toNullableJSNumber(impl.nullableStringValue(ec));
     setDOMException(state, ec);
-    if (isNull)
-        return JSValue::encode(jsNull());
     return JSValue::encode(result);
 }
 

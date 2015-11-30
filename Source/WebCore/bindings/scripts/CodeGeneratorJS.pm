@@ -2278,8 +2278,6 @@ sub GenerateImplementation
 
             my $name = $attribute->signature->name;
             my $type = $attribute->signature->type;
-            # Nullable wrapper types do not need any special handling as the implementation can return a null pointer.
-            my $isNullable = $attribute->signature->isNullable && !$codeGenerator->IsWrapperType($type);
             $codeGenerator->AssertNotSequenceType($type);
             my $getFunctionName = GetAttributeGetterName($interfaceName, $className, $interface, $attribute);
             my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
@@ -2411,8 +2409,6 @@ sub GenerateImplementation
                     push(@implContent, "    return JSValue::encode(JS" . $constructorType . "::getConstructor(state->vm(), castedThis->globalObject()));\n");
                 }
             } elsif (!$attribute->signature->extendedAttributes->{"GetterRaisesException"}) {
-                push(@implContent, "    bool isNull = false;\n") if $isNullable;
-
                 my $cacheIndex = 0;
                 if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                     $cacheIndex = $currentCachedAttribute;
@@ -2435,7 +2431,6 @@ sub GenerateImplementation
                     }
                 } else {
                     my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
-                    push(@arguments, "isNull") if $isNullable;
                     if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                         my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                         $implIncludes{"${implementedBy}.h"} = 1;
@@ -2456,22 +2451,12 @@ sub GenerateImplementation
                     } else {
                         push(@implContent, "    JSValue result = $jsType;\n");
                     }
-
-                    if ($isNullable) {
-                        push(@implContent, "    if (isNull)\n");
-                        push(@implContent, "        return JSValue::encode(jsNull());\n");
-                    }
                 }
 
                 push(@implContent, "    castedThis->m_" . $attribute->signature->name . ".set(state->vm(), castedThis, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
                 push(@implContent, "    return JSValue::encode(result);\n");
 
             } else {
-                if ($isNullable) {
-                    push(@implContent, "    bool isNull = false;\n");
-                    unshift(@arguments, "isNull");
-                }
-
                 unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, "JSValue::encode(jsUndefined())"));
 
                 if ($svgPropertyOrListPropertyType) {
@@ -2483,11 +2468,6 @@ sub GenerateImplementation
                 }
 
                 push(@implContent, "    setDOMException(state, ec);\n");
-
-                if ($isNullable) {
-                    push(@implContent, "    if (isNull)\n");
-                    push(@implContent, "        return JSValue::encode(jsNull());\n");
-                }
 
                 push(@implContent, "    return JSValue::encode(result);\n");
             }
@@ -4161,13 +4141,15 @@ sub NativeToJSValue
         return "Symbol::create(state->vm(), *($value).uid())";
     }
 
-    if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
-        $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
-        return "jsNumber(std::max(0, " . $value . "))";
-    }
-
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp") {
-        return "jsNumber($value)";
+        # We could instead overload a function to work with optional as well as non-optional numbers, but this
+        # is slightly better because it guarantees we will fail to compile if the IDL file doesn't match the C++.
+        my $function = $signature->isNullable ? "toNullableJSNumber" : "jsNumber";
+        if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
+            $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
+            return "$function(std::max(0, " . $value . "))";
+        }
+        return "$function($value)";
     }
 
     if ($codeGenerator->IsEnumType($type)) {

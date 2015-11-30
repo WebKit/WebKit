@@ -1,3 +1,64 @@
+2015-11-30  Darin Adler  <darin@apple.com>
+
+        Use Optional instead of isNull out argument for nullable getters
+        https://bugs.webkit.org/show_bug.cgi?id=151676
+
+        Reviewed by Anders Carlsson.
+
+        No behavior change, just cleaner code.
+
+        * Modules/geolocation/Coordinates.cpp:
+        (WebCore::Coordinates::altitude): Return an Optional.
+        (WebCore::Coordinates::altitudeAccuracy): Ditto.
+        (WebCore::Coordinates::heading): Ditto.
+        (WebCore::Coordinates::speed): Ditto.
+        * Modules/geolocation/Coordinates.h: Ditto.
+
+        * Modules/indexeddb/IDBVersionChangeEvent.cpp:
+        (WebCore::IDBVersionChangeEvent::create): Added. The code before was calling
+        through to Event::create, which is clearly not what was wanted. Also removed
+        unneeded explicit destructor.
+        * Modules/indexeddb/IDBVersionChangeEvent.h: Changed return type of newVersion
+        to Optional and updated for above change.
+
+        * Modules/indexeddb/client/IDBVersionChangeEventImpl.cpp:
+        (WebCore::IDBClient::IDBVersionChangeEvent::newVersion): Changed to return
+        an Optional.
+        * Modules/indexeddb/client/IDBVersionChangeEventImpl.h: Removed unused
+        default argument values; the event type one, at least, was clearly incorrect.
+        Made more things private, got rid of unneeded destructor, marked class final
+        instead of marking all functions final.
+
+        * Modules/indexeddb/legacy/LegacyVersionChangeEvent.cpp:
+        (WebCore::LegacyVersionChangeEvent::newVersion): Same as above.
+        * Modules/indexeddb/legacy/LegacyVersionChangeEvent.h: Ditto.
+
+        * Modules/mediastream/MediaTrackConstraints.cpp:
+        (WebCore::MediaTrackConstraints::optional): Removed bogus bool value. If we
+        come back to finish later we will have to implement optional return values
+        for arrays in the JavaScript bindings generator, which should be straightforward.
+        * Modules/mediastream/MediaTrackConstraints.h: Ditto.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toNullableJSNumber): Added. This function template is used for
+        return values that are nullable numbers.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction): Replaced some existing bogus code to handle nullables with
+        new equally-bogus code that should be no worse and will compile.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Removed old support for nullables.
+        (NativeToJSValue): Added new support for nullable numbers.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation): Removed support for nullables. We almost certainly
+        won't need it for Objective-C bindings.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp: Updated.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Updated.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm: Updated.
+
 2015-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Split platform-independent logic in AVCaptureDeviceManager out into a new class

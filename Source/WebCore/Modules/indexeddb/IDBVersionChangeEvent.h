@@ -29,21 +29,19 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Event.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
 class IDBVersionChangeEvent : public Event {
 public:
-    virtual ~IDBVersionChangeEvent() { }
+    static Ref<IDBVersionChangeEvent> create();
 
     virtual uint64_t oldVersion() const = 0;
-    virtual uint64_t newVersion(bool& isNull) const = 0;
+    virtual Optional<uint64_t> newVersion() const = 0;
 
 protected:
-    IDBVersionChangeEvent(const AtomicString&);
+    explicit IDBVersionChangeEvent(const AtomicString& type);
 };
 
 } // namespace WebCore
