@@ -1763,6 +1763,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecInt32);
         break;
         
+    case GetRestLength:
+        forNode(node).setType(SpecInt32);
+        break;
+        
     case GetGetter: {
         JSValue base = forNode(node->child1()).m_value;
         if (base) {

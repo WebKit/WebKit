@@ -704,14 +704,14 @@ SLOW_PATH_DECL(slow_path_resolve_scope)
 SLOW_PATH_DECL(slow_path_copy_rest)
 {
     BEGIN();
-    unsigned numParamsToSkip = pc[2].u.unsignedValue;
-    unsigned numArgumentsToFunction = exec->argumentCount();
-    if (numArgumentsToFunction <= numParamsToSkip)
+    unsigned arraySize = OP_C(2).jsValue().asUInt32();
+    if (!arraySize) {
+        ASSERT(!jsCast<JSArray*>(OP(1).jsValue())->length());
         END();
-
+    }
     JSArray* array = jsCast<JSArray*>(OP(1).jsValue());
-    unsigned arraySize = numArgumentsToFunction - numParamsToSkip;
-    array->setLength(exec, arraySize);
+    ASSERT(arraySize == array->length());
+    unsigned numParamsToSkip = pc[3].u.unsignedValue;
     for (unsigned i = 0; i < arraySize; i++)
         array->putDirectIndex(exec, i, exec->uncheckedArgument(i + numParamsToSkip));
     END();

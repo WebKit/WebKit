@@ -1,3 +1,93 @@
+2015-11-30  Saam barati  <sbarati@apple.com>
+
+        implement op_get_rest_length so that we can allocate the rest array with the right size from the start
+        https://bugs.webkit.org/show_bug.cgi?id=151467
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+
+        This patch implements op_get_rest_length which returns the length
+        that the rest parameter array will be. We're implementing this because
+        it might be a constant value in the presence of inlining in the DFG.
+        We will take advantage of this optimization opportunity in a future patch:
+        https://bugs.webkit.org/show_bug.cgi?id=151454
+        to emit better code for op_copy_rest.
+
+        op_get_rest_length has two operands: 
+        1) a destination
+        2) A constant indicating the number of parameters to skip when copying the rest array.
+
+        op_get_rest_length lowers to a JSConstant node when we're inlined
+        and not a varargs call (in this case, we statically know the arguments
+        length). When that condition isn't met, we lower op_get_rest_length to 
+        GetRestArray. GetRestArray produces its result as an int32.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitNewArrayWithSize):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        (JSC::BytecodeGenerator::emitRestParameter):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RestParameterNode::emit):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::numberOfArgumentsToSkip):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCopyRest):
+        (JSC::DFG::SpeculativeJIT::compileGetRestLength):
+        (JSC::DFG::SpeculativeJIT::compileNotifyWrite):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCopyRest):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetRestLength):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewObject):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_copy_rest):
+        (JSC::JIT::emit_op_get_rest_length):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2015-11-30  Filip Pizlo  <fpizlo@apple.com>
 
         MacroAssembler needs an API for disabling scratch registers

@@ -3483,7 +3483,8 @@ void RestParameterNode::emit(BytecodeGenerator& generator)
         return;
     }
 
-    RefPtr<RegisterID> restParameterArray = generator.emitRestParameter(generator.newTemporary(), m_numParametersToSkip);
+    RefPtr<RegisterID> restParameterArray = generator.newTemporary();
+    generator.emitRestParameter(restParameterArray.get(), m_numParametersToSkip);
     generator.emitProfileType(restParameterArray.get(), var, m_divotStart, m_divotEnd);
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
     generator.emitExpressionInfo(m_divotEnd, m_divotStart, m_divotEnd);

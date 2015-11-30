@@ -1221,9 +1221,9 @@ public:
         return appendCall(operation);
     }
 
-    JITCompiler::Call callOperation(V_JITOperation_ECRUiUi operation, GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, GPRReg arg4)
+    JITCompiler::Call callOperation(V_JITOperation_ECRUiUi operation, GPRReg arg1, GPRReg arg2, Imm32 arg3, GPRReg arg4)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3, arg4);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3.asTrustedImm32(), arg4);
         return appendCall(operation);
     }
 
@@ -2245,6 +2245,7 @@ public:
     void compileCreateScopedArguments(Node*);
     void compileCreateClonedArguments(Node*);
     void compileCopyRest(Node*);
+    void compileGetRestLength(Node*);
     void compileNotifyWrite(Node*);
     bool compileRegExpExec(Node*);
     void compileIsObjectOrNull(Node*);

@@ -970,6 +970,9 @@ private:
         case CopyRest:
             compileCopyRest();
             break;
+        case GetRestLength:
+            compileGetRestLength();
+            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -3645,21 +3648,41 @@ private:
         LBasicBlock doCopyRest = FTL_NEW_BLOCK(m_out, ("CopyRest C call"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("FillRestParameter continuation"));
 
-        LValue numberOfArgumentsToSkip = m_out.constInt32(m_node->numberOfArgumentsToSkip());
-        LValue numberOfArguments = getArgumentsLength().value;
+        LValue arrayLength = lowInt32(m_node->child2());
 
         m_out.branch(
-            m_out.above(numberOfArguments, numberOfArgumentsToSkip),
-            unsure(doCopyRest), unsure(continuation));
+            m_out.equal(arrayLength, m_out.constInt32(0)),
+            unsure(continuation), unsure(doCopyRest));
             
         LBasicBlock lastNext = m_out.appendTo(doCopyRest, continuation);
-        // Arguments: 0:exec, 1:JSCell* array, 2:arguments start, 3:number of arguments to skip, 4:number of arguments
+        // Arguments: 0:exec, 1:JSCell* array, 2:arguments start, 3:number of arguments to skip, 4:array length
+        LValue numberOfArgumentsToSkip = m_out.constInt32(m_node->numberOfArgumentsToSkip());
         vmCall(
             m_out.voidType,m_out.operation(operationCopyRest), m_callFrame, lowCell(m_node->child1()),
-            getArgumentsStart(), numberOfArgumentsToSkip, numberOfArguments);
+            getArgumentsStart(), numberOfArgumentsToSkip, arrayLength);
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
+    }
+
+    void compileGetRestLength()
+    {
+        LBasicBlock nonZeroLength = FTL_NEW_BLOCK(m_out, ("GetRestLength non zero"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetRestLength continuation"));
+        
+        ValueFromBlock zeroLengthResult = m_out.anchor(m_out.constInt32(0));
+
+        LValue numberOfArgumentsToSkip = m_out.constInt32(m_node->numberOfArgumentsToSkip());
+        LValue argumentsLength = getArgumentsLength().value;
+        m_out.branch(m_out.above(argumentsLength, numberOfArgumentsToSkip),
+            unsure(nonZeroLength), unsure(continuation));
+        
+        LBasicBlock lastNext = m_out.appendTo(nonZeroLength, continuation);
+        ValueFromBlock nonZeroLengthResult = m_out.anchor(m_out.sub(argumentsLength, numberOfArgumentsToSkip));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setInt32(m_out.phi(m_out.int32, zeroLengthResult, nonZeroLengthResult));
     }
     
     void compileNewObject()

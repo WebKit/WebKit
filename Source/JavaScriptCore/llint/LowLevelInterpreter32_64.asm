@@ -2430,3 +2430,20 @@ _llint_op_load_arrowfunction_this:
     storei CellTag, TagOffset[cfr, t1, 8]
     storei t0, PayloadOffset[cfr, t1, 8]
     dispatch(2)
+
+
+_llint_op_get_rest_length:
+    traceExecution()
+    loadi PayloadOffset + ArgumentCount[cfr], t0
+    subi 1, t0
+    loadisFromInstruction(2, t1)
+    bilteq t0, t1, .storeZero
+    subi t1, t0
+    jmp .finish
+.storeZero:
+    move 0, t0
+.finish:
+    loadisFromInstruction(1, t1)
+    storei t0, PayloadOffset[cfr, t1, 8]
+    storei Int32Tag, TagOffset[cfr, t1, 8]
+    dispatch(3)

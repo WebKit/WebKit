@@ -2298,3 +2298,20 @@ _llint_op_load_arrowfunction_this:
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
     dispatch(2)
+
+
+_llint_op_get_rest_length:
+    traceExecution()
+    loadi PayloadOffset + ArgumentCount[cfr], t0
+    subi 1, t0
+    loadisFromInstruction(2, t1)
+    bilteq t0, t1, .storeZero
+    subi t1, t0
+    jmp .boxUp
+.storeZero:
+    move 0, t0
+.boxUp:
+    orq tagTypeNumber, t0
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+    dispatch(3)

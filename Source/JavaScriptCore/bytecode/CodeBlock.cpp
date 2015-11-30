@@ -783,7 +783,16 @@ void CodeBlock::dumpBytecode(
         }
         case op_copy_rest: {
             int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            unsigned argumentOffset = (++it)->u.unsignedValue;
             printLocationAndOp(out, exec, location, it, "copy_rest");
+            out.printf("%s, %s, ", registerName(r0).data(), registerName(r1).data());
+            out.printf("ArgumentsOffset: %u", argumentOffset);
+            break;
+        }
+        case op_get_rest_length: {
+            int r0 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "get_rest_length");
             out.printf("%s, ", registerName(r0).data());
             unsigned argumentOffset = (++it)->u.unsignedValue;
             out.printf("ArgumentsOffset: %u", argumentOffset);

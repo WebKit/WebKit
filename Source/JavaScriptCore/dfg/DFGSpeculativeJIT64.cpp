@@ -3827,6 +3827,11 @@ void SpeculativeJIT::compile(Node* node)
         int32Result(result.gpr(), node);
         break;
     }
+
+    case GetRestLength: {
+        compileGetRestLength(node);
+        break;
+    }
         
     case GetScope:
         compileGetScope(node);

@@ -140,6 +140,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CreateThis:
     case GetCallee:
     case GetArgumentCount:
+    case GetRestLength:
     case GetLocal:
     case SetLocal:
     case PutStack:

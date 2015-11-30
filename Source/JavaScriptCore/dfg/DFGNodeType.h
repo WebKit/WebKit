@@ -262,6 +262,8 @@ namespace JSC { namespace DFG {
     macro(NewArrayBuffer, NodeResultJS) \
     macro(NewTypedArray, NodeResultJS | NodeMustGenerate) \
     macro(NewRegexp, NodeResultJS) \
+    /* Rest Parameter */\
+    macro(GetRestLength, NodeResultInt32) \
     macro(CopyRest, NodeMustGenerate) \
     \
     /* Support for allocation sinking. */\

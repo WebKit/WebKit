@@ -1370,6 +1370,7 @@ private:
 
         case CopyRest: {
             fixEdge<KnownCellUse>(node->child1());
+            fixEdge<KnownInt32Use>(node->child2());
             break;
         }
 
@@ -1381,6 +1382,7 @@ private:
         case GetLocal:
         case GetCallee:
         case GetArgumentCount:
+        case GetRestLength:
         case Flush:
         case PhantomLocal:
         case GetLocalUnlinked:

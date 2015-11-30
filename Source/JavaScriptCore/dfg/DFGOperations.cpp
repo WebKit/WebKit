@@ -818,11 +818,11 @@ JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, 
     return result;
 }
 
-void JIT_OPERATION operationCopyRest(ExecState* exec, JSCell* arrayAsCell, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned numberOfArguments)
+void JIT_OPERATION operationCopyRest(ExecState* exec, JSCell* arrayAsCell, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned arraySize)
 {
-    RELEASE_ASSERT(numberOfArguments > numberOfParamsToSkip); // We should only call this from JIT code when this condition is true.
+    ASSERT(arraySize);
     JSArray* array = jsCast<JSArray*>(arrayAsCell);
-    unsigned arraySize = numberOfArguments - numberOfParamsToSkip;
+    ASSERT(arraySize == array->length());
     array->setLength(exec, arraySize);
     for (unsigned i = 0; i < arraySize; i++)
         array->putDirectIndex(exec, i, argumentStart[i + numberOfParamsToSkip].jsValue());

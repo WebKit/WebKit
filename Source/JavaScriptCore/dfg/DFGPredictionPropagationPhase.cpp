@@ -219,6 +219,11 @@ private:
             break;
         }
 
+        case GetRestLength: {
+            changed |= setPrediction(SpecInt32);
+            break;
+        }
+
         case GetTypedArrayByteOffset:
         case GetArrayLength: {
             changed |= setPrediction(SpecInt32);

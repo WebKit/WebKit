@@ -1405,6 +1405,35 @@ void JIT::emit_op_copy_rest(Instruction* currentInstruction)
     slowPathCall.call();
 }
 
+void JIT::emit_op_get_rest_length(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    unsigned numParamsToSkip = currentInstruction[2].u.unsignedValue;
+    load32(payloadFor(JSStack::ArgumentCount), regT0);
+    sub32(TrustedImm32(1), regT0);
+    Jump zeroLength = branch32(LessThanOrEqual, regT0, Imm32(numParamsToSkip));
+    sub32(Imm32(numParamsToSkip), regT0);
+#if USE(JSVALUE64)
+    boxInt32(regT0, JSValueRegs(regT0));
+#endif
+    Jump done = jump();
+
+    zeroLength.link(this);
+#if USE(JSVALUE64)
+    move(TrustedImm64(JSValue::encode(jsNumber(0))), regT0);
+#else
+    move(TrustedImm32(0), regT0);
+#endif
+
+    done.link(this);
+#if USE(JSVALUE64)
+    emitPutVirtualRegister(dst, regT0);
+#else
+    move(TrustedImm32(JSValue::Int32Tag), regT1);
+    emitPutVirtualRegister(dst, JSValueRegs(regT1, regT0));
+#endif
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

@@ -2471,6 +2471,16 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitNewArrayWithSize(RegisterID* dst, RegisterID* length)
+{
+    emitOpcode(op_new_array_with_size);
+    instructions().append(dst->index());
+    instructions().append(length->index());
+    instructions().append(newArrayAllocationProfile());
+
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadataNode* function)
 {
     return emitNewFunctionInternal(dst, m_codeBlock->addFunctionDecl(makeFunction(function)));
@@ -2600,12 +2610,9 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
         instructions().append(realCall->bind(begin, instructions().size()));
         
         if (dst != ignoredResult()) {
-            if (callArguments.argumentCountIncludingThis() == 2) {
-                emitOpcode(op_new_array_with_size);
-                instructions().append(dst->index());
-                instructions().append(callArguments.argumentRegister(0)->index());
-                instructions().append(newArrayAllocationProfile());
-            } else {
+            if (callArguments.argumentCountIncludingThis() == 2)
+                emitNewArrayWithSize(dst, callArguments.argumentRegister(0));
+            else {
                 ASSERT(callArguments.argumentCountIncludingThis() == 1);
                 emitOpcode(op_new_array);
                 instructions().append(dst->index());
@@ -3833,10 +3840,16 @@ void BytecodeGenerator::invalidateForInContextForLocal(RegisterID* localRegister
 
 RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned numParametersToSkip)
 {
-    emitNewArray(result, nullptr, 0);
+    RefPtr<RegisterID> restArrayLength = newTemporary();
+    emitOpcode(op_get_rest_length);
+    instructions().append(restArrayLength->index());
+    instructions().append(numParametersToSkip);
+
+    emitNewArrayWithSize(result, restArrayLength.get());
 
     emitOpcode(op_copy_rest);
     instructions().append(result->index());
+    instructions().append(restArrayLength->index());
     instructions().append(numParametersToSkip);
 
     return result;

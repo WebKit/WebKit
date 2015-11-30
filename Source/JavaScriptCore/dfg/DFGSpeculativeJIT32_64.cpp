@@ -4443,6 +4443,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetRestLength: {
+        compileGetRestLength(node);
+        break;
+    }
+
     case NewFunction:
     case NewArrowFunction:
         compileNewFunction(node);

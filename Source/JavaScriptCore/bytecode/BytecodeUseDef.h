@@ -53,6 +53,7 @@ void computeUsesForBytecodeOffset(
     case op_profile_control_flow:
     case op_create_direct_arguments:
     case op_create_out_of_band_arguments:
+    case op_get_rest_length:
         return;
     case op_assert:
     case op_get_scope:
@@ -70,8 +71,7 @@ void computeUsesForBytecodeOffset(
     case op_jeq_null:
     case op_jneq_null:
     case op_dec:
-    case op_inc: 
-    case op_copy_rest: {
+    case op_inc: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
@@ -82,7 +82,8 @@ void computeUsesForBytecodeOffset(
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
-    case op_jless: {
+    case op_jless:
+    case op_copy_rest: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;
@@ -377,7 +378,8 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_del_by_id:
     case op_del_by_val:
     case op_unsigned:
-    case op_get_from_arguments: {
+    case op_get_from_arguments: 
+    case op_get_rest_length: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }

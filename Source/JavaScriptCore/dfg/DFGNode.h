@@ -2161,7 +2161,7 @@ struct Node {
 
     unsigned numberOfArgumentsToSkip()
     {
-        ASSERT(op() == CopyRest);
+        ASSERT(op() == CopyRest || op() == GetRestLength);
         return static_cast<unsigned>(m_opInfo);
     }
 

@@ -3331,10 +3331,31 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_new_regexp);
         }
 
+        case op_get_rest_length: {
+            InlineCallFrame* inlineCallFrame = this->inlineCallFrame();
+            Node* length;
+            if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
+                unsigned argumentsLength = inlineCallFrame->arguments.size() - 1;
+                unsigned numParamsToSkip = currentInstruction[2].u.unsignedValue;
+                JSValue restLength;
+                if (argumentsLength <= numParamsToSkip)
+                    restLength = jsNumber(0);
+                else
+                    restLength = jsNumber(argumentsLength - numParamsToSkip);
+
+                length = jsConstant(restLength);
+            } else
+                length = addToGraph(GetRestLength, OpInfo(currentInstruction[2].u.unsignedValue));
+            set(VirtualRegister(currentInstruction[1].u.operand), length);
+            NEXT_OPCODE(op_get_rest_length);
+        }
+
         case op_copy_rest: {
             noticeArgumentsUse();
-            addToGraph(CopyRest,
-                OpInfo(currentInstruction[2].u.unsignedValue), get(VirtualRegister(currentInstruction[1].u.operand)));
+            Node* array = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* arrayLength = get(VirtualRegister(currentInstruction[2].u.operand));
+            addToGraph(CopyRest, OpInfo(currentInstruction[3].u.unsignedValue),
+                array, arrayLength);
             NEXT_OPCODE(op_copy_rest);
         }
             

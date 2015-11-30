@@ -113,6 +113,7 @@ ExitMode mayExit(Graph& graph, Node* node)
     case GetStack:
     case GetCallee:
     case GetArgumentCount:
+    case GetRestLength:
     case GetScope:
     case PhantomLocal:
     case CountExecution:
