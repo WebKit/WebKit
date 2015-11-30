@@ -1,3 +1,19 @@
+2015-11-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: using "Reload Web Inspector" when docked breaks dock-specific styles
+        https://bugs.webkit.org/show_bug.cgi?id=151642
+
+        Reviewed by Timothy Hatcher.
+
+        After a frontend loads, explicitly tell it about the current dock
+        state. This is necessary for force-reloading the inspector, since
+        the dock state isn't sent from UIProcess in this case.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::frontendLoaded):
+        (WebKit::WebInspectorUI::setDockingUnavailable):
+        * WebProcess/WebPage/WebInspectorUI.h:
+
 2015-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Make ProcessModel always MultipleSecondaryProcesses

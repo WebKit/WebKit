@@ -120,6 +120,7 @@ private:
 
     uint64_t m_inspectedPageIdentifier { 0 };
     bool m_underTest { false };
+    bool m_dockingUnavailable { false };
     DockSide m_dockSide { DockSide::Undocked };
     unsigned m_inspectionLevel { 1 };
 

@@ -91,6 +91,11 @@ void WebInspectorUI::frontendLoaded()
 {
     m_frontendAPIDispatcher.frontendLoaded();
 
+    // Tell the new frontend about the current dock state. If the window object
+    // cleared due to a reload, the dock state won't be resent from UIProcess.
+    setDockingUnavailable(m_dockingUnavailable);
+    setDockSide(m_dockSide);
+
     bringToFront();
 }
 
@@ -169,6 +174,7 @@ void WebInspectorUI::setDockSide(DockSide side)
 void WebInspectorUI::setDockingUnavailable(bool unavailable)
 {
     m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setDockingUnavailable"), unavailable);
+    m_dockingUnavailable = unavailable;
 }
 
 void WebInspectorUI::changeAttachedWindowHeight(unsigned height)
