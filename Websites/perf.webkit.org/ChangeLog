@@ -1,5 +1,20 @@
 2015-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should extend baseline and target to the future
+        https://bugs.webkit.org/show_bug.cgi?id=151511
+
+        Reviewed by Darin Adler.
+
+        * public/v2/data.js:
+        (RunsData.prototype.timeSeriesByCommitTime): Added extendToFuture as an argument.
+        (RunsData.prototype.timeSeriesByBuildTime): Ditto.
+        (RunsData.prototype._timeSeriesByTimeInternal): Ditto.
+        (TimeSeries): Add a new point to the end if extendToFuture is set and the series is not empty.
+        * public/v2/manifest.js:
+        (App.Manifest._formatFetchedData): Set extendToFuture to true for baselines and targets.
+
+2015-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard should always show comparison to baseline and target even if one is missing
         https://bugs.webkit.org/show_bug.cgi?id=151510
 

@@ -365,12 +365,12 @@ App.Manifest = Ember.Controller.extend({
         var deltaFormatterWithoutSign = this._makeFormatter(unit, 2, false);
 
         var currentTimeSeries = configurations.current.timeSeriesByCommitTime(false);
-        var baselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(false) : null;
-        var targetTimeSeries = configurations.target ? configurations.target.timeSeriesByCommitTime(false) : null;
+        var baselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(false, true) : null;
+        var targetTimeSeries = configurations.target ? configurations.target.timeSeriesByCommitTime(false, true) : null;
 
         var unfilteredCurrentTimeSeries = configurations.current.timeSeriesByCommitTime(true);
-        var unfilteredBaselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(true) : null;
-        var unfilteredTargetTimeSeries = configurations.target ? configurations.target.timeSeriesByCommitTime(true) : null;
+        var unfilteredBaselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(true, true) : null;
+        var unfilteredTargetTimeSeries = configurations.target ? configurations.target.timeSeriesByCommitTime(true, true) : null;
 
         return {
             current: currentTimeSeries,
