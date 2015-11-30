@@ -3556,6 +3556,9 @@ void SpeculativeJIT::compileArithDiv(Node* node)
             numeratorNonZero.link(&m_jit);
         }
 
+        if (shouldCheckOverflow(node->arithMode()))
+            speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branchTest32(MacroAssembler::Zero, op2GPR));
+
         m_jit.assembler().sdiv<32>(quotient.gpr(), op1GPR, op2GPR);
 
         // Check that there was no remainder. If there had been, then we'd be obligated to
