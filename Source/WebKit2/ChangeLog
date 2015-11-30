@@ -1,3 +1,49 @@
+2015-11-30  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cache] We should not speculatively revalidate transient resources
+        https://bugs.webkit.org/show_bug.cgi?id=151402
+        <rdar://problem/23092196>
+
+        Reviewed by Antti Koivisto.
+
+        We should not speculatively revalidate transient resources. This patch
+        adds a simple and conservative algorithm to detect that a subresource is
+        transient and then ignores those when doing the speculative revalidation.
+
+        The algorithm is question marks as transient all subresources that are
+        not common to the 2 last loads of a main resource.
+
+        This is not perfect as I see the number of non-speculative revalidations
+        going up to 11-12 from 9 in the context of the warm PLT. However, it is
+        best to be conservative at first and we can improve this later.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::create):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::~PendingFrameLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::registerSubresource):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::markLoadAsCompleted):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::setExistingSubresourcesEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::PendingFrameLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::saveToDiskIfReady):
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveSubresourcesEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieve): Deleted.
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourcesEntry::encodeAsStorageRecord):
+        (WebKit::NetworkCache::SubresourcesEntry::decodeStorageRecord):
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourcesEntry):
+        (WebKit::NetworkCache::SubresourcesEntry::updateSubresourceKeys):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourceInfo::encode):
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourceInfo::decode):
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourceInfo::SubresourceInfo):
+        (WebKit::NetworkCache::SubresourcesEntry::subresources):
+
 2015-11-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Add font service permission to the sandbox profile

@@ -34,6 +34,7 @@
 #include "NetworkCacheSubresourcesEntry.h"
 #include <WebCore/HysteresisActivity.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -109,52 +110,86 @@ private:
     std::function<void()> m_lifetimeReachedHandler;
 };
 
-class SpeculativeLoadManager::PendingFrameLoad {
-    WTF_MAKE_FAST_ALLOCATED;
+class SpeculativeLoadManager::PendingFrameLoad : public RefCounted<PendingFrameLoad> {
 public:
-    PendingFrameLoad(const Key& mainResourceKey, std::function<void()>&& completionHandler)
-        : m_mainResourceKey(mainResourceKey)
-        , m_completionHandler(WTF::move(completionHandler))
-        , m_loadHysteresisActivity([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_completionHandler(); })
-    { }
+    static Ref<PendingFrameLoad> create(Storage& storage, const Key& mainResourceKey, std::function<void()>&& loadCompletionHandler)
+    {
+        return adoptRef(*new PendingFrameLoad(storage, mainResourceKey, WTF::move(loadCompletionHandler)));
+    }
+
+    ~PendingFrameLoad()
+    {
+        ASSERT(m_didFinishLoad);
+        ASSERT(m_didRetrieveExistingEntry);
+    }
 
     void registerSubresource(const Key& subresourceKey)
     {
         ASSERT(RunLoop::isMain());
-        m_subresourceKeys.add(subresourceKey);
+        m_subresourceKeys.append(subresourceKey);
         m_loadHysteresisActivity.impulse();
     }
 
-    Optional<Storage::Record> encodeAsSubresourcesRecord()
+    void markLoadAsCompleted()
     {
         ASSERT(RunLoop::isMain());
-        if (m_subresourceKeys.isEmpty())
-            return { };
+        if (m_didFinishLoad)
+            return;
 
-        auto subresourcesStorageKey = makeSubresourcesKey(m_mainResourceKey);
-        Vector<Key> subresourceKeys;
-        copyToVector(m_subresourceKeys, subresourceKeys);
-
-#if !LOG_DISABLED
-        LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Saving to disk list of subresources for '%s':", m_mainResourceKey.identifier().utf8().data());
-        for (auto& subresourceKey : subresourceKeys)
-            LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) * Subresource: '%s'.", subresourceKey.identifier().utf8().data());
-#endif
-
-        return SubresourcesEntry(WTF::move(subresourcesStorageKey), WTF::move(subresourceKeys)).encodeAsStorageRecord();
+        m_didFinishLoad = true;
+        saveToDiskIfReady();
+        m_loadCompletionHandler();
     }
 
-    void markAsCompleted()
+    void setExistingSubresourcesEntry(std::unique_ptr<SubresourcesEntry> entry)
     {
-        ASSERT(RunLoop::isMain());
-        m_completionHandler();
+        ASSERT(!m_existingEntry);
+        ASSERT(!m_didRetrieveExistingEntry);
+
+        m_existingEntry = WTF::move(entry);
+        m_didRetrieveExistingEntry = true;
+        saveToDiskIfReady();
     }
 
 private:
+    PendingFrameLoad(Storage& storage, const Key& mainResourceKey, std::function<void()>&& loadCompletionHandler)
+        : m_storage(storage)
+        , m_mainResourceKey(mainResourceKey)
+        , m_loadCompletionHandler(WTF::move(loadCompletionHandler))
+        , m_loadHysteresisActivity([this](HysteresisState state) { if (state == HysteresisState::Stopped) markLoadAsCompleted(); })
+    { }
+
+    void saveToDiskIfReady()
+    {
+        if (!m_didFinishLoad || !m_didRetrieveExistingEntry)
+            return;
+
+        if (m_subresourceKeys.isEmpty())
+            return;
+
+#if !LOG_DISABLED
+        LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Saving to disk list of subresources for '%s':", m_mainResourceKey.identifier().utf8().data());
+        for (auto& subresourceKey : m_subresourceKeys)
+            LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) * Subresource: '%s'.", subresourceKey.identifier().utf8().data());
+#endif
+
+        if (m_existingEntry) {
+            m_existingEntry->updateSubresourceKeys(m_subresourceKeys);
+            m_storage.store(m_existingEntry->encodeAsStorageRecord(), [](const Data&) { });
+        } else {
+            SubresourcesEntry entry(makeSubresourcesKey(m_mainResourceKey), m_subresourceKeys);
+            m_storage.store(entry.encodeAsStorageRecord(), [](const Data&) { });
+        }
+    }
+
+    Storage& m_storage;
     Key m_mainResourceKey;
-    HashSet<Key> m_subresourceKeys;
-    std::function<void()> m_completionHandler;
+    Vector<Key> m_subresourceKeys;
+    std::function<void()> m_loadCompletionHandler;
     HysteresisActivity m_loadHysteresisActivity;
+    std::unique_ptr<SubresourcesEntry> m_existingEntry;
+    bool m_didFinishLoad { false };
+    bool m_didRetrieveExistingEntry { false };
 };
 
 SpeculativeLoadManager::SpeculativeLoadManager(Storage& storage)
@@ -200,16 +235,24 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
     if (isMainResource) {
         // Mark previous load in this frame as completed if necessary.
         if (auto* pendingFrameLoad = m_pendingFrameLoads.get(frameID))
-            pendingFrameLoad->markAsCompleted();
+            pendingFrameLoad->markLoadAsCompleted();
+
+        ASSERT(!m_pendingFrameLoads.contains(frameID));
 
         // Start tracking loads in this frame.
-        m_pendingFrameLoads.add(frameID, std::make_unique<PendingFrameLoad>(resourceKey, [this, frameID]() {
-            auto frameLoad = m_pendingFrameLoads.take(frameID);
-            auto optionalRecord = frameLoad->encodeAsSubresourcesRecord();
-            if (!optionalRecord)
-                return;
-            m_storage.store(optionalRecord.value(), [](const Data&) { });
-        }));
+        RefPtr<PendingFrameLoad> pendingFrameLoad = PendingFrameLoad::create(m_storage, resourceKey, [this, frameID] {
+            bool wasRemoved = m_pendingFrameLoads.remove(frameID);
+            ASSERT_UNUSED(wasRemoved, wasRemoved);
+        });
+        m_pendingFrameLoads.add(frameID, pendingFrameLoad);
+
+        // Retrieve the subresources entry if it exists to start speculative revalidation and to update it.
+        retrieveSubresourcesEntry(resourceKey, [this, frameID, pendingFrameLoad](std::unique_ptr<SubresourcesEntry> entry) {
+            if (entry)
+                startSpeculativeRevalidation(frameID, *entry);
+
+            pendingFrameLoad->setExistingSubresourcesEntry(WTF::move(entry));
+        });
         return;
     }
 
@@ -306,24 +349,33 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& f
     });
 }
 
-void SpeculativeLoadManager::startSpeculativeRevalidation(const ResourceRequest& originalRequest, const GlobalFrameID& frameID, const Key& storageKey)
+void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry)
 {
-    if (originalRequest.requester() != ResourceRequest::Requester::Main)
-        return;
+    for (auto& subresource : entry.subresources()) {
+        if (!subresource.value.isTransient)
+            preloadEntry(subresource.key, frameID);
+        else
+            LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Not preloading '%s' because it is marked as transient", subresource.key.identifier().utf8().data());
+    }
+}
 
+void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)> completionHandler)
+{
+    ASSERT(storageKey.type() == "resource");
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey);
-
-    m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [this, frameID](std::unique_ptr<Storage::Record> record) {
-        if (!record)
+    m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler](std::unique_ptr<Storage::Record> record) {
+        if (!record) {
+            completionHandler(nullptr);
             return false;
+        }
 
         auto subresourcesEntry = SubresourcesEntry::decodeStorageRecord(*record);
-        if (!subresourcesEntry)
+        if (!subresourcesEntry) {
+            completionHandler(nullptr);
             return false;
+        }
 
-        for (auto& subresourceKey : subresourcesEntry->subresourceKeys())
-            preloadEntry(subresourceKey, frameID);
-
+        completionHandler(WTF::move(subresourcesEntry));
         return true;
     });
 }

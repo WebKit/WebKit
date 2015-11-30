@@ -40,6 +40,7 @@ namespace NetworkCache {
 
 class Entry;
 class SpeculativeLoad;
+class SubresourcesEntry;
 
 class SpeculativeLoadManager {
 public:
@@ -51,19 +52,19 @@ public:
     typedef std::function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
     bool retrieve(const Key& storageKey, const RetrieveCompletionHandler&);
 
-    void startSpeculativeRevalidation(const WebCore::ResourceRequest&, const GlobalFrameID&, const Key& storageKey);
-
 private:
     void addPreloadedEntry(std::unique_ptr<Entry>);
     void preloadEntry(const Key&, const GlobalFrameID&);
     void retrieveEntryFromStorage(const Key&, const RetrieveCompletionHandler&);
     void revalidateEntry(std::unique_ptr<Entry>, const GlobalFrameID&);
     bool satisfyPendingRequests(const Key&, Entry*);
+    void retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>);
+    void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&);
 
     Storage& m_storage;
 
     class PendingFrameLoad;
-    HashMap<GlobalFrameID, std::unique_ptr<PendingFrameLoad>> m_pendingFrameLoads;
+    HashMap<GlobalFrameID, RefPtr<PendingFrameLoad>> m_pendingFrameLoads;
 
     HashMap<Key, std::unique_ptr<SpeculativeLoad>> m_pendingPreloads;
     HashMap<Key, std::unique_ptr<Vector<RetrieveCompletionHandler>>> m_pendingRetrieveRequests;

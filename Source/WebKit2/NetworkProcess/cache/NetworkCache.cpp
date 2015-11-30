@@ -356,12 +356,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, const Glob
     Key storageKey = makeCacheKey(originalRequest);
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (m_speculativeLoadManager) {
+    if (m_speculativeLoadManager)
         m_speculativeLoadManager->registerLoad(frameID, originalRequest, storageKey);
-        RunLoop::main().dispatch([this, originalRequest, frameID, storageKey] {
-            m_speculativeLoadManager->startSpeculativeRevalidation(originalRequest, frameID, storageKey);
-        });
-    }
 #endif
 
     auto retrieveDecision = makeRetrieveDecision(originalRequest);

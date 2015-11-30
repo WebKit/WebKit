@@ -28,7 +28,10 @@
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
+#include "NetworkCacheDecoder.h"
+#include "NetworkCacheEncoder.h"
 #include "NetworkCacheStorage.h"
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -36,7 +39,16 @@ namespace NetworkCache {
 class SubresourcesEntry {
     WTF_MAKE_NONCOPYABLE(SubresourcesEntry); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SubresourcesEntry(Key&&, Vector<Key>&& subresourceKeys);
+    struct SubresourceInfo {
+        void encode(Encoder& encoder) const { encoder << isTransient; }
+        static bool decode(Decoder& decoder, SubresourceInfo& info) { return decoder.decode(info.isTransient); }
+
+        SubresourceInfo() = default;
+        SubresourceInfo(bool isTransient) : isTransient(isTransient) { }
+
+        bool isTransient { false };
+    };
+    SubresourcesEntry(Key&&, const Vector<Key>& subresourceKeys);
     explicit SubresourcesEntry(const Storage::Record&);
 
     Storage::Record encodeAsStorageRecord() const;
@@ -44,12 +56,14 @@ public:
 
     const Key& key() const { return m_key; }
     std::chrono::system_clock::time_point timeStamp() const { return m_timeStamp; }
-    const Vector<Key>& subresourceKeys() const { return m_subresourceKeys; }
+    const HashMap<Key, SubresourceInfo>& subresources() const { return m_subresources; }
+
+    void updateSubresourceKeys(const Vector<Key>&);
 
 private:
     Key m_key;
     std::chrono::system_clock::time_point m_timeStamp;
-    Vector<Key> m_subresourceKeys;
+    HashMap<Key, SubresourceInfo> m_subresources;
 };
 
 } // namespace WebKit

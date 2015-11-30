@@ -39,7 +39,7 @@ namespace NetworkCache {
 Storage::Record SubresourcesEntry::encodeAsStorageRecord() const
 {
     Encoder encoder;
-    encoder << m_subresourceKeys;
+    encoder << m_subresources;
 
     encoder.encodeChecksum();
 
@@ -51,7 +51,7 @@ std::unique_ptr<SubresourcesEntry> SubresourcesEntry::decodeStorageRecord(const 
     auto entry = std::make_unique<SubresourcesEntry>(storageEntry);
 
     Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
-    if (!decoder.decode(entry->m_subresourceKeys))
+    if (!decoder.decode(entry->m_subresources))
         return nullptr;
 
     if (!decoder.verifyChecksum()) {
@@ -69,12 +69,24 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
     ASSERT(m_key.type() == "subresources");
 }
 
-SubresourcesEntry::SubresourcesEntry(Key&& key, Vector<Key>&& subresourceKeys)
+SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<Key>& subresourceKeys)
     : m_key(WTF::move(key))
     , m_timeStamp(std::chrono::system_clock::now())
-    , m_subresourceKeys(WTF::move(subresourceKeys))
 {
     ASSERT(m_key.type() == "subresources");
+    for (auto& key : subresourceKeys)
+        m_subresources.add(key, SubresourceInfo());
+}
+
+void SubresourcesEntry::updateSubresourceKeys(const Vector<Key>& subresourceKeys)
+{
+    auto oldSubresources = WTF::move(m_subresources);
+
+    // Mark keys that are common with last load as non-Transient.
+    for (auto& key : subresourceKeys) {
+        bool isTransient = !oldSubresources.contains(key);
+        m_subresources.add(key, SubresourceInfo(isTransient));
+    }
 }
 
 } // namespace WebKit
