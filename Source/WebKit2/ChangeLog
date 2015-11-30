@@ -1,5 +1,18 @@
 2015-11-30  Tim Horton  <timothy_horton@apple.com>
 
+        Get rid of the legacy swipe shadow style
+        https://bugs.webkit.org/show_bug.cgi?id=151671
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture): Deleted.
+        (WebKit::ViewGestureController::handleSwipeGesture): Deleted.
+        (WebKit::ViewGestureController::removeSwipeSnapshot): Deleted.
+        It is no longer needed.
+
+2015-11-30  Tim Horton  <timothy_horton@apple.com>
+
         [iOS] Option-up and Option-down should scroll a little less than a full page
         https://bugs.webkit.org/show_bug.cgi?id=151538
         <rdar://problem/23642675>
