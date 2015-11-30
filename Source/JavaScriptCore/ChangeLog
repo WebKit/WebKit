@@ -1,3 +1,117 @@
+2015-11-30  Filip Pizlo  <fpizlo@apple.com>
+
+        MacroAssembler needs an API for disabling scratch registers
+        https://bugs.webkit.org/show_bug.cgi?id=151010
+
+        Reviewed by Saam Barati and Michael Saboff.
+
+        This adds two scope classes, DisallowMacroScratchRegisterUsage and
+        AllowMacroScratchRegisterUsage. The default is that the scratch registers are enabled. Air
+        disables them before generation.
+
+        Henceforth the pattern inside B3 stackmap generator callbacks will be that you can only use
+        AllowMacroScratchRegisterUsage if you've either supplied the scratch register as a clobbered
+        register and arranged for all of the stackmap values to be late uses, or you're writing a test
+        and you're OK with it being fragile with respect to scratch registers. The latter holds in most
+        of testb3.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::optimizeForX86):
+        (JSC::AbstractMacroAssembler::setTempRegisterValid):
+        * assembler/AllowMacroScratchRegisterUsage.h: Added.
+        (JSC::AllowMacroScratchRegisterUsage::AllowMacroScratchRegisterUsage):
+        (JSC::AllowMacroScratchRegisterUsage::~AllowMacroScratchRegisterUsage):
+        * assembler/DisallowMacroScratchRegisterUsage.h: Added.
+        (JSC::DisallowMacroScratchRegisterUsage::DisallowMacroScratchRegisterUsage):
+        (JSC::DisallowMacroScratchRegisterUsage::~DisallowMacroScratchRegisterUsage):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::scratchRegister):
+        (JSC::MacroAssemblerX86Common::loadDouble):
+        (JSC::MacroAssemblerX86Common::branchConvertDoubleToInt32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::and32):
+        (JSC::MacroAssemblerX86_64::or32):
+        (JSC::MacroAssemblerX86_64::sub32):
+        (JSC::MacroAssemblerX86_64::load8):
+        (JSC::MacroAssemblerX86_64::addDouble):
+        (JSC::MacroAssemblerX86_64::convertInt32ToDouble):
+        (JSC::MacroAssemblerX86_64::store32):
+        (JSC::MacroAssemblerX86_64::store8):
+        (JSC::MacroAssemblerX86_64::callWithSlowPathReturnType):
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::jump):
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::branchAdd32):
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::addPtrNoFlags):
+        (JSC::MacroAssemblerX86_64::and64):
+        (JSC::MacroAssemblerX86_64::lshift64):
+        (JSC::MacroAssemblerX86_64::or64):
+        (JSC::MacroAssemblerX86_64::sub64):
+        (JSC::MacroAssemblerX86_64::store64):
+        (JSC::MacroAssemblerX86_64::store64WithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::branch64):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+        (JSC::MacroAssemblerX86_64::branchTest64):
+        (JSC::MacroAssemblerX86_64::test64):
+        (JSC::MacroAssemblerX86_64::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::branch32WithPatch):
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+        (JSC::MacroAssemblerX86_64::branch8):
+        (JSC::MacroAssemblerX86_64::branchTest8):
+        (JSC::MacroAssemblerX86_64::convertInt64ToDouble):
+        (JSC::MacroAssemblerX86_64::readCallTarget):
+        (JSC::MacroAssemblerX86_64::haveScratchRegisterForBlinding):
+        (JSC::MacroAssemblerX86_64::scratchRegisterForBlinding):
+        (JSC::MacroAssemblerX86_64::canJumpReplacePatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::canJumpReplacePatchableBranch32WithPatch):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::repatchCall):
+        (JSC::MacroAssemblerX86_64::add64AndSetFlags):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpoint):
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersFPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersFPArgs):
+        (JSC::B3::testPatchpointCallArg):
+        (JSC::B3::testPatchpointFixedRegister):
+        (JSC::B3::testPatchpointAny):
+        (JSC::B3::testPatchpointAnyImm):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCheckLessThan):
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testCheckAddImmCommute):
+        (JSC::B3::testCheckAddImmSomeRegister):
+        (JSC::B3::testCheckAdd):
+        (JSC::B3::testCheckAdd64):
+        (JSC::B3::testCheckAddFoldFail):
+        (JSC::B3::testCheckSubImm):
+        (JSC::B3::testCheckSubBadImm):
+        (JSC::B3::testCheckSub):
+        (JSC::B3::testCheckSub64):
+        (JSC::B3::testCheckSubFoldFail):
+        (JSC::B3::testCheckNeg):
+        (JSC::B3::testCheckNeg64):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul2):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::testCheckMulFoldFail):
+        (JSC::B3::genericTestCompare):
+        * dfg/DFGCommon.h:
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::reservedRegisters):
+
 2015-11-26  Mark Lam  <mark.lam@apple.com>
 
         [ARM64] stress/op_div.js is failing on some divide by 0 cases.

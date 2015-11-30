@@ -82,6 +82,8 @@ inline bool optimizeForX86()
     return isX86() && Options::useArchitectureSpecificOptimizations();
 }
 
+class AllowMacroScratchRegisterUsage;
+class DisallowMacroScratchRegisterUsage;
 class LinkBuffer;
 class Watchpoint;
 namespace DFG {
@@ -1118,7 +1120,10 @@ protected:
         m_tempRegistersValidBits |= registerMask;
     }
 
+    friend class AllowMacroScratchRegisterUsage;
+    friend class DisallowMacroScratchRegisterUsage;
     unsigned m_tempRegistersValidBits;
+    bool m_allowScratchRegister { true };
 
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
 

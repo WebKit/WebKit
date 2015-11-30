@@ -399,7 +399,6 @@ public:
     static const GPRReg callFrameRegister = X86Registers::ebp;
     static const GPRReg tagTypeNumberRegister = X86Registers::r14;
     static const GPRReg tagMaskRegister = X86Registers::r15;
-    static const GPRReg scratchRegister = MacroAssembler::scratchRegister;
 
     // Temporary registers.
     static const GPRReg regT0 = X86Registers::eax;
@@ -454,7 +453,7 @@ public:
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
     static const GPRReg nonPreservedNonArgumentGPR = X86Registers::r10; // regT5 (regT4 on Windows)
-    static const GPRReg patchpointScratchRegister = MacroAssembler::scratchRegister;
+    static const GPRReg patchpointScratchRegister = MacroAssembler::s_scratchRegister;
 
     static GPRReg toRegister(unsigned index)
     {
@@ -506,7 +505,7 @@ public:
     static const std::array<GPRReg, 3>& reservedRegisters()
     {
         static const std::array<GPRReg, 3> reservedRegisters { {
-            scratchRegister,
+            MacroAssembler::s_scratchRegister,
             tagTypeNumberRegister,
             tagMaskRegister,
         } };

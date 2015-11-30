@@ -43,6 +43,7 @@
 #include "B3IndexMap.h"
 #include "B3TimingScope.h"
 #include "CCallHelpers.h"
+#include "DisallowMacroScratchRegisterUsage.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -111,6 +112,8 @@ void prepareForGeneration(Code& code)
 void generate(Code& code, CCallHelpers& jit)
 {
     TimingScope timingScope("Air::generate");
+
+    DisallowMacroScratchRegisterUsage disallowScratch(jit);
 
     // And now, we generate code.
     jit.emitFunctionPrologue();

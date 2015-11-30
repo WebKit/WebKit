@@ -36,7 +36,16 @@ namespace JSC {
 class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler, MacroAssemblerX86Common> {
 public:
 #if CPU(X86_64)
-    static const X86Registers::RegisterID scratchRegister = X86Registers::r11;
+    // Use this directly only if you're not generating code with it.
+    static const X86Registers::RegisterID s_scratchRegister = X86Registers::r11;
+
+    // Use this when generating code so that we get enforcement of the disallowing of scratch register
+    // usage.
+    X86Registers::RegisterID scratchRegister()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return s_scratchRegister;
+    }
 #endif
 
 protected:
@@ -742,8 +751,8 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.movsd_mr(address.m_value, dest);
 #else
-        move(address, scratchRegister);
-        loadDouble(scratchRegister, dest);
+        move(address, scratchRegister());
+        loadDouble(scratchRegister(), dest);
 #endif
     }
 
@@ -964,8 +973,8 @@ public:
 #if CPU(X86_64)
         if (negZeroCheck) {
             Jump valueIsNonZero = branchTest32(NonZero, dest);
-            m_assembler.movmskpd_rr(src, scratchRegister);
-            failureCases.append(branchTest32(NonZero, scratchRegister, TrustedImm32(1)));
+            m_assembler.movmskpd_rr(src, scratchRegister());
+            failureCases.append(branchTest32(NonZero, scratchRegister(), TrustedImm32(1)));
             valueIsNonZero.link(this);
         }
 #else

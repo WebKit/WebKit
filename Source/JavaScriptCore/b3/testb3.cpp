@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "AllowMacroScratchRegisterUsage.h"
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
@@ -3182,6 +3183,7 @@ void testSimplePatchpoint()
     patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isGPR());
             CHECK(params.reps[1].isGPR());
@@ -3209,6 +3211,7 @@ void testSimplePatchpointWithoutOuputClobbersGPArgs()
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 2);
             CHECK(params.reps[0].isGPR());
             CHECK(params.reps[1].isGPR());
@@ -3253,6 +3256,7 @@ void testSimplePatchpointWithOuputClobbersGPArgs()
 
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isGPR());
             CHECK(params.reps[1].isGPR());
@@ -3287,6 +3291,7 @@ void testSimplePatchpointWithoutOuputClobbersFPArgs()
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 2);
             CHECK(params.reps[0].isFPR());
             CHECK(params.reps[1].isFPR());
@@ -3324,6 +3329,7 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
 
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isFPR());
             CHECK(params.reps[1].isFPR());
@@ -3353,6 +3359,7 @@ void testPatchpointCallArg()
     patchpoint->append(ConstrainedValue(arg2, ValueRep::stackArgument(8)));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isGPR());
             CHECK(params.reps[1].isStack());
@@ -3380,6 +3387,7 @@ void testPatchpointFixedRegister()
     patchpoint->append(ConstrainedValue(arg2, ValueRep(GPRInfo::regT1)));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isGPR());
             CHECK(params.reps[1] == ValueRep(GPRInfo::regT0));
@@ -3410,6 +3418,7 @@ void testPatchpointAny()
     patchpoint->append(ConstrainedValue(arg2, ValueRep::Any));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             // We shouldn't have spilled the inputs, so we assert that they're in registers.
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isGPR());
@@ -3436,6 +3445,7 @@ void testPatchpointAnyImm()
     patchpoint->append(ConstrainedValue(arg2, ValueRep::Any));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[0].isGPR());
             CHECK(params.reps[1].isGPR());
@@ -3486,6 +3496,7 @@ void testSimpleCheck()
     CheckValue* check = root->appendNew<CheckValue>(proc, Check, Origin(), arg);
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 1);
 
             // This should always work because a function this simple should never have callee
@@ -3517,6 +3528,7 @@ void testCheckLessThan()
             root->appendNew<Const32Value>(proc, Origin(), 42)));
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 1);
 
             // This should always work because a function this simple should never have callee
@@ -3562,6 +3574,7 @@ void testCheckMegaCombo()
             root->appendNew<Const32Value>(proc, Origin(), 42)));
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 1);
 
             // This should always work because a function this simple should never have callee
@@ -3601,6 +3614,7 @@ void testCheckAddImm()
     checkAdd->append(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isConstant());
@@ -3636,6 +3650,7 @@ void testCheckAddImmCommute()
     checkAdd->append(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isConstant());
@@ -3671,6 +3686,7 @@ void testCheckAddImmSomeRegister()
     checkAdd->appendSomeRegister(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -3707,6 +3723,7 @@ void testCheckAdd()
     checkAdd->appendSomeRegister(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -3739,6 +3756,7 @@ void testCheckAdd64()
     checkAdd->appendSomeRegister(arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -3787,6 +3805,7 @@ void testCheckAddFoldFail(int a, int b)
     CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), arg1, arg2);
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -3811,6 +3830,7 @@ void testCheckSubImm()
     checkSub->append(arg2);
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isConstant());
@@ -3847,6 +3867,7 @@ void testCheckSubBadImm()
     checkSub->append(arg2);
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isConstant());
@@ -3884,6 +3905,7 @@ void testCheckSub()
     checkSub->append(arg2);
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -3921,6 +3943,7 @@ void testCheckSub64()
     checkSub->append(arg2);
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -3969,6 +3992,7 @@ void testCheckSubFoldFail(int a, int b)
     CheckValue* checkSub = root->appendNew<CheckValue>(proc, CheckSub, Origin(), arg1, arg2);
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -3992,6 +4016,7 @@ void testCheckNeg()
     checkNeg->append(arg2);
     checkNeg->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[2].isGPR());
             jit.convertInt32ToDouble(params.reps[2].gpr(), FPRInfo::fpRegT1);
@@ -4021,6 +4046,7 @@ void testCheckNeg64()
     checkNeg->append(arg2);
     checkNeg->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 3);
             CHECK(params.reps[2].isGPR());
             jit.convertInt64ToDouble(params.reps[2].gpr(), FPRInfo::fpRegT1);
@@ -4055,6 +4081,7 @@ void testCheckMul()
     checkMul->append(arg2);
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -4095,6 +4122,7 @@ void testCheckMulMemory()
     checkMul->append(arg2);
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -4140,6 +4168,7 @@ void testCheckMul2()
     checkMul->append(arg2);
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isConstant());
@@ -4173,6 +4202,7 @@ void testCheckMul64()
     checkMul->append(arg2);
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             CHECK(params.reps.size() == 4);
             CHECK(params.reps[2].isGPR());
             CHECK(params.reps[3].isGPR());
@@ -4221,6 +4251,7 @@ void testCheckMulFoldFail(int a, int b)
     CheckValue* checkMul = root->appendNew<CheckValue>(proc, CheckMul, Origin(), arg1, arg2);
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -4274,6 +4305,7 @@ void genericTestCompare(
         PatchpointValue* patchpoint = thenCase->appendNew<PatchpointValue>(proc, Int32, Origin());
         patchpoint->setGenerator(
             [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
                 CHECK(params.reps.size() == 1);
                 CHECK(params.reps[0].isGPR());
                 jit.move(CCallHelpers::TrustedImm32(1), params.reps[0].gpr());
