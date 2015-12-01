@@ -209,7 +209,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_with_submenu(const gchar* la
         return nullptr;
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
-    item->priv->menuItem = std::make_unique<WebContextMenuItemGtk>(SubmenuType, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
+    item->priv->menuItem = std::make_unique<WebContextMenuItemGtk>(ActionType, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
     item->priv->subMenu = submenu;
     webkitContextMenuSetParentItem(submenu, item);
 

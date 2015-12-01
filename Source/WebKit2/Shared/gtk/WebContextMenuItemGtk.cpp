@@ -121,17 +121,18 @@ static const char* gtkStockIDFromContextMenuAction(ContextMenuAction action)
 WebContextMenuItemGtk::WebContextMenuItemGtk(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
     : WebContextMenuItemData(type, action, title, enabled, checked)
 {
+    ASSERT(type != SubmenuType);
     createGtkActionIfNeeded();
 }
 
 WebContextMenuItemGtk::WebContextMenuItemGtk(const WebContextMenuItemData& data)
-    : WebContextMenuItemData(data.type(), data.action(), data.title(), data.enabled(), data.checked())
+    : WebContextMenuItemData(data.type() == SubmenuType ? ActionType : data.type(), data.action(), data.title(), data.enabled(), data.checked())
 {
     createGtkActionIfNeeded();
 }
 
 WebContextMenuItemGtk::WebContextMenuItemGtk(const WebContextMenuItemGtk& data, Vector<WebContextMenuItemGtk>&& submenu)
-    : WebContextMenuItemData(SubmenuType, data.action(), data.title(), data.enabled(), false)
+    : WebContextMenuItemData(ActionType, data.action(), data.title(), data.enabled(), false)
 {
     m_action = data.gtkAction();
     m_submenuItems = WTF::move(submenu);

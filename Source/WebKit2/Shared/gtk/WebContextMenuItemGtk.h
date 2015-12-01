@@ -43,6 +43,8 @@ public:
     WebContextMenuItemGtk(GtkAction*);
     ~WebContextMenuItemGtk();
 
+    // We don't use the SubmenuType internally, so check if we have submenu items.
+    WebCore::ContextMenuItemType type() const { return m_submenuItems.isEmpty() ? WebContextMenuItemData::type() : WebCore::SubmenuType; }
     GtkAction* gtkAction() const { return m_action.get(); }
     const Vector<WebContextMenuItemGtk>& submenuItems() const { return m_submenuItems; }
 

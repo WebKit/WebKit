@@ -1,5 +1,36 @@
 2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r192247): [GTK] ASSERTION FAILED: type == WebCore::ActionType || type == WebCore::CheckableActionType || type == WebCore::SeparatorType
+        https://bugs.webkit.org/show_bug.cgi?id=151513
+
+        Reviewed by Martin Robinson.
+
+        This happens because we are using our own WebContextMenuItemGtk
+        derived from WebContextMenuItemData, but using our own submenu
+        items handling. We are using the non-submenu
+        WebContextMenuItemData constructor to create our submenu items
+        too, because WebContextMenuItemData always expect the submenu
+        items to be passed to the constructor, but we have a set_submenu
+        method in the public API. So we consider that a
+        WebContextMenuItemGtk is SubmenuType if it has submenu items, but
+        we use the action type internally. When converting a
+        WebContextMenuItemGtk to a generic WebContextMenuItemData, we
+        correctly set the type and pass the submenu items to the
+        approriate constructor.
+
+        * Shared/gtk/WebContextMenuItemGtk.cpp:
+        (WebKit::WebContextMenuItemGtk::WebContextMenuItemGtk): When
+        constructing from a WebContextMenuItemData, set the type as
+        ActionType when it's a submenu type.
+        * Shared/gtk/WebContextMenuItemGtk.h:
+        (WebKit::WebContextMenuItemGtk::type): Return SubmenuType if
+        submenu items vector is not empty, otherwise use the parent method.
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkit_context_menu_item_new_with_submenu): Create the
+        WebContextMenuItemGtk as ActionType.
+
+2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Add missing inspector files to the GTK+ build.
 
         * PlatformGTK.cmake: Add also Debug css files.
