@@ -1,5 +1,30 @@
 2015-12-01  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192689.
+
+    2015-11-19  Simon Fraser  <simon.fraser@apple.com>
+
+            Back-buffer to front-buffer copy fails for some buffer formats
+            https://bugs.webkit.org/show_bug.cgi?id=151475
+            rdar://problem/23617899
+
+            Reviewed by Tim Horton.
+
+            Fix some fo the bitsPerComponent/bitsPerPixel options in IOSurface::ensurePlatformContext()
+            for RGB10 buffers. Fix IOSurface::format() to return the new formats.
+
+            Implement IOSurface::copyToSurface(), which does a synchronous copy between
+            surfaces.
+
+            * platform/graphics/cocoa/IOSurface.h:
+            * platform/graphics/cocoa/IOSurface.mm:
+            (IOSurface::create):
+            (IOSurface::ensurePlatformContext):
+            (IOSurface::format):
+            (IOSurface::copyToSurface):
+
+2015-12-01  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r190894.
 
     2015-10-12  Simon Fraser  <simon.fraser@apple.com>
