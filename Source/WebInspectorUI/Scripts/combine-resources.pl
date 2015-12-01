@@ -91,10 +91,10 @@ sub concatenateFiles($$$)
     my $replacementExpression = "([\t ]*)" . $tagExpression . "[\t ]*\n+";
 
     if (defined $strip) {
-        # Just strip all occurances of the pattern.
+        # Just strip all occurrences of the pattern.
         $headContents =~ s/$replacementExpression//gi;
     } else {
-        # Replace the first occurance with a token so we can inject the concatenated tag in the same place
+        # Replace the first occurrence with a token so we can inject the concatenated tag in the same place
         # as the first file that got consolidated. This makes sure we preserve some order if there are other
         # items in the head that we didn't consolidate.
         $headContents =~ s/$replacementExpression/$1%CONCATENATED%\n/i;

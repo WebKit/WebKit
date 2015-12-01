@@ -368,7 +368,7 @@ class FindFlakyTests(Command):
 
     def _print_statistics(self, statistics):
         print "=== Results ==="
-        print "Occurances Test name"
+        print "Occurrences Test name"
         for value, key in sorted([(value, key) for key, value in statistics.items()]):
             print "%10d %s" % (value, key)
 

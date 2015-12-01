@@ -1,3 +1,10 @@
+2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed common typo fix "occurance" => "occurrence".
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (FindFlakyTests._print_statistics):
+
 2015-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Make ProcessModel always MultipleSecondaryProcesses
