@@ -1,5 +1,28 @@
 2015-12-01  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r190587.
+
+    2015-10-05  Beth Dakin  <bdakin@apple.com>
+
+            WebCore::IOSurface should ask the IOSurface for the pixel format instead of 
+            caching it
+            https://bugs.webkit.org/show_bug.cgi?id=149820
+            -and corresponding-
+            rdar://problem/22976230
+
+            Reviewed by Tim Horton.
+
+            Also there is no reason to make YUV be iOS only, so this patch removes those 
+            PLATFORM checks.
+
+            * platform/graphics/cocoa/IOSurface.h:
+            * platform/graphics/cocoa/IOSurface.mm:
+            (IOSurface::IOSurface):
+            (IOSurface::format):
+            * platform/spi/cocoa/IOSurfaceSPI.h:
+
+2015-12-01  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r190576.
 
     2015-10-05  Beth Dakin  <bdakin@apple.com>

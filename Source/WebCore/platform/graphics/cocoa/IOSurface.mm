@@ -98,11 +98,9 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
 
 IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
     : m_colorSpace(colorSpace)
-    , m_format(format)
     , m_size(size)
     , m_contextSize(size)
 {
-
     unsigned pixelFormat;
     unsigned bytesPerPixel;
     unsigned bytesPerElement;
@@ -223,7 +221,6 @@ IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colorSpace)
 
 IOSurface::IOSurface(IOSurfaceRef surface, ColorSpace colorSpace)
     : m_colorSpace(colorSpace)
-    , m_format(Format::RGBA)
     , m_surface(surface)
 {
     m_size = IntSize(IOSurfaceGetWidth(surface), IOSurfaceGetHeight(surface));
@@ -306,6 +303,18 @@ IOSurface::SurfaceState IOSurface::setIsVolatile(bool isVolatile)
         return IOSurface::SurfaceState::Empty;
 
     return IOSurface::SurfaceState::Valid;
+}
+
+IOSurface::Format IOSurface::format() const
+{
+    unsigned pixelFormat = IOSurfaceGetPixelFormat(m_surface.get());
+    if (pixelFormat == 'BGRA')
+        return Format::RGBA;
+    if (pixelFormat == 'yuvf')
+        return Format::YUV422;
+
+    ASSERT_NOT_REACHED();
+    return Format::RGBA;
 }
 
 bool IOSurface::isInUse() const
