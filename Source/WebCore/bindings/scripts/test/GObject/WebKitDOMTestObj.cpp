@@ -1238,6 +1238,14 @@ void webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError** 
     }
 }
 
+void webkit_dom_test_obj_method_with_exception_with_message(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->methodWithExceptionWithMessage();
+}
+
 void webkit_dom_test_obj_with_script_state_void(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;

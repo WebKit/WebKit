@@ -104,6 +104,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAl
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionWithMessage(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(JSC::ExecState*);
@@ -605,6 +606,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "serializedValue", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSerializedValue), (intptr_t) (1) } },
     { "optionsObject", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOptionsObject), (intptr_t) (1) } },
     { "methodWithException", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithException), (intptr_t) (0) } },
+    { "methodWithExceptionWithMessage", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithExceptionWithMessage), (intptr_t) (0) } },
     { "customMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t) (0) } },
     { "customMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t) (3) } },
     { "customBindingMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomBindingMethod), (intptr_t) (0) } },
@@ -3479,6 +3481,21 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecS
     ExceptionCode ec = 0;
     impl.methodWithException(ec);
     setDOMException(state, ec);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionWithMessage(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "methodWithExceptionWithMessage");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    ExceptionCode ec = 0;
+    String exceptionMessage;
+    impl.methodWithExceptionWithMessage(ec, exceptionMessage);
+    setDOMException(state, ec, exceptionMessage);
     return JSValue::encode(jsUndefined());
 }
 

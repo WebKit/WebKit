@@ -301,6 +301,15 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError** error);
 
 /**
+ * webkit_dom_test_obj_method_with_exception_with_message:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_exception_with_message(WebKitDOMTestObj* self);
+
+/**
  * webkit_dom_test_obj_with_script_state_void:
  * @self: A #WebKitDOMTestObj
  *

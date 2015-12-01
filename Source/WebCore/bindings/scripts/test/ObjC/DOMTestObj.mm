@@ -967,6 +967,12 @@
     WebCore::raiseOnDOMError(ec);
 }
 
+- (void)methodWithExceptionWithMessage
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithExceptionWithMessage();
+}
+
 - (void)customMethod
 {
     WebCore::JSMainThreadNullState state;

@@ -1,3 +1,32 @@
+2015-12-01  Brady Eidson  <beidson@apple.com>
+
+        Add "RaisesExceptionWithMessage" IDL attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=151720
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by changes to existing bindings tests).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (GenerateReturnParameters):
+        (GenerateImplementationFunctionCall):
+        (GenerateConstructorDefinition):
+        
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_method_with_exception_with_message):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithExceptionWithMessage):
+        
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj methodWithExceptionWithMessage]):
+        
+        * bindings/scripts/test/TestObj.idl:
+
 2015-12-01  Darin Adler  <darin@apple.com>
 
         Fix anomaly where isMouseEvent returns false for wheel events
