@@ -99,6 +99,7 @@ CCallHelpers::Jump PatchpointSpecial::generate(
     params.value = value;
     params.reps = reps;
     params.usedRegisters = value->m_usedRegisters;
+    params.context = &context;
 
     value->m_generator->run(jit, params);
 

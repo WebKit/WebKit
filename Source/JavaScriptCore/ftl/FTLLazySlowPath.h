@@ -66,12 +66,26 @@ public:
     }
     
     LazySlowPath(
-        CodeLocationLabel patchpoint, CodeLocationLabel exceptionTarget, const RegisterSet& usedRegisters,
-        CallSiteIndex, RefPtr<Generator>, GPRReg newZeroReg, ScratchRegisterAllocator);
+#if FTL_USES_B3
+        CodeLocationJump patchableJump, CodeLocationLabel done,
+#else // FLT_USES_B3
+        CodeLocationLabel patchpoint,
+#endif // FTL_USES_B3
+        CodeLocationLabel exceptionTarget, const RegisterSet& usedRegisters,
+        CallSiteIndex, RefPtr<Generator>
+#if !FTL_USES_B3
+        , GPRReg newZeroReg, ScratchRegisterAllocator
+#endif // FTL_USES_B3
+        );
 
     ~LazySlowPath();
 
+#if FTL_USES_B3
+    CodeLocationJump patchableJump() const { return m_patchableJump; }
+    CodeLocationLabel done() const { return m_done; }
+#else // FTL_USES_B3
     CodeLocationLabel patchpoint() const { return m_patchpoint; }
+#endif // FTL_USES_B3
     const RegisterSet& usedRegisters() const { return m_usedRegisters; }
     CallSiteIndex callSiteIndex() const { return m_callSiteIndex; }
 
@@ -80,14 +94,21 @@ public:
     MacroAssemblerCodeRef stub() const { return m_stub; }
 
 private:
+#if FTL_USES_B3
+    CodeLocationJump m_patchableJump;
+    CodeLocationLabel m_done;
+#else // FTL_USES_B3
     CodeLocationLabel m_patchpoint;
+#endif // FTL_USES_B3
     CodeLocationLabel m_exceptionTarget;
     RegisterSet m_usedRegisters;
     CallSiteIndex m_callSiteIndex;
     MacroAssemblerCodeRef m_stub;
     RefPtr<Generator> m_generator;
+#if !FTL_USES_B3
     GPRReg m_newZeroValueRegister;
     ScratchRegisterAllocator m_scratchRegisterAllocator;
+#endif // FTL_USES_B3
 };
 
 } } // namespace JSC::FTL

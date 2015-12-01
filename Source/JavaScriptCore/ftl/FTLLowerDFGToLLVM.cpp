@@ -28,6 +28,8 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "AirGenerationContext.h"
+#include "AllowMacroScratchRegisterUsage.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGDominators.h"
@@ -100,6 +102,7 @@ NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
     } while (false)
 
 class LowerDFGToLLVM {
+    WTF_MAKE_NONCOPYABLE(LowerDFGToLLVM);
 public:
     LowerDFGToLLVM(State& state)
         : m_graph(state.graph)
@@ -7835,14 +7838,78 @@ private:
     LValue lazySlowPath(const Functor& functor, const Vector<LValue>& userArguments)
     {
 #if FTL_USES_B3
-        UNUSED_PARAM(functor);
-
+        CodeOrigin origin = m_node->origin.semantic;
+        
         B3::PatchpointValue* result = m_out.patchpoint(B3::Int64);
         for (LValue arg : userArguments)
-            result->append(ConstrainedValue(arg, ValueRep::SomeRegister));
+            result->append(ConstrainedValue(arg, B3::ValueRep::SomeRegister));
+
+        // FIXME: As part of handling exceptions, we need to append OSR exit state here.
+        
+        result->clobber(RegisterSet::macroScratchRegisters());
+        State* state = &m_ftlState;
+
         result->setGenerator(
-            [&] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-                jit.oops();
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                Vector<Location> locations;
+                for (const B3::ValueRep& rep : params.reps)
+                    locations.append(Location::forValueRep(rep));
+
+                RefPtr<LazySlowPath::Generator> generator = functor(locations);
+                
+                CCallHelpers::PatchableJump patchableJump = jit.patchableJump();
+                CCallHelpers::Label done = jit.label();
+
+                RegisterSet usedRegisters = params.usedRegisters;
+
+                // FIXME: As part of handling exceptions, we need to create a concrete OSRExit here.
+                // Doing so should automagically register late paths that emit exit thunks.
+                
+                params.context->latePaths.append(
+                    createSharedTask<Air::GenerationContext::LatePathFunction>(
+                        [=] (CCallHelpers& jit, Air::GenerationContext&) {
+                            AllowMacroScratchRegisterUsage allowScratch(jit);
+                            patchableJump.m_jump.link(&jit);
+                            unsigned index = state->jitCode->lazySlowPaths.size();
+                            state->jitCode->lazySlowPaths.append(nullptr);
+                            jit.pushToSaveImmediateWithoutTouchingRegisters(
+                                CCallHelpers::TrustedImm32(index));
+                            CCallHelpers::Jump generatorJump = jit.jump();
+
+                            // Note that so long as we're here, we don't really know if our late path
+                            // runs before or after any other late paths that we might depend on, like
+                            // the exception thunk.
+
+                            RefPtr<JITCode> jitCode = state->jitCode;
+                            VM* vm = &state->graph.m_vm;
+
+                            jit.addLinkTask(
+                                [=] (LinkBuffer& linkBuffer) {
+                                    linkBuffer.link(
+                                        generatorJump, CodeLocationLabel(
+                                            vm->getCTIStub(
+                                                lazySlowPathGenerationThunkGenerator).code()));
+                                    
+                                    CodeLocationJump linkedPatchableJump = CodeLocationJump(
+                                        linkBuffer.locationOf(patchableJump));
+                                    CodeLocationLabel linkedDone = linkBuffer.locationOf(done);
+
+                                    // FIXME: Need a story for exceptions in FTL-B3. That basically means
+                                    // doing a lookup of the exception entrypoint here. We will have an
+                                    // OSR exit data structure of some sort.
+                                    // https://bugs.webkit.org/show_bug.cgi?id=151686
+                                    CodeLocationLabel exceptionTarget;
+                                    CallSiteIndex callSiteIndex =
+                                        jitCode->common.addUniqueCallSiteIndex(origin);
+                                    
+                                    std::unique_ptr<LazySlowPath> lazySlowPath =
+                                        std::make_unique<LazySlowPath>(
+                                            linkedPatchableJump, linkedDone, exceptionTarget,
+                                            usedRegisters, callSiteIndex, generator);
+                                    
+                                    jitCode->lazySlowPaths[index] = WTF::move(lazySlowPath);
+                                });
+                        }));
             });
         return result;
 #else

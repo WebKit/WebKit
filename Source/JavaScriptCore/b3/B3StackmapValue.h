@@ -39,6 +39,10 @@ namespace JSC { namespace B3 {
 
 class StackmapValue;
 
+namespace Air {
+struct GenerationContext;
+}
+
 struct StackmapGenerationParams {
     // This is the stackmap value that we're generating.
     StackmapValue* value;
@@ -49,6 +53,9 @@ struct StackmapGenerationParams {
     
     // This tells you the registers that were used.
     RegisterSet usedRegisters;
+
+    // The Air::GenerationContext gives you even more power.
+    Air::GenerationContext* context;
 };
 
 typedef void StackmapGeneratorFunction(CCallHelpers&, const StackmapGenerationParams&);

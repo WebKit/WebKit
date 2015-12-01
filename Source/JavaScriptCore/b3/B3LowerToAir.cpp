@@ -119,8 +119,10 @@ public:
 
             // Make sure that the successors are set up correctly.
             ASSERT(block->successors().size() <= 2);
-            for (B3::BasicBlock* successor : block->successorBlocks())
-                m_blockToBlock[block]->successors().append(m_blockToBlock[successor]);
+            for (B3::FrequentedBlock successor : block->successors()) {
+                m_blockToBlock[block]->successors().append(
+                    Air::FrequentedBlock(m_blockToBlock[successor.block()], successor.frequency()));
+            }
         }
 
         Air::InsertionSet insertionSet(m_code);

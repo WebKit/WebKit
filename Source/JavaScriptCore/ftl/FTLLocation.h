@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +28,21 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGCommon.h"
 #include "FPRInfo.h"
 #include "FTLDWARFRegister.h"
 #include "FTLStackMaps.h"
 #include "GPRInfo.h"
+#include "Reg.h"
 #include <wtf/HashMap.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
+
+namespace B3 {
+class ValueRep;
+} // namespace B3
+
+namespace FTL {
 
 class Location {
 public:
@@ -56,23 +64,33 @@ public:
     {
         u.constant = 1;
     }
-    
-    static Location forRegister(DWARFRegister dwarfReg, int32_t addend)
+
+    static Location forRegister(Reg reg, int32_t addend)
     {
         Location result;
         result.m_kind = Register;
-        result.u.variable.dwarfRegNum = dwarfReg.dwarfRegNum();
+        result.u.variable.regIndex = reg.index();
         result.u.variable.offset = addend;
+        return result;
+    }
+    
+    static Location forRegister(DWARFRegister dwarfReg, int32_t addend)
+    {
+        return forRegister(dwarfReg.reg(), addend);
+    }
+    
+    static Location forIndirect(Reg reg, int32_t offset)
+    {
+        Location result;
+        result.m_kind = Indirect;
+        result.u.variable.regIndex = reg.index();
+        result.u.variable.offset = offset;
         return result;
     }
     
     static Location forIndirect(DWARFRegister dwarfReg, int32_t offset)
     {
-        Location result;
-        result.m_kind = Indirect;
-        result.u.variable.dwarfRegNum = dwarfReg.dwarfRegNum();
-        result.u.variable.offset = offset;
-        return result;
+        return forIndirect(dwarfReg.reg(), offset);
     }
     
     static Location forConstant(int64_t constant)
@@ -83,21 +101,22 @@ public:
         return result;
     }
 
+#if FTL_USES_B3
+    static Location forValueRep(const B3::ValueRep&);
+#endif // FTL_USES_B3
+
     // You can pass a null StackMaps if you are confident that the location doesn't
     // involve a wide constant.
     static Location forStackmaps(const StackMaps*, const StackMaps::Location&);
     
     Kind kind() const { return m_kind; }
-    
-    bool hasDwarfRegNum() const { return kind() == Register || kind() == Indirect; }
-    int16_t dwarfRegNum() const
+
+    bool hasReg() const { return kind() == Register || kind() == Indirect; }
+    Reg reg() const
     {
-        ASSERT(hasDwarfRegNum());
-        return u.variable.dwarfRegNum;
+        ASSERT(hasReg());
+        return Reg::fromIndex(u.variable.regIndex);
     }
-    
-    bool hasDwarfReg() const { return hasDwarfRegNum(); }
-    DWARFRegister dwarfReg() const { return DWARFRegister(dwarfRegNum()); }
     
     bool hasOffset() const { return kind() == Indirect; }
     int32_t offset() const
@@ -142,11 +161,11 @@ public:
             break;
 
         case Register:
-            result ^= u.variable.dwarfRegNum;
+            result ^= u.variable.regIndex;
             break;
             
         case Indirect:
-            result ^= u.variable.dwarfRegNum;
+            result ^= u.variable.regIndex;
             result ^= u.variable.offset;
             break;
             
@@ -182,7 +201,7 @@ private:
     union {
         int64_t constant;
         struct {
-            int16_t dwarfRegNum;
+            unsigned regIndex;
             int32_t offset;
         } variable;
     } u;

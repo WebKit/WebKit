@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +78,15 @@ RegisterSet RegisterSet::volatileRegistersForJSCall()
 RegisterSet RegisterSet::stubUnavailableRegisters()
 {
     return RegisterSet(specialRegisters(), vmCalleeSaveRegisters());
+}
+
+RegisterSet RegisterSet::macroScratchRegisters()
+{
+#if CPU(X86_64)
+    return RegisterSet(MacroAssembler::s_scratchRegister);
+#else
+    return RegisterSet();
+#endif
 }
 
 RegisterSet RegisterSet::calleeSaveRegisters()

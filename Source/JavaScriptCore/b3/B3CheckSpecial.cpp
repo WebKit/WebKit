@@ -212,6 +212,7 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
                 params.value = value;
                 params.reps = reps;
                 params.usedRegisters = value->m_usedRegisters;
+                params.context = &context;
 
                 value->m_generator->run(jit, params);
             }));

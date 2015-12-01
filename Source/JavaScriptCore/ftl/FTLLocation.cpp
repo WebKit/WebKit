@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3ValueRep.h"
 #include "FTLSaveRestore.h"
 #include "RegisterSet.h"
 #include <wtf/CommaPrinter.h>
@@ -35,6 +36,25 @@
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace FTL {
+
+using namespace B3;
+
+#if FTL_USES_B3
+Location Location::forValueRep(const ValueRep& rep)
+{
+    switch (rep.kind()) {
+    case ValueRep::Register:
+        return forRegister(rep.reg(), 0);
+    case ValueRep::Stack:
+        return forIndirect(GPRInfo::callFrameRegister, rep.offsetFromFP());
+    case ValueRep::Constant:
+        return forConstant(rep.value());
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return Location();
+    }
+}
+#endif // FTL_USES_B3
 
 Location Location::forStackmaps(const StackMaps* stackmaps, const StackMaps::Location& location)
 {
@@ -66,8 +86,8 @@ Location Location::forStackmaps(const StackMaps* stackmaps, const StackMaps::Loc
 void Location::dump(PrintStream& out) const
 {
     out.print("(", kind());
-    if (hasDwarfReg())
-        out.print(", ", dwarfReg());
+    if (hasReg())
+        out.print(", ", reg());
     if (hasOffset())
         out.print(", ", offset());
     if (hasAddend())
@@ -84,22 +104,22 @@ bool Location::involvesGPR() const
 
 bool Location::isGPR() const
 {
-    return kind() == Register && dwarfReg().reg().isGPR();
+    return kind() == Register && reg().isGPR();
 }
 
 GPRReg Location::gpr() const
 {
-    return dwarfReg().reg().gpr();
+    return reg().gpr();
 }
 
 bool Location::isFPR() const
 {
-    return kind() == Register && dwarfReg().reg().isFPR();
+    return kind() == Register && reg().isFPR();
 }
 
 FPRReg Location::fpr() const
 {
-    return dwarfReg().reg().fpr();
+    return reg().fpr();
 }
 
 void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg result, unsigned numFramesToPop) const
