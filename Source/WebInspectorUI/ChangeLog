@@ -1,3 +1,23 @@
+2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Broken Inspector when resources are minified
+        https://bugs.webkit.org/show_bug.cgi?id=151711
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/combine-resources.pl:
+        (concatenateFiles):
+        Provide a way to just strip resources matches a pattern.
+
+        * Scripts/copy-user-interface-resources.pl:
+        Strip "Debug/" resources before combining / minifying others.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View.prototype.makeRootView):
+        (WebInspector.View.prototype.didDetach):
+        Address warnings from the console.assert stripping phase
+        for console.assert statements lacking a trailing semicolon.
+
 2015-11-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: show something useful when the inspector frontend fails to load

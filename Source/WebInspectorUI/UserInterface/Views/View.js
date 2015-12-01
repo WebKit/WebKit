@@ -62,7 +62,7 @@ WebInspector.View = class View extends WebInspector.Object
     makeRootView()
     {
         console.assert(!WebInspector.View._rootView, "Root view already exists.");
-        console.assert(!this._parentView, "Root view cannot be a subview.")
+        console.assert(!this._parentView, "Root view cannot be a subview.");
         if (WebInspector.View._rootView)
             return;
 
@@ -154,7 +154,7 @@ WebInspector.View = class View extends WebInspector.Object
 
     didDetach()
     {
-        console.assert(this._parentView, "Detached view has no parent.")
+        console.assert(this._parentView, "Detached view has no parent.");
         this._parentView = null;
     }
 

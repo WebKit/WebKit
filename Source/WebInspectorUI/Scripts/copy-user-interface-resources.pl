@@ -148,11 +148,14 @@ my $shouldCombineTest = defined $ENV{'COMBINE_TEST_RESOURCES'} && ($ENV{'COMBINE
 my $combineResourcesCmd = File::Spec->catfile($scriptsRoot, 'combine-resources.pl');
 
 if ($shouldCombineMain) {
+    # Remove Debug JavaScript and CSS files in Production builds.
+    system($combineResourcesCmd, '--input-dir', 'Debug', '--input-html', File::Spec->catfile($uiRoot, 'Main.html'), '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'Debug.js', '--output-style-name', 'Debug.css', '--strip');
+
     # Combine the JavaScript and CSS files in Production builds into single files (Main.js and Main.css).
-    system($combineResourcesCmd, '--input-html', File::Spec->catfile($uiRoot, 'Main.html'), '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'Main.js', '--output-style-name', 'Main.css');
+    my $derivedSourcesMainHTML = File::Spec->catfile($derivedSourcesDir, 'Main.html');
+    system($combineResourcesCmd, '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'Main.js', '--output-style-name', 'Main.css');
 
     # Combine the CodeMirror JavaScript and CSS files in Production builds into single files (CodeMirror.js and CodeMirror.css).
-    my $derivedSourcesMainHTML = File::Spec->catfile($derivedSourcesDir, 'Main.html');
     system($combineResourcesCmd, '--input-dir', 'External/CodeMirror', '--input-html', $derivedSourcesMainHTML, '--input-html-dir', $uiRoot, '--derived-sources-dir', $derivedSourcesDir, '--output-dir', $derivedSourcesDir, '--output-script-name', 'CodeMirror.js', '--output-style-name', 'CodeMirror.css');
 
     # Combine the Esprima JavaScript files in Production builds into a single file (Esprima.js).
