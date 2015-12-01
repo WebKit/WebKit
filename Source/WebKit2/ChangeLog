@@ -1,5 +1,15 @@
 2015-12-01  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192742.
+
+    2015-11-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+            Unreviewed speculative buildfix after r192701.
+
+            * PlatformMac.cmake:
+
+2015-12-01  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192701.
 
     2015-11-20  Simon Fraser  <simon.fraser@apple.com>
