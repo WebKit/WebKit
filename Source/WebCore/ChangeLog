@@ -1,3 +1,10 @@
+2015-12-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Update bindings test results after r192903.
+
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature
