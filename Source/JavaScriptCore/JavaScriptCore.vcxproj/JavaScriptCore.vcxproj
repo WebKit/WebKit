@@ -758,6 +758,10 @@
     <ClCompile Include="..\runtime\FunctionHasExecutedCache.cpp" />
     <ClCompile Include="..\runtime\FunctionPrototype.cpp" />
     <ClCompile Include="..\runtime\FunctionRareData.cpp" />
+    <ClCompile Include="..\runtime\GeneratorFrame.cpp" />
+    <ClCompile Include="..\runtime\GeneratorFunctionConstructor.cpp" />
+    <ClCompile Include="..\runtime\GeneratorFunctionPrototype.cpp" />
+    <ClCompile Include="..\runtime\GeneratorPrototype.cpp" />
     <ClCompile Include="..\runtime\GetterSetter.cpp" />
     <ClCompile Include="..\runtime\Identifier.cpp" />
     <ClCompile Include="..\runtime\IndexingType.cpp" />
@@ -797,6 +801,7 @@
     <ClCompile Include="..\runtime\JSDataViewPrototype.cpp" />
     <ClCompile Include="..\runtime\JSDateMath.cpp" />
     <ClCompile Include="..\runtime\JSFunction.cpp" />
+    <ClCompile Include="..\runtime\JSGeneratorFunction.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObject.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObjectFunctions.cpp" />
     <ClCompile Include="..\runtime\JSGlobalLexicalEnvironment.cpp" />
@@ -947,6 +952,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\DateConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\DatePrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ErrorPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\GeneratorPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HeaderDetection.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InjectedScriptSource.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorBackendDispatchers.h" />
@@ -1521,6 +1527,7 @@
     <ClInclude Include="..\parser\ParserTokens.h" />
     <ClInclude Include="..\parser\ResultType.h" />
     <ClInclude Include="..\parser\SourceCode.h" />
+    <ClInclude Include="..\parser\SourceCodeKey.h" />
     <ClInclude Include="..\parser\SourceProvider.h" />
     <ClInclude Include="..\parser\SourceProviderCache.h" />
     <ClInclude Include="..\parser\SourceProviderCacheItem.h" />
@@ -1607,6 +1614,11 @@
     <ClInclude Include="..\runtime\FunctionHasExecutedCache.h" />
     <ClInclude Include="..\runtime\FunctionPrototype.h" />
     <ClInclude Include="..\runtime\FunctionRareData.h" />
+    <ClInclude Include="..\runtime\GeneratorFrame.h" />
+    <ClInclude Include="..\runtime\GeneratorFunctionConstructor.h" />
+    <ClInclude Include="..\runtime\GeneratorFunctionPrototype.h" />
+    <ClInclude Include="..\runtime\GeneratorPrototype.h" />
+    <ClInclude Include="..\runtime\GeneratorThisMode.h" />
     <ClInclude Include="..\runtime\GenericArguments.h" />
     <ClInclude Include="..\runtime\GenericArgumentsInlines.h" />
     <ClInclude Include="..\runtime\GenericOffset.h" />
@@ -1666,6 +1678,7 @@
     <ClInclude Include="..\runtime\JSFloat32Array.h" />
     <ClInclude Include="..\runtime\JSFloat64Array.h" />
     <ClInclude Include="..\runtime\JSFunction.h" />
+    <ClInclude Include="..\runtime\JSGeneratorFunction.h" />
     <ClInclude Include="..\runtime\JSGenericTypedArrayView.h" />
     <ClInclude Include="..\runtime\JSGenericTypedArrayViewConstructor.h" />
     <ClInclude Include="..\runtime\JSGenericTypedArrayViewConstructorInlines.h" />

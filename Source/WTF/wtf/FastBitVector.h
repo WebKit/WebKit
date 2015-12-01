@@ -181,7 +181,7 @@ public:
     }
     
     template<typename Functor>
-    void forEachSetBit(const Functor& functor)
+    void forEachSetBit(const Functor& functor) const
     {
         unsigned n = arrayLength();
         for (unsigned i = 0; i < n; ++i) {
@@ -195,7 +195,7 @@ public:
             }
         }
     }
-    
+
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
 private:

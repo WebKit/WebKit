@@ -153,7 +153,16 @@ JSValue eval(CallFrame* callFrame)
     CallFrame* callerFrame = callFrame->callerFrame();
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
     JSScope* callerScopeChain = callerFrame->uncheckedR(callerCodeBlock->scopeRegister().offset()).Register::scope();
-    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), programSource, callerScopeChain);
+    UnlinkedCodeBlock* callerUnlinkedCodeBlock = callerCodeBlock->unlinkedCodeBlock();
+
+    ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded;
+    if (callerUnlinkedCodeBlock->constructorKind() == ConstructorKind::Derived)
+        thisTDZMode = ThisTDZMode::AlwaysCheck;
+    if (callerUnlinkedCodeBlock->parseMode() == SourceParseMode::GeneratorBodyMode && callerUnlinkedCodeBlock->generatorThisMode() == GeneratorThisMode::Empty)
+        thisTDZMode = ThisTDZMode::AlwaysCheck;
+
+    SourceCode sourceCode(makeSource(programSource));
+    EvalExecutable* eval = callerCodeBlock->evalCodeCache().tryGet(callerCodeBlock->isStrictMode(), sourceCode, thisTDZMode, callerScopeChain);
 
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
@@ -171,8 +180,7 @@ JSValue eval(CallFrame* callFrame)
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!callFrame->vm().exception());
 
-        ThisTDZMode thisTDZMode = callerCodeBlock->unlinkedCodeBlock()->constructorKind() == ConstructorKind::Derived ? ThisTDZMode::AlwaysCheck : ThisTDZMode::CheckIfNeeded;
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, programSource, callerScopeChain);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, sourceCode, callerScopeChain);
         if (!eval)
             return jsUndefined();
     }
@@ -410,7 +418,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     }
     dataLogF("-----------------------------------------------------------------------------\n");
 
-    end = it - codeBlock->m_numCalleeRegisters + codeBlock->m_numVars;
+    end = it - codeBlock->m_numCalleeLocals + codeBlock->m_numVars;
     if (it != end) {
         do {
             JSValue v = (*it).jsValue();

@@ -1,3 +1,508 @@
+2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature
+        https://bugs.webkit.org/show_bug.cgi?id=150792
+
+        Reviewed by Saam Barati.
+
+        This patch implements basic functionality of ES6 Generators in LLInt and Baseline tiers.
+        While the implementation has some inefficient part, the implementation covers edge cases.
+        Later, we will make this efficient.
+
+            https://bugs.webkit.org/show_bug.cgi?id=151545
+            https://bugs.webkit.org/show_bug.cgi?id=151546
+            https://bugs.webkit.org/show_bug.cgi?id=151547
+            https://bugs.webkit.org/show_bug.cgi?id=151552
+            https://bugs.webkit.org/show_bug.cgi?id=151560
+            https://bugs.webkit.org/show_bug.cgi?id=151586
+
+        To encourage DFG / FTL later, we take the following design.
+
+        1. Use switch_imm to jump to the save/resume points.
+
+        Instead of saving / restoring instruction pointer to resume from it, we use switch_imm to jump to the resume point.
+        This limits one entry point to a given generator function. This design makes inlining easy.
+        The generated code becomes the following.
+
+            function @generatorNext(@generator, @generatorState, @generatorValue, @generatorResumeMode)
+            {
+                switch (@generatorState) {
+                case Initial:
+                    ...
+                    initial sequence.
+                    ...
+
+
+                    op_save(Yield_0);  // op_save contains *virtual* jump to Yield_0.
+                                       // CFG shows a jump edge to Yield_0 point, but it won't be actually used.
+                    return ...;
+
+                case Yield_0:
+                    op_resume();
+                    if (@generatorResumeMode == Throw)
+                        ...
+                    else if (@generatorResumeMode == Return)
+                        ...
+                    ...
+                    // sentValue is a value sent from a caller by `generator.next(sentValue)`.
+                    sentValue = @generatorValue;
+                    ...
+                    op_save(Yield_1);
+                    return ...;
+
+                case Yield_1:
+                    op_resume();
+                    if (@generatorResumeMode == Throw)
+                        ...
+                    else if (@generatorResumeMode == Return)
+                        ...
+                    ...
+                    sentValue = @generatorValue;
+                    ...
+
+                ...
+                }
+            }
+
+            Resume sequence should not be emitted per yield.
+            This should be done in https://bugs.webkit.org/show_bug.cgi?id=151552.
+
+        2. Store live frame registers to GeneratorFrame
+
+        To save and resume generator's state, we save all the live registers in GeneratorFrame.
+        And when resuming, we refill registers with saved ones.
+        Since saved register contains scope register, |this| etc., the environment including the scope chain will be recovered automatically.
+        While saving and resuming callee registers, we don't save parameter registers.
+        These registers will be used to control generator's resume behavior.
+
+        We perform BytecodeLivenessAnalysis in CodeBlock to determine actually *def*ined registers at that resume point.
+
+        3. GeneratorFunction will evaluate parameters before generating Generator
+
+        Generator's parameter should be evaluated before entering Generator's body. For example,
+
+            function hello() { ... }
+            function *gen(a, b = hello())
+            {
+                yield b;
+            }
+            let g = gen(20);  // Now, hello should be called.
+
+        To enable this, we evaluate parameters in GeneratorFunction, and after that, we create a Generator and return it.
+        This can be explained by the following pseudo code.
+
+            function *gen(a, b = hello())
+            {
+                // This is generator.
+                return {
+                    @generatorNext: function (@generator, @generatorState, @generatorValue, @generatorResumeMode)
+                    {
+                        ...
+                    }
+                }
+            }
+
+        4. op_save seems similar to conditional jump
+
+        We won't jump to elsewhere from op_save actually. But we add a *virtual* jump edge (flow) from op_save to the point so called *merge point*.
+        We construct the CFG as follows,
+
+            (global generator switch) -> (initial sequence) -> (op_save) ----+-> (merge point) -> (next sequence)*
+                   |                                              |          |
+                   |                                              v          |
+                   |                                           (op_ret)      |
+                   |                                                         |
+                   +------------------------------------------->(op_resume)--+
+
+        By constructing such a graph,
+
+            1. Since we have a flow from (op_save) to (merge point), at merge point, we can *use* locals that are defined before (op_save)
+            2. op_save should claim that it does not define anything. And claim that it *use*s locals that are used in (merge point).
+            3. at op_resume, we see *use*d locals at merge point and define all of them.
+
+        We can do the above things in use-def analysis because use-def analysis is backward analysis.
+        And after analyzing use-def chains, in op_save / op_resume, we only save / resume live registers at the head of merge point.
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::createExecutableInternal):
+        * builtins/GeneratorPrototype.js: Added.
+        (generatorResume):
+        (next):
+        (return):
+        (throw):
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::isBranch):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::stepOverInstruction):
+        (JSC::computeLocalLivenessForBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::runLivenessFixpoint):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::validate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numCalleeLocals):
+        (JSC::CodeBlock::liveCalleeLocalsAtYield):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        (JSC::EvalCodeCache::isCacheable):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::generatorThisMode):
+        (JSC::ExecutableInfo::superBinding):
+        (JSC::ExecutableInfo::parseMode):
+        (JSC::ExecutableInfo::isArrowFunction): Deleted.
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::getJumpTargetsForBytecodeOffset):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::parseMode):
+        (JSC::UnlinkedCodeBlock::generatorThisMode):
+        (JSC::UnlinkedCodeBlock::superBinding):
+        (JSC::UnlinkedCodeBlock::isArrowFunction): Deleted.
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeParameters):
+        (JSC::BytecodeGenerator::newRegister):
+        (JSC::BytecodeGenerator::reclaimFreeRegisters):
+        (JSC::BytecodeGenerator::createVariable):
+        (JSC::BytecodeGenerator::emitCreateThis):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitIteratorNextWithValue):
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::BytecodeGenerator::emitSave):
+        (JSC::BytecodeGenerator::emitResume):
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitGeneratorStateChange):
+        (JSC::BytecodeGenerator::emitGeneratorStateLabel):
+        (JSC::BytecodeGenerator::beginGenerator):
+        (JSC::BytecodeGenerator::endGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal): Deleted.
+        (JSC::BytecodeGenerator::emitNewFunctionCommon): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generatorThisMode):
+        (JSC::BytecodeGenerator::superBinding):
+        (JSC::BytecodeGenerator::generatorRegister):
+        (JSC::BytecodeGenerator::generatorStateRegister):
+        (JSC::BytecodeGenerator::generatorValueRegister):
+        (JSC::BytecodeGenerator::generatorResumeModeRegister):
+        (JSC::BytecodeGenerator::parseMode):
+        (JSC::BytecodeGenerator::registerFor):
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::emitHomeObjectForCallee):
+        (JSC::emitSuperBaseForCallee):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::YieldExprNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * ftl/FTLForOSREntryJITCode.cpp:
+        (JSC::FTL::ForOSREntryJITCode::initializeEntryBuffer):
+        * ftl/FTLForOSREntryJITCode.h:
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isAtom):
+        (JSC::MarkedBlock::isLiveCell):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::Interpreter::dumpRegisters):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::frameRegisterCountFor):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncCommon):
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emit_op_new_generator_func):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emit_op_new_generator_func_exp):
+        (JSC::JIT::emit_op_save):
+        (JSC::JIT::emit_op_resume):
+        * jit/JITOperations.cpp:
+        (JSC::operationNewFunctionCommon):
+        * jit/JITOperations.h:
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::frameRegisterCountFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createYield):
+        (JSC::ASTBuilder::createFunctionMetadata):
+        (JSC::ASTBuilder::propagateArgumentsUse):
+        * parser/Nodes.cpp:
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::createGeneratorParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseYieldExpression):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseFunctionExpression):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setSourceParseMode):
+        (JSC::Scope::hasArguments):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::setIsGeneratorFunction):
+        (JSC::Scope::setIsGenerator):
+        (JSC::parse):
+        * parser/ParserModes.h:
+        (JSC::isFunctionParseMode):
+        (JSC::isModuleParseMode):
+        (JSC::isProgramParseMode):
+        * parser/SourceCodeKey.h: Added.
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::isHashTableDeletedValue):
+        (JSC::SourceCodeKey::hash):
+        (JSC::SourceCodeKey::length):
+        (JSC::SourceCodeKey::isNull):
+        (JSC::SourceCodeKey::string):
+        (JSC::SourceCodeKey::operator==):
+        (JSC::SourceCodeKeyHash::hash):
+        (JSC::SourceCodeKeyHash::equal):
+        (JSC::SourceCodeKeyHashTraits::isEmptyValue):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createYield):
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeKey::SourceCodeKey): Deleted.
+        (JSC::SourceCodeKey::isHashTableDeletedValue): Deleted.
+        (JSC::SourceCodeKey::hash): Deleted.
+        (JSC::SourceCodeKey::length): Deleted.
+        (JSC::SourceCodeKey::isNull): Deleted.
+        (JSC::SourceCodeKey::string): Deleted.
+        (JSC::SourceCodeKey::operator==): Deleted.
+        (JSC::SourceCodeKeyHash::hash): Deleted.
+        (JSC::SourceCodeKeyHash::equal): Deleted.
+        (JSC::SourceCodeKeyHashTraits::isEmptyValue): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::checkModuleSyntax):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ProgramExecutable::checkSyntax):
+        * runtime/Executable.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * runtime/GeneratorFrame.cpp: Added.
+        (JSC::GeneratorFrame::GeneratorFrame):
+        (JSC::GeneratorFrame::finishCreation):
+        (JSC::GeneratorFrame::createStructure):
+        (JSC::GeneratorFrame::create):
+        (JSC::GeneratorFrame::save):
+        (JSC::GeneratorFrame::resume):
+        (JSC::GeneratorFrame::visitChildren):
+        * runtime/GeneratorFrame.h: Added.
+        (JSC::GeneratorFrame::locals):
+        (JSC::GeneratorFrame::localAt):
+        (JSC::GeneratorFrame::offsetOfLocals):
+        (JSC::GeneratorFrame::allocationSizeForLocals):
+        * runtime/GeneratorFunctionConstructor.cpp: Added.
+        (JSC::GeneratorFunctionConstructor::GeneratorFunctionConstructor):
+        (JSC::GeneratorFunctionConstructor::finishCreation):
+        (JSC::callGeneratorFunctionConstructor):
+        (JSC::constructGeneratorFunctionConstructor):
+        (JSC::GeneratorFunctionConstructor::getCallData):
+        (JSC::GeneratorFunctionConstructor::getConstructData):
+        * runtime/GeneratorFunctionConstructor.h: Added.
+        (JSC::GeneratorFunctionConstructor::create):
+        (JSC::GeneratorFunctionConstructor::createStructure):
+        * runtime/GeneratorFunctionPrototype.cpp: Added.
+        (JSC::GeneratorFunctionPrototype::GeneratorFunctionPrototype):
+        (JSC::GeneratorFunctionPrototype::finishCreation):
+        * runtime/GeneratorFunctionPrototype.h: Added.
+        (JSC::GeneratorFunctionPrototype::create):
+        (JSC::GeneratorFunctionPrototype::createStructure):
+        * runtime/GeneratorPrototype.cpp: Copied from Source/JavaScriptCore/ftl/FTLForOSREntryJITCode.cpp.
+        (JSC::GeneratorPrototype::finishCreation):
+        (JSC::GeneratorPrototype::getOwnPropertySlot):
+        * runtime/GeneratorPrototype.h: Copied from Source/JavaScriptCore/ftl/FTLForOSREntryJITCode.cpp.
+        (JSC::GeneratorPrototype::create):
+        (JSC::GeneratorPrototype::createStructure):
+        (JSC::GeneratorPrototype::GeneratorPrototype):
+        * runtime/GeneratorThisMode.h: Added.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGeneratorFunction.cpp: Added.
+        (JSC::JSGeneratorFunction::JSGeneratorFunction):
+        (JSC::JSGeneratorFunction::createImpl):
+        (JSC::JSGeneratorFunction::create):
+        (JSC::JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSGeneratorFunction.h: Added.
+        (JSC::JSGeneratorFunction::allocationSize):
+        (JSC::JSGeneratorFunction::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::generatorFunctionPrototype):
+        (JSC::JSGlobalObject::generatorPrototype):
+        (JSC::JSGlobalObject::generatorFunctionStructure):
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::moduleLoaderObjectParseModule):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tests/es6.yaml:
+        * tests/es6/generators_yield_star_generic_iterables.js:
+        (iterator.next):
+        (iterable.Symbol.iterator):
+        (__createIterableObject):
+        * tests/es6/generators_yield_star_instances_of_iterables.js:
+        (iterator.next):
+        (iterable.Symbol.iterator):
+        (__createIterableObject):
+        * tests/es6/generators_yield_star_iterator_closing.js:
+        (iterator.next):
+        (iterable.Symbol.iterator):
+        (__createIterableObject):
+        * tests/es6/generators_yield_star_iterator_closing_via_throw.js:
+        (iterator.next):
+        (iterable.Symbol.iterator):
+        (__createIterableObject):
+        * tests/stress/generator-arguments-from-function.js: Added.
+        (shouldBe):
+        (test):
+        * tests/stress/generator-arguments.js: Added.
+        (shouldBe):
+        (g1):
+        * tests/stress/generator-class-methods-syntax.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        (testSyntaxError.Cocoa):
+        (testSyntax.Cocoa.prototype.ok):
+        (testSyntax.Cocoa):
+        (testSyntax.Cocoa.ok):
+        * tests/stress/generator-class-methods.js: Added.
+        (shouldBe):
+        (prototype.gen):
+        (staticGen):
+        (shouldBe.g.next):
+        * tests/stress/generator-eval-this.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (B):
+        (A):
+        (C.prototype.generator):
+        (C):
+        (TypeError):
+        * tests/stress/generator-function-constructor.js: Added.
+        (shouldBe):
+        (generatorFunctionConstructor):
+        * tests/stress/generator-function-name.js: Added.
+        (shouldBe):
+        (ok):
+        * tests/stress/generator-methods-with-non-generator.js: Added.
+        (shouldThrow):
+        * tests/stress/generator-relations.js: Added.
+        (shouldBe):
+        (generatorFunction):
+        * tests/stress/generator-return-before-first-call.js: Added.
+        (shouldBe):
+        (shouldBeIteratorResult):
+        * tests/stress/generator-return.js: Added.
+        (shouldBe):
+        (shouldBeIteratorResult):
+        * tests/stress/generator-this.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (gen):
+        (shouldBe.g.next):
+        * tests/stress/generator-throw-before-first-call.js: Added.
+        (unreachable):
+        (gen):
+        (catch):
+        * tests/stress/generator-throw.js: Added.
+        (shouldBe):
+        (shouldBeIteratorResult):
+        * tests/stress/generator-with-new-target.js: Added.
+        (shouldBe):
+        (gen):
+        * tests/stress/generator-with-super.js: Added.
+        (shouldThrow):
+        (test):
+        (B.prototype.gen):
+        (B):
+        (A.prototype.gen):
+        (A):
+        * tests/stress/generator-yield-star.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (prototype.call):
+        (Arrays):
+        (Arrays.prototype.Symbol.iterator):
+        (Iterator.prototype.next):
+        (Iterator.prototype.string_appeared_here):
+        (Iterator.prototype.Symbol.iterator):
+        (Iterator):
+        (gen):
+
 2015-12-01  Filip Pizlo  <fpizlo@apple.com>
 
         Remove repetitive cruft from FTL OSR exit code in LowerDFGToLLVM

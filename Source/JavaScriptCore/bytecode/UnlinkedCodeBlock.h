@@ -31,6 +31,7 @@
 #include "CodeType.h"
 #include "ConstructAbility.h"
 #include "ExpressionRangeInfo.h"
+#include "GeneratorThisMode.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
 #include "JSCell.h"
@@ -41,6 +42,7 @@
 #include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
 #include "VirtualRegister.h"
+#include <wtf/FastBitVector.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
@@ -116,7 +118,7 @@ public:
     bool isConstructor() const { return m_isConstructor; }
     bool isStrictMode() const { return m_isStrictMode; }
     bool usesEval() const { return m_usesEval; }
-    bool isArrowFunction() const { return m_isArrowFunction; }
+    SourceParseMode parseMode() const { return m_parseMode; }
 
     bool needsFullScopeChain() const { return m_needsFullScopeChain; }
 
@@ -202,6 +204,8 @@ public:
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
+    GeneratorThisMode generatorThisMode() const { return static_cast<GeneratorThisMode>(m_generatorThisMode); }
+    SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
 
     void shrinkToFit()
     {
@@ -232,7 +236,7 @@ public:
 
     int m_numVars;
     int m_numCapturedVars;
-    int m_numCalleeRegisters;
+    int m_numCalleeLocals;
 
     // Jump Tables
 
@@ -387,12 +391,14 @@ private:
     unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructorKind : 2;
-    unsigned m_isArrowFunction : 1;
+    unsigned m_generatorThisMode : 1;
+    unsigned m_superBinding : 1;
 
     unsigned m_firstLine;
     unsigned m_lineCount;
     unsigned m_endColumn;
 
+    SourceParseMode m_parseMode;
     CodeFeatures m_features;
     CodeType m_codeType;
 

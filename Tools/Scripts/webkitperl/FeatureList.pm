@@ -185,7 +185,7 @@ my @features = (
       define => "ENABLE_ES6_CLASS_SYNTAX", default => 1, value => \$classSyntax },
 
     { option => "generators", desc => "Toggle ES6 generators support",
-      define => "ENABLE_ES6_GENERATORS", default => 0, value => \$generatorsSupport },
+      define => "ENABLE_ES6_GENERATORS", default => 1, value => \$generatorsSupport },
 
     { option => "modules", desc => "Toggle ES6 modules support",
       define => "ENABLE_ES6_MODULES", default => 0, value => \$modulesSupport },

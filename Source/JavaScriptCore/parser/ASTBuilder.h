@@ -341,9 +341,11 @@ public:
         return new (m_parserArena) YieldExprNode(location, nullptr, /* delegate */ false);
     }
 
-    YieldExprNode* createYield(const JSTokenLocation& location, ExpressionNode* argument, bool delegate)
+    YieldExprNode* createYield(const JSTokenLocation& location, ExpressionNode* argument, bool delegate, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
-        return new (m_parserArena) YieldExprNode(location, argument, delegate);
+        YieldExprNode* node = new (m_parserArena) YieldExprNode(location, argument, delegate);
+        setExceptionLocation(node, start, divot, end);
+        return node;
     }
 
     ClassExprNode* createClassExpr(const JSTokenLocation& location, const Identifier& name, VariableEnvironment& classEnvironment, ExpressionNode* constructor,
@@ -364,12 +366,12 @@ public:
         const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, 
         unsigned startColumn, unsigned endColumn, int functionKeywordStart, 
         int functionNameStart, int parametersStart, bool inStrictContext, 
-        ConstructorKind constructorKind, unsigned parameterCount, SourceParseMode mode, bool isArrowFunction, bool isArrowFunctionBodyExpression)
+        ConstructorKind constructorKind, SuperBinding superBinding, unsigned parameterCount, SourceParseMode mode, bool isArrowFunctionBodyExpression)
     {
         return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 
-            inStrictContext, constructorKind, parameterCount, mode, isArrowFunction, isArrowFunctionBodyExpression);
+            inStrictContext, constructorKind, superBinding, parameterCount, mode, isArrowFunctionBodyExpression);
     }
 
     ExpressionNode* createArrowFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
@@ -891,6 +893,9 @@ public:
     {
         node->setStartOffset(offset);
     }
+
+
+    void propagateArgumentsUse() { usesArguments(); }
     
 private:
     struct Scope {

@@ -45,9 +45,9 @@ ForOSREntryJITCode* ForOSREntryJITCode::ftlForOSREntry()
     return this;
 }
 
-void ForOSREntryJITCode::initializeEntryBuffer(VM& vm, unsigned numCalleeRegisters)
+void ForOSREntryJITCode::initializeEntryBuffer(VM& vm, unsigned numCalleeLocals)
 {
-    m_entryBuffer = vm.scratchBufferForSize(numCalleeRegisters * sizeof(EncodedJSValue));
+    m_entryBuffer = vm.scratchBufferForSize(numCalleeLocals * sizeof(EncodedJSValue));
 }
 
 } } // namespace JSC::FTL

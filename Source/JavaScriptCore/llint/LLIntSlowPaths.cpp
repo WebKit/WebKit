@@ -43,6 +43,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
+#include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSStackInlines.h"
 #include "JSString.h"
@@ -224,9 +225,9 @@ static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpec
     JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     FunctionExecutable* executable = callee->jsExecutable();
     CodeBlock* codeBlock = executable->codeBlockFor(kind);
-    dataLogF("%p / %p: in %s of function %p, executable %p; numVars = %u, numParameters = %u, numCalleeRegisters = %u, caller = %p.\n",
+    dataLogF("%p / %p: in %s of function %p, executable %p; numVars = %u, numParameters = %u, numCalleeLocals = %u, caller = %p.\n",
             codeBlock, exec, comment, callee, executable,
-            codeBlock->m_numVars, codeBlock->numParameters(), codeBlock->m_numCalleeRegisters,
+            codeBlock->m_numVars, codeBlock->numParameters(), codeBlock->m_numCalleeLocals,
             exec->callerFrame());
 }
 
@@ -458,7 +459,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Checking stack height with exec = %p.\n", exec);
     dataLogF("CodeBlock = %p.\n", exec->codeBlock());
-    dataLogF("Num callee registers = %u.\n", exec->codeBlock()->m_numCalleeRegisters);
+    dataLogF("Num callee registers = %u.\n", exec->codeBlock()->m_numCalleeLocals);
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
 
 #if ENABLE(JIT)
@@ -1041,6 +1042,18 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
     LLINT_RETURN(JSFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
+{
+    LLINT_BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsActivation() || exec->hasActivation());
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
+#if LLINT_SLOW_PATH_TRACING
+    dataLogF("Creating function!\n");
+#endif
+    LLINT_RETURN(JSGeneratorFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
 {
     LLINT_BEGIN();
@@ -1050,6 +1063,17 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
     FunctionExecutable* executable = codeBlock->functionExpr(pc[3].u.operand);
     
     LLINT_RETURN(JSFunction::create(vm, executable, scope));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_new_generator_func_exp)
+{
+    LLINT_BEGIN();
+
+    CodeBlock* codeBlock = exec->codeBlock();
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
+    FunctionExecutable* executable = codeBlock->functionExpr(pc[3].u.operand);
+
+    LLINT_RETURN(JSGeneratorFunction::create(vm, executable, scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_arrow_func_exp)
