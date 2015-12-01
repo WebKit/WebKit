@@ -1,3 +1,9 @@
+2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing inspector files to the GTK+ build.
+
+        * PlatformGTK.cmake: Add also Debug css files.
+
 2015-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix for some compiler versions.
