@@ -325,6 +325,7 @@ Effects Value::effects() const
     case Shl:
     case SShr:
     case ZShr:
+    case Sqrt:
     case BitwiseCast:
     case SExt8:
     case SExt16:
@@ -400,6 +401,7 @@ ValueKey Value::key() const
     case FramePointer:
         return ValueKey(opcode(), type());
     case Identity:
+    case Sqrt:
     case SExt8:
     case SExt16:
     case SExt32:
@@ -496,6 +498,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case Shl:
     case SShr:
     case ZShr:
+    case Sqrt:
     case CheckAdd:
     case CheckSub:
     case CheckMul:

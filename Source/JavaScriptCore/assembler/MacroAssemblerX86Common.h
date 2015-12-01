@@ -505,6 +505,11 @@ public:
         m_assembler.sqrtsd_rr(src, dst);
     }
 
+    void sqrtDouble(Address src, FPRegisterID dst)
+    {
+        m_assembler.sqrtsd_mr(src.offset, src.base, dst);
+    }
+
     void absDouble(FPRegisterID src, FPRegisterID dst)
     {
         ASSERT(src != dst);

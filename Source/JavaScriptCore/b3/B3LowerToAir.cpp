@@ -1463,6 +1463,11 @@ private:
             return;
         }
 
+        case Sqrt: {
+            appendUnOp<Air::Oops, Air::Oops, SqrtDouble>(m_value->child(0));
+            return;
+        }
+
         case BitwiseCast: {
             appendUnOp<Air::Oops, Move64ToDouble, MoveDoubleTo64>(m_value->child(0));
             return;

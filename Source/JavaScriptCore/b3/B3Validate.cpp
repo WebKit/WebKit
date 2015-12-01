@@ -197,6 +197,7 @@ public:
                 VALIDATE(value->child(0)->type() == Int64, ("At ", *value));
                 VALIDATE(value->type() == Int32, ("At ", *value));
                 break;
+            case Sqrt:
             case FRound:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Double, ("At ", *value));

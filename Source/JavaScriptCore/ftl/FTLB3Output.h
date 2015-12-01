@@ -166,7 +166,7 @@ public:
 
     LValue doublePowi(LValue xOperand, LValue yOperand) { CRASH(); }
 
-    LValue doubleSqrt(LValue value) { CRASH(); }
+    LValue doubleSqrt(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Sqrt, origin(), value); }
 
     LValue doubleLog(LValue value) { CRASH(); }
 

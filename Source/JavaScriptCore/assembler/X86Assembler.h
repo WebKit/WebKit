@@ -2137,7 +2137,13 @@ public:
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_SQRTSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
-    
+
+    void sqrtsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_SQRTSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
     // Misc instructions:
 
     void int3()

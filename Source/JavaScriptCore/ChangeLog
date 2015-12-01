@@ -1,3 +1,33 @@
+2015-11-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add Sqrt to B3
+        https://bugs.webkit.org/show_bug.cgi?id=151692
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::sqrtDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::sqrtsd_mr):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testSqrtArg):
+        (JSC::B3::testSqrtImm):
+        (JSC::B3::testSqrtMem):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleSqrt):
+
 2015-11-30  Filip Pizlo  <fpizlo@apple.com>
 
         FTL lazy slow paths should work with B3

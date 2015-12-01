@@ -203,6 +203,10 @@ Not64 UD:G
     Tmp
     Addr
 
+SqrtDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 ConvertInt32ToDouble U:G, D:F
     Tmp, Tmp
     Addr, Tmp

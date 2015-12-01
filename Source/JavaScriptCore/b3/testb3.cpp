@@ -1884,6 +1884,44 @@ void testZShrArgImm32(uint32_t a, uint32_t b)
     CHECK(compileAndRun<uint32_t>(proc, a) == (a >> b));
 }
 
+void testSqrtArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sqrt, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0)));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), sqrt(a)));
+}
+
+void testSqrtImm(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sqrt, Origin(), argument));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), sqrt(a)));
+}
+
+void testSqrtMem(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadDouble = root->appendNew<MemoryValue>(proc, Load, Double, Origin(), address);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sqrt, Origin(), loadDouble));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, &a), sqrt(a)));
+}
+
 void testDoubleArgToInt64BitwiseCast(double value)
 {
     Procedure proc;
@@ -5681,6 +5719,10 @@ void run(const char* filter)
     RUN(testZShrArgImm32(0xffffffff, 0));
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
+
+    RUN_UNARY(testSqrtArg, doubleOperands());
+    RUN_UNARY(testSqrtImm, doubleOperands());
+    RUN_UNARY(testSqrtMem, doubleOperands());
 
     RUN_UNARY(testDoubleArgToInt64BitwiseCast, doubleOperands());
     RUN_UNARY(testDoubleImmToInt64BitwiseCast, doubleOperands());
