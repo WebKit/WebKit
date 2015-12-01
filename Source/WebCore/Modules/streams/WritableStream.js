@@ -53,15 +53,14 @@ function initializeWritableStream(underlyingSink, strategy)
 
     @syncWritableStreamStateWithQueue(this);
 
-    const _this = this;
-    function error(e) {
-        @errorWritableStream.@call(_this, e);
+    const errorFunction = (e) => {
+        @errorWritableStream(this, e);
     };
-    this.@startedPromise = @Promise.@resolve(@invokeOrNoop(underlyingSink, "start", [error]));
-    @Promise.prototype.@then.@call(this.@startedPromise, function() {
-        _this.@started = true;
-        _this.@startedPromise = undefined;
-    }, error);
+    this.@startedPromise = @Promise.@resolve(@invokeOrNoop(underlyingSink, "start", [errorFunction]));
+    @Promise.prototype.@then.@call(this.@startedPromise, () => {
+        this.@started = true;
+        this.@startedPromise = undefined;
+    }, errorFunction);
 
     return this;
 }
@@ -79,7 +78,7 @@ function abort(reason)
     if (this.@state === @streamErrored)
         return @Promise.@reject(this.@storedError);
 
-    @errorWritableStream.@call(this, reason);
+    @errorWritableStream(this, reason);
 
     const sinkAbortPromise = @promiseInvokeOrFallbackOrNoop(this.@underlyingSink, "abort", [reason], "close", []);
 
@@ -129,7 +128,7 @@ function write(chunk)
         try {
             chunkSize = this.@strategy.size.@call(undefined, chunk);
         } catch(e) {
-            @errorWritableStream.@call(this, e);
+            @errorWritableStream(this, e);
             return @Promise.@reject(e);
         }
     }
@@ -138,7 +137,7 @@ function write(chunk)
     try {
         @enqueueValueWithSize(this.@queue, { promiseCapability: promiseCapability, chunk: chunk }, chunkSize);
     } catch (e) {
-        @errorWritableStream.@call(this, e);
+        @errorWritableStream(this, e);
         return @Promise.@reject(e);
     }
 

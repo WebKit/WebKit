@@ -1,5 +1,28 @@
 2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Streams API] Clean-up JS built-in code using arrow functions
+        https://bugs.webkit.org/show_bug.cgi?id=151489
+
+        Reviewed by Darin Adler.
+
+        Using arrow functions to remove need for _this.
+        Made errorWritableStream take two parameters to simplify code and align it with the spec.
+
+        No change in behavior.
+
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        (abort):
+        (write):
+        * Modules/streams/WritableStreamInternals.js:
+        (errorWritableStream):
+        (writableStreamAdvanceQueue):
+        (closeWritableStream):
+
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Streams API] teeReadableStream should not directly use stream.getReader()
         https://bugs.webkit.org/show_bug.cgi?id=151487
 

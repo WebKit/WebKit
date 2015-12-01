@@ -56,13 +56,12 @@ function initializeReadableStream(underlyingSource, strategy)
     this.@strategy = @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark);
 
     const result = @invokeOrNoop(underlyingSource, "start", [this.@controller]);
-    const _this = this;
-    @Promise.prototype.@then.@call(@Promise.@resolve(result), function() {
-        _this.@started = true;
-        @requestReadableStreamPull(_this);
-    }, function(error) {
-        if (_this.@state === @streamReadable)
-            @errorReadableStream(_this, error);
+    @Promise.prototype.@then.@call(@Promise.@resolve(result), () => {
+        this.@started = true;
+        @requestReadableStreamPull(this);
+    }, (error) => {
+        if (this.@state === @streamReadable)
+            @errorReadableStream(this, error);
     });
 
     return this;
