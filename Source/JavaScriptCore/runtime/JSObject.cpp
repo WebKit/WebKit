@@ -1621,7 +1621,7 @@ void JSObject::seal(VM& vm)
 {
     if (isSealed(vm))
         return;
-    preventExtensions(vm);
+    enterDictionaryIndexingMode(vm);
     setStructure(vm, Structure::sealTransition(vm, structure(vm)));
 }
 
@@ -1629,15 +1629,16 @@ void JSObject::freeze(VM& vm)
 {
     if (isFrozen(vm))
         return;
-    preventExtensions(vm);
+    enterDictionaryIndexingMode(vm);
     setStructure(vm, Structure::freezeTransition(vm, structure(vm)));
 }
 
 void JSObject::preventExtensions(VM& vm)
 {
+    if (!isExtensible())
+        return;
     enterDictionaryIndexingMode(vm);
-    if (isExtensible())
-        setStructure(vm, Structure::preventExtensionsTransition(vm, structure(vm)));
+    setStructure(vm, Structure::preventExtensionsTransition(vm, structure(vm)));
 }
 
 // This presently will flatten to an uncachable dictionary; this is suitable

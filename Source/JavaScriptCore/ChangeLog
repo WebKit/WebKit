@@ -1,3 +1,21 @@
+2015-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Object::{freeze, seal} perform preventExtensionsTransition twice
+        https://bugs.webkit.org/show_bug.cgi?id=151606
+
+        Reviewed by Darin Adler.
+
+        In Structure::{freezeTransition, sealTransition}, we perform preventExtensionsTransition.
+        So it is unnecessary to perform preventExtensionsTransition before executing Structure::{freezeTransition, sealTransition}.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::seal):
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+        * tests/stress/freeze-and-seal-should-prevent-extensions.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2015-11-30  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add Sqrt to B3
