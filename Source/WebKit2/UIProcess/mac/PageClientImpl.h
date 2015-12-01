@@ -237,6 +237,8 @@ private:
 
     virtual void refView() override;
     virtual void derefView() override;
+
+    virtual void didRestoreScrollPosition() override;
 };
 
 } // namespace WebKit

@@ -3183,6 +3183,12 @@ void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
 #endif
 }
 
+void WebViewImpl::didRestoreScrollPosition()
+{
+    if (m_gestureController)
+        m_gestureController->didRestoreScrollPosition();
+}
+
 void WebViewImpl::doneWithKeyEvent(NSEvent *event, bool eventWasHandled)
 {
     if ([event type] != NSKeyDown)

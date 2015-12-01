@@ -916,6 +916,8 @@ public:
 
     void dispatchDidLayout(WebCore::LayoutMilestones);
 
+    void didRestoreScrollPosition();
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

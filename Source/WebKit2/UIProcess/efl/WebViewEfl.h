@@ -93,6 +93,8 @@ private:
     virtual void refView() override final { }
     virtual void derefView() override final { }
 
+    virtual void didRestoreScrollPosition() override final { }
+
 #if USE(GSTREAMER)
     virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override final { return false; };
 #endif

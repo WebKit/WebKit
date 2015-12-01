@@ -214,6 +214,8 @@ protected:
     virtual void didChangeBackgroundColor() override { }
     virtual void didFailLoadForMainFrame() override { }
 
+    virtual void didRestoreScrollPosition() override { }
+
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;
     DefaultUndoController m_undoController;

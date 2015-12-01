@@ -153,10 +153,20 @@ void HistoryController::restoreScrollPositionAndViewState()
     // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
     if (view && !view->wasScrolledByUser()) {
         Page* page = m_frame.page();
+        auto desiredScrollPosition = m_currentItem->scrollPoint();
+
         if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
-            page->setPageScaleFactor(m_currentItem->pageScaleFactor() * page->viewScaleFactor(), m_currentItem->scrollPoint());
+            page->setPageScaleFactor(m_currentItem->pageScaleFactor() * page->viewScaleFactor(), desiredScrollPosition);
         else
-            view->setScrollPosition(m_currentItem->scrollPoint());
+            view->setScrollPosition(desiredScrollPosition);
+
+        // If the scroll position doesn't have to be clamped, consider it successfully restored.
+        if (m_frame.isMainFrame()) {
+            auto adjustedDesiredScrollPosition = view->adjustScrollPositionWithinRange(desiredScrollPosition);
+            if (desiredScrollPosition == adjustedDesiredScrollPosition)
+                m_frame.loader().client().didRestoreScrollPosition();
+        }
+
     }
 #endif
 }

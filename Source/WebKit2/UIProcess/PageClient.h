@@ -355,6 +355,8 @@ public:
 #if USE(GSTREAMER)
     virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) = 0;
 #endif
+
+    virtual void didRestoreScrollPosition() = 0;
 };
 
 } // namespace WebKit

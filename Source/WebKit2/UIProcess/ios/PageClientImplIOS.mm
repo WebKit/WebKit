@@ -752,6 +752,10 @@ void PageClientImpl::derefView()
     [m_webView release];
 }
 
+void PageClientImpl::didRestoreScrollPosition()
+{
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

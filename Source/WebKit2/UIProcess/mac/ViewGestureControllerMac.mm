@@ -734,10 +734,11 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_swipeCancellationTracker = nullptr;
 
+#if ENABLE(LEGACY_SWIPE_SHADOW_STYLE)
     CALayer *rootLayer = m_webPageProxy.acceleratedCompositingRootLayer();
-
-    [rootLayer setShadowOpacity:0];
-    [rootLayer setShadowRadius:0];
+    rootLayer.shadowOpacity = 0;
+    rootLayer.shadowRadius = 0;
+#endif
 
     if (cancelled) {
         removeSwipeSnapshot();
@@ -754,11 +755,10 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
     m_webPageProxy.goToBackForwardItem(targetItem);
 
-    // FIXME: We should be able to include scroll position restoration here,
-    // and then can address the FIXME in didFirstVisuallyNonEmptyLayoutForMainFrame.
     SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
         | SnapshotRemovalTracker::MainFrameLoad
-        | SnapshotRemovalTracker::SubresourceLoads;
+        | SnapshotRemovalTracker::SubresourceLoads
+        | SnapshotRemovalTracker::ScrollPositionRestoration;
     if (renderTreeSize)
         desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
     m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });

@@ -1,3 +1,19 @@
+2015-12-01  Tim Horton  <timothy_horton@apple.com>
+
+        Remove swipe snapshot before main document load if scroll position is already restored
+        https://bugs.webkit.org/show_bug.cgi?id=151224
+
+        Reviewed by Darin Adler.
+
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        Each time we try to restore the scroll position, see if the requested
+        scroll position is something we can scroll to by going through ScrollView's
+        scroll position constraint logic. If we can scroll there, tell our client
+        (and eventually ViewGestureController) that we successfully restored the
+        scroll position!
+
 2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Adjacent emoji overlap each other

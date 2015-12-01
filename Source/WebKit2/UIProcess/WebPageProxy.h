@@ -1071,6 +1071,8 @@ public:
 
     void didLayout(uint32_t layoutMilestones);
 
+    void didRestoreScrollPosition();
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();

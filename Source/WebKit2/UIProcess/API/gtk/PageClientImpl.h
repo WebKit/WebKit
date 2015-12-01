@@ -139,6 +139,8 @@ private:
     virtual void refView() override;
     virtual void derefView() override;
 
+    virtual void didRestoreScrollPosition() override { }
+
 #if ENABLE(VIDEO)
     virtual bool decicePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
 #endif

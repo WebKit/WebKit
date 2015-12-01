@@ -248,6 +248,8 @@ private:
 
     void prefetchDNS(const String&) override;
 
+    void didRestoreScrollPosition() override;
+
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;

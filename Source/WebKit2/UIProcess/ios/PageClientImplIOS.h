@@ -191,6 +191,8 @@ private:
     virtual void refView() override;
     virtual void derefView() override;
 
+    virtual void didRestoreScrollPosition() override;
+
     WKContentView *m_contentView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

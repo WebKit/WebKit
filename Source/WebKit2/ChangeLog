@@ -1,3 +1,43 @@
+2015-12-01  Tim Horton  <timothy_horton@apple.com>
+
+        Remove swipe snapshot before main document load if scroll position is already restored
+        https://bugs.webkit.org/show_bug.cgi?id=151224
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::didRestoreScrollPosition):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didRestoreScrollPosition):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didRestoreScrollPosition):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didRestoreScrollPosition):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didRestoreScrollPosition):
+        * WebProcess/WebPage/WebPage.h:
+        Plumb didRestoreScrollPosition through to ViewGestureController (yikes!).
+
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        Cancel waiting for any more loads if we get to firstVisuallyNonEmptyLayout.
+
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        Cancel waiting for scroll position restoration if we make it to main frame load,
+        because there is a chance we won't be able to restore the old scroll position, and
+        by main frame load time we've tried as hard as we're going to to restore it.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Make some legacy-style-only code clearer that it's legacy-style-only.
+        Wait for scroll position restoration.
+
 2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r192834): [GTK] Test /webkit2/WebKitWebView/editor-state/typing-attributes times out after r192834

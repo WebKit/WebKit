@@ -5083,4 +5083,9 @@ void WebPage::dispatchDidLayout(WebCore::LayoutMilestones milestones)
     send(Messages::WebPageProxy::DidLayout(milestones));
 }
 
+void WebPage::didRestoreScrollPosition()
+{
+    send(Messages::WebPageProxy::DidRestoreScrollPosition());
+}
+
 } // namespace WebKit

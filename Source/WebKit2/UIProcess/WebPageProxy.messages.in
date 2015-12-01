@@ -445,4 +445,6 @@ messages -> WebPageProxy {
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     RequestInstallMissingMediaPlugins(String details, String description)
 #endif
+
+    DidRestoreScrollPosition()
 }

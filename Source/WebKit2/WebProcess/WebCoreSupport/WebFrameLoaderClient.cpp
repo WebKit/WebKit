@@ -1726,4 +1726,13 @@ void WebFrameLoaderClient::prefetchDNS(const String& hostname)
     WebProcess::singleton().prefetchDNS(hostname);
 }
 
+void WebFrameLoaderClient::didRestoreScrollPosition()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->didRestoreScrollPosition();
+}
+
 } // namespace WebKit

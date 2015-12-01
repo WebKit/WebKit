@@ -27,6 +27,7 @@
 #import "ViewGestureController.h"
 
 #import "Logging.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "ViewGestureControllerMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -86,12 +87,9 @@ void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
     if (!m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::VisuallyNonEmptyLayout))
         return;
 
+    m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::MainFrameLoad);
+    m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::SubresourceLoads);
     m_snapshotRemovalTracker.startWatchdog(swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration);
-
-    // FIXME: Ideally, this would be sufficient to cancel waiting for the main frame load,
-    // and would make snapshot removal faster, but we need didRestoreScrollPosition
-    // to be usable/accurate on all platforms before doing that, or we get a flash
-    // of the new page in the wrong position.
 }
 
 void ViewGestureController::didRepaintAfterNavigation()
@@ -118,6 +116,17 @@ void ViewGestureController::didReachMainFrameLoadTerminalState()
     // WebCore considers a loaded document enough to be considered visually non-empty, so that's good
     // enough for us too.
     m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::VisuallyNonEmptyLayout);
+
+    // With Web-process scrolling, we check if the scroll position restoration succeeded by comparing the
+    // requested and actual scroll position. It's possible that we will never succeed in restoring
+    // the exact scroll position we wanted, in the case of a dynamic page, but we know that by
+    // main frame load time that we've gotten as close as we're going to get, so stop waiting.
+    // We don't want to do this with UI-side scrolling because scroll position restoration is baked into the transaction.
+    // FIXME: It seems fairly dirty to type-check the DrawingArea like this.
+    if (auto drawingArea = m_webPageProxy.drawingArea()) {
+        if (is<RemoteLayerTreeDrawingAreaProxy>(drawingArea))
+            m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::ScrollPositionRestoration);
+    }
 
     checkForActiveLoads();
 }

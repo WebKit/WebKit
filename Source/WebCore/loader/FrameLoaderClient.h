@@ -349,6 +349,8 @@ namespace WebCore {
 #endif
 
         virtual void prefetchDNS(const String&) = 0;
+
+        virtual void didRestoreScrollPosition() { }
     };
 
 } // namespace WebCore

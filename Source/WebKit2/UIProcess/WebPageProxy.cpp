@@ -6085,4 +6085,9 @@ void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocu
     m_process->send(Messages::WebPage::SetShouldScaleViewToFitDocument(shouldScaleViewToFitDocument), m_pageID);
 }
 
+void WebPageProxy::didRestoreScrollPosition()
+{
+    m_pageClient.didRestoreScrollPosition();
+}
+
 } // namespace WebKit

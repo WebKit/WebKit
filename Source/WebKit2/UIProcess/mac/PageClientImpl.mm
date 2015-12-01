@@ -827,6 +827,11 @@ _WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
 }
 #endif
 
+void PageClientImpl::didRestoreScrollPosition()
+{
+    m_impl->didRestoreScrollPosition();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
