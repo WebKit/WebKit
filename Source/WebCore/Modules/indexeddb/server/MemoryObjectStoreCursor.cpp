@@ -237,8 +237,10 @@ void MemoryObjectStoreCursor::incrementForwardIterator(std::set<IDBKeyData>& set
         if (*m_forwardIterator == set.end())
             return;
 
-        if (!m_info.range().containsKey(**m_forwardIterator))
+        if (!m_info.range().containsKey(**m_forwardIterator)) {
+            m_forwardIterator = set.end();
             return;
+        }
     }
 }
 
@@ -294,8 +296,10 @@ void MemoryObjectStoreCursor::incrementReverseIterator(std::set<IDBKeyData>& set
         if (*m_reverseIterator == set.rend())
             return;
 
-        if (!m_info.range().containsKey(**m_reverseIterator))
+        if (!m_info.range().containsKey(**m_reverseIterator)) {
+            m_reverseIterator = set.rend();
             return;
+        }
     }
 }
 
