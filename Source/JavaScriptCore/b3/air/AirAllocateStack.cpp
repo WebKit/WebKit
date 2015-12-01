@@ -136,16 +136,16 @@ void allocateStack(Code& code)
     }
 
     // Now we handle the anonymous slots.
-    Liveness<StackSlot*> liveness(code);
+    StackSlotLiveness liveness(code);
     IndexMap<StackSlot, HashSet<StackSlot*>> interference(code.stackSlots().size());
     Vector<StackSlot*> slots;
 
     for (BasicBlock* block : code) {
-        Liveness<StackSlot*>::LocalCalc localCalc(liveness, block);
+        StackSlotLiveness::LocalCalc localCalc(liveness, block);
 
         auto interfere = [&] (Inst& inst) {
             if (verbose)
-                dataLog("Interfering: ", pointerListDump(localCalc.live()), "\n");
+                dataLog("Interfering: ", WTF::pointerListDump(localCalc.live()), "\n");
 
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Arg::Type) {

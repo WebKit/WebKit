@@ -1,3 +1,20 @@
+2015-11-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Speed up Air Liveness Analysis on Tmps
+        https://bugs.webkit.org/show_bug.cgi?id=151556
+
+        Reviewed by Filip Pizlo.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/IndexSparseSet.h: Added.
+        (WTF::IndexSparseSet<OverflowHandler>::IndexSparseSet):
+        (WTF::IndexSparseSet<OverflowHandler>::add):
+        (WTF::IndexSparseSet<OverflowHandler>::remove):
+        (WTF::IndexSparseSet<OverflowHandler>::clear):
+        (WTF::IndexSparseSet<OverflowHandler>::size):
+        (WTF::IndexSparseSet<OverflowHandler>::isEmpty):
+        (WTF::IndexSparseSet<OverflowHandler>::contains):
+
 2015-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Get rid of the !USE(ASYNC_NSTEXTINPUTCLIENT) codepath

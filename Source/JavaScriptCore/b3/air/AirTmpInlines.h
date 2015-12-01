@@ -38,6 +38,51 @@ inline Tmp::Tmp(const Arg& arg)
     *this = arg.tmp();
 }
 
+// When a Hash structure is too slow or when Sets contains most values, you can
+// use direct array addressing with Tmps.
+template<Arg::Type type>
+struct AbsoluteTmpMapper;
+
+template<>
+struct AbsoluteTmpMapper<Arg::GP> {
+    static unsigned absoluteIndex(const Tmp& tmp)
+    {
+        ASSERT(tmp.isGP());
+        ASSERT(static_cast<int>(tmp.internalValue()) > 0);
+        return tmp.internalValue();
+    }
+
+    static unsigned absoluteIndex(unsigned tmpIndex)
+    {
+        return absoluteIndex(Tmp::gpTmpForIndex(tmpIndex));
+    }
+
+    static Tmp tmpFromAbsoluteIndex(unsigned tmpIndex)
+    {
+        return Tmp::tmpForInternalValue(tmpIndex);
+    }
+};
+
+template<>
+struct AbsoluteTmpMapper<Arg::FP> {
+    static unsigned absoluteIndex(const Tmp& tmp)
+    {
+        ASSERT(tmp.isFP());
+        ASSERT(static_cast<int>(tmp.internalValue()) < 0);
+        return -tmp.internalValue();
+    }
+
+    static unsigned absoluteIndex(unsigned tmpIndex)
+    {
+        return absoluteIndex(Tmp::fpTmpForIndex(tmpIndex));
+    }
+
+    static Tmp tmpFromAbsoluteIndex(unsigned tmpIndex)
+    {
+        return Tmp::tmpForInternalValue(-tmpIndex);
+    }
+};
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

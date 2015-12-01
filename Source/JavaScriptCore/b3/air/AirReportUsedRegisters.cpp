@@ -41,22 +41,29 @@ void reportUsedRegisters(Code& code)
 
     // FIXME: We should tell liveness to only track Regs.
     // https://bugs.webkit.org/show_bug.cgi?id=150751
-    Liveness<Tmp> liveness(code);
+    GPLiveness gpLiveness(code);
+    FPLiveness fpLiveness(code);
 
     for (BasicBlock* block : code) {
-        Liveness<Tmp>::LocalCalc localCalc(liveness, block);
+        GPLiveness::LocalCalc gpLocalCalc(gpLiveness, block);
+        FPLiveness::LocalCalc fpLocalCalc(fpLiveness, block);
 
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
             if (inst.hasSpecial()) {
                 RegisterSet registerSet;
-                for (Tmp tmp : localCalc.live()) {
-                    if (tmp.isReg())
-                        registerSet.set(tmp.reg());
+                for (Tmp tmp : gpLocalCalc.live()) {
+                    ASSERT(tmp.isGP());
+                    registerSet.set(tmp.reg());
+                }
+                for (Tmp tmp : fpLocalCalc.live()) {
+                    ASSERT(tmp.isFP());
+                    registerSet.set(tmp.reg());
                 }
                 inst.reportUsedRegisters(registerSet);
             }
-            localCalc.execute(instIndex);
+            gpLocalCalc.execute(instIndex);
+            fpLocalCalc.execute(instIndex);
         }
     }
 }

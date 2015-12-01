@@ -58,6 +58,11 @@ public:
     {
         return m_vector[key->index()];
     }
+
+    void clear()
+    {
+        m_vector.clear();
+    }
     
 private:
     Vector<Value> m_vector;

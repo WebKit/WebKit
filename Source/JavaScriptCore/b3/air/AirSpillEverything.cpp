@@ -44,14 +44,21 @@ void spillEverything(Code& code)
 
     // We want to know the set of registers used at every point in every basic block.
     IndexMap<BasicBlock, Vector<RegisterSet>> usedRegisters(code.size());
-    Liveness<Tmp> liveness(code);
+    GPLiveness gpLiveness(code);
+    FPLiveness fpLiveness(code);
     for (BasicBlock* block : code) {
-        Liveness<Tmp>::LocalCalc localCalc(liveness, block);
+        GPLiveness::LocalCalc gpLocalCalc(gpLiveness, block);
+        FPLiveness::LocalCalc fpLocalCalc(fpLiveness, block);
+
         usedRegisters[block].resize(block->size() + 1);
 
         auto setUsedRegisters = [&] (unsigned index, Inst& inst) {
             RegisterSet& registerSet = usedRegisters[block][index];
-            for (Tmp tmp : localCalc.live()) {
+            for (Tmp tmp : gpLocalCalc.live()) {
+                if (tmp.isReg())
+                    registerSet.set(tmp.reg());
+            }
+            for (Tmp tmp : fpLocalCalc.live()) {
                 if (tmp.isReg())
                     registerSet.set(tmp.reg());
             }
@@ -69,7 +76,8 @@ void spillEverything(Code& code)
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
             setUsedRegisters(instIndex + 1, inst);
-            localCalc.execute(instIndex);
+            gpLocalCalc.execute(instIndex);
+            fpLocalCalc.execute(instIndex);
         }
 
         Inst nop;

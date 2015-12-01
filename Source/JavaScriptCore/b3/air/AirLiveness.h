@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef AirLiveness_h
@@ -29,129 +29,235 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBasicBlock.h"
+#include "AirTmpInlines.h"
 #include "B3IndexMap.h"
 #include "B3IndexSet.h"
+#include <wtf/IndexSparseSet.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
-// You can compute liveness over Tmp's or over Arg's. If you compute over Arg's, you get both
-// stack liveness and tmp liveness.
-template<typename Thing>
-class Liveness {
-public:
-    template<typename T>
-    static bool isAlive(const T& thing) { return thing.isAlive(); }
+template<Arg::Type adapterType>
+struct TmpLivenessAdapter {
+    typedef Tmp Thing;
+    typedef HashSet<unsigned> IndexSet;
 
-    static bool isAlive(StackSlot* slot) { return slot->kind() == StackSlotKind::Anonymous; }
-    
-    Liveness(Code& code)
+    TmpLivenessAdapter(Code&) { }
+
+    static unsigned maxIndex(Code& code)
     {
-        m_liveAtHead.resize(code.size());
-        m_liveAtTail.resize(code.size());
+        unsigned numTmps = code.numTmps(adapterType);
+        return AbsoluteTmpMapper<adapterType>::absoluteIndex(numTmps);
+    }
+    static bool acceptsType(Arg::Type type) { return type == adapterType; }
+    static unsigned valueToIndex(Tmp tmp) { return AbsoluteTmpMapper<adapterType>::absoluteIndex(tmp); }
+    static Tmp indexToValue(unsigned index) { return AbsoluteTmpMapper<adapterType>::tmpFromAbsoluteIndex(index); }
+};
 
+struct StackSlotLivenessAdapter {
+    typedef StackSlot* Thing;
+    typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> IndexSet;
+
+    StackSlotLivenessAdapter(Code& code)
+        : m_code(code)
+    {
+    }
+
+    static unsigned maxIndex(Code& code)
+    {
+        return code.stackSlots().size() - 1;
+    }
+    static bool acceptsType(Arg::Type) { return true; }
+    static unsigned valueToIndex(StackSlot* stackSlot) { return stackSlot->index(); }
+    StackSlot* indexToValue(unsigned index) { return m_code.stackSlots()[index]; }
+
+private:
+    Code& m_code;
+};
+
+template<typename Adapter>
+class AbstractLiveness : private Adapter {
+    struct Workset;
+public:
+    AbstractLiveness(Code& code)
+        : Adapter(code)
+        , m_workset(Adapter::maxIndex(code))
+        , m_liveAtHead(code.size())
+        , m_liveAtTail(code.size())
+    {
         // The liveAtTail of each block automatically contains the LateUse's of the terminal.
         for (BasicBlock* block : code) {
-            HashSet<Thing>& live = m_liveAtTail[block];
-            block->last().forEach<Thing>(
-                [&] (Thing& thing, Arg::Role role, Arg::Type) {
-                    if (Arg::isLateUse(role))
-                        live.add(thing);
+            typename Adapter::IndexSet& liveAtTail = m_liveAtTail[block];
+
+            block->last().forEach<typename Adapter::Thing>(
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                    if (Arg::isLateUse(role) && Adapter::acceptsType(type))
+                        liveAtTail.add(Adapter::valueToIndex(thing));
                 });
         }
 
-        IndexSet<BasicBlock> seen;
+        // Blocks with new live values at tail.
+        BitVector dirtyBlocks;
+        for (size_t blockIndex = 0; blockIndex < code.size(); ++blockIndex)
+            dirtyBlocks.set(blockIndex);
 
-        bool changed = true;
-        while (changed) {
+        bool changed;
+        do {
             changed = false;
 
             for (size_t blockIndex = code.size(); blockIndex--;) {
                 BasicBlock* block = code.at(blockIndex);
                 if (!block)
                     continue;
+
+                if (!dirtyBlocks.quickClear(blockIndex))
+                    continue;
+
                 LocalCalc localCalc(*this, block);
                 for (size_t instIndex = block->size(); instIndex--;)
                     localCalc.execute(instIndex);
-                bool firstTime = seen.add(block);
-                if (!firstTime && localCalc.live() == m_liveAtHead[block])
-                    continue;
-                changed = true;
-                for (BasicBlock* predecessor : block->predecessors()) {
-                    m_liveAtTail[predecessor].add(
-                        localCalc.live().begin(), localCalc.live().end());
+
+                Vector<unsigned>& liveAtHead = m_liveAtHead[block];
+
+                // We only care about Tmps that were discovered in this iteration. It is impossible
+                // to remove a live value from the head.
+                // We remove all the values we already knew about so that we only have to deal with
+                // what is new in LiveAtHead.
+                if (m_workset.size() == liveAtHead.size())
+                    m_workset.clear();
+                else {
+                    for (unsigned liveIndexAtHead : liveAtHead)
+                        m_workset.remove(liveIndexAtHead);
                 }
-                m_liveAtHead[block] = localCalc.takeLive();
+
+                if (m_workset.isEmpty())
+                    continue;
+
+                liveAtHead.reserveCapacity(liveAtHead.size() + m_workset.size());
+                for (unsigned newValue : m_workset)
+                    liveAtHead.uncheckedAppend(newValue);
+
+                for (BasicBlock* predecessor : block->predecessors()) {
+                    typename Adapter::IndexSet& liveAtTail = m_liveAtTail[predecessor];
+                    for (unsigned newValue : m_workset) {
+                        if (liveAtTail.add(newValue)) {
+                            if (dirtyBlocks.quickSet(predecessor->index()))
+                                changed = true;
+                        }
+                    }
+                }
             }
-        }
-    }
+        } while (changed);
 
-    const HashSet<Thing>& liveAtHead(BasicBlock* block) const
-    {
-        return m_liveAtHead[block];
-    }
-
-    const HashSet<Thing>& liveAtTail(BasicBlock* block) const
-    {
-        return m_liveAtTail[block];
+        m_liveAtHead.clear();
     }
 
     // This calculator has to be run in reverse.
     class LocalCalc {
     public:
-        LocalCalc(Liveness& liveness, BasicBlock* block)
-            : m_live(liveness.liveAtTail(block))
+        LocalCalc(AbstractLiveness& liveness, BasicBlock* block)
+            : m_liveness(liveness)
             , m_block(block)
         {
+            auto& workset = liveness.m_workset;
+            workset.clear();
+            typename Adapter::IndexSet& liveAtTail = liveness.m_liveAtTail[block];
+            for (unsigned index : liveAtTail)
+                workset.add(index);
         }
 
-        const HashSet<Thing>& live() const { return m_live; }
-        HashSet<Thing>&& takeLive() { return WTF::move(m_live); }
+        struct Iterator {
+            Iterator(Adapter& adapter, IndexSparseSet<UnsafeVectorOverflow>::const_iterator sparceSetIterator)
+                : m_adapter(adapter)
+                , m_sparceSetIterator(sparceSetIterator)
+            {
+            }
+
+            Iterator& operator++()
+            {
+                ++m_sparceSetIterator;
+                return *this;
+            }
+
+            typename Adapter::Thing operator*() const
+            {
+                return m_adapter.indexToValue(*m_sparceSetIterator);
+            }
+
+            bool operator==(const Iterator& other) { return m_sparceSetIterator == other.m_sparceSetIterator; }
+            bool operator!=(const Iterator& other) { return m_sparceSetIterator != other.m_sparceSetIterator; }
+
+        private:
+            Adapter& m_adapter;
+            IndexSparseSet<UnsafeVectorOverflow>::const_iterator m_sparceSetIterator;
+        };
+
+        struct Iterable {
+            Iterable(AbstractLiveness& liveness)
+                : m_liveness(liveness)
+            {
+            }
+
+            Iterator begin() const { return Iterator(m_liveness, m_liveness.m_workset.begin()); }
+            Iterator end() const { return Iterator(m_liveness, m_liveness.m_workset.end()); }
+
+        private:
+            AbstractLiveness& m_liveness;
+        };
+
+        Iterable live() const
+        {
+            return Iterable(m_liveness);
+        }
 
         void execute(unsigned instIndex)
         {
             Inst& inst = m_block->at(instIndex);
-            
+            auto& workset = m_liveness.m_workset;
             // First handle def's.
-            inst.forEach<Thing>(
-                [this] (Thing& arg, Arg::Role role, Arg::Type) {
-                    if (!isAlive(arg))
-                        return;
-                    if (Arg::isDef(role))
-                        m_live.remove(arg);
+            inst.forEach<typename Adapter::Thing>(
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                    if (Arg::isDef(role) && Adapter::acceptsType(type))
+                        workset.remove(Adapter::valueToIndex(thing));
                 });
 
             // Then handle use's.
-            inst.forEach<Thing>(
-                [this] (Thing& arg, Arg::Role role, Arg::Type) {
-                    if (!isAlive(arg))
-                        return;
-                    if (Arg::isEarlyUse(role))
-                        m_live.add(arg);
+            inst.forEach<typename Adapter::Thing>(
+                [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                    if (Arg::isEarlyUse(role) && Adapter::acceptsType(type))
+                        workset.add(Adapter::valueToIndex(thing));
                 });
 
             // And finally, handle the late use's of the previous instruction.
             if (instIndex) {
                 Inst& prevInst = m_block->at(instIndex - 1);
-
-                prevInst.forEach<Thing>(
-                    [this] (Thing& arg, Arg::Role role, Arg::Type) {
-                        if (!Arg::isLateUse(role))
-                            return;
-                        if (isAlive(arg))
-                            m_live.add(arg);
+                prevInst.forEach<typename Adapter::Thing>(
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Arg::Type type) {
+                        if (Arg::isLateUse(role) && Adapter::acceptsType(type))
+                            workset.add(Adapter::valueToIndex(thing));
                     });
             }
         }
 
     private:
-        HashSet<Thing> m_live;
+        AbstractLiveness& m_liveness;
         BasicBlock* m_block;
     };
 
 private:
-    IndexMap<BasicBlock, HashSet<Thing>> m_liveAtHead;
-    IndexMap<BasicBlock, HashSet<Thing>> m_liveAtTail;
+    friend class LocalCalc;
+    friend struct LocalCalc::Iterable;
+
+    IndexSparseSet<UnsafeVectorOverflow> m_workset;
+    IndexMap<BasicBlock, Vector<unsigned>> m_liveAtHead;
+    IndexMap<BasicBlock, typename Adapter::IndexSet> m_liveAtTail;
 };
+
+template<Arg::Type type>
+using TmpLiveness = AbstractLiveness<TmpLivenessAdapter<type>>;
+
+typedef AbstractLiveness<TmpLivenessAdapter<Arg::GP>> GPLiveness;
+typedef AbstractLiveness<TmpLivenessAdapter<Arg::FP>> FPLiveness;
+typedef AbstractLiveness<StackSlotLivenessAdapter> StackSlotLiveness;
 
 } } } // namespace JSC::B3::Air
 
