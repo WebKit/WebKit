@@ -3206,7 +3206,7 @@ void testSimplePatchpointWithoutOuputClobbersGPArgs()
     Value* const2 = root->appendNew<Const64Value>(proc, Origin(), 13);
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobber(RegisterSet(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1));
+    patchpoint->clobberLate(RegisterSet(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1));
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
     patchpoint->setGenerator(
@@ -3249,7 +3249,7 @@ void testSimplePatchpointWithOuputClobbersGPArgs()
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
     clobberAll.clear(GPRInfo::argumentGPR2);
-    patchpoint->clobber(clobberAll);
+    patchpoint->clobberLate(clobberAll);
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
@@ -3286,7 +3286,7 @@ void testSimplePatchpointWithoutOuputClobbersFPArgs()
     Value* const2 = root->appendNew<ConstDoubleValue>(proc, Origin(), 13.1);
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobber(RegisterSet(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1));
+    patchpoint->clobberLate(RegisterSet(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1));
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
     patchpoint->setGenerator(
@@ -3322,7 +3322,7 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
     clobberAll.clear(FPRInfo::argumentFPR2);
-    patchpoint->clobber(clobberAll);
+    patchpoint->clobberLate(clobberAll);
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
     patchpoint->append(ConstrainedValue(const2, ValueRep::SomeRegister));
@@ -3346,6 +3346,42 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
     root->appendNew<ControlValue>(proc, Return, Origin(), result);
 
     CHECK(compileAndRun<double>(proc, 1.5, 2.5) == 59.6);
+}
+
+void testPatchpointWithEarlyClobber()
+{
+    auto test = [] (GPRReg registerToClobber, bool arg1InArgGPR, bool arg2InArgGPR) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+        patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+        patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+        patchpoint->clobberEarly(RegisterSet(registerToClobber));
+        patchpoint->setGenerator(
+            [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                CHECK((params.reps[1].gpr() == GPRInfo::argumentGPR0) == arg1InArgGPR);
+                CHECK((params.reps[2].gpr() == GPRInfo::argumentGPR1) == arg2InArgGPR);
+
+                if (params.reps[0].gpr() == params.reps[2].gpr()) {
+                    jit.move(params.reps[2].gpr(), params.reps[0].gpr());
+                    jit.add32(params.reps[1].gpr(), params.reps[0].gpr());
+                } else {
+                    jit.move(params.reps[1].gpr(), params.reps[0].gpr());
+                    jit.add32(params.reps[2].gpr(), params.reps[0].gpr());
+                }
+            });
+
+        root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+        CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+    };
+
+    test(GPRInfo::nonArgGPR0, true, true);
+    test(GPRInfo::argumentGPR0, false, true);
+    test(GPRInfo::argumentGPR1, true, false);
 }
 
 void testPatchpointCallArg()
@@ -5717,6 +5753,7 @@ void run(const char* filter)
     RUN(testSimplePatchpointWithOuputClobbersGPArgs());
     RUN(testSimplePatchpointWithoutOuputClobbersFPArgs());
     RUN(testSimplePatchpointWithOuputClobbersFPArgs());
+    RUN(testPatchpointWithEarlyClobber());
     RUN(testPatchpointCallArg());
     RUN(testPatchpointFixedRegister());
     RUN(testPatchpointAny());

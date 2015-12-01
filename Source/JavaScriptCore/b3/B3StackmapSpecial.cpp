@@ -60,7 +60,15 @@ const RegisterSet& StackmapSpecial::extraClobberedRegs(Inst& inst)
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
 
-    return value->clobbered();
+    return value->lateClobbered();
+}
+
+const RegisterSet& StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
+{
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
+
+    return value->earlyClobbered();
 }
 
 void StackmapSpecial::forEachArgImpl(

@@ -58,6 +58,7 @@ protected:
     bool admitsStack(Inst&, unsigned argIndex) override;
     void reportUsedRegisters(Inst&, const RegisterSet&) override;
     CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&) override;
+    const RegisterSet& extraEarlyClobberedRegs(Inst&) override;
     const RegisterSet& extraClobberedRegs(Inst&) override;
 
     void dumpImpl(PrintStream&) const override;
@@ -76,6 +77,7 @@ private:
         numSpecialArgs + numCalleeArgs + numReturnGPArgs + numReturnFPArgs;
     
     RegisterSet m_clobberedRegs;
+    RegisterSet m_emptyRegs;
 };
 
 } } } // namespace JSC::B3::Air

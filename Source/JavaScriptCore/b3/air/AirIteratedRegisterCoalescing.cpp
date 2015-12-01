@@ -145,20 +145,24 @@ public:
         m_isOnSelectStack.ensureSize(tmpArraySize);
     }
 
-    void build(Inst& inst, const Liveness<Tmp>::LocalCalc& localCalc)
+    void build(Inst& inst, Inst* nextInst, const Liveness<Tmp>::LocalCalc& localCalc)
     {
-        inst.forEachDefAndExtraClobberedTmp(type, [&] (Tmp& arg) {
-            // All the Def()s interfere with each other and with all the extra clobbered Tmps.
-            // We should not use forEachDefAndExtraClobberedTmp() here since colored Tmps
-            // do not need interference edges in our implementation.
-            inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type otherArgType) {
-                if (otherArgType != type)
+        inst.forEachTmpWithExtraClobberedRegs(
+            nextInst,
+            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType) {
+                if (!Arg::isDef(role) || argType != type)
                     return;
-
-                if (Arg::isDef(role))
-                    addEdge(arg, otherArg);
+                
+                // All the Def()s interfere with each other and with all the extra clobbered Tmps.
+                // We should not use forEachDefAndExtraClobberedTmp() here since colored Tmps
+                // do not need interference edges in our implementation.
+                inst.forEachTmp([&] (Tmp& otherArg, Arg::Role role, Arg::Type argType) {
+                        if (!Arg::isDef(role) || argType != type)
+                            return;
+                        
+                        addEdge(arg, otherArg);
+                    });
             });
-        });
 
         if (MoveInstHelper<type>::mayBeCoalescable(inst)) {
             // We do not want the Use() of this move to interfere with the Def(), even if it is live
@@ -195,8 +199,18 @@ public:
                 if (liveTmp != useTmp && liveTmp.isGP() == (type == Arg::GP))
                     addEdge(defTmp, liveTmp);
             }
+
+            // The next instruction could have early clobbers. We need to consider those now.
+            if (nextInst && nextInst->hasSpecial()) {
+                nextInst->extraEarlyClobberedRegs().forEach(
+                    [&] (Reg reg) {
+                        for (const Tmp& liveTmp : localCalc.live()) {
+                            addEdge(Tmp(reg), liveTmp);
+                        }
+                    });
+            }
         } else
-            addEdges(inst, localCalc.live());
+            addEdges(inst, nextInst, localCalc.live());
     }
 
     void allocate()
@@ -296,15 +310,20 @@ private:
         bzero(m_degrees.data() + firstNonRegIndex, (tmpArraySize - firstNonRegIndex) * sizeof(unsigned));
     }
 
-    void addEdges(Inst& inst, const HashSet<Tmp>& liveTmp)
+    void addEdges(Inst& inst, Inst* nextInst, const HashSet<Tmp>& liveTmp)
     {
         // All the Def()s interfere with everthing live.
-        inst.forEachDefAndExtraClobberedTmp(type, [&] (Tmp& arg) {
-            for (const Tmp& liveTmp : liveTmp) {
-                if (liveTmp.isGP() == (type == Arg::GP))
-                    addEdge(arg, liveTmp);
-            }
-        });
+        inst.forEachTmpWithExtraClobberedRegs(
+            nextInst,
+            [&] (const Tmp& arg, Arg::Role role, Arg::Type argType) {
+                if (!Arg::isDef(role) || argType != type)
+                    return;
+                
+                for (const Tmp& liveTmp : liveTmp) {
+                    if (liveTmp.isGP() == (type == Arg::GP))
+                        addEdge(arg, liveTmp);
+                }
+            });
     }
 
     void addEdge(const Tmp& a, const Tmp& b)
@@ -1030,7 +1049,8 @@ static void iteratedRegisterCoalescingOnType(Code& code, HashSet<Tmp>& unspillab
             Liveness<Tmp>::LocalCalc localCalc(liveness, block);
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
-                allocator.build(inst, localCalc);
+                Inst* nextInst = instIndex + 1 < block->size() ? &block->at(instIndex + 1) : nullptr;
+                allocator.build(inst, nextInst, localCalc);
                 localCalc.execute(instIndex);
             }
         }
@@ -1068,9 +1088,10 @@ void iteratedRegisterCoalescing(Code& code)
             Liveness<Tmp>::LocalCalc localCalc(liveness, block);
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
+                Inst* nextInst = instIndex + 1 < block->size() ? &block->at(instIndex + 1) : nullptr;
 
-                gpAllocator.build(inst, localCalc);
-                fpAllocator.build(inst, localCalc);
+                gpAllocator.build(inst, nextInst, localCalc);
+                fpAllocator.build(inst, nextInst, localCalc);
 
                 localCalc.execute(instIndex);
             }

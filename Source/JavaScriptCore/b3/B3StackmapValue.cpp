@@ -79,8 +79,8 @@ void StackmapValue::dumpChildren(CommaPrinter& comma, PrintStream& out) const
 void StackmapValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(
-        comma, "generator = ", RawPointer(m_generator.get()), ", clobbered = ", m_clobbered,
-        ", usedRegisters = ", m_usedRegisters);
+        comma, "generator = ", RawPointer(m_generator.get()), ", earlyClobbered = ", m_earlyClobbered,
+        ", lateClobbered = ", m_lateClobbered, ", usedRegisters = ", m_usedRegisters);
 }
 
 StackmapValue::StackmapValue(unsigned index, CheckedOpcodeTag, Opcode opcode, Type type, Origin origin)

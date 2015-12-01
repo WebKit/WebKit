@@ -125,10 +125,12 @@ public:
     // Reports any additional registers clobbered by this operation. Note that for efficiency,
     // extraClobberedRegs() only works if hasSpecial() returns true.
     const RegisterSet& extraClobberedRegs();
+    const RegisterSet& extraEarlyClobberedRegs();
 
-    // Iterate over the Defs and the extra clobbered registers.
+    // Iterate over the Defs and the extra clobbered registers. You must supply the next instruction if
+    // there is one.
     template<typename Functor>
-    void forEachDefAndExtraClobberedTmp(Arg::Type, const Functor& functor);
+    void forEachTmpWithExtraClobberedRegs(Inst* nextInst, const Functor& functor);
 
     // Use this to report which registers are live. This should be done just before codegen. Note
     // that for efficiency, reportUsedRegisters() only works if hasSpecial() returns true.

@@ -1,3 +1,73 @@
+2015-11-30  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 stackmaps should support early clobber
+        https://bugs.webkit.org/show_bug.cgi?id=151668
+
+        Reviewed by Geoffrey Garen.
+
+        While starting work on FTL lazy slow paths, I realized that we needed some way to say that r11 is
+        off limits. Not just that it's clobbered, but that it cannot be used for any input values to a
+        stackmap.
+
+        In LLVM we do this by having the AnyRegCC forbid r11.
+
+        In B3, we want something more flexible. In this and other cases, what we really want is an early
+        clobber set. B3 already supported a late clobber set for every stackmap value. Late clobber means
+        that the act of performing the operation will cause garbage to be written into those registers.
+        But here we want: assume that garbage magically appears in those registers in the moment before
+        the operation executes. Any registers in that set will be off-limits to the inputs to the
+        stackmap. This should be great for other things, like the way the we handle exceptions.
+
+        For the simple r11 issue, what we want is to call the StackmapValue::clobber() method, which now
+        means both early and late clobber. It's the weapon of choice whenever you're unsure.
+
+        This adds the early clobber feature, does some minor Inst refactoring to make this less scary,
+        and adds a test. The test is simple but it's very comprehensive - for example it tests the
+        early-clobber-after-Move special case.
+
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::extraClobberedRegs):
+        (JSC::B3::StackmapSpecial::extraEarlyClobberedRegs):
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::dumpMeta):
+        (JSC::B3::StackmapValue::StackmapValue):
+        * b3/B3StackmapValue.h:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::extraClobberedRegs):
+        (JSC::B3::Air::CCallSpecial::extraEarlyClobberedRegs):
+        (JSC::B3::Air::CCallSpecial::dumpImpl):
+        * b3/air/AirCCallSpecial.h:
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::extraClobberedRegs):
+        (JSC::B3::Air::Inst::extraEarlyClobberedRegs):
+        (JSC::B3::Air::Inst::forEachTmpWithExtraClobberedRegs):
+        (JSC::B3::Air::Inst::reportUsedRegisters):
+        (JSC::B3::Air::Inst::forEachDefAndExtraClobberedTmp): Deleted.
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::IteratedRegisterCoalescingAllocator):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::build):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::allocate):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::initializeDegrees):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::addEdges):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::addEdge):
+        (JSC::B3::Air::iteratedRegisterCoalescingOnType):
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+        * b3/air/AirSpecial.h:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersFPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersFPArgs):
+        (JSC::B3::testPatchpointWithEarlyClobber):
+        (JSC::B3::testPatchpointCallArg):
+        (JSC::B3::run):
+        * dfg/DFGCommon.h:
+
 2015-11-30  Mark Lam  <mark.lam@apple.com>
 
         Snippefy op_div for the baseline JIT.

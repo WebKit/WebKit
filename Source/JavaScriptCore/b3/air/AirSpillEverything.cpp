@@ -58,12 +58,12 @@ void spillEverything(Code& code)
 
             // Gotta account for dead assignments to registers. These may happen because the input
             // code is suboptimal.
-            auto updateRegisterSet = [&registerSet] (const Tmp& tmp) {
-                if (tmp.isReg())
-                    registerSet.set(tmp.reg());
-            };
-            inst.forEachDefAndExtraClobberedTmp(Arg::GP, updateRegisterSet);
-            inst.forEachDefAndExtraClobberedTmp(Arg::FP, updateRegisterSet);
+            inst.forEachTmpWithExtraClobberedRegs(
+                index < block->size() ? &block->at(index) : nullptr,
+                [&registerSet] (const Tmp& tmp, Arg::Role role, Arg::Type) {
+                    if (tmp.isReg() && Arg::isDef(role))
+                        registerSet.set(tmp.reg());
+                });
         };
 
         for (unsigned instIndex = block->size(); instIndex--;) {
