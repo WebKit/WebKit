@@ -1,5 +1,17 @@
 2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Streams API] teeReadableStream should not directly use stream.getReader()
+        https://bugs.webkit.org/show_bug.cgi?id=151487
+
+        Reviewed by Darin Adler.
+
+        Covered by added test.
+
+        * Modules/streams/ReadableStreamInternals.js:
+        (teeReadableStream): Create a @ReadableStreamReader instead of calling getReader() which may be disrupted by user scripts.
+
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Streams API] streams should not directly use Number and related methods
         https://bugs.webkit.org/show_bug.cgi?id=151499
 

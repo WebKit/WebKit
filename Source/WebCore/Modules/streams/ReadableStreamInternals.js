@@ -73,7 +73,7 @@ function teeReadableStream(stream, shouldClone)
     @assert(@isReadableStream(stream));
     @assert(typeof(shouldClone) === "boolean");
 
-    const reader = stream.getReader();
+    const reader = new @ReadableStreamReader(stream);
 
     const teeState = {
         closedOrErrored: false,

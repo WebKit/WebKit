@@ -115,4 +115,14 @@ test(function() {
         Number.isFinite = NumberIsFiniteBackup;
     }
 }, 'Streams should not directly use Number and related methods');
+test(function() {
+    const ReadableStreamGetReaderBackup = ReadableStream.prototype.getReader;
+
+    try {
+        ReadableStream.prototype.getReader = function() { assert_unreached("streams should not use this ReadableStream.getReader method"); };
+        new ReadableStream().tee();
+    } finally {
+        ReadableStream.prototype.getReader = ReadableStreamGetReaderBackup;
+    }
+}, 'Streams should not directly use ReadableStream public APIs');
 </script>

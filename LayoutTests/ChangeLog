@@ -1,3 +1,15 @@
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] teeReadableStream should not directly use stream.getReader()
+        https://bugs.webkit.org/show_bug.cgi?id=151487
+
+        Reviewed by Darin Adler.
+
+        Adding non-regression test.
+
+        * streams/streams-promises-expected.txt:
+        * streams/streams-promises.html:
+
 2015-12-01  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] "super" and "this" should be lexically bound inside an arrow function and should live in a JSLexicalEnvironment
