@@ -300,21 +300,22 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
         marker.addEventListener(WebInspector.TimelineMarker.Event.TimeChanged, this._timelineMarkerTimeChanged, this);
 
-        var markerElement = document.createElement("div");
+        let markerTime = marker.time - this._startTime;
+        let markerElement = document.createElement("div");
         markerElement.classList.add(marker.type, "marker");
 
         switch (marker.type) {
         case WebInspector.TimelineMarker.Type.LoadEvent:
-            markerElement.title = WebInspector.UIString("Load \u2014 %s").format(Number.secondsToString(marker.time));
+            markerElement.title = WebInspector.UIString("Load \u2014 %s").format(Number.secondsToString(markerTime));
             break;
         case WebInspector.TimelineMarker.Type.DOMContentEvent:
-            markerElement.title = WebInspector.UIString("DOMContentLoaded \u2014 %s").format(Number.secondsToString(marker.time));
+            markerElement.title = WebInspector.UIString("DOMContentLoaded \u2014 %s").format(Number.secondsToString(markerTime));
             break;
         case WebInspector.TimelineMarker.Type.TimeStamp:
             if (marker.details)
-                markerElement.title = WebInspector.UIString("%s \u2014 %s").format(marker.details, Number.secondsToString(marker.time));
+                markerElement.title = WebInspector.UIString("%s \u2014 %s").format(marker.details, Number.secondsToString(markerTime));
             else
-                markerElement.title = WebInspector.UIString("Timestamp \u2014 %s").format(Number.secondsToString(marker.time));
+                markerElement.title = WebInspector.UIString("Timestamp \u2014 %s").format(Number.secondsToString(markerTime));
             break;
         }
 

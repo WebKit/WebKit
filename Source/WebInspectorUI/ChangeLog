@@ -1,5 +1,16 @@
 2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timestamp in Tooltip of Event Markers is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=151722
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.addMarker):
+        Convert the marker's time, to be relative to the start of the recording.
+
+2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed common typo fix "occurance" => "occurrence".
 
         * Scripts/combine-resources.pl:
