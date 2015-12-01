@@ -1,5 +1,104 @@
 2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Initial support for variable timelines
+        https://bugs.webkit.org/show_bug.cgi?id=151372
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.defaultInstruments):
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        Keep the status quo which is the same set of instruments for each recording.
+
+        (WebInspector.TimelineManager.prototype.startCapturing):
+        (WebInspector.TimelineManager.prototype.stopCapturing):
+        Push responsibility of capturing to the Recording, which has a specific set
+        of instruments that know what they need to turn on an off from the backend.
+        
+        * UserInterface/Main.html:
+        * UserInterface/Models/Instrument.js: Added.
+        (WebInspector.Instrument):
+        (WebInspector.Instrument.startLegacyTimelineAgent):
+        (WebInspector.Instrument.stopLegacyTimelineAgent):
+        (WebInspector.Instrument.prototype.get timelineRecordType):
+        (WebInspector.Instrument.prototype.startInstrumentation):
+        (WebInspector.Instrument.prototype.stopInstrumentation):
+        New class representing something that can be turned on and off
+        from the backend and produces a set of Timeline record types.
+        Currently instruments are 1-to-1 to a Timeline type.
+
+        * UserInterface/Models/LayoutInstrument.js: Added.
+        (WebInspector.LayoutInstrument.prototype.get timelineRecordType):
+        (WebInspector.LayoutInstrument):
+        * UserInterface/Models/NetworkInstrument.js: Added.
+        (WebInspector.NetworkInstrument.prototype.get timelineRecordType):
+        (WebInspector.NetworkInstrument.prototype.startInstrumentation):
+        (WebInspector.NetworkInstrument.prototype.stopInstrumentation):
+        (WebInspector.NetworkInstrument):
+        * UserInterface/Models/ScriptInstrument.js: Added.
+        (WebInspector.ScriptInstrument.prototype.get timelineRecordType):
+        (WebInspector.ScriptInstrument):
+        The default set of instruments. Currently they all enable the TimelineAgent,
+        so they share code to enable/disable in the base class to avoid duplication.
+
+        * UserInterface/Models/FPSInstrument.js: Added.
+        (WebInspector.FPSInstrument):
+        (WebInspector.FPSInstrument.supported):
+        (WebInspector.FPSInstrument.prototype.get timelineRecordType):
+        Provide a "supported" static method and simplify other code that
+        checks whether or not RenderingFrames is available or not.
+
+
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline.prototype.get displayName): Deleted.
+        (WebInspector.Timeline.prototype.get iconClassName): Deleted.
+        Move these to a View class, as this is primarily View logic.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording):
+        (WebInspector.TimelineRecording.prototype.get instruments):
+        (WebInspector.TimelineRecording.prototype.start):
+        (WebInspector.TimelineRecording.prototype.stop):
+        (WebInspector.TimelineRecording.prototype.timelineForInstrument):
+        (WebInspector.TimelineRecording.prototype.addInstrument):
+        (WebInspector.TimelineRecording.prototype.removeInstrument):
+        (WebInspector.TimelineRecording.prototype.addEventMarker):
+        (WebInspector.TimelineRecording.prototype.addTimeline): Deleted.
+        (WebInspector.TimelineRecording.prototype.removeTimeline): Deleted.
+        A recording now has a set of Instruments and its own start/stop
+        which starts/stops its set of Instruments! Treat Instruments as
+        the variable property of a Recording instead of Timelines.
+    
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype._instrumentAdded):
+        (WebInspector.TimelineOverview.prototype._instrumentRemoved):
+        (WebInspector.TimelineOverview.prototype._timelineAdded): Deleted.
+        (WebInspector.TimelineOverview.prototype._timelineRemoved): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._instrumentAdded):
+        (WebInspector.TimelineRecordingContentView.prototype._instrumentRemoved):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineAdded): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._timelineRemoved): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.displayNameForTimeline):
+        (WebInspector.TimelineSidebarPanel.iconClassNameForTimeline):
+        (WebInspector.TimelineSidebarPanel.prototype.updateFrameSelection):
+        (WebInspector.TimelineSidebarPanel.prototype.restoreStateFromCookie):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingSelected):
+        (WebInspector.TimelineSidebarPanel.prototype._instrumentAdded):
+        (WebInspector.TimelineSidebarPanel.prototype._instrumentRemoved):
+        (WebInspector.TimelineSidebarPanel.prototype._changeViewMode):
+        (WebInspector.TimelineSidebarPanel.prototype._timelineAdded): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._timelineRemoved): Deleted.
+        Update all TimelineAdded/TimelineRemoved clients to instead check
+        InstrumentAdded/InstrumentRemoved. Immediately convert from an Instrument
+        to a Timeline to keep the patch simple.
+
+2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Broken Inspector when resources are minified
         https://bugs.webkit.org/show_bug.cgi?id=151711
 

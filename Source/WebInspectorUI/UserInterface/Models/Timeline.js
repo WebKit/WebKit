@@ -66,34 +66,6 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
         return this._records;
     }
 
-    get displayName()
-    {
-        if (this._type === WebInspector.TimelineRecord.Type.Network)
-            return WebInspector.UIString("Network Requests");
-        if (this._type === WebInspector.TimelineRecord.Type.Layout)
-            return WebInspector.UIString("Layout & Rendering");
-        if (this._type === WebInspector.TimelineRecord.Type.Script)
-            return WebInspector.UIString("JavaScript & Events");
-        if (this._type === WebInspector.TimelineRecord.Type.RenderingFrame)
-            return WebInspector.UIString("Rendering Frames");
-
-        console.error("Timeline has unknown type:", this._type, this);
-    }
-
-    get iconClassName()
-    {
-        if (this._type === WebInspector.TimelineRecord.Type.Network)
-            return WebInspector.TimelineSidebarPanel.NetworkIconStyleClass;
-        if (this._type === WebInspector.TimelineRecord.Type.Layout)
-            return WebInspector.TimelineSidebarPanel.ColorsIconStyleClass;
-        if (this._type === WebInspector.TimelineRecord.Type.Script)
-            return WebInspector.TimelineSidebarPanel.ScriptIconStyleClass;
-        if (this._type === WebInspector.TimelineRecord.Type.RenderingFrame)
-            return WebInspector.TimelineSidebarPanel.RenderingFrameIconStyleClass;
-
-        console.error("Timeline has unknown type:", this._type, this);
-    }
-
     reset(suppressEvents)
     {
         this._records = [];

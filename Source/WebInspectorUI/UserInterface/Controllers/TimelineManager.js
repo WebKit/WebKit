@@ -45,6 +45,22 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         this.reset();
     }
 
+    // Static
+
+    static defaultInstruments()
+    {
+        let defaults = [
+            new WebInspector.NetworkInstrument,
+            new WebInspector.LayoutInstrument,
+            new WebInspector.ScriptInstrument,
+        ];
+
+        if (WebInspector.FPSInstrument.supported())
+            defaults.push(new WebInspector.FPSInstrument);
+
+        return defaults;
+    }
+
     // Public
 
     reset()
@@ -103,21 +119,14 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (!this._activeRecording || shouldCreateRecording)
             this._loadNewRecording();
 
-        var result = TimelineAgent.start();
-
-        // COMPATIBILITY (iOS 7): recordingStarted event did not exist yet. Start explicitly.
-        if (!TimelineAgent.hasEvent("recordingStarted")) {
-            result.then(function() {
-                WebInspector.timelineManager.capturingStarted();
-            });
-        }
+        this._activeRecording.start();
     }
 
     stopCapturing()
     {
         console.assert(this._isCapturing, "TimelineManager is not capturing.");
 
-        TimelineAgent.stop();
+        this._activeRecording.stop();
 
         // NOTE: Always stop immediately instead of waiting for a Timeline.recordingStopped event.
         // This way the UI feels as responsive to a stop as possible.
@@ -445,8 +454,11 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (this._activeRecording && this._activeRecording.isEmpty())
             return;
 
+        // FIXME: Move the list of instruments for a new recording to a Setting when new Instruments are supported.
+        let instruments = WebInspector.TimelineManager.defaultInstruments();
+
         var identifier = this._nextRecordingIdentifier++;
-        var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier));
+        var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier), instruments);
 
         this._recordings.push(newRecording);
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingCreated, {recording: newRecording});

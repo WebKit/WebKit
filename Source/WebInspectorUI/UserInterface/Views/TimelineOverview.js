@@ -32,8 +32,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         console.assert(timelineRecording instanceof WebInspector.TimelineRecording);
 
         this._recording = timelineRecording;
-        this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineAdded, this._timelineAdded, this);
-        this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
+        this._recording.addEventListener(WebInspector.TimelineRecording.Event.InstrumentAdded, this._instrumentAdded, this);
+        this._recording.addEventListener(WebInspector.TimelineRecording.Event.InstrumentRemoved, this._instrumentRemoved, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
 
@@ -90,8 +90,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this.selectionStartTime = this._selectionStartValueSetting.value;
         this.selectionDuration = this._selectionDurationSetting.value;
 
-        for (var timeline of this._recording.timelines.values())
-            this._timelineAdded(timeline);
+        for (let instrument of this._recording.instruments)
+            this._instrumentAdded(instrument);
 
         if (!WebInspector.timelineManager.isCapturingPageReload())
             this._resetSelection();
@@ -496,18 +496,17 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._gestureStartDurationPerPixel = NaN;
     }
 
-    _timelineAdded(timelineOrEvent)
+    _instrumentAdded(instrumentOrEvent)
     {
-        var timeline = timelineOrEvent;
-        if (!(timeline instanceof WebInspector.Timeline))
-            timeline = timelineOrEvent.data.timeline;
+        let instrument = instrumentOrEvent instanceof WebInspector.Instrument ? instrumentOrEvent : instrumentOrEvent.data.instrument;
+        console.assert(instrument instanceof WebInspector.Instrument, instrument);
 
-        console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        let timeline = this._recording.timelineForInstrument(instrument);
         console.assert(!this._timelineOverviewGraphsMap.has(timeline), timeline);
         if (!this.canShowTimeline(timeline))
             return;
 
-        var overviewGraph = WebInspector.TimelineOverviewGraph.createForTimeline(timeline, this);
+        let overviewGraph = WebInspector.TimelineOverviewGraph.createForTimeline(timeline, this);
         overviewGraph.addEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
         this._timelineOverviewGraphsMap.set(timeline, overviewGraph);
 
@@ -515,10 +514,12 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this._graphsContainerElement.appendChild(overviewGraph.element);
     }
 
-    _timelineRemoved(event)
+    _instrumentRemoved(event)
     {
-        let timeline = event.data.timeline;
-        console.assert(timeline instanceof WebInspector.Timeline, timeline);
+        let instrument = event.data.instrument;
+        console.assert(instrument instanceof WebInspector.Instrument, instrument);
+
+        let timeline = this._recording.timelineForInstrument(instrument);
         if (!this.canShowTimeline(timeline))
             return;
 
