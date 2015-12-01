@@ -38,20 +38,20 @@ NavigatorVibration::~NavigatorVibration()
 {
 }
 
-bool NavigatorVibration::vibrate(Navigator* navigator, unsigned time)
+bool NavigatorVibration::vibrate(Navigator& navigator, unsigned time)
 {
     return NavigatorVibration::vibrate(navigator, VibrationPattern(1, time));
 }
 
-bool NavigatorVibration::vibrate(Navigator* navigator, const VibrationPattern& pattern)
+bool NavigatorVibration::vibrate(Navigator& navigator, const VibrationPattern& pattern)
 {
-    if (!navigator->frame()->page())
+    if (!navigator.frame()->page())
         return false;
 
-    if (navigator->frame()->page()->visibilityState() == PageVisibilityStateHidden)
+    if (navigator.frame()->page()->visibilityState() == PageVisibilityStateHidden)
         return false;
 
-    return Vibration::from(navigator->frame()->page())->vibrate(pattern);
+    return Vibration::from(navigator.frame()->page())->vibrate(pattern);
 }
 
 } // namespace WebCore

@@ -105,12 +105,12 @@ NavigatorContentUtils::~NavigatorContentUtils()
 {
 }
 
-void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
+void NavigatorContentUtils::registerProtocolHandler(Navigator& navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
 {
-    if (!navigator->frame())
+    if (!navigator.frame())
         return;
 
-    URL baseURL = navigator->frame()->document()->baseURL();
+    URL baseURL = navigator.frame()->document()->baseURL();
 
     if (!verifyCustomHandlerURL(baseURL, url, ec))
         return;
@@ -118,7 +118,7 @@ void NavigatorContentUtils::registerProtocolHandler(Navigator* navigator, const 
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return;
 
-    NavigatorContentUtils::from(navigator->frame()->page())->client()->registerProtocolHandler(scheme, baseURL, URL(ParsedURLString, url), navigator->frame()->displayStringModifiedByEncoding(title));
+    NavigatorContentUtils::from(navigator.frame()->page())->client()->registerProtocolHandler(scheme, baseURL, URL(ParsedURLString, url), navigator.frame()->displayStringModifiedByEncoding(title));
 }
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
@@ -141,14 +141,14 @@ static String customHandlersStateString(const NavigatorContentUtilsClient::Custo
     return String();
 }
 
-String NavigatorContentUtils::isProtocolHandlerRegistered(Navigator* navigator, const String& scheme, const String& url, ExceptionCode& ec)
+String NavigatorContentUtils::isProtocolHandlerRegistered(Navigator& navigator, const String& scheme, const String& url, ExceptionCode& ec)
 {
     static NeverDestroyed<String> declined(ASCIILiteral("declined"));
 
-    if (!navigator->frame())
+    if (!navigator.frame())
         return declined;
 
-    URL baseURL = navigator->frame()->document()->baseURL();
+    URL baseURL = navigator.frame()->document()->baseURL();
 
     if (!verifyCustomHandlerURL(baseURL, url, ec))
         return declined;
@@ -156,15 +156,15 @@ String NavigatorContentUtils::isProtocolHandlerRegistered(Navigator* navigator, 
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return declined;
 
-    return customHandlersStateString(NavigatorContentUtils::from(navigator->frame()->page())->client()->isProtocolHandlerRegistered(scheme, baseURL, URL(ParsedURLString, url)));
+    return customHandlersStateString(NavigatorContentUtils::from(navigator.frame()->page())->client()->isProtocolHandlerRegistered(scheme, baseURL, URL(ParsedURLString, url)));
 }
 
-void NavigatorContentUtils::unregisterProtocolHandler(Navigator* navigator, const String& scheme, const String& url, ExceptionCode& ec)
+void NavigatorContentUtils::unregisterProtocolHandler(Navigator& navigator, const String& scheme, const String& url, ExceptionCode& ec)
 {
-    if (!navigator->frame())
+    if (!navigator.frame())
         return;
 
-    URL baseURL = navigator->frame()->document()->baseURL();
+    URL baseURL = navigator.frame()->document()->baseURL();
 
     if (!verifyCustomHandlerURL(baseURL, url, ec))
         return;
@@ -172,7 +172,7 @@ void NavigatorContentUtils::unregisterProtocolHandler(Navigator* navigator, cons
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return;
 
-    NavigatorContentUtils::from(navigator->frame()->page())->client()->unregisterProtocolHandler(scheme, baseURL, URL(ParsedURLString, url));
+    NavigatorContentUtils::from(navigator.frame()->page())->client()->unregisterProtocolHandler(scheme, baseURL, URL(ParsedURLString, url));
 }
 #endif
 

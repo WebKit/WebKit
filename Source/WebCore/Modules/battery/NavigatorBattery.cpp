@@ -36,14 +36,14 @@ NavigatorBattery::~NavigatorBattery()
 {
 }
 
-BatteryManager* NavigatorBattery::webkitBattery(Navigator* navigator)
+BatteryManager* NavigatorBattery::webkitBattery(Navigator& navigator)
 {
-    if (!navigator->frame())
+    if (!navigator.frame())
         return nullptr;
 
-    NavigatorBattery* navigatorBattery = NavigatorBattery::from(navigator);
+    NavigatorBattery* navigatorBattery = NavigatorBattery::from(&navigator);
     if (!navigatorBattery->m_batteryManager)
-        navigatorBattery->m_batteryManager = BatteryManager::create(navigator);
+        navigatorBattery->m_batteryManager = BatteryManager::create(&navigator);
     return navigatorBattery->m_batteryManager.get();
 }
 

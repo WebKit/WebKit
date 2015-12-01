@@ -88,7 +88,7 @@ void BatteryManager::updateBatteryStatus(PassRefPtr<BatteryStatus> batteryStatus
     m_batteryStatus = batteryStatus;
 }
 
-bool BatteryManager::canSuspendForPageCache() const
+bool BatteryManager::canSuspendForDocumentSuspension() const
 {
     return true;
 }

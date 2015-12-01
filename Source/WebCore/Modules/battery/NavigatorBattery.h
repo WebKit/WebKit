@@ -35,7 +35,7 @@ public:
     virtual ~NavigatorBattery();
 
     static NavigatorBattery* from(Navigator*);
-    static BatteryManager* webkitBattery(Navigator*);
+    static BatteryManager* webkitBattery(Navigator&);
 
  private:
     static const char* supplementName();

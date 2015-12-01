@@ -61,7 +61,7 @@ private:
     explicit BatteryManager(Navigator*);
 
     // ActiveDOMObject API.
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;

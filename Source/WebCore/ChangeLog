@@ -1,3 +1,29 @@
+2015-11-30  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, fix build after r192848 and r192849
+
+        - Rename canSuspendForPageCache to canSuspendForDocumentSuspension
+        - Use references instead of pointers
+
+        * Modules/battery/BatteryManager.cpp:
+        (WebCore::BatteryManager::canSuspendForDocumentSuspension):
+        (WebCore::BatteryManager::canSuspendForPageCache): Deleted.
+        * Modules/battery/BatteryManager.h:
+        * Modules/battery/NavigatorBattery.cpp:
+        (WebCore::NavigatorBattery::webkitBattery):
+        * Modules/battery/NavigatorBattery.h:
+        * Modules/gamepad/deprecated/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::webkitGetGamepads):
+        * Modules/gamepad/deprecated/NavigatorGamepad.h:
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::NavigatorContentUtils::registerProtocolHandler):
+        (WebCore::NavigatorContentUtils::isProtocolHandlerRegistered):
+        (WebCore::NavigatorContentUtils::unregisterProtocolHandler):
+        * Modules/navigatorcontentutils/NavigatorContentUtils.h:
+        * Modules/vibration/NavigatorVibration.cpp:
+        (WebCore::NavigatorVibration::vibrate):
+        * Modules/vibration/NavigatorVibration.h:
+
 2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Amazon.com Additional Information links aren't clickable

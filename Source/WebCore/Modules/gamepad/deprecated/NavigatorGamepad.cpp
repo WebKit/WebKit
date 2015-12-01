@@ -58,9 +58,9 @@ NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
     return supplement;
 }
 
-GamepadList* NavigatorGamepad::webkitGetGamepads(Navigator* navigator)
+GamepadList* NavigatorGamepad::webkitGetGamepads(Navigator& navigator)
 {
-    return NavigatorGamepad::from(navigator)->gamepads();
+    return NavigatorGamepad::from(&navigator)->gamepads();
 }
 
 GamepadList* NavigatorGamepad::gamepads()

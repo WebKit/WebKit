@@ -42,7 +42,7 @@ public:
 
     static NavigatorGamepad* from(Navigator*);
 
-    static GamepadList* webkitGetGamepads(Navigator*);
+    static GamepadList* webkitGetGamepads(Navigator&);
 
     GamepadList* gamepads();
 

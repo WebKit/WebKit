@@ -36,8 +36,8 @@ public:
 
     ~NavigatorVibration();
 
-    static bool vibrate(Navigator*, unsigned time);
-    static bool vibrate(Navigator*, const VibrationPattern&);
+    static bool vibrate(Navigator&, unsigned time);
+    static bool vibrate(Navigator&, const VibrationPattern&);
 
 private:
     NavigatorVibration();
