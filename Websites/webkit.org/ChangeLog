@@ -1,5 +1,15 @@
 2015-11-30  Jonathan Davis  <jond@apple.com>
 
+        Set max-height to prevent narrow images from upscaling.
+
+        * wp-content/themes/webkit/style.css:
+        (article figure > img):
+        (figure.widescreen):
+        (figure.widescreen figcaption):
+        (figure.widescreen img): Deleted.
+
+2015-11-30  Jonathan Davis  <jond@apple.com>
+
         Added a new theme and plugins for a redesigned webkit.org.
 
         Reviewed by Timothy Hatcher.

@@ -1057,6 +1057,8 @@ article figure {
 article figure > img {
     display: inline-block;
     max-width: 100%;
+    max-height: 540px;
+    height: auto;
 }
 
 figure.widescreen {
@@ -1070,11 +1072,6 @@ figure.widescreen img,
 figure.widescreen figcaption {
     display: block;
     margin: 0 auto;
-}
-
-figure.widescreen img {
-    max-width: 100%;
-    height: auto;
 }
 
 figure.widescreen figcaption {
