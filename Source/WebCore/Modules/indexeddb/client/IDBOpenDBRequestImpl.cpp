@@ -67,6 +67,13 @@ void IDBOpenDBRequest::onError(const IDBResultData& data)
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 
+void IDBOpenDBRequest::versionChangeTransactionWillFinish()
+{
+    // 3.3.7 "versionchange" transaction steps
+    // When the transaction is finished, immediately set request's transaction property to null.
+    m_shouldExposeTransactionToDOM = false;
+}
+
 void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 {
     LOG(IndexedDB, "IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()");

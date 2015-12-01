@@ -1,3 +1,27 @@
+2015-12-01  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/basics.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151694
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes, and covered by changes to 3 previously incorrect tests).
+
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::versionChangeTransactionWillFinish): Set the flag determining whether
+          or not the request's transaction should be exposed to the DOM.
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::result): Throw an exception if the request is not done.
+        (WebCore::IDBClient::IDBRequest::error): Ditto.
+        (WebCore::IDBClient::IDBRequest::transaction): Only return the transaction to the DOM if the flag says so.
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::abort):
+        (WebCore::IDBClient::IDBTransaction::commit):
+
 2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ASSERTION FAILED: m_table running /webkit2/BackForwardList/navigation in Debug build

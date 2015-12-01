@@ -42,11 +42,10 @@ request.onupgradeneeded = function(e)
     request.transaction.oncomplete = function()
     {
         log("Version change complete");
-        var connection = request.transaction.db;
-        connection.onversionchange = function(e)
+        database.onversionchange = function(e)
         {
             log("First connection received versionchange event: oldVersion " + e.oldVersion + ", newVersion " + e.newVersion);
-            connection.close();
+            database.close();
         }
         continueTest1();
     }

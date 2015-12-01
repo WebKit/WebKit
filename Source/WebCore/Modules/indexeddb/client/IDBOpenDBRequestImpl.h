@@ -51,6 +51,8 @@ public:
     uint64_t version() const { return m_version; }
 
     void requestCompleted(const IDBResultData&);
+
+    void versionChangeTransactionWillFinish();
     void fireSuccessAfterVersionChangeCommit();
     void fireErrorAfterVersionChangeAbort();
 

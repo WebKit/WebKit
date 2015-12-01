@@ -32,6 +32,7 @@
 #include "EventQueue.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursorImpl.h"
+#include "IDBDatabaseException.h"
 #include "IDBEventDispatcher.h"
 #include "IDBKeyData.h"
 #include "IDBResultData.h"
@@ -119,9 +120,13 @@ IDBRequest::~IDBRequest()
     }
 }
 
-RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCode&) const
+RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCode& ec) const
 {
-    return m_result;
+    if (m_readyState == IDBRequestReadyState::Done)
+        return m_result;
+
+    ec = IDBDatabaseException::InvalidStateError;
+    return nullptr;
 }
 
 unsigned short IDBRequest::errorCode(ExceptionCode&) const
@@ -129,9 +134,13 @@ unsigned short IDBRequest::errorCode(ExceptionCode&) const
     return 0;
 }
 
-RefPtr<DOMError> IDBRequest::error(ExceptionCode&) const
+RefPtr<DOMError> IDBRequest::error(ExceptionCode& ec) const
 {
-    return m_domError;
+    if (m_readyState == IDBRequestReadyState::Done)
+        return m_domError;
+
+    ec = IDBDatabaseException::InvalidStateError;
+    return nullptr;
 }
 
 RefPtr<WebCore::IDBAny> IDBRequest::source() const
@@ -146,7 +155,7 @@ void IDBRequest::setSource(IDBCursor& cursor)
 
 RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
 {
-    return m_transaction;
+    return m_shouldExposeTransactionToDOM ? m_transaction : nullptr;
 }
 
 const String& IDBRequest::readyState() const

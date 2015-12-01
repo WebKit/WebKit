@@ -36,11 +36,14 @@ request.onerror = function(e)
 
 request.onupgradeneeded = function(e)
 {
+    var database = event.target.result;
+
     alert("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
     request.transaction.oncomplete = function()
     {
-        alert("Version change complete (firstPhase). Database version is now - " + request.transaction.db.version);
-        connection1 = request.transaction.db;
+        alert("Version change complete (firstPhase). Database version is now - " + database.version);
+
+        connection1 = database;
         connection1.onversionchange = function(e)
         {
             connection1.oldVersion = e.oldVersion;

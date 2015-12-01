@@ -72,6 +72,7 @@ inspector/indexeddb
 
 # But Modern IndexedDB is.
 storage/indexeddb/aborted-versionchange-closes.html [ Pass ]
+storage/indexeddb/basics.html [ Pass ]
 storage/indexeddb/cursor-cast.html [ Pass ]
 storage/indexeddb/cursor-finished.html [ Pass ]
 storage/indexeddb/modern [ Pass ]

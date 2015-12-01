@@ -28,12 +28,14 @@ request.onerror = function(e)
 
 request.onupgradeneeded = function(e)
 {
+    var database = event.target.result;
+
     alert("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
     alert(request.transaction);
     request.transaction.oncomplete = function()
     {
-        alert("Version change complete (firstPhase). Database version is now - " + request.transaction.db.version);
-        request.transaction.db.close();
+        alert("Version change complete (firstPhase). Database version is now - " + database.version);
+        database.close();
         secondPhase();
     }
     request.transaction.onabort = function()
@@ -86,12 +88,14 @@ function thirdPhase()
     }
     request.onupgradeneeded = function(e)
     {
+        var database = event.target.result;
+
         alert("upgradeneeded (thirdPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
         alert(request.transaction);
         request.transaction.oncomplete = function()
         {
-            alert("Version change complete (thirdPhase). Database version is now - " + request.transaction.db.version);
-            request.transaction.db.close();
+            alert("Version change complete (thirdPhase). Database version is now - " + database.version);
+            database.close();
             fourthPhase();
         }
         request.transaction.onabort = function()

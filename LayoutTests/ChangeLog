@@ -1,3 +1,15 @@
+2015-12-01  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/basics.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151694
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/deletedatabase-1.html:
+        * storage/indexeddb/modern/opendatabase-versions.html:
+        * storage/indexeddb/modern/versionchange-event.html:
+
 2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r192876.

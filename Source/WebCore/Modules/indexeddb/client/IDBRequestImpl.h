@@ -120,6 +120,7 @@ protected:
     IDBRequestReadyState m_readyState { IDBRequestReadyState::Pending };
     RefPtr<IDBAny> m_result;
     RefPtr<IDBTransaction> m_transaction;
+    bool m_shouldExposeTransactionToDOM { true };
     RefPtr<DOMError> m_domError;
     IDBError m_idbError;
 

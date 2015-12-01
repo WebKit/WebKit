@@ -177,6 +177,11 @@ void IDBTransaction::abort(ExceptionCode& ec)
     m_state = IndexedDB::TransactionState::Aborting;
     m_database->willAbortTransaction(*this);
 
+    if (isVersionChange()) {
+        ASSERT(m_openDBRequest);
+        m_openDBRequest->versionChangeTransactionWillFinish();
+    }
+    
     m_abortQueue.swap(m_transactionOperationQueue);
 
     auto operation = createTransactionOperation(*this, nullptr, &IDBTransaction::abortOnServerAndCancelRequests);
@@ -284,6 +289,11 @@ void IDBTransaction::commit()
 
     m_state = IndexedDB::TransactionState::Committing;
     m_database->willCommitTransaction(*this);
+
+    if (isVersionChange()) {
+        ASSERT(m_openDBRequest);
+        m_openDBRequest->versionChangeTransactionWillFinish();
+    }
 
     auto operation = createTransactionOperation(*this, nullptr, &IDBTransaction::commitOnServer);
     scheduleOperation(WTF::move(operation));
