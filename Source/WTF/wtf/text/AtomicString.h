@@ -88,6 +88,8 @@ public:
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
+    unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
+
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };
 

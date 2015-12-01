@@ -1,3 +1,18 @@
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Give String and AtomicString an existingHash() function
+        https://bugs.webkit.org/show_bug.cgi?id=151717
+
+        Reviewed by Andreas Kling.
+
+        Test: WTF.AtomicStringExistingHash
+              WTF.StringExistingHash
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::existingHash):
+        * wtf/text/WTFString.h:
+        (WTF::String::existingHash):
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature

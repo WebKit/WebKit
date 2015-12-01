@@ -463,6 +463,8 @@ public:
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
+    unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
+
 #ifndef NDEBUG
     WTF_EXPORT_STRING_API void show() const;
 #endif

@@ -53,4 +53,12 @@ TEST(WTF, AtomicStringCreationFromLiteralUniqueness)
     ASSERT_EQ(string1.impl(), string3.impl());
 }
 
+TEST(WTF, AtomicStringExistingHash)
+{
+    AtomicString string1("Template Literal", AtomicString::ConstructFromLiteral);
+    ASSERT_EQ(string1.existingHash(), string1.impl()->existingHash());
+    AtomicString string2;
+    ASSERT_EQ(string2.existingHash(), 0u);
+}
+
 } // namespace TestWebKitAPI

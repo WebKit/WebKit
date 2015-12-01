@@ -426,7 +426,7 @@ struct CharacterFallbackMapKeyHash {
         IntegerHasher hasher;
         hasher.add(key.character);
         hasher.add(key.isForPlatformFont);
-        hasher.add(key.locale.isNull() ? 0 : key.locale.impl()->existingHash());
+        hasher.add(key.locale.existingHash());
         return hasher.hash();
     }
 
