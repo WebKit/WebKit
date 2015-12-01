@@ -810,9 +810,6 @@ private:
         case GetScope:
             compileGetScope();
             break;
-        case LoadArrowFunctionThis:
-            compileLoadArrowFunctionThis();
-            break;
         case SkipScope:
             compileSkipScope();
             break;
@@ -4505,11 +4502,6 @@ private:
     void compileGetScope()
     {
         setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSFunction_scope));
-    }
-    
-    void compileLoadArrowFunctionThis()
-    {
-        setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSArrowFunction_this));
     }
     
     void compileSkipScope()

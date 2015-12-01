@@ -102,10 +102,6 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
     case ClosureVarPLoc:
         out.print("ClosureVarPLoc");
         return;
-
-    case ArrowFunctionBoundThisPLoc:
-        out.print("ArrowFunctionBoundThisPLoc");
-        return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

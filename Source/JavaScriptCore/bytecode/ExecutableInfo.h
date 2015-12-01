@@ -31,7 +31,7 @@
 namespace JSC {
 
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, bool isArrowFunction)
+    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, bool isArrowFunction, bool isDerivedConstructorContext, bool isArrowFunctionContext)
         : m_needsActivation(needsActivation)
         , m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
@@ -39,6 +39,8 @@ struct ExecutableInfo {
         , m_isBuiltinFunction(isBuiltinFunction)
         , m_constructorKind(static_cast<unsigned>(constructorKind))
         , m_isArrowFunction(isArrowFunction)
+        , m_isDerivedConstructorContext(isDerivedConstructorContext)
+        , m_isArrowFunctionContext(isArrowFunctionContext)
     {
         ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
     }
@@ -50,6 +52,8 @@ struct ExecutableInfo {
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     bool isArrowFunction() const { return m_isArrowFunction; }
+    bool isDerivedConstructorContext() const { return m_isDerivedConstructorContext; }
+    bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
 
 private:
     unsigned m_needsActivation : 1;
@@ -59,6 +63,8 @@ private:
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructorKind : 2;
     unsigned m_isArrowFunction : 1;
+    unsigned m_isDerivedConstructorContext : 1;
+    unsigned m_isArrowFunctionContext : 1;
 };
 
 } // namespace JSC

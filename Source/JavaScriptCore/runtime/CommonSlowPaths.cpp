@@ -225,7 +225,7 @@ SLOW_PATH_DECL(slow_path_create_this)
     
 #if !ASSERT_DISABLED
     ConstructData constructData;
-    ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
+    ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS || constructor->jsExecutable()->isArrowFunction());
 #endif
 
     auto& cacheWriteBarrier = pc[4].u.jsCell;

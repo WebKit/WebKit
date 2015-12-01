@@ -50,12 +50,12 @@ namespace JSC {
                 return m_cacheMap.get(evalSource.impl()).get();
             return 0;
         }
-        
-        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, bool inStrictContext, ThisTDZMode thisTDZMode, const String& evalSource, JSScope* scope)
+
+        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, bool inStrictContext, ThisTDZMode thisTDZMode, bool isDerivedConstructorContext, bool isArrowFunctionContext, const String& evalSource, JSScope* scope)
         {
             VariableEnvironment variablesUnderTDZ;
             JSScope::collectVariablesUnderTDZ(scope, variablesUnderTDZ);
-            EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext, thisTDZMode, &variablesUnderTDZ);
+            EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext, thisTDZMode, isDerivedConstructorContext, isArrowFunctionContext, &variablesUnderTDZ);
             if (!evalExecutable)
                 return 0;
 

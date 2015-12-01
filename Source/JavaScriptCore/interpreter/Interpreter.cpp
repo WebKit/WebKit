@@ -172,7 +172,7 @@ JSValue eval(CallFrame* callFrame)
         ASSERT(!callFrame->vm().exception());
 
         ThisTDZMode thisTDZMode = callerCodeBlock->unlinkedCodeBlock()->constructorKind() == ConstructorKind::Derived ? ThisTDZMode::AlwaysCheck : ThisTDZMode::CheckIfNeeded;
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, programSource, callerScopeChain);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, callerCodeBlock->unlinkedCodeBlock()->isDerivedConstructorContext(), callerCodeBlock->unlinkedCodeBlock()->isArrowFunction(), programSource, callerScopeChain);
         if (!eval)
             return jsUndefined();
     }

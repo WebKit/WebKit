@@ -2200,7 +2200,6 @@ public:
     void compileGetByValOnScopedArguments(Node*);
     
     void compileGetScope(Node*);
-    void compileLoadArrowFunctionThis(Node*);
     void compileSkipScope(Node*);
 
     void compileGetArrayLength(Node*);
