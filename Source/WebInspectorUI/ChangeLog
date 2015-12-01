@@ -1,5 +1,27 @@
 2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Spacebar to toggle Timeline recording doesn't work in Timeline tab after reloading the page
+        https://bugs.webkit.org/show_bug.cgi?id=151530
+
+        Reviewed by Timothy Hatcher.
+
+        If reloading the page caused the console to clear, that was triggering
+        the console prompt to be focused. When the console prompt is focused,
+        keyboard input like Spacebar, was just inputing characters instead of
+        triggering the keyboard shortcut that was expected.
+
+        This also means that console.clear() in the inspected page would cause
+        the inspector to focus the console. That is unexpected as well.
+
+        Focusing the console prompt whenever the console log is cleared
+        is not ideal. If we do want to focus the prompt the caller should
+        make that determination, not clear.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.clear):
+
+2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update Timeline UI based on the Instruments in the Active Recording
         https://bugs.webkit.org/show_bug.cgi?id=151374
 
