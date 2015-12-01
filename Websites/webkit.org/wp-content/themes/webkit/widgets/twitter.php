@@ -25,6 +25,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
             extract($args, EXTR_SKIP);
         
         $Tweet = $this->tweet();
+
         // Show "Follow @webkit" instead of tweet for empty text
         if ( empty($Tweet) || empty($Tweet->text) )
             return $this->follow_markup($options);
@@ -36,12 +37,12 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
                 && preg_match('!webkit.org/blog/\d+/!', $Tweet->entities->urls[0]->expanded_url) == 1)
             return $this->follow_markup($options);
 
-        $text = $Tweet->text;
-
         $classes = array('tile', 'third-tile', 'twitter-tile');
 
-        if ( empty($text) && ! empty($options['text']) ) 
-            $text = (string)$options['text'];
+        $text = (string)$options['text'];
+
+        if ( ! empty($Tweet->text) )
+            $text = $Tweet->text;
 
         if ( ! empty($options['url']) ) 
             $url = (string)$options['url'];
@@ -123,9 +124,8 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
 		$oauth_consumer_key_secret = 'mLuYD3AjUehUZKOgQIICA5Na69te45aSJTkdIDTGSg4cfHd6Lz';
 		$oauth_token = '14315023-7pHbcI5bk2QZhNiHR9uFudaksBzMPubEuOEmYj7YQ';
 		$oauth_token_secret = '0K9T9znxG4S9PUGunYZ5LwyKL9AR6v3eAXp6WKY2oi7Bg';
-		$oauth_nonce = '492f1766207b56aa04bcea8e969dc1f5'; //sha1(rand() . time());
-		$oauth_signature = '-------------------';
 		$oauth_timestamp = time();
+		$oauth_nonce = sha1(rand() . $oauth_timestamp);
 
 		$fields = array(
 			'oauth_consumer_key' => $oauth_consumer_key,
@@ -171,14 +171,14 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
 		$options['headers'] = $headers;
         
 		$response = wp_remote_get($endpoint, $options);
-        
+
         if ( is_a($response, 'WP_Error') ) 
             return false;
 
 		if ( 200 == $response['response']['code'] && ! empty($response['body']) ) {
             $data = json_decode($response['body'])[0];
             set_transient(self::CACHEKEY, json_encode($data), DAY_IN_SECONDS/2);
-            return json_decode($data);
+            return $data;
 		}
 
 		return false;
