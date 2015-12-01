@@ -190,7 +190,7 @@ void IDBDatabase::deleteObjectStore(const String& objectStoreName, ExceptionCode
     LOG(IndexedDB, "IDBDatabase::deleteObjectStore");
 
     if (!m_versionChangeTransaction) {
-        ec = INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return;
     }
 

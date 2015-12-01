@@ -70,9 +70,10 @@ crypto/subtle/rsa-indexeddb.html
 crypto/subtle/rsa-indexeddb-non-exportable.html
 inspector/indexeddb
 
-# But Modern IndexedDB is.
+# Tests that are skipped above but that pass in Modern IDB are unskipped below.
 storage/indexeddb/aborted-versionchange-closes.html [ Pass ]
 storage/indexeddb/basics.html [ Pass ]
+storage/indexeddb/create-and-remove-object-store.html
 storage/indexeddb/cursor-cast.html [ Pass ]
 storage/indexeddb/cursor-finished.html [ Pass ]
 storage/indexeddb/modern [ Pass ]
