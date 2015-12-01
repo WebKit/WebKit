@@ -26,6 +26,8 @@
 #ifndef IOSurfacePool_h
 #define IOSurfacePool_h
 
+#if USE(IOSURFACE)
+
 #include "ColorSpace.h"
 #include "IOSurface.h"
 #include "IntSize.h"
@@ -35,8 +37,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
-
-#if USE(IOSURFACE)
 
 namespace WebCore {
 

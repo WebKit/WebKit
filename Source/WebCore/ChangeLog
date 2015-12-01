@@ -1,5 +1,15 @@
 2015-12-01  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192709.
+
+    2015-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix the Windows build.
+
+            * platform/graphics/cg/IOSurfacePool.h:
+
+2015-12-01  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192701.
 
     2015-11-20  Simon Fraser  <simon.fraser@apple.com>
