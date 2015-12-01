@@ -1,3 +1,14 @@
+2015-12-01  Darin Adler  <darin@apple.com>
+
+        Fix anomaly where isMouseEvent returns false for wheel events
+        https://bugs.webkit.org/show_bug.cgi?id=151685
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DOMEventsClasses.cpp:
+        (DOMEvent::createInstance): Use eventInterface instead of isMouseEvent to create the appropriate
+        wrapper class.
+
 2015-11-24  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Implement methods to get and set inner html.

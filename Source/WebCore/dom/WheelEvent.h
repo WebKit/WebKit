@@ -91,7 +91,6 @@ public:
     bool isHorizontal() const { return m_wheelDelta.x(); }
 
     virtual EventInterface eventInterface() const override;
-    virtual bool isMouseEvent() const override;
 
 #if PLATFORM(MAC)
     PlatformWheelEventPhase phase() const { return m_wheelEvent.phase(); }

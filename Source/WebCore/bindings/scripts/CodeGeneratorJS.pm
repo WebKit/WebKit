@@ -4704,9 +4704,8 @@ template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecS
 {
     auto* jsConstructor = jsCast<${constructorClassName}*>(state->callee());
 
-    ScriptExecutionContext* stateutionContext = jsConstructor->scriptExecutionContext();
-    if (!stateutionContext)
-        return throwVMError(state, createReferenceError(state, "Constructor associated stateution context is unavailable"));
+    if (!jsConstructor->scriptExecutionContext())
+        return throwVMError(state, createReferenceError(state, "Constructor associated execution context is unavailable"));
 
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));

@@ -114,11 +114,6 @@ EventInterface WheelEvent::eventInterface() const
     return WheelEventInterfaceType;
 }
 
-bool WheelEvent::isMouseEvent() const
-{
-    return false;
-}
-
 bool WheelEvent::isWheelEvent() const
 {
     return true;

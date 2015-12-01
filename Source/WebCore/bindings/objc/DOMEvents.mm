@@ -52,38 +52,41 @@ using WebCore::eventNames;
 
 Class kitClass(WebCore::Event* impl)
 {
-    if (impl->isUIEvent()) {
-        if (impl->isKeyboardEvent())
-            return [DOMKeyboardEvent class];
-        if (impl->isMouseEvent())
-            return [DOMMouseEvent class];
-
-        WebCore::EventInterface desiredInterface = impl->eventInterface();
-        if (desiredInterface == WebCore::TextEventInterfaceType)
-            return [DOMTextEvent class];
-        if (desiredInterface == WebCore::WheelEventInterfaceType)
-            return [DOMWheelEvent class];        
-#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
-        if (desiredInterface == WebCore::TouchEventInterfaceType) 
-            return [DOMTouchEvent class];
-#endif
-#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
-        if (desiredInterface == WebCore::GestureEventInterfaceType)
-            return [DOMGestureEvent class];
-#endif
-        return [DOMUIEvent class];
-    }
-
-    WebCore::EventInterface desiredInterface = impl->eventInterface();
-    if (desiredInterface == WebCore::MutationEventInterfaceType)
-        return [DOMMutationEvent class];
-    if (desiredInterface == WebCore::OverflowEventInterfaceType)
-        return [DOMOverflowEvent class];
-    if (desiredInterface == WebCore::MessageEventInterfaceType)
-        return [DOMMessageEvent class];
-    if (desiredInterface == WebCore::ProgressEventInterfaceType || desiredInterface == WebCore::XMLHttpRequestProgressEventInterfaceType)
-        return [DOMProgressEvent class];
-    if (desiredInterface == WebCore::BeforeLoadEventInterfaceType)
+    switch (impl->eventInterface()) {
+    case WebCore::BeforeLoadEventInterfaceType:
         return [DOMBeforeLoadEvent class];
-    return [DOMEvent class];
+    case WebCore::KeyboardEventInterfaceType:
+        return [DOMKeyboardEvent class];
+    case WebCore::MessageEventInterfaceType:
+        return [DOMMessageEvent class];
+    case WebCore::MouseEventInterfaceType:
+        return [DOMMouseEvent class];
+    case WebCore::MutationEventInterfaceType:
+        return [DOMMutationEvent class];
+    case WebCore::OverflowEventInterfaceType:
+        return [DOMOverflowEvent class];
+    case WebCore::ProgressEventInterfaceType:
+    case WebCore::XMLHttpRequestProgressEventInterfaceType:
+        return [DOMProgressEvent class];
+    case WebCore::TextEventInterfaceType:
+        return [DOMTextEvent class];
+    case WebCore::WheelEventInterfaceType:
+        return [DOMWheelEvent class];
+
+#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+    case WebCore::TouchEventInterfaceType:
+        return [DOMTouchEvent class];
+#endif
+
+#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
+    case WebCore::GestureEventInterfaceType:
+        return [DOMGestureEvent class];
+#endif
+
+    default:
+        if (impl->isUIEvent())
+            return [DOMUIEvent class];
+
+        return [DOMEvent class];
+    }
 }

@@ -1,3 +1,42 @@
+2015-12-01  Darin Adler  <darin@apple.com>
+
+        Fix anomaly where isMouseEvent returns false for wheel events
+        https://bugs.webkit.org/show_bug.cgi?id=151685
+
+        Reviewed by Alexey Proskuryakov.
+
+        Back three years ago when we made WheelEvent inherit from MouseEvent,
+        someone decided that isMouseEvent should return false for the wheel events.
+        An audit of all the callers of isMouseEvent indicated that in almost every
+        case, it's better to return true, so this patch does that.
+
+        All the other call sites that were checking isMouseEvent, here and in the
+        higher levels of WebKit, benefit from getting true even for wheel events.
+
+        * bindings/objc/DOMEvents.mm:
+        (kitClass): Use eventInterface instead of isMouseEvent to create the appropriate
+        wrapper class.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition): Eliminated a peculiar search and replace
+        mistake; "stateution" instead of "execution".
+
+        * dom/Node.cpp:
+        (WebCore::Node::handleLocalEvents): Add an isWheelEvent check here so that we
+        will not ignore wheel events. This preserves behavior. A FIXME questions whether
+        that is the behavior we want.
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::isMouseEvent): Deleted. No need to override and return false.
+        * dom/WheelEvent.h: Ditto.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultEventHandler): Removed unneeded checks for
+        drag events and wheel events; both are types of mouse event, and so a single
+        isMouseEvent check takes care of all three of these.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent): Ditto.
+
 2015-12-01  Alex Christensen  <achristensen@webkit.org>
 
         Use Optional for matrix inverses

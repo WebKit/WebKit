@@ -267,7 +267,7 @@ void HTMLTextAreaElement::updateFocusAppearance(SelectionRestorationMode restora
 
 void HTMLTextAreaElement::defaultEventHandler(Event* event)
 {
-    if (renderer() && (event->isMouseEvent() || event->isDragEvent() || event->eventInterface() == WheelEventInterfaceType || event->type() == eventNames().blurEvent))
+    if (renderer() && (event->isMouseEvent() || event->type() == eventNames().blurEvent))
         forwardEvent(event);
     else if (renderer() && is<BeforeTextInsertedEvent>(*event))
         handleBeforeTextInsertedEvent(downcast<BeforeTextInsertedEvent>(event));

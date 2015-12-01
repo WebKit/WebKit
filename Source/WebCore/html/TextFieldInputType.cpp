@@ -187,8 +187,6 @@ void TextFieldInputType::forwardEvent(Event* event)
     }
 
     if (event->isMouseEvent()
-        || event->isDragEvent()
-        || event->eventInterface() == WheelEventInterfaceType
         || event->type() == eventNames().blurEvent
         || event->type() == eventNames().focusEvent)
     {

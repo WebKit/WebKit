@@ -105,27 +105,40 @@ IDOMEvent* DOMEvent::createInstance(PassRefPtr<WebCore::Event> e)
     HRESULT hr;
     IDOMEvent* domEvent = nullptr;
 
-    if (e->isKeyboardEvent()) {
+    switch (e->eventInterface()) {
+    case WebCore::KeyboardEventInterfaceType: {
         DOMKeyboardEvent* newEvent = new DOMKeyboardEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMKeyboardEvent, (void**)&domEvent);
-    } else if (e->isMouseEvent()) {
+        break;
+    }
+    case WebCore::MouseEventInterfaceType: {
         DOMMouseEvent* newEvent = new DOMMouseEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMMouseEvent, (void**)&domEvent);
-    } else if (e->eventInterface() == WebCore::MutationEventInterfaceType) {
+        break;
+    }
+    case WebCore::MutationEventInterfaceType: {
         DOMMutationEvent* newEvent = new DOMMutationEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMMutationEvent, (void**)&domEvent);
-    } else if (e->eventInterface() == WebCore::OverflowEventInterfaceType) {
+        break;
+    }
+    case WebCore::OverflowEventInterfaceType: {
         DOMOverflowEvent* newEvent = new DOMOverflowEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMOverflowEvent, (void**)&domEvent);
-    } else if (e->eventInterface() == WebCore::WheelEventInterfaceType) {
+        break;
+    }
+    case WebCore::WheelEventInterfaceType: {
         DOMWheelEvent* newEvent = new DOMWheelEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMWheelEvent, (void**)&domEvent);
-    } else if (e->isUIEvent()) {
-        DOMUIEvent* newEvent = new DOMUIEvent(e);
-        hr = newEvent->QueryInterface(IID_IDOMUIEvent, (void**)&domEvent);
-    } else {
-        DOMEvent* newEvent = new DOMEvent(e);
-        hr = newEvent->QueryInterface(IID_IDOMEvent, (void**)&domEvent);
+        break;
+    }
+    default:
+        if (e->isUIEvent()) {
+            DOMUIEvent* newEvent = new DOMUIEvent(e);
+            hr = newEvent->QueryInterface(IID_IDOMUIEvent, (void**)&domEvent);
+        } else {
+            DOMEvent* newEvent = new DOMEvent(e);
+            hr = newEvent->QueryInterface(IID_IDOMEvent, (void**)&domEvent);
+        }
     }
 
     if (FAILED(hr))
