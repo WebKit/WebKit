@@ -2431,8 +2431,10 @@ void FrameLoader::checkLoadComplete()
         frames.append(*frame);
 
     // To process children before their parents, iterate the vector backwards.
-    for (unsigned i = frames.size(); i; --i)
-        frames[i - 1]->loader().checkLoadCompleteForThisFrame();
+    for (auto frame = frames.rbegin(); frame != frames.rend(); ++frame) {
+        if ((*frame)->page())
+            (*frame)->loader().checkLoadCompleteForThisFrame();
+    }
 }
 
 int FrameLoader::numPendingOrLoadingRequests(bool recurse) const

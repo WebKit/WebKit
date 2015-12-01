@@ -1,3 +1,30 @@
+2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test http/tests/misc/detach-during-notifyDone.html
+        https://bugs.webkit.org/show_bug.cgi?id=149309
+        <rdar://problem/22748363>
+
+        Reviewed by Brent Fulgham.
+
+        The test case is from Blink r175601:
+        https://codereview.chromium.org/317513002
+        The test case will generate a set of weird ordering events that affects the documentLoader:
+        1. The subframe finishes loading, and since the frame’s testRunner is not set to wait until
+        done, WebKitTestRunner stops the load (by calling WKBundlePageStopLoading()).
+        2. This causes the in-progress XHR to be aborted, which causes its readyState to become DONE
+        (this bug doesn’t always reproduce because sometimes the XHR has already finished before the
+        frame finishes loading).
+        3. The onreadystatechange callback is executed, which sets innerHTML on the parent frame.
+        4. Setting innerHTML disconnects the subframe, nulling out its DocumentLoader.
+        5. We return to WebFrameLoaderClient::dispatchDidFinishLoad() from step #1, but now the
+        FrameLoader’s DocumentLoader is null. And WebKit crashes here.
+
+        Note that steps 2-4 happen synchronously inside WebFrameLoaderClient::dispatchDidFinishLoad().
+
+        * http/tests/misc/detach-during-notifyDone-expected.txt: Added.
+        * http/tests/misc/detach-during-notifyDone.html: Added.
+        * http/tests/misc/resources/detached-frame.html: Added.
+
 2015-11-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r192819.

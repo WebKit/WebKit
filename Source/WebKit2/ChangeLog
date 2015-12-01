@@ -1,3 +1,23 @@
+2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test http/tests/misc/detach-during-notifyDone.html
+        https://bugs.webkit.org/show_bug.cgi?id=149309
+        <rdar://problem/22748363>
+
+        Reviewed by Brent Fulgham.
+
+        Callback of bundle clients could kill the documentloader. Therefore, make a copy
+        of the navigationID before invoking the callback.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPushStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReplaceStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPopStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+
 2015-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Get rid of the !USE(ASYNC_NSTEXTINPUTCLIENT) codepath

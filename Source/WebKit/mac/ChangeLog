@@ -1,1 +1,13 @@
+2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test http/tests/misc/detach-during-notifyDone.html
+        https://bugs.webkit.org/show_bug.cgi?id=149309
+        <rdar://problem/22748363>
+
+        Reviewed by Brent Fulgham.
+
+        * WebView/WebDataSource.mm:
+        (WebDataSourcePrivate::~WebDataSourcePrivate):
+        Refine the assertion to treat <rdar://problem/9673866>.
+
 == Rolled over to ChangeLog-2015-11-21 ==
