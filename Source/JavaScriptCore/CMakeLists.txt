@@ -997,6 +997,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLCapabilities.cpp
         ftl/FTLCommonValues.cpp
         ftl/FTLCompile.cpp
+        ftl/FTLCompileBinaryOp.cpp
         ftl/FTLDWARFDebugLineInfo.cpp
         ftl/FTLDWARFRegister.cpp
         ftl/FTLDataSection.cpp

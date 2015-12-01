@@ -522,6 +522,7 @@
     <ClCompile Include="..\ftl\FTLCapabilities.cpp" />
     <ClCompile Include="..\ftl\FTLCommonValues.cpp" />
     <ClCompile Include="..\ftl\FTLCompile.cpp" />
+    <ClCompile Include="..\ftl\FTLCompileBinaryOp.cpp" />
     <ClCompile Include="..\ftl\FTLDataSection.cpp" />
     <ClCompile Include="..\ftl\FTLDWARFDebugLineInfo.cpp" />
     <ClCompile Include="..\ftl\FTLDWARFRegister.cpp" />
@@ -1290,6 +1291,7 @@
     <ClInclude Include="..\ftl\FTLCapabilities.h" />
     <ClInclude Include="..\ftl\FTLCommonValues.h" />
     <ClInclude Include="..\ftl\FTLCompile.h" />
+    <ClInclude Include="..\ftl\FTLCompileBinaryOp.h" />
     <ClInclude Include="..\ftl\FTLDataSection.h" />
     <ClInclude Include="..\ftl\FTLDWARFDebugLineInfo.h" />
     <ClInclude Include="..\ftl\FTLDWARFRegister.h" />
@@ -1306,6 +1308,7 @@
     <ClInclude Include="..\ftl\FTLForOSREntryJITCode.h" />
     <ClInclude Include="..\ftl\FTLGeneratedFunction.h" />
     <ClInclude Include="..\ftl\FTLInlineCacheDescriptor.h" />
+    <ClInclude Include="..\ftl\FTLInlineCacheDescriptorInlines.h" />
     <ClInclude Include="..\ftl\FTLInlineCacheSize.h" />
     <ClInclude Include="..\ftl\FTLIntrinsicRepository.h" />
     <ClInclude Include="..\ftl\FTLJITCode.h" />

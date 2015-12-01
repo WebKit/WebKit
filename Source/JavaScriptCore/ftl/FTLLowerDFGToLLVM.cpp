@@ -1655,20 +1655,21 @@ private:
             // Arguments: id, bytes, target, numArgs, args...
             StackmapArgumentList arguments;
             arguments.append(m_out.constInt64(stackmapID));
-            arguments.append(m_out.constInt32(sizeOfArithSub()));
+            arguments.append(m_out.constInt32(ArithSubDescriptor::icSize()));
             arguments.append(constNull(m_out.ref8));
             arguments.append(m_out.constInt32(2));
             arguments.append(left);
             arguments.append(right);
 
-            appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments, ExceptionType::SubGenerator, 3); // left, right, and result show up in the stackmap locations.
+            appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
+                ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
 
             LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
             setInstructionCallingConvention(call, LLVMAnyRegCallConv);
 
-            m_ftlState.arithSubs.append(ArithSubDescriptor(stackmapID, m_node->origin.semantic,
-                abstractValue(m_node->child1()).resultType(),
-                abstractValue(m_node->child2()).resultType()));
+            SnippetOperand leftOperand(abstractValue(m_node->child1()).resultType());
+            SnippetOperand rightOperand(abstractValue(m_node->child2()).resultType());
+            m_ftlState.binaryOps.append(ArithSubDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
 
             setJSValue(call);
 #endif

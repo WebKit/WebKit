@@ -1560,6 +1560,9 @@
     <ClCompile Include="..\ftl\FTLCompile.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
+    <ClCompile Include="..\ftl\FTLCompileBinaryOp.cpp">
+      <Filter>ftl</Filter>
+    </ClCompile>
     <ClCompile Include="..\ftl\FTLDataSection.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
@@ -4132,6 +4135,9 @@
     <ClInclude Include="..\ftl\FTLCompile.h">
       <Filter>ftl</Filter>
     </ClInclude>
+    <ClInclude Include="..\ftl\FTLCompileBinaryOp.h">
+      <Filter>ftl</Filter>
+    </ClInclude>
     <ClInclude Include="..\ftl\FTLDataSection.h">
       <Filter>ftl</Filter>
     </ClInclude>
@@ -4172,6 +4178,9 @@
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLInlineCacheDescriptor.h">
+      <Filter>ftl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ftl\FTLInlineCacheDescriptorInlines.h">
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLInlineCacheSize.h">

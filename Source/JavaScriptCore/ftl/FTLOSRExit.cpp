@@ -172,7 +172,7 @@ bool OSRExit::willArriveAtExitFromIndirectExceptionCheck() const
     case ExceptionType::GetById:
     case ExceptionType::PutById:
     case ExceptionType::LazySlowPath:
-    case ExceptionType::SubGenerator:
+    case ExceptionType::BinaryOpGenerator:
     case ExceptionType::GetByIdCallOperation:
     case ExceptionType::PutByIdCallOperation:
         return true;
@@ -200,7 +200,7 @@ bool OSRExit::willArriveAtOSRExitFromCallOperation() const
     switch (m_exceptionType) {
     case ExceptionType::GetByIdCallOperation:
     case ExceptionType::PutByIdCallOperation:
-    case ExceptionType::SubGenerator:
+    case ExceptionType::BinaryOpGenerator:
         return true;
     default:
         return false;

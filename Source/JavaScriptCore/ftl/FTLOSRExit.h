@@ -145,7 +145,7 @@ enum class ExceptionType : uint8_t {
     PutById,
     PutByIdCallOperation,
     LazySlowPath,
-    SubGenerator,
+    BinaryOpGenerator,
 };
 
 struct OSRExitDescriptor {

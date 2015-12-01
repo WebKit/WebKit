@@ -1,3 +1,56 @@
+2015-12-01  Mark Lam  <mark.lam@apple.com>
+
+        Refactor FTL sub snippet code to support general binary op snippets.
+        https://bugs.webkit.org/show_bug.cgi?id=151706
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * ftl/FTLCompile.cpp:
+        - Moved the BinarySnippetRegisterContext to FTLCompileBinaryOp.cpp verbatim.
+        - Generalize generateArithSubICFastPath() to generateBinaryOpICFastPath().
+          It now uses snippet specific helpers in FTLCompileBinaryOp.cpp to generate
+          the fast paths.
+
+        * ftl/FTLCompileBinaryOp.cpp: Added.
+        (JSC::FTL::BinarySnippetRegisterContext::BinarySnippetRegisterContext):
+        (JSC::FTL::BinarySnippetRegisterContext::initializeRegisters):
+        (JSC::FTL::BinarySnippetRegisterContext::restoreRegisters):
+        - Moved here without changed from FTLCompile.cpp.
+        (JSC::FTL::generateArithSubFastPath):
+        * ftl/FTLCompileBinaryOp.h: Added.
+
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::BinaryOpDescriptor::nodeType):
+        (JSC::FTL::BinaryOpDescriptor::size):
+        (JSC::FTL::BinaryOpDescriptor::name):
+        (JSC::FTL::BinaryOpDescriptor::fastPathICName):
+        (JSC::FTL::BinaryOpDescriptor::slowPathFunction):
+        (JSC::FTL::BinaryOpDescriptor::leftOperand):
+        (JSC::FTL::BinaryOpDescriptor::rightOperand):
+        (JSC::FTL::BinaryOpDescriptor::BinaryOpDescriptor):
+        (JSC::FTL::ArithSubDescriptor::ArithSubDescriptor): Deleted.
+        (JSC::FTL::ArithSubDescriptor::leftType): Deleted.
+        (JSC::FTL::ArithSubDescriptor::rightType): Deleted.
+        - Refactor ArithSubDescriptor into BinaryOpDescriptor, and re-add a sub-class
+          ArithSubDescriptor as specializations of BinaryOpDescriptor.
+
+        * ftl/FTLInlineCacheDescriptorInlines.h: Added.
+        (JSC::FTL::ArithSubDescriptor::ArithSubDescriptor):
+        (JSC::FTL::ArithSubDescriptor::icSize):
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::willArriveAtExitFromIndirectExceptionCheck):
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromCallOperation):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLState.h:
+
 2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r192876.

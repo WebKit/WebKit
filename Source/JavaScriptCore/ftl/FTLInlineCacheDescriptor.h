@@ -29,9 +29,11 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeOrigin.h"
+#include "DFGAbstractValue.h"
 #include "FTLLazySlowPath.h"
 #include "JITInlineCacheGenerator.h"
 #include "MacroAssembler.h"
+#include "SnippetOperand.h"
 #include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC { namespace FTL {
@@ -123,23 +125,50 @@ public:
     Vector<CheckInGenerator> m_generators;
 };
 
-class ArithSubDescriptor : public InlineCacheDescriptor {
+class BinaryOpDescriptor : public InlineCacheDescriptor {
 public:
-    ArithSubDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, ResultType leftType, ResultType rightType)
+    typedef EncodedJSValue (*SlowPathFunction)(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+
+    unsigned nodeType() const { return m_nodeType; }
+    size_t size() const { return m_size; }
+    const char* name() const { return m_name; }
+    const char* fastPathICName() const { return m_fastPathICName; }
+    SlowPathFunction slowPathFunction() const { return m_slowPathFunction; }
+
+    SnippetOperand leftOperand() { return m_leftOperand; }
+    SnippetOperand rightOperand() { return m_rightOperand; }
+
+    Vector<MacroAssembler::Label> m_slowPathStarts;
+
+protected:
+    BinaryOpDescriptor(unsigned nodeType, unsigned stackmapID, CodeOrigin codeOrigin,
+        size_t size, const char* name, const char* fastPathICName,
+        SlowPathFunction slowPathFunction, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
         : InlineCacheDescriptor(stackmapID, codeOrigin, nullptr)
-        , m_leftType(leftType)
-        , m_rightType(rightType)
+        , m_nodeType(nodeType)
+        , m_size(size)
+        , m_name(name)
+        , m_fastPathICName(fastPathICName)
+        , m_slowPathFunction(slowPathFunction)
+        , m_leftOperand(leftOperand)
+        , m_rightOperand(rightOperand)
     {
     }
 
-    ResultType leftType() const { return m_leftType; }
-    ResultType rightType() const { return m_rightType; }
-    
-    Vector<MacroAssembler::Label> m_slowPathStarts;
+    unsigned m_nodeType;
+    size_t m_size;
+    const char* m_name;
+    const char* m_fastPathICName;
+    SlowPathFunction m_slowPathFunction;
 
-private:
-    ResultType m_leftType;
-    ResultType m_rightType;
+    SnippetOperand m_leftOperand;
+    SnippetOperand m_rightOperand;
+};
+
+class ArithSubDescriptor : public BinaryOpDescriptor {
+public:
+    ArithSubDescriptor(unsigned stackmapID, CodeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand);
+    static size_t icSize();
 };
 
 // You can create a lazy slow path call in lowerDFGToLLVM by doing:
