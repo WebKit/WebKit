@@ -4480,6 +4480,8 @@ void WebPage::didChangeSelection()
         send(Messages::WebPageProxy::CompositionWasCanceled(editorState));
     } else
         send(Messages::WebPageProxy::EditorStateChanged(editorState));
+#else
+    send(Messages::WebPageProxy::EditorStateChanged(editorState), pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 #endif
 
 #if PLATFORM(IOS)
