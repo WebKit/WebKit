@@ -685,28 +685,22 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    bool leftIsConstInt32 = isOperandConstantInt(op1);
-    bool rightIsConstInt32 = isOperandConstantInt(op2);
-    ResultType leftType = types.first();
-    ResultType rightType = types.second();
-    int32_t leftConstInt32 = 0;
-    int32_t rightConstInt32 = 0;
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
 
-    ASSERT(!leftIsConstInt32 || !rightIsConstInt32);
+    if (isOperandConstantInt(op1))
+        leftOperand.setConstInt32(getOperandConstantInt(op1));
+    if (isOperandConstantInt(op2))
+        rightOperand.setConstInt32(getOperandConstantInt(op2));
 
-    if (leftIsConstInt32) {
-        leftConstInt32 = getOperandConstantInt(op1);
-        emitGetVirtualRegister(op2, rightRegs);
-    } else if (rightIsConstInt32) {
+    ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+    if (!leftOperand.isConst())
         emitGetVirtualRegister(op1, leftRegs);
-        rightConstInt32 = getOperandConstantInt(op2);
-    } else {
-        emitGetVirtualRegister(op1, leftRegs);
+    if (!rightOperand.isConst())
         emitGetVirtualRegister(op2, rightRegs);
-    }
 
-    JITAddGenerator gen(resultRegs, leftRegs, rightRegs, leftType, rightType,
-        leftIsConstInt32, rightIsConstInt32, leftConstInt32, rightConstInt32,
+    JITAddGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
         fpRegT0, fpRegT1, scratchGPR, scratchFPR);
 
     gen.generateFastPath(*this);
@@ -826,38 +820,26 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
-    bool leftIsConstInt32 = isOperandConstantInt(op1);
-    bool rightIsConstInt32 = isOperandConstantInt(op2);
-    ResultType leftType = types.first();
-    ResultType rightType = types.second();
-    int32_t leftConstInt32 = 0;
-    int32_t rightConstInt32 = 0;
-
     uint32_t* profilingCounter = nullptr;
     if (shouldEmitProfiling())
         profilingCounter = &m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter;
 
-    ASSERT(!leftIsConstInt32 || !rightIsConstInt32);
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
 
-    if (leftIsConstInt32)
-        leftConstInt32 = getOperandConstantInt(op1);
-    if (rightIsConstInt32)
-        rightConstInt32 = getOperandConstantInt(op2);
+    if (isOperandConstantInt(op1))
+        leftOperand.setConstInt32(getOperandConstantInt(op1));
+    if (isOperandConstantInt(op2))
+        rightOperand.setConstInt32(getOperandConstantInt(op2));
 
-    bool leftIsPositiveConstInt32 = leftIsConstInt32 && (leftConstInt32 > 0);
-    bool rightIsPositiveConstInt32 = rightIsConstInt32 && (rightConstInt32 > 0);
+    ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    if (leftIsPositiveConstInt32)
-        emitGetVirtualRegister(op2, rightRegs);
-    else if (rightIsPositiveConstInt32)
+    if (!leftOperand.isPositiveConstInt32())
         emitGetVirtualRegister(op1, leftRegs);
-    else {
-        emitGetVirtualRegister(op1, leftRegs);
+    if (!rightOperand.isPositiveConstInt32())
         emitGetVirtualRegister(op2, rightRegs);
-    }
 
-    JITMulGenerator gen(resultRegs, leftRegs, rightRegs, leftType, rightType,
-        leftIsPositiveConstInt32, rightIsPositiveConstInt32, leftConstInt32, rightConstInt32,
+    JITMulGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
         fpRegT0, fpRegT1, scratchGPR, scratchFPR, profilingCounter);
 
     gen.generateFastPath(*this);
@@ -904,10 +886,13 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     FPRReg scratchFPR = fpRegT2;
 #endif
 
+    SnippetOperand leftOperand(types.first());
+    SnippetOperand rightOperand(types.second());
+    
     emitGetVirtualRegister(op1, leftRegs);
     emitGetVirtualRegister(op2, rightRegs);
 
-    JITSubGenerator gen(resultRegs, leftRegs, rightRegs, types.first(), types.second(),
+    JITSubGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
         fpRegT0, fpRegT1, scratchGPR, scratchFPR);
 
     gen.generateFastPath(*this);

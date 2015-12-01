@@ -2853,30 +2853,26 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     FPRReg scratchFPR = fprScratch.fpr();
 #endif
 
-    ResultType leftType = m_state.forNode(node->child1()).resultType();
-    ResultType rightType = m_state.forNode(node->child2()).resultType();
-    int32_t leftConstInt32 = 0;
-    int32_t rightConstInt32 = 0;
+    SnippetOperand leftOperand(m_state.forNode(node->child1()).resultType());
+    SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
 
-    ASSERT(!leftIsConstInt32 || !rightIsConstInt32);
+    if (leftIsConstInt32)
+        leftOperand.setConstInt32(node->child1()->asInt32());
+    if (rightIsConstInt32)
+        rightOperand.setConstInt32(node->child2()->asInt32());
 
-    if (leftIsConstInt32) {
-        leftConstInt32 = node->child1()->asInt32();
-        right = JSValueOperand(this, node->child2());
-        rightRegs = right->jsValueRegs();
-    } else if (rightIsConstInt32) {
+    ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+    if (!leftOperand.isConst()) {
         left = JSValueOperand(this, node->child1());
         leftRegs = left->jsValueRegs();
-        rightConstInt32 = node->child2()->asInt32();
-    } else {
-        left = JSValueOperand(this, node->child1());
-        leftRegs = left->jsValueRegs();
+    }
+    if (!rightOperand.isConst()) {
         right = JSValueOperand(this, node->child2());
         rightRegs = right->jsValueRegs();
     }
 
-    JITAddGenerator gen(resultRegs, leftRegs, rightRegs, leftType, rightType,
-        leftIsConstInt32, rightIsConstInt32, leftConstInt32, rightConstInt32,
+    JITAddGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
         leftFPR, rightFPR, scratchGPR, scratchFPR);
     gen.generateFastPath(m_jit);
 
@@ -3216,9 +3212,6 @@ void SpeculativeJIT::compileArithSub(Node* node)
         JSValueRegs leftRegs = left.jsValueRegs();
         JSValueRegs rightRegs = right.jsValueRegs();
 
-        ResultType leftType = m_state.forNode(node->child1()).resultType();
-        ResultType rightType = m_state.forNode(node->child2()).resultType();
-
         FPRTemporary leftNumber(this);
         FPRTemporary rightNumber(this);
         FPRReg leftFPR = leftNumber.fpr();
@@ -3239,7 +3232,10 @@ void SpeculativeJIT::compileArithSub(Node* node)
         FPRReg scratchFPR = fprScratch.fpr();
 #endif
 
-        JITSubGenerator gen(resultRegs, leftRegs, rightRegs, leftType, rightType,
+        SnippetOperand leftOperand(m_state.forNode(node->child1()).resultType());
+        SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
+
+        JITSubGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
             leftFPR, rightFPR, scratchGPR, scratchFPR);
         gen.generateFastPath(m_jit);
 

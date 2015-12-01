@@ -50,6 +50,7 @@ public:
     bool isConst() const { return m_type != Variable; }
     bool isConstInt32() const { return m_type == ConstInt32; }
     bool isConstDouble() const { return m_type == ConstDouble; }
+    bool isPositiveConstInt32() const { return isConstInt32() && asConstInt32() > 0; }
 
     int64_t asRawBits() const { return m_val.rawBits; }
 

@@ -29,32 +29,27 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
-#include "ResultType.h"
+#include "SnippetOperand.h"
 
 namespace JSC {
 
 class JITMulGenerator {
 public:
-    JITMulGenerator(JSValueRegs result, JSValueRegs left, JSValueRegs right,
-        ResultType leftType, ResultType rightType, bool leftIsPositiveConstInt32, bool rightIsPositiveConstInt32,
-        int32_t leftConstInt32, int32_t rightConstInt32, FPRReg leftFPR, FPRReg rightFPR,
-        GPRReg scratchGPR, FPRReg scratchFPR, uint32_t* profilingCounter)
-        : m_result(result)
+    JITMulGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
+        JSValueRegs result, JSValueRegs left, JSValueRegs right,
+        FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR, uint32_t* profilingCounter)
+        : m_leftOperand(leftOperand)
+        , m_rightOperand(rightOperand)
+        , m_result(result)
         , m_left(left)
         , m_right(right)
-        , m_leftType(leftType)
-        , m_rightType(rightType)
-        , m_leftIsPositiveConstInt32(leftIsPositiveConstInt32)
-        , m_rightIsPositiveConstInt32(rightIsPositiveConstInt32)
-        , m_leftConstInt32(leftConstInt32)
-        , m_rightConstInt32(rightConstInt32)
         , m_leftFPR(leftFPR)
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
         , m_scratchFPR(scratchFPR)
         , m_profilingCounter(profilingCounter)
     {
-        ASSERT(!leftIsPositiveConstInt32 || !rightIsPositiveConstInt32);
+        ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
     }
 
     void generateFastPath(CCallHelpers&);
@@ -64,15 +59,11 @@ public:
     CCallHelpers::JumpList& slowPathJumpList() { return m_slowPathJumpList; }
 
 private:
+    SnippetOperand m_leftOperand;
+    SnippetOperand m_rightOperand;
     JSValueRegs m_result;
     JSValueRegs m_left;
     JSValueRegs m_right;
-    ResultType m_leftType;
-    ResultType m_rightType;
-    bool m_leftIsPositiveConstInt32;
-    bool m_rightIsPositiveConstInt32;
-    int32_t m_leftConstInt32;
-    int32_t m_rightConstInt32;
     FPRReg m_leftFPR;
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;

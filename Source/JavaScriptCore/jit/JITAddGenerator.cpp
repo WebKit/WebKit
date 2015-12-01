@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "JITAddGenerator.h"
 
 #if ENABLE(JIT)
-#include "JITAddGenerator.h"
 
 namespace JSC {
 
@@ -41,34 +41,24 @@ void JITAddGenerator::generateFastPath(CCallHelpers& jit)
     ASSERT(m_scratchFPR != InvalidFPRReg);
 #endif
 
-    ASSERT(!m_leftIsConstInt32 || !m_rightIsConstInt32);
+    ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
     
-    if (!m_leftType.mightBeNumber() || !m_rightType.mightBeNumber()) {
+    if (!m_leftOperand.mightBeNumber() || !m_rightOperand.mightBeNumber()) {
         ASSERT(!m_didEmitFastPath);
         return;
     }
 
     m_didEmitFastPath = true;
 
-    if (m_leftIsConstInt32 || m_rightIsConstInt32) {
-        JSValueRegs var;
-        ResultType varType = ResultType::unknownType();
-        int32_t constInt32;
-
-        if (m_leftIsConstInt32) {
-            var = m_right;
-            varType = m_rightType;
-            constInt32 = m_leftConstInt32;
-        } else {
-            var = m_left;
-            varType = m_leftType;
-            constInt32 = m_rightConstInt32;
-        }
+    if (m_leftOperand.isConstInt32() || m_rightOperand.isConstInt32()) {
+        JSValueRegs var = m_leftOperand.isConstInt32() ? m_right : m_left;
+        SnippetOperand& varOpr = m_leftOperand.isConstInt32() ? m_rightOperand : m_leftOperand;
+        SnippetOperand& constOpr = m_leftOperand.isConstInt32() ? m_leftOperand : m_rightOperand;
 
         // Try to do intVar + intConstant.
         CCallHelpers::Jump notInt32 = jit.branchIfNotInt32(var);
 
-        m_slowPathJumpList.append(jit.branchAdd32(CCallHelpers::Overflow, var.payloadGPR(), CCallHelpers::Imm32(constInt32), m_scratchGPR));
+        m_slowPathJumpList.append(jit.branchAdd32(CCallHelpers::Overflow, var.payloadGPR(), CCallHelpers::Imm32(constOpr.asConstInt32()), m_scratchGPR));
 
         jit.boxInt32(m_scratchGPR, m_result);
         m_endJumpList.append(jit.jump());
@@ -80,18 +70,18 @@ void JITAddGenerator::generateFastPath(CCallHelpers& jit)
 
         // Try to do doubleVar + double(intConstant).
         notInt32.link(&jit);
-        if (!varType.definitelyIsNumber())
+        if (!varOpr.definitelyIsNumber())
             m_slowPathJumpList.append(jit.branchIfNotNumber(var, m_scratchGPR));
 
         jit.unboxDoubleNonDestructive(var, m_leftFPR, m_scratchGPR, m_scratchFPR);
 
-        jit.move(CCallHelpers::Imm32(constInt32), m_scratchGPR);
+        jit.move(CCallHelpers::Imm32(constOpr.asConstInt32()), m_scratchGPR);
         jit.convertInt32ToDouble(m_scratchGPR, m_rightFPR);
 
         // Fall thru to doubleVar + doubleVar.
 
     } else {
-        ASSERT(!m_leftIsConstInt32 && !m_rightIsConstInt32);
+        ASSERT(!m_leftOperand.isConstInt32() && !m_rightOperand.isConstInt32());
         CCallHelpers::Jump leftNotInt;
         CCallHelpers::Jump rightNotInt;
 
@@ -111,9 +101,9 @@ void JITAddGenerator::generateFastPath(CCallHelpers& jit)
         }
 
         leftNotInt.link(&jit);
-        if (!m_leftType.definitelyIsNumber())
+        if (!m_leftOperand.definitelyIsNumber())
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
-        if (!m_rightType.definitelyIsNumber())
+        if (!m_rightOperand.definitelyIsNumber())
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
 
         jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
@@ -123,7 +113,7 @@ void JITAddGenerator::generateFastPath(CCallHelpers& jit)
         CCallHelpers::Jump rightWasInteger = jit.jump();
 
         rightNotInt.link(&jit);
-        if (!m_rightType.definitelyIsNumber())
+        if (!m_rightOperand.definitelyIsNumber())
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
 
         jit.convertInt32ToDouble(m_left.payloadGPR(), m_leftFPR);

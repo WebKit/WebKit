@@ -440,6 +440,9 @@ static void generateArithSubICFastPath(
 
         CCallHelpers fastPathJIT(&vm, codeBlock);
 
+        SnippetOperand leftOperand(ic.leftType());
+        SnippetOperand rightOperand(ic.rightType());
+
         GPRReg result = record.locations[0].directGPR();
         GPRReg left = record.locations[1].directGPR();
         GPRReg right = record.locations[2].directGPR();
@@ -454,7 +457,7 @@ static void generateArithSubICFastPath(
         FPRReg rightFPR = allocator.allocateScratchFPR();
         FPRReg scratchFPR = InvalidFPRReg;
 
-        JITSubGenerator gen(JSValueRegs(result), JSValueRegs(left), JSValueRegs(right), ic.leftType(), ic.rightType(), leftFPR, rightFPR, scratchGPR, scratchFPR);
+        JITSubGenerator gen(leftOperand, rightOperand, JSValueRegs(result), JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
 
         auto numberOfBytesUsedToPreserveReusedRegisters =
             allocator.preserveReusedRegistersByPushing(fastPathJIT, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);

@@ -29,31 +29,26 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
-#include "ResultType.h"
+#include "SnippetOperand.h"
 
 namespace JSC {
 
 class JITAddGenerator {
 public:
-    JITAddGenerator(JSValueRegs result, JSValueRegs left, JSValueRegs right,
-        ResultType leftType, ResultType rightType, bool leftIsConstInt32, bool rightIsConstInt32,
-        int32_t leftConstInt32, int32_t rightConstInt32, FPRReg leftFPR, FPRReg rightFPR,
-        GPRReg scratchGPR, FPRReg scratchFPR)
-        : m_result(result)
+    JITAddGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
+        JSValueRegs result, JSValueRegs left, JSValueRegs right,
+        FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR)
+        : m_leftOperand(leftOperand)
+        , m_rightOperand(rightOperand)
+        , m_result(result)
         , m_left(left)
         , m_right(right)
-        , m_leftType(leftType)
-        , m_rightType(rightType)
-        , m_leftIsConstInt32(leftIsConstInt32)
-        , m_rightIsConstInt32(rightIsConstInt32)
-        , m_leftConstInt32(leftConstInt32)
-        , m_rightConstInt32(rightConstInt32)
         , m_leftFPR(leftFPR)
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
         , m_scratchFPR(scratchFPR)
     {
-        ASSERT(!leftIsConstInt32 || !rightIsConstInt32);
+        ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
     }
 
     void generateFastPath(CCallHelpers&);
@@ -63,15 +58,11 @@ public:
     CCallHelpers::JumpList& slowPathJumpList() { return m_slowPathJumpList; }
 
 private:
+    SnippetOperand m_leftOperand;
+    SnippetOperand m_rightOperand;
     JSValueRegs m_result;
     JSValueRegs m_left;
     JSValueRegs m_right;
-    ResultType m_leftType;
-    ResultType m_rightType;
-    bool m_leftIsConstInt32;
-    bool m_rightIsConstInt32;
-    int32_t m_leftConstInt32;
-    int32_t m_rightConstInt32;
     FPRReg m_leftFPR;
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;

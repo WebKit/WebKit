@@ -1,3 +1,33 @@
+2015-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Refactor the op_add, op_sub, and op_mul snippets to use the SnippetOperand class.
+        https://bugs.webkit.org/show_bug.cgi?id=151678
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * ftl/FTLCompile.cpp:
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h:
+        (JSC::JITAddGenerator::JITAddGenerator):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_sub):
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::JITMulGenerator):
+        * jit/JITSubGenerator.cpp:
+        (JSC::JITSubGenerator::generateFastPath):
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::JITSubGenerator):
+        * jit/SnippetOperand.h:
+        (JSC::SnippetOperand::isPositiveConstInt32):
+
 2015-11-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3 stackmaps should support early clobber
