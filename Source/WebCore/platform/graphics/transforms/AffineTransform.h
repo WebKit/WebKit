@@ -30,6 +30,7 @@
 #include "PlatformExportMacros.h"
 #include <array>
 #include <wtf/FastMalloc.h>
+#include <wtf/Optional.h>
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
@@ -117,9 +118,8 @@ public:
     WEBCORE_EXPORT double xScale() const;
     WEBCORE_EXPORT double yScale() const;
 
-    double det() const;
-    WEBCORE_EXPORT bool isInvertible() const;
-    WEBCORE_EXPORT AffineTransform inverse() const;
+    bool isInvertible() const; // If you call this this, you're probably doing it wrong.
+    WEBCORE_EXPORT Optional<AffineTransform> inverse() const;
 
     void blend(const AffineTransform& from, double progress);
 

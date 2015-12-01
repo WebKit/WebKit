@@ -227,7 +227,7 @@ void WebView::didFindZoomableArea(const WebCore::IntPoint& target, const WebCore
 
 AffineTransform WebView::transformFromScene() const
 {
-    return transformToScene().inverse();
+    return transformToScene().inverse().valueOr(AffineTransform());
 }
 
 AffineTransform WebView::transformToScene() const

@@ -346,7 +346,8 @@ void CanvasRenderingContext2D::restore()
         return;
     m_path.transform(state().transform);
     m_stateStack.removeLast();
-    m_path.transform(state().transform.inverse());
+    if (Optional<AffineTransform> inverse = state().transform.inverse())
+        m_path.transform(inverse.value());
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
@@ -673,7 +674,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
     if (!state().hasInvertibleTransform)
         return;
 
-    if (!std::isfinite(sx) | !std::isfinite(sy))
+    if (!std::isfinite(sx) || !std::isfinite(sy))
         return;
 
     AffineTransform newTransform = state().transform;
@@ -683,7 +684,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
 
     realizeSaves();
 
-    if (!newTransform.isInvertible()) {
+    if (!sx || !sy) {
         modifiableState().hasInvertibleTransform = false;
         return;
     }
@@ -711,11 +712,6 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
 
     realizeSaves();
 
-    if (!newTransform.isInvertible()) {
-        modifiableState().hasInvertibleTransform = false;
-        return;
-    }
-
     modifiableState().transform = newTransform;
     c->rotate(angleInRadians);
     m_path.transform(AffineTransform().rotate(-angleInRadians / piDouble * 180.0));
@@ -738,11 +734,6 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
         return;
 
     realizeSaves();
-
-    if (!newTransform.isInvertible()) {
-        modifiableState().hasInvertibleTransform = false;
-        return;
-    }
 
     modifiableState().transform = newTransform;
     c->translate(tx, ty);
@@ -767,14 +758,13 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
 
     realizeSaves();
 
-    if (!newTransform.isInvertible()) {
-        modifiableState().hasInvertibleTransform = false;
+    if (auto inverse = newTransform.inverse()) {
+        modifiableState().transform = newTransform;
+        c->concatCTM(transform);
+        m_path.transform(inverse.value());
         return;
     }
-
-    modifiableState().transform = newTransform;
-    c->concatCTM(transform);
-    m_path.transform(transform.inverse());
+    modifiableState().hasInvertibleTransform = false;
 }
 
 void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, float m22, float dx, float dy)
@@ -1108,9 +1098,8 @@ bool CanvasRenderingContext2D::isPointInPathInternal(const Path& path, float x, 
     if (!state().hasInvertibleTransform)
         return false;
 
-    FloatPoint point(x, y);
-    AffineTransform ctm = state().transform;
-    FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
+    FloatPoint transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
+
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
@@ -1129,9 +1118,7 @@ bool CanvasRenderingContext2D::isPointInStrokeInternal(const Path& path, float x
     if (!state().hasInvertibleTransform)
         return false;
 
-    FloatPoint point(x, y);
-    AffineTransform ctm = state().transform;
-    FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
+    FloatPoint transformedPoint = state().transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 

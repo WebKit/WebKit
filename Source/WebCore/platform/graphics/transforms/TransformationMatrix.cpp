@@ -1445,7 +1445,7 @@ bool TransformationMatrix::isInvertible() const
     return true;
 }
 
-TransformationMatrix TransformationMatrix::inverse() const
+Optional<TransformationMatrix> TransformationMatrix::inverse() const
 {
     if (isIdentityOrTranslation()) {
         // identity matrix
@@ -1460,9 +1460,10 @@ TransformationMatrix TransformationMatrix::inverse() const
     }
 
     TransformationMatrix invMat;
-    bool inverted = WebCore::inverse(m_matrix, invMat.m_matrix);
-    if (!inverted)
-        return TransformationMatrix();
+    // FIXME: Use LU decomposition to apply the inverse instead of calculating the inverse explicitly.
+    // Calculating the inverse of a 4x4 matrix using cofactors is numerically unstable and unnecessary to apply the inverse transformation to a point.
+    if (!WebCore::inverse(m_matrix, invMat.m_matrix))
+        return Nullopt;
 
     return invMat;
 }

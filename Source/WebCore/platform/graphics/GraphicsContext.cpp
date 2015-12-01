@@ -705,13 +705,11 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 
 FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const FloatPoint& point, float width, bool printing, bool& shouldAntialias, Color& color)
 {
-    FloatPoint origin;
+    FloatPoint origin = point;
     float thickness = std::max(strokeThickness(), 0.5f);
 
     shouldAntialias = true;
-    if (printing)
-        origin = point;
-    else {
+    if (!printing) {
         AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
         if (transform.preservesAxisAlignment())
             shouldAntialias = false;
@@ -731,7 +729,8 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
 
         FloatPoint devicePoint = transform.mapPoint(point);
         FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
-        origin = transform.inverse().mapPoint(deviceOrigin);
+        if (auto inverse = transform.inverse())
+            origin = inverse.value().mapPoint(deviceOrigin);
     }
     return FloatRect(origin.x(), origin.y(), width, thickness);
 }

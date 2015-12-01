@@ -146,16 +146,16 @@ NPBool NetscapePlugin::convertPoint(double sourceX, double sourceY, NPCoordinate
     if (!getScreenTransform(destSpace, destTransform))
         return false;
 
-    if (!destTransform.isInvertible())
-        return false;
+    if (auto inverse = destTransform.inverse()) {
+        AffineTransform transform = inverse.value() * sourceTransform;
 
-    AffineTransform transform = destTransform.inverse() * sourceTransform;
+        FloatPoint destinationPoint = transform.mapPoint(FloatPoint(sourceX, sourceY));
 
-    FloatPoint destinationPoint = transform.mapPoint(FloatPoint(sourceX, sourceY));
-
-    destX = destinationPoint.x();
-    destY = destinationPoint.y();
-    return true;
+        destX = destinationPoint.x();
+        destY = destinationPoint.y();
+        return true;
+    }
+    return false;
 }
 
 

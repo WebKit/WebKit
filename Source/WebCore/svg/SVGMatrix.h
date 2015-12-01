@@ -106,11 +106,11 @@ public:
 
     SVGMatrix inverse(ExceptionCode& ec) const
     {
-        AffineTransform transform = AffineTransform::inverse();
-        if (!isInvertible())
-            ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
-
-        return transform;
+        if (auto inverse = AffineTransform::inverse())
+            return inverse.value();
+        
+        ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
+        return AffineTransform();
     }
 
     SVGMatrix rotateFromVector(double x, double y, ExceptionCode& ec)

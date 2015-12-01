@@ -101,12 +101,11 @@ RefPtr<WebKitCSSMatrix> WebKitCSSMatrix::multiply(WebKitCSSMatrix* secondMatrix)
 
 RefPtr<WebKitCSSMatrix> WebKitCSSMatrix::inverse(ExceptionCode& ec) const
 {
-    if (!m_matrix.isInvertible()) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
-
-    return WebKitCSSMatrix::create(m_matrix.inverse());
+    if (auto inverse = m_matrix.inverse())
+        return WebKitCSSMatrix::create(inverse.value());
+    
+    ec = NOT_SUPPORTED_ERR;
+    return nullptr;
 }
 
 RefPtr<WebKitCSSMatrix> WebKitCSSMatrix::translate(double x, double y, double z) const

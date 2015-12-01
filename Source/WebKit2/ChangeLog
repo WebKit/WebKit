@@ -1,3 +1,22 @@
+2015-12-01  Alex Christensen  <achristensen@webkit.org>
+
+        Use Optional for matrix inverses
+        https://bugs.webkit.org/show_bug.cgi?id=151575
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::convertFromRootView):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::convertPoint):
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::convertFromPDFViewToRootView):
+        (WebKit::PDFPlugin::convertFromPDFViewToScreen):
+        (WebKit::PDFPlugin::boundsOnScreen):
+        (WebKit::PDFPlugin::geometryDidChange):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::geometryDidChange):
+
 2015-12-01  Tim Horton  <timothy_horton@apple.com>
 
         Remove swipe snapshot before main document load if scroll position is already restored

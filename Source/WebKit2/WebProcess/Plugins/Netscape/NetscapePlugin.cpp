@@ -1122,11 +1122,11 @@ IntPoint NetscapePlugin::convertToRootView(const IntPoint& pointInPluginCoordina
 
 bool NetscapePlugin::convertFromRootView(const IntPoint& pointInRootViewCoordinates, IntPoint& pointInPluginCoordinates)
 {
-    if (!m_pluginToRootViewTransform.isInvertible())
-        return false;
-
-    pointInPluginCoordinates = m_pluginToRootViewTransform.inverse().mapPoint(pointInRootViewCoordinates);
-    return true;
+    if (auto inverse = m_pluginToRootViewTransform.inverse()) {
+        pointInPluginCoordinates = inverse.value().mapPoint(pointInRootViewCoordinates);
+        return true;
+    }
+    return false;
 }
 
 void NetscapePlugin::mutedStateChanged(bool muted)

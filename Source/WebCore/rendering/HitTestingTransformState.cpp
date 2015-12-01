@@ -55,10 +55,11 @@ void HitTestingTransformState::flatten()
 
 void HitTestingTransformState::flattenWithTransform(const TransformationMatrix& t)
 {
-    TransformationMatrix inverseTransform = t.inverse();
-    m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
-    m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad);
-    m_lastPlanarArea = inverseTransform.projectQuad(m_lastPlanarArea);
+    if (Optional<TransformationMatrix> inverse = t.inverse()) {
+        m_lastPlanarPoint = inverse.value().projectPoint(m_lastPlanarPoint);
+        m_lastPlanarQuad = inverse.value().projectQuad(m_lastPlanarQuad);
+        m_lastPlanarArea = inverse.value().projectQuad(m_lastPlanarArea);
+    }
 
     m_accumulatedTransform.makeIdentity();
     m_accumulatingTransform = false;
@@ -66,22 +67,31 @@ void HitTestingTransformState::flattenWithTransform(const TransformationMatrix& 
 
 FloatPoint HitTestingTransformState::mappedPoint() const
 {
-    return m_accumulatedTransform.inverse().projectPoint(m_lastPlanarPoint);
+    if (auto inverse = m_accumulatedTransform.inverse())
+        return inverse.value().projectPoint(m_lastPlanarPoint);
+    return m_lastPlanarPoint;
 }
 
 FloatQuad HitTestingTransformState::mappedQuad() const
 {
-    return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarQuad);
+    if (auto inverse = m_accumulatedTransform.inverse())
+        return inverse.value().projectQuad(m_lastPlanarQuad);
+    return m_lastPlanarQuad;
 }
 
 FloatQuad HitTestingTransformState::mappedArea() const
 {
-    return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarArea);
+    if (auto inverse = m_accumulatedTransform.inverse())
+        return inverse.value().projectQuad(m_lastPlanarArea);
+    return m_lastPlanarArea;
 }
 
 LayoutRect HitTestingTransformState::boundsOfMappedArea() const
 {
-    return m_accumulatedTransform.inverse().clampedBoundsOfProjectedQuad(m_lastPlanarArea);
+    if (auto inverse = m_accumulatedTransform.inverse())
+        return inverse.value().clampedBoundsOfProjectedQuad(m_lastPlanarArea);
+    TransformationMatrix identity;
+    return identity.clampedBoundsOfProjectedQuad(m_lastPlanarArea);
 }
 
 } // namespace WebCore

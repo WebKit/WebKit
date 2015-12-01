@@ -1,3 +1,103 @@
+2015-12-01  Alex Christensen  <achristensen@webkit.org>
+
+        Use Optional for matrix inverses
+        https://bugs.webkit.org/show_bug.cgi?id=151575
+
+        Reviewed by Myles C. Maxfield.
+
+        This patch should have no change in behavior.  Some unnecessary checks are removed.
+        There are a few places where we are no longer multiplying by the identity matrix.
+        This should remind future coders that not all matrices are invertible.
+
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::inverse):
+        (WebCore::WebKitCSSMatrix::translate):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::restore):
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+        (WebCore::CanvasRenderingContext2D::isPointInPathInternal):
+        (WebCore::CanvasRenderingContext2D::isPointInStrokeInternal):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::computeLineBoundsAndAntialiasingModeForText):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::calculateLayerBoundingRect):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::putByteArray):
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::setFilterScale):
+        (WebCore::Filter::absoluteTransform):
+        (WebCore::Filter::mapAbsolutePointToLocalPoint):
+        (WebCore::Filter::renderingMode):
+        (WebCore::Filter::setRenderingMode):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildrenWithReplica):
+        (WebCore::TextureMapperLayer::replicaTransform):
+        (WebCore::TextureMapperLayer::setAnimatedFilters):
+        (WebCore::TextureMapperLayer::mapScrollOffset):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::transformedVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::computeTransformedVisibleRect):
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::yScale):
+        (WebCore::det):
+        (WebCore::AffineTransform::isInvertible):
+        (WebCore::AffineTransform::inverse):
+        (WebCore::AffineTransform::det): Deleted.
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::mappedPoint):
+        (WebCore::TransformState::mappedQuad):
+        (WebCore::TransformState::mapQuad):
+        (WebCore::TransformState::flattenWithTransform):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::isInvertible):
+        (WebCore::TransformationMatrix::inverse):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/HitTestingTransformState.cpp:
+        (WebCore::HitTestingTransformState::flattenWithTransform):
+        (WebCore::HitTestingTransformState::mappedPoint):
+        (WebCore::HitTestingTransformState::mappedQuad):
+        (WebCore::HitTestingTransformState::mappedArea):
+        (WebCore::HitTestingTransformState::boundsOfMappedArea):
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::applyTransform):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::nodeAtFloatPoint):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::setupNonScalingStrokeContext):
+        (WebCore::RenderSVGShape::nodeAtFloatPoint):
+        (WebCore::RenderSVGShape::calculateStrokeBoundingBox):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithShadows):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::clipToImageBuffer):
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGMatrix.h:
+        (WebCore::SVGMatrix::inverse):
+        (WebCore::SVGMatrix::rotateFromVector):
+
 2015-12-01  Tim Horton  <timothy_horton@apple.com>
 
         Remove swipe snapshot before main document load if scroll position is already restored

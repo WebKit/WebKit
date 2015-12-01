@@ -399,7 +399,7 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext& context, const F
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
         FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(shadowedRect));
         transformedPolygon.move(m_offset);
-        layerRect = transform.inverse().mapQuad(transformedPolygon).boundingBox();
+        layerRect = transform.inverse().valueOr(AffineTransform()).mapQuad(transformedPolygon).boundingBox();
     } else {
         layerRect = shadowedRect;
         layerRect.move(m_offset);

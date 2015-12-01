@@ -318,10 +318,14 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     // Set up context for using drawImage as a direct bit copy
     CGContextRef destContext = context().platformContext();
     CGContextSaveGState(destContext);
-    if (coordinateSystem == LogicalCoordinateSystem)
-        CGContextConcatCTM(destContext, AffineTransform(getUserToBaseCTM(destContext)).inverse());
-    else
-        CGContextConcatCTM(destContext, AffineTransform(CGContextGetCTM(destContext)).inverse());
+    
+    if (coordinateSystem == LogicalCoordinateSystem) {
+        if (auto inverse = AffineTransform(getUserToBaseCTM(destContext)).inverse())
+            CGContextConcatCTM(destContext, inverse.value());
+    } else {
+        if (auto inverse = AffineTransform(CGContextGetCTM(destContext)).inverse())
+            CGContextConcatCTM(destContext, inverse.value());
+    }
     CGContextResetClip(destContext);
     CGContextSetInterpolationQuality(destContext, kCGInterpolationNone);
     CGContextSetAlpha(destContext, 1.0);

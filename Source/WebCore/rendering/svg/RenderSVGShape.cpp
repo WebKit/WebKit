@@ -197,11 +197,12 @@ Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransfo
 
 bool RenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
 {
-    if (!strokeTransform.isInvertible())
+    Optional<AffineTransform> inverse = strokeTransform.inverse();
+    if (!inverse)
         return false;
 
     stateSaver.save();
-    stateSaver.context()->concatCTM(strokeTransform.inverse());
+    stateSaver.context()->concatCTM(inverse.value());
     return true;
 }
 
@@ -334,7 +335,7 @@ bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
     if (hitTestAction != HitTestForeground)
         return false;
 
-    FloatPoint localPoint = m_localTransform.inverse().mapPoint(pointInParent);
+    FloatPoint localPoint = m_localTransform.inverse().valueOr(AffineTransform()).mapPoint(pointInParent);
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;
@@ -406,10 +407,10 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
         BoundingRectStrokeStyleApplier strokeStyle(*this);
         if (hasNonScalingStroke()) {
             AffineTransform nonScalingTransform = nonScalingStrokeTransform();
-            if (nonScalingTransform.isInvertible()) {
+            if (Optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
                 Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
                 FloatRect strokeBoundingRect = usePath->strokeBoundingRect(&strokeStyle);
-                strokeBoundingRect = nonScalingTransform.inverse().mapRect(strokeBoundingRect);
+                strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
                 strokeBoundingBox.unite(strokeBoundingRect);
             }
         } else

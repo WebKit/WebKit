@@ -92,23 +92,23 @@ double AffineTransform::yScale() const
     return sqrt(m_transform[2] * m_transform[2] + m_transform[3] * m_transform[3]);
 }
 
-double AffineTransform::det() const
+static double det(const std::array<double, 6>& transform)
 {
-    return m_transform[0] * m_transform[3] - m_transform[1] * m_transform[2];
+    return transform[0] * transform[3] - transform[1] * transform[2];
 }
 
 bool AffineTransform::isInvertible() const
 {
-    double determinant = det();
+    double determinant = det(m_transform);
 
     return std::isfinite(determinant) && determinant != 0;
 }
 
-AffineTransform AffineTransform::inverse() const
+Optional<AffineTransform> AffineTransform::inverse() const
 {
-    double determinant = det();
+    double determinant = det(m_transform);
     if (!std::isfinite(determinant) || determinant == 0)
-        return AffineTransform();
+        return Nullopt;
 
     AffineTransform result;
     if (isIdentityOrTranslation()) {

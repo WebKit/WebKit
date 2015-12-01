@@ -355,7 +355,7 @@ void SVGRenderSupport::intersectRepaintRectWithShadows(const RenderElement& rend
     if (localToRootTransform.isIdentity())
         return;
 
-    AffineTransform rootToLocalTransform = localToRootTransform.inverse();
+    AffineTransform rootToLocalTransform = localToRootTransform.inverse().valueOr(AffineTransform());
     repaintRect = rootToLocalTransform.mapRect(repaintRect);
 }
 
