@@ -1,3 +1,14 @@
+2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Amazon.com Additional Information links aren't clickable
+        https://bugs.webkit.org/show_bug.cgi?id=151401
+        <rdar://problem/23454261>
+
+        Reviewed by Darin Adler.
+
+        * fast/block/float/hit-test-on-overlapping-floats-expected.txt: Added.
+        * fast/block/float/hit-test-on-overlapping-floats.html: Added.
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Iterating index cursors to a specific key is busted.

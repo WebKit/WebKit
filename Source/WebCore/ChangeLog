@@ -1,3 +1,22 @@
+2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Amazon.com Additional Information links aren't clickable
+        https://bugs.webkit.org/show_bug.cgi?id=151401
+        <rdar://problem/23454261>
+
+        Reviewed by Darin Adler.
+
+        The cause of this issue is that the painting order is different from the hittest order so we can end up
+        with visible but unreachable content. To fix this, the executation flow of hittest has been reordered.
+        According to the paint system, which renders the webpage from the bottom RenderLayer to the top, contents
+        are rendered before floats. Hence, for the hittest, which determines the hitted location from top RenderLayer
+        to the bottom, should do it reversedly. Now, hittest will first test floats then contents.
+
+        Test: fast/block/float/hit-test-on-overlapping-floats.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+
 2015-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fix possible crash with animated layers in reflections
