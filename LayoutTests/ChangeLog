@@ -1,5 +1,14 @@
 2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Test gardening after r192894
+
+        Unreviewed.
+
+        * fast/text/small-caps-complex-expected.html:
+        * fast/text/small-caps-complex.html:
+
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [iOS] Adjacent emoji overlap each other
         https://bugs.webkit.org/show_bug.cgi?id=151690
         <rdar://problem/23430453>
