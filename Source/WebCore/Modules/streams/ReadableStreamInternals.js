@@ -116,7 +116,7 @@ function teeReadableStreamPullFunction(teeState, reader, shouldClone)
     "use strict";
 
     return function() {
-        @Promise.prototype.@then.@call(reader.read(), function(result) {
+        @Promise.prototype.@then.@call(@readFromReadableStreamReader(reader), function(result) {
             @assert(@isObject(result));
             @assert(typeof result.done === "boolean");
             if (result.done && !teeState.closedOrErrored) {

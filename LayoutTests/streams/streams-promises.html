@@ -125,4 +125,28 @@ test(function() {
         ReadableStream.prototype.getReader = ReadableStreamGetReaderBackup;
     }
 }, 'Streams should not directly use ReadableStream public APIs');
+
+promise_test(function() {
+    const ReadableStreamReader = new ReadableStream().getReader().constructor;
+    const ReadableStreamReaderReadBackup = ReadableStreamReader.prototype.read;
+
+    function cleanTest() {
+        ReadableStreamReader.prototype.read = ReadableStreamReaderReadBackup;
+    }
+
+    try {
+        ReadableStreamReader.prototype.read = function() { assert_unreached("streams should not use this ReadableStreamReader.read method"); };
+
+        [s1, s2] = new ReadableStream({
+            start: function(controller) {
+                controller.close();
+            }
+        }).tee();
+        return s1.getReader().closed.then(cleanTest, cleanTest);
+
+    } catch (error) {
+        cleanTest();
+        assert_unreached("test should not throw");
+    }
+}, 'Streams should not directly use ReadableStreamReader read public API');
 </script>

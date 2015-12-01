@@ -1,5 +1,17 @@
 2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Streams API] pull function of tee should call readFromReadableStreamReader directly
+        https://bugs.webkit.org/show_bug.cgi?id=151497
+
+        Reviewed by Darin Adler.
+
+        Covered by added test.
+
+        * Modules/streams/ReadableStreamInternals.js:
+        (teeReadableStreamPullFunction): directly calling readFromReadableStreamReader.
+
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Streams API] Clean-up JS built-in code using arrow functions
         https://bugs.webkit.org/show_bug.cgi?id=151489
 
