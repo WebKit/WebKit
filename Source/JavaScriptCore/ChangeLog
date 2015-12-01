@@ -1,3 +1,12 @@
+2015-11-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(DFG_JIT) build after r192699
+        https://bugs.webkit.org/show_bug.cgi?id=151616
+
+        Reviewed by Darin Adler.
+
+        * assembler/MacroAssembler.h:
+
 2015-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Object::{freeze, seal} perform preventExtensionsTransition twice

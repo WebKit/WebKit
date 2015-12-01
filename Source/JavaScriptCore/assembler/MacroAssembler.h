@@ -1301,6 +1301,7 @@ public:
 
 #endif // !CPU(X86_64)
 
+#if ENABLE(B3_JIT)
     template<typename LeftType, typename RightType>
     void moveDoubleConditionally32(RelationalCondition cond, LeftType left, RightType right, FPRegisterID src, FPRegisterID dest)
     {
@@ -1355,6 +1356,7 @@ public:
         moveDouble(src, dest);
         falseCase.link(this);
     }
+#endif
 
     void lea(Address address, RegisterID dest)
     {
