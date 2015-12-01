@@ -1311,7 +1311,7 @@ EOF
             if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                unshift(@arguments, "item");
+                unshift(@arguments, "*item");
                 $functionName = "WebCore::${implementedBy}::${functionName}";
             } else {
                 $functionName = "item->${functionName}";
@@ -1323,7 +1323,7 @@ EOF
             if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                unshift(@arguments, "item");
+                unshift(@arguments, "*item");
                 $functionName = "WebCore::${implementedBy}::${functionName}";
                 $contentHead = "${assign}${assignPre}${functionName}(" . join(", ", @arguments) . ")${assignPost};\n";
             } else {
@@ -1335,7 +1335,7 @@ EOF
             if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                unshift(@arguments, "item");
+                unshift(@arguments, "*item");
                 $contentHead = "${assign}${assignPre}WebCore::${implementedBy}::${functionImplementationName}(" . join(", ", @arguments) . ")${assignPost};\n";
             } else {
                 $contentHead = "${assign}${assignPre}item->${functionImplementationName}(" . join(", ", @arguments) . ")${assignPost};\n";

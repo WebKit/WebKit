@@ -296,7 +296,7 @@ void webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
     WebCore::TestInterface* item = WebKit::core(self);
-    WebCore::TestSupplemental::supplementalMethod1(item);
+    WebCore::TestSupplemental::supplementalMethod1(*item);
 #else
     UNUSED_PARAM(self);
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
@@ -322,7 +322,7 @@ WebKitDOMTestObj* webkit_dom_test_interface_supplemental_method2(WebKitDOMTestIn
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
     WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(item, convertedStrArg, convertedObjArg, ec));
+    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(*item, convertedStrArg, convertedObjArg, ec));
     if (ec) {
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
@@ -520,7 +520,7 @@ void webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* sel
     g_return_if_fail(value);
     WebCore::TestInterface* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    WebCore::TestSupplemental::setSupplementalStr2(item, convertedValue);
+    WebCore::TestSupplemental::setSupplementalStr2(*item, convertedValue);
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(value);
@@ -542,7 +542,7 @@ WebKitDOMNode* webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInte
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
     WebCore::TestInterface* item = WebKit::core(self);
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(WebCore::TestSupplemental::supplementalNode(item));
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(WebCore::TestSupplemental::supplementalNode(*item));
     return WebKit::kit(gobjectResult.get());
 #else
     UNUSED_PARAM(self);
@@ -567,7 +567,7 @@ void webkit_dom_test_interface_set_supplemental_node(WebKitDOMTestInterface* sel
     g_return_if_fail(WEBKIT_DOM_IS_NODE(value));
     WebCore::TestInterface* item = WebKit::core(self);
     WebCore::Node* convertedValue = WebKit::core(value);
-    WebCore::TestSupplemental::setSupplementalNode(item, convertedValue);
+    WebCore::TestSupplemental::setSupplementalNode(*item, convertedValue);
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(value);

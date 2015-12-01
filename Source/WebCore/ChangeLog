@@ -1,3 +1,16 @@
+2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r192849.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_supplemental_method1):
+        (webkit_dom_test_interface_supplemental_method2):
+        (webkit_dom_test_interface_set_supplemental_str2):
+        (webkit_dom_test_interface_get_supplemental_node):
+        (webkit_dom_test_interface_set_supplemental_node):
+
 2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Remove use of @catch for exposed promises
