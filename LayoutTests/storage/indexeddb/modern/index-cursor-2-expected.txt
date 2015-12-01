@@ -55,7 +55,7 @@ Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: C
-Cursor primary key is: 9
+Cursor primary key is: 7
 Cursor value is: [object Object]
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.bound('B', 'C'))
@@ -153,13 +153,13 @@ Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: C
-Cursor primary key is: 9
+Cursor primary key is: 7
 Cursor value is: [object Object]
 Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: B
-Cursor primary key is: 6
+Cursor primary key is: 4
 Cursor value is: [object Object]
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.upperBound('B'))
@@ -257,13 +257,13 @@ Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: B
-Cursor primary key is: 6
+Cursor primary key is: 4
 Cursor value is: [object Object]
 Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: A
-Cursor primary key is: 3
+Cursor primary key is: 1
 Cursor value is: [object Object]
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.lowerBound('C'))
@@ -361,13 +361,13 @@ Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: D
-Cursor primary key is: 12
+Cursor primary key is: 10
 Cursor value is: [object Object]
 Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: C
-Cursor primary key is: 9
+Cursor primary key is: 7
 Cursor value is: [object Object]
 
 Starting a new cursor: testCursorDirection('next', IDBKeyRange.only('B'))
@@ -423,7 +423,7 @@ Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: B
-Cursor primary key is: 6
+Cursor primary key is: 4
 Cursor value is: [object Object]
 Done
 

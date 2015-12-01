@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorInfo.h"
 #include "IDBKeyData.h"
 #include "IndexValueEntry.h"
 #include <set>
@@ -67,7 +68,7 @@ public:
         }
 
         Iterator(IndexValueStore&, std::set<IDBKeyData>::iterator, IndexValueEntry::Iterator);
-        Iterator(IndexValueStore&, std::set<IDBKeyData>::reverse_iterator, IndexValueEntry::Iterator);
+        Iterator(IndexValueStore&, CursorDuplicity, std::set<IDBKeyData>::reverse_iterator, IndexValueEntry::Iterator);
 
         void invalidate();
         bool isValid();
@@ -82,6 +83,7 @@ public:
     private:
         IndexValueStore* m_store { nullptr };
         bool m_forward { true };
+        CursorDuplicity m_duplicity { CursorDuplicity::Duplicates };
         std::set<IDBKeyData>::iterator m_forwardIterator;
         std::set<IDBKeyData>::reverse_iterator m_reverseIterator;
 
@@ -90,11 +92,11 @@ public:
 
     // Returns an iterator pointing to the first primaryKey record in the requested key, or the next key if it doesn't exist.
     Iterator find(const IDBKeyData&, bool open = false);
-    Iterator reverseFind(const IDBKeyData&, bool open = false);
+    Iterator reverseFind(const IDBKeyData&, CursorDuplicity, bool open = false);
 
     // Returns an iterator pointing to the key/primaryKey record, or the next one after it if it doesn't exist.
     Iterator find(const IDBKeyData&, const IDBKeyData& primaryKey);
-    Iterator reverseFind(const IDBKeyData&, const IDBKeyData& primaryKey);
+    Iterator reverseFind(const IDBKeyData&, const IDBKeyData& primaryKey, CursorDuplicity);
 
 private:
     std::set<IDBKeyData>::iterator lowestIteratorInRange(const IDBKeyRangeData&) const;

@@ -231,7 +231,7 @@ IndexValueStore::Iterator IndexValueStore::find(const IDBKeyData& key, const IDB
     return { *this, iterator, primaryIterator };
 }
 
-IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, bool open)
+IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, CursorDuplicity duplicity, bool open)
 {
     IDBKeyRangeData range;
     if (!key.isNull())
@@ -247,12 +247,12 @@ IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, bo
     auto record = m_records.get(*iterator);
     ASSERT(record);
 
-    auto primaryIterator = record->reverseBegin();
+    auto primaryIterator = record->reverseBegin(duplicity);
     ASSERT(primaryIterator.isValid());
-    return { *this, iterator, primaryIterator };
+    return { *this, duplicity, iterator, primaryIterator };
 }
 
-IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, const IDBKeyData& primaryKey)
+IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, const IDBKeyData& primaryKey, CursorDuplicity duplicity)
 {
     ASSERT(!key.isNull());
     ASSERT(!primaryKey.isNull());
@@ -268,9 +268,9 @@ IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, co
     auto record = m_records.get(*iterator);
     ASSERT(record);
 
-    auto primaryIterator = record->reverseFind(primaryKey);
+    auto primaryIterator = record->reverseFind(primaryKey, duplicity);
     if (primaryIterator.isValid())
-        return { *this, iterator, primaryIterator };
+        return { *this, duplicity, iterator, primaryIterator };
 
     // If we didn't find a primary key iterator in this entry,
     // we need to move on to start of the next record.
@@ -281,10 +281,10 @@ IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, co
     record = m_records.get(*iterator);
     ASSERT(record);
 
-    primaryIterator = record->reverseBegin();
+    primaryIterator = record->reverseBegin(duplicity);
     ASSERT(primaryIterator.isValid());
 
-    return { *this, iterator, primaryIterator };
+    return { *this, duplicity, iterator, primaryIterator };
 }
 
 
@@ -295,9 +295,10 @@ IndexValueStore::Iterator::Iterator(IndexValueStore& store, std::set<IDBKeyData>
 {
 }
 
-IndexValueStore::Iterator::Iterator(IndexValueStore& store, std::set<IDBKeyData>::reverse_iterator iterator, IndexValueEntry::Iterator primaryIterator)
+IndexValueStore::Iterator::Iterator(IndexValueStore& store, CursorDuplicity duplicity, std::set<IDBKeyData>::reverse_iterator iterator, IndexValueEntry::Iterator primaryIterator)
     : m_store(&store)
     , m_forward(false)
+    , m_duplicity(duplicity)
     , m_reverseIterator(iterator)
     , m_primaryKeyIterator(primaryIterator)
 {
@@ -330,7 +331,7 @@ IndexValueStore::Iterator& IndexValueStore::Iterator::nextIndexEntry()
         auto* entry = m_store->m_records.get(*m_reverseIterator);
         ASSERT(entry);
 
-        m_primaryKeyIterator = entry->reverseBegin();
+        m_primaryKeyIterator = entry->reverseBegin(m_duplicity);
         ASSERT(m_primaryKeyIterator.isValid());
     }
     

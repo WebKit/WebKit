@@ -45,6 +45,11 @@ enum class CursorType;
 
 struct IDBKeyRangeData;
 
+enum class CursorDuplicity {
+    Duplicates,
+    NoDuplicates,
+};
+
 class IDBCursorInfo {
 public:
     static IDBCursorInfo objectStoreCursor(IDBClient::IDBTransaction&, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection);
@@ -60,7 +65,7 @@ public:
     const IDBKeyRangeData& range() const { return m_range; }
 
     bool isDirectionForward() const;
-    bool isDirectionNoDuplicate() const;
+    CursorDuplicity duplicity() const;
 
     IDBCursorInfo isolatedCopy() const;
 

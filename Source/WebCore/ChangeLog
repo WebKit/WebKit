@@ -1,3 +1,33 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: "prevunique" cursors should point at the lowest primary key that matches, not the highest.
+        https://bugs.webkit.org/show_bug.cgi?id=151675.
+
+        Reviewed by Darin Adler.
+
+        No new tests (Covered by at least one failing test that now passes, and updates to previously incorrect tests).
+
+        * Modules/indexeddb/server/IndexValueEntry.cpp:
+        (WebCore::IDBServer::IndexValueEntry::reverseBegin): If CursorDuplicity is NoDuplicates, start at the lowest
+          entry instead of the highest.
+        (WebCore::IDBServer::IndexValueEntry::reverseFind):
+        * Modules/indexeddb/server/IndexValueEntry.h:
+        
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::reverseFind):
+        (WebCore::IDBServer::IndexValueStore::Iterator::Iterator):
+        (WebCore::IDBServer::IndexValueStore::Iterator::nextIndexEntry):
+        * Modules/indexeddb/server/IndexValueStore.h:
+        
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        (WebCore::IDBServer::MemoryIndexCursor::MemoryIndexCursor):
+        (WebCore::IDBServer::MemoryIndexCursor::iterate):
+        
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::duplicity):
+        (WebCore::IDBCursorInfo::isDirectionNoDuplicate): Deleted.
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+
 2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test http/tests/misc/detach-during-notifyDone.html

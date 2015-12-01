@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorInfo.h"
+
 namespace WebCore {
 namespace IDBServer {
 
@@ -176,7 +178,7 @@ IndexValueEntry::Iterator IndexValueEntry::begin()
     return { *this, m_orderedKeys->begin() };
 }
 
-IndexValueEntry::Iterator IndexValueEntry::reverseBegin()
+IndexValueEntry::Iterator IndexValueEntry::reverseBegin(CursorDuplicity duplicity)
 {
     if (m_unique) {
         ASSERT(m_key);
@@ -184,7 +186,13 @@ IndexValueEntry::Iterator IndexValueEntry::reverseBegin()
     }
 
     ASSERT(m_orderedKeys);
-    return { *this, m_orderedKeys->rbegin() };
+
+    if (duplicity == CursorDuplicity::Duplicates)
+        return { *this, m_orderedKeys->rbegin() };
+
+    auto iterator = m_orderedKeys->rend();
+    --iterator;
+    return { *this, iterator };
 }
 
 IndexValueEntry::Iterator IndexValueEntry::find(const IDBKeyData& key)
@@ -202,7 +210,7 @@ IndexValueEntry::Iterator IndexValueEntry::find(const IDBKeyData& key)
     return { *this, iterator };
 }
 
-IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key)
+IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key, CursorDuplicity)
 {
     if (m_unique) {
         ASSERT(m_key);

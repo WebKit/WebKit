@@ -84,9 +84,9 @@ bool IDBCursorInfo::isDirectionForward() const
     return m_direction == IndexedDB::CursorDirection::Next || m_direction == IndexedDB::CursorDirection::NextNoDuplicate;
 }
 
-bool IDBCursorInfo::isDirectionNoDuplicate() const
+CursorDuplicity IDBCursorInfo::duplicity() const
 {
-    return m_direction == IndexedDB::CursorDirection::NextNoDuplicate || m_direction == IndexedDB::CursorDirection::PrevNoDuplicate;
+    return m_direction == IndexedDB::CursorDirection::NextNoDuplicate || m_direction == IndexedDB::CursorDirection::PrevNoDuplicate ? CursorDuplicity::NoDuplicates : CursorDuplicity::Duplicates;
 }
 
 IDBCursorInfo IDBCursorInfo::isolatedCopy() const

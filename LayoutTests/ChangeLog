@@ -1,3 +1,15 @@
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: "prevunique" cursors should point at the lowest primary key that matches, not the highest.
+        https://bugs.webkit.org/show_bug.cgi?id=151675.
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/index-cursor-1-expected.txt:
+        * storage/indexeddb/modern/index-cursor-2-expected.txt:
+        * storage/indexeddb/modern/index-cursor-3-expected.txt:
+
 2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test http/tests/misc/detach-during-notifyDone.html

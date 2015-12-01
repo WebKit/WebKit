@@ -35,6 +35,8 @@ namespace WebCore {
 
 class ThreadSafeDataBuffer;
 
+enum class CursorDuplicity;
+
 namespace IDBServer {
 
 class IndexValueEntry {
@@ -77,12 +79,12 @@ public:
     };
 
     Iterator begin();
-    Iterator reverseBegin();
+    Iterator reverseBegin(CursorDuplicity);
 
     // Finds the key, or the next higher record after the key.
     Iterator find(const IDBKeyData&);
     // Finds the key, or the next lowest record before the key.
-    Iterator reverseFind(const IDBKeyData&);
+    Iterator reverseFind(const IDBKeyData&, CursorDuplicity);
 
     bool unique() const { return m_unique; }
 

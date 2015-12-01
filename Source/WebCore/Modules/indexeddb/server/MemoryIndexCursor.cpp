@@ -50,7 +50,7 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& in
     if (m_info.isDirectionForward())
         iterator = valueStore->find(m_info.range().lowerKey, m_info.range().lowerOpen);
     else
-        iterator = valueStore->reverseFind(m_info.range().upperKey, m_info.range().upperOpen);
+        iterator = valueStore->reverseFind(m_info.range().upperKey, m_info.duplicity(), m_info.range().upperOpen);
 
     if (iterator.isValid()) {
         m_currentKey = iterator.key();
@@ -90,7 +90,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetRes
         if (m_info.isDirectionForward())
             m_currentIterator = valueStore->find(m_currentKey);
         else
-            m_currentIterator = valueStore->reverseFind(m_currentKey);
+            m_currentIterator = valueStore->reverseFind(m_currentKey, m_info.duplicity());
 
         if (!m_currentIterator.isValid()) {
             m_currentKey = { };
@@ -130,10 +130,10 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetRes
             m_currentIterator = valueStore->find(m_currentKey, true);
             break;
         case IndexedDB::CursorDirection::Prev:
-            m_currentIterator = valueStore->reverseFind(m_currentKey, m_currentPrimaryKey);
+            m_currentIterator = valueStore->reverseFind(m_currentKey, m_currentPrimaryKey, m_info.duplicity());
             break;
         case IndexedDB::CursorDirection::PrevNoDuplicate:
-            m_currentIterator = valueStore->reverseFind(m_currentKey, true);
+            m_currentIterator = valueStore->reverseFind(m_currentKey, m_info.duplicity(), true);
             break;
         }
 
@@ -155,7 +155,7 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetRes
     ASSERT(m_currentIterator.isValid());
 
     while (count) {
-        if (m_info.isDirectionNoDuplicate())
+        if (m_info.duplicity() == CursorDuplicity::NoDuplicates)
             m_currentIterator.nextIndexEntry();
         else
             ++m_currentIterator;

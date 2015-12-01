@@ -240,35 +240,26 @@ Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: I
-Cursor primary key is: 18
+Cursor primary key is: 17
 Cursor value is: [object Object]
 Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: H
-Cursor primary key is: 16
+Cursor primary key is: 15
 Cursor value is: [object Object]
-Deleted key 16 from object store
 Deleted key 15 from object store
 Deleted key 14 from object store
-Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: G
-Cursor primary key is: 13
-Cursor value is: [object Object]
 Deleted key 13 from object store
-Deleted key 12 from object store
-Deleted key 11 from object store
 Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
-Cursor key is: E
-Cursor primary key is: 10
+Cursor key is: F
+Cursor primary key is: 11
 Cursor value is: [object Object]
+Deleted key 11 from object store
 Deleted key 10 from object store
 Deleted key 9 from object store
-Deleted key 8 from object store
 Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
@@ -282,17 +273,10 @@ Success opening or iterating cursor
 Cursor direction is: prevunique
 Cursor source is: TestIndex1
 Cursor key is: B
-Cursor primary key is: 4
+Cursor primary key is: 3
 Cursor value is: [object Object]
-Deleted key 4 from object store
 Deleted key 3 from object store
 Deleted key 2 from object store
-Success opening or iterating cursor
-Cursor direction is: prevunique
-Cursor source is: TestIndex1
-Cursor key is: A
-Cursor primary key is: 1
-Cursor value is: [object Object]
 Deleted key 1 from object store
 Success opening or iterating cursor
 Done
