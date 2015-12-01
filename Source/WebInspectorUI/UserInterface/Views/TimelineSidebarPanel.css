@@ -144,7 +144,6 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar {
     display: flex;
     height: 23px;
     border-top: 1px solid hsl(0, 0%, 70%);
-    top: 166px;
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar {
@@ -170,7 +169,6 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline
 .sidebar > .panel.navigation.timeline > .timelines-content {
     position: absolute;
     top: 58px;
-    height: 108px;
     left: 0;
     right: 0;
 

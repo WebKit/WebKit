@@ -31,19 +31,19 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this.contentBrowser = contentBrowser;
 
-        var timelineEventsTitleBarContainer = document.createElement("div");
-        timelineEventsTitleBarContainer.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
-        timelineEventsTitleBarContainer.classList.add(WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass);
+        this._timelineEventsTitleBarContainer = document.createElement("div");
+        this._timelineEventsTitleBarContainer.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
+        this._timelineEventsTitleBarContainer.classList.add(WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass);
 
         this._timelineEventsTitleBarElement = document.createElement("div");
         this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarTextStyleClass);
-        timelineEventsTitleBarContainer.appendChild(this._timelineEventsTitleBarElement);
+        this._timelineEventsTitleBarContainer.appendChild(this._timelineEventsTitleBarElement);
 
         this._timelineEventsTitleBarScopeContainer = document.createElement("div");
         this._timelineEventsTitleBarScopeContainer.classList.add(WebInspector.TimelineSidebarPanel.TitleBarScopeBarStyleClass);
-        timelineEventsTitleBarContainer.appendChild(this._timelineEventsTitleBarScopeContainer);
+        this._timelineEventsTitleBarContainer.appendChild(this._timelineEventsTitleBarScopeContainer);
 
-        this.element.insertBefore(timelineEventsTitleBarContainer, this.element.firstChild);
+        this.element.insertBefore(this._timelineEventsTitleBarContainer, this.element.firstChild);
 
         this.contentTreeOutlineLabel = "";
 
@@ -73,16 +73,23 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._timelineTreeElementMap = new Map;
 
+        this._basicTitleBar = document.createElement("div");
+        this._basicTitleBar.textContent = WebInspector.UIString("Timelines");
+        this._basicTitleBar.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
+        this._basicTitleBar.classList.add(WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass);
+        this.element.insertBefore(this._basicTitleBar, this.element.firstChild);
+
         if (WebInspector.FPSInstrument.supported()) {
             var timelinesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineSidebarPanel.ViewMode.Timelines, WebInspector.UIString("Timelines"))
             var renderingFramesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames, WebInspector.UIString("Rendering Frames"))
             this._viewModeNavigationBar = new WebInspector.NavigationBar(null, [timelinesNavigationItem, renderingFramesNavigationItem], "tablist");
             this._viewModeNavigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._viewModeSelected, this);
 
-            var container = document.createElement("div");
-            container.className = "navigation-bar-container";
-            container.appendChild(this._viewModeNavigationBar.element);
-            this.element.insertBefore(container, this.element.firstChild);
+            this._renderingFramesTitleBar = document.createElement("div");
+            this._renderingFramesTitleBar.className = "navigation-bar-container";
+            this._renderingFramesTitleBar.appendChild(this._viewModeNavigationBar.element);
+            this._renderingFramesTitleBar.hidden = true;
+            this.element.insertBefore(this._renderingFramesTitleBar, this.element.firstChild);
 
             this._chartColors = new Map;
             this._chartColors.set(WebInspector.RenderingFrameTimelineRecord.TaskType.Script, "rgb(153, 113, 185)");
@@ -106,12 +113,6 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             var chartGroup = new WebInspector.DetailsSectionGroup([this._frameSelectionChartRow]);
             this._frameSelectionChartSection = new WebInspector.DetailsSection("frames-selection-chart", WebInspector.UIString("Selected Frames"), [chartGroup], null, true);
             this._timelinesContentContainerElement.appendChild(this._frameSelectionChartSection.element);
-        } else {
-            var timelinesTitleBarElement = document.createElement("div");
-            timelinesTitleBarElement.textContent = WebInspector.UIString("Timelines");
-            timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
-            timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass);
-            this.element.insertBefore(timelinesTitleBarElement, this.element.firstChild);
         }
 
         var statusBarElement = this._statusBarElement = document.createElement("div");
@@ -227,6 +228,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._toggleRecordingShortcut.disabled = false;
         this._toggleNewRecordingShortcut.disabled = false;
+
+        this._updateTimelineOverviewHeight();
     }
 
     hidden()
@@ -708,6 +711,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._timelineTreeElementMap.clear();
         }
 
+        this._clearInstruments();
+
         this._displayedRecording = recording;
         this._displayedRecording.addEventListener(WebInspector.TimelineRecording.Event.InstrumentAdded, this._instrumentAdded, this);
         this._displayedRecording.addEventListener(WebInspector.TimelineRecording.Event.InstrumentRemoved, this._instrumentRemoved, this);
@@ -748,6 +753,14 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._recordingSelected(WebInspector.timelineManager.activeRecording);
     }
 
+    _clearInstruments()
+    {
+        this._timelineTreeElementMap.clear();
+
+        if (WebInspector.FPSInstrument.supported())
+            this._removedFPSInstrument();
+    }
+
     _instrumentAdded(instrumentOrEvent)
     {
         let instrument = instrumentOrEvent instanceof WebInspector.Instrument ? instrumentOrEvent : instrumentOrEvent.data.instrument;
@@ -757,6 +770,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         console.assert(!this._timelineTreeElementMap.has(timeline), timeline);
 
         if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame) {
+            this._addedFPSInstrument();
             timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._renderingFrameTimelineTimesUpdated, this);
             return;
         }
@@ -783,6 +797,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         let timeline = this._displayedRecording.timelineForInstrument(instrument);
 
         if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame) {
+            this._removedFPSInstrument();
             timeline.removeEventListener(WebInspector.Timeline.Event.TimesUpdated, this._renderingFrameTimelineTimesUpdated, this);
             return;
         }
@@ -798,6 +813,18 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._timelineCountChanged();
     }
 
+    _addedFPSInstrument()
+    {
+        this._basicTitleBar.hidden = true;
+        this._renderingFramesTitleBar.hidden = false;
+    }
+
+    _removedFPSInstrument()
+    {
+        this._basicTitleBar.hidden = false;
+        this._renderingFramesTitleBar.hidden = true;
+    }
+
     _timelineCountChanged()
     {
         var previousTreeElement = null;
@@ -810,14 +837,32 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             previousTreeElement = treeElement;
         }
 
-        var timelineHeight = 36;
-        var eventTitleBarOffset = 58;
-        var contentElementOffset = 81;
-        var timelineCount = this._timelineTreeElementMap.size;
+        this._updateTimelineOverviewHeight();
+    }
 
-        this._timelinesContentContainerElement.style.height = (timelineHeight * timelineCount) + "px";
-        this._timelineEventsTitleBarElement.style.top = (timelineHeight * timelineCount + eventTitleBarOffset) + "px";
-        this.contentElement.style.top = (timelineHeight * timelineCount + contentElementOffset) + "px";
+    _updateTimelineOverviewHeight()
+    {
+        const timelineHeight = 36;
+        const eventTitleBarOffset = 58;
+        const contentElementOffset = 81;
+        const renderingFramesTimelineHeight = 108;
+
+        if (!this._displayedContentView)
+            return;
+
+        let overviewHeight;
+        let currentTimelineView = this._displayedContentView.currentTimelineView;
+        if (currentTimelineView && currentTimelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            overviewHeight = renderingFramesTimelineHeight;
+        else {
+            let timelineCount = this._timelineTreeElementMap.size;
+            if (this._timelineTreeElementMap.has(WebInspector.TimelineRecord.Type.RenderingFrame))
+                timelineCount--;
+            overviewHeight = timelineCount * timelineHeight;
+        }
+
+        this._timelineEventsTitleBarContainer.style.top = (overviewHeight + eventTitleBarOffset) + "px";
+        this.contentElement.style.top = (overviewHeight + contentElementOffset) + "px";
     }
 
     _recordGlyphMousedOver(event)
@@ -896,6 +941,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             } else
                 this.showTimelineOverview();
         }
+
+        this._timelineCountChanged();
 
         this.updateFilter();
     }

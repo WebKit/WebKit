@@ -1,5 +1,41 @@
 2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Update Timeline UI based on the Instruments in the Active Recording
+        https://bugs.webkit.org/show_bug.cgi?id=151374
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineOverviewHeight):
+        Modernize as I was in this code while looking into this patch.
+
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events): Deleted.
+        (.sidebar > .panel.navigation.timeline > .timelines-content): Deleted.
+        These defaults are no longer necessary, the UI overrides them anyways.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        Include both the basic and rendering frames toolbars. They will be
+        mutually exclusive based on if the FPSIntrument is available.
+
+        (WebInspector.TimelineSidebarPanel.prototype._recordingSelected):
+        (WebInspector.TimelineSidebarPanel.prototype._clearInstruments):
+        When loading a new Recording clear the UI.
+
+        (WebInspector.TimelineSidebarPanel.prototype._instrumentAdded):
+        (WebInspector.TimelineSidebarPanel.prototype._instrumentRemoved):
+        (WebInspector.TimelineSidebarPanel.prototype._addedFPSInstrument):
+        (WebInspector.TimelineSidebarPanel.prototype._removedFPSInstrument):
+        Handle toggling the toolbars when the FPS instrument is added/removed.
+
+        (WebInspector.TimelineSidebarPanel.prototype._timelineCountChanged):
+        (WebInspector.TimelineSidebarPanel.prototype._updateTimelineOverviewHeight):
+        (WebInspector.TimelineSidebarPanel.prototype._changeViewMode):
+        Properly update the sidebar's understanding of the TimelineOverview size.
+
+2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Initial support for variable timelines
         https://bugs.webkit.org/show_bug.cgi?id=151372
 

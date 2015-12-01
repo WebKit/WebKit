@@ -554,23 +554,22 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _updateTimelineOverviewHeight()
     {
+        const rulerHeight = 29;
         const timelineHeight = 36;
         const renderingFramesTimelineHeight = 108;
-        const rulerHeight = 29;
 
-        var overviewHeight;
-
+        let overviewHeight;
         if (this.currentTimelineView && this.currentTimelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
             overviewHeight = renderingFramesTimelineHeight;
         else {
-            var timelineCount = this._timelineViewMap.size;
+            let timelineCount = this._timelineViewMap.size;
             if (this._renderingFrameTimeline)
                 timelineCount--;
 
             overviewHeight = timelineCount * timelineHeight;
         }
 
-        var styleValue = (rulerHeight + overviewHeight) + "px";
+        let styleValue = (overviewHeight + rulerHeight) + "px";
         this._currentTimelineOverview.element.style.height = styleValue;
         this._contentViewContainer.element.style.top = styleValue;
     }
