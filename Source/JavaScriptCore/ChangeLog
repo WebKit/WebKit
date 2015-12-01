@@ -1,3 +1,22 @@
+2015-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove repetitive cruft from FTL OSR exit code in LowerDFGToLLVM
+        https://bugs.webkit.org/show_bug.cgi?id=151718
+
+        Reviewed by Geoffrey Garen.
+
+        * b3/B3StackmapValue.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callStackmap):
+
 2015-12-01  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] add missing RequireObjectCoercible() step in destructuring

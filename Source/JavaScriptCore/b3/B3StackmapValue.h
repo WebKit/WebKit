@@ -84,6 +84,13 @@ public:
     // children().append(). That will work fine, but it's not recommended.
     void append(const ConstrainedValue&);
 
+    template<typename VectorType>
+    void appendAnys(const VectorType& vector)
+    {
+        for (Value* value : vector)
+            append(value);
+    }
+
     // This is a helper for something you might do a lot of: append a value that should be constrained
     // to SomeRegister.
     void appendSomeRegister(Value*);
