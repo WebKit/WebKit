@@ -1,5 +1,13 @@
 2015-12-01  Jonathan Davis  <jond@apple.com>
 
+        Fixed PHP syntax for compatibility with the server environment.
+
+        * wp-content/plugins/social-meta.php:
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/widgets/twitter.php:
+
+2015-12-01  Jonathan Davis  <jond@apple.com>
+
         Updated webkit.org to use the new theme and WordPress deployment.
 
         * .htaccess:

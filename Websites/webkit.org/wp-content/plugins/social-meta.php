@@ -8,8 +8,11 @@ Author URI:  http://webkit.org
 */
 
 add_action('wp_head', function() { ?>
-    <?php $image_url = wp_get_attachment_image_src( get_post_thumbnail_id($post_id), 'large' )[0]; ?>
-    
+    <?php
+        $image_src = wp_get_attachment_image_src( get_post_thumbnail_id($post_id), 'large' );
+        $image_url = $image_src[0];
+    ?>
+
     <!-- Schema.org markup -->
     <meta itemprop="name" content="<?php the_title(); ?>">
     <meta itemprop="description" content="<?php the_excerpt(); ?>">
@@ -28,7 +31,7 @@ add_action('wp_head', function() { ?>
     <?php if ( $image_url ): // Twitter summary card with large image must be at least 280x150px ?>
     <meta name="twitter:image:src" content="<?php echo $image_url; ?>">
     <?php endif; ?>
-    
+
     <!-- Open Graph data -->
     <meta property="og:title" content="<?php the_title(); ?>" />
     <meta property="og:type" content="article" />
@@ -40,11 +43,11 @@ add_action('wp_head', function() { ?>
     <meta property="og:site_name" content="<?php bloginfo('title'); ?>" />
     <meta property="article:published_time" content="<?php the_time('c'); ?>" />
     <meta property="article:modified_time" content="<?php the_modified_date('c'); ?>" />
-    <?php     
+    <?php
         $categories = wp_get_object_terms( get_the_ID(), 'category', array( 'fields' => 'names' ) );
         $tags = wp_get_object_terms( get_the_ID(), 'post_tag', array( 'fields' => 'names' ) );
-        
-        if ( ! empty($categories) ): 
+
+        if ( ! empty($categories) ):
             $section = array_shift($categories);      // The first category is used as the section
             $tags = array_merge($categories, $tags);  // The rest are prepended to the tag list
     ?>
@@ -58,6 +61,6 @@ add_action('wp_head', function() { ?>
     <?php
         endforeach; endif;
     ?>
-    
+
 <?php
 });

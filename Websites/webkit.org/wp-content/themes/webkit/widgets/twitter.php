@@ -7,23 +7,23 @@
 defined('WPINC') || header('HTTP/1.1 403') & exit; // Prevent direct access
 
 if ( ! class_exists('WP_Widget') ) return;
-	
+
 class WebKitTwitterTileWidget extends WebKitPostTileWidget {
-    
+
     const CACHEKEY = 'webkit_twitter_feed';
 
     function __construct() {
-        parent::WP_Widget(false, 
-			__('Twitter Tile'), 
-			array('description' => __('Twitter tile for the home page'))
-		);
+        parent::WP_Widget(false,
+            __('Twitter Tile'),
+            array('description' => __('Twitter tile for the home page'))
+        );
     }
 
     function widget( array $args, array $options ) {
-        
+
         if ( ! empty($args) )
             extract($args, EXTR_SKIP);
-        
+
         $Tweet = $this->tweet();
 
         // Show "Follow @webkit" instead of tweet for empty text
@@ -44,7 +44,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
         if ( ! empty($Tweet->text) )
             $text = $Tweet->text;
 
-        if ( ! empty($options['url']) ) 
+        if ( ! empty($options['url']) )
             $url = (string)$options['url'];
 
         // Expand URLs
@@ -53,10 +53,10 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
                                  . $entry->display_url . '</a>';
             $text = str_replace($entry->url, $expanded, $text);
         }
-        
+
         $text = preg_replace('/RT @[^:]+:\s+/', '', $text, 1);
-        
-        if ( empty($Tweet->entities) || empty($Tweet->entities->media) ) { 
+
+        if ( empty($Tweet->entities) || empty($Tweet->entities->media) ) {
 
             $Image = $Tweet->entities->media[0];
             if ( empty($Image) ) $classes[] = 'text-only';
@@ -66,7 +66,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
                 $text = str_replace($entry->url, '', $text);
             }
         }
-        
+
         ?>
         <div class="<?php echo esc_attr(join(' ', $classes)); ?>">
             <a href="http://twitter.com/webkit/status/<?php echo esc_attr($Tweet->id); ?>" class="tile-link">Clickable link to tweet</a>
@@ -76,7 +76,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
             <?php else: ?>
             <?php endif;?>
                 <p><?php echo $text; ?></p>
-            
+
             </div>
             <ul class="twitter-controls">
                 <li><a href="https://twitter.com/intent/follow?screen_name=webkit" target="twitter-modal"><span class="twitter-icon">Twitter</span> @webkit</a></li>
@@ -87,12 +87,12 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
         </div>
         <?php
     }
-    
+
     function follow_markup ($options) {
-        
+
         $url = 'https://twitter.com/intent/follow?screen_name=webkit';
         $classes = array('tile', 'third-tile', 'twitter-tile');
-        
+
         ?>
         <div class="<?php echo esc_attr(join(' ', $classes)); ?>">
             <a class="tile-link" href="<?php echo esc_url($url); ?>">Clickable link</a>
@@ -103,86 +103,87 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
     }
 
     function form( array $options ) {
-		?>
-		<p><label for="<?php echo $this->get_field_id('text'); ?>"><?php _e('Text'); ?></label>
-		<textarea type="text" name="<?php echo $this->get_field_name('text'); ?>" id="<?php echo $this->get_field_id('text'); ?>" class="widefat"><?php echo $options['text']; ?></textarea></p>
-		<?php
+        ?>
+        <p><label for="<?php echo $this->get_field_id('text'); ?>"><?php _e('Text'); ?></label>
+        <textarea type="text" name="<?php echo $this->get_field_name('text'); ?>" id="<?php echo $this->get_field_id('text'); ?>" class="widefat"><?php echo $options['text']; ?></textarea></p>
+        <?php
     }
-    
-	function tweet () {
+
+    function tweet () {
 
         if ( false !== ( $cached = get_transient(self::CACHEKEY) ) )
             return json_decode($cached);
-        
-		$endpoint = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
-		$parameters = array();
-		$options = array(
-			'method' => 'GET',
-		);
 
-		$oauth_consumer_key = 'ypSvRp37vmyt3ldMPhs0e62c9';
-		$oauth_consumer_key_secret = 'mLuYD3AjUehUZKOgQIICA5Na69te45aSJTkdIDTGSg4cfHd6Lz';
-		$oauth_token = '14315023-7pHbcI5bk2QZhNiHR9uFudaksBzMPubEuOEmYj7YQ';
-		$oauth_token_secret = '0K9T9znxG4S9PUGunYZ5LwyKL9AR6v3eAXp6WKY2oi7Bg';
-		$oauth_timestamp = time();
-		$oauth_nonce = sha1(rand() . $oauth_timestamp);
+        $endpoint = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
+        $parameters = array();
+        $options = array(
+            'method' => 'GET',
+        );
 
-		$fields = array(
-			'oauth_consumer_key' => $oauth_consumer_key,
-			'oauth_nonce' => sha1(rand() . time()),
-			'oauth_signature_method' => 'HMAC-SHA1',
-			'oauth_timestamp' => time(),
-			'oauth_token' => $oauth_token,
-			'oauth_version' => '1.0',
-		);
-		$fields = array_merge($parameters, $fields);
+        $oauth_consumer_key = 'ypSvRp37vmyt3ldMPhs0e62c9';
+        $oauth_consumer_key_secret = 'mLuYD3AjUehUZKOgQIICA5Na69te45aSJTkdIDTGSg4cfHd6Lz';
+        $oauth_token = '14315023-7pHbcI5bk2QZhNiHR9uFudaksBzMPubEuOEmYj7YQ';
+        $oauth_token_secret = '0K9T9znxG4S9PUGunYZ5LwyKL9AR6v3eAXp6WKY2oi7Bg';
+        $oauth_timestamp = time();
+        $oauth_nonce = sha1(rand() . $oauth_timestamp);
 
-		$base = array(
-			'GET', $endpoint, http_build_query($fields, '', '&')
-		);
-		$base = join('&', array_map('rawurlencode', $base));
+        $fields = array(
+            'oauth_consumer_key' => $oauth_consumer_key,
+            'oauth_nonce' => sha1(rand() . time()),
+            'oauth_signature_method' => 'HMAC-SHA1',
+            'oauth_timestamp' => time(),
+            'oauth_token' => $oauth_token,
+            'oauth_version' => '1.0',
+        );
+        $fields = array_merge($parameters, $fields);
+
+        $base = array(
+            'GET', $endpoint, http_build_query($fields, '', '&')
+        );
+        $base = join('&', array_map('rawurlencode', $base));
 
 
-		$key = array(
-			$oauth_consumer_key_secret, $oauth_token_secret
-		);
-		$key = join('&', array_map('rawurlencode', $key));
+        $key = array(
+            $oauth_consumer_key_secret, $oauth_token_secret
+        );
+        $key = join('&', array_map('rawurlencode', $key));
 
-		$signature = base64_encode( hash_hmac('sha1', $base, $key, true) );
+        $signature = base64_encode( hash_hmac('sha1', $base, $key, true) );
 
-		$oauth = array(
-			'oauth_consumer_key' => $oauth_consumer_key,
-			'oauth_nonce' => $fields['oauth_nonce'],
-			'oauth_signature' => $signature,
-			'oauth_signature_method' => 'HMAC-SHA1',
-			'oauth_timestamp' => $fields['oauth_timestamp'],
-			'oauth_token' => $oauth_token,
-			'oauth_version' => '1.0',
-		);
-		$oauth = array_map(create_function('$h','return "\"$h\"";'), $oauth);
+        $oauth = array(
+            'oauth_consumer_key' => $oauth_consumer_key,
+            'oauth_nonce' => $fields['oauth_nonce'],
+            'oauth_signature' => $signature,
+            'oauth_signature_method' => 'HMAC-SHA1',
+            'oauth_timestamp' => $fields['oauth_timestamp'],
+            'oauth_token' => $oauth_token,
+            'oauth_version' => '1.0',
+        );
+        $oauth = array_map(create_function('$h','return "\"$h\"";'), $oauth);
 
-		$oauth = http_build_query($oauth, '', ', ');
-		$oauth = str_replace('%22', '"', $oauth);
+        $oauth = http_build_query($oauth, '', ', ');
+        $oauth = str_replace('%22', '"', $oauth);
 
-		$headers = array(
-			'Authorization' => "OAuth $oauth"
-		);
+        $headers = array(
+            'Authorization' => "OAuth $oauth"
+        );
 
-		$options['headers'] = $headers;
-        
-		$response = wp_remote_get($endpoint, $options);
+        $options['headers'] = $headers;
 
-        if ( is_a($response, 'WP_Error') ) 
+        $response = wp_remote_get($endpoint, $options);
+
+        if ( is_a($response, 'WP_Error') )
             return false;
 
-		if ( 200 == $response['response']['code'] && ! empty($response['body']) ) {
-            $data = json_decode($response['body'])[0];
+        if ( 200 == $response['response']['code'] && ! empty($response['body']) ) {
+            $body = json_decode($response['body']);
+            $data = $body[0];
             set_transient(self::CACHEKEY, json_encode($data), DAY_IN_SECONDS/2);
             return $data;
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 } // END class WebKitTwitterTileWidget
 
