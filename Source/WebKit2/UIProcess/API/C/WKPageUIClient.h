@@ -48,11 +48,21 @@ enum {
 };
 typedef uint32_t WKPluginUnavailabilityReason;
 
+
+WK_EXPORT WKTypeID WKPageRunJavaScriptAlertResultListenerGetTypeID();
+WK_EXPORT void WKPageRunJavaScriptAlertResultListenerCall(WKPageRunJavaScriptAlertResultListenerRef listener);
+
+WK_EXPORT WKTypeID WKPageRunJavaScriptConfirmResultListenerGetTypeID();
+WK_EXPORT void WKPageRunJavaScriptConfirmResultListenerCall(WKPageRunJavaScriptConfirmResultListenerRef listener, bool result);
+
+WK_EXPORT WKTypeID WKPageRunJavaScriptPromptResultListenerGetTypeID();
+WK_EXPORT void WKPageRunJavaScriptPromptResultListenerCall(WKPageRunJavaScriptPromptResultListenerRef listener, WKStringRef result);
+
 typedef void (*WKPageUIClientCallback)(WKPageRef page, const void* clientInfo);
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo);
-typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
-typedef bool (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
-typedef WKStringRef (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
+typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void *clientInfo);
+typedef void (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptConfirmResultListenerRef listener, const void *clientInfo);
+typedef void (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptPromptResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageTakeFocusCallback)(WKPageRef page, WKFocusDirection direction, const void *clientInfo);
 typedef void (*WKPageFocusCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageUnfocusCallback)(WKPageRef page, const void *clientInfo);
@@ -99,6 +109,10 @@ typedef void (*WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV0)(WKPageRe
 typedef bool (*WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
 typedef WKStringRef (*WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void *clientInfo);
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV1)(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
+typedef void (*WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
+typedef bool (*WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
+typedef WKStringRef (*WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
+
 
 typedef struct WKPageUIClientBase {
     int                                                                 version;
@@ -448,9 +462,9 @@ typedef struct WKPageUIClientV5 {
     // Version 5.
     WKPageDecidePolicyForUserMediaPermissionRequestCallback             decidePolicyForUserMediaPermissionRequest;
     WKPageDidClickAutoFillButtonCallback                                didClickAutoFillButton;
-    WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
-    WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
-    WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
+    WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert;
+    WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm;
+    WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt;
     WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
 } WKPageUIClientV5;
 
@@ -521,14 +535,16 @@ typedef struct WKPageUIClientV6 {
     // Version 5.
     WKPageDecidePolicyForUserMediaPermissionRequestCallback             decidePolicyForUserMediaPermissionRequest;
     WKPageDidClickAutoFillButtonCallback                                didClickAutoFillButton;
-    WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
-    WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
-    WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
+    WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert_deprecatedForUseWithV5;
+    WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm_deprecatedForUseWithV5;
+    WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt_deprecatedForUseWithV5;
     WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
 
     // Version 6.
     WKPageCreateNewPageCallback                                         createNewPage;
-
+    WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
+    WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
+    WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
 } WKPageUIClientV6;
 
 #ifdef __cplusplus

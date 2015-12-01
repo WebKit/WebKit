@@ -1,3 +1,16 @@
+2015-12-01  Sam Weinig  <sam@webkit.org>
+
+        Need completionHandler-based WebKit C SPI for alert, confirm, and prompt
+        <rdar://problem/23320863>
+        https://bugs.webkit.org/show_bug.cgi?id=151708
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        Update for new WKPageUIClient.
+
 2015-12-01  Anders Carlsson  <andersca@apple.com>
 
         Remove WebKit2.framework

@@ -1431,9 +1431,9 @@ static void fixUpBotchedPageUIClient(WKPageRef pageRef, const WKPageUIClientBase
         WKPagePinnedStateDidChangeCallback                                  pinnedStateDidChange;
 
         // Version 4.
-        WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
-        WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
-        WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
+        WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV5             runJavaScriptAlert;
+        WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV5           runJavaScriptConfirm;
+        WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV5            runJavaScriptPrompt;
     };
 
     const auto& botchedPageUIClient = reinterpret_cast<const BotchedWKPageUIClientV4&>(wkClient);
@@ -1502,6 +1502,89 @@ static void fixUpBotchedPageUIClient(WKPageRef pageRef, const WKPageUIClientBase
     WKPageSetPageUIClient(pageRef, &fixedPageUIClient.base);
 }
 #endif
+
+namespace WebKit {
+
+class RunJavaScriptAlertResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptAlertResultListener> {
+public:
+    static PassRefPtr<RunJavaScriptAlertResultListener> create(std::function<void ()>&& completionHandler)
+    {
+        return adoptRef(new RunJavaScriptAlertResultListener(WTF::move(completionHandler)));
+    }
+
+    virtual ~RunJavaScriptAlertResultListener()
+    {
+    }
+
+    void call()
+    {
+        m_completionHandler();
+    }
+
+private:
+    explicit RunJavaScriptAlertResultListener(std::function<void ()>&& completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
+    {
+    }
+    
+    std::function<void ()> m_completionHandler;
+};
+
+class RunJavaScriptConfirmResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptConfirmResultListener> {
+public:
+    static PassRefPtr<RunJavaScriptConfirmResultListener> create(std::function<void (bool)>&& completionHandler)
+    {
+        return adoptRef(new RunJavaScriptConfirmResultListener(WTF::move(completionHandler)));
+    }
+
+    virtual ~RunJavaScriptConfirmResultListener()
+    {
+    }
+
+    void call(bool result)
+    {
+        m_completionHandler(result);
+    }
+
+private:
+    explicit RunJavaScriptConfirmResultListener(std::function<void (bool)>&& completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
+    {
+    }
+
+    std::function<void (bool)> m_completionHandler;
+};
+
+class RunJavaScriptPromptResultListener : public API::ObjectImpl<API::Object::Type::RunJavaScriptPromptResultListener> {
+public:
+    static PassRefPtr<RunJavaScriptPromptResultListener> create(std::function<void (const String&)>&& completionHandler)
+    {
+        return adoptRef(new RunJavaScriptPromptResultListener(WTF::move(completionHandler)));
+    }
+
+    virtual ~RunJavaScriptPromptResultListener()
+    {
+    }
+
+    void call(const String& result)
+    {
+        m_completionHandler(result);
+    }
+
+private:
+    explicit RunJavaScriptPromptResultListener(std::function<void (const String&)>&& completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
+    {
+    }
+
+    std::function<void (const String&)> m_completionHandler;
+};
+
+WK_ADD_API_MAPPING(WKPageRunJavaScriptAlertResultListenerRef, RunJavaScriptAlertResultListener)
+WK_ADD_API_MAPPING(WKPageRunJavaScriptConfirmResultListenerRef, RunJavaScriptConfirmResultListener)
+WK_ADD_API_MAPPING(WKPageRunJavaScriptPromptResultListenerRef, RunJavaScriptPromptResultListener)
+
+}
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient)
 {
@@ -1613,57 +1696,88 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
         virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void ()> completionHandler) override
         {
-            if (!m_client.runJavaScriptAlert && !m_client.runJavaScriptAlert_deprecatedForUseWithV0) {
+            if (m_client.runJavaScriptAlert) {
+                RefPtr<RunJavaScriptAlertResultListener> listener = RunJavaScriptAlertResultListener::create(WTF::move(completionHandler));
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
+                m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
+                return;
+            }
+
+            if (m_client.runJavaScriptAlert_deprecatedForUseWithV5) {
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
+                m_client.runJavaScriptAlert_deprecatedForUseWithV5(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
+                completionHandler();
+                return;
+            }
+            
+            if (m_client.runJavaScriptAlert_deprecatedForUseWithV0) {
+                m_client.runJavaScriptAlert_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
                 completionHandler();
                 return;
             }
 
-            if (m_client.runJavaScriptAlert) {
-                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
-                m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
-            } else
-                m_client.runJavaScriptAlert_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
 
             completionHandler();
         }
 
         virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void (bool)> completionHandler) override
         {
-            if (!m_client.runJavaScriptConfirm && !m_client.runJavaScriptConfirm_deprecatedForUseWithV0) {
-                completionHandler(false);
+            if (m_client.runJavaScriptConfirm) {
+                RefPtr<RunJavaScriptConfirmResultListener> listener = RunJavaScriptConfirmResultListener::create(WTF::move(completionHandler));
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
+                m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
             }
 
-            bool result;
-            if (m_client.runJavaScriptConfirm) {
+            if (m_client.runJavaScriptConfirm_deprecatedForUseWithV5) {
                 RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
-                result = m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
-            } else
-                result = m_client.runJavaScriptConfirm_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+                bool result = m_client.runJavaScriptConfirm_deprecatedForUseWithV5(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
+                
+                completionHandler(result);
+                return;
+            }
+            
+            if (m_client.runJavaScriptConfirm_deprecatedForUseWithV0) {
+                bool result = m_client.runJavaScriptConfirm_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
 
-            completionHandler(result);
+                completionHandler(result);
+                return;
+            }
+            
+            completionHandler(false);
         }
 
         virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, const SecurityOriginData& securityOriginData, std::function<void (const String&)> completionHandler) override
         {
-            if (!m_client.runJavaScriptPrompt && !m_client.runJavaScriptPrompt_deprecatedForUseWithV0) {
-                completionHandler(String());
-                return;
-            }
-
-            RefPtr<API::String> string;
             if (m_client.runJavaScriptPrompt) {
+                RefPtr<RunJavaScriptPromptResultListener> listener = RunJavaScriptPromptResultListener::create(WTF::move(completionHandler));
                 RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
-                string = adoptRef(toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo)));
-            } else
-                string = adoptRef(toImpl(m_client.runJavaScriptPrompt_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo)));
-
-            if (!string) {
-                completionHandler(String());
+                m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), toAPI(securityOrigin.get()), toAPI(listener.get()), m_client.base.clientInfo);
                 return;
             }
 
-            completionHandler(string->string());
+            if (m_client.runJavaScriptPrompt_deprecatedForUseWithV5) {
+                RefPtr<API::SecurityOrigin> securityOrigin = API::SecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
+                RefPtr<API::String> string = adoptRef(toImpl(m_client.runJavaScriptPrompt_deprecatedForUseWithV5(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo)));
+                
+                if (string)
+                    completionHandler(string->string());
+                else
+                    completionHandler(String());
+                return;
+            }
+            
+            if (m_client.runJavaScriptPrompt_deprecatedForUseWithV0) {
+                RefPtr<API::String> string = adoptRef(toImpl(m_client.runJavaScriptPrompt_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo)));
+                
+                if (string)
+                    completionHandler(string->string());
+                else
+                    completionHandler(String());
+                return;
+            }
+
+            completionHandler(String());
         }
 
         virtual void setStatusText(WebPageProxy* page, const String& text) override

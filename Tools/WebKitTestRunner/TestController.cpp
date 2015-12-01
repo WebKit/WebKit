@@ -275,6 +275,9 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKPageConfiguration
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
         createOtherPage,
+        0, // runJavaScriptAlert
+        0, // runJavaScriptConfirm
+        0  // runJavaScriptPrompt
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
     
@@ -534,6 +537,9 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
         createOtherPage,
+        0, // runJavaScriptAlert
+        0, // runJavaScriptConfirm
+        0, // runJavaScriptPrompt
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
