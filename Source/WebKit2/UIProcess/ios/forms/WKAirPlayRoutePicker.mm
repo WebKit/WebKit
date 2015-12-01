@@ -36,15 +36,15 @@
 #import <WebCore/SoftLinking.h>
 #import <wtf/RetainPtr.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 SOFT_LINK_FRAMEWORK(MediaPlayer)
 SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
 SOFT_LINK_CLASS(MediaPlayer, MPAudioVideoRoutingPopoverController)
 SOFT_LINK_CLASS(MediaPlayer, MPAudioVideoRoutingActionSheet)
 
 using namespace WebKit;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 @implementation WKAirPlayRoutePicker {
     RetainPtr<MPAVRoutingController> _routingController;

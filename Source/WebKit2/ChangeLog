@@ -1,3 +1,10 @@
+2015-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for some compiler versions.
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm: Disable deprecation warnings while
+        processing SOFT_LINK_CLASS too.
+
 2015-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test http/tests/misc/detach-during-notifyDone.html
