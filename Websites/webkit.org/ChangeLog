@@ -1,5 +1,11 @@
 2015-12-01  Jonathan Davis  <jond@apple.com>
 
+        Fixed static reference PHP syntax for compatibility with the server environment.
+
+        * wp-content/plugins/table-of-contents.php:
+
+2015-12-01  Jonathan Davis  <jond@apple.com>
+
         Fixed PHP syntax for compatibility with the server environment.
 
         * wp-content/plugins/social-meta.php:
