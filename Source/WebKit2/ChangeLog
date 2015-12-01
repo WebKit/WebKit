@@ -1,5 +1,15 @@
 2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix timeouts in several HTTP layout tests in GTK+ after r192796.
+
+        In r192796, the initialization of m_ignoreTLSErrors in
+        WebProcessPool was removed by mistake, making all HTTP tests that use
+        HTTPS fail due to invalid certificate errors.
+
+        * UIProcess/WebProcessPool.h: Bring back m_ignoreTLSErrors initialization.
+
+2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r192247): [GTK] ASSERTION FAILED: type == WebCore::ActionType || type == WebCore::CheckableActionType || type == WebCore::SeparatorType
         https://bugs.webkit.org/show_bug.cgi?id=151513
 

@@ -491,7 +491,7 @@ private:
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;
 
 #if USE(SOUP)
-    bool m_ignoreTLSErrors;
+    bool m_ignoreTLSErrors { true };
 #endif
 
     bool m_memoryCacheDisabled;
