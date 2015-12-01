@@ -3837,6 +3837,10 @@ void SpeculativeJIT::compile(Node* node)
         compileGetScope(node);
         break;
             
+    case LoadArrowFunctionThis:
+        compileLoadArrowFunctionThis(node);
+        break;
+            
     case SkipScope:
         compileSkipScope(node);
         break;

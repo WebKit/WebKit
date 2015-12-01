@@ -1012,6 +1012,11 @@ private:
             break;
         }
 
+        case LoadArrowFunctionThis: {
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
+
         case SkipScope:
         case GetScope:
         case GetGetter:

@@ -594,6 +594,10 @@ private:
             changed |= setPrediction(SpecObjectOther);
             break;
 
+        case LoadArrowFunctionThis:
+            changed |= setPrediction(SpecFinalObject);
+            break;
+
         case In:
             changed |= setPrediction(SpecBoolean);
             break;

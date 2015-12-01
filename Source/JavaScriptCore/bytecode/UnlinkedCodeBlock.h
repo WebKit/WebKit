@@ -117,8 +117,6 @@ public:
     bool isStrictMode() const { return m_isStrictMode; }
     bool usesEval() const { return m_usesEval; }
     bool isArrowFunction() const { return m_isArrowFunction; }
-    bool isDerivedConstructorContext() const { return m_isDerivedConstructorContext; }
-    bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
 
     bool needsFullScopeChain() const { return m_needsFullScopeChain; }
 
@@ -390,8 +388,6 @@ private:
     unsigned m_isBuiltinFunction : 1;
     unsigned m_constructorKind : 2;
     unsigned m_isArrowFunction : 1;
-    unsigned m_isDerivedConstructorContext : 1;
-    unsigned m_isArrowFunctionContext : 1;
 
     unsigned m_firstLine;
     unsigned m_lineCount;

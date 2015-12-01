@@ -330,9 +330,6 @@
     macro(Uint32Array) \
     macro(Float32Array) \
     macro(Float64Array) \
-    macro(newTargetLocal) \
-    macro(derivedConstructor) \
-
 
 
 namespace JSC {

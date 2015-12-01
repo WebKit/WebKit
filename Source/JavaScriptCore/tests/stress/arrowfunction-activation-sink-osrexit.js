@@ -1,4 +1,4 @@
-var n = 100000;
+var n = 1000000;
 
 function bar() { }
 
