@@ -1,3 +1,26 @@
+2015-12-01  Caitlin Potter  <caitpotter88@gmail.com>
+
+        [JSC] support CoverInitializedName in nested AssignmentPatterns
+        https://bugs.webkit.org/show_bug.cgi?id=151595
+
+        Reviewed by Geoffrey Garen.
+
+        A regression introduced in bug https://bugs.webkit.org/show_bug.cgi?id=151026
+        causes the parser to fail when attempting to parse nested
+        ObjectAssignmentPatterns with CoverInitializedName destructuring targets.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpressionOrPropagateErrorClass):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseArrayLiteral):
+        * parser/Parser.h:
+        (JSC::Parser::ExpressionErrorClassifier::propagateExpressionErrorClass):
+        * tests/es6.yaml:
+        * tests/es6/destructuring_assignment_nested_cover_initialized_name.js: Added.
+        (test1):
+        (test2):
+
 2015-12-01  Juergen Ributzka  <juergen@apple.com>
 
         Add new library dependency for LLVMForJavaScriptCore dylib

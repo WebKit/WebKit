@@ -222,6 +222,8 @@
   cmd: runES6 :normal
 - path: es6/destructuring_assignment_computed_property_default.js
   cmd: runES6 :normal
+- path: es6/destructuring_assignment_nested_cover_initialized_name.js
+  cmd: runES6 :normal
 - path: es6/destructuring_initializer_scoping.js
   cmd: runES6 :normal
 - path: es6/for..of_loops_with_arrays.js

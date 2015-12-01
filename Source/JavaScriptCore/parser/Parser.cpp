@@ -2830,9 +2830,25 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     return head;
 }
 
-    
+template <typename LexerType>
+template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpressionOrPropagateErrorClass(TreeBuilder& context)
+{
+    ExpressionErrorClassifier classifier(this);
+    auto assignment = parseAssignmentExpression(context, classifier);
+    if (!assignment)
+        classifier.propagateExpressionErrorClass();
+    return assignment;
+}
+
 template <typename LexerType>
 template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpression(TreeBuilder& context)
+{
+    ExpressionErrorClassifier classifier(this);
+    return parseAssignmentExpression(context, classifier);
+}
+    
+template <typename LexerType>
+template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmentExpression(TreeBuilder& context, ExpressionErrorClassifier& classifier)
 {
     failIfStackOverflow();
     JSTextPosition start = tokenStartPosition();
@@ -2841,7 +2857,6 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     int initialNonLHSCount = m_nonLHSCount;
     bool maybeAssignmentPattern = match(OPENBRACE) || match(OPENBRACKET);
     SavePoint savePoint = createSavePoint();
-    ExpressionErrorClassifier classifier(this);
 
 #if ENABLE(ES6_GENERATORS)
     if (match(YIELD) && !isYIELDMaskedAsIDENT(currentScope()->isGenerator()))
@@ -3071,7 +3086,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
 
         if (!isGenerator && match(COLON)) {
             next();
-            TreeExpression node = parseAssignmentExpression(context);
+            TreeExpression node = parseAssignmentExpressionOrPropagateErrorClass(context);
             failIfFalse(node, "Cannot parse expression for property declaration");
             context.setEndOffset(node, m_lexer->currentOffset());
             return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, complete);
@@ -3347,11 +3362,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
         auto start = m_token.m_startPosition;
         auto divot = m_token.m_endPosition;
         next();
-        auto spreadExpr = parseAssignmentExpression(context);
+        auto spreadExpr = parseAssignmentExpressionOrPropagateErrorClass(context);
         failIfFalse(spreadExpr, "Cannot parse subject of a spread operation");
         elem = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, m_lastTokenEndPosition);
     } else
-        elem = parseAssignmentExpression(context);
+        elem = parseAssignmentExpressionOrPropagateErrorClass(context);
     failIfFalse(elem, "Cannot parse array literal element");
     typename TreeBuilder::ElementList elementList = context.createElementList(elisions, elem);
     typename TreeBuilder::ElementList tail = elementList;
@@ -3375,13 +3390,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
             auto start = m_token.m_startPosition;
             auto divot = m_token.m_endPosition;
             next();
-            TreeExpression elem = parseAssignmentExpression(context);
+            TreeExpression elem = parseAssignmentExpressionOrPropagateErrorClass(context);
             failIfFalse(elem, "Cannot parse subject of a spread operation");
             auto spread = context.createSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
             tail = context.createElementList(tail, elisions, spread);
             continue;
         }
-        TreeExpression elem = parseAssignmentExpression(context);
+        TreeExpression elem = parseAssignmentExpressionOrPropagateErrorClass(context);
         failIfFalse(elem, "Cannot parse array literal element");
         tail = context.createElementList(tail, elisions, elem);
     }

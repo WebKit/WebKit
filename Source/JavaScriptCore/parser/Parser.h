@@ -763,6 +763,13 @@ private:
                 return;
             m_class = classification;
         }
+
+        void propagateExpressionErrorClass()
+        {
+            if (m_previous && m_class != ErrorIndicatesNothing)
+                m_previous->m_class = m_class;
+        }
+
         bool indicatesPossiblePattern() const { return m_class == ErrorIndicatesPattern; }
 
     private:
@@ -1196,7 +1203,9 @@ private:
     template <class TreeBuilder> TreeStatement parseIfStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseBlockStatement(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&);
+    template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&, ExpressionErrorClassifier&);
     template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&);
+    template <class TreeBuilder> TreeExpression parseAssignmentExpressionOrPropagateErrorClass(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseYieldExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseConditionalExpression(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseBinaryExpression(TreeBuilder&);
