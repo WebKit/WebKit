@@ -50,6 +50,41 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
     return deviceRGBColorSpaceRef();
 }
 
+class CGContextStateSaver {
+public:
+    CGContextStateSaver(CGContextRef context, bool saveAndRestore = true)
+        : m_context(context)
+        , m_saveAndRestore(saveAndRestore)
+    {
+        if (m_saveAndRestore)
+            CGContextSaveGState(m_context);
+    }
+    
+    ~CGContextStateSaver()
+    {
+        if (m_saveAndRestore)
+            CGContextRestoreGState(m_context);
+    }
+    
+    void save()
+    {
+        ASSERT(!m_saveAndRestore);
+        CGContextSaveGState(m_context);
+        m_saveAndRestore = true;
+    }
+
+    void restore()
+    {
+        ASSERT(m_saveAndRestore);
+        CGContextRestoreGState(m_context);
+        m_saveAndRestore = false;
+    }
+    
+private:
+    CGContextRef m_context;
+    bool m_saveAndRestore;
+};
+
 }
 
 #endif
