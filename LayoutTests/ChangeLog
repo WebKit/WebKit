@@ -1,3 +1,12 @@
+2015-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/xmlhttprequest/workers/methods.html as flaky on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=151709
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-12-01  Brady Eidson  <beidson@apple.com>
 
         Skip some specific IDB tests in preparation for enabling the entire directory.

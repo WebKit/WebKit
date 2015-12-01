@@ -285,6 +285,8 @@ webkit.org/b/151455 [ Yosemite ] http/tests/xmlhttprequest/workers/methods-async
 webkit.org/b/151661 [ Yosemite ] http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Pass Timeout ]
 
 webkit.org/b/150542 fast/forms/state-restore-per-form.html [ Pass Timeout ]
+
+webkit.org/b/151709 [ Yosemite ] http/tests/xmlhttprequest/workers/methods.html [ Pass Timeout ]
 ### END OF (1) Classified failures with bug reports
 ########################################
 
