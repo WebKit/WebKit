@@ -322,8 +322,8 @@ function enqueueInReadableStream(stream, chunk)
     try {
         let size = 1;
         if (stream.@strategy.size) {
-            size = Number(stream.@strategy.size(chunk));
-            if (Number.isNaN(size) || size === +Infinity || size < 0)
+            size = @Number(stream.@strategy.size(chunk));
+            if (!@isFinite(size) || size < 0)
                 throw new @RangeError("Chunk size is not valid");
         }
         @enqueueValueWithSize(stream.@queue, chunk, size);

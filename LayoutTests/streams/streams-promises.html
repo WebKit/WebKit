@@ -89,4 +89,30 @@ test(function() {
     new ReadableStream({ start: function() { return createMangledPromise(); } })
     new WritableStream({ start: function() { return createMangledPromise(); } })
 }, 'Streams and promises: replace then method in promise object');
+
+test(function() {
+    const NumberBackup = Number;
+    const NumberIsNaNBackup = Number.isNaN;
+    const NumberIsFiniteBackup = Number.isFinite;
+
+    try {
+        Number.isNaN = function() { assert_unreached("streams should not use this Number.isNaN method"); };
+        Number.isFinite = function() { assert_unreached("streams should not use this Number.isFinite method"); };
+        Number = null;
+
+        new ReadableStream({
+            start: function(controller) {
+                controller.enqueue("small potato");
+            }
+        }, {
+            size: function(chunk) { return 2; },
+            highWaterMark: 1
+        });
+
+    } finally {
+        Number = NumberBackup;
+        Number.isNaN = NumberIsNaNBackup;
+        Number.isFinite = NumberIsFiniteBackup;
+    }
+}, 'Streams should not directly use Number and related methods');
 </script>

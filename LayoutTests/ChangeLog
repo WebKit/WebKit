@@ -1,5 +1,17 @@
 2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
+        [Streams API] streams should not directly use Number and related methods
+        https://bugs.webkit.org/show_bug.cgi?id=151499
+
+        Reviewed by Darin Adler.
+
+        Added a non-regression test.
+
+        * streams/streams-promises-expected.txt:
+        * streams/streams-promises.html:
+
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
         [Streams API] Remove use of @catch for exposed promises
         https://bugs.webkit.org/show_bug.cgi?id=151625
 

@@ -297,6 +297,7 @@
     macro(abs) \
     macro(floor) \
     macro(isFinite) \
+    macro(isNaN) \
     macro(getPrototypeOf) \
     macro(getOwnPropertyNames) \
     macro(RangeError) \
