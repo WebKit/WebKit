@@ -60,7 +60,7 @@ static const CSSPropertyID editingProperties[] = {
     CSSPropertyFontFamily,
     CSSPropertyFontSize,
     CSSPropertyFontStyle,
-    CSSPropertyFontVariantCaps,
+    CSSPropertyFontVariant,
     CSSPropertyFontWeight,
     CSSPropertyLetterSpacing,
     CSSPropertyOrphans,

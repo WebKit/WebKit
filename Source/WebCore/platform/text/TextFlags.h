@@ -139,8 +139,8 @@ enum class FontVariantEastAsianVariant {
 
 enum class FontVariantEastAsianWidth {
     Normal,
-    Full,
-    Proportional
+    FullWidth,
+    ProportionalWidth
 };
 
 enum class FontVariantEastAsianRuby {
@@ -219,25 +219,6 @@ struct FontVariantSettings {
             && eastAsianVariant == FontVariantEastAsianVariant::Normal
             && eastAsianWidth == FontVariantEastAsianWidth::Normal
             && eastAsianRuby == FontVariantEastAsianRuby::Normal;
-    }
-
-    bool operator==(const FontVariantSettings& other)
-    {
-        return commonLigatures == other.commonLigatures
-            && discretionaryLigatures == other.discretionaryLigatures
-            && historicalLigatures == other.historicalLigatures
-            && contextualAlternates == other.contextualAlternates
-            && position == other.position
-            && caps == other.caps
-            && numericFigure == other.numericFigure
-            && numericSpacing == other.numericSpacing
-            && numericFraction == other.numericFraction
-            && numericOrdinal == other.numericOrdinal
-            && numericSlashedZero == other.numericSlashedZero
-            && alternates == other.alternates
-            && eastAsianVariant == other.eastAsianVariant
-            && eastAsianWidth == other.eastAsianWidth
-            && eastAsianRuby == other.eastAsianRuby;
     }
 
     FontVariantLigatures commonLigatures;

@@ -20,7 +20,7 @@ runTest("font-variant-ligatures", "normal", "normal");
 runTest("font-variant-ligatures", "normal common-ligatures", "normal");
 runTest("font-variant-ligatures", "notavalidvalue", "normal");
 runTest("font-variant-ligatures", "common-ligatures", "common-ligatures");
-runTest("font-variant-ligatures", "common-ligatures common-ligatures", "common-ligatures");
+runTest("font-variant-ligatures", "common-ligatures common-ligatures", "normal");
 runTest("font-variant-ligatures", "no-common-ligatures", "no-common-ligatures");
 runTest("font-variant-ligatures", "discretionary-ligatures", "discretionary-ligatures");
 runTest("font-variant-ligatures", "no-discretionary-ligatures", "no-discretionary-ligatures");
@@ -69,9 +69,9 @@ runTest("font-variant-numeric", "stacked-fractions", "stacked-fractions");
 runTest("font-variant-numeric", "ordinal", "ordinal");
 runTest("font-variant-numeric", "slashed-zero", "slashed-zero");
 runTest("font-variant-numeric", "lining-nums slashed-zero", "lining-nums slashed-zero");
-runTest("font-variant-numeric", "lining-nums oldstyle-nums", "oldstyle-nums");
-runTest("font-variant-numeric", "proportional-nums tabular-nums", "tabular-nums");
-runTest("font-variant-numeric", "diagonal-fractions stacked-fractions", "stacked-fractions");
+runTest("font-variant-numeric", "lining-nums oldstyle-nums", "normal");
+runTest("font-variant-numeric", "proportional-nums tabular-nums", "normal");
+runTest("font-variant-numeric", "diagonal-fractions stacked-fractions", "normal");
 runTest("font-variant-numeric", "lining-nums proportional-nums", "lining-nums proportional-nums");
 runTest("font-variant-numeric", "lining-nums diagonal-fractions", "lining-nums diagonal-fractions");
 runTest("font-variant-numeric", "ordinal slashed-zero", "ordinal slashed-zero");
@@ -96,13 +96,13 @@ runTest("font-variant-east-asian", "traditional", "traditional");
 runTest("font-variant-east-asian", "full-width", "full-width");
 runTest("font-variant-east-asian", "proportional-width", "proportional-width");
 runTest("font-variant-east-asian", "ruby", "ruby");
-runTest("font-variant-east-asian", "jis78 jis83", "jis83");
-runTest("font-variant-east-asian", "jis90 traditional", "traditional");
+runTest("font-variant-east-asian", "jis78 jis83", "normal");
+runTest("font-variant-east-asian", "jis90 traditional", "normal");
 runTest("font-variant-east-asian", "full-width traditional", "traditional full-width");
 runTest("font-variant-east-asian", "jis04 proportional-width", "jis04 proportional-width");
 runTest("font-variant-east-asian", "jis04 proportional-width ruby", "jis04 proportional-width ruby");
 runTest("font-variant-east-asian", "jis83 ruby", "jis83 ruby");
-runTest("font-variant-east-asian", "full-width proportional-width", "proportional-width");
+runTest("font-variant-east-asian", "full-width proportional-width", "normal");
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

@@ -68,7 +68,7 @@ inline void applyValueFontVariantLigatures(T& receiver, CSSValue& value)
                 break;
             }
         }
-    } else if (is<CSSPrimitiveValue>(value)) {
+    } else {
         switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
         case CSSValueNormal:
             break;
@@ -131,7 +131,7 @@ inline void applyValueFontVariantNumeric(T& receiver, CSSValue& value)
                 break;
             }
         }
-    } else if (is<CSSPrimitiveValue>(value))
+    } else
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
 
     receiver.setVariantNumericFigure(figure);
@@ -170,10 +170,10 @@ inline void applyValueFontVariantEastAsian(T& receiver, CSSValue& value)
                 variant = FontVariantEastAsianVariant::Traditional;
                 break;
             case CSSValueFullWidth:
-                width = FontVariantEastAsianWidth::Full;
+                width = FontVariantEastAsianWidth::FullWidth;
                 break;
             case CSSValueProportionalWidth:
-                width = FontVariantEastAsianWidth::Proportional;
+                width = FontVariantEastAsianWidth::ProportionalWidth;
                 break;
             case CSSValueRuby:
                 ruby = FontVariantEastAsianRuby::Yes;
@@ -183,7 +183,7 @@ inline void applyValueFontVariantEastAsian(T& receiver, CSSValue& value)
                 break;
             }
         }
-    } else if (is<CSSPrimitiveValue>(value))
+    } else
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
 
     receiver.setVariantEastAsianVariant(variant);

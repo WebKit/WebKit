@@ -269,7 +269,7 @@ void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID
     case CSSPropertyFontStyle:
         break; // No prefix.
     case CSSPropertyFontFamily:
-    case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontVariant:
     case CSSPropertyFontWeight:
         prefix = ' ';
         break;
@@ -303,7 +303,7 @@ String StyleProperties::fontValue() const
     String commonValue = fontSizeProperty.value()->cssText();
     StringBuilder result;
     appendFontLonghandValueIfExplicit(CSSPropertyFontStyle, result, commonValue);
-    appendFontLonghandValueIfExplicit(CSSPropertyFontVariantCaps, result, commonValue);
+    appendFontLonghandValueIfExplicit(CSSPropertyFontVariant, result, commonValue);
     appendFontLonghandValueIfExplicit(CSSPropertyFontWeight, result, commonValue);
     if (!result.isEmpty())
         result.append(' ');
@@ -973,7 +973,7 @@ String StyleProperties::asText() const
             case CSSPropertyLineHeight:
             case CSSPropertyFontSize:
             case CSSPropertyFontStyle:
-            case CSSPropertyFontVariantCaps:
+            case CSSPropertyFontVariant:
             case CSSPropertyFontWeight:
                 // Don't use CSSPropertyFont because old UAs can't recognize them but are important for editing.
                 break;

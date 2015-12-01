@@ -261,7 +261,7 @@ void Editor::removeUnchangeableStyles()
     // FIXME: it'd be nice if knowledge about which styles were unchangeable was not hard-coded here.
     defaultStyle->removeProperty(CSSPropertyFontWeight);
     defaultStyle->removeProperty(CSSPropertyFontStyle);
-    defaultStyle->removeProperty(CSSPropertyFontVariantCaps);
+    defaultStyle->removeProperty(CSSPropertyFontVariant);
     // FIXME: we should handle also pasted quoted text, strikethrough, etc. <rdar://problem/9255115>
     defaultStyle->removeProperty(CSSPropertyTextDecoration);
     defaultStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect); // implements underline
