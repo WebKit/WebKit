@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebAhem";
+    src: url("../../resources/Ahem.ttf") format(truetype);
+}
+@font-face {
+    font-family: "WebFallbackFont";
+    src: url("resources/tinyfont.svg") format("svg");
+}
+</style>
+</head>
+<body>
+This test makes sure that small-caps works in both the simple and complex text codepaths.
+<div style="position: relative;">
+<div style="font: 100px WebAhem, WebFallbackFont; font-variant: small-caps;">a&#xe8;bcd</div>
+<div style="position: absolute; left: 50px; top: 0px; width: 125px; height: 100px; background-color: black;"></div>
+<div style="position: absolute; left: 350px; top: 0px; width: 20px; height: 100px; background-color: black;"></div>
+</div>
+</body>
+</html>

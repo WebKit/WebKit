@@ -1,3 +1,27 @@
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Web fonts with small caps have excess whitespace with the complex text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=151698
+
+        Reviewed by Darin Adler.
+
+        When performing small-caps on OS X, we bake in the smaller font size into the platform's native font
+        object. On Windows, we currently don't do that; instead, we just change some ancillary data inside
+        the FontPlatformData, and our advance & drawing calculations are sensitive to this ancillary data.
+        However, in the complex text codepath, Uniscribe only takes the native font object as input, and
+        therefore operates with the wrong font size.
+
+        The solution is to bake the smaller font size into the native platform font on Windows, similar to
+        OS X. It isn't clear why we didn't do this previously, but it seems like we weren't sure that
+        Windows would select the correct font when we provide new selection criteria. However, for web fonts,
+        we already use the same mechanism (CreateFontIndirect()) when we create the font in the first place;
+        therefore, this scaled font request will always work as well.
+
+        Test: fast/text/small-caps-complex.html
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::Font::platformCreateScaledFont): Deleted.
+
 2015-12-01  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/create-and-remove-object-store.html fails.
