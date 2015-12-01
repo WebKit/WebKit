@@ -1,3 +1,12 @@
+2015-11-30  Dana Burkart  <dburkart@apple.com>
+
+        Remove Mountain Lion support from ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=151679
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+
 2015-11-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add tvOS and watchOS to SUPPORTED_PLATFORMS
