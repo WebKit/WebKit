@@ -56,62 +56,6 @@ OSRExitDescriptor::OSRExitDescriptor(
 {
 }
 
-bool OSRExitDescriptor::willArriveAtExitFromIndirectExceptionCheck() const
-{
-    switch (m_exceptionType) {
-    case ExceptionType::JSCall:
-    case ExceptionType::GetById:
-    case ExceptionType::PutById:
-    case ExceptionType::LazySlowPath:
-    case ExceptionType::SubGenerator:
-        return true;
-    default:
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool OSRExitDescriptor::mightArriveAtOSRExitFromGenericUnwind() const
-{
-    switch (m_exceptionType) {
-    case ExceptionType::JSCall:
-    case ExceptionType::GetById:
-    case ExceptionType::PutById:
-        return true;
-    default:
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool OSRExitDescriptor::mightArriveAtOSRExitFromCallOperation() const
-{
-    switch (m_exceptionType) {
-    case ExceptionType::GetById:
-    case ExceptionType::PutById:
-    case ExceptionType::SubGenerator:
-        return true;
-    default:
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-bool OSRExitDescriptor::needsRegisterRecoveryOnGenericUnwindOSRExitPath() const
-{
-    // Calls/PutByIds/GetByIds all have a generic unwind osr exit paths.
-    // But, GetById and PutById ICs will do register recovery themselves
-    // because they're responsible for spilling necessary registers, so
-    // they also must recover registers themselves.
-    // Calls don't work this way. We compile Calls as patchpoints in LLVM.
-    // A call patchpoint might pass us volatile registers for locations
-    // we will do value recovery on. Therefore, before we make the call,
-    // we must spill these registers. Otherwise, the call will clobber them.
-    // Therefore, the corresponding OSR exit for the call will need to
-    // recover the spilled registers.
-    return m_exceptionType == ExceptionType::JSCall;
-}
-
 bool OSRExitDescriptor::isExceptionHandler() const
 {
     return m_exceptionType != ExceptionType::None;
@@ -131,6 +75,7 @@ OSRExit::OSRExit(OSRExitDescriptor& descriptor, uint32_t stackmapRecordIndex)
     : OSRExitBase(descriptor.m_kind, descriptor.m_codeOrigin, descriptor.m_codeOriginForExitProfile)
     , m_descriptor(descriptor)
     , m_stackmapRecordIndex(stackmapRecordIndex)
+    , m_exceptionType(descriptor.m_exceptionType)
 {
     m_isExceptionHandler = descriptor.isExceptionHandler();
 }
@@ -186,7 +131,7 @@ void OSRExit::gatherRegistersToSpillForCallIfException(StackMaps& stackmaps, Sta
 
 void OSRExit::spillRegistersToSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
 {
-    RELEASE_ASSERT(m_descriptor.mightArriveAtOSRExitFromGenericUnwind() || m_descriptor.mightArriveAtOSRExitFromCallOperation());
+    RELEASE_ASSERT(willArriveAtOSRExitFromGenericUnwind() || willArriveAtOSRExitFromCallOperation());
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (registersToPreserveForCallThatMightThrow.get(reg)) {
@@ -204,7 +149,7 @@ void OSRExit::spillRegistersToSpillSlot(CCallHelpers& jit, int32_t stackSpillSlo
 
 void OSRExit::recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot)
 {
-    RELEASE_ASSERT(m_descriptor.mightArriveAtOSRExitFromGenericUnwind() || m_descriptor.mightArriveAtOSRExitFromCallOperation());
+    RELEASE_ASSERT(willArriveAtOSRExitFromGenericUnwind() || willArriveAtOSRExitFromCallOperation());
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (registersToPreserveForCallThatMightThrow.get(reg)) {
@@ -218,6 +163,64 @@ void OSRExit::recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpil
             count++;
         }
     }
+}
+
+bool OSRExit::willArriveAtExitFromIndirectExceptionCheck() const
+{
+    switch (m_exceptionType) {
+    case ExceptionType::JSCall:
+    case ExceptionType::GetById:
+    case ExceptionType::PutById:
+    case ExceptionType::LazySlowPath:
+    case ExceptionType::SubGenerator:
+    case ExceptionType::GetByIdCallOperation:
+    case ExceptionType::PutByIdCallOperation:
+        return true;
+    default:
+        return false;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool OSRExit::willArriveAtOSRExitFromGenericUnwind() const
+{
+    switch (m_exceptionType) {
+    case ExceptionType::JSCall:
+    case ExceptionType::GetById:
+    case ExceptionType::PutById:
+        return true;
+    default:
+        return false;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool OSRExit::willArriveAtOSRExitFromCallOperation() const
+{
+    switch (m_exceptionType) {
+    case ExceptionType::GetByIdCallOperation:
+    case ExceptionType::PutByIdCallOperation:
+    case ExceptionType::SubGenerator:
+        return true;
+    default:
+        return false;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool OSRExit::needsRegisterRecoveryOnGenericUnwindOSRExitPath() const
+{
+    // Calls/PutByIds/GetByIds all have a generic unwind osr exit paths.
+    // But, GetById and PutById ICs will do register recovery themselves
+    // because they're responsible for spilling necessary registers, so
+    // they also must recover registers themselves.
+    // Calls don't work this way. We compile Calls as patchpoints in LLVM.
+    // A call patchpoint might pass us volatile registers for locations
+    // we will do value recovery on. Therefore, before we make the call,
+    // we must spill these registers. Otherwise, the call will clobber them.
+    // Therefore, the corresponding OSR exit for the call will need to
+    // recover the spilled registers.
+    return m_exceptionType == ExceptionType::JSCall;
 }
 
 } } // namespace JSC::FTL

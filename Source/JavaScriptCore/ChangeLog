@@ -1,3 +1,43 @@
+2015-11-30  Saam barati  <sbarati@apple.com>
+
+        FTL OSR Exits that are exception handlers should not have two different entrances. Instead, we should have two discrete OSR exits that do different things.
+        https://bugs.webkit.org/show_bug.cgi?id=151404
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExceptionHandlerManager.cpp:
+        (JSC::FTL::ExceptionHandlerManager::addNewExit):
+        (JSC::FTL::ExceptionHandlerManager::addNewCallOperationExit):
+        (JSC::FTL::ExceptionHandlerManager::callOperationExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::lazySlowPathExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::callOperationOSRExit):
+        (JSC::FTL::ExceptionHandlerManager::getByIdOSRExit): Deleted.
+        (JSC::FTL::ExceptionHandlerManager::subOSRExit): Deleted.
+        * ftl/FTLExceptionHandlerManager.h:
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExitDescriptor::isExceptionHandler):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::spillRegistersToSpillSlot):
+        (JSC::FTL::OSRExit::recoverRegistersFromSpillSlot):
+        (JSC::FTL::OSRExit::willArriveAtExitFromIndirectExceptionCheck):
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromGenericUnwind):
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromCallOperation):
+        (JSC::FTL::OSRExit::needsRegisterRecoveryOnGenericUnwindOSRExitPath):
+        (JSC::FTL::OSRExitDescriptor::willArriveAtExitFromIndirectExceptionCheck): Deleted.
+        (JSC::FTL::OSRExitDescriptor::mightArriveAtOSRExitFromGenericUnwind): Deleted.
+        (JSC::FTL::OSRExitDescriptor::mightArriveAtOSRExitFromCallOperation): Deleted.
+        (JSC::FTL::OSRExitDescriptor::needsRegisterRecoveryOnGenericUnwindOSRExitPath): Deleted.
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+
 2015-11-30  Mark Lam  <mark.lam@apple.com>
 
         Refactor the op_add, op_sub, and op_mul snippets to use the SnippetOperand class.

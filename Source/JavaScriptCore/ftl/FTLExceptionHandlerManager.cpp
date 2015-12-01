@@ -41,7 +41,14 @@ void ExceptionHandlerManager::addNewExit(uint32_t stackmapRecordIndex, size_t os
 {
     m_map.add(stackmapRecordIndex, osrExitIndex);
     OSRExit& exit = m_state.jitCode->osrExit[osrExitIndex];
-    RELEASE_ASSERT(exit.m_descriptor.willArriveAtExitFromIndirectExceptionCheck());
+    RELEASE_ASSERT(exit.willArriveAtExitFromIndirectExceptionCheck());
+}
+
+void ExceptionHandlerManager::addNewCallOperationExit(uint32_t stackmapRecordIndex, size_t osrExitIndex)
+{
+    m_callOperationMap.add(stackmapRecordIndex, osrExitIndex);
+    OSRExit& exit = m_state.jitCode->osrExit[osrExitIndex];
+    RELEASE_ASSERT(exit.willArriveAtExitFromIndirectExceptionCheck());
 }
 
 CodeLocationLabel ExceptionHandlerManager::callOperationExceptionTarget(uint32_t stackmapRecordIndex)
@@ -51,15 +58,15 @@ CodeLocationLabel ExceptionHandlerManager::callOperationExceptionTarget(uint32_t
     RELEASE_ASSERT_NOT_REACHED();
     return CodeLocationLabel();
 #else // FTL_USES_B3
-    auto findResult = m_map.find(stackmapRecordIndex);
-    if (findResult == m_map.end())
+    auto findResult = m_callOperationMap.find(stackmapRecordIndex);
+    if (findResult == m_callOperationMap.end())
         return CodeLocationLabel();
 
     size_t osrExitIndex = findResult->value;
-    RELEASE_ASSERT(m_state.jitCode->osrExit[osrExitIndex].m_descriptor.mightArriveAtOSRExitFromCallOperation());
+    RELEASE_ASSERT(m_state.jitCode->osrExit[osrExitIndex].willArriveAtOSRExitFromCallOperation());
     OSRExitCompilationInfo& info = m_state.finalizer->osrExit[osrExitIndex];
-    RELEASE_ASSERT(info.m_callOperationExceptionOSRExitEntrance.isSet());
-    return m_state.finalizer->exitThunksLinkBuffer->locationOf(info.m_callOperationExceptionOSRExitEntrance);
+    RELEASE_ASSERT(info.m_thunkLabel.isSet());
+    return m_state.finalizer->exitThunksLinkBuffer->locationOf(info.m_thunkLabel);
 #endif // FTL_USES_B3
 }
 
@@ -82,25 +89,16 @@ CodeLocationLabel ExceptionHandlerManager::lazySlowPathExceptionTarget(uint32_t 
 #endif // FTL_USES_B3
 }
 
-OSRExit* ExceptionHandlerManager::getByIdOSRExit(uint32_t stackmapRecordIndex)
+OSRExit* ExceptionHandlerManager::callOperationOSRExit(uint32_t stackmapRecordIndex)
 {
-    auto findResult = m_map.find(stackmapRecordIndex);
-    if (findResult == m_map.end())
+    auto findResult = m_callOperationMap.find(stackmapRecordIndex);
+    if (findResult == m_callOperationMap.end())
         return nullptr;
     size_t osrExitIndex = findResult->value;
     OSRExit* exit = &m_state.jitCode->osrExit[osrExitIndex];
-    RELEASE_ASSERT(exit->m_descriptor.m_exceptionType == ExceptionType::GetById);
-    return exit; 
-}
-
-OSRExit* ExceptionHandlerManager::subOSRExit(uint32_t stackmapRecordIndex)
-{
-    auto findResult = m_map.find(stackmapRecordIndex);
-    if (findResult == m_map.end())
-        return nullptr;
-    size_t osrExitIndex = findResult->value;
-    OSRExit* exit = &m_state.jitCode->osrExit[osrExitIndex];
-    RELEASE_ASSERT(exit->m_descriptor.m_exceptionType == ExceptionType::SubGenerator);
+    // We may have more than one exit for the same stackmap record index (i.e, for GetByIds and PutByIds).
+    // Therefore we need to make sure this exit really is a callOperation OSR exit.
+    RELEASE_ASSERT(exit->willArriveAtOSRExitFromCallOperation());
     return exit; 
 }
 

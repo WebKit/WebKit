@@ -643,12 +643,39 @@ static void fixFunctionBasedOnStackMaps(
             }
 
             OSRExit& exit = state.jitCode->osrExit.last();
-            if (exitDescriptor.willArriveAtExitFromIndirectExceptionCheck()) {
+            if (exit.willArriveAtExitFromIndirectExceptionCheck()) {
                 StackMaps::Record& record = iter->value[j].record;
                 RELEASE_ASSERT(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader.isSet());
                 CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader);
                 exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
-                exceptionHandlerManager.addNewExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
+
+                OSRExit* callOperationExit = nullptr;
+                if (exitDescriptor.m_exceptionType == ExceptionType::SubGenerator) {
+                    exceptionHandlerManager.addNewCallOperationExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
+                    callOperationExit = &exit;
+                } else
+                    exceptionHandlerManager.addNewExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
+                
+                if (exitDescriptor.m_exceptionType == ExceptionType::GetById || exitDescriptor.m_exceptionType == ExceptionType::PutById) {
+                    // We create two different OSRExits for GetById and PutById.
+                    // One exit that will be arrived at from the genericUnwind exception handler path,
+                    // and the other that will be arrived at from the callOperation exception handler path.
+                    // This code here generates the second callOperation variant.
+                    uint32_t stackmapRecordIndex = iter->value[j].index;
+                    OSRExit exit(exitDescriptor, stackmapRecordIndex);
+                    if (exitDescriptor.m_exceptionType == ExceptionType::GetById)
+                        exit.m_exceptionType = ExceptionType::GetByIdCallOperation;
+                    else
+                        exit.m_exceptionType = ExceptionType::PutByIdCallOperation;
+                    CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader);
+                    exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
+
+                    state.jitCode->osrExit.append(exit);
+                    state.finalizer->osrExit.append(OSRExitCompilationInfo());
+
+                    exceptionHandlerManager.addNewCallOperationExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
+                    callOperationExit = &state.jitCode->osrExit.last();
+                }
 
                 // Subs and GetByIds have an interesting register preservation story,
                 // see comment below at GetById to read about it.
@@ -666,13 +693,13 @@ static void fixFunctionBasedOnStackMaps(
                     GPRReg result = record.locations[0].directGPR();
                     GPRReg base = record.locations[1].directGPR();
                     if (base == result)
-                        exit.registersToPreserveForCallThatMightThrow.set(base);
+                        callOperationExit->registersToPreserveForCallThatMightThrow.set(base);
                 } else if (exitDescriptor.m_exceptionType == ExceptionType::SubGenerator) {
                     GPRReg result = record.locations[0].directGPR();
                     GPRReg left = record.locations[1].directGPR();
                     GPRReg right = record.locations[2].directGPR();
                     if (result == left || result == right)
-                        exit.registersToPreserveForCallThatMightThrow.set(result);
+                        callOperationExit->registersToPreserveForCallThatMightThrow.set(result);
                 }
             }
         }
@@ -703,7 +730,7 @@ static void fixFunctionBasedOnStackMaps(
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
 
-            if (exit.m_descriptor.mightArriveAtOSRExitFromGenericUnwind()) {
+            if (exit.willArriveAtOSRExitFromGenericUnwind()) {
                 HandlerInfo newHandler = exit.m_descriptor.m_baselineExceptionHandler;
                 newHandler.start = exit.m_exceptionHandlerCallSiteIndex.bits();
                 newHandler.end = exit.m_exceptionHandlerCallSiteIndex.bits() + 1;
@@ -781,7 +808,7 @@ static void fixFunctionBasedOnStackMaps(
                     // register that we would like to do value recovery on. We combat this situation from ever
                     // taking place by ensuring we spill the original base value and then recover it from
                     // the spill slot as the first step in OSR exit.
-                    if (OSRExit* exit = exceptionHandlerManager.getByIdOSRExit(iter->value[i].index))
+                    if (OSRExit* exit = exceptionHandlerManager.callOperationOSRExit(iter->value[i].index))
                         exit->spillRegistersToSpillSlot(slowPathJIT, jsCallThatMightThrowSpillOffset);
                 }
                 MacroAssembler::Call call = callOperation(
@@ -900,7 +927,7 @@ static void fixFunctionBasedOnStackMaps(
                 if (result == left || result == right) {
                     // This situation has a really interesting register preservation story.
                     // See comment above for GetByIds.
-                    if (OSRExit* exit = exceptionHandlerManager.subOSRExit(iter->value[i].index))
+                    if (OSRExit* exit = exceptionHandlerManager.callOperationOSRExit(iter->value[i].index))
                         exit->spillRegistersToSpillSlot(slowPathJIT, jsCallThatMightThrowSpillOffset);
                 }
 
@@ -1099,7 +1126,7 @@ static void fixFunctionBasedOnStackMaps(
         OSRExit& exit = jitCode->osrExit[exitIndex];
         Vector<const void*> codeAddresses;
 
-        if (exit.m_descriptor.willArriveAtExitFromIndirectExceptionCheck()) // This jump doesn't happen directly from a patchpoint/stackmap we compile. It happens indirectly through an exception check somewhere.
+        if (exit.willArriveAtExitFromIndirectExceptionCheck()) // This jump doesn't happen directly from a patchpoint/stackmap we compile. It happens indirectly through an exception check somewhere.
             continue;
         
         StackMaps::Record& record = jitCode->stackmaps.records[exit.m_stackmapRecordIndex];

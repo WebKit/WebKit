@@ -136,14 +136,16 @@ namespace FTL {
 //   intrinsics (or meta-data, or something) to inform the backend that it's safe to
 //   make the predicate passed to 'exitIf()' more truthy.
 
-enum class ExceptionType {
+enum class ExceptionType : uint8_t {
     None,
     CCallException,
     JSCall,
     GetById,
+    GetByIdCallOperation,
     PutById,
+    PutByIdCallOperation,
     LazySlowPath,
-    SubGenerator
+    SubGenerator,
 };
 
 struct OSRExitDescriptor {
@@ -152,10 +154,6 @@ struct OSRExitDescriptor {
         CodeOrigin, CodeOrigin originForProfile,
         unsigned numberOfArguments, unsigned numberOfLocals);
 
-    bool willArriveAtExitFromIndirectExceptionCheck() const;
-    bool mightArriveAtOSRExitFromGenericUnwind() const;
-    bool mightArriveAtOSRExitFromCallOperation() const;
-    bool needsRegisterRecoveryOnGenericUnwindOSRExitPath() const;
     bool isExceptionHandler() const;
 
     ExitKind m_kind;
@@ -191,6 +189,7 @@ struct OSRExit : public DFG::OSRExitBase {
     unsigned m_patchableCodeOffset;
     // Offset within Stackmap::records
     uint32_t m_stackmapRecordIndex;
+    ExceptionType m_exceptionType;
 
     RegisterSet registersToPreserveForCallThatMightThrow;
 
@@ -203,6 +202,11 @@ struct OSRExit : public DFG::OSRExitBase {
     void gatherRegistersToSpillForCallIfException(StackMaps&, StackMaps::Record&);
     void spillRegistersToSpillSlot(CCallHelpers&, int32_t stackSpillSlot);
     void recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot);
+
+    bool willArriveAtOSRExitFromGenericUnwind() const;
+    bool willArriveAtExitFromIndirectExceptionCheck() const;
+    bool willArriveAtOSRExitFromCallOperation() const;
+    bool needsRegisterRecoveryOnGenericUnwindOSRExitPath() const;
 };
 
 } } // namespace JSC::FTL
