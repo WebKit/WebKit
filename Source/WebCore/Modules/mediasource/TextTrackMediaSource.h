@@ -36,7 +36,7 @@ class SourceBuffer;
 
 class TextTrackMediaSource {
 public:
-    static SourceBuffer* sourceBuffer(TextTrack* track) { return track->sourceBuffer(); }
+    static SourceBuffer* sourceBuffer(TextTrack& track) { return track.sourceBuffer(); }
 };
 
 }

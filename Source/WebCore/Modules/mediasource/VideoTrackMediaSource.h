@@ -36,7 +36,7 @@ class SourceBuffer;
 
 class VideoTrackMediaSource {
 public:
-    static SourceBuffer* sourceBuffer(VideoTrack* track) { return track->sourceBuffer(); }
+    static SourceBuffer* sourceBuffer(VideoTrack& track) { return track.sourceBuffer(); }
 };
 
 }

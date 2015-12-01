@@ -2435,7 +2435,7 @@ sub GenerateImplementation
                         my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                         $implIncludes{"${implementedBy}.h"} = 1;
                         $functionName = "WebCore::${implementedBy}::${functionName}";
-                        unshift(@arguments, "&impl") if !$attribute->isStatic;
+                        unshift(@arguments, "impl") if !$attribute->isStatic;
                     } elsif ($attribute->isStatic) {
                         $functionName = "${interfaceName}::${functionName}";
                     } else {
@@ -2777,7 +2777,7 @@ sub GenerateImplementation
                     if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                         my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                         AddToImplIncludes("${implementedBy}.h", $attribute->signature->extendedAttributes->{"Conditional"});
-                        unshift(@arguments, "&impl") if !$attribute->isStatic;
+                        unshift(@arguments, "impl") if !$attribute->isStatic;
                         $functionName = "WebCore::${implementedBy}::${functionName}";
                     } elsif ($attribute->isStatic) {
                         $functionName = "${interfaceName}::${functionName}";
@@ -3296,7 +3296,7 @@ sub GenerateParametersCheck
     my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
     if ($implementedBy) {
         AddToImplIncludes("${implementedBy}.h", $function->signature->extendedAttributes->{"Conditional"});
-        unshift(@arguments, "&impl") if !$function->isStatic;
+        unshift(@arguments, "impl") if !$function->isStatic;
         $functionName = "WebCore::${implementedBy}::${functionImplementationName}";
     } elsif ($function->isStatic) {
         $functionName = "${interfaceName}::${functionImplementationName}";

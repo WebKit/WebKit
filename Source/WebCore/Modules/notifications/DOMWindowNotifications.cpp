@@ -63,9 +63,9 @@ DOMWindowNotifications* DOMWindowNotifications::from(DOMWindow* window)
     return supplement;
 }
 
-NotificationCenter* DOMWindowNotifications::webkitNotifications(DOMWindow* window)
+NotificationCenter* DOMWindowNotifications::webkitNotifications(DOMWindow& window)
 {
-    return DOMWindowNotifications::from(window)->webkitNotifications();
+    return DOMWindowNotifications::from(&window)->webkitNotifications();
 }
 
 void DOMWindowNotifications::disconnectFrameForDocumentSuspension()

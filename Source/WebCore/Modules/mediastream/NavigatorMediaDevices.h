@@ -48,7 +48,7 @@ public:
     virtual ~NavigatorMediaDevices();
     static NavigatorMediaDevices* from(Navigator*);
 
-    static MediaDevices* mediaDevices(Navigator*);
+    static MediaDevices* mediaDevices(Navigator&);
     MediaDevices* mediaDevices() const;
 
 private:

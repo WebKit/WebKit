@@ -38,7 +38,7 @@ public:
     virtual ~NavigatorGeolocation();
     static NavigatorGeolocation* from(Navigator*);
 
-    static Geolocation* geolocation(Navigator*);
+    static Geolocation* geolocation(Navigator&);
     Geolocation* geolocation() const;
 
 #if PLATFORM(IOS)

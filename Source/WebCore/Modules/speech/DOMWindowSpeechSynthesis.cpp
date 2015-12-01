@@ -65,9 +65,9 @@ DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(DOMWindow* window)
 }
 
 // static
-SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis(DOMWindow* window)
+SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis(DOMWindow& window)
 {
-    return DOMWindowSpeechSynthesis::from(window)->speechSynthesis();
+    return DOMWindowSpeechSynthesis::from(&window)->speechSynthesis();
 }
 
 SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis()

@@ -46,7 +46,7 @@ public:
 
     // The array of Gamepads might be sparse.
     // Null checking each entry is necessary.
-    static const Vector<RefPtr<Gamepad>>& getGamepads(Navigator*);
+    static const Vector<RefPtr<Gamepad>>& getGamepads(Navigator&);
 
     double navigationStart() const { return m_navigationStart; }
 

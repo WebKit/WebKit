@@ -37,8 +37,8 @@ class MediaStream;
 
 class HTMLMediaElementMediaStream {
 public:
-    static MediaStream* srcObject(HTMLMediaElement*);
-    static void setSrcObject(HTMLMediaElement*, MediaStream*);
+    static MediaStream* srcObject(HTMLMediaElement&);
+    static void setSrcObject(HTMLMediaElement&, MediaStream*);
 };
 
 } // namespace WebCore

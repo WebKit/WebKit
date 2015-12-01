@@ -61,9 +61,9 @@ WorkerGlobalScopeNotifications* WorkerGlobalScopeNotifications::from(WorkerGloba
     return supplement;
 }
 
-NotificationCenter* WorkerGlobalScopeNotifications::webkitNotifications(WorkerGlobalScope* context)
+NotificationCenter* WorkerGlobalScopeNotifications::webkitNotifications(WorkerGlobalScope& context)
 {
-    return WorkerGlobalScopeNotifications::from(context)->webkitNotifications();
+    return WorkerGlobalScopeNotifications::from(&context)->webkitNotifications();
 }
 
 NotificationCenter* WorkerGlobalScopeNotifications::webkitNotifications()

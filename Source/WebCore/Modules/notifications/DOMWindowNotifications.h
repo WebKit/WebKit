@@ -43,7 +43,7 @@ public:
     explicit DOMWindowNotifications(DOMWindow*);
     virtual ~DOMWindowNotifications();
 
-    static NotificationCenter* webkitNotifications(DOMWindow*);
+    static NotificationCenter* webkitNotifications(DOMWindow&);
     static DOMWindowNotifications* from(DOMWindow*);
 
     virtual void disconnectFrameForDocumentSuspension() override;

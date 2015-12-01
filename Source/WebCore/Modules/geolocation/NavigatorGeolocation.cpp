@@ -66,9 +66,9 @@ void NavigatorGeolocation::resetAllGeolocationPermission()
 }
 #endif // PLATFORM(IOS)
 
-Geolocation* NavigatorGeolocation::geolocation(Navigator* navigator)
+Geolocation* NavigatorGeolocation::geolocation(Navigator& navigator)
 {
-    return NavigatorGeolocation::from(navigator)->geolocation();
+    return NavigatorGeolocation::from(&navigator)->geolocation();
 }
 
 Geolocation* NavigatorGeolocation::geolocation() const

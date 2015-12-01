@@ -60,9 +60,9 @@ NavigatorMediaDevices* NavigatorMediaDevices::from(Navigator* navigator)
     return supplement;
 }
 
-MediaDevices* NavigatorMediaDevices::mediaDevices(Navigator* navigator)
+MediaDevices* NavigatorMediaDevices::mediaDevices(Navigator& navigator)
 {
-    return NavigatorMediaDevices::from(navigator)->mediaDevices();
+    return NavigatorMediaDevices::from(&navigator)->mediaDevices();
 }
 
 MediaDevices* NavigatorMediaDevices::mediaDevices() const

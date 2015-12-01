@@ -33,16 +33,14 @@
 
 namespace WebCore {
 
-MediaStream* HTMLMediaElementMediaStream::srcObject(HTMLMediaElement* mediaElement)
+MediaStream* HTMLMediaElementMediaStream::srcObject(HTMLMediaElement& mediaElement)
 {
-    ASSERT(mediaElement);
-    return mediaElement->srcObject();
+    return mediaElement.srcObject();
 }
 
-void HTMLMediaElementMediaStream::setSrcObject(HTMLMediaElement* mediaElement, MediaStream* mediaStream)
+void HTMLMediaElementMediaStream::setSrcObject(HTMLMediaElement& mediaElement, MediaStream* mediaStream)
 {
-    ASSERT(mediaElement);
-    mediaElement->setSrcObject(mediaStream);
+    mediaElement.setSrcObject(mediaStream);
 }
 
 } // namespace WebCore

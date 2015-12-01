@@ -81,9 +81,9 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
     return *m_gamepads[index];
 }
 
-const Vector<RefPtr<Gamepad>>& NavigatorGamepad::getGamepads(Navigator* navigator)
+const Vector<RefPtr<Gamepad>>& NavigatorGamepad::getGamepads(Navigator& navigator)
 {
-    return NavigatorGamepad::from(navigator)->gamepads();
+    return NavigatorGamepad::from(&navigator)->gamepads();
 }
 
 const Vector<RefPtr<Gamepad>>& NavigatorGamepad::gamepads()

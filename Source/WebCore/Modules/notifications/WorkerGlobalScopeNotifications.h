@@ -42,7 +42,7 @@ public:
     explicit WorkerGlobalScopeNotifications(WorkerGlobalScope*);
     virtual ~WorkerGlobalScopeNotifications();
 
-    static NotificationCenter* webkitNotifications(WorkerGlobalScope*);
+    static NotificationCenter* webkitNotifications(WorkerGlobalScope&);
     static WorkerGlobalScopeNotifications* from(WorkerGlobalScope*);
 
 private:
