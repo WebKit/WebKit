@@ -1,3 +1,18 @@
+2015-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebKit2.framework
+        https://bugs.webkit.org/show_bug.cgi?id=151715
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2/StopLoadingDuringDidFailProvisionalLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/StopLoadingDuringDidFailProvisionalLoad_bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsInvalidScheme.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing.mm:
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm:
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.h:
+
 2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed common typo fix "occurance" => "occurrence".

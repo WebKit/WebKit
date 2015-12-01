@@ -32,7 +32,6 @@
 #import "PlatformUtilities.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
-#import <WebKit/WebKit2.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED && PLATFORM(MAC)

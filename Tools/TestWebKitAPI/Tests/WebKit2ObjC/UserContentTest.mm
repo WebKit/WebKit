@@ -35,7 +35,6 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKSerializedScriptValue.h>
 #import <WebKit/WKViewPrivate.h>
-#import <WebKit/WebKit2.h>
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 

@@ -1,3 +1,17 @@
+2015-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebKit2.framework
+        https://bugs.webkit.org/show_bug.cgi?id=151715
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKit2.xcconfig: Removed.
+        * UIProcess/API/Cocoa/WebKit2.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * mac/Info-WebKit2.plist: Removed.
+        * mac/MigrateHeadersToWebKit2.make: Removed.
+        * mac/WebKit2.m: Removed.
+
 2015-12-01  Alex Christensen  <achristensen@webkit.org>
 
         Use Optional for matrix inverses
