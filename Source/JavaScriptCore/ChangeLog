@@ -1,3 +1,13 @@
+2015-12-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Don't hide the argument name inside for block in AirIteratedRegisterCoalescing.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=151622
+
+        Reviewed by Darin Adler.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::addEdges):
+
 2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Remove use of @catch for exposed promises

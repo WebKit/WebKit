@@ -247,7 +247,7 @@ private:
             addEdges(inst, nextInst, localCalc.live());
     }
 
-    void addEdges(Inst& inst, Inst* nextInst, typename TmpLiveness<type>::LocalCalc::Iterable liveTmp)
+    void addEdges(Inst& inst, Inst* nextInst, typename TmpLiveness<type>::LocalCalc::Iterable liveTmps)
     {
         // All the Def()s interfere with everthing live.
         inst.forEachTmpWithExtraClobberedRegs(
@@ -256,7 +256,7 @@ private:
                 if (!Arg::isDef(role) || argType != type)
                     return;
                 
-                for (const Tmp& liveTmp : liveTmp) {
+                for (const Tmp& liveTmp : liveTmps) {
                     if (liveTmp.isGP() == (type == Arg::GP))
                         addEdge(arg, liveTmp);
                 }
