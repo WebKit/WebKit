@@ -1,3 +1,13 @@
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Remove use of @catch for exposed promises
+        https://bugs.webkit.org/show_bug.cgi?id=151625
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::addOwnInternalSlots): Removing @catch from the prototype as it is not safe.
+
 2015-11-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3::ValueRep::Any should translate into a Arg::ColdUse role in Air

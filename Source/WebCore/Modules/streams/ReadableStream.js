@@ -171,7 +171,7 @@ function pipeTo(destination, options)
 
     reader = source.getReader();
 
-    @Promise.prototype.@catch.@call(reader.closed, abortDestination);
+    @Promise.prototype.@then.@call(reader.closed, undefined, abortDestination);
     @Promise.prototype.@then.@call(destination.closed,
         function() {
             if (!closedPurposefully)

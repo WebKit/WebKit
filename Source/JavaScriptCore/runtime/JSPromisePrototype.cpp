@@ -83,7 +83,6 @@ void JSPromisePrototype::finishCreation(VM& vm, Structure*)
 void JSPromisePrototype::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)
 {
     JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().thenPrivateName(), promisePrototypeThenCodeGenerator, DontEnum | DontDelete | ReadOnly);
-    JSC_BUILTIN_FUNCTION(vm.propertyNames->builtinNames().catchPrivateName(), promisePrototypeCatchCodeGenerator, DontEnum | DontDelete | ReadOnly);
 }
 
 bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

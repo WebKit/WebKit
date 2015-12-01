@@ -1,3 +1,20 @@
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Remove use of @catch for exposed promises
+        https://bugs.webkit.org/show_bug.cgi?id=151625
+
+        Reviewed by Darin Adler.
+
+        Promise @catch is calling "then" which may be controlled by user scripts.
+        This patch simply replaces @catch by calling @then directly.
+
+        Covered by modified tests.
+
+        * Modules/streams/ReadableStream.js:
+        (pipeTo):
+        * Modules/streams/ReadableStreamInternals.js:
+        (teeReadableStream):
+
 2015-11-30  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, fix build after r192848 and r192849

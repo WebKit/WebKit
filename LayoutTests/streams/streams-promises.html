@@ -66,14 +66,17 @@ test(function() {
 
 test(function() {
     const PromiseCatchBackup = Promise.prototype.catch;
+    const PromiseThenBackup = Promise.prototype.then;
 
     try {
         Promise.prototype.catch = function() { assert_unreached("streams should not use this Promise.prototype.catch method"); };
+        Promise.prototype.then = function() { assert_unreached("streams should not use this Promise.prototype.catch method"); };
 
         const rs = new ReadableStream();
         rs.tee();
     } finally {
         Promise.prototype.catch = PromiseCatchBackup;
+        Promise.prototype.then = PromiseThenBackup;
     }
 }, 'Streams and promises: replace catch method in Promise prototype');
 

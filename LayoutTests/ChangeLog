@@ -1,3 +1,12 @@
+2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Remove use of @catch for exposed promises
+        https://bugs.webkit.org/show_bug.cgi?id=151625
+
+        Reviewed by Darin Adler.
+
+        * streams/streams-promises.html: beefing up the catch test by also overwritting Promise.prototype.then.
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Unskip "storage/indexeddb/mozilla" instead of each individual test inside of it.

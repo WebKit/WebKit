@@ -96,7 +96,7 @@ function teeReadableStream(stream, shouldClone)
         "cancel": @teeReadableStreamBranch2CancelFunction(teeState, stream)
     });
 
-    @Promise.prototype.@catch.@call(reader.closed, function(e) {
+    @Promise.prototype.@then.@call(reader.closed, undefined, function(e) {
         if (teeState.closedOrErrored)
             return;
         @errorReadableStream(branch1, e);
