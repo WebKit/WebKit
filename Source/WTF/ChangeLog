@@ -7,7 +7,7 @@
 
         Use 64 bits in the random number generator instead of 32 bit. (In
         the end, JavaScript, which uses doubles, will only see 52 bits.) This
-        prevents programs that mulitply a random number by a large constant from
+        prevents programs that multiply a random number by a large constant from
         seeing non-random "banding" caused by zeroes in the low 20 bits.
 
         I also took the opportunity to upgrade from GameRandom to Xorshift+,
