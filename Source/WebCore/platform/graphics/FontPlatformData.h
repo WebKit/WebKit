@@ -115,7 +115,6 @@ public:
     static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
 
-    bool isSystemFont() const { return m_isSystemFont; }
     bool hasCustomTracking() const { return isSystemFont(); }
 
 #if USE(APPKIT)
@@ -123,6 +122,11 @@ public:
     NSFont *nsFont() const { return (NSFont *)m_font.get(); }
     void setNSFont(NSFont *font) { setFont(reinterpret_cast<CTFontRef>(font)); }
 #endif
+#endif
+
+#if PLATFORM(WIN) || PLATFORM(COCOA)
+    bool isSystemFont() const { return m_isSystemFont; }
+    void setIsSystemFont(bool isSystemFont) { m_isSystemFont = isSystemFont; }
 #endif
 
 #if USE(CG)

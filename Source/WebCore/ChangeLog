@@ -1,3 +1,16 @@
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Build fix after r192895
+
+        Unreviewed.
+
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::isSystemFont):
+        (WebCore::FontPlatformData::setIsSystemFont):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::Font::platformInit):
+        (WebCore::Font::platformWidthForGlyph):
+
 2015-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         Update bindings test results after r192903.
