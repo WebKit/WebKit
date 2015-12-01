@@ -1014,10 +1014,10 @@ void JSGlobalObject::setInputCursor(PassRefPtr<InputCursor> prpCursor)
     // Save or set the random seed. This performed here rather than the constructor
     // to avoid threading the input cursor through all the abstraction layers.
     if (cursor.isCapturing())
-        cursor.appendInput<SetRandomSeed>(m_weakRandom.seedUnsafe());
+        cursor.appendInput<SetRandomSeed>(m_weakRandom.seed());
     else if (cursor.isReplaying()) {
         if (SetRandomSeed* input = cursor.fetchInput<SetRandomSeed>())
-            m_weakRandom.initializeSeed(static_cast<unsigned>(input->randomSeed()));
+            m_weakRandom.setSeed(static_cast<unsigned>(input->randomSeed()));
     }
 }
 #endif

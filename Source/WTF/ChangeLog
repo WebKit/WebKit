@@ -1,3 +1,37 @@
+2015-11-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Use a better RNG for Math.random()
+        https://bugs.webkit.org/show_bug.cgi?id=151641
+
+        Reviewed by Anders Carlsson.
+
+        Use 64 bits in the random number generator instead of 32 bit. (In
+        the end, JavaScript, which uses doubles, will only see 52 bits.) This
+        prevents programs that mulitply a random number by a large constant from
+        seeing non-random "banding" caused by zeroes in the low 20 bits.
+
+        I also took the opportunity to upgrade from GameRandom to Xorshift+,
+        since Xorshift+ passes more benchmarks for randomness, and is not any
+        slower or more complicated.
+
+        Now let us all remember the fateful words of Steve Weibe, who would be
+        King of Kong: "The randomness went the opposite way that it usually goes."
+
+        * wtf/WeakRandom.h:
+        (WTF::WeakRandom::WeakRandom):
+        (WTF::WeakRandom::setSeed): Use standard naming.
+
+        (WTF::WeakRandom::seed): This function is safe now. "Unsafe" in function
+        names makes me itch.
+
+        (WTF::WeakRandom::get):
+        (WTF::WeakRandom::getUint32): Update to 64bit.
+
+        (WTF::WeakRandom::advance): The Xorshift+ algorithm.
+
+        (WTF::WeakRandom::initializeSeed): Deleted.
+        (WTF::WeakRandom::seedUnsafe): Deleted.
+
 2015-11-30  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Speed up Air Liveness Analysis on Tmps

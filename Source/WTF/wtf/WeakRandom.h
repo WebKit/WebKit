@@ -22,76 +22,57 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
+ * Vigna, Sebastiano (2014). "Further scramblings of Marsaglia's xorshift
+ * generators". arXiv:1404.0390 (http://arxiv.org/abs/1404.0390)
  *
- * Copyright (c) 2009 Ian C. Bullard
- * 
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
+ * See also https://en.wikipedia.org/wiki/Xorshift.
  */
 
 #ifndef WeakRandom_h
 #define WeakRandom_h
 
 #include <limits.h>
-#include <wtf/RandomNumber.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
 class WeakRandom {
 public:
-    WeakRandom()
+    WeakRandom(unsigned seed = cryptographicallyRandomNumber())
     {
-        initializeSeed(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
+        setSeed(seed);
     }
-    
-    WeakRandom(unsigned seed)
+
+    void setSeed(unsigned seed)
     {
-        initializeSeed(seed);
-    }
-    
-    void initializeSeed(unsigned seed)
-    {
-        m_low = seed ^ 0x49616E42;
+        m_seed = seed;
+
+        // A zero seed would cause an infinite series of zeroes.
+        if (!seed)
+            seed = 1;
+
+        m_low = seed;
         m_high = seed;
     }
 
-    // Returns the seed provided that you've never called get() or getUint32().
-    unsigned seedUnsafe() const { return m_high; }
+    unsigned seed() const { return m_seed; }
 
     double get()
     {
-        return advance() / (UINT_MAX + 1.0);
+        return advance() / (std::numeric_limits<uint64_t>::max() + 1.0);
     }
 
     unsigned getUint32()
     {
-        return advance();
+        return static_cast<unsigned>(advance());
     }
 
     unsigned getUint32(unsigned limit)
     {
         if (limit <= 1)
             return 0;
-        uint64_t cutoff = (static_cast<uint64_t>(UINT_MAX) + 1) / limit * limit;
+        uint64_t cutoff = (static_cast<uint64_t>(std::numeric_limits<unsigned>::max()) + 1) / limit * limit;
         for (;;) {
             uint64_t value = getUint32();
             if (value >= cutoff)
@@ -101,16 +82,21 @@ public:
     }
 
 private:
-    unsigned advance()
+    uint64_t advance()
     {
-        m_high = (m_high << 16) + (m_high >> 16);
-        m_high += m_low;
-        m_low += m_high;
-        return m_high;
+        uint64_t x = m_low;
+        uint64_t y = m_high;
+        m_low = y;
+        x ^= x << 23;
+        x ^= x >> 17;
+        x ^= y ^ (y >> 26);
+        m_high = x;
+        return x + y;
     }
 
-    unsigned m_low;
-    unsigned m_high;
+    unsigned m_seed;
+    uint64_t m_low;
+    uint64_t m_high;
 };
 
 } // namespace WTF
