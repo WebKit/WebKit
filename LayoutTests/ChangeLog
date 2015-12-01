@@ -1,5 +1,13 @@
 2015-12-01  Brady Eidson  <beidson@apple.com>
 
+        Skip some specific IDB tests in preparation for enabling the entire directory.
+
+        Reviewed in person by Sam Weinig.
+
+        * platform/mac-wk1/TestExpectations:
+
+2015-12-01  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/create-and-remove-object-store.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=151704
 

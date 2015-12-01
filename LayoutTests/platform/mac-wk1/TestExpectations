@@ -79,6 +79,21 @@ storage/indexeddb/cursor-finished.html [ Pass ]
 storage/indexeddb/modern [ Pass ]
 storage/indexeddb/mozilla [ Pass ]
 
+# No workers support in Modern IDB yet
+storage/indexeddb/basics-workers.html
+storage/indexeddb/cursor-advance-workers.html
+storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html
+storage/indexeddb/factory-basics-workers.html
+storage/indexeddb/index-basics-workers.html
+storage/indexeddb/objectstore-basics-workers.html
+storage/indexeddb/open-twice-workers.html
+storage/indexeddb/pending-activity-workers.html
+storage/indexeddb/transaction-complete-workers.html
+storage/indexeddb/unprefix-workers.html
+
+# Complicated IDB failures that need a closer look
+storage/indexeddb/connection-leak.html
+
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
