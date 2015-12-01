@@ -1325,8 +1325,16 @@ void WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture(%p)", this);
     [m_playerViewController setShowsPlaybackControls:YES];
-    [m_window setHidden:YES];
-    [[m_playerViewController view] setHidden:YES];
+
+    if (m_mode & HTMLMediaElementEnums::VideoFullscreenModeStandard) {
+        clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
+
+        RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
+        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[strongThis, this] (BOOL, NSError*) {
+            [m_window setHidden:YES];
+            [[m_playerViewController view] setHidden:YES];
+        }];
+    }
 
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->didEnterFullscreen();

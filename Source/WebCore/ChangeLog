@@ -1,3 +1,15 @@
+2015-12-01  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Abrupt transition between Fullscreen -> PiP
+        https://bugs.webkit.org/show_bug.cgi?id=151719
+
+        Reviewed by Eric Carlson.
+
+        Rather than abruptly hiding the fullscreen window, explicitly exit fullscreen mode upon entering PiP.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+
 2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Give String and AtomicString an existingHash() function
