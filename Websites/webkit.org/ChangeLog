@@ -1,3 +1,12 @@
+2015-12-01  Jonathan Davis  <jond@apple.com>
+
+        Theme update to tidy styles and add a theme screenshot.
+
+        * wp-content/themes/webkit/screenshot.png: Added.
+        * wp-content/themes/webkit/style.css:
+        (.featured-tile):
+        (.tile .background-image):
+
 2015-11-30  Jonathan Davis  <jond@apple.com>
 
         Set max-height to prevent narrow images from upscaling.
