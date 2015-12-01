@@ -1,5 +1,33 @@
 2015-12-01  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192701.
+
+    2015-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+            Allow more buffer formats in the IOSurface pool
+            https://bugs.webkit.org/show_bug.cgi?id=151516
+
+            Reviewed by Tim Horton.
+
+            Previously IOSurface::create was only looking in the pool for RGBA-format surfaces. Change that to
+            always look in the pool, and to cache all format types. We include format in the criteria used
+            to pick a surface from the pool.
+
+            * platform/graphics/cg/IOSurfacePool.cpp:
+            (WebCore::surfaceMatchesParameters):
+            (WebCore::IOSurfacePool::takeSurface):
+            (WebCore::IOSurfacePool::shouldCacheFormat):
+            (WebCore::IOSurfacePool::shouldCacheSurface):
+            (WebCore::IOSurfacePool::addSurface):
+            * platform/graphics/cg/IOSurfacePool.h:
+            * platform/graphics/cocoa/IOSurface.h:
+            * platform/graphics/cocoa/IOSurface.mm:
+            (IOSurface::surfaceFromPool):
+            (IOSurface::create):
+            (IOSurface::IOSurface):
+
+2015-12-01  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192689.
 
     2015-11-19  Simon Fraser  <simon.fraser@apple.com>

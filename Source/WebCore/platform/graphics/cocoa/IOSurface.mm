@@ -41,9 +41,9 @@ CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 
 using namespace WebCore;
 
-inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, ColorSpace colorSpace)
+inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, ColorSpace colorSpace, Format pixelFormat)
 {
-    auto cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace);
+    auto cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace, pixelFormat);
     if (!cachedSurface)
         return nullptr;
 
@@ -53,21 +53,17 @@ inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSi
 
 std::unique_ptr<IOSurface> IOSurface::create(IntSize size, ColorSpace colorSpace, Format pixelFormat)
 {
-    // YUV422 IOSurfaces do not go in the pool.
-    // FIXME: Want pooling of RGB10, RGB10A8.
-    if (pixelFormat == Format::RGBA) {
-        if (auto cachedSurface = surfaceFromPool(size, size, colorSpace))
-            return cachedSurface;
-    }
+    if (auto cachedSurface = surfaceFromPool(size, size, colorSpace, pixelFormat))
+        return cachedSurface;
 
     return std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, pixelFormat));
 }
 
-std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, ColorSpace colorSpace)
+std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, ColorSpace colorSpace, Format pixelFormat)
 {
-    if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace))
+    if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace, pixelFormat))
         return cachedSurface;
-    return std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace));
+    return std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace, pixelFormat));
 }
 
 std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight& sendRight, ColorSpace colorSpace)
@@ -95,6 +91,11 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     CGContextFlush(surfaceContext);
 
     return surface;
+}
+
+void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
+{
+    IOSurfacePool::sharedPool().addSurface(WTF::move(surface));
 }
 
 IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
@@ -212,8 +213,8 @@ IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
         NSLog(@"Surface creation failed for options %@", options);
 }
 
-IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colorSpace)
-    : IOSurface(size, colorSpace, Format::RGBA)
+IOSurface::IOSurface(IntSize size, IntSize contextSize, ColorSpace colorSpace, Format pixelFormat)
+    : IOSurface(size, colorSpace, pixelFormat)
 {
     ASSERT(contextSize.width() <= size.width());
     ASSERT(contextSize.height() <= size.height());
