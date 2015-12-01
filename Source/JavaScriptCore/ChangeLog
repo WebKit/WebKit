@@ -1,3 +1,61 @@
+2015-11-30  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::ValueRep::Any should translate into a Arg::ColdUse role in Air
+        https://bugs.webkit.org/show_bug.cgi?id=151174
+
+        Reviewed by Geoffrey Garen and Benjamin Poulain.
+
+        This teaches the register allocator that it should pick spills based on whichever tmp has the
+        highest score:
+
+            score(tmp) = degree(tmp) / sum(for each use of tmp, block->frequency)
+
+        In other words, the numerator is the number of edges in the inteference graph and the denominator
+        is an estimate of the dynamic number of uses.
+
+        This also extends Arg::Role to know that there is such a thing as ColdUse, i.e. a Use that
+        doesn't count as such for the above formula. Because LateUse is always used in contexts where we
+        want it to be Cold, I've defined LateUse to imply ColdUse.
+
+        This gets rid of all spilling inside the hot loop in Kraken/imaging-gaussian-blur. But more
+        importantly, it makes our register allocator use a well-known heuristic based on reusable
+        building blocks like the new Air::UseCounts. Even if the heuristic is slightly wrong, the right
+        heuristic probably uses the same building blocks.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        * b3/B3ValueRep.h:
+        * b3/air/AirArg.cpp:
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isAnyUse):
+        (JSC::B3::Air::Arg::isColdUse):
+        (JSC::B3::Air::Arg::isWarmUse):
+        (JSC::B3::Air::Arg::isEarlyUse):
+        (JSC::B3::Air::Arg::isDef):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::IteratedRegisterCoalescingAllocator): Deleted.
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::allocatedReg): Deleted.
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::tmpArraySize): Deleted.
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::initializeDegrees): Deleted.
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::build): Deleted.
+        (JSC::B3::Air::IteratedRegisterCoalescingAllocator::selectSpill): Deleted.
+        (JSC::B3::Air::isUselessMoveInst): Deleted.
+        (JSC::B3::Air::assignRegisterToTmpInProgram): Deleted.
+        (JSC::B3::Air::addSpillAndFillToProgram): Deleted.
+        (JSC::B3::Air::iteratedRegisterCoalescingOnType): Deleted.
+        * b3/air/AirLiveness.h:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirUseCounts.h: Added.
+        (JSC::B3::Air::UseCounts::Counts::dump):
+        (JSC::B3::Air::UseCounts::UseCounts):
+        (JSC::B3::Air::UseCounts::operator[]):
+        (JSC::B3::Air::UseCounts::dump):
+        * runtime/Options.h:
+
 2015-11-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(DFG_JIT) build after r192699

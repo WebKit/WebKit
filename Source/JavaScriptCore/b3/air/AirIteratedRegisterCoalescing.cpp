@@ -35,14 +35,17 @@
 #include "AirPhaseScope.h"
 #include "AirRegisterPriority.h"
 #include "AirTmpInlines.h"
+#include "AirUseCounts.h"
 #include <wtf/ListDump.h>
 #include <wtf/ListHashSet.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
-static bool debug = false;
-static bool traceDebug = false;
-static bool reportStats = false;
+namespace {
+
+bool debug = false;
+bool traceDebug = false;
+bool reportStats = false;
 
 template<Arg::Type type>
 struct MoveInstHelper;
@@ -81,19 +84,22 @@ struct MoveInstHelper<Arg::FP> {
 template<Arg::Type type>
 class IteratedRegisterCoalescingAllocator {
 public:
-    IteratedRegisterCoalescingAllocator(Code& code, const HashSet<Tmp>& unspillableTmp)
-        : m_unspillableTmp(unspillableTmp)
+    IteratedRegisterCoalescingAllocator(
+        Code& code, const UseCounts<Tmp>& useCounts, const HashSet<Tmp>& unspillableTmp)
+        : m_code(code)
+        , m_useCounts(useCounts)
+        , m_unspillableTmp(unspillableTmp)
         , m_numberOfRegisters(regsInPriorityOrder(type).size())
     {
-        initializeDegrees(code);
+        initializeDegrees();
 
-        unsigned tmpArraySize = this->tmpArraySize(code);
+        unsigned tmpArraySize = this->tmpArraySize();
         m_adjacencyList.resize(tmpArraySize);
         m_moveList.resize(tmpArraySize);
         m_coalescedTmps.resize(tmpArraySize);
         m_isOnSelectStack.ensureSize(tmpArraySize);
 
-        build(code);
+        build();
         allocate();
     }
 
@@ -138,15 +144,15 @@ public:
     }
 
 private:
-    static unsigned tmpArraySize(Code& code)
+    unsigned tmpArraySize()
     {
-        unsigned numTmps = code.numTmps(type);
+        unsigned numTmps = m_code.numTmps(type);
         return AbsoluteTmpMapper<type>::absoluteIndex(numTmps);
     }
 
-    void initializeDegrees(Code& code)
+    void initializeDegrees()
     {
-        unsigned tmpArraySize = this->tmpArraySize(code);
+        unsigned tmpArraySize = this->tmpArraySize();
         m_degrees.resize(tmpArraySize);
 
         // All precolored registers have  an "infinite" degree.
@@ -157,10 +163,10 @@ private:
         bzero(m_degrees.data() + firstNonRegIndex, (tmpArraySize - firstNonRegIndex) * sizeof(unsigned));
     }
 
-    void build(Code& code)
+    void build()
     {
-        TmpLiveness<type> liveness(code);
-        for (BasicBlock* block : code) {
+        TmpLiveness<type> liveness(m_code);
+        for (BasicBlock* block : m_code) {
             typename TmpLiveness<type>::LocalCalc localCalc(liveness, block);
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
@@ -547,7 +553,6 @@ private:
                 m_coalescedTmpsAtSpill = m_coalescedTmps;
         }
 
-        // FIXME: we should select a good candidate based on all the information we have.
         auto iterator = m_spillWorklist.begin();
 
         while (iterator != m_spillWorklist.end() && m_unspillableTmp.contains(*iterator))
@@ -555,18 +560,32 @@ private:
 
         RELEASE_ASSERT_WITH_MESSAGE(iterator != m_spillWorklist.end(), "It is not possible to color the Air graph with the number of available registers.");
 
+        // Higher score means more desirable to spill. Lower scores maximize the likelihood that a tmp
+        // gets a register.
+        auto score = [&] (Tmp tmp) -> double {
+            // All else being equal, the score should be directly related to the degree.
+            double degree = static_cast<double>(m_degrees[AbsoluteTmpMapper<type>::absoluteIndex(tmp)]);
+
+            // All else being equal, the score should be inversely related to the number of warm uses and
+            // defs.
+            const UseCounts<Tmp>::Counts& counts = m_useCounts[tmp];
+            double uses = counts.numWarmUses + counts.numDefs;
+
+            return degree / uses;
+        };
+
         auto victimIterator = iterator;
-        unsigned maxDegree = m_degrees[AbsoluteTmpMapper<type>::absoluteIndex(*iterator)];
+        double maxScore = score(*iterator);
 
         ++iterator;
         for (;iterator != m_spillWorklist.end(); ++iterator) {
-            unsigned tmpDegree = m_degrees[AbsoluteTmpMapper<type>::absoluteIndex(*iterator)];
-            if (tmpDegree > maxDegree) {
+            double tmpScore = score(*iterator);
+            if (tmpScore > maxScore) {
                 if (m_unspillableTmp.contains(*iterator))
                     continue;
 
                 victimIterator = iterator;
-                maxDegree = tmpDegree;
+                maxScore = tmpScore;
             }
         }
 
@@ -778,6 +797,9 @@ private:
     };
     typedef SimpleClassHashTraits<InterferenceEdge> InterferenceEdgeHashTraits;
 
+    Code& m_code;
+    const UseCounts<Tmp>& m_useCounts;
+
     const HashSet<Tmp>& m_unspillableTmp;
     unsigned m_numberOfRegisters { 0 };
 
@@ -901,13 +923,13 @@ private:
 };
 
 template<Arg::Type type>
-static bool isUselessMoveInst(const Inst& inst)
+bool isUselessMoveInst(const Inst& inst)
 {
     return MoveInstHelper<type>::mayBeCoalescable(inst) && inst.args[0].tmp() == inst.args[1].tmp();
 }
 
 template<Arg::Type type>
-static void assignRegisterToTmpInProgram(Code& code, const IteratedRegisterCoalescingAllocator<type>& allocator)
+void assignRegisterToTmpInProgram(Code& code, const IteratedRegisterCoalescingAllocator<type>& allocator)
 {
     for (BasicBlock* block : code) {
         // Give Tmp a valid register.
@@ -937,7 +959,7 @@ static void assignRegisterToTmpInProgram(Code& code, const IteratedRegisterCoale
 }
 
 template<Arg::Type type>
-static void addSpillAndFillToProgram(Code& code, const IteratedRegisterCoalescingAllocator<type>& allocator, HashSet<Tmp>& unspillableTmp)
+void addSpillAndFillToProgram(Code& code, const IteratedRegisterCoalescingAllocator<type>& allocator, HashSet<Tmp>& unspillableTmp)
 {
     const HashSet<Tmp>& spilledTmp = allocator.spilledTmp();
 
@@ -1007,12 +1029,13 @@ static void addSpillAndFillToProgram(Code& code, const IteratedRegisterCoalescin
 }
 
 template<Arg::Type type>
-static void iteratedRegisterCoalescingOnType(Code& code, unsigned& numIterations)
+void iteratedRegisterCoalescingOnType(
+    Code& code, const UseCounts<Tmp>& useCounts, unsigned& numIterations)
 {
     HashSet<Tmp> unspillableTmps;
     while (true) {
         numIterations++;
-        IteratedRegisterCoalescingAllocator<type> allocator(code, unspillableTmps);
+        IteratedRegisterCoalescingAllocator<type> allocator(code, useCounts, unspillableTmps);
         if (allocator.spilledTmp().isEmpty()) {
             assignRegisterToTmpInProgram(code, allocator);
             return;
@@ -1021,14 +1044,17 @@ static void iteratedRegisterCoalescingOnType(Code& code, unsigned& numIterations
     }
 }
 
+} // anonymous namespace
+
 void iteratedRegisterCoalescing(Code& code)
 {
     PhaseScope phaseScope(code, "iteratedRegisterCoalescing");
 
     unsigned numIterations = 0;
 
-    iteratedRegisterCoalescingOnType<Arg::GP>(code, numIterations);
-    iteratedRegisterCoalescingOnType<Arg::FP>(code, numIterations);
+    UseCounts<Tmp> useCounts(code);
+    iteratedRegisterCoalescingOnType<Arg::GP>(code, useCounts, numIterations);
+    iteratedRegisterCoalescingOnType<Arg::FP>(code, useCounts, numIterations);
 
     if (reportStats)
         dataLog("Num iterations = ", numIterations, "\n");

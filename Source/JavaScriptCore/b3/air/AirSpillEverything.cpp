@@ -130,6 +130,7 @@ void spillEverything(Code& code)
                     Reg chosenReg;
                     switch (role) {
                     case Arg::Use:
+                    case Arg::ColdUse:
                         for (Reg reg : regsInPriorityOrder(type)) {
                             if (!setBefore.get(reg)) {
                                 setBefore.set(reg);

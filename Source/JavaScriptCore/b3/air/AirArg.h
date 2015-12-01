@@ -83,8 +83,13 @@ public:
         // always escaping, and Stack is presumed to be always escaping if it's Locked.
         Use,
 
+        // Exactly like Use, except that it also implies that the use is cold: that is, replacing the
+        // use with something on the stack is free.
+        ColdUse,
+
         // LateUse means that the Inst will read from this value after doing its Def's. Note that LateUse
-        // on an Addr or Index still means Use on the internal temporaries.
+        // on an Addr or Index still means Use on the internal temporaries. LateUse also currently also
+        // implies ColdUse.
         LateUse,
 
         // Def means that the Inst will write to this value after doing everything else.
@@ -132,6 +137,7 @@ public:
     {
         switch (role) {
         case Use:
+        case ColdUse:
         case UseDef:
         case LateUse:
             return true;
@@ -141,11 +147,31 @@ public:
         }
     }
 
+    static bool isColdUse(Role role)
+    {
+        switch (role) {
+        case ColdUse:
+        case LateUse:
+            return true;
+        case Use:
+        case UseDef:
+        case Def:
+        case UseAddr:
+            return false;
+        }
+    }
+
+    static bool isWarmUse(Role role)
+    {
+        return isAnyUse(role) && !isColdUse(role);
+    }
+
     // Returns true if the Role implies that the Inst will Use the Arg before doing anything else.
     static bool isEarlyUse(Role role)
     {
         switch (role) {
         case Use:
+        case ColdUse:
         case UseDef:
             return true;
         case Def:
@@ -166,6 +192,7 @@ public:
     {
         switch (role) {
         case Use:
+        case ColdUse:
         case UseAddr:
         case LateUse:
             return false;

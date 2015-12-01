@@ -181,6 +181,9 @@ void printInternal(PrintStream& out, Arg::Role role)
     case Arg::UseAddr:
         out.print("UseAddr");
         return;
+    case Arg::ColdUse:
+        out.print("ColdUse");
+        return;
     case Arg::LateUse:
         out.print("LateUse");
         return;

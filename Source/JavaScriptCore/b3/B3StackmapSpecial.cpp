@@ -75,7 +75,8 @@ void StackmapSpecial::forEachArgImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
     Inst& inst, Arg::Role role, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
-    Value* value = inst.origin;
+    StackmapValue* value = inst.origin->as<StackmapValue>();
+    ASSERT(value);
 
     // Check that insane things have not happened.
     ASSERT(inst.args.size() >= numIgnoredAirArgs);
@@ -84,9 +85,15 @@ void StackmapSpecial::forEachArgImpl(
     
     for (unsigned i = 0; i < inst.args.size() - numIgnoredAirArgs; ++i) {
         Arg& arg = inst.args[i + numIgnoredAirArgs];
-        Value* child = value->child(i + numIgnoredB3Args);
+        ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
 
-        callback(arg, role, Arg::typeForB3Type(child->type()));
+        Arg::Role thisRole = role;
+        
+        // Cool down the role if the use is cold.
+        if (child.rep().kind() == ValueRep::Any && thisRole == Arg::Use)
+            thisRole = Arg::ColdUse;
+        
+        callback(arg, role, Arg::typeForB3Type(child.value()->type()));
     }
 }
 

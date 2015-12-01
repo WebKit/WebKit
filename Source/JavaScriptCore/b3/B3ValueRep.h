@@ -43,9 +43,10 @@ namespace JSC { namespace B3 {
 class ValueRep {
 public:
     enum Kind {
-        // As an input representation, this means that B3 can pick any representation. As an
-        // output representation, this means that we don't know. This will only arise for the
-        // right operand (i.e. child(1)) of a CheckMul.
+        // As an input representation, this means that B3 can pick any representation. It also currently
+        // implies that the use is cold: the register allocator doesn't count it. As an output
+        // representation, this means that we don't know. This will only arise as an output
+        // representation for the active arguments of Check/CheckAdd/CheckSub/CheckMul.
         Any,
 
         // As an input representation, this means that B3 should pick some register. It could be a

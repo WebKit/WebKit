@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBasicBlock.h"
+#include "AirInstInlines.h"
 #include "AirTmpInlines.h"
 #include "B3IndexMap.h"
 #include "B3IndexSet.h"
