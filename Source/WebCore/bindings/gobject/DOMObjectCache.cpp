@@ -155,10 +155,17 @@ private:
             return;
 
         auto objects = WTF::move(m_objects);
-        for (auto* data : objects) {
+
+        // Deleting of DOM wrappers might end up deleting the wrapped core object which could cause some problems
+        // for example if a Document is deleted during the frame destruction, so we remove the weak references now
+        // and delete the objects on next run loop iteration. See https://bugs.webkit.org/show_bug.cgi?id=151700.
+        for (auto* data : objects)
             g_object_weak_unref(data->object, DOMObjectCacheFrameObserver::objectFinalizedCallback, this);
-            data->clearObject();
-        }
+
+        RunLoop::main().dispatch([objects] {
+            for (auto* data : objects)
+                data->clearObject();
+        });
     }
 
     virtual void willDetachPage() override

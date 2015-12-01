@@ -1,3 +1,21 @@
+2015-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ASSERTION FAILED: m_table running /webkit2/BackForwardList/navigation in Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=151700
+
+        Reviewed by Martin Robinson.
+
+        This happens when the frame notifies its observers that the page
+        will be detached. The m_table that asserts is the
+        FrameDestructionObserver HashSet. It happens when clearing the
+        GObject DOM cache wrappers during frame destruction, and there's a
+        Document object wrapped whose last reference is held by the DOM
+        wrapper. In that case, the Document object is destroyed while the
+        frame is being destroyed. Deleting the wrapper objects after the
+        frame destruction fixes the crash.
+
+        * bindings/gobject/DOMObjectCache.cpp:
+
 2015-12-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] pull function of tee should call readFromReadableStreamReader directly
