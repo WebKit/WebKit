@@ -1,5 +1,65 @@
 2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] Adjacent emoji overlap each other
+        https://bugs.webkit.org/show_bug.cgi?id=151690
+        <rdar://problem/23430453>
+
+        Reviewed by Simon Fraser.
+
+        This is a partial revert of r188737. It turns out that only CoreText gives correct
+        glyph advances for emoji. In r188737, I reverted the special iOS emoji processing,
+        but also removed the logic of using CoreText for emoji advances. This patch adds
+        the m_isEmoji boolean back, so we can tell if we need to force
+        platformWidthForGlyph() to use CoreText.
+
+        This patch also performs a little bit of cleanup by moving Font's m_isSystemFont
+        to FontPlatformData where it belongs.
+
+        Test: fast/text/emoji-overlap.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::fillGlyphPage): Removed unnecessary argument.
+        (WebCore::Font::Font): Deleted.
+        * platform/graphics/Font.h: Moved getters and booleans to FontPlatformData.
+        (WebCore::Font::hasCustomTracking): Deleted.
+        (WebCore::Font::isSystemFont): Deleted.
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Initialize new booleans.
+        (WebCore::FontPlatformData::operator=): Ditto.
+        * platform/graphics/FontPlatformData.h: Getters for new booleans.
+        (WebCore::FontPlatformData::isSystemFont):
+        (WebCore::FontPlatformData::hasCustomTracking):
+        (WebCore::FontPlatformData::isEmoji):
+        * platform/graphics/GlyphPage.h: Remove unnecessary argument.
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::advanceForColorBitmapFont): Return an Optional instead of using an out
+        argument.
+        (WebCore::canUseFastGlyphAdvanceGetter): Make sure that we use CoreText if we are
+        using the Emoji font.
+        (WebCore::Font::platformWidthForGlyph):
+        (WebCore::Font::platformInit): Deleted.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm: Deal with the new booleans.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformDataAssign):
+        (WebCore::FontPlatformData::setFont):
+        * platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp:
+        (WebCore::GlyphPage::fill): Removed unnecessary argument.
+        * platform/graphics/mac/GlyphPageMac.cpp:
+        (WebCore::shouldUseCoreText): Use a reference instead of a pointer.
+        (WebCore::GlyphPage::fill): Removed unnecessary argument.
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::FontCascade::drawGlyphs): Update for new location of booleans.
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp:
+        (WebCore::GlyphPage::fill): Removed unnecessary argument.
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        (WebCore::GlyphPage::fill): Removed unnecessary argument.
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem): Update for new location of
+        booleans.
+
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Win] Web fonts with small caps have excess whitespace with the complex text codepath
         https://bugs.webkit.org/show_bug.cgi?id=151698
 

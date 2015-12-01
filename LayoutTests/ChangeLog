@@ -1,5 +1,16 @@
 2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] Adjacent emoji overlap each other
+        https://bugs.webkit.org/show_bug.cgi?id=151690
+        <rdar://problem/23430453>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/emoji-overlap-expected.html: Added.
+        * fast/text/emoji-overlap.html: Added.
+
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Win] Web fonts with small caps have excess whitespace with the complex text codepath
         https://bugs.webkit.org/show_bug.cgi?id=151698
 

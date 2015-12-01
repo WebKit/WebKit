@@ -34,18 +34,19 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
+bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 {
     // bufferLength will be greater than the requested number of glyphs if the buffer contains surrogate pairs.
     // We won't support this for now.
     if (bufferLength > GlyphPage::size)
         return false;
 
+    const Font& font = this->font();
     bool haveGlyphs = false;
 
     HWndDC dc(0);
     SaveDC(dc);
-    SelectObject(dc, fontData->platformData().hfont());
+    SelectObject(dc, font.platformData().hfont());
 
     WORD localGlyphBuffer[GlyphPage::size * 2];
     DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);

@@ -66,6 +66,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
 {
     m_isHashTableDeletedValue = source.m_isHashTableDeletedValue;
     m_isColorBitmapFont = source.m_isColorBitmapFont;
+    m_isSystemFont = source.m_isSystemFont;
     platformDataInit(source);
 }
 
@@ -83,6 +84,7 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
     m_widthVariant = other.m_widthVariant;
     m_isColorBitmapFont = other.m_isColorBitmapFont;
     m_textRenderingMode = other.m_textRenderingMode;
+    m_isSystemFont = other.m_isSystemFont;
 
     return platformDataAssign(other);
 }

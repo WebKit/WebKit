@@ -111,7 +111,7 @@ public:
     }
 
     // Implemented by the platform.
-    bool fill(UChar* characterBuffer, unsigned bufferLength, const Font*);
+    bool fill(UChar* characterBuffer, unsigned bufferLength);
 
 private:
     explicit GlyphPage(const Font& font)

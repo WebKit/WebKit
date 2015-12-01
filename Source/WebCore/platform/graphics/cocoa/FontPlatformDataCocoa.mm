@@ -47,6 +47,11 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
     ASSERT_ARG(font, font);
     m_font = font;
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontTraitColorGlyphs;
+    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_font.get())).get());
+
+#if PLATFORM(IOS)
+    m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
+#endif
 }
 
 FontPlatformData::~FontPlatformData()
@@ -59,6 +64,10 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 
     m_cgFont = f.m_cgFont;
     m_ctFont = f.m_ctFont;
+
+#if PLATFORM(IOS)
+    m_isEmoji = f.m_isEmoji;
+#endif
 }
 
 const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& f)
@@ -68,6 +77,10 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
         return *this;
     m_font = f.m_font;
     m_ctFont = f.m_ctFont;
+
+#if PLATFORM(IOS)
+    m_isEmoji = f.m_isEmoji;
+#endif
 
     return *this;
 }
@@ -108,6 +121,11 @@ void FontPlatformData::setFont(CTFontRef font)
 
     CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(m_font.get());
     m_isColorBitmapFont = traits & kCTFontTraitColorGlyphs;
+    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_font.get())).get());
+
+#if PLATFORM(IOS)
+    m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
+#endif
     
     m_ctFont = nullptr;
 }

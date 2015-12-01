@@ -115,6 +115,9 @@ public:
     static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
 
+    bool isSystemFont() const { return m_isSystemFont; }
+    bool hasCustomTracking() const { return isSystemFont(); }
+
 #if USE(APPKIT)
     // FIXME: Remove this when all NSFont usage is removed.
     NSFont *nsFont() const { return (NSFont *)m_font.get(); }
@@ -182,6 +185,15 @@ public:
         return m_isHashTableDeletedValue;
     }
 
+    bool isEmoji() const
+    {
+#if PLATFORM(IOS)
+        return m_isEmoji;
+#else
+        return false;
+#endif
+    }
+
 #if PLATFORM(COCOA) || PLATFORM(WIN)
     PassRefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
 #endif
@@ -227,10 +239,10 @@ private:
 
     bool m_isColorBitmapFont { false };
     bool m_isHashTableDeletedValue { false };
+    bool m_isSystemFont { false };
 #if PLATFORM(IOS)
     bool m_isEmoji { false };
 #endif
-
 #if PLATFORM(WIN)
     bool m_useGDI { false };
 #endif

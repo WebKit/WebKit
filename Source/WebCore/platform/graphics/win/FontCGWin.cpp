@@ -178,7 +178,7 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     FloatSize translation = glyphBuffer.offsetAt(from);
 
     CGContextSetFontSize(cgContext, platformData.size());
-    wkSetCGContextFontRenderingStyle(cgContext, font.isSystemFont(), false, font.platformData().useGDI());
+    wkSetCGContextFontRenderingStyle(cgContext, font.platformData().isSystemFont(), false, font.platformData().useGDI());
 
     FloatSize shadowOffset;
     float shadowBlur;

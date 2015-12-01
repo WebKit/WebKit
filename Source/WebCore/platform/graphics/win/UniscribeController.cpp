@@ -313,7 +313,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
 
         // Match AppKit's rules for the integer vs. non-integer rendering modes.
         float roundedAdvance = roundf(advance);
-        if (!fontData->isSystemFont()) {
+        if (!fontData->platformData().isSystemFont()) {
             advance = roundedAdvance;
             offsetX = roundf(offsetX);
             offsetY = roundf(offsetY);

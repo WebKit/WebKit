@@ -154,8 +154,6 @@ void Font::platformInit()
         LOG_ERROR("failed to set up font, using system font %s", m_platformData.font());
     }
 
-    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
-
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
     // Work around <rdar://problem/19433490>
     CGGlyph dummyGlyphs[] = {0, 0};
@@ -232,7 +230,6 @@ void Font::platformInit()
 
 #else
 
-    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? ceilf(m_platformData.size()  / 24.0f) : 0.f;
 
     CTFontRef ctFont = m_platformData.font();
@@ -413,30 +410,27 @@ static inline CGFontRenderingStyle renderingStyle(const FontPlatformData& platfo
 #endif
 }
 
-static inline bool advanceForColorBitmapFont(const FontPlatformData& platformData, Glyph glyph, CGSize& advance)
+static inline Optional<CGSize> advanceForColorBitmapFont(const FontPlatformData& platformData, Glyph glyph)
 {
 #if PLATFORM(MAC)
     NSFont *font = platformData.nsFont();
     if (!font || !platformData.isColorBitmapFont())
-        return false;
-    advance = NSSizeToCGSize([font advancementForGlyph:glyph]);
-    return true;
+        return Nullopt;
+    return NSSizeToCGSize([font advancementForGlyph:glyph]);
 #else
     UNUSED_PARAM(platformData);
     UNUSED_PARAM(glyph);
-    UNUSED_PARAM(advance);
-    return false;
+    return Nullopt;
 #endif
 }
 
-static inline bool canUseFastGlyphAdvanceGetter(const Font& font, Glyph glyph, CGSize& advance, bool& populatedAdvance)
+static inline bool canUseFastGlyphAdvanceGetter(const FontPlatformData& platformData, Glyph glyph, CGSize& advance, bool& populatedAdvance)
 {
-    const FontPlatformData& platformData = font.platformData();
-    // Fast getter doesn't doesn't work for emoji, bitmap fonts, or take custom tracking into account
-    if (font.hasCustomTracking() || platformData.textRenderingMode() == OptimizeLegibility)
+    if (platformData.isEmoji() || platformData.hasCustomTracking() || platformData.textRenderingMode() == OptimizeLegibility)
         return false;
-    if (advanceForColorBitmapFont(platformData, glyph, advance)) {
+    if (auto size = advanceForColorBitmapFont(platformData, glyph)) {
         populatedAdvance = true;
+        advance = size.value();
         return false;
     }
     return true;
@@ -447,7 +441,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     CGSize advance = CGSizeZero;
     bool horizontal = platformData().orientation() == Horizontal;
     bool populatedAdvance = false;
-    if ((horizontal || m_isBrokenIdeographFallback) && canUseFastGlyphAdvanceGetter(*this, glyph, advance, populatedAdvance)) {
+    if ((horizontal || m_isBrokenIdeographFallback) && canUseFastGlyphAdvanceGetter(this->platformData(), glyph, advance, populatedAdvance)) {
         float pointSize = platformData().m_size;
         CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
         if (!CGFontGetGlyphAdvancesForStyle(platformData().cgFont(), &m, renderingStyle(platformData()), &glyph, 1, &advance)) {

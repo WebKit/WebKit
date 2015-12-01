@@ -193,7 +193,6 @@ public:
 #endif
 #if PLATFORM(COCOA)
     CFDictionaryRef getCFStringAttributes(bool enableKerning, FontOrientation) const;
-    bool hasCustomTracking() const { return isSystemFont(); }
 #endif
 
 #if PLATFORM(COCOA) || USE(HARFBUZZ)
@@ -203,7 +202,6 @@ public:
     bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, bool enableKerning, bool requiresShaping) const;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN)
-    bool isSystemFont() const { return m_isSystemFont; }
 #endif
 
 #if PLATFORM(WIN)
@@ -313,9 +311,6 @@ private:
 
     unsigned m_isUsedInSystemFallbackCache : 1;
 
-#if PLATFORM(COCOA) || PLATFORM(WIN)
-    unsigned m_isSystemFont : 1;
-#endif
 #if PLATFORM(IOS)
     unsigned m_shouldNotBeUsedForArabic : 1;
 #endif

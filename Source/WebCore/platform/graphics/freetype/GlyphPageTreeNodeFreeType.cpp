@@ -39,9 +39,10 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(UChar* buffer, unsigned bufferLength, const Font* fontData)
+bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 {
-    cairo_scaled_font_t* scaledFont = fontData->platformData().scaledFont();
+    const Font& font = this->font();
+    cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();
     ASSERT(scaledFont);
 
     FT_Face face = cairo_ft_scaled_font_lock_face(scaledFont);
