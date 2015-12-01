@@ -90,7 +90,7 @@ bool ActiveDOMObject::hasPendingActivity() const
     return m_pendingActivityCount;
 }
 
-bool ActiveDOMObject::canSuspendForPageCache() const
+bool ActiveDOMObject::canSuspendForDocumentSuspension() const
 {
     return false;
 }

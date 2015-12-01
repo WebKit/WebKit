@@ -355,7 +355,7 @@ void AudioContext::stop()
     });
 }
 
-bool AudioContext::canSuspendForPageCache() const
+bool AudioContext::canSuspendForDocumentSuspension() const
 {
     // FIXME: We should be able to suspend while rendering as well with some more code.
     return m_state == State::Suspended || m_state == State::Closed;

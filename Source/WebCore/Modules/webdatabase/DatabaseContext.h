@@ -71,7 +71,7 @@ private:
 
     void contextDestroyed() override;
     void stop() override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
     const char* activeDOMObjectName() const override { return "DatabaseContext"; }
 
     RefPtr<DatabaseThread> m_databaseThread;

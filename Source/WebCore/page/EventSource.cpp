@@ -404,7 +404,7 @@ const char* EventSource::activeDOMObjectName() const
     return "EventSource";
 }
 
-bool EventSource::canSuspendForPageCache() const
+bool EventSource::canSuspendForDocumentSuspension() const
 {
     // FIXME: We should try and do better here.
     return false;

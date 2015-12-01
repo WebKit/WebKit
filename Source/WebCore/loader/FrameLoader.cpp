@@ -584,7 +584,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     // Do this after detaching the document so that the unload event works.
     if (clearWindowProperties) {
         InspectorInstrumentation::frameWindowDiscarded(&m_frame, m_frame.document()->domWindow());
-        m_frame.document()->domWindow()->resetUnlessSuspendedForPageCache();
+        m_frame.document()->domWindow()->resetUnlessSuspendedForDocumentSuspension();
         m_frame.script().clearWindowShell(newDocument->domWindow(), m_frame.document()->inPageCache());
     }
 
@@ -2074,7 +2074,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
         view->setFrameRect(previousViewFrameRect.value());
     
     m_frame.setDocument(document);
-    document->domWindow()->resumeFromPageCache();
+    document->domWindow()->resumeFromDocumentSuspension();
 
     updateFirstPartyForCookies();
 

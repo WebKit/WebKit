@@ -814,7 +814,7 @@ void MediaSource::stop()
     m_private = nullptr;
 }
 
-bool MediaSource::canSuspendForPageCache() const
+bool MediaSource::canSuspendForDocumentSuspension() const
 {
     return isClosed() && !m_asyncEventQueue.hasPendingEvents();
 }

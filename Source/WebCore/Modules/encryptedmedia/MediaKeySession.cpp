@@ -265,7 +265,7 @@ const char* MediaKeySession::activeDOMObjectName() const
     return "MediaKeySession";
 }
 
-bool MediaKeySession::canSuspendForPageCache() const
+bool MediaKeySession::canSuspendForDocumentSuspension() const
 {
     // FIXME: We should try and do better here.
     return false;

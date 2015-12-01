@@ -90,7 +90,7 @@ private:
     // ActiveDOMObject API.
     void stop() override;
     const char* activeDOMObjectName() const override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
 
     void connect();
     void networkRequestEnded();

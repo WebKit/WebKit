@@ -46,8 +46,8 @@ public:
     static Ref<DOMApplicationCache> create(Frame* frame) { return adoptRef(*new DOMApplicationCache(frame)); }
     virtual ~DOMApplicationCache() { ASSERT(!m_frame); }
 
-    virtual void disconnectFrameForPageCache() override;
-    virtual void reconnectFrameFromPageCache(Frame*) override;
+    virtual void disconnectFrameForDocumentSuspension() override;
+    virtual void reconnectFrameFromDocumentSuspension(Frame*) override;
     virtual void willDestroyGlobalObjectInFrame() override;
 
     unsigned short status() const;

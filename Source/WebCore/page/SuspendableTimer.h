@@ -60,7 +60,7 @@ private:
     // ActiveDOMObject API.
     bool hasPendingActivity() const override final;
     void stop() override final;
-    bool canSuspendForPageCache() const override final;
+    bool canSuspendForDocumentSuspension() const override final;
     void suspend(ReasonForSuspension) override final;
     void resume() override final;
 

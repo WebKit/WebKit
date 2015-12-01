@@ -170,7 +170,7 @@ CachedFrame::CachedFrame(Frame& frame)
     m_document->suspendActiveDOMObjects(ActiveDOMObject::PageCache);
     m_cachedFrameScriptData = std::make_unique<ScriptCachedFrameData>(frame);
 
-    m_document->domWindow()->suspendForPageCache();
+    m_document->domWindow()->suspendForDocumentSuspension();
 
     frame.loader().client().savePlatformDataToCachedFrame(this);
 

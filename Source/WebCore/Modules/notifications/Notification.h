@@ -140,7 +140,7 @@ private:
     // ActiveDOMObject API.
     void contextDestroyed() override;
     const char* activeDOMObjectName() const override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
 
     // EventTarget API.
     virtual void refEventTarget() override { ref(); }

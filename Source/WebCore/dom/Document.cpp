@@ -604,7 +604,7 @@ Document::~Document()
 
     // FIXME: Should we reset m_domWindow when we detach from the Frame?
     if (m_domWindow)
-        m_domWindow->resetUnlessSuspendedForPageCache();
+        m_domWindow->resetUnlessSuspendedForDocumentSuspension();
 
     m_scriptRunner = nullptr;
     m_moduleLoader = nullptr;

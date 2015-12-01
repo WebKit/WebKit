@@ -84,7 +84,7 @@ void SuspendableTimer::resume()
         start(m_savedNextFireInterval, m_savedRepeatInterval);
 }
 
-bool SuspendableTimer::canSuspendForPageCache() const
+bool SuspendableTimer::canSuspendForDocumentSuspension() const
 {
     return true;
 }

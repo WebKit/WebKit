@@ -1246,7 +1246,7 @@ void XMLHttpRequest::didReachTimeout()
     dispatchErrorEvents(eventNames().timeoutEvent);
 }
 
-bool XMLHttpRequest::canSuspendForPageCache() const
+bool XMLHttpRequest::canSuspendForDocumentSuspension() const
 {
     // If the load event has not fired yet, cancelling the load in suspend() may cause
     // the load event to be fired and arbitrary JS execution, which would be unsafe.

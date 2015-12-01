@@ -55,7 +55,7 @@ DOMWindowProperty::~DOMWindowProperty()
     m_frame = nullptr;
 }
 
-void DOMWindowProperty::disconnectFrameForPageCache()
+void DOMWindowProperty::disconnectFrameForDocumentSuspension()
 {
     // If this property is being disconnected from its Frame to enter the PageCache, it must have
     // been created with a Frame in the first place.
@@ -65,7 +65,7 @@ void DOMWindowProperty::disconnectFrameForPageCache()
     m_frame = nullptr;
 }
 
-void DOMWindowProperty::reconnectFrameFromPageCache(Frame* frame)
+void DOMWindowProperty::reconnectFrameFromDocumentSuspension(Frame* frame)
 {
     // If this property is being reconnected to its Frame to enter the PageCache, it must have
     // been disconnected from its Frame in the first place and it should still have an associated DOMWindow.

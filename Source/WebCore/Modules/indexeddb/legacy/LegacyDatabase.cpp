@@ -393,7 +393,7 @@ const char* LegacyDatabase::activeDOMObjectName() const
     return "LegacyDatabase";
 }
 
-bool LegacyDatabase::canSuspendForPageCache() const
+bool LegacyDatabase::canSuspendForDocumentSuspension() const
 {
     return m_isClosed;
 }

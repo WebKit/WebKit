@@ -79,7 +79,7 @@ public:
     virtual bool dispatchEvent(Event&) override final;
 
     virtual const char* activeDOMObjectName() const override final;
-    virtual bool canSuspendForPageCache() const override final;
+    virtual bool canSuspendForDocumentSuspension() const override final;
     virtual bool hasPendingActivity() const override final;
 
     const IDBTransactionInfo info() const { return m_info; }

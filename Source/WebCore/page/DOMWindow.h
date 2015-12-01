@@ -119,9 +119,9 @@ namespace WebCore {
         void registerProperty(DOMWindowProperty*);
         void unregisterProperty(DOMWindowProperty*);
 
-        void resetUnlessSuspendedForPageCache();
-        void suspendForPageCache();
-        void resumeFromPageCache();
+        void resetUnlessSuspendedForDocumentSuspension();
+        void suspendForDocumentSuspension();
+        void resumeFromDocumentSuspension();
 
         PassRefPtr<MediaQueryList> matchMedia(const String&);
 
@@ -369,7 +369,7 @@ namespace WebCore {
 #endif
 
         bool m_shouldPrintWhenFinishedLoading;
-        bool m_suspendedForPageCache;
+        bool m_suspendedForDocumentSuspension;
 
         HashSet<DOMWindowProperty*> m_properties;
 

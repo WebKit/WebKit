@@ -46,8 +46,8 @@ public:
 
     static IDBFactory* indexedDB(DOMWindow*);
 
-    virtual void disconnectFrameForPageCache() override;
-    virtual void reconnectFrameFromPageCache(Frame*) override;
+    virtual void disconnectFrameForDocumentSuspension() override;
+    virtual void reconnectFrameFromDocumentSuspension(Frame*) override;
     virtual void willDestroyGlobalObjectInCachedFrame() override;
     virtual void willDestroyGlobalObjectInFrame() override;
     virtual void willDetachGlobalObjectFromFrame() override;

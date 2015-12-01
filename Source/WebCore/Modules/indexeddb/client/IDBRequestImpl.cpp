@@ -216,7 +216,7 @@ const char* IDBRequest::activeDOMObjectName() const
     return "IDBRequest";
 }
 
-bool IDBRequest::canSuspendForPageCache() const
+bool IDBRequest::canSuspendForDocumentSuspension() const
 {
     return false;
 }

@@ -206,7 +206,7 @@ const char* IDBTransaction::activeDOMObjectName() const
     return "IDBTransaction";
 }
 
-bool IDBTransaction::canSuspendForPageCache() const
+bool IDBTransaction::canSuspendForDocumentSuspension() const
 {
     return false;
 }

@@ -340,7 +340,7 @@ bool LegacyTransaction::dispatchEvent(Event& event)
     return returnValue;
 }
 
-bool LegacyTransaction::canSuspendForPageCache() const
+bool LegacyTransaction::canSuspendForDocumentSuspension() const
 {
     // FIXME: Technically we can suspend before the first request is schedule
     //        and after the complete/abort event is enqueued.

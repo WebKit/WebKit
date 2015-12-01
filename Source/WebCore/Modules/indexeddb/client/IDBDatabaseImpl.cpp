@@ -234,7 +234,7 @@ const char* IDBDatabase::activeDOMObjectName() const
     return "IDBDatabase";
 }
 
-bool IDBDatabase::canSuspendForPageCache() const
+bool IDBDatabase::canSuspendForDocumentSuspension() const
 {
     // FIXME: This value will sometimes be false when database operations are actually in progress.
     // Such database operations do not yet exist.

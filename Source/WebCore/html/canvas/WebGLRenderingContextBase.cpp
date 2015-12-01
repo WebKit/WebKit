@@ -3927,7 +3927,7 @@ const char* WebGLRenderingContextBase::activeDOMObjectName() const
     return "WebGLRenderingContext";
 }
 
-bool WebGLRenderingContextBase::canSuspendForPageCache() const
+bool WebGLRenderingContextBase::canSuspendForDocumentSuspension() const
 {
     // FIXME: We should try and do better here.
     return false;

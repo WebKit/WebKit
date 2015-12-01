@@ -149,7 +149,7 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
     }
 
     Vector<ActiveDOMObject*> unsuspendableObjects;
-    if (!frame.document()->canSuspendActiveDOMObjectsForPageCache(&unsuspendableObjects)) {
+    if (!frame.document()->canSuspendActiveDOMObjectsForDocumentSuspension(&unsuspendableObjects)) {
         PCLOG("   -The document cannot suspend its active DOM Objects");
         for (auto* activeDOMObject : unsuspendableObjects) {
             PCLOG("    - Unsuspendable: ", activeDOMObject->activeDOMObjectName());

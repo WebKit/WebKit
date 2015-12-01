@@ -129,7 +129,7 @@ const char* HTMLSourceElement::activeDOMObjectName() const
     return "HTMLSourceElement";
 }
 
-bool HTMLSourceElement::canSuspendForPageCache() const
+bool HTMLSourceElement::canSuspendForDocumentSuspension() const
 {
     return true;
 }

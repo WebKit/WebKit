@@ -1,3 +1,188 @@
+2015-11-30  Katlyn Graff  <kgraff@apple.com>
+
+        Rename ActiveDOMObject/DOMWindow PageCacheSuspension code to support more reasons for suspension
+        https://bugs.webkit.org/show_bug.cgi?id=151677
+
+        Reviewed by Ryosuke Niwa.
+
+        Simply a refactoring patch, so no new tests.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::canSuspendForDocumentSuspension):
+        (WebCore::MediaKeySession::canSuspendForPageCache): Deleted.
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::canSuspendForDocumentSuspension):
+        (WebCore::Geolocation::canSuspendForPageCache): Deleted.
+        * Modules/geolocation/Geolocation.h:
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowIndexedDatabase::reconnectFrameFromDocumentSuspension):
+        (WebCore::DOMWindowIndexedDatabase::disconnectFrameForPageCache): Deleted.
+        (WebCore::DOMWindowIndexedDatabase::reconnectFrameFromPageCache): Deleted.
+        * Modules/indexeddb/DOMWindowIndexedDatabase.h:
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::canSuspendForDocumentSuspension):
+        (WebCore::IDBClient::IDBDatabase::canSuspendForPageCache): Deleted.
+        * Modules/indexeddb/client/IDBDatabaseImpl.h:
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::canSuspendForDocumentSuspension):
+        (WebCore::IDBClient::IDBRequest::canSuspendForPageCache): Deleted.
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::canSuspendForDocumentSuspension):
+        (WebCore::IDBClient::IDBTransaction::canSuspendForPageCache): Deleted.
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+        * Modules/indexeddb/legacy/LegacyDatabase.cpp:
+        (WebCore::LegacyDatabase::canSuspendForDocumentSuspension):
+        (WebCore::LegacyDatabase::canSuspendForPageCache): Deleted.
+        * Modules/indexeddb/legacy/LegacyDatabase.h:
+        * Modules/indexeddb/legacy/LegacyRequest.cpp:
+        (WebCore::LegacyRequest::canSuspendForDocumentSuspension):
+        (WebCore::LegacyRequest::canSuspendForPageCache): Deleted.
+        * Modules/indexeddb/legacy/LegacyRequest.h:
+        * Modules/indexeddb/legacy/LegacyTransaction.cpp:
+        (WebCore::LegacyTransaction::canSuspendForDocumentSuspension):
+        (WebCore::LegacyTransaction::canSuspendForPageCache): Deleted.
+        * Modules/indexeddb/legacy/LegacyTransaction.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::canSuspendForDocumentSuspension):
+        (WebCore::MediaSource::canSuspendForPageCache): Deleted.
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::canSuspendForDocumentSuspension):
+        (WebCore::SourceBuffer::canSuspendForPageCache): Deleted.
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::canSuspendForDocumentSuspension):
+        (WebCore::MediaStreamTrack::canSuspendForPageCache): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::canSuspendForDocumentSuspension):
+        (WebCore::RTCDTMFSender::canSuspendForPageCache): Deleted.
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::canSuspendForDocumentSuspension):
+        (WebCore::RTCPeerConnection::canSuspendForPageCache): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/notifications/DOMWindowNotifications.cpp:
+        (WebCore::DOMWindowNotifications::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowNotifications::reconnectFrameFromDocumentSuspension):
+        (WebCore::DOMWindowNotifications::disconnectFrameForPageCache): Deleted.
+        (WebCore::DOMWindowNotifications::reconnectFrameFromPageCache): Deleted.
+        * Modules/notifications/DOMWindowNotifications.h:
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::canSuspendForDocumentSuspension):
+        (WebCore::Notification::canSuspendForPageCache): Deleted.
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::canSuspendForDocumentSuspension):
+        (WebCore::NotificationCenter::canSuspendForPageCache): Deleted.
+        * Modules/notifications/NotificationCenter.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::canSuspendForDocumentSuspension):
+        (WebCore::AudioContext::canSuspendForPageCache): Deleted.
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::canSuspendForDocumentSuspension):
+        (WebCore::DatabaseContext::canSuspendForPageCache): Deleted.
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::canSuspendForDocumentSuspension):
+        (WebCore::WebSocket::canSuspendForPageCache): Deleted.
+        * Modules/websockets/WebSocket.h:
+        * css/FontLoader.cpp:
+        (WebCore::FontLoader::canSuspendForDocumentSuspension):
+        (WebCore::FontLoader::canSuspendForPageCache): Deleted.
+        * css/FontLoader.h:
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::canSuspendForDocumentSuspension):
+        (WebCore::ActiveDOMObject::canSuspendForPageCache): Deleted.
+        * dom/ActiveDOMObject.h:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjectsForTabSuspension):
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache): Deleted.
+        * dom/ScriptExecutionContext.h:
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::canSuspendForDocumentSuspension):
+        (WebCore::FileReader::canSuspendForPageCache): Deleted.
+        * fileapi/FileReader.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * history/PageCache.cpp:
+        (WebCore::canCacheFrame):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::canSuspendForDocumentSuspension):
+        (WebCore::HTMLMarqueeElement::canSuspendForPageCache): Deleted.
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canSuspendForDocumentSuspension):
+        (WebCore::HTMLMediaElement::canSuspendForPageCache): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::canSuspendForDocumentSuspension):
+        (WebCore::HTMLSourceElement::canSuspendForPageCache): Deleted.
+        * html/HTMLSourceElement.h:
+        * html/PublicURLManager.cpp:
+        (WebCore::PublicURLManager::canSuspendForDocumentSuspension):
+        (WebCore::PublicURLManager::canSuspendForPageCache): Deleted.
+        * html/PublicURLManager.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::canSuspendForDocumentSuspension):
+        (WebCore::WebGLRenderingContextBase::canSuspendForPageCache): Deleted.
+        * html/canvas/WebGLRenderingContextBase.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::open):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMApplicationCache::reconnectFrameFromDocumentSuspension):
+        (WebCore::DOMApplicationCache::disconnectFrameForPageCache): Deleted.
+        (WebCore::DOMApplicationCache::reconnectFrameFromPageCache): Deleted.
+        * loader/appcache/DOMApplicationCache.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::resetUnlessSuspendedForDocumentSuspension):
+        (WebCore::DOMWindow::suspendForDocumentSuspension):
+        (WebCore::DOMWindow::resumeFromDocumentSuspension):
+        (WebCore::DOMWindow::disconnectDOMWindowProperties):
+        (WebCore::DOMWindow::reconnectDOMWindowProperties):
+        (WebCore::DOMWindow::resetUnlessSuspendedForPageCache): Deleted.
+        (WebCore::DOMWindow::suspendForPageCache): Deleted.
+        (WebCore::DOMWindow::resumeFromPageCache): Deleted.
+        * page/DOMWindow.h:
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowExtension::reconnectFrameFromDocumentSuspension):
+        (WebCore::DOMWindowExtension::disconnectFrameForPageCache): Deleted.
+        (WebCore::DOMWindowExtension::reconnectFrameFromPageCache): Deleted.
+        * page/DOMWindowExtension.h:
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::disconnectFrameForDocumentSuspension):
+        (WebCore::DOMWindowProperty::reconnectFrameFromDocumentSuspension):
+        (WebCore::DOMWindowProperty::disconnectFrameForPageCache): Deleted.
+        (WebCore::DOMWindowProperty::reconnectFrameFromPageCache): Deleted.
+        * page/DOMWindowProperty.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::canSuspendForDocumentSuspension):
+        (WebCore::EventSource::canSuspendForPageCache): Deleted.
+        * page/EventSource.h:
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimer::canSuspendForDocumentSuspension):
+        (WebCore::SuspendableTimer::canSuspendForPageCache): Deleted.
+        * page/SuspendableTimer.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::canSuspendForDocumentSuspension):
+        (WebCore::Worker::canSuspendForPageCache): Deleted.
+        * workers/Worker.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::canSuspendForDocumentSuspension):
+        (WebCore::XMLHttpRequest::canSuspendForPageCache): Deleted.
+        * xml/XMLHttpRequest.h:
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: "prevunique" cursors should point at the lowest primary key that matches, not the highest.

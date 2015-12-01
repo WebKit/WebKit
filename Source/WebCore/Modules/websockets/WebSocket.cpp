@@ -475,7 +475,7 @@ void WebSocket::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-bool WebSocket::canSuspendForPageCache() const
+bool WebSocket::canSuspendForDocumentSuspension() const
 {
     return true;
 }

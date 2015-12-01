@@ -176,7 +176,7 @@ void ScriptExecutionContext::didLoadResourceSynchronously(const ResourceRequest&
 {
 }
 
-bool ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache(Vector<ActiveDOMObject*>* unsuspendableObjects)
+bool ScriptExecutionContext::canSuspendActiveDOMObjectsForDocumentSuspension(Vector<ActiveDOMObject*>* unsuspendableObjects)
 {
     checkConsistency();
 
@@ -193,7 +193,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache(Vector<Activ
     // canSuspend functions so it will not happen!
     NoEventDispatchAssertion assertNoEventDispatch;
     for (auto* activeDOMObject : m_activeDOMObjects) {
-        if (!activeDOMObject->canSuspendForPageCache()) {
+        if (!activeDOMObject->canSuspendForDocumentSuspension()) {
             canSuspend = false;
             if (unsuspendableObjects)
                 unsuspendableObjects->append(activeDOMObject);

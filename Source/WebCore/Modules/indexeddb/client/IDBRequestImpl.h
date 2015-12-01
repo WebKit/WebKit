@@ -108,7 +108,7 @@ protected:
 
     // ActiveDOMObject.
     virtual const char* activeDOMObjectName() const override final;
-    virtual bool canSuspendForPageCache() const override final;
+    virtual bool canSuspendForDocumentSuspension() const override final;
     virtual bool hasPendingActivity() const override final;
     
     // EventTarget.

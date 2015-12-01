@@ -35,8 +35,8 @@ class DOMWindowProperty {
 public:
     explicit DOMWindowProperty(Frame*);
 
-    virtual void disconnectFrameForPageCache();
-    virtual void reconnectFrameFromPageCache(Frame*);
+    virtual void disconnectFrameForDocumentSuspension();
+    virtual void reconnectFrameFromDocumentSuspension(Frame*);
     virtual void willDestroyGlobalObjectInCachedFrame();
     virtual void willDestroyGlobalObjectInFrame();
     virtual void willDetachGlobalObjectFromFrame();

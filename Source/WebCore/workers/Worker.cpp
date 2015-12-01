@@ -124,7 +124,7 @@ void Worker::terminate()
     m_contextProxy->terminateWorkerGlobalScope();
 }
 
-bool Worker::canSuspendForPageCache() const
+bool Worker::canSuspendForDocumentSuspension() const
 {
     // FIXME: It is not currently possible to suspend a worker, so pages with workers can not go into page cache.
     return false;

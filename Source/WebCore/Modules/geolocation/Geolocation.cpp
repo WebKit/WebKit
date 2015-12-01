@@ -161,7 +161,7 @@ Page* Geolocation::page() const
     return document() ? document()->page() : nullptr;
 }
 
-bool Geolocation::canSuspendForPageCache() const
+bool Geolocation::canSuspendForDocumentSuspension() const
 {
     return true;
 }

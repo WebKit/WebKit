@@ -69,7 +69,7 @@ private:
     // ActiveDOMObject
     void stop() override;
     const char* activeDOMObjectName() const override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
 
     void scheduleDispatchEvent(Ref<Event>&&);
     void scheduledEventTimerFired();

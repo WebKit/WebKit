@@ -148,7 +148,7 @@ private:
 
     // ActiveDOMObject
     void contextDestroyed() override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;

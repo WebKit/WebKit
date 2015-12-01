@@ -64,15 +64,15 @@ DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(DOMWindow* window)
     return supplement;
 }
 
-void DOMWindowIndexedDatabase::disconnectFrameForPageCache()
+void DOMWindowIndexedDatabase::disconnectFrameForDocumentSuspension()
 {
     m_suspendedIDBFactory = m_idbFactory.release();
-    DOMWindowProperty::disconnectFrameForPageCache();
+    DOMWindowProperty::disconnectFrameForDocumentSuspension();
 }
 
-void DOMWindowIndexedDatabase::reconnectFrameFromPageCache(Frame* frame)
+void DOMWindowIndexedDatabase::reconnectFrameFromDocumentSuspension(Frame* frame)
 {
-    DOMWindowProperty::reconnectFrameFromPageCache(frame);
+    DOMWindowProperty::reconnectFrameFromDocumentSuspension(frame);
     m_idbFactory = m_suspendedIDBFactory.release();
 }
 

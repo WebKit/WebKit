@@ -113,7 +113,7 @@ private:
 
     // ActiveDOMObject API.
     void stop() override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
     const char* activeDOMObjectName() const override;
 };
 

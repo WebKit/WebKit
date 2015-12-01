@@ -4946,7 +4946,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     updateSleepDisabling();
 }
 
-bool HTMLMediaElement::canSuspendForPageCache() const
+bool HTMLMediaElement::canSuspendForDocumentSuspension() const
 {
     return true; 
 }

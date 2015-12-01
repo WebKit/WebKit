@@ -510,7 +510,7 @@ void SourceBuffer::stop()
     m_removeTimer.stop();
 }
 
-bool SourceBuffer::canSuspendForPageCache() const
+bool SourceBuffer::canSuspendForDocumentSuspension() const
 {
     return !hasPendingActivity();
 }

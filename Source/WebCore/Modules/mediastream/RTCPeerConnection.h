@@ -117,7 +117,7 @@ private:
     // ActiveDOMObject
     void stop() override;
     const char* activeDOMObjectName() const override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
 
     // PeerConnectionBackendClient
     void setSignalingState(PeerConnectionStates::SignalingState) override;

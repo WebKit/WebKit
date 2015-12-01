@@ -393,7 +393,7 @@ DOMWindow::DOMWindow(Document* document)
     : ContextDestructionObserver(document)
     , FrameDestructionObserver(document->frame())
     , m_shouldPrintWhenFinishedLoading(false)
-    , m_suspendedForPageCache(false)
+    , m_suspendedForDocumentSuspension(false)
     , m_lastPageStatus(PageStatusNone)
     , m_weakPtrFactory(this)
 #if PLATFORM(IOS)
@@ -418,7 +418,7 @@ void DOMWindow::didSecureTransitionTo(Document* document)
 DOMWindow::~DOMWindow()
 {
 #ifndef NDEBUG
-    if (!m_suspendedForPageCache) {
+    if (!m_suspendedForDocumentSuspension) {
         ASSERT(!m_screen);
         ASSERT(!m_history);
         ASSERT(!m_crypto);
@@ -440,7 +440,7 @@ DOMWindow::~DOMWindow()
     }
 #endif
 
-    if (m_suspendedForPageCache)
+    if (m_suspendedForDocumentSuspension)
         willDestroyCachedFrame();
     else
         willDestroyDocumentInFrame();
@@ -542,45 +542,45 @@ void DOMWindow::unregisterProperty(DOMWindowProperty* property)
     m_properties.remove(property);
 }
 
-void DOMWindow::resetUnlessSuspendedForPageCache()
+void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
 {
-    if (m_suspendedForPageCache)
+    if (m_suspendedForDocumentSuspension)
         return;
     willDestroyDocumentInFrame();
     resetDOMWindowProperties();
 }
 
-void DOMWindow::suspendForPageCache()
+void DOMWindow::suspendForDocumentSuspension()
 {
     disconnectDOMWindowProperties();
-    m_suspendedForPageCache = true;
+    m_suspendedForDocumentSuspension = true;
 }
 
-void DOMWindow::resumeFromPageCache()
+void DOMWindow::resumeFromDocumentSuspension()
 {
     reconnectDOMWindowProperties();
-    m_suspendedForPageCache = false;
+    m_suspendedForDocumentSuspension = false;
 }
 
 void DOMWindow::disconnectDOMWindowProperties()
 {
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
-    // unregister themselves from the DOMWindow as a result of the call to disconnectFrameForPageCache.
+    // unregister themselves from the DOMWindow as a result of the call to disconnectFrameForDocumentSuspension.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
     for (auto& property : properties)
-        property->disconnectFrameForPageCache();
+        property->disconnectFrameForDocumentSuspension();
 }
 
 void DOMWindow::reconnectDOMWindowProperties()
 {
-    ASSERT(m_suspendedForPageCache);
+    ASSERT(m_suspendedForDocumentSuspension);
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to reconnectFromPageCache.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
     for (auto& property : properties)
-        property->reconnectFrameFromPageCache(m_frame);
+        property->reconnectFrameFromDocumentSuspension(m_frame);
 }
 
 void DOMWindow::resetDOMWindowProperties()

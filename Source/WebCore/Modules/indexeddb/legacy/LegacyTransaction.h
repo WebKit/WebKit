@@ -111,7 +111,7 @@ private:
     void unregisterOpenCursor(LegacyCursor*);
 
     // ActiveDOMObject API.
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
     void stop() override;
     const char* activeDOMObjectName() const override;
 

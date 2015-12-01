@@ -75,7 +75,7 @@ namespace WebCore {
         virtual void notifyFinished() override;
 
         // ActiveDOMObject API.
-        bool canSuspendForPageCache() const override;
+        bool canSuspendForDocumentSuspension() const override;
         void stop() override;
         const char* activeDOMObjectName() const override;
 

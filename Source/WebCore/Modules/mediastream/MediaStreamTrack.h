@@ -108,7 +108,7 @@ private:
     // ActiveDOMObject API.
     void stop() override final;
     const char* activeDOMObjectName() const override final;
-    bool canSuspendForPageCache() const override final;
+    bool canSuspendForDocumentSuspension() const override final;
 
     // EventTarget
     virtual void refEventTarget() override final { ref(); }

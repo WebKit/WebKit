@@ -142,7 +142,7 @@ void DatabaseContext::stop()
     stopDatabases();
 }
 
-bool DatabaseContext::canSuspendForPageCache() const
+bool DatabaseContext::canSuspendForDocumentSuspension() const
 {
     if (!hasOpenDatabases() || !m_databaseThread)
         return true;

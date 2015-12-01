@@ -42,11 +42,11 @@ public:
 
     virtual bool hasPendingActivity() const;
 
-    // The canSuspendForPageCache() function is used by the caller if there is a choice between suspending
+    // The canSuspendForDocumentSuspension() function is used by the caller if there is a choice between suspending
     // and stopping. For example, a page won't be suspended and placed in the back/forward
     // cache if it contains any objects that cannot be suspended.
 
-    // However, the suspend function will sometimes be called even if canSuspendForPageCache() returns false.
+    // However, the suspend function will sometimes be called even if canSuspendForDocumentSuspension() returns false.
     // That happens in step-by-step JS debugging for example - in this case it would be incorrect
     // to stop the object. Exact semantics of suspend is up to the object in cases like that.
 
@@ -62,7 +62,7 @@ public:
 
     // These three functions must not have a side effect of creating or destroying
     // any ActiveDOMObject. That means they must not result in calls to arbitrary JavaScript.
-    virtual bool canSuspendForPageCache() const = 0; // Returning false in canSuspendForPageCache() will prevent the page from entering the PageCache.
+    virtual bool canSuspendForDocumentSuspension() const = 0; // Returning false in canSuspendForDocumentSuspension() will prevent the page from entering the PageCache.
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
 

@@ -384,7 +384,7 @@ protected:
     virtual bool hasPendingActivity() const override;
     virtual void stop() override;
     virtual const char* activeDOMObjectName() const override;
-    bool canSuspendForPageCache() const override;
+    bool canSuspendForDocumentSuspension() const override;
 
     void addSharedObject(WebGLSharedObject*);
     void addContextObject(WebGLContextObject*);

@@ -451,7 +451,7 @@ void LegacyRequest::stop()
         markEarlyDeath();
 }
 
-bool LegacyRequest::canSuspendForPageCache() const
+bool LegacyRequest::canSuspendForDocumentSuspension() const
 {
     return !m_hasPendingActivity;
 }
