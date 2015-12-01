@@ -88,9 +88,9 @@ void MemoryIndexCursor::iterate(const IDBKeyData& key, uint32_t count, IDBGetRes
         }
 
         if (m_info.isDirectionForward())
-            m_currentIterator = valueStore->find(m_currentKey);
+            m_currentIterator = valueStore->find(key);
         else
-            m_currentIterator = valueStore->reverseFind(m_currentKey, m_info.duplicity());
+            m_currentIterator = valueStore->reverseFind(key, m_info.duplicity());
 
         if (!m_currentIterator.isValid()) {
             m_currentKey = { };

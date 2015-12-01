@@ -1,5 +1,14 @@
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Iterating index cursors to a specific key is busted.
+        https://bugs.webkit.org/show_bug.cgi?id=151684
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk1/TestExpectations:
+
+2015-11-30  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: ObjectStore cursors should not be able to iterate out of their range.
         https://bugs.webkit.org/show_bug.cgi?id=151683
 
