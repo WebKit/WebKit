@@ -1,3 +1,20 @@
+2015-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix possible crash with animated layers in reflections
+        https://bugs.webkit.org/show_bug.cgi?id=151689
+        rdar://problem/23018612
+
+        Reviewed by Darin Adler.
+
+        Reflections create additional PlatformCALayers whose owner is set to the GraphicsLayerCA.
+        Those PlatformCALayers need their owner pointer cleared out when the GraphicsLayerCA
+        is destroyed.
+        
+        Tested by compositing/reflections/nested-reflection-transition.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2015-11-30  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Iterating index cursors to a specific key is busted.
