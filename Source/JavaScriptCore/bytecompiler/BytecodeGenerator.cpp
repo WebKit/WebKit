@@ -3855,4 +3855,17 @@ RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned nu
     return result;
 }
 
+void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, const String& error)
+{
+    // FIXME: op_jneq_null treats "undetectable" objects as null/undefined. RequireObjectCoercible
+    // thus incorrectly throws a TypeError for interfaces like HTMLAllCollection.
+    RefPtr<Label> target = newLabel();
+    size_t begin = instructions().size();
+    emitOpcode(op_jneq_null);
+    instructions().append(value->index());
+    instructions().append(target->bind(begin, instructions().size()));
+    emitThrowTypeError(error);
+    emitLabel(target.get());
+}
+
 } // namespace JSC

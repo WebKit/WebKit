@@ -3337,6 +3337,7 @@ void ObjectPatternNode::toString(StringBuilder& builder) const
     
 void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
+    generator.emitRequireObjectCoercible(rhs, ASCIILiteral("Right side of assignment cannot be destructured"));
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         auto& target = m_targetPatterns[i];
         RefPtr<RegisterID> temp = generator.newTemporary();
