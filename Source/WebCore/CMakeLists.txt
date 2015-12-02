@@ -504,6 +504,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLOutputElement.idl
     html/HTMLParagraphElement.idl
     html/HTMLParamElement.idl
+    html/HTMLPictureElement.idl
     html/HTMLPreElement.idl
     html/HTMLProgressElement.idl
     html/HTMLQuoteElement.idl
@@ -1719,6 +1720,7 @@ set(WebCore_SOURCES
     html/HTMLOutputElement.cpp
     html/HTMLParagraphElement.cpp
     html/HTMLParamElement.cpp
+    html/HTMLPictureElement.cpp
     html/HTMLPlugInElement.cpp
     html/HTMLPlugInImageElement.cpp
     html/HTMLPreElement.cpp

@@ -1,3 +1,68 @@
+2015-11-30  David Hyatt  <hyatt@apple.com>
+
+        Implement the picture element.
+        https://bugs.webkit.org/show_bug.cgi?id=116963
+
+        Reviewed by Dean Jackson.
+
+        Added fast/picture tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add HTMLPictureElement.* to the project.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::setBestFitURLAndDPRFromImageCandidate):
+        Remove the CURRENT_SRC ifdef.
+
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        New helper function that checks the <source> elements of a <picture> parent
+        for the best match.
+
+        (WebCore::HTMLImageElement::selectImageSource):
+        Pull out the process of image selection into its own function so that this can
+        be called from many places (to ensure that dynamic changes are reflected as elements
+        get changed, added or removed).
+
+        (WebCore::HTMLImageElement::parseAttribute):
+        Call selectImageSource when attributes change.
+
+        (WebCore::HTMLImageElement::insertedInto):
+        If inserted into a picture element, make sure to update the source.
+
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::currentSrc):
+        Remove the CURRENT_SRC ifdef.
+
+        * html/HTMLImageElement.idl:
+        Remove the CURRENT_SRC ifdef.
+
+        * html/HTMLPictureElement.cpp: Added.
+        (WebCore::HTMLPictureElement::HTMLPictureElement):
+        (WebCore::HTMLPictureElement::create):
+        (WebCore::HTMLPictureElement::sourcesChanged):
+        * html/HTMLPictureElement.h: Added.
+        The new picture element. Has a sourcesChanged() function that is invoked whenever anything
+        about the <source> elements changes.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::insertedInto):
+        (WebCore::HTMLSourceElement::removedFrom):
+        (WebCore::HTMLSourceElement::parseAttribute):
+        Make sure to call sourcesChanged when new sources come and go or when attributes on
+        source elements change.
+
+        * html/HTMLSourceElement.h:
+        Added parseAttribute function so we can see when attributes change that force us to
+        do a dynamic update.
+
+        * html/HTMLTagNames.in:
+        Add the picture element.
+
+        * html/parser/HTMLSrcsetParser.h:
+        (WebCore::ImageCandidate::srcOrigin):
+        (WebCore::ImageCandidate::isEmpty):
+        Some helpers for picture parsing.
+
 2015-12-02  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Video is not rendered correctly on some graphics cards.

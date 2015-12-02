@@ -628,6 +628,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLParamElement').hasOwnProperty(
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLParamElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLParamElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLParamElement').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLPictureElement').value is HTMLPictureElement
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLPictureElement').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLPictureElement').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLPictureElement').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLPictureElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLPreElement').value is HTMLPreElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLPreElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLPreElement').hasOwnProperty('set') is false

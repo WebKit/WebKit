@@ -33,9 +33,7 @@
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString srcset;
     [Reflect] attribute DOMString sizes;
-#if ENABLE_CURRENTSRC
     readonly attribute DOMString currentSrc;
-#endif
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute long vspace;
     attribute long width;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLSourceElement_h
-#define HTMLSourceElement_h
+#include "config.h"
+#include "HTMLPictureElement.h"
 
-#include "HTMLElement.h"
-#include "Timer.h"
+#include "ElementChildIterator.h"
+#include "HTMLImageElement.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 
-class HTMLSourceElement final : public HTMLElement, public ActiveDOMObject {
-public:
-    static Ref<HTMLSourceElement> create(const QualifiedName&, Document&);
+HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, document)
+{
+}
 
-    String media() const;
-    String type() const;
-    void setSrc(const String&);    
-    void setMedia(const String&);
-    void setType(const String&);
-    
-    void scheduleErrorEvent();
-    void cancelPendingErrorEvent();
+Ref<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName, Document& document)
+{
+    return adoptRef(*new HTMLPictureElement(tagName, document));
+}
 
-private:
-    HTMLSourceElement(const QualifiedName&, Document&);
-    
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual bool isURLAttribute(const Attribute&) const override;
+void HTMLPictureElement::sourcesChanged()
+{
+    for (auto& imageElement : childrenOfType<HTMLImageElement>(*this))
+        imageElement.selectImageSource();
+}
 
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const override;
-    bool canSuspendForDocumentSuspension() const override;
-    void suspend(ReasonForSuspension) override;
-    void resume() override;
-    void stop() override;
-
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-
-    void errorEventTimerFired();
-
-    Timer m_errorEventTimer;
-    bool m_shouldRescheduleErrorEventOnResume { false };
-};
-
-} //namespace
-
-#endif
+}
 

@@ -1,3 +1,15 @@
+2015-12-01  David Hyatt  <hyatt@apple.com>
+
+        Implement the picture element.
+        https://bugs.webkit.org/show_bug.cgi?id=116963
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/parse-a-srcset-attribute-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/select-an-image-source-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt:
+
 2015-11-19  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         XHR should not combine empty content-type value with default one

@@ -1,3 +1,21 @@
+2015-12-01  David Hyatt  <hyatt@apple.com>
+
+        Implement the picture element.
+        https://bugs.webkit.org/show_bug.cgi?id=116963
+
+        Reviewed by Dean Jackson.
+
+        * fast/picture: Added.
+        * fast/picture/image-picture-1x-expected.txt: Added.
+        * fast/picture/image-picture-1x.html: Added.
+        * fast/picture/resources: Added.
+        * fast/picture/resources/blue_rect.jpg: Added.
+        * fast/picture/resources/currentSrcHelper.js: Added.
+        (fileName):
+        (currentSrcFileName):
+        (currentSrcFileNameNoParams):
+        * fast/picture/resources/image-set-4x.png: Added.
+
 2015-12-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test fast/loader/unload-mutation-crash.html

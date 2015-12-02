@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLSourceElement_h
-#define HTMLSourceElement_h
+#ifndef HTMLPictureElement_h
+#define HTMLPictureElement_h
 
 #include "HTMLElement.h"
-#include "Timer.h"
 
 namespace WebCore {
 
-class HTMLSourceElement final : public HTMLElement, public ActiveDOMObject {
+class HTMLPictureElement final : public HTMLElement {
 public:
-    static Ref<HTMLSourceElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLPictureElement> create(const QualifiedName&, Document&);
 
-    String media() const;
-    String type() const;
-    void setSrc(const String&);    
-    void setMedia(const String&);
-    void setType(const String&);
-    
-    void scheduleErrorEvent();
-    void cancelPendingErrorEvent();
+    void sourcesChanged();
 
 private:
-    HTMLSourceElement(const QualifiedName&, Document&);
-    
-    virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
-    virtual void removedFrom(ContainerNode&) override;
-    virtual bool isURLAttribute(const Attribute&) const override;
-
-    // ActiveDOMObject.
-    const char* activeDOMObjectName() const override;
-    bool canSuspendForDocumentSuspension() const override;
-    void suspend(ReasonForSuspension) override;
-    void resume() override;
-    void stop() override;
-
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
-
-    void errorEventTimerFired();
-
-    Timer m_errorEventTimer;
-    bool m_shouldRescheduleErrorEventOnResume { false };
+    HTMLPictureElement(const QualifiedName&, Document&);
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
-
+#endif // HTMLPictureElement_h

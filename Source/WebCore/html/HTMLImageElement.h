@@ -48,9 +48,7 @@ public:
 
     int naturalWidth() const;
     int naturalHeight() const;
-#if ENABLE(CURRENTSRC)
     const AtomicString& currentSrc() const { return m_currentSrc; }
-#endif
 
     bool isServerMap() const;
 
@@ -122,13 +120,15 @@ private:
     virtual HTMLImageElement& asHTMLElement() override final { return *this; }
     virtual const HTMLImageElement& asHTMLElement() const override final { return *this; }
 
+    void selectImageSource();
+
+    ImageCandidate bestFitSourceFromPictureElement();
+
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
-#if ENABLE(CURRENTSRC)
     AtomicString m_currentSrc;
-#endif
     AtomicString m_lowercasedUsemap;
     float m_imageDevicePixelRatio;
     bool m_experimentalImageMenuEnabled;
@@ -141,6 +141,8 @@ private:
     bool hasImageControls() const;
     virtual bool childShouldCreateRenderer(const Node&) const override;
 #endif
+
+    friend class HTMLPictureElement;
 };
 
 } //namespace

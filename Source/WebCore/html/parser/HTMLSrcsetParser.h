@@ -91,6 +91,11 @@ struct ImageCandidate {
     {
         return (originAttribute == SrcOrigin);
     }
+    
+    bool isEmpty() const
+    {
+        return string.isEmpty();
+    }
 
     StringView string;
     float density;
