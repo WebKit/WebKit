@@ -1,3 +1,16 @@
+2015-12-02  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r192368. rdar://problem/23189763
+
+    2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+            Fix build failure due to missing NeverDestroyed.h include after r192169
+            https://bugs.webkit.org/show_bug.cgi?id=151186
+
+            Reviewed by Darin Adler.
+
+            * rendering/RenderCombineText.cpp:
+
 2015-12-01  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r192169. rdar://problem/23189763
