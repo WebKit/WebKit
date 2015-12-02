@@ -38,6 +38,7 @@ from webkitpy.port.port_testcase import TestWebKitPort
 
 from webkitpy.tool.mocktool import MockOptions
 
+import sys
 
 class DriverOutputTest(unittest.TestCase):
     def test_strip_metrics(self):
@@ -178,7 +179,10 @@ class DriverTest(unittest.TestCase):
         port = TestWebKitPort()
         port._config.build_directory = lambda configuration: '/mock-build'
         driver = Driver(port, 0, pixel_tests=True, no_timeout=True)
-        self.assertEqual(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree', '--no-timeout', '-'])
+        if sys.platform.startswith('win'):
+            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree.exe', '--no-timeout', '-'])
+        else:
+            self.assertEqual(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree', '--no-timeout', '-'])
 
     def test_check_for_driver_crash(self):
         port = TestWebKitPort()

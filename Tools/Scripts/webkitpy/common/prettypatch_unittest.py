@@ -70,7 +70,7 @@ Index: latin1_test
         if not self.check_ruby():
             return
 
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             # FIXME: disabled due to https://bugs.webkit.org/show_bug.cgi?id=93192
             return
 

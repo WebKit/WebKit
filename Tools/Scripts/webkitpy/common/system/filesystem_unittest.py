@@ -91,7 +91,7 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
         fs = FileSystem()
         cwd = fs.getcwd()
         newdir = '/'
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             newdir = 'c:\\'
         fs.chdir(newdir)
         self.assertEqual(fs.getcwd(), newdir)
@@ -100,7 +100,7 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
     def test_chdir__notexists(self):
         fs = FileSystem()
         newdir = '/dirdoesnotexist'
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             newdir = 'c:\\dirdoesnotexist'
         self.assertRaises(OSError, fs.chdir, newdir)
 
@@ -164,7 +164,7 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
     def test_maybe_make_directory__failure(self):
         # FIXME: os.chmod() doesn't work on Windows to set directories
         # as readonly, so we skip this test for now.
-        if sys.platform in ('win32', 'cygwin'):
+        if sys.platform.startswith('win') or sys.platform == 'cygwin':
             return
 
         fs = FileSystem()

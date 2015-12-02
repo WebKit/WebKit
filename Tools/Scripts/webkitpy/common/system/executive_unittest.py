@@ -67,7 +67,7 @@ def never_ending_command():
     """Arguments for a command that will never end (useful for testing process
     killing). It should be a process that is unlikely to already be running
     because all instances will be killed."""
-    if sys.platform == 'win32':
+    if sys.platform.startswith('win'):
         return ['wmic']
     return ['yes']
 
@@ -130,14 +130,14 @@ class ExecutiveTest(unittest.TestCase):
         to Executive.run* methods, and they will return unicode()
         objects by default unless decode_output=False"""
         unicode_tor_input = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             encoding = 'mbcs'
         else:
             encoding = 'utf-8'
         encoded_tor = unicode_tor_input.encode(encoding)
         # On Windows, we expect the unicode->mbcs->unicode roundtrip to be
         # lossy. On other platforms, we expect a lossless roundtrip.
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             unicode_tor_output = encoded_tor.decode(encoding)
         else:
             unicode_tor_output = unicode_tor_input
@@ -170,7 +170,7 @@ class ExecutiveTest(unittest.TestCase):
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_process(process.pid)
         # Note: Can't use a ternary since signal.SIGKILL is undefined for sys.platform == "win32"
-        if sys.platform == "win32":
+        if sys.platform.startswith('win'):
             # FIXME: https://bugs.webkit.org/show_bug.cgi?id=54790
             # We seem to get either 0 or 1 here for some reason.
             self.assertIn(process.wait(), (0, 1))
@@ -195,7 +195,7 @@ class ExecutiveTest(unittest.TestCase):
         if sys.platform == "cygwin":
             expected_exit_code = 0  # os.kill results in exit(0) for this process.
             self.assertEqual(process.wait(), expected_exit_code)
-        elif sys.platform == "win32":
+        elif sys.platform.startswith('win'):
             # FIXME: https://bugs.webkit.org/show_bug.cgi?id=54790
             # We seem to get either 0 or 1 here for some reason.
             self.assertIn(process.wait(), (0, 1))
@@ -226,7 +226,7 @@ class ExecutiveTest(unittest.TestCase):
         self.assertFalse(executive.check_running_pid(100000))
 
     def serial_test_running_pids(self):
-        if sys.platform in ("win32", "cygwin"):
+        if sys.platform.startswith('win') or sys.platform == "cygwin":
             return  # This function isn't implemented on Windows yet.
 
         executive = Executive()
@@ -236,7 +236,7 @@ class ExecutiveTest(unittest.TestCase):
     def serial_test_run_in_parallel(self):
         # We run this test serially to avoid overloading the machine and throwing off the timing.
 
-        if sys.platform in ("win32", "cygwin"):
+        if sys.platform.startswith('win') or sys.platform == "cygwin":
             return  # This function isn't implemented properly on windows yet.
         import multiprocessing
 
@@ -257,7 +257,7 @@ class ExecutiveTest(unittest.TestCase):
 
 
 def main(platform, stdin, stdout, cmd, args):
-    if platform == 'win32' and hasattr(stdout, 'fileno'):
+    if sys.platform.startswith('win') and hasattr(stdout, 'fileno'):
         import msvcrt
         msvcrt.setmode(stdout.fileno(), os.O_BINARY)
     if cmd == '--cat':

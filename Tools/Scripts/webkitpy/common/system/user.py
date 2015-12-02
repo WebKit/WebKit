@@ -46,7 +46,7 @@ _log = logging.getLogger(__name__)
 try:
     import readline
 except ImportError:
-    if sys.platform != "win32":
+    if not sys.platform.startswith('win32'):
         # There is no readline module for win32, not much to do except cry.
         _log.warn("Unable to import readline.")
 

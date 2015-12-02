@@ -42,7 +42,7 @@ class FileLock(object):
         self._max_wait_time_sec = max_wait_time_sec
 
     def _create_lock(self):
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             import msvcrt
             msvcrt.locking(self._lock_file_descriptor, msvcrt.LK_NBLCK, 32)
         else:
@@ -50,7 +50,7 @@ class FileLock(object):
             fcntl.flock(self._lock_file_descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
     def _remove_lock(self):
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             import msvcrt
             msvcrt.locking(self._lock_file_descriptor, msvcrt.LK_UNLCK, 32)
         else:

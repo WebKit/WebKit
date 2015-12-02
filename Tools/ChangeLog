@@ -1,3 +1,106 @@
+2015-12-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Run non-http tests without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=151721
+
+        Reviewed by Andy Estes.
+
+        Support native 32-bit and 64-bit Python (and Perl) builds
+        for running tests:
+
+        1. Use "startswith('win')", rather than "== 'win32'" to support
+        various Windows build types.
+        2. Supply full path for some native Windows utilities, since the
+        path environment does not always have the specified, and they are
+        guaranteed to exist in those specific locations.
+        3. Make sure native Windows Python test runs pass proper environment
+        variables to run programs.
+        4. Append 'exe' suffix when running Windows executables.
+        5. Use the _winreg Python module on Windows, since the Cygwin 'regtool'
+        command doesn't exist.
+        
+        * Scripts/update-webkit: Use Perl $^X command to refer to the path of
+        the current Perl executable, rather than requiring a new path search.
+        * Scripts/webkitpy/common/find_files_unittest.py:
+        (TestWinNormalize.test_win): Use startswith('win').
+        * Scripts/webkitpy/common/prettypatch_unittest.py:
+        (test_pretty_diff_encodings): Ditto.
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._should_close_fds): Ditto.
+        (Executive.shell_command_for_script): Use startswith('win').
+        (Executive.kill_process): Use full path to killall executable.
+        (Executive.check_running_pid): Use startswith('win').
+        (Executive.running_pids): Ditto.
+        (Executive.kill_all): Ditto. Also use path to 'killall' executable when
+        running under native Windows Python.
+        (Executive._child_process_encoding): Use startswith('win').
+        (Executive._should_encode_child_process_arguments): Ditto.
+        (Executive.popen): Recognize proper script engine on Windows, since it
+        does not support the shebang syntax.
+        (Executive.run_in_parallel): Use startswith('win').
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (never_ending_command): Ditto.
+        (ExecutiveTest.test_run_command_with_unicode): Ditto.
+        (ExecutiveTest.serial_test_kill_process): Ditto.
+        (ExecutiveTest.serial_test_kill_all): Ditto.
+        (ExecutiveTest.serial_test_check_running_pid): Ditto.
+        (ExecutiveTest.serial_test_run_in_parallel): Ditto.
+        (main): Ditto.
+        * Scripts/webkitpy/common/system/file_lock.py:
+        (FileLock._create_lock): Ditto.
+        (FileLock._remove_lock): Ditto.
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (RealFileSystemTest.test_chdir): Ditto.
+        (RealFileSystemTest.test_chdir__notexists): Ditto.
+        (RealFileSystemTest.test_maybe_make_directory__failure): Ditto.
+        * Scripts/webkitpy/common/system/path_unittest.py:
+        (AbspathTest.test_abspath_to_uri_win): Ditto.
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._determine_os_name): Ditto.
+        * Scripts/webkitpy/common/system/user.py: Ditto.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.integration_test_needs_servers): Ditto.
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__): Handle upper and lower-case
+        driver letters.
+        (LayoutTestApacheHttpd._get_apache_config_file_path): Ditto.
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server_unittest.py:
+        (TestLayoutTestApacheHttpd.test_start_cmd): Ditto.
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase._check_that_all_ports_are_available): Ditto.
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_start_cmd): Ditto.
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.setup_environ_for_server): Include 'COMSPEC', 'SYSTEMDRIVE',
+        and 'SYSTEMROOT' in environment passed to test runners.
+        (Port._apache_config_file_name_for_platform): Use startswith('win').
+        (Port._build_path): Ditto.
+        (Port._path_to_driver): Include 'exe' suffix when running under native
+        Windows.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver): Explicitly make some environment
+        variables strings.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__): Use startswith('win').
+        * Scripts/webkitpy/port/win.py:
+        (WinPort): Use the win32 registry utilities on Windows, and appropriate
+        registry key formats.
+        (WinPort._ntsd_location): Revise tool search paths for Windows 10.
+        (WinPort.read_registry_value): Revise to use _winreg library on Windows,
+        and regtool on Cygwin.
+        (WinPort.write_registry_value): Ditto.
+        (WinPort.setup_crash_log_saving): Ditto.
+        (WinPort.restore_crash_log_saving): Ditto.
+        (WinPort.prevent_error_dialogs): Ditto.
+        (WinPort.allow_error_dialogs): Ditto.
+        (WinPort.find_system_pid): Revise to use Windows management
+        infrastructure on native Windows, continue using 'ps' on Cygwin.
+        (WinPort.read_registry_string): Deleted.
+        (WinPort.write_registry_string): Deleted.
+        * Scripts/webkitpy/test/main.py:
+        (main): Use startswith('win').
+        (Tester._parse_args): Ditto.
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature

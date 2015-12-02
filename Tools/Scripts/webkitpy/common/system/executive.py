@@ -93,7 +93,7 @@ class Executive(object):
         # multiple threads). See http://bugs.python.org/issue2320 .
         # Note that close_fds isn't supported on Windows, but this bug only
         # shows up on Mac and Linux.
-        return sys.platform not in ('win32', 'cygwin')
+        return not (sys.platform == 'cygwin' or sys.platform.startswith('win'))
 
     def _run_command_with_teed_output(self, args, teed_output, **kwargs):
         child_process = self.popen(args,
@@ -174,7 +174,7 @@ class Executive(object):
     def shell_command_for_script(script_path, fs=None):
         fs = fs or FileSystem()
         # Win32 does not support shebang. We need to detect the interpreter ourself.
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             interpreter = Executive.interpreter_for_script(script_path, fs)
             if interpreter:
                 return [interpreter, script_path]
@@ -183,11 +183,12 @@ class Executive(object):
     def kill_process(self, pid):
         """Attempts to kill the given pid.
         Will fail silently if pid does not exist or insufficient permisssions."""
-        if sys.platform == "win32":
+        if sys.platform.startswith('win32'):
             # We only use taskkill.exe on windows (not cygwin) because subprocess.pid
             # is a CYGWIN pid and taskkill.exe expects a windows pid.
             # Thankfully os.kill on CYGWIN handles either pid type.
-            command = ["taskkill.exe", "/f", "/t", "/pid", pid]
+            task_kill_executable = os.path.join('C:', os.sep, 'WINDOWS', 'system32', 'taskkill.exe')
+            command = [task_kill_executable, "/f", "/t", "/pid", pid]
             # taskkill will exit 128 if the process is not found.  We should log.
             self.run_command(command, error_handler=self.ignore_error)
             return
@@ -264,7 +265,7 @@ class Executive(object):
 
     def check_running_pid(self, pid):
         """Return True if pid is alive, otherwise return False."""
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             return self._win32_check_running_pid(pid)
 
         try:
@@ -274,7 +275,7 @@ class Executive(object):
             return False
 
     def running_pids(self, process_name_filter=None):
-        if sys.platform == "win32":
+        if sys.platform.startswith('win'):
             # FIXME: running_pids isn't implemented on native Windows yet...
             return []
 
@@ -349,9 +350,12 @@ class Executive(object):
     def kill_all(self, process_name):
         """Attempts to kill processes matching process_name.
         Will fail silently if no process are found."""
-        if sys.platform in ("win32", "cygwin"):
+        if sys.platform == 'cygwin' or sys.platform.startswith('win'):
             image_name = self._windows_image_name(process_name)
-            command = ["taskkill.exe", "/f", "/im", image_name]
+            killCommmand = 'taskkill.exe'
+            if sys.platform.startswith('win'):
+                killCommand = os.path.join('C:', os.sep, 'WINDOWS', 'system32', 'taskkill.exe')
+            command = [killCommmand, "/f", "/im", image_name]
             # taskkill will exit 128 if the process is not found.  We should log.
             self.run_command(command, error_handler=self.ignore_error)
             return
@@ -460,7 +464,7 @@ class Executive(object):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if sys.platform == 'win32' and sys.version < '3':
+        if sys.platform.startswith('win') and sys.version < '3':
             return 'mbcs'
         # All other platforms use UTF-8.
         # FIXME: Using UTF-8 on Cygwin will confuse Windows-native commands
@@ -477,7 +481,7 @@ class Executive(object):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if sys.platform == 'win32' and sys.version < '3':
+        if sys.platform.startswith('win') and sys.version < '3':
             return True
 
         return False
@@ -493,8 +497,27 @@ class Executive(object):
         # The Windows implementation of Popen cannot handle unicode strings. :(
         return map(self._encode_argument_if_needed, string_args)
 
-    # The only required arugment to popen is named "args", the rest are optional keyword arguments.
+    def _needs_interpreter_check(self, argument):
+        return not argument.endswith(('perl', 'python', 'ruby', 'taskkill.exe', 'git', 'svn'))
+
+    # The only required argument to popen is named "args", the rest are optional keyword arguments.
     def popen(self, args, **kwargs):
+        if sys.platform.startswith('win'):
+            _log.debug("Looking at {0}".format(args))
+            # Must include proper interpreter
+            if self._needs_interpreter_check(args[0]):
+                try:
+                    with open(args[0], 'r') as f:
+                        line = f.readline()
+                        if "perl" in line:
+                            args.insert(0, "perl")
+                        elif "python" in line:
+                            args.insert(0, "python")
+                        elif "ruby" in line:
+                            args.insert(0, "ruby")
+                except IOError:
+                    pass
+
         # FIXME: We should always be stringifying the args, but callers who pass shell=True
         # expect that the exact bytes passed will get passed to the shell (even if they're wrongly encoded).
         # shell=True is wrong for many other reasons, and we should remove this
@@ -509,7 +532,7 @@ class Executive(object):
         """Runs a list of (cmd_line list, cwd string) tuples in parallel and returns a list of (retcode, stdout, stderr) tuples."""
         assert len(command_lines_and_cwds)
 
-        if sys.platform in ('cygwin', 'win32'):
+        if sys.platform == 'cygwin' or sys.platform.startswith('win'):
             return map(_run_command_thunk, command_lines_and_cwds)
         pool = multiprocessing.Pool(processes=processes)
         results = pool.map(_run_command_thunk, command_lines_and_cwds)

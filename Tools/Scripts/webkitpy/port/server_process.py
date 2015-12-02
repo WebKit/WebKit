@@ -37,7 +37,7 @@ import time
 # Note that although win32 python does provide an implementation of
 # the win32 select API, it only works on sockets, and not on the named pipes
 # used by subprocess, so we have to use the native APIs directly.
-if sys.platform == 'win32':
+if sys.platform.startswith('win'):
     import msvcrt
     import win32pipe
     import win32file
@@ -74,7 +74,7 @@ class ServerProcess(object):
 
         # See comment in imports for why we need the win32 APIs and can't just use select.
         # FIXME: there should be a way to get win32 vs. cygwin from platforminfo.
-        self._use_win32_apis = sys.platform == 'win32'
+        self._use_win32_apis = sys.platform.startswith('win')
 
     def name(self):
         return self._name

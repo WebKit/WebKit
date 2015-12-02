@@ -76,10 +76,10 @@ runSvnUpdateAndResolveChangeLogs(@svnOptions) if isSVN();
 runGitUpdate() if isGit();
 
 if (isAppleWinWebKit() && $auxiliaryLibs) {
-    system("perl", "Tools/Scripts/update-webkit-auxiliary-libs") == 0 or die;
+    system($^X, File::Spec->catfile("Tools", "Scripts", "update-webkit-auxiliary-libs")) == 0 or die;
     if (isWinCairo()) {
         # WinCairo shares the auxiliary libs from the Apple port.
-        system("perl", "Tools/Scripts/update-webkit-wincairo-libs") == 0 or die;
+        system($^X, File::Spec->catfile("Tools", "Scripts", "update-webkit-wincairo-libs")) == 0 or die;
     }
 }
 

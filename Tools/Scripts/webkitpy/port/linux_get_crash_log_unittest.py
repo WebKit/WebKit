@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import sys
 import unittest
 
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
@@ -37,6 +38,9 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 class GDBCrashLogGeneratorTest(unittest.TestCase):
 
     def test_generate_crash_log(self):
+        if sys.platform.startswith('win'):
+            return
+
         generator = GDBCrashLogGenerator('DumpRenderTree', 28529, newer_than=None, filesystem=MockFileSystem({'/path/to/coredumps': ''}), path_to_driver=None)
 
         core_directory = os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')

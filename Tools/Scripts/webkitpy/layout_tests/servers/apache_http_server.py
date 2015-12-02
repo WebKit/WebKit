@@ -65,7 +65,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         if port_obj.host.platform.is_win():
             # Convert to MSDOS file naming:
             precompiledBuildbot = re.compile('^/home/buildbot')
-            precompiledDrive = re.compile('^/cygdrive/c')
+            precompiledDrive = re.compile('^/cygdrive/[cC]')
             output_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", output_dir)
             output_dir = precompiledDrive.sub("C:", output_dir)
             test_dir = precompiledBuildbot.sub("C:/cygwin/home/buildbot", test_dir)
@@ -157,7 +157,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
         if self._port_obj.host.platform.is_win():
             # Convert to MSDOS file naming:
-            precompiledDrive = re.compile('^/cygdrive/c')
+            precompiledDrive = re.compile('^/cygdrive/[cC]')
             httpd_config_copy = precompiledDrive.sub("C:", httpd_config_copy)
             precompiledBuildbot = re.compile('^/home/buildbot')
             httpd_config_copy = precompiledBuildbot.sub("C:/cygwin/home/buildbot", httpd_config_copy)

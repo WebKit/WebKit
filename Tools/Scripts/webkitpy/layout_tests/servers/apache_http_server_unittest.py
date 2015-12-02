@@ -41,7 +41,7 @@ from webkitpy.layout_tests.servers.http_server_base import ServerError
 class TestLayoutTestApacheHttpd(unittest.TestCase):
     def test_start_cmd(self):
         # Fails on win - see https://bugs.webkit.org/show_bug.cgi?id=84726
-        if sys.platform in ('cygwin', 'win32'):
+        if sys.platform.startswith('win') or sys.platform == 'cygwin':
             return
 
         def fake_pid(_):

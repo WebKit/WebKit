@@ -475,7 +475,10 @@ class PortTestCase(unittest.TestCase):
     def test_root_option(self):
         port = TestWebKitPort()
         port._options = MockOptions(root='/foo')
-        self.assertEqual(port._path_to_driver(), "/foo/DumpRenderTree")
+        if sys.platform.startswith('win'):
+            self.assertEqual(port._path_to_driver(), "/foo/DumpRenderTree.exe")
+        else:
+            self.assertEqual(port._path_to_driver(), "/foo/DumpRenderTree")
 
     def test_test_expectations(self):
         # Check that we read the expectations file

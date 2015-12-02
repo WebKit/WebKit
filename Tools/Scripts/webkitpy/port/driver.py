@@ -312,15 +312,15 @@ class Driver(object):
             self._run_post_start_tasks()
 
     def _setup_environ_for_driver(self, environment):
-        environment['DYLD_LIBRARY_PATH'] = self._port._build_path()
-        environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
+        environment['DYLD_LIBRARY_PATH'] = str(self._port._build_path())
+        environment['DYLD_FRAMEWORK_PATH'] = str(self._port._build_path())
         # Use an isolated temp directory that can be deleted after testing (especially important on Mac, as
         # CoreMedia disk cache is in the temp directory).
         environment['TMPDIR'] = str(self._driver_tempdir)
-        environment['DIRHELPER_USER_DIR_SUFFIX'] = os.path.basename(str(self._driver_tempdir))
+        environment['DIRHELPER_USER_DIR_SUFFIX'] = str(os.path.basename(str(self._driver_tempdir)))
         # Put certain normally persistent files into the temp directory (e.g. IndexedDB storage).
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
-        environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
+        environment['LOCAL_RESOURCE_ROOT'] = str(self._port.layout_tests_dir())
         environment['ASAN_OPTIONS'] = "allocator_may_return_null=1"
         if 'WEBKIT_OUTPUTDIR' in os.environ:
             environment['WEBKIT_OUTPUTDIR'] = os.environ['WEBKIT_OUTPUTDIR']

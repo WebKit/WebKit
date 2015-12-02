@@ -56,6 +56,6 @@ class TestWinNormalize(unittest.TestCase):
     def test_win(self):
         # This tests the actual windows platform, to ensure we get the same
         # results that we get in test_mocked_win().
-        if sys.platform != 'win32':
+        if not sys.platform.startswith('win'):
             return
         self.assert_filesystem_normalizes(FileSystem())

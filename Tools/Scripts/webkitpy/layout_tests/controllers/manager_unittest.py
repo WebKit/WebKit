@@ -78,7 +78,7 @@ class ManagerTest(unittest.TestCase):
         manager = get_manager()
         self.assertTrue(manager.needs_servers(['http/tests/mime']))
 
-        if sys.platform == 'win32':
+        if sys.platform.startswith('win'):
             manager = get_manager()
             self.assertFalse(manager.needs_servers(['fast\\html']))
 

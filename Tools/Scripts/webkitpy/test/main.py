@@ -52,11 +52,11 @@ def main():
     tester.add_tree(os.path.join(webkit_root, 'Tools', 'Scripts'), 'webkitpy')
 
     # There is no WebKit2 on Windows, so we don't need to run WebKit2 unittests on it.
-    if not sys.platform in ('cygwin', 'win32'):
+    if not (sys.platform.startswith('win') or sys.platform == 'cygwin'):
         tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'), 'webkit2')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
-    if sys.platform == 'win32':
+    if sys.platform.startswith('win'):
         tester.skip(('webkitpy.common.checkout', 'webkitpy.common.config', 'webkitpy.tool'), 'fail horribly on win32', 54526)
 
     # This only needs to run on Unix, so don't worry about win32 for now.
@@ -106,7 +106,7 @@ class Tester(object):
                           help='generate code coverage info (requires http://pypi.python.org/pypi/coverage)')
         parser.add_option('-i', '--integration-tests', action='store_true', default=False,
                           help='run integration tests as well as unit tests'),
-        parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform == 'win32' else multiprocessing.cpu_count()),
+        parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform.startswith('win') else multiprocessing.cpu_count()),
                           help='number of tests to run in parallel (default=%default)')
         parser.add_option('-p', '--pass-through', action='store_true', default=False,
                           help='be debugger friendly by passing captured output through to the system')

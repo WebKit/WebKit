@@ -49,7 +49,7 @@ class AbspathTest(unittest.TestCase):
                           'file:///foo/bar.html')
 
     def test_abspath_to_uri_win(self):
-        if sys.platform != 'win32':
+        if not sys.platform.startswith('win'):
             return
         self.assertEqual(path.abspath_to_uri(self.platforminfo(), 'c:\\foo\\bar.html'),
                          'file:///c:/foo/bar.html')

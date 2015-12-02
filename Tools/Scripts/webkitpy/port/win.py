@@ -44,6 +44,12 @@ from webkitpy.port.apple import ApplePort
 _log = logging.getLogger(__name__)
 
 
+try:
+    import _winreg
+    import win32com.client
+except ImportError:
+    _log.warn("Not running on native Windows.")
+
 class WinPort(ApplePort):
     port_name = "win"
 
@@ -53,13 +59,30 @@ class WinPort(ApplePort):
 
     CRASH_LOG_PREFIX = "CrashLog"
 
-    POST_MORTEM_DEBUGGER_KEY = "/%s/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
-
-    WINDOWS_ERROR_REPORTING_KEY = "/%s/SOFTWARE/Microsoft/Windows/Windows Error Reporting/%s"
+    if sys.platform.startswith('win'):
+        POST_MORTEM_DEBUGGER_KEY = r'SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug'
+        WOW64_POST_MORTEM_DEBUGGER_KEY = r'SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\AeDebug'
+        WINDOWS_ERROR_REPORTING_KEY = r'SOFTWARE\Microsoft\Windows\Windows Error Reporting'
+        WOW64_WINDOWS_ERROR_REPORTING_KEY = r'SOFTWARE\Wow6432Node\Microsoft\Windows\Windows Error Reporting'
+        _HKLM = _winreg.HKEY_LOCAL_MACHINE
+        _HKCU = _winreg.HKEY_CURRENT_USER
+        _REG_DWORD = _winreg.REG_DWORD
+        _REG_SZ = _winreg.REG_SZ
+    else:
+        POST_MORTEM_DEBUGGER_KEY = "/%s/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
+        WOW64_POST_MORTEM_DEBUGGER_KEY = "/%s/SOFTWARE/Wow6432Node/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
+        WINDOWS_ERROR_REPORTING_KEY = "/%s/SOFTWARE/Microsoft/Windows/Windows Error Reporting/%s"
+        WOW64_WINDOWS_ERROR_REPORTING_KEY = "/%s/SOFTWARE/Wow6432Node/Microsoft/Windows/Windows Error Reporting/%s"
+        _HKLM = "HKLM"
+        _HKCU = "HKCU"
+        _REG_DWORD = "-d"
+        _REG_SZ = "-s"
 
     previous_debugger_values = {}
+    previous_wow64_debugger_values = {}
 
     previous_error_reporting_values = {}
+    previous_wow64_error_reporting_values = {}
 
     def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
@@ -163,20 +186,25 @@ class WinPort(ApplePort):
     def _ntsd_location(self):
         if 'PROGRAMFILES' not in os.environ:
             return None
+        possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "10", "Debuggers", "x64", "ntsd.exe"),
+            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x64", "ntsd.exe"),
+            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe")]
         if self.get_option('architecture') == 'x86_64':
-            possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "10", "Debuggers", "x64", "ntsd.exe"),
-                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x64", "ntsd.exe"),
-                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe")]
+            possible_paths.append(self._filesystem.join("{0} (x86)".format(os.environ['PROGRAMFILES']), "Windows Kits", "10", "Debuggers", "x64", "ntsd.exe"))
+            possible_paths.append(self._filesystem.join("{0} (x86)".format(os.environ['PROGRAMFILES']), "Windows Kits", "8.1", "Debuggers", "x64", "ntsd.exe"))
+            possible_paths.append(self._filesystem.join("{0} (x86)".format(os.environ['PROGRAMFILES']), "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe"))
+            possible_paths.append(self._filesystem.join("{0} (x86)".format(os.environ['PROGRAMFILES']), "Debugging Tools for Windows (x64)", "ntsd.exe"))
         else:
-            possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "10", "Debuggers", "x86", "ntsd.exe"),
-                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x86", "ntsd.exe"),
-                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
-                self._filesystem.join(os.environ['PROGRAMFILES'], "Debugging Tools for Windows (x86)", "ntsd.exe")]
+            possible_paths.append(self._filesystem.join(os.environ['PROGRAMFILES'], "Debugging Tools for Windows (x86)", "ntsd.exe"))
         possible_paths.append(self._filesystem.join(os.environ['SYSTEMROOT'], "system32", "ntsd.exe"))
         if 'ProgramW6432' in os.environ:
+            possible_paths.append(self._filesystem.join(os.environ['ProgramW6432'], "Windows Kits", "10", "Debuggers", "x64", "ntsd.exe"))
+            possible_paths.append(self._filesystem.join(os.environ['ProgramW6432'], "Windows Kits", "8.1", "Debuggers", "x64", "ntsd.exe"))
+            possible_paths.append(self._filesystem.join(os.environ['ProgramW6432'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe"))
             possible_paths.append(self._filesystem.join(os.environ['ProgramW6432'], "Debugging Tools for Windows (x64)", "ntsd.exe"))
         for path in possible_paths:
             expanded_path = self._filesystem.expanduser(path)
+            _log.debug("Considering '%s'" % expanded_path)
             if self._filesystem.exists(expanded_path):
                 _log.debug("Using ntsd located in '%s'" % path)
                 return expanded_path
@@ -193,41 +221,78 @@ class WinPort(ApplePort):
         self._filesystem.write_text_file(command_file, commands)
         return command_file
 
-    def read_registry_string(self, reg_path, arch, root, key):
-        registry_key = reg_path % (root, key)
-        read_registry_command = ["regtool", arch, "get", registry_key]
-        value = self._executive.run_command(read_registry_command, error_handler=Executive.ignore_error)
-        return value.rstrip()
+    def read_registry_value(self, reg_path, arch, root, key):
+        if sys.platform.startswith('win'):
+            _log.debug("Trying to read %s\\%s" % (reg_path, key))
+            try:
+                registry_key = _winreg.OpenKey(root, reg_path)
+                value = _winreg.QueryValueEx(registry_key, key)
+                _winreg.CloseKey(registry_key)
+            except WindowsError as ex:
+                _log.debug("Unable to read %s\\%s: %s" % (reg_path, key, str(ex)))
+                return ['', self._REG_SZ]
+        else:
+            registry_key = reg_path % (root, key)
+            _log.debug("Reading %s" % (registry_key))
+            read_registry_command = ["regtool", arch, "get", registry_key]
+            int_value = self._executive.run_command(read_registry_command, error_handler=Executive.ignore_error)
+            # regtool doesn't return the type of the entry, so need this ugly hack:
+            if reg_path in (self.WINDOWS_ERROR_REPORTING_KEY, self.WOW64_WINDOWS_ERROR_REPORTING_KEY):
+                _log.debug("I got {0}".format(int_value))
+                try:
+                    value = [int(int_value), self._REG_DWORD]
+                except:
+                    value = [0, self._REG_DWORD]
+            else:
+                value = [int_value.rstrip(), self._REG_SZ]
+
+        _log.debug("I got back ({0}) of type ({1})".format(value[0], value[1]))
+        return value
 
     def write_registry_value(self, reg_path, arch, root, key, regType, value):
-        registry_key = reg_path % (root, key)
+        if sys.platform.startswith('win'):
+            _log.debug("Trying to write %s\\%s = %s" % (reg_path, key, value))
+            try:
+                registry_key = _winreg.OpenKey(root, reg_path, 0, _winreg.KEY_WRITE)
+            except WindowsError:
+                try:
+                    _log.debug("Key doesn't exist -- must create it.")
+                    registry_key = _winreg.CreateKeyEx(root, reg_path, 0, _winreg.KEY_WRITE)
+                except WindowsError as ex:
+                    _log.error("Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(ex)))
+                    _log.error("You many need to adjust permissions on the %s\\%s key." % (reg_path, key))
+                    return False
 
-        _log.debug("Writing to %s" % registry_key)
+            _log.debug("Writing {0} of type {1} to {2}\\{3}".format(value, regType, registry_key, key))
+            _winreg.SetValueEx(registry_key, key, 0, regType, value)
+            _winreg.CloseKey(registry_key)
+        else:
+            registry_key = reg_path % (root, key)
+            _log.debug("Writing to %s" % registry_key)
 
-        set_reg_value_command = ["regtool", arch, "set", regType, str(registry_key), str(value)]
-        rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
-        if rc == 2:
-            add_reg_value_command = ["regtool", arch, "add", regType, str(registry_key)]
-            rc = self._executive.run_command(add_reg_value_command, return_exit_code=True)
-            if rc == 0:
-                rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
-        if rc:
-            _log.warn("Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(rc)))
-            _log.warn("You many need to adjust permissions on the %s key." % registry_key)
-            return False
+            set_reg_value_command = ["regtool", arch, "set", regType, str(registry_key), str(value)]
+            rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
+            if rc == 2:
+                add_reg_value_command = ["regtool", arch, "add", regType, str(registry_key)]
+                rc = self._executive.run_command(add_reg_value_command, return_exit_code=True)
+                if rc == 0:
+                    rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
+            if rc:
+                _log.warn("Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(rc)))
+                _log.warn("You many need to adjust permissions on the %s key." % registry_key)
+                return False
 
         # On Windows Vista/7 with UAC enabled, regtool will fail to modify the registry, but will still
         # return a successful exit code. So we double-check here that the value we tried to write to the
         # registry was really written.
-        if self.read_registry_string(reg_path, arch, root, key) != str(value):
-            _log.warn("Regtool reported success, but value of key %s did not change." % key)
-            _log.warn("You many need to adjust permissions on the %s key." % registry_key)
+        check_value = self.read_registry_value(reg_path, arch, root, key)
+        if check_value[0] != value or check_value[1] != regType:
+            _log.warn("Reg update reported success, but value of key %s did not change." % key)
+            _log.warn("Wanted to set it to ({0}, {1}), but got {2})".format(value, regType, check_value))
+            _log.warn("You many need to adjust permissions on the %s\\%s key." % (reg_path, key))
             return False
 
         return True
-
-    def write_registry_string(self, reg_path, arch, root, key, value):
-        return self.write_registry_value(reg_path, arch, root, key, "-s", value)
 
     def setup_crash_log_saving(self):
         if '_NT_SYMBOL_PATH' not in os.environ:
@@ -246,27 +311,35 @@ class WinPort(ApplePort):
         if not command_file:
             return None
         debugger_options = '"{0}" -p %ld -e %ld -g -noio -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
-        registry_settings = {'Debugger': debugger_options, 'Auto': "1"}
-        for key in registry_settings:
+        registry_settings = {'Debugger': [debugger_options, self._REG_SZ], 'Auto': ["1", self._REG_SZ]}
+        for key, value in registry_settings.iteritems():
             for arch in ["--wow32", "--wow64"]:
-                self.previous_debugger_values[(arch, "HKLM", key)] = self.read_registry_string(self.POST_MORTEM_DEBUGGER_KEY, arch, "HKLM", key)
-                self.write_registry_string(self.POST_MORTEM_DEBUGGER_KEY, arch, "HKLM", key, registry_settings[key])
+                self.previous_debugger_values[(arch, self._HKLM, key)] = self.read_registry_value(self.POST_MORTEM_DEBUGGER_KEY, arch, self._HKLM, key)
+                self.previous_wow64_debugger_values[(arch, self._HKLM, key)] = self.read_registry_value(self.WOW64_POST_MORTEM_DEBUGGER_KEY, arch, self._HKLM, key)
+                self.write_registry_value(self.POST_MORTEM_DEBUGGER_KEY, arch, self._HKLM, key, value[1], value[0])
+                self.write_registry_value(self.WOW64_POST_MORTEM_DEBUGGER_KEY, arch, self._HKLM, key, value[1], value[0])
 
     def restore_crash_log_saving(self):
-        for key in self.previous_debugger_values:
-            self.write_registry_string(self.POST_MORTEM_DEBUGGER_KEY, key[0], key[1], key[2], self.previous_debugger_values[key])
+        for key, value in self.previous_debugger_values.iteritems():
+            self.write_registry_value(self.POST_MORTEM_DEBUGGER_KEY, key[0], key[1], key[2], value[1], value[0])
+        for key, value in self.previous_wow64_debugger_values.iteritems():
+            self.write_registry_value(self.WOW64_POST_MORTEM_DEBUGGER_KEY, key[0], key[1], key[2], value[1], value[0])
 
     def prevent_error_dialogs(self):
-        registry_settings = {'DontShowUI': 1, 'Disabled': 1}
-        for key in registry_settings:
-            for root in ["HKLM", "HKCU"]:
+        registry_settings = {'DontShowUI': [1, self._REG_DWORD], 'Disabled': [1, self._REG_DWORD]}
+        for key, value in registry_settings.iteritems():
+            for root in [self._HKLM, self._HKCU]:
                 for arch in ["--wow32", "--wow64"]:
-                    self.previous_error_reporting_values[(arch, root, key)] = self.read_registry_string(self.WINDOWS_ERROR_REPORTING_KEY, arch, root, key)
-                    self.write_registry_value(self.WINDOWS_ERROR_REPORTING_KEY, arch, root, key, "-d", registry_settings[key])
+                    self.previous_error_reporting_values[(arch, root, key)] = self.read_registry_value(self.WINDOWS_ERROR_REPORTING_KEY, arch, root, key)
+                    self.previous_wow64_error_reporting_values[(arch, root, key)] = self.read_registry_value(self.WOW64_WINDOWS_ERROR_REPORTING_KEY, arch, root, key)
+                    self.write_registry_value(self.WINDOWS_ERROR_REPORTING_KEY, arch, root, key, value[1], value[0])
+                    self.write_registry_value(self.WOW64_WINDOWS_ERROR_REPORTING_KEY, arch, root, key, value[1], value[0])
 
     def allow_error_dialogs(self):
-        for key in self.previous_error_reporting_values:
-            self.write_registry_value(self.WINDOWS_ERROR_REPORTING_KEY, key[0], key[1], key[2], "-d", self.previous_error_reporting_values[key])
+        for key, value in self.previous_error_reporting_values.iteritems():
+            self.write_registry_value(self.WINDOWS_ERROR_REPORTING_KEY, key[0], key[1], key[2], value[1], value[0])
+        for key, value in self.previous_wow64_error_reporting_values.iteritems():
+            self.write_registry_value(self.WOW64_WINDOWS_ERROR_REPORTING_KEY, key[0], key[1], key[2], value[1], value[0])
 
     def delete_sem_locks(self):
         os.system("rm -rf /dev/shm/sem.*")
@@ -331,21 +404,33 @@ class WinPort(ApplePort):
 
     def find_system_pid(self, name, pid):
         system_pid = int(pid)
-        # Windows and Cygwin PIDs are not the same.  We need to find the Windows
-        # PID for our Cygwin process so we can match it later to any crash
-        # files we end up creating (which will be tagged with the Windows PID)
-        ps_process = self._executive.run_command(['ps', '-e'], error_handler=Executive.ignore_error)
-        for line in ps_process.splitlines():
-            tokens = line.strip().split()
-            try:
-                cpid, ppid, pgid, winpid, tty, uid, stime, process_name = tokens
-                if process_name.endswith(name):
-                    self._executive.pid_to_system_pid[int(cpid)] = int(winpid)
-                    if int(pid) == int(cpid):
-                        system_pid = int(winpid)
-                    break
-            except ValueError, e:
-                pass
+
+        if sys.platform == "cygwin":
+            # Windows and Cygwin PIDs are not the same.  We need to find the Windows
+            # PID for our Cygwin process so we can match it later to any crash
+            # files we end up creating (which will be tagged with the Windows PID)
+            ps_process = self._executive.run_command(['ps', '-e'], error_handler=Executive.ignore_error)
+            for line in ps_process.splitlines():
+                tokens = line.strip().split()
+                try:
+                    cpid, ppid, pgid, winpid, tty, uid, stime, process_name = tokens
+                    if process_name.endswith(name):
+                        self._executive.pid_to_system_pid[int(cpid)] = int(winpid)
+                        if int(pid) == int(cpid):
+                            system_pid = int(winpid)
+                        break
+                except ValueError, e:
+                    pass
+        else:
+            wmi = win32com.client.GetObject('winmgmts:')
+            _log.debug('Querying WMI with "%{0}%"'.format(name))
+            procs = wmi.ExecQuery('Select * from win32_process where name like "%{0}%"'.format(name))
+            for proc in procs:
+                self._executive.pid_to_system_pid[int(proc.ProcessId)] = int(proc.ProcessId)
+                _log.debug("I see {0}: {1}".format(proc.Name, proc.ProcessId))
+                if int(pid) == int(proc.ProcessId):
+                    system_pid = int(proc.ProcessId)
+                break
 
         return system_pid
 
