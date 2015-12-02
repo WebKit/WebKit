@@ -1,3 +1,15 @@
+2015-12-02  David Hyatt  <hyatt@apple.com>
+
+        Add some more picture element layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=151769
+
+        Reviewed by Dean Jackson.
+
+        * fast/picture/image-picture-invalid-expected.txt: Added.
+        * fast/picture/image-picture-invalid.html: Added.
+        * fast/picture/image-picture-nested-expected.txt: Added.
+        * fast/picture/image-picture-nested.html: Added.
+
 2015-12-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Enable a couple more passing tests.
