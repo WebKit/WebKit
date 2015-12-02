@@ -1,5 +1,14 @@
 2015-12-02  Benjamin Poulain  <bpoulain@apple.com>
 
+        Update the interface added in r192967
+
+        * b3/B3CCallValue.h:
+        Filip prefers explicit effects.
+        * b3/testb3.cpp:
+        (JSC::B3::testCallSimplePure):
+
+2015-12-02  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Add a function attribute for Pure functions in B3
         https://bugs.webkit.org/show_bug.cgi?id=151741
 

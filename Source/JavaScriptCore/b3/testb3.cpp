@@ -33,6 +33,7 @@
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
 #include "B3ControlValue.h"
+#include "B3Effects.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
@@ -4731,7 +4732,7 @@ void testCallSimplePure(int a, int b)
     root->appendNew<ControlValue>(
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
-            proc, Int32, Origin(), CCallValue::PureFunction,
+            proc, Int32, Origin(), Effects::none(),
             root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));

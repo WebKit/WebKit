@@ -35,7 +35,6 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE CCallValue : public Value {
 public:
-    enum PureFunctionTag { PureFunction };
     static bool accepts(Opcode opcode) { return opcode == CCall; }
 
     ~CCallValue();
@@ -53,8 +52,9 @@ private:
     }
 
     template<typename... Arguments>
-    CCallValue(unsigned index, Type type, Origin origin, PureFunctionTag, Arguments... arguments)
+    CCallValue(unsigned index, Type type, Origin origin, const Effects& effects, Arguments... arguments)
         : Value(index, CheckedOpcode, CCall, type, origin, arguments...)
+        , effects(effects)
     {
     }
 };

@@ -55,6 +55,11 @@ struct Effects {
     HeapRange writes;
     HeapRange reads;
 
+    static Effects none()
+    {
+        return Effects();
+    }
+
     static Effects forCall()
     {
         Effects result;
