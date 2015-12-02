@@ -278,7 +278,20 @@ bool IDBRequest::dispatchEvent(Event& event)
     if (m_transaction && !m_pendingCursor)
         m_transaction->removeRequest(*this);
 
+    if (dontPreventDefault && event.type() == eventNames().errorEvent && m_transaction && !m_transaction->isFinishedOrFinishing()) {
+        ASSERT(m_domError);
+        m_transaction->abortDueToFailedRequest(*m_domError);
+    }
+
     return dontPreventDefault;
+}
+
+void IDBRequest::uncaughtExceptionInEventHandler()
+{
+    LOG(IndexedDB, "IDBRequest::uncaughtExceptionInEventHandler");
+
+    if (m_transaction && m_idbError.code() != IDBDatabaseException::AbortError)
+        m_transaction->abortDueToFailedRequest(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::AbortError)));
 }
 
 void IDBRequest::setResult(const IDBKeyData* keyData)

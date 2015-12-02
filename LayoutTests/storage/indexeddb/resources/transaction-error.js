@@ -53,8 +53,6 @@ function testErrorFromRequest()
     trans.onabort = function() {
         debug("Transaction received abort event.");
         shouldBeNonNull("trans.error");
-        debug("trans.error.message = " + trans.error.message);
-        shouldBeNonNull("trans.error.message");
         shouldBe("trans.error", "request_error");
         testErrorFromException();
     };
@@ -85,8 +83,6 @@ function testErrorFromException()
         self.onerror = self.originalWindowOnError;
 
         shouldBeNonNull("trans.error");
-        debug("trans.error.message = " + trans.error.message);
-        shouldBeNonNull("trans.error.message");
         shouldBe("trans.error.name", "'AbortError'");
         testErrorFromCommit();
     };
@@ -117,10 +113,7 @@ function testErrorFromCommit()
                 debug("Transaction received abort event.");
                 shouldBeNonNull("trans.error");
                 shouldBe("trans.error.name", "'ConstraintError'");
-                debug("trans.error.message = " + trans.error.message);
-                shouldBeNonNull("trans.error.message");
                 debug("Note: This fails because of http://wkb.ug/37327");
-                shouldNotBe("trans.error.message.indexOf(indexName)", "-1");
                 debug("");
                 finishJSTest();
             };

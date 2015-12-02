@@ -116,6 +116,8 @@ public:
     void addRequest(IDBRequest&);
     void removeRequest(IDBRequest&);
 
+    void abortDueToFailedRequest(DOMError&);
+
     IDBConnectionToServer& serverConnection();
 
     void activate();
@@ -191,6 +193,7 @@ private:
     bool m_startedOnServer { false };
 
     IDBError m_idbError;
+    RefPtr<DOMError> m_domError;
 
     Timer m_operationTimer;
     std::unique_ptr<Timer> m_activationTimer;

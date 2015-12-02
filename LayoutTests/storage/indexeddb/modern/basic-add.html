@@ -57,6 +57,7 @@ request.onupgradeneeded = function(event) {
         }
         
         event.stopPropagation();
+        event.preventDefault();
     }
         
     tx.onabort = function(event) {

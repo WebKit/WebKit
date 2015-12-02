@@ -114,6 +114,7 @@ protected:
     // EventTarget.
     virtual void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
     virtual void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
+    virtual void uncaughtExceptionInEventHandler() override final;
 
     virtual bool isOpenDBRequest() const { return false; }
 

@@ -1,3 +1,24 @@
+2015-12-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDBTransaction::error is not exposed.
+        https://bugs.webkit.org/show_bug.cgi?id=151752
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least 3 failing tests now pass, plus changes to other faulty tests).
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::dispatchEvent):
+        (WebCore::IDBClient::IDBRequest::uncaughtExceptionInEventHandler):
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::error):
+        (WebCore::IDBClient::IDBTransaction::abortDueToFailedRequest):
+        (WebCore::IDBClient::IDBTransaction::abort):
+        (WebCore::IDBClient::IDBTransaction::didCreateIndexOnServer):
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+
 2015-12-02  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [css border] border-image doesn't honor border-style

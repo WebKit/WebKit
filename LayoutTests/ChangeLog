@@ -1,3 +1,17 @@
+2015-12-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: IDBTransaction::error is not exposed.
+        https://bugs.webkit.org/show_bug.cgi?id=151752
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/basic-add.html:
+        * storage/indexeddb/modern/double-abort-expected.txt:
+        * storage/indexeddb/modern/index-3.html:
+        * storage/indexeddb/resources/transaction-error.js:
+        * storage/indexeddb/transaction-error-expected.txt:
+
 2015-12-02  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [css border] border-image doesn't honor border-style

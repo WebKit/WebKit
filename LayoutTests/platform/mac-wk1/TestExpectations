@@ -78,6 +78,9 @@ storage/indexeddb/cursor-cast.html [ Pass ]
 storage/indexeddb/cursor-finished.html [ Pass ]
 storage/indexeddb/modern [ Pass ]
 storage/indexeddb/mozilla [ Pass ]
+storage/indexeddb/transaction-abort.html [ Pass ]
+storage/indexeddb/transaction-error.html [ Pass ]
+storage/indexeddb/transaction-event-propagation.html [ Pass ]
 
 # No workers support in Modern IDB yet
 storage/indexeddb/basics-workers.html

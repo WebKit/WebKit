@@ -31,6 +31,7 @@
 #include "DOMError.h"
 #include "EventQueue.h"
 #include "IDBCursorWithValueImpl.h"
+#include "IDBDatabaseException.h"
 #include "IDBDatabaseImpl.h"
 #include "IDBError.h"
 #include "IDBEventDispatcher.h"
@@ -117,8 +118,7 @@ IDBConnectionToServer& IDBTransaction::serverConnection()
 
 RefPtr<DOMError> IDBTransaction::error() const
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return m_domError;
 }
 
 RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& objectStoreName, ExceptionCode& ec)
@@ -165,12 +165,23 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
     return adoptRef(&objectStore.leakRef());
 }
 
+
+void IDBTransaction::abortDueToFailedRequest(DOMError& error)
+{
+    LOG(IndexedDB, "IDBTransaction::abortDueToFailedRequest");
+    ASSERT(!isFinishedOrFinishing());
+
+    m_domError = &error;
+    ExceptionCode ec;
+    abort(ec);
+}
+
 void IDBTransaction::abort(ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBTransaction::abort");
 
     if (isFinishedOrFinishing()) {
-        ec = INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return;
     }
 
@@ -481,8 +492,7 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
         return;
 
     // Otherwise, failure to create an index forced abortion of the transaction.
-    ExceptionCode ec;
-    abort(ec);
+    abortDueToFailedRequest(DOMError::create(IDBDatabaseException::getErrorName(resultData.error().code())));
 }
 
 Ref<IDBRequest> IDBTransaction::requestOpenCursor(ScriptExecutionContext& context, IDBObjectStore& objectStore, const IDBCursorInfo& info)

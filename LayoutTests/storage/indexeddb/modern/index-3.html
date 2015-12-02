@@ -76,6 +76,7 @@ createRequest.onupgradeneeded = function(event) {
     request2.onerror = function(e) {
         log("Second put failure");
         e.stopPropagation();
+        e.preventDefault();
     }
     
     checkObjectStore();
@@ -90,6 +91,7 @@ createRequest.onupgradeneeded = function(event) {
     request3.onerror = function(e) {
         log("Third put failure");
         e.stopPropagation();
+        e.preventDefault();
     }
     
     checkObjectStore();
