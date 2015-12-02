@@ -2677,7 +2677,11 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFS
 
         if (width > 0 && height > 0) {
             if (!m_memSurface || m_width != width || m_height != height) {
-                hr = m_device->CreateOffscreenPlainSurface(width, height, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_memSurface, nullptr);
+                D3DFORMAT format = D3DFMT_A8R8G8B8;
+                D3DSURFACE_DESC desc;
+                if (SUCCEEDED(surface->GetDesc(&desc)))
+                    format = desc.Format;
+                hr = m_device->CreateOffscreenPlainSurface(width, height, format, D3DPOOL_SYSTEMMEM, &m_memSurface, nullptr);
                 m_width = width;
                 m_height = height;
             }
@@ -2728,11 +2732,34 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
         void* data = lockedRect.pBits;
         int pitch = lockedRect.Pitch;
 #if USE(CAIRO)
-        WebCore::PlatformContextCairo* ctxt = context.platformContext();
-        cairo_surface_t* image = cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), CAIRO_FORMAT_ARGB32, width, height, pitch);
+        D3DFORMAT format = D3DFMT_UNKNOWN;
+        D3DSURFACE_DESC desc;
+        if (SUCCEEDED(m_memSurface->GetDesc(&desc)))
+            format = desc.Format;
+
+        cairo_format_t cairoFormat = CAIRO_FORMAT_INVALID;
+
+        switch (format) {
+        case D3DFMT_A8R8G8B8:
+            cairoFormat = CAIRO_FORMAT_ARGB32;
+            break;
+        case D3DFMT_X8R8G8B8:
+            cairoFormat = CAIRO_FORMAT_RGB24;
+            break;
+        }
+
+        ASSERT(cairoFormat != CAIRO_FORMAT_INVALID);
+
+        cairo_surface_t* image = nullptr;
+        if (cairoFormat != CAIRO_FORMAT_INVALID)
+            image = cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch);
+
         FloatRect srcRect(0, 0, width, height);
-        ctxt->drawSurfaceToContext(image, destRect, srcRect, context);
-        cairo_surface_destroy(image);
+        if (image) {
+            WebCore::PlatformContextCairo* ctxt = context.platformContext();
+            ctxt->drawSurfaceToContext(image, destRect, srcRect, context);
+            cairo_surface_destroy(image);
+        }
 #else
 #error "Platform needs to implement drawing of Direct3D surface to graphics context!"
 #endif

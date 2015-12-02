@@ -1,3 +1,17 @@
+2015-12-02  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Video is not rendered correctly on some graphics cards.
+        https://bugs.webkit.org/show_bug.cgi?id=151757
+
+        Reviewed by Alex Christensen.
+
+        We need to make sure we use the same bitmap format as in the Direct3D surface
+        in video memory when copying surface data and rendering with Cairo.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame):
+
 2015-12-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Get rid of IDBExceptionCode.
