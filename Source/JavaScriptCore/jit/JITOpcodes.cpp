@@ -967,7 +967,7 @@ void JIT::emit_op_new_regexp(Instruction* currentInstruction)
     callOperation(operationNewRegexp, currentInstruction[1].u.operand, m_codeBlock->regexp(currentInstruction[2].u.operand));
 }
 
-void JIT::emitNewFuncCommon(Instruction* currentInstruction)
+void JIT::emit_op_new_func(Instruction* currentInstruction)
 {
     Jump lazyJump;
     int dst = currentInstruction[1].u.operand;
@@ -978,26 +978,14 @@ void JIT::emitNewFuncCommon(Instruction* currentInstruction)
     emitLoadPayload(currentInstruction[2].u.operand, regT0);
 #endif
     FunctionExecutable* funcExec = m_codeBlock->functionDecl(currentInstruction[3].u.operand);
-
-    OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(currentInstruction->u.opcode);
-    if (opcodeID == op_new_func)
-        callOperation(operationNewFunction, dst, regT0, funcExec);
-    else {
-        ASSERT(opcodeID == op_new_generator_func);
-        callOperation(operationNewGeneratorFunction, dst, regT0, funcExec);
-    }
+    callOperation(operationNewFunction, dst, regT0, funcExec);
 }
 
-void JIT::emit_op_new_func(Instruction* currentInstruction)
+void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
-    emitNewFuncCommon(currentInstruction);
+    emitNewFuncExprCommon(currentInstruction);
 }
-
-void JIT::emit_op_new_generator_func(Instruction* currentInstruction)
-{
-    emitNewFuncCommon(currentInstruction);
-}
-
+    
 void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
 {
     OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(currentInstruction->u.opcode);
@@ -1030,27 +1018,11 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
 #else 
         callOperation(operationNewArrowFunction, dst, regT0, function, regT3, regT2);
 #endif
-    else {
-        if (opcodeID == op_new_func_exp)
-            callOperation(operationNewFunction, dst, regT0, function);
-        else {
-            ASSERT(opcodeID == op_new_generator_func_exp);
-            callOperation(operationNewGeneratorFunction, dst, regT0, function);
-        }
-    }
+    else
+        callOperation(operationNewFunction, dst, regT0, function);
     done.link(this);
 }
-
-void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
-{
-    emitNewFuncExprCommon(currentInstruction);
-}
-
-void JIT::emit_op_new_generator_func_exp(Instruction* currentInstruction)
-{
-    emitNewFuncExprCommon(currentInstruction);
-}
-
+    
 void JIT::emit_op_new_arrow_func_exp(Instruction* currentInstruction)
 {
     emitNewFuncExprCommon(currentInstruction);
@@ -1460,18 +1432,6 @@ void JIT::emit_op_get_rest_length(Instruction* currentInstruction)
     move(TrustedImm32(JSValue::Int32Tag), regT1);
     emitPutVirtualRegister(dst, JSValueRegs(regT1, regT0));
 #endif
-}
-
-void JIT::emit_op_save(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_save);
-    slowPathCall.call();
-}
-
-void JIT::emit_op_resume(Instruction* currentInstruction)
-{
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_resume);
-    slowPathCall.call();
 }
 
 } // namespace JSC

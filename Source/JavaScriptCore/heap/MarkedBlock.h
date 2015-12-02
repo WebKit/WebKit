@@ -155,7 +155,6 @@ namespace JSC {
         bool testAndSetMarked(const void*);
         bool isLive(const JSCell*);
         bool isLiveCell(const void*);
-        bool isAtom(const void*);
         bool isMarkedOrNewlyAllocated(const JSCell*);
         void setMarked(const void*);
         void clearMarked(const void*);
@@ -389,7 +388,7 @@ namespace JSC {
         return false;
     }
 
-    inline bool MarkedBlock::isAtom(const void* p)
+    inline bool MarkedBlock::isLiveCell(const void* p)
     {
         ASSERT(MarkedBlock::isAtomAligned(p));
         size_t atomNumber = this->atomNumber(p);
@@ -400,13 +399,7 @@ namespace JSC {
             return false;
         if (atomNumber >= m_endAtom) // Filters pointers into invalid cells out of the range.
             return false;
-        return true;
-    }
 
-    inline bool MarkedBlock::isLiveCell(const void* p)
-    {
-        if (!isAtom(p))
-            return false;
         return isLive(static_cast<const JSCell*>(p));
     }
 

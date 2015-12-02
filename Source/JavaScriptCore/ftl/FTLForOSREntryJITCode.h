@@ -46,7 +46,7 @@ public:
     ForOSREntryJITCode();
     ~ForOSREntryJITCode();
     
-    void initializeEntryBuffer(VM&, unsigned numCalleeLocals);
+    void initializeEntryBuffer(VM&, unsigned numCalleeRegisters);
     ScratchBuffer* entryBuffer() const { return m_entryBuffer; }
     
     void setBytecodeIndex(unsigned value) { m_bytecodeIndex = value; }

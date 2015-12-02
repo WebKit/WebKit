@@ -29,7 +29,6 @@
 #include "CodeSpecializationKind.h"
 #include "ParserModes.h"
 #include "SourceCode.h"
-#include "SourceCodeKey.h"
 #include "Strong.h"
 #include "VariableEnvironment.h"
 #include <wtf/CurrentTime.h>
@@ -56,6 +55,71 @@ class UnlinkedProgramCodeBlock;
 class VM;
 class SourceCode;
 class SourceProvider;
+
+class SourceCodeKey {
+public:
+    enum CodeType { EvalType, ProgramType, FunctionType, ModuleType };
+
+    SourceCodeKey()
+    {
+    }
+
+    SourceCodeKey(const SourceCode& sourceCode, const String& name, CodeType codeType, JSParserBuiltinMode builtinMode,
+        JSParserStrictMode strictMode, ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded)
+        : m_sourceCode(sourceCode)
+        , m_name(name)
+        , m_flags(
+            (static_cast<unsigned>(codeType) << 3)
+            | (static_cast<unsigned>(builtinMode) << 2)
+            | (static_cast<unsigned>(strictMode) << 1)
+            | static_cast<unsigned>(thisTDZMode))
+        , m_hash(string().impl()->hash())
+    {
+    }
+
+    SourceCodeKey(WTF::HashTableDeletedValueType)
+        : m_sourceCode(WTF::HashTableDeletedValue)
+    {
+    }
+
+    bool isHashTableDeletedValue() const { return m_sourceCode.isHashTableDeletedValue(); }
+
+    unsigned hash() const { return m_hash; }
+
+    size_t length() const { return m_sourceCode.length(); }
+
+    bool isNull() const { return m_sourceCode.isNull(); }
+
+    // To save memory, we compute our string on demand. It's expected that source
+    // providers cache their strings to make this efficient.
+    String string() const { return m_sourceCode.toString(); }
+
+    bool operator==(const SourceCodeKey& other) const
+    {
+        return m_hash == other.m_hash
+            && length() == other.length()
+            && m_flags == other.m_flags
+            && m_name == other.m_name
+            && string() == other.string();
+    }
+
+private:
+    SourceCode m_sourceCode;
+    String m_name;
+    unsigned m_flags;
+    unsigned m_hash;
+};
+
+struct SourceCodeKeyHash {
+    static unsigned hash(const SourceCodeKey& key) { return key.hash(); }
+    static bool equal(const SourceCodeKey& a, const SourceCodeKey& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct SourceCodeKeyHashTraits : SimpleClassHashTraits<SourceCodeKey> {
+    static const bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const SourceCodeKey& sourceCodeKey) { return sourceCodeKey.isNull(); }
+};
 
 struct SourceCodeValue {
     SourceCodeValue()

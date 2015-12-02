@@ -281,7 +281,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectParseModule(ExecState* exec)
     ParserError error;
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
         &vm, sourceCode, Identifier(), JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::Strict, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
+        JSParserStrictMode::Strict, SourceParseMode::ModuleAnalyzeMode, error);
 
     if (error.isValid()) {
         throwVMError(exec, error.toErrorObject(exec->lexicalGlobalObject(), sourceCode));

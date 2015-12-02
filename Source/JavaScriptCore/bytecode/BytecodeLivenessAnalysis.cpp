@@ -98,7 +98,7 @@ static BytecodeBasicBlock* findBasicBlockForBytecodeOffset(Vector<std::unique_pt
 // Simplified interface to bytecode use/def, which determines defs first and then uses, and includes
 // exception handlers in the uses.
 template<typename UseFunctor, typename DefFunctor>
-static void stepOverInstruction(CodeBlock* codeBlock, BytecodeBasicBlock* block, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, const UseFunctor& use, const DefFunctor& def)
+static void stepOverInstruction(CodeBlock* codeBlock, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, const UseFunctor& use, const DefFunctor& def)
 {
     // This abstractly execute the instruction in reverse. Instructions logically first use operands and
     // then define operands. This logical ordering is necessary for operations that use and def the same
@@ -116,19 +116,19 @@ static void stepOverInstruction(CodeBlock* codeBlock, BytecodeBasicBlock* block,
     // first add it to the out set (the use), and then we'd remove it (the def).
     
     computeDefsForBytecodeOffset(
-        codeBlock, block, bytecodeOffset,
+        codeBlock, bytecodeOffset,
         [&] (CodeBlock* codeBlock, Instruction*, OpcodeID, int operand) {
             if (isValidRegisterForLiveness(codeBlock, operand))
                 def(VirtualRegister(operand).toLocal());
         });
 
     computeUsesForBytecodeOffset(
-        codeBlock, block, bytecodeOffset,
+        codeBlock, bytecodeOffset,
         [&] (CodeBlock* codeBlock, Instruction*, OpcodeID, int operand) {
             if (isValidRegisterForLiveness(codeBlock, operand))
                 use(VirtualRegister(operand).toLocal());
         });
-
+        
     // If we have an exception handler, we want the live-in variables of the 
     // exception handler block to be included in the live-in of this particular bytecode.
     if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset)) {
@@ -138,10 +138,10 @@ static void stepOverInstruction(CodeBlock* codeBlock, BytecodeBasicBlock* block,
     }
 }
 
-static void stepOverInstruction(CodeBlock* codeBlock, BytecodeBasicBlock* block, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, FastBitVector& out)
+static void stepOverInstruction(CodeBlock* codeBlock, Vector<std::unique_ptr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, FastBitVector& out)
 {
     stepOverInstruction(
-        codeBlock, block, basicBlocks, bytecodeOffset,
+        codeBlock, basicBlocks, bytecodeOffset,
         [&] (unsigned bitIndex) {
             // This is the use functor, so we set the bit.
             out.set(bitIndex);
@@ -164,7 +164,7 @@ static void computeLocalLivenessForBytecodeOffset(CodeBlock* codeBlock, Bytecode
         if (targetOffset > bytecodeOffset)
             break;
         
-        stepOverInstruction(codeBlock, block, basicBlocks, bytecodeOffset, out);
+        stepOverInstruction(codeBlock, basicBlocks, bytecodeOffset, out);
     }
 
     result.set(out);
@@ -180,7 +180,7 @@ static void computeLocalLivenessForBlock(CodeBlock* codeBlock, BytecodeBasicBloc
 void BytecodeLivenessAnalysis::runLivenessFixpoint()
 {
     UnlinkedCodeBlock* unlinkedCodeBlock = m_codeBlock->unlinkedCodeBlock();
-    unsigned numberOfVariables = unlinkedCodeBlock->m_numCalleeLocals;
+    unsigned numberOfVariables = unlinkedCodeBlock->m_numCalleeRegisters;
 
     for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
         BytecodeBasicBlock* block = m_basicBlocks[i].get();
@@ -248,7 +248,7 @@ void BytecodeLivenessAnalysis::computeFullLiveness(FullBytecodeLiveness& result)
         
         for (unsigned i = block->bytecodeOffsets().size(); i--;) {
             unsigned bytecodeOffset = block->bytecodeOffsets()[i];
-            stepOverInstruction(m_codeBlock, block, m_basicBlocks, bytecodeOffset, out);
+            stepOverInstruction(m_codeBlock, m_basicBlocks, bytecodeOffset, out);
             result.m_map[bytecodeOffset] = out;
         }
     }
@@ -271,7 +271,7 @@ void BytecodeLivenessAnalysis::computeKills(BytecodeKills& result)
         for (unsigned i = block->bytecodeOffsets().size(); i--;) {
             unsigned bytecodeOffset = block->bytecodeOffsets()[i];
             stepOverInstruction(
-                m_codeBlock, block, m_basicBlocks, bytecodeOffset,
+                m_codeBlock, m_basicBlocks, bytecodeOffset,
                 [&] (unsigned index) {
                     // This is for uses.
                     if (out.get(index))

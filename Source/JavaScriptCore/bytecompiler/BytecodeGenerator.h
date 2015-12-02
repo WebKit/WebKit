@@ -32,7 +32,6 @@
 #define BytecodeGenerator_h
 
 #include "CodeBlock.h"
-#include "GeneratorThisMode.h"
 #include <wtf/HashTraits.h>
 #include "Instruction.h"
 #include "Label.h"
@@ -281,8 +280,6 @@ namespace JSC {
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
-        GeneratorThisMode generatorThisMode() const { return m_codeBlock->generatorThisMode(); }
-        SuperBinding superBinding() const { return m_codeBlock->superBinding(); }
 
         ParserError generate();
 
@@ -299,8 +296,6 @@ namespace JSC {
         RegisterID* newTarget() { return m_newTargetRegister; }
 
         RegisterID* scopeRegister() { return m_scopeRegister; }
-
-        RegisterID* generatorRegister() { return m_generatorRegister; }
 
         // Returns the next available temporary register. Registers returned by
         // newTemporary require a modified form of reference counting: any
@@ -505,8 +500,10 @@ namespace JSC {
         RegisterID* emitNewArrayWithSize(RegisterID* dst, RegisterID* length);
 
         RegisterID* emitNewFunction(RegisterID* dst, FunctionMetadataNode*);
+        RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
         RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name);
+        void emitNewFunctionCommon(RegisterID*, BaseFuncExprNode*, OpcodeID);
         RegisterID* emitNewArrowFunctionExpression(RegisterID*, ArrowFuncExprNode*);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
 
@@ -601,7 +598,6 @@ namespace JSC {
         void emitRequireObjectCoercible(RegisterID* value, const String& error);
 
         RegisterID* emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node);
-        RegisterID* emitIteratorNextWithValue(RegisterID* dst, RegisterID* iterator, RegisterID* value, const ThrowableExpressionData* node);
         void emitIteratorClose(RegisterID* iterator, const ThrowableExpressionData* node);
 
         RegisterID* emitRestParameter(RegisterID* result, unsigned numParametersToSkip);
@@ -650,28 +646,12 @@ namespace JSC {
         void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
         void endSwitch(uint32_t clauseCount, RefPtr<Label>*, ExpressionNode**, Label* defaultLabel, int32_t min, int32_t range);
 
-        void emitYieldPoint(RegisterID*);
-        void emitSave(Label* mergePoint, unsigned liveCalleeLocalsIndex);
-        void emitResume(Label* mergePoint, unsigned liveCalleeLocalsIndex);
-
-        void emitGeneratorStateLabel();
-        void emitGeneratorStateChange(int32_t state);
-        RegisterID* emitYield(RegisterID* argument);
-        RegisterID* emitDelegateYield(RegisterID* argument, ThrowableExpressionData*);
-        void beginGenerator(RegisterID*);
-        void endGenerator(Label* defaultLabel);
-        RegisterID* generatorStateRegister() { return &m_parameters[2]; }
-        RegisterID* generatorValueRegister() { return &m_parameters[3]; }
-        RegisterID* generatorResumeModeRegister() { return &m_parameters[4]; }
-
         CodeType codeType() const { return m_codeType; }
 
         bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
         bool shouldEmitDebugHooks() { return m_shouldEmitDebugHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
-
-        SourceParseMode parseMode() const { return m_codeBlock->parseMode(); }
         
         bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
@@ -689,7 +669,6 @@ namespace JSC {
         void emitPopScope(RegisterID* dst, RegisterID* scope);
         RegisterID* emitGetParentScope(RegisterID* dst, RegisterID* scope);
         void emitPushFunctionNameScope(const Identifier& property, RegisterID* value, bool isCaptured);
-        void emitNewFunctionExpressionCommon(RegisterID*, BaseFuncExprNode*);
 
     public:
         void pushLexicalScope(VariableEnvironmentNode*, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult = nullptr);
@@ -753,7 +732,7 @@ namespace JSC {
         RegisterID& registerFor(VirtualRegister reg)
         {
             if (reg.isLocal())
-                return m_calleeLocals[reg.toLocal()];
+                return m_calleeRegisters[reg.toLocal()];
 
             if (reg.offset() == JSStack::Callee)
                 return m_calleeRegister;
@@ -775,22 +754,12 @@ namespace JSC {
             VariableEnvironment variablesUnderTDZ;
             getVariablesUnderTDZ(variablesUnderTDZ);
 
-            // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
-            // https://bugs.webkit.org/show_bug.cgi?id=151547
             SourceParseMode parseMode = metadata->parseMode();
             ConstructAbility constructAbility = ConstructAbility::CanConstruct;
-            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode)
-                constructAbility = ConstructAbility::CannotConstruct;
-            else if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() == ConstructorKind::None)
-                constructAbility = ConstructAbility::CannotConstruct;
-            else if (parseMode == SourceParseMode::GeneratorWrapperFunctionMode && metadata->superBinding() == SuperBinding::Needed)
+            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode || (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() == ConstructorKind::None))
                 constructAbility = ConstructAbility::CannotConstruct;
 
-            GeneratorThisMode generatorThisMode = GeneratorThisMode::NonEmpty;
-            if (parseMode == SourceParseMode::GeneratorBodyMode && isConstructor())
-                generatorThisMode = GeneratorThisMode::Empty;
-
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, generatorThisMode, variablesUnderTDZ);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, variablesUnderTDZ);
         }
 
         void getVariablesUnderTDZ(VariableEnvironment&);
@@ -798,7 +767,6 @@ namespace JSC {
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitCallVarargs(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
-        void initializeParameters(FunctionParameters&);
         void initializeVarLexicalEnvironment(int symbolTableConstantIndex);
         void initializeDefaultParameterValuesAndSetupFunctionScopeStack(FunctionParameters&, FunctionNode*, SymbolTable*, int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures);
 
@@ -838,7 +806,6 @@ namespace JSC {
         RegisterID* m_topMostScope { nullptr };
         RegisterID* m_argumentsRegister { nullptr };
         RegisterID* m_lexicalEnvironmentRegister { nullptr };
-        RegisterID* m_generatorRegister { nullptr };
         RegisterID* m_emptyValueRegister { nullptr };
         RegisterID* m_globalObjectRegister { nullptr };
         RegisterID* m_newTargetRegister { nullptr };
@@ -846,7 +813,7 @@ namespace JSC {
 
         SegmentedVector<RegisterID*, 16> m_localRegistersForCalleeSaveRegisters;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
-        SegmentedVector<RegisterID, 32> m_calleeLocals;
+        SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;
         SegmentedVector<Label, 32> m_labels;
         LabelScopeStore m_labelScopes;
@@ -862,7 +829,6 @@ namespace JSC {
         Vector<SwitchInfo> m_switchContextStack;
         Vector<std::unique_ptr<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
-        Vector<RefPtr<Label>> m_generatorResumeLabels;
         enum FunctionVariableType : uint8_t { NormalFunctionVariable, GlobalFunctionVariable };
         Vector<std::pair<FunctionMetadataNode*, FunctionVariableType>> m_functionsToInitialize;
         bool m_needToInitializeArguments { false };

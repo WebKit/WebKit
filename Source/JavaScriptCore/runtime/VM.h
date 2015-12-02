@@ -304,7 +304,6 @@ public:
     Strong<Structure> inferredTypeStructure;
     Strong<Structure> inferredTypeTableStructure;
     Strong<Structure> functionRareDataStructure;
-    Strong<Structure> generatorFrameStructure;
     Strong<Structure> exceptionStructure;
     Strong<Structure> promiseDeferredStructure;
     Strong<Structure> internalPromiseDeferredStructure;

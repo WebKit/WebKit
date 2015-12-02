@@ -26,28 +26,21 @@
 #ifndef ExecutableInfo_h
 #define ExecutableInfo_h
 
-#include "GeneratorThisMode.h"
 #include "ParserModes.h"
 
 namespace JSC {
 
-// FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
-// https://bugs.webkit.org/show_bug.cgi?id=151547
 struct ExecutableInfo {
-    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, GeneratorThisMode generatorThisMode, SuperBinding superBinding, SourceParseMode parseMode)
+    ExecutableInfo(bool needsActivation, bool usesEval, bool isStrictMode, bool isConstructor, bool isBuiltinFunction, ConstructorKind constructorKind, bool isArrowFunction)
         : m_needsActivation(needsActivation)
         , m_usesEval(usesEval)
         , m_isStrictMode(isStrictMode)
         , m_isConstructor(isConstructor)
         , m_isBuiltinFunction(isBuiltinFunction)
-        , m_generatorThisMode(static_cast<unsigned>(generatorThisMode))
         , m_constructorKind(static_cast<unsigned>(constructorKind))
-        , m_superBinding(static_cast<unsigned>(superBinding))
-        , m_parseMode(parseMode)
+        , m_isArrowFunction(isArrowFunction)
     {
         ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
-        ASSERT(m_superBinding == static_cast<unsigned>(superBinding));
-        ASSERT(m_generatorThisMode == static_cast<unsigned>(generatorThisMode));
     }
 
     bool needsActivation() const { return m_needsActivation; }
@@ -55,10 +48,8 @@ struct ExecutableInfo {
     bool isStrictMode() const { return m_isStrictMode; }
     bool isConstructor() const { return m_isConstructor; }
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
-    GeneratorThisMode generatorThisMode() const { return static_cast<GeneratorThisMode>(m_generatorThisMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
-    SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
-    SourceParseMode parseMode() const { return m_parseMode; }
+    bool isArrowFunction() const { return m_isArrowFunction; }
 
 private:
     unsigned m_needsActivation : 1;
@@ -66,10 +57,8 @@ private:
     unsigned m_isStrictMode : 1;
     unsigned m_isConstructor : 1;
     unsigned m_isBuiltinFunction : 1;
-    unsigned m_generatorThisMode : 1;
     unsigned m_constructorKind : 2;
-    unsigned m_superBinding : 1;
-    SourceParseMode m_parseMode;
+    unsigned m_isArrowFunction : 1;
 };
 
 } // namespace JSC

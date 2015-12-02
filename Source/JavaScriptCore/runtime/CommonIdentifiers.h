@@ -39,7 +39,6 @@
     macro(Error) \
     macro(EvalError) \
     macro(Function) \
-    macro(GeneratorFunction) \
     macro(Infinity) \
     macro(Intl) \
     macro(JSON) \
@@ -331,13 +330,6 @@
     macro(Uint32Array) \
     macro(Float32Array) \
     macro(Float64Array) \
-    macro(generator) \
-    macro(generatorNext) \
-    macro(generatorState) \
-    macro(generatorFrame) \
-    macro(generatorValue) \
-    macro(generatorThis) \
-    macro(generatorResumeMode) \
 
 
 namespace JSC {

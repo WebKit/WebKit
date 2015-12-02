@@ -93,8 +93,8 @@ public:
         // We'd really like to use an unset origin, but ThreadedCPS won't allow that.
         NodeOrigin origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), false);
         
-        Vector<Node*> locals(baseline->m_numCalleeLocals);
-        for (int local = 0; local < baseline->m_numCalleeLocals; ++local) {
+        Vector<Node*> locals(baseline->m_numCalleeRegisters);
+        for (int local = 0; local < baseline->m_numCalleeRegisters; ++local) {
             Node* previousHead = target->variablesAtHead.local(local);
             if (!previousHead)
                 continue;
@@ -124,7 +124,7 @@ public:
             m_graph.m_arguments[argument] = node;
         }
 
-        for (int local = 0; local < baseline->m_numCalleeLocals; ++local) {
+        for (int local = 0; local < baseline->m_numCalleeRegisters; ++local) {
             Node* previousHead = target->variablesAtHead.local(local);
             if (!previousHead)
                 continue;

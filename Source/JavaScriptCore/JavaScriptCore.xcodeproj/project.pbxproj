@@ -1208,19 +1208,6 @@
 		709FB86B1AE335C60039D069 /* WeakSetPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 709FB8651AE335C60039D069 /* WeakSetPrototype.cpp */; };
 		709FB86C1AE335C60039D069 /* WeakSetPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 709FB8661AE335C60039D069 /* WeakSetPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B0A9D01A9B66200001306A /* RuntimeFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B791911C024A13002481E2 /* SourceCodeKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918E1C0244C9002481E2 /* SourceCodeKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B791921C024A23002481E2 /* GeneratorFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B791831C024432002481E2 /* GeneratorFrame.cpp */; };
-		70B791931C024A28002481E2 /* GeneratorFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B791841C024432002481E2 /* GeneratorFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B791941C024A28002481E2 /* GeneratorFunctionConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B791851C024432002481E2 /* GeneratorFunctionConstructor.cpp */; };
-		70B791951C024A28002481E2 /* GeneratorFunctionConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B791861C024432002481E2 /* GeneratorFunctionConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B791961C024A28002481E2 /* GeneratorFunctionPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B791871C024432002481E2 /* GeneratorFunctionPrototype.cpp */; };
-		70B791971C024A29002481E2 /* GeneratorFunctionPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B791881C024432002481E2 /* GeneratorFunctionPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B791981C024A29002481E2 /* GeneratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B791891C024432002481E2 /* GeneratorPrototype.cpp */; };
-		70B791991C024A29002481E2 /* GeneratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918A1C024432002481E2 /* GeneratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B7919A1C024A29002481E2 /* GeneratorThisMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918B1C024432002481E2 /* GeneratorThisMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B7919B1C024A46002481E2 /* JSGeneratorFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B7918C1C024462002481E2 /* JSGeneratorFunction.cpp */; };
-		70B7919C1C024A49002481E2 /* JSGeneratorFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918D1C024462002481E2 /* JSGeneratorFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70B7919D1C024A56002481E2 /* GeneratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B791901C0246CE002481E2 /* GeneratorPrototype.lut.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70DC3E091B2DF2C700054299 /* IteratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */; };
 		70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DC3E081B2DF2C700054299 /* IteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70DE9A091BE7D69E005D89D9 /* LLIntAssembly.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */; };
@@ -3300,20 +3287,6 @@
 		709FB8651AE335C60039D069 /* WeakSetPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakSetPrototype.cpp; sourceTree = "<group>"; };
 		709FB8661AE335C60039D069 /* WeakSetPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakSetPrototype.h; sourceTree = "<group>"; };
 		70B0A9D01A9B66200001306A /* RuntimeFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeFlags.h; sourceTree = "<group>"; };
-		70B791831C024432002481E2 /* GeneratorFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorFrame.cpp; sourceTree = "<group>"; };
-		70B791841C024432002481E2 /* GeneratorFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorFrame.h; sourceTree = "<group>"; };
-		70B791851C024432002481E2 /* GeneratorFunctionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorFunctionConstructor.cpp; sourceTree = "<group>"; };
-		70B791861C024432002481E2 /* GeneratorFunctionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorFunctionConstructor.h; sourceTree = "<group>"; };
-		70B791871C024432002481E2 /* GeneratorFunctionPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorFunctionPrototype.cpp; sourceTree = "<group>"; };
-		70B791881C024432002481E2 /* GeneratorFunctionPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorFunctionPrototype.h; sourceTree = "<group>"; };
-		70B791891C024432002481E2 /* GeneratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorPrototype.cpp; sourceTree = "<group>"; };
-		70B7918A1C024432002481E2 /* GeneratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorPrototype.h; sourceTree = "<group>"; };
-		70B7918B1C024432002481E2 /* GeneratorThisMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorThisMode.h; sourceTree = "<group>"; };
-		70B7918C1C024462002481E2 /* JSGeneratorFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeneratorFunction.cpp; sourceTree = "<group>"; };
-		70B7918D1C024462002481E2 /* JSGeneratorFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeneratorFunction.h; sourceTree = "<group>"; };
-		70B7918E1C0244C9002481E2 /* SourceCodeKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceCodeKey.h; sourceTree = "<group>"; };
-		70B7918F1C0244EC002481E2 /* GeneratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = GeneratorPrototype.js; sourceTree = "<group>"; };
-		70B791901C0246CE002481E2 /* GeneratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorPrototype.lut.h; sourceTree = "<group>"; };
 		70DC3E071B2DF2C700054299 /* IteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorPrototype.cpp; sourceTree = "<group>"; };
 		70DC3E081B2DF2C700054299 /* IteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorPrototype.h; sourceTree = "<group>"; };
 		70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntAssembly.h; sourceTree = "<group>"; };
@@ -5143,7 +5116,6 @@
 				996B73081BD9FA2C00331B84 /* DateConstructor.lut.h */,
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
 				996B73091BD9FA2C00331B84 /* ErrorPrototype.lut.h */,
-				70B791901C0246CE002481E2 /* GeneratorPrototype.lut.h */,
 				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
 				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
 				A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */,
@@ -5272,7 +5244,6 @@
 				869EBCB60E8C6D4A008722CC /* ResultType.h */,
 				0F8F2B9D17306C8B007DBDA5 /* SourceCode.cpp */,
 				65E866EE0DD59AFA00A2B2A1 /* SourceCode.h */,
-				70B7918E1C0244C9002481E2 /* SourceCodeKey.h */,
 				0F493AF816D0CAD10084508B /* SourceProvider.cpp */,
 				65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */,
 				E49DC15512EF277200184A1F /* SourceProviderCache.cpp */,
@@ -5402,15 +5373,6 @@
 				F692A85D0255597D01FF60F7 /* FunctionPrototype.h */,
 				62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */,
 				62D2D38E1ADF103F000206C1 /* FunctionRareData.h */,
-				70B791831C024432002481E2 /* GeneratorFrame.cpp */,
-				70B791841C024432002481E2 /* GeneratorFrame.h */,
-				70B791851C024432002481E2 /* GeneratorFunctionConstructor.cpp */,
-				70B791861C024432002481E2 /* GeneratorFunctionConstructor.h */,
-				70B791871C024432002481E2 /* GeneratorFunctionPrototype.cpp */,
-				70B791881C024432002481E2 /* GeneratorFunctionPrototype.h */,
-				70B791891C024432002481E2 /* GeneratorPrototype.cpp */,
-				70B7918A1C024432002481E2 /* GeneratorPrototype.h */,
-				70B7918B1C024432002481E2 /* GeneratorThisMode.h */,
 				0FE050111AA9091100D33B33 /* GenericArguments.h */,
 				0FE050121AA9091100D33B33 /* GenericArgumentsInlines.h */,
 				0FE050131AA9091100D33B33 /* GenericOffset.h */,
@@ -5510,8 +5472,6 @@
 				F692A85E0255597D01FF60F7 /* JSFunction.cpp */,
 				F692A85F0255597D01FF60F7 /* JSFunction.h */,
 				A72028B91797603D0098028C /* JSFunctionInlines.h */,
-				70B7918C1C024462002481E2 /* JSGeneratorFunction.cpp */,
-				70B7918D1C024462002481E2 /* JSGeneratorFunction.h */,
 				0F2B66C317B6B5AB00A7AE3F /* JSGenericTypedArrayView.h */,
 				0F2B66C417B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructor.h */,
 				0F2B66C517B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructorInlines.h */,
@@ -6626,7 +6586,6 @@
 				A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */,
 				41DEA1311B9F3154006D65DD /* BuiltinUtils.h */,
 				A7A979C418BE8D9E002C3733 /* FunctionPrototype.js */,
-				70B7918F1C0244EC002481E2 /* GeneratorPrototype.js */,
 				7CF9BC5A1B65D9A3009DB1EF /* GlobalObject.js */,
 				E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */,
 				E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */,
@@ -7043,7 +7002,6 @@
 				A737810E1799EA2E00817533 /* DFGNaturalLoops.h in Headers */,
 				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
 				0FFB921B16D02F010055A5DB /* DFGNodeAllocator.h in Headers */,
-				70B791931C024A28002481E2 /* GeneratorFrame.h in Headers */,
 				0FA581BB150E953000B9A2D9 /* DFGNodeFlags.h in Headers */,
 				0F300B7818AB051100A6D72E /* DFGNodeOrigin.h in Headers */,
 				0FA581BC150E953000B9A2D9 /* DFGNodeType.h in Headers */,
@@ -7094,7 +7052,6 @@
 				0F50AF3C193E8B3900674EE8 /* DFGStructureClobberState.h in Headers */,
 				0F79085619A290B200F6310C /* DFGStructureRegistrationPhase.h in Headers */,
 				0F2FCCFF18A60070001A27F8 /* DFGThreadData.h in Headers */,
-				70B791991C024A29002481E2 /* GeneratorPrototype.h in Headers */,
 				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 				0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */,
 				0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */,
@@ -7316,7 +7273,6 @@
 				A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */,
 				A593CF831840377100BFCE27 /* InspectorValues.h in Headers */,
 				969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */,
-				70B791911C024A13002481E2 /* SourceCodeKey.h in Headers */,
 				A7A8AF3B17ADB5F3005AB174 /* Int16Array.h in Headers */,
 				A7A8AF3C17ADB5F3005AB174 /* Int32Array.h in Headers */,
 				A7A8AF3A17ADB5F3005AB174 /* Int8Array.h in Headers */,
@@ -7344,7 +7300,6 @@
 				70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */,
 				70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
-				70B791971C024A29002481E2 /* GeneratorFunctionPrototype.h in Headers */,
 				A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */,
 				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
 				BC18C4150E16F5CD00B34460 /* JavaScriptCorePrefix.h in Headers */,
@@ -7488,7 +7443,6 @@
 				1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */,
 				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
 				70ECA6061AFDBEA200449739 /* JSTemplateRegistryKey.h in Headers */,
-				70B7919C1C024A49002481E2 /* JSGeneratorFunction.h in Headers */,
 				BC18C42A0E16F5CD00B34460 /* JSType.h in Headers */,
 				0F2B66FB17B6B5AB00A7AE3F /* JSTypedArrayConstructors.h in Headers */,
 				0F2B66FD17B6B5AB00A7AE3F /* JSTypedArrayPrototypes.h in Headers */,
@@ -7525,7 +7479,6 @@
 				FE187A021BFBE5610038BBCA /* JITMulGenerator.h in Headers */,
 				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,
 				0F431738146BAC69007E3890 /* ListableHandler.h in Headers */,
-				70B791951C024A28002481E2 /* GeneratorFunctionConstructor.h in Headers */,
 				A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */,
 				FE3913551B794F8A00EDAF71 /* LiveObjectData.h in Headers */,
 				FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */,
@@ -7699,7 +7652,6 @@
 				A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */,
 				A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */,
 				A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */,
-				70B7919D1C024A56002481E2 /* GeneratorPrototype.lut.h in Headers */,
 				A7299DA617D12858005F5FF9 /* SetConstructor.h in Headers */,
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
@@ -7732,7 +7684,6 @@
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				0FB3878E1BFBC44D00E3AB1E /* AirBlockWorklist.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
-				70B7919A1C024A29002481E2 /* GeneratorThisMode.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
@@ -8754,7 +8705,6 @@
 				A1B9E23D1B4E0D6700BC7FED /* IntlCollatorPrototype.cpp in Sources */,
 				A1587D6D1B4DC14100D69849 /* IntlDateTimeFormat.cpp in Sources */,
 				A1587D6F1B4DC14100D69849 /* IntlDateTimeFormatConstructor.cpp in Sources */,
-				70B7919B1C024A46002481E2 /* JSGeneratorFunction.cpp in Sources */,
 				A1587D711B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp in Sources */,
 				A1D792FC1B43864B004516F5 /* IntlNumberFormat.cpp in Sources */,
 				A1D792FE1B43864B004516F5 /* IntlNumberFormatConstructor.cpp in Sources */,
@@ -8781,7 +8731,6 @@
 				0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */,
 				0F766D2B15A8CC38008F363E /* JITStubRoutineSet.cpp in Sources */,
 				FE4238901BE18C3C00514737 /* JITSubGenerator.cpp in Sources */,
-				70B791941C024A28002481E2 /* GeneratorFunctionConstructor.cpp in Sources */,
 				0F5EF91E16878F7A003E5C25 /* JITThunks.cpp in Sources */,
 				0FC712E217CD8791008CC93C /* JITToDFGDeferredCompilationCallback.cpp in Sources */,
 				140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */,
@@ -8919,7 +8868,6 @@
 				142D6F0813539A2800B02E86 /* MarkedBlock.cpp in Sources */,
 				14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */,
 				142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */,
-				70B791981C024A29002481E2 /* GeneratorPrototype.cpp in Sources */,
 				4340A4841A9051AF00D73CCA /* MathCommon.cpp in Sources */,
 				0F37308C1C0BD29100052BFA /* B3PhiChildren.cpp in Sources */,
 				14469DDF107EC7E700650446 /* MathObject.cpp in Sources */,
@@ -9068,7 +9016,6 @@
 				0FF42745158EBE91004CB9FF /* udis86_syn-att.c in Sources */,
 				0FF42746158EBE91004CB9FF /* udis86_syn-intel.c in Sources */,
 				0FF42747158EBE91004CB9FF /* udis86_syn.c in Sources */,
-				70B791961C024A28002481E2 /* GeneratorFunctionPrototype.cpp in Sources */,
 				0FF42732158EBD58004CB9FF /* UDis86Disassembler.cpp in Sources */,
 				A76F279415F13C9600517D67 /* UnlinkedCodeBlock.cpp in Sources */,
 				14142E551B7973C000F4BF4B /* UnlinkedFunctionExecutable.cpp in Sources */,
@@ -9077,7 +9024,6 @@
 				79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */,
 				0F6C73501AC9F99F00BE1682 /* VariableWriteFireDetail.cpp in Sources */,
 				0FE0502C1AA9095600D33B33 /* VarOffset.cpp in Sources */,
-				70B791921C024A23002481E2 /* GeneratorFrame.cpp in Sources */,
 				0F20C2591A8013AB00DA3229 /* VirtualRegister.cpp in Sources */,
 				E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */,
 				FE5932A7183C5A2600A1ECCC /* VMEntryScope.cpp in Sources */,

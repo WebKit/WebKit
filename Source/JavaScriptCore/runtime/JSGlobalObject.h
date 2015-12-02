@@ -63,8 +63,6 @@ class EvalExecutable;
 class FunctionCodeBlock;
 class FunctionExecutable;
 class FunctionPrototype;
-class GeneratorPrototype;
-class GeneratorFunctionPrototype;
 class GetterSetter;
 class GlobalCodeBlock;
 class InputCursor;
@@ -231,8 +229,6 @@ protected:
     WriteBarrier<ArrayPrototype> m_arrayPrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
     WriteBarrier<IteratorPrototype> m_iteratorPrototype;
-    WriteBarrier<GeneratorFunctionPrototype> m_generatorFunctionPrototype;
-    WriteBarrier<GeneratorPrototype> m_generatorPrototype;
 
     WriteBarrier<Structure> m_debuggerScopeStructure;
     WriteBarrier<Structure> m_withScopeStructure;
@@ -266,7 +262,6 @@ protected:
     PropertyOffset m_functionNameOffset;
     WriteBarrier<Structure> m_privateNameStructure;
     WriteBarrier<Structure> m_regExpStructure;
-    WriteBarrier<Structure> m_generatorFunctionStructure;
     WriteBarrier<Structure> m_consoleStructure;
     WriteBarrier<Structure> m_dollarVMStructure;
     WriteBarrier<Structure> m_internalFunctionStructure;
@@ -458,8 +453,6 @@ public:
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
     ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
     IteratorPrototype* iteratorPrototype() const { return m_iteratorPrototype.get(); }
-    GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
-    GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
 
     Structure* debuggerScopeStructure() const { return m_debuggerScopeStructure.get(); }
     Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
@@ -513,7 +506,6 @@ public:
     Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }
     Structure* mapStructure() const { return m_mapStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
-    Structure* generatorFunctionStructure() const { return m_generatorFunctionStructure.get(); }
     Structure* setStructure() const { return m_setStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }

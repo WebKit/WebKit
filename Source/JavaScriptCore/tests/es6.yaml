@@ -727,7 +727,7 @@
 - path: es6/Array_is_subclassable_correct_prototype_chain.js
   cmd: runES6 :fail
 - path: es6/Array_static_methods_Array.from_generator_instances.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/Array_static_methods_Array.from_generic_iterables.js
   cmd: runES6 :fail
 - path: es6/Array_static_methods_Array.from_instances_of_generic_iterables.js
@@ -735,7 +735,7 @@
 - path: es6/Array_static_methods_Array.from_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/Array_static_methods_Array.from_map_function_generator_instances.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/Array_static_methods_Array.from_map_function_generic_iterables.js
   cmd: runES6 :fail
 - path: es6/Array_static_methods_Array.from_map_function_instances_of_iterables.js
@@ -761,7 +761,7 @@
 - path: es6/destructuring_nested_rest.js
   cmd: runES6 :normal
 - path: es6/destructuring_with_generator_instances.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/destructuring_with_generic_iterables.js
   cmd: runES6 :fail
 - path: es6/destructuring_with_instances_of_generic_iterables.js
@@ -771,7 +771,7 @@
 - path: es6/for..of_loops_iterator_closing_throw.js
   cmd: runES6 :fail
 - path: es6/for..of_loops_with_generator_instances.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/for..of_loops_with_generic_iterables.js
   cmd: runES6 :fail
 - path: es6/for..of_loops_with_instances_of_generic_iterables.js
@@ -811,55 +811,55 @@
 - path: es6/function_name_property_variables_function.js
   cmd: runES6 :fail
 - path: es6/generators_%GeneratorPrototype%.constructor.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_%GeneratorPrototype%.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_%GeneratorPrototype%.return.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_%GeneratorPrototype%.throw.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_basic_functionality.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_cant_use_this_with_new.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_computed_shorthand_generators.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_computed_shorthand_generators_classes.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_correct_this_binding.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_generator_function_expressions.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_sending.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_shorthand_generator_methods.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_shorthand_generator_methods_classes.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_string-keyed_shorthand_generator_methods.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_arrays.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_astral_plane_strings.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_generator_instances.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_generic_iterables.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_instances_of_iterables.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_iterator_closing.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_iterator_closing_via_throw.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_on_non-iterables_is_a_runtime_error.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_sparse_arrays.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_star_strings.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/generators_yield_operator_precedence.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/Map_iterator_closing.js
   cmd: runES6 :fail
 - path: es6/Map_Map[Symbol.species].js
@@ -1113,7 +1113,7 @@
 - path: es6/spread_..._operator_with_astral_plane_strings_in_function_calls.js
   cmd: runES6 :fail
 - path: es6/spread_..._operator_with_generator_instances_in_arrays.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/spread_..._operator_with_generator_instances_in_calls.js
   cmd: runES6 :fail
 - path: es6/spread_..._operator_with_generic_iterables_in_arrays.js

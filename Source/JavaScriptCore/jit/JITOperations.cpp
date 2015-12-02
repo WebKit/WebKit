@@ -45,7 +45,6 @@
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JSArrowFunction.h"
 #include "JSCInlines.h"
-#include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
@@ -988,42 +987,23 @@ EncodedJSValue JIT_OPERATION operationNewArrayWithSizeAndProfile(ExecState* exec
     return JSValue::encode(constructArrayWithSizeQuirk(exec, profile, exec->lexicalGlobalObject(), sizeValue));
 }
 
-}
-
-template<typename FunctionType>
-static EncodedJSValue operationNewFunctionCommon(ExecState* exec, JSScope* scope, JSCell* functionExecutable, bool isInvalidated)
+EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
 {
     ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    if (isInvalidated)
-        return JSValue::encode(FunctionType::createWithInvalidatedReallocationWatchpoint(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
-    return JSValue::encode(FunctionType::create(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
-}
-
-extern "C" {
-
-EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
-{
-    return operationNewFunctionCommon<JSFunction>(exec, scope, functionExecutable, false);
+    return JSValue::encode(JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
 }
 
 EncodedJSValue JIT_OPERATION operationNewFunctionWithInvalidatedReallocationWatchpoint(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
 {
-    return operationNewFunctionCommon<JSFunction>(exec, scope, functionExecutable, true);
+    ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    return JSValue::encode(JSFunction::createWithInvalidatedReallocationWatchpoint(vm, static_cast<FunctionExecutable*>(functionExecutable), scope));
 }
 
-EncodedJSValue JIT_OPERATION operationNewGeneratorFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
-{
-    return operationNewFunctionCommon<JSGeneratorFunction>(exec, scope, functionExecutable, false);
-}
-
-EncodedJSValue JIT_OPERATION operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint(ExecState* exec, JSScope* scope, JSCell* functionExecutable)
-{
-    return operationNewFunctionCommon<JSGeneratorFunction>(exec, scope, functionExecutable, true);
-}
-
-EncodedJSValue static operationNewArrowFunctionCommon(ExecState* exec, JSScope* scope, JSCell* functionExecutable, EncodedJSValue thisValue, bool isInvalidated)
+EncodedJSValue static operationNewFunctionCommon(ExecState* exec, JSScope* scope, JSCell* functionExecutable, EncodedJSValue thisValue, bool isInvalidated)
 {
     ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     FunctionExecutable* executable = static_cast<FunctionExecutable*>(functionExecutable);
@@ -1039,12 +1019,12 @@ EncodedJSValue static operationNewArrowFunctionCommon(ExecState* exec, JSScope* 
     
 EncodedJSValue JIT_OPERATION operationNewArrowFunctionWithInvalidatedReallocationWatchpoint(ExecState* exec, JSScope* scope, JSCell* functionExecutable, EncodedJSValue thisValue)
 {
-    return operationNewArrowFunctionCommon(exec, scope, functionExecutable, thisValue, true);
+    return operationNewFunctionCommon(exec, scope, functionExecutable, thisValue, true);
 }
     
 EncodedJSValue JIT_OPERATION operationNewArrowFunction(ExecState* exec, JSScope* scope, JSCell* functionExecutable, EncodedJSValue thisValue)
 {
-    return operationNewArrowFunctionCommon(exec, scope, functionExecutable, thisValue, false);
+    return operationNewFunctionCommon(exec, scope, functionExecutable, thisValue, false);
 }
 
 JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)

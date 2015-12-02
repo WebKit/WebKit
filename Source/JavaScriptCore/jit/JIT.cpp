@@ -215,8 +215,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_get_rest_length)
         DEFINE_OP(op_check_tdz)
         DEFINE_OP(op_assert)
-        DEFINE_OP(op_save)
-        DEFINE_OP(op_resume)
         DEFINE_OP(op_debug)
         DEFINE_OP(op_del_by_id)
         DEFINE_OP(op_div)
@@ -263,8 +261,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_new_array_buffer)
         DEFINE_OP(op_new_func)
         DEFINE_OP(op_new_func_exp)
-        DEFINE_OP(op_new_generator_func)
-        DEFINE_OP(op_new_generator_func_exp)
         DEFINE_OP(op_new_arrow_func_exp) 
         DEFINE_OP(op_new_object)
         DEFINE_OP(op_new_regexp)
@@ -768,9 +764,9 @@ void JIT::privateCompileExceptionHandlers()
 
 unsigned JIT::frameRegisterCountFor(CodeBlock* codeBlock)
 {
-    ASSERT(static_cast<unsigned>(codeBlock->m_numCalleeLocals) == WTF::roundUpToMultipleOf(stackAlignmentRegisters(), static_cast<unsigned>(codeBlock->m_numCalleeLocals)));
+    ASSERT(static_cast<unsigned>(codeBlock->m_numCalleeRegisters) == WTF::roundUpToMultipleOf(stackAlignmentRegisters(), static_cast<unsigned>(codeBlock->m_numCalleeRegisters)));
 
-    return roundLocalRegisterCountForFramePointerOffset(codeBlock->m_numCalleeLocals + maxFrameExtentForSlowPathCallInRegisters);
+    return roundLocalRegisterCountForFramePointerOffset(codeBlock->m_numCalleeRegisters + maxFrameExtentForSlowPathCallInRegisters);
 }
 
 int JIT::stackPointerOffsetFor(CodeBlock* codeBlock)

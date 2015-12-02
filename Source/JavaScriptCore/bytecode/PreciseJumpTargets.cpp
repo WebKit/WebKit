@@ -54,7 +54,6 @@ static void getJumpTargetsForBytecodeOffset(CodeBlock* codeBlock, Interpreter* i
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
-    case op_save: // The jump of op_save is purely for calculating liveness.
         out.append(bytecodeOffset + current[3].u.operand);
         break;
     case op_switch_imm:

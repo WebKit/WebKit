@@ -145,7 +145,7 @@ public:
         , m_constantNaN(graph.freeze(jsNumber(PNaN)))
         , m_constantOne(graph.freeze(jsNumber(1)))
         , m_numArguments(m_codeBlock->numParameters())
-        , m_numLocals(m_codeBlock->m_numCalleeLocals)
+        , m_numLocals(m_codeBlock->m_numCalleeRegisters)
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
         , m_inlineStackTop(0)
@@ -1413,7 +1413,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
     
     ensureLocals(
         VirtualRegister(inlineCallFrameStart).toLocal() + 1 +
-        JSStack::CallFrameHeaderSize + codeBlock->m_numCalleeLocals);
+        JSStack::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters);
     
     size_t argumentPositionStart = m_graph.m_argumentPositions.size();
 
@@ -2927,7 +2927,7 @@ void ByteCodeParser::handleGetById(
     
     // Start with a register offset that corresponds to the last in-use register.
     int registerOffset = virtualRegisterForLocal(
-        m_inlineStackTop->m_profiledBlock->m_numCalleeLocals - 1).offset();
+        m_inlineStackTop->m_profiledBlock->m_numCalleeRegisters - 1).offset();
     registerOffset -= numberOfParameters;
     registerOffset -= JSStack::CallFrameHeaderSize;
     
@@ -3096,7 +3096,7 @@ void ByteCodeParser::handlePutById(
     
         // Start with a register offset that corresponds to the last in-use register.
         int registerOffset = virtualRegisterForLocal(
-            m_inlineStackTop->m_profiledBlock->m_numCalleeLocals - 1).offset();
+            m_inlineStackTop->m_profiledBlock->m_numCalleeRegisters - 1).offset();
         registerOffset -= numberOfParameters;
         registerOffset -= JSStack::CallFrameHeaderSize;
     

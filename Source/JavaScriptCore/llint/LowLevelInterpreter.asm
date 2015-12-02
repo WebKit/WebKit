@@ -697,7 +697,7 @@ macro vmEntryRecord(entryFramePointer, resultReg)
 end
 
 macro getFrameRegisterSizeForCodeBlock(codeBlock, size)
-    loadi CodeBlock::m_numCalleeLocals[codeBlock], size
+    loadi CodeBlock::m_numCalleeRegisters[codeBlock], size
     lshiftp 3, size
     addp maxFrameExtentForSlowPathCall, size
 end
@@ -1227,12 +1227,6 @@ _llint_op_new_func:
     dispatch(4)
 
 
-_llint_op_new_generator_func:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_generator_func)
-    dispatch(4)
-
-
 _llint_op_new_array:
     traceExecution()
     callSlowPath(_llint_slow_path_new_array)
@@ -1464,11 +1458,6 @@ _llint_op_new_func_exp:
     callSlowPath(_llint_slow_path_new_func_exp)
     dispatch(4)
 
-_llint_op_new_generator_func_exp:
-    traceExecution()
-    callSlowPath(_llint_slow_path_new_generator_func_exp)
-    dispatch(4)
-
 _llint_op_new_arrow_func_exp:
     traceExecution()
     callSlowPath(_llint_slow_path_new_arrow_func_exp)
@@ -1581,18 +1570,6 @@ _llint_op_push_with_scope:
 _llint_op_assert:
     traceExecution()
     callSlowPath(_slow_path_assert)
-    dispatch(3)
-
-
-_llint_op_save:
-    traceExecution()
-    callSlowPath(_slow_path_save)
-    dispatch(4)
-
-
-_llint_op_resume:
-    traceExecution()
-    callSlowPath(_slow_path_resume)
     dispatch(3)
 
 

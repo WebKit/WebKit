@@ -90,8 +90,6 @@
             { "name" : "op_switch_string", "length" : 4 },
             { "name" : "op_new_func", "length" : 4 },
             { "name" : "op_new_func_exp", "length" : 4 },
-            { "name" : "op_new_generator_func", "length" : 4 },
-            { "name" : "op_new_generator_func_exp", "length" : 4 },
             { "name" : "op_new_arrow_func_exp", "length" : 5 },
             { "name" : "op_call", "length" : 9 },
             { "name" : "op_tail_call", "length" : 9 },
@@ -132,9 +130,7 @@
             { "name" : "op_load_arrowfunction_this", "length" : 2 },
             { "name" : "op_assert", "length" : 3 },
             { "name" : "op_copy_rest", "length": 4 },
-            { "name" : "op_get_rest_length", "length": 3 },
-            { "name" : "op_save", "length" : 4 },
-            { "name" : "op_resume", "length" : 3 }
+            { "name" : "op_get_rest_length", "length": 3 }
         ]
     },
     {

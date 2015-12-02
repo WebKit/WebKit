@@ -32,7 +32,6 @@
 #include "CallFrame.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
-#include "GeneratorPrototype.h"
 #include "GetterSetter.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
@@ -349,12 +348,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
         unsigned attributes;
         PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {
-            JSObject* prototype = nullptr;
-            if (thisObject->jsExecutable()->parseMode() == SourceParseMode::GeneratorWrapperFunctionMode)
-                prototype = constructEmptyObject(exec, thisObject->globalObject()->generatorPrototype());
-            else
-                prototype = constructEmptyObject(exec);
-
+            JSObject* prototype = constructEmptyObject(exec);
             prototype->putDirect(vm, exec->propertyNames().constructor, thisObject, DontEnum);
             thisObject->putDirect(vm, exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
             offset = thisObject->getDirectOffset(vm, exec->propertyNames().prototype, attributes);
