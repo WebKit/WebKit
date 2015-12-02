@@ -474,11 +474,6 @@ WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef context)
     return reinterpret_cast<WKResourceCacheManagerRef>(WKContextGetWebsiteDataStore(context));
 }
 
-WKOriginDataManagerRef WKContextGetOriginDataManager(WKContextRef context)
-{
-    return reinterpret_cast<WKOriginDataManagerRef>(toAPI(toImpl(context)->websiteDataStore()));
-}
-
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)
 {
     toImpl(contextRef)->startMemorySampler(toImpl(interval)->value());

@@ -862,7 +862,6 @@
 		4A3CC18F19B07B8A00D14AEF /* WKUserMediaPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
-		510274321981AF8E008165ED /* WKOriginDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51032F18180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */; };
 		51032F19180F73BB00961BB7 /* WebToDatabaseProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51032F17180F73BB00961BB7 /* WebToDatabaseProcessConnection.h */; };
 		51032F1D180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F1B180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp */; };
@@ -1070,7 +1069,6 @@
 		728E86F21795188C0087879E /* WebColorPickerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 728E86F01795188C0087879E /* WebColorPickerMac.mm */; };
 		753E3E0D1887398500188496 /* SessionTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753E3E0B1887397300188496 /* SessionTracker.cpp */; };
 		753E3E0E1887398900188496 /* SessionTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 753E3E091887394B00188496 /* SessionTracker.h */; };
-		755422BD18062BB20046F6A8 /* WKOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */; };
 		75A8D2C8187CCFAB00C39C9E /* WKWebsiteDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2C4187CCF9F00C39C9E /* WKWebsiteDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75A8D2C9187CCFAF00C39C9E /* WKWebsiteDataStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75A8D2C5187CCF9F00C39C9E /* WKWebsiteDataStore.mm */; };
 		75A8D2D6187D1C0E00C39C9E /* WKWebsiteDataStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2D4187D1C0100C39C9E /* WKWebsiteDataStoreInternal.h */; };
@@ -3286,8 +3284,6 @@
 		728E86F01795188C0087879E /* WebColorPickerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebColorPickerMac.mm; sourceTree = "<group>"; };
 		753E3E091887394B00188496 /* SessionTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionTracker.h; sourceTree = "<group>"; };
 		753E3E0B1887397300188496 /* SessionTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionTracker.cpp; sourceTree = "<group>"; };
-		755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOriginDataManager.cpp; sourceTree = "<group>"; };
-		755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOriginDataManager.h; sourceTree = "<group>"; };
 		75A8D2C4187CCF9F00C39C9E /* WKWebsiteDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsiteDataStore.h; sourceTree = "<group>"; };
 		75A8D2C5187CCF9F00C39C9E /* WKWebsiteDataStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebsiteDataStore.mm; sourceTree = "<group>"; };
 		75A8D2D0187D17BF00C39C9E /* WKSessionRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSessionRef.cpp; sourceTree = "<group>"; };
@@ -6446,8 +6442,6 @@
 				BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */,
 				BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */,
 				BC1DFE8D12B31CA8005DF730 /* WKOpenPanelResultListener.h */,
-				755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */,
-				755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */,
 				BCD597D4112B56DC00EC8C23 /* WKPage.cpp */,
 				BCD597D5112B56DC00EC8C23 /* WKPage.h */,
 				7C89D2991A67837B003A5FDE /* WKPageConfigurationRef.cpp */,
@@ -8375,7 +8369,6 @@
 				378E1A40181EDA010031007A /* WKObject.h in Headers */,
 				BC857FE612B843D800EDEB2E /* WKOpenPanelParameters.h in Headers */,
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
-				510274321981AF8E008165ED /* WKOriginDataManager.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
 				7C89D29C1A67837B003A5FDE /* WKPageConfigurationRef.h in Headers */,
 				1AB8A1F818400BB800E9AE69 /* WKPageContextMenuClient.h in Headers */,
@@ -10136,7 +10129,6 @@
 				374436881820E7240049579F /* WKObject.mm in Sources */,
 				BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */,
 				BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */,
-				755422BD18062BB20046F6A8 /* WKOriginDataManager.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
 				7C89D29B1A67837B003A5FDE /* WKPageConfigurationRef.cpp in Sources */,
 				BC7B633812A45ABA00D174A4 /* WKPageGroup.cpp in Sources */,

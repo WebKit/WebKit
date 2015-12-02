@@ -1,3 +1,19 @@
+2015-12-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove WKOriginDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=151723
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/C/WKOriginDataManager.cpp: Removed.
+        (WKOriginDataManagerGetTypeID): Deleted.
+        (WKOriginDataManagerGetOrigins): Deleted.
+        (WKOriginDataManagerDeleteEntriesForOrigin): Deleted.
+        (WKOriginDataManagerDeleteEntriesModifiedBetweenDates): Deleted.
+        (WKOriginDataManagerDeleteAllEntries): Deleted.
+        * UIProcess/API/C/WKOriginDataManager.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature
