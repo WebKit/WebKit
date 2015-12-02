@@ -1,3 +1,21 @@
+2015-12-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r192894 and r192904.
+        https://bugs.webkit.org/show_bug.cgi?id=151738
+
+        Crashes sometimes on Windows (Requested by litherum on
+        #webkit).
+
+        Reverted changesets:
+
+        "[Win] Web fonts with small caps have excess whitespace with
+        the complex text codepath"
+        https://bugs.webkit.org/show_bug.cgi?id=151698
+        http://trac.webkit.org/changeset/192894
+
+        "Test gardening after r192894"
+        http://trac.webkit.org/changeset/192904
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature
