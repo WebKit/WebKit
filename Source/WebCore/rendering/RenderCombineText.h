@@ -35,7 +35,7 @@ public:
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
     void combineText();
-    void adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const;
+    Optional<FloatPoint> computeTextOrigin(const FloatRect& boxRect) const;
     void getStringToRender(int, String&, int& length) const;
     bool isCombined() const { return m_isCombined; }
     float combinedTextWidth(const FontCascade& font) const { return font.size(); }
@@ -52,7 +52,9 @@ private:
     virtual void setRenderedText(const String&) override;
 
     RefPtr<RenderStyle> m_combineFontStyle;
-    FloatSize m_combinedTextSize;
+    float m_combinedTextWidth { 0 };
+    float m_combinedTextAscent { 0 };
+    float m_combinedTextDescent { 0 };
     bool m_isCombined : 1;
     bool m_needsFontUpdate : 1;
 };
