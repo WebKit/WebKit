@@ -3,7 +3,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="48"
     height="528">
     <style>
-        symbol { color: white; }
+        svg,symbol { color: white; }
     </style>
     
     <defs>

@@ -1,5 +1,32 @@
 2015-12-01  Jonathan Davis  <jond@apple.com>
 
+        Fixed font rendering. Fixed SVG rendering for Firefox.
+
+        * wp-content/themes/webkit/images/icons.svg:
+        * wp-content/themes/webkit/images/inspector.svg:
+        * wp-content/themes/webkit/images/twitter.svg:
+        * wp-content/themes/webkit/style.css:
+        (code):
+        (a[name]):
+        (.screen-reader-text:focus):
+        (.page-width):
+        (.tile.category-web-inspector .background-image):
+        (.tile.category-performance .background-image):
+        (.tile.category-javascript .background-image):
+        (.tile.category-css .background-image):
+        (.tile.category-standards .background-image):
+        (.tile.category-contributing .background-image):
+        (.tile.category-storage .background-image):
+        (.tile.category-layout .background-image):
+        (.tile.tag-timeline .background-image):
+        (.tile.tag-console .background-image):
+        (.tile.tag-debugger .background-image):
+        (.tile.tag-shortcuts .background-image):
+        (.tile .background-image.loaded):
+        (body, input, textarea, select, button): Deleted.
+
+2015-12-01  Jonathan Davis  <jond@apple.com>
+
         Removed escpaes to correctly pass query string arguments.
 
         * .htaccess:

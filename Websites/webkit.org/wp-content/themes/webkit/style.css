@@ -95,15 +95,6 @@ code {
     color: #444;
 }
 
-/** Form Elements **/
-body, input, textarea, select, button {
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -moz-font-feature-settings: 'liga', 'kern';
-}
-
 /** Accessibility Helpers **/
 a[name] {
     display: block;
@@ -143,7 +134,6 @@ a[name] {
 	width: auto;
 	z-index: 100000; /* Above WP toolbar. */
 }
-
 
 /** Page Layout **/
 .page-width {
@@ -333,42 +323,42 @@ footer .menu {
 
 .tile.category-web-inspector .background-image {
     background-color: #08c;
-    background-position-y: 10.75%;
+    background-position: 50% 10.75%; /* Must use this notation for Firefox */
 }
 
 .tile.category-performance .background-image {
     background-color: rgb(152, 188, 77);
-    background-position-y: 20.5%;
+    background-position: 50% 20.5%;
 }
 
 .tile.category-javascript .background-image {
     background-color: #997FA6;
-    background-position-y: 30.5%;
+    background-position: 50% 30.5%;
 }
 
 .tile.category-css .background-image {
     background-color: #bf6d71;
-    background-position-y: 40.4%;
+    background-position: 50% 40.4%;
 }
 
 .tile.category-standards .background-image {
     background-color: #BF7600;
-    background-position-y: 50.4%;
+    background-position: 50% 50.4%;
 }
 
 .tile.category-contributing .background-image {
     background-color: #CBAA44;
-    background-position-y: 59.8%;
+    background-position: 50% 59.8%;
 }
 
 .tile.category-storage .background-image {
     background-color: #997FA6;
-    background-position-y: 69.6%;
+    background-position: 50% 69.6%;
 }
 
 .tile.category-layout .background-image {
     background-color: #bf6d71;
-    background-position-y: 79.45%;
+    background-position: 50% 79.45%;
 }
 
 .tile.tag-console .background-image,
@@ -379,19 +369,19 @@ footer .menu {
 }
 
 .tile.tag-console .background-image {
-    background-position-y: 3%;
+    background-position: 50% 3%;
 }
 
 .tile.tag-debugger .background-image {
-    background-position-y: 34%;
+    background-position: 50% 34%;
 }
 
 .tile.tag-shortcuts .background-image {
-    background-position-y: 66%;
+    background-position: 50% 66%;
 }
 
 .tile.tag-timeline .background-image {
-    background-position-y: 97%;
+    background-position: 50% 97%;
 }
 
 .tile .background-image.loaded {
