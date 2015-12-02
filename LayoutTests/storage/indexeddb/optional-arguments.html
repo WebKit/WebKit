@@ -45,11 +45,6 @@ function checkOptionalArguments(event)
         function(callback) { verifyCursor("store.openCursor(IDBKeyRange.lowerBound(4))", "next", 2, callback); },
         function(callback) { verifyCursor("store.openCursor(3)", "next", 1, callback); },
 
-        function(callback) { verifyCursor("store.openKeyCursor()", "next", 5, callback); },
-        function(callback) { verifyCursor("store.openKeyCursor(null)", "next", 5, callback); },
-        function(callback) { verifyCursor("store.openKeyCursor(IDBKeyRange.lowerBound(4))", "next", 2, callback); },
-        function(callback) { verifyCursor("store.openKeyCursor(3)", "next", 1, callback); },
-
         function(callback) { verifyCursor("index.openCursor()", "next", 5, callback); },
         function(callback) { verifyCursor("index.openCursor(null)", "next", 5, callback); },
         function(callback) { verifyCursor("index.openCursor(IDBKeyRange.lowerBound('b'))", "next", 4, callback); },

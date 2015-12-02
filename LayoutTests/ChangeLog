@@ -1,3 +1,27 @@
+2015-12-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Remove all traces of IDBObjectStore::openKeyCursor from tests.
+        https://bugs.webkit.org/show_bug.cgi?id=151772
+
+        Reviewed by Alex Christensen.
+        
+        IDBObjectStore::openKeyCursor no longer exists, so testing it is inherently bogus.
+
+        * platform/mac-wk1/TestExpectations: Two tests now pass with small expectations changes.
+        * storage/indexeddb/cursor-basics-expected.txt:
+        * storage/indexeddb/cursor-overloads-expected.txt:
+
+        * storage/indexeddb/cursor-overloads.html:
+        * storage/indexeddb/optional-arguments.html:
+        * storage/indexeddb/resources/cursor-basics.js:
+        * storage/indexeddb/resources/deleted-objects.js:
+        * storage/indexeddb/resources/exceptions.js:
+        * storage/indexeddb/resources/objectstore-basics.js:
+        
+        * storage/indexeddb/objectstore-keycursor-expected.txt: Removed.
+        * storage/indexeddb/objectstore-keycursor.html: Removed.
+        * storage/indexeddb/resources/objectstore-keycursor.js: Removed.
+
 2015-12-02  David Hyatt  <hyatt@apple.com>
 
         Add some more picture element layout tests

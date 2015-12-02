@@ -19,10 +19,6 @@ function prepareDatabase(evt)
     request.onsuccess = onStoreOpenCursor;
     request.onerror = unexpectedErrorCallback;
 
-    request = evalAndLog("store.openKeyCursor()");
-    request.onsuccess = onStoreOpenKeyCursor;
-    request.onerror = unexpectedErrorCallback;
-
     request = evalAndLog("index.openCursor()");
     request.onsuccess = onIndexOpenCursor;
     request.onerror = unexpectedErrorCallback;
@@ -63,20 +59,6 @@ function onStoreOpenCursor(evt) {
     shouldBeTrue("cursor instanceof IDBCursorWithValue");
     shouldBeTrue("'value' in cursor");
     shouldBeEqualToString("JSON.stringify(cursor.value)", '{"indexOn":"a"}');
-}
-
-function onStoreOpenKeyCursor(evt) {
-    preamble(evt);
-    evalAndLog("cursor = event.target.result");
-    shouldBeNonNull("cursor");
-    checkCursorProperties();
-
-    shouldBe("cursor.key", "0");
-    shouldBeTrue("'primaryKey' in cursor");
-    shouldBe("cursor.primaryKey", "0");
-
-    shouldBeFalse("cursor instanceof IDBCursorWithValue");
-    shouldBeFalse("'value' in cursor");
 }
 
 function onIndexOpenCursor(evt) {

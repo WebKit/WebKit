@@ -35,11 +35,6 @@ function testStore()
     evalAndExpectException("deletedStore.openCursor(0, 'next')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("deletedStore.openCursor(IDBKeyRange.only(0))", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("deletedStore.openCursor(IDBKeyRange.only(0), 'next')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    evalAndExpectException("deletedStore.openKeyCursor()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    evalAndExpectException("deletedStore.openKeyCursor(0)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    evalAndExpectException("deletedStore.openKeyCursor(0, 'next')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    evalAndExpectException("deletedStore.openKeyCursor(IDBKeyRange.only(0))", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    evalAndExpectException("deletedStore.openKeyCursor(IDBKeyRange.only(0), 'next')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("deletedStore.createIndex('name', 'path')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("deletedStore.index('name')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("deletedStore.deleteIndex('name')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
