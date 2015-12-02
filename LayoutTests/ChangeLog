@@ -1,5 +1,22 @@
 2015-12-01  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r192432. rdar://problem/23558672
+
+    2015-11-13  Tim Horton  <timothy_horton@apple.com>
+
+            Hardware keyboard spacebar scrolls too far on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=151227
+            <rdar://problem/23500681>
+
+            Reviewed by Simon Fraser.
+
+            * fast/events/ios/keyboard-scrolling-distance-expected.txt: Added.
+            * fast/events/ios/keyboard-scrolling-distance.html: Added.
+            Add a test that records how much we scroll when pressing the spacebar.
+            The test is at a fixed scale of 1.5 to expose the bug fixed by this patch.
+
+2015-12-01  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r192169. rdar://problem/23189763
 
     2015-11-09  Myles C. Maxfield  <mmaxfield@apple.com>
