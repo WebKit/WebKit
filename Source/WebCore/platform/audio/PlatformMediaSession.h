@@ -63,6 +63,7 @@ public:
 
     enum State {
         Idle,
+        Autoplaying,
         Playing,
         Paused,
         Interrupted,
@@ -71,11 +72,15 @@ public:
     void setState(State);
 
     enum InterruptionType {
+        NoInterruption,
         SystemSleep,
         EnteringBackground,
         SystemInterruption,
         SuspendedUnderLock,
+        InvisibleAutoplay,
     };
+    InterruptionType interruptionType() const { return m_interruptionType; }
+
     enum EndInterruptionFlags {
         NoFlags = 0,
         MayResumePlaying = 1 << 0,
@@ -84,6 +89,7 @@ public:
     void beginInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
+    void clientWillBeginAutoplaying();
     bool clientWillBeginPlayback();
     bool clientWillPausePlayback();
 
@@ -148,6 +154,7 @@ private:
     Timer m_clientDataBufferingTimer;
     State m_state;
     State m_stateToRestore;
+    InterruptionType m_interruptionType { NoInterruption };
     int m_interruptionCount { 0 };
     bool m_notifyingClient;
     bool m_isPlayingToWirelessPlaybackTarget { false };
@@ -165,6 +172,7 @@ public:
     virtual PlatformMediaSession::MediaType presentationType() const = 0;
     virtual PlatformMediaSession::DisplayType displayType() const { return PlatformMediaSession::Normal; }
 
+    virtual void resumeAutoplaying() { }
     virtual void mayResumePlayback(bool shouldResume) = 0;
     virtual void suspendPlayback() = 0;
 

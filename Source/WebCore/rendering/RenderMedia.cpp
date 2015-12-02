@@ -63,6 +63,12 @@ void RenderMedia::layout()
         mediaElement().layoutSizeChanged();
 }
 
+void RenderMedia::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
+{
+    RenderImage::styleDidChange(difference, oldStyle);
+    if (!oldStyle || style().visibility() != oldStyle->visibility())
+        mediaElement().visibilityDidChange();
+}
 
 } // namespace WebCore
 

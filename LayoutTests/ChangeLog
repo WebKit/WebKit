@@ -1,3 +1,13 @@
+2015-12-02  Jer Noble  <jer.noble@apple.com>
+
+        Add a setting and restriction which will pause invisible autoplaying video
+        https://bugs.webkit.org/show_bug.cgi?id=151412
+
+        Reviewed by Eric Carlson.
+
+        * media/video-restricted-invisible-autoplay-not-allowed-expected.txt: Added.
+        * media/video-restricted-invisible-autoplay-not-allowed.html: Added.
+
 2015-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/parser/xml-declaration-missing-ending-mark.html, fast/parser/xml-colon-entity.html for Win

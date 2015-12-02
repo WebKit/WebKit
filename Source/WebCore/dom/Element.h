@@ -494,6 +494,8 @@ public:
     StyleResolver& styleResolver();
     Ref<RenderStyle> resolveStyle(RenderStyle* parentStyle);
 
+    virtual void isVisibleInViewportChanged() { }
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 

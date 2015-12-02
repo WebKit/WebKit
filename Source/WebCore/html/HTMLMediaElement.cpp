@@ -427,6 +427,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
         // Relax RequireUserGestureForFullscreen when requiresUserGestureForMediaPlayback is not set:
         m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     }
+    if (settings && settings->invisibleAutoplayNotPermitted())
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
 #endif // !PLATFORM(IOS)
 
     if (settings && settings->audioPlaybackRequiresUserGesture() && settings->requiresUserGestureForMediaPlayback())
@@ -602,6 +604,7 @@ void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
     registerWithDocument(document());
 
     HTMLElement::didMoveToNewDocument(oldDocument);
+    updateShouldAutoplay();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -613,6 +616,7 @@ void HTMLMediaElement::prepareForDocumentSuspension()
 void HTMLMediaElement::resumeFromDocumentSuspension()
 {
     m_mediaSession->registerWithDocument(document());
+    updateShouldAutoplay();
 }
 #endif
 
@@ -779,8 +783,23 @@ void HTMLMediaElement::willAttachRenderers()
 
 void HTMLMediaElement::didAttachRenderers()
 {
-    if (renderer())
-        renderer()->updateFromElement();
+    if (RenderElement* renderer = this->renderer()) {
+        renderer->updateFromElement();
+        if (m_mediaSession->hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
+            renderer->registerForVisibleInViewportCallback();
+    }
+    updateShouldAutoplay();
+}
+
+void HTMLMediaElement::willDetachRenderers()
+{
+    if (renderer() && m_mediaSession->hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
+        renderer()->unregisterForVisibleInViewportCallback();
+}
+
+void HTMLMediaElement::didDetachRenderers()
+{
+    updateShouldAutoplay();
 }
 
 void HTMLMediaElement::didRecalcStyle(Style::Change)
@@ -2058,6 +2077,15 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
+static bool elementCanTransitionFromAutoplayToPlay(HTMLMediaElement& element)
+{
+    return element.isAutoplaying()
+        && element.paused()
+        && element.autoplay()
+        && !element.document().isSandboxed(SandboxAutomaticFeatures)
+        && element.mediaSession().playbackPermitted(element);
+}
+
 void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 {
     LOG(Media, "HTMLMediaElement::setReadyState(%p) - new state = %d, current state = %d,", this, static_cast<int>(state), static_cast<int>(m_readyState));
@@ -2167,7 +2195,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         if (isPotentiallyPlaying && oldState <= HAVE_CURRENT_DATA)
             scheduleEvent(eventNames().playingEvent);
 
-        if (m_autoplaying && m_paused && autoplay() && !document().isSandboxed(SandboxAutomaticFeatures) && m_mediaSession->playbackPermitted(*this)) {
+        if (elementCanTransitionFromAutoplayToPlay(*this)) {
             m_paused = false;
             invalidateCachedTime();
             scheduleEvent(eventNames().playEvent);
@@ -3940,6 +3968,11 @@ void HTMLMediaElement::layoutSizeChanged()
     };
     m_resizeTaskQueue.enqueueTask(task);
 #endif
+}
+
+void HTMLMediaElement::visibilityDidChange()
+{
+    updateShouldAutoplay();
 }
 
 void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
@@ -6174,7 +6207,8 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
         | MediaElementSession::RequireUserGestureForLoad
         | MediaElementSession::RequireUserGestureForRateChange
         | MediaElementSession::RequireUserGestureForAudioRateChange
-        | MediaElementSession::RequireUserGestureForFullscreen;
+        | MediaElementSession::RequireUserGestureForFullscreen
+        | MediaElementSession::InvisibleAutoplayNotPermitted;
     m_mediaSession->removeBehaviorRestriction(restrictionsToRemove);
 }
 
@@ -6455,6 +6489,15 @@ void HTMLMediaElement::suspendPlayback()
         pause();
 }
 
+void HTMLMediaElement::resumeAutoplaying()
+{
+    LOG(Media, "HTMLMediaElement::resumeAutoplaying(%p) - paused = %s", this, boolString(paused()));
+    m_autoplaying = true;
+
+    if (elementCanTransitionFromAutoplayToPlay(*this))
+        play();
+}
+
 void HTMLMediaElement::mayResumePlayback(bool shouldResume)
 {
     LOG(Media, "HTMLMediaElement::mayResumePlayback(%p) - paused = %s", this, boolString(paused()));
@@ -6692,6 +6735,49 @@ void HTMLMediaElement::allowsMediaDocumentInlinePlaybackChanged()
 {
     if (potentiallyPlaying() && m_mediaSession->requiresFullscreenForVideoPlayback(*this) && !isFullscreen())
         enterFullscreen();
+}
+
+static bool mediaElementIsAllowedToAutoplay(const HTMLMediaElement& element)
+{
+    const Document& document = element.document();
+    if (document.inPageCache())
+        return false;
+    if (document.activeDOMObjectsAreSuspended())
+        return false;
+
+    RenderElement* renderer = element.renderer();
+    if (!renderer)
+        return false;
+    if (renderer->style().visibility() != VISIBLE)
+        return false;
+    if (renderer->view().frameView().isOffscreen())
+        return false;
+    if (renderer->visibleInViewportState() != RenderElement::VisibleInViewport)
+        return false;
+    return true;
+}
+
+void HTMLMediaElement::isVisibleInViewportChanged()
+{
+    updateShouldAutoplay();
+}
+
+void HTMLMediaElement::updateShouldAutoplay()
+{
+    if (!autoplay())
+        return;
+
+    if (!m_mediaSession->hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
+        return;
+
+    bool canAutoplay = mediaElementIsAllowedToAutoplay(*this);
+    if (canAutoplay
+        && m_mediaSession->state() == PlatformMediaSession::Interrupted
+        && m_mediaSession->interruptionType() == PlatformMediaSession::InvisibleAutoplay)
+        m_mediaSession->endInterruption(PlatformMediaSession::MayResumePlaying);
+    else if (!canAutoplay
+        && m_mediaSession->state() != PlatformMediaSession::Interrupted)
+        m_mediaSession->beginInterruption(PlatformMediaSession::InvisibleAutoplay);
 }
 
 }

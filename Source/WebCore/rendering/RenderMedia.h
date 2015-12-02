@@ -57,6 +57,7 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const override final { return true; }
 
     virtual bool shadowControlsNeedCustomLayoutMetrics() const override { return true; }
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
 };
 
 } // namespace WebCore

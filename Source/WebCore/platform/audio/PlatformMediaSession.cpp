@@ -42,6 +42,7 @@ static const char* stateName(PlatformMediaSession::State state)
 #define STATE_CASE(state) case PlatformMediaSession::state: return #state
     switch (state) {
     STATE_CASE(Idle);
+    STATE_CASE(Autoplaying);
     STATE_CASE(Playing);
     STATE_CASE(Paused);
     STATE_CASE(Interrupted);
@@ -55,10 +56,12 @@ static const char* interruptionName(PlatformMediaSession::InterruptionType type)
 {
 #define INTERRUPTION_CASE(type) case PlatformMediaSession::type: return #type
     switch (type) {
+    INTERRUPTION_CASE(NoInterruption);
     INTERRUPTION_CASE(SystemSleep);
     INTERRUPTION_CASE(EnteringBackground);
     INTERRUPTION_CASE(SystemInterruption);
     INTERRUPTION_CASE(SuspendedUnderLock);
+    INTERRUPTION_CASE(InvisibleAutoplay);
     }
     
     ASSERT_NOT_REACHED();
@@ -106,6 +109,7 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
     m_stateToRestore = state();
     m_notifyingClient = true;
     setState(Interrupted);
+    m_interruptionType = type;
     client().suspendPlayback();
     m_notifyingClient = false;
 }
@@ -124,10 +128,30 @@ void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)
 
     State stateToRestore = m_stateToRestore;
     m_stateToRestore = Idle;
+    m_interruptionType = NoInterruption;
     setState(Paused);
+
+    if (stateToRestore == Autoplaying)
+        client().resumeAutoplaying();
 
     bool shouldResume = flags & MayResumePlaying && stateToRestore == Playing;
     client().mayResumePlayback(shouldResume);
+}
+
+void PlatformMediaSession::clientWillBeginAutoplaying()
+{
+    if (m_notifyingClient)
+        return;
+
+    LOG(Media, "PlatformMediaSession::clientWillBeginAutoplaying(%p)- state = %s", this, stateName(m_state));
+    if (state() == Interrupted) {
+        m_stateToRestore = Autoplaying;
+        LOG(Media, "      setting stateToRestore to \"Autoplaying\"");
+        return;
+    }
+
+    setState(Autoplaying);
+    updateClientDataBuffering();
 }
 
 bool PlatformMediaSession::clientWillBeginPlayback()

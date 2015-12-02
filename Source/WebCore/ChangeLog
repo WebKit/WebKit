@@ -1,3 +1,83 @@
+2015-12-02  Jer Noble  <jer.noble@apple.com>
+
+        Add a setting and restriction which will pause invisible autoplaying video
+        https://bugs.webkit.org/show_bug.cgi?id=151412
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-restricted-invisible-autoplay-not-allowed.html
+
+        Drive-by fix: m_autoplaying is reset in many places by calling pause() or play(), where those
+        calls did not originate from an explicit request to pause or play, e.g., during an interruption.
+        This causes m_autoplaying to be set to false, thus breaking resumption of autoplaying when the
+        interruption ends. Update PlatformMediaSession to remember its client's "autoplaying" state and
+        restore it when an interruption ends.
+
+        Add a means to register for viewport visibility notifications to FrameView, RenderView,
+        and RenderElement. Elements who wish to recieve these notifications must do so through their
+        renderer, and thus will have to re-register whenever a new renderer is attached.
+
+        Add a restriction to HTMLMediaElement which will pause autoplaying video when that video scrolls
+        out of the viewport, or is hidden with CSS.
+
+        Add a setting which controls whether that new restriction is set.
+
+        * dom/Element.h:
+        (WebCore::Element::isVisibleInViewportChanged): Add default empty virtual method.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::didMoveToNewDocument):
+        (WebCore::HTMLMediaElement::documentDidResumeFromPageCache):
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture):
+        (WebCore::HTMLMediaElement::resumeAutoplaying):
+        (WebCore::mediaElementIsAllowedToAutoplay):
+        (WebCore::HTMLMediaElement::isVisibleInViewportChanged):
+        (WebCore::HTMLMediaElement::updateShouldAutoplay):
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Set the new restriction based on the current Settings.
+        (WebCore::HTMLMediaElement::resumeAutoplaying): Continue autoplay, or begin playback.
+        (WebCore::HTMLMediaElement::didMoveToNewDocument): Update our autoplay state.
+        (WebCore::HTMLMediaElement::documentDidResumeFromPageCache): Ditto.
+        (WebCore::HTMLMediaElement::removedFrom): Ditto.
+        (WebCore::HTMLMediaElement::didAttachRenderers): Ditto.
+        (WebCore::HTMLMediaElement::didDetachRenderers): Ditto.
+        (WebCore::HTMLMediaElement::visibilityDidChange): Ditto.
+        (WebCore::HTMLMediaElement::willDetachRenderers): Unregister for visibility callbacks.
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture): Clear new restriction.
+        (WebCore::mediaElementIsAllowedToAutoplay): Check for autoplay requirements.
+        (WebCore::HTMLMediaElement::isVisibleInViewportChanged): Added, update our autoplay state.
+        (WebCore::HTMLMediaElement::updateShouldAutoplay): Set interruption if necessary, clear otherwise.
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::restrictionName): Added support for new restriction.
+        * html/MediaElementSession.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportContentsChanged): Update clients of viewport visibility.
+        * page/Settings.in:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::stateName): Add new "Autoplay" state.
+        (WebCore::interruptionName): Added new interruption type.
+        (WebCore::PlatformMediaSession::beginInterruption): Set the m_interruptionType.
+        (WebCore::PlatformMediaSession::clientWillBeginAutoplaying): Set the m_state to Autoplaying.
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSession::interruptionType): Added getter.
+        (WebCore::PlatformMediaSessionClient::resumeAutoplaying): Added default.
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::sessionWillBeginPlayback): Only pause session if its state is playing.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement): Set new ivars.
+        (WebCore::RenderElement::~RenderElement): Unregister for callbacks if necessary.
+        (WebCore::RenderElement::registerForVisibleInViewportCallback): Register for callbacks from RenderView.
+        (WebCore::RenderElement::unregisterForVisibleInViewportCallback): Unregister from same.
+        (WebCore::RenderElement::visibleInViewportStateChanged): Notify Element if value has changed.
+        * rendering/RenderElement.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::registerForVisibleInViewportCallback): Add renderer to list of callbacks.
+        (WebCore::RenderView::unregisterForVisibleInViewportCallback): Remove renderer from same.
+        (WebCore::RenderView::updateVisibleViewportRect): Walk renderers setting their visiblility based on the viewport visible rect.
+        * rendering/RenderView.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaElementRestrictions): Support new restriction.
+
 2015-12-02  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: IDBTransaction::error is not exposed.

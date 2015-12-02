@@ -2823,6 +2823,8 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement* element, const Str
             restrictions |= MediaElementSession::MetadataPreloadingNotPermitted;
         if (equalIgnoringCase(restrictionString, "AutoPreloadingNotPermitted"))
             restrictions |= MediaElementSession::AutoPreloadingNotPermitted;
+        if (equalIgnoringCase(restrictionString, "InvisibleAutoplayNotPermitted"))
+            restrictions |= MediaElementSession::InvisibleAutoplayNotPermitted;
     }
     element->mediaSession().addBehaviorRestriction(restrictions);
 }

@@ -208,7 +208,9 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
     for (auto* oneSession : sessions) {
         if (oneSession == &session)
             continue;
-        if (oneSession->mediaType() == sessionType && restrictions & ConcurrentPlaybackNotPermitted)
+        if (oneSession->mediaType() == sessionType
+            && restrictions & ConcurrentPlaybackNotPermitted
+            && oneSession->state() == PlatformMediaSession::Playing)
             oneSession->pauseSession();
     }
 

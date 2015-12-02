@@ -2196,6 +2196,18 @@ void RenderObject::setIsRenderFlowThread(bool isFlowThread)
         ensureRareData().setIsRenderFlowThread(isFlowThread);
 }
 
+void RenderObject::setIsRegisteredForVisibleInViewportCallback(bool registered)
+{
+    if (registered || hasRareData())
+        ensureRareData().setIsRegisteredForVisibleInViewportCallback(registered);
+}
+
+void RenderObject::setVisibleInViewportState(VisibleInViewportState visible)
+{
+    if (visible != VisibilityUnknown || hasRareData())
+        ensureRareData().setVisibleInViewportState(visible);
+}
+
 RenderObject::RareDataHash& RenderObject::rareDataMap()
 {
     static NeverDestroyed<RareDataHash> map;

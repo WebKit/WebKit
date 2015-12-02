@@ -225,6 +225,9 @@ public:
     void didCreateRenderer() { ++m_rendererCount; }
     void didDestroyRenderer() { --m_rendererCount; }
 
+    void updateVisibleViewportRect(const IntRect&);
+    void registerForVisibleInViewportCallback(RenderElement&);
+    void unregisterForVisibleInViewportCallback(RenderElement&);
     void resumePausedImageAnimationsIfNeeded(IntRect visibleRect);
     void addRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
@@ -374,6 +377,7 @@ private:
     bool m_usesFirstLetterRules { false };
 
     HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
+    HashSet<RenderElement*> m_visibleInViewportRenderers;
     Vector<RefPtr<RenderWidget>> m_protectedRenderWidgets;
 
 #if ENABLE(SERVICE_CONTROLS)

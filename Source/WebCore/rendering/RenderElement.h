@@ -193,6 +193,10 @@ public:
     bool hasShapeOutside() const { return false; }
 #endif
 
+    void registerForVisibleInViewportCallback();
+    void unregisterForVisibleInViewportCallback();
+    void visibleInViewportStateChanged(VisibleInViewportState);
+
     bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
@@ -327,6 +331,8 @@ private:
     unsigned m_renderBlockHasBorderOrPaddingLogicalWidthChanged : 1;
     unsigned m_renderBlockFlowHasMarkupTruncation : 1;
     unsigned m_renderBlockFlowLineLayoutPath : 2;
+
+    VisibleInViewportState m_visibleInViewportState { VisibilityUnknown };
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

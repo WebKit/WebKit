@@ -91,6 +91,7 @@ public:
 #endif
         MetadataPreloadingNotPermitted = 1 << 9,
         AutoPreloadingNotPermitted = 1 << 10,
+        InvisibleAutoplayNotPermitted = 1 << 11,
     };
     typedef unsigned BehaviorRestrictions;
 

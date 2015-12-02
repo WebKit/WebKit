@@ -77,7 +77,7 @@ protected:
     virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override final;
     virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) override final;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) override;
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 

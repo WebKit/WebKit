@@ -73,6 +73,7 @@ static String restrictionName(MediaElementSession::BehaviorRestrictions restrict
     CASE(WirelessVideoPlaybackDisabled);
 #endif
     CASE(RequireUserGestureForAudioRateChange);
+    CASE(InvisibleAutoplayNotPermitted);
 
     return restrictionBuilder.toString();
 }
