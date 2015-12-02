@@ -34,6 +34,7 @@
 #include "JSScope.h"
 #include "Options.h"
 #include "SourceCode.h"
+#include "SourceCodeKey.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -44,23 +45,29 @@ namespace JSC {
 
     class EvalCodeCache {
     public:
-        EvalExecutable* tryGet(bool inStrictContext, const String& evalSource, JSScope* scope)
+        EvalExecutable* tryGet(bool inStrictContext, const SourceCode& evalSource, ThisTDZMode thisTDZMode, JSScope* scope)
         {
-            if (isCacheable(inStrictContext, evalSource, scope))
-                return m_cacheMap.get(evalSource.impl()).get();
-            return 0;
+            if (isCacheable(inStrictContext, evalSource, scope)) {
+                ASSERT(!inStrictContext);
+                SourceCodeKey sourceCodeKey(evalSource, String(), SourceCodeKey::EvalType, JSParserBuiltinMode::NotBuiltin, JSParserStrictMode::NotStrict, thisTDZMode);
+                return m_cacheMap.get(sourceCodeKey).get();
+            }
+            return nullptr;
         }
         
-        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, bool inStrictContext, ThisTDZMode thisTDZMode, const String& evalSource, JSScope* scope)
+        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, bool inStrictContext, ThisTDZMode thisTDZMode, const SourceCode& evalSource, JSScope* scope)
         {
             VariableEnvironment variablesUnderTDZ;
             JSScope::collectVariablesUnderTDZ(scope, variablesUnderTDZ);
-            EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext, thisTDZMode, &variablesUnderTDZ);
+            EvalExecutable* evalExecutable = EvalExecutable::create(exec, evalSource, inStrictContext, thisTDZMode, &variablesUnderTDZ);
             if (!evalExecutable)
-                return 0;
+                return nullptr;
 
-            if (isCacheable(inStrictContext, evalSource, scope) && m_cacheMap.size() < maxCacheEntries)
-                m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->vm(), owner, evalExecutable));
+            if (isCacheable(inStrictContext, evalSource, scope) && m_cacheMap.size() < maxCacheEntries) {
+                ASSERT(!inStrictContext);
+                SourceCodeKey sourceCodeKey(evalSource, String(), SourceCodeKey::EvalType, JSParserBuiltinMode::NotBuiltin, JSParserStrictMode::NotStrict, thisTDZMode);
+                m_cacheMap.set(sourceCodeKey, WriteBarrier<EvalExecutable>(exec->vm(), owner, evalExecutable));
+            }
             
             return evalExecutable;
         }
@@ -80,17 +87,17 @@ namespace JSC {
             return scope->isGlobalLexicalEnvironment() || scope->isFunctionNameScopeObject() || scope->isVarScope();
         }
 
-        ALWAYS_INLINE bool isCacheable(bool inStrictContext, const String& evalSource, JSScope* scope)
+        ALWAYS_INLINE bool isCacheable(bool inStrictContext, const SourceCode& evalSource, JSScope* scope)
         {
             // If eval() is called and it has access to a lexical scope, we can't soundly cache it.
             // If the eval() only has access to the "var" scope, then we can cache it.
             return !inStrictContext 
-                && evalSource.length() < Options::maximumEvalCacheableSourceLength() 
+                && static_cast<size_t>(evalSource.length()) < Options::maximumEvalCacheableSourceLength()
                 && isCacheableScope(scope);
         }
         static const int maxCacheEntries = 64;
 
-        typedef HashMap<RefPtr<StringImpl>, WriteBarrier<EvalExecutable>> EvalCacheMap;
+        typedef HashMap<SourceCodeKey, WriteBarrier<EvalExecutable>, SourceCodeKeyHash, SourceCodeKeyHashTraits> EvalCacheMap;
         EvalCacheMap m_cacheMap;
     };
 

@@ -172,6 +172,7 @@ struct Scope {
         , m_isLexicalScope(false)
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
+        , m_hasArguments(false)
         , m_loopDepth(0)
         , m_switchDepth(0)
     {
@@ -192,6 +193,7 @@ struct Scope {
         , m_isLexicalScope(rhs.m_isLexicalScope)
         , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
+        , m_hasArguments(rhs.m_hasArguments)
         , m_loopDepth(rhs.m_loopDepth)
         , m_switchDepth(rhs.m_switchDepth)
         , m_moduleScopeData(rhs.m_moduleScopeData)
@@ -242,8 +244,12 @@ struct Scope {
     void setSourceParseMode(SourceParseMode mode)
     {
         switch (mode) {
-        case SourceParseMode::GeneratorMode:
+        case SourceParseMode::GeneratorBodyMode:
             setIsGenerator();
+            break;
+
+        case SourceParseMode::GeneratorWrapperFunctionMode:
+            setIsGeneratorFunction();
             break;
 
         case SourceParseMode::NormalFunctionMode:
@@ -267,6 +273,8 @@ struct Scope {
     bool isFunction() const { return m_isFunction; }
     bool isFunctionBoundary() const { return m_isFunctionBoundary; }
     bool isGenerator() const { return m_isGenerator; }
+
+    bool hasArguments() const { return m_hasArguments; }
 
     void setIsLexicalScope() 
     { 
@@ -450,16 +458,20 @@ struct Scope {
             m_usesEval = true;
 
         {
-            IdentifierSet::iterator end = nestedScope->m_usedVariables.end();
-            for (IdentifierSet::iterator ptr = nestedScope->m_usedVariables.begin(); ptr != end; ++ptr) {
-                if (nestedScope->m_declaredVariables.contains(*ptr) || nestedScope->m_lexicalVariables.contains(*ptr))
+            for (const RefPtr<UniquedStringImpl>& impl : nestedScope->m_usedVariables) {
+                if (nestedScope->m_declaredVariables.contains(impl) || nestedScope->m_lexicalVariables.contains(impl))
                     continue;
-                m_usedVariables.add(*ptr);
+
+                // "arguments" reference should be resolved at function boudary.
+                if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm->propertyNames->arguments.impl())
+                    continue;
+
+                m_usedVariables.add(impl);
                 // We don't want a declared variable that is used in an inner scope to be thought of as captured if
                 // that inner scope is both a lexical scope and not a function. Only inner functions and "catch" 
                 // statements can cause variables to be captured.
                 if (shouldTrackClosedVariables && (nestedScope->m_isFunctionBoundary || !nestedScope->m_isLexicalScope))
-                    m_closedVariableCandidates.add(*ptr);
+                    m_closedVariableCandidates.add(impl);
             }
         }
         // Propagate closed variable candidates downwards within the same function.
@@ -550,14 +562,22 @@ private:
     {
         m_isFunction = true;
         m_isFunctionBoundary = true;
+        m_hasArguments = true;
         setIsLexicalScope();
         m_isGenerator = false;
+    }
+
+    void setIsGeneratorFunction()
+    {
+        setIsFunction();
+        m_isGenerator = true;
     }
 
     void setIsGenerator()
     {
         setIsFunction();
         m_isGenerator = true;
+        m_hasArguments = false;
     }
 
     void setIsModule()
@@ -579,6 +599,7 @@ private:
     bool m_isLexicalScope : 1;
     bool m_isFunctionBoundary : 1;
     bool m_isValidStrictMode : 1;
+    bool m_hasArguments : 1;
     int m_loopDepth;
     int m_switchDepth;
 
@@ -627,7 +648,7 @@ class Parser {
 
 public:
     Parser(
-        VM*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, SourceParseMode,
+        VM*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, SourceParseMode, SuperBinding,
         ConstructorKind defaultConstructorKind = ConstructorKind::None, ThisTDZMode = ThisTDZMode::CheckIfNeeded);
     ~Parser();
 
@@ -1157,6 +1178,7 @@ private:
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
+    template <class TreeBuilder> TreeSourceElements parseGeneratorFunctionSourceElements(TreeBuilder&, SourceElementsMode);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
     enum class ExportType { Exported, NotExported };
@@ -1199,7 +1221,7 @@ private:
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
     template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName, bool isGenerator);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind = ConstructorKind::None, SuperBinding = SuperBinding::NotNeeded);
-    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionBodyType, unsigned, SourceParseMode);
+    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding, FunctionBodyType, unsigned, SourceParseMode);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, unsigned&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
     template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, ExportType, bool& forLoopConstDoesNotHaveInitializer);
@@ -1224,6 +1246,7 @@ private:
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, SourceParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType);
     
     template <class TreeBuilder> NEVER_INLINE int parseFunctionParameters(TreeBuilder&, SourceParseMode, ParserFunctionInfo<TreeBuilder>&);
+    template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::FormalParameterList createGeneratorParameters(TreeBuilder&);
 
     template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements, ParserClassInfo<TreeBuilder>&);
 
@@ -1349,6 +1372,7 @@ private:
     RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;
     bool m_parsingBuiltin;
+    SuperBinding m_superBinding;
     ConstructorKind m_defaultConstructorKind;
     ThisTDZMode m_thisTDZMode;
     VariableEnvironment m_varDeclarations;
@@ -1472,7 +1496,7 @@ template <class ParsedNode>
 std::unique_ptr<ParsedNode> parse(
     VM* vm, const SourceCode& source,
     const Identifier& name, JSParserBuiltinMode builtinMode,
-    JSParserStrictMode strictMode, SourceParseMode parseMode,
+    JSParserStrictMode strictMode, SourceParseMode parseMode, SuperBinding superBinding,
     ParserError& error, JSTextPosition* positionBeforeLastNewline = nullptr,
     ConstructorKind defaultConstructorKind = ConstructorKind::None,
     ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded)
@@ -1481,7 +1505,7 @@ std::unique_ptr<ParsedNode> parse(
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, parseMode, defaultConstructorKind, thisTDZMode);
+        Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, parseMode, superBinding, defaultConstructorKind, thisTDZMode);
         std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, name, parseMode);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
@@ -1494,7 +1518,7 @@ std::unique_ptr<ParsedNode> parse(
         return result;
     }
     ASSERT_WITH_MESSAGE(defaultConstructorKind == ConstructorKind::None, "BuiltinExecutables::createDefaultConstructor should always use a 8-bit string");
-    Parser<Lexer<UChar>> parser(vm, source, builtinMode, strictMode, parseMode, defaultConstructorKind, thisTDZMode);
+    Parser<Lexer<UChar>> parser(vm, source, builtinMode, strictMode, parseMode, superBinding, defaultConstructorKind, thisTDZMode);
     std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, name, parseMode);
     if (positionBeforeLastNewline)
         *positionBeforeLastNewline = parser.positionBeforeLastNewline();

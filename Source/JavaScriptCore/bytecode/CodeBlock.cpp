@@ -585,7 +585,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         ": %lu m_instructions; %lu bytes; %d parameter(s); %d callee register(s); %d variable(s)",
         static_cast<unsigned long>(instructions().size()),
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
-        m_numParameters, m_numCalleeRegisters, m_numVars);
+        m_numParameters, m_numCalleeLocals, m_numVars);
     if (needsActivation() && codeType() == FunctionCode)
         out.printf("; lexical environment in r%d", activationRegister().offset());
     out.printf("\n");
@@ -678,6 +678,18 @@ void CodeBlock::dumpBytecode(PrintStream& out)
             out.printf("      }\n");
             ++i;
         } while (i < m_rareData->m_stringSwitchJumpTables.size());
+    }
+
+    if (m_rareData && !m_rareData->m_liveCalleeLocalsAtYield.isEmpty()) {
+        out.printf("\nLive Callee Locals:\n");
+        unsigned i = 0;
+        do {
+            const FastBitVector& liveness = m_rareData->m_liveCalleeLocalsAtYield[i];
+            out.printf("  live%1u = ", i);
+            liveness.dump(out);
+            out.printf("\n");
+            ++i;
+        } while (i < m_rareData->m_liveCalleeLocalsAtYield.size());
     }
 
     out.printf("\n");
@@ -1303,6 +1315,14 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
             break;
         }
+        case op_new_generator_func: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int f0 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "new_generator_func");
+            out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
+            break;
+        }
         case op_new_arrow_func_exp: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1317,6 +1337,14 @@ void CodeBlock::dumpBytecode(
             int r1 = (++it)->u.operand;
             int f0 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "new_func_exp");
+            out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
+            break;
+        }
+        case op_new_generator_func_exp: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int f0 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "new_generator_func_exp");
             out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
             break;
         }
@@ -1508,6 +1536,27 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %d", debugHookName(debugHookID), hasBreakpointFlag);
             break;
         }
+        case op_save: {
+            int generator = (++it)->u.operand;
+            unsigned liveCalleeLocalsIndex = (++it)->u.unsignedValue;
+            int offset = (++it)->u.operand;
+            const FastBitVector& liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
+            printLocationAndOp(out, exec, location, it, "save");
+            out.printf("%s, ", registerName(generator).data());
+            liveness.dump(out);
+            out.printf("(@live%1u), %d(->%d)", liveCalleeLocalsIndex, offset, location + offset);
+            break;
+        }
+        case op_resume: {
+            int generator = (++it)->u.operand;
+            unsigned liveCalleeLocalsIndex = (++it)->u.unsignedValue;
+            const FastBitVector& liveness = m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex];
+            printLocationAndOp(out, exec, location, it, "resume");
+            out.printf("%s, ", registerName(generator).data());
+            liveness.dump(out);
+            out.printf("(@live%1u)", liveCalleeLocalsIndex);
+            break;
+        }
         case op_assert: {
             int condition = (++it)->u.operand;
             int line = (++it)->u.operand;
@@ -1672,7 +1721,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     : JSCell(*vm, structure)
     , m_globalObject(other.m_globalObject)
     , m_heap(other.m_heap)
-    , m_numCalleeRegisters(other.m_numCalleeRegisters)
+    , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
     , m_isConstructor(other.m_isConstructor)
     , m_shouldAlwaysBeInlined(true)
@@ -1729,6 +1778,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
         m_rareData->m_constantBuffers = other.m_rareData->m_constantBuffers;
         m_rareData->m_switchJumpTables = other.m_rareData->m_switchJumpTables;
         m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
+        m_rareData->m_liveCalleeLocalsAtYield = other.m_rareData->m_liveCalleeLocalsAtYield;
     }
     
     m_heap->m_codeBlocks.add(this);
@@ -1739,7 +1789,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     : JSCell(*vm, structure)
     , m_globalObject(scope->globalObject()->vm(), this, scope->globalObject())
     , m_heap(&m_globalObject->vm().heap)
-    , m_numCalleeRegisters(unlinkedCodeBlock->m_numCalleeRegisters)
+    , m_numCalleeLocals(unlinkedCodeBlock->m_numCalleeLocals)
     , m_numVars(unlinkedCodeBlock->m_numVars)
     , m_isConstructor(unlinkedCodeBlock->isConstructor())
     , m_shouldAlwaysBeInlined(true)
@@ -1908,6 +1958,9 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     // Bookkeep the strongly referenced module environments.
     HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
+
+    // Bookkeep the merge point bytecode offsets.
+    Vector<size_t> mergePointBytecodeOffsets;
 
     RefCountedArray<Instruction> instructions(instructionCount);
 
@@ -2197,6 +2250,15 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             break;
         }
 
+        case op_save: {
+            unsigned liveCalleeLocalsIndex = pc[2].u.index;
+            int offset = pc[3].u.operand;
+            if (liveCalleeLocalsIndex >= mergePointBytecodeOffsets.size())
+                mergePointBytecodeOffsets.resize(liveCalleeLocalsIndex + 1);
+            mergePointBytecodeOffsets[liveCalleeLocalsIndex] = i + offset;
+            break;
+        }
+
         default:
             break;
         }
@@ -2207,6 +2269,20 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         insertBasicBlockBoundariesForControlFlowProfiler(instructions);
 
     m_instructions = WTF::move(instructions);
+
+    // Perform bytecode liveness analysis to determine which locals are live and should be resumed when executing op_resume.
+    if (unlinkedCodeBlock->parseMode() == SourceParseMode::GeneratorBodyMode) {
+        if (size_t count = mergePointBytecodeOffsets.size()) {
+            createRareDataIfNecessary();
+            BytecodeLivenessAnalysis liveness(this);
+            m_rareData->m_liveCalleeLocalsAtYield.grow(count);
+            size_t liveCalleeLocalsIndex = 0;
+            for (size_t bytecodeOffset : mergePointBytecodeOffsets) {
+                m_rareData->m_liveCalleeLocalsAtYield[liveCalleeLocalsIndex] = liveness.getLivenessInfoAtBytecodeOffset(bytecodeOffset);
+                ++liveCalleeLocalsIndex;
+            }
+        }
+    }
 
     // Set optimization thresholds only after m_instructions is initialized, since these
     // rely on the instruction count (and are in theory permitted to also inspect the
@@ -2231,7 +2307,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerE
     : JSCell(*vm, structure)
     , m_globalObject(globalObject->vm(), this, globalObject)
     , m_heap(&m_globalObject->vm().heap)
-    , m_numCalleeRegisters(0)
+    , m_numCalleeLocals(0)
     , m_numVars(0)
     , m_isConstructor(false)
     , m_shouldAlwaysBeInlined(false)
@@ -3058,6 +3134,7 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         if (m_rareData) {
             m_rareData->m_switchJumpTables.shrinkToFit();
             m_rareData->m_stringSwitchJumpTables.shrinkToFit();
+            m_rareData->m_liveCalleeLocalsAtYield.shrinkToFit();
         }
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 }
@@ -4029,7 +4106,7 @@ void CodeBlock::validate()
     
     FastBitVector liveAtHead = liveness.getLivenessInfoAtBytecodeOffset(0);
     
-    if (liveAtHead.numBits() != static_cast<size_t>(m_numCalleeRegisters)) {
+    if (liveAtHead.numBits() != static_cast<size_t>(m_numCalleeLocals)) {
         beginValidationDidFail();
         dataLog("    Wrong number of bits in result!\n");
         dataLog("    Result: ", liveAtHead, "\n");
@@ -4037,7 +4114,7 @@ void CodeBlock::validate()
         endValidationDidFail();
     }
     
-    for (unsigned i = m_numCalleeRegisters; i--;) {
+    for (unsigned i = m_numCalleeLocals; i--;) {
         VirtualRegister reg = virtualRegisterForLocal(i);
         
         if (liveAtHead.get(i)) {

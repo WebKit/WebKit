@@ -32,7 +32,7 @@ namespace JSC {
 
 template<typename Functor>
 void computeUsesForBytecodeOffset(
-    CodeBlock* codeBlock, unsigned bytecodeOffset, const Functor& functor)
+    CodeBlock* codeBlock, BytecodeBasicBlock* block, unsigned bytecodeOffset, const Functor& functor)
 {
     Interpreter* interpreter = codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
@@ -71,7 +71,8 @@ void computeUsesForBytecodeOffset(
     case op_jeq_null:
     case op_jneq_null:
     case op_dec:
-    case op_inc: {
+    case op_inc:
+    case op_resume: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
@@ -125,6 +126,7 @@ void computeUsesForBytecodeOffset(
     case op_get_property_enumerator:
     case op_get_enumerable_length:
     case op_new_func_exp:
+    case op_new_generator_func_exp:
     case op_new_arrow_func_exp:
     case op_to_index_string:
     case op_create_lexical_environment:
@@ -153,6 +155,7 @@ void computeUsesForBytecodeOffset(
     case op_del_by_id:
     case op_unsigned:
     case op_new_func:
+    case op_new_generator_func:
     case op_get_parent_scope:
     case op_create_scoped_arguments:
     case op_get_from_arguments: {
@@ -234,6 +237,22 @@ void computeUsesForBytecodeOffset(
             functor(codeBlock, instruction, opcodeID, lastArg + i);
         return;
     }
+    case op_save: {
+        functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
+        unsigned mergePointBytecodeOffset = bytecodeOffset + instruction[3].u.operand;
+        BytecodeBasicBlock* mergePointBlock = nullptr;
+        for (BytecodeBasicBlock* successor : block->successors()) {
+            if (successor->leaderBytecodeOffset() == mergePointBytecodeOffset) {
+                mergePointBlock = successor;
+                break;
+            }
+        }
+        ASSERT(mergePointBlock);
+        mergePointBlock->in().forEachSetBit([&](unsigned local) {
+            functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(local).offset());
+        });
+        return;
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -241,7 +260,7 @@ void computeUsesForBytecodeOffset(
 }
 
 template<typename Functor>
-void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset, const Functor& functor)
+void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* block, unsigned bytecodeOffset, const Functor& functor)
 {
     Interpreter* interpreter = codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
@@ -256,6 +275,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_profile_did_call:
     case op_throw:
     case op_throw_static_error:
+    case op_save:
     case op_assert:
     case op_debug:
     case op_ret:
@@ -316,6 +336,8 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_new_regexp:
     case op_new_func:
     case op_new_func_exp:
+    case op_new_generator_func:
+    case op_new_generator_func_exp:
     case op_new_arrow_func_exp:
     case op_call_varargs:
     case op_tail_call_varargs:
@@ -392,7 +414,15 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
         for (unsigned i = codeBlock->m_numVars; i--;)
             functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(i).offset());
         return;
-    } }
+    }
+    case op_resume: {
+        RELEASE_ASSERT(block->successors().size() == 1);
+        block->successors()[0]->in().forEachSetBit([&](unsigned local) {
+            functor(codeBlock, instruction, opcodeID, virtualRegisterForLocal(local).offset());
+        });
+        return;
+    }
+    }
 }
 
 } // namespace JSC

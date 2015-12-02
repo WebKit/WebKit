@@ -69,6 +69,7 @@
 #include "VirtualRegister.h"
 #include "Watchpoint.h"
 #include <wtf/Bag.h>
+#include <wtf/FastBitVector.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
@@ -140,6 +141,8 @@ public:
 
     int numParameters() const { return m_numParameters; }
     void setNumParameters(int newValue);
+
+    int numCalleeLocals() const { return m_numCalleeLocals; }
 
     int* addressOfNumParameters() { return &m_numParameters; }
     static ptrdiff_t offsetOfNumParameters() { return OBJECT_OFFSETOF(CodeBlock, m_numParameters); }
@@ -654,6 +657,18 @@ public:
     StringJumpTable& addStringSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_stringSwitchJumpTables.append(StringJumpTable()); return m_rareData->m_stringSwitchJumpTables.last(); }
     StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
+    // Live callee registers at yield points.
+    const FastBitVector& liveCalleeLocalsAtYield(unsigned index) const
+    {
+        RELEASE_ASSERT(m_rareData);
+        return m_rareData->m_liveCalleeLocalsAtYield[index];
+    }
+    FastBitVector& liveCalleeLocalsAtYield(unsigned index)
+    {
+        RELEASE_ASSERT(m_rareData);
+        return m_rareData->m_liveCalleeLocalsAtYield[index];
+    }
+
     EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
     enum ShrinkMode {
@@ -855,7 +870,7 @@ public:
     // FIXME: Make these remaining members private.
 
     int m_numLocalRegistersForCalleeSaves;
-    int m_numCalleeRegisters;
+    int m_numCalleeLocals;
     int m_numVars;
     bool m_isConstructor : 1;
     
@@ -899,6 +914,8 @@ public:
         // Jump Tables
         Vector<SimpleJumpTable> m_switchJumpTables;
         Vector<StringJumpTable> m_stringSwitchJumpTables;
+
+        Vector<FastBitVector> m_liveCalleeLocalsAtYield;
 
         EvalCodeCache m_evalCodeCache;
     };

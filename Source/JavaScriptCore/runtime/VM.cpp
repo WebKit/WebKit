@@ -45,6 +45,7 @@
 #include "FTLThunks.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
+#include "GeneratorFrame.h"
 #include "GetterSetter.h"
 #include "Heap.h"
 #include "HeapIterationScope.h"
@@ -244,6 +245,7 @@ VM::VM(VMType vmType, HeapType heapType)
     inferredTypeStructure.set(*this, InferredType::createStructure(*this, 0, jsNull()));
     inferredTypeTableStructure.set(*this, InferredTypeTable::createStructure(*this, 0, jsNull()));
     functionRareDataStructure.set(*this, FunctionRareData::createStructure(*this, 0, jsNull()));
+    generatorFrameStructure.set(*this, GeneratorFrame::createStructure(*this, 0, jsNull()));
     exceptionStructure.set(*this, Exception::createStructure(*this, 0, jsNull()));
     promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
     internalPromiseDeferredStructure.set(*this, JSInternalPromiseDeferred::createStructure(*this, 0, jsNull()));

@@ -34,6 +34,7 @@
 #include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "ExceptionFuzz.h"
+#include "GeneratorFrame.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
@@ -222,11 +223,6 @@ SLOW_PATH_DECL(slow_path_create_this)
 {
     BEGIN();
     JSFunction* constructor = jsCast<JSFunction*>(OP(2).jsValue().asCell());
-    
-#if !ASSERT_DISABLED
-    ConstructData constructData;
-    ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
-#endif
 
     auto& cacheWriteBarrier = pc[4].u.jsCell;
     if (!cacheWriteBarrier)
@@ -641,6 +637,38 @@ SLOW_PATH_DECL(slow_path_assert)
 {
     BEGIN();
     ASSERT_WITH_MESSAGE(OP(1).jsValue().asBoolean(), "JS assertion failed at line %d in:\n%s\n", pc[2].u.operand, exec->codeBlock()->sourceCodeForTools().data());
+    END();
+}
+
+SLOW_PATH_DECL(slow_path_save)
+{
+    // Only save variables and temporary registers. The scope registers are included in them.
+    // But parameters are not included. Because the generator implementation replaces the values of parameters on each generator.next() call.
+    BEGIN();
+    JSValue generator = OP(1).jsValue();
+    GeneratorFrame* frame = nullptr;
+    JSValue value = generator.get(exec, exec->propertyNames().generatorFramePrivateName);
+    if (!value.isNull())
+        frame = jsCast<GeneratorFrame*>(value);
+    else {
+        // FIXME: Once JSGenerator specialized object is introduced, this GeneratorFrame should be embeded into it to avoid allocations.
+        // https://bugs.webkit.org/show_bug.cgi?id=151545
+        frame = GeneratorFrame::create(exec->vm(),  exec->codeBlock()->numCalleeLocals());
+        PutPropertySlot slot(generator, true, PutPropertySlot::PutById);
+        asObject(generator)->methodTable(exec->vm())->put(asObject(generator), exec, exec->propertyNames().generatorFramePrivateName, frame, slot);
+    }
+    unsigned liveCalleeLocalsIndex = pc[2].u.unsignedValue;
+    frame->save(exec, exec->codeBlock()->liveCalleeLocalsAtYield(liveCalleeLocalsIndex));
+    END();
+}
+
+SLOW_PATH_DECL(slow_path_resume)
+{
+    BEGIN();
+    JSValue generator = OP(1).jsValue();
+    GeneratorFrame* frame = jsCast<GeneratorFrame*>(generator.get(exec, exec->propertyNames().generatorFramePrivateName));
+    unsigned liveCalleeLocalsIndex = pc[2].u.unsignedValue;
+    frame->resume(exec, exec->codeBlock()->liveCalleeLocalsAtYield(liveCalleeLocalsIndex));
     END();
 }
 
