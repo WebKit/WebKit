@@ -930,7 +930,7 @@ static NSEventPhase nsEventPhaseFromCGEventPhase(int phase)
 
 void EventSenderProxy::swipeGestureWithWheelAndMomentumPhases(int x, int y, int phase, int momentum)
 {
-    EventSenderSyntheticEvent *event = [[EventSenderSyntheticEvent alloc] init];
+    RetainPtr<EventSenderSyntheticEvent> event = adoptNS([[EventSenderSyntheticEvent alloc] init]);
 
     // "mayBegin" a swipe is actually a scroll wheel event.
     event->_eventSender_type = (phase == 128) ? NSScrollWheel : NSEventTypeGesture;
@@ -950,7 +950,7 @@ void EventSenderProxy::swipeGestureWithWheelAndMomentumPhases(int x, int y, int 
     NSLog(@"Synthetic swipe gestures are not implemented for 32-bit WebKitTestRunner.");
 #endif
 
-    [NSApp sendEvent:event];
+    [NSApp sendEvent:event.get()];
 }
 
 } // namespace WTR

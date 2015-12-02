@@ -1,3 +1,14 @@
+2015-12-01  David Kilzer  <ddkilzer@apple.com>
+
+        EventSenderProxy::swipeGestureWithWheelAndMomentumPhases() leaks an EventSenderSyntheticEvent
+        <http://webkit.org/b/151726>
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::swipeGestureWithWheelAndMomentumPhases):
+        Deploy RetainPtr<EventSenderSyntheticEvent> to fix leak.
+
 2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Give String and AtomicString an existingHash() function
