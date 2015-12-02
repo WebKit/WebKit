@@ -2494,12 +2494,12 @@ PlatformLayer* CanvasRenderingContext2D::platformLayer() const
 }
 #endif
 
-bool CanvasRenderingContext2D::webkitImageSmoothingEnabled() const
+bool CanvasRenderingContext2D::imageSmoothingEnabled() const
 {
     return state().imageSmoothingEnabled;
 }
 
-void CanvasRenderingContext2D::setWebkitImageSmoothingEnabled(bool enabled)
+void CanvasRenderingContext2D::setImageSmoothingEnabled(bool enabled)
 {
     if (enabled == state().imageSmoothingEnabled)
         return;
