@@ -21,7 +21,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     for (var i = 0; i < menuitems.length; ++i) {
         menuitems[i].addEventListener('focus', function (e) {
-            var targetMenu = findParentMenu(findParentMenu(e.target, menuClass), menuClass),
+            var targetMenu = findParentMenu(e.target, menuClass),
+                targetMenuClass = null;
+                
+            if ( targetMenu != undefined )
                 targetMenuClass = targetMenu.className;
 
             for (var m = 0; m < menus.length; ++m) {

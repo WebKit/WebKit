@@ -1,5 +1,11 @@
 2015-12-01  Jonathan Davis  <jond@apple.com>
 
+        Improved accessibility handling for the small drop-down menu.
+
+        * wp-content/themes/webkit/scripts/global.js:
+
+2015-12-01  Jonathan Davis  <jond@apple.com>
+
         Fixed font rendering. Fixed SVG rendering for Firefox.
 
         * wp-content/themes/webkit/images/icons.svg:
