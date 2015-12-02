@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
           text run at (0,72) width 33: "other"
         RenderBR {BR} at (32,86) size 1x0
 layer at (100,100) size 106x106
-  RenderBlock (positioned) {DIV} at (100,100) size 106x106 [bgcolor=#008000] [border: (3px solid #000000)]
+  RenderBlock (positioned) {DIV} at (100,100) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]
 layer at (100,250) size 106x106
-  RenderBlock (positioned) {DIV} at (100,250) size 106x106 [bgcolor=#008000] [border: (3px solid #000000)]
+  RenderBlock (positioned) {DIV} at (100,250) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]
 layer at (100,400) size 106x106
-  RenderBlock (positioned) {DIV} at (100,400) size 106x106 [bgcolor=#008000] [border: (3px solid #000000)]
+  RenderBlock (positioned) {DIV} at (100,400) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]

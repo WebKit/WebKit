@@ -1,3 +1,17 @@
+2015-12-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r192955.
+        https://bugs.webkit.org/show_bug.cgi?id=151776
+
+        A large number of the tests added with this change are failing
+        on Windows (Requested by ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "[css border] border-image doesn't honor border-style"
+        https://bugs.webkit.org/show_bug.cgi?id=99922
+        http://trac.webkit.org/changeset/192955
+
 2015-12-02  Yoav Weiss  <yoav@yoav.ws>
 
         Fix preloader issue with srcdoc documents.
