@@ -31,6 +31,7 @@
 #include "DFGNodeType.h"
 #include "FTLInlineCacheDescriptor.h"
 #include "GPRInfo.h"
+#include "JITAddGenerator.h"
 #include "JITSubGenerator.h"
 #include "ScratchRegisterAllocator.h"
 
@@ -166,6 +167,43 @@ void generateArithSubFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     FPRReg scratchFPR = InvalidFPRReg;
 
     JITSubGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
+        JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
+
+    auto numberOfBytesUsedToPreserveReusedRegisters =
+    allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+    context.initializeRegisters(jit);
+    gen.generateFastPath(jit);
+
+    ASSERT(gen.didEmitFastPath());
+    gen.endJumpList().link(&jit);
+    context.restoreRegisters(jit);
+    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
+        ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+    done = jit.jump();
+
+    gen.slowPathJumpList().link(&jit);
+    context.restoreRegisters(jit);
+    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
+        ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+    slowPathStart = jit.jump();
+}
+
+void generateValueAddFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
+    GPRReg result, GPRReg left, GPRReg right, RegisterSet usedRegisters,
+    CCallHelpers::Jump& done, CCallHelpers::Jump& slowPathStart)
+{
+    ASSERT(ic.nodeType() == ValueAdd);
+    ScratchRegisterAllocator allocator(usedRegisters);
+
+    BinarySnippetRegisterContext context(allocator, result, left, right);
+
+    GPRReg scratchGPR = allocator.allocateScratchGPR();
+    FPRReg leftFPR = allocator.allocateScratchFPR();
+    FPRReg rightFPR = allocator.allocateScratchFPR();
+    FPRReg scratchFPR = InvalidFPRReg;
+
+    JITAddGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
         JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
 
     auto numberOfBytesUsedToPreserveReusedRegisters =

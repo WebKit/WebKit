@@ -47,6 +47,18 @@ size_t ArithSubDescriptor::icSize()
     return sizeOfArithSub();
 }
 
+ValueAddDescriptor::ValueAddDescriptor(unsigned stackmapID, CodeOrigin codeOrigin,
+    const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+    : BinaryOpDescriptor(DFG::ValueAdd, stackmapID, codeOrigin, icSize(),
+        "ValueAdd", "ValueAdd IC fast path", DFG::operationValueAdd, leftOperand, rightOperand)
+{
+}
+
+size_t ValueAddDescriptor::icSize()
+{
+    return sizeOfValueAdd();
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

@@ -234,7 +234,8 @@ public:
                     }
                     case ArithSub:
                     case GetById:
-                    case GetByIdFlush: {
+                    case GetByIdFlush:
+                    case ValueAdd: {
                         // We may have to flush one thing for GetByIds/ArithSubs when the base and result or the left/right and the result
                         // are assigned the same register. For a more comprehensive overview, look at the comment in FTLCompile.cpp
                         if (node->op() == ArithSub && node->binaryUseKind() != UntypedUse)
@@ -243,8 +244,8 @@ public:
                         HandlerInfo* exceptionHandler;
                         bool willCatchException = m_graph.willCatchExceptionInMachineFrame(node->origin.forExit, opCatchOrigin, exceptionHandler);
                         if (willCatchException) {
-                            static const size_t numberOfGetByIdOrSubSpills = 1;
-                            maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, numberOfGetByIdOrSubSpills);
+                            static const size_t numberOfGetByIdOrBinaryOpSpills = 1;
+                            maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, numberOfGetByIdOrBinaryOpSpills);
                         }
                         break;
                     }
@@ -1484,15 +1485,56 @@ private:
     
     void compileValueAdd()
     {
-        J_JITOperation_EJJ operation;
-        if (!(provenType(m_node->child1()) & SpecFullNumber)
-            && !(provenType(m_node->child2()) & SpecFullNumber))
-            operation = operationValueAddNotNumber;
-        else
-            operation = operationValueAdd;
-        setJSValue(vmCall(
-            m_out.int64, m_out.operation(operation), m_callFrame,
-            lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
+        auto leftChild = m_node->child1();
+        auto rightChild = m_node->child2();
+
+        if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
+            setJSValue(vmCall(m_out.int64, m_out.operation(operationValueAddNotNumber), m_callFrame,
+                lowJSValue(leftChild), lowJSValue(rightChild)));
+            return;
+        }
+
+        unsigned stackmapID = m_stackmapIDs++;
+
+        if (Options::verboseCompilation())
+            dataLog("    Emitting ValueAdd patchpoint with stackmap #", stackmapID, "\n");
+
+#if FTL_USES_B3
+        CRASH();
+#else
+        LValue left = lowJSValue(leftChild);
+        LValue right = lowJSValue(rightChild);
+
+        SnippetOperand leftOperand(abstractValue(leftChild).resultType());
+        SnippetOperand rightOperand(abstractValue(rightChild).resultType());
+
+        // The DFG does not always fold the sum of 2 constant int operands together.
+        // Because the snippet does not support both operands being constant, if the left
+        // operand is already a constant, we'll just pretend the right operand is not.
+        if (leftChild->isInt32Constant())
+            leftOperand.setConstInt32(leftChild->asInt32());
+        if (!leftOperand.isConst() && rightChild->isInt32Constant())
+            rightOperand.setConstInt32(rightChild->asInt32());
+
+        // Arguments: id, bytes, target, numArgs, args...
+        StackmapArgumentList arguments;
+        arguments.append(m_out.constInt64(stackmapID));
+        arguments.append(m_out.constInt32(ValueAddDescriptor::icSize()));
+        arguments.append(constNull(m_out.ref8));
+        arguments.append(m_out.constInt32(2));
+        arguments.append(left);
+        arguments.append(right);
+
+        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
+            ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
+
+        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
+        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
+
+        m_ftlState.binaryOps.append(ValueAddDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
+
+        setJSValue(call);
+#endif
     }
     
     void compileStrCat()

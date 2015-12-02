@@ -171,6 +171,12 @@ public:
     static size_t icSize();
 };
 
+class ValueAddDescriptor : public BinaryOpDescriptor {
+public:
+    ValueAddDescriptor(unsigned stackmapID, CodeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand);
+    static size_t icSize();
+};
+
 // You can create a lazy slow path call in lowerDFGToLLVM by doing:
 // m_ftlState.lazySlowPaths.append(
 //     LazySlowPathDescriptor(

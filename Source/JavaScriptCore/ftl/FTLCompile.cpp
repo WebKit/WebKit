@@ -340,6 +340,9 @@ static void generateBinaryOpICFastPath(
         case ArithSub:
             generateArithSubFastPath(ic, fastPathJIT, result, left, right, usedRegisters, done, slowPathStart);
             break;
+        case ValueAdd:
+            generateValueAddFastPath(ic, fastPathJIT, result, left, right, usedRegisters, done, slowPathStart);
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }

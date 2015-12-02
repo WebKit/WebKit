@@ -1,5 +1,42 @@
 2015-12-02  Mark Lam  <mark.lam@apple.com>
 
+        Use the JITAddGenerator snippet in the FTL.
+        https://bugs.webkit.org/show_bug.cgi?id=151519
+
+        Reviewed by Geoffrey Garen.
+
+        One detail about how we choosing to handle operands to the binary snippets that
+        may be constant: the slow path call to a C++ function still needs the constant
+        operand loaded in a register.  To simplify things, we're choosing to always tell
+        LLVM to load the operands into registers even if they may be constant.  However,
+        even though a constant operand is preloaded in a register, the snippet generator
+        will not be made aware of it.  It will continue to load the constant as an
+        immediate.
+
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLCompileBinaryOp.cpp:
+        (JSC::FTL::generateArithSubFastPath):
+        (JSC::FTL::generateValueAddFastPath):
+        - generateValueAddFastPath() currently is an exact copy of generateArithSubFastPath()
+          except that it uses JITAddGenerator instead of JITSubGenerator.  When we add
+          support for JITMulGenerator later, the code will start to vary.  We'll refactor
+          these functions then when we have more insight into what needs to vary between
+          the implementations.
+
+        * ftl/FTLCompileBinaryOp.h:
+        * ftl/FTLInlineCacheDescriptor.h:
+        * ftl/FTLInlineCacheDescriptorInlines.h:
+        (JSC::FTL::ValueAddDescriptor::ValueAddDescriptor):
+        (JSC::FTL::ValueAddDescriptor::icSize):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfValueAdd):
+        * ftl/FTLInlineCacheSize.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileValueAdd):
+
+2015-12-02  Mark Lam  <mark.lam@apple.com>
+
         Teach DFG that ArithSub can now clobber the heap (and other things).
         https://bugs.webkit.org/show_bug.cgi?id=151733
 
