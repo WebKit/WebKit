@@ -1,5 +1,15 @@
 2015-12-02  Mark Lam  <mark.lam@apple.com>
 
+        Removed unnecessary #if USE(JSVALUE64).
+        https://bugs.webkit.org/show_bug.cgi?id=151733
+
+        Not reviewed.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+2015-12-02  Mark Lam  <mark.lam@apple.com>
+
         Use the JITAddGenerator snippet in the FTL.
         https://bugs.webkit.org/show_bug.cgi?id=151519
 

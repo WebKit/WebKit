@@ -259,9 +259,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithSub:
         switch (node->binaryUseKind()) {
         case Int32Use:
-#if USE(JSVALUE64)
         case Int52RepUse:
-#endif
         case DoubleRepUse:
             def(PureValue(node, node->arithMode()));
             return;
