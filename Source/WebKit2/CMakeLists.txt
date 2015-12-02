@@ -444,7 +444,6 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKNotificationPermissionRequest.cpp
     UIProcess/API/C/WKOpenPanelParameters.cpp
     UIProcess/API/C/WKOpenPanelResultListener.cpp
-    UIProcess/API/C/WKOriginDataManager.cpp
     UIProcess/API/C/WKPage.cpp
     UIProcess/API/C/WKPageConfigurationRef.cpp
     UIProcess/API/C/WKPageGroup.cpp

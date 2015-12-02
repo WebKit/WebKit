@@ -1,3 +1,9 @@
+2015-12-01  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed, fix build after r192931.
+
+        * CMakeLists.txt: Remove the WKOriginDataManager in CMakeLists.txt.
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature
