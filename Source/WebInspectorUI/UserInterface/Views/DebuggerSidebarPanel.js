@@ -113,7 +113,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this.filterBar.addFilterBarButton("debugger-show-resources-with-issues-only", showResourcesWithIssuesOnlyFilterFunction, true, WebInspector.UIString("Show only resources with issues."), WebInspector.UIString("Show resources with and without issues."), "Images/Errors.svg", 15, 15);
 
         this._breakpointsContentTreeOutline = this.contentTreeOutline;
-        this._breakpointsContentTreeOutline.onselect = this._treeElementSelected.bind(this);
+        this._breakpointsContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this._breakpointsContentTreeOutline.ondelete = this._breakpointTreeOutlineDeleteTreeElement.bind(this);
         this._breakpointsContentTreeOutline.oncontextmenu = this._breakpointTreeOutlineContextMenuTreeElement.bind(this);
 
@@ -130,7 +130,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this.contentElement.appendChild(breakpointsSection.element);
 
         this._callStackContentTreeOutline = this.createContentTreeOutline(true, true);
-        this._callStackContentTreeOutline.onselect = this._treeElementSelected.bind(this);
+        this._callStackContentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         this._callStackRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Call Frames"));
         this._callStackRow.showEmptyMessage();
@@ -598,7 +598,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         contextMenu.appendItem(WebInspector.UIString("Delete Breakpoints"), removeAllResourceBreakpoints);
     }
 
-    _treeElementSelected(treeElement, selectedByUser)
+    _treeSelectionDidChange(event)
     {
         function deselectCallStackContentTreeElements()
         {
@@ -623,6 +623,10 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             if (selectedTreeElement)
                 selectedTreeElement.deselect();
         }
+
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
             deselectCallStackContentTreeElements.call(this);
@@ -731,7 +735,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
             if (pauseData && pauseData.breakpointId) {
                 var breakpoint = WebInspector.debuggerManager.breakpointForIdentifier(pauseData.breakpointId);
                 var breakpointTreeOutline = this.createContentTreeOutline(true, true);
-                breakpointTreeOutline.onselect = this._treeElementSelected.bind(this);
+                breakpointTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+
                 var breakpointTreeElement = new WebInspector.BreakpointTreeElement(breakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WebInspector.UIString("Triggered Breakpoint"));
                 var breakpointDetailsSection = new WebInspector.DetailsSectionRow;
                 breakpointTreeOutline.appendChild(breakpointTreeElement);

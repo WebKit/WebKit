@@ -38,7 +38,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         this.contentElement.appendChild(listElement);
 
         this._commaSeparatedKeywords = new WebInspector.TreeOutline(listElement);
-        this._commaSeparatedKeywords.onselect = this._treeElementSelected.bind(this);
+        this._commaSeparatedKeywords.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         let controlContainer = document.createElement("div");
         controlContainer.classList.add("visual-style-comma-separated-keyword-controls");
@@ -185,10 +185,14 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
             this._removeSelectedCommaSeparatedKeyword();
     }
 
-    _treeElementSelected(item, selectedByUser)
+    _treeSelectionDidChange(event)
     {
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
+
         this._removeEmptyCommaSeparatedKeywords();
-        this.dispatchEventToListeners(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, {text: item.mainTitle});
+        this.dispatchEventToListeners(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, {text: treeElement.mainTitle});
     }
 
     _treeElementIsEmpty(item)

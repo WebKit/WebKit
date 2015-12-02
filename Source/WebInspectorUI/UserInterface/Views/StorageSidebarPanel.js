@@ -86,7 +86,7 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
         WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestAdded, this._frameManifestAdded, this);
         WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestRemoved, this._frameManifestRemoved, this);
 
-        this.contentTreeOutline.onselect = this._treeElementSelected.bind(this);
+        this.contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         for (var domStorageObject of WebInspector.storageManager.domStorageObjects)
             this._addDOMStorageObject(domStorageObject);
@@ -161,8 +161,12 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     // Private
 
-    _treeElementSelected(treeElement, selectedByUser)
+    _treeSelectionDidChange(event)
     {
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
+
         if (treeElement instanceof WebInspector.FolderTreeElement || treeElement instanceof WebInspector.DatabaseHostTreeElement ||
             treeElement instanceof WebInspector.IndexedDatabaseHostTreeElement || treeElement instanceof WebInspector.IndexedDatabaseTreeElement
             || treeElement instanceof WebInspector.ApplicationCacheManifestTreeElement)

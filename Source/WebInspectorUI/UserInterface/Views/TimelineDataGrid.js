@@ -453,7 +453,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
             var contentElement = document.createElement("ol");
             contentElement.classList.add("timeline-data-grid-tree-outline");
             this._popoverCallStackTreeOutline = new WebInspector.TreeOutline(contentElement);
-            this._popoverCallStackTreeOutline.onselect = this._popoverCallStackTreeElementSelected.bind(this);
+            this._popoverCallStackTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._popoverCallStackTreeSelectionDidChange, this);
         } else
             this._popoverCallStackTreeOutline.removeChildren();
 
@@ -469,8 +469,12 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         return content;
     }
 
-    _popoverCallStackTreeElementSelected(treeElement, selectedByUser)
+    _popoverCallStackTreeSelectionDidChange(event)
     {
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
+
         this._popover.dismiss();
 
         console.assert(treeElement instanceof WebInspector.CallFrameTreeElement, "TreeElements in TimelineDataGrid popover should always be CallFrameTreeElements");

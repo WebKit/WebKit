@@ -49,49 +49,11 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
         this._treeOutline.element.addEventListener("focus", this._treeOutlineGainedFocus.bind(this));
         this._treeOutline.element.addEventListener("blur", this._treeOutlineLostFocus.bind(this));
 
-        // FIXME: This is a hack. TreeOutline should just dispatch events via WebInspector.Object.
-        var existingOnAdd = treeOutline.onadd;
-        var existingOnRemove = treeOutline.onremove;
-        var existingOnExpand = treeOutline.onexpand;
-        var existingOnCollapse = treeOutline.oncollapse;
-        var existingOnHidden = treeOutline.onhidden;
-        var existingOnSelect = treeOutline.onselect;
-
-        treeOutline.onadd = function(element) {
-            this._treeElementAdded(element);
-            if (existingOnAdd)
-                existingOnAdd.call(treeOutline, element);
-        }.bind(this);
-
-        treeOutline.onremove = function(element) {
-            this._treeElementRemoved(element);
-            if (existingOnRemove)
-                existingOnRemove.call(treeOutline, element);
-        }.bind(this);
-
-        treeOutline.onexpand = function(element) {
-            this._treeElementExpanded(element);
-            if (existingOnExpand)
-                existingOnExpand.call(treeOutline, element);
-        }.bind(this);
-
-        treeOutline.oncollapse = function(element) {
-            this._treeElementCollapsed(element);
-            if (existingOnCollapse)
-                existingOnCollapse.call(treeOutline, element);
-        }.bind(this);
-
-        treeOutline.onhidden = function(element, hidden) {
-            this._treeElementHiddenChanged(element, hidden);
-            if (existingOnHidden)
-                existingOnHidden.call(treeOutline, element, hidden);
-        }.bind(this);
-
-        treeOutline.onselect = function(element, selectedByUser) {
-            this._treeElementSelected(element, selectedByUser);
-            if (existingOnSelect)
-                existingOnSelect.call(treeOutline, element, selectedByUser);
-        }.bind(this);
+        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAdded, this);
+        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementRemoved, this._treeElementRemoved, this);
+        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange, this);
+        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementVisibilityDidChange, this._treeElementVisibilityDidChange, this);
+        treeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
     }
 
     // Public
@@ -243,27 +205,36 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
         this._dataGrid.element.classList.remove("force-focus");
     }
 
-    _treeElementSelected(treeElement, selectedByUser)
+    _treeSelectionDidChange(event)
     {
         if (!this._enabled)
             return;
 
-        var dataGridNode = treeElement.__dataGridNode;
+        let treeElement = event.data.selectedElement || event.data.deselectedElement;
+        console.assert(treeElement);
+        if (!treeElement)
+            return;
+
+        let dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
-        dataGridNode.select(true);
+        if (event.data.selectedElement)
+            dataGridNode.select();
+        else
+            dataGridNode.deselect();
     }
 
-    _treeElementAdded(treeElement)
+    _treeElementAdded(event)
     {
         if (!this._enabled)
             return;
 
-        var dataGridNode = this.dataGridNodeForTreeElement(treeElement);
+        let treeElement = event.data.element;
+        let dataGridNode = this.dataGridNodeForTreeElement(treeElement);
         console.assert(dataGridNode);
 
         var parentDataGridNode = treeElement.parent.__dataGridNode;
-        console.assert(dataGridNode);
+        console.assert(parentDataGridNode);
 
         var childIndex = treeElement.parent.children.indexOf(treeElement);
         console.assert(childIndex !== -1);
@@ -271,50 +242,43 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
         parentDataGridNode.insertChild(dataGridNode, childIndex);
     }
 
-    _treeElementRemoved(treeElement)
+    _treeElementRemoved(event)
     {
         if (!this._enabled)
             return;
 
-        var dataGridNode = treeElement.__dataGridNode;
+        let treeElement = event.data.element;
+        let dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
         if (dataGridNode.parent)
             dataGridNode.parent.removeChild(dataGridNode);
     }
 
-    _treeElementExpanded(treeElement)
+    _treeElementDisclosureDidChange(event)
     {
         if (!this._enabled)
             return;
 
-        var dataGridNode = treeElement.__dataGridNode;
+        let treeElement = event.data.element;
+        let dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
-        if (!dataGridNode.expanded)
+        if (treeElement.expanded)
             dataGridNode.expand();
-    }
-
-    _treeElementCollapsed(treeElement)
-    {
-        if (!this._enabled)
-            return;
-
-        var dataGridNode = treeElement.__dataGridNode;
-        console.assert(dataGridNode);
-
-        if (dataGridNode.expanded)
+        else
             dataGridNode.collapse();
     }
 
-    _treeElementHiddenChanged(treeElement, hidden)
+    _treeElementVisibilityDidChange(event)
     {
         if (!this._enabled)
             return;
 
-        var dataGridNode = treeElement.__dataGridNode;
+        let treeElement = event.data.element;
+        let dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
-        dataGridNode.element.classList.toggle("hidden", hidden);
+        dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
     }
 };

@@ -221,9 +221,8 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                 objectTree.appendExtraPropertyDescriptor(extraPropertyDescriptor);
 
             let treeOutline = objectTree.treeOutline;
-            treeOutline.onadd = this._objectTreeAddHandler.bind(this, detailsSectionIdentifier);
-            treeOutline.onexpand = this._objectTreeExpandHandler.bind(this, detailsSectionIdentifier);
-            treeOutline.oncollapse = this._objectTreeCollapseHandler.bind(this, detailsSectionIdentifier);
+            treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAdded.bind(this, detailsSectionIdentifier), this);
+            treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange.bind(this, detailsSectionIdentifier), this);
 
             let detailsSection = new WebInspector.DetailsSection(detailsSectionIdentifier, title, null, null, collapsedByDefault);
             detailsSection.groups[0].rows = [new WebInspector.DetailsSectionPropertiesRow(objectTree)];
@@ -254,9 +253,8 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
         let treeOutline = objectTree.treeOutline;
         const watchExpressionSectionIdentifier = "watch-expressions";
-        treeOutline.onadd = this._objectTreeAddHandler.bind(this, watchExpressionSectionIdentifier);
-        treeOutline.onexpand = this._objectTreeExpandHandler.bind(this, watchExpressionSectionIdentifier);
-        treeOutline.oncollapse = this._objectTreeCollapseHandler.bind(this, watchExpressionSectionIdentifier);
+        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAdded.bind(this, watchExpressionSectionIdentifier), this);
+        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange.bind(this, watchExpressionSectionIdentifier), this);
         treeOutline.objectTreeElementAddContextMenuItems = this._objectTreeElementAddContextMenuItems.bind(this);
 
         let promises = [];
@@ -422,8 +420,9 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         return identifier + "-" + propertyPath.fullPath;
     }
 
-    _objectTreeAddHandler(identifier, treeElement)
+    _treeElementAdded(identifier, event)
     {
+        let treeElement = event.data.element;
         let propertyPathIdentifier = this._propertyPathIdentifierForTreeElement(identifier, treeElement);
         if (!propertyPathIdentifier)
             return;
@@ -432,22 +431,17 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
             treeElement.expand();
     }
 
-    _objectTreeExpandHandler(identifier, treeElement)
+    _treeElementDisclosureDidChange(identifier, event)
     {
+        let treeElement = event.data.element;
         let propertyPathIdentifier = this._propertyPathIdentifierForTreeElement(identifier, treeElement);
         if (!propertyPathIdentifier)
             return;
 
-        WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.add(propertyPathIdentifier);
-    }
-
-    _objectTreeCollapseHandler(identifier, treeElement)
-    {
-        let propertyPathIdentifier = this._propertyPathIdentifierForTreeElement(identifier, treeElement);
-        if (!propertyPathIdentifier)
-            return;
-
-        WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.delete(propertyPathIdentifier);
+        if (treeElement.expanded)
+            WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.add(propertyPathIdentifier);
+        else
+            WebInspector.ScopeChainDetailsSidebarPanel._autoExpandProperties.delete(propertyPathIdentifier);
     }
 
     _updateWatchExpressionsNavigationBar()

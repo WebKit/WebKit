@@ -35,7 +35,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         this._networkSidebarPanel = extraArguments.networkSidebarPanel;
 
         this._contentTreeOutline = this._networkSidebarPanel.contentTreeOutline;
-        this._contentTreeOutline.onselect = this._treeElementSelected.bind(this);
+        this._contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         var columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};
 
@@ -202,13 +202,14 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         dataGridNode.revealAndSelect();
     }
 
-    _treeElementSelected(treeElement, selectedByUser)
+    _treeSelectionDidChange(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
 
         if (!this._networkSidebarPanel.canShowDifferentContentView())
             return;
 
+        let treeElement = event.data.selectedElement;
         if (treeElement instanceof WebInspector.ResourceTreeElement) {
             WebInspector.showRepresentedObject(treeElement.representedObject);
             return;

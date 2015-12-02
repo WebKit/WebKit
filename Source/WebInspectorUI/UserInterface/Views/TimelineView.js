@@ -39,8 +39,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         this._timelineSidebarPanel = extraArguments.timelineSidebarPanel;
 
         this._contentTreeOutline = this._timelineSidebarPanel.createContentTreeOutline();
-        this._contentTreeOutline.onselect = this.treeElementSelected.bind(this);
-        this._contentTreeOutline.ondeselect = this.treeElementDeselected.bind(this);
+        this._contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this._contentTreeOutline.__canShowContentViewForTreeElement = this.canShowContentViewForTreeElement.bind(this);
 
         this.element.classList.add("timeline-view");
@@ -229,8 +228,6 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
     {
         // Implemented by sub-classes if needed.
 
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-
         if (!this._timelineSidebarPanel.canShowDifferentContentView())
             return;
 
@@ -238,5 +235,16 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
             return;
 
         this.showContentViewForTreeElement(treeElement);
+    }
+
+    // Private
+
+    _treeSelectionDidChange(event)
+    {
+        if (event.data.deselectedElement)
+            this.treeElementDeselected(event.data.deselectedElement);
+
+        if (event.data.selectedElement)
+            this.treeElementSelected(event.data.selectedElement, event.data.selectedByUser);
     }
 };

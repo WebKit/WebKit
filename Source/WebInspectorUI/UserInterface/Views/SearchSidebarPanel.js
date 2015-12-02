@@ -52,7 +52,7 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        this.contentTreeOutline.onselect = this._treeElementSelected.bind(this);
+        this.contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
     }
 
     // Public
@@ -346,9 +346,10 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
             this.focusSearchField();
     }
 
-    _treeElementSelected(treeElement, selectedByUser)
+    _treeSelectionDidChange(event)
     {
-        if (treeElement instanceof WebInspector.FolderTreeElement)
+        let treeElement = event.data.selectedElement;
+        if (!treeElement || treeElement instanceof WebInspector.FolderTreeElement)
             return;
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {

@@ -89,8 +89,8 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         if (this._childrenListNode)
             child._attach();
 
-        if (this.treeOutline.onadd)
-            this.treeOutline.onadd(child);
+        if (this.treeOutline)
+            this.treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementAdded, {element: child});
 
         if (isFirstChild && this.expanded)
             this.expand();
@@ -139,8 +139,8 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         if (this._childrenListNode)
             child._attach();
 
-        if (this.treeOutline.onadd)
-            this.treeOutline.onadd(child);
+        if (this.treeOutline)
+            this.treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementAdded, {element: child});
 
         if (isFirstChild && this.expanded)
             this.expand();
@@ -152,10 +152,10 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         if (childIndex < 0 || childIndex >= this.children.length)
             return;
 
-        var child = this.children[childIndex];
+        let child = this.children[childIndex];
         this.children.splice(childIndex, 1);
 
-        var parent = child.parent;
+        let parent = child.parent;
         if (child.deselect(suppressOnDeselect)) {
             if (child.previousSibling && !suppressSelectSibling)
                 child.previousSibling.select(true, false);
@@ -170,9 +170,10 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         if (child.nextSibling)
             child.nextSibling.previousSibling = child.previousSibling;
 
-        if (child.treeOutline) {
-            child.treeOutline._forgetTreeElement(child);
-            child.treeOutline._forgetChildrenRecursive(child);
+        let treeOutline = child.treeOutline;
+        if (treeOutline) {
+            treeOutline._forgetTreeElement(child);
+            treeOutline._forgetChildrenRecursive(child);
         }
 
         child._detach();
@@ -181,8 +182,8 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         child.nextSibling = null;
         child.previousSibling = null;
 
-        if (this.treeOutline && this.treeOutline.onremove)
-            this.treeOutline.onremove(child);
+        if (treeOutline)
+            treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementRemoved, {element: child});
     }
 
     removeChild(child, suppressOnDeselect, suppressSelectSibling)
@@ -207,15 +208,13 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     removeChildren(suppressOnDeselect)
     {
-        var treeOutline = this.treeOutline;
-
-        for (var i = 0; i < this.children.length; ++i) {
-            var child = this.children[i];
+        for (let child of this.children) {
             child.deselect(suppressOnDeselect);
 
-            if (child.treeOutline) {
-                child.treeOutline._forgetTreeElement(child);
-                child.treeOutline._forgetChildrenRecursive(child);
+            let treeOutline = child.treeOutline;
+            if (treeOutline) {
+                treeOutline._forgetTreeElement(child);
+                treeOutline._forgetChildrenRecursive(child);
             }
 
             child._detach();
@@ -224,8 +223,8 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
             child.nextSibling = null;
             child.previousSibling = null;
 
-            if (treeOutline && treeOutline.onremove)
-                treeOutline.onremove(child);
+            if (treeOutline)
+                treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementRemoved, {element: child});
         }
 
         this.children = [];
@@ -233,23 +232,21 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     removeChildrenRecursive(suppressOnDeselect)
     {
-        var childrenToRemove = this.children;
-
-        var treeOutline = this.treeOutline;
-
-        var child = this.children[0];
+        let childrenToRemove = this.children;
+        let child = this.children[0];
         while (child) {
             if (child.children.length)
                 childrenToRemove = childrenToRemove.concat(child.children);
             child = child.traverseNextTreeElement(false, this, true);
         }
 
-        for (var i = 0; i < childrenToRemove.length; ++i) {
+        for (let child of childrenToRemove) {
             child = childrenToRemove[i];
             child.deselect(suppressOnDeselect);
 
-            if (child.treeOutline)
-                child.treeOutline._forgetTreeElement(child);
+            let treeOutline = child.treeOutline;
+            if (treeOutline)
+                treeOutline._forgetTreeElement(child);
 
             child._detach();
             child.children = [];
@@ -258,8 +255,8 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
             child.nextSibling = null;
             child.previousSibling = null;
 
-            if (treeOutline && treeOutline.onremove)
-                treeOutline.onremove(child);
+            if (treeOutline)
+                treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementRemoved, {element: child});
         }
 
         this.children = [];
@@ -371,8 +368,7 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         if (treeElement.treeOutline !== this)
             return;
 
-        if (this.onchange)
-            this.onchange(treeElement);
+        this.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementDidChange, {element: treeElement});
     }
 
     treeElementFromNode(node)
@@ -519,6 +515,15 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
     }
 };
 
+WebInspector.TreeOutline.Event = {
+    ElementAdded: Symbol("element-added"),
+    ElementDidChange: Symbol("element-did-change"),
+    ElementRemoved: Symbol("element-removed"),
+    ElementDisclosureDidChanged: Symbol("element-disclosure-did-change"),
+    ElementVisibilityDidChange: Symbol("element-visbility-did-change"),
+    SelectionDidChange: Symbol("selection-did-change")
+};
+
 WebInspector.TreeOutline._knownTreeElementNextIdentifier = 1;
 
 WebInspector.TreeElement = class TreeElement extends WebInspector.Object
@@ -579,11 +584,6 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
     get listItemElement()
     {
         return this._listItemNode;
-    }
-
-    get childrenListElement()
-    {
-        return this._childrenListNode;
     }
 
     get title()
@@ -671,8 +671,8 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
                 this._childrenListNode.classList.remove("hidden");
         }
 
-        if (this.treeOutline && this.treeOutline.onhidden)
-            this.treeOutline.onhidden(this, x);
+        if (this.treeOutline)
+            this.treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementVisibilityDidChange, {element: this});
     }
 
     get shouldRefreshChildren()
@@ -842,8 +842,8 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         if (this.oncollapse)
             this.oncollapse(this);
 
-        if (this.treeOutline && this.treeOutline.oncollapse)
-            this.treeOutline.oncollapse(this);
+        if (this.treeOutline)
+            this.treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, {element: this});
     }
 
     collapseRecursively()
@@ -861,9 +861,9 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         if (this.expanded && !this._shouldRefreshChildren && this._childrenListNode)
             return;
 
-        // Set this before onpopulate. Since onpopulate can add elements and call onadd, this makes
-        // sure the expanded flag is true before calling those functions. This prevents the possibility
-        // of an infinite loop if onpopulate or onadd were to call expand.
+        // Set this before onpopulate. Since onpopulate can add elements and dispatch an ElementAdded event,
+        // this makes sure the expanded flag is true before calling those functions. This prevents the
+        // possibility of an infinite loop if onpopulate or an event handler were to call expand.
 
         this.expanded = true;
         if (this.treeOutline)
@@ -904,8 +904,8 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         if (this.onexpand)
             this.onexpand(this);
 
-        if (this.treeOutline && this.treeOutline.onexpand)
-            this.treeOutline.onexpand(this);
+        if (this.treeOutline)
+            this.treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, {element: this});
     }
 
     expandRecursively(maxDepth)
@@ -990,12 +990,19 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
             this.treeOutline._childrenListNode.focus();
 
         // Focusing on another node may detach "this" from tree.
-        var treeOutline = this.treeOutline;
+        let treeOutline = this.treeOutline;
         if (!treeOutline)
             return;
 
         treeOutline.processingSelectionChange = true;
 
+        // Prevent dispatching a SelectionDidChange event for the deselected element if
+        // it will be dispatched for the selected element. The event data includes both
+        // the selected and deselected elements, so one event is.
+        if (!suppressOnSelect)
+            suppressOnDeselect = true;
+
+        let deselectedElement = treeOutline.selectedTreeElement;
         if (!this.selected) {
             if (treeOutline.selectedTreeElement)
                 treeOutline.selectedTreeElement.deselect(suppressOnDeselect);
@@ -1007,11 +1014,12 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
                 this._listItemNode.classList.add("selected");
         }
 
-        if (this.onselect && !suppressOnSelect)
-            this.onselect(this, selectedByUser);
+        if (!suppressOnSelect) {
+            if (this.onselect)
+                this.onselect(this, selectedByUser);
 
-        if (treeOutline.onselect && !suppressOnSelect)
-            treeOutline.onselect(this, selectedByUser);
+            treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.SelectionDidChange, {selectedElement: this, deselectedElement, selectedByUser});
+        }
 
         treeOutline.processingSelectionChange = false;
     }
@@ -1033,11 +1041,12 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         if (this._listItemNode)
             this._listItemNode.classList.remove("selected");
 
-        if (this.ondeselect && !suppressOnDeselect)
-            this.ondeselect(this);
+        if (!suppressOnDeselect) {
+            if (this.ondeselect)
+                this.ondeselect(this);
 
-        if (this.treeOutline.ondeselect && !suppressOnDeselect)
-            this.treeOutline.ondeselect(this);
+            this.treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.SelectionDidChange, {deselectedElement: this});
+        }
 
         return true;
     }

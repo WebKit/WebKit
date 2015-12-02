@@ -1,3 +1,118 @@
+2015-12-01  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TreeOutline should just dispatch events via WebInspector.Object
+        https://bugs.webkit.org/show_bug.cgi?id=148067
+
+        Reviewed by Timothy Hatcher.
+
+        TreeOutline now dispatches most events via WebInspector.Object. The onselect and
+        ondeselect callbacks are replaced by a SelectionDidChange event, which includes
+        both the selected and deselected elements in its event data. The onexpand and oncollapse
+        callbacks are replaced by an ElementDisclosureDidChange event. This is consistent with the
+        behavior of onhidden, which had no corresponding onvisible callback.
+
+        Alas, TimelineView and TreeOutlineDataGridSynchronizer depended on the order in which
+        TreeOutline.onselect callbacks were chained together. The synchronizer added its
+        callback after the timeline view, which ensured that the tree and grid were in sync
+        before the view handled onselect and dispatched a SelectionPathComponentsDidChange.
+        The change notification causes the view's path components to be read, and timeline
+        views need the grid selection to be in a valid state to build path components.
+
+        This is addressed by having timeline views dispatch SelectionPathComponentsDidChange
+        events when the grid selection changes, instead of the tree selection. The change
+        required that the synchronizer no longer suppress notifications when selecting grid nodes.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype._treeSelectionDidChange):
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected): Deleted.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._generateWatchExpressionsSection):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._treeElementAdded):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._treeElementDisclosureDidChange):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._objectTreeExpandHandler): Deleted.
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype._objectTreeCollapseHandler): Deleted.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel):
+        (WebInspector.SearchSidebarPanel.prototype._treeSelectionDidChange):
+        (WebInspector.SearchSidebarPanel.prototype._treeElementSelected): Deleted.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel):
+        (WebInspector.StorageSidebarPanel._treeSelectionDidChange):
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._createPopoverContent):
+        (WebInspector.TimelineDataGrid.prototype._popoverCallStackTreeSelectionDidChange):
+        (WebInspector.TimelineDataGrid):
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype._recordingsTreeSelectionDidChange):
+        (WebInspector.TimelineSidebarPanel.prototype._timelinesTreeSelectionDidChange):
+        (WebInspector.TimelineSidebarPanel.prototype._timelinesTreeElementSelected): Deleted.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype._treeSelectionDidChange):
+        (WebInspector.TimelineView.prototype.treeElementSelected):
+        Don't dispatch SelectionPathComponentsDidChange. Timeline views already do this
+        in response to grid selection events.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline.prototype.appendChild):
+        (WebInspector.TreeOutline.prototype.insertChild):
+        (WebInspector.TreeOutline.prototype.removeChildAtIndex):
+        (WebInspector.TreeOutline.prototype.removeChildren):
+        (WebInspector.TreeOutline.prototype.removeChildrenRecursive):
+        (WebInspector.TreeOutline.prototype._treeElementDidChange):
+        (WebInspector.TreeElement.prototype.set hidden):
+        (WebInspector.TreeElement.prototype.collapse):
+        (WebInspector.TreeElement.prototype.expand):
+        (WebInspector.TreeElement.prototype.select):
+        (WebInspector.TreeElement.prototype.deselect):
+        (WebInspector.TreeElement.prototype.get childrenListElement): Deleted.
+        Removed dead code.
+
+        * UserInterface/Views/TreeOutlineDataGridSynchronizer.js:
+        (WebInspector.TreeOutlineDataGridSynchronizer):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeSelectionDidChange):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementAdded):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementRemoved):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementDisclosureDidChange):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementVisibilityDidChange):
+        (WebInspector.TreeOutlineDataGridSynchronizer.treeOutline.onadd): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.treeOutline.onremove): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.treeOutline.onexpand): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.treeOutline.oncollapse): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.treeOutline.onhidden): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.treeOutline.onselect): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementSelected): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementExpanded): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementCollapsed): Deleted.
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementHiddenChanged): Deleted.
+
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._treeSelectionDidChange):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._treeElementSelected): Deleted.
+
 2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timestamp in Tooltip of Event Markers is incorrect

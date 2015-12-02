@@ -166,10 +166,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         contentTreeOutline.allowsRepeatSelection = true;
 
         if (!suppressFiltering) {
-            contentTreeOutline.onadd = this._treeElementAddedOrChanged.bind(this);
-            contentTreeOutline.onchange = this._treeElementAddedOrChanged.bind(this);
-            contentTreeOutline.onexpand = this._treeElementExpandedOrCollapsed.bind(this);
-            contentTreeOutline.oncollapse = this._treeElementExpandedOrCollapsed.bind(this);
+            contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAddedOrChanged, this);
+            contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDidChange, this._treeElementAddedOrChanged, this);
+            contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange, this);
         }
 
         if (dontHideByDefault)
@@ -556,14 +555,15 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         }
     }
 
-    _treeElementAddedOrChanged(treeElement)
+    _treeElementAddedOrChanged(event)
     {
         // Don't populate if we don't have any active filters.
         // We only need to populate when a filter needs to reveal.
         var dontPopulate = !this._filterBar.hasActiveFilters() && !this.shouldFilterPopulate();
 
         // Apply the filters to the tree element and its descendants.
-        var currentTreeElement = treeElement;
+        let treeElement = event.data.element;
+        let currentTreeElement = treeElement;
         while (currentTreeElement && !currentTreeElement.root) {
             const currentTreeElementWasHidden = currentTreeElement.hidden;
             this.applyFiltersToTreeElement(currentTreeElement);
@@ -582,7 +582,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this.treeElementAddedOrChanged(treeElement);
     }
 
-    _treeElementExpandedOrCollapsed(treeElement)
+    _treeElementDisclosureDidChange(event)
     {
         this._updateContentOverflowShadowVisibility();
     }

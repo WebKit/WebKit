@@ -62,13 +62,13 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._recordingsTreeOutline = this.createContentTreeOutline(true, true);
         this._recordingsTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
         this._recordingsTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
-        this._recordingsTreeOutline.onselect = this._recordingsTreeElementSelected.bind(this);
+        this._recordingsTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._recordingsTreeSelectionDidChange, this);
         this._timelinesContentContainerElement.appendChild(this._recordingsTreeOutline.element);
 
         // Maintain a tree outline with tree elements for each timeline of the selected recording.
         this._timelinesTreeOutline = this.createContentTreeOutline(true, true);
         this._timelinesTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
-        this._timelinesTreeOutline.onselect = this._timelinesTreeElementSelected.bind(this);
+        this._timelinesTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._timelinesTreeSelectionDidChange, this);
         this._timelinesContentContainerElement.appendChild(this._timelinesTreeOutline.element);
 
         this._timelineTreeElementMap = new Map;
@@ -614,8 +614,12 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this.showTimelineOverview();
     }
 
-    _recordingsTreeElementSelected(treeElement, selectedByUser)
+    _recordingsTreeSelectionDidChange(event)
     {
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
+
         console.assert(treeElement.representedObject instanceof WebInspector.TimelineRecording);
 
         this._recordingSelected(treeElement.representedObject);
@@ -627,17 +631,22 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._refreshFrameSelectionChart();
     }
 
-    _timelinesTreeElementSelected(treeElement, selectedByUser)
+    _timelinesTreeSelectionDidChange(event)
     {
+        let treeElement = event.data.selectedElement;
+        if (!treeElement)
+            return;
+
         console.assert(this._timelineTreeElementMap.get(treeElement.representedObject) === treeElement, treeElement);
 
         // If not selected by user, then this selection merely synced the tree element with the content view's contents.
+        let selectedByUser = event.data.selectedByUser;
         if (!selectedByUser) {
             console.assert(this._displayedContentView.currentTimelineView.representedObject === treeElement.representedObject);
             return;
         }
 
-        var timeline = treeElement.representedObject;
+        let timeline = treeElement.representedObject;
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(this._displayedRecording.timelines.get(timeline.type) === timeline, timeline);
 
