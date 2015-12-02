@@ -1,3 +1,19 @@
+2015-12-02  Alex Christensen  <achristensen@webkit.org>
+
+        Asynchronously call onerror when a content blocker blocks ascript element's load
+        https://bugs.webkit.org/show_bug.cgi?id=151649
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/contentextensions/script-onerror-expected.txt: Added.
+        * http/tests/contentextensions/script-onerror.html: Added.
+        * http/tests/contentextensions/script-onerror.html.json: Added.
+        * http/tests/misc/unloadable-script-expected.txt:
+        * http/tests/misc/unloadable-script.html:
+        * http/tests/security/local-JavaScript-from-remote-expected.txt:
+        * http/tests/security/local-JavaScript-from-remote.html:
+        Added testRunner.waitUntilDone and testRunner.notifyDone to reflect the fact that onerror is no longer called synchronously.
+
 2015-12-02  Eric Carlson  <eric.carlson@apple.com>
 
         Fix flaky test added with r192954.

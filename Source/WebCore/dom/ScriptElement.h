@@ -23,6 +23,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "Timer.h"
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
@@ -109,6 +110,7 @@ private:
     bool m_requestUsesAccessControl { false };
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
+    Timer m_errorEventTimer;
 };
 
 ScriptElement* toScriptElementIfPossible(Element*);

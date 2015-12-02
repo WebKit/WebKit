@@ -1,3 +1,17 @@
+2015-12-02  Alex Christensen  <achristensen@webkit.org>
+
+        Asynchronously call onerror when a content blocker blocks ascript element's load
+        https://bugs.webkit.org/show_bug.cgi?id=151649
+
+        Reviewed by Brady Eidson.
+
+        Test: http/tests/contentextensions/script-onerror.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::requestScript):
+        * dom/ScriptElement.h:
+
 2015-12-02  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Abrupt transition between Fullscreen -> PiP

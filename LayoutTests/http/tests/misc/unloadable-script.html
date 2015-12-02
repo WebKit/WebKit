@@ -7,9 +7,13 @@ function log(message) {
   document.getElementById("console").appendChild(p);
 }
 
+var errorCount = 0;
 function handleScriptOnError()
 {
     log('onerror called (good!)');
+    errorCount++;
+    if (errorCount == 2 && window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>
@@ -23,8 +27,10 @@ function handleScriptOnError()
     <script onerror="handleScriptOnError()" id=test_script></script>
 
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
         <!-- we are an HTTP test so the security origin will fail the file method -->
         document.getElementById('test_script').src = "file:///foobar";
