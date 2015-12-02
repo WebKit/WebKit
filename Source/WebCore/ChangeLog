@@ -1,3 +1,15 @@
+2015-12-02  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=151742
+
+        Reviewed by Csaba Osztrogonác.
+
+        System font flag has moved from Font class to FontData class.
+
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::Font::platformInit):
+
 2015-12-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r192894 and r192904.

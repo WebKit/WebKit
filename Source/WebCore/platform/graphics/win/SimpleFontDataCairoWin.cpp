@@ -46,7 +46,7 @@ void Font::platformInit()
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
-    m_isSystemFont = false;
+    m_platformData.setIsSystemFont(false);
 
     if (m_platformData.useGDI())
        return initGDIFont();
@@ -55,7 +55,7 @@ void Font::platformInit()
         m_fontMetrics.reset();
         m_avgCharWidth = 0;
         m_maxCharWidth = 0;
-        m_isSystemFont = false;
+        m_platformData.setIsSystemFont(false);
         m_scriptCache = 0;
         m_scriptFontProperties = 0;
         return;
@@ -90,8 +90,8 @@ void Font::platformInit()
     int faceLength = ::GetTextFace(dc, 0, 0);
     Vector<WCHAR> faceName(faceLength);
     ::GetTextFace(dc, faceLength, faceName.data());
-    m_isSystemFont = !wcscmp(faceName.data(), L"Lucida Grande");
- 
+    m_platformData.setIsSystemFont(!wcscmp(faceName.data(), L"Lucida Grande"));
+
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
