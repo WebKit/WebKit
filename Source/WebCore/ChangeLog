@@ -1,3 +1,78 @@
+2015-12-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Get rid of IDBExceptionCode.
+        https://bugs.webkit.org/show_bug.cgi?id=151753
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::count):
+        (WebCore::IDBClient::IDBIndex::doCount):
+        (WebCore::IDBClient::IDBIndex::get):
+        (WebCore::IDBClient::IDBIndex::doGet):
+        (WebCore::IDBClient::IDBIndex::getKey):
+        (WebCore::IDBClient::IDBIndex::doGetKey):
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::get):
+        (WebCore::IDBClient::IDBObjectStore::deleteFunction):
+        (WebCore::IDBClient::IDBObjectStore::clear):
+        (WebCore::IDBClient::IDBObjectStore::createIndex):
+        (WebCore::IDBClient::IDBObjectStore::index):
+        (WebCore::IDBClient::IDBObjectStore::deleteIndex):
+        (WebCore::IDBClient::IDBObjectStore::count):
+        (WebCore::IDBClient::IDBObjectStore::doCount):
+        
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::fireErrorAfterVersionChangeAbort):
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::abortOnServerAndCancelRequests):
+        
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::addRecord):
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getCount):
+        (WebCore::IDBServer::MemoryIDBBackingStore::openCursor):
+        (WebCore::IDBServer::MemoryIDBBackingStore::iterateCursor):
+        
+        * Modules/indexeddb/server/MemoryIndex.cpp:
+        (WebCore::IDBServer::MemoryIndex::putIndexKey):
+        
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::createIndex):
+        (WebCore::IDBServer::MemoryObjectStore::deleteIndex):
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::handleOpenDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        
+        * Modules/indexeddb/shared/IDBError.cpp:
+        (WebCore::IDBError::IDBError):
+        (WebCore::IDBError::name):
+        (WebCore::IDBError::message):
+        (WebCore::idbErrorName): Deleted.
+        (WebCore::idbErrorDescription): Deleted.
+        
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::code):
+        (WebCore::IDBError::isNull):
+
 2015-12-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         Null dereference loading Blink layout test fast/loader/unload-mutation-crash.html

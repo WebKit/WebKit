@@ -28,44 +28,29 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseException.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static const int IDBExceptionCodeOffset = 1200;
-
-enum class IDBExceptionCode {
-    None = IDBExceptionCodeOffset,
-    Unknown,
-    ConstraintError,
-    DataError,
-    TransactionInactiveError,
-    ReadOnlyError,
-    VersionError,
-
-    // Indexed DB existing exception codes with IDB-specific error messages:
-    InvalidStateError,
-    DataCloneError,
-    AbortError,
-};
-
 class IDBError {
 public:
     IDBError() { }
-    IDBError(IDBExceptionCode);
-    IDBError(IDBExceptionCode, const String& message);
+    IDBError(ExceptionCode);
+    IDBError(ExceptionCode, const String& message);
 
     IDBError& operator=(const IDBError&);
 
-    const String& name() const;
-    const String& message() const;
+    ExceptionCode code() const { return m_code; }
+    String name() const;
+    String message() const;
 
-    bool isNull() const { return m_code == IDBExceptionCode::None; }
+    bool isNull() const { return m_code == IDBDatabaseException::NoError; }
 
     IDBError isolatedCopy() const;
 
 private:
-    IDBExceptionCode m_code { IDBExceptionCode::None };
+    ExceptionCode m_code { IDBDatabaseException::NoError };
     String m_message;
 };
 

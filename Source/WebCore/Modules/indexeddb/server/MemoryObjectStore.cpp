@@ -86,7 +86,7 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
     LOG(IndexedDB, "MemoryObjectStore::createIndex");
 
     if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
-        return IDBError(IDBExceptionCode::ConstraintError);
+        return IDBError(IDBDatabaseException::ConstraintError);
 
     ASSERT(!m_indexesByIdentifier.contains(info.identifier()));
     auto index = MemoryIndex::create(info, *this);
@@ -143,12 +143,12 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
     LOG(IndexedDB, "MemoryObjectStore::deleteIndex");
 
     if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
-        return IDBError(IDBExceptionCode::ConstraintError);
+        return IDBError(IDBDatabaseException::ConstraintError);
     
     auto index = takeIndexByName(indexName);
     ASSERT(index);
     if (!index)
-        return IDBError(IDBExceptionCode::ConstraintError);
+        return IDBError(IDBDatabaseException::ConstraintError);
 
     m_info.deleteIndex(indexName);
     transaction.indexDeleted(WTF::move(index));

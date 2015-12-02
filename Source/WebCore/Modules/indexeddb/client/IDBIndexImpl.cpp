@@ -162,7 +162,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, con
     DOMRequestState requestState(context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::DataError);
         return nullptr;
     }
 
@@ -177,13 +177,13 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doCount(ScriptExecutionContext& context, c
     }
 
     if (range.isNull) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::DataError);
         return nullptr;
     }
 
     auto& transaction = m_objectStore->modernTransaction();
     if (!transaction.isActive()) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::TransactionInactiveError);
         return nullptr;
     }
 
@@ -247,7 +247,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const
     DOMRequestState requestState(context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::DataError);
         return nullptr;
     }
 
@@ -262,13 +262,13 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGet(ScriptExecutionContext& context, con
     }
 
     if (range.isNull) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::DataError);
         return nullptr;
     }
 
     auto& transaction = m_objectStore->modernTransaction();
     if (!transaction.isActive()) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::TransactionInactiveError);
         return nullptr;
     }
 
@@ -299,7 +299,7 @@ RefPtr<WebCore::IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, co
     DOMRequestState requestState(context);
     RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
     if (!idbKey || idbKey->type() == KeyType::Invalid) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::DataError);
         return nullptr;
     }
 
@@ -314,13 +314,13 @@ RefPtr<WebCore::IDBRequest> IDBIndex::doGetKey(ScriptExecutionContext& context, 
     }
 
     if (range.isNull) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::DataError);
         return nullptr;
     }
 
     auto& transaction = m_objectStore->modernTransaction();
     if (!transaction.isActive()) {
-        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        ec = static_cast<ExceptionCode>(IDBDatabaseException::TransactionInactiveError);
         return nullptr;
     }
 

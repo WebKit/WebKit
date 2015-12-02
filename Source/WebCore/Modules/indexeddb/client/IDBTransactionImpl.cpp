@@ -196,7 +196,7 @@ void IDBTransaction::abortOnServerAndCancelRequests(TransactionOperation&)
 
     serverConnection().abortTransaction(*this);
 
-    IDBError error(IDBExceptionCode::AbortError);
+    IDBError error(IDBDatabaseException::AbortError);
     for (auto& operation : m_abortQueue)
         operation->completed(IDBResultData::error(operation->identifier(), error));
 

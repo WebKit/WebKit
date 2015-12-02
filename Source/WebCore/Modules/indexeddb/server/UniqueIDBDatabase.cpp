@@ -134,7 +134,7 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
     // 3.3.1 Opening a database
     // If the database version higher than the requested version, abort these steps and return a VersionError.
     if (requestedVersion < m_databaseInfo->version()) {
-        auto result = IDBResultData::error(operation->requestData().requestIdentifier(), IDBError(IDBExceptionCode::VersionError));
+        auto result = IDBResultData::error(operation->requestData().requestIdentifier(), IDBError(IDBDatabaseException::VersionError));
         operation->connection().didOpenDatabase(result);
         return;
     }
@@ -512,7 +512,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
 
     auto objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo) {
-        error = IDBError(IDBExceptionCode::InvalidStateError, ASCIILiteral("Object store cannot be found in the backing store"));
+        error = IDBError(IDBDatabaseException::InvalidStateError, ASCIILiteral("Object store cannot be found in the backing store"));
         m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
         return;
     }
@@ -535,7 +535,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
         bool keyExists;
         error = m_backingStore->keyExistsInObjectStore(transactionIdentifier, objectStoreIdentifier, usedKey, keyExists);
         if (error.isNull() && keyExists)
-            error = IDBError(IDBExceptionCode::ConstraintError, ASCIILiteral("Key already exists in the object store"));
+            error = IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Key already exists in the object store"));
 
         if (!error.isNull()) {
             m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
@@ -552,18 +552,18 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
 
         JSValue value = deserializeIDBValueDataToJSValue(databaseThreadExecState(), originalRecordValue);
         if (value.isUndefined()) {
-            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBExceptionCode::ConstraintError, ASCIILiteral("Unable to deserialize record value for record key injection")), usedKey));
+            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to deserialize record value for record key injection")), usedKey));
             return;
         }
 
         if (!injectIDBKeyIntoScriptValue(databaseThreadExecState(), usedKey, value, objectStoreInfo->keyPath())) {
-            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBExceptionCode::ConstraintError, ASCIILiteral("Unable to inject record key into record value")), usedKey));
+            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to inject record key into record value")), usedKey));
             return;
         }
 
         auto serializedValue = SerializedScriptValue::create(&databaseThreadExecState(), value, nullptr, nullptr);
         if (databaseThreadExecState().hadException()) {
-            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBExceptionCode::ConstraintError, ASCIILiteral("Unable to serialize record value after injecting record key")), usedKey));
+            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, IDBError(IDBDatabaseException::ConstraintError, ASCIILiteral("Unable to serialize record value after injecting record key")), usedKey));
             return;
         }
 

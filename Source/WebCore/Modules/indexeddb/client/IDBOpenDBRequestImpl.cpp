@@ -92,7 +92,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeAbort()
 
     ASSERT(hasPendingActivity());
 
-    IDBError idbError(IDBExceptionCode::AbortError);
+    IDBError idbError(IDBDatabaseException::AbortError);
     m_domError = DOMError::create(idbError.name());
 
     m_transaction->addRequest(*this);
