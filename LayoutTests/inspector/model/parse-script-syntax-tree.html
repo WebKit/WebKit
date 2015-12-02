@@ -193,6 +193,7 @@ function test()
     InspectorTest.assert(node.params[1].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.assert(node.body);
     InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(!node.generator);
     node = makeNode("x = {get foo(){return 20}}", true);
     InspectorTest.assert(node.right.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
     node = makeNode("x = {set foo(x){return 20}}", true);
@@ -207,6 +208,7 @@ function test()
     InspectorTest.assert(node.arguments[0].params[1].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.assert(node.arguments[0].body);
     InspectorTest.assert(node.arguments[0].body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(!node.arguments[0].generator);
     InspectorTest.log("passed FunctionExpression");
 
     node = makeNode("foo;", true);
@@ -442,6 +444,21 @@ function test()
     InspectorTest.assert(node.body);
     InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
     InspectorTest.log("passed WithStatement");
+
+    node = makeNode("function* gen() { yield 1; yield* [1,2]; }", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration);
+    InspectorTest.assert(node.generator);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(node.body.body.length === 2);
+    InspectorTest.assert(node.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.assert(node.body.body[0].expression.type === WebInspector.ScriptSyntaxTree.NodeType.YieldExpression);
+    InspectorTest.assert(!node.body.body[0].expression.delegate);
+    InspectorTest.assert(node.body.body[0].expression.argument.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.body.body[1].type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.assert(node.body.body[1].expression.type === WebInspector.ScriptSyntaxTree.NodeType.YieldExpression);
+    InspectorTest.assert(node.body.body[1].expression.delegate);
+    InspectorTest.assert(node.body.body[1].expression.argument.type === WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression);
+    InspectorTest.log("passed YieldExpression");
 
     node = makeNode("class C { constructor() { super(); new.target; } }", false);
     InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ClassDeclaration);

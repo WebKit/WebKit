@@ -1,3 +1,18 @@
+2015-12-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Handle YieldExpressions in the ScriptSyntaxTree
+        https://bugs.webkit.org/show_bug.cgi?id=151730
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        Add the Generator API.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        Handle YieldExpressions.
+
 2015-12-01  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TreeOutline should just dispatch events via WebInspector.Object

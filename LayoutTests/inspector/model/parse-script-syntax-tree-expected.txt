@@ -38,6 +38,7 @@ passed VariableDeclaration
 passed VariableDeclarator
 passed WhileStatement
 passed WithStatement
+passed YieldExpression
 passed ClassStatement, Super, MetaProperty
 passed AssignmentPattern
 passed ArrowFunctionExpression

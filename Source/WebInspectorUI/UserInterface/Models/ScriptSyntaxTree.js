@@ -494,6 +494,10 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             this._recurse(node.object, callback, state);
             this._recurse(node.body, callback, state);
             break;
+        case WebInspector.ScriptSyntaxTree.NodeType.YieldExpression:
+            callback(node, state);
+            this._recurse(node.argument, callback, state);
+            break;
         // All the leaf nodes go here.
         case WebInspector.ScriptSyntaxTree.NodeType.DebuggerStatement:
         case WebInspector.ScriptSyntaxTree.NodeType.EmptyStatement:
@@ -546,6 +550,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 params: node.params.map(this._createInternalSyntaxTree, this),
                 defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
+                generator: node.generator,
                 expression: node.expression, // Boolean indicating if the body a single expression or a block statement.
                 typeProfilingReturnDivot: node.range[0]
             };
@@ -690,6 +695,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 params: node.params.map(this._createInternalSyntaxTree, this),
                 defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
+                generator: node.generator,
                 typeProfilingReturnDivot: node.range[0]
             };
             break;
@@ -700,6 +706,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 params: node.params.map(this._createInternalSyntaxTree, this),
                 defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
+                generator: node.generator,
                 typeProfilingReturnDivot: node.range[0] // This may be overridden in the Property AST node.
             };
             break;
@@ -924,6 +931,13 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 body: this._createInternalSyntaxTree(node.body)
             };
             break;
+        case "YieldExpression":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.YieldExpression,
+                argument: this._createInternalSyntaxTree(node.argument),
+                delegate: node.delegate
+            };
+            break;
         default:
             console.error("Unsupported Syntax Tree Node: " + node.type, node);
             return null;
@@ -999,4 +1013,5 @@ WebInspector.ScriptSyntaxTree.NodeType = {
     VariableDeclarator: Symbol("variable-declarator"),
     WhileStatement: Symbol("while-statement"),
     WithStatement: Symbol("with-statement"),
+    YieldExpression: Symbol("yield-expression"),
 };

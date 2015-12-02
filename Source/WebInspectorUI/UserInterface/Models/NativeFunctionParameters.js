@@ -345,6 +345,13 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    Generator: {
+        next: "value",
+        return: "value",
+        throw: "exception",
+        __proto__: null,
+    },
+
     // Curated DOM Interfaces.
 
     Element: {
