@@ -1,3 +1,12 @@
+2015-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/xmlhttprequest/methods-async.html as flaky on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=151729
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-12-01  Brady Eidson  <beidson@apple.com>
 
         Give a more detailed message for TypeErrors that result from EnforceRange.
