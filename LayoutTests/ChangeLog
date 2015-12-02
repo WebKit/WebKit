@@ -1,3 +1,13 @@
+2015-12-02  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Enable a couple more passing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=151766
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/create-object-store-options-expected.txt:
+
 2015-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping tests on Win that fail due to unimplemented showModalDialog function.

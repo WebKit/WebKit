@@ -73,7 +73,8 @@ inspector/indexeddb
 # Tests that are skipped above but that pass in Modern IDB are unskipped below.
 storage/indexeddb/aborted-versionchange-closes.html [ Pass ]
 storage/indexeddb/basics.html [ Pass ]
-storage/indexeddb/create-and-remove-object-store.html
+storage/indexeddb/create-and-remove-object-store.html [ Pass ]
+storage/indexeddb/create-object-store-options.html [ Pass ]
 storage/indexeddb/cursor-cast.html [ Pass ]
 storage/indexeddb/cursor-finished.html [ Pass ]
 storage/indexeddb/modern [ Pass ]
