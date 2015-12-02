@@ -1,3 +1,10 @@
+2015-12-01  Brady Eidson  <beidson@apple.com>
+
+        Add updated test result missing from http://trac.webkit.org/changeset/192924
+        https://bugs.webkit.org/show_bug.cgi?id=151725
+
+        * storage/indexeddb/modern/opendatabase-request-event-expected.txt:
+
 2015-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/xmlhttprequest/methods-async.html as flaky on Yosemite WK2

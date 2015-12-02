@@ -1,5 +1,5 @@
 ALERT: Caught exception TypeError: Type error
-ALERT: Caught exception TypeError: Type error
+ALERT: Caught exception TypeError: Value -1 is outside the range [0, 9007199254740991]
 ALERT: [object IDBOpenDBRequest]
 ALERT: upgradeneeded: old version - 0 new version - 1
 ALERT: Done
