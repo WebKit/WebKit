@@ -1,3 +1,60 @@
+2015-12-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Handle x86 partial register stalls in Air
+        https://bugs.webkit.org/show_bug.cgi?id=151735
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a primitive false-dependency breaking
+        algorithm to Air. We look for redefinition of the same
+        variable that is too close to a partial definition.
+
+        There is not explicit dependency tracking going on,
+        but it is pretty fast and the extra xorps added on false-positives
+        are cheap anyway.
+
+        Typically, partial register stalls appear from instructions
+        interfering with themselves in small loops. Something like:
+
+          Label0:
+            cvtsi2sdq %eax, %xmm0
+            ...
+            jmp Label0
+
+        Those are correctly detected by propagating the local distance
+        information from block to block until no unsafe chain is found.
+
+        The test testInt32ToDoublePartialRegisterStall() checks the kind
+        of cases we typically find from JavaScript.
+        The execution time is 20% faster with a register reset (which is
+        astounding since the very next instruction has a real dependency).
+
+        Future tweaks will be needed when we can run more JavaScript:
+        -Handle function calls differently.
+        -Anything with a special can have hidden instructions.
+         We need to take them into account.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::moveZeroToDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::xorps_rr):
+        (JSC::X86Assembler::xorpd_rr):
+        According to the documentation, starting with Sandy Bridge,
+        registers reset can be done in the frontend with xorps.
+
+        * b3/B3IndexSet.h:
+        (JSC::B3::IndexSet::remove):
+        * b3/air/AirFixPartialRegisterStalls.cpp: Added.
+        (JSC::B3::Air::fixPartialRegisterStalls):
+        * b3/air/AirFixPartialRegisterStalls.h: Added.
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        * b3/testb3.cpp:
+        (JSC::B3::testInt32ToDoublePartialRegisterStall):
+        (JSC::B3::run):
+        * jit/FPRInfo.h:
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature

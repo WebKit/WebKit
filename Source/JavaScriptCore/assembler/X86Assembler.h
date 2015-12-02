@@ -2120,8 +2120,17 @@ public:
         m_formatter.twoByteOp(OP2_DIVSD_VsdWsd, (RegisterID)dst, base, offset);
     }
 
+    void xorps_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_XORPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
+
     void xorpd_rr(XMMRegisterID src, XMMRegisterID dst)
     {
+        if (src == dst) {
+            xorps_rr(src, dst);
+            return;
+        }
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_XORPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
     }

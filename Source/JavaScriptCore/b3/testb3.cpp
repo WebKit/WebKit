@@ -2667,6 +2667,105 @@ void testSpillFP()
     compileAndRun<double>(proc, 1.1, 2.5);
 }
 
+void testInt32ToDoublePartialRegisterStall()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loop = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    // Head.
+    Value* total = root->appendNew<ConstDoubleValue>(proc, Origin(), 0.);
+    Value* counter = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    UpsilonValue* originalTotal = root->appendNew<UpsilonValue>(proc, Origin(), total);
+    UpsilonValue* originalCounter = root->appendNew<UpsilonValue>(proc, Origin(), counter);
+    root->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(loop));
+
+    // Loop.
+    Value* loopCounter = loop->appendNew<Value>(proc, Phi, Int64, Origin());
+    Value* loopTotal = loop->appendNew<Value>(proc, Phi, Double, Origin());
+    originalCounter->setPhi(loopCounter);
+    originalTotal->setPhi(loopTotal);
+
+    Value* truncatedCounter = loop->appendNew<Value>(proc, Trunc, Origin(), loopCounter);
+    Value* doubleCounter = loop->appendNew<Value>(proc, IToD, Origin(), truncatedCounter);
+    Value* updatedTotal = loop->appendNew<Value>(proc, Add, Origin(), doubleCounter, loopTotal);
+    UpsilonValue* updatedTotalUpsilon = loop->appendNew<UpsilonValue>(proc, Origin(), updatedTotal);
+    updatedTotalUpsilon->setPhi(loopTotal);
+
+    Value* decCounter = loop->appendNew<Value>(proc, Sub, Origin(), loopCounter, loop->appendNew<Const64Value>(proc, Origin(), 1));
+    UpsilonValue* decCounterUpsilon = loop->appendNew<UpsilonValue>(proc, Origin(), decCounter);
+    decCounterUpsilon->setPhi(loopCounter);
+    loop->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        decCounter,
+        FrequentedBlock(loop), FrequentedBlock(done));
+
+    // Tail.
+    done->appendNew<ControlValue>(proc, Return, Origin(), updatedTotal);
+    CHECK(isIdentical(compileAndRun<double>(proc, 100000), 5000050000.));
+}
+
+void testInt32ToDoublePartialRegisterWithoutStall()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loop = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    // Head.
+    Value* total = root->appendNew<ConstDoubleValue>(proc, Origin(), 0.);
+    Value* counter = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    UpsilonValue* originalTotal = root->appendNew<UpsilonValue>(proc, Origin(), total);
+    UpsilonValue* originalCounter = root->appendNew<UpsilonValue>(proc, Origin(), counter);
+    uint64_t forPaddingInput;
+    Value* forPaddingInputAddress = root->appendNew<ConstPtrValue>(proc, Origin(), &forPaddingInput);
+    uint64_t forPaddingOutput;
+    Value* forPaddingOutputAddress = root->appendNew<ConstPtrValue>(proc, Origin(), &forPaddingOutput);
+    root->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(loop));
+
+    // Loop.
+    Value* loopCounter = loop->appendNew<Value>(proc, Phi, Int64, Origin());
+    Value* loopTotal = loop->appendNew<Value>(proc, Phi, Double, Origin());
+    originalCounter->setPhi(loopCounter);
+    originalTotal->setPhi(loopTotal);
+
+    Value* truncatedCounter = loop->appendNew<Value>(proc, Trunc, Origin(), loopCounter);
+    Value* doubleCounter = loop->appendNew<Value>(proc, IToD, Origin(), truncatedCounter);
+    Value* updatedTotal = loop->appendNew<Value>(proc, Add, Origin(), doubleCounter, loopTotal);
+
+    // Add enough padding instructions to avoid a stall.
+    Value* loadPadding = loop->appendNew<MemoryValue>(proc, Load, Int64, Origin(), forPaddingInputAddress);
+    Value* padding = loop->appendNew<Value>(proc, BitXor, Origin(), loadPadding, loopCounter);
+    padding = loop->appendNew<Value>(proc, Add, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, BitOr, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, Sub, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, BitXor, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, Add, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, BitOr, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, Sub, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, BitXor, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, Add, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, BitOr, Origin(), padding, loopCounter);
+    padding = loop->appendNew<Value>(proc, Sub, Origin(), padding, loopCounter);
+    loop->appendNew<MemoryValue>(proc, Store, Origin(), padding, forPaddingOutputAddress);
+
+    UpsilonValue* updatedTotalUpsilon = loop->appendNew<UpsilonValue>(proc, Origin(), updatedTotal);
+    updatedTotalUpsilon->setPhi(loopTotal);
+
+    Value* decCounter = loop->appendNew<Value>(proc, Sub, Origin(), loopCounter, loop->appendNew<Const64Value>(proc, Origin(), 1));
+    UpsilonValue* decCounterUpsilon = loop->appendNew<UpsilonValue>(proc, Origin(), decCounter);
+    decCounterUpsilon->setPhi(loopCounter);
+    loop->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        decCounter,
+        FrequentedBlock(loop), FrequentedBlock(done));
+
+    // Tail.
+    done->appendNew<ControlValue>(proc, Return, Origin(), updatedTotal);
+    CHECK(isIdentical(compileAndRun<double>(proc, 100000), 5000050000.));
+}
+
 void testBranch()
 {
     Procedure proc;
@@ -5887,6 +5986,9 @@ void run(const char* filter)
 
     RUN(testSpillGP());
     RUN(testSpillFP());
+
+    RUN(testInt32ToDoublePartialRegisterStall());
+    RUN(testInt32ToDoublePartialRegisterWithoutStall());
 
     RUN(testCallSimple(1, 2));
     RUN(testCallFunctionWithHellaArguments());

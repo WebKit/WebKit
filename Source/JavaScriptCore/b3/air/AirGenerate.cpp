@@ -31,6 +31,7 @@
 #include "AirAllocateStack.h"
 #include "AirCode.h"
 #include "AirEliminateDeadCode.h"
+#include "AirFixPartialRegisterStalls.h"
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirIteratedRegisterCoalescing.h"
@@ -94,6 +95,10 @@ void prepareForGeneration(Code& code)
     // This sorts the basic blocks in Code to achieve an ordering that maximizes the likelihood that a high
     // frequency successor is also the fall-through target.
     optimizeBlockOrder(code);
+
+    // Attempt to remove false dependencies between instructions created by partial register changes.
+    // This must be executed as late as possible as it depends on the instructions order and register use.
+    fixPartialRegisterStalls(code);
 
     // This is needed to satisfy a requirement of B3::StackmapValue.
     reportUsedRegisters(code);

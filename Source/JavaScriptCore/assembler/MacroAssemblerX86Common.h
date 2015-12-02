@@ -996,7 +996,7 @@ public:
 
     void moveZeroToDouble(FPRegisterID reg)
     {
-        m_assembler.xorpd_rr(reg, reg);
+        m_assembler.xorps_rr(reg, reg);
     }
 
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)

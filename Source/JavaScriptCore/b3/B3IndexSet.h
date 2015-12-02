@@ -48,6 +48,11 @@ public:
         return !m_set.set(value->index());
     }
 
+    bool remove(T* value)
+    {
+        return m_set.clear(value->index());
+    }
+
     bool contains(T* value) const
     {
         if (!value)
