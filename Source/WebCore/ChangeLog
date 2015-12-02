@@ -1,3 +1,19 @@
+2015-12-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Null dereference loading Blink layout test fast/loader/unload-mutation-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=149305
+        <rdar://problem/22747892>
+
+        Reviewed by Brent Fulgham.
+
+        Add an extra guard to replaceDocument() against rude JS in unload event handlers.
+
+        Test: fast/loader/unload-mutation-crash.html
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+        (WebCore::DocumentWriter::begin):
+
 2015-12-02  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Compile error.
