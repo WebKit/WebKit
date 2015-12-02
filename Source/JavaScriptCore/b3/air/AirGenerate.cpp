@@ -122,7 +122,8 @@ void generate(Code& code, CCallHelpers& jit)
 
     // And now, we generate code.
     jit.emitFunctionPrologue();
-    jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
+    if (code.frameSize())
+        jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
 
     GenerationContext context;
     context.code = &code;
@@ -154,7 +155,10 @@ void generate(Code& code, CCallHelpers& jit)
         if (block->last().opcode == Ret) {
             // We currently don't represent the full prologue/epilogue in Air, so we need to
             // have this override.
-            jit.emitFunctionEpilogue();
+            if (code.frameSize())
+                jit.emitFunctionEpilogue();
+            else
+                jit.emitFunctionEpilogueWithEmptyFrame();
             jit.ret();
             continue;
         }

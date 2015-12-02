@@ -348,6 +348,9 @@ BranchMul32 U:G, U:G, UD:G /branch
     ResCond, Tmp, Tmp
     ResCond, Addr, Tmp
 
+BranchMul32 U:G, U:G, U:G, D:G /branch
+    ResCond, Tmp, Imm, Tmp
+
 BranchMul64 U:G, U:G, UD:G /branch
     ResCond, Tmp, Tmp
 

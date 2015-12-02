@@ -152,6 +152,11 @@ public:
             return;
         }
 
+        if (src == dest) {
+            add32(imm, dest);
+            return;
+        }
+
         m_assembler.leal_mr(imm.m_value, src, dest);
     }
     

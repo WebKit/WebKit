@@ -388,6 +388,11 @@ public:
         move(stackPointerRegister, framePointerRegister);
     }
 
+    void emitFunctionEpilogueWithEmptyFrame()
+    {
+        pop(framePointerRegister);
+    }
+
     void emitFunctionEpilogue()
     {
         move(framePointerRegister, stackPointerRegister);
