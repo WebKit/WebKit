@@ -1,3 +1,31 @@
+2015-12-02  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [css border] border-image doesn't honor border-style
+        https://bugs.webkit.org/show_bug.cgi?id=99922
+
+        Reviewed by Simon Fraser.
+
+        Ensure that WebKit will be compliant to css-backgrounds spec where a
+        border with an image will only be rendered if there is a style defined.
+
+        Quote: "None: No border. Color and width are ignored (i.e., the border has width 0)".
+        Reference: http://www.w3.org/TR/css3-background/#border-style
+
+        From W3C discussion: "The fact that these properties set the style of the border is
+        normative". Reference: https://lists.w3.org/Archives/Public/www-style/2015Nov/0260.html
+
+        Test: fast/borders/border-image-should-not-display.html
+
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::hasBorder):
+        (WebCore::BorderData::borderLeftWidth):
+        (WebCore::BorderData::borderRightWidth):
+        (WebCore::BorderData::borderTopWidth):
+        (WebCore::BorderData::borderBottomWidth):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::nonZero):
+        (WebCore::BorderValue::isVisible):
+
 2015-12-02  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Implement MediaStreamTrack.getSettings()

@@ -42,9 +42,9 @@ public:
     {
     }
 
-    bool nonZero(bool checkStyle = true) const
+    bool nonZero() const
     {
-        return width() && (!checkStyle || m_style != BNONE);
+        return width() && (m_style != BNONE);
     }
 
     bool isTransparent() const
@@ -52,9 +52,9 @@ public:
         return m_colorIsValid && !alphaChannel(m_color);
     }
 
-    bool isVisible(bool checkStyle = true) const
+    bool isVisible() const
     {
-        return nonZero(checkStyle) && !isTransparent() && (!checkStyle || m_style != BHIDDEN);
+        return nonZero() && !isTransparent() && (m_style != BHIDDEN);
     }
 
     bool operator==(const BorderValue& o) const
