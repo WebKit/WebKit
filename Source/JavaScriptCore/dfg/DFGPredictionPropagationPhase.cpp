@@ -269,8 +269,7 @@ private:
             break;
         }
 
-        case ArithAdd:
-        case ArithSub: {
+        case ArithAdd: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
             
@@ -285,6 +284,25 @@ private:
             break;
         }
             
+        case ArithSub: {
+            SpeculatedType left = node->child1()->prediction();
+            SpeculatedType right = node->child2()->prediction();
+
+            if (left && right) {
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
+                    && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
+                    if (m_graph.addSpeculationMode(node, m_pass) != DontSpeculateInt32)
+                        changed |= mergePrediction(SpecInt32);
+                    else if (m_graph.addShouldSpeculateMachineInt(node))
+                        changed |= mergePrediction(SpecInt52);
+                    else
+                        changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
+                } else
+                    changed |= mergePrediction(SpecInt32 | SpecBytecodeDouble);
+            }
+            break;
+        }
+
         case ArithNegate:
             if (node->child1()->prediction()) {
                 if (m_graph.negateShouldSpeculateInt32(node, m_pass))

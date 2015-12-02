@@ -247,7 +247,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case ArithAdd:
-    case ArithSub:
     case ArithNegate:
     case ArithMul:
     case ArithDiv:
@@ -256,6 +255,23 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case UInt32ToNumber:
         def(PureValue(node, node->arithMode()));
         return;
+
+    case ArithSub:
+        switch (node->binaryUseKind()) {
+        case Int32Use:
+#if USE(JSVALUE64)
+        case Int52RepUse:
+#endif
+        case DoubleRepUse:
+            def(PureValue(node, node->arithMode()));
+            return;
+        case UntypedUse:
+            read(World);
+            write(Heap);
+            return;
+        default:
+            DFG_CRASH(graph, node, "Bad use kind");
+        }
 
     case ArithRound:
         def(PureValue(node, static_cast<uintptr_t>(node->arithRoundingMode())));
