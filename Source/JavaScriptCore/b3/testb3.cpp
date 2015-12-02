@@ -4724,6 +4724,21 @@ void testCallSimple(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == a + b);
 }
 
+void testCallSimplePure(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<CCallValue>(
+            proc, Int32, Origin(), CCallValue::PureFunction,
+            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int>(proc, a, b) == a + b);
+}
+
 int functionWithHellaArguments(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n, int o, int p, int q, int r, int s, int t, int u, int v, int w, int x, int y, int z)
 {
     return (a << 0) + (b << 1) + (c << 2) + (d << 3) + (e << 4) + (f << 5) + (g << 6) + (h << 7) + (i << 8) + (j << 9) + (k << 10) + (l << 11) + (m << 12) + (n << 13) + (o << 14) + (p << 15) + (q << 16) + (r << 17) + (s << 18) + (t << 19) + (u << 20) + (v << 21) + (w << 22) + (x << 23) + (y << 24) + (z << 25);
@@ -5991,6 +6006,7 @@ void run(const char* filter)
     RUN(testInt32ToDoublePartialRegisterWithoutStall());
 
     RUN(testCallSimple(1, 2));
+    RUN(testCallSimplePure(1, 2));
     RUN(testCallFunctionWithHellaArguments());
 
     RUN(testReturnDouble(0.0));
