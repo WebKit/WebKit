@@ -303,6 +303,10 @@ webkit.org/b/53675 fast/events/scroll-event-during-modal-dialog.html [ Skip ]
 webkit.org/b/53675 fast/dom/Window/open-window-min-size.html [ Skip ]
 webkit.org/b/53675 js/dom/function-length.html [ Skip ]
 
+webkit.org/b/151506 fast/events/beforeunload-showModalDialog.html [ Skip ]
+webkit.org/b/151506 fast/events/pagehide-showModalDialog.html [ Skip ]
+webkit.org/b/151506 fast/events/unload-showModalDialog.html [ Skip ]
+
 # Datalist is not yet enabled.
 fast/forms/datalist/ [ Skip ]
 
