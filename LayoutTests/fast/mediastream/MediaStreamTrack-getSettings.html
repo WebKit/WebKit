@@ -12,23 +12,27 @@
                     return value.toFixed(precision);
                 return value;
             }
+            
+            function listTrackProperties(track)
+            {
+                debug(`${track.kind} track:`);
+                settings = track.getSettings();
+                for (var property in settings) {
+                    if (settings.hasOwnProperty(property) || settings.__proto__.hasOwnProperty(property))
+                        if (property == "deviceId")
+                            value = "&lt;UUID>";
+                        else
+                            value = limitPrecision(settings[property], 2);
+                        debug(`  settings.${property} = ${value}`);
+                }
+                debug("");
+            }
 
             function gotStream(stream)
             {
                 mediaStream = stream;
-                mediaStream.getTracks().forEach(function(track) {
-                    debug(`${track.kind} track:`);
-                    settings = track.getSettings();
-                    for (var property in settings) {
-                        if (settings.hasOwnProperty(property) || settings.__proto__.hasOwnProperty(property))
-                            if (property == "deviceId")
-                                value = "&lt;UUID>";
-                            else
-                                value = limitPrecision(settings[property], 2);
-                            debug(`  settings.${property} = ${value}`);
-                    }
-                    debug("");
-                });
+                listTrackProperties(mediaStream.getVideoTracks()[0]);
+                listTrackProperties(mediaStream.getAudioTracks()[0]);
                 finishJSTest();
             }
 
