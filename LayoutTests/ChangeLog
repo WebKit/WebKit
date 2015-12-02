@@ -1,5 +1,15 @@
 2015-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline fast/parser/xml-declaration-missing-ending-mark.html, fast/parser/xml-colon-entity.html for Win
+        https://bugs.webkit.org/show_bug.cgi?id=151763
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/fast/parser/xml-colon-entity-expected.txt:
+        * platform/win/fast/parser/xml-declaration-missing-ending-mark-expected.txt:
+
+2015-12-02  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline fast/dynamic/text-combine.html on win
         https://bugs.webkit.org/show_bug.cgi?id=151761
 
