@@ -1,3 +1,31 @@
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Force UnitsPerEm to 1000
+        https://bugs.webkit.org/show_bug.cgi?id=151650
+
+        Reviewed by Antti Koivisto.
+
+        Some tests have quantization differences.
+
+        * fast/ruby/ruby-expansion-cjk-2-expected.html:
+        * fast/ruby/ruby-expansion-cjk-3-expected.html:
+        * fast/ruby/ruby-expansion-cjk-4-expected.html:
+        * fast/ruby/ruby-expansion-cjk-5-expected.html:
+        * fast/ruby/ruby-expansion-cjk-expected.html:
+        * platform/mac-wk2/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-04-t-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt:
+        * svg/custom/acid3-test-77-expected.txt:
+
 2015-12-01  Brady Eidson  <beidson@apple.com>
 
         Add updated test result missing from http://trac.webkit.org/changeset/192924

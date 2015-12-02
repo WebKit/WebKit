@@ -1,3 +1,41 @@
+2015-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Force UnitsPerEm to 1000
+        https://bugs.webkit.org/show_bug.cgi?id=151650
+
+        Reviewed by Antti Koivisto.
+
+        According to the Adobe Type 1 Font Format:
+
+        "Type 1 font programs generally use a 1000 to 1 scaling matrix
+        for the definition of the relationship of character space unites
+        to user space units."
+
+        Windows actually disregards the "unitsPerEm" value in the "head"
+        table for some calculations, and hardcodes 1000 instead. In order
+        to have consistent renderings on Windows and OS X, this patch
+        forces all generated fonts to have a unitsPerEm of 1000, and
+        appropriately scales all necessary values.
+
+        Test: svg/W3C-SVG-1.1/fonts-elem-03-b.svg
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::scaleUnitsPerEm):
+        (WebCore::SVGToOTFFontConverter::appendHEADTable):
+        (WebCore::SVGToOTFFontConverter::appendOS2Table):
+        (WebCore::SVGToOTFFontConverter::appendVORGTable):
+        (WebCore::SVGToOTFFontConverter::appendVHEATable):
+        (WebCore::SVGToOTFFontConverter::appendVMTXTable):
+        (WebCore::SVGToOTFFontConverter::addKerningPair):
+        (WebCore::CFFBuilder::CFFBuilder):
+        (WebCore::CFFBuilder::boundingBox):
+        (WebCore::CFFBuilder::updateBoundingBox):
+        (WebCore::CFFBuilder::unscaledLineTo):
+        (WebCore::SVGToOTFFontConverter::transcodeGlyphPaths):
+        (WebCore::SVGToOTFFontConverter::processGlyphElement):
+        (WebCore::SVGToOTFFontConverter::appendLigatureGlyphs):
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter):
+
 2015-12-01  Brady Eidson  <beidson@apple.com>
 
         Give a more detailed message for TypeErrors that result from EnforceRange.

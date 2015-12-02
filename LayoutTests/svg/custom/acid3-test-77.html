@@ -57,24 +57,24 @@
     // The font-size 4000 was chosen because that matches the unitsPerEm value in the svgfont, 
     // which makes it easy to check the glyph advances since they will then be exactly what was specified in the svgfont.
     shouldBe("text.getNumberOfChars()", "3");
-    shouldBe("text.getComputedTextLength()", "4711+42+23");
-    shouldBe("text.getSubStringLength(0,1)", "42");
-    shouldBe("text.getSubStringLength(0,2)", "42+23");
-    shouldBe("text.getSubStringLength(1,1)", "23");
+    shouldBe("text.getComputedTextLength()", "4780");
+    shouldBe("text.getSubStringLength(0,1)", "44");
+    shouldBe("text.getSubStringLength(0,2)", "68");
+    shouldBe("text.getSubStringLength(1,1)", "24");
     shouldBe("text.getSubStringLength(1,0)", "0");
-    shouldBe("text.getSubStringLength(1, 3)", "4734");
-    shouldBe("text.getSubStringLength(0, 4)", "4776");
+    shouldBe("text.getSubStringLength(1, 3)", "4736");
+    shouldBe("text.getSubStringLength(0, 4)", "4780");
     shouldThrow("text.getSubStringLength(3, 0)");
     shouldThrow("text.getSubStringLength(-17, 20)");
     shouldBe("text.getStartPositionOfChar(0).x", "0");
-    shouldBe("text.getStartPositionOfChar(1).x", "42");
-    shouldBe("text.getStartPositionOfChar(2).x", "42+23");
+    shouldBe("text.getStartPositionOfChar(1).x", "44");
+    shouldBe("text.getStartPositionOfChar(2).x", "68");
     shouldBe("text.getStartPositionOfChar(0).y", "4000");
     shouldThrow("text.getEndPositionOfChar(-1)");
     shouldThrow("text.getEndPositionOfChar(4)");
-    shouldBe("text.getEndPositionOfChar(0).x", "42");
-    shouldBe("text.getEndPositionOfChar(1).x", "42+23");
-    shouldBe("text.getEndPositionOfChar(2).x", "42+23+4711");
+    shouldBe("text.getEndPositionOfChar(0).x", "44");
+    shouldBe("text.getEndPositionOfChar(1).x", "68");
+    shouldBe("text.getEndPositionOfChar(2).x", "4780");
     shouldThrow("text.getEndPositionOfChar(-17)");
     shouldThrow("text.getEndPositionOfChar(4)");
 
