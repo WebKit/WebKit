@@ -177,12 +177,9 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
         return;
     }
 
-    if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
-        completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
-        return;
-    }
-
-    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, challenge, completionHandler);
+    m_completionHandler = completionHandler;
+    m_challenge = challenge;
+    m_client.canAuthenticateAgainstProtectionSpaceAsync(challenge.protectionSpace());
 }
 
 void NetworkLoad::didReceiveResponse(const ResourceResponse& response, std::function<void(WebCore::PolicyAction)> completionHandler)
@@ -280,8 +277,19 @@ void NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* han
 void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
 #if USE(NETWORK_SESSION)
-    // FIXME: Do something here.
-    notImplemented();
+    ASSERT(m_completionHandler);
+    auto completionHandler = WTF::move(m_completionHandler);
+    if (!result) {
+        completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
+        return;
+    }
+    
+    if (m_parameters.clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
+        completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
+        return;
+    }
+    
+    NetworkProcess::singleton().authenticationManager().didReceiveAuthenticationChallenge(m_parameters.webPageID, m_parameters.webFrameID, m_challenge, completionHandler);
 #else
     m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
 #endif

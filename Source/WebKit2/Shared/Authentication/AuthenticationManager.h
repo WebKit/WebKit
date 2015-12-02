@@ -54,7 +54,7 @@ public:
     static const char* supplementName();
 
 #if USE(NETWORK_SESSION)
-    typedef std::function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> ChallengeCompletionHandler;
+    typedef NetworkSessionTaskClient::ChallengeCompletionHandler ChallengeCompletionHandler;
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler);
 #endif
     // Called for resources in the WebProcess (NetworkProcess disabled)

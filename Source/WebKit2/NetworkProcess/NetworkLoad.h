@@ -32,6 +32,7 @@
 
 #if USE(NETWORK_SESSION)
 #include "NetworkSession.h"
+#include <WebCore/AuthenticationChallenge.h>
 #else
 #include <WebCore/ResourceHandleClient.h>
 #endif
@@ -115,6 +116,8 @@ private:
     RefPtr<RemoteNetworkingContext> m_networkingContext;
 #if USE(NETWORK_SESSION)
     Ref<NetworkDataTask> m_task;
+    WebCore::AuthenticationChallenge m_challenge;
+    ChallengeCompletionHandler m_completionHandler;
 #else
     RefPtr<WebCore::ResourceHandle> m_handle;
 #endif

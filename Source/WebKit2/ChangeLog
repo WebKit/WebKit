@@ -1,3 +1,25 @@
+2015-12-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix authentication requests with NetworkSession and canHandleHTTPSServerTrustEvaluation true
+        https://bugs.webkit.org/show_bug.cgi?id=151775
+        rdar://problem/23586265
+
+        Reviewed by Chris Dumez.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=150968 I copied functionality from 
+        NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync into NetworkLoad::didReceiveChallenge
+        but I overlooked the call to m_client.canAuthenticateAgainstProtectionSpaceAsync which is needed
+        if canHandleHTTPSServerTrustEvaluation is true.  This adds that call and moves what should happen
+        after that to NetworkLoad::continueCanAuthenticateAgainstProtectionSpace.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponse):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkSession.h:
+        * Shared/Authentication/AuthenticationManager.h:
+
 2015-12-01  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed, fix build after r192931.
