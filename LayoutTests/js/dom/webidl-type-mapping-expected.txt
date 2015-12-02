@@ -113,25 +113,25 @@ converter.testEnforceRangeLong = -0x8001
 PASS converter.testEnforceRangeLong is -0x8001
 converter.testEnforceRangeLong = 0x7FFFFFFF
 PASS converter.testEnforceRangeLong is 0x7FFFFFFF
-PASS converter.testEnforceRangeLong = 0x80000000 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLong = 0xFFFFFFFF threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = 0x80000000 threw exception TypeError: Value 2147483648 is outside the range [-2147483648, 2147483647].
+PASS converter.testEnforceRangeLong = 0xFFFFFFFF threw exception TypeError: Value 4294967295 is outside the range [-2147483648, 2147483647].
 converter.testEnforceRangeLong = -0x80000000
 PASS converter.testEnforceRangeLong is -0x80000000
-PASS converter.testEnforceRangeLong = -0x80000001 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLong = 0xDCBA9876543210 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLong = Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = -0x80000001 threw exception TypeError: Value -2147483649 is outside the range [-2147483648, 2147483647].
+PASS converter.testEnforceRangeLong = 0xDCBA9876543210 threw exception TypeError: Value 62129658859368980 is outside the range [-2147483648, 2147483647].
+PASS converter.testEnforceRangeLong = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [-2147483648, 2147483647].
 converter.testEnforceRangeLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeLong is 0
-PASS converter.testEnforceRangeLong = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [-2147483648, 2147483647].
 converter.testEnforceRangeLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeLong is 0
 converter.testEnforceRangeLong = 1.99
 PASS converter.testEnforceRangeLong is 1
 converter.testEnforceRangeLong = -1.99
 PASS converter.testEnforceRangeLong is -1
-PASS converter.testEnforceRangeLong = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLong = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLong = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = Infinity threw exception TypeError: Value Infinity is outside the range [-2147483648, 2147483647].
+PASS converter.testEnforceRangeLong = -Infinity threw exception TypeError: Value -Infinity is outside the range [-2147483648, 2147483647].
+PASS converter.testEnforceRangeLong = NaN threw exception TypeError: Value NaN is outside the range [-2147483648, 2147483647].
 converter.testEnforceRangeLong = false
 PASS converter.testEnforceRangeLong is 0
 converter.testEnforceRangeLong = true
@@ -140,10 +140,10 @@ converter.testEnforceRangeLong = ''
 PASS converter.testEnforceRangeLong is 0
 converter.testEnforceRangeLong = '1'
 PASS converter.testEnforceRangeLong is 1
-PASS converter.testEnforceRangeLong = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = 'abc' threw exception TypeError: Value NaN is outside the range [-2147483648, 2147483647].
 converter.testEnforceRangeLong = null
 PASS converter.testEnforceRangeLong is 0
-PASS converter.testEnforceRangeLong = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = undefined threw exception TypeError: Value NaN is outside the range [-2147483648, 2147483647].
 PASS converter.testEnforceRangeLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testUnsignedLong' in converter is true
@@ -228,7 +228,7 @@ converter.testEnforceRangeUnsignedLong = 0
 PASS converter.testEnforceRangeUnsignedLong is 0
 converter.testEnforceRangeUnsignedLong = -0
 PASS converter.testEnforceRangeUnsignedLong is 0
-PASS converter.testEnforceRangeUnsignedLong = -1 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -1 threw exception TypeError: Value -1 is outside the range [0, 4294967295].
 converter.testEnforceRangeUnsignedLong = 1
 PASS converter.testEnforceRangeUnsignedLong is 1
 converter.testEnforceRangeUnsignedLong = 0x7F
@@ -237,37 +237,37 @@ converter.testEnforceRangeUnsignedLong = 0x80
 PASS converter.testEnforceRangeUnsignedLong is 0x80
 converter.testEnforceRangeUnsignedLong = 0xFF
 PASS converter.testEnforceRangeUnsignedLong is 0xFF
-PASS converter.testEnforceRangeUnsignedLong = -0x80 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = -0x81 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -0x80 threw exception TypeError: Value -128 is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = -0x81 threw exception TypeError: Value -129 is outside the range [0, 4294967295].
 converter.testEnforceRangeUnsignedLong = 0x7FFF
 PASS converter.testEnforceRangeUnsignedLong is 0x7FFF
 converter.testEnforceRangeUnsignedLong = 0x8000
 PASS converter.testEnforceRangeUnsignedLong is 0x8000
 converter.testEnforceRangeUnsignedLong = 0xFFFF
 PASS converter.testEnforceRangeUnsignedLong is 0xFFFF
-PASS converter.testEnforceRangeUnsignedLong = -0x8000 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = -0x8001 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -0x8000 threw exception TypeError: Value -32768 is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = -0x8001 threw exception TypeError: Value -32769 is outside the range [0, 4294967295].
 converter.testEnforceRangeUnsignedLong = 0x7FFFFFFF
 PASS converter.testEnforceRangeUnsignedLong is 0x7FFFFFFF
 converter.testEnforceRangeUnsignedLong = 0x80000000
 PASS converter.testEnforceRangeUnsignedLong is 0x80000000
 converter.testEnforceRangeUnsignedLong = 0xFFFFFFFF
 PASS converter.testEnforceRangeUnsignedLong is 0xFFFFFFFF
-PASS converter.testEnforceRangeUnsignedLong = -0x80000000 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = -0x80000001 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = 0xDCBA9876543210 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -0x80000000 threw exception TypeError: Value -2147483648 is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = -0x80000001 threw exception TypeError: Value -2147483649 is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = 0xDCBA9876543210 threw exception TypeError: Value 62129658859368980 is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [0, 4294967295].
 converter.testEnforceRangeUnsignedLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLong is 0
-PASS converter.testEnforceRangeUnsignedLong = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [0, 4294967295].
 converter.testEnforceRangeUnsignedLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLong is 0
 converter.testEnforceRangeUnsignedLong = 1.99
 PASS converter.testEnforceRangeUnsignedLong is 1
-PASS converter.testEnforceRangeUnsignedLong = -1.99 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLong = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -1.99 threw exception TypeError: Value -1 is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = Infinity threw exception TypeError: Value Infinity is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = -Infinity threw exception TypeError: Value -Infinity is outside the range [0, 4294967295].
+PASS converter.testEnforceRangeUnsignedLong = NaN threw exception TypeError: Value NaN is outside the range [0, 4294967295].
 converter.testEnforceRangeUnsignedLong = false
 PASS converter.testEnforceRangeUnsignedLong is 0
 converter.testEnforceRangeUnsignedLong = true
@@ -276,10 +276,10 @@ converter.testEnforceRangeUnsignedLong = ''
 PASS converter.testEnforceRangeUnsignedLong is 0
 converter.testEnforceRangeUnsignedLong = '1'
 PASS converter.testEnforceRangeUnsignedLong is 1
-PASS converter.testEnforceRangeUnsignedLong = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = 'abc' threw exception TypeError: Value NaN is outside the range [0, 4294967295].
 converter.testEnforceRangeUnsignedLong = null
 PASS converter.testEnforceRangeUnsignedLong is 0
-PASS converter.testEnforceRangeUnsignedLong = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = undefined threw exception TypeError: Value NaN is outside the range [0, 4294967295].
 PASS converter.testEnforceRangeUnsignedLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testLongLong' in converter is true
@@ -398,20 +398,20 @@ converter.testEnforceRangeLongLong = -0x80000000
 PASS converter.testEnforceRangeLongLong is -0x80000000
 converter.testEnforceRangeLongLong = -0x80000001
 PASS converter.testEnforceRangeLongLong is -0x80000001
-PASS converter.testEnforceRangeLongLong = 0xDCBA9876543210 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = 0xDCBA9876543210 threw exception TypeError: Value 62129658859368980 is outside the range [-9007199254740991, 9007199254740991].
 converter.testEnforceRangeLongLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeLongLong is 0
 converter.testEnforceRangeLongLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeLongLong is 0
-PASS converter.testEnforceRangeLongLong = Number.MAX_VALUE threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLongLong = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [-9007199254740991, 9007199254740991].
+PASS converter.testEnforceRangeLongLong = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [-9007199254740991, 9007199254740991].
 converter.testEnforceRangeLongLong = 1.99
 PASS converter.testEnforceRangeLongLong is 1
 converter.testEnforceRangeLongLong = -1.99
 PASS converter.testEnforceRangeLongLong is -1
-PASS converter.testEnforceRangeLongLong = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLongLong = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeLongLong = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = Infinity threw exception TypeError: Value Infinity is outside the range [-9007199254740991, 9007199254740991].
+PASS converter.testEnforceRangeLongLong = -Infinity threw exception TypeError: Value -Infinity is outside the range [-9007199254740991, 9007199254740991].
+PASS converter.testEnforceRangeLongLong = NaN threw exception TypeError: Value NaN is outside the range [-9007199254740991, 9007199254740991].
 converter.testEnforceRangeLongLong = false
 PASS converter.testEnforceRangeLongLong is 0
 converter.testEnforceRangeLongLong = true
@@ -420,10 +420,10 @@ converter.testEnforceRangeLongLong = ''
 PASS converter.testEnforceRangeLongLong is 0
 converter.testEnforceRangeLongLong = '1'
 PASS converter.testEnforceRangeLongLong is 1
-PASS converter.testEnforceRangeLongLong = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = 'abc' threw exception TypeError: Value NaN is outside the range [-9007199254740991, 9007199254740991].
 converter.testEnforceRangeLongLong = null
 PASS converter.testEnforceRangeLongLong is 0
-PASS converter.testEnforceRangeLongLong = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = undefined threw exception TypeError: Value NaN is outside the range [-9007199254740991, 9007199254740991].
 PASS converter.testEnforceRangeLongLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testUnsignedLongLong' in converter is true
@@ -508,7 +508,7 @@ converter.testEnforceRangeUnsignedLongLong = 0
 PASS converter.testEnforceRangeUnsignedLongLong is 0
 converter.testEnforceRangeUnsignedLongLong = -0
 PASS converter.testEnforceRangeUnsignedLongLong is 0
-PASS converter.testEnforceRangeUnsignedLongLong = -1 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -1 threw exception TypeError: Value -1 is outside the range [0, 9007199254740991].
 converter.testEnforceRangeUnsignedLongLong = 1
 PASS converter.testEnforceRangeUnsignedLongLong is 1
 converter.testEnforceRangeUnsignedLongLong = 0x7F
@@ -517,37 +517,37 @@ converter.testEnforceRangeUnsignedLongLong = 0x80
 PASS converter.testEnforceRangeUnsignedLongLong is 0x80
 converter.testEnforceRangeUnsignedLongLong = 0xFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0xFF
-PASS converter.testEnforceRangeUnsignedLongLong = -0x80 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = -0x81 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x80 threw exception TypeError: Value -128 is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = -0x81 threw exception TypeError: Value -129 is outside the range [0, 9007199254740991].
 converter.testEnforceRangeUnsignedLongLong = 0x7FFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0x7FFF
 converter.testEnforceRangeUnsignedLongLong = 0x8000
 PASS converter.testEnforceRangeUnsignedLongLong is 0x8000
 converter.testEnforceRangeUnsignedLongLong = 0xFFFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0xFFFF
-PASS converter.testEnforceRangeUnsignedLongLong = -0x8000 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = -0x8001 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x8000 threw exception TypeError: Value -32768 is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = -0x8001 threw exception TypeError: Value -32769 is outside the range [0, 9007199254740991].
 converter.testEnforceRangeUnsignedLongLong = 0x7FFFFFFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0x7FFFFFFF
 converter.testEnforceRangeUnsignedLongLong = 0x80000000
 PASS converter.testEnforceRangeUnsignedLongLong is 0x80000000
 converter.testEnforceRangeUnsignedLongLong = 0xFFFFFFFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0xFFFFFFFF
-PASS converter.testEnforceRangeUnsignedLongLong = -0x80000000 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = -0x80000001 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = 0xDCBA9876543210 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x80000000 threw exception TypeError: Value -2147483648 is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = -0x80000001 threw exception TypeError: Value -2147483649 is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = 0xDCBA9876543210 threw exception TypeError: Value 62129658859368980 is outside the range [0, 9007199254740991].
 converter.testEnforceRangeUnsignedLongLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLongLong is 0
 converter.testEnforceRangeUnsignedLongLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLongLong is 0
-PASS converter.testEnforceRangeUnsignedLongLong = Number.MAX_VALUE threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [0, 9007199254740991].
 converter.testEnforceRangeUnsignedLongLong = 1.99
 PASS converter.testEnforceRangeUnsignedLongLong is 1
-PASS converter.testEnforceRangeUnsignedLongLong = -1.99 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedLongLong = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -1.99 threw exception TypeError: Value -1 is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = Infinity threw exception TypeError: Value Infinity is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = -Infinity threw exception TypeError: Value -Infinity is outside the range [0, 9007199254740991].
+PASS converter.testEnforceRangeUnsignedLongLong = NaN threw exception TypeError: Value NaN is outside the range [0, 9007199254740991].
 converter.testEnforceRangeUnsignedLongLong = false
 PASS converter.testEnforceRangeUnsignedLongLong is 0
 converter.testEnforceRangeUnsignedLongLong = true
@@ -556,10 +556,10 @@ converter.testEnforceRangeUnsignedLongLong = ''
 PASS converter.testEnforceRangeUnsignedLongLong is 0
 converter.testEnforceRangeUnsignedLongLong = '1'
 PASS converter.testEnforceRangeUnsignedLongLong is 1
-PASS converter.testEnforceRangeUnsignedLongLong = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = 'abc' threw exception TypeError: Value NaN is outside the range [0, 9007199254740991].
 converter.testEnforceRangeUnsignedLongLong = null
 PASS converter.testEnforceRangeUnsignedLongLong is 0
-PASS converter.testEnforceRangeUnsignedLongLong = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = undefined threw exception TypeError: Value NaN is outside the range [0, 9007199254740991].
 PASS converter.testEnforceRangeUnsignedLongLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testByte' in converter is true
@@ -638,15 +638,15 @@ converter.testEnforceRangeByte = Number.MIN_VALUE
 PASS converter.testEnforceRangeByte is 0
 converter.testEnforceRangeByte = -Number.MIN_VALUE
 PASS converter.testEnforceRangeByte is 0
-PASS converter.testEnforceRangeByte = Number.MAX_VALUE threw exception TypeError: Type error.
-PASS converter.testEnforceRangeByte = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeByte = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [-128, 127].
+PASS converter.testEnforceRangeByte = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [-128, 127].
 converter.testEnforceRangeByte = 1.99
 PASS converter.testEnforceRangeByte is 1
 converter.testEnforceRangeByte = -1.99
 PASS converter.testEnforceRangeByte is -1
-PASS converter.testEnforceRangeByte = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeByte = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeByte = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeByte = Infinity threw exception TypeError: Value Infinity is outside the range [-128, 127].
+PASS converter.testEnforceRangeByte = -Infinity threw exception TypeError: Value -Infinity is outside the range [-128, 127].
+PASS converter.testEnforceRangeByte = NaN threw exception TypeError: Value NaN is outside the range [-128, 127].
 converter.testEnforceRangeByte = false
 PASS converter.testEnforceRangeByte is 0
 converter.testEnforceRangeByte = true
@@ -655,10 +655,10 @@ converter.testEnforceRangeByte = ''
 PASS converter.testEnforceRangeByte is 0
 converter.testEnforceRangeByte = '1'
 PASS converter.testEnforceRangeByte is 1
-PASS converter.testEnforceRangeByte = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeByte = 'abc' threw exception TypeError: Value NaN is outside the range [-128, 127].
 converter.testEnforceRangeByte = null
 PASS converter.testEnforceRangeByte is 0
-PASS converter.testEnforceRangeByte = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeByte = undefined threw exception TypeError: Value NaN is outside the range [-128, 127].
 PASS converter.testEnforceRangeByte = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testOctet' in converter is true
@@ -725,7 +725,7 @@ converter.testEnforceRangeOctet = 0
 PASS converter.testEnforceRangeOctet is 0
 converter.testEnforceRangeOctet = -0
 PASS converter.testEnforceRangeOctet is 0
-PASS converter.testEnforceRangeOctet = -1 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeOctet = -1 threw exception TypeError: Value -1 is outside the range [0, 255].
 converter.testEnforceRangeOctet = 1
 PASS converter.testEnforceRangeOctet is 1
 converter.testEnforceRangeOctet = 0x7F
@@ -736,20 +736,20 @@ converter.testEnforceRangeOctet = 0xFF
 PASS converter.testEnforceRangeOctet is 0xFF
 PASS converter.testEnforceRangeOctet = 0x100 threw exception TypeError: Type error.
 PASS converter.testEnforceRangeOctet = 0x101 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeOctet = -0x80 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeOctet = -0x81 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeOctet = Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeOctet = -0x80 threw exception TypeError: Value -128 is outside the range [0, 255].
+PASS converter.testEnforceRangeOctet = -0x81 threw exception TypeError: Value -129 is outside the range [0, 255].
+PASS converter.testEnforceRangeOctet = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [0, 255].
 converter.testEnforceRangeOctet = Number.MIN_VALUE
 PASS converter.testEnforceRangeOctet is 0
-PASS converter.testEnforceRangeOctet = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeOctet = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [0, 255].
 converter.testEnforceRangeOctet = -Number.MIN_VALUE
 PASS converter.testEnforceRangeOctet is 0
 converter.testEnforceRangeOctet = 1.99
 PASS converter.testEnforceRangeOctet is 1
-PASS converter.testEnforceRangeOctet = -1.99 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeOctet = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeOctet = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeOctet = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeOctet = -1.99 threw exception TypeError: Value -1 is outside the range [0, 255].
+PASS converter.testEnforceRangeOctet = Infinity threw exception TypeError: Value Infinity is outside the range [0, 255].
+PASS converter.testEnforceRangeOctet = -Infinity threw exception TypeError: Value -Infinity is outside the range [0, 255].
+PASS converter.testEnforceRangeOctet = NaN threw exception TypeError: Value NaN is outside the range [0, 255].
 converter.testEnforceRangeOctet = false
 PASS converter.testEnforceRangeOctet is 0
 converter.testEnforceRangeOctet = true
@@ -758,10 +758,10 @@ converter.testEnforceRangeOctet = ''
 PASS converter.testEnforceRangeOctet is 0
 converter.testEnforceRangeOctet = '1'
 PASS converter.testEnforceRangeOctet is 1
-PASS converter.testEnforceRangeOctet = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeOctet = 'abc' threw exception TypeError: Value NaN is outside the range [0, 255].
 converter.testEnforceRangeOctet = null
 PASS converter.testEnforceRangeOctet is 0
-PASS converter.testEnforceRangeOctet = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeOctet = undefined threw exception TypeError: Value NaN is outside the range [0, 255].
 PASS converter.testEnforceRangeOctet = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testShort' in converter is true
@@ -857,20 +857,20 @@ PASS converter.testEnforceRangeShort = 0xFFFF threw exception TypeError: Type er
 converter.testEnforceRangeShort = -0x8000
 PASS converter.testEnforceRangeShort is -0x8000
 PASS converter.testEnforceRangeShort = -0x8001 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeShort = 0xDCBA9876543210 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeShort = Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeShort = 0xDCBA9876543210 threw exception TypeError: Value 62129658859368980 is outside the range [-32768, 32767].
+PASS converter.testEnforceRangeShort = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [-32768, 32767].
 converter.testEnforceRangeShort = Number.MIN_VALUE
 PASS converter.testEnforceRangeShort is 0
-PASS converter.testEnforceRangeShort = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeShort = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [-32768, 32767].
 converter.testEnforceRangeShort = -Number.MIN_VALUE
 PASS converter.testEnforceRangeShort is 0
 converter.testEnforceRangeShort = 1.99
 PASS converter.testEnforceRangeShort is 1
 converter.testEnforceRangeShort = -1.99
 PASS converter.testEnforceRangeShort is -1
-PASS converter.testEnforceRangeShort = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeShort = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeShort = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeShort = Infinity threw exception TypeError: Value Infinity is outside the range [-32768, 32767].
+PASS converter.testEnforceRangeShort = -Infinity threw exception TypeError: Value -Infinity is outside the range [-32768, 32767].
+PASS converter.testEnforceRangeShort = NaN threw exception TypeError: Value NaN is outside the range [-32768, 32767].
 converter.testEnforceRangeShort = false
 PASS converter.testEnforceRangeShort is 0
 converter.testEnforceRangeShort = true
@@ -879,10 +879,10 @@ converter.testEnforceRangeShort = ''
 PASS converter.testEnforceRangeShort is 0
 converter.testEnforceRangeShort = '1'
 PASS converter.testEnforceRangeShort is 1
-PASS converter.testEnforceRangeShort = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeShort = 'abc' threw exception TypeError: Value NaN is outside the range [-32768, 32767].
 converter.testEnforceRangeShort = null
 PASS converter.testEnforceRangeShort is 0
-PASS converter.testEnforceRangeShort = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeShort = undefined threw exception TypeError: Value NaN is outside the range [-32768, 32767].
 PASS converter.testEnforceRangeShort = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testUnsignedShort' in converter is true
@@ -959,7 +959,7 @@ converter.testEnforceRangeUnsignedShort = 0
 PASS converter.testEnforceRangeUnsignedShort is 0
 converter.testEnforceRangeUnsignedShort = -0
 PASS converter.testEnforceRangeUnsignedShort is 0
-PASS converter.testEnforceRangeUnsignedShort = -1 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = -1 threw exception TypeError: Value -1 is outside the range [0, 65535].
 converter.testEnforceRangeUnsignedShort = 1
 PASS converter.testEnforceRangeUnsignedShort is 1
 converter.testEnforceRangeUnsignedShort = 0x7F
@@ -968,8 +968,8 @@ converter.testEnforceRangeUnsignedShort = 0x80
 PASS converter.testEnforceRangeUnsignedShort is 0x80
 converter.testEnforceRangeUnsignedShort = 0xFF
 PASS converter.testEnforceRangeUnsignedShort is 0xFF
-PASS converter.testEnforceRangeUnsignedShort = -0x80 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedShort = -0x81 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = -0x80 threw exception TypeError: Value -128 is outside the range [0, 65535].
+PASS converter.testEnforceRangeUnsignedShort = -0x81 threw exception TypeError: Value -129 is outside the range [0, 65535].
 converter.testEnforceRangeUnsignedShort = 0x7FFF
 PASS converter.testEnforceRangeUnsignedShort is 0x7FFF
 converter.testEnforceRangeUnsignedShort = 0x8000
@@ -977,22 +977,22 @@ PASS converter.testEnforceRangeUnsignedShort is 0x8000
 converter.testEnforceRangeUnsignedShort = 0xFFFF
 PASS converter.testEnforceRangeUnsignedShort is 0xFFFF
 PASS converter.testEnforceRangeUnsignedShort = 0x10000 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedShort = -0x8000 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedShort = -0x8001 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = -0x8000 threw exception TypeError: Value -32768 is outside the range [0, 65535].
+PASS converter.testEnforceRangeUnsignedShort = -0x8001 threw exception TypeError: Value -32769 is outside the range [0, 65535].
 converter.testEnforceRangeUnsignedShort = 0x3210
 PASS converter.testEnforceRangeUnsignedShort is 0x3210
-PASS converter.testEnforceRangeUnsignedShort = Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = Number.MAX_VALUE threw exception TypeError: Value 1.7976931348623157e+308 is outside the range [0, 65535].
 converter.testEnforceRangeUnsignedShort = Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedShort is 0
-PASS converter.testEnforceRangeUnsignedShort = -Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = -Number.MAX_VALUE threw exception TypeError: Value -1.7976931348623157e+308 is outside the range [0, 65535].
 converter.testEnforceRangeUnsignedShort = -Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedShort is 0
 converter.testEnforceRangeUnsignedShort = 1.99
 PASS converter.testEnforceRangeUnsignedShort is 1
-PASS converter.testEnforceRangeUnsignedShort = -1.99 threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedShort = Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedShort = -Infinity threw exception TypeError: Type error.
-PASS converter.testEnforceRangeUnsignedShort = NaN threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = -1.99 threw exception TypeError: Value -1 is outside the range [0, 65535].
+PASS converter.testEnforceRangeUnsignedShort = Infinity threw exception TypeError: Value Infinity is outside the range [0, 65535].
+PASS converter.testEnforceRangeUnsignedShort = -Infinity threw exception TypeError: Value -Infinity is outside the range [0, 65535].
+PASS converter.testEnforceRangeUnsignedShort = NaN threw exception TypeError: Value NaN is outside the range [0, 65535].
 converter.testEnforceRangeUnsignedShort = false
 PASS converter.testEnforceRangeUnsignedShort is 0
 converter.testEnforceRangeUnsignedShort = true
@@ -1001,10 +1001,10 @@ converter.testEnforceRangeUnsignedShort = ''
 PASS converter.testEnforceRangeUnsignedShort is 0
 converter.testEnforceRangeUnsignedShort = '1'
 PASS converter.testEnforceRangeUnsignedShort is 1
-PASS converter.testEnforceRangeUnsignedShort = 'abc' threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = 'abc' threw exception TypeError: Value NaN is outside the range [0, 65535].
 converter.testEnforceRangeUnsignedShort = null
 PASS converter.testEnforceRangeUnsignedShort is 0
-PASS converter.testEnforceRangeUnsignedShort = undefined threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedShort = undefined threw exception TypeError: Value NaN is outside the range [0, 65535].
 PASS converter.testEnforceRangeUnsignedShort = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS successfullyParsed is true

@@ -320,15 +320,20 @@ static const int32_t kMinInt32 = -kMaxInt32 - 1;
 static const uint32_t kMaxUInt32 = 0xffffffffU;
 static const int64_t kJSMaxInteger = 0x20000000000000LL - 1; // 2^53 - 1, largest integer exactly representable in ECMAScript.
 
+static String rangeErrorString(double value, double min, double max)
+{
+    return makeString("Value ", String::numberToStringECMAScript(value), " is outside the range [", String::numberToStringECMAScript(min), ", ", String::numberToStringECMAScript(max), "]");
+}
+
 static double enforceRange(ExecState* exec, double x, double minimum, double maximum)
 {
     if (std::isnan(x) || std::isinf(x)) {
-        throwTypeError(exec);
+        exec->vm().throwException(exec, createTypeError(exec, rangeErrorString(x, minimum, maximum)));
         return 0;
     }
     x = trunc(x);
     if (x < minimum || x > maximum) {
-        throwTypeError(exec);
+        exec->vm().throwException(exec, createTypeError(exec, rangeErrorString(x, minimum, maximum)));
         return 0;
     }
     return x;

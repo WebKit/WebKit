@@ -1,3 +1,16 @@
+2015-12-01  Brady Eidson  <beidson@apple.com>
+
+        Give a more detailed message for TypeErrors that result from EnforceRange.
+        https://bugs.webkit.org/show_bug.cgi?id=151725
+
+        Reviewed by Tim Horton.
+
+        No new tests (Covered by changes to existing tests).
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::rangeErrorString):
+        (WebCore::enforceRange):
+
 2015-12-01  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Abrupt transition between Fullscreen -> PiP
