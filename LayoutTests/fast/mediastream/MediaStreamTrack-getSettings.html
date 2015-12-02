@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+            var mediaStream;
+
+            function limitPrecision(value, precision)
+            {
+                if (typeof value === "number" && value % 1 != 0)
+                    return value.toFixed(precision);
+                return value;
+            }
+
+            function gotStream(stream)
+            {
+                mediaStream = stream;
+                mediaStream.getTracks().forEach(function(track) {
+                    debug(`${track.kind} track:`);
+                    settings = track.getSettings();
+                    for (var property in settings) {
+                        if (settings.hasOwnProperty(property) || settings.__proto__.hasOwnProperty(property))
+                            if (property == "deviceId")
+                                value = "&lt;UUID>";
+                            else
+                                value = limitPrecision(settings[property], 2);
+                            debug(`  settings.${property} = ${value}`);
+                    }
+                    debug("");
+                });
+                finishJSTest();
+            }
+
+            function start()
+            {
+                description("Tests MediaStreamTrack.getSettings.");
+                getUserMedia("allow", {audio:true, video:true}, gotStream);
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

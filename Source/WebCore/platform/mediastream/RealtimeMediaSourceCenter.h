@@ -44,7 +44,7 @@ namespace WebCore {
 class MediaConstraints;
 class MediaStreamCreationClient;
 class MediaStreamTrackSourcesRequestClient;
-class RealtimeMediaSourceStates;
+class RealtimeMediaSourceSettings;
 class RealtimeMediaSourceSupportedConstraints;
 class TrackSourceInfo;
 

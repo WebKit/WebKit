@@ -21,8 +21,8 @@ Event 'canplaythrough'
 video.pause()
 
 **** check video element ****
-PASS video.videoWidth is mediaStream.getVideoTracks()[0].states().width
-PASS video.videoHeight is mediaStream.getVideoTracks()[0].states().height
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
 PASS video.src.indexOf("blob:") is 0
 PASS video.srcObject is mediaStream
 

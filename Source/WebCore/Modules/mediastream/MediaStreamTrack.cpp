@@ -37,7 +37,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "MediaConstraintsImpl.h"
-#include "MediaSourceStates.h"
+#include "MediaSourceSettings.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
 #include "MediaTrackConstraints.h"
@@ -162,21 +162,14 @@ RefPtr<MediaTrackConstraints> MediaStreamTrack::getConstraints() const
     return 0;
 }
 
-RefPtr<MediaSourceStates> MediaStreamTrack::states() const
+RefPtr<MediaSourceSettings> MediaStreamTrack::getSettings() const
 {
-    return MediaSourceStates::create(m_private->states());
+    return MediaSourceSettings::create(m_private->settings());
 }
 
 RefPtr<MediaStreamCapabilities> MediaStreamTrack::getCapabilities() const
 {
-    // The source may be shared by multiple tracks, so its states is not necessarily
-    // in sync with the track state. A track that has ended always has a source
-    // type of "none".
-    RefPtr<RealtimeMediaSourceCapabilities> sourceCapabilities = m_private->capabilities();
-    if (ended())
-        sourceCapabilities->setSourceType(RealtimeMediaSourceStates::None);
-    
-    return MediaStreamCapabilities::create(sourceCapabilities.release());
+    return MediaStreamCapabilities::create(m_private->capabilities());
 }
 
 void MediaStreamTrack::applyConstraints(const Dictionary& constraints)
@@ -238,7 +231,7 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
     configureTrackRendering();
 }
 
-void MediaStreamTrack::trackStatesChanged(MediaStreamTrackPrivate&)
+void MediaStreamTrack::trackSettingsChanged(MediaStreamTrackPrivate&)
 {
     configureTrackRendering();
 }

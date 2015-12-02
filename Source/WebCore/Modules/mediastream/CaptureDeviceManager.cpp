@@ -32,7 +32,7 @@
 #import "MediaConstraints.h"
 #import "RealtimeMediaSource.h"
 #import "RealtimeMediaSourceCenter.h"
-#import "RealtimeMediaSourceStates.h"
+#import "RealtimeMediaSourceSettings.h"
 #import "UUID.h"
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
@@ -125,9 +125,9 @@ RefPtr<RealtimeMediaSource> CaptureDeviceManager::sourceWithUID(const String& de
     return nullptr;
 }
 
-CaptureDeviceInfo* CaptureDeviceManager::bestDeviceForFacingMode(RealtimeMediaSourceStates::VideoFacingMode facingMode)
+CaptureDeviceInfo* CaptureDeviceManager::bestDeviceForFacingMode(RealtimeMediaSourceSettings::VideoFacingMode facingMode)
 {
-    if (facingMode == RealtimeMediaSourceStates::Unknown)
+    if (facingMode == RealtimeMediaSourceSettings::Unknown)
         return nullptr;
 
     for (auto& device : captureDeviceList()) {
@@ -137,21 +137,21 @@ CaptureDeviceInfo* CaptureDeviceManager::bestDeviceForFacingMode(RealtimeMediaSo
     return nullptr;
 }
 
-static inline RealtimeMediaSourceStates::VideoFacingMode facingModeFromString(const String& facingModeString)
+static inline RealtimeMediaSourceSettings::VideoFacingMode facingModeFromString(const String& facingModeString)
 {
     static NeverDestroyed<AtomicString> userFacingModeString("user", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> environmentFacingModeString("environment", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> leftFacingModeString("left", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> rightFacingModeString("right", AtomicString::ConstructFromLiteral);
     if (facingModeString == userFacingModeString)
-        return RealtimeMediaSourceStates::User;
+        return RealtimeMediaSourceSettings::User;
     if (facingModeString == environmentFacingModeString)
-        return RealtimeMediaSourceStates::Environment;
+        return RealtimeMediaSourceSettings::Environment;
     if (facingModeString == leftFacingModeString)
-        return RealtimeMediaSourceStates::Left;
+        return RealtimeMediaSourceSettings::Left;
     if (facingModeString == rightFacingModeString)
-        return RealtimeMediaSourceStates::Right;
-    return RealtimeMediaSourceStates::Unknown;
+        return RealtimeMediaSourceSettings::Right;
+    return RealtimeMediaSourceSettings::Unknown;
 }
 
 bool CaptureDeviceManager::sessionSupportsConstraint(const CaptureSessionInfo*, RealtimeMediaSource::Type type, const String& name, const String& value)

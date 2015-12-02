@@ -31,7 +31,7 @@
 #include "CapabilityRange.h"
 
 #include "JSDOMBinding.h"
-#include "MediaSourceStates.h"
+#include "MediaSourceSettings.h"
 #include <bindings/ScriptValue.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/JSCJSValue.h>

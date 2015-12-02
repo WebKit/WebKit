@@ -39,7 +39,7 @@
 #include "MediaConstraints.h"
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
-#include "RealtimeMediaSourceStates.h"
+#include "RealtimeMediaSourceSettings.h"
 #include "UUID.h"
 #include <math.h>
 #include <wtf/CurrentTime.h>
@@ -90,39 +90,32 @@ double MockRealtimeVideoSource::elapsedTime()
     return m_elapsedTime + (monotonicallyIncreasingTime() - m_startTime);
 }
 
-void MockRealtimeVideoSource::updateStates()
+void MockRealtimeVideoSource::updateSettings(RealtimeMediaSourceSettings& settings)
 {
-    RealtimeMediaSourceStates* states = currentStates();
-
-    states->setSourceType(RealtimeMediaSourceStates::Camera);
-    states->setFacingMode(RealtimeMediaSourceStates::User);
-    states->setFrameRate(m_frameRate);
-    states->setWidth(m_size.width());
-    states->setHeight(m_size.height());
-    states->setAspectRatio(static_cast<float>(m_size.width()) / m_size.height());
+    settings.setFacingMode(RealtimeMediaSourceSettings::User);
+    settings.setFrameRate(m_frameRate);
+    settings.setWidth(m_size.width());
+    settings.setHeight(m_size.height());
+    settings.setAspectRatio(static_cast<float>(m_size.width()) / m_size.height());
 }
 
 void MockRealtimeVideoSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
-    capabilities.addSourceType(RealtimeMediaSourceStates::Camera);
-    capabilities.addFacingMode(RealtimeMediaSourceStates::User);
-    capabilities.addFacingMode(RealtimeMediaSourceStates::Environment);
+    capabilities.addFacingMode(RealtimeMediaSourceSettings::User);
+    capabilities.addFacingMode(RealtimeMediaSourceSettings::Environment);
     capabilities.setWidthRange(RealtimeMediaSourceCapabilityRange(320UL, 1920UL, true));
     capabilities.setHeightRange(RealtimeMediaSourceCapabilityRange(240UL, 1080UL, true));
     capabilities.setFrameRateRange(RealtimeMediaSourceCapabilityRange(15.0f, 60.0f, true));
     capabilities.setAspectRatioRange(RealtimeMediaSourceCapabilityRange(4 / 3.0f, 16 / 9.0f, true));
 }
 
-void MockRealtimeVideoSource::setFacingMode(RealtimeMediaSourceStates::VideoFacingMode mode)
+void MockRealtimeVideoSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)
 {
-    RealtimeMediaSourceStates* states = currentStates();
-
-    if (states->facingMode() == mode)
-        return;
-
-    states->setFacingMode(mode);
-
-    statesDidChanged();
+    supportedConstraints.setSupportsWidth(true);
+    supportedConstraints.setSupportsHeight(true);
+    supportedConstraints.setSupportsAspectRatio(true);
+    supportedConstraints.setSupportsFrameRate(true);
+    supportedConstraints.setSupportsFacingMode(true);
 }
 
 void MockRealtimeVideoSource::setFrameRate(float rate)
@@ -134,7 +127,7 @@ void MockRealtimeVideoSource::setFrameRate(float rate)
     if (m_timer.isActive())
         m_timer.startRepeating(std::chrono::milliseconds(lround(1000 / m_frameRate)));
 
-    statesDidChanged();
+    settingsDidChanged();
 }
 
 void MockRealtimeVideoSource::setSize(const IntSize& size)
@@ -169,7 +162,7 @@ void MockRealtimeVideoSource::setSize(const IntSize& size)
     m_imageBuffer = nullptr;
     updatePlatformLayer();
 
-    statesDidChanged();
+    settingsDidChanged();
 }
 
 void MockRealtimeVideoSource::drawAnimation(GraphicsContext& context)
@@ -284,20 +277,20 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     context.drawText(m_statsFont, TextRun((StringView(string))), statsLocation, 0, -1);
 
     const char* camera;
-    switch (states().facingMode()) {
-    case RealtimeMediaSourceStates::User:
+    switch (settings().facingMode()) {
+    case RealtimeMediaSourceSettings::User:
         camera = "User facing";
         break;
-    case RealtimeMediaSourceStates::Environment:
+    case RealtimeMediaSourceSettings::Environment:
         camera = "Environment facing";
         break;
-    case RealtimeMediaSourceStates::Left:
+    case RealtimeMediaSourceSettings::Left:
         camera = "Left facing";
         break;
-    case RealtimeMediaSourceStates::Right:
+    case RealtimeMediaSourceSettings::Right:
         camera = "Right facing";
         break;
-    case RealtimeMediaSourceStates::Unknown:
+    case RealtimeMediaSourceSettings::Unknown:
         camera = "Unknown";
         break;
     }

@@ -37,7 +37,7 @@
 #import "MediaConstraints.h"
 #import "NotImplemented.h"
 #import "PlatformLayer.h"
-#import "RealtimeMediaSourceStates.h"
+#import "RealtimeMediaSourceSettings.h"
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <objc/runtime.h>

@@ -22,8 +22,8 @@ video.pause()
 
 **** check states with live video stream track ****
 PASS video.ended is false
-PASS video.videoWidth is mediaStream.getVideoTracks()[0].states().width
-PASS video.videoHeight is mediaStream.getVideoTracks()[0].states().height
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
 PASS video.src.indexOf("blob:") is 0
 PASS video.srcObject is mediaStream
 
@@ -41,8 +41,8 @@ mediaStream.getVideoTracks()[0].enabled = false
 
 **** re-check states now that the video stream has been disabled ****
 PASS mediaStream.getVideoTracks()[0].enabled is false
-PASS video.videoWidth is mediaStream.getVideoTracks()[0].states().width
-PASS video.videoHeight is mediaStream.getVideoTracks()[0].states().height
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
 
 **** stop MediaStream tracks ****
 mediaStream.getVideoTracks()[0].enabled = true

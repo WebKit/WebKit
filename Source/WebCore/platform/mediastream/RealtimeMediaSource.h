@@ -51,7 +51,7 @@ class FloatRect;
 class GraphicsContext;
 class MediaConstraints;
 class MediaStreamPrivate;
-class RealtimeMediaSourceStates;
+class RealtimeMediaSourceSettings;
 
 class RealtimeMediaSource : public RefCounted<RealtimeMediaSource> {
 public:
@@ -62,7 +62,7 @@ public:
         // Source state changes.
         virtual void sourceStopped() = 0;
         virtual void sourceMutedChanged() = 0;
-        virtual void sourceStatesChanged() = 0;
+        virtual void sourceSettingsChanged() = 0;
 
         // Observer state queries.
         virtual bool preventSourceFromStopping() = 0;
@@ -85,8 +85,8 @@ public:
     virtual void setFitnessScore(const unsigned fitnessScore) { m_fitnessScore = fitnessScore; }
 
     virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() = 0;
-    virtual const RealtimeMediaSourceStates& states() = 0;
-    void statesDidChanged();
+    virtual const RealtimeMediaSourceSettings& settings() = 0;
+    void settingsDidChanged();
     
     bool stopped() const { return m_stopped; }
 

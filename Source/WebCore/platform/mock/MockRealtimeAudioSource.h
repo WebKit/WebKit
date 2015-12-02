@@ -51,8 +51,9 @@ protected:
     MockRealtimeAudioSource();
 
 private:
-    void updateStates() override;
+    void updateSettings(RealtimeMediaSourceSettings&) override;
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
+    void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
 };
 
 } // namespace WebCore

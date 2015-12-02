@@ -59,12 +59,13 @@ private:
     virtual ~AVAudioCaptureSource();
     
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
+    void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
 
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) override;
     
     void setupCaptureSession() override;
     void shutdownCaptureSession() override;
-    void updateStates() override;
+    void updateSettings(RealtimeMediaSourceSettings&) override;
     AudioSourceProvider* audioSourceProvider() override;
 
     RetainPtr<AVCaptureConnection> m_audioConnection;

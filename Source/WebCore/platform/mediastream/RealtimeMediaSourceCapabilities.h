@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RealtimeMediaSourceStates.h"
+#include "RealtimeMediaSourceSettings.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -90,20 +90,11 @@ public:
 
     ~RealtimeMediaSourceCapabilities() { }
 
-    const Vector<RealtimeMediaSourceStates::SourceType>& sourceTypes() { return m_sourceType; }
-    void setSourceType(RealtimeMediaSourceStates::SourceType sourceType) { m_sourceType.resizeToFit(1); addSourceType(sourceType); }
-    void addSourceType(RealtimeMediaSourceStates::SourceType sourceType)
-    {
-        if (sourceType == RealtimeMediaSourceStates::Camera)
-            m_videoSource = true;
-        m_sourceType.append(sourceType);
-    }
-
     const Vector<AtomicString>& sourceId() { return m_sourceId; }
     void setSourceId(const AtomicString& id)  { m_sourceId.reserveCapacity(1); m_sourceId.insert(0, id); }
 
-    const Vector<RealtimeMediaSourceStates::VideoFacingMode>& facingModes() { return m_facingMode; }
-    void addFacingMode(RealtimeMediaSourceStates::VideoFacingMode mode) { m_facingMode.append(mode); }
+    const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& facingModes() { return m_facingMode; }
+    void addFacingMode(RealtimeMediaSourceSettings::VideoFacingMode mode) { m_facingMode.append(mode); }
 
     const RealtimeMediaSourceCapabilityRange& width() { return m_width; }
     void setWidthRange(const RealtimeMediaSourceCapabilityRange& width) { m_width = width; }
@@ -130,8 +121,7 @@ private:
     }
 
     Vector<AtomicString> m_sourceId;
-    Vector<RealtimeMediaSourceStates::SourceType> m_sourceType;
-    Vector<RealtimeMediaSourceStates::VideoFacingMode> m_facingMode;
+    Vector<RealtimeMediaSourceSettings::VideoFacingMode> m_facingMode;
 
     RealtimeMediaSourceCapabilityRange m_width;
     RealtimeMediaSourceCapabilityRange m_height;

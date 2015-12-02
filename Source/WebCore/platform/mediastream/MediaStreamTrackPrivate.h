@@ -37,7 +37,7 @@ namespace WebCore {
 
 class AudioSourceProvider;
 class GraphicsContext;
-class MediaSourceStates;
+class MediaSourceSettings;
 class RealtimeMediaSourceCapabilities;
 
 class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate>, public RealtimeMediaSource::Observer {
@@ -48,7 +48,7 @@ public:
 
         virtual void trackEnded(MediaStreamTrackPrivate&) = 0;
         virtual void trackMutedChanged(MediaStreamTrackPrivate&) = 0;
-        virtual void trackStatesChanged(MediaStreamTrackPrivate&) = 0;
+        virtual void trackSettingsChanged(MediaStreamTrackPrivate&) = 0;
         virtual void trackEnabledChanged(MediaStreamTrackPrivate&) = 0;
     };
     
@@ -85,7 +85,7 @@ public:
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
-    const RealtimeMediaSourceStates& states() const;
+    const RealtimeMediaSourceSettings& settings() const;
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() const;
 
     RefPtr<MediaConstraints> constraints() const;
@@ -102,7 +102,7 @@ private:
     // RealtimeMediaSourceObserver
     void sourceStopped() override final;
     void sourceMutedChanged() override final;
-    void sourceStatesChanged() override final;
+    void sourceSettingsChanged() override final;
     bool preventSourceFromStopping() override final;
 
     Vector<Observer*> m_observers;

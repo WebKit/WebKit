@@ -53,7 +53,6 @@ public:
     void setSize(const IntSize&);
     const IntSize& size() const { return m_size; }
 
-    void setFacingMode(RealtimeMediaSourceStates::VideoFacingMode);
     void setFrameRate(float);
 
 protected:
@@ -63,8 +62,9 @@ protected:
     ImageBuffer* imageBuffer() const;
 
 private:
-    void updateStates() override;
+    void updateSettings(RealtimeMediaSourceSettings&) override;
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
+    void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
 
     void startProducingData() override;
     void stopProducingData() override;

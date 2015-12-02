@@ -228,7 +228,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/HTMLMediaElementMediaStream.idl
     Modules/mediastream/MediaDeviceInfo.idl
     Modules/mediastream/MediaDevices.idl
-    Modules/mediastream/MediaSourceStates.idl
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamCapabilities.idl
     Modules/mediastream/MediaStreamEvent.idl
@@ -952,7 +951,7 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaDevices.cpp
     Modules/mediastream/MediaDevicesRequest.cpp
     Modules/mediastream/MediaEndpointPeerConnection.cpp
-    Modules/mediastream/MediaSourceStates.cpp
+    Modules/mediastream/MediaSourceSettings.cpp
     Modules/mediastream/MediaStream.cpp
     Modules/mediastream/MediaStreamCapabilities.cpp
     Modules/mediastream/MediaStreamEvent.cpp
@@ -1207,8 +1206,8 @@ set(WebCore_SOURCES
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
-    bindings/js/JSMediaSourceStatesCustom.cpp
     bindings/js/JSMediaStreamCapabilitiesCustom.cpp
+    bindings/js/JSMediaStreamTrackCustom.cpp
     bindings/js/JSMediaTrackSupportedConstraintsCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
@@ -2310,7 +2309,7 @@ set(WebCore_SOURCES
     platform/mediastream/RTCSessionDescriptionDescriptor.cpp
     platform/mediastream/RealtimeMediaSource.cpp
     platform/mediastream/RealtimeMediaSourceCenter.cpp
-    platform/mediastream/RealtimeMediaSourceStates.cpp
+    platform/mediastream/RealtimeMediaSourceSettings.cpp
 
     platform/mock/DeviceMotionClientMock.cpp
     platform/mock/DeviceOrientationClientMock.cpp

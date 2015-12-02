@@ -45,7 +45,7 @@ namespace WebCore {
 class AudioSourceProvider;
 class Dictionary;
 class MediaConstraintsImpl;
-class MediaSourceStates;
+class MediaSourceSettings;
 class MediaStreamCapabilities;
 class MediaTrackConstraints;
 
@@ -79,7 +79,7 @@ public:
     void stopProducingData();
 
     RefPtr<MediaTrackConstraints> getConstraints() const;
-    RefPtr<MediaSourceStates> states() const;
+    RefPtr<MediaSourceSettings> getSettings() const;
     RefPtr<MediaStreamCapabilities> getCapabilities() const;
     void applyConstraints(const Dictionary&);
     void applyConstraints(const MediaConstraints&);
@@ -117,7 +117,7 @@ private:
     // MediaStreamTrackPrivate::Observer
     void trackEnded(MediaStreamTrackPrivate&) override;
     void trackMutedChanged(MediaStreamTrackPrivate&) override;
-    void trackStatesChanged(MediaStreamTrackPrivate&) override;
+    void trackSettingsChanged(MediaStreamTrackPrivate&) override;
     void trackEnabledChanged(MediaStreamTrackPrivate&) override;
 
     Vector<Observer*> m_observers;

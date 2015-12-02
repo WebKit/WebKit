@@ -55,9 +55,10 @@ private:
     void setupCaptureSession() override;
     void shutdownCaptureSession() override;
 
-    void updateStates() override;
+    void updateSettings(RealtimeMediaSourceSettings&) override;
 
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
+    void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
 
     bool applyConstraints(MediaConstraints*);
     bool setFrameRateConstraint(float minFrameRate, float maxFrameRate);

@@ -1,3 +1,17 @@
+2015-12-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Implement MediaStreamTrack.getSettings()
+        https://bugs.webkit.org/show_bug.cgi?id=151727
+
+        Reviewed by Jer Noble.
+
+        * fast/mediastream/MediaStream-video-element-expected.txt:
+        * fast/mediastream/MediaStream-video-element-track-stop-expected.txt:
+        * fast/mediastream/MediaStream-video-element-track-stop.html:
+        * fast/mediastream/MediaStream-video-element.html:
+        * fast/mediastream/MediaStreamTrack-getSettings-expected.txt: Added.
+        * fast/mediastream/MediaStreamTrack-getSettings.html: Added.
+
 2015-12-01  David Hyatt  <hyatt@apple.com>
 
         Implement the picture element.

@@ -104,7 +104,7 @@ private:
     // MediaStreamTrackPrivate::Observer
     void trackEnded(MediaStreamTrackPrivate&) override;
     void trackMutedChanged(MediaStreamTrackPrivate&) override;
-    void trackStatesChanged(MediaStreamTrackPrivate&) override;
+    void trackSettingsChanged(MediaStreamTrackPrivate&) override;
     void trackEnabledChanged(MediaStreamTrackPrivate&) override;
 
     void characteristicsChanged();

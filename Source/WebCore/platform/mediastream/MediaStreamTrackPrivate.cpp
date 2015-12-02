@@ -32,8 +32,7 @@
 #include "AudioSourceProvider.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "MediaSourceStates.h"
-#include "MediaStreamCapabilities.h"
+#include "MediaSourceSettings.h"
 #include "UUID.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -149,9 +148,9 @@ RefPtr<MediaConstraints> MediaStreamTrackPrivate::constraints() const
     return m_constraints;
 }
 
-const RealtimeMediaSourceStates& MediaStreamTrackPrivate::states() const
+const RealtimeMediaSourceSettings& MediaStreamTrackPrivate::settings() const
 {
-    return m_source->states();
+    return m_source->settings();
 }
 
 RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrackPrivate::capabilities() const
@@ -202,10 +201,10 @@ void MediaStreamTrackPrivate::sourceMutedChanged()
         observer->trackMutedChanged(*this);
 }
 
-void MediaStreamTrackPrivate::sourceStatesChanged()
+void MediaStreamTrackPrivate::sourceSettingsChanged()
 {
     for (auto& observer : m_observers)
-        observer->trackStatesChanged(*this);
+        observer->trackSettingsChanged(*this);
 }
 
 bool MediaStreamTrackPrivate::preventSourceFromStopping()

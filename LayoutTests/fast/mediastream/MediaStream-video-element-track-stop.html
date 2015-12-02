@@ -44,8 +44,8 @@
             {
                 debug("<br>**** re-check states now that the video stream has been disabled ****");
                 shouldBe('mediaStream.getVideoTracks()[0].enabled', 'false');
-                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].states().width');
-                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].states().height');
+                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].getSettings().width');
+                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].getSettings().height');
 
                 debug("<br>**** stop MediaStream tracks ****");
                 evalAndLog('mediaStream.getVideoTracks()[0].enabled = true');
@@ -60,8 +60,8 @@
 
                 debug("<br>**** check states with live video stream track ****");
                 shouldBe('video.ended', 'false');
-                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].states().width');
-                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].states().height');
+                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].getSettings().width');
+                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].getSettings().height');
                 shouldBe('video.src.indexOf("blob:")', '0');
                 shouldBe('video.srcObject', 'mediaStream');
                 

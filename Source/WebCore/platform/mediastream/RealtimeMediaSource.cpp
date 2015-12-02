@@ -95,10 +95,10 @@ void RealtimeMediaSource::setMuted(bool muted)
         observer->sourceMutedChanged();
 }
 
-void RealtimeMediaSource::statesDidChanged()
+void RealtimeMediaSource::settingsDidChanged()
 {
     for (auto& observer : m_observers)
-        observer->sourceStatesChanged();
+        observer->sourceSettingsChanged();
 }
 
 bool RealtimeMediaSource::readonly() const

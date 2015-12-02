@@ -1,3 +1,139 @@
+2015-12-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Implement MediaStreamTrack.getSettings()
+        https://bugs.webkit.org/show_bug.cgi?id=151727
+
+        Reviewed by Jer Noble.
+
+        MediaStreamTrack.getStates has been replaced by MediaStreamTrack.getSettings. 
+
+        Test: fast/mediastream/MediaStreamTrack-getSettings.html
+
+        * CMakeLists.txt: MediaSourceStates.* -> MediaSourceSettings.*.
+        * DerivedSources.make: No more MediaSourceStates.idl.
+        * Modules/mediastream/CapabilityRange.cpp: MediaSourceStates.* -> MediaSourceSettings.*.
+        * Modules/mediastream/MediaSourceSettings.cpp: Copied from Source/WebCore/Modules/mediastream/MediaSourceStates.cpp.
+        (WebCore::MediaSourceSettings::create):
+        (WebCore::MediaSourceSettings::MediaSourceSettings):
+        (WebCore::MediaSourceSettings::facingMode):
+        (WebCore::MediaSourceStates::create): Deleted.
+        (WebCore::MediaSourceStates::MediaSourceStates): Deleted.
+        (WebCore::MediaSourceStates::sourceType): Deleted.
+        (WebCore::MediaSourceStates::facingMode): Deleted.
+        * Modules/mediastream/MediaSourceSettings.h: Copied from Source/WebCore/Modules/mediastream/MediaSourceStates.h.
+
+        MediaSourceStates.* renamed to MediaSourceSettings.* and updated to new API.
+        * Modules/mediastream/MediaSourceStates.cpp: Removed.
+        * Modules/mediastream/MediaSourceStates.h: Removed.
+        * Modules/mediastream/MediaSourceStates.idl: Removed.
+
+        * Modules/mediastream/MediaStreamCapabilities.cpp:
+        (WebCore::MediaStreamCapabilities::sourceType): Return an empty vector for now, will be fixed
+          by the changes for https://bugs.webkit.org/show_bug.cgi?id=151728.
+        (WebCore::MediaStreamCapabilities::sourceId): RealtimeMediaSourceStates -> MediaSourceSettings.
+        (WebCore::MediaStreamCapabilities::facingMode): Ditto.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::getSettings): New.
+        (WebCore::MediaStreamTrack::getCapabilities): Don't modify states, just pass through whatever
+          private track returns.
+        (WebCore::MediaStreamTrack::trackSettingsChanged):
+        (WebCore::MediaStreamTrack::states): Deleted.
+        (WebCore::MediaStreamTrack::trackStatesChanged): Deleted.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl: MediaSourceStates -> MediaSourceSettings.
+
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        (WebCore::MediaStreamAudioSource::settings):
+        (WebCore::MediaStreamAudioSource::states): Deleted.
+        * Modules/webaudio/MediaStreamAudioSource.h: MediaSourceStates -> MediaSourceSettings.
+
+        * WebCore.xcodeproj/project.pbxproj: MediaSourceStates.* -> MediaSourceSettings.*.
+
+        * bindings/js/JSMediaSourceStatesCustom.cpp: Removed.
+        * bindings/js/JSMediaStreamTrackCustom.cpp: Added.
+        (WebCore::JSMediaStreamTrack::getSettings): MediaSourceSettings is a generic dictionary so 
+          it has to be generated manually.
+
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::intrinsicSize): states -> settings.
+        (WebCore::MediaStreamPrivate::trackStatesChanged): Deleted.
+        * platform/mediastream/MediaStreamPrivate.h:
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::settings):
+        (WebCore::MediaStreamTrackPrivate::sourceSettingsChanged):
+        (WebCore::MediaStreamTrackPrivate::states): Deleted.
+        (WebCore::MediaStreamTrackPrivate::sourceStatesChanged): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::settingsDidChanged):
+        (WebCore::RealtimeMediaSource::statesDidChanged): Deleted.
+        * platform/mediastream/RealtimeMediaSource.h:
+
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        (WebCore::RealtimeMediaSourceCapabilities::facingModes): States -> Settings.
+        (WebCore::RealtimeMediaSourceCapabilities::addFacingMode): Ditto.
+        (WebCore::RealtimeMediaSourceCapabilities::sourceTypes): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setSourceType): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::addSourceType): Deleted.
+
+        * platform/mediastream/RealtimeMediaSourceCenter.h: States -> Settings.
+        * platform/mediastream/RealtimeMediaSourceSettings.cpp: Copied from Source/WebCore/platform/mediastream/RealtimeMediaSourceStates.cpp.
+        (WebCore::RealtimeMediaSourceSettings::facingMode):
+        (WebCore::RealtimeMediaSourceStates::facingMode): Deleted.
+        (WebCore::RealtimeMediaSourceStates::sourceType): Deleted.
+
+        * platform/mediastream/RealtimeMediaSourceSettings.h: Copied from Source/WebCore/platform/mediastream/RealtimeMediaSourceStates.h.
+        * platform/mediastream/RealtimeMediaSourceStates.cpp: Removed.
+
+        * platform/mediastream/RealtimeMediaSourceStates.h: Removed.
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::updateStates): Deleted.
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::states): Deleted.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::updateStates): Deleted.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h:
+
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::initializeSupportedConstraints):
+        (WebCore::MockRealtimeAudioSource::updateStates): Deleted.
+        * platform/mock/MockRealtimeAudioSource.h:
+
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::capabilities): Minor cleanup.
+        (WebCore::MockRealtimeMediaSource::settings):
+        (WebCore::MockRealtimeMediaSource::supportedConstraints):
+        (WebCore::MockRealtimeMediaSource::states): Deleted.
+        * platform/mock/MockRealtimeMediaSource.h:
+        (WebCore::MockRealtimeMediaSource::constraints):
+        (WebCore::MockRealtimeMediaSource::currentStates): Deleted.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::updateSettings):
+        (WebCore::MockRealtimeVideoSource::initializeCapabilities):
+        (WebCore::MockRealtimeVideoSource::initializeSupportedConstraints):
+        (WebCore::MockRealtimeVideoSource::setFrameRate): states -> settings.
+        (WebCore::MockRealtimeVideoSource::setSize): Ditto.
+        (WebCore::MockRealtimeVideoSource::drawAnimation): Ditto.
+        (WebCore::MockRealtimeVideoSource::drawText): Ditto.
+        (WebCore::MockRealtimeVideoSource::updateStates): Deleted.
+        (WebCore::MockRealtimeVideoSource::setFacingMode): Deleted.
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2015-11-30  David Hyatt  <hyatt@apple.com>
 
         Implement the picture element.

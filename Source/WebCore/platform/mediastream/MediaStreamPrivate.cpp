@@ -204,9 +204,9 @@ FloatSize MediaStreamPrivate::intrinsicSize() const
     FloatSize size;
 
     if (m_activeVideoTrack) {
-        const RealtimeMediaSourceStates& states = m_activeVideoTrack->source()->states();
-        size.setWidth(states.width());
-        size.setHeight(states.height());
+        const RealtimeMediaSourceSettings& setting = m_activeVideoTrack->settings();
+        size.setWidth(setting.width());
+        size.setHeight(setting.height());
     }
 
     return size;
@@ -268,7 +268,7 @@ void MediaStreamPrivate::trackMutedChanged(MediaStreamTrackPrivate&)
     });
 }
 
-void MediaStreamPrivate::trackStatesChanged(MediaStreamTrackPrivate&)
+void MediaStreamPrivate::trackSettingsChanged(MediaStreamTrackPrivate&)
 {
     characteristicsChanged();
 }

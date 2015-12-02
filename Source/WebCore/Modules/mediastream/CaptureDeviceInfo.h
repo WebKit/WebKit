@@ -42,7 +42,7 @@ struct CaptureDeviceInfo {
 
     bool m_enabled { false };
     RealtimeMediaSource::Type m_sourceType { RealtimeMediaSource::None };
-    RealtimeMediaSourceStates::VideoFacingMode m_position { RealtimeMediaSourceStates::Unknown };
+    RealtimeMediaSourceSettings::VideoFacingMode m_position { RealtimeMediaSourceSettings::Unknown };
 };
 
 class CaptureSessionInfo {

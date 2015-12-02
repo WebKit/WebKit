@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,13 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
-#include "RealtimeMediaSourceStates.h"
+#include "RealtimeMediaSourceSettings.h"
 
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-const AtomicString& RealtimeMediaSourceStates::facingMode(RealtimeMediaSourceStates::VideoFacingMode mode)
+const AtomicString& RealtimeMediaSourceSettings::facingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
 {
     static NeverDestroyed<AtomicString> userFacing("user", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> environmentFacing("environment", AtomicString::ConstructFromLiteral);
@@ -45,35 +45,16 @@ const AtomicString& RealtimeMediaSourceStates::facingMode(RealtimeMediaSourceSta
     static NeverDestroyed<AtomicString> rightFacing("right", AtomicString::ConstructFromLiteral);
     
     switch (mode) {
-    case RealtimeMediaSourceStates::User:
+    case RealtimeMediaSourceSettings::User:
         return userFacing;
-    case RealtimeMediaSourceStates::Environment:
+    case RealtimeMediaSourceSettings::Environment:
         return environmentFacing;
-    case RealtimeMediaSourceStates::Left:
+    case RealtimeMediaSourceSettings::Left:
         return leftFacing;
-    case RealtimeMediaSourceStates::Right:
+    case RealtimeMediaSourceSettings::Right:
         return rightFacing;
-    case RealtimeMediaSourceStates::Unknown:
+    case RealtimeMediaSourceSettings::Unknown:
         return emptyAtom;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return emptyAtom;
-}
-
-const AtomicString& RealtimeMediaSourceStates::sourceType(RealtimeMediaSourceStates::SourceType sourceType)
-{
-    static NeverDestroyed<AtomicString> none("none", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> camera("camera", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> microphone("microphone", AtomicString::ConstructFromLiteral);
-    
-    switch (sourceType) {
-    case RealtimeMediaSourceStates::None:
-        return none;
-    case RealtimeMediaSourceStates::Camera:
-        return camera;
-    case RealtimeMediaSourceStates::Microphone:
-        return microphone;
     }
     
     ASSERT_NOT_REACHED();

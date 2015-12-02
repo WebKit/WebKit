@@ -52,12 +52,12 @@ RefPtr<RealtimeMediaSourceCapabilities> MediaStreamAudioSource::capabilities()
     return nullptr;
 }
 
-const RealtimeMediaSourceStates& MediaStreamAudioSource::states()
+const RealtimeMediaSourceSettings& MediaStreamAudioSource::settings()
 {
     // FIXME: implement this.
     // https://bugs.webkit.org/show_bug.cgi?id=122430
     notImplemented();
-    return m_currentStates;
+    return m_currentSettings;
 }
 
 AudioSourceProvider* MediaStreamAudioSource::audioSourceProvider()

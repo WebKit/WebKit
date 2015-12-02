@@ -57,23 +57,25 @@ public:
 protected:
     MockRealtimeMediaSource(const String& id, Type, const String& name);
 
-    virtual void updateStates() = 0;
+    virtual void updateSettings(RealtimeMediaSourceSettings&) = 0;
     virtual void initializeCapabilities(RealtimeMediaSourceCapabilities&) = 0;
+    virtual void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) = 0;
 
     void startProducingData() override { m_isProducingData = true; }
     void stopProducingData() override { m_isProducingData = false; }
 
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
-    const RealtimeMediaSourceStates& states() override;
+    const RealtimeMediaSourceSettings& settings() override;
 
-    RealtimeMediaSourceStates* currentStates() { return &m_currentStates; }
-    MediaConstraints* constraints() { return m_constraints.get(); }
+    MediaConstraints& constraints() { return *m_constraints.get(); }
+    RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
 private:
 
     bool isProducingData() const override { return m_isProducingData; }
 
-    RealtimeMediaSourceStates m_currentStates;
+    RealtimeMediaSourceSettings m_currentSettings;
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
     RefPtr<MediaConstraints> m_constraints;
     bool m_isProducingData { false };

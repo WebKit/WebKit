@@ -31,7 +31,7 @@
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "NotImplemented.h"
-#import "RealtimeMediaSourceStates.h"
+#import "RealtimeMediaSourceSettings.h"
 #import "SoftLinking.h"
 #import "WebAudioSourceProviderAVFObjC.h"
 #import <AVFoundation/AVFoundation.h>
@@ -70,8 +70,6 @@ RefPtr<AVMediaCaptureSource> AVAudioCaptureSource::create(AVCaptureDeviceType* d
 AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraints)
     : AVMediaCaptureSource(device, id, RealtimeMediaSource::Audio, constraints)
 {
-    currentStates()->setSourceId(id);
-    currentStates()->setSourceType(RealtimeMediaSourceStates::Microphone);
     m_inputDescription = std::make_unique<AudioStreamBasicDescription>();
 }
     
@@ -79,19 +77,21 @@ AVAudioCaptureSource::~AVAudioCaptureSource()
 {
 }
 
-void AVAudioCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities&capabilities)
+void AVAudioCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities&)
 {
     // FIXME: finish this implementation - https://webkit.org/b/122430
-    capabilities.addSourceType(RealtimeMediaSourceStates::Microphone);
 }
 
-void AVAudioCaptureSource::updateStates()
+void AVAudioCaptureSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)
+{
+    supportedConstraints.setSupportsVolume(true);
+}
+
+void AVAudioCaptureSource::updateSettings(RealtimeMediaSourceSettings& settings)
 {
     // FIXME: use [AVCaptureAudioPreviewOutput volume] for volume
 
-    RealtimeMediaSourceStates* states = currentStates();
-    states->setSourceId(id());
-    states->setSourceType(RealtimeMediaSourceStates::Microphone);
+    settings.setDeviceId(id());
 }
 
 void AVAudioCaptureSource::addObserver(AVAudioCaptureSource::Observer* observer)

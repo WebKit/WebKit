@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,25 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum SourceTypeEnum { "none", "camera", "microphone" };
-enum VideoFacingModeEnum { "user", "environment", "left", "right" };
+#include "config.h"
+#include "MediaSourceSettings.h"
 
-[
-    Conditional=MEDIA_STREAM,
-    ImplementationLacksVTable,
-    NoInterfaceObject,
-] interface MediaSourceStates {
-    readonly attribute SourceTypeEnum sourceType;
-    readonly attribute DOMString sourceId;
+#if ENABLE(MEDIA_STREAM)
 
-    [CustomGetter] readonly attribute unsigned long? width;
-    [CustomGetter] readonly attribute unsigned long? height;
-    [CustomGetter] readonly attribute unrestricted float? frameRate;
-    [CustomGetter] readonly attribute unrestricted float? aspectRatio;
-    [CustomGetter] readonly attribute VideoFacingModeEnum? facingMode;
-    [CustomGetter] readonly attribute unsigned long? volume;
-};
+#include <wtf/NeverDestroyed.h>
 
+namespace WebCore {
+
+Ref<MediaSourceSettings> MediaSourceSettings::create(const RealtimeMediaSourceSettings& settings)
+{
+    return adoptRef(*new MediaSourceSettings(settings));
+}
+
+MediaSourceSettings::MediaSourceSettings(const RealtimeMediaSourceSettings& settings)
+    : m_sourceSettings(settings)
+{
+}
+
+const AtomicString& MediaSourceSettings::facingMode() const
+{
+    return RealtimeMediaSourceSettings::facingMode(m_sourceSettings.facingMode());
+}
+
+} // namespace WebCore
+
+#endif

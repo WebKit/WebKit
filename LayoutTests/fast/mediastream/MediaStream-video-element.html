@@ -30,9 +30,6 @@
             function enumerateProperties(object, workFunc)
             {
                 for (var property in object) {
-                    // When https://webkit.org/b/129375 is fixed, we have to remove
-                    // states.hasOwnProperty(property), because all the attributes
-                    // will be in the prototype chain.
                     if (!object.hasOwnProperty(property) && !object.__proto__.hasOwnProperty(property))
                         continue;
                     if (object[property] === undefined)
@@ -59,8 +56,8 @@
                 evalAndLog("video.pause()");
 
                 debug("<br>**** check video element ****");
-                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].states().width');
-                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].states().height');
+                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].getSettings().width');
+                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].getSettings().height');
                 shouldBe('video.src.indexOf("blob:")', '0');
                 shouldBe('video.srcObject', 'mediaStream');
                 

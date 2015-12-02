@@ -1,0 +1,21 @@
+Tests MediaStreamTrack.getSettings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+video track:
+  settings.width = 640
+  settings.height = 480
+  settings.aspectRatio = 1.33
+  settings.frameRate = 30
+  settings.facingMode = user
+  settings.deviceId = <UUID>
+
+audio track:
+  settings.volume = 50
+  settings.deviceId = <UUID>
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

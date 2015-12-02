@@ -47,7 +47,7 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     [ImplementedAs=stopProducingData] void stop();
 
     MediaTrackConstraints getConstraints();
-    MediaSourceStates states();
+    [Custom] MediaSourceSettings getSettings();
     MediaStreamCapabilities getCapabilities(); // returns either AllVideoCapabilities or AllAudioCapabilities
     void applyConstraints(Dictionary constraints);
 

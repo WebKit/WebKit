@@ -48,7 +48,7 @@ public:
     ~MediaStreamAudioSource() { }
 
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
-    const RealtimeMediaSourceStates& states() override;
+    const RealtimeMediaSourceSettings& settings() override;
     
     const String& deviceId() const { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
@@ -68,7 +68,7 @@ private:
     String m_deviceId;
     Lock m_audioConsumersLock;
     Vector<RefPtr<AudioDestinationConsumer>> m_audioConsumers;
-    RealtimeMediaSourceStates m_currentStates;
+    RealtimeMediaSourceSettings m_currentSettings;
 };
 
 } // namespace WebCore

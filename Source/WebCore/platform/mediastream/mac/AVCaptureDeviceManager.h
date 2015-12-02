@@ -31,6 +31,7 @@
 #include "CaptureDeviceManager.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "RealtimeMediaSource.h"
+#include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -65,6 +66,8 @@ public:
 
     void deviceConnected();
     void deviceDisconnected(AVCaptureDevice*);
+    
+    const RealtimeMediaSourceSupportedConstraints& supportedConstraints();
 
 protected:
     static bool isAvailable();
@@ -80,6 +83,7 @@ protected:
     void registerForDeviceNotifications();
 
     RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     Vector<CaptureDeviceInfo> m_devices;
 };
 

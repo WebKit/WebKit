@@ -35,7 +35,7 @@
 #include "Logging.h"
 #include "MediaConstraints.h"
 #include "NotImplemented.h"
-#include "RealtimeMediaSourceStates.h"
+#include "RealtimeMediaSourceSettings.h"
 #include "UUID.h"
 
 namespace WebCore {
@@ -50,16 +50,19 @@ MockRealtimeAudioSource::MockRealtimeAudioSource()
 {
 }
 
-void MockRealtimeAudioSource::updateStates()
+void MockRealtimeAudioSource::updateSettings(RealtimeMediaSourceSettings& settings)
 {
-    RealtimeMediaSourceStates* states = currentStates();
-    states->setSourceType(RealtimeMediaSourceStates::Microphone);
-    states->setVolume(50);
+    settings.setVolume(50);
 }
 
 void MockRealtimeAudioSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
     capabilities.setVolumeRange(RealtimeMediaSourceCapabilityRange(0UL, 100UL, true));
+}
+
+void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)
+{
+    supportedConstraints.setSupportsVolume(true);
 }
 
 } // namespace WebCore

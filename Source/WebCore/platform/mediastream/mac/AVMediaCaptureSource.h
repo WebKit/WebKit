@@ -56,7 +56,7 @@ public:
     
     AVCaptureSession *session() const { return m_session.get(); }
 
-    const RealtimeMediaSourceStates& states() override;
+    const RealtimeMediaSourceSettings& settings() override;
 
     void startProducingData() override;
     void stopProducingData() override;
@@ -71,14 +71,15 @@ protected:
 
     virtual void setupCaptureSession() = 0;
     virtual void shutdownCaptureSession() = 0;
-    virtual void updateStates() = 0;
+    virtual void updateSettings(RealtimeMediaSourceSettings&) = 0;
     virtual void initializeCapabilities(RealtimeMediaSourceCapabilities&) = 0;
+    virtual void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) = 0;
 
     AVCaptureDevice *device() const { return m_device.get(); }
 
-    RealtimeMediaSourceStates* currentStates() { return &m_currentStates; }
     MediaConstraints* constraints() { return m_constraints.get(); }
 
+    RealtimeMediaSourceSupportedConstraints& supportedConstraints();
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
 
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
@@ -90,11 +91,12 @@ private:
     void setupSession();
     void reset() override;
 
+    RealtimeMediaSourceSettings m_currentSettings;
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     WeakPtrFactory<AVMediaCaptureSource> m_weakPtrFactory;
     RetainPtr<WebCoreAVMediaCaptureSourceObserver> m_objcObserver;
     RefPtr<MediaConstraints> m_constraints;
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
-    RealtimeMediaSourceStates m_currentStates;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
     bool m_isRunning { false};

@@ -32,7 +32,7 @@
 #include "AllAudioCapabilities.h"
 #include "AllVideoCapabilities.h"
 #include "CapabilityRange.h"
-#include "MediaSourceStates.h"
+#include "MediaSourceSettings.h"
 #include "RealtimeMediaSourceCapabilities.h"
 
 namespace WebCore {
@@ -52,19 +52,8 @@ MediaStreamCapabilities::MediaStreamCapabilities(PassRefPtr<RealtimeMediaSourceC
 
 Vector<String> MediaStreamCapabilities::sourceType() const
 {
-    ASSERT(m_SourceCapabilities->hasVideoSource());
-    
-    size_t count = m_SourceCapabilities->sourceTypes().size();
-    if (!count)
-        return Vector<String>();
-    
-    Vector<String> capabilities;
-    capabilities.reserveCapacity(count);
-    
-    for (auto& type : m_SourceCapabilities->sourceTypes())
-        capabilities.append(RealtimeMediaSourceStates::sourceType(type));
-    
-    return capabilities;
+    // This will be fixed by https://bugs.webkit.org/show_bug.cgi?id=151728.
+    return Vector<String>();
 }
 
 Vector<String> MediaStreamCapabilities::sourceId() const
@@ -94,7 +83,7 @@ Vector<String> MediaStreamCapabilities::facingMode() const
     capabilities.reserveCapacity(count);
     
     for (auto& mode : m_SourceCapabilities->facingModes())
-        capabilities.append(RealtimeMediaSourceStates::facingMode(mode));
+        capabilities.append(RealtimeMediaSourceSettings::facingMode(mode));
     
     return capabilities;
 }

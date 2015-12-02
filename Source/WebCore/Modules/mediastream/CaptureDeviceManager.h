@@ -54,7 +54,7 @@ protected:
     virtual bool isSupportedFrameRate(float frameRate) const;
 
     bool captureDeviceFromDeviceID(const String& captureDeviceID, CaptureDeviceInfo& source);
-    CaptureDeviceInfo* bestDeviceForFacingMode(RealtimeMediaSourceStates::VideoFacingMode);
+    CaptureDeviceInfo* bestDeviceForFacingMode(RealtimeMediaSourceSettings::VideoFacingMode);
 };
 
 } // namespace WebCore

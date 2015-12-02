@@ -36,7 +36,7 @@
 #import "MediaConstraints.h"
 #import "RealtimeMediaSource.h"
 #import "RealtimeMediaSourceCenter.h"
-#import "RealtimeMediaSourceStates.h"
+#import "RealtimeMediaSourceSettings.h"
 #import "RealtimeMediaSourceSupportedConstraints.h"
 #import "SoftLinking.h"
 #import "UUID.h"
@@ -177,9 +177,9 @@ void AVCaptureDeviceManager::refreshCaptureDeviceList()
             captureDevice.m_groupID = createCanonicalUUIDString();
             captureDevice.m_localizedName = platformDevice.localizedName;
             if ([platformDevice position] == AVCaptureDevicePositionFront)
-                captureDevice.m_position = RealtimeMediaSourceStates::User;
+                captureDevice.m_position = RealtimeMediaSourceSettings::User;
             if ([platformDevice position] == AVCaptureDevicePositionBack)
-                captureDevice.m_position = RealtimeMediaSourceStates::Environment;
+                captureDevice.m_position = RealtimeMediaSourceSettings::Environment;
 
             bool hasAudio = [platformDevice hasMediaType:AVMediaTypeAudio] || [platformDevice hasMediaType:AVMediaTypeMuxed];
             bool hasVideo = [platformDevice hasMediaType:AVMediaTypeVideo] || [platformDevice hasMediaType:AVMediaTypeMuxed];
@@ -342,6 +342,31 @@ bool AVCaptureDeviceManager::isSupportedFrameRate(float frameRate) const
     // FIXME: We should use [AVCaptureConnection videoMinFrameDuration] and [AVCaptureConnection videoMaxFrameDuration],
     // but they only work with a "live" AVCaptureConnection. For now, just use the default platform-independent behavior.
     return CaptureDeviceManager::isSupportedFrameRate(frameRate);
+}
+
+const RealtimeMediaSourceSupportedConstraints& AVCaptureDeviceManager::supportedConstraints()
+{
+    if (m_supportedConstraints.supportsDeviceId())
+        return m_supportedConstraints;
+
+    m_supportedConstraints.setSupportsDeviceId(true);
+
+    Vector<CaptureDeviceInfo>& devices = captureDeviceList();
+
+    for (auto& captureDevice : devices) {
+        if (captureDevice.m_sourceType == RealtimeMediaSource::Audio)
+            m_supportedConstraints.setSupportsVolume(true);
+
+        if (captureDevice.m_sourceType == RealtimeMediaSource::Video) {
+            m_supportedConstraints.setSupportsWidth(true);
+            m_supportedConstraints.setSupportsHeight(true);
+            m_supportedConstraints.setSupportsAspectRatio(true);
+            m_supportedConstraints.setSupportsFrameRate(true);
+            m_supportedConstraints.setSupportsFacingMode(true);
+        }
+    }
+    
+    return m_supportedConstraints;
 }
 
 } // namespace WebCore
