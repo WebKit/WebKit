@@ -1,5 +1,11 @@
 2015-12-01  Jonathan Davis  <jond@apple.com>
 
+        Updated favicon.ico with the new logo.
+
+        * favicon.ico:
+
+2015-12-01  Jonathan Davis  <jond@apple.com>
+
         Improved accessibility handling for the small drop-down menu.
 
         * wp-content/themes/webkit/scripts/global.js:
