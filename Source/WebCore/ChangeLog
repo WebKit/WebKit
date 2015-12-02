@@ -1,3 +1,20 @@
+2015-12-02  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix preloader issue with srcdoc documents.
+        https://bugs.webkit.org/show_bug.cgi?id=151744
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure that PreloadRequest is resolving URLs based on the document's
+        baseURL() rather than using url() as the base URL, which is not how URLs
+        are resolved by the parser, and fails when document->url() diverges from
+        the document's base URL (e.g. in the case of srcdoc based documents).
+
+        Test: fast/preloader/iframe-srcdoc.html
+
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::completeURL):
+
 2015-12-02  Jer Noble  <jer.noble@apple.com>
 
         Add a setting and restriction which will pause invisible autoplaying video

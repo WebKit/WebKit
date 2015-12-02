@@ -1,3 +1,15 @@
+2015-12-02  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix preloader issue with srcdoc documents.
+        https://bugs.webkit.org/show_bug.cgi?id=151744
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a test that makes sure that srcdoc based subresources are properly preloaded.
+
+        * fast/preloader/iframe-srcdoc-expected.txt: Added.
+        * fast/preloader/iframe-srcdoc.html: Added.
+
 2015-12-02  Jer Noble  <jer.noble@apple.com>
 
         Add a setting and restriction which will pause invisible autoplaying video

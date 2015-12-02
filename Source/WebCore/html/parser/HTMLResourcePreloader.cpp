@@ -37,7 +37,7 @@ namespace WebCore {
 
 URL PreloadRequest::completeURL(Document& document)
 {
-    return document.completeURL(m_resourceURL, m_baseURL.isEmpty() ? document.url() : m_baseURL);
+    return document.completeURL(m_resourceURL, m_baseURL.isEmpty() ? document.baseURL() : m_baseURL);
 }
 
 CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
