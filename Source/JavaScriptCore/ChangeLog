@@ -1,3 +1,14 @@
+2015-12-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Remove insertElement() from FTLB3Output
+        https://bugs.webkit.org/show_bug.cgi?id=151781
+
+        Reviewed by Sam Weinig.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::insertElement): Deleted.
+        That's a LLVM concept.
+
 2015-12-02  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove stuffs related to alloca from FTLB3Output

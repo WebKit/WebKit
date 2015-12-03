@@ -147,8 +147,6 @@ public:
     LValue lShr(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ZShr, origin(), left, castToInt32(right)); }
     LValue bitNot(LValue);
 
-    LValue insertElement(LValue vector, LValue element, LValue index) { CRASH(); }
-
     LValue ceil64(LValue operand) { CRASH(); }
     LValue ctlz32(LValue xOperand, LValue yOperand) { CRASH(); }
     LValue addWithOverflow32(LValue left, LValue right) { CRASH(); }
