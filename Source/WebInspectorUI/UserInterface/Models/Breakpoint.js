@@ -292,7 +292,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         if (!type)
             this._actions = [];
         else
-            this._actions = this._actions.filter(function(action) { action.type !== type; });
+            this._actions = this._actions.filter(function(action) { return action.type !== type; });
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
     }
