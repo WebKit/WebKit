@@ -1,5 +1,18 @@
 2015-12-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION:(r192753): Remote Web Inspector: Window immediately closes after opening
+        https://bugs.webkit.org/show_bug.cgi?id=151788
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::pushListingsNow):
+        The key at the outer level was not a string. Ensure it is a
+        string for backwards compatibility. One day we may use
+        non-numeric page identifiers as listing keys.
+
+2015-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION(r192753): Remote Web Inspector: Enabling Remote Inspection on Auto Inspect candidate Debuggable doesn't show up in debuggers
         https://bugs.webkit.org/show_bug.cgi?id=151792
 

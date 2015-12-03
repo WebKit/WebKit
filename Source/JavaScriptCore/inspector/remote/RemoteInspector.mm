@@ -545,7 +545,7 @@ void RemoteInspector::pushListingsNow()
 
     RetainPtr<NSMutableDictionary> listings = adoptNS([[NSMutableDictionary alloc] init]);
     for (RetainPtr<NSDictionary> listing : m_listingMap.values()) {
-        NSString *identifier = [listing.get() objectForKey:WIRPageIdentifierKey];
+        NSString *identifier = [[listing.get() objectForKey:WIRPageIdentifierKey] stringValue];
         [listings setObject:listing.get() forKey:identifier];
     }
 
