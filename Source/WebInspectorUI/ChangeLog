@@ -1,5 +1,28 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187249. rdar://problem/23221163
+
+    2015-07-23  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: Add a function to CSSCompletions to get a list of supported system fonts
+            https://bugs.webkit.org/show_bug.cgi?id=147009
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Base/Main.js:
+            (WebInspector.loaded):
+            (WebInspector.activateExtraDomains):
+            * UserInterface/Base/Test.js:
+            (WebInspector.loaded):
+            * UserInterface/Models/CSSCompletions.js:
+            (WebInspector.CSSCompletions.requestCSSCompletions.fontFamilyNamesCallback):
+            (WebInspector.CSSCompletions.requestCSSCompletions):
+            Now also grabs the list of system font family names and adds that list to the existing completion
+            list for both font and font-family in CSSKeywordCompletions.
+            (WebInspector.CSSCompletions.requestCSSNameCompletions): Deleted.
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187227. rdar://problem/23221163
 
     2015-07-23  Matt Baker  <mattbaker@apple.com>

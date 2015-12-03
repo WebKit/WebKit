@@ -1,0 +1,4 @@
+Has at least 5 fonts: true
+PASS: Includes Arial
+PASS: Includes Times
+

@@ -660,6 +660,8 @@ webkit.org/b/136227 mathml/very-large-stretchy-operators.html [ Crash Timeout Pa
 
 #webkit.org/b/142158 inspector-protocol/dom/remove-multiple-nodes.html [ Crash Pass ]
 
+webkit.org/b/147018 inspector/css/get-system-fonts.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
