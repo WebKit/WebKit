@@ -447,18 +447,9 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         var identifier = this._nextRecordingIdentifier++;
         var newRecording = new WebInspector.TimelineRecording(identifier, WebInspector.UIString("Timeline Recording %d").format(identifier));
-        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Network, newRecording));
-        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Layout, newRecording));
-        newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.Script, newRecording));
-
-        // COMPATIBILITY (iOS 8): TimelineAgent.EventType.RenderingFrame did not exist.
-        if (window.TimelineAgent && TimelineAgent.EventType.RenderingFrame)
-            newRecording.addTimeline(WebInspector.Timeline.create(WebInspector.TimelineRecord.Type.RenderingFrame, newRecording));
 
         this._recordings.push(newRecording);
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingCreated, {recording: newRecording});
-
-        console.assert(newRecording.isWritable());
 
         if (this._isCapturing)
             this.stopCapturing();

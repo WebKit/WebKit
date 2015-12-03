@@ -25,27 +25,31 @@
 
 WebInspector.Timeline = class Timeline extends WebInspector.Object
 {
-    constructor(type, recording)
+    constructor(type)
     {
         super();
 
         this._type = type;
-        this._recording = recording;
 
         this.reset(true);
     }
 
     // Static
 
-    static create(type, recording)
+    static create(type)
     {
         if (type === WebInspector.TimelineRecord.Type.Network)
-            return new WebInspector.NetworkTimeline(type, recording);
+            return new WebInspector.NetworkTimeline(type);
 
-        return new WebInspector.Timeline(type, recording);
+        return new WebInspector.Timeline(type);
     }
 
     // Public
+
+    get type()
+    {
+        return this._type;
+    }
 
     get startTime()
     {
@@ -60,16 +64,6 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
     get records()
     {
         return this._records;
-    }
-
-    get type()
-    {
-        return this._type;
-    }
-
-    get recording()
-    {
-        return this._recording;
     }
 
     get displayName()

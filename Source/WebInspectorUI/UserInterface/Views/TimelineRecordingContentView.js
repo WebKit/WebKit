@@ -164,7 +164,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     {
         this._currentTimelineOverview.shown();
         this._contentViewContainer.shown();
-        this._clearTimelineNavigationItem.enabled = this._recording.isWritable();
+        this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
 
         this._currentContentViewDidChange();
 
