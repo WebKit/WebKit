@@ -620,7 +620,6 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         this._tooltip = x;
         if (this._listItemNode)
             this._listItemNode.title = x ? x : "";
-        this.didChange();
     }
 
     get hasChildren()
