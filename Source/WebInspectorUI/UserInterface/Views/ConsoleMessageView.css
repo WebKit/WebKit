@@ -230,7 +230,10 @@
 
 .console-message .console-message-location {
     float: right;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
     font-weight: normal;
+    -webkit-user-select: text;
 }
 
 .console-message .call-frame {
