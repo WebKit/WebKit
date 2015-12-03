@@ -148,6 +148,8 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         super.reset();
 
         this._dataGrid.reset();
+
+        this._pendingRecords = [];
     }
 
     // Protected

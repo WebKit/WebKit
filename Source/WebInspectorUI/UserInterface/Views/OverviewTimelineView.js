@@ -142,6 +142,13 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         return pathComponents;
     }
 
+    reset()
+    {
+        super.reset();
+
+        this._pendingRepresentedObjects = [];
+    }
+
     // Protected
 
     treeElementPathComponentSelected(event)
@@ -306,7 +313,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
     _processPendingRepresentedObjects()
     {
-        if (!this._pendingRepresentedObjects || !this._pendingRepresentedObjects.length)
+        if (!this._pendingRepresentedObjects.length)
             return;
 
         for (var representedObject of this._pendingRepresentedObjects) {

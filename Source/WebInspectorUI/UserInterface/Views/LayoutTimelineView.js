@@ -154,6 +154,8 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         this._hideHighlightIfNeeded();
 
         this._dataGrid.reset();
+
+        this._pendingRecords = [];
     }
 
     // Protected
