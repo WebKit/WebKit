@@ -99,7 +99,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             this._bouncyHighlightElement = null;
         }
 
-        this._bouncyHighlightElement.addEventListener("animationEnd", animationEnded.bind(this));
+        this._bouncyHighlightElement.addEventListener("animationend", animationEnded.bind(this));
     }
 
     _updateSearchHighlight(show)

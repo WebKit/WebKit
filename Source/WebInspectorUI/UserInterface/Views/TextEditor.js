@@ -960,7 +960,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
         }
 
         // Listen for the end of the animation so we can remove the element.
-        this._bouncyHighlightElement.addEventListener("animationEnd", animationEnded.bind(this));
+        this._bouncyHighlightElement.addEventListener("animationend", animationEnded.bind(this));
     }
 
     _binarySearchInsertionIndexInSearchResults(object, comparator)
