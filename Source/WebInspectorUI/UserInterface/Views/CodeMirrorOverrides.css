@@ -76,8 +76,7 @@
 
     color: rgb(146, 146, 146);
 
-    font-size: 9px;
-    line-height: 13px;
+    font: 8px/13px -apple-system-monospaced-numbers, Menlo, Monaco, monospace;
     text-align: right;
 }
 
