@@ -29,6 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -51,7 +52,7 @@ class CSSStyleSheet final : public StyleSheet {
 public:
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule = 0);
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node* ownerNode);
-    static Ref<CSSStyleSheet> createInline(Node&, const URL&, const String& encoding = String());
+    static Ref<CSSStyleSheet> createInline(Node&, const URL&, const TextPosition& startPosition = TextPosition::minimumPosition(), const String& encoding = String());
 
     virtual ~CSSStyleSheet();
 
@@ -118,11 +119,14 @@ public:
 
     StyleSheetContents& contents() { return m_contents; }
 
+    bool isInline() const { return m_isInlineStylesheet; }
+    TextPosition startPosition() const { return m_startPosition; }
+
     void detachFromDocument() { m_ownerNode = nullptr; }
 
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);
-    CSSStyleSheet(Ref<StyleSheetContents>&&, Node* ownerNode, bool isInlineStylesheet);
+    CSSStyleSheet(Ref<StyleSheetContents>&&, Node* ownerNode, const TextPosition& startPosition, bool isInlineStylesheet);
 
     virtual bool isCSSStyleSheet() const override { return true; }
     virtual String type() const override { return ASCIILiteral("text/css"); }
@@ -138,6 +142,8 @@ private:
 
     Node* m_ownerNode;
     CSSImportRule* m_ownerRule;
+
+    TextPosition m_startPosition;
 
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;

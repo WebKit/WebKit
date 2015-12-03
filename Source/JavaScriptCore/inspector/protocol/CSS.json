@@ -96,7 +96,10 @@
                 { "name": "sourceURL", "type": "string", "description": "Stylesheet resource URL."},
                 { "name": "origin", "$ref": "StyleSheetOrigin", "description": "Stylesheet origin."},
                 { "name": "title", "type": "string", "description": "Stylesheet title."},
-                { "name": "disabled", "type": "boolean", "description": "Denotes whether the stylesheet is disabled."}
+                { "name": "disabled", "type": "boolean", "description": "Denotes whether the stylesheet is disabled."},
+                { "name": "isInline", "type": "boolean", "description": "Whether this stylesheet is a <style> tag created by the parser. This is not set for document.written <style> tags." },
+                { "name": "startLine", "type": "number", "description": "Line offset of the stylesheet within the resource (zero based)." },
+                { "name": "startColumn", "type": "number", "description": "Column offset of the stylesheet within the resource (zero based)." }
             ],
             "description": "CSS stylesheet metainformation."
         },
