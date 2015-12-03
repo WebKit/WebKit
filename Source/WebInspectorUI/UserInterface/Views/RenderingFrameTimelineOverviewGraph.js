@@ -250,6 +250,9 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
             return;
 
         var newSelectedRecord = this._renderingFrameTimeline.records[frameIndex];
+        if (newSelectedRecord[WebInspector.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol])
+            return;
+
         // Clicking the selected frame causes it to be deselected.
         if (this.selectedRecord === newSelectedRecord)
             newSelectedRecord = null;
