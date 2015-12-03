@@ -49,6 +49,7 @@ WebInspector.TimelineRuler = function()
     this._endTimePinned = false;
     this._allowsClippedLabels = false;
     this._allowsTimeRangeSelection = false;
+    this._minimumSelectionDuration = 0.01;
     this._formatLabelCallback = null;
 
     this._markerElementMap = new Map;
@@ -60,8 +61,6 @@ WebInspector.TimelineRuler.MinimumDividerSpacing = 64;
 WebInspector.TimelineRuler.AllowsTimeRangeSelectionStyleClassName = "allows-time-range-selection";
 WebInspector.TimelineRuler.DividerElementStyleClassName = "divider";
 WebInspector.TimelineRuler.DividerLabelElementStyleClassName = "label";
-
-WebInspector.TimelineRuler.MinimumSelectionTimeRange = 0.01;
 
 WebInspector.TimelineRuler.Event = {
     TimeRangeSelectionChanged: "time-ruler-time-range-selection-changed"
@@ -158,6 +157,16 @@ WebInspector.TimelineRuler.prototype = {
             delete this._rightSelectionHandleElement;
             delete this._selectionDragElement;
         }
+    },
+
+    get minimumSelectionDuration()
+    {
+        return this._minimumSelectionDuration;
+    },
+
+    set minimumSelectionDuration(x)
+    {
+        this._minimumSelectionDuration = x;
     },
 
     get zeroTime()
@@ -715,15 +724,15 @@ WebInspector.TimelineRuler.prototype = {
     {
         console.assert(event.button === 0);
 
-        if (!this._selectionIsMove && this.selectionEndTime - this.selectionStartTime < WebInspector.TimelineRuler.MinimumSelectionTimeRange) {
+        if (!this._selectionIsMove && this.selectionEndTime - this.selectionStartTime < this.minimumSelectionDuration) {
             // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
             var currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
             if (currentMousePosition > this._mouseDownPosition) {
-                this.selectionEndTime = Math.min(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, this.endTime);
-                this.selectionStartTime = this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange;
+                this.selectionEndTime = Math.min(this.selectionStartTime + this.minimumSelectionDuration, this.endTime);
+                this.selectionStartTime = this.selectionEndTime - this.minimumSelectionDuration;
             } else {
-                this.selectionStartTime = Math.max(this.startTime, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange);
-                this.selectionEndTime = this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange;
+                this.selectionStartTime = Math.max(this.startTime, this.selectionEndTime - this.minimumSelectionDuration);
+                this.selectionEndTime = this.selectionStartTime + this.minimumSelectionDuration;
             }
         }
 
@@ -778,19 +787,19 @@ WebInspector.TimelineRuler.prototype = {
             // Resize the selection on both sides when the Option keys is held down.
             if (this._dragHandleIsStartTime) {
                 var timeDifference = currentTime - this.selectionStartTime;
-                this.selectionStartTime = Math.max(this.startTime, Math.min(currentTime, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange));
-                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, this.selectionEndTime - timeDifference), this.endTime);
+                this.selectionStartTime = Math.max(this.startTime, Math.min(currentTime, this.selectionEndTime - this.minimumSelectionDuration));
+                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + this.minimumSelectionDuration, this.selectionEndTime - timeDifference), this.endTime);
             } else {
                 var timeDifference = currentTime - this.selectionEndTime;
-                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, currentTime), this.endTime);
-                this.selectionStartTime = Math.max(this.startTime, Math.min(this.selectionStartTime - timeDifference, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange));
+                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + this.minimumSelectionDuration, currentTime), this.endTime);
+                this.selectionStartTime = Math.max(this.startTime, Math.min(this.selectionStartTime - timeDifference, this.selectionEndTime - this.minimumSelectionDuration));
             }
         } else {
             // Resize the selection on side being dragged.
             if (this._dragHandleIsStartTime)
-                this.selectionStartTime = Math.max(this.startTime, Math.min(currentTime, this.selectionEndTime - WebInspector.TimelineRuler.MinimumSelectionTimeRange));
+                this.selectionStartTime = Math.max(this.startTime, Math.min(currentTime, this.selectionEndTime - this.minimumSelectionDuration));
             else
-                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + WebInspector.TimelineRuler.MinimumSelectionTimeRange, currentTime), this.endTime);
+                this.selectionEndTime = Math.min(Math.max(this.selectionStartTime + this.minimumSelectionDuration, currentTime), this.endTime);
         }
 
         this._updateSelection(this._element.clientWidth, this.duration);
