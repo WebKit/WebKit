@@ -587,13 +587,13 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         if (!this._allowsTimeRangeSelection)
             return;
 
-        let startTimeClamped = this._selectionStartTime < this._startTime;
-        let endTimeClamped = this._selectionEndTime > this._endTime;
+        var startTimeClamped = this._selectionStartTime < this._startTime;
+        var endTimeClamped = this._selectionEndTime > this._endTime;
 
-        let formattedStartTimeText = this._formatDividerLabelText(this._selectionStartTime);
-        let formattedEndTimeText = this._formatDividerLabelText(this._selectionEndTime);
+        var formattedStartTimeText = this._formatDividerLabelText(this._selectionStartTime);
+        var formattedEndTimeText = this._formatDividerLabelText(this._selectionEndTime);
 
-        let newLeftPosition = Math.max(0, (this._selectionStartTime - this._startTime) / duration);
+        var newLeftPosition = Math.max(0, (this._selectionStartTime - this._startTime) / duration);
         this._updatePositionOfElement(this._leftShadedAreaElement, newLeftPosition, visibleWidth, "width");
         this._updatePositionOfElement(this._leftSelectionHandleElement, newLeftPosition, visibleWidth, "left");
         this._updatePositionOfElement(this._selectionDragElement, newLeftPosition, visibleWidth, "left");
@@ -601,7 +601,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         this._leftSelectionHandleElement.classList.toggle("clamped", startTimeClamped);
         this._leftSelectionHandleElement.title = startTimeClamped  && this._selectionEndTime < this._startTime ? formattedEndTimeText : formattedStartTimeText;
 
-        let newRightPosition = 1 - Math.min((this._selectionEndTime - this._startTime) / duration, 1);
+        var newRightPosition = 1 - Math.min((this._selectionEndTime - this._startTime) / duration, 1);
         this._updatePositionOfElement(this._rightShadedAreaElement, newRightPosition, visibleWidth, "width");
         this._updatePositionOfElement(this._rightSelectionHandleElement, newRightPosition, visibleWidth, "right");
         this._updatePositionOfElement(this._selectionDragElement, newRightPosition, visibleWidth, "right");

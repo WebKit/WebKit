@@ -449,47 +449,10 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         }
 
         contextMenu.appendItem(WebInspector.UIString("Copy Rule"), function() {
-            InspectorFrontendHost.copyText(this._generateCSSRuleString());
+            InspectorFrontendHost.copyText(this._style.generateCSSRuleString());
         }.bind(this));
 
         contextMenu.show();
-    }
-
-    _generateCSSRuleString()
-    {
-        var numMediaQueries = 0;
-        var styleText = "";
-
-        if (this._style.ownerRule) {
-            var mediaList = this._style.ownerRule.mediaList;
-            if (mediaList.length) {
-                numMediaQueries = mediaList.length;
-
-                for (var i = numMediaQueries - 1; i >= 0; --i)
-                    styleText += "    ".repeat(numMediaQueries - i - 1) + "@media " + mediaList[i].text + " {\n";
-            }
-
-            styleText += "    ".repeat(numMediaQueries) + this._style.ownerRule.selectorText;
-        } else
-            styleText += this._selectorElement.textContent;
-
-        styleText += " {\n";
-
-        for (var property of this._style.visibleProperties) {
-            styleText += "    ".repeat(numMediaQueries + 1) + property.text.trim();
-
-            if (!styleText.endsWith(";"))
-                styleText += ";";
-
-            styleText += "\n";
-        }
-
-        for (var i = numMediaQueries; i > 0; --i)
-            styleText += "    ".repeat(i) + "}\n";
-
-        styleText += "}";
-
-        return styleText;
     }
 
     _toggleRuleOnOff()
