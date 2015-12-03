@@ -1,0 +1,27 @@
+Testing that generated CSS rule strings have proper formatting.
+
+== Running test suite: CSS.generateCSSRuleString
+-- Running test case: InlineStyleString
+#test-node {
+    background-color: red;
+}
+
+-- Running test case: CSSRuleString0
+@media only screen and (min-width: 0px) {
+    body > div {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+-- Running test case: CSSRuleString1
+* {
+    margin: 0;
+    padding: 0;
+}
+
+-- Running test case: CSSRuleString2
+address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
+}
+

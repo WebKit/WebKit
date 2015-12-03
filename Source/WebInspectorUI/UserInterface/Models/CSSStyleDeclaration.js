@@ -239,6 +239,20 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         return this._styleSheetTextRange;
     }
 
+    get mediaList()
+    {
+        if (this._ownerRule)
+            return this._ownerRule.mediaList;
+        return [];
+    }
+
+    get selectorText()
+    {
+        if (this._ownerRule)
+            return this._ownerRule.selectorText;
+        return this._node.appropriateSelectorFor(true);
+    }
+
     propertyForName(name, dontCreateIfMissing)
     {
         console.assert(name);
@@ -288,26 +302,21 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
 
     generateCSSRuleString()
     {
-        if (!this._ownerRule)
-            return;
-
+        // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+        var indentation = "    ";
         var styleText = "";
-        var mediaQueriesCount = 0;
-        var mediaList = this._ownerRule.mediaList;
-        if (mediaList.length) {
-            mediaQueriesCount = mediaList.length;
+        var mediaList = this.mediaList;
+        var mediaQueriesCount = mediaList.length;
+        for (var i = mediaQueriesCount - 1; i >= 0; --i)
+            styleText += indentation.repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
 
-            for (var i = mediaQueriesCount - 1; i >= 0; --i)
-                styleText += "    ".repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
-        }
-
-        styleText += "    ".repeat(mediaQueriesCount) + this._ownerRule.selectorText + " {\n";
+        styleText += indentation.repeat(mediaQueriesCount) + this.selectorText + " {\n";
 
         for (var property of this._properties) {
             if (property.anonymous)
                 continue;
 
-            styleText += "    ".repeat(mediaQueriesCount + 1) + property.text.trim();
+            styleText += indentation.repeat(mediaQueriesCount + 1) + property.text.trim();
 
             if (!styleText.endsWith(";"))
                 styleText += ";";
@@ -316,7 +325,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         }
 
         for (var i = mediaQueriesCount; i > 0; --i)
-            styleText += "    ".repeat(i) + "}\n";
+            styleText += indentation.repeat(i) + "}\n";
 
         styleText += "}";
 
