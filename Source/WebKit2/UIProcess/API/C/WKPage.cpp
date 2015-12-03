@@ -1586,6 +1586,36 @@ WK_ADD_API_MAPPING(WKPageRunJavaScriptPromptResultListenerRef, RunJavaScriptProm
 
 }
 
+WKTypeID WKPageRunJavaScriptAlertResultListenerGetTypeID()
+{
+    return toAPI(RunJavaScriptAlertResultListener::APIType);
+}
+
+void WKPageRunJavaScriptAlertResultListenerCall(WKPageRunJavaScriptAlertResultListenerRef listener)
+{
+    toImpl(listener)->call();
+}
+
+WKTypeID WKPageRunJavaScriptConfirmResultListenerGetTypeID()
+{
+    return toAPI(RunJavaScriptConfirmResultListener::APIType);
+}
+
+void WKPageRunJavaScriptConfirmResultListenerCall(WKPageRunJavaScriptConfirmResultListenerRef listener, bool result)
+{
+    toImpl(listener)->call(result);
+}
+
+WKTypeID WKPageRunJavaScriptPromptResultListenerGetTypeID()
+{
+    return toAPI(RunJavaScriptPromptResultListener::APIType);
+}
+
+void WKPageRunJavaScriptPromptResultListenerCall(WKPageRunJavaScriptPromptResultListenerRef listener, WKStringRef result)
+{
+    toImpl(listener)->call(toWTFString(result));
+}
+
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient)
 {
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
