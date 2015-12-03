@@ -1,3 +1,15 @@
+2015-12-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r192753): Remote Web Inspector: Applications and Debuggables not showing up in debuggers
+        https://bugs.webkit.org/show_bug.cgi?id=151787
+
+        Reviewed by Brian Burg.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        Removed lock that was unnecessarily added in r192753. It was
+        protecting nothing.
+
 2015-12-02  Saam barati  <sbarati@apple.com>
 
         Insert a FIXME comment FTLLazySlowPath.h to remind us to remove/refactor the ScratchRegisterAllocator field.

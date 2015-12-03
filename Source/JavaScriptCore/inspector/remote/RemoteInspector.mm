@@ -685,8 +685,6 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
 
     BOOL indicateEnabled = [[userInfo objectForKey:WIRIndicateEnabledKey] boolValue];
 
-    std::lock_guard<Lock> lock(m_mutex);
-
     callOnWebThreadOrDispatchAsyncOnMainThread(^{
         RemoteControllableTarget* target = nullptr;
         {
