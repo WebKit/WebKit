@@ -39,6 +39,7 @@ WebInspector.TimelineRecord = class TimelineRecord extends WebInspector.Object
         this._endTime = endTime || NaN;
         this._callFrames = callFrames || null;
         this._sourceCodeLocation = sourceCodeLocation || null;
+        this._children = [];
     }
 
     // Public
@@ -119,6 +120,11 @@ WebInspector.TimelineRecord = class TimelineRecord extends WebInspector.Object
     get sourceCodeLocation()
     {
         return this._sourceCodeLocation;
+    }
+
+    get children()
+    {
+        return this._children;
     }
 
     saveIdentityToCookie(cookie)

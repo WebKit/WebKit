@@ -263,15 +263,23 @@ WebInspector.RenderingFrameTimelineView.prototype = {
 
             var treeElement = new WebInspector.TimelineRecordTreeElement(renderingFrameTimelineRecord);
             var dataGridNode = new WebInspector.RenderingFrameTimelineDataGridNode(renderingFrameTimelineRecord, this.zeroTime);
-
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
 
-            for (var childRecord of renderingFrameTimelineRecord.children) {
+            var stack = [{children: renderingFrameTimelineRecord.children, parentTreeElement: treeElement, index: 0}];
+            while (stack.length) {
+                var entry = stack.lastValue;
+                if (entry.index >= entry.children.length) {
+                    stack.pop();
+                    continue;
+                }
+
+                var childRecord = entry.children[entry.index];
+                var childTreeElement = null;
                 if (childRecord.type === WebInspector.TimelineRecord.Type.Layout) {
-                    var layoutTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
+                    childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
                     var layoutDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
 
-                    this._dataGrid.addRowInSortOrder(layoutTreeElement, layoutDataGridNode, treeElement);
+                    this._dataGrid.addRowInSortOrder(childTreeElement, layoutDataGridNode, entry.parentTreeElement);
                 } else if (childRecord.type === WebInspector.TimelineRecord.Type.Script) {
                     var rootNodes = [];
                     if (childRecord.profile) {
@@ -279,21 +287,21 @@ WebInspector.RenderingFrameTimelineView.prototype = {
                         rootNodes = childRecord.profile.topDownRootNodes;
                     }
 
-                    var zeroTime = this.zeroTime;
-                    var scriptTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short, rootNodes.length);
-                    var scriptDataGridNode = new WebInspector.ScriptTimelineDataGridNode(childRecord, zeroTime);
+                    childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short, rootNodes.length);
+                    var scriptDataGridNode = new WebInspector.ScriptTimelineDataGridNode(childRecord, this.zeroTime);
 
-                    this._dataGrid.addRowInSortOrder(scriptTreeElement, scriptDataGridNode, treeElement);
-
-                    var startTime = this.startTime;
-                    var endTime = this.endTime;
+                    this._dataGrid.addRowInSortOrder(childTreeElement, scriptDataGridNode, entry.parentTreeElement);
 
                     for (var profileNode of rootNodes) {
                         var profileNodeTreeElement = new WebInspector.ProfileNodeTreeElement(profileNode, this);
-                        var profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(profileNode, zeroTime, startTime, endTime);
-                        this._dataGrid.addRowInSortOrder(profileNodeTreeElement, profileNodeDataGridNode, scriptTreeElement);
+                        var profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(profileNode, this.zeroTime, this.startTime, this.endTime);
+                        this._dataGrid.addRowInSortOrder(profileNodeTreeElement, profileNodeDataGridNode, childTreeElement);
                     }
                 }
+
+                if (childTreeElement && childRecord.children.length)
+                    stack.push({children: childRecord.children, parentTreeElement: childTreeElement, index: 0});
+                ++entry.index;
             }
         }
 
