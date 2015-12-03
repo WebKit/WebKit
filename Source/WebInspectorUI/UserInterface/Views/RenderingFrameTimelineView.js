@@ -271,6 +271,11 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
                 var childTreeElement = null;
                 if (childRecord.type === WebInspector.TimelineRecord.Type.Layout) {
                     childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
+                    if (childRecord.width && childRecord.height) {
+                        let subtitle = document.createElement("span");
+                        subtitle.textContent = WebInspector.UIString("%d \u2A09 %d").format(childRecord.width, childRecord.height);
+                        childTreeElement.subtitle = subtitle;
+                    }
                     var layoutDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
 
                     this._dataGrid.addRowInSortOrder(childTreeElement, layoutDataGridNode, entry.parentTreeElement);
