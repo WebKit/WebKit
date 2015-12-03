@@ -1262,6 +1262,8 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         if (node.hasShadowRoots())
             return null;
+        if (node.templateContent())
+            return null;
         if (node.hasPseudoElements())
             return null;
 
@@ -1288,6 +1290,8 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         if (node.hasChildNodes())
             return true;
+        if (node.templateContent())
+            return true;
         if (node.hasPseudoElements())
             return true;
 
@@ -1299,6 +1303,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         var node = this.representedObject;
 
         var visibleChildren = [];
+
+        var templateContent = node.templateContent();
+        if (templateContent)
+            visibleChildren.push(templateContent);
 
         var beforePseudoElement = node.beforePseudoElement();
         if (beforePseudoElement)

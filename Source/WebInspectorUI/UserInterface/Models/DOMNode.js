@@ -79,7 +79,10 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             }
         }
 
-        // FIXME: Handle templateContent.
+        if (payload.templateContent) {
+            this._templateContent = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, payload.templateContent);
+            this._templateContent.parentNode = this;
+        }
 
         if (payload.children)
             this._setChildrenPayload(payload.children);
@@ -261,6 +264,11 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
     localName()
     {
         return this._localName;
+    }
+
+    templateContent()
+    {
+        return this._templateContent || null;
     }
 
     pseudoType()
