@@ -125,7 +125,7 @@ WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspec
             fragment.appendChild(goToArrowButtonLink);
 
             var icon = document.createElement("div");
-            icon.className = WebInspector.ScriptTimelineDataGridNode.IconStyleClassName;
+            icon.className = "icon";
             fragment.appendChild(icon);
 
             var titleElement = document.createElement("span");
