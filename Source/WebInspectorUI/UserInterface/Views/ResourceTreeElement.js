@@ -170,7 +170,7 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
 
     _updateToolTip()
     {
-        this.tooltip = this._resource.url;
+        this.tooltip = this._resource.displayURL;
     }
 
     _urlDidChange(event)
