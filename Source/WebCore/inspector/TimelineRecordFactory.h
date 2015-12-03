@@ -81,8 +81,6 @@ namespace WebCore {
 
         static Ref<Inspector::InspectorObject> createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout);
 
-        static Ref<Inspector::InspectorObject> createMarkData(bool isMainFrame);
-
         static Ref<Inspector::InspectorObject> createParseHTMLData(unsigned startLine);
 
         static Ref<Inspector::InspectorObject> createAnimationFrameData(int callbackId);

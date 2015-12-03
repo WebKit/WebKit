@@ -29,12 +29,12 @@ WebInspector.PageObserver = class PageObserver
 
     domContentEventFired(timestamp)
     {
-        // Covered by Timeline "MarkDOMContent" record.
+        WebInspector.timelineManager.pageDOMContentLoadedEventFired(timestamp);
     }
 
     loadEventFired(timestamp)
     {
-        WebInspector.timelineManager.pageDidLoad(timestamp);
+        WebInspector.timelineManager.pageLoadEventFired(timestamp);
     }
 
     frameNavigated(frame, loaderId)
