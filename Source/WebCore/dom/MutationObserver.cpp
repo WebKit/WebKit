@@ -35,6 +35,7 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "Microtasks.h"
 #include "MutationCallback.h"
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
@@ -154,17 +155,54 @@ static MutationObserverSet& suspendedMutationObservers()
     return suspendedObservers;
 }
 
+static bool mutationObserverCompoundMicrotaskQueuedFlag;
+
+class MutationObserverMicrotask : public Microtask {
+public:
+    MutationObserverMicrotask()
+    {
+    }
+
+    virtual ~MutationObserverMicrotask()
+    {
+    }
+
+private:    
+    virtual Result run()
+    {
+        mutationObserverCompoundMicrotaskQueuedFlag = false;
+
+        MutationObserver::deliverAllMutations();
+
+        return Result::Done;
+    }
+};
+
+static void queueMutationObserverCompoundMicrotask()
+{
+    if (mutationObserverCompoundMicrotaskQueuedFlag)
+        return;
+    mutationObserverCompoundMicrotaskQueuedFlag = true;
+
+    auto microtask = std::make_unique<MutationObserverMicrotask>();
+    MicrotaskQueue::mainThreadQueue().append(WTF::move(microtask));
+}
+
 void MutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mutation)
 {
     ASSERT(isMainThread());
     m_records.append(mutation);
     activeMutationObservers().add(this);
+
+    queueMutationObserverCompoundMicrotask();
 }
 
 void MutationObserver::setHasTransientRegistration()
 {
     ASSERT(isMainThread());
     activeMutationObservers().add(this);
+
+    queueMutationObserverCompoundMicrotask();
 }
 
 HashSet<Node*> MutationObserver::getObservedNodes() const

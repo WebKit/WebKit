@@ -1,3 +1,102 @@
+2015-12-02  Sam Weinig  <sam@webkit.org>
+
+        Promise callbacks should be called at microtask checkpoints
+        https://bugs.webkit.org/show_bug.cgi?id=147933
+
+        Reviewed by Chris Dumez.
+
+        - Re-names MicroTaskQueue and MicroTask to MicrotaskQueue and Microtask to match the spec language.
+        - Re-implements MicrotaskQueue and Microtask support suspended Microtasks (via the new KeepInQueue
+          result value a Microtask can have when running) and correct behavior when Microtasks are added to
+          the queue during a Microtask checkpoint.
+        - MicrotaskQueue now has a mainThreadQueue() static function, replacing the old singleton() function,
+          which can be used for the Document (non-Worker) Microtasks. For Workers, the a MicrotaskQueue 
+          can be separately allocated for each WorkerGlobalScope (though this was not done in this change).
+        - Adds a helper subclass of Microtask, ActiveDOMCallbackMicrotask, for Microtasks that are
+          per-ScriptExecutationContext, and need to act as ActiveDOMCallbacks.
+        - Re-implement Document (non-Worker) Promises on top of ActiveDOMCallbackMicrotask.
+        - Re-implement MutationObserver delivery on top of Microtask.
+
+        Layout Test:
+            fast/dom/microtask-promise-mutation-observer-order.html
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        Add new files.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueTaskToEventLoop):
+        Switch to using ActiveDOMCallbackMicrotask/MicrotaskQueue rather than ScriptExecutionContext's Task mechanism
+        for JavaScriptCore tasks.
+
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::JSMainThreadExecState::didLeaveScriptContext):
+        Perform a microtask checkpoint rather than calling MutationObserver code explicitly now that mutation observers
+        use microtasks.
+
+        * dom/ActiveDOMCallbackMicrotask.cpp: Added.
+        (WebCore::ActiveDOMCallbackMicrotask::ActiveDOMCallbackMicrotask):
+        (WebCore::ActiveDOMCallbackMicrotask::~ActiveDOMCallbackMicrotask):
+        (WebCore::ActiveDOMCallbackMicrotask::run):
+        (WebCore::ActiveDOMCallbackMicrotask::contextDestroyed):
+        * dom/ActiveDOMCallbackMicrotask.h: Added.
+        Add a helper subclass of Microtask which behaves like a ActiveDOMCallback (e.g. supports suspension
+        and context destruction).
+
+        * dom/MicroTask.cpp: Renamed to Microtasks.cpp.
+        * dom/MicroTask.h: Renamed to Microtasks.h.
+        * dom/Microtasks.cpp: Renamed from Source/WebCore/dom/MicroTask.cpp.
+        (WebCore::Microtask::removeSelfFromQueue):
+        (WebCore::MicrotaskQueue::mainThreadQueue):
+        (WebCore::MicrotaskQueue::append):
+        (WebCore::MicrotaskQueue::remove):
+        (WebCore::MicrotaskQueue::performMicrotaskCheckpoint):
+        (WebCore::MicroTaskQueue::singleton): Deleted.
+        (WebCore::MicroTaskQueue::queueMicroTask): Deleted.
+        (WebCore::MicroTaskQueue::runMicroTasks): Deleted.
+        * dom/Microtasks.h: Renamed from Source/WebCore/dom/MicroTask.h.
+        (WebCore::Microtask::~Microtask):
+        (WebCore::MicrotaskQueue::MicrotaskQueue):
+        (WebCore::MicrotaskQueue::~MicrotaskQueue):
+        (WebCore::MicroTask::~MicroTask): Deleted.
+        (WebCore::MicroTaskQueue::~MicroTaskQueue): Deleted.
+        (WebCore::MicroTaskQueue::MicroTaskQueue): Deleted.
+        Re-implement MicrotaskQueue and Microtask to support Microtask suspension (via the KeepInQueue result
+        value) and correct behavior when Microtasks are queued during checkpoints.
+
+        * dom/MutationObserver.cpp:
+        (WebCore::suspendedMutationObservers):
+        (WebCore::MutationObserverMicrotask::MutationObserverMicrotask):
+        (WebCore::MutationObserverMicrotask::~MutationObserverMicrotask):
+        (WebCore::MutationObserverMicrotask::run):
+        (WebCore::queueMutationObserverCompoundMicrotask):
+        (WebCore::MutationObserver::enqueueMutationRecord):
+        (WebCore::MutationObserver::setHasTransientRegistration):
+        * dom/MutationObserver.h:
+        Re-implement MutationObserver delivery on top of Microtasks.
+
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::timerFired):
+        Remove unnecessary call to runMicroTasks().
+
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent):
+        (WebCore::HTMLScriptRunner::runScript):
+        Remove calls to MutationObserver::deliverAllMutations() now that the MicrotaskQueue will take care of it.
+
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForParsing):
+        Remove unnecessary call to runMicroTasks().
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::queueMicroTask):
+        Use ActiveDOMCallbackMicrotask rather than a custom test subclass.
+
+        * testing/MicroTaskTest.cpp: Removed.
+        * testing/MicroTaskTest.h: Removed.
+        Remove custom test subclass of Microtask, just use ActiveDOMCallbackMicrotask directly.
+
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
         Add GetterRaisesExceptionWithMessage and SetterRaisesExceptionWithMessage to the code generator.

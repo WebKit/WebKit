@@ -25,6 +25,7 @@
 
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
+#include "ActiveDOMCallbackMicrotask.cpp"
 #include "ActiveDOMObject.cpp"
 #include "AnimationEvent.cpp"
 #include "Attr.cpp"
@@ -97,7 +98,7 @@
 #include "MessageEvent.cpp"
 #include "MessagePort.cpp"
 #include "MessagePortChannel.cpp"
-#include "MicroTask.cpp"
+#include "Microtasks.cpp"
 #include "MouseEvent.cpp"
 #include "MouseRelatedEvent.cpp"
 #include "MutationEvent.cpp"
