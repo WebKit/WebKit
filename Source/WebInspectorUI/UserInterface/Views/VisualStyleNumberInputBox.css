@@ -47,7 +47,7 @@
     line-height: 16px;
     text-align: right;
     border-radius: 4px;
-    background-color: hsl(0, 100%, 100%);
+    background-color: white;
     pointer-events: none;
     overflow: hidden;
     white-space: nowrap;
@@ -71,4 +71,8 @@
 
 .visual-style-property-container > .visual-style-property-value-container > .number-input-container > span {
     min-width: -webkit-fit-content;
+}
+
+.visual-style-property-container > .visual-style-property-value-container > .number-input-container:not(.has-value) > span {
+    color: hsl(0, 0%, 60%);
 }
