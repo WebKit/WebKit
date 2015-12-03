@@ -1,3 +1,17 @@
+2015-12-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Add sin(), cos(), pow() and log() to B3
+        https://bugs.webkit.org/show_bug.cgi?id=151778
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleSin):
+        (JSC::FTL::Output::doubleCos):
+        (JSC::FTL::Output::doublePow):
+        (JSC::FTL::Output::doubleLog):
+        (JSC::FTL::Output::callWithoutSideEffects):
+
 2015-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         Add a few obvious strength-reductions to Air
