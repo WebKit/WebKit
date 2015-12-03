@@ -110,7 +110,7 @@ WebInspector.Resizer = class Resizer extends WebInspector.Object
         // The cursor could change when hovering over links, text, or other elements with cursor cues.
         // FIXME: when Pointer Events support is available this could be implemented by drawing the cursor ourselves.
         if (WebInspector._elementDraggingGlassPane)
-            WebInspector._elementDraggingGlassPane.parentElement.removeChild(WebInspector._elementDraggingGlassPane);
+            WebInspector._elementDraggingGlassPane.remove();
 
         var glassPaneElement = document.createElement("div");
         glassPaneElement.className = "glass-pane-for-drag";
@@ -135,7 +135,7 @@ WebInspector.Resizer = class Resizer extends WebInspector.Object
         document.body.style.removeProperty("cursor");
 
         if (WebInspector._elementDraggingGlassPane) {
-            WebInspector._elementDraggingGlassPane.parentElement.removeChild(WebInspector._elementDraggingGlassPane);
+            WebInspector._elementDraggingGlassPane.remove();
             delete WebInspector._elementDraggingGlassPane;
         }
 
