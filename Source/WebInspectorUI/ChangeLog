@@ -1,5 +1,25 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r191715. rdar://problem/23221163
+
+    2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Add "revert" to CSS value autocompletion
+            https://bugs.webkit.org/show_bug.cgi?id=150652
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Models/CSSCompletions.js:
+            * UserInterface/Models/CSSKeywordCompletions.js:
+            (WebInspector.CSSKeywordCompletions.forProperty):
+            * UserInterface/Views/VisualStyleDetailsPanel.js:
+            (WebInspector.VisualStyleDetailsPanel):
+            (WebInspector.VisualStyleDetailsPanel.prototype._populateDisplaySection):
+            (WebInspector.VisualStyleDetailsPanel.prototype._populateAlignmentSection):
+            Treat "revert" like initial and unset. It is valid on all properties.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r191714. rdar://problem/23221163
 
     2015-10-28  Nikita Vasilyev  <nvasilyev@apple.com>

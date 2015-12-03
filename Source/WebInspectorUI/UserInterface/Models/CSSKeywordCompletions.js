@@ -33,7 +33,7 @@ WebInspector.CSSKeywordCompletions = {};
 
 WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
 {
-    var acceptedKeywords = ["initial", "unset"];
+    var acceptedKeywords = ["initial", "unset", "revert"];
     var isNotPrefixed = propertyName.charAt(0) !== "-";
 
     if (propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap)
