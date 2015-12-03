@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FlexibleSpaceNavigationItem = function(identifier) {
-    WebInspector.NavigationItem.call(this, identifier);
+WebInspector.FlexibleSpaceNavigationItem = class FlexibleSpaceNavigationItem extends WebInspector.NavigationItem
+{
+    constructor(identifier)
+    {
+        super(identifier);
+    }
+
+    // Protected
+
+    get additionalClassNames()
+    {
+        return ["flexible-space"];
+    }
 };
-
-WebInspector.FlexibleSpaceNavigationItem.StyleClassName = "flexible-space";
-
-WebInspector.FlexibleSpaceNavigationItem.prototype = {
-    constructor: WebInspector.FlexibleSpaceNavigationItem,
-
-    // Private
-
-    _additionalClassNames: [WebInspector.FlexibleSpaceNavigationItem.StyleClassName],
-};
-
-WebInspector.FlexibleSpaceNavigationItem.prototype.__proto__ = WebInspector.NavigationItem.prototype;

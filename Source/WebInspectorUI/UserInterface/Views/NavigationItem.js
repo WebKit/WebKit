@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NavigationItem = function(identifier, role, label) {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
+WebInspector.NavigationItem = class NavigationItem extends WebInspector.Object
+{
+    constructor(identifier, role, label)
+    {
+        super();
 
-    this._identifier = identifier || null;
+        this._identifier = identifier || null;
 
-    this._element = document.createElement("div");
-    this._hidden = false;
+        this._element = document.createElement("div");
+        this._hidden = false;
 
-    if (role)
-        this._element.setAttribute("role", role);
-    if (label)
-        this._element.setAttribute("aria-label", label);
+        if (role)
+            this._element.setAttribute("role", role);
+        if (label)
+            this._element.setAttribute("aria-label", label);
 
-    this._element.classList.add(...this._classNames);
-    this._element.navigationItem = this;
-};
-
-WebInspector.NavigationItem.StyleClassName = "item";
-WebInspector.NavigationItem.HiddenStyleClassName = "hidden";
-
-
-WebInspector.NavigationItem.prototype = {
-    constructor: WebInspector.NavigationItem,
+        this._element.classList.add(...this._classNames);
+        this._element.navigationItem = this;
+    }
 
     // Public
 
     get identifier()
     {
         return this._identifier;
-    },
+    }
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get parentNavigationBar()
     {
         return this._parentNavigationBar;
-    },
+    }
 
-    updateLayout: function(expandOnly)
+    updateLayout(expandOnly)
     {
         // Implemented by subclasses.
-    },
+    }
 
     get hidden()
     {
         return this._hidden;
-    },
+    }
 
     set hidden(flag)
     {
@@ -82,26 +77,21 @@ WebInspector.NavigationItem.prototype = {
 
         this._hidden = flag;
 
-        if (flag)
-            this._element.classList.add(WebInspector.NavigationItem.HiddenStyleClassName);
-        else
-            this._element.classList.remove(WebInspector.NavigationItem.HiddenStyleClassName);
+        this._element.classList.toggle("hidden", flag);
 
         if (this._parentNavigationBar)
             this._parentNavigationBar.updateLayoutSoon();
-    },
+    }
 
     // Private
 
     get _classNames()
     {
-        var classNames = [WebInspector.NavigationItem.StyleClassName];
+        var classNames = ["item"];
         if (this._identifier)
             classNames.push(this._identifier);
-        if (this._additionalClassNames instanceof Array)
-            classNames = classNames.concat(this._additionalClassNames);
+        if (this.additionalClassNames instanceof Array)
+            classNames = classNames.concat(this.additionalClassNames);
         return classNames;
     }
 };
-
-WebInspector.NavigationItem.prototype.__proto__ = WebInspector.Object.prototype;
