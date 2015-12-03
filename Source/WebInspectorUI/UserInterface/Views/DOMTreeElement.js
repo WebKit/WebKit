@@ -808,6 +808,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             return true;
 
         var closingTagElement = this._distinctClosingTagElement();
+        var originalClosingTagTextContent = closingTagElement ? closingTagElement.textContent : "";
 
         function keyupListener(event)
         {
@@ -823,6 +824,9 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         function editingCancelled()
         {
+            if (closingTagElement)
+                closingTagElement.textContent = originalClosingTagTextContent;
+
             tagNameElement.removeEventListener("keyup", keyupListener, false);
             this._editingCancelled.apply(this, arguments);
         }
