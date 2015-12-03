@@ -36,7 +36,7 @@ WebInspector.Slider = class Slider extends WebInspector.Object
 
         this._value = 0;
         this._knobX = 0;
-        this.__maxX = 0;
+        this._maxX = 0;
 
         this._element.addEventListener("mousedown", this);
     }
@@ -60,13 +60,25 @@ WebInspector.Slider = class Slider extends WebInspector.Object
         if (value === this._value)
             return;
 
-        this._value = value;
-
-        this._knobX = Math.round(value * this._maxX);
-        this._knob.style.webkitTransform = "translate3d(" + this._knobX + "px, 0, 0)";
+        this.knobX = value;
 
         if (this.delegate && typeof this.delegate.sliderValueDidChange === "function")
             this.delegate.sliderValueDidChange(this, value);
+    }
+
+    set knobX(value)
+    {
+        this._value = value;
+        this._knobX = Math.round(value * this.maxX);
+        this._knob.style.webkitTransform = "translate3d(" + this._knobX + "px, 0, 0)";
+    }
+
+    get maxX()
+    {
+        if (this._maxX <= 0 && document.body.contains(this._element))
+            this._maxX = Math.max(this._element.offsetWidth - Math.ceil(WebInspector.Slider.KnobWidth / 2), 0);
+
+        return this._maxX;
     }
 
     // Protected
@@ -91,7 +103,7 @@ WebInspector.Slider = class Slider extends WebInspector.Object
     _handleMousedown(event)
     {
         if (event.target !== this._knob)
-            this.value = (this._localPointForEvent(event).x - 3) / this._maxX;
+            this.value = (this._localPointForEvent(event).x - 3) / this.maxX;
 
         this._startKnobX = this._knobX;
         this._startMouseX = this._localPointForEvent(event).x;
@@ -105,9 +117,9 @@ WebInspector.Slider = class Slider extends WebInspector.Object
     _handleMousemove(event)
     {
         var dx = this._localPointForEvent(event).x - this._startMouseX;
-        var x = Math.max(Math.min(this._startKnobX + dx, this._maxX), 0);
+        var x = Math.max(Math.min(this._startKnobX + dx, this.maxX), 0);
 
-        this.value = x / this._maxX;
+        this.value = x / this.maxX;
     }
 
     _handleMouseup(event)
@@ -123,14 +135,6 @@ WebInspector.Slider = class Slider extends WebInspector.Object
         // We convert all event coordinates from page coordinates to local coordinates such that the slider
         // may be transformed using CSS Transforms and interaction works as expected.
         return window.webkitConvertPointFromPageToNode(this._element, new WebKitPoint(event.pageX, event.pageY));
-    }
-
-    get _maxX()
-    {
-        if (this.__maxX === 0 && document.body.contains(this._element))
-            this.__maxX = this._element.offsetWidth - Math.ceil(WebInspector.Slider.KnobWidth / 2);
-
-        return this.__maxX;
     }
 };
 

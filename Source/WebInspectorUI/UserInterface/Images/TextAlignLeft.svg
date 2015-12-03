@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke="black">
+    <line class="stroked" x1="0.5" y1="3" x2="14.5" y2="3" />
+    <line class="stroked" x1="0.5" y1="5.5" x2="9.5" y2="5.5" />
+    <line class="stroked" x1="0.5" y1="8" x2="14.5" y2="8" />
+    <line class="stroked" x1="0.5" y1="10.5" x2="9.5" y2="10.5" />
+    <line class="stroked" x1="0.5" y1="13" x2="14.5" y2="13" />
+</svg>
