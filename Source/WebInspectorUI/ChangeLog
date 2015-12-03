@@ -1,5 +1,25 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r189190. rdar://problem/23221163
+
+    2015-08-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Debugger Popovers should work for object literal shorthand variables
+            https://bugs.webkit.org/show_bug.cgi?id=148603
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+            (WebInspector.CodeMirrorTokenTrackingController.prototype._processJavaScriptExpression):
+            Allow debugger popovers for object property shorthands, because they
+            are actually variables that have values. Previously we ignored property
+            name literals, because they were just property names until ES6.
+
+            * UserInterface/Views/CodeMirrorAdditions.js:
+            Add a helper for walking through token types from a start position. It may be useful elsewhere.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r189189. rdar://problem/23221163
 
     2015-08-31  Matt Baker  <mattbaker@apple.com>
