@@ -1,3 +1,10 @@
+2015-12-03  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build-fix; fix !HAVE(AVKIT) build after r193340.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::applicationDidBecomeActive):
+
 2015-12-03  Sam Weinig  <sam@webkit.org>
 
         Need completionHandler-based WebKit C SPI for alert, confirm, and prompt

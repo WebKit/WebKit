@@ -92,6 +92,11 @@ void WebVideoFullscreenManagerProxy::requestHideAndExitFullscreen()
 {
 
 }
+
+void WebVideoFullscreenManagerProxy::applicationDidBecomeActive()
+{
+
+}
 #else
 
 #pragma mark - WebVideoFullscreenModelContext
