@@ -372,12 +372,14 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             callback(node, state);
             this._recurse(node.id, callback, state);
             this._recurseArray(node.params, callback, state);
+            this._recurseArray(node.defaults, callback, state);
             this._recurse(node.body, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
             callback(node, state);
             this._recurse(node.id, callback, state);
             this._recurseArray(node.params, callback, state);
+            this._recurseArray(node.defaults, callback, state);
             this._recurse(node.body, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.Identifier:
@@ -678,6 +680,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree.bind(this)),
+                defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
                 body: this._createInternalSyntaxTree(node.body),
                 isGetterOrSetter: false // This is obvious, but is convenient none the less b/c Declarations and Expressions are often intertwined.
             };
@@ -687,6 +690,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree.bind(this)),
+                defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
                 body: this._createInternalSyntaxTree(node.body),
                 isGetterOrSetter: false // If true, it is set in the Property AST node.
             };
