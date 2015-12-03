@@ -67,6 +67,33 @@ WebInspector.FormattedValue.createElementForNode = function(object)
     return span;
 };
 
+WebInspector.FormattedValue.createElementForError = function(object)
+{
+    var span = document.createElement("span");
+    span.classList.add("formatted-error");
+    span.textContent = object.description;
+
+    if (!object.preview)
+        return span;
+
+    function previewToObject(preview)
+    {
+        var result = {};
+        for (var property of preview.propertyPreviews)
+            result[property.name] = property.value;
+
+        return result;
+    }
+
+    var preview = previewToObject(object.preview);
+    if (!preview.sourceURL)
+        return span;
+
+    var sourceLinkWithPrefix = WebInspector.ErrorObjectView.makeSourceLinkWithPrefix(preview.sourceURL, preview.line, preview.column);
+    span.appendChild(sourceLinkWithPrefix);
+    return span;
+};
+
 WebInspector.FormattedValue.createElementForNodePreview = function(preview)
 {
     var value = preview.value;
@@ -145,7 +172,7 @@ WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subty
         return span;
     }
 
-    // Function: if class, show the description, otherwise ellide in previews.
+    // Function: if class, show the description, otherwise elide in previews.
     if (type === "function") {
         if (subtype === "class")
             span.textContent = displayString;
@@ -186,6 +213,9 @@ WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject =
 {
     if (object.subtype === "node")
         return WebInspector.FormattedValue.createElementForNode(object);
+
+    if (object.subtype === "error")
+        return WebInspector.FormattedValue.createElementForError(object);
 
     if (object.preview)
         return new WebInspector.ObjectPreviewView(object.preview, previewViewMode);

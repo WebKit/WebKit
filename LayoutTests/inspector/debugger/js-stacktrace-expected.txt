@@ -1,0 +1,78 @@
+Test that the inspector can parse the stack trace format used by JSC for Error instances and console.trace.
+
+console.trace():
+[
+    {
+        "lineNumber": 15,
+        "columnNumber": 22,
+        "functionName": "typeError",
+        "nativeCode": false
+    },
+    {
+        "lineNumber": 6,
+        "columnNumber": 21,
+        "functionName": "typeErrorWrap",
+        "nativeCode": false
+    }
+]
+
+Error object:
+[
+    {
+        "functionName": "typeError",
+        "url": "/inspector/debugger/js-stacktrace.html",
+        "lineNumber": "14",
+        "columnNumber": "30"
+    },
+    {
+        "functionName": "typeErrorWrap",
+        "url": "/inspector/debugger/js-stacktrace.html",
+        "lineNumber": "7",
+        "columnNumber": "21"
+    }
+]
+
+console.trace():
+[
+    {
+        "lineNumber": 15,
+        "columnNumber": 22,
+        "functionName": "typeError",
+        "nativeCode": false
+    },
+    {
+        "lineNumber": null,
+        "columnNumber": null,
+        "functionName": "map",
+        "nativeCode": true
+    },
+    {
+        "lineNumber": 22,
+        "columnNumber": 20,
+        "functionName": "testWithNativeCallInBetween",
+        "nativeCode": false
+    }
+]
+
+Error object:
+[
+    {
+        "functionName": "typeError",
+        "url": "/inspector/debugger/js-stacktrace.html",
+        "lineNumber": "14",
+        "columnNumber": "30"
+    },
+    {
+        "functionName": "map",
+        "url": "[native code]",
+        "lineNumber": 0,
+        "columnNumber": 0
+    },
+    {
+        "functionName": "testWithNativeCallInBetween",
+        "url": "/inspector/debugger/js-stacktrace.html",
+        "lineNumber": "23",
+        "columnNumber": "20"
+    }
+]
+

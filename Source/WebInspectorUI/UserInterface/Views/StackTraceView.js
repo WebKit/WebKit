@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.call-frame {
-    white-space: nowrap;
-    cursor: pointer;
-}
+WebInspector.StackTraceView = class StackTraceView extends WebInspector.Object
+{
+    constructor(stackTrace)
+    {
+        super();
 
-.call-frame .icon {
-    display: inline-block;
-    vertical-align: top;
-    width: 16px;
-    height: 16px;
-    margin-right: 3px;
-}
+        var element = this._element = document.createElement("div");
+        element.classList.add("stack-trace");
 
-.call-frame .titles {
-    display: inline-block;
-}
+        for (var callFrame of stackTrace.callFrames) {
+            if (!callFrame.sourceCodeLocation && callFrame.functionName === null)
+                continue;
 
-.call-frame .subtitle,
-.call-frame .subtitle .source-link {
-    color: hsla(0, 0%, 0%, 0.6);
-    text-decoration: none;
-}
+            var callFrameElement = new WebInspector.CallFrameView(callFrame, true);
+            element.appendChild(callFrameElement);
+        }
+    }
 
-.call-frame:hover .subtitle .source-link,
-.call-frame:focus .subtitle .source-link {
-    color: hsl(210, 0%, 0%);
-}
-
-.call-frame .subtitle:empty {
-    display: none;
-}
-
-.call-frame .subtitle {
-    font-size: inherit;
-}
-
-.call-frame .colon {
-    background-color: red;
-}
-
-.call-frame .separator {
-    white-space: nowrap;
-    color: hsla(0, 0%, 0%, 0.2);
-}
+    get element()
+    {
+        return this._element;
+    }
+};

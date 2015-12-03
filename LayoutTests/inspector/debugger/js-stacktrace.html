@@ -1,0 +1,112 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function typeErrorWrap()
+{
+    return typeError();
+}
+
+function typeError()
+{
+    var object = {};
+    try {
+        object.propertyDoesnt.exist;
+    } catch (e) {
+        console.trace();
+        return e.stack;
+    }
+}
+
+function testWithNativeCallInBetween()
+{
+    return [42].map(typeError)[0];
+}
+
+
+function test()
+{
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+        InspectorTest.log("\nconsole.trace():");
+
+        var stackTrace = [];
+        var callFramesBeforeEval = stripCallFramesAfterEval(event.data.message.stackTrace.callFrames);
+        for (var callFrame of callFramesBeforeEval) {
+            var lineNumber = callFrame.sourceCodeLocation ? callFrame.sourceCodeLocation.lineNumber : null;
+            var columnNumber = callFrame.sourceCodeLocation ? callFrame.sourceCodeLocation.columnNumber : null;
+            stackTrace.push({
+                lineNumber: lineNumber,
+                columnNumber: columnNumber,
+                functionName: callFrame.functionName,
+                nativeCode: callFrame.nativeCode
+            });
+        }
+
+        InspectorTest.log(JSON.stringify(stackTrace, null, 4));
+    });
+
+    InspectorTest.evaluateInPage("typeErrorWrap()", function(error, result) {
+        InspectorTest.log("\nError object:");
+
+        if (error)
+            InspectorTest.log(error);
+
+        var stackTrace = stripPayloadAfterEval(WebInspector.StackTrace._parseStackTrace(result.value));
+        stackTrace = stripFilePaths(stackTrace);
+
+        InspectorTest.log(JSON.stringify(stackTrace, null, 4));
+        InspectorTest.completeTest();
+    });
+
+    InspectorTest.evaluateInPage("testWithNativeCallInBetween()", function(error, result) {
+        InspectorTest.log("\nError object:");
+
+        if (error)
+            InspectorTest.log(error);
+
+        var stackTrace = stripPayloadAfterEval(WebInspector.StackTrace._parseStackTrace(result.value));
+        stackTrace = stripFilePaths(stackTrace);
+
+        InspectorTest.log(JSON.stringify(stackTrace, null, 4));
+        InspectorTest.completeTest();
+    });
+
+    function stripFilePaths(stackTrace)
+    {
+        for (var frame of stackTrace) {
+            if (typeof frame.url === "string")
+                frame.url = frame.url.replace(/^.+?LayoutTests/, "");
+        }
+        return stackTrace;
+    }
+
+    function stripCallFramesAfterEval(stackTrace)
+    {
+        var index = 0;
+        for (var frame of stackTrace) {
+            if (frame.nativeCode && frame.functionName === null)
+                break;
+            index++;
+        }
+        return stackTrace.slice(0, index);
+    }
+
+    function stripPayloadAfterEval(payload)
+    {
+        var index = 0;
+        for (var frame of payload) {
+            if (frame.functionName === "eval code")
+                break;
+            index++;
+        }
+        return payload.slice(0, index);
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Test that the inspector can parse the stack trace format used by JSC for Error instances and console.trace.<br>
+</p>
+</body>
+</html>
