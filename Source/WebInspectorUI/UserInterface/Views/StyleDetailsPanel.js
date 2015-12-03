@@ -141,7 +141,6 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
     _refreshPreservingScrollPosition(significantChange)
     {
         significantChange = this._forceSignificantChange || significantChange || false;
-        delete this._forceSignificantChange;
 
         var previousScrollTop = this._initialScrollOffset;
 
@@ -155,6 +154,8 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
 
         if (this.element.parentNode)
             this.element.parentNode.scrollTop = previousScrollTop;
+
+        this._forceSignificantChange = false;
     }
 
     _nodeStylesNeedsRefreshed(event)
