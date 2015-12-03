@@ -172,6 +172,8 @@ public:
 
     virtual uint32_t hostingContextID();
 
+    virtual unsigned backingStoreBytesPerPixel() const override;
+
     void setClonedLayer(const PlatformCALayer*);
 
     RemoteLayerTreeTransaction::LayerProperties& properties() { return m_properties; }

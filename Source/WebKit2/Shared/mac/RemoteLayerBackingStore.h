@@ -61,6 +61,7 @@ public:
     float scale() const { return m_scale; }
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     bool isOpaque() const { return m_isOpaque; }
+    unsigned bytesPerPixel() const;
 
     PlatformCALayerRemote* layer() const { return m_layer; }
 

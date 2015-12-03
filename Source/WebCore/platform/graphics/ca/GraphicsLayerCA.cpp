@@ -3775,7 +3775,7 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
     if (!m_layer->backingContributesToMemoryEstimate())
         return 0;
 
-    return 4.0 * size().width() * m_layer->contentsScale() * size().height() * m_layer->contentsScale();
+    return m_layer->backingStoreBytesPerPixel() * size().width() * m_layer->contentsScale() * size().height() * m_layer->contentsScale();
 }
 
 } // namespace WebCore

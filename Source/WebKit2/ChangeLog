@@ -1,3 +1,21 @@
+2015-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Have layer memory use consult the backing store format
+        https://bugs.webkit.org/show_bug.cgi?id=151827
+        rdar://problem/23746497
+
+        Reviewed by Dean Jackson.
+
+        When computing the backing store memory size, take the pixel format into account,
+        rather than assuming 4 bytes per pixel.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::bytesPerPixel):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::backingStoreBytesPerPixel):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2015-12-03  Jer Noble  <jer.noble@apple.com>
 
         Expose WebCore's InvisibleAutoplayNotPermitted setting to WebKit & WebKit2

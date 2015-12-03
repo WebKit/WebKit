@@ -230,6 +230,8 @@ public:
     virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length) const;
 
     static void flipContext(CGContextRef, CGFloat height);
+    
+    virtual unsigned backingStoreBytesPerPixel() const { return 4; }
 
 #if PLATFORM(WIN)
     virtual PlatformCALayer* rootLayer() const = 0;

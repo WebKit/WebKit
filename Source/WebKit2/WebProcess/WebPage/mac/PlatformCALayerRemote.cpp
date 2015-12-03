@@ -782,6 +782,14 @@ uint32_t PlatformCALayerRemote::hostingContextID()
     return 0;
 }
 
+unsigned PlatformCALayerRemote::backingStoreBytesPerPixel() const
+{
+    if (!m_properties.backingStore)
+        return 4;
+
+    return m_properties.backingStore->bytesPerPixel();
+}
+
 LayerPool& PlatformCALayerRemote::layerPool()
 {
     return m_context->layerPool();

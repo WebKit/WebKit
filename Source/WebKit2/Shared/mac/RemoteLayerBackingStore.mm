@@ -187,6 +187,20 @@ IntSize RemoteLayerBackingStore::backingStoreSize() const
     return roundedIntSize(scaledSize);
 }
 
+unsigned RemoteLayerBackingStore::bytesPerPixel() const
+{
+#if USE(IOSURFACE)
+    WebCore::IOSurface::Format format = bufferFormat(m_isOpaque);
+    switch (format) {
+    case IOSurface::Format::RGBA: return 4;
+    case IOSurface::Format::YUV422: return 2;
+    case IOSurface::Format::RGB10: return 4;
+    case IOSurface::Format::RGB10A8: return 5;
+    }
+#endif
+    return 4;
+}
+
 void RemoteLayerBackingStore::swapToValidFrontBuffer()
 {
     IntSize expandedScaledSize = backingStoreSize();
