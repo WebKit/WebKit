@@ -311,13 +311,16 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
 
         switch (marker.type) {
         case WebInspector.TimelineMarker.Type.LoadEvent:
-            markerElement.title = WebInspector.UIString("Load – %s").format(Number.secondsToString(marker.time));
+            markerElement.title = WebInspector.UIString("Load \u2014 %s").format(Number.secondsToString(marker.time));
             break;
         case WebInspector.TimelineMarker.Type.DOMContentEvent:
-            markerElement.title = WebInspector.UIString("DOMContentLoaded – %s").format(Number.secondsToString(marker.time));
+            markerElement.title = WebInspector.UIString("DOMContentLoaded \u2014 %s").format(Number.secondsToString(marker.time));
             break;
         case WebInspector.TimelineMarker.Type.TimeStamp:
-            markerElement.title = WebInspector.UIString("Timestamp – %s").format(Number.secondsToString(marker.time));
+            if (marker.details)
+                markerElement.title = WebInspector.UIString("%s \u2014 %s").format(marker.details, Number.secondsToString(marker.time));
+            else
+                markerElement.title = WebInspector.UIString("Timestamp \u2014 %s").format(Number.secondsToString(marker.time));
             break;
         }
 
