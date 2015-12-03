@@ -1,3 +1,15 @@
+2015-12-03  Sam Weinig  <sam@webkit.org>
+
+        It should be possible to use version 6 of the WKPageUIClient without adopting the new createNewPage
+        https://bugs.webkit.org/show_bug.cgi?id=151826
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        Pick which variant of createNewPage to use based on which function pointer is available,
+        not the version number.
+
 2015-12-03  Anders Carlsson  <andersca@apple.com>
 
         Remove Objective-C GC support
