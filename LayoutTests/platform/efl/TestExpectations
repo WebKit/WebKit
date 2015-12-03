@@ -2711,3 +2711,7 @@ css2.1/tables/table-anonymous-objects-205.xht [ Missing ]
 css2.1/tables/table-anonymous-objects-206.xht [ Missing ]
 css2.1/tables/table-anonymous-objects-207.xht [ Missing ]
 css2.1/tables/table-anonymous-objects-208.xht [ Missing ]
+
+# EFL layout test has been broken since r192796. SKip web-platform-tests until fixing this problem.
+# http://trac.webkit.org/changeset/192796
+Bug(EFL) imported/w3c/web-platform-tests [ Skip ]

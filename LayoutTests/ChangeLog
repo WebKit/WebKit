@@ -1,3 +1,10 @@
+2015-12-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL urgent gardening. Skip web-platform-tests
+        because it has been timeout since r192796.
+
+        * platform/efl/TestExpectations:
+
 2015-12-02  Mark Lam  <mark.lam@apple.com>
 
         Polymorphic operand types for DFG and FTL mul.
