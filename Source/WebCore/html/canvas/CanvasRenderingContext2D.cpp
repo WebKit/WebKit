@@ -2105,7 +2105,7 @@ String CanvasRenderingContext2D::font() const
 
     if (fontDescription.italic())
         serializedFont.appendLiteral("italic ");
-    if (fontDescription.smallCaps() == FontSmallCapsOn)
+    if (fontDescription.variantCaps() == FontVariantCaps::Small)
         serializedFont.appendLiteral("small-caps ");
 
     serializedFont.appendNumber(fontDescription.computedPixelSize());
@@ -2174,7 +2174,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     StyleResolver& styleResolver = canvas()->styleResolver();
     styleResolver.applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), &newStyle.get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontStyle, parsedStyle->getPropertyCSSValue(CSSPropertyFontStyle).get());
-    styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontVariant, parsedStyle->getPropertyCSSValue(CSSPropertyFontVariant).get());
+    styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontVariantCaps, parsedStyle->getPropertyCSSValue(CSSPropertyFontVariantCaps).get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontWeight, parsedStyle->getPropertyCSSValue(CSSPropertyFontWeight).get());
 
     // As described in BUG66291, setting font-size and line-height on a font may entail a CSSPrimitiveValue::computeLengthDouble call,

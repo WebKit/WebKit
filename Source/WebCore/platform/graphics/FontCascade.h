@@ -148,7 +148,7 @@ public:
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForText(const TextRun&, LayoutRect& selectionRect, int from = 0, int to = -1) const;
 
-    bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
+    bool isSmallCaps() const { return m_fontDescription.variantCaps() == FontVariantCaps::Small; }
 
     float wordSpacing() const { return m_wordSpacing; }
     float letterSpacing() const { return m_letterSpacing; }
@@ -324,10 +324,12 @@ private:
 
     bool computeRequiresShaping() const
     {
+#if PLATFORM(COCOA)
         if (!m_fontDescription.variantSettings().isAllNormal())
             return true;
         if (m_fontDescription.featureSettings().size())
             return true;
+#endif
         return advancedTextRenderingMode();
     }
 
