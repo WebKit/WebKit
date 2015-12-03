@@ -126,7 +126,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
     {
         console.assert(messageView instanceof WebInspector.ConsoleMessageView || messageView instanceof WebInspector.ConsoleCommandView);
 
-        WebInspector.quickConsole.updateLayout();
+        WebInspector.quickConsole.needsLayout();
 
         // Nest the message.
         var type = messageView instanceof WebInspector.ConsoleCommandView ? null : messageView.message.type;
@@ -164,11 +164,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             WebInspector.showSplitConsole();
 
         this._logViewController.scrollToBottom();
-    }
-
-    promptDidChangeHeight()
-    {
-        WebInspector.quickConsole.updateLayout();
     }
 
     get supportsSearch()

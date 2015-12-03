@@ -174,16 +174,11 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
         this._textEditor.revealNextSearchResult(changeFocus);
     }
 
-    updateLayout()
-    {
-        this._textEditor.updateLayout();
-    }
-
     // Private
 
     _contentWillPopulate(event)
     {
-        if (this._textEditor.element.parentNode === this.element)
+        if (this._textEditor.parentView === this)
             return;
 
         // Check the MIME-type for CSS since Resource.Type.Stylesheet also includes XSL, which we can't edit yet.
@@ -195,7 +190,7 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
             this._textEditor.readOnly = false;
 
         this.element.removeChildren();
-        this.element.appendChild(this._textEditor.element);
+        this.addSubview(this._textEditor);
     }
 
     _contentDidPopulate(event)

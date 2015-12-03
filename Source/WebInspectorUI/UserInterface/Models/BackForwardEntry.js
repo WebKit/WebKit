@@ -59,7 +59,7 @@ WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Obje
         this.contentView.visible = true;
         if (shouldCallShown)
             this.contentView.shown();
-        this.contentView.updateLayout();
+        this.contentView.needsLayout();
     }
 
     prepareToHide()

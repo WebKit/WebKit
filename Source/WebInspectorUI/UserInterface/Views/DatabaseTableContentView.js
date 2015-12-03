@@ -50,12 +50,6 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
         this.representedObject.database.executeSQL("SELECT * FROM \"" + this._escapeTableName(this.representedObject.name) + "\"", this._queryFinished.bind(this), this._queryError.bind(this));
     }
 
-    updateLayout()
-    {
-        if (this._dataGrid)
-            this._dataGrid.updateLayout();
-    }
-
     saveToCookie(cookie)
     {
         cookie.type = WebInspector.ContentViewCookieType.DatabaseTable;
@@ -95,7 +89,7 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
             this._dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
 
             this.addSubview(this._dataGrid);
-            this.updateLayout();
+            this._dataGrid.updateLayout();
             return;
         }
 

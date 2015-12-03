@@ -435,7 +435,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
         this._updateContentViewNavigationItems();
 
-        this._navigationBar.updateLayout();
+        this._navigationBar.needsLayout();
 
         this._dispatchCurrentRepresentedObjectsDidChangeEventSoon();
     }
@@ -459,7 +459,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         this._updateContentViewNavigationItems();
         this._updateFindBanner(currentContentView);
 
-        this._navigationBar.updateLayout();
+        this._navigationBar.needsLayout();
 
         this.dispatchEventToListeners(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange);
 
@@ -472,7 +472,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
             return;
 
         this._updateContentViewNavigationItems();
-        this._navigationBar.updateLayout();
+        this._navigationBar.needsLayout();
     }
 
     _hierarchicalPathComponentWasSelected(event)

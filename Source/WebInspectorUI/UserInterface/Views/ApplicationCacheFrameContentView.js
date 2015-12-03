@@ -57,12 +57,6 @@ WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameConte
         WebInspector.applicationCacheManager.removeEventListener(null, null, this);
     }
 
-    updateLayout()
-    {
-        if (this.dataGrid)
-            this.dataGrid.updateLayout();
-    }
-
     saveToCookie(cookie)
     {
         cookie.type = WebInspector.ContentViewCookieType.ApplicationCache;
