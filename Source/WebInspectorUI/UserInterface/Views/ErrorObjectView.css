@@ -27,7 +27,7 @@
     display: inline-block;
 }
 
-.error-object::before {
+.error-object > .formatted-error::before {
     display: inline-block;
     vertical-align: baseline;
     margin-bottom: -2px;
@@ -41,7 +41,7 @@
     content: "";
 }
 
-.error-object.expanded::before {
+.error-object.expanded > .formatted-error::before {
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
 }
 
