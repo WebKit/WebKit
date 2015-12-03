@@ -37,8 +37,10 @@
     void loaded();
     void closeWindow();
     void bringToFront();
-    void setZoomFactor(unrestricted float zoom);
     void inspectedURLChanged(DOMString newURL);
+
+    void setZoomFactor(unrestricted float zoom);
+    float zoomFactor();
 
     void requestSetDockSide(DOMString side);
 

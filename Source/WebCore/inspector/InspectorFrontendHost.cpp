@@ -174,15 +174,20 @@ void InspectorFrontendHost::bringToFront()
         m_client->bringToFront();
 }
 
+void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
+{
+    if (m_client)
+        m_client->inspectedURLChanged(newURL);
+}
+
 void InspectorFrontendHost::setZoomFactor(float zoom)
 {
     m_frontendPage->mainFrame().setPageAndTextZoomFactors(zoom, 1);
 }
 
-void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
+float InspectorFrontendHost::zoomFactor()
 {
-    if (m_client)
-        m_client->inspectedURLChanged(newURL);
+    return m_frontendPage->mainFrame().pageZoomFactor();
 }
 
 void InspectorFrontendHost::setAttachedWindowHeight(unsigned height)
