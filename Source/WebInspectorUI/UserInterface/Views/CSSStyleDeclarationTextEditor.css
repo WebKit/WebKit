@@ -37,10 +37,7 @@
 }
 
 .css-style-text-editor > .CodeMirror .CodeMirror-placeholder {
-    font-family: -apple-system, sans-serif;
-    color: hsl(0, 0%, 65%);
     padding: 0 5px 0 25px;
-    text-indent: 0;
 }
 
 .css-style-text-editor > .CodeMirror pre {
