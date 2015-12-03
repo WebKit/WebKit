@@ -1,5 +1,20 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188749. rdar://problem/23221163
+
+    2015-08-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: inline errors/warnings are taller than the line height
+            https://bugs.webkit.org/show_bug.cgi?id=148232
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/SourceCodeTextEditor.css:
+            (.source-code.text-editor > .CodeMirror .issue-widget.inline):
+            (.source-code.text-editor > .CodeMirror .issue-widget.inline > .text):
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188739. rdar://problem/23221163
 
     2015-08-20  Nikita Vasilyev  <nvasilyev@apple.com>

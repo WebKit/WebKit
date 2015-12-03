@@ -46,7 +46,7 @@
 .source-code.text-editor > .CodeMirror .issue-widget.inline {
     position: relative;
     top: -13px;
-
+    height: 13px;
     padding: 0px 5px 0 3px;
     border-bottom-left-radius: 0;
 }
@@ -117,14 +117,10 @@
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline > .text {
     display: inline-block;
-
     max-width: 300px;
-    height: 12px;
-    padding-top: 1px;
-
+    vertical-align: baseline;
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow: hidden;
 }
 
 .popover .debugger-popover-content {
