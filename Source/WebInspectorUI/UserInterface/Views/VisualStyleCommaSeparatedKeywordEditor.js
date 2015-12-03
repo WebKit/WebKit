@@ -171,8 +171,11 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
     _addCommaSeparatedKeyword(value, index)
     {
         var valueElement = this._createNewTreeElement(value);
-        var indexIsSet = !isNaN(index);
-        this._commaSeparatedKeywords.insertChild(valueElement, indexIsSet ? index + !this._insertNewItemsBeforeSelected : 0);
+        if (!isNaN(index))
+            this._commaSeparatedKeywords.insertChild(valueElement, index + !this._insertNewItemsBeforeSelected);
+        else
+            this._commaSeparatedKeywords.appendChild(valueElement);
+
         return valueElement;
     }
 
