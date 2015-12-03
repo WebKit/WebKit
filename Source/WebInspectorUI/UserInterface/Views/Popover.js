@@ -89,7 +89,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             this._update(true);
     }
 
-    update()
+    update(shouldAnimate = true)
     {
         if (!this.visible)
             return;
@@ -97,7 +97,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         var previouslyFocusedElement = document.activeElement;
 
         this._contentNeedsUpdate = true;
-        this._update(true);
+        this._update(shouldAnimate);
 
         if (previouslyFocusedElement)
             previouslyFocusedElement.focus();
@@ -151,7 +151,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         switch (event.type) {
         case "mousedown":
         case "scroll":
-            if (!this._element.contains(event.target))
+            if (!this._element.contains(event.target) && !event.target.enclosingNodeOrSelfWithClass(WebInspector.Popover.IgnoreAutoDismissClassName))
                 this.dismiss();
             break;
         case "transitionend":
@@ -555,3 +555,4 @@ WebInspector.Popover.ShadowPadding = 5;
 WebInspector.Popover.ContentPadding = 5;
 WebInspector.Popover.AnchorSize = new WebInspector.Size(22, 11);
 WebInspector.Popover.ShadowEdgeInsets = new WebInspector.EdgeInsets(WebInspector.Popover.ShadowPadding);
+WebInspector.Popover.IgnoreAutoDismissClassName = "popover-ignore-auto-dismiss";

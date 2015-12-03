@@ -5,8 +5,8 @@
 <script>
 function test()
 {
-    let domNode;
-    let suite = InspectorTest.createAsyncSuite("DOM.setOuterHTML");
+    var domNode;
+    var suite = InspectorTest.createAsyncSuite("DOM.setOuterHTML");
 
     suite.addTestCase({
         name: "OuterHTMLBefore",
@@ -38,14 +38,14 @@ function test()
     </div>
 </div>`.trim();
 
-    let steps = [
+    var steps = [
         ["RemovingElements", emptyOuterHTML],
         ["AddingElements", newOuterHTML],
         ["ModifyingElements", modifiedOuterHTML],
     ];
 
     steps.forEach(function(tuple) {
-        let [title, replacementOuterHTML] = tuple;
+        var [title, replacementOuterHTML] = tuple;
         suite.addTestCase({
             name: `SetOuterHTML${title}`,
             description: "Change the outerHTML.",

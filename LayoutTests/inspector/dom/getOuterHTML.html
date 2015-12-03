@@ -5,7 +5,7 @@
 <script>
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("DOM.getOuterHTML");
+    var suite = InspectorTest.createAsyncSuite("DOM.getOuterHTML");
 
     suite.addTestCase({
         name: "GetOuterHTML",
@@ -13,7 +13,7 @@ function test()
         test: (resolve, reject) => {
             WebInspector.domTreeManager.requestDocument(function(documentNode) {
                 WebInspector.domTreeManager.querySelector(documentNode.id, "#x", function(nodeId) {
-                    let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                    var domNode = WebInspector.domTreeManager.nodeForId(nodeId);
                     InspectorTest.assert(domNode, "DOMNode exists");
                     domNode.getOuterHTML(function(error, outerHTML) {
                         InspectorTest.expectNoError(error);
