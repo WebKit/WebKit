@@ -28,6 +28,8 @@
 #include "FrameLoader.h"
 #include "PluginDatabase.h"
 #include "WebFrameNetworkingContext.h"
+#include "WebResourceLoadScheduler.h"
+#include <WebCore/BlobRegistryImpl.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformCookieJar.h>
@@ -54,7 +56,7 @@ CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
 
 LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 {
-    return this;
+    return new WebResourceLoadScheduler;
 }
 
 PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
@@ -65,6 +67,11 @@ PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 {
     return this;
+}
+
+BlobRegistry* WebPlatformStrategies::createBlobRegistry()
+{
+    return new BlobRegistryImpl;
 }
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)

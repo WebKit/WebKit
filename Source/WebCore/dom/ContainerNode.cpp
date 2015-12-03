@@ -49,7 +49,6 @@
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "RenderWidget.h"
-#include "ResourceLoadScheduler.h"
 #include "RootInlineBox.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"

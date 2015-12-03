@@ -27,25 +27,26 @@
 #define WebResourceLoadScheduler_h
 
 #include "WebResourceLoader.h"
-#include <WebCore/ResourceLoadPriority.h>
-#include <WebCore/ResourceLoadScheduler.h>
+#include <WebCore/LoaderStrategy.h>
 #include <WebCore/ResourceLoader.h>
+#include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
 class NetworkProcessConnection;
+class WebResourceLoadScheduler;
 typedef uint64_t ResourceLoadIdentifier;
 
-class WebResourceLoadScheduler : public WebCore::ResourceLoadScheduler {
+class WebResourceLoadScheduler : public WebCore::LoaderStrategy {
     WTF_MAKE_NONCOPYABLE(WebResourceLoadScheduler); WTF_MAKE_FAST_ALLOCATED;
 public:
     WebResourceLoadScheduler();
     virtual ~WebResourceLoadScheduler();
     
-    virtual RefPtr<WebCore::SubresourceLoader> scheduleSubresourceLoad(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
-    virtual RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&) override;
-    
+    virtual RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
+    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
+
     virtual void remove(WebCore::ResourceLoader*) override;
     virtual void setDefersLoading(WebCore::ResourceLoader*, bool) override;
     virtual void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
@@ -55,9 +56,10 @@ public:
     virtual void suspendPendingRequests() override;
     virtual void resumePendingRequests() override;
 
-    virtual void setSerialLoadingEnabled(bool) override;
+    virtual void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, bool shouldUseCredentialStorage) override;
 
     WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
+    RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&);
 
     void networkProcessCrashed();
 

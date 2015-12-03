@@ -31,21 +31,17 @@
 
 namespace WebKit {
 
-class NetworkProcessPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::LoaderStrategy {
+class NetworkProcessPlatformStrategies : public WebCore::PlatformStrategies {
 public:
     static void initialize();
     
 private:
     // WebCore::PlatformStrategies
-    virtual WebCore::CookiesStrategy* createCookiesStrategy() override;
-    virtual WebCore::LoaderStrategy* createLoaderStrategy() override;
-    virtual WebCore::PasteboardStrategy* createPasteboardStrategy() override;
-    virtual WebCore::PluginStrategy* createPluginStrategy() override;
-
-    // WebCore::LoaderStrategy
-    virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() override;
-    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
-    virtual WebCore::BlobRegistry* createBlobRegistry() override;
+    WebCore::CookiesStrategy* createCookiesStrategy() override;
+    WebCore::LoaderStrategy* createLoaderStrategy() override;
+    WebCore::PasteboardStrategy* createPasteboardStrategy() override;
+    WebCore::PluginStrategy* createPluginStrategy() override;
+    WebCore::BlobRegistry* createBlobRegistry() override;
 };
 
 } // namespace WebKit

@@ -40,9 +40,7 @@ namespace WebCore {
 BlobRegistry& blobRegistry()
 {
     ASSERT(isMainThread());
-
-    static BlobRegistry& instance = *platformStrategies()->loaderStrategy()->createBlobRegistry();
-    return instance;
+    return *platformStrategies()->blobRegistry();
 }
 
 BlobRegistry::~BlobRegistry()

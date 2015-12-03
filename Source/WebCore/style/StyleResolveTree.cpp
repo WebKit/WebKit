@@ -47,7 +47,6 @@
 #include "RenderText.h"
 #include "RenderTreePosition.h"
 #include "RenderWidget.h"
-#include "ResourceLoadScheduler.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleResolveForDocument.h"
@@ -944,7 +943,7 @@ PostResolutionCallbackDisabler::PostResolutionCallbackDisabler(Document& documen
     ++resolutionNestingDepth;
 
     if (resolutionNestingDepth == 1)
-        platformStrategies()->loaderStrategy()->resourceLoadScheduler()->suspendPendingRequests();
+        platformStrategies()->loaderStrategy()->suspendPendingRequests();
 
     // FIXME: It's strange to build this into the disabler.
     suspendMemoryCacheClientCalls(document);
@@ -959,7 +958,7 @@ PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler()
             queue[i]();
         queue.clear();
 
-        platformStrategies()->loaderStrategy()->resourceLoadScheduler()->resumePendingRequests();
+        platformStrategies()->loaderStrategy()->resumePendingRequests();
     }
 
     --resolutionNestingDepth;

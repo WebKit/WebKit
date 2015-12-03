@@ -1,3 +1,72 @@
+2015-12-02  Antti Koivisto  <antti@apple.com>
+
+        Move ResourceLoadScheduler to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=151743
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp: Copied from Source/WebCore/loader/ResourceLoadScheduler.cpp.
+        (webResourceLoadScheduler):
+        (WebResourceLoadScheduler::hostForURL):
+        (WebResourceLoadScheduler::WebResourceLoadScheduler):
+        (WebResourceLoadScheduler::~WebResourceLoadScheduler):
+        (WebResourceLoadScheduler::scheduleSubresourceLoad):
+        (WebResourceLoadScheduler::loadResourceSynchronously):
+        (WebResourceLoadScheduler::schedulePluginStreamLoad):
+        (WebResourceLoadScheduler::scheduleLoad):
+        (WebResourceLoadScheduler::remove):
+        (WebResourceLoadScheduler::setDefersLoading):
+        (WebResourceLoadScheduler::crossOriginRedirectReceived):
+        (WebResourceLoadScheduler::servePendingRequests):
+        (WebResourceLoadScheduler::suspendPendingRequests):
+        (WebResourceLoadScheduler::resumePendingRequests):
+        (WebResourceLoadScheduler::scheduleServePendingRequests):
+        (WebResourceLoadScheduler::requestTimerFired):
+        (WebResourceLoadScheduler::HostInformation::HostInformation):
+        (WebResourceLoadScheduler::HostInformation::~HostInformation):
+        (WebResourceLoadScheduler::HostInformation::priorityToIndex):
+        (WebResourceLoadScheduler::HostInformation::schedule):
+        (WebResourceLoadScheduler::HostInformation::addLoadInProgress):
+        (WebResourceLoadScheduler::HostInformation::remove):
+        (WebResourceLoadScheduler::HostInformation::hasRequests):
+        (WebResourceLoadScheduler::HostInformation::limitRequests):
+        (WebResourceLoadScheduler::createPingHandle):
+        (WebCore::ResourceLoadScheduler::hostForURL): Deleted.
+        (WebCore::resourceLoadScheduler): Deleted.
+        (WebCore::ResourceLoadScheduler::ResourceLoadScheduler): Deleted.
+        (WebCore::ResourceLoadScheduler::~ResourceLoadScheduler): Deleted.
+        (WebCore::ResourceLoadScheduler::scheduleSubresourceLoad): Deleted.
+        (WebCore::ResourceLoadScheduler::schedulePluginStreamLoad): Deleted.
+        (WebCore::ResourceLoadScheduler::scheduleLoad): Deleted.
+        (WebCore::ResourceLoadScheduler::remove): Deleted.
+        (WebCore::ResourceLoadScheduler::setDefersLoading): Deleted.
+        (WebCore::ResourceLoadScheduler::crossOriginRedirectReceived): Deleted.
+        (WebCore::ResourceLoadScheduler::servePendingRequests): Deleted.
+        (WebCore::ResourceLoadScheduler::suspendPendingRequests): Deleted.
+        (WebCore::ResourceLoadScheduler::resumePendingRequests): Deleted.
+        (WebCore::ResourceLoadScheduler::scheduleServePendingRequests): Deleted.
+        (WebCore::ResourceLoadScheduler::requestTimerFired): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::HostInformation): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::~HostInformation): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::priorityToIndex): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::schedule): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::addLoadInProgress): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::remove): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::hasRequests): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::limitRequests): Deleted.
+        * WebCoreSupport/WebResourceLoadScheduler.h: Copied from Source/WebCore/loader/ResourceLoadScheduler.h.
+        (WebResourceLoadScheduler::isSerialLoadingEnabled):
+        (WebResourceLoadScheduler::setSerialLoadingEnabled):
+        (WebResourceLoadScheduler::HostInformation::name):
+        (WebResourceLoadScheduler::HostInformation::requestsPending):
+        (WebCore::ResourceLoadScheduler::isSerialLoadingEnabled): Deleted.
+        (WebCore::ResourceLoadScheduler::setSerialLoadingEnabled): Deleted.
+        (WebCore::ResourceLoadScheduler::Suspender::Suspender): Deleted.
+        (WebCore::ResourceLoadScheduler::Suspender::~Suspender): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::name): Deleted.
+        (WebCore::ResourceLoadScheduler::HostInformation::requestsPending): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2015-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Make WebCore a framework in Mac CMake build

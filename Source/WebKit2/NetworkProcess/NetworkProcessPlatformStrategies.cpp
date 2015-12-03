@@ -41,33 +41,22 @@ void NetworkProcessPlatformStrategies::initialize()
 
 CookiesStrategy* NetworkProcessPlatformStrategies::createCookiesStrategy()
 {
-    return 0;
+    return nullptr;
 }
 
 LoaderStrategy* NetworkProcessPlatformStrategies::createLoaderStrategy()
 {
-    return this;
+    return nullptr;
 }
 
 PasteboardStrategy* NetworkProcessPlatformStrategies::createPasteboardStrategy()
 {
-    return 0;
+    return nullptr;
 }
 
 PluginStrategy* NetworkProcessPlatformStrategies::createPluginStrategy()
 {
-    return 0;
-}
-
-ResourceLoadScheduler* NetworkProcessPlatformStrategies::resourceLoadScheduler()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-void NetworkProcessPlatformStrategies::loadResourceSynchronously(NetworkingContext*, unsigned long, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>&)
-{
-    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()

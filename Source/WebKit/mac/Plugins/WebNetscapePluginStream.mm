@@ -37,13 +37,15 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNetscapePluginPackage.h"
 #import "WebNetscapePluginView.h"
+#import "WebResourceLoadScheduler.h"
 #import <Foundation/NSURLResponse.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/JSDOMWindowBase.h>
-#import <WebCore/ResourceLoadScheduler.h>
+#import <WebCore/LoaderStrategy.h>
+#import <WebCore/PlatformStrategies.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -285,8 +287,8 @@ void WebNetscapePluginStream::start()
     ASSERT(m_request);
     ASSERT(!m_frameLoader);
     ASSERT(!m_loader);
-    
-    m_loader = resourceLoadScheduler()->schedulePluginStreamLoad(core([m_pluginView.get() webFrame]), this, m_request.get());
+
+    m_loader = webResourceLoadScheduler().schedulePluginStreamLoad(core([m_pluginView.get() webFrame]), this, m_request.get());
 }
 
 void WebNetscapePluginStream::stop()

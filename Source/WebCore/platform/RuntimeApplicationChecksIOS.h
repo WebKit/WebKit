@@ -39,7 +39,7 @@ WEBCORE_EXPORT bool applicationIsFacebook();
 WEBCORE_EXPORT bool applicationIsDaijisenDictionary();
 bool applicationIsNASAHD();
 WEBCORE_EXPORT bool applicationIsTheEconomistOnIPhone();
-bool applicationIsWebProcess();
+WEBCORE_EXPORT bool applicationIsWebProcess();
 bool applicationIsIBooksOnIOS();
 
 } // namespace WebCore

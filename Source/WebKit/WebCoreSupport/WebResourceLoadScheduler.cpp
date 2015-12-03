@@ -3,7 +3,7 @@
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2004-2008, 2015 Apple Inc. All rights reserved.
     Copyright (C) 2010 Google Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
@@ -22,34 +22,31 @@
     Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
-#include "ResourceLoadScheduler.h"
+#include "WebResourceLoadScheduler.h"
 
-#include "Document.h"
-#include "DocumentLoader.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "LoaderStrategy.h"
-#include "Logging.h"
-#include "NetscapePlugInStreamLoader.h"
-#include "PlatformStrategies.h"
-#include "ResourceLoader.h"
-#include "ResourceRequest.h"
-#include "SubresourceLoader.h"
-#include "URL.h"
+#include <WebCore/Document.h>
+#include <WebCore/DocumentLoader.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameLoader.h>
+#include <WebCore/Logging.h>
+#include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/PingHandle.h>
+#include <WebCore/PlatformStrategies.h>
+#include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/SubresourceLoader.h>
+#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
-#include <RuntimeApplicationChecksIOS.h>
+#include <WebCore/RuntimeApplicationChecksIOS.h>
 #endif
 
 #if USE(QUICK_LOOK)
-#include "QuickLook.h"
+#include <WebCore/QuickLook.h>
 #endif
-
-namespace WebCore {
 
 // Match the parallel connection count used by the networking layer.
 static unsigned maxRequestsInFlightPerHost;
@@ -60,7 +57,14 @@ static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
 static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
 #endif
 
-ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy createHostPolicy)
+using namespace WebCore;
+
+WebResourceLoadScheduler& webResourceLoadScheduler()
+{
+    return static_cast<WebResourceLoadScheduler&>(*platformStrategies()->loaderStrategy());
+}
+
+WebResourceLoadScheduler::HostInformation* WebResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy createHostPolicy)
 {
     if (!url.protocolIsInHTTPFamily())
         return m_nonHTTPProtocolHost;
@@ -75,43 +79,20 @@ ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const 
     return host;
 }
 
-ResourceLoadScheduler* resourceLoadScheduler()
-{
-    ASSERT(isMainThread());
-    static ResourceLoadScheduler* globalScheduler = nullptr;
-    
-    if (!globalScheduler) {
-        static bool isCallingOutToStrategy = false;
-        
-        // If we're re-entering resourceLoadScheduler() while calling out to the LoaderStrategy,
-        // then the LoaderStrategy is trying to use the default resourceLoadScheduler.
-        // So we'll create it here and start using it.
-        if (isCallingOutToStrategy) {
-            globalScheduler = new ResourceLoadScheduler;
-            return globalScheduler;
-        }
-        
-        TemporaryChange<bool> recursionGuard(isCallingOutToStrategy, true);
-        globalScheduler = platformStrategies()->loaderStrategy()->resourceLoadScheduler();
-    }
-
-    return globalScheduler;
-}
-
-ResourceLoadScheduler::ResourceLoadScheduler()
+WebResourceLoadScheduler::WebResourceLoadScheduler()
     : m_nonHTTPProtocolHost(new HostInformation(String(), maxRequestsInFlightForNonHTTPProtocols))
-    , m_requestTimer(*this, &ResourceLoadScheduler::requestTimerFired)
+    , m_requestTimer(*this, &WebResourceLoadScheduler::requestTimerFired)
     , m_suspendPendingRequestsCount(0)
     , m_isSerialLoadingEnabled(false)
 {
     maxRequestsInFlightPerHost = initializeMaximumHTTPConnectionCountPerHost();
 }
 
-ResourceLoadScheduler::~ResourceLoadScheduler()
+WebResourceLoadScheduler::~WebResourceLoadScheduler()
 {
 }
 
-RefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> WebResourceLoadScheduler::loadResource(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
@@ -128,7 +109,12 @@ RefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* 
     return loader;
 }
 
-RefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
+void WebResourceLoadScheduler::loadResourceSynchronously(NetworkingContext* context, unsigned long, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+{
+    ResourceHandle::loadResourceSynchronously(context, request, storedCredentials, error, response, data);
+}
+
+RefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
@@ -136,11 +122,11 @@ RefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStreamLo
     return loader;
 }
 
-void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
+void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
 
-    LOG(ResourceLoading, "ResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
+    LOG(ResourceLoading, "WebResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
 
 #if PLATFORM(IOS)
     // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
@@ -194,7 +180,7 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     scheduleServePendingRequests();
 }
 
-void ResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
+void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
 
@@ -213,11 +199,11 @@ void ResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     scheduleServePendingRequests();
 }
 
-void ResourceLoadScheduler::setDefersLoading(ResourceLoader*, bool)
+void WebResourceLoadScheduler::setDefersLoading(ResourceLoader*, bool)
 {
 }
 
-void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const URL& redirectURL)
+void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const URL& redirectURL)
 {
     HostInformation* oldHost = hostForURL(resourceLoader->url());
     ASSERT(oldHost);
@@ -233,9 +219,9 @@ void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resource
     oldHost->remove(resourceLoader);
 }
 
-void ResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
+void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
-    LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests. m_suspendPendingRequestsCount=%d", m_suspendPendingRequestsCount); 
+    LOG(ResourceLoading, "WebResourceLoadScheduler::servePendingRequests. m_suspendPendingRequestsCount=%d", m_suspendPendingRequestsCount); 
     if (isSuspendingPendingRequests())
         return;
 
@@ -254,9 +240,9 @@ void ResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPri
     }
 }
 
-void ResourceLoadScheduler::servePendingRequests(HostInformation* host, ResourceLoadPriority minimumPriority)
+void WebResourceLoadScheduler::servePendingRequests(HostInformation* host, ResourceLoadPriority minimumPriority)
 {
-    LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests HostInformation.m_name='%s'", host->name().latin1().data());
+    LOG(ResourceLoading, "WebResourceLoadScheduler::servePendingRequests HostInformation.m_name='%s'", host->name().latin1().data());
 
     auto priority = ResourceLoadPriority::Highest;
     while (true) {
@@ -288,12 +274,12 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Resource
     }
 }
 
-void ResourceLoadScheduler::suspendPendingRequests()
+void WebResourceLoadScheduler::suspendPendingRequests()
 {
     ++m_suspendPendingRequestsCount;
 }
 
-void ResourceLoadScheduler::resumePendingRequests()
+void WebResourceLoadScheduler::resumePendingRequests()
 {
     ASSERT(m_suspendPendingRequestsCount);
     --m_suspendPendingRequestsCount;
@@ -303,31 +289,31 @@ void ResourceLoadScheduler::resumePendingRequests()
         scheduleServePendingRequests();
 }
     
-void ResourceLoadScheduler::scheduleServePendingRequests()
+void WebResourceLoadScheduler::scheduleServePendingRequests()
 {
-    LOG(ResourceLoading, "ResourceLoadScheduler::scheduleServePendingRequests, m_requestTimer.isActive()=%u", m_requestTimer.isActive());
+    LOG(ResourceLoading, "WebResourceLoadScheduler::scheduleServePendingRequests, m_requestTimer.isActive()=%u", m_requestTimer.isActive());
     if (!m_requestTimer.isActive())
         m_requestTimer.startOneShot(0);
 }
 
-void ResourceLoadScheduler::requestTimerFired()
+void WebResourceLoadScheduler::requestTimerFired()
 {
-    LOG(ResourceLoading, "ResourceLoadScheduler::requestTimerFired\n");
+    LOG(ResourceLoading, "WebResourceLoadScheduler::requestTimerFired\n");
     servePendingRequests();
 }
 
-ResourceLoadScheduler::HostInformation::HostInformation(const String& name, unsigned maxRequestsInFlight)
+WebResourceLoadScheduler::HostInformation::HostInformation(const String& name, unsigned maxRequestsInFlight)
     : m_name(name)
     , m_maxRequestsInFlight(maxRequestsInFlight)
 {
 }
 
-ResourceLoadScheduler::HostInformation::~HostInformation()
+WebResourceLoadScheduler::HostInformation::~HostInformation()
 {
     ASSERT(!hasRequests());
 }
 
-unsigned ResourceLoadScheduler::HostInformation::priorityToIndex(ResourceLoadPriority priority)
+unsigned WebResourceLoadScheduler::HostInformation::priorityToIndex(ResourceLoadPriority priority)
 {
     switch (priority) {
     case ResourceLoadPriority::VeryLow:
@@ -345,18 +331,18 @@ unsigned ResourceLoadScheduler::HostInformation::priorityToIndex(ResourceLoadPri
     return 0;
 }
 
-void ResourceLoadScheduler::HostInformation::schedule(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
+void WebResourceLoadScheduler::HostInformation::schedule(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
 {
     m_requestsPending[priorityToIndex(priority)].append(resourceLoader);
 }
     
-void ResourceLoadScheduler::HostInformation::addLoadInProgress(ResourceLoader* resourceLoader)
+void WebResourceLoadScheduler::HostInformation::addLoadInProgress(ResourceLoader* resourceLoader)
 {
     LOG(ResourceLoading, "HostInformation '%s' loading '%s'. Current count %d", m_name.latin1().data(), resourceLoader->url().string().latin1().data(), m_requestsLoading.size());
     m_requestsLoading.add(resourceLoader);
 }
     
-void ResourceLoadScheduler::HostInformation::remove(ResourceLoader* resourceLoader)
+void WebResourceLoadScheduler::HostInformation::remove(ResourceLoader* resourceLoader)
 {
     if (m_requestsLoading.remove(resourceLoader))
         return;
@@ -371,7 +357,7 @@ void ResourceLoadScheduler::HostInformation::remove(ResourceLoader* resourceLoad
     }
 }
 
-bool ResourceLoadScheduler::HostInformation::hasRequests() const
+bool WebResourceLoadScheduler::HostInformation::hasRequests() const
 {
     if (!m_requestsLoading.isEmpty())
         return true;
@@ -382,11 +368,16 @@ bool ResourceLoadScheduler::HostInformation::hasRequests() const
     return false;
 }
 
-bool ResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriority priority) const 
+bool WebResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriority priority) const 
 {
     if (priority == ResourceLoadPriority::VeryLow && !m_requestsLoading.isEmpty())
         return true;
-    return m_requestsLoading.size() >= (resourceLoadScheduler()->isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
+    return m_requestsLoading.size() >= (webResourceLoadScheduler().isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
 }
 
-} // namespace WebCore
+void WebResourceLoadScheduler::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage)
+{
+    // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
+    new PingHandle(networkingContext, request, shouldUseCredentialStorage, PingHandle::UsesAsyncCallbacks::No);
+}
+

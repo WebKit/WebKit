@@ -511,7 +511,7 @@ public:
 
     void notifyRemovePendingSheetIfNeeded();
 
-    bool haveStylesheetsLoaded() const;
+    WEBCORE_EXPORT bool haveStylesheetsLoaded() const;
 
     // This is a DOM function.
     StyleSheetList& styleSheets();

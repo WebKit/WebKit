@@ -7418,7 +7418,6 @@
     <ClCompile Include="..\loader\ResourceLoader.cpp" />
     <ClCompile Include="..\loader\cf\ResourceLoaderCFNet.cpp" />
     <ClCompile Include="..\loader\ResourceLoadNotifier.cpp" />
-    <ClCompile Include="..\loader\ResourceLoadScheduler.cpp" />
     <ClCompile Include="..\loader\SinkDocument.cpp" />
     <ClCompile Include="..\loader\SubframeLoader.cpp" />
     <ClCompile Include="..\loader\SubresourceLoader.cpp" />
@@ -20839,7 +20838,6 @@
     <ClInclude Include="..\loader\ResourceLoader.h" />
     <ClInclude Include="..\loader\ResourceLoaderOptions.h" />
     <ClInclude Include="..\loader\ResourceLoadNotifier.h" />
-    <ClInclude Include="..\loader\ResourceLoadScheduler.h" />
     <ClInclude Include="..\loader\SinkDocument.h" />
     <ClInclude Include="..\loader\SubframeLoader.h" />
     <ClInclude Include="..\loader\SubresourceLoader.h" />

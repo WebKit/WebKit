@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebResourceLoadScheduler.h"
 
+#include "HangDetectionDisabler.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -35,6 +36,7 @@
 #include "WebErrors.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
+#include "WebFrameNetworkingContext.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebResourceLoader.h"
@@ -45,6 +47,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SessionID.h>
@@ -65,7 +68,7 @@ WebResourceLoadScheduler::~WebResourceLoadScheduler()
 {
 }
 
-RefPtr<SubresourceLoader> WebResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> WebResourceLoadScheduler::loadResource(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
@@ -269,11 +272,6 @@ void WebResourceLoadScheduler::resumePendingRequests()
     // Network process does keep requests in pending state.
 }
 
-void WebResourceLoadScheduler::setSerialLoadingEnabled(bool)
-{
-    // Network process does not reorder loads.
-}
-
 void WebResourceLoadScheduler::networkProcessCrashed()
 {
     HashMap<unsigned long, RefPtr<WebResourceLoader>>::iterator end = m_webResourceLoaders.end();
@@ -282,5 +280,58 @@ void WebResourceLoadScheduler::networkProcessCrashed()
 
     m_webResourceLoaders.clear();
 }
+
+void WebResourceLoadScheduler::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+{
+    WebFrameNetworkingContext* webContext = static_cast<WebFrameNetworkingContext*>(context);
+    // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
+    // EmptyFrameLoaderClient shouldn't exist and everything should be using a WebFrameLoaderClient,
+    // but in the meantime we have to make sure not to mis-cast.
+    WebFrameLoaderClient* webFrameLoaderClient = webContext->webFrameLoaderClient();
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebPage* webPage = webFrame ? webFrame->page() : 0;
+
+    NetworkResourceLoadParameters loadParameters;
+    loadParameters.identifier = resourceLoadIdentifier;
+    loadParameters.webPageID = webPage ? webPage->pageID() : 0;
+    loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
+    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
+    loadParameters.request = request;
+    loadParameters.contentSniffingPolicy = SniffContent;
+    loadParameters.allowStoredCredentials = storedCredentials;
+    loadParameters.clientCredentialPolicy = clientCredentialPolicy;
+    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
+
+    data.resize(0);
+
+    HangDetectionDisabler hangDetectionDisabler;
+
+    if (!WebProcess::singleton().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
+        response = ResourceResponse();
+        error = internalError(request.url());
+    }
+}
+
+void WebResourceLoadScheduler::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage)
+{
+    // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
+    // It is not clear that we should send ping loads during that process anyways.
+    if (!networkingContext)
+        return;
+
+    WebFrameNetworkingContext* webContext = static_cast<WebFrameNetworkingContext*>(networkingContext);
+    WebFrameLoaderClient* webFrameLoaderClient = webContext->webFrameLoaderClient();
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
+    
+    NetworkResourceLoadParameters loadParameters;
+    loadParameters.request = request;
+    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
+    loadParameters.allowStoredCredentials = shouldUseCredentialStorage ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();
+
+    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::LoadPing(loadParameters), 0);
+}
+
 
 } // namespace WebKit

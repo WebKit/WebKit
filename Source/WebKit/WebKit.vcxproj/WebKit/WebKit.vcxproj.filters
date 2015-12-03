@@ -338,6 +338,9 @@
     <ClCompile Include="..\..\WebCoreSupport\WebViewGroup.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\WebCoreSupport\WebResourceLoadScheduler.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.cpp">
       <Filter>WebCoreSupport</Filter>
     </ClCompile>
@@ -666,6 +669,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\WebCoreSupport\WebViewGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\WebCoreSupport\WebResourceLoadScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

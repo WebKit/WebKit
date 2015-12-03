@@ -1,3 +1,63 @@
+2015-12-02  Antti Koivisto  <antti@apple.com>
+
+        Move ResourceLoadScheduler to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=151743
+
+        Reviewed by Alex Christensen.
+
+        It is no longer used by WebKit2. Simplify the WebKit/WebCore interface.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        * dom/Document.h:
+        * loader/DocumentLoader.h:
+        * loader/LoaderStrategy.cpp:
+        (WebCore::LoaderStrategy::~LoaderStrategy):
+        (WebCore::ResourceLoadSuspender::ResourceLoadSuspender):
+        (WebCore::ResourceLoadSuspender::~ResourceLoadSuspender):
+        (WebCore::LoaderStrategy::resourceLoadScheduler): Deleted.
+        (WebCore::LoaderStrategy::loadResourceSynchronously): Deleted.
+        (WebCore::LoaderStrategy::createBlobRegistry): Deleted.
+        (WebCore::LoaderStrategy::createPingHandle): Deleted.
+        * loader/LoaderStrategy.h:
+
+            Loading functions implemented on WebKit side move to pure virtual LoaderStrategy.
+
+        * loader/ResourceLoadScheduler.cpp: Removed.
+        * loader/ResourceLoadScheduler.h: Removed.
+
+            ResourceLoadScheduler moves to WebKit1 as WebResourceLoadScheduler.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::finishNetworkLoad):
+        (WebCore::ResourceLoader::setDefersLoading):
+        (WebCore::ResourceLoader::frameLoader):
+        (WebCore::ResourceLoader::willSwitchToSubstituteResource):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/archive/ArchiveResourceCollection.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::performPostLoadActions):
+        (WebCore::CachedResourceLoader::incrementRequestCount):
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::pluginStrategy):
+        (WebCore::PlatformStrategies::blobRegistry):
+
+            Move BlobRegistry factory function here from LoaderStrategy as this allows network process to have null loaderStrategy.
+            (it could be renamed BlobStrategy for consistency later).
+
+        (WebCore::PlatformStrategies::PlatformStrategies):
+        * platform/network/BlobRegistry.cpp:
+        (WebCore::blobRegistry):
+        (WebCore::BlobRegistry::~BlobRegistry):
+        * platform/network/ResourceRequestBase.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::PostResolutionCallbackDisabler::PostResolutionCallbackDisabler):
+        (WebCore::Style::PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler):
+
 2015-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unify font-variant-* with font-variant shorthand

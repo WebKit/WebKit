@@ -34,7 +34,6 @@
 #include "MarshallingHelpers.h"
 #include "PluginDatabase.h"
 #include "PluginView.h"
-#include "ResourceLoadScheduler.h"
 #include "SoftLinking.h"
 #include "SubframeLoader.h"
 #include "TextIterator.h"
@@ -67,6 +66,7 @@
 #include "WebNotificationCenter.h"
 #include "WebPlatformStrategies.h"
 #include "WebPreferences.h"
+#include "WebResourceLoadScheduler.h"
 #include "WebScriptWorld.h"
 #include "WebStorageNamespaceProvider.h"
 #include "WebViewGroup.h"
@@ -7487,7 +7487,7 @@ HRESULT WebView::selectedRangeForTesting(_Out_ UINT* location, _Out_ UINT* lengt
 HRESULT WebView::setLoadResourcesSerially(BOOL serialize)
 {
     WebPlatformStrategies::initialize();
-    resourceLoadScheduler()->setSerialLoadingEnabled(serialize);
+    webResourceLoadScheduler().setSerialLoadingEnabled(serialize);
     return S_OK;
 }
 
@@ -7503,7 +7503,7 @@ HRESULT WebView::scaleWebView(double scale, POINT origin)
 
 HRESULT WebView::dispatchPendingLoadRequests()
 {
-    resourceLoadScheduler()->servePendingRequests();
+    webResourceLoadScheduler().servePendingRequests();
     return S_OK;
 }
 

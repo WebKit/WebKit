@@ -161,7 +161,7 @@ namespace WebCore {
         void scheduleSubstituteResourceLoad(ResourceLoader&, SubstituteResource&);
 
         // Return the ArchiveResource for the URL only when loading an Archive
-        ArchiveResource* archiveResourceForURL(const URL&) const;
+        WEBCORE_EXPORT ArchiveResource* archiveResourceForURL(const URL&) const;
 
         WEBCORE_EXPORT PassRefPtr<ArchiveResource> mainResource() const;
 

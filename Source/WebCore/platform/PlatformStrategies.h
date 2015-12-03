@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class BlobRegistry;
 class CookiesStrategy;
 class LoaderStrategy;
 class PasteboardStrategy;
@@ -63,12 +64,15 @@ public:
         return m_pluginStrategy;
     }
 
+    BlobRegistry* blobRegistry()
+    {
+        if (!m_blobRegistry)
+            m_blobRegistry = createBlobRegistry();
+        return m_blobRegistry;
+    }
+
 protected:
     PlatformStrategies()
-        : m_cookiesStrategy(nullptr)
-        , m_loaderStrategy(nullptr)
-        , m_pasteboardStrategy(nullptr)
-        , m_pluginStrategy(nullptr)
     {
     }
 
@@ -81,11 +85,13 @@ private:
     virtual LoaderStrategy* createLoaderStrategy() = 0;
     virtual PasteboardStrategy* createPasteboardStrategy() = 0;
     virtual PluginStrategy* createPluginStrategy() = 0;
+    virtual BlobRegistry* createBlobRegistry() = 0;
 
-    CookiesStrategy* m_cookiesStrategy;
-    LoaderStrategy* m_loaderStrategy;
-    PasteboardStrategy* m_pasteboardStrategy;
-    PluginStrategy* m_pluginStrategy;
+    CookiesStrategy* m_cookiesStrategy { };
+    LoaderStrategy* m_loaderStrategy { };
+    PasteboardStrategy* m_pasteboardStrategy { };
+    PluginStrategy* m_pluginStrategy { };
+    BlobRegistry* m_blobRegistry { };
 };
 
 WEBCORE_EXPORT PlatformStrategies* platformStrategies();

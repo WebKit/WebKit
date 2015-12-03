@@ -36,11 +36,12 @@
 #import "WebKitSystemInterface.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
+#import "WebResourceLoadScheduler.h"
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/ResourceLoadScheduler.h>
+#import <WebCore/PlatformStrategies.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreURLResponse.h>
@@ -220,8 +221,8 @@ void HostedNetscapePluginStream::start()
     ASSERT(m_request);
     ASSERT(!m_frameLoader);
     ASSERT(!m_loader);
-    
-    m_loader = resourceLoadScheduler()->schedulePluginStreamLoad(core([m_instance->pluginView() webFrame]), this, m_request.get());
+
+    m_loader = webResourceLoadScheduler().schedulePluginStreamLoad(core([m_instance->pluginView() webFrame]), this, m_request.get());
 }
 
 void HostedNetscapePluginStream::stop()

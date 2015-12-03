@@ -1,3 +1,47 @@
+2015-12-02  Antti Koivisto  <antti@apple.com>
+
+        Move ResourceLoadScheduler to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=151743
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createCookiesStrategy):
+        (WebKit::NetworkProcessPlatformStrategies::createLoaderStrategy):
+        (WebKit::NetworkProcessPlatformStrategies::createPasteboardStrategy):
+        (WebKit::NetworkProcessPlatformStrategies::createPluginStrategy):
+        (WebKit::NetworkProcessPlatformStrategies::createBlobRegistry):
+        (WebKit::NetworkProcessPlatformStrategies::resourceLoadScheduler): Deleted.
+        (WebKit::NetworkProcessPlatformStrategies::loadResourceSynchronously): Deleted.
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::~WebResourceLoadScheduler):
+        (WebKit::WebResourceLoadScheduler::loadResource):
+        (WebKit::WebResourceLoadScheduler::resumePendingRequests):
+        (WebKit::WebResourceLoadScheduler::networkProcessCrashed):
+        (WebKit::WebResourceLoadScheduler::loadResourceSynchronously):
+        (WebKit::WebResourceLoadScheduler::createPingHandle):
+        (WebKit::WebResourceLoadScheduler::scheduleSubresourceLoad): Deleted.
+        (WebKit::WebResourceLoadScheduler::setSerialLoadingEnabled): Deleted.
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+        (WebKit::WebResourceLoadScheduler::webResourceLoaderForIdentifier):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::start):
+        (WebKit::PluginView::Stream::cancel):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createLoaderStrategy):
+        (WebKit::WebPlatformStrategies::createPasteboardStrategy):
+        (WebKit::WebPlatformStrategies::createPluginStrategy):
+        (WebKit::WebPlatformStrategies::createBlobRegistry):
+        (WebKit::WebPlatformStrategies::cookiesForDOM):
+        (WebKit::WebPlatformStrategies::deleteCookie):
+        (WebKit::WebPlatformStrategies::refreshPlugins):
+        (WebKit::WebPlatformStrategies::resourceLoadScheduler): Deleted.
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously): Deleted.
+        (WebKit::WebPlatformStrategies::createPingHandle): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2015-12-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix authentication requests with NetworkSession and canHandleHTTPSServerTrustEvaluation true

@@ -61,7 +61,6 @@
 #include "PlatformStrategies.h"
 #include "RenderElement.h"
 #include "ResourceLoadInfo.h"
-#include "ResourceLoadScheduler.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SessionID.h"
@@ -967,7 +966,7 @@ void CachedResourceLoader::performPostLoadActions()
 {
     checkForPendingPreloads();
 
-    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->servePendingRequests();
+    platformStrategies()->loaderStrategy()->servePendingRequests();
 }
 
 void CachedResourceLoader::incrementRequestCount(const CachedResource* res)

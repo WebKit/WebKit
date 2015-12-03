@@ -1,3 +1,28 @@
+2015-12-02  Antti Koivisto  <antti@apple.com>
+
+        Move ResourceLoadScheduler to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=151743
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::start):
+        (WebKit::HostedNetscapePluginStream::stop):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::start):
+        (WebNetscapePluginStream::stop):
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::createLoaderStrategy):
+        (WebPlatformStrategies::createPasteboardStrategy):
+        (WebPlatformStrategies::createPluginStrategy):
+        (WebPlatformStrategies::createBlobRegistry):
+        (WebPlatformStrategies::cookiesForDOM):
+        * WebView/WebView.mm:
+        (-[WebView _dispatchPendingLoadRequests]):
+        (+[WebView _setLoadResourcesSerially:]):
+        (+[WebView _HTTPPipeliningEnabled]):
+
 2015-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement LLInt/Baseline Support for ES6 Generators and enable this feature

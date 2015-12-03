@@ -244,7 +244,7 @@ namespace WebCore {
         ResourceRequestBase::Requester requester;
     };
     
-    unsigned initializeMaximumHTTPConnectionCountPerHost();
+    WEBCORE_EXPORT unsigned initializeMaximumHTTPConnectionCountPerHost();
 #if PLATFORM(IOS)
     WEBCORE_EXPORT void initializeHTTPConnectionSettingsOnStartup();
 #endif
