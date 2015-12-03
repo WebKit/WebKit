@@ -31,6 +31,15 @@ WebInspector.RenderingFrameTimelineView = function(timeline, extraArguments)
 
     this.navigationSidebarTreeOutline.element.classList.add("rendering-frame");
 
+    var scopeBarItems = [];
+    for (var key in WebInspector.RenderingFrameTimelineView.DurationFilter) {
+        var value = WebInspector.RenderingFrameTimelineView.DurationFilter[key];
+        scopeBarItems.push(new WebInspector.ScopeBarItem(value, WebInspector.RenderingFrameTimelineView.displayNameForDurationFilter(value)));
+    }
+
+    this._scopeBar = new WebInspector.ScopeBar("rendering-frame-scope-bar", scopeBarItems, scopeBarItems[0], true);
+    this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
+
     var columns = {location: {}, startTime: {}, scriptTime: {}, paintTime: {}, layoutTime: {}, otherTime: {}, totalTime: {}};
 
     columns.location.title = WebInspector.UIString("Location");
@@ -73,6 +82,28 @@ WebInspector.RenderingFrameTimelineView = function(timeline, extraArguments)
     timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._renderingFrameTimelineRecordAdded, this);
 
     this._pendingRecords = [];
+};
+
+WebInspector.RenderingFrameTimelineView.DurationFilter = {
+    All: "rendering-frame-timeline-view-duration-filter-all",
+    OverOneMillisecond: "rendering-frame-timeline-view-duration-filter-over-1-ms",
+    OverFifteenMilliseconds: "rendering-frame-timeline-view-duration-filter-over-15-ms"
+};
+
+WebInspector.RenderingFrameTimelineView.displayNameForDurationFilter = function(filter)
+{
+    switch (filter) {
+        case WebInspector.RenderingFrameTimelineView.DurationFilter.All:
+            return WebInspector.UIString("All");
+        case WebInspector.RenderingFrameTimelineView.DurationFilter.OverOneMillisecond:
+            return WebInspector.UIString("Over 1 ms");
+        case WebInspector.RenderingFrameTimelineView.DurationFilter.OverFifteenMilliseconds:
+            return WebInspector.UIString("Over 15 ms");
+        default:
+            console.error("Unknown tab type", tabType);
+    }
+
+    return null;
 };
 
 WebInspector.RenderingFrameTimelineView.prototype = {
@@ -145,7 +176,20 @@ WebInspector.RenderingFrameTimelineView.prototype = {
 
     matchTreeElementAgainstCustomFilters: function(treeElement)
     {
-        return this._dataGrid.treeElementMatchesActiveScopeFilters(treeElement);
+        console.assert(this._scopeBar.selectedItems.length === 1);
+        var selectedScopeBarItem = this._scopeBar.selectedItems[0];
+        if (!selectedScopeBarItem || selectedScopeBarItem.id === WebInspector.RenderingFrameTimelineView.DurationFilter.All)
+            return true;
+
+        while (treeElement && !(treeElement.record instanceof WebInspector.RenderingFrameTimelineRecord))
+            treeElement = treeElement.parent;
+
+        console.assert(treeElement, "Cannot apply duration filter: no RenderingFrameTimelineRecord found.");
+        if (!treeElement)
+            return false;
+
+        var minimumDuration = selectedScopeBarItem.id === WebInspector.RenderingFrameTimelineView.DurationFilter.OverOneMillisecond ? 0.001 : 0.015;
+        return treeElement.record.duration > minimumDuration;
     },
 
     reset: function()
@@ -269,5 +313,10 @@ WebInspector.RenderingFrameTimelineView.prototype = {
     _dataGridNodeSelected: function(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+    },
+
+    _scopeBarSelectionDidChange: function(event)
+    {
+        this.timelineSidebarPanel.updateFilter();
     }
 };
