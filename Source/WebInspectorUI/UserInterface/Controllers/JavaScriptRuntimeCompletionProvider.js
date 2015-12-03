@@ -267,6 +267,14 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
                 if (!isNaN(numericCompareResult))
                     return numericCompareResult;
 
+                // Sort __defineGetter__, __lookupGetter__, and friends last.
+                var aRareProperty = a.startsWith("__") && a.endsWith("__");
+                var bRareProperty = b.startsWith("__") && b.endsWith("__");
+                if (aRareProperty && !bRareProperty)
+                    return 1;
+                if (!aRareProperty && bRareProperty)
+                    return -1;
+
                 // Not numbers, sort as strings.
                 return a.localeCompare(b);
             }
