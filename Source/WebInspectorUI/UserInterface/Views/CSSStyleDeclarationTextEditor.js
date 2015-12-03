@@ -49,7 +49,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this._delegate = delegate || null;
 
-        this._codeMirror = CodeMirror(this.element, {
+        this._codeMirror = WebInspector.CodeMirrorEditor.create(this.element, {
             readOnly: true,
             lineWrapping: true,
             mode: "css-rule",

@@ -1,5 +1,41 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r192662. rdar://problem/23221163
+
+    2015-11-19  Brian Burg  <bburg@apple.com>
+
+            Web Inspector: yank/kill shortcuts (CTRL+Y, K) don't work in Console / QuickConsole
+            https://bugs.webkit.org/show_bug.cgi?id=151157
+
+            Reviewed by Joseph Pecoraro.
+
+            CodeMirror maintains its own editor buffer and implements its own
+            `killLine` command but doesn't implement the yank command. So, text
+            that is "killed" with CTRL-k inside a CodeMirror instance isn't
+            added to Editor's kill ring. Subsequent yank commands won't match
+            up with the killed text, instead returning text from a prior kill
+            that was handled by Editor (i.e., in a contenteditable or form input).
+
+            This patch adds a host function so that the Inspector frontend can
+            append "missed" killed text to Editor's kill ring. Subsequent
+            yanks handled by Editor will then match the text killed by CodeMirror.
+
+            No new tests, because we need to use both InspectorFrontendHost
+            and TestRunner.execCommand, but the latter is not available in
+            the inspector context where we would need to simulate a kill.
+
+            * inspector/InspectorFrontendHost.cpp:
+            (WebCore::InspectorFrontendHost::killText):
+
+                Added. This appends the killed text to the kill ring, starting
+                a new sequence if necessary. Unlike Editor, Inspector waits
+                until the next kill command to clear the existing sequence.
+
+            * inspector/InspectorFrontendHost.h:
+            * inspector/InspectorFrontendHost.idl:
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Merge r192641. rdar://problem/23221163
 
     2015-11-19  Brian Burg  <bburg@apple.com>

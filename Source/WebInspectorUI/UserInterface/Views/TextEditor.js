@@ -32,7 +32,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         this.element.classList.add("text-editor", WebInspector.SyntaxHighlightedStyleClassName);
 
         // FIXME: <https://webkit.org/b/149120> Web Inspector: Preferences for Text Editor behavior
-        this._codeMirror = CodeMirror(this.element, {
+        this._codeMirror = WebInspector.CodeMirrorEditor.create(this.element, {
             readOnly: true,
             indentWithTabs: true,
             indentUnit: 4,

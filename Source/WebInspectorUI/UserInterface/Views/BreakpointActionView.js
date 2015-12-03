@@ -149,7 +149,7 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
             editorElement.classList.add("breakpoint-action-eval-editor");
             editorElement.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
 
-            this._codeMirror = CodeMirror(editorElement, {
+            this._codeMirror = WebInspector.CodeMirrorEditor.create(editorElement, {
                 lineWrapping: true,
                 mode: "text/javascript",
                 indentWithTabs: true,

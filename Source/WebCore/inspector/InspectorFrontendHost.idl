@@ -55,6 +55,7 @@
     DOMString debuggableType();
 
     void copyText(DOMString text);
+    void killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
     void openInNewTab(DOMString url);
     boolean canSave();
     void save(DOMString url, DOMString content, boolean base64Encoded, boolean forceSaveAs);
