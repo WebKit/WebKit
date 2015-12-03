@@ -147,7 +147,7 @@ WebInspector.TypeTokenAnnotator = class TypeTokenAnnotator extends WebInspector.
         var isMultiLineComment = false;
         var isSingleLineComment = false;
         var shouldIgnore = false;
-        const isArrowFunction = node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression;
+        var isArrowFunction = node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression;
 
         function isLineTerminator(char)
         {

@@ -465,6 +465,13 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     _shouldConsiderObjectLossless(object)
     {
+        if (object.type === "string") {
+            var description = object.description;
+            var maxLength = WebInspector.FormattedValue.MAX_PREVIEW_STRING_LENGTH;
+            var longOrMultiLineString = description.length > maxLength || description.slice(0, maxLength).includes("\n");
+            return !longOrMultiLineString;
+        }
+
         return object.type !== "object" || object.subtype === "null" || object.subtype === "regexp";
     }
 
