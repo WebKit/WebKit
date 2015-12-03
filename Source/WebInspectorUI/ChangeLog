@@ -1,5 +1,23 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188967. rdar://problem/23221163
+
+    2015-08-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Command-Enter should evaluate selected JS in Debugger/Sources
+            https://bugs.webkit.org/show_bug.cgi?id=148368
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Controllers/CodeMirrorCompletionController.js:
+            (WebInspector.CodeMirrorCompletionController):
+            (WebInspector.CodeMirrorCompletionController.prototype._generateJavaScriptCompletions):
+            Evaluate selected text in the console only for JS and HTML resources. HTML resources
+            should be allowed because they can have commented out (inside <!-- -->) and
+            inline (onclick="") JavaScript.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188965. rdar://problem/23221163
 
     2015-08-25  Brian Burg  <bburg@apple.com>
