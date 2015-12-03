@@ -1,5 +1,22 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187578. rdar://problem/23221163
+
+    2015-07-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Improve styles of debugger popovers
+            https://bugs.webkit.org/show_bug.cgi?id=147437
+
+            Reviewed by Timothy Hatcher.
+
+            Use non-monospace font and improve spacing.
+
+            * UserInterface/Views/SourceCodeTextEditor.css:
+            (.popover .debugger-popover-content > .title):
+            (.popover .debugger-popover-content > .body):
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187577. rdar://problem/23221163
 
     2015-07-29  Nikita Vasilyev  <nvasilyev@apple.com>

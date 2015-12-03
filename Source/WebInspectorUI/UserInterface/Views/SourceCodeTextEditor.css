@@ -142,8 +142,9 @@
 }
 
 .popover .debugger-popover-content > .title {
-    font-weight: bold;
-    padding-left: 10px;
+    font-family: -apple-system, sans-serif;
+    font-weight: 500;
+    padding: 2px 0 4px 10px;
 
     text-overflow: ellipsis;
     overflow: hidden;
@@ -161,8 +162,7 @@
 .popover .debugger-popover-content > .body {
     border-top: 1px solid hsla(0, 0%, 0%, 0.3);
     overflow: auto;
-    margin-top: 5px;
-    padding-top: 5px;
+    padding-top: 2px;
 }
 
 .popover .debugger-popover-content.function > .body {
