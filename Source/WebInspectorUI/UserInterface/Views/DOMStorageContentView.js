@@ -46,7 +46,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
         this._dataGrid.sortColumnIdentifier = "key";
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         this._populate();
     }
@@ -110,12 +110,6 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
             }
         }
         this._sortDataGrid();
-    }
-
-    updateLayout()
-    {
-        if (this._dataGrid)
-            this._dataGrid.updateLayout();
     }
 
     get scrollableElements()

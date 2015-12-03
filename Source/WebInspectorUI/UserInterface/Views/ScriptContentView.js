@@ -184,11 +184,6 @@ WebInspector.ScriptContentView = class ScriptContentView extends WebInspector.Co
         this._textEditor.revealNextSearchResult(changeFocus);
     }
 
-    updateLayout()
-    {
-        this._textEditor.updateLayout();
-    }
-
     // Private
 
     _contentWillPopulate(event)
@@ -201,7 +196,7 @@ WebInspector.ScriptContentView = class ScriptContentView extends WebInspector.Co
             this._textEditor.readOnly = false;
 
         this.element.removeChildren();
-        this.element.appendChild(this._textEditor.element);
+        this.addSubview(this._textEditor);
     }
 
     _contentDidPopulate(event)

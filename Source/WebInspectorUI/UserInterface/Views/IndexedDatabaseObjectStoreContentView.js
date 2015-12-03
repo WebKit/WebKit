@@ -69,7 +69,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
 
         this._dataGrid = new WebInspector.DataGrid(columnInfo);
         this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         this._entries = [];
 
@@ -98,11 +98,6 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
         cookie.databaseName = this._objectStore.parentDatabase.name;
         cookie.objectStoreName = this._objectStore.name;
         cookie.objectStoreIndexName = this._objectStoreIndex && this._objectStoreIndex.name;
-    }
-
-    updateLayout()
-    {
-        this._dataGrid.updateLayout();
     }
 
     // Private

@@ -81,11 +81,6 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
         return [this.element];
     }
 
-    updateLayout()
-    {
-        this._domTreeOutline.updateSelection();
-    }
-
     shown()
     {
         this._domTreeOutline.setVisible(true, WebInspector.isConsoleFocused());
@@ -282,6 +277,13 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
             this._currentSearchResultIndex = 0;
 
         this._revealSearchResult(this._currentSearchResultIndex, changeFocus);
+    }
+
+    // Protected
+
+    layout()
+    {
+        this._domTreeOutline.updateSelection();
     }
 
     // Private

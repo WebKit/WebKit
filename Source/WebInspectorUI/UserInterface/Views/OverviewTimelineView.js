@@ -41,8 +41,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
         this._timelineRuler = new WebInspector.TimelineRuler;
         this._timelineRuler.allowsClippedLabels = true;
-        // FIXME: change to `this.addSubview(this._timelineRuler)` once <https://webkit.org/b/150703> is fixed.
-        this.element.appendChild(this._timelineRuler.element);
+        this.addSubview(this._timelineRuler);
 
         this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
         this._timelineRuler.addMarker(this._currentTimeMarker);
@@ -181,9 +180,6 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
                 dataGridNode = dataGridNode.traverseNextNode(true, null, true);
             }
         }
-
-        // FIXME: remove once <https://webkit.org/b/150703> is fixed.
-        this._timelineRuler.updateLayout();
 
         this._processPendingRepresentedObjects();
     }

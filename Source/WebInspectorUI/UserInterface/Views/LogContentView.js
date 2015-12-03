@@ -107,13 +107,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         return this._logViewController;
     }
 
-    updateLayout()
-    {
-        super.updateLayout();
-
-        this._scrollElementHeight = this.messagesElement.getBoundingClientRect().height;
-    }
-
     get scrollableElements()
     {
         return [this.element];
@@ -251,6 +244,13 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             this.messagesElement.focus();
         else
             this.prompt.focus();
+    }
+
+    // Protected
+
+    layout()
+    {
+        this._scrollElementHeight = this.messagesElement.getBoundingClientRect().height;
     }
 
     // Private
