@@ -339,7 +339,7 @@ CodeMirror.extendMode("css", {
                     return true;
                 if (state.state === "prop") // -webkit-transform:rotate(...)translate(...);
                     return true;
-                if (state.state === "media" || state.state === "media_parens") // Space in "not(foo)and" but not at the end of "not(not(foo))"
+                if (state.state === "media" || state.state === "atBlock_parens") // Space in "not(foo)and" but not at the end of "not(not(foo))"
                     return true;
                 return false; // color: rgb(...);
             }
@@ -350,7 +350,7 @@ CodeMirror.extendMode("css", {
             return true;
 
         if (/\bkeyword\b/.test(lastToken)) // media-query keywords
-            return state.state === "media" || state.state === "media_parens";
+            return state.state === "media" || (state.state === "atBlock_parens" && content !== ")");
 
         return false;
     },

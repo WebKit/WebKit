@@ -1,4 +1,4 @@
-Formatter.prototype.debug = function(from, to)
+WebInspector.Formatter.prototype.debug = function(from, to)
 {
     var debug = "";
     var outerMode = this._codeMirror.getMode();
