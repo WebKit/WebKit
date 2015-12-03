@@ -29,14 +29,14 @@ WebInspector._messagesToDispatch = [];
 WebInspector.dispatchNextQueuedMessageFromBackend = function()
 {
     var startCount = WebInspector._messagesToDispatch.length;
-    var startTime = Date.now();
+    var startTimestamp = timestamp();
     var timeLimitPerRunLoop = 10; // milliseconds
 
     var i = 0;
     for (; i < WebInspector._messagesToDispatch.length; ++i) {
         // Defer remaining messages if we have taken too long. In practice, single
         // messages like Page.getResourceContent blow through the time budget.
-        if (Date.now() - startTime > timeLimitPerRunLoop)
+        if (timestamp() - startTimestamp > timeLimitPerRunLoop)
             break;
 
         InspectorBackend.dispatch(WebInspector._messagesToDispatch[i]);
@@ -50,8 +50,12 @@ WebInspector.dispatchNextQueuedMessageFromBackend = function()
         WebInspector._dispatchTimeout = setTimeout(WebInspector.dispatchNextQueuedMessageFromBackend, 0);
     }
 
-    if (InspectorBackend.dumpInspectorTimeStats)
-        console.log("time-stats: --- RunLoop duration: " + (Date.now() - startTime) + "ms; dispatched: " + (startCount - WebInspector._messagesToDispatch.length) + "; remaining: " + WebInspector._messagesToDispatch.length);
+    if (InspectorBackend.dumpInspectorTimeStats) {
+        var messageDuration = (timestamp() - startTimestamp).toFixed(3);
+        var dispatchedCount = startCount - WebInspector._messagesToDispatch.length;
+        var remainingCount = WebInspector._messagesToDispatch.length;
+        console.log(`time-stats: --- RunLoop duration: ${messageDuration}ms; dispatched: ${dispatchedCount}; remaining: ${remainingCount}`);
+    }
 };
 
 WebInspector.dispatchMessageFromBackend = function(message)
@@ -59,10 +63,10 @@ WebInspector.dispatchMessageFromBackend = function(message)
     // Enforce asynchronous interaction between the backend and the frontend by queueing messages.
     // The messages are dequeued on a zero delay timeout.
 
-    WebInspector._messagesToDispatch.push(message);
+    this._messagesToDispatch.push(message);
 
     if (this._dispatchTimeout)
         return;
 
-    this._dispatchTimeout = setTimeout(WebInspector.dispatchNextQueuedMessageFromBackend, 0);
+    this._dispatchTimeout = setTimeout(this.dispatchNextQueuedMessageFromBackend, 0);
 };

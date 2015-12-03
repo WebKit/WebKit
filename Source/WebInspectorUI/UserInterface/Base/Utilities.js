@@ -1124,3 +1124,9 @@ function decodeBase64ToBlob(base64Data, mimeType)
 
     return new Blob(byteArrays, {type: mimeType});
 }
+
+// FIXME: This can be removed when WEB_TIMING is enabled for all platforms.
+function timestamp()
+{
+    return window.performance ? performance.now() : Date.now();
+}
