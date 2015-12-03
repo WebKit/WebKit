@@ -187,23 +187,21 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         var initialPropertyText = {};
         var initialPropertyTextMissing = !initialTextList.has(group);
-        var onePropertyHasValue = false;
         for (let key in group.properties) {
             var propertyEditor = group.properties[key];
             propertyEditor.update(!propertyEditor.style || forceStyleUpdate ? this._currentStyle : null);
 
             var value = propertyEditor.synthesizedValue;
-            if (value && !propertyEditor.propertyMissing) {
-                onePropertyHasValue = true;
-                if (initialPropertyTextMissing)
-                    initialPropertyText[key] = value;
-            }
+            if (value && !propertyEditor.propertyMissing && initialPropertyTextMissing)
+                initialPropertyText[key] = value;
         }
 
         if (initialPropertyTextMissing)
             initialTextList.set(group, initialPropertyText);
 
-        group.section.collapsed = !onePropertyHasValue && !group.section.expandedByUser;
+        var groupHasSetProperty = this._groupHasSetProperty(group);
+        group.section.collapsed = !groupHasSetProperty && !group.section.expandedByUser;
+        group.section.element.classList.toggle("has-set-property", groupHasSetProperty);
         this._sectionModified(group);
 
         var autocompleteCompatibleProperties = group.autocompleteCompatibleProperties;
@@ -225,6 +223,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
     _sectionModified(group)
     {
         group.section.element.classList.toggle("modified", this._initialPropertyTextModified(group));
+        group.section.element.classList.toggle("has-set-property", this._groupHasSetProperty(group));
     }
 
     _clearModifiedSection(groupId)
@@ -270,6 +269,17 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
                 return true;
         }
 
+        return false;
+    }
+
+    _groupHasSetProperty(group)
+    {
+        for (let key in group.properties) {
+            var propertyEditor = group.properties[key];
+            var value = propertyEditor.synthesizedValue;
+            if (value && !propertyEditor.propertyMissing)
+                return true;
+        }
         return false;
     }
 
