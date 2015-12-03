@@ -1,3 +1,11 @@
+2015-12-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Attempt to fix GTK after r193125
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::supportsLZCNT):
+        GCC is unable to handle EBX correctly when clobbered by inline asm.
+
 2015-12-03  Saam barati  <sbarati@apple.com>
 
         FTL::OSRExitDescriptor should use less memory by having a companion object that dies after compilation

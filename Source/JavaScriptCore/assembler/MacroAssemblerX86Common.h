@@ -1725,11 +1725,13 @@ protected:
 #elif COMPILER(GCC_OR_CLANG)
             asm (
                 "movl $0x80000001, %%eax;"
+                "pushl %%ebx;"
                 "cpuid;"
+                "popl %%ebx;"
                 "movl %%ecx, %0;"
                 : "=g" (flags)
                 :
-                : "%eax", "%ebx", "%ecx", "%edx"
+                : "%eax", "%ecx", "%edx"
                 );
 #endif
             s_lzcntCheckState = (flags & 0x20) ? LZCNTCheckState::Set : LZCNTCheckState::Clear;
