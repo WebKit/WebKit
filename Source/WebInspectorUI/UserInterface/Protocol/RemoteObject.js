@@ -391,7 +391,7 @@ WebInspector.RemoteObject = class RemoteObject
         var objectGroup = this.isWeakCollection() ? this._weakCollectionObjectGroup() : "";
 
         RuntimeAgent.getCollectionEntries(this._objectId, objectGroup, start, numberToFetch, function(error, entries) {
-            entries = entries.map(function(entry) { return WebInspector.CollectionEntry.fromPayload(entry); });
+            entries = entries.map(WebInspector.CollectionEntry.fromPayload);
             callback(entries);
         });
     }

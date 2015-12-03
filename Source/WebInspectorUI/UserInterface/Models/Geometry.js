@@ -349,7 +349,7 @@ WebInspector.CubicBezier = class CubicBezier
         if (!coordinates || coordinates.length < 4)
             return null;
 
-        coordinates = coordinates.map((x) => Number(x));
+        coordinates = coordinates.map(Number);
         if (coordinates.includes(NaN))
             return null;
 

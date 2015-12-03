@@ -51,9 +51,9 @@ WebInspector.ObjectPreview = class ObjectPreview extends WebInspector.Object
     static fromPayload(payload)
     {
         if (payload.properties)
-            payload.properties = payload.properties.map(function(property) { return WebInspector.PropertyPreview.fromPayload(property); });
+            payload.properties = payload.properties.map(WebInspector.PropertyPreview.fromPayload);
         if (payload.entries)
-            payload.entries = payload.entries.map(function(entry) { return WebInspector.CollectionEntryPreview.fromPayload(entry); });
+            payload.entries = payload.entries.map(WebInspector.CollectionEntryPreview.fromPayload);
 
         if (payload.subtype === "array") {
             // COMPATIBILITY (iOS 8): Runtime.ObjectPreview did not have size property,

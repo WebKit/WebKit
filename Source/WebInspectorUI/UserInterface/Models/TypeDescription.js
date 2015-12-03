@@ -51,7 +51,7 @@ WebInspector.TypeDescription = class TypeDescription extends WebInspector.Object
 
         var structures = undefined;
         if (payload.structures)
-            structures = payload.structures.map(function(x) { return WebInspector.StructureDescription.fromPayload(x); });
+            structures = payload.structures.map(WebInspector.StructureDescription.fromPayload);
 
         return new WebInspector.TypeDescription(payload.leastCommonAncestor, typeSet, structures, payload.isValid, payload.isTruncated);
     }
