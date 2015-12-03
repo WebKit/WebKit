@@ -80,7 +80,7 @@ WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends Web
 
     get filterableData()
     {
-        return {text: this.representedObject.title};
+        return {text: [this.representedObject.title]};
     }
 };
 

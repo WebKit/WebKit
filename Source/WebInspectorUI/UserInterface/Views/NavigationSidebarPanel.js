@@ -341,22 +341,20 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         var filterableData = treeElement.filterableData || {};
 
         var flags = {expandTreeElement: false};
+        var filterRegex = this._textFilterRegex;
 
-        var self = this;
         function matchTextFilter(inputs)
         {
-            if (!inputs || !self._textFilterRegex)
+            if (!inputs || !filterRegex)
                 return true;
 
-            // Convert to a single item array if needed.
-            if (!(inputs instanceof Array))
-                inputs = [inputs];
+            console.assert(inputs instanceof Array, "filterableData.text should be an array of text inputs");
 
             // Loop over all the inputs and try to match them.
             for (var input of inputs) {
                 if (!input)
                     continue;
-                if (self._textFilterRegex.test(input)) {
+                if (filterRegex.test(input)) {
                     flags.expandTreeElement = true;
                     return true;
                 }
