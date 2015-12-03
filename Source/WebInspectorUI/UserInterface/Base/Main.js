@@ -246,6 +246,7 @@ WebInspector.contentLoaded = function()
 
     this._increaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Plus, this._increaseZoom.bind(this));
     this._decreaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Minus, this._decreaseZoom.bind(this));
+    this._resetZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "0", this._resetZoom.bind(this));
 
     this.tabBrowser = new WebInspector.TabBrowser(document.getElementById("tab-browser"), this.tabBar, this.navigationSidebar, this.detailsSidebar);
     this.tabBrowser.addEventListener(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange, this._tabBrowserSelectedTabContentViewDidChange, this);
@@ -1838,6 +1839,11 @@ WebInspector._increaseZoom = function(event) {
 WebInspector._decreaseZoom = function(event) {
     var currentZoom = InspectorFrontendHost.zoomFactor();
     InspectorFrontendHost.setZoomFactor(currentZoom - 0.2);
+    event.preventDefault();
+};
+
+WebInspector._resetZoom = function(event) {
+    InspectorFrontendHost.setZoomFactor(1);
     event.preventDefault();
 };
 
