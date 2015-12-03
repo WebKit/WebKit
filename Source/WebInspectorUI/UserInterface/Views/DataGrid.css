@@ -191,7 +191,7 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 
     content: "";
 
-    background-image: -webkit-canvas(data-grid-sort-indicator-up-arrow);
+    background-image: url(../Images/SortIndicatorArrows.svg#up-arrow-normal);
     background-size: 9px 8px;
     background-repeat: no-repeat;
 }
@@ -210,7 +210,7 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 
     content: "";
 
-    background-image: -webkit-canvas(data-grid-sort-indicator-down-arrow);
+    background-image: url(../Images/SortIndicatorArrows.svg#down-arrow-normal);
     background-size: 9px 8px;
     background-repeat: no-repeat;
 }
@@ -224,27 +224,24 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 
     content: "";
 
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-normal);
-    background-size: 8px 8px;
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+    background-size: 13px 13px;
     background-repeat: no-repeat;
 
-    width: 8px;
-    height: 8px;
-
-    margin-top: 2px;
-    margin-right: 2px;
+    width: 13px;
+    height: 13px;
 }
 
 .data-grid tr.parent.expanded td.disclosure::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
 .data-grid:matches(:focus, .force-focus) tr.parent.selected td.disclosure::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-selected);
 }
 
 .data-grid:matches(:focus, .force-focus) tr.parent.expanded.selected td.disclosure::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
+    background-image: url(../Images/DisclosureTriangles.svg#open-selected);
 }
 
 .data-grid tr.selected {

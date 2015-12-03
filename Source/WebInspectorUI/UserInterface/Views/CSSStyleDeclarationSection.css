@@ -121,7 +121,7 @@
     width: 8px;
     height: 10px;
 
-    background-image: -webkit-canvas(style-lock-normal);
+    background-image: url(../Images/Locked.svg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 8px 10px;

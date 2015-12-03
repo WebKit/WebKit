@@ -86,7 +86,7 @@
     width: 21px;
     height: 100%;
 
-    background-image: -webkit-canvas(details-section-disclosure-triangle-open-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 13px 13px;
@@ -95,15 +95,15 @@
 }
 
 .details-section > .header:not(.mouse-over-options-element):active::before {
-    background-image: -webkit-canvas(details-section-disclosure-triangle-open-active);
+    background-image: url(../Images/DisclosureTriangles.svg#open-active);
 }
 
 .details-section.collapsed > .header::before {
-    background-image: -webkit-canvas(details-section-disclosure-triangle-closed-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
 }
 
 .details-section.collapsed > .header:not(.mouse-over-options-element):active::before {
-    background-image: -webkit-canvas(details-section-disclosure-triangle-closed-active);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-active);
 }
 
 .details-section > .header > label {

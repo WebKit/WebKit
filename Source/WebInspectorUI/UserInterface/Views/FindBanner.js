@@ -93,8 +93,6 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
         this._findPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._previousResultButtonClicked.bind(this));
 
         this.disableKeyboardShortcuts();
-
-        this._generateButtonsGlyphsIfNeeded();
     }
 
     // Public
@@ -334,21 +332,6 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
     _doneButtonClicked(event)
     {
         this.hide();
-    }
-
-    _generateButtonsGlyphsIfNeeded()
-    {
-        if (WebInspector.FindBanner._generatedButtonsGlyphs)
-            return;
-
-        WebInspector.FindBanner._generatedButtonsGlyphs = true;
-
-        var specifications = {};
-        specifications["normal"] = {fillColor: [81, 81, 81]};
-        specifications["normal-active"] = {fillColor: [37, 37, 37]};
-
-        generateColoredImagesForCSS("Images/BackArrow.svg", specifications, 7, 11, "find-banner-previous-arrow-");
-        generateColoredImagesForCSS("Images/ForwardArrow.svg", specifications, 7, 11, "find-banner-next-arrow-");
     }
 };
 

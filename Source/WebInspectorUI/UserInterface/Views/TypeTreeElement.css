@@ -53,14 +53,14 @@
 
 .type-tree-element.parent > .disclosure-button {
     background-color: transparent;
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 13px 13px;
 }
 
 .type-tree-element.parent.expanded > .disclosure-button {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
 .type-tree-element > .icon {

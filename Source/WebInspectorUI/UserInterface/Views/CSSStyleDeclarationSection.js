@@ -119,13 +119,6 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         } else
             this._element.classList.add(WebInspector.CSSStyleDeclarationSection.SelectorLockedStyleClassName);
 
-        if (!WebInspector.CSSStyleDeclarationSection._generatedLockImages) {
-            WebInspector.CSSStyleDeclarationSection._generatedLockImages = true;
-
-            var specifications = {"style-lock-normal": {fillColor: [0, 0, 0, 0.5]}};
-            generateColoredImagesForCSS("Images/Locked.svg", specifications, 8, 10);
-        }
-
         this.refresh();
 
         this._headerElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));

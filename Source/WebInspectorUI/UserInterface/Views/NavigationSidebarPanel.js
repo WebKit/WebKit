@@ -66,7 +66,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this._emptyContentPlaceholderElement.appendChild(this._emptyContentPlaceholderMessageElement);
 
         this._generateStyleRulesIfNeeded();
-        this._generateDisclosureTrianglesIfNeeded();
 
         this._shouldAutoPruneStaleTopLevelResourceTreeElements = shouldAutoPruneStaleTopLevelResourceTreeElements || false;
 
@@ -610,28 +609,6 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         document.head.appendChild(WebInspector.NavigationSidebarPanel._styleElement);
     }
 
-    _generateDisclosureTrianglesIfNeeded()
-    {
-        if (WebInspector.NavigationSidebarPanel._generatedDisclosureTriangles)
-            return;
-
-        // Set this early instead of in _generateDisclosureTriangle because we don't want multiple panels that are
-        // created at the same time to duplicate the work (even though it would be harmless.)
-        WebInspector.NavigationSidebarPanel._generatedDisclosureTriangles = true;
-
-        var specifications = {};
-        specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleNormalCanvasIdentifierSuffix] = {
-            fillColor: [140, 140, 140]
-        };
-
-        specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleSelectedCanvasIdentifierSuffix] = {
-            fillColor: [255, 255, 255]
-        };
-
-        generateColoredImagesForCSS("Images/DisclosureTriangleSmallOpen.svg", specifications, 13, 13, WebInspector.NavigationSidebarPanel.DisclosureTriangleOpenCanvasIdentifier);
-        generateColoredImagesForCSS("Images/DisclosureTriangleSmallClosed.svg", specifications, 13, 13, WebInspector.NavigationSidebarPanel.DisclosureTriangleClosedCanvasIdentifier);
-    }
-
     _checkForStaleResourcesIfNeeded()
     {
         if (!this._checkForStaleResourcesTimeoutIdentifier || !this._shouldAutoPruneStaleTopLevelResourceTreeElements)
@@ -744,7 +721,3 @@ WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName = "n
 WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName = "hide-disclosure-buttons";
 WebInspector.NavigationSidebarPanel.EmptyContentPlaceholderElementStyleClassName = "empty-content-placeholder";
 WebInspector.NavigationSidebarPanel.EmptyContentPlaceholderMessageElementStyleClassName = "message";
-WebInspector.NavigationSidebarPanel.DisclosureTriangleOpenCanvasIdentifier = "navigation-sidebar-panel-disclosure-triangle-open";
-WebInspector.NavigationSidebarPanel.DisclosureTriangleClosedCanvasIdentifier = "navigation-sidebar-panel-disclosure-triangle-closed";
-WebInspector.NavigationSidebarPanel.DisclosureTriangleNormalCanvasIdentifierSuffix = "-normal";
-WebInspector.NavigationSidebarPanel.DisclosureTriangleSelectedCanvasIdentifierSuffix = "-selected";

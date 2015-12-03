@@ -47,12 +47,12 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
             this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this), this._element);
             this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this), this._element);
 
-            this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), "Images/BackArrow.svg", 8, 13);
+            this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), "Images/BackForwardArrows.svg#back-arrow-mask", 8, 13);
             this._backButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._backButtonClicked, this);
             this._backButtonNavigationItem.enabled = false;
             this._navigationBar.addNavigationItem(this._backButtonNavigationItem);
 
-            this._forwardButtonNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), "Images/ForwardArrow.svg", 8, 13);
+            this._forwardButtonNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), "Images/BackForwardArrows.svg#forward-arrow-mask", 8, 13);
             this._forwardButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._forwardButtonClicked, this);
             this._forwardButtonNavigationItem.enabled = false;
             this._navigationBar.addNavigationItem(this._forwardButtonNavigationItem);

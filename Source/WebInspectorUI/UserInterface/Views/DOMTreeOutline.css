@@ -123,7 +123,7 @@
 
     content: "";
 
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-size: 13px 13px;
     background-repeat: no-repeat;
 
@@ -135,15 +135,15 @@
 }
 
 .dom-tree-outline:focus li.parent.selected::before {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-selected);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-selected);
 }
 
 .dom-tree-outline li.parent.expanded::before {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
 .dom-tree-outline:focus li.parent.expanded.selected::before {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-selected);
+    background-image: url(../Images/DisclosureTriangles.svg#open-selected);
 }
 
 .dom-tree-outline .html-text-node.large {

@@ -143,7 +143,7 @@ body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
     border: 0;
 
     background-color: transparent;
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 13px 13px;
@@ -160,15 +160,15 @@ body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
 }
 
 .navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-selected) !important;
+    background-image: url(../Images/DisclosureTriangles.svg#closed-selected) !important;
 }
 
 .navigation-sidebar-panel-content-tree-outline .item.expanded .disclosure-button {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
 .navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-selected) !important;
+    background-image: url(../Images/DisclosureTriangles.svg#open-selected) !important;
 }
 
 .navigation-sidebar-panel-content-tree-outline .item .icon {

@@ -147,11 +147,11 @@ body.window-inactive .find-banner {
 }
 
 .find-banner > button.segmented.left > .glyph {
-    background-image: -webkit-canvas(find-banner-previous-arrow-normal);
+    background-image: url(../Images/BackForwardArrows.svg#back-arrow-normal);
 }
 
 .find-banner > button.segmented.left:active:not(:disabled) > .glyph {
-    background-image: -webkit-canvas(find-banner-previous-arrow-normal-active);
+    background-image: url(../Images/BackForwardArrows.svg#back-arrow-active);
 }
 
 .find-banner > button.segmented.right {
@@ -161,12 +161,12 @@ body.window-inactive .find-banner {
 }
 
 .find-banner > button.segmented.right > .glyph {
-    background-image: -webkit-canvas(find-banner-next-arrow-normal);
+    background-image: url(../Images/BackForwardArrows.svg#forward-arrow-normal);
     margin-left: 1px;
 }
 
 .find-banner > button.segmented.right:active:not(:disabled) > .glyph {
-    background-image: -webkit-canvas(find-banner-next-arrow-normal-active);
+    background-image: url(../Images/BackForwardArrows.svg#forward-arrow-active);
 }
 
 .find-banner > button.segmented {
