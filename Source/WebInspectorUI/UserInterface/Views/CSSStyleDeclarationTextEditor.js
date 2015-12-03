@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Tobias Reiss <tobi+webkit@basecode.de>
  *
  * Redistribution and use in source and binary forms, with or without
