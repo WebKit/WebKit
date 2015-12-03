@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Object = class Object
+WebInspector.Object = class WebInspectorObject
 {
     // Static
 
