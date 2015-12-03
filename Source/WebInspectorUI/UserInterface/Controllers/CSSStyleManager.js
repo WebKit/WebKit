@@ -167,6 +167,92 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         return styles;
     }
 
+    preferredInspectorStyleSheetForFrame(frame, callback)
+    {
+        var inspectorStyleSheets = this._inspectorStyleSheetsForFrame(frame);
+        for (var styleSheet of inspectorStyleSheets) {
+            if (styleSheet[WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol]) {
+                callback(styleSheet);
+                return;
+            }
+        }
+
+        if (CSSAgent.createStyleSheet) {
+            CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
+                var styleSheet = WebInspector.cssStyleManager.styleSheetForIdentifier(styleSheetId);
+                styleSheet[WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
+                callback(styleSheet);
+            });
+            return;
+        }
+
+        // COMPATIBILITY (iOS 9): CSS.createStyleSheet did not exist.
+        // Legacy backends can only create the Inspector StyleSheet through CSS.addRule.
+        // Exploit that to create the Inspector StyleSheet for the document.body node in
+        // this frame, then get the StyleSheet for the new rule.
+
+        var expression = appendWebInspectorSourceURL("document");
+        var contextId = frame.pageExecutionContext.id;
+        RuntimeAgent.evaluate.invoke({expression, objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, returnByValue: false, generatePreview: false}, documentAvailable);
+
+        function documentAvailable(error, documentRemoteObjectPayload)
+        {
+            if (error) {
+                callback(null);
+                return;
+            }
+
+            var remoteObject = WebInspector.RemoteObject.fromPayload(documentRemoteObjectPayload);
+            remoteObject.pushNodeToFrontend(documentNodeAvailable.bind(null, remoteObject));
+        }
+
+        function documentNodeAvailable(remoteObject, documentNodeId)
+        {
+            remoteObject.release();
+
+            if (!documentNodeId) {
+                callback(null);
+                return;
+            }
+
+            DOMAgent.querySelector(documentNodeId, "body", bodyNodeAvailable);
+        }
+
+        function bodyNodeAvailable(error, bodyNodeId)
+        {
+            if (error) {
+                console.error(error);
+                callback(null);
+                return;
+            }
+
+            var selector = ""; // Intentionally empty.
+            CSSAgent.addRule(bodyNodeId, selector, cssRuleAvailable);
+        }
+
+        function cssRuleAvailable(error, payload)
+        {
+            if (error || !payload.ruleId) {
+                callback(null);
+                return;
+            }
+
+            var styleSheetId = payload.ruleId.styleSheetId;
+            var styleSheet = WebInspector.cssStyleManager.styleSheetForIdentifier(styleSheetId);
+            if (!styleSheet) {
+                callback(null);
+                return;
+            }
+
+            styleSheet[WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
+
+            console.assert(styleSheet.isInspectorStyleSheet());
+            console.assert(styleSheet.parentFrame === frame);
+
+            callback(styleSheet);
+        }
+    }
+
     // Protected
 
     mediaQueryResultChanged()
@@ -215,6 +301,18 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     }
 
     // Private
+
+    _inspectorStyleSheetsForFrame(frame)
+    {
+        var styleSheets = [];
+
+        for (var styleSheet of this.styleSheets) {
+            if (styleSheet.isInspectorStyleSheet() && styleSheet.parentFrame === frame)
+                styleSheets.push(styleSheet);
+        }
+
+        return styleSheets;
+    }
 
     _nodePseudoClassesDidChange(event)
     {
@@ -443,3 +541,4 @@ WebInspector.CSSStyleManager.Event = {
 };
 
 WebInspector.CSSStyleManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
+WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol = Symbol("css-style-manager-preferred-inspector-stylesheet");

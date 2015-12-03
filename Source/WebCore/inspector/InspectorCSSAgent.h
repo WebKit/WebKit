@@ -45,21 +45,16 @@ class CSSFrontendDispatcher;
 namespace WebCore {
 
 class CSSRule;
-class CSSRuleList;
-class CSSStyleDeclaration;
 class CSSStyleRule;
 class CSSStyleSheet;
+class ChangeRegionOversetTask;
 class Document;
-class DocumentStyleSheetCollection;
 class Element;
-class InspectorCSSOMWrappers;
 class InstrumentingAgents;
-class NameNodeMap;
 class Node;
 class NodeList;
 class StyleResolver;
 class StyleRule;
-class ChangeRegionOversetTask;
 
 class InspectorCSSAgent final
     : public InspectorAgentBase
@@ -71,8 +66,8 @@ class InspectorCSSAgent final
 public:
     class InlineStyleOverrideScope {
     public:
-        InlineStyleOverrideScope(SecurityContext* context)
-            : m_contentSecurityPolicy(context->contentSecurityPolicy())
+        InlineStyleOverrideScope(SecurityContext& context)
+            : m_contentSecurityPolicy(context.contentSecurityPolicy())
         {
             m_contentSecurityPolicy->setOverrideAllowInlineStyle(true);
         }
@@ -119,7 +114,8 @@ public:
     virtual void setStyleSheetText(ErrorString&, const String& styleSheetId, const String& text) override;
     virtual void setStyleText(ErrorString&, const Inspector::InspectorObject& styleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
     virtual void setRuleSelector(ErrorString&, const Inspector::InspectorObject& ruleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
-    virtual void addRule(ErrorString&, int contextNodeId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
+    virtual void createStyleSheet(ErrorString&, const String& frameId, String* styleSheetId) override;
+    virtual void addRule(ErrorString&, const String& styleSheetId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
     virtual void getSupportedCSSProperties(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>>& result) override;
     virtual void getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<Inspector::Protocol::Array<String>>& result) override;
     virtual void forcePseudoState(ErrorString&, int nodeId, const Inspector::InspectorArray& forcedPseudoClasses) override;
@@ -135,7 +131,7 @@ private:
     typedef HashMap<String, RefPtr<InspectorStyleSheet>> IdToInspectorStyleSheet;
     typedef HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet>> CSSStyleSheetToInspectorStyleSheet;
     typedef HashMap<Node*, RefPtr<InspectorStyleSheetForInlineStyle>> NodeToInspectorStyleSheet; // bogus "stylesheets" with elements' inline styles
-    typedef HashMap<RefPtr<Document>, RefPtr<InspectorStyleSheet>> DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
+    typedef HashMap<RefPtr<Document>, Vector<RefPtr<InspectorStyleSheet>>> DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
     typedef HashMap<int, unsigned> NodeIdToForcedPseudoState;
 
     void resetNonPersistentData();
@@ -150,8 +146,8 @@ private:
 
     String unbindStyleSheet(InspectorStyleSheet*);
     InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
-    InspectorStyleSheet* viaInspectorStyleSheet(Document*, bool createIfAbsent);
     InspectorStyleSheet* assertStyleSheetForId(ErrorString&, const String&);
+    InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
     Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(StyleRule*, StyleResolver&, Element*);

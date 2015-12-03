@@ -7,8 +7,6 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("CSS.StyleSheetEvents.InspectorStyleSheet");
 
-    let bodyNodeId;
-
     suite.addTestCase({
         name: "CheckNoStyleSheets",
         description: "Ensure there are currently no stylesheets.",
@@ -22,24 +20,17 @@ function test()
         name: "CreateInspectorStyleSheet",
         description: "Creating an inspector stylesheet adds a stylesheet.",
         test: (resolve, reject) => {
+            CSSAgent.createStyleSheet(WebInspector.frameResourceManager.mainFrame.id);
             WebInspector.cssStyleManager.singleFireEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, function(event) {
                 InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 1, "Should be one stylesheet.");
                 InspectorTest.assert(event.data.styleSheet instanceof WebInspector.CSSStyleSheet, "Event data should be a CSSStyleSheet");
-                InspectorTest.expectThat(event.data.styleSheet.origin === WebInspector.CSSStyleSheet.Type.Inspector, "StyleSheet origin is inspector.");
+                InspectorTest.expectThat(event.data.styleSheet.origin === WebInspector.CSSStyleSheet.Type.Inspector, "StyleSheet origin should be 'inspector'.");
                 resolve();
             });
-
-            // FIXME: Currently the only way to create an inspector stylesheet is through `CSS.addRule`.
-            CSSAgent.addRule(bodyNodeId, "body");
         }
     });
 
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "body", function(contentNodeId) {
-            bodyNodeId = contentNodeId;
-            suite.runTestCasesAndFinish();
-        });
-    });
+    suite.runTestCasesAndFinish();
 }
 </script>
 </head>
