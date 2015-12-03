@@ -33,6 +33,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
 
         var listElement = document.createElement("ol");
         listElement.classList.add("visual-style-comma-separated-keyword-list");
+        listElement.addEventListener("keydown", this._listElementKeyDown.bind(this));
         this.contentElement.appendChild(listElement);
 
         this._commaSeparatedKeywords = new WebInspector.TreeOutline(listElement);
@@ -113,6 +114,22 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
     }
 
     // Private
+
+    _listElementKeyDown(event)
+    {
+        var selectedTreeElement = this._commaSeparatedKeywords.selectedTreeElement;
+        if (!selectedTreeElement)
+            return;
+
+        if (selectedTreeElement.currentlyEditing)
+            return;
+
+        var keyCode = event.keyCode;
+        var backspaceKeyCode = WebInspector.KeyboardShortcut.Key.Backspace.keyCode;
+        var deleteKeyCode = WebInspector.KeyboardShortcut.Key.Delete.keyCode;
+        if (keyCode === backspaceKeyCode || keyCode === deleteKeyCode)
+            this._removeSelectedCommaSeparatedKeyword();
+    }
 
     _treeElementSelected(item, selectedByUser)
     {
