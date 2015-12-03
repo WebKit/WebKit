@@ -371,8 +371,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
             lastTime: lastDividerTime,
         };
 
-        if (Object.shallowEqual(dividerData, this._currentDividers))
+        if (Object.shallowEqual(dividerData, this._currentDividers)) {
+            this._updateMarkers(visibleWidth, duration);
+            this._updateSelection(visibleWidth, duration);
             return;
+        }
+
         this._currentDividers = dividerData;
 
         var markerDividers = this._markersElement.querySelectorAll("." + WebInspector.TimelineRuler.DividerElementStyleClassName);

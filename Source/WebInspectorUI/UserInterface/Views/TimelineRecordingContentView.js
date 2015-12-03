@@ -460,18 +460,16 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         if (this._updating)
             return;
 
-        if (!isNaN(this._currentTime)) {
+        if (typeof startTime === "number")
+            this._currentTime = startTime;
+        else if (!isNaN(this._currentTime)) {
             // This happens when you stop and later restart recording.
-            if (typeof startTime === "number")
-                this._currentTime = startTime;
-            else {
-                // COMPATIBILITY (iOS 9): Timeline.recordingStarted events did not include a timestamp.
-                // We likely need to jump into the future to a better current time which we can
-                // ascertained from a new incoming timeline record, so we wait for a Timeline to update.
-                console.assert(!this._waitingToResetCurrentTime);
-                this._waitingToResetCurrentTime = true;
-                this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
-            }
+            // COMPATIBILITY (iOS 9): Timeline.recordingStarted events did not include a timestamp.
+            // We likely need to jump into the future to a better current time which we can
+            // ascertained from a new incoming timeline record, so we wait for a Timeline to update.
+            console.assert(!this._waitingToResetCurrentTime);
+            this._waitingToResetCurrentTime = true;
+            this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
         }
 
         this._updating = true;

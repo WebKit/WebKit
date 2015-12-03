@@ -228,6 +228,18 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._legacyFirstRecordedTimestamp = timestamp;
     }
 
+    initializeTimeBoundsIfNecessary(timestamp)
+    {
+        if (isNaN(this._startTime)) {
+            console.assert(isNaN(this._endTime));
+
+            this._startTime = timestamp;
+            this._endTime = timestamp;
+
+            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
+        }
+    }
+
     // Private
 
     _keyForRecord(record)
