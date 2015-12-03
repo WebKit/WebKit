@@ -33,7 +33,8 @@
     pointer-events: all;
 }
 
-.timeline-ruler.allows-time-range-selection.creating-selection {
+.timeline-ruler.resizing-selection,
+.timeline-ruler.resizing-selection > .selection-drag {
     cursor: col-resize;
 }
 
