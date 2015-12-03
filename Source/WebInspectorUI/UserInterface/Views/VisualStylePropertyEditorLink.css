@@ -71,7 +71,7 @@
 }
 
 .visual-style-property-editor-link.linked > .visual-style-property-editor-link-border {
-    border-top: 1px solid hsl(0, 0, 0);
+    border-top: 1px solid black;
 }
 
 .visual-style-property-editor-link > .visual-style-property-editor-link-border.left {
@@ -106,7 +106,7 @@
 
 .visual-style-property-editor-link > .visual-style-property-editor-link-icon > .unlinked-icon {
     position: relative;
-    background-color: hsl(0, 100%, 100%);
+    background-color: white;
     z-index: 1;
 }
 

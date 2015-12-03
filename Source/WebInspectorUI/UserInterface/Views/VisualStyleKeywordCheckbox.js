@@ -25,22 +25,16 @@
 
 WebInspector.VisualStyleKeywordCheckbox = class VisualStyleKeywordCheckbox extends WebInspector.VisualStylePropertyEditor
 {
-    constructor(propertyNames, text, value, checkboxImage, layoutReversed)
+    constructor(propertyNames, text, value, layoutReversed)
     {
         super(propertyNames, text, null, null, "keyword-checkbox", layoutReversed);
-
-        this._value = value || null;
 
         this._checkboxElement = document.createElement("input");
         this._checkboxElement.type = "checkbox";
         this._checkboxElement.addEventListener("change", this._valueDidChange.bind(this));
         this.contentElement.appendChild(this._checkboxElement);
 
-        if (checkboxImage) {
-            wrappedSVGDocument(checkboxImage, null, value, function(wrapper) {
-                this.contentElement.appendChild(wrapper);
-            }.bind(this));
-        }
+        this._value = value.toLowerCase().replace(/\s/g, "-") || null;
     }
 
     // Public
