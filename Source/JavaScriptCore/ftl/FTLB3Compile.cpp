@@ -77,6 +77,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
         dataLog("    ", *registerOffsets, "\n");
     }
     state.graph.m_codeBlock->setCalleeSaveRegisters(WTF::move(registerOffsets));
+    ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
+    state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);
 
     CCallHelpers jit(&vm, codeBlock);
     B3::generate(*state.proc, jit);
@@ -90,6 +92,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     state.generatedFunction = bitwise_cast<GeneratedFunction>(
         state.finalizer->b3CodeLinkBuffer->entrypoint().executableAddress());
+    state.jitCode->initializeB3Byproducts(state.proc->releaseByproducts());
 }
 
 } } // namespace JSC::FTL

@@ -32,6 +32,8 @@
 
 namespace JSC { namespace FTL {
 
+using namespace B3;
+
 JITCode::JITCode()
     : JSC::JITCode(FTLJIT)
 {
@@ -59,6 +61,11 @@ JITCode::~JITCode()
 void JITCode::initializeB3Code(CodeRef b3Code)
 {
     m_b3Code = b3Code;
+}
+
+void JITCode::initializeB3Byproducts(std::unique_ptr<OpaqueByproducts> byproducts)
+{
+    m_b3Byproducts = WTF::move(byproducts);
 }
 #else // FTL_USES_B3
 void JITCode::initializeExitThunks(CodeRef exitThunks)
@@ -155,17 +162,21 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
     common.validateReferences(trackedReferences);
     
     for (OSRExit& exit : osrExit)
-        exit.m_descriptor.validateReferences(trackedReferences);
+        exit.m_descriptor->validateReferences(trackedReferences);
 }
 
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
 {
+#if FTL_USES_B3
+    UNUSED_PARAM(callSiteIndex);
+#else // FTL_USES_B3
     for (OSRExit& exit : osrExit) {
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
             RELEASE_ASSERT(exit.m_isExceptionHandler);
             return stackmaps.records[exit.m_stackmapRecordIndex].usedRegisterSet();
         }
     }
+#endif // FTL_USES_B3
     return RegisterSet();
 }
 

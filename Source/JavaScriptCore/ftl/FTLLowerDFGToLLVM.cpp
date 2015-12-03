@@ -5374,14 +5374,12 @@ private:
         DFG_ASSERT(m_graph, m_node, m_origin.exitOK);
         
 
-        appendOSRExitDescriptor(UncountableInvalidation, ExceptionType::None, noValue(), nullptr, m_origin);
-        
-        OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
+        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(UncountableInvalidation, ExceptionType::None, noValue(), nullptr, m_origin);
         
         StackmapArgumentList arguments = buildExitArguments(exitDescriptor, FormattedValue());
         callStackmap(exitDescriptor, arguments);
         
-        exitDescriptor.m_isInvalidationPoint = true;
+        exitDescriptor->m_isInvalidationPoint = true;
 #endif // FTL_USES_B3
     }
     
@@ -9267,11 +9265,10 @@ private:
         if (!willCatchException)
             return;
 
-        appendOSRExitDescriptor(Uncountable, exceptionType, noValue(), nullptr, m_origin.withForExitAndExitOK(opCatchOrigin, true));
-        OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
-        exitDescriptor.m_semanticCodeOriginForCallFrameHeader = codeOriginDescriptionOfCallSite();
-        exitDescriptor.m_baselineExceptionHandler = *exceptionHandler;
-        exitDescriptor.m_stackmapID = m_stackmapIDs - 1;
+        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(Uncountable, exceptionType, noValue(), nullptr, m_origin.withForExitAndExitOK(opCatchOrigin, true));
+        exitDescriptor->m_semanticCodeOriginForCallFrameHeader = codeOriginDescriptionOfCallSite();
+        exitDescriptor->m_baselineExceptionHandler = *exceptionHandler;
+        exitDescriptor->m_stackmapID = m_stackmapIDs - 1;
 
         StackmapArgumentList freshList =
             buildExitArguments(exitDescriptor, noValue(), offsetOfExitArguments);
@@ -9295,9 +9292,9 @@ private:
         return m_blocks.get(block);
     }
 
-    OSRExitDescriptor& appendOSRExitDescriptor(ExitKind kind, ExceptionType exceptionType, FormattedValue lowValue, Node* highValue, NodeOrigin origin)
+    OSRExitDescriptor* appendOSRExitDescriptor(ExitKind kind, ExceptionType exceptionType, FormattedValue lowValue, Node* highValue, NodeOrigin origin)
     {
-        return m_ftlState.jitCode->osrExitDescriptors.alloc(
+        return &m_ftlState.jitCode->osrExitDescriptors.alloc(
             kind, exceptionType, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
             origin.forExit, origin.semantic,
             availabilityMap().m_locals.numberOfArguments(),
@@ -9342,7 +9339,7 @@ private:
         blessSpeculation(
             m_out.speculate(failCondition), kind, lowValue, highValue, origin, isExceptionHandler);
 #else // FTL_USES_B3
-        OSRExitDescriptor& exitDescriptor = appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
+        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
 
         if (failCondition == m_out.booleanTrue) {
             emitOSRExitCall(exitDescriptor, lowValue);
@@ -9368,26 +9365,32 @@ private:
     }
 
 #if FTL_USES_B3
-    void blessSpeculation(B3::StackmapValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin, bool isExceptionHandler = false)
+    void blessSpeculation(B3::CheckValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin, bool isExceptionHandler = false)
     {
-        OSRExitDescriptor& exitDescriptor = appendOSRExitDescriptor(kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue, highValue, origin);
+        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(
+            kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue,
+            highValue, origin);
+        
+        unsigned offset = value->numChildren();
         value->appendAnys(buildExitArguments(exitDescriptor, lowValue));
+
+        State* state = &m_ftlState;
         value->setGenerator(
-            [&] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-                jit.oops();
+            [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                exitDescriptor->emitOSRExit(*state, jit, params, offset);
             });
     }
 #endif
 
 #if !FTL_USES_B3
-    void emitOSRExitCall(OSRExitDescriptor& exitDescriptor, FormattedValue lowValue)
+    void emitOSRExitCall(OSRExitDescriptor* exitDescriptor, FormattedValue lowValue)
     {
         callStackmap(exitDescriptor, buildExitArguments(exitDescriptor, lowValue));
     }
 #endif
 
     StackmapArgumentList buildExitArguments(
-        OSRExitDescriptor& exitDescriptor, FormattedValue lowValue,
+        OSRExitDescriptor* exitDescriptor, FormattedValue lowValue,
         unsigned offsetOfExitArgumentsInStackmapLocations = 0)
     {
         StackmapArgumentList result;
@@ -9397,14 +9400,14 @@ private:
     }
     
     void buildExitArguments(
-        OSRExitDescriptor& exitDescriptor, StackmapArgumentList& arguments, FormattedValue lowValue,
+        OSRExitDescriptor* exitDescriptor, StackmapArgumentList& arguments, FormattedValue lowValue,
         unsigned offsetOfExitArgumentsInStackmapLocations = 0)
     {
         if (!!lowValue)
             arguments.append(lowValue.value());
         
         AvailabilityMap availabilityMap = this->availabilityMap();
-        availabilityMap.pruneByLiveness(m_graph, exitDescriptor.m_codeOrigin);
+        availabilityMap.pruneByLiveness(m_graph, exitDescriptor->m_codeOrigin);
         
         HashMap<Node*, ExitTimeObjectMaterialization*> map;
         availabilityMap.forEachAvailability(
@@ -9419,24 +9422,24 @@ private:
                 auto result = map.add(node, nullptr);
                 if (result.isNewEntry) {
                     result.iterator->value =
-                        exitDescriptor.m_materializations.add(node->op(), node->origin.semantic);
+                        exitDescriptor->m_materializations.add(node->op(), node->origin.semantic);
                 }
             });
         
-        for (unsigned i = 0; i < exitDescriptor.m_values.size(); ++i) {
-            int operand = exitDescriptor.m_values.operandForIndex(i);
+        for (unsigned i = 0; i < exitDescriptor->m_values.size(); ++i) {
+            int operand = exitDescriptor->m_values.operandForIndex(i);
             
             Availability availability = availabilityMap.m_locals[i];
             
             if (Options::validateFTLOSRExitLiveness()) {
                 DFG_ASSERT(
                     m_graph, m_node,
-                    (!(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitDescriptor.m_codeOrigin))) || m_graph.m_plan.mode == FTLForOSREntryMode);
+                    (!(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitDescriptor->m_codeOrigin))) || m_graph.m_plan.mode == FTLForOSREntryMode);
             }
             ExitValue exitValue = exitValueForAvailability(arguments, map, availability);
             if (exitValue.hasIndexInStackmapLocations())
                 exitValue.adjustStackmapLocationsIndexByOffset(offsetOfExitArgumentsInStackmapLocations);
-            exitDescriptor.m_values[i] = exitValue;
+            exitDescriptor->m_values[i] = exitValue;
         }
         
         for (auto heapPair : availabilityMap.m_heap) {
@@ -9451,21 +9454,21 @@ private:
         }
         
         if (verboseCompilationEnabled()) {
-            dataLog("        Exit values: ", exitDescriptor.m_values, "\n");
-            if (!exitDescriptor.m_materializations.isEmpty()) {
+            dataLog("        Exit values: ", exitDescriptor->m_values, "\n");
+            if (!exitDescriptor->m_materializations.isEmpty()) {
                 dataLog("        Materializations: \n");
-                for (ExitTimeObjectMaterialization* materialization : exitDescriptor.m_materializations)
+                for (ExitTimeObjectMaterialization* materialization : exitDescriptor->m_materializations)
                     dataLog("            ", pointerDump(materialization), "\n");
             }
         }
     }
 
 #if !FTL_USES_B3
-    void callStackmap(OSRExitDescriptor& exitDescriptor, StackmapArgumentList arguments)
+    void callStackmap(OSRExitDescriptor* exitDescriptor, StackmapArgumentList arguments)
     {
-        exitDescriptor.m_stackmapID = m_stackmapIDs++;
+        exitDescriptor->m_stackmapID = m_stackmapIDs++;
         arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-        arguments.insert(0, m_out.constInt64(exitDescriptor.m_stackmapID));
+        arguments.insert(0, m_out.constInt64(exitDescriptor->m_stackmapID));
         
         m_out.call(m_out.voidType, m_out.stackmapIntrinsic(), arguments);
     }
@@ -9929,10 +9932,6 @@ private:
 
 void lowerDFGToLLVM(State& state)
 {
-#if FTL_USES_B3
-    state.proc = std::make_unique<Procedure>();
-#endif
-
     LowerDFGToLLVM lowering(state);
     lowering.lower();
 }

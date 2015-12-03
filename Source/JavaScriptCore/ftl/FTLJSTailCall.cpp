@@ -38,7 +38,26 @@
 
 namespace JSC { namespace FTL {
 
+using namespace B3;
 using namespace DFG;
+
+#if FTL_USES_B3
+
+JSTailCall::JSTailCall(PatchpointValue* patchpoint, Node* node, const Vector<ExitValue>& arguments)
+    : JSCallBase(CallLinkInfo::TailCall, node->origin.semantic, node->origin.semantic)
+    , m_patchpoint(patchpoint)
+    , m_arguments(arguments)
+    , m_instructionOffset(0)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+void JSTailCall::emit(JITCode&, CCallHelpers&)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+#else // FTL_USES_B3
 
 namespace {
 
@@ -180,10 +199,10 @@ uint32_t sizeFor(DataFormat format)
 
 } // anonymous namespace
 
-JSTailCall::JSTailCall(unsigned stackmapID, Node* node, Vector<ExitValue> arguments)
+JSTailCall::JSTailCall(unsigned stackmapID, Node* node, const Vector<ExitValue>& arguments)
     : JSCallBase(CallLinkInfo::TailCall, node->origin.semantic, node->origin.semantic)
     , m_stackmapID(stackmapID)
-    , m_arguments { WTF::move(arguments) }
+    , m_arguments(arguments)
     , m_instructionOffset(0)
 {
     ASSERT(node->op() == TailCall);
@@ -322,6 +341,8 @@ void JSTailCall::emit(JITCode& jitCode, CCallHelpers& jit)
 
     m_callLinkInfo->setUpCall(m_type, m_semanticeOrigin, calleeGPR);
 }
+
+#endif // FTL_USES_B3
 
 } } // namespace JSC::FTL
 

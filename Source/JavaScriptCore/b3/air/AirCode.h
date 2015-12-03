@@ -103,6 +103,7 @@ public:
         m_frameSize = frameSize;
     }
 
+    const RegisterAtOffsetList& calleeSaveRegisters() const { return m_calleeSaveRegisters; }
     RegisterAtOffsetList& calleeSaveRegisters() { return m_calleeSaveRegisters; }
 
     // Recomputes predecessors and deletes unreachable blocks.

@@ -148,7 +148,12 @@ void* Procedure::addDataSection(size_t size)
     return result;
 }
 
-const RegisterAtOffsetList& Procedure::calleeSaveRegisters()
+unsigned Procedure::frameSize() const
+{
+    return code().frameSize();
+}
+
+const RegisterAtOffsetList& Procedure::calleeSaveRegisters() const
 {
     return code().calleeSaveRegisters();
 }

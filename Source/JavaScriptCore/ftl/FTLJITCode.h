@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3OpaqueByproducts.h"
 #include "DFGCommonData.h"
 #include "FTLDataSection.h"
 #include "FTLLazySlowPath.h"
@@ -68,6 +69,7 @@ public:
 
 #if FTL_USES_B3
     void initializeB3Code(CodeRef);
+    void initializeB3Byproducts(std::unique_ptr<B3::OpaqueByproducts>);
 #else
     void initializeExitThunks(CodeRef);
     void addHandle(PassRefPtr<ExecutableMemoryHandle>);
@@ -95,13 +97,16 @@ public:
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
+#if !FTL_USES_B3
     StackMaps stackmaps;
+#endif // !FTL_USES_B3
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:
     CodePtr m_addressForCall;
 #if FTL_USES_B3
     CodeRef m_b3Code;
+    std::unique_ptr<B3::OpaqueByproducts> m_b3Byproducts;
 #else
     Vector<RefPtr<DataSection>> m_dataSections;
     Vector<RefPtr<ExecutableMemoryHandle>> m_handles;

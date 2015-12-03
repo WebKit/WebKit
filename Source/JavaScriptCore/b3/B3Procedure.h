@@ -219,11 +219,13 @@ public:
     // just keeps alive things like the double constant pool and switch lookup tables. If this sounds
     // confusing, you should probably be using the B3::Compilation API to compile code. If you use
     // that API, then you don't have to worry about this.
-    std::unique_ptr<OpaqueByproducts> takeByproducts() { return WTF::move(m_byproducts); }
+    std::unique_ptr<OpaqueByproducts> releaseByproducts() { return WTF::move(m_byproducts); }
 
+    const Air::Code& code() const { return *m_code; }
     Air::Code& code() { return *m_code; }
 
-    const RegisterAtOffsetList& calleeSaveRegisters();
+    unsigned frameSize() const;
+    const RegisterAtOffsetList& calleeSaveRegisters() const;
 
 private:
     friend class BlockInsertionSet;

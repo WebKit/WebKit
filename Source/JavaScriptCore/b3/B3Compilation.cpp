@@ -42,13 +42,14 @@ Compilation::Compilation(VM& vm, Procedure& proc, unsigned optLevel)
 {
     TimingScope timingScope("Compilation");
     
-    CCallHelpers jit(&vm);
     prepareForGeneration(proc, optLevel);
+    
+    CCallHelpers jit(&vm);
     generate(proc, jit);
     LinkBuffer linkBuffer(vm, jit, nullptr);
 
     m_codeRef = FINALIZE_CODE(linkBuffer, ("B3::Compilation"));
-    m_byproducts = proc.takeByproducts();
+    m_byproducts = proc.releaseByproducts();
 }
 
 Compilation::~Compilation()

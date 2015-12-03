@@ -141,9 +141,9 @@ namespace WTF {
         }
 
         template<typename... Args>
-        T& alloc(Args... args)
+        T& alloc(Args&&... args)
         {
-            append<T>(T(args...));
+            append<T>(T(std::forward<Args>(args)...));
             return last();
         }
 

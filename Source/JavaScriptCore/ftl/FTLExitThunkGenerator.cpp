@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLExitThunkGenerator.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "FTLOSRExitCompilationInfo.h"
 #include "FTLState.h"
@@ -79,5 +79,5 @@ void ExitThunkGenerator::emitThunks(int32_t osrExitFromGenericUnwindStackSpillSl
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3
 

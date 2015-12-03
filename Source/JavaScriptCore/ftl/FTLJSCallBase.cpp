@@ -54,9 +54,13 @@ JSCallBase::JSCallBase(CallLinkInfo::CallType type, CodeOrigin semantic, CodeOri
 void JSCallBase::emit(CCallHelpers& jit, State& /*state*/, int32_t osrExitFromGenericUnwindStackSpillSlot)
 {
     RELEASE_ASSERT(!!m_callSiteIndex);
-    
+
+#if FTL_USES_B3
+    UNUSED_PARAM(osrExitFromGenericUnwindStackSpillSlot);
+#else // FTL_USES_B3
     if (m_correspondingGenericUnwindOSRExit)
         m_correspondingGenericUnwindOSRExit->spillRegistersToSpillSlot(jit, osrExitFromGenericUnwindStackSpillSlot);
+#endif // FTL_USES_B3
 
     jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex.bits()), CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
 

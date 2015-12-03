@@ -82,13 +82,6 @@ bool JITFinalizer::finalizeFunction()
     bool dumpDisassembly = shouldDumpDisassembly() || Options::asyncDisassembly();
     
 #if FTL_USES_B3
-    for (OSRExitCompilationInfo& info : osrExit) {
-        b3CodeLinkBuffer->link(
-            info.m_thunkJump,
-            CodeLocationLabel(
-                m_plan.vm.getCTIStub(osrExitGenerationThunkGenerator).code()));
-    }
-    
     jitCode->initializeB3Code(
         FINALIZE_CODE_IF(
             dumpDisassembly, *b3CodeLinkBuffer,

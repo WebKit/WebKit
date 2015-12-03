@@ -498,7 +498,7 @@ static void fixFunctionBasedOnStackMaps(
         for (unsigned j = 0; j < iter->value.size(); j++) {
             {
                 uint32_t stackmapRecordIndex = iter->value[j].index;
-                OSRExit exit(exitDescriptor, stackmapRecordIndex);
+                OSRExit exit(&exitDescriptor, stackmapRecordIndex);
                 state.jitCode->osrExit.append(exit);
                 state.finalizer->osrExit.append(OSRExitCompilationInfo());
             }
@@ -506,8 +506,8 @@ static void fixFunctionBasedOnStackMaps(
             OSRExit& exit = state.jitCode->osrExit.last();
             if (exit.willArriveAtExitFromIndirectExceptionCheck()) {
                 StackMaps::Record& record = iter->value[j].record;
-                RELEASE_ASSERT(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader.isSet());
-                CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader);
+                RELEASE_ASSERT(exit.m_descriptor->m_semanticCodeOriginForCallFrameHeader.isSet());
+                CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor->m_semanticCodeOriginForCallFrameHeader);
                 exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
 
                 OSRExit* callOperationExit = nullptr;
@@ -523,12 +523,12 @@ static void fixFunctionBasedOnStackMaps(
                     // and the other that will be arrived at from the callOperation exception handler path.
                     // This code here generates the second callOperation variant.
                     uint32_t stackmapRecordIndex = iter->value[j].index;
-                    OSRExit exit(exitDescriptor, stackmapRecordIndex);
+                    OSRExit exit(&exitDescriptor, stackmapRecordIndex);
                     if (exitDescriptor.m_exceptionType == ExceptionType::GetById)
                         exit.m_exceptionType = ExceptionType::GetByIdCallOperation;
                     else
                         exit.m_exceptionType = ExceptionType::PutByIdCallOperation;
-                    CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor.m_semanticCodeOriginForCallFrameHeader);
+                    CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor->m_semanticCodeOriginForCallFrameHeader);
                     exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
 
                     state.jitCode->osrExit.append(exit);
@@ -586,13 +586,13 @@ static void fixFunctionBasedOnStackMaps(
             OSRExit& exit = state.jitCode->osrExit[i];
             
             if (verboseCompilationEnabled())
-                dataLog("Handling OSR stackmap #", exit.m_descriptor.m_stackmapID, " for ", exit.m_codeOrigin, "\n");
+                dataLog("Handling OSR stackmap #", exit.m_descriptor->m_stackmapID, " for ", exit.m_codeOrigin, "\n");
 
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
 
             if (exit.willArriveAtOSRExitFromGenericUnwind()) {
-                HandlerInfo newHandler = exit.m_descriptor.m_baselineExceptionHandler;
+                HandlerInfo newHandler = exit.m_descriptor->m_baselineExceptionHandler;
                 newHandler.start = exit.m_exceptionHandlerCallSiteIndex.bits();
                 newHandler.end = exit.m_exceptionHandlerCallSiteIndex.bits() + 1;
                 newHandler.nativeCode = info.m_thunkAddress;
@@ -601,10 +601,10 @@ static void fixFunctionBasedOnStackMaps(
 
             if (verboseCompilationEnabled()) {
                 DumpContext context;
-                dataLog("    Exit values: ", inContext(exit.m_descriptor.m_values, &context), "\n");
-                if (!exit.m_descriptor.m_materializations.isEmpty()) {
+                dataLog("    Exit values: ", inContext(exit.m_descriptor->m_values, &context), "\n");
+                if (!exit.m_descriptor->m_materializations.isEmpty()) {
                     dataLog("    Materializations: \n");
-                    for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations)
+                    for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor->m_materializations)
                         dataLog("        Materialize(", pointerDump(materialization), ")\n");
                 }
             }
@@ -997,7 +997,7 @@ static void fixFunctionBasedOnStackMaps(
         
         codeAddresses.append(bitwise_cast<char*>(generatedFunction) + record.instructionOffset + MacroAssembler::maxJumpReplacementSize());
         
-        if (exit.m_descriptor.m_isInvalidationPoint)
+        if (exit.m_descriptor->m_isInvalidationPoint)
             jitCode->common.jumpReplacements.append(JumpReplacement(source, info.m_thunkAddress));
         else
             MacroAssembler::replaceWithJump(source, info.m_thunkAddress);

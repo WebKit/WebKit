@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,44 +24,32 @@
  */
 
 #include "config.h"
-#include "FTLJSCall.h"
+#include "FTLOSRExitHandle.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && FTL_USES_B3
 
-#include "DFGNode.h"
-#include "FTLState.h"
+#include "FTLOSRExit.h"
+#include "FTLThunks.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace FTL {
 
-using namespace DFG;
-
-JSCall::JSCall()
-    : m_stackmapID(UINT_MAX)
-    , m_instructionOffset(UINT_MAX)
+void OSRExitHandle::emitExitThunk(CCallHelpers& jit)
 {
-}
+    label = jit.label();
+    jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(index));
+    CCallHelpers::PatchableJump jump = jit.patchableJump();
+    jit.addLinkTask(
+        [this, jump] (LinkBuffer& linkBuffer) {
+            exit.m_patchableJump = CodeLocationJump(linkBuffer.locationOf(jump));
 
-JSCall::JSCall(unsigned stackmapID, Node* node, CodeOrigin callSiteDescriptionOrigin)
-    : JSCallBase(node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, node->origin.semantic, callSiteDescriptionOrigin)
-    , m_stackmapID(stackmapID)
-    , m_instructionOffset(0)
-{
-    ASSERT(node->op() == Call || node->op() == Construct || node->op() == TailCallInlinedCaller);
-}
-
-void JSCall::emit(CCallHelpers& jit, State& state, int32_t osrExitFromGenericUnwindSpillSlots)
-{
-    JSCallBase::emit(jit, state, osrExitFromGenericUnwindSpillSlots);
-
-#if FTL_USES_B3
-    jit.addPtr(CCallHelpers::TrustedImm32(- static_cast<int64_t>(state.jitCode->common.frameRegisterCount * sizeof(EncodedJSValue))), CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
-#else // FTL_USES_B3
-    jit.addPtr(CCallHelpers::TrustedImm32(- static_cast<int64_t>(state.jitCode->stackmaps.stackSizeForLocals())), CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
-#endif // FTL_USES_B3
+            linkBuffer.link(
+                jump.m_jump,
+                CodeLocationLabel(linkBuffer.vm().getCTIStub(osrExitGenerationThunkGenerator).code()));
+        });
 }
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && FTL_USES_B3
 

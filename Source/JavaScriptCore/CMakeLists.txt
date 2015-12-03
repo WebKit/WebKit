@@ -1031,6 +1031,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLOSREntry.cpp
         ftl/FTLOSRExit.cpp
         ftl/FTLOSRExitCompiler.cpp
+        ftl/FTLOSRExitHandle.cpp
         ftl/FTLOperations.cpp
         ftl/FTLOutput.cpp
         ftl/FTLRecoveryOpcode.cpp

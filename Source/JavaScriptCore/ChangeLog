@@ -1,3 +1,125 @@
+2015-12-02  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should support OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=151710
+
+        Reviewed by Saam Barati.
+
+        This adds OSR exit support using the same style that I established with lazy slow paths. All of
+        the work is driven by FTL::LowerDFGToLLVM, and from there any work that needs to be deferred
+        until after B3 finishes is attached to the stackmap generator. In order to make it easy to port
+        all of the different forms of OSR exit - invalidation points, exceptions, etc. - the logic for
+        registering an OSR exit is abstracted behind OSRExitDescriptor and OSRExitHandle.
+
+        An issue that I encountered repeatedly in this patch is OSRExitDescriptor being passed as a
+        reference (&) rather than pointer (*). The new code uses a lot of lambdas that run after the
+        current frame pops, so the capture list cannot be [&]. I believe that always listing all of the
+        captured variables is not scalable considering how sophisticated our use of lambdas is. So, it
+        makes sense to use [=]. But anytime we captured a variable whose type was OSRExitDescriptor&, it
+        would be captured by value, because that's how references work. One has to be mindful of these
+        things whenever using [=]. Note that it's not enough to say that we should have listed the
+        captured variables explicitly - in that case, we still could have made the mistake by forgetting
+        to put & in front of the variant. The pattern that worked for me to reason about whether I'm
+        capturing an object or a pointer to an object is to always use pointer types for pointers: either
+        RefPtr<> when we also want the lambda to prolong the object's life, or * if we are confident that
+        the object will stay alive. For this reason, this patch changes all code that references
+        OSRExitDescriptor to use * instead of &. Consistency makes the code easier to grok, and it made
+        it easier to introduce the required uses of * in places where there were lambdas.
+
+        I tested this by running imaging-gaussian-blur, and running some tests that reqiure OSR exit. I'm
+        not promising that all kinds of exits work, but we have to begin somewhere.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Compilation.cpp:
+        (JSC::B3::Compilation::Compilation):
+        (JSC::B3::Compilation::~Compilation):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addDataSection):
+        (JSC::B3::Procedure::frameSize):
+        (JSC::B3::Procedure::calleeSaveRegisters):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::releaseByproducts):
+        (JSC::B3::Procedure::code):
+        (JSC::B3::Procedure::takeByproducts): Deleted.
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::setFrameSize):
+        (JSC::B3::Air::Code::calleeSaveRegisters):
+        * b3/air/AirGenerationContext.h:
+        * ftl/FTLB3Compile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExceptionHandlerManager.cpp:
+        (JSC::FTL::ExceptionHandlerManager::lazySlowPathExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::getCallOSRExitCommon):
+        * ftl/FTLExitThunkGenerator.cpp:
+        * ftl/FTLExitThunkGenerator.h:
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::JITCode):
+        (JSC::FTL::JITCode::initializeB3Code):
+        (JSC::FTL::JITCode::initializeB3Byproducts):
+        (JSC::FTL::JITCode::initializeExitThunks):
+        (JSC::FTL::JITCode::validateReferences):
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::emit):
+        * ftl/FTLJSCallBase.cpp:
+        (JSC::FTL::JSCallBase::emit):
+        * ftl/FTLJSTailCall.cpp:
+        (JSC::FTL::JSTailCall::JSTailCall):
+        (JSC::FTL::JSTailCall::emit):
+        (JSC::FTL::DFG::getRegisterWithAddend): Deleted.
+        (JSC::FTL::m_instructionOffset): Deleted.
+        * ftl/FTLJSTailCall.h:
+        (JSC::FTL::JSTailCall::patchpoint):
+        (JSC::FTL::JSTailCall::stackmapID):
+        (JSC::FTL::JSTailCall::estimatedSize):
+        (JSC::FTL::JSTailCall::operator<):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callStackmap):
+        (JSC::FTL::lowerDFGToLLVM):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExitDescriptor::validateReferences):
+        (JSC::FTL::OSRExitDescriptor::appendOSRExit):
+        (JSC::FTL::OSRExitDescriptor::appendOSRExitLater):
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::gatherRegistersToSpillForCallIfException):
+        (JSC::FTL::OSRExit::spillRegistersToSpillSlot):
+        (JSC::FTL::OSRExit::recoverRegistersFromSpillSlot):
+        (JSC::FTL::OSRExit::willArriveAtExitFromIndirectExceptionCheck):
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExit::considerAddingAsFrequentExitSite):
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+        (JSC::FTL::compileRecovery):
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLOSRExitHandle.cpp: Added.
+        (JSC::FTL::OSRExitHandle::emitExitThunk):
+        * ftl/FTLOSRExitHandle.h: Added.
+        (JSC::FTL::OSRExitHandle::OSRExitHandle):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        (JSC::FTL::State::~State):
+
 2015-12-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION:(r192753): Remote Web Inspector: RemoteInspector::sendMessageToRemote with null connection

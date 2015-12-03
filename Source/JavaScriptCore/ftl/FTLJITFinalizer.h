@@ -73,9 +73,9 @@ public:
     std::unique_ptr<LinkBuffer> sideCodeLinkBuffer;
     std::unique_ptr<LinkBuffer> handleExceptionsLinkBuffer;
     Vector<OutOfLineCodeInfo> outOfLineCodeInfos;
-#endif
-    
     Vector<OSRExitCompilationInfo> osrExit;
+#endif
+
     Vector<CCallHelpers::Jump> lazySlowPathGeneratorJumps;
     GeneratedFunction function;
     RefPtr<JITCode> jitCode;

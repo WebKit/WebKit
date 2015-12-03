@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3ValueRep.h"
 #include "CodeOrigin.h"
 #include "DFGExitProfile.h"
 #include "DFGOSRExitBase.h"
@@ -35,6 +36,7 @@
 #include "FTLExitTimeObjectMaterialization.h"
 #include "FTLExitValue.h"
 #include "FTLFormattedValue.h"
+#include "FTLOSRExitHandle.h"
 #include "FTLStackMaps.h"
 #include "FTLStackmapArgumentList.h"
 #include "HandlerInfo.h"
@@ -48,93 +50,16 @@ namespace JSC {
 
 class TrackedReferences;
 
+namespace B3 {
+struct StackmapGenerationParams;
+namespace Air {
+struct GenerationContext;
+} // namespace Air
+} // namespace B3
+
 namespace FTL {
 
-// Tracks one OSR exit site within the FTL JIT. OSR exit in FTL works by deconstructing
-// the crazy that is OSR down to simple SSA CFG primitives that any compiler backend
-// (including of course LLVM) can grok and do meaningful things to. An exit is just a
-// conditional branch in the emitted code where one destination is the continuation and
-// the other is a basic block that performs a no-return tail-call to an  exit thunk.
-// This thunk takes as its arguments the live non-constant not-already-accounted-for
-// bytecode state. To appreciate how this works consider the following JavaScript
-// program, and its lowering down to LLVM IR including the relevant exits:
-//
-// function foo(o) {
-//     var a = o.a; // predicted int
-//     var b = o.b;
-//     var c = o.c; // NB this is dead
-//     a = a | 5; // our example OSR exit: need to check if a is an int
-//     return a + b;
-// }
-//
-// Just consider the "a | 5". In the DFG IR, this looks like:
-//
-// BitOr(Check:Int32:@a, Int32:5)
-//
-// Where @a is the node for the value of the 'a' variable. Conceptually, this node can
-// be further broken down to the following (note that this particular lowering never
-// actually happens - we skip this step and go straight to LLVM IR - but it's still
-// useful to see this):
-//
-// exitIf(@a is not int32);
-// continuation;
-//
-// Where 'exitIf()' is a function that will exit if the argument is true, and
-// 'continuation' is the stuff that we will do after the exitIf() check. (Note that
-// FTL refers to 'exitIf()' as 'speculate()', which is in line with DFG terminology.)
-// This then gets broken down to the following LLVM IR, assuming that %0 is the LLVM
-// value corresponding to variable 'a', and %1 is the LLVM value for variable 'b':
-//
-//   %2 = ... // the predictate corresponding to '@a is not int32'
-//   br i1 %2, label %3, label %4
-// ; <label>:3
-//   call void exitThunk1(%0, %1) // pass 'a' and 'b', since they're both live-in-bytecode
-//   unreachable
-// ; <label>:4
-//   ... // code for the continuation
-//
-// Where 'exitThunk1' is the IR to get the exit thunk for *this* OSR exit. Each OSR
-// exit will appear to LLVM to have a distinct exit thunk.
-//
-// Note that this didn't have to pass '5', 'o', or 'c' to the exit thunk. 5 is a
-// constant and the DFG already knows that, and can already tell the OSR exit machinery
-// what that contant is and which bytecode variables (if any) it needs to be dropped
-// into. This is conveyed to the exit statically, via the OSRExit data structure below.
-// See the code for ExitValue for details. 'o' is an argument, and arguments are always
-// "flushed" - if you never assign them then their values are still in the argument
-// stack slots, and if you do assign them then we eagerly store them into those slots.
-// 'c' is dead in bytecode, and the DFG knows this; we statically tell the exit thunk
-// that it's dead and don't have to pass anything. The exit thunk will "initialize" its
-// value to Undefined.
-//
-// This approach to OSR exit has a number of virtues:
-//
-// - It is an entirely unsurprising representation for a compiler that already groks
-//   CFG-like IRs for C-like languages. All existing analyses and transformations just
-//   work.
-//
-// - It lends itself naturally to modern approaches to code motion. For example, you
-//   could sink operations from above the exit to below it, if you just duplicate the
-//   operation into the OSR exit block. This is both legal and desirable. It works
-//   because the backend sees the OSR exit block as being no different than any other,
-//   and LLVM already supports sinking if it sees that a value is only partially used.
-//   Hence there exists a value that dominates the exit but is only used by the exit
-//   thunk and not by the continuation, sinking ought to kick in for that value.
-//   Hoisting operations from below it to above it is also possible, for similar
-//   reasons.
-//
-// - The no-return tail-call to the OSR exit thunk can be subjected to specialized
-//   code-size reduction optimizations, though this is optional. For example, instead
-//   of actually emitting a call along with all that goes with it (like placing the
-//   arguments into argument position), the backend could choose to simply inform us
-//   where it had placed the arguments and expect the callee (i.e. the exit thunk) to
-//   figure it out from there. It could also tell us what we need to do to pop stack,
-//   although again, it doesn't have to; it could just emit that code normally. We do
-//   all of these things through the patchpoint/stackmap LLVM intrinsics.
-//
-// - It could be extended to allow the backend to do its own exit hoisting, by using
-//   intrinsics (or meta-data, or something) to inform the backend that it's safe to
-//   make the predicate passed to 'exitIf()' more truthy.
+class State;
 
 enum class ExceptionType : uint8_t {
     None,
@@ -175,20 +100,59 @@ struct OSRExitDescriptor {
     
     uint32_t m_stackmapID;
     HandlerInfo m_baselineExceptionHandler;
-    bool m_isInvalidationPoint : 1;
+    bool m_isInvalidationPoint;
     
     void validateReferences(const TrackedReferences&);
+
+#if FTL_USES_B3
+    // Call this once we have a place to emit the OSR exit jump and we have data about how the state
+    // should be recovered. This effectively emits code that does the exit, though the code is really a
+    // patchable jump and we emit the real code lazily. The description of how to emit the real code is
+    // up to the OSRExit object, which this creates. Note that it's OK to drop the OSRExitHandle object
+    // on the ground. It contains information that is mostly not useful if you use this API, since after
+    // this call, the OSRExit is simply ready to go.
+    RefPtr<OSRExitHandle> emitOSRExit(
+        State&, CCallHelpers&, const B3::StackmapGenerationParams&, unsigned offset);
+
+    // In some cases you want an OSRExit to come into existence, but you don't want to emit it right now.
+    // This will emit the OSR exit in a late path. You can't be sure exactly when that will happen, but
+    // you know that it will be done by the time late path emission is done. So, a linker task will
+    // surely happen after that. You can use the OSRExitHandle to retrieve the exit's label.
+    //
+    // This API is meant to be used for things like exception handling, where some patchpoint wants to
+    // have a place to jump to for OSR exit. It doesn't care where that OSR exit is emitted so long as it
+    // eventually gets access to its label.
+    RefPtr<OSRExitHandle> emitOSRExitLater(
+        State&, const B3::StackmapGenerationParams&, unsigned offset);
+
+    // This is the low-level interface. It will create a handle representing the desire to emit code for
+    // an OSR exit. You can call OSRExitHandle::emitExitThunk() once you have a place to emit it. Note
+    // that the above two APIs are written in terms of this and OSRExitHandle::emitExitThunk().
+    RefPtr<OSRExitHandle> prepareOSRExitHandle(
+        State&, const B3::StackmapGenerationParams&, unsigned offset);
+#endif // FTL_USES_B3
 };
 
 struct OSRExit : public DFG::OSRExitBase {
-    OSRExit(OSRExitDescriptor&, uint32_t stackmapRecordIndex);
+    OSRExit(
+        OSRExitDescriptor*
+#if !FTL_USES_B3
+        , uint32_t stackmapRecordIndex
+#endif // !FTL_USES_B3
+        );
 
-    OSRExitDescriptor& m_descriptor;
+    OSRExitDescriptor* m_descriptor;
     MacroAssemblerCodeRef m_code;
+#if FTL_USES_B3
+    // This tells us where to place a jump.
+    CodeLocationJump m_patchableJump;
+    Vector<B3::ValueRep> m_valueReps;
+#else // FTL_USES_B3
     // Offset within the exit stubs of the stub for this exit.
     unsigned m_patchableCodeOffset;
     // Offset within Stackmap::records
     uint32_t m_stackmapRecordIndex;
+#endif // FTL_USES_B3
     ExceptionType m_exceptionType;
 
     RegisterSet registersToPreserveForCallThatMightThrow;
@@ -199,9 +163,11 @@ struct OSRExit : public DFG::OSRExitBase {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
     }
 
+#if !FTL_USES_B3
     void gatherRegistersToSpillForCallIfException(StackMaps&, StackMaps::Record&);
     void spillRegistersToSpillSlot(CCallHelpers&, int32_t stackSpillSlot);
     void recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot);
+#endif // !FTL_USES_B3
 
     bool willArriveAtOSRExitFromGenericUnwind() const;
     bool willArriveAtExitFromIndirectExceptionCheck() const;
