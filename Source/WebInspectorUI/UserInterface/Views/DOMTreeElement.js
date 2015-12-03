@@ -668,6 +668,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         contextMenu.appendItem(WebInspector.UIString("Copy as HTML"), this._copyHTML.bind(this));
         if (this.editable)
             contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
+
+        var node = this.representedObject;
+        if (node.nodeType() === Node.ELEMENT_NODE)
+            contextMenu.appendItem(WebInspector.UIString("Scroll Into View"), this._scrollIntoView.bind(this));
     }
 
     _startEditing()
@@ -1354,6 +1358,26 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
 
         this.representedObject.removeNode(removeNodeCallback);
+    }
+
+    _scrollIntoView()
+    {
+        function resolvedNode(object)
+        {
+            if (!object)
+                return;
+
+            function scrollIntoView()
+            {
+                this.scrollIntoViewIfNeeded(true);
+            }
+
+            object.callFunction(scrollIntoView, undefined, false, function() {});
+            object.release();
+        }
+
+        var node = this.representedObject;
+        WebInspector.RemoteObject.resolveNode(node, "", resolvedNode);
     }
 
     _editAsHTML()
