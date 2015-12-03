@@ -1115,9 +1115,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             var baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
             attrValueElement = attrSpanElement.createChild("span", "html-attribute-value");
 
+            // Leading whitespace.
             var groups = value.split(/\s*,\s*/);
             for (var i = 0; i < groups.length; ++i) {
-                var string = groups[i];
+                var string = groups[i].trim();
                 var spaceIndex = string.search(/\s/);
 
                 if (spaceIndex === -1) {
