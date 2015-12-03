@@ -262,9 +262,26 @@ WebInspector.startEditing = function(element, config)
             selection.addRange(wordRange);
             document.execCommand("insertText", false, wordPrefix + replacement + wordSuffix);
 
+            var container = range.commonAncestorContainer;
+            var startOffset = range.startOffset;
+            // This check is for the situation when the cursor is in the space between the
+            // opening quote of the attribute and the first character. In that spot, the
+            // commonAncestorContainer is actually the entire attribute node since `="` is
+            // added as a simple text node. Since the opening quote is immediately before
+            // the attribute, the node for that attribute must be the next sibling and the
+            // text of the attribute's value must be the first child of that sibling.
+            if (container.parentNode.classList.contains("editing")) {
+                container = container.nextSibling.firstChild;
+                startOffset = 0;
+            }
+            startOffset += wordPrefix.length;
+
+            if (!container)
+                return;
+
             var replacementSelectionRange = document.createRange();
-            replacementSelectionRange.setStart(wordRange.commonAncestorContainer, wordRange.startOffset + wordPrefix.length);
-            replacementSelectionRange.setEnd(wordRange.commonAncestorContainer, wordRange.startOffset + wordPrefix.length + replacement.length);
+            replacementSelectionRange.setStart(container, startOffset);
+            replacementSelectionRange.setEnd(container, startOffset + replacement.length);
 
             selection.removeAllRanges();
             selection.addRange(replacementSelectionRange);
