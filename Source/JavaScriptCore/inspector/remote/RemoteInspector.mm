@@ -268,6 +268,8 @@ void RemoteInspector::sendMessageToRemote(unsigned identifier, const String& mes
         return;
 
     auto connection = m_connectionMap.get(identifier);
+    if (!connection)
+        return;
 
     NSDictionary *userInfo = @{
         WIRRawDataKey: [static_cast<NSString *>(message) dataUsingEncoding:NSUTF8StringEncoding],
