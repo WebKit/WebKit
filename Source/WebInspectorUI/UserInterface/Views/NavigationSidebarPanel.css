@@ -63,11 +63,10 @@ body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
     left: 0;
     right: 0;
     bottom: 28px;
-
     display: flex;
-
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 .sidebar > .panel.navigation > .empty-content-placeholder > .message {
