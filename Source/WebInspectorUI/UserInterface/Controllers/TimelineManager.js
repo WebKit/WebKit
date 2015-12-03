@@ -161,12 +161,12 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         if (this._stopCapturingTimeout) {
             clearTimeout(this._stopCapturingTimeout);
-            delete this._stopCapturingTimeout;
+            this._stopCapturingTimeout = undefined;
         }
 
         if (this._deadTimeTimeout) {
             clearTimeout(this._deadTimeTimeout);
-            delete this._deadTimeTimeout;
+            this._deadTimeTimeout = undefined;
         }
 
         this._isCapturing = false;

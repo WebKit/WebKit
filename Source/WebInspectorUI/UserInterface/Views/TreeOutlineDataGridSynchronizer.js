@@ -167,7 +167,7 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
             return;
 
         if (this._ignoreNextTreeOutlineScrollEvent) {
-            delete this._ignoreNextTreeOutlineScrollEvent;
+            this._ignoreNextTreeOutlineScrollEvent = false;
             return;
         }
 
@@ -191,7 +191,7 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
             return;
 
         if (this._ignoreNextDataGridScrollEvent) {
-            delete this._ignoreNextDataGridScrollEvent;
+            this._ignoreNextDataGridScrollEvent = false;
             return;
         }
 

@@ -194,7 +194,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     {
         if (this._scheduledDataGridNodeRefreshIdentifier) {
             cancelAnimationFrame(this._scheduledDataGridNodeRefreshIdentifier);
-            delete this._scheduledDataGridNodeRefreshIdentifier;
+            this._scheduledDataGridNodeRefreshIdentifier = undefined;
         }
 
         if (!this._dirtyDataGridNodes)
@@ -236,13 +236,13 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
             if (dataGridNode === selectedNode) {
                 selectedNode.revealAndSelect();
-                delete this._ignoreSelectionEvent;
+                this._ignoreSelectionEvent = false;
             }
         }
 
         this._treeOutlineDataGridSynchronizer.enabled = true;
 
-        delete this._dirtyDataGridNodes;
+        this._dirtyDataGridNodes = null;
     }
 
     _sort()
@@ -300,7 +300,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         if (selectedNode)
             selectedNode.revealAndSelect();
 
-        delete this._ignoreSelectionEvent;
+        this._ignoreSelectionEvent = false;
     }
 
     _sortComparator(node1, node2)
@@ -403,7 +403,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
     {
         if (this._showPopoverTimeout) {
             clearTimeout(this._showPopoverTimeout);
-            delete this._showPopoverTimeout;
+            this._showPopoverTimeout = undefined;
         }
 
         if (this._popover)
@@ -438,7 +438,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
 
         if (this._hidePopoverContentClearTimeout) {
             clearTimeout(this._hidePopoverContentClearTimeout);
-            delete this._hidePopoverContentClearTimeout;
+            this._hidePopoverContentClearTimeout = undefined;
         }
 
         if (updateContent)

@@ -313,7 +313,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
     {
         if (this._scheduledLayoutUpdateIdentifier) {
             cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            delete this._scheduledLayoutUpdateIdentifier;
+            this._scheduledLayoutUpdateIdentifier = undefined;
         }
 
         // Calculate the required width based on the duration and seconds per pixel.
@@ -405,7 +405,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
     _handleScrollEvent(event)
     {
         if (this._ignoreNextScrollEvent) {
-            delete this._ignoreNextScrollEvent;
+            this._ignoreNextScrollEvent = false;
             return;
         }
 
@@ -417,7 +417,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         // Force layout so we can update with the scroll position synchronously.
         this.updateLayoutIfNeeded();
 
-        delete this._dontUpdateScrollLeft;
+        this._dontUpdateScrollLeft = false;
     }
 
     _handleWheelEvent(event)
