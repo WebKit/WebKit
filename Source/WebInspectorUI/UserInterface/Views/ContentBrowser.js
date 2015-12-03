@@ -43,10 +43,6 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
         this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidShow, this._findBannerDidShow, this);
         this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidHide, this._findBannerDidHide, this);
 
-        this._findKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._showFindBanner.bind(this), this._element);
-        this._saveKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
-        this._saveAsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._saveAs.bind(this), this._element);
-
         if (!disableBackForward) {
             this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this), this._element);
             this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this), this._element);
@@ -211,6 +207,21 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
         // so it does not need to be called here.
     }
 
+    handleFindEvent(event)
+    {
+        var currentContentView = this.currentContentView;
+        if (!currentContentView || !currentContentView.supportsSearch)
+            return;
+
+        // LogContentView has custom search handling.
+        if (typeof currentContentView.handleFindEvent === "function") {
+            currentContentView.handleFindEvent(event);
+            return;
+        }
+
+        this._findBanner.show();
+    }
+
     findBannerPerformSearch(findBanner, query)
     {
         var currentContentView = this.currentContentView;
@@ -280,33 +291,6 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
     _forwardButtonClicked(event)
     {
         this.goForward();
-    }
-
-    _save(event)
-    {
-        var currentContentView = this.currentContentView;
-        if (!currentContentView || !currentContentView.supportsSave)
-            return;
-
-        WebInspector.saveDataToFile(currentContentView.saveData);
-    }
-
-    _saveAs(event)
-    {
-        var currentContentView = this.currentContentView;
-        if (!currentContentView || !currentContentView.supportsSave)
-            return;
-
-        WebInspector.saveDataToFile(currentContentView.saveData, true);
-    }
-
-    _showFindBanner(event)
-    {
-        var currentContentView = this.currentContentView;
-        if (!currentContentView || !currentContentView.supportsSearch)
-            return;
-
-        this._findBanner.show();
     }
 
     _findBannerDidShow(event)

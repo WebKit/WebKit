@@ -53,16 +53,12 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this.messagesClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "K", this._handleClearShortcut.bind(this));
         this.messagesAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._element);
 
-        this._messagesFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._handleFindShortcut.bind(this), this._element);
         this._messagesFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._element);
         this._messagesFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._element);
 
         this._promptAlternateClearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "L", this._handleClearShortcut.bind(this), this._prompt.element);
-        this._promptFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "F", this._handleFindShortcut.bind(this), this._prompt.element);
         this._promptFindNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
         this._promptFindPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
-        this._promptSaveKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._prompt.element);
-        this._promptSaveAsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._saveAs.bind(this), this._prompt.element);
 
         this.startNewSession();
     }
@@ -243,11 +239,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         WebInspector.logManager.requestClearMessages();
     }
 
-    _handleFindShortcut()
-    {
-        this.delegate.focusSearchBar();
-    }
-
     _handleFindNextShortcut()
     {
         this.delegate.highlightNextSearchMatch();
@@ -256,16 +247,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
     _handleFindPreviousShortcut()
     {
         this.delegate.highlightPreviousSearchMatch();
-    }
-
-    _save()
-    {
-        this.delegate.save();
-    }
-
-    _saveAs()
-    {
-        this.delegate.saveAs();
     }
 
     _appendConsoleMessageView(messageView, repeatCountWasInterrupted)
