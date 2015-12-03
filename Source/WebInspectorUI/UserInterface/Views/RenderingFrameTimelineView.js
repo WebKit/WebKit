@@ -272,7 +272,7 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
                 if (childRecord.type === WebInspector.TimelineRecord.Type.Layout) {
                     childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
                     if (childRecord.width && childRecord.height) {
-                        let subtitle = document.createElement("span");
+                        var subtitle = document.createElement("span");
                         subtitle.textContent = WebInspector.UIString("%d \u2A09 %d").format(childRecord.width, childRecord.height);
                         childTreeElement.subtitle = subtitle;
                     }
