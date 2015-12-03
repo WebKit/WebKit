@@ -1719,11 +1719,9 @@ protected:
         if (s_lzcntCheckState == LZCNTCheckState::NotChecked) {
             int flags = 0;
 #if COMPILER(MSVC)
-            _asm {
-                mov eax, 0x80000001
-                cpuid;
-                mov flags, ecx;
-            }
+            int cpuInfo[4];
+            __cpuid(cpuInfo, 0x80000001);
+            flags = cpuInfo[2];
 #elif COMPILER(GCC_OR_CLANG)
             asm (
                 "movl $0x80000001, %%eax;"

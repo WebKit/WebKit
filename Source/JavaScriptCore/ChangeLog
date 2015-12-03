@@ -1,3 +1,14 @@
+2015-12-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix 64-bit Windows build after r193125.
+        https://bugs.webkit.org/show_bug.cgi?id=151799
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::supportsLZCNT):
+        Use __cpuid intrinsic instead of inline assembly.
+
 2015-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should support OSR exit
