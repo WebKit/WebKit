@@ -35,6 +35,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
         super(["breakpoint", className], title, null, breakpoint, false);
 
         this._breakpoint = breakpoint;
+        this._probeSet = null;
 
         this._listeners = new WebInspector.EventListenerSet(this, "BreakpointTreeElement listeners");
         if (!title)
@@ -194,7 +195,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
 
         probeSet.removeEventListener(WebInspector.ProbeSet.Event.SamplesCleared, this._samplesCleared, this);
         probeSet.dataTable.removeEventListener(WebInspector.ProbeSetDataTable.Event.FrameInserted, this._dataUpdated, this);
-        delete this._probeSet;
+        this._probeSet = null;
     }
 
     _probeSetAdded(event)

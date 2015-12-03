@@ -127,10 +127,10 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
     {
         if (this._scheduledRefreshIdentifier) {
             cancelAnimationFrame(this._scheduledRefreshIdentifier);
-            delete this._scheduledRefreshIdentifier;
+            this._scheduledRefreshIdentifier = undefined;
         }
 
-        delete this._cachedData;
+        this._cachedData = null;
 
         super.refresh();
     }
