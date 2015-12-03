@@ -1,3 +1,17 @@
+2015-12-03  Jer Noble  <jer.noble@apple.com>
+
+        Expose WebCore's InvisibleAutoplayNotPermitted setting to WebKit & WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=151830
+
+        Reviewed by Anders Carlsson.
+
+        Set invisibleAutoplayNotPermitted to NO by default both in WKTR and DRT.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2015-12-03  Anders Carlsson  <andersca@apple.com>
 
         Remove Objective-C GC support

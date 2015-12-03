@@ -2783,6 +2783,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setAudioPlaybackRequiresUserGesture(store.getBoolValueForKey(WebPreferencesKey::requiresUserGestureForAudioPlaybackKey()));
     settings.setAllowsInlineMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsInlineMediaPlaybackKey()));
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(store.getBoolValueForKey(WebPreferencesKey::inlineMediaPlaybackRequiresPlaysInlineAttributeKey()));
+    settings.setInvisibleAutoplayNotPermitted(store.getBoolValueForKey(WebPreferencesKey::invisibleAutoplayNotPermittedKey()));
     settings.setMediaDataLoadsAutomatically(store.getBoolValueForKey(WebPreferencesKey::mediaDataLoadsAutomaticallyKey()));
     settings.setAllowsPictureInPictureMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsPictureInPictureMediaPlaybackKey()));
     settings.setMediaControlsScaleWithPageZoom(store.getBoolValueForKey(WebPreferencesKey::mediaControlsScaleWithPageZoomKey()));

@@ -55,6 +55,7 @@
 
 @property (nonatomic, setter=_setRequiresUserActionForAudioPlayback:) BOOL _requiresUserActionForAudioPlayback WK_AVAILABLE(NA, WK_IOS_TBA);
 @property (nonatomic, setter=_setInlineMediaPlaybackRequiresPlaysInlineAttribute:) BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute WK_AVAILABLE(NA, WK_IOS_TBA);
+@property (nonatomic, setter=_setInvisibleAutoplayNotPermitted:) BOOL _invisibleAutoplayNotPermitted WK_AVAILABLE(NA, WK_IOS_TBA);
 @property (nonatomic, setter=_setMediaDataLoadsAutomatically:) BOOL _mediaDataLoadsAutomatically WK_AVAILABLE(NA, WK_IOS_TBA);
 #else
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_AVAILABLE(WK_MAC_TBA, NA);

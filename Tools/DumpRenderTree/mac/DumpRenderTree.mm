@@ -943,6 +943,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setMediaPlaybackAllowsInline:YES];
     [preferences setMediaPlaybackRequiresUserGesture:NO];
     [preferences setMediaDataLoadsAutomatically:YES];
+    [preferences setInvisibleAutoplayNotPermitted:NO];
 
     // Enable the tracker before creating the first WebView will
     // cause initialization to use the correct database paths.

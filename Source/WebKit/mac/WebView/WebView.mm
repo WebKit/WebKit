@@ -2306,6 +2306,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAudioPlaybackRequiresUserGesture([preferences audioPlaybackRequiresUserGesture]);
     settings.setAllowsInlineMediaPlayback([preferences mediaPlaybackAllowsInline]);
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute([preferences inlineMediaPlaybackRequiresPlaysInlineAttribute]);
+    settings.setInvisibleAutoplayNotPermitted([preferences invisibleAutoplayNotPermitted]);
     settings.setAllowsPictureInPictureMediaPlayback([preferences allowsPictureInPictureMediaPlayback] && shouldAllowPictureInPictureMediaPlayback());
     settings.setMediaControlsScaleWithPageZoom([preferences mediaControlsScaleWithPageZoom]);
     settings.setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);

@@ -103,6 +103,7 @@ private:
     BOOL _alwaysRunsAtForegroundPriority;
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
+    BOOL _invisibleAutoplayNotPermitted;
     BOOL _mediaDataLoadsAutomatically;
     BOOL _requiresUserActionForAudioPlayback;
 #endif
@@ -124,6 +125,7 @@ private:
     _allowsPictureInPictureMediaPlayback = YES;
     _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
+    _invisibleAutoplayNotPermitted = YES;
     _mediaDataLoadsAutomatically = NO;
     _respectsImageOrientation = YES;
     _printsBackgrounds = YES;
@@ -183,6 +185,7 @@ private:
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
+    configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
@@ -454,6 +457,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)requires
 {
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = requires;
+}
+
+- (BOOL)_invisibleAutoplayNotPermitted
+{
+    return _invisibleAutoplayNotPermitted;
+}
+
+- (void)_setInvisibleAutoplayNotPermitted:(BOOL)notPermitted
+{
+    _invisibleAutoplayNotPermitted = notPermitted;
 }
 
 - (BOOL)_mediaDataLoadsAutomatically

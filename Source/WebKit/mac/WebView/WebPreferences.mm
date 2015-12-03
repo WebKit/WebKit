@@ -2218,6 +2218,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitInlineMediaPlaybackRequiresPlaysInlineAttributeKey];
 }
 
+- (BOOL)invisibleAutoplayNotPermitted
+{
+    return [self _boolValueForKey:WebKitInvisibleAutoplayNotPermittedKey];
+}
+
+- (void)setInvisibleAutoplayNotPermitted:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitInvisibleAutoplayNotPermittedKey];
+}
+
 - (BOOL)mediaControlsScaleWithPageZoom
 {
     return [self _boolValueForKey:WebKitMediaControlsScaleWithPageZoomPreferenceKey];
