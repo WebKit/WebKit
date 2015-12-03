@@ -91,7 +91,7 @@
 
 .sidebar > .panel.details.css-style > .content + .options-container > .filter-bar {
     width: -webkit-fill-available;
-    background-color: white;
+    background-color: transparent;
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule) + .options-container > .new-rule,
