@@ -106,27 +106,28 @@ void BackendDispatcher::dispatch(const String& message)
         return;
     }
 
-    String method;
-    if (!methodValue->asString(method)) {
+    String methodString;
+    if (!methodValue->asString(methodString)) {
         reportProtocolError(&callId, InvalidRequest, ASCIILiteral("The type of 'method' property must be string"));
         return;
     }
 
-    size_t position = method.find('.');
-    if (position == WTF::notFound) {
+    Vector<String> domainAndMethod;
+    methodString.split('.', true, domainAndMethod);
+    if (domainAndMethod.size() != 2 || !domainAndMethod[0].length() || !domainAndMethod[1].length()) {
         reportProtocolError(&callId, InvalidRequest, ASCIILiteral("The 'method' property was formatted incorrectly. It should be 'Domain.method'"));
         return;
     }
 
-    String domain = method.substring(0, position);
+    String domain = domainAndMethod[0];
     SupplementalBackendDispatcher* domainDispatcher = m_dispatchers.get(domain);
     if (!domainDispatcher) {
         reportProtocolError(&callId, MethodNotFound, "'" + domain + "' domain was not found");
         return;
     }
 
-    String domainMethod = method.substring(position + 1);
-    domainDispatcher->dispatch(callId, domainMethod, messageObject.releaseNonNull());
+    String method = domainAndMethod[1];
+    domainDispatcher->dispatch(callId, method, messageObject.releaseNonNull());
 }
 
 void BackendDispatcher::sendResponse(long callId, RefPtr<InspectorObject>&& result, const ErrorString& invocationError)

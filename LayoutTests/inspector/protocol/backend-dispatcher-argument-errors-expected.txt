@@ -1,0 +1,57 @@
+Testing the inspector backend's error handling when sending messages with wrong parameters.
+
+
+== Running test suite: Protocol.ArgumentModeErrors
+-- Running test case: ParametersNotAnObject
+Sending message: {"id":123,"method":"Runtime.evaluate","params":"junk"}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: 'params' object must contain required parameter 'expression' with type 'String'.
+
+-- Running test case: MissingRequiredParameter
+Sending message: {"id":123,"method":"Runtime.evaluate","params":{"stuff":123}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: Parameter 'expression' with type 'String' was not found.
+
+-- Running test case: RequiredParameterWrongType
+Sending message: {"id":123,"method":"Runtime.evaluate","params":{"expression":[]}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: Parameter 'expression' has wrong type. It must be 'String'.
+
+-- Running test case: OptionalParameterWrongType
+Sending message: {"id":123,"method":"Runtime.evaluate","params":{"expression":"42","includeCommandLineAPI":123}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: Parameter 'includeCommandLineAPI' has wrong type. It must be 'Boolean'.
+
+-- Running test case: TestErrorCodeForSyncServerError
+Sending message: {"id":123,"method":"Database.getDatabaseTableNames","params":{"databaseId":"thisisNotADatabase"}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "ServerError" (-32000)
+Actual error code: -32000
+Actual error message: Database agent is not enabled
+
+-- Running test case: TestErrorCodeForAsyncServerError
+Sending message: {"id":123,"method":"Database.executeSQL","params":{"databaseId":"thisisNotADatabase","query":"asdf"}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "ServerError" (-32000)
+Actual error code: -32000
+Actual error message: Database agent is not enabled
+
+-- Running test case: CommandWithBadArgumentValue
+Sending message: {"id":123,"method":"Runtime.getProperties","params":{"objectId":"thisisNotAnId"}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "ServerError" (-32000)
+Actual error code: -32000
+Actual error message: Inspected frame has gone
+
