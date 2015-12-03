@@ -402,8 +402,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
         this._updateTimes(startTime, currentTime, endTime);
 
-        // Only stop updating if the current time is greater than the end time.
-        if (!this._updating && currentTime >= endTime) {
+        // Only stop updating if the current time is greater than the end time, or the end time is NaN.
+        // The recording end time will be NaN if no records were added.
+        if (!this._updating && (currentTime >= endTime || isNaN(endTime))) {
             this._lastUpdateTimestamp = NaN;
             return;
         }
