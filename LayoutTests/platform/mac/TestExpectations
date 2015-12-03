@@ -1080,6 +1080,12 @@ webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
 
 webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 
+# Skip Inspector tests because the new test harness does not work on the branch currently
+inspector [ Skip ]
+inspector-protocol [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-protocol [ Skip ]
+
 # Some inspector tests failing after r173992
 webkit.org/b/137157 [ Release ] inspector/page/main-frame-resource.html [ Pass Failure ]
 [ Debug ] inspector/page/main-frame-resource.html [ Pass Failure Slow ]

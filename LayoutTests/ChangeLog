@@ -1,5 +1,11 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Skip Inspector tests because the new test harness does not work on the branch currently.
+
+        * platform/mac/TestExpectations:
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Merge r192592. rdar://problem/23221163
 
     2015-11-18  Joseph Pecoraro  <pecoraro@apple.com>
