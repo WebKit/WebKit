@@ -46,7 +46,7 @@
     margin: 4.5px 0 4px 5px;
 }
 
-.item.visual-style-selector-item.selected > input[type="checkbox"]::before {
+body:not(.window-inactive, .window-docked-inactive) .item.visual-style-selector-item.selected > input[type="checkbox"]:checked::before {
     position: absolute;
     top: 0;
     right: 0;
