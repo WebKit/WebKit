@@ -57,6 +57,11 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .status-bar {
     background-position: center;
 }
 
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
+    /* Workaround for background image clipping issue on non-retina machines. See http://webkit.org/b/147346. */
+    -webkit-filter: brightness(100%);
+}
+
 .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
     -webkit-filter: brightness(95%);
 }
