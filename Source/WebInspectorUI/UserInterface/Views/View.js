@@ -41,6 +41,11 @@ WebInspector.View = class View extends WebInspector.Object
         return this._element;
     }
 
+    get layoutPending()
+    {
+        return !!this._scheduledLayoutUpdateIdentifier;
+    }
+
     get subviews()
     {
         return this._subviews;
