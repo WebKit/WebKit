@@ -1723,6 +1723,16 @@ protected:
             __cpuid(cpuInfo, 0x80000001);
             flags = cpuInfo[2];
 #elif COMPILER(GCC_OR_CLANG)
+#if CPU(X86_64)
+            asm (
+                "movl $0x80000001, %%eax;"
+                "cpuid;"
+                "movl %%ecx, %0;"
+                : "=g" (flags)
+                :
+                : "%eax", "%ebx", "%ecx", "%edx"
+                );
+#else
             asm (
                 "movl $0x80000001, %%eax;"
                 "pushl %%ebx;"
@@ -1734,6 +1744,7 @@ protected:
                 : "%eax", "%ecx", "%edx"
                 );
 #endif
+#endif // COMPILER(GCC_OR_CLANG)
             s_lzcntCheckState = (flags & 0x20) ? LZCNTCheckState::Set : LZCNTCheckState::Clear;
         }
         return s_lzcntCheckState == LZCNTCheckState::Set;

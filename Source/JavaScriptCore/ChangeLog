@@ -1,5 +1,12 @@
 2015-12-03  Benjamin Poulain  <bpoulain@apple.com>
 
+        Attempt to fix GTK again after r193125
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::supportsLZCNT):
+
+2015-12-03  Benjamin Poulain  <bpoulain@apple.com>
+
         Attempt to fix GTK after r193125
 
         * assembler/MacroAssemblerX86Common.h:
