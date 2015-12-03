@@ -32,7 +32,7 @@
 .386
 .model FLAT, STDCALL
 
-EXTERN exceptionHandler@16 : near   ; Defined in StructuredExceptionHandlerSupressor.cpp
+EXTERN exceptionHandler@16 : near   ; Defined in StructuredExceptionHandlerSuppressor.cpp
 
 exceptionHandlerThunk proto
 .safeseh exceptionHandlerThunk

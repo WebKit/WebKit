@@ -87,7 +87,7 @@ private:
 
 inline bool ContentDistributor::needsDistribution() const
 {
-    // During the invalidation, re-distribution should be supressed.
+    // During the invalidation, re-distribution should be suppressed.
     return m_validity != Valid && m_validity != Invalidating;
 }
 
