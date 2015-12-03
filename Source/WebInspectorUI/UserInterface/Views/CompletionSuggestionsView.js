@@ -175,6 +175,9 @@ WebInspector.CompletionSuggestionsView = class CompletionSuggestionsView extends
             if (i === this._selectedIndex)
                 itemElement.classList.add(WebInspector.CompletionSuggestionsView.SelectedItemStyleClassName);
             this._containerElement.appendChild(itemElement);
+
+            if (this._delegate && typeof this._delegate.completionSuggestionsViewCustomizeCompletionElement === "function")
+                this._delegate.completionSuggestionsViewCustomizeCompletionElement(this, itemElement, completions[i]);
         }
     }
 
