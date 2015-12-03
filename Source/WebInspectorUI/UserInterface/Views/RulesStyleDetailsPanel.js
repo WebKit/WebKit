@@ -116,17 +116,6 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             return true;
         }
 
-        function filteredMediaList(mediaList)
-        {
-            if (!mediaList)
-                return [];
-
-            // Exclude the basic "screen" query since it's very common and just clutters things.
-            return mediaList.filter(function(media) {
-                return media.text !== "screen";
-            });
-        }
-
         function uniqueOrderedStyles(orderedStyles)
         {
             var uniqueStyles = [];
@@ -201,7 +190,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             }
 
             // Only include the media list if it is different from the previous media list shown.
-            var currentMediaList = filteredMediaList(style.ownerRule && style.ownerRule.mediaList);
+            var currentMediaList = (style.ownerRule && style.ownerRule.mediaList) || [];
             if (!mediaListsEqual(previousMediaList, currentMediaList)) {
                 previousMediaList = currentMediaList;
 
