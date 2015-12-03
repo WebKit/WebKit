@@ -1,3 +1,23 @@
+2015-12-03  Michael Saboff  <msaboff@apple.com>
+
+        bmalloc: extra large allocations could be more efficient
+        https://bugs.webkit.org/show_bug.cgi?id=151817
+
+        Reviewed by Geoffrey Garen.
+
+        Reduced the super chunk size from 4MB to 2MB.
+
+        Added path to reallocate() of an extra large object to see if we can extend the allocation.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate):
+        * bmalloc/SegregatedFreeList.h:
+        * bmalloc/Sizes.h:
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate):
+        (bmalloc::tryVMExtend):
+        (bmalloc::vmAllocate):
+
 2015-11-11  Akos Kiss  <akiss@inf.u-szeged.hu>
 
         bmalloc: Add libdl dependency
