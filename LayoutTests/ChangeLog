@@ -1,3 +1,12 @@
+2015-12-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Removing deleted test storage/indexeddb/objectstore-keycursor.html from TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=151772
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-12-03  Keith Rollin  <krollin@apple.com>
 
         [Win] fast/forms/HTMLOptionElement_label03.html failing on win7

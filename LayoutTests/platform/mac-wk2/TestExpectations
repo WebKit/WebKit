@@ -416,7 +416,6 @@ storage/indexeddb/key-type-binary.html [ Skip ]
 storage/indexeddb/lazy-index-population.html [ Skip ]
 storage/indexeddb/noblobs.html [ Skip ] # Missing DRT file/blob support
 storage/indexeddb/objectstore-autoincrement.html [ Skip ]
-storage/indexeddb/objectstore-keycursor.html [ Skip ]
 storage/indexeddb/optional-arguments.html [ Skip ]
 storage/indexeddb/request-leak.html [ Skip ] # Missing WKTR support? GC?
 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Skip ]
