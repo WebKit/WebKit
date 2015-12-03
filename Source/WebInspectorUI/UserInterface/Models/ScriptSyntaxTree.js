@@ -326,12 +326,9 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             this._recurseArray(node.body, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.ClassDeclaration:
-            callback(node, state);
-            this._recurse(node.superClass, callback, state);
-            this._recurse(node.body, callback, state);
-            break;
         case WebInspector.ScriptSyntaxTree.NodeType.ClassExpression:
             callback(node, state);
+            this._recurse(node.id, callback, state);
             this._recurse(node.superClass, callback, state);
             this._recurse(node.body, callback, state);
             break;
@@ -369,12 +366,6 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             this._recurse(node.body, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
-            callback(node, state);
-            this._recurse(node.id, callback, state);
-            this._recurseArray(node.params, callback, state);
-            this._recurseArray(node.defaults, callback, state);
-            this._recurse(node.body, callback, state);
-            break;
         case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
             callback(node, state);
             this._recurse(node.id, callback, state);
@@ -886,7 +877,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case "VariableDeclaration":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration,
-                declarations: node.declarations.map(this._createInternalSyntaxTree.bind(this))
+                declarations: node.declarations.map(this._createInternalSyntaxTree.bind(this)),
+                kind: node.kind
             };
             break;
         case "VariableDeclarator":
