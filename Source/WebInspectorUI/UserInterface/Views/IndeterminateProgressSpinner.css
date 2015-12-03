@@ -24,7 +24,7 @@
  */
 
 /* These keyframes try to reproduce the 12 discrete steps seen in a standard system progress indicator. */
-@-webkit-keyframes discrete-spinner {
+@keyframes discrete-spinner {
     0% {
         background-image: url(../Images/IndeterminateProgressSpinner1.svg);
     }
@@ -86,8 +86,8 @@
     width: 16px;
     height: 16px;
 
-    -webkit-animation-name: discrete-spinner;
-    -webkit-animation-duration: 1s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: step-start;
+    animation-name: discrete-spinner;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: step-start;
 }

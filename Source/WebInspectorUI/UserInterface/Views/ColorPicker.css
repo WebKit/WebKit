@@ -37,8 +37,8 @@
 .color-picker > .slider {
     top: 7px;
     width: 196px;
-    -webkit-transform: rotate(-90deg) translateX(-100%);
-    -webkit-transform-origin: 0 0;
+    transform: rotate(-90deg) translateX(-100%);
+    transform-origin: 0 0;
 }
 
 .color-picker > .slider > img {
