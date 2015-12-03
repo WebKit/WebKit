@@ -169,9 +169,9 @@ protected:
 class CommandDomainBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<CommandDomainBackendDispatcher> create(BackendDispatcher*, CommandDomainBackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
+    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void commandWithEnumReturnValue(long callId, const InspectorObject& message);
+    void commandWithEnumReturnValue(long requestId, RefPtr<InspectorObject>&& parameters);
 private:
     CommandDomainBackendDispatcher(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
     CommandDomainBackendDispatcherHandler* m_agent;
@@ -224,6 +224,7 @@ private:
 
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -249,21 +250,24 @@ CommandDomainBackendDispatcher::CommandDomainBackendDispatcher(BackendDispatcher
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("CommandDomain"), this);
 }
 
-void CommandDomainBackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void CommandDomainBackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<CommandDomainBackendDispatcher> protect(*this);
 
+    RefPtr<InspectorObject> parameters;
+    message->getObject(ASCIILiteral("params"), parameters);
+
     if (method == "commandWithEnumReturnValue")
-        commandWithEnumReturnValue(callId, message);
+        commandWithEnumReturnValue(requestId, WTF::move(parameters));
     else
-        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
 }
 
-void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long callId, const InspectorObject&)
+void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->commandWithEnumReturnValue(callId);
+        m_alternateDispatcher->commandWithEnumReturnValue(requestId);
         return;
     }
 #endif
@@ -276,7 +280,10 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long callId, con
     if (!error.length())
         result->setString(ASCIILiteral("returnValue"), Inspector::Protocol::getEnumConstantValue(out_returnValue));
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
 } // namespace Inspector
@@ -584,7 +591,7 @@ namespace Inspector {
 class ObjCInspectorCommandDomainBackendDispatcher final : public AlternateCommandDomainBackendDispatcher {
 public:
     ObjCInspectorCommandDomainBackendDispatcher(id<RWIProtocolCommandDomainDomainHandler> handler) { m_delegate = handler; }
-    virtual void commandWithEnumReturnValue(long callId) override;
+    virtual void commandWithEnumReturnValue(long requestId) override;
 private:
     RetainPtr<id<RWIProtocolCommandDomainDomainHandler>> m_delegate;
 };
@@ -777,16 +784,17 @@ namespace Inspector {
 
 
 
-void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(long callId)
+void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^(RWIProtocolCommandDomainCommandWithEnumReturnValueReturnValue returnValue) {
         Ref<InspectorObject> resultObject = InspectorObject::create();
         resultObject->setString(ASCIILiteral("returnValue"), toProtocolString(returnValue));
-        backendDispatcher()->sendResponse(callId, WTF::move(resultObject), String());
+        backendDispatcher()->sendResponse(requestId, WTF::move(resultObject));
     };
 
     [m_delegate commandWithEnumReturnValueWithErrorCallback:errorCallback successCallback:successCallback];

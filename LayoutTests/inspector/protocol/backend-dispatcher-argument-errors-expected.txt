@@ -8,7 +8,7 @@ PASS: the backend should send a protocol error when receiving an invalid message
 PASS: the reported error should be "InvalidParams" (-32602)
 Actual error code: -32602
 Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
-Actual error data: 'params' object must contain required parameter 'expression' with type 'String'.
+Actual error data: [{"code":-32602,"message":"'params' object must contain required parameter 'expression' with type 'String'."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
 
 -- Running test case: MissingRequiredParameter
 Sending message: {"id":123,"method":"Runtime.evaluate","params":{"stuff":123}}
@@ -16,7 +16,7 @@ PASS: the backend should send a protocol error when receiving an invalid message
 PASS: the reported error should be "InvalidParams" (-32602)
 Actual error code: -32602
 Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
-Actual error data: Parameter 'expression' with type 'String' was not found.
+Actual error data: [{"code":-32602,"message":"Parameter 'expression' with type 'String' was not found."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
 
 -- Running test case: RequiredParameterWrongType
 Sending message: {"id":123,"method":"Runtime.evaluate","params":{"expression":[]}}
@@ -24,7 +24,7 @@ PASS: the backend should send a protocol error when receiving an invalid message
 PASS: the reported error should be "InvalidParams" (-32602)
 Actual error code: -32602
 Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
-Actual error data: Parameter 'expression' has wrong type. It must be 'String'.
+Actual error data: [{"code":-32602,"message":"Parameter 'expression' has wrong type. It must be 'String'."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
 
 -- Running test case: OptionalParameterWrongType
 Sending message: {"id":123,"method":"Runtime.evaluate","params":{"expression":"42","includeCommandLineAPI":123}}
@@ -32,7 +32,7 @@ PASS: the backend should send a protocol error when receiving an invalid message
 PASS: the reported error should be "InvalidParams" (-32602)
 Actual error code: -32602
 Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
-Actual error data: Parameter 'includeCommandLineAPI' has wrong type. It must be 'Boolean'.
+Actual error data: [{"code":-32602,"message":"Parameter 'includeCommandLineAPI' has wrong type. It must be 'Boolean'."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
 
 -- Running test case: TestErrorCodeForSyncServerError
 Sending message: {"id":123,"method":"Database.getDatabaseTableNames","params":{"databaseId":"thisisNotADatabase"}}
@@ -40,6 +40,7 @@ PASS: the backend should send a protocol error when receiving an invalid message
 PASS: the reported error should be "ServerError" (-32000)
 Actual error code: -32000
 Actual error message: Database agent is not enabled
+Actual error data: [{"code":-32000,"message":"Database agent is not enabled"}]
 
 -- Running test case: TestErrorCodeForAsyncServerError
 Sending message: {"id":123,"method":"Database.executeSQL","params":{"databaseId":"thisisNotADatabase","query":"asdf"}}
@@ -47,6 +48,7 @@ PASS: the backend should send a protocol error when receiving an invalid message
 PASS: the reported error should be "ServerError" (-32000)
 Actual error code: -32000
 Actual error message: Database agent is not enabled
+Actual error data: [{"code":-32000,"message":"Database agent is not enabled"}]
 
 -- Running test case: CommandWithBadArgumentValue
 Sending message: {"id":123,"method":"Runtime.getProperties","params":{"objectId":"thisisNotAnId"}}
@@ -54,4 +56,5 @@ PASS: the backend should send a protocol error when receiving an invalid message
 PASS: the reported error should be "ServerError" (-32000)
 Actual error code: -32000
 Actual error message: Inspected frame has gone
+Actual error data: [{"code":-32000,"message":"Inspected frame has gone"}]
 

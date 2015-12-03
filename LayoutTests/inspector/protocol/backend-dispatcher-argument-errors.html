@@ -36,7 +36,7 @@ function test()
                     ProtocolTest.log("Actual error code: " + response.code);
                     ProtocolTest.log("Actual error message: " + response.message);
                     if (response.data)
-                        ProtocolTest.log("Actual error data: " + response.data);
+                        ProtocolTest.log("Actual error data: " + JSON.stringify(response.data));
 
                     resolve();
                 })

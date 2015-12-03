@@ -177,6 +177,7 @@ typedef String ErrorString;
 
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
