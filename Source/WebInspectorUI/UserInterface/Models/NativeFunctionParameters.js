@@ -2114,7 +2114,22 @@ WebInspector.NativePrototypeFunctionParameters = {
         querySelector: "selectors",
         querySelectorAll: "selectors",
     };
-
     Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ElementQueries);
     Object.assign(WebInspector.NativePrototypeFunctionParameters.Document, ElementQueries);
+
+    var ChildNode = {
+        after: "[node|string]...",
+        before: "[node|string]...",
+        replaceWith: "[node|string]...",
+    };
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ChildNode)
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.CharacterData, ChildNode);
+
+    var ParentNode = {
+        append: "[node|string]...",
+        prepend: "[node|string]...",
+    };
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ParentNode);
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.Document, ParentNode);
+    Object.assign(WebInspector.NativePrototypeFunctionParameters.DocumentFragment, ParentNode);
 })();
