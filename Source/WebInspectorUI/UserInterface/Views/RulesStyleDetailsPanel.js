@@ -27,7 +27,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 {
     constructor(delegate)
     {
-        super(delegate, "rules", "rules", WebInspector.UIString("Rules"));
+        super(delegate, "rules", "rules", WebInspector.UIString("Styles \u2014 Rules"));
 
         this._sections = [];
         this._previousFocusedSection = null;

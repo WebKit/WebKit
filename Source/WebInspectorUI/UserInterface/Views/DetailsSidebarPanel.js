@@ -25,13 +25,14 @@
 
 WebInspector.DetailsSidebarPanel = class DetailsSidebarPanel extends WebInspector.SidebarPanel
 {
-    constructor(identifier, displayName, singularDisplayName, element)
+    constructor(identifier, displayName, singularDisplayName, element, dontCreateNavigationItem)
     {
         super(identifier, displayName, element);
 
         this.element.classList.add("details");
 
-        this._navigationItem = new WebInspector.RadioButtonNavigationItem(identifier, displayName);
+        if (!dontCreateNavigationItem)
+            this._navigationItem = new WebInspector.RadioButtonNavigationItem(identifier, displayName);
     }
 
     // Public

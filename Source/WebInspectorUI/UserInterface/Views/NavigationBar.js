@@ -295,6 +295,11 @@ WebInspector.NavigationBar.prototype = {
         this._mouseMovedEventListener = this._mouseMoved.bind(this);
         this._mouseUpEventListener = this._mouseUp.bind(this);
 
+        if (typeof this.selectedNavigationItem.dontPreventDefaultOnNavigationBarMouseDown === "function"
+            && this.selectedNavigationItem.dontPreventDefaultOnNavigationBarMouseDown()
+            && this._previousSelectedNavigationItem === this.selectedNavigationItem)
+            return;
+
         // Register these listeners on the document so we can track the mouse if it leaves the navigation bar.
         document.addEventListener("mousemove", this._mouseMovedEventListener, false);
         document.addEventListener("mouseup", this._mouseUpEventListener, false);

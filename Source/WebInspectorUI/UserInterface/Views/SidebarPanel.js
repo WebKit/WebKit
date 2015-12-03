@@ -30,6 +30,7 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.Object
         super();
 
         this._identifier = identifier;
+        this._displayName = displayName;
 
         this._savedScrollPosition = 0;
 
