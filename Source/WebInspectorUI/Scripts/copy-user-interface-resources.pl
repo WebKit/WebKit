@@ -55,7 +55,7 @@ sub readLicenseFile($)
 
 my $inspectorLicense = <<'EOF';
 /*
- * Copyright (C) 2007-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek. All rights reserved.
  * Copyright (C) 2008-2009 Anthony Ricaud <rik@webkit.org>
  * Copyright (C) 2009-2010 Joseph Pecoraro. All rights reserved.
@@ -67,7 +67,10 @@ my $inspectorLicense = <<'EOF';
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  * Copyright (C) 2013 Seokju Kwon (seokju.kwon@gmail.com)
  * Copyright (C) 2013 Adobe Systems Inc. All rights reserved.
- * Copyright (C) 2013-2014 University of Washington. All rights reserved.
+ * Copyright (C) 2013-2015 University of Washington. All rights reserved.
+ * Copyright (C) 2014-2015 Saam Barati <saambarati1@gmail.com>
+ * Copyright (C) 2014 Antoine Quint
+ * Copyright (C) 2015 Tobias Reiss <tobi+webkit@basecode.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
