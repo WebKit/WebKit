@@ -185,7 +185,9 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     toClipboardString(isPrefixOptional)
     {
-        var clipboardString = this._messageTextElement.innerText;
+        var clipboardString = this._messageTextElement.innerText.removeWordBreakCharacters();
+        if (this._message.savedResultIndex)
+            clipboardString = clipboardString.replace(/\s*=\s*(\$\d+)$/, " = $1");
 
         if (this._message.type === WebInspector.ConsoleMessage.MessageType.Trace)
             clipboardString = "console.trace()";

@@ -64,6 +64,6 @@ WebInspector.ConsoleCommandView = class ConsoleCommandView extends WebInspector.
 
     toClipboardString(isPrefixOptional)
     {
-        return (isPrefixOptional ? "" : "> ") + this._commandText;
+        return (isPrefixOptional ? "" : "> ") + this._commandText.removeWordBreakCharacters();
     }
 };
