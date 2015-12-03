@@ -62,28 +62,31 @@ struct ScriptBreakpoint {
     {
     }
 
-    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, bool autoContinue)
+    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, bool autoContinue, unsigned ignoreCount)
         : lineNumber(lineNumber)
         , columnNumber(columnNumber)
         , condition(condition)
         , autoContinue(autoContinue)
+        , ignoreCount(ignoreCount)
     {
     }
 
-    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, BreakpointActions& actions, bool autoContinue)
+    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, BreakpointActions& actions, bool autoContinue, unsigned ignoreCount)
         : lineNumber(lineNumber)
         , columnNumber(columnNumber)
         , condition(condition)
         , actions(actions)
         , autoContinue(autoContinue)
+        , ignoreCount(ignoreCount)
     {
     }
 
-    int lineNumber;
-    int columnNumber;
+    int lineNumber { 0 };
+    int columnNumber { 0 };
     String condition;
     BreakpointActions actions;
-    bool autoContinue;
+    bool autoContinue { false };
+    unsigned ignoreCount { 0 };
 };
 
 } // namespace Inspector
