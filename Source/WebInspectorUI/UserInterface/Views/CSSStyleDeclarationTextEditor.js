@@ -1713,7 +1713,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                     return;
                 }
 
-                for (let property of properties) {
+                for (var property of properties) {
                     if (property.__refreshedAfterBlur)
                         continue;
 

@@ -136,7 +136,7 @@ WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends W
     _createValueOptions(values)
     {
         var addedElements = [];
-        for (let key in values) {
+        for (var key in values) {
             var option = document.createElement("option");
             option.value = key;
             option.text = values[key];
@@ -161,7 +161,7 @@ WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends W
             return;
 
         this._keywordSelectElement.removeChild(this._advancedValuesElements[0].previousSibling);
-        for (let element of this._advancedValuesElements)
+        for (var element of this._advancedValuesElements)
             this._keywordSelectElement.removeChild(element);
 
         this._advancedValuesElements = null;

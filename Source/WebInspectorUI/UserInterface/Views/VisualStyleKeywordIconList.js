@@ -57,7 +57,7 @@ WebInspector.VisualStyleKeywordIconList = class VisualStyleKeywordIconList exten
             return iconButtonElement;
         }
 
-        for (let key in this._possibleValues.basic) {
+        for (var key in this._possibleValues.basic) {
             var iconElement = createListItem.call(this, key, this._possibleValues.basic[key]);
             this._iconListContainer.appendChild(iconElement);
             this._iconElements.push(iconElement);
@@ -80,7 +80,7 @@ WebInspector.VisualStyleKeywordIconList = class VisualStyleKeywordIconList exten
     {
         this._computedIcon = null;
         this._selectedIcon = null;
-        for (let icon of this._iconElements) {
+        for (var icon of this._iconElements) {
             if (icon.id === this._updatedValues.placeholder)
                 this._computedIcon = icon;
 

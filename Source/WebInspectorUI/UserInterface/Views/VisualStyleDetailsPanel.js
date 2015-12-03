@@ -159,13 +159,13 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         if (disabled)
             return;
 
-        for (let key in this._groups)
+        for (var key in this._groups)
             this._updateProperties(this._groups[key], !!event);
 
-        for (let key in this._sections) {
+        for (var key in this._sections) {
             var section = this._sections[key];
             var oneSectionExpanded = false;
-            for (let group of section.groups) {
+            for (var group of section.groups) {
                 if (!group.collapsed) {
                     oneSectionExpanded = true;
                     break;
@@ -182,7 +182,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
             return;
 
         if (group.links) {
-            for (let key in group.links)
+            for (var key in group.links)
                 group.links[key].linked = false;
         }
 
@@ -192,7 +192,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         var initialPropertyText = {};
         var initialPropertyTextMissing = !initialTextList.has(group);
-        for (let key in group.properties) {
+        for (var key in group.properties) {
             var propertyEditor = group.properties[key];
             propertyEditor.update(!propertyEditor.style || forceStyleUpdate ? this._currentStyle : null);
 
@@ -213,7 +213,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         if (!autocompleteCompatibleProperties || !autocompleteCompatibleProperties.length)
             return;
 
-        for (let editor of autocompleteCompatibleProperties)
+        for (var editor of autocompleteCompatibleProperties)
             this._updateAutocompleteCompatiblePropertyEditor(editor, forceStyleUpdate);
     }
 
@@ -240,7 +240,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
             return;
 
         var newStyleText = this._currentStyle.text;
-        for (let key in group.properties) {
+        for (var key in group.properties) {
             var propertyEditor = group.properties[key];
             var initialValue = initialPropertyTextList[key] || null;
             newStyleText = propertyEditor.modifyPropertyText(newStyleText, initialValue);
@@ -265,7 +265,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         if (!initialPropertyTextList)
             return false;
 
-        for (let key in group.properties) {
+        for (var key in group.properties) {
             var propertyEditor = group.properties[key];
             if (propertyEditor.propertyMissing)
                 continue;
@@ -280,7 +280,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
     _groupHasSetProperty(group)
     {
-        for (let key in group.properties) {
+        for (var key in group.properties) {
             var propertyEditor = group.properties[key];
             var value = propertyEditor.synthesizedValue;
             if (value && !propertyEditor.propertyMissing)
@@ -295,7 +295,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
             return;
 
         group.section.groups = groups;
-        for (let key in group.properties)
+        for (var key in group.properties)
             group.properties[key].addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, this._sectionModified.bind(this, group));
     }
 

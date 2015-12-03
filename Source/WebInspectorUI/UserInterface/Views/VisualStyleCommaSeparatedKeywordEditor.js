@@ -73,7 +73,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
             return;
 
         var value = "";
-        for (let treeItem of this._commaSeparatedKeywords.children) {
+        for (var treeItem of this._commaSeparatedKeywords.children) {
             if (this._treeElementIsEmpty(treeItem))
                 continue;
 
@@ -102,7 +102,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         }
 
         var values = commaSeparatedValue.split(/\s*,\s*(?![^\(]*\))/);
-        for (let value of values)
+        for (var value of values)
             this._addCommaSeparatedKeyword(value);
 
         this._commaSeparatedKeywords.children[0].select(true);
@@ -159,7 +159,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
 
     _removeEmptyCommaSeparatedKeywords()
     {
-        for (let treeElement of this._commaSeparatedKeywords.children) {
+        for (var treeElement of this._commaSeparatedKeywords.children) {
             if (!this._treeElementIsEmpty(treeElement) || treeElement.selected)
                 continue;
 

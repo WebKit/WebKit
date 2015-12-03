@@ -268,7 +268,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 return;
             }
 
-            for (let styleSheetInfo of styleSheets) {
+            for (var styleSheetInfo of styleSheets) {
                 // COMPATIBILITY (iOS 6): The info did not have 'frameId', so make parentFrame null in that case.
                 var parentFrame = "frameId" in styleSheetInfo ? WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId) : null;
 

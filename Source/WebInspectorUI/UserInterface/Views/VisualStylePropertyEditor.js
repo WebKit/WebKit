@@ -38,7 +38,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
                 return;
 
             var canonicalizedValues = {};
-            for (let value of values)
+            for (var value of values)
                 canonicalizedValues[value.toLowerCase().replace(/\s/g, "-")] = value;
 
             return canonicalizedValues;
@@ -103,7 +103,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
             this._element.classList.add("multiple");
         }
 
-        for (let name of propertyNames) {
+        for (var name of propertyNames) {
             this._element.classList.add(name);
             this._propertyInfoList.push({
                 name,
@@ -274,7 +274,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._updatedValues = {};
         var propertyValuesConflict = false;
         var propertyMissing = false;
-        for (let propertyInfo of this._propertyInfoList) {
+        for (var propertyInfo of this._propertyInfoList) {
             var property = this._style.propertyForName(propertyInfo.name, true);
             propertyMissing = !property;
             if (propertyMissing && this._style.nodeStyles)
@@ -331,7 +331,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
     modifyPropertyText(text, value)
     {
-        for (let property of this._propertyInfoList) {
+        for (var property of this._propertyInfoList) {
             if (property.textContainsNameRegExp.test(text))
                 text = text.replace(property.replacementRegExp, value !== null ? "$1$2: " + value + ";" : "$1");
             else if (value !== null)
@@ -430,7 +430,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         if (!keyword || !keyword.length || !this._possibleValues)
             return null;
 
-        for (let basicKey in this._possibleValues.basic) {
+        for (var basicKey in this._possibleValues.basic) {
             if (this._possibleValues.basic[basicKey] === keyword)
                 return basicKey;
         }
@@ -438,7 +438,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         if (!this._possibleValues.advanced)
             return null;
 
-        for (let advancedKey in this._possibleValues.advanced) {
+        for (var advancedKey in this._possibleValues.advanced) {
             if (this._possibleValues.advanced[advancedKey] === keyword)
                 return advancedKey;
         }
@@ -480,7 +480,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
             return text;
 
         var longhandText = "";
-        for (let longhandProperty of shorthand.relatedLonghandProperties) {
+        for (var longhandProperty of shorthand.relatedLonghandProperties) {
             if (longhandProperty.anonymous)
                 longhandText += longhandProperty.synthesizedText;
         }

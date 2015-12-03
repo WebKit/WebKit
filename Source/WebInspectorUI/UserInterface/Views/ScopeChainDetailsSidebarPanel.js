@@ -135,7 +135,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                 if (!callFrameSections)
                     return;
 
-                for (let callFrameSection of callFrameSections)
+                for (var callFrameSection of callFrameSections)
                     this.contentElement.appendChild(callFrameSection.element);
             }
 
@@ -165,7 +165,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
             sectionCountByType[WebInspector.ScopeChainNode.Type[type]] = 0;
 
         var scopeChain = callFrame.scopeChain;
-        for (let scope of scopeChain) {
+        for (var scope of scopeChain) {
             var title = null;
             var extraPropertyDescriptor = null;
             var collapsedByDefault = false;
@@ -259,7 +259,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         treeOutline.objectTreeElementAddContextMenuItems = this._objectTreeElementAddContextMenuItems.bind(this);
 
         var promises = [];
-        for (let expression of watchExpressions) {
+        for (var expression of watchExpressions) {
             promises.push(new Promise(function(resolve, reject) {
                 WebInspector.runtimeManager.evaluateInInspectedWindow(expression, WebInspector.ScopeChainDetailsSidebarPanel.WatchExpressionsObjectGroupName, false, true, false, true, false, function(object, wasThrown) {
                     var propertyDescriptor = new WebInspector.PropertyDescriptor({name: expression, value: object}, undefined, undefined, wasThrown);

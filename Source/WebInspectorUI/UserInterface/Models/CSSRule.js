@@ -183,7 +183,7 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
             return;
 
         var mediaText = "";
-        for (let media of this._mediaList)
+        for (var media of this._mediaList)
             mediaText += media.text;
 
         return mediaText;

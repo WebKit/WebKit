@@ -103,7 +103,7 @@ WebInspector.DOMTreeUpdater.prototype = {
         }
 
         var updatedParentTreeElements = [];
-        for (let recentlyModifiedNode of this._recentlyModifiedNodes) {
+        for (var recentlyModifiedNode of this._recentlyModifiedNodes) {
             var parent = recentlyModifiedNode.parent;
             var node = recentlyModifiedNode.node;
             var changeInfo = null;
@@ -133,7 +133,7 @@ WebInspector.DOMTreeUpdater.prototype = {
             }
         }
 
-        for (let i = 0; i < updatedParentTreeElements.length; ++i)
+        for (var i = 0; i < updatedParentTreeElements.length; ++i)
             updatedParentTreeElements[i].alreadyUpdatedChildren = null;
 
         this._recentlyModifiedNodes = [];

@@ -36,7 +36,7 @@ WebInspector.VisualStyleTabbedPropertiesRow = class VisualStyleTabbedPropertiesR
 
         this._tabButtons = [];
         this._tabMap = tabMap;
-        for (let key in this._tabMap) {
+        for (var key in this._tabMap) {
             var button = document.createElement("button");
             button.id = key;
             button.textContent = this._tabMap[key].title;
@@ -57,12 +57,12 @@ WebInspector.VisualStyleTabbedPropertiesRow = class VisualStyleTabbedPropertiesR
 
     _handleButtonClicked(event)
     {
-        for (let item of this._tabButtons) {
+        for (var item of this._tabButtons) {
             var tab = this._tabMap[item.id];
             var selected = item === event.target;
             item.classList.toggle("selected", selected);
             tab.element.classList.toggle("visible", selected);
-            for (let propertyEditor of tab.properties)
+            for (var propertyEditor of tab.properties)
                 propertyEditor.update();
         }
     }

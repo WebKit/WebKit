@@ -34,7 +34,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         this._propertyMissing = false;
         this._propertyEditors = propertyEditors || [];
 
-        for (let editor of this._propertyEditors) {
+        for (var editor of this._propertyEditors) {
             editor.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, this._handlePropertyEditorValueChanged, this);
             editor.suppressStyleTextUpdate = true;
         }
@@ -53,7 +53,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
     {
         var value = "";
         var oneEditorHasValue = false;
-        for (let editor of this._propertyEditors) {
+        for (var editor of this._propertyEditors) {
             var editorValue = editor.synthesizedValue;
             if (editorValue && editorValue.length)
                 oneEditorHasValue = true;
@@ -115,11 +115,11 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         if (styleText === this.synthesizedValue)
             return;
 
-        for (let editor of this._propertyEditors)
+        for (var editor of this._propertyEditors)
             editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol] = false;
 
         function updateCompatibleEditor(value) {
-            for (let editor of this._propertyEditors) {
+            for (var editor of this._propertyEditors) {
                 if (value && !editor.valueIsCompatible(value) || editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol])
                     continue;
 
@@ -136,7 +136,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         }
 
         var matches = styleText.match(this._valueRegExp);
-        for (let i = 0; i < this._propertyEditors.length; ++i)
+        for (var i = 0; i < this._propertyEditors.length; ++i)
             updateCompatibleEditor.call(this, matches && matches[i]);
     }
 
@@ -156,7 +156,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
     _markEditors(ignoredEditor, disabled)
     {
         this._currentValueIsKeyword = disabled || false;
-        for (let editor of this._propertyEditors) {
+        for (var editor of this._propertyEditors) {
             if (ignoredEditor && editor === ignoredEditor)
                 continue;
 

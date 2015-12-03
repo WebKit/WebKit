@@ -1116,7 +1116,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (hasText)
             attrSpanElement.appendChild(document.createTextNode("\""));
 
-        for (let change of this._nodeStateChanges) {
+        for (var change of this._nodeStateChanges) {
             if (change.type === WebInspector.DOMTreeElement.ChangeType.Attribute && change.attribute === name)
                 change.element = hasText ? attrValueElement : attrNameElement;
         }
@@ -1466,7 +1466,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _markNodeChanged()
     {
-        for (let change of this._nodeStateChanges) {
+        for (var change of this._nodeStateChanges) {
             var element = change.element;
             if (!element)
                 continue;
@@ -1483,7 +1483,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         element.classList.remove("node-state-changed");
         element.removeEventListener("animationend", this._boundNodeChangedAnimationEnd);
 
-        for (let i = this._nodeStateChanges.length - 1; i >= 0; --i) {
+        for (var i = this._nodeStateChanges.length - 1; i >= 0; --i) {
             if (this._nodeStateChanges[i].element === element)
                 this._nodeStateChanges.splice(i, 1);
         }

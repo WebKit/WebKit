@@ -87,7 +87,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         // Pseudo Styles
         var pseudoRules = [];
         var pseudoElements = this._nodeStyles.pseudoElements;
-        for (let pseudoIdentifier in pseudoElements)
+        for (var pseudoIdentifier in pseudoElements)
             pseudoRules = pseudoRules.concat(pseudoElements[pseudoIdentifier].matchedRules);
 
         var orderedPseudoRules = uniqueOrderedRules(pseudoRules);
@@ -121,7 +121,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
                 return new Array;
 
             var uniqueRules = new Map;
-            for (let rule of orderedRules) {
+            for (var rule of orderedRules) {
                 if (!uniqueRules.has(rule.id))
                     uniqueRules.set(rule.id, rule);
             }
@@ -134,7 +134,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
                 return;
 
             if (force) {
-                for (let i = orderedPseudoRules.length - 1; i >= 0; --i) {
+                for (var i = orderedPseudoRules.length - 1; i >= 0; --i) {
                     var pseudoRule = orderedPseudoRules[i];
                     createSelectorItem.call(this, pseudoRule.style, pseudoRule.selectorText, pseudoRule.mediaText);
                 }
@@ -144,7 +144,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             if (!previousRule)
                 return;
 
-            for (let i = orderedPseudoRules.length - 1; i >= 0; --i) {
+            for (var i = orderedPseudoRules.length - 1; i >= 0; --i) {
                 var pseudoRule = orderedPseudoRules[i];
                 if (!pseudoRule.selectorIsGreater(previousRule.mostSpecificSelector))
                     continue;
@@ -162,7 +162,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         createSelectorItem.call(this, this._nodeStyles.inlineStyle, WebInspector.UIString("This Element"));
 
         // Matched Rules
-        for (let rule of uniqueOrderedRules(this._nodeStyles.matchedRules)) {
+        for (var rule of uniqueOrderedRules(this._nodeStyles.matchedRules)) {
             if (rule.type === WebInspector.CSSRule.Type.UserAgent) {
                 insertAllMatchingPseudoRules.call(this, true);
                 continue;
@@ -177,7 +177,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         insertAllMatchingPseudoRules.call(this, true);
 
         // Inherited Rules
-        for (let inherited of this._nodeStyles.inheritedRules) {
+        for (var inherited of this._nodeStyles.inheritedRules) {
             if (!inherited.matchedRules || !inherited.matchedRules.length)
                 continue;
 
@@ -186,7 +186,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             divider.selectable = false;
             this._selectors.appendChild(divider);
 
-            for (let rule of uniqueOrderedRules(inherited.matchedRules)) {
+            for (var rule of uniqueOrderedRules(inherited.matchedRules)) {
                 if (rule.type === WebInspector.CSSRule.Type.UserAgent)
                     continue;
 

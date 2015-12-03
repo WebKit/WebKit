@@ -33,7 +33,7 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
         this._linksToHideWhenLinked = linksToHideWhenLinked || [];
         this._lastPropertyEdited = null;
 
-        for (let property of this._linkedProperties)
+        for (var property of this._linkedProperties)
             property.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, this._linkedPropertyValueChanged, this);
 
         this._element = document.createElement("div");
@@ -86,7 +86,7 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
         this._unlinkedIcon.hidden = this._linked;
         this._iconElement.title = this._linked ? WebInspector.UIString("Click to remove link") : WebInspector.UIString("Click to link property values");
 
-        for (let linkToHide of this._linksToHideWhenLinked)
+        for (var linkToHide of this._linksToHideWhenLinked)
             linkToHide.disabled = this._linked;
     }
 
@@ -120,7 +120,7 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
         var text = style.text;
         var value = property.synthesizedValue || null;
 
-        for (let linkedProperty of this._linkedProperties)
+        for (var linkedProperty of this._linkedProperties)
             text = linkedProperty.updateValueFromText(text, value);
 
         style.text = text;

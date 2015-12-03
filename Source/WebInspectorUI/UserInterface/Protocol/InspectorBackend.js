@@ -474,7 +474,7 @@ InspectorBackend.Command.prototype = {
         var callback = typeof commandArguments.lastValue === "function" ? commandArguments.pop() : null;
 
         var parameters = {};
-        for (let parameter of instance.callSignature) {
+        for (var parameter of instance.callSignature) {
             var parameterName = parameter["name"];
             var typeName = parameter["type"];
             var optionalFlag = parameter["optional"];

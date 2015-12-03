@@ -319,7 +319,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
     _createValueOptions(values)
     {
         var addedElements = [];
-        for (let key in values) {
+        for (var key in values) {
             var option = document.createElement("option");
             option.value = key;
             option.text = values[key];
@@ -333,7 +333,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
     _createUnitOptions(units)
     {
         var addedElements = [];
-        for (let unit of units) {
+        for (var unit of units) {
             var option = document.createElement("option");
             option.text = unit;
             this._keywordSelectElement.appendChild(option);
@@ -358,7 +358,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
             return;
 
         this._keywordSelectElement.removeChild(this._advancedUnitsElements[0].previousSibling);
-        for (let element of this._advancedUnitsElements)
+        for (var element of this._advancedUnitsElements)
             this._keywordSelectElement.removeChild(element);
 
         this._advancedUnitsElements = null;

@@ -124,7 +124,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
     _addCheckboxColorFilter(id, r, g, b)
     {
-        for (let i = 0; i < this._svgFiltersElement.childNodes.length; ++i) {
+        for (var i = 0; i < this._svgFiltersElement.childNodes.length; ++i) {
             if (this._svgFiltersElement.childNodes[i].id === id)
                 return;
         }
@@ -172,7 +172,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
     {
         this._legendElement.removeChildren();
 
-        for (let item of this._items) {
+        for (var item of this._items) {
             var labelElement = document.createElement("label");
             var keyElement;
             if (item.checkbox) {

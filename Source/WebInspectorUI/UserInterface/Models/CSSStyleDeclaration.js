@@ -290,13 +290,13 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         if (mediaList.length) {
             mediaQueriesCount = mediaList.length;
 
-            for (let i = mediaQueriesCount - 1; i >= 0; --i)
+            for (var i = mediaQueriesCount - 1; i >= 0; --i)
                 styleText += "    ".repeat(mediaQueriesCount - i - 1) + "@media " + mediaList[i].text + " {\n";
         }
 
         styleText += "    ".repeat(mediaQueriesCount) + this._ownerRule.selectorText + " {\n";
 
-        for (let property of this._properties) {
+        for (var property of this._properties) {
             if (property.anonymous)
                 continue;
 
@@ -308,7 +308,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
             styleText += "\n";
         }
 
-        for (let i = mediaQueriesCount; i > 0; --i)
+        for (var i = mediaQueriesCount; i > 0; --i)
             styleText += "    ".repeat(i) + "}\n";
 
         styleText += "}";
