@@ -200,6 +200,10 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
         auto result = m_targetMap.set(identifier, target);
         ASSERT_UNUSED(result, !result.isNewEntry);
 
+        // If the target has just allowed remote control, then the listing won't exist yet.
+        if (RetainPtr<NSDictionary> listing = listingForTarget(*target))
+            m_listingMap.set(identifier, listing);
+
         // Don't allow automatic inspection unless it is allowed or we are stopped.
         if (!m_automaticInspectionEnabled || !m_enabled) {
             pushListingsSoon();
