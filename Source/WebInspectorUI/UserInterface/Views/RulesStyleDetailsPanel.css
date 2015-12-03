@@ -26,8 +26,7 @@
 .sidebar > .panel.details.css-style .rules .label {
     color: hsl(0, 0%, 60%);
     text-shadow: white 0 1px 0;
-
-    padding: 0 10px;
+    padding: 0 8px;
 }
 
 .sidebar > .panel.details.css-style .rules .label .go-to-link {
