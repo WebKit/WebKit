@@ -592,10 +592,16 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         this._updatePositionOfElement(this._leftSelectionHandleElement, newLeftPosition, visibleWidth, "left");
         this._updatePositionOfElement(this._selectionDragElement, newLeftPosition, visibleWidth, "left");
 
+        this._leftSelectionHandleElement.classList.toggle("clamped", this._selectionStartTime < this._startTime);
+        this._leftSelectionHandleElement.title = this._selectionStartTime < this._startTime ? this._formatDividerLabelText(this._selectionStartTime) : "";
+
         var newRightPosition = 1 - Math.min((this._selectionEndTime - this._startTime) / duration, 1);
         this._updatePositionOfElement(this._rightShadedAreaElement, newRightPosition, visibleWidth, "width");
         this._updatePositionOfElement(this._rightSelectionHandleElement, newRightPosition, visibleWidth, "right");
         this._updatePositionOfElement(this._selectionDragElement, newRightPosition, visibleWidth, "right");
+
+        this._rightSelectionHandleElement.classList.toggle("clamped", this._selectionEndTime > this._endTime);
+        this._rightSelectionHandleElement.title = this._selectionEndTime > this._endTime ? this._formatDividerLabelText(this._selectionEndTime) : "";
 
         if (!this._selectionDragElement.parentNode) {
             this._element.appendChild(this._selectionDragElement);
