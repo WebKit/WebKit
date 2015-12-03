@@ -100,7 +100,9 @@ public:
     void reset();
 
     // InspectorInstrumentation callbacks.
+    void documentDetached(Document&);
     void mediaQueryResultChanged();
+    void activeStyleSheetsUpdated(Document&);
     void didCreateNamedFlow(Document&, WebKitNamedFlow&);
     void willRemoveNamedFlow(Document&, WebKitNamedFlow&);
     void didChangeRegionOverset(Document&, WebKitNamedFlow&);
@@ -140,8 +142,13 @@ private:
     InspectorStyleSheetForInlineStyle* asInspectorStyleSheet(Element* element);
     Element* elementForId(ErrorString&, int nodeId);
     int documentNodeWithRequestedFlowsId(Document*);
-    void collectStyleSheets(CSSStyleSheet*, Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSStyleSheetHeader>*);
 
+    void collectAllStyleSheets(Vector<InspectorStyleSheet*>&);
+    void collectAllDocumentStyleSheets(Document&, Vector<CSSStyleSheet*>&);
+    void collectStyleSheets(CSSStyleSheet*, Vector<CSSStyleSheet*>&);
+    void setActiveStyleSheetsForDocument(Document&, Vector<CSSStyleSheet*>& activeStyleSheets);
+
+    String unbindStyleSheet(InspectorStyleSheet*);
     InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
     InspectorStyleSheet* viaInspectorStyleSheet(Document*, bool createIfAbsent);
     InspectorStyleSheet* assertStyleSheetForId(ErrorString&, const String&);
@@ -172,11 +179,13 @@ private:
     CSSStyleSheetToInspectorStyleSheet m_cssStyleSheetToInspectorStyleSheet;
     NodeToInspectorStyleSheet m_nodeToInspectorStyleSheet;
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
+    HashMap<Document*, HashSet<CSSStyleSheet*>> m_documentToKnownCSSStyleSheets;
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
     HashSet<int> m_namedFlowCollectionsRequested;
     std::unique_ptr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
     int m_lastStyleSheetId;
+    bool m_creatingViaInspectorStyleSheet { false };
 };
 
 } // namespace WebCore

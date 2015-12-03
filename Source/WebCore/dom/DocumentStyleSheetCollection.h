@@ -59,6 +59,8 @@ public:
 
     const Vector<RefPtr<CSSStyleSheet>>& activeAuthorStyleSheets() const { return m_activeAuthorStyleSheets; }
 
+    const Vector<RefPtr<CSSStyleSheet>> activeStyleSheetsForInspector() const;
+
     CSSStyleSheet* pageUserSheet();
     const Vector<RefPtr<CSSStyleSheet>>& documentUserStyleSheets() const { return m_userStyleSheets; }
     const Vector<RefPtr<CSSStyleSheet>>& documentAuthorStyleSheets() const { return m_authorStyleSheets; }
