@@ -1,3 +1,12 @@
+2015-12-03  Jonathan Davis  <jond@apple.com>
+
+        Add WebCrypto to status page
+        https://bugs.webkit.org/show_bug.cgi?id=151760
+
+        Reviewed by Timothy Hatcher.
+
+        * features.json:
+
 2015-12-03  Keith Rollin  <krollin@apple.com>
 
         [Win] fast/forms/HTMLOptionElement_label03.html failing on win7

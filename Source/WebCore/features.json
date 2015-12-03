@@ -170,6 +170,23 @@
         }
     },
     {
+        "name": "WebCrypto",
+        "status": {
+            "status": "Partial Support",
+            "enabled-by-default": true
+        },
+        "url": "http://www.w3.org/TR/WebCryptoAPI/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=122679",
+        "keywords": ["webcrypto"],
+        "category": "webapps",
+        "description": "A JavaScript API for web applications to perform cryptographic operations.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "WebGL 1",
         "status": {
             "status": "Done",
