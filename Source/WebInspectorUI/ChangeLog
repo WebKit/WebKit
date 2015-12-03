@@ -1,5 +1,22 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r192755. rdar://problem/23221163
+
+    2015-11-23  Brian Burg  <bburg@apple.com>
+
+            Web Inspector: use Cmd-Option-L and Cmd-Option-R for toggling navigation and details sidebars
+            https://bugs.webkit.org/show_bug.cgi?id=151572
+
+            Reviewed by Timothy Hatcher.
+
+            The previous shortcuts were Cmd-0 and Cmd-Option-0, but these didn't match Safari's
+            sidebar shortcuts and conflict with Cmd-0 as the cross-browser way to reset page zoom.
+
+            * UserInterface/Base/Main.js:
+            (WebInspector.contentLoaded):
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Merge r192735. rdar://problem/23221163
 
     2015-11-22  Matt Baker  <mattbaker@apple.com>
