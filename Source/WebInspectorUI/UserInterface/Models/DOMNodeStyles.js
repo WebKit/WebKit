@@ -325,20 +325,29 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
     changeRuleSelector(rule, selector)
     {
         selector = selector || "";
+        var result = new WebInspector.WrappedPromise;
 
         function ruleSelectorChanged(error, rulePayload)
         {
+            if (error) {
+                result.reject(error);
+                return;
+            }
+
             DOMAgent.markUndoableState();
 
             // Do a full refresh incase the rule no longer matches the node or the
             // matched selector indices changed.
             this.refresh();
+
+            result.resolve(rulePayload);
         }
 
         this._needsRefresh = true;
         this._ignoreNextContentDidChangeForStyleSheet = rule.ownerStyleSheet;
 
         CSSAgent.setRuleSelector(rule.id, selector, ruleSelectorChanged.bind(this));
+        return result.promise;
     }
 
     changeStyleText(style, text)
