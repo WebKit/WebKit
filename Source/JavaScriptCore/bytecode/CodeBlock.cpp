@@ -2124,9 +2124,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                     // Because a return statement can be added implicitly to return undefined at the end of a function,
                     // and these nodes don't emit expression ranges because they aren't in the actual source text of
                     // the user's program, give the type profiler some range to identify these return statements.
-                    // Currently, the text offset that is used as identification is on the open brace of the function 
+                    // Currently, the text offset that is used as identification is "f" in the function keyword
                     // and is stored on TypeLocation's m_divotForFunctionOffsetIfReturnStatement member variable.
-                    divotStart = divotEnd = m_sourceOffset;
+                    divotStart = divotEnd = m_ownerExecutable->typeProfilingStartOffset();
                     shouldAnalyze = true;
                 }
                 break;
@@ -2139,7 +2139,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             bool isNewLocation = locationPair.second;
 
             if (flag == ProfileTypeBytecodeFunctionReturnStatement)
-                location->m_divotForFunctionOffsetIfReturnStatement = m_sourceOffset;
+                location->m_divotForFunctionOffsetIfReturnStatement = m_ownerExecutable->typeProfilingStartOffset();
 
             if (shouldAnalyze && isNewLocation)
                 vm()->typeProfiler()->insertNewLocation(location);

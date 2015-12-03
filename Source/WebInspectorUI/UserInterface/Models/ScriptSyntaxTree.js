@@ -146,6 +146,23 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         return hasNonEmptyReturnStatement;
     }
 
+    static functionReturnDivot(node)
+    {
+        console.assert(
+            node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration 
+            || node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression 
+            || node.type === WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition);
+
+        // COMPATIBILITY (iOS 9): Legacy Backends view the return type as being the opening "{" of the function body. 
+        // After iOS 9, this is to move to the start of the function statement/expression. See below:
+        // FIXME: Need a better way to determine backend versions. Using DOM.pseudoElement because that was added after iOS 9.
+        if (!DOMAgent.hasEvent("pseudoElementAdded"))
+            return node.body.range[0];
+
+        // "f" in function, "s" in set, "g" in get, first letter in any method name for classes.
+        return node.isGetterOrSetter ? node.getterOrSetterRange[0] : node.range[0];
+    }
+
     updateTypes(nodesToUpdate, callback)
     {
         console.assert(RuntimeAgent.getRuntimeTypesForVariablesAtOffsets);
@@ -173,10 +190,11 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                     }
                 }
 
+
                 allRequests.push({
                     typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn,
                     sourceID,
-                    divot: node.body.range[0]
+                    divot: WebInspector.ScriptSyntaxTree.functionReturnDivot(node)
                 });
                 allRequestNodes.push(node);
                 break;
