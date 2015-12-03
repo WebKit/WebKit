@@ -1,5 +1,21 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r190780. rdar://problem/23221163
+
+    2015-10-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Stack trace view doesn't properly display lines without function names
+            https://bugs.webkit.org/show_bug.cgi?id=149922
+
+            Test an anomymous function.
+
+            Reviewed by Timothy Hatcher.
+
+            * inspector/debugger/js-stacktrace-expected.txt: Also, rebaseline one old test.
+            * inspector/debugger/js-stacktrace.html:
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r190551. rdar://problem/23221163
 
     2015-10-04  Nikita Vasilyev  <nvasilyev@apple.com>
