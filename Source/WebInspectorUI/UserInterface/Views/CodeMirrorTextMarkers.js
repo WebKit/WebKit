@@ -85,7 +85,7 @@ function createCodeMirrorTextMarkers(type, pattern, matchFunction, codeMirror, r
 function createCodeMirrorColorTextMarkers(codeMirror, range, callback)
 {
     // Matches rgba(0, 0, 0, 0.5), rgb(0, 0, 0), hsl(), hsla(), #fff, #ffffff, white
-    var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?![-.]))/g;
+    var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{8}|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3,4}|\b\w+\b(?![-.]))/g;
     function matchFunction(lineContent, match) {
         // Act as a negative look-behind and disallow the color from being prefixing with certain characters.
         return !(match.index > 0 && /[-.\"\']/.test(lineContent[match.index - 1]));

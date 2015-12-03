@@ -1,0 +1,121 @@
+Tests for the WebInspector.Color model object.
+
+
+== Running test suite: WebInspector.Color
+-- Running test case: WebInspector.Color.fromString
+PASS: '#000' should be detected
+PASS: '#000' was the expected 'Short HEX' format
+PASS: '#a0A' should be detected
+PASS: '#a0A' was the expected 'Short HEX' format
+PASS: '#000000' should be detected
+PASS: '#000000' was the expected 'HEX' format
+PASS: '#a0Aa0A' should be detected
+PASS: '#a0Aa0A' was the expected 'HEX' format
+PASS: '#0000' should be detected
+PASS: '#0000' was the expected 'Short HEX with Alpha' format
+PASS: '#a0Af' should be detected
+PASS: '#a0Af' was the expected 'Short HEX with Alpha' format
+PASS: '#00000000' should be detected
+PASS: '#00000000' was the expected 'HEX with Alpha' format
+PASS: '#a0Aa0Aff' should be detected
+PASS: '#a0Aa0Aff' was the expected 'HEX with Alpha' format
+PASS: 'rgb(1,2,3)' should be detected
+PASS: 'rgb(1,2,3)' was the expected 'RGB' format
+PASS: 'RGB(1,2,3)' should be detected
+PASS: 'RGB(1,2,3)' was the expected 'RGB' format
+PASS: 'rgb(999, 999, 999)' should be detected
+PASS: 'rgb(999, 999, 999)' was the expected 'RGB' format
+PASS: 'rgb( 1 , 1 , 1 )' should be detected
+PASS: 'rgb( 1 , 1 , 1 )' was the expected 'RGB' format
+PASS: 'rgba(1,2,3,0)' should be detected
+PASS: 'rgba(1,2,3,0)' was the expected 'RGBA' format
+PASS: 'RGBA(1,2,3,0)' should be detected
+PASS: 'RGBA(1,2,3,0)' was the expected 'RGBA' format
+PASS: 'rgba(999, 999, 999, 999)' should be detected
+PASS: 'rgba(999, 999, 999, 999)' was the expected 'RGBA' format
+PASS: 'rgba( 1 , 1 , 1 , 0.5 )' should be detected
+PASS: 'rgba( 1 , 1 , 1 , 0.5 )' was the expected 'RGBA' format
+PASS: 'hsl(0, 0%, 50%)' should be detected
+PASS: 'hsl(0, 0%, 50%)' was the expected 'HSL' format
+PASS: 'HSL(0, 0%, 50%)' should be detected
+PASS: 'HSL(0, 0%, 50%)' was the expected 'HSL' format
+PASS: 'hsl(999, 999%, 999%)' should be detected
+PASS: 'hsl(999, 999%, 999%)' was the expected 'HSL' format
+PASS: 'hsl( 0 , 0% , 50% )' should be detected
+PASS: 'hsl( 0 , 0% , 50% )' was the expected 'HSL' format
+PASS: 'hsla(0, 0%, 50%, 0)' should be detected
+PASS: 'hsla(0, 0%, 50%, 0)' was the expected 'HSLA' format
+PASS: 'HSLA(0, 0%, 50%, 0)' should be detected
+PASS: 'HSLA(0, 0%, 50%, 0)' was the expected 'HSLA' format
+PASS: 'hsla(999, 999%, 999%, 999)' should be detected
+PASS: 'hsla(999, 999%, 999%, 999)' was the expected 'HSLA' format
+PASS: 'hsla( 0 , 0% , 50% , 0.5 )' should be detected
+PASS: 'hsla( 0 , 0% , 50% , 0.5 )' was the expected 'HSLA' format
+PASS: 'blue' should be detected
+PASS: 'blue' was the expected 'Nickname' format
+PASS: 'BLuE' should be detected
+PASS: 'BLuE' was the expected 'Nickname' format
+PASS: 'midnightblue' should be detected
+PASS: 'midnightblue' was the expected 'Nickname' format
+PASS: 'royalblue' should be detected
+PASS: 'royalblue' was the expected 'Nickname' format
+PASS: 'steelblue' should be detected
+PASS: 'steelblue' was the expected 'Nickname' format
+PASS: 'transparent' should be detected
+PASS: 'transparent' was the expected 'Nickname' format
+
+PASS: ' #000 ' should not be detected
+PASS: '#rgb' should not be detected
+PASS: '#1' should not be detected
+PASS: '#12' should not be detected
+PASS: '#12345' should not be detected
+PASS: '#1234567' should not be detected
+PASS: '#123456789' should not be detected
+PASS: 'rgb(255, 255, 255, 0.5)' should not be detected
+PASS: 'rgba(255, 255, 255, 0.5, 1)' should not be detected
+PASS: 'hsl(0, 0%, 50%, 1)' should not be detected
+PASS: 'hsla(0, 0%, 50%, 1, 2)' should not be detected
+PASS: 'superblue' should not be detected
+
+-- Running test case: WebInspector.Color properties
+PASS: 'red' should have alpha of 1.
+PASS: 'red' should be simple.
+PASS: 'red' has rgb of [255, 0, 0].
+PASS: 'red' has rgba of [255, 0, 0, 1].
+PASS: 'red' has hsl of [0, 100, 50].
+PASS: 'red' has hsla of [0, 100, 50, 1].
+PASS: 'transparent' should have alpha of 0.
+PASS: 'transparent' should be not be simple.
+PASS: 'transparent' has rgb of [0, 0, 0].
+PASS: 'transparent' has rgba of [0, 0, 0, 0].
+PASS: 'transparent' has hsl of [0, 0, 0].
+PASS: 'transparent' has hsla of [0, 0, 0, 0].
+
+-- Running test case: WebInspector.Color.prototype.nextFormat
+PASS: All format phases of 'transparent' should be as expected.
+PASS: All format phases of 'red' should be as expected.
+PASS: All format phases of 'rgb(100, 150, 200)' should be as expected.
+PASS: All format phases of 'rgba(100, 150, 200, 0.5)' should be as expected.
+
+-- Running test case: WebInspector.Color.prototype.toString
+PASS: Color as 'Original' should be 'RED'
+PASS: Color as 'Nickname' should be 'red'
+PASS: Color as 'Short HEX' should be '#f00'
+PASS: Color as 'HEX' should be '#ff0000'
+PASS: Color as 'Short HEX with Alpha' should be '#f00f'
+PASS: Color as 'HEX with Alpha' should be '#ff0000ff'
+PASS: Color as 'RGB' should be 'rgb(255, 0, 0)'
+PASS: Color as 'RGBA' should be 'rgba(255, 0, 0, 1)'
+PASS: Color as 'HSL' should be 'hsl(0, 100%, 50%)'
+PASS: Color as 'HSLA' should be 'hsla(0, 100%, 50%, 1)'
+PASS: Color as 'Original' should be 'rgba(100, 200, 255, 0.5)'
+PASS: Color as 'Nickname' should be 'rgba(100, 200, 255, 0.5)'
+PASS: Color as 'Short HEX' should be 'rgba(100, 200, 255, 0.5)'
+PASS: Color as 'HEX' should be 'rgba(100, 200, 255, 0.5)'
+PASS: Color as 'Short HEX with Alpha' should be '#64c8ff80'
+PASS: Color as 'HEX with Alpha' should be '#64c8ff80'
+PASS: Color as 'RGB' should be 'rgba(100, 200, 255, 0.5)'
+PASS: Color as 'RGBA' should be 'rgba(100, 200, 255, 0.5)'
+PASS: Color as 'HSL' should be 'hsla(201, 100%, 70%, 0.5)'
+PASS: Color as 'HSLA' should be 'hsla(201, 100%, 70%, 0.5)'
+

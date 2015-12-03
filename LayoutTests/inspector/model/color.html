@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    function formatToString(format) {
+        switch (format) {
+        case WebInspector.Color.Format.Original:
+            return "Original";
+        case WebInspector.Color.Format.Nickname:
+            return "Nickname";
+        case WebInspector.Color.Format.HEX:
+            return "HEX";
+        case WebInspector.Color.Format.ShortHEX:
+            return "Short HEX";
+        case WebInspector.Color.Format.HEXAlpha:
+            return "HEX with Alpha";
+        case WebInspector.Color.Format.ShortHEXAlpha:
+            return "Short HEX with Alpha";
+        case WebInspector.Color.Format.RGB:
+            return "RGB";
+        case WebInspector.Color.Format.RGBA:
+            return "RGBA";
+        case WebInspector.Color.Format.HSL:
+            return "HSL";
+        case WebInspector.Color.Format.HSLA:
+            return "HSLA";
+        default:
+            return "Unexpected format";
+        }
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WebInspector.Color");
+
+    suite.addTestCase({
+        name: "WebInspector.Color.fromString",
+        description: "Test we can detect colors from strings.",
+        test: (resolve, reject) => {
+            function testGood(string, expectedFormat) {
+                let color = WebInspector.Color.fromString(string);
+                InspectorTest.expectThat(color instanceof WebInspector.Color, `'${string}' should be detected`);
+                InspectorTest.expectThat(color && color.format === expectedFormat, `'${string}' was the expected '${formatToString(expectedFormat)}' format`);
+            }
+
+            function testBad(string) {
+                let color = WebInspector.Color.fromString(string);
+                InspectorTest.expectThat(color === null, `'${string}' should not be detected`);
+                if (color) InspectorTest.log(`'${string}' detected with format '${formatToString(color.format)}'`);
+            }
+
+            testGood("#000", WebInspector.Color.Format.ShortHEX);
+            testGood("#a0A", WebInspector.Color.Format.ShortHEX);
+            testGood("#000000", WebInspector.Color.Format.HEX);
+            testGood("#a0Aa0A", WebInspector.Color.Format.HEX);
+
+            testGood("#0000", WebInspector.Color.Format.ShortHEXAlpha);
+            testGood("#a0Af", WebInspector.Color.Format.ShortHEXAlpha);
+            testGood("#00000000", WebInspector.Color.Format.HEXAlpha);
+            testGood("#a0Aa0Aff", WebInspector.Color.Format.HEXAlpha);
+
+            testGood("rgb(1,2,3)", WebInspector.Color.Format.RGB);
+            testGood("RGB(1,2,3)", WebInspector.Color.Format.RGB);
+            testGood("rgb(999, 999, 999)", WebInspector.Color.Format.RGB);
+            testGood("rgb( 1 , 1 , 1 )", WebInspector.Color.Format.RGB);
+
+            testGood("rgba(1,2,3,0)", WebInspector.Color.Format.RGBA);
+            testGood("RGBA(1,2,3,0)", WebInspector.Color.Format.RGBA);
+            testGood("rgba(999, 999, 999, 999)", WebInspector.Color.Format.RGBA);
+            testGood("rgba( 1 , 1 , 1 , 0.5 )", WebInspector.Color.Format.RGBA);
+
+            testGood("hsl(0, 0%, 50%)", WebInspector.Color.Format.HSL);
+            testGood("HSL(0, 0%, 50%)", WebInspector.Color.Format.HSL);
+            testGood("hsl(999, 999%, 999%)", WebInspector.Color.Format.HSL);
+            testGood("hsl( 0 , 0% , 50% )", WebInspector.Color.Format.HSL);
+            
+            testGood("hsla(0, 0%, 50%, 0)", WebInspector.Color.Format.HSLA);
+            testGood("HSLA(0, 0%, 50%, 0)", WebInspector.Color.Format.HSLA);
+            testGood("hsla(999, 999%, 999%, 999)", WebInspector.Color.Format.HSLA);
+            testGood("hsla( 0 , 0% , 50% , 0.5 )", WebInspector.Color.Format.HSLA);
+
+            testGood("blue", WebInspector.Color.Format.Nickname);
+            testGood("BLuE", WebInspector.Color.Format.Nickname);
+            testGood("midnightblue", WebInspector.Color.Format.Nickname);
+            testGood("royalblue", WebInspector.Color.Format.Nickname);
+            testGood("steelblue", WebInspector.Color.Format.Nickname);
+            testGood("transparent", WebInspector.Color.Format.Nickname);
+
+            InspectorTest.log("");
+
+            testBad(" #000 "); // whitespace
+            testBad("#rgb"); // bad hex
+            testBad("#1"); // 1
+            testBad("#12"); // 2
+            testBad("#12345"); // 5
+            testBad("#1234567"); // 7
+            testBad("#123456789"); // 9
+            testBad("rgb(255, 255, 255, 0.5)"); // extra values
+            testBad("rgba(255, 255, 255, 0.5, 1)"); // extra values
+            testBad("hsl(0, 0%, 50%, 1)"); // extra value
+            testBad("hsla(0, 0%, 50%, 1, 2)"); // extra values
+            testBad("superblue"); // not a nickname
+
+            // FIXME: currentColor?
+            // FIXME: Should we consider missing %s as bad? Currently we just strip them.
+            // testBad("hsl(0, 0, 50)"); // missing %s
+            // testBad("hsla(0, 0, 50, 1)"); // missing %s
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Color properties",
+        description: "Test different color properties.",
+        test: (resolve, reject) => {
+            function shallowEqual(arr1, arr2) {
+                if (arr1.length !== arr2.length)
+                    return false;
+
+                for (let i = 0; i < arr1.length; ++i) {
+                    if (arr1[i] !== arr2[i])
+                        return false;
+                }
+
+                return true;
+            }
+
+            let color;
+
+            color = WebInspector.Color.fromString("red");
+            InspectorTest.expectThat(color.alpha === 1, "'red' should have alpha of 1.");
+            InspectorTest.expectThat(color.simple === true, "'red' should be simple.");
+            InspectorTest.expectThat(shallowEqual(color.rgb, [255, 0, 0]), "'red' has rgb of [255, 0, 0].");
+            InspectorTest.expectThat(shallowEqual(color.rgba, [255, 0, 0, 1]), "'red' has rgba of [255, 0, 0, 1].");
+            InspectorTest.expectThat(shallowEqual(color.hsl, [0, 100, 50]), "'red' has hsl of [0, 100, 50].");
+            InspectorTest.expectThat(shallowEqual(color.hsla, [0, 100, 50, 1]), "'red' has hsla of [0, 100, 50, 1].");
+
+            color = WebInspector.Color.fromString("transparent");
+            InspectorTest.expectThat(color.alpha === 0, "'transparent' should have alpha of 0.");
+            InspectorTest.expectThat(color.simple === false, "'transparent' should be not be simple.");
+            InspectorTest.expectThat(shallowEqual(color.rgb, [0, 0, 0]), "'transparent' has rgb of [0, 0, 0].");
+            InspectorTest.expectThat(shallowEqual(color.rgba, [0, 0, 0, 0]), "'transparent' has rgba of [0, 0, 0, 0].");
+            InspectorTest.expectThat(shallowEqual(color.hsl, [0, 0, 0]), "'transparent' has hsl of [0, 0, 0].");
+            InspectorTest.expectThat(shallowEqual(color.hsla, [0, 0, 0, 0]), "'transparent' has hsla of [0, 0, 0, 0].");
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Color.prototype.nextFormat",
+        description: "Test we can cycle through color formats for different colors.",
+        test: (resolve, reject) => {
+            function test(string, phases) {
+                let color = WebInspector.Color.fromString(string);
+                color.format = WebInspector.Color.Format.Original;
+
+                let pass = true;
+                for (let expectedNextFormat of phases) {
+                    let nextFormat = color.nextFormat();
+                    InspectorTest.assert(nextFormat === expectedNextFormat, `Next format '${formatToString(nextFormat)}' was not the expected '${formatToString(expectedNextFormat)}'`);
+                    pass = pass && nextFormat === expectedNextFormat;
+                    color.format = nextFormat;
+                }
+
+                InspectorTest.expectThat(pass, `All format phases of '${string}' should be as expected.`);
+            }
+
+            // All with alpha.
+            test("transparent", [
+                WebInspector.Color.Format.RGBA,
+                WebInspector.Color.Format.HSLA,
+                WebInspector.Color.Format.Nickname,
+                WebInspector.Color.Format.ShortHEXAlpha,
+                WebInspector.Color.Format.HEXAlpha,
+                WebInspector.Color.Format.Original,
+            ]);
+
+            // All without alpha.
+            test("red", [
+                WebInspector.Color.Format.RGB,
+                WebInspector.Color.Format.HSL,
+                WebInspector.Color.Format.Nickname,
+                WebInspector.Color.Format.ShortHEX,
+                WebInspector.Color.Format.HEX,
+                WebInspector.Color.Format.Original,
+            ]);
+
+            // No short hex or nickname.
+            test("rgb(100, 150, 200)", [
+                WebInspector.Color.Format.RGB,
+                WebInspector.Color.Format.HSL,
+                WebInspector.Color.Format.HEX,
+                WebInspector.Color.Format.Original,
+            ]);
+
+            // No short hex alpha or nickname.
+            test("rgba(100, 150, 200, 0.5)", [
+                WebInspector.Color.Format.RGBA,
+                WebInspector.Color.Format.HSLA,
+                WebInspector.Color.Format.HEXAlpha,
+                WebInspector.Color.Format.Original,
+            ]);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Color.prototype.toString",
+        description: "Test the different toString outputs.",
+        test: (resolve, reject) => {
+            let color;
+            function test(expected, format) {
+                let pass = color.toString(format) === expected;
+                InspectorTest.expectThat(pass, `Color as '${formatToString(format)}' should be '${expected}'`);
+                if (!pass) InspectorTest.log("WAS: " + color.toString(format));
+            }
+
+            // A color with all formats.
+            color = WebInspector.Color.fromString("RED");
+            test("RED", WebInspector.Color.Format.Original);
+            test("red", WebInspector.Color.Format.Nickname);
+            test("#f00", WebInspector.Color.Format.ShortHEX);
+            test("#ff0000", WebInspector.Color.Format.HEX);
+            test("#f00f", WebInspector.Color.Format.ShortHEXAlpha);
+            test("#ff0000ff", WebInspector.Color.Format.HEXAlpha);
+            test("rgb(255, 0, 0)", WebInspector.Color.Format.RGB);
+            test("rgba(255, 0, 0, 1)", WebInspector.Color.Format.RGBA);
+            test("hsl(0, 100%, 50%)", WebInspector.Color.Format.HSL);
+            test("hsla(0, 100%, 50%, 1)", WebInspector.Color.Format.HSLA);
+
+            // A color which cannot be some formats, those fallback to something else.
+            color = WebInspector.Color.fromString("rGbA(  100, 200, 255, 0.5  )");
+            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.Original); // Original text ignored for some formats.
+            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.Nickname); // fallback (rgba)
+            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.ShortHEX); // fallback (rgba)
+            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.HEX); // fallback (rgba)
+            test("#64c8ff80", WebInspector.Color.Format.ShortHEXAlpha); // fallback (hex alpha)
+            test("#64c8ff80", WebInspector.Color.Format.HEXAlpha);
+            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.RGB); // fallback (rgba)
+            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.RGBA);
+            test("hsla(201, 100%, 70%, 0.5)", WebInspector.Color.Format.HSL); // fallback (hsla)
+            test("hsla(201, 100%, 70%, 0.5)", WebInspector.Color.Format.HSLA);
+
+            // FIXME: Should we clamp rgb(300, 300, 300) => rgb(255, 255, 255) in toStrings?
+            // FIXME: Should we always stash the original string, no matter how poor?
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the WebInspector.Color model object.</p>
+</body>
+</html>
