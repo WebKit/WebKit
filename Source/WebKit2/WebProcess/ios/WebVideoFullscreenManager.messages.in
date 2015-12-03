@@ -32,7 +32,7 @@ messages -> WebVideoFullscreenManager {
     BeginScanningForward(uint64_t contextId)
     BeginScanningBackward(uint64_t contextId)
     EndScanning(uint64_t contextId)
-    RequestExitFullscreen(uint64_t contextId)
+    RequestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
     DidSetupFullscreen(uint64_t contextId)
     DidExitFullscreen(uint64_t contextId)
     DidEnterFullscreen(uint64_t contextId)

@@ -96,6 +96,8 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 - (void)stopPictureInPicture;
 
 @property (nonatomic, strong) AVPlayerController *playerController;
+@property (nonatomic, readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+@property (nonatomic, readonly) BOOL pictureInPictureWasStartedWhenEnteringBackground;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

@@ -112,7 +112,6 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
 
 void WebVideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
 {
-    LOG(Media, "handleEvent %s", event->type().characters8());
     updateForEventName(event->type());
 }
 
@@ -245,10 +244,10 @@ void WebVideoFullscreenModelVideoElement::endScanning()
         m_videoElement->endScanning();
 }
 
-void WebVideoFullscreenModelVideoElement::requestExitFullscreen()
+void WebVideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    if (m_videoElement && m_videoElement->isFullscreen())
-        m_videoElement->exitFullscreen();
+    if (m_videoElement && m_videoElement->fullscreenMode() != mode)
+        m_videoElement->setFullscreenMode(mode);
 }
 
 void WebVideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
@@ -387,6 +386,17 @@ void WebVideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElement
 {
     if (m_videoElement)
         m_videoElement->fullscreenModeChanged(videoFullscreenMode);
+}
+
+bool WebVideoFullscreenModelVideoElement::isVisible() const
+{
+    if (!m_videoElement)
+        return false;
+
+    if (Page* page = m_videoElement->document().page())
+        return page->isVisible();
+
+    return false;
 }
 
 #endif

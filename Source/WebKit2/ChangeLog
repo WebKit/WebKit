@@ -1,3 +1,32 @@
+2015-12-03  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Fullscreen -> PiP should resume to Fullscreen, not inline
+        https://bugs.webkit.org/show_bug.cgi?id=150906
+
+        Reviewed by Simon Fraser.
+
+        Add methods to pass isVisible(), applicationDidBecomeActive(), and requestFullscreenMode()
+        to and from models and interfaces.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidBecomeActive): Notify the fullscreen manager, if preset.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenModelContext::requestFullscreenMode): Renamed from requestExitFullscreen(); takes a mode enum.
+        (WebKit::WebVideoFullscreenModelContext::isVisible): Added.
+        (WebKit::WebVideoFullscreenManagerProxy::applicationDidBecomeActive): Pass to all existing interfaces.
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID): Do not re-create the view if it already exists.
+        (WebKit::WebVideoFullscreenManagerProxy::requestFullscreenMode): Renamed from requestExitFullscreen(); takes a mode enum.
+        (WebKit::WebVideoFullscreenManagerProxy::isVisible): Added. Query Page::isVisible() and Page::isInWindow(), the latter because
+                PiP will cause Page::isVisible() to be TRUE even when the containing tab is backgrounded.
+        (WebKit::WebVideoFullscreenModelContext::requestExitFullscreen): Deleted.
+        (WebKit::WebVideoFullscreenManagerProxy::requestExitFullscreen): Deleted.
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement): Only resize the view if we are not already in one of
+                the fullscreen modes.
+        (WebKit::WebVideoFullscreenManager::requestFullscreenMode): Renamed from requestExitFullscreen().
+        (WebKit::WebVideoFullscreenManager::requestExitFullscreen): Deleted.
+
 2015-12-02  Antti Koivisto  <antti@apple.com>
 
         Move ResourceLoadScheduler to WebKit1

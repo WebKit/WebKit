@@ -75,12 +75,13 @@ private:
     virtual void beginScanningForward() override;
     virtual void beginScanningBackward() override;
     virtual void endScanning() override;
-    virtual void requestExitFullscreen() override;
+    virtual void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
     virtual void setVideoLayerFrame(WebCore::FloatRect) override;
     virtual void setVideoLayerGravity(VideoGravity) override;
     virtual void selectAudioMediaOption(uint64_t) override;
     virtual void selectLegibleMediaOption(uint64_t) override;
     virtual void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
+    virtual bool isVisible() const override;
 
     // WebVideoFullscreenChangeObserver
     virtual void didSetupFullscreen() override;
@@ -104,6 +105,8 @@ public:
     void requestHideAndExitFullscreen();
     bool hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool mayAutomaticallyShowVideoPictureInPicture() const;
+    void applicationDidBecomeActive();
+    bool isVisible() const;
 
 private:
     friend class WebVideoFullscreenModelContext;
@@ -147,7 +150,7 @@ private:
     void beginScanningForward(uint64_t contextId);
     void beginScanningBackward(uint64_t contextId);
     void endScanning(uint64_t contextId);
-    void requestExitFullscreen(uint64_t contextId);
+    void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void didSetupFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);

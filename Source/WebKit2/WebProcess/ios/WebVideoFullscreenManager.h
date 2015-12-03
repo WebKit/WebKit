@@ -153,7 +153,7 @@ protected:
     void beginScanningForward(uint64_t contextId);
     void beginScanningBackward(uint64_t contextId);
     void endScanning(uint64_t contextId);
-    void requestExitFullscreen(uint64_t contextId);
+    void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void didSetupFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);

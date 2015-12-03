@@ -1,3 +1,60 @@
+2015-12-03  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Fullscreen -> PiP should resume to Fullscreen, not inline
+        https://bugs.webkit.org/show_bug.cgi?id=150906
+
+        Reviewed by Simon Fraser.
+
+        When restoring the user interface when exiting PiP, we should return to Fullscreen if that
+        is where fullscreen was initiated from. Additionally, when we "auto-PiP" by backgrounding the
+        app in Fullscreen mode, we should "auto-un-PiP" when restoring the application to foreground.
+
+        Rather than have a separate method to request exiting fullscreen, entering standard fullscreen,
+        and switching to & from PiP, add a new method setFullscreenMode() which does all three.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::presentationModeToFullscreenMode):
+        (WebCore::HTMLVideoElement::webkitSetPresentationMode):
+        (WebCore::HTMLVideoElement::setFullscreenMode):
+        * html/HTMLVideoElement.h:
+
+        Add methods to for clients to request a specific fullscreen mode, and to query whether
+        the page is currently visible.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::requestFullscreenMode):
+        (WebVideoFullscreenControllerContext::isVisible):
+        (WebVideoFullscreenControllerContext::requestExitFullscreen): Deleted.
+        * platform/ios/WebVideoFullscreenModel.h:
+        * platform/ios/WebVideoFullscreenModelVideoElement.h:
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::requestFullscreenMode):
+        (WebVideoFullscreenModelVideoElement::isVisible):
+        (WebVideoFullscreenModelVideoElement::requestExitFullscreen): Deleted.
+
+        Track whether returning from PiP should enter fullscreen, or whether foregrounding the app
+        should cause PiP to return to fullscreen.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer layoutSublayers]): Renamed from -setBounds:. -layoutSublayers is called
+            more consistently than -setBounds:, including when a sublayer is added to the layer.
+        (WebAVPlayerLayerView_stopRoutingVideoToPictureInPicturePlayerLayerView): The PiP WebAVPlayerLayer's
+            modelVideoLayerFrame property may have been modified, so pass it back up to the fullscreen
+            layer when exiting PiP.
+        (WebVideoFullscreenInterfaceAVKit::applicationDidBecomeActive): Request fullscreen if we auto-PiPed.
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen): Only recreate owned objects if they did not already exist.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard): If we are in PiP mode, enter fullscreen by stopping PiP.
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): requestExitFullscreen() -> requestFullscreenMode().
+        (WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture): Animate out the fullscreen window, if exiting Fullscreen -> PiP.
+        (WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture): Set m_shouldReturnToFullscreenAfterEnteringForeground if we auto-PiPed.
+        (WebVideoFullscreenInterfaceAVKit::failedToStartPictureInPicture): requestExitFullscreen() -> requestFullscreenMode().
+        (WebVideoFullscreenInterfaceAVKit::willStopPictureInPicture): If we are returning from PiP -> Fullscreen, do not hide the fullscreen window.
+        (WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture): If we are returning from PiP -> Fullscreen, show the controls and notify clients.
+        (WebVideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler): Animate in the fullscreen window, if returning from PiP -> Fullscreen.
+        (WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason): Set m_shouldReturnToFullscreenWhenStoppingPiP if we are entering PiP from Fullscreen.
+        * platform/spi/cocoa/AVKitSPI.h:
+
 2015-12-02  Sam Weinig  <sam@webkit.org>
 
         Promise callbacks should be called at microtask checkpoints

@@ -240,11 +240,13 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
 
     FloatRect clientRect = clientRectForElement(&videoElement);
     FloatRect videoLayerFrame = FloatRect(0, 0, clientRect.width(), clientRect.height());
-    
+
+    HTMLMediaElementEnums::VideoFullscreenMode oldMode = interface->fullscreenMode();
     interface->setTargetIsFullscreen(true);
     interface->setFullscreenMode(mode);
     model->setVideoElement(&videoElement);
-    model->setVideoLayerFrame(videoLayerFrame);
+    if (oldMode == HTMLMediaElementEnums::VideoFullscreenModeNone)
+        model->setVideoLayerFrame(videoLayerFrame);
 
     if (interface->isAnimating())
         return;
@@ -394,9 +396,9 @@ void WebVideoFullscreenManager::endScanning(uint64_t contextId)
     ensureModel(contextId).endScanning();
 }
 
-void WebVideoFullscreenManager::requestExitFullscreen(uint64_t contextId)
+void WebVideoFullscreenManager::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    ensureModel(contextId).requestExitFullscreen();
+    ensureModel(contextId).requestFullscreenMode(mode);
 }
 
 void WebVideoFullscreenManager::selectAudioMediaOption(uint64_t contextId, uint64_t index)

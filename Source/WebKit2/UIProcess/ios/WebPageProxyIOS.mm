@@ -632,6 +632,8 @@ void WebPageProxy::applicationWillResignActive()
 
 void WebPageProxy::applicationDidBecomeActive()
 {
+    if (m_videoFullscreenManager)
+        m_videoFullscreenManager->applicationDidBecomeActive();
     m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), m_pageID);
 }
 

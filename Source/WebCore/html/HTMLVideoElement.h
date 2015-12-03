@@ -82,6 +82,7 @@ public:
     bool webkitSupportsPresentationMode(const String&) const;
     void webkitSetPresentationMode(const String&);
     String webkitPresentationMode() const;
+    void setFullscreenMode(VideoFullscreenMode);
     virtual void fullscreenModeChanged(VideoFullscreenMode) override;
 #endif
 

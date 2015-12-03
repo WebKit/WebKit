@@ -115,6 +115,7 @@ public:
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
     void fullscreenMayReturnToInline(std::function<void(bool)> callback);
     bool wirelessVideoPlaybackDisabled() const;
+    void applicationDidBecomeActive();
 
     void willStartPictureInPicture();
     void didStartPictureInPicture();
@@ -154,6 +155,8 @@ protected:
     bool m_exitCompleted { false };
     bool m_enterRequested { false };
     bool m_wirelessVideoPlaybackDisabled { true };
+    bool m_shouldReturnToFullscreenWhenStoppingPiP { false };
+    bool m_shouldReturnToFullscreenAfterEnteringForeground { false };
 
     void doEnterFullscreen();
 };

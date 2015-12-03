@@ -70,12 +70,13 @@ public:
     WEBCORE_EXPORT virtual void beginScanningForward() override;
     WEBCORE_EXPORT virtual void beginScanningBackward() override;
     WEBCORE_EXPORT virtual void endScanning() override;
-    WEBCORE_EXPORT virtual void requestExitFullscreen() override;
+    WEBCORE_EXPORT virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
     WEBCORE_EXPORT virtual void setVideoLayerFrame(FloatRect) override;
     WEBCORE_EXPORT virtual void setVideoLayerGravity(VideoGravity) override;
     WEBCORE_EXPORT virtual void selectAudioMediaOption(uint64_t index) override;
     WEBCORE_EXPORT virtual void selectLegibleMediaOption(uint64_t index) override;
     WEBCORE_EXPORT virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
+    WEBCORE_EXPORT virtual bool isVisible() const override;
 
 protected:
     WEBCORE_EXPORT WebVideoFullscreenModelVideoElement();

@@ -46,13 +46,14 @@ public:
     virtual void beginScanningForward() = 0;
     virtual void beginScanningBackward() = 0;
     virtual void endScanning() = 0;
-    virtual void requestExitFullscreen() = 0;
+    virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;
     enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
     virtual void setVideoLayerGravity(VideoGravity) = 0;
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
+    virtual bool isVisible() const = 0;
 };
 
 }

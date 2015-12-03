@@ -143,13 +143,14 @@ private:
     virtual void beginScanningForward() override;
     virtual void beginScanningBackward() override;
     virtual void endScanning() override;
-    virtual void requestExitFullscreen() override;
+    virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
     virtual void setVideoLayerFrame(FloatRect) override;
     virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
     virtual void selectAudioMediaOption(uint64_t index) override;
     virtual void selectLegibleMediaOption(uint64_t index) override;
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
-    
+    virtual bool isVisible() const override;
+
     RefPtr<WebVideoFullscreenInterfaceAVKit> m_interface;
     RefPtr<WebVideoFullscreenModelVideoElement> m_model;
     RefPtr<HTMLVideoElement> m_videoElement;
@@ -461,13 +462,13 @@ void WebVideoFullscreenControllerContext::endScanning()
     });
 }
 
-void WebVideoFullscreenControllerContext::requestExitFullscreen()
+void WebVideoFullscreenControllerContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(isUIThread());
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
+    WebThreadRun([strongThis, this, mode] {
         if (m_model)
-            m_model->requestExitFullscreen();
+            m_model->requestFullscreenMode(mode);
     });
 }
 
@@ -532,6 +533,12 @@ void WebVideoFullscreenControllerContext::fullscreenModeChanged(HTMLMediaElement
         if (m_model)
             m_model->fullscreenModeChanged(mode);
     });
+}
+
+bool WebVideoFullscreenControllerContext::isVisible() const
+{
+    ASSERT(isUIThread());
+    return m_model ? m_model->isVisible() : false;
 }
 
 #pragma mark Other

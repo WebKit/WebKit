@@ -381,9 +381,38 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(const String& mode) const
     return false;
 }
 
+static bool presentationModeToFullscreenMode(const String& presentationMode, HTMLMediaElementEnums::VideoFullscreenMode& fullscreenMode)
+{
+    if (presentationMode == presentationModeFullscreen()) {
+        fullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard;
+        return true;
+    }
+
+    if (presentationMode == presentationModePictureInPicture()) {
+        fullscreenMode = HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
+        return true;
+    }
+
+    if (presentationMode == presentationModeInline()) {
+        fullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeNone;
+        return true;
+    }
+    return false;
+}
+
 void HTMLVideoElement::webkitSetPresentationMode(const String& mode)
 {
-    if (mode == presentationModeInline() && isFullscreen()) {
+    VideoFullscreenMode fullscreenMode = VideoFullscreenModeNone;
+    if (!presentationModeToFullscreenMode(mode, fullscreenMode))
+        return;
+
+    LOG_WITH_STREAM(Media, stream << "HTMLVideoElement::webkitSetPresentationMode(" << this << ") - setting to \"" << mode << "\"");
+    setFullscreenMode(fullscreenMode);
+}
+
+void HTMLVideoElement::setFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    if (mode == VideoFullscreenModeNone && isFullscreen()) {
         exitFullscreen();
         return;
     }
@@ -391,12 +420,7 @@ void HTMLVideoElement::webkitSetPresentationMode(const String& mode)
     if (!mediaSession().fullscreenPermitted(*this) || !supportsFullscreen())
         return;
 
-    LOG(Media, "HTMLVideoElement::webkitSetPresentationMode(%p) - setting to \"%s\"", this, mode.utf8().data());
-
-    if (mode == presentationModeFullscreen())
-        enterFullscreen(VideoFullscreenModeStandard);
-    else if (mode == presentationModePictureInPicture())
-        enterFullscreen(VideoFullscreenModePictureInPicture);
+    enterFullscreen(mode);
 }
 
 String HTMLVideoElement::webkitPresentationMode() const
