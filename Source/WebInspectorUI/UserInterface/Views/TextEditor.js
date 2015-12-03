@@ -495,8 +495,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
 
             this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.HighlightedStyleClassName);
 
-            // Use a timeout instead of a webkitAnimationEnd event listener because the line element might
-            // be removed if the user scrolls during the animation. In that case webkitAnimationEnd isn't
+            // Use a timeout instead of a animationEnd event listener because the line element might
+            // be removed if the user scrolls during the animation. In that case animationEnd isn't
             // fired, and the line would highlight again the next time it scrolls into view.
             setTimeout(removeStyleClass.bind(this), WebInspector.TextEditor.HighlightAnimationDuration);
         }
@@ -960,7 +960,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
         }
 
         // Listen for the end of the animation so we can remove the element.
-        this._bouncyHighlightElement.addEventListener("webkitAnimationEnd", animationEnded.bind(this));
+        this._bouncyHighlightElement.addEventListener("animationEnd", animationEnded.bind(this));
     }
 
     _binarySearchInsertionIndexInSearchResults(object, comparator)
