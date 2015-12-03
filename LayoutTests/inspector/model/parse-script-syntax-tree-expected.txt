@@ -41,5 +41,8 @@ passed WithStatement
 passed ClassStatement, Super, MetaProperty
 passed AssignmentPattern
 passed ArrowFunctionExpression
+passed computed method on object literal
+passed method on object literal
+passed computed method property on object literal
 passed ALL TESTS
 

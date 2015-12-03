@@ -1,5 +1,19 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r190184. rdar://problem/23221163
+
+    2015-09-23  Saam barati  <sbarati@apple.com>
+
+            Web Inspector: Type bubbles missing for computed methods and methods on object literals
+            https://bugs.webkit.org/show_bug.cgi?id=148562
+
+            Reviewed by Joseph Pecoraro.
+
+            * inspector/model/parse-script-syntax-tree-expected.txt:
+            * inspector/model/parse-script-syntax-tree.html:
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r190146. rdar://problem/23221163
 
     2015-09-22  Saam barati  <sbarati@apple.com>

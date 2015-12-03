@@ -193,13 +193,10 @@ function test()
     InspectorTest.assert(node.params[1].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.assert(node.body);
     InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
-    InspectorTest.assert(!node.isGetterOrSetter);
     node = makeNode("x = {get foo(){return 20}}", true);
     InspectorTest.assert(node.right.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
-    InspectorTest.assert(node.right.properties[0].value.isGetterOrSetter);
     node = makeNode("x = {set foo(x){return 20}}", true);
     InspectorTest.assert(node.right.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
-    InspectorTest.assert(node.right.properties[0].value.isGetterOrSetter);
     InspectorTest.log("passed FunctionDeclaration");
 
     node = makeNode("foo(function(x,y){})", true);
@@ -495,6 +492,51 @@ function test()
     InspectorTest.assert(node.defaults[0].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
     InspectorTest.log("passed ArrowFunctionExpression");
+
+    node = makeNode("var o = {['c']() { }};", false);
+    //                        ^
+    //                 type profiling return divot.
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.assert(node.declarations[0].type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].init.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression);
+    InspectorTest.assert(node.declarations[0].init.properties.length === 1);
+    InspectorTest.assert(node.declarations[0].init.properties[0].type === WebInspector.ScriptSyntaxTree.NodeType.Property);
+    InspectorTest.assert(!!node.declarations[0].init.properties[0].method);
+    InspectorTest.assert(!!node.declarations[0].init.properties[0].computed);
+    InspectorTest.assert(node.declarations[0].init.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.declarations[0].init.properties[0].value.typeProfilingReturnDivot === 9);
+    InspectorTest.log("passed computed method on object literal");
+
+    node = makeNode("var o = { m(){ } };", false);
+    //                         ^
+    //                 type profiling return divot.
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.assert(node.declarations[0].type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].init.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression);
+    InspectorTest.assert(node.declarations[0].init.properties.length === 1);
+    InspectorTest.assert(node.declarations[0].init.properties[0].type === WebInspector.ScriptSyntaxTree.NodeType.Property);
+    InspectorTest.assert(!!node.declarations[0].init.properties[0].method);
+    InspectorTest.assert(!node.declarations[0].init.properties[0].computed);
+    InspectorTest.assert(node.declarations[0].init.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.declarations[0].init.properties[0].value.typeProfilingReturnDivot === 10);
+    InspectorTest.log("passed method on object literal");
+
+    node = makeNode("var o = {['c']: function(){ } };", false);
+    //                               ^
+    //                    type profiling return divot.
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.assert(node.declarations[0].type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].init.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression);
+    InspectorTest.assert(node.declarations[0].init.properties.length === 1);
+    InspectorTest.assert(node.declarations[0].init.properties[0].type === WebInspector.ScriptSyntaxTree.NodeType.Property);
+    InspectorTest.assert(!node.declarations[0].init.properties[0].method);
+    InspectorTest.assert(!!node.declarations[0].init.properties[0].computed);
+    InspectorTest.assert(node.declarations[0].init.properties[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.declarations[0].init.properties[0].value.typeProfilingReturnDivot === 16);
+    InspectorTest.log("passed computed method property on object literal");
 
     InspectorTest.log("passed ALL TESTS");
     InspectorTest.completeTest();
