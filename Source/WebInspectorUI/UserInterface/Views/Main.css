@@ -187,6 +187,10 @@ body.window-inactive #split-content-browser {
     display: none;
 }
 
+#split-content-browser > .navigation-bar > :matches(.hierarchical-path, .log-scope-bar) {
+    pointer-events: none;
+}
+
 #split-content-browser > .navigation-bar > .log-scope-bar > li {
     pointer-events: all;
 }
