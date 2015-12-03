@@ -360,6 +360,14 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
             DOMAgent.hideHighlight();
     }
 
+    highlightSelector(selectorText, frameId, mode)
+    {
+        if (!DOMAgent.highlightSelector || typeof DOMAgent.highlightSelector !== "function")
+            return;
+
+        DOMAgent.highlightSelector(this._buildHighlightConfig(mode), selectorText, frameId);
+    }
+
     highlightRect(rect, usePageCoordinates)
     {
         DOMAgent.highlightRect.invoke({
