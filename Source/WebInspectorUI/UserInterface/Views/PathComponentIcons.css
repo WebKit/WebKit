@@ -35,6 +35,10 @@
     content: url(../Images/DOMElement.svg);
 }
 
+.dom-pseudo-element-icon .icon {
+    content: url(../Images/PseudoElement.svg);
+}
+
 .dom-text-node-icon .icon {
     content: url(../Images/DOMTextNode.svg);
 }

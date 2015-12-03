@@ -43,7 +43,7 @@ public:
     virtual ~PseudoElement();
 
     Element* hostElement() const { return m_hostElement; }
-    void clearHostElement() { m_hostElement = nullptr; }
+    void clearHostElement();
 
     virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle) override;
     virtual void didAttachRenderers() override;

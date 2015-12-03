@@ -228,14 +228,15 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         var treeElement = this.findTreeElement(node);
         if (treeElement)
             return treeElement;
+
         if (!node.parentNode)
             return null;
 
         treeElement = this.createTreeElementFor(node.parentNode);
-        if (treeElement && treeElement.showChild(node.index))
-            return treeElement.children[node.index];
+        if (!treeElement)
+            return null;
 
-        return null;
+        return treeElement.showChildNode(node);
     }
 
     set suppressRevealAndSelect(x)
@@ -548,12 +549,19 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
         event.preventDefault();
 
-        var selectedNode = this.selectedTreeElement.representedObject;
-        console.assert(selectedNode);
-        if (!selectedNode)
+        var effectiveNode = this.selectedTreeElement.representedObject;
+        console.assert(effectiveNode);
+        if (!effectiveNode)
             return;
 
-        if (selectedNode.nodeType() !== Node.ELEMENT_NODE)
+        if (effectiveNode.isPseudoElement()) {
+            effectiveNode = effectiveNode.parentNode;
+            console.assert(effectiveNode);
+            if (!effectiveNode)
+                return;
+        }            
+
+        if (effectiveNode.nodeType() !== Node.ELEMENT_NODE)
             return;
 
         function resolvedNode(object)
@@ -579,7 +587,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             object.release();
         }
 
-        WebInspector.RemoteObject.resolveNode(selectedNode, "", resolvedNode);
+        WebInspector.RemoteObject.resolveNode(effectiveNode, "", resolvedNode);
     }
 };
 

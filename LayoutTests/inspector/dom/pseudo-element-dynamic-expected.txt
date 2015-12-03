@@ -1,0 +1,49 @@
+Test for dynamic DOMNode pseudo element support, pseudo elements getting added and removed dynamically.
+
+TEST ELEMENT
+
+PASS: Got DOMNode for #x
+PASS: DOMNode has no pseudo elements
+
+Add :before
+EVENT: NodeInserted
+
+Verify :before was added
+PASS: #x DOMNode has pseudo elements
+PASS: DOMNode has 1 pseudo elements
+PASS: DOMNode has a before pseudo element
+PASS: DOMNode does not have an after pseudo element
+PASS: New DOMNode is the beforePseudoElement
+PASS: New DOMNode is a child of #x
+PASS: New DOMNode is a before pseudo element
+
+Remove :before
+EVENT: NodeRemoved
+
+Verify :before was removed
+PASS: #x DOMNode has no pseudo elements
+PASS: Removed DOMNode was the before pseudo element
+PASS: Removed DOMNode has no parent
+PASS: Removed DOMNode was a before pseudo element
+
+Add :after
+EVENT: NodeInserted
+
+Verify :after was added
+PASS: #x DOMNode has pseudo elements
+PASS: DOMNode has 1 pseudo elements
+PASS: DOMNode does not have a before pseudo element
+PASS: DOMNode has an after pseudo element
+PASS: New DOMNode is the afterPseudoElement
+PASS: New DOMNode is a child of #x
+PASS: New DOMNode is an after pseudo element
+
+Remove :after
+EVENT: NodeRemoved
+
+Verify :after was removed
+PASS: #x DOMNode has no pseudo elements
+PASS: Removed DOMNode was the after pseudo element
+PASS: Removed DOMNode has no parent
+PASS: Removed DOMNode was an after pseudo element
+

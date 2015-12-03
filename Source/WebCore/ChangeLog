@@ -1,5 +1,84 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187496. rdar://problem/23221163
+
+    2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Show Pseudo Elements in DOM Tree
+            https://bugs.webkit.org/show_bug.cgi?id=139612
+
+            Reviewed by Timothy Hatcher.
+
+            Tests: inspector/css/pseudo-element-matches-for-pseudo-element-node.html
+                   inspector/dom/pseudo-element-dynamic.html
+                   inspector/dom/pseudo-element-static.html
+
+            Much of this patch was modelled after the Blink implementation of
+            pseudo element inspection.
+
+            * dom/PseudoElement.h:
+            * dom/PseudoElement.cpp:
+            (WebCore::PseudoElement::~PseudoElement):
+            (WebCore::PseudoElement::clearHostElement):
+            Since InspectorDOMAgent may hold a reference to this PseudoElement we
+            can't report it as destroyed in the destructor, as that wouldn't be
+            reached if the inspector holds a reference. Move this to when the
+            psuedo element is disconnected, which is immediately before destruction.
+
+            * inspector/InspectorCSSAgent.h:
+            * inspector/InspectorCSSAgent.cpp:
+            (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+            When computing styles for a pseudo element, compute styles from the
+            host element for just the pseudo element's pseudo type. Likewise
+            only include matched results, not inherited or others.
+
+            (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+            Add the pseudo type to the checker context to try and detect exactly
+            which selector in a list of selectors matched the pseudo element.
+
+            * inspector/InspectorDOMAgent.h:
+            * inspector/InspectorDOMAgent.cpp:
+            (WebCore::InspectorDOMAgent::unbind):
+            When unbinding an element, also unbind any pseudo element children
+            it may have had and bound.
+
+            (WebCore::InspectorDOMAgent::assertEditableNode):
+            (WebCore::InspectorDOMAgent::assertEditableElement):
+            (WebCore::InspectorDOMAgent::removeNode):
+            Improve grammar in error message. Don't allow editing pseudo elements.
+
+            (WebCore::pseudoElementType):
+            (WebCore::InspectorDOMAgent::buildObjectForNode):
+            (WebCore::InspectorDOMAgent::buildArrayForPseudoElements):
+            If a node is a pseudo element include its pseudoType.
+            If a node has pseudo element children include them.
+
+            (WebCore::InspectorDOMAgent::pseudoElementCreated):
+            (WebCore::InspectorDOMAgent::pseudoElementDestroyed):
+            When pseudo elements are dynamically created or destroyed
+            push pseudo element nodes to the frontend if needed.
+
+            * inspector/InspectorInstrumentation.cpp:
+            (WebCore::InspectorInstrumentation::pseudoElementCreatedImpl):
+            (WebCore::InspectorInstrumentation::pseudoElementDestroyedImpl):
+            * inspector/InspectorInstrumentation.h:
+            (WebCore::InspectorInstrumentation::pseudoElementCreated):
+            (WebCore::InspectorInstrumentation::pseudoElementDestroyed):
+            (WebCore::InspectorInstrumentation::layerTreeDidChange):
+            (WebCore::InspectorInstrumentation::renderLayerDestroyed):
+            Plumbing for pseudo element created/destroyed events.
+
+            * style/StyleResolveTree.cpp:
+            (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded):
+            This is the only place a pseudo element is created, inform the inspector.
+
+            * inspector/InspectorOverlay.cpp:
+            (WebCore::buildObjectForElementData):
+            Update the element data for the node highlight label to include the
+            host element's selector and the pseudo element selector.
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187249. rdar://problem/23221163
 
     2015-07-23  Devin Rousso  <drousso@apple.com>

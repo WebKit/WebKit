@@ -169,6 +169,8 @@ public:
     bool handleTouchEvent(Node&);
     void didCommitLoad(Document*);
     void frameDocumentUpdated(Frame*);
+    void pseudoElementCreated(PseudoElement&);
+    void pseudoElementDestroyed(PseudoElement&);
 
     // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);
@@ -233,6 +235,7 @@ private:
     Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
     Ref<Inspector::Protocol::Array<String>> buildArrayForElementAttributes(Element*);
     Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
     Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
     void processAccessibilityChildren(RefPtr<AccessibilityObject>&&, RefPtr<Inspector::Protocol::Array<int>>&&);

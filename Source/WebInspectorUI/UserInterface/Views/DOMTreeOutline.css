@@ -156,12 +156,16 @@
     white-space: pre-wrap;
 }
 
+.dom-tree-outline .html-pseudo-element {
+    color: hsl(0, 59%, 41%);
+}
+
+.dom-tree-outline .html-fragment.shadow {
+    opacity: 0.6;
+}
+
 .showing-find-banner .dom-tree-outline .search-highlight {
     color: black;
     background-color: hsla(53, 83%, 53%, 0.2);
     border-bottom: 1px solid hsl(47, 82%, 60%);
-}
-
-.webkit-html-fragment.shadow {
-    opacity: 0.6;
 }
