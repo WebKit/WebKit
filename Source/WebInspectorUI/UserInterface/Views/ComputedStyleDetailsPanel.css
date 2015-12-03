@@ -51,3 +51,7 @@
 .details-section > .content > .group > .row .CodeMirror-code pre:hover .go-to-arrow {
     display: initial;
 }
+
+.details-section.style-box-model:not(.collapsed) > :matches(.header, .content) {
+    background-color: white;
+}

@@ -37,18 +37,9 @@
     padding-right: 2px;
 }
 
-.details-section .row.box-model .position {
-    border: 1px hsl(0, 0%, 65%) dotted;
-    background-color: hsl(0, 0%, 90%);
-    display: inline-block;
-    text-align: center;
-    padding: 3px;
-    margin: 3px;
-}
-
-.details-section .row.box-model .margin {
-    border: 1px dashed;
-    background-color: hsl(0, 0%, 90%);
+.details-section .row.box-model :matches(.position, .margin, .border, .padding, .content) {
+    border: 1px solid grey;
+    background-color: white;
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -56,57 +47,47 @@
     margin: 3px;
 }
 
+.details-section .row.box-model .position {
+    border-style: dotted;
+}
+
+.details-section .row.box-model .margin {
+    border-style: dashed;
+    border-color: black;
+}
+
+.details-section .row.box-model:not(.hovered) .margin,
 .details-section .row.box-model .margin.active {
     background-color: hsla(30, 88%, 69%, 0.66);
 }
 
 .details-section .row.box-model .border {
-    border: 1px black solid;
-    background-color: hsl(0, 0%, 90%);
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    padding: 3px;
-    margin: 3px;
+    border-color: black;
 }
 
+.details-section .row.box-model:not(.hovered) .border,
 .details-section .row.box-model .border.active {
     background-color: hsla(44, 100%, 80%, 0.66);
 }
 
 .details-section .row.box-model .padding {
-    border: 1px grey dashed;
-    background-color: hsl(0, 0%, 90%);
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    padding: 3px;
-    margin: 3px;
+    border-style: dashed;
 }
 
+.details-section .row.box-model:not(.hovered) .padding,
 .details-section .row.box-model .padding.active {
     background-color: hsla(101, 37%, 62%, 0.55);
 }
 
 .details-section .row.box-model .content {
     position: static;
-    border: 1px gray solid;
-    background-color: hsl(0, 0%, 90%);
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    padding: 3px;
-    margin: 3px;
     min-width: 80px;
     overflow: visible;
 }
 
+.details-section .row.box-model:not(.hovered) .content,
 .details-section .row.box-model .content.active {
     background-color: hsla(208, 60%, 64%, 0.66);
-}
-
-.details-section .row.box-model .content span {
-    display: inline-block;
 }
 
 .details-section .row.box-model .editing {
@@ -114,20 +95,10 @@
     z-index: 100;
 }
 
-.details-section .row.box-model .left {
+.details-section .row.box-model :matches(.content span, .top, .right, .bottom, .left) {
     display: inline-block;
+}
+
+.details-section .row.box-model :matches(.right, .left) {
     vertical-align: middle;
-}
-
-.details-section .row.box-model .right {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.details-section .row.box-model .top {
-    display: inline-block;
-}
-
-.details-section .row.box-model .bottom {
-    display: inline-block;
 }
