@@ -1026,6 +1026,9 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
                                     m_numConstants);
         result->setLoc(m_source->firstLine(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
         result->setEndOffset(m_lexer->currentOffset());
+
+        m_source->provider()->setSourceURLDirective(m_lexer->sourceURL());
+        m_source->provider()->setSourceMappingURLDirective(m_lexer->sourceMappingURL());
     } else {
         // We can never see a syntax error when reparsing a function, since we should have
         // reported the error when parsing the containing program or eval code. So if we're
