@@ -1,5 +1,25 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r192735. rdar://problem/23221163
+
+    2015-11-22  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Clean up FolderizedTreeElement folder settings
+            https://bugs.webkit.org/show_bug.cgi?id=151539
+
+            Reviewed by Brian Burg.
+
+            The expanded state for each folder was stored as an external property on the folder
+            tree element. Now FolderizedTreeElement keeps a map of folders to settings.
+
+            * UserInterface/Views/FolderizedTreeElement.js:
+            (WebInspector.FolderizedTreeElement):
+            (WebInspector.FolderizedTreeElement.prototype.removeChildren):
+            (WebInspector.FolderizedTreeElement.prototype._parentTreeElementForRepresentedObject):
+            (WebInspector.FolderizedTreeElement.prototype._folderTreeElementExpandedStateChange):
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Merge r192719. rdar://problem/23221163
 
     2015-11-20  Joseph Pecoraro  <pecoraro@apple.com>

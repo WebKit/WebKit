@@ -31,6 +31,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
         this.shouldRefreshChildren = true;
 
+        this._folderExpandedSettingMap = new Map;
         this._folderSettingsKey = "";
         this._folderTypeMap = new Map;
         this._folderizeSettingsMap = new Map;
@@ -80,6 +81,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
         for (var folder of this._folderTypeMap.values())
             folder.removeChildren();
 
+        this._folderExpandedSettingMap.clear();
         this._folderTypeMap.clear();
 
         this._groupedIntoFolders = false;
@@ -273,9 +275,12 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
         function createFolderTreeElement(type, displayName)
         {
             var folderTreeElement = new WebInspector.FolderTreeElement(displayName);
-            folderTreeElement.__expandedSetting = new WebInspector.Setting(type + "-folder-expanded-" + this._folderSettingsKey, false);
-            if (folderTreeElement.__expandedSetting.value)
+            var folderExpandedSetting = new WebInspector.Setting(type + "-folder-expanded-" + this._folderSettingsKey, false);
+            this._folderExpandedSettingMap.set(folderTreeElement, folderExpandedSetting);
+
+            if (folderExpandedSetting.value)
                 folderTreeElement.expand();
+
             folderTreeElement.onexpand = this._folderTreeElementExpandedStateChange.bind(this);
             folderTreeElement.oncollapse = this._folderTreeElementExpandedStateChange.bind(this);
             return folderTreeElement;
@@ -298,8 +303,12 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
     _folderTreeElementExpandedStateChange(folderTreeElement)
     {
-        console.assert(folderTreeElement.__expandedSetting);
-        folderTreeElement.__expandedSetting.value = folderTreeElement.expanded;
+        var expandedSetting = this._folderExpandedSettingMap.get(folderTreeElement);
+        console.assert(expandedSetting, "No expanded setting for folderTreeElement", folderTreeElement);
+        if (!expandedSetting)
+            return;
+
+        expandedSetting.value = folderTreeElement.expanded;
     }
 
     _settingsForRepresentedObject(representedObject)
