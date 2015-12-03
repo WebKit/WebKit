@@ -97,14 +97,42 @@ code {
 
 /** Accessibility Helpers **/
 a[name] {
-    display: block;
+    display: inline-block;
     position: relative;
     top: -3rem;
+    color: #ddd;
+    width: 0;
+}
+
+p > a[name]::before {
+    content: "#";
+    margin-left: -1.7rem;
+    position: relative;
+    top: 3rem;
+    
+}
+
+a[name]:hover {
+    color: #08c;
+    text-decoration: none;
+}
+
+h1 a[name],
+h2 a[name],
+h3 a[name],
+h4 a[name],
+h5 a[name],
+h6 a[name] {
+    display: block;
     visibility: hidden;
 }
 
 .admin-bar a[name] {
     top: calc(-32px - 3rem);
+}
+
+.admin-bar p > a[name]::before {
+    top: calc(32px + 3rem);
 }
 
 .screen-reader-text {
@@ -1216,7 +1244,7 @@ article,
 }
 
 .with-toc pre:nth-child(-n+6),
-#post-4132 pre:nth-child(-n+8) {
+#post-4132 pre:nth-child(-n+10) {
     width: 55%;
     z-index: -1;
 }

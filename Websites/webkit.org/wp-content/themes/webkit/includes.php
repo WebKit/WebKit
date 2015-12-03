@@ -18,9 +18,15 @@
             ob_start();
             include $path . '/' . $file;
             $content = ob_get_clean();
-        
+
+            // Handle sub-section anchors
+            $content = preg_replace('/\[]\(\#([^\)]+)\)\s+?/', '<a href="#$1" name="$1"></a>', $content);
+            
+            // Transform Markdown
             $Markdown = WPCom_Markdown::get_instance();
             $content = wp_unslash( $Markdown->transform($content) );
+            
+            // Index table of contents
             $content = table_of_contents_index($content, get_the_ID());
             
             set_transient($cachekey, $content, DAY_IN_SECONDS);

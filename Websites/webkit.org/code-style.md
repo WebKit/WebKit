@@ -1,6 +1,8 @@
 ### Indentation
 
-Use spaces, not tabs. The indent size is 4 spaces. Tabs should only appear in files that require them for semantic meaning, like Makefiles.
+[](#indentation-no-tabs) Use spaces, not tabs. Tabs should only appear in files that require them for semantic meaning, like Makefiles.
+
+[](#indentation-4-spaces) The indent size is 4 spaces.
 
 ###### Right:
 
@@ -20,7 +22,7 @@ int main()
 }
 ```
 
-The contents of an outermost `namespace` block (and any nested namespaces with the same scope) should not be indented. The contents of other nested namespaces should be indented.
+[](#indentation-namespace) The contents of an outermost `namespace` block (and any nested namespaces with the same scope) should not be indented. The contents of other nested namespaces should be indented.
 
 ###### Right:
 
@@ -78,8 +80,7 @@ namespace WebCore {
 } // namespace WebCore
 ```
 
-
-A case label should line up with its switch statement. The case statement is indented.
+[](#indentation-case-label) A case label should line up with its switch statement. The case statement is indented.
 
 ###### Right:
 
@@ -107,8 +108,7 @@ switch (condition) {
 }
 ```
 
-
-Boolean expressions at the same nesting level that span multiple lines should have their operators on the left side of the line instead of the right side.
+[](#indentation-wrap-bool-op) Boolean expressions at the same nesting level that span multiple lines should have their operators on the left side of the line instead of the right side.
 
 ###### Right:
 
@@ -130,7 +130,7 @@ return attribute.name() == srcAttr ||
 
 ### Spacing
 
-Do not place spaces around unary operators.
+[](#spacing-unary-op) Do not place spaces around unary operators.
 
 ###### Right:
 
@@ -145,8 +145,7 @@ i++;
 i ++;
 ```
 
-
-**Do** place spaces around binary and ternary operators.
+[](#spacing-binary-ternary-op) **Do** place spaces around binary and ternary operators.
 
 ###### Right:
 
@@ -166,8 +165,7 @@ c = a|b;
 return condition ? 1:0;
 ```
 
-
-Place spaces around the colon in a range-based for loop.
+[](#spacing-for-colon) Place spaces around the colon in a range-based for loop.
 
 ###### Right:
 
@@ -185,8 +183,7 @@ for (auto& plugin: plugins)
     registerPlugin(plugin);
 ```
 
-
-Do not place spaces before comma and semicolon.
+[](#spacing-comma-semicolon) Do not place spaces before comma and semicolon.
 
 ###### Right:
 
@@ -206,8 +203,7 @@ for (int i = 0 ; i < 10 ; ++i)
 f(a , b) ;
 ```
 
-
-Place spaces between control statements and their parentheses.
+[](#spacing-control-paren) Place spaces between control statements and their parentheses.
 
 ###### Right:
 
@@ -223,8 +219,7 @@ if(condition)
     doIt();
 ```
 
-
-Do not place spaces between a function and its parentheses, or between a parenthesis and its content.
+[](#spacing-function-paren) Do not place spaces between a function and its parentheses, or between a parenthesis and its content.
 
 ###### Right:
 
@@ -241,7 +236,7 @@ f( a, b );
 
 ### Line breaking
 
-Each statement should get its own line.
+[](#linebreaking-multiple-statements) Each statement should get its own line.
 
 ###### Right:
 
@@ -259,7 +254,7 @@ x++; y++;
 if (condition) doIt();
 ```
 
-An `else` statement should go on the same line as a preceding close brace if one is present, else it should line up with the `if` statement.
+[](#linebreaking-else-braces) An `else` statement should go on the same line as a preceding close brace if one is present, else it should line up with the `if` statement.
 
 ###### Right:
 
@@ -299,8 +294,7 @@ if (condition) doSomething(); else {
 }
 ```
 
-
-An `else if` statement should be written as an `if` statement when the prior `if` concludes with a `return` statement.
+[](#linebreaking-else-if) An `else if` statement should be written as an `if` statement when the prior `if` concludes with a `return` statement.
 
 ###### Right:
 
@@ -327,7 +321,7 @@ if (condition) {
 
 ### Braces
 
-Function definitions: place each brace on its own line.
+[](#braces-function) Function definitions: place each brace on its own line.
 
 ###### Right:
 
@@ -346,7 +340,7 @@ int main() {
 }
 ```
 
-Other braces: place the open brace on the line preceding the code block; place the close brace on its own line.
+[](#braces-blocks) Other braces: place the open brace on the line preceding the code block; place the close brace on its own line.
 
 ###### Right:
 
@@ -373,7 +367,7 @@ class MyClass
 };
 ```
 
-One-line control clauses should not use braces unless comments are included or a single statement spans multiple lines.
+[](#braces-one-line) One-line control clauses should not use braces unless comments are included or a single statement spans multiple lines.
 
 ###### Right:
 
@@ -408,8 +402,7 @@ if (condition)
         reallyLongParam5);
 ```
 
-
-Control clauses without a body should use empty braces:
+[](#braces-empty-block) Control clauses without a body should use empty braces:
 
 ###### Right:
 
@@ -425,11 +418,11 @@ for ( ; current; current = current->next);
 
 ### Null, false and zero
 
-In C++, the null pointer value should be written as `nullptr`. In C, it should be written as `NULL`. In Objective-C and Objective-C++, follow the guideline for C or C++, respectively, but use `nil` to represent a null Objective-C object.
+[](#zero-null) In C++, the null pointer value should be written as `nullptr`. In C, it should be written as `NULL`. In Objective-C and Objective-C++, follow the guideline for C or C++, respectively, but use `nil` to represent a null Objective-C object.
 
-C++ and C `bool` values should be written as `true` and `false`. Objective-C `BOOL` values should be written as `YES` and `NO`.
+[](#zero-bool) C++ and C `bool` values should be written as `true` and `false`. Objective-C `BOOL` values should be written as `YES` and `NO`.
 
-Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.
+[](#zero-comparison) Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.
 
 ###### Right:
 
@@ -457,11 +450,11 @@ if (count == 0)
     return;
 ```
 
-In Objective-C, instance variables are initialized to zero automatically. Don't add explicit initializations to nil or NO in an init method.
+[](#zero-objc-variables) In Objective-C, instance variables are initialized to zero automatically. Don't add explicit initializations to nil or NO in an init method.
 
 ### Floating point literals
 
-Unless required in order to force floating point math, do not append `.0`, `.f` and `.0f` to floating point literals.
+[](#float-suffixes) Unless required in order to force floating point math, do not append `.0`, `.f` and `.0f` to floating point literals.
 
 ###### Right:
 
@@ -497,7 +490,7 @@ double frameDuration = 1 / framesPerSecond; // integer division
 
 ### Names
 
-Use CamelCase. Capitalize the first letter, including all letters in an acronym, in a class, struct, protocol, or namespace name. Lower-case the first letter, including all letters in an acronym, in a variable or function name.
+[](#names-basic) Use CamelCase. Capitalize the first letter, including all letters in an acronym, in a class, struct, protocol, or namespace name. Lower-case the first letter, including all letters in an acronym, in a variable or function name.
 
 ###### Right:
 
@@ -517,7 +510,7 @@ class HtmlDocument;
 String MIMEType();
 ```
 
-Use full words, except in the rare case where an abbreviation would be more canonical and easier to understand.
+[](#names-full-words) Use full words, except in the rare case where an abbreviation would be more canonical and easier to understand.
 
 ###### Right:
 
@@ -535,7 +528,7 @@ size_t len;
 short tabulationIndex; // bizarre
 ```
 
-Data members in C++ classes should be private. Static data members should be prefixed by "s_". Other data members should be prefixed by "m_".
+[](#names-data-members) Data members in C++ classes should be private. Static data members should be prefixed by "s_". Other data members should be prefixed by "m_".
 
 ###### Right:
 
@@ -560,7 +553,7 @@ public:
 };
 ```
 
-Prefix Objective-C instance variables with "_".
+[](#names-objc-instance-variables) Prefix Objective-C instance variables with "_".
 
 ###### Right:
 
@@ -580,7 +573,7 @@ Prefix Objective-C instance variables with "_".
 @end
 ```
 
-Precede boolean values with words like "is" and "did".
+[](#names-bool) Precede boolean values with words like "is" and "did".
 
 ###### Right:
 
@@ -596,7 +589,7 @@ bool valid;
 bool sentData;
 ```
 
-Precede setters with the word "set". Use bare words for getters. Setter and getter names should match the names of the variables being set/gotten.
+[](#names-setter-getter) Precede setters with the word "set". Use bare words for getters. Setter and getter names should match the names of the variables being set/gotten.
 
 ###### Right:
 
@@ -612,7 +605,7 @@ void setCount(size_t); // sets m_theCount
 size_t getCount();
 ```
 
-Precede getters that return values through out arguments with the word "get".
+[](#names-out-argument) Precede getters that return values through out arguments with the word "get".
 
 ###### Right:
 
@@ -626,7 +619,7 @@ void getInlineBoxAndOffset(InlineBox*&, int& caretOffset) const;
 void inlineBoxAndOffset(InlineBox*&, int& caretOffset) const;
 ```
 
-Use descriptive verbs in function names.
+[](#names-verb) Use descriptive verbs in function names.
 
 ###### Right:
 
@@ -640,7 +633,7 @@ bool convertToASCII(short*, size_t);
 bool toASCII(short*, size_t);
 ```
 
-Leave meaningless variable names out of function declarations. A good rule of thumb is if the parameter type name contains the parameter name (without trailing numbers or pluralization), then the parameter name isn't needed. Usually, there should be a parameter name for bools, strings, and numerical types.
+[](#names-variable-name-in-function-decl) Leave meaningless variable names out of function declarations. A good rule of thumb is if the parameter type name contains the parameter name (without trailing numbers or pluralization), then the parameter name isn't needed. Usually, there should be a parameter name for bools, strings, and numerical types.
 
 ###### Right:
 
@@ -658,7 +651,7 @@ void setCount(size_t count);
 void doSomething(ScriptExecutionContext* context);
 ```
 
-Prefer enums to bools on function parameters if callers are likely to be passing constants, since named constants are easier to read at the call site. An exception to this rule is a setter function, where the name of the function already makes clear what the boolean is.
+[](#names-enum-to-bool) Prefer enums to bools on function parameters if callers are likely to be passing constants, since named constants are easier to read at the call site. An exception to this rule is a setter function, where the name of the function already makes clear what the boolean is.
 
 ###### Right:
 
@@ -675,15 +668,15 @@ doSomething(something, false);
 setResizable(NotResizable);
 ```
 
-Objective-C method names should follow the Cocoa naming guidelines — they should read like a phrase and each piece of the selector should start with a lowercase letter and use intercaps.
+[](#names-objc-methods) Objective-C method names should follow the Cocoa naming guidelines — they should read like a phrase and each piece of the selector should start with a lowercase letter and use intercaps.
 
-Enum members should use InterCaps with an initial capital letter.
+[](#names-enum-members) Enum members should use InterCaps with an initial capital letter.
 
-Prefer `const` to `#define`. Prefer inline functions to macros.
+[](#names-const-to-define) Prefer `const` to `#define`. Prefer inline functions to macros.
 
-`#defined` constants should use all uppercase names with words separated by underscores.
+[](#names-define-constants) `#defined` constants should use all uppercase names with words separated by underscores.
 
-Macros that expand to function calls or other non-constant computation: these should be named like functions, and should have parentheses at the end, even if they take no arguments (with the exception of some special macros like ASSERT). Note that usually it is preferable to use an inline function in such cases instead of a macro.
+[](#names-define-non-const) Macros that expand to function calls or other non-constant computation: these should be named like functions, and should have parentheses at the end, even if they take no arguments (with the exception of some special macros like ASSERT). Note that usually it is preferable to use an inline function in such cases instead of a macro.
 
 ###### Right:
 
@@ -702,7 +695,7 @@ Macros that expand to function calls or other non-constant computation: these sh
         NSLocalizedString(@"Stop", @"Stop button title")
 ```
 
-`#define`, `#ifdef` "header guards" should be named exactly the same as the file (including case), replacing the `.` with a `_`.
+[](#names-header-guards) `#define`, `#ifdef` "header guards" should be named exactly the same as the file (including case), replacing the `.` with a `_`.
 
 ###### Right:
 
@@ -722,7 +715,7 @@ Macros that expand to function calls or other non-constant computation: these sh
 
 ### Other Punctuation
 
-Constructors for C++ classes should initialize all of their members using C++ initializer syntax. Each member (and superclass) should be indented on a separate line, with the colon or comma preceding the member on that line.
+[](#punctuation-member-init) Constructors for C++ classes should initialize all of their members using C++ initializer syntax. Each member (and superclass) should be indented on a separate line, with the colon or comma preceding the member on that line.
 
 ###### Right:
 
@@ -752,7 +745,7 @@ MyClass::MyClass(Document* document) : MySuperClass()
 MyOtherClass::MyOtherClass() : MySuperClass() {}
 ```
 
-Prefer index over iterator in Vector iterations for terse, easier-to-read code.
+[](#punctuation-vector-index) Prefer index over iterator in Vector iterations for terse, easier-to-read code.
 
 ###### Right:
 
@@ -780,10 +773,10 @@ for (Vector<RefPtr<FrameView> >::iterator it = frameViews.begin(); it != end; ++
 
 ### Pointers and References
 
-**Pointer types in non-C++ code**
+[](#pointers-non-cpp) **Pointer types in non-C++ code**
 Pointer types should be written with a space between the type and the `*` (so the `*` is adjacent to the following identifier if any).
 
-**Pointer and reference types in C++ code**
+[](#pointers-cpp) **Pointer and reference types in C++ code**
 Both pointer types and reference types should be written with no space between the type name and the `*` or `&`.
 
 ###### Right:
@@ -804,8 +797,7 @@ Image *SVGStyledElement::doSomething(PaintInfo &paintInfo)
     const KCDashArray &dashes = dashArray();
 ```
 
-
-An out argument of a function should be passed by reference except rare cases where it is optional in which case it should be passed by pointer.
+[](#pointers-out-argument) An out argument of a function should be passed by reference except rare cases where it is optional in which case it should be passed by pointer.
 
 ###### Right:
 
@@ -832,10 +824,9 @@ void MyClass::getSomeValue(OutArgumentType* outArgument) const
 }
 ```
 
-
 ### #include Statements
 
-All implementation files must `#include` `config.h` first. Header files should never include `config.h`.
+[](#include-config-h) All implementation files must `#include` `config.h` first. Header files should never include `config.h`.
 
 ###### Right:
 
@@ -857,9 +848,9 @@ All implementation files must `#include` `config.h` first. Header files should n
 #include "Node.h"
 ```
 
-All implementation files must `#include` the primary header second, just after `config.h`. So for example, `Node.cpp` should include `Node.h` first, before other files. This guarantees that each header's completeness is tested. This also assures that each header can be compiled without requiring any other header files be included first.
+[](#include-primary) All implementation files must `#include` the primary header second, just after `config.h`. So for example, `Node.cpp` should include `Node.h` first, before other files. This guarantees that each header's completeness is tested. This also assures that each header can be compiled without requiring any other header files be included first.
 
-Other `#include` statements should be in sorted order (case sensitive, as done by the command-line sort tool or the Xcode sort selection command). Don't bother to organize them in a logical order.
+[](#include-others) Other `#include` statements should be in sorted order (case sensitive, as done by the command-line sort tool or the Xcode sort selection command). Don't bother to organize them in a logical order.
 
 ###### Right:
 
@@ -883,8 +874,7 @@ Other `#include` statements should be in sorted order (case sensitive, as done b
 #include "Attribute.h"
 ```
 
-
-Includes of system headers must come after includes of other headers.
+[](#include-system) Includes of system headers must come after includes of other headers.
 
 ###### Right:
 
@@ -914,7 +904,7 @@ Includes of system headers must come after includes of other headers.
 
 ### "using" Statements
 
-In header files, do not use "using" statements in namespace (or global) scope.
+[](#using-in-headers) In header files, do not use "using" statements in namespace (or global) scope.
 
 ###### Right:
 
@@ -947,8 +937,7 @@ class VectorBuffer {
 } // namespace WTF
 ```
 
-
-In header files in the WTF sub-library, however, it is acceptable to use "using" declarations at the end of the file to import one or more names in the WTF namespace into the global scope.
+[](#using-wtf) In header files in the WTF sub-library, however, it is acceptable to use "using" declarations at the end of the file to import one or more names in the WTF namespace into the global scope.
 
 ###### Right:
 
@@ -986,8 +975,7 @@ namespace WTF {
 using WTF::PlacementNewAdopt;
 ```
 
-
-In C++ implementation files, do not use "using" declarations of any kind to import names in the standard template library. Directly qualify the names at the point they're used instead.
+[](#using-in-cpp) In C++ implementation files, do not use "using" declarations of any kind to import names in the standard template library. Directly qualify the names at the point they're used instead.
 
 ###### Right:
 
@@ -1030,8 +1018,7 @@ namespace WebCore {
 } // namespace WebCore
 ```
 
-
-In implementation files, if a "using namespace" statement is for a nested namespace whose parent namespace is defined in the file, put the statement inside that namespace definition.
+[](#using-nested-namespaces) In implementation files, if a "using namespace" statement is for a nested namespace whose parent namespace is defined in the file, put the statement inside that namespace definition.
 
 ###### Right:
 
@@ -1057,8 +1044,7 @@ namespace WebCore {
 } // namespace WebCore
 ```
 
-
-In implementation files, put all other "using" statements at the beginning of the file, before any namespace definitions and after any "include" statements.
+[](#using-position) In implementation files, put all other "using" statements at the beginning of the file, before any namespace definitions and after any "include" statements.
 
 ###### Right:
 
@@ -1086,7 +1072,7 @@ using namespace other;
 
 ### Types
 
-Omit "int" when using "unsigned" modifier. Do not use "signed" modifier. Use "int" by itself instead.
+[](#types-unsigned) Omit "int" when using "unsigned" modifier. Do not use "signed" modifier. Use "int" by itself instead.
 
 ###### Right:
 
@@ -1105,7 +1091,7 @@ signed int c; // Doesn't omit "signed".
 
 ### Classes
 
-Use a constructor to do an implicit conversion when the argument is reasonably thought of as a type conversion and the type conversion is fast. Otherwise, use the explicit keyword or a function returning the type. This only applies to single argument constructors.
+[](#classes-explicit) Use a constructor to do an implicit conversion when the argument is reasonably thought of as a type conversion and the type conversion is fast. Otherwise, use the explicit keyword or a function returning the type. This only applies to single argument constructors.
 
 ###### Right:
 
@@ -1136,7 +1122,7 @@ public:
 
 ### Singleton pattern
 
-Use a static member function named "singleton()" to access the instance of the singleton.
+[](#singleton-static-member) Use a static member function named "singleton()" to access the instance of the singleton.
 
 ###### Right:
 
@@ -1168,7 +1154,7 @@ MySingleton& mySingleton(); // free function.
 
 ### Comments
 
-Use only _one_ space before end of line comments and in between sentences in comments.
+[](#comments-eol) Use only _one_ space before end of line comments and in between sentences in comments.
 
 ###### Right:
 
@@ -1183,9 +1169,9 @@ int i;    // This is a comment with several spaces before it, which is a non-con
 double f; // This is another comment.  There are two spaces before this sentence which is a non-conforming style.
 ```
 
-Make comments look like sentences by starting with a capital letter and ending with a period (punctation). One exception may be end of line comments like this `if (x == y) // false for NaN`.
+[](#comments-sentences) Make comments look like sentences by starting with a capital letter and ending with a period (punctation). One exception may be end of line comments like this `if (x == y) // false for NaN`.
 
-Use FIXME: (without attribution) to denote items that need to be addressed in the future.
+[](#comments-fixme) Use FIXME: (without attribution) to denote items that need to be addressed in the future.
 
 ###### Right:
 

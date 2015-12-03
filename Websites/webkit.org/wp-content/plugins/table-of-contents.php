@@ -28,7 +28,7 @@ class WebKitTableOfContents {
 
     public static function filterIndex($value, $key) {
         list($level, $anchor) = explode('::', $key);
-        if ( $level < 4 ) self::$toc[ $key ] = $value;
+        if ( $level < 3 ) self::$toc[ $key ] = $value;
     }
 
     public static function renderMarkup() {

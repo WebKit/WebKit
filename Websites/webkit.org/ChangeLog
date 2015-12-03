@@ -1,3 +1,25 @@
+2015-12-03  Jonathan Davis  <jond@apple.com>
+
+        Add sub-section anchors to code style guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=151770
+
+        Reviewed by Timothy Hatcher.
+
+        * code-style.md:
+        * wp-content/plugins/table-of-contents.php:
+        * wp-content/themes/webkit/includes.php:
+        * wp-content/themes/webkit/style.css:
+        (a[name]):
+        (p > a[name]::before):
+        (a[name]:hover):
+        (h6 a[name]):
+        (.admin-bar a[name]):
+        (.admin-bar p > a[name]::before):
+        (.screen-reader-text):
+        (.table-of-contents ul li > ul):
+        (#post-4132 pre:nth-child(-n+10)):
+        (#post-4132 pre:nth-child(-n+8)): Deleted.
+
 2015-12-01  Jonathan Davis  <jond@apple.com>
 
         Updated favicon.ico with the new logo.
