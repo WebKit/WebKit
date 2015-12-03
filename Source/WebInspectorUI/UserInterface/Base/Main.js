@@ -343,11 +343,14 @@ WebInspector.contentLoaded = function()
     this._updateDockNavigationItems();
     this._updateToolbarHeight();
 
-    this._pendingOpenTabTypes = [];
+    this._pendingOpenTabs = [];
 
-    for (var tabType of this._openTabsSetting.value) {
+    var openTabTypes = this._openTabsSetting.value;
+
+    for (var i = 0; i < openTabTypes.length; ++i) {
+        var tabType = openTabTypes[i];
         if (!this.isTabTypeAllowed(tabType)) {
-            this._pendingOpenTabTypes.push(tabType);
+            this._pendingOpenTabs.push({tabType, index: i});
             continue;
         }
 
@@ -444,6 +447,10 @@ WebInspector._rememberOpenTabs = function()
         openTabs.push(tabContentView.type);
     }
 
+    // Keep currently unsupported tabs in the setting at their previous index.
+    for (var {tabType, index} of this._pendingOpenTabs)
+        openTabs.insertAtIndex(tabType, index);
+
     this._openTabsSetting.value = openTabs;
 };
 
@@ -514,10 +521,10 @@ WebInspector.activateExtraDomains = function(domains)
     this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();
 
-    var stillPendingOpenTabTypes = [];
-    for (var tabType of this._pendingOpenTabTypes) {
+    var stillPendingOpenTabs = [];
+    for (var {tabType, index} of this._pendingOpenTabs) {
         if (!this.isTabTypeAllowed(tabType)) {
-            stillPendingOpenTabTypes.push(tabType);
+            stillPendingOpenTabs.push({tabType, index});
             continue;
         }
 
@@ -525,12 +532,12 @@ WebInspector.activateExtraDomains = function(domains)
         if (!tabContentView)
             continue;
 
-        this.tabBrowser.addTabForContentView(tabContentView, true);
+        this.tabBrowser.addTabForContentView(tabContentView, true, index);
 
         tabContentView.restoreStateFromCookie(WebInspector.StateRestorationType.Load);
     }
 
-    this._pendingOpenTabTypes = stillPendingOpenTabTypes;
+    this._pendingOpenTabs = stillPendingOpenTabs;
 
     this._updateNewTabButtonState();
 };
