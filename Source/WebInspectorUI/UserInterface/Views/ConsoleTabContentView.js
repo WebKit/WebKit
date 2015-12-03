@@ -43,6 +43,8 @@ WebInspector.ConsoleTabContentView = class ConsoleTabContentView extends WebInsp
     {
         super.shown();
 
+        WebInspector.consoleContentView.prompt.focus();
+
         if (this.contentBrowser.currentContentView === WebInspector.consoleContentView)
             return;
 
