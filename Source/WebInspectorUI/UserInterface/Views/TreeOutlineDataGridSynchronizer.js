@@ -279,6 +279,6 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
         let dataGridNode = treeElement.__dataGridNode;
         console.assert(dataGridNode);
 
-        dataGridNode.element.classList.toggle("hidden", treeElement.hidden);
+        dataGridNode.hidden = treeElement.hidden;
     }
 };

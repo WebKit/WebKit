@@ -1304,6 +1304,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         super();
 
         this._expanded = false;
+        this._hidden = false;
         this._selected = false;
         this._copyable = true;
         this._shouldRefreshChildren = true;
@@ -1317,9 +1318,24 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         this.disclosureToggleWidth = 10;
     }
 
+    get hidden()
+    {
+        return this._hidden;
+    }
+
+    set hidden(x)
+    {
+        if (x === this._hidden)
+            return;
+
+        this._hidden = x || false;
+        if (this._element)
+            this._element.classList.toggle("hidden", this._hidden);
+    }
+
     get selectable()
     {
-        return !this._element || !this._element.classList.contains("hidden");
+        return this._element && !this._hidden;
     }
 
     get copyable()
@@ -1351,6 +1367,8 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
             this._element.classList.add("selected");
         if (this.revealed)
             this._element.classList.add("revealed");
+        if (this._hidden)
+            this._element.classList.add("hidden");
 
         this.createCells();
         return this._element;

@@ -1,3 +1,24 @@
+2015-12-03  Matt Baker  <mattbaker@apple.com>
+
+        Uncaught Exception in Web Inspector: TypeError: null is not an object (evaluating 'dataGridNode.element.classList')
+        https://bugs.webkit.org/show_bug.cgi?id=151790
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode):
+        (WebInspector.DataGridNode.prototype.get hidden):
+        (WebInspector.DataGridNode.prototype.set hidden):
+        Make hidden a property, so it can be set before the grid node's DOM element exists.
+        (WebInspector.DataGridNode.prototype.get selectable):
+        (WebInspector.DataGridNode.prototype.get element):
+        Add hidden style, if needed, when element is created.
+
+        * UserInterface/Views/TreeOutlineDataGridSynchronizer.js:
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeElementVisibilityDidChange):
+        (WebInspector.TreeOutlineDataGridSynchronizer):
+        Don't access the grid node's element directly, since it may not exist yet.
+
 2015-12-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Handle YieldExpressions in the ScriptSyntaxTree
