@@ -80,8 +80,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this._cleared = true;
 
         this.startNewSession(true);
-
-        this.prompt.focus();
     }
 
     startNewSession(clearPreviousSessions)
