@@ -487,7 +487,7 @@ InjectedScript.prototype = {
             var expressionFunction = evalFunction.call(object, boundExpressionFunctionString);
             var result = expressionFunction.apply(null, parameters);
 
-            if (objectGroup === "console" && saveResult)
+            if (saveResult)
                 this._saveResult(result);
 
             return result;
@@ -507,7 +507,7 @@ InjectedScript.prototype = {
 
             var result = evalFunction.call(inspectedGlobalObject, expression);
 
-            if (objectGroup === "console" && saveResult)
+            if (saveResult)
                 this._saveResult(result);
 
             return result;
