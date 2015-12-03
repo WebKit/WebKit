@@ -31,32 +31,4 @@ WebInspector.DatabaseObserver = class DatabaseObserver
     {
         WebInspector.storageManager.databaseWasAdded(database.id, database.domain, database.name, database.version);
     }
-
-    // COMPATIBILITY (iOS 6): This event was removed in favor of a more async DatabaseAgent.executeSQL.
-    sqlTransactionSucceeded(transactionId, columnNames, values)
-    {
-        if (!WebInspector.DatabaseObserver._callbacks[transactionId])
-            return;
-
-        var callback = WebInspector.DatabaseObserver._callbacks[transactionId];
-        delete WebInspector.DatabaseObserver._callbacks[transactionId];
-
-        if (callback)
-            callback(columnNames, values, null);
-    }
-
-    // COMPATIBILITY (iOS 6): This event was removed in favor of a more async DatabaseAgent.executeSQL.
-    sqlTransactionFailed(transactionId, sqlError)
-    {
-        if (!WebInspector.DatabaseObserver._callbacks[transactionId])
-            return;
-
-        var callback = WebInspector.DatabaseObserver._callbacks[transactionId];
-        delete WebInspector.DatabaseObserver._callbacks[transactionId];
-
-        if (callback)
-            callback(null, null, sqlError);
-    }
 };
-
-WebInspector.DatabaseObserver._callbacks = {};

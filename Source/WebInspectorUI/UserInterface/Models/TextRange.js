@@ -95,42 +95,6 @@ WebInspector.TextRange = class TextRange extends WebInspector.Object
         return new WebInspector.SourceCodePosition(this._endLine, this._endColumn);
     }
 
-    resolveLinesAndColumns(text)
-    {
-        console.assert(typeof text === "string");
-        if (typeof text !== "string")
-            return;
-
-        console.assert(!isNaN(this._startOffset));
-        console.assert(!isNaN(this._endOffset));
-        if (isNaN(this._startOffset) || isNaN(this._endOffset))
-            return;
-
-        function countNewLineCharacters(text)
-        {
-            var matches = text.match(/\n/g);
-            return matches ? matches.length : 0;
-        }
-
-        var startSubstring = text.substring(0, this._startOffset);
-        var rangeSubstring = text.substring(this._startOffset, this._endOffset);
-
-        var startNewLineCount = countNewLineCharacters(startSubstring);
-        var rangeNewLineCount = countNewLineCharacters(rangeSubstring);
-
-        this._startLine = startNewLineCount;
-        this._endLine = startNewLineCount + rangeNewLineCount;
-
-        var lastNewLineOffset = startNewLineCount ? startSubstring.lastIndexOf("\n") + 1 : 0;
-        this._startColumn = startSubstring.length - lastNewLineOffset;
-
-        lastNewLineOffset = rangeNewLineCount ? rangeSubstring.lastIndexOf("\n") + 1 : 0;
-        this._endColumn = rangeSubstring.length - lastNewLineOffset;
-
-        if (this._startLine === this._endLine)
-            this._endColumn += this._startColumn;
-    }
-
     resolveOffsets(text)
     {
         console.assert(typeof text === "string");

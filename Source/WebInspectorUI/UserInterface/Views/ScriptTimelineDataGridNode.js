@@ -68,7 +68,7 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
         var duration = this._record.startTime + this._record.duration - startTime;
         var callFrameOrSourceCodeLocation = this._record.initiatorCallFrame || this._record.sourceCodeLocation;
 
-        // COMPATIBILITY (iOS8): Profiles included per-call information and can be finely partitioned.
+        // COMPATIBILITY (iOS 8): Profiles included per-call information and can be finely partitioned.
         if (this._record.profile) {
             var oneRootNode = this._record.profile.topDownRootNodes[0];
             if (oneRootNode && oneRootNode.calls) {

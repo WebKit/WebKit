@@ -440,9 +440,6 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     _updateCompositingBordersButtonToMatchPageSettings()
     {
-        if (!PageAgent.getCompositingBordersVisible)
-            return;
-
         var button = this._compositingBordersButtonNavigationItem;
 
         // We need to sync with the page settings since these can be controlled

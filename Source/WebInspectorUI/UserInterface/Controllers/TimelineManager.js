@@ -268,21 +268,12 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         case TimelineAgent.EventType.Layout:
             var layoutRecordType = sourceCodeLocation ? WebInspector.LayoutTimelineRecord.EventType.ForcedLayout : WebInspector.LayoutTimelineRecord.EventType.Layout;
-
-            // COMPATIBILITY (iOS 6): Layout records did not contain area properties. This is not exposed via a quad "root".
-            var quad = recordPayload.data.root ? new WebInspector.Quad(recordPayload.data.root) : null;
-            if (quad)
-                return new WebInspector.LayoutTimelineRecord(layoutRecordType, startTime, endTime, callFrames, sourceCodeLocation, quad.points[0].x, quad.points[0].y, quad.width, quad.height, quad);
-            else
-                return new WebInspector.LayoutTimelineRecord(layoutRecordType, startTime, endTime, callFrames, sourceCodeLocation);
+            var quad = new WebInspector.Quad(recordPayload.data.root);
+            return new WebInspector.LayoutTimelineRecord(layoutRecordType, startTime, endTime, callFrames, sourceCodeLocation, quad);
 
         case TimelineAgent.EventType.Paint:
-            // COMPATIBILITY (iOS 6): Paint records data contained x, y, width, height properties. This became a quad "clip".
-            var quad = recordPayload.data.clip ? new WebInspector.Quad(recordPayload.data.clip) : null;
-            if (quad)
-                return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, null, null, quad.width, quad.height, quad);
-            else
-                return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.x, recordPayload.data.y, recordPayload.data.width, recordPayload.data.height);
+            var quad = new WebInspector.Quad(recordPayload.data.clip);
+            return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, quad);
 
         case TimelineAgent.EventType.Composite:
             return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Composite, startTime, endTime, callFrames, sourceCodeLocation);

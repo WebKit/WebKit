@@ -135,12 +135,6 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
 
     get matchedSelectors()
     {
-        // COMPATIBILITY (iOS 6): The selectors array is always empty, so just return an empty array.
-        if (!this._selectors.length) {
-            console.assert(!this._matchedSelectorIndices.length);
-            return [];
-        }
-
         if (this._matchedSelectors)
             return this._matchedSelectors;
 
@@ -153,12 +147,6 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
 
     get matchedSelectorText()
     {
-        // COMPATIBILITY (iOS 6): The selectors array is always empty, so just return the whole selector.
-        if (!this._selectors.length) {
-            console.assert(!this._matchedSelectorIndices.length);
-            return this._selectorText;
-        }
-
         if ("_matchedSelectorText" in this)
             return this._matchedSelectorText;
 

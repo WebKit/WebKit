@@ -75,7 +75,6 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
                 this._type = WebInspector.IssueMessage.Type.OtherIssue;
             break;
 
-        case "html": // COMPATIBILITY (iOS 6).
         case "css":
         case "xml":
             this._type = WebInspector.IssueMessage.Type.PageIssue;

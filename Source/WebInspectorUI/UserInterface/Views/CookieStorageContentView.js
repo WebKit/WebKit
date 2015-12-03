@@ -256,9 +256,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
 
         var cookie = node.cookie;
         var cookieURL = (cookie.secure ? "https://" : "http://") + cookie.domain + cookie.path;
-
-        // COMPATIBILITY (iOS 6): PageAgent.deleteCookie used to take 'domain', now takes 'url'. Send both.
-        PageAgent.deleteCookie.invoke({cookieName: cookie.name, domain: cookie.domain, url: cookieURL});
+        PageAgent.deleteCookie(cookie.name, cookieURL);
 
         this.update();
     }

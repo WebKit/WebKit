@@ -38,14 +38,7 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
             IndexedDBAgent.enable();
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-
-        WebInspector.notifications.addEventListener(WebInspector.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
-
-        // COMPATIBILITY (iOS 6): DOMStorage was discovered via a DOMStorageObserver event. Now DOM Storage
-        // is added whenever a new securityOrigin is discovered. Check for DOMStorageAgent.getDOMStorageItems,
-        // which was renamed at the same time the change to start using securityOrigin was made.
-        if (window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
-            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
 
         this.initialize();
     }
@@ -97,11 +90,6 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
         this._databaseObjects.push(database);
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasAdded, {database});
-    }
-
-    domStorageWasUpdated(id)
-    {
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageWasUpdated, id);
     }
 
     itemsCleared(storageId)
@@ -196,7 +184,6 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
     {
         for (var storageObject of this._domStorageObjects) {
             // The id is an object, so we need to compare the properties using Object.shallowEqual.
-            // COMPATIBILITY (iOS 6): The id was a string. Object.shallowEqual works for both.
             if (Object.shallowEqual(storageObject.id, id))
                 return storageObject;
         }
@@ -231,6 +218,9 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
     _addDOMStorageIfNeeded(frame)
     {
+        if (!window.DOMStorageAgent)
+            return;
+
         // Don't show storage if we don't have a security origin (about:blank).
         if (!frame.securityOrigin || frame.securityOrigin === "://")
             return;
@@ -325,12 +315,6 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         }
 
         return null;
-    }
-
-    _extraDomainsActivated(event)
-    {
-        if (event.data.domains.includes("DOMStorage") && window.DOMStorageAgent && DOMStorageAgent.getDOMStorageItems)
-            WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
     }
 };
 

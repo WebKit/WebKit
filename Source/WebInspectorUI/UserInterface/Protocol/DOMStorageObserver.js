@@ -28,18 +28,6 @@ WebInspector.DOMStorageObserver = class DOMStorageObserver
 {
     // Events defined by the "DOMStorage" domain.
 
-    // COMPATIBILITY (iOS 6): This event no longer exists. It is still needed and called on iOS 6.
-    addDOMStorage(storage)
-    {
-        WebInspector.storageManager.domStorageWasAdded(storage.id, storage.host, storage.isLocalStorage);
-    }
-
-    // COMPATIBILITY (iOS 6): This event was split into the granular events below.
-    updateDOMStorage(storageId)
-    {
-        WebInspector.storageManager.domStorageWasUpdated(storageId);
-    }
-
     domStorageItemsCleared(storageId)
     {
         WebInspector.storageManager.itemsCleared(storageId);

@@ -689,6 +689,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         // Convert BreakpointAction types to DebuggerAgent protocol types.
         // NOTE: Breakpoint.options returns new objects each time, so it is safe to modify.
+        // COMPATIBILITY (iOS 7): Debugger.BreakpointActionType did not exist yet.
         var options;
         if (DebuggerAgent.BreakpointActionType) {
             options = breakpoint.options;

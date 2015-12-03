@@ -127,6 +127,7 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
             });
         }
 
+        // COMPATIBILITY (iOS 7): Network.loadResource did not exist.
         if (!NetworkAgent.loadResource)
             return sourceMapResourceLoadError.call(this);
 
