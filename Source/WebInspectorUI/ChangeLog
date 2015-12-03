@@ -1,5 +1,20 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187577. rdar://problem/23221163
+
+    2015-07-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Border line in the debug popover should be semi-transparent black, not dark yellow
+            https://bugs.webkit.org/show_bug.cgi?id=147435
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/SourceCodeTextEditor.css:
+            (.popover .debugger-popover-content > .body):
+            (@media (-webkit-min-device-pixel-ratio: 2)): Use hairline borders on retina.
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187576. rdar://problem/23221163
 
     2015-07-29  Nikita Vasilyev  <nvasilyev@apple.com>
