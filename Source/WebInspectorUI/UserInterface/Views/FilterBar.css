@@ -45,6 +45,7 @@
 .filter-bar > input[type="search"] {
     display: flex;
     flex: 1;
+    min-width: 0;
 
     margin: 3px 6px 4px;
     padding-top: 0;
