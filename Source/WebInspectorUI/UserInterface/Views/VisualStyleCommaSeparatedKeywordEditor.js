@@ -25,11 +25,12 @@
 
 WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSeparatedKeywordEditor extends WebInspector.VisualStylePropertyEditor
 {
-    constructor(propertyNames, text, insertNewItemsBeforeSelected, layoutReversed)
+    constructor(propertyNames, text, longhandProperties, insertNewItemsBeforeSelected, layoutReversed)
     {
         super(propertyNames, text, null, null, "comma-separated-keyword-editor", layoutReversed);
 
         this._insertNewItemsBeforeSelected = insertNewItemsBeforeSelected || false;
+        this._longhandProperties = longhandProperties || {};
 
         var listElement = document.createElement("ol");
         listElement.classList.add("visual-style-comma-separated-keyword-list");
@@ -114,6 +115,60 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
     }
 
     // Private
+
+    _generateTextFromLonghandProperties()
+    {
+        var text = "";
+        if (!this._style)
+            return text;
+
+        function propertyValue(existingProperty, propertyName) {
+            if (existingProperty)
+                return existingProperty.value;
+
+            if (propertyName)
+                return this._longhandProperties[propertyName];
+
+            return "";
+        }
+
+        var onePropertyExists = false;
+        var valueLists = [];
+        var valuesCount = 0;
+        for (var propertyName in this._longhandProperties) {
+            var existingProperty = this._style.propertyForName(propertyName, true);
+            if (existingProperty)
+                onePropertyExists = true;
+
+            var matches = propertyValue.call(this, existingProperty, propertyName).split(/\s*,\s*(?![^\(]*\))/);
+            valuesCount = Math.max(valuesCount, matches.length);
+            valueLists.push(matches);
+        }
+
+        if (!onePropertyExists)
+            return text;
+
+        var count = 0;
+        while (count < valuesCount) {
+            if (count > 0)
+                text += ",";
+
+            for (var valueList of valueLists)
+                text += valueList[count > valueList.length - 1 ? valueList.length - 1 : count] + " ";
+
+            ++count;
+        }
+        return text;
+    }
+
+    modifyPropertyText(text, value)
+    {
+        for (var property in this._longhandProperties) {
+            var replacementRegExp = new RegExp(property + "\s*:\s*[^;]*(;|$)");
+            text = text.replace(replacementRegExp, "");
+        }
+        return super.modifyPropertyText(text, value);
+    }
 
     _listElementKeyDown(event)
     {

@@ -25,9 +25,9 @@
 
 WebInspector.VisualStyleFontFamilyListEditor = class VisualStyleFontFamilyListEditor extends WebInspector.VisualStyleCommaSeparatedKeywordEditor
 {
-    constructor(propertyNames, text, layoutReversed)
+    constructor(propertyNames, text, longhandProperties, layoutReversed)
     {
-        super(propertyNames, text, true, layoutReversed);
+        super(propertyNames, text, longhandProperties, true, layoutReversed);
 
         this._commaSeparatedKeywords.element.addEventListener("scroll", this._hideCompletions.bind(this));
 

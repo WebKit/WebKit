@@ -96,3 +96,7 @@
 .sidebar > .panel.details.css-style .visual.disabled > .details-section:not(.visual-style-selector-section) input {
     pointer-events: none;
 }
+
+.sidebar > .panel.details.css-style .visual > .details-section.background .details-section.background-style .visual-style-property-container.comma-separated-keyword-editor.background {
+    margin-top: 3px;
+}

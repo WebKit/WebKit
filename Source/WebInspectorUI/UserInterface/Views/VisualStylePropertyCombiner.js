@@ -126,7 +126,8 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
                     continue;
 
                 var updatedValues = editor.getValuesFromText(value || "", propertyMissing);
-                editor.updateEditorValues(updatedValues);
+                if (updatedValues)
+                    editor.updateEditorValues(updatedValues);
                 editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol] = true;
 
                 if (value)
