@@ -52,22 +52,19 @@ private:
     virtual void iterate(const IDBKeyData&, uint32_t count, IDBGetResult&) override final;
 
     void setFirstInRemainingRange(std::set<IDBKeyData>&);
-    std::set<IDBKeyData>::iterator firstForwardIteratorInRemainingRange(std::set<IDBKeyData>&);
-    std::set<IDBKeyData>::reverse_iterator firstReverseIteratorInRemainingRange(std::set<IDBKeyData>&);
+    void setForwardIteratorFromRemainingRange(std::set<IDBKeyData>&);
+    void setReverseIteratorFromRemainingRange(std::set<IDBKeyData>&);
 
     void incrementForwardIterator(std::set<IDBKeyData>&, const IDBKeyData&, uint32_t count);
     void incrementReverseIterator(std::set<IDBKeyData>&, const IDBKeyData&, uint32_t count);
 
-    bool hasIterators() const;
     bool hasValidPosition() const;
-    void clearIterators();
 
     MemoryObjectStore& m_objectStore;
 
     IDBKeyRangeData m_remainingRange;
 
-    WTF::Optional<std::set<IDBKeyData>::iterator> m_forwardIterator;
-    WTF::Optional<std::set<IDBKeyData>::reverse_iterator> m_reverseIterator;
+    WTF::Optional<std::set<IDBKeyData>::iterator> m_iterator;
 
     IDBKeyData m_currentPositionKey;
 };

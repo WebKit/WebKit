@@ -1,3 +1,42 @@
+2015-12-03  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/cursor-skip-deleted.html crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=151794
+
+        Reviewed by Alex Christensen.
+
+        STL reverse_iterators are a tricky beast.
+        
+        They are implemented in terms of a normal forward iterator (called the "base" iterator),
+        and they decrement a copy of that iterator when dereferenced.
+            
+        So when monitoring deletes from  a std::set to check if we should invalidate our current 
+        reverse_iterator, we were incorrectly comparing the deleted key to the value pointed by the
+        reverse_iterator instead of its base iterator.
+        
+        Since the iterators in question are bidirectional, anyways, we can just use a single iterator
+        and either increment or decrement it as needed.
+        
+        No new tests (At least one failing (crashing) test now passes).
+
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        (WebCore::IDBServer::MemoryObjectStoreCursor::objectStoreCleared):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::keyDeleted):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::keyAdded):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::setFirstInRemainingRange):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::setForwardIteratorFromRemainingRange):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::setReverseIteratorFromRemainingRange):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::currentData):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::incrementForwardIterator):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::incrementReverseIterator):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::iterate):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::firstForwardIteratorInRemainingRange): Deleted.
+        (WebCore::IDBServer::MemoryObjectStoreCursor::firstReverseIteratorInRemainingRange): Deleted.
+        (WebCore::IDBServer::MemoryObjectStoreCursor::hasIterators): Deleted.
+        (WebCore::IDBServer::MemoryObjectStoreCursor::hasValidPosition): Deleted.
+        (WebCore::IDBServer::MemoryObjectStoreCursor::clearIterators): Deleted.
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.h:
+
 2015-12-03  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Main thread can block when session is destroyed.
