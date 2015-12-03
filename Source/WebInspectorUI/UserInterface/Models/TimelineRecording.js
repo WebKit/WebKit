@@ -150,6 +150,9 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
     addEventMarker(marker)
     {
+        if (!WebInspector.timelineManager.isCapturing())
+            return;
+
         this._eventMarkers.push(marker);
 
         this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.MarkerAdded, {marker});
