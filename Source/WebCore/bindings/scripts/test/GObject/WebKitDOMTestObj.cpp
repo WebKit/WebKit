@@ -102,7 +102,9 @@ enum {
     PROP_REFLECTED_CUSTOM_BOOLEAN_ATTR,
     PROP_REFLECTED_CUSTOM_URL_ATTR,
     PROP_ATTR_WITH_GETTER_EXCEPTION,
+    PROP_ATTR_WITH_GETTER_EXCEPTION_WITH_MESSAGE,
     PROP_ATTR_WITH_SETTER_EXCEPTION,
+    PROP_ATTR_WITH_SETTER_EXCEPTION_WITH_MESSAGE,
     PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
     PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
     PROP_STRICT_TYPE_CHECKING_ATTRIBUTE,
@@ -211,8 +213,14 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
     case PROP_ATTR_WITH_GETTER_EXCEPTION:
         webkit_dom_test_obj_set_attr_with_getter_exception(self, g_value_get_long(value));
         break;
+    case PROP_ATTR_WITH_GETTER_EXCEPTION_WITH_MESSAGE:
+        webkit_dom_test_obj_set_attr_with_getter_exception_with_message(self, g_value_get_long(value));
+        break;
     case PROP_ATTR_WITH_SETTER_EXCEPTION:
         webkit_dom_test_obj_set_attr_with_setter_exception(self, g_value_get_long(value), nullptr);
+        break;
+    case PROP_ATTR_WITH_SETTER_EXCEPTION_WITH_MESSAGE:
+        webkit_dom_test_obj_set_attr_with_setter_exception_with_message(self, g_value_get_long(value));
         break;
     case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
         webkit_dom_test_obj_set_string_attr_with_getter_exception(self, g_value_get_string(value));
@@ -327,8 +335,14 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
     case PROP_ATTR_WITH_GETTER_EXCEPTION:
         g_value_set_long(value, webkit_dom_test_obj_get_attr_with_getter_exception(self, nullptr));
         break;
+    case PROP_ATTR_WITH_GETTER_EXCEPTION_WITH_MESSAGE:
+        g_value_set_long(value, webkit_dom_test_obj_get_attr_with_getter_exception_with_message(self));
+        break;
     case PROP_ATTR_WITH_SETTER_EXCEPTION:
         g_value_set_long(value, webkit_dom_test_obj_get_attr_with_setter_exception(self));
+        break;
+    case PROP_ATTR_WITH_SETTER_EXCEPTION_WITH_MESSAGE:
+        g_value_set_long(value, webkit_dom_test_obj_get_attr_with_setter_exception_with_message(self));
         break;
     case PROP_STRING_ATTR_WITH_GETTER_EXCEPTION:
         g_value_take_string(value, webkit_dom_test_obj_get_string_attr_with_getter_exception(self, nullptr));
@@ -700,11 +714,31 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
 
     g_object_class_install_property(
         gobjectClass,
+        PROP_ATTR_WITH_GETTER_EXCEPTION_WITH_MESSAGE,
+        g_param_spec_long(
+            "attr-with-getter-exception-with-message",
+            "TestObj:attr-with-getter-exception-with-message",
+            "read-write glong TestObj:attr-with-getter-exception-with-message",
+            G_MINLONG, G_MAXLONG, 0,
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
         PROP_ATTR_WITH_SETTER_EXCEPTION,
         g_param_spec_long(
             "attr-with-setter-exception",
             "TestObj:attr-with-setter-exception",
             "read-write glong TestObj:attr-with-setter-exception",
+            G_MINLONG, G_MAXLONG, 0,
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_ATTR_WITH_SETTER_EXCEPTION_WITH_MESSAGE,
+        g_param_spec_long(
+            "attr-with-setter-exception-with-message",
+            "TestObj:attr-with-setter-exception-with-message",
+            "read-write glong TestObj:attr-with-setter-exception-with-message",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -1997,6 +2031,23 @@ void webkit_dom_test_obj_set_attr_with_getter_exception(WebKitDOMTestObj* self, 
     item->setAttrWithGetterException(value);
 }
 
+glong webkit_dom_test_obj_get_attr_with_getter_exception_with_message(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    glong result = item->attrWithGetterExceptionWithMessage();
+    return result;
+}
+
+void webkit_dom_test_obj_set_attr_with_getter_exception_with_message(WebKitDOMTestObj* self, glong value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setAttrWithGetterExceptionWithMessage(value);
+}
+
 glong webkit_dom_test_obj_get_attr_with_setter_exception(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -2018,6 +2069,23 @@ void webkit_dom_test_obj_set_attr_with_setter_exception(WebKitDOMTestObj* self, 
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
+}
+
+glong webkit_dom_test_obj_get_attr_with_setter_exception_with_message(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    glong result = item->attrWithSetterExceptionWithMessage();
+    return result;
+}
+
+void webkit_dom_test_obj_set_attr_with_setter_exception_with_message(WebKitDOMTestObj* self, glong value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setAttrWithSetterExceptionWithMessage(value);
 }
 
 gchar* webkit_dom_test_obj_get_string_attr_with_getter_exception(WebKitDOMTestObj* self, GError** error)

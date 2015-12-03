@@ -106,7 +106,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [RaisesException] void methodWithException();
     [RaisesExceptionWithMessage] void methodWithExceptionWithMessage();
     [GetterRaisesException] attribute long attrWithGetterException;
+    [GetterRaisesExceptionWithMessage] attribute long attrWithGetterExceptionWithMessage;
     [SetterRaisesException] attribute long attrWithSetterException;
+    [SetterRaisesExceptionWithMessage] attribute long attrWithSetterExceptionWithMessage;
     [GetterRaisesException] attribute DOMString stringAttrWithGetterException;
     [SetterRaisesException] attribute DOMString stringAttrWithSetterException;
 

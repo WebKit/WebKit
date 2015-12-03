@@ -65,6 +65,7 @@ EventTarget
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
 GetterRaisesException
+GetterRaisesExceptionWithMessage
 GlobalContext=DOMWindow|WorkerGlobalScope|DedicatedWorkerGlobalScope
 Immutable
 ImplementationLacksVTable
@@ -112,6 +113,7 @@ ReplaceableConstructor
 ReportExtraMemoryCost
 RequiresExistingAtomicString
 SetterRaisesException
+SetterRaisesExceptionWithMessage
 SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
 SkipVTableValidation
 StrictTypeChecking

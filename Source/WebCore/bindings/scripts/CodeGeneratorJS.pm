@@ -2281,7 +2281,12 @@ sub GenerateImplementation
             $codeGenerator->AssertNotSequenceType($type);
             my $getFunctionName = GetAttributeGetterName($interfaceName, $className, $interface, $attribute);
             my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
-            my $getterExceptions = $attribute->signature->extendedAttributes->{"GetterRaisesException"};
+            my $getterExceptionsWithMessage = $attribute->signature->extendedAttributes->{"GetterRaisesExceptionWithMessage"};
+            my $getterExceptions = $attribute->signature->extendedAttributes->{"GetterRaisesException"} || $getterExceptionsWithMessage;
+
+            if ($getterExceptions) {
+                $implIncludes{"ExceptionCode.h"} = 1;
+            }
 
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
@@ -2315,7 +2320,11 @@ sub GenerateImplementation
             my @arguments = ();
             if ($getterExceptions && !HasCustomGetter($attribute->signature->extendedAttributes)) {
                 push(@arguments, "ec");
-                push(@implContent, "    ExceptionCode ec = 0;\n");
+                if ($getterExceptionsWithMessage) {
+                    push(@implContent, "    ExceptionCodeWithMessage ec;\n");
+                } else {
+                    push(@implContent, "    ExceptionCode ec = 0;\n");
+                }
             }
 
             # Global constructors can be disabled at runtime.
@@ -2359,7 +2368,7 @@ sub GenerateImplementation
 
                 my $nativeType = GetNativeType($type);
                 my $memoizedType = GetNativeTypeForMemoization($type);
-                my $exceptionCode = $getterExceptions ? "ec" : "0";
+                my $exceptionCode = $getterExceptionsWithMessage ? "ec.code" : ($getterExceptions ? "ec" : "0");
                 push(@implContent, "    static NeverDestroyed<const AtomicString> bindingName(\"$interfaceName.$name\", AtomicString::ConstructFromLiteral);\n");
                 push(@implContent, "    if (cursor.isCapturing()) {\n");
                 push(@implContent, "        $memoizedType memoizedResult = castedThis->wrapped().$implGetterFunctionName(" . join(", ", @arguments) . ");\n");
@@ -2408,7 +2417,7 @@ sub GenerateImplementation
                     AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                     push(@implContent, "    return JSValue::encode(JS" . $constructorType . "::getConstructor(state->vm(), castedThis->globalObject()));\n");
                 }
-            } elsif (!$attribute->signature->extendedAttributes->{"GetterRaisesException"}) {
+            } elsif (!$attribute->signature->extendedAttributes->{"GetterRaisesException"} && !$attribute->signature->extendedAttributes->{"GetterRaisesExceptionWithMessage"}) {
                 my $cacheIndex = 0;
                 if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                     $cacheIndex = $currentCachedAttribute;
@@ -2606,7 +2615,12 @@ sub GenerateImplementation
             my $type = $attribute->signature->type;
             my $putFunctionName = GetAttributeSetterName($interfaceName, $className, $interface, $attribute);
             my $implSetterFunctionName = $codeGenerator->WK_ucfirst($name);
-            my $setterRaisesException = $attribute->signature->extendedAttributes->{"SetterRaisesException"};
+            my $setterRaisesExceptionWithMessage = $attribute->signature->extendedAttributes->{"SetterRaisesExceptionWithMessage"};
+            my $setterRaisesException = $attribute->signature->extendedAttributes->{"SetterRaisesException"} || $setterRaisesExceptionWithMessage;
+
+            if ($setterRaisesException) {
+                $implIncludes{"ExceptionCode.h"} = 1;
+            }
 
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
@@ -2702,7 +2716,11 @@ sub GenerateImplementation
                         push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     }
                 }
-                push(@implContent, "    ExceptionCode ec = 0;\n") if $setterRaisesException;
+                if ($setterRaisesExceptionWithMessage) {
+                    push(@implContent, "    ExceptionCodeWithMessage ec;\n");
+                } elsif ($setterRaisesException) {
+                    push(@implContent, "    ExceptionCode ec = 0;\n");
+                }
 
                 # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
                 # interface type, then if the incoming value does not implement that interface, a TypeError
@@ -2760,7 +2778,10 @@ sub GenerateImplementation
                         push(@implContent, "    setDOMException(state, ec);\n") if $setterRaisesException;
                     }
                     if ($svgPropertyType) {
-                        if ($setterRaisesException) {
+                        if ($setterRaisesExceptionWithMessage) {
+                            push(@implContent, "    if (!ec.code)\n");
+                            push(@implContent, "        impl.commitChange();\n");
+                        } elsif ($setterRaisesException) {
                             push(@implContent, "    if (!ec)\n");
                             push(@implContent, "        impl.commitChange();\n");
                         } else {
@@ -2850,9 +2871,11 @@ sub GenerateImplementation
 
             my $isCustom = HasCustomMethod($function->signature->extendedAttributes);
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
-            my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
+
+            die "RaisesException and RaisesExceptionWithMessage are mutually exclusive" if $function->signature->extendedAttributes->{"RaisesException"} && $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
+
             my $raisesExceptionWithMessage = $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
-            die "RaisesException and RaisesExceptionWithMessage are mutually exclusive" if $raisesException && $raisesExceptionWithMessage;
+            my $raisesException = $function->signature->extendedAttributes->{"RaisesException"} || $raisesExceptionWithMessage;
 
             next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;
 
@@ -2904,8 +2927,11 @@ sub GenerateImplementation
                 } else {
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    push(@implContent, "    ExceptionCode ec = 0;\n") if $raisesException || $raisesExceptionWithMessage;
-                    push(@implContent, "    String exceptionMessage;\n") if $raisesExceptionWithMessage;
+                    if ($raisesExceptionWithMessage) {
+                        push(@implContent, "    ExceptionCodeWithMessage ec;\n");
+                    } elsif ($raisesException) {
+                        push(@implContent, "    ExceptionCode ec = 0;\n");
+                    }
 
                     my $numParameters = @{$function->parameters};
                     my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $numParameters, $interfaceName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
@@ -2941,11 +2967,14 @@ sub GenerateImplementation
                     } else {
                         GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                        push(@implContent, "    ExceptionCode ec = 0;\n") if $raisesException || $raisesExceptionWithMessage;
-                        push(@implContent, "    String exceptionMessage;\n") if $raisesExceptionWithMessage;
+                        if ($raisesExceptionWithMessage) {
+                            push(@implContent, "    ExceptionCodeWithMessage ec;\n");
+                        } elsif ($raisesException) {
+                            push(@implContent, "    ExceptionCode ec = 0;\n");
+                        }
 
                         if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-                            push(@implContent, "    if (!shouldAllowAccessToNode(state, impl." . $function->signature->name . "(" . ($raisesException ? "ec" : $raisesExceptionWithMessage ? "ec, exceptionMessage" : "") .")))\n");
+                            push(@implContent, "    if (!shouldAllowAccessToNode(state, impl." . $function->signature->name . "(" . ($raisesException ? "ec" : "") .")))\n");
                             push(@implContent, "        return JSValue::encode(jsNull());\n");
                             $implIncludes{"JSDOMBinding.h"} = 1;
                         }
@@ -3292,8 +3321,6 @@ sub GenerateParametersCheck
 
     my $argsIndex = 0;
     my $hasOptionalArguments = 0;
-    my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
-    my $raisesExceptionWithMessage = $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
 
     my $className = $interface->name;
     my @arguments;
@@ -3539,7 +3566,6 @@ sub GenerateReturnParameters
 
     push(@arguments, "DeferredWrapper(state, castedThis->globalObject(), promiseDeferred)") if IsReturningPromise($function);
     push(@arguments, "ec") if $function->signature->extendedAttributes->{"RaisesException"} || $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
-    push(@arguments, "exceptionMessage") if $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
     return @arguments;
 }
 
@@ -3821,8 +3847,8 @@ sub GenerateImplementationFunctionCall()
     my $interfaceName = shift;
 
     my $nondeterministic = $function->signature->extendedAttributes->{"Nondeterministic"};
-    my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
     my $raisesExceptionWithMessage = $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
+    my $raisesException = $function->signature->extendedAttributes->{"RaisesException"} || $raisesExceptionWithMessage;
 
     if ($function->signature->type eq "void" || IsReturningPromise($function)) {
         if ($nondeterministic) {
@@ -3832,22 +3858,22 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, $indent . "if (!cursor.isReplaying()) {\n");
             push(@implContent, $indent . "    $functionString;\n");
             push(@implContent, $indent . "    setDOMException(state, ec);\n") if $raisesException;
-            push(@implContent, $indent . "    setDOMException(state, ec, exceptionMessage);\n") if $raisesExceptionWithMessage;
             push(@implContent, $indent . "}\n");
             push(@implContent, "#else\n");
             push(@implContent, $indent . "$functionString;\n");
             push(@implContent, $indent . "setDOMException(state, ec);\n") if $raisesException;
-            push(@implContent, $indent . "setDOMException(state, ec, exceptionMessage);\n") if $raisesExceptionWithMessage;
             push(@implContent, "#endif\n");
         } else {
             push(@implContent, $indent . "$functionString;\n");
             push(@implContent, $indent . "setDOMException(state, ec);\n") if $raisesException;
-            push(@implContent, $indent . "setDOMException(state, ec, exceptionMessage);\n") if $raisesExceptionWithMessage;
         }
 
         if ($svgPropertyType and !$function->isStatic) {
-            if ($raisesException || $raisesExceptionWithMessage) {
-                push(@implContent, $indent . "if (!ec)\n"); 
+            if ($raisesExceptionWithMessage) {
+                push(@implContent, $indent . "if (!ec.code)\n");
+                push(@implContent, $indent . "    impl.commitChange();\n");
+            } elsif ($raisesException) {
+                push(@implContent, $indent . "if (!ec)\n");
                 push(@implContent, $indent . "    impl.commitChange();\n");
             } else {
                 push(@implContent, $indent . "impl.commitChange();\n");
@@ -3871,7 +3897,7 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, $indent . "static NeverDestroyed<const AtomicString> bindingName(\"$bindingName\", AtomicString::ConstructFromLiteral);\n");
             push(@implContent, $indent . "if (cursor.isCapturing()) {\n");
             push(@implContent, $indent . "    $nativeType memoizedResult = $functionString;\n");
-            my $exceptionCode = $raisesException || $raisesExceptionWithMessage ? "ec" : "0";
+            my $exceptionCode = $raisesExceptionWithMessage ? "ec.code" : ($raisesException ? "ec" : "0");
             push(@implContent, $indent . "    cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, $exceptionCode);\n");
             push(@implContent, $indent . "    result = " . NativeToJSValue($function->signature, 1, $interfaceName, "memoizedResult", $thisObject) . ";\n");
             push(@implContent, $indent . "} else if (cursor.isReplaying()) {\n");
@@ -3880,7 +3906,8 @@ sub GenerateImplementationFunctionCall()
             # FIXME: the generated code should report an error if an input cannot be fetched or converted.
             push(@implContent, $indent . "    if (input && input->convertTo<$memoizedType>(memoizedResult)) {\n");
             push(@implContent, $indent . "        result = " . NativeToJSValue($function->signature, 1, $interfaceName, "memoizedResult", $thisObject) . ";\n");
-            push(@implContent, $indent . "        ec = input->exceptionCode();\n") if $raisesException || $raisesExceptionWithMessage;
+            push(@implContent, $indent . "        ec.code = input->exceptionCode();\n") if $raisesExceptionWithMessage;
+            push(@implContent, $indent . "        ec = input->exceptionCode();\n") if $raisesException && !$raisesExceptionWithMessage;
             push(@implContent, $indent . "    } else\n");
             push(@implContent, $indent . "        result = " . NativeToJSValue($function->signature, 1, $interfaceName, $functionString, $thisObject) . ";\n");
             push(@implContent, $indent . "} else\n");
@@ -3892,7 +3919,6 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, $indent . "JSValue result = " . NativeToJSValue($function->signature, 1, $interfaceName, $functionString, $thisObject) . ";\n");
         }
         push(@implContent, "\n" . $indent . "setDOMException(state, ec);\n") if $raisesException;
-        push(@implContent, "\n" . $indent . "setDOMException(state, ec, exceptionMessage);\n") if $raisesExceptionWithMessage;
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContent, $indent . "if (UNLIKELY(state->hadException()))\n");
@@ -4798,8 +4824,11 @@ END
 
             if ($function->signature->extendedAttributes->{"RaisesException"} || $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"} || $interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 $implIncludes{"ExceptionCode.h"} = 1;
-                push(@$outputArray, "    ExceptionCode ec = 0;\n");
-                push(@$outputArray, "    String exceptionMessage;\n") if $function->signature->extendedAttributes->{"RaisesExceptionWithMessage"};
+                if ($function->signature->extendedAttributes->{"RaisesExceptionWithMessage"}) {
+                    push(@$outputArray, "    ExceptionCodeWithMessage ec;\n");
+                } else {
+                    push(@$outputArray, "    ExceptionCode ec = 0;\n");
+                }
             }
 
             # FIXME: For now, we do not support SVG constructors.
