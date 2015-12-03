@@ -1,3 +1,19 @@
+2015-12-03  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Main thread can block when session is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=151803
+
+        Reviewed by Alex Christensen.
+
+        Set flag to make sure that the scheduler thread stops when the session ends.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::processSamplesInQueue):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::schedulerThreadProcPrivate):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::stopThread):
+
 2015-12-03  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Fullscreen -> PiP should resume to Fullscreen, not inline

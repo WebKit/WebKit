@@ -2202,14 +2202,8 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler()
     if (!m_schedulerThread.isValid())
         return S_OK;
 
-    {
-        // Clearing the sample queue before we post the thread terminate message will make sure
-        // the thread exits quickly, and we will not be stuck waiting for it to finish.
-        LockHolder locker(m_lock);
-        m_scheduledSamples.clear();
-    }
-
     // Terminate the scheduler thread
+    stopThread();
     ::PostThreadMessage(m_threadID, EventTerminate, 0, 0);
 
     // Wait for the scheduler thread to finish.
@@ -2217,6 +2211,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler()
 
     LockHolder locker(m_lock);
 
+    m_scheduledSamples.clear();
     m_schedulerThread.clear();
     m_flushEvent.clear();
 
@@ -2281,7 +2276,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::processSamplesInQueue
 
     // Process samples as long as there are samples in the queue, and they have not arrived too early.
 
-    while (true) {
+    while (!m_exitThread) {
         COMPtr<IMFSample> sample;
 
         if (true) {
@@ -2400,15 +2395,15 @@ DWORD MediaPlayerPrivateMediaFoundation::VideoScheduler::schedulerThreadProcPriv
     SetEvent(m_threadReadyEvent.get());
 
     LONG wait = INFINITE;
-    bool exitThread = false;
-    while (!exitThread) {
+    m_exitThread = false;
+    while (!m_exitThread) {
         // Wait for messages
         DWORD result = MsgWaitForMultipleObjects(0, nullptr, FALSE, wait, QS_POSTMESSAGE);
 
         if (result == WAIT_TIMEOUT) {
             hr = processSamplesInQueue(wait);
             if (FAILED(hr))
-                exitThread = true;
+                m_exitThread = true;
         }
 
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -2416,7 +2411,7 @@ DWORD MediaPlayerPrivateMediaFoundation::VideoScheduler::schedulerThreadProcPriv
 
             switch (msg.message) {
             case EventTerminate:
-                exitThread = true;
+                m_exitThread = true;
                 break;
 
             case EventFlush:
@@ -2432,7 +2427,7 @@ DWORD MediaPlayerPrivateMediaFoundation::VideoScheduler::schedulerThreadProcPriv
                 if (processSamples) {
                     hr = processSamplesInQueue(wait);
                     if (FAILED(hr))
-                        exitThread = true;
+                        m_exitThread = true;
                     processSamples = (wait != INFINITE);
                 }
                 break;
