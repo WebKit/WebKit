@@ -42,8 +42,6 @@ WebInspector.LogContentView = function(representedObject)
     this.messagesElement.tabIndex = 0;
     this.messagesElement.setAttribute("role", "log");
     this.messagesElement.addEventListener("mousedown", this._mousedown.bind(this));
-    this.messagesElement.addEventListener("focus", this._didFocus.bind(this));
-    this.messagesElement.addEventListener("blur", this._didBlur.bind(this));
     this.messagesElement.addEventListener("keydown", this._keyDown.bind(this));
     this.messagesElement.addEventListener("dragstart", this._ondragstart.bind(this), true);
     this.element.appendChild(this.messagesElement);
@@ -409,9 +407,6 @@ WebInspector.LogContentView.prototype = {
             return;
         }
 
-        if (!this._focused)
-            this.messagesElement.focus();
-
         this._mouseDownWrapper = event.target.enclosingNodeOrSelfWithClass(WebInspector.LogContentView.ItemWrapperStyleClassName);
         this._mouseDownShiftKey = event.shiftKey;
         this._mouseDownCommandKey = event.metaKey;
@@ -730,16 +725,6 @@ WebInspector.LogContentView.prototype = {
         }, this);
 
         this._performSearch();
-    },
-
-    _didFocus: function(event)
-    {
-        this._focused = true;
-    },
-
-    _didBlur: function(event)
-    {
-        this._focused = false;
     },
 
     _keyDown: function(event)
