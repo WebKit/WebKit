@@ -194,8 +194,7 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
 
         records = records || [];
 
-        if (!(records instanceof Array))
-            records = [records];
+        console.assert(records instanceof Array, "records should be an array");
 
         this._records = records;
 
