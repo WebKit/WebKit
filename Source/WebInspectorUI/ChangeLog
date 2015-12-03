@@ -1,5 +1,19 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188546. rdar://problem/23221163
+
+    2015-08-17  Brian Burg  <bburg@apple.com>
+
+            Web Inspector: REGRESSION: spurious console.assert inside ResourceContentView._contentAvailable
+            https://bugs.webkit.org/show_bug.cgi?id=147886
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/ResourceContentView.js:
+            (WebInspector.ResourceContentView.prototype._hasContent): Fix the style class name.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188506. rdar://problem/23221163
 
     2015-08-14  Matt Baker  <mattbaker@apple.com>
