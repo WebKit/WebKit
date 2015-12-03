@@ -1,5 +1,23 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187211. rdar://problem/23221163
+
+    2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Timeline should immediately start moving play head when starting a new recording
+            https://bugs.webkit.org/show_bug.cgi?id=147210
+
+            Reviewed by Timothy Hatcher.
+
+            Test: inspector/timeline/recording-start-stop-timestamps.html
+
+            * inspector/InspectorTimelineAgent.cpp:
+            (WebCore::InspectorTimelineAgent::internalStart):
+            (WebCore::InspectorTimelineAgent::internalStop):
+            Include the current timestamp when starting / stopping a recording.
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r186724. rdar://problem/23221163
 
     2015-07-11  Nikita Vasilyev  <nvasilyev@apple.com>

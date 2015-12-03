@@ -442,18 +442,24 @@ WebInspector.TimelineRecordingContentView.prototype = {
             this.currentTimelineView.updateLayoutIfNeeded();
     },
 
-    _startUpdatingCurrentTime: function()
+    _startUpdatingCurrentTime: function(startTime)
     {
         console.assert(!this._updating);
         if (this._updating)
             return;
 
         if (!isNaN(this._currentTime)) {
-            // We have a current time already, so we likely need to jump into the future to a better current time.
             // This happens when you stop and later restart recording.
-            console.assert(!this._waitingToResetCurrentTime);
-            this._waitingToResetCurrentTime = true;
-            this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
+            if (typeof startTime === "number")
+                this._currentTime = startTime;
+            else {
+                // COMPATIBILITY (iOS 9): Timeline.recordingStarted events did not include a timestamp.
+                // We likely need to jump into the future to a better current time which we can
+                // ascertained from a new incoming timeline record, so we wait for a Timeline to update.
+                console.assert(!this._waitingToResetCurrentTime);
+                this._waitingToResetCurrentTime = true;
+                this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
+            }
         }
 
         this._updating = true;
@@ -478,7 +484,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     _capturingStarted: function(event)
     {
-        this._startUpdatingCurrentTime();
+        this._startUpdatingCurrentTime(event.data.startTime);
     },
 
     _capturingStopped: function(event)
@@ -508,10 +514,9 @@ WebInspector.TimelineRecordingContentView.prototype = {
         if (!this._waitingToResetCurrentTime)
             return;
 
+        // COMPATIBILITY (iOS 9): Timeline.recordingStarted events did not include a new startTime.
         // Make the current time be the start time of the last added record. This is the best way
         // currently to jump to the right period of time after recording starts.
-        // FIXME: If no activity is happening we can sit for a while until a record is added.
-        // We might want to have the backend send a "start" record to get current time moving.
 
         for (var timeline of this._recording.timelines.values()) {
             var lastRecord = timeline.records.lastValue;
