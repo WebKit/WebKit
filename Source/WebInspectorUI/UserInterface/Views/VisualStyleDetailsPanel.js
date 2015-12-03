@@ -29,7 +29,6 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
     {
         super(delegate, "visual", "visual", WebInspector.UIString("Styles \u2014 Visual"));
 
-        WebInspector.propertyReferenceInfoTemp = {};
         this._currentStyle = null;
         this._forceNextStyleUpdate = false;
 
