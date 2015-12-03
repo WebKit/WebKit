@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.messagesCleared");
+
+    suite.addTestCase({
+        name: "ClearViaConsoleClearMessagesAPI",
+        description: "Calling Console.clearMessages should trigger Console.messagesCleared.",
+        test: (resolve, reject) => {
+            ConsoleAgent.clearMessages();
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+                InspectorTest.expectThat(event, "Cleared event should fire.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ClearViaConsoleAPI",
+        description: "Calling console.clear() should trigger Console.messagesCleared.",
+        test: (resolve, reject) => {
+            InspectorTest.evaluateInPage("console.clear()");
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+                InspectorTest.expectThat(event, "Cleared event should fire.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ClearViaCommandLineAPI",
+        description: "Calling `clear()` in the command line API should trigger Console.messagesCleared.",
+        test: (resolve, reject) => {
+            const objectGroup = "test";
+            const includeCommandLineAPI = true;
+            const ignorePauseOnExceptionsAndMute = false;
+            const shouldReturnByValue = false;
+            const shouldGeneratePreview = false;
+            const shouldSaveResult = false;
+            WebInspector.runtimeManager.evaluateInInspectedWindow("clear()", objectGroup, includeCommandLineAPI, ignorePauseOnExceptionsAndMute, shouldReturnByValue, shouldGeneratePreview, shouldSaveResult, function(){});
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+                InspectorTest.expectThat(event, "Cleared event should fire.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ClearViaPageReload",
+        description: "Reloading the page should trigger Console.messagesCleared.",
+        test: (resolve, reject) => {
+            InspectorTest.reloadPage();
+            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.Cleared, (event) => {
+                InspectorTest.expectThat(event, "Cleared event should fire.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Console.messagesCleared event.</p>
+</body>
+</html>

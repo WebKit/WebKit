@@ -345,6 +345,16 @@ WebInspector.RemoteObject = class RemoteObject
         }
     }
 
+    isUndefined()
+    {
+        return this._type === "undefined";
+    }
+
+    isNode()
+    {
+        return this._subtype === "node";
+    }
+
     isArray()
     {
         return this._subtype === "array";

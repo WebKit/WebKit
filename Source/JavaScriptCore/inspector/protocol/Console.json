@@ -61,9 +61,9 @@
         {
             "name": "addInspectedNode",
             "parameters": [
-                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "DOM node id to be accessible by means of $x command line API." }
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "DOM node id to be accessible by means of $0 command line API." }
             ],
-            "description": "Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions)."
+            "description": "Enables console to refer to the node with given id via $0 (see Command Line API for more details)."
         }
     ],
     "events": [

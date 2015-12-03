@@ -1,0 +1,66 @@
+CONSOLE MESSAGE: line 1: test message
+CONSOLE MESSAGE: line 1: test message
+CONSOLE MESSAGE: line 1: test message
+CONSOLE MESSAGE: line 1: test message
+CONSOLE MESSAGE: line 1: test message
+CONSOLE MESSAGE: line 1: test message
+CONSOLE MESSAGE: line 1: different message
+CONSOLE MESSAGE: line 1: different message
+CONSOLE MESSAGE: line 1: test message
+CONSOLE MESSAGE: line 1: equal parameter values
+CONSOLE MESSAGE: line 1: equal parameter values
+CONSOLE MESSAGE: line 1: object
+CONSOLE MESSAGE: line 1: object
+CONSOLE MESSAGE: line 1: level
+CONSOLE MESSAGE: line 1: level
+Test for the Console.messageRepeatCountUpdated event.
+
+
+== Running test suite: Console.messageRepeatCountUpdated
+-- Running test case: AddTestMessage
+PASS: MessageAdded event should fire.
+PASS: ConsoleMessage repeatCount is 1.
+
+-- Running test case: RepeatTestMessage1
+PASS: PreviousMessageRepeatCountUpdated should fire.
+PASS: Count should be 2.
+
+-- Running test case: RepeatTestMessage2
+PASS: PreviousMessageRepeatCountUpdated should fire.
+PASS: Count should be 3.
+
+-- Running test case: RepeatTestMessage3
+PASS: PreviousMessageRepeatCountUpdated should fire.
+PASS: Count should be 4.
+
+-- Running test case: RepeatTestMessage4
+PASS: PreviousMessageRepeatCountUpdated should fire.
+PASS: Count should be 5.
+
+-- Running test case: RepeatTestMessage5
+PASS: PreviousMessageRepeatCountUpdated should fire.
+PASS: Count should be 6.
+
+-- Running test case: AddDifferentMessage
+PASS: MessageAdded event should fire.
+PASS: ConsoleMessage repeatCount is 1.
+
+-- Running test case: RepeatDifferentMessage
+PASS: PreviousMessageRepeatCountUpdated should fire.
+PASS: Count should be 2.
+
+-- Running test case: AddTestMessageAgain
+PASS: MessageAdded event should fire.
+PASS: ConsoleMessage repeatCount is 1.
+
+-- Running test case: MessagesWithEqualValuesRepeats
+PASS: PreviousMessageRepeatCountUpdated should fire for repeat messages with equal values.
+
+-- Running test case: MessagesWithObjectsDoNotRepeat
+PASS: MessageAdded event should fire.
+PASS: MessageAdded event should fire.
+
+-- Running test case: MessagesWithDifferentLevelsDoNotRepeat
+PASS: MessageAdded event should fire.
+PASS: MessageAdded event should fire.
+
