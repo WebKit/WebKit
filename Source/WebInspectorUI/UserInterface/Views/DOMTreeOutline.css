@@ -41,11 +41,7 @@
 
 .dom-tree-outline li.hovered:not(.selected) .selection {
     display: block;
-    left: 3px;
-    right: 3px;
-
     background-color: hsla(209, 100%, 49%, 0.1);
-    border-radius: 5px;
 }
 
 .dom-tree-outline li .selection {

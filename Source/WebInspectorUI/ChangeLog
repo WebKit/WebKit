@@ -1,5 +1,20 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188260. rdar://problem/23221163
+
+    2015-08-11  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: Hovering over an element in the Elements tab should highlight the whole line
+            https://bugs.webkit.org/show_bug.cgi?id=147855
+
+            Reviewed by Brian Burg.
+
+            * UserInterface/Views/DOMTreeOutline.css:
+            (.dom-tree-outline li.hovered:not(.selected) .selection):
+            Removed the horizontal positioning and border radius.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188238. rdar://problem/23221163
 
     2015-08-10  Devin Rousso  <drousso@apple.com>
