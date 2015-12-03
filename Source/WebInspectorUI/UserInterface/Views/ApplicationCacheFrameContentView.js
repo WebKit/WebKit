@@ -29,10 +29,7 @@ WebInspector.ApplicationCacheFrameContentView = function(representedObject)
 
     WebInspector.ContentView.call(this, representedObject);
 
-    this.element.classList.add("application-cache-frame");
-
-    this.element.classList.add("storage-view");
-    this.element.classList.add("table");
+    this.element.classList.add("application-cache-frame", "table");
 
     this._frame = representedObject.frame;
 
