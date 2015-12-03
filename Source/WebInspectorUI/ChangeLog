@@ -1,5 +1,19 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188665. rdar://problem/23221163
+
+    2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Include Legacy Inspector JSON for iOS 9
+            https://bugs.webkit.org/show_bug.cgi?id=148200
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js: Added.
+            * Versions/Inspector-iOS-9.0.json: Added.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188664. rdar://problem/23221163
 
     2015-08-19  Joseph Pecoraro  <pecoraro@apple.com>
