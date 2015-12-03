@@ -213,10 +213,7 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
     updateLayout()
     {
         this._currentTimelineOverview.updateLayoutForResize();
-
-        var currentContentView = this._contentViewContainer.currentContentView;
-        if (currentContentView)
-            currentContentView.updateLayout();
+        this._contentViewContainer.updateLayout();
     }
 
     saveToCookie(cookie)
