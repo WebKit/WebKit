@@ -23,29 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.details-section.watch-expressions .options > * {
-    float: right;
-    margin-top: 1px;
-    margin-left: 5px;
-    height: 13px;
-}
-
-.details-section.watch-expressions .options > *:active {
-    opacity: 0.7;
-}
-
-.details-section.watch-expressions .options > .watch-expression-add {
-    content: url(../Images/Plus13.svg);
-}
-
-.details-section.watch-expressions .options > .watch-expression-clear {
-    content: url(../Images/NavigationItemTrash.svg);
-}
-
-.details-section.watch-expressions .options > .watch-expression-refresh {
-    content: url(../Images/ReloadFull.svg);
-}
-
 .popover .watch-expression {
     padding: 5px;
     margin: 2px;
