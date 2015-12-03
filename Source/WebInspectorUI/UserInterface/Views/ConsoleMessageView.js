@@ -609,7 +609,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         {
             if (b instanceof Node)
                 a.appendChild(b);
-            else if (b) {
+            else if (b !== undefined) {
                 var toAppend = WebInspector.linkifyStringAsFragment(b.toString());
                 if (currentStyle) {
                     var wrapper = document.createElement("span");
