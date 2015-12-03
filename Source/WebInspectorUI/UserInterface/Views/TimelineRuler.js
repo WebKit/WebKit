@@ -587,21 +587,27 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         if (!this._allowsTimeRangeSelection)
             return;
 
-        var newLeftPosition = Math.max(0, (this._selectionStartTime - this._startTime) / duration);
+        let startTimeClamped = this._selectionStartTime < this._startTime;
+        let endTimeClamped = this._selectionEndTime > this._endTime;
+
+        let formattedStartTimeText = this._formatDividerLabelText(this._selectionStartTime);
+        let formattedEndTimeText = this._formatDividerLabelText(this._selectionEndTime);
+
+        let newLeftPosition = Math.max(0, (this._selectionStartTime - this._startTime) / duration);
         this._updatePositionOfElement(this._leftShadedAreaElement, newLeftPosition, visibleWidth, "width");
         this._updatePositionOfElement(this._leftSelectionHandleElement, newLeftPosition, visibleWidth, "left");
         this._updatePositionOfElement(this._selectionDragElement, newLeftPosition, visibleWidth, "left");
 
-        this._leftSelectionHandleElement.classList.toggle("clamped", this._selectionStartTime < this._startTime);
-        this._leftSelectionHandleElement.title = this._selectionStartTime < this._startTime ? this._formatDividerLabelText(this._selectionStartTime) : "";
+        this._leftSelectionHandleElement.classList.toggle("clamped", startTimeClamped);
+        this._leftSelectionHandleElement.title = startTimeClamped  && this._selectionEndTime < this._startTime ? formattedEndTimeText : formattedStartTimeText;
 
-        var newRightPosition = 1 - Math.min((this._selectionEndTime - this._startTime) / duration, 1);
+        let newRightPosition = 1 - Math.min((this._selectionEndTime - this._startTime) / duration, 1);
         this._updatePositionOfElement(this._rightShadedAreaElement, newRightPosition, visibleWidth, "width");
         this._updatePositionOfElement(this._rightSelectionHandleElement, newRightPosition, visibleWidth, "right");
         this._updatePositionOfElement(this._selectionDragElement, newRightPosition, visibleWidth, "right");
 
-        this._rightSelectionHandleElement.classList.toggle("clamped", this._selectionEndTime > this._endTime);
-        this._rightSelectionHandleElement.title = this._selectionEndTime > this._endTime ? this._formatDividerLabelText(this._selectionEndTime) : "";
+        this._rightSelectionHandleElement.classList.toggle("clamped", endTimeClamped);
+        this._rightSelectionHandleElement.title = endTimeClamped && this._selectionStartTime > this._endTime ? formattedStartTimeText : formattedEndTimeText;
 
         if (!this._selectionDragElement.parentNode) {
             this._element.appendChild(this._selectionDragElement);
