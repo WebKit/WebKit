@@ -100,8 +100,7 @@ function test()
     node = makeNode("try {} catch(e) {} ", false);
     InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.TryStatement);
     InspectorTest.log("passed TryStatement");
-    InspectorTest.assert(node.handlers.length === 1);
-    InspectorTest.assert(node.handlers[0].type === WebInspector.ScriptSyntaxTree.NodeType.CatchClause);
+    InspectorTest.assert(node.handler.type === WebInspector.ScriptSyntaxTree.NodeType.CatchClause);
     InspectorTest.log("passed CatchClause");
 
     node = makeNode("foo ? bar : baz;", true);
@@ -446,6 +445,36 @@ function test()
     InspectorTest.assert(node.body);
     InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
     InspectorTest.log("passed WithStatement");
+
+    node = makeNode("class C { constructor() { super(); new.target; } }", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ClassDeclaration);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.ClassBody);
+    InspectorTest.assert(node.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition);
+    InspectorTest.assert(node.body.body[0].value.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.body.body[0].value.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.assert(node.body.body[0].value.body.body.length === 2);
+    InspectorTest.assert(node.body.body[0].value.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.assert(node.body.body[0].value.body.body[0].expression.type === WebInspector.ScriptSyntaxTree.NodeType.CallExpression);
+    InspectorTest.assert(node.body.body[0].value.body.body[0].expression.callee.type === WebInspector.ScriptSyntaxTree.NodeType.Super);
+    InspectorTest.assert(node.body.body[0].value.body.body[1].type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
+    InspectorTest.assert(node.body.body[0].value.body.body[1].expression.type === WebInspector.ScriptSyntaxTree.NodeType.MetaProperty);
+    InspectorTest.assert(node.body.body[0].value.body.body[1].expression.meta === "new");
+    InspectorTest.assert(node.body.body[0].value.body.body[1].expression.property === "target");
+    InspectorTest.log("passed ClassStatement, Super, MetaProperty");
+
+    node = makeNode("let [x=20] = [];", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration);
+    InspectorTest.assert(node.kind === "let");
+    InspectorTest.assert(node.declarations.length === 1);
+    InspectorTest.assert(node.declarations[0].type === WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator);
+    InspectorTest.assert(node.declarations[0].id.type === WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern);
+    InspectorTest.assert(node.declarations[0].id.elements.length === 1);
+    InspectorTest.assert(node.declarations[0].id.elements[0].type === WebInspector.ScriptSyntaxTree.NodeType.AssignmentPattern);
+    InspectorTest.assert(node.declarations[0].id.elements[0].left.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.declarations[0].id.elements[0].left.name === "x");
+    InspectorTest.assert(node.declarations[0].id.elements[0].right.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.declarations[0].id.elements[0].right.value === 20);
+    InspectorTest.log("passed AssignmentPattern");
 
     InspectorTest.log("passed ALL TESTS");
     InspectorTest.completeTest();

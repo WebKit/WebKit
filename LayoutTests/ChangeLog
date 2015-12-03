@@ -1,5 +1,19 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r190110. rdar://problem/23221163
+
+    2015-09-22  Saam barati  <sbarati@apple.com>
+
+            Web Inspector: update Esprima to latest version
+            https://bugs.webkit.org/show_bug.cgi?id=148960
+
+            Reviewed by Joseph Pecoraro.
+
+            * inspector/model/parse-script-syntax-tree-expected.txt:
+            * inspector/model/parse-script-syntax-tree.html:
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r189761. rdar://problem/23221163
 
     2015-09-14  Brian Burg  <bburg@apple.com>
