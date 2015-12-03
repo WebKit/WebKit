@@ -89,10 +89,13 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             this._update(true);
     }
 
-    update(shouldAnimate = true)
+    update(shouldAnimate)
     {
         if (!this.visible)
             return;
+
+        if (shouldAnimate === undefined)
+            shouldAnimate = true;
 
         var previouslyFocusedElement = document.activeElement;
 

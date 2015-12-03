@@ -46,10 +46,10 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
 
     update()
     {
-        PageAgent.getCookies().then((payload) => {
+        PageAgent.getCookies().then(function(payload) {
             this._cookies = this._filterCookies(payload.cookies);
             this._rebuildTable();
-        }).catch((error) => {
+        }.bind(this)).catch(function(error) {
             console.error("Could not fetch cookies: ", error);
         });
     }
@@ -147,10 +147,10 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
 
     _filterCookies(cookies)
     {
-        var resourceMatchesStorageDomain = (resource) => {
+        var resourceMatchesStorageDomain = function(resource) {
             var urlComponents = resource.urlComponents;
             return urlComponents && urlComponents.host && urlComponents.host === this.representedObject.host;
-        }
+        }.bind(this);
 
         var allResources = [];
         for (var frame of WebInspector.frameResourceManager.frames) {
@@ -161,8 +161,8 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
 
         var resourcesForDomain = allResources.filter(resourceMatchesStorageDomain);
 
-        var cookiesForDomain = cookies.filter((cookie) => {
-            return resourcesForDomain.some((resource) => {
+        var cookiesForDomain = cookies.filter(function(cookie) {
+            return resourcesForDomain.some(function(resource) {
                 return WebInspector.CookieStorageObject.cookieMatchesResourceURL(cookie, resource.url);
             });
         });

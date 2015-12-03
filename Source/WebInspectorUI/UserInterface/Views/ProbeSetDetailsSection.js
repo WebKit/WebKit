@@ -151,7 +151,7 @@ WebInspector.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WebIn
 
     _probeSetHasSamples()
     {
-        return this._probeSet.probes.some((probe) => probe.samples.length);
+        return this._probeSet.probes.some(function(probe) { return probe.samples.length; });
     }
 };
 

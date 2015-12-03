@@ -872,8 +872,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         if (this._restoringBreakpoints)
             return;
 
-        var breakpointsToSave = this._breakpoints.filter((breakpoint) => !!breakpoint.url);
-        var serializedBreakpoints = breakpointsToSave.map((breakpoint) => breakpoint.info);
+        var breakpointsToSave = this._breakpoints.filter(function(breakpoint) { return !!breakpoint.url; });
+        var serializedBreakpoints = breakpointsToSave.map(function(breakpoint) { return breakpoint.info; });
         this._breakpointsSetting.value = serializedBreakpoints;
     }
 

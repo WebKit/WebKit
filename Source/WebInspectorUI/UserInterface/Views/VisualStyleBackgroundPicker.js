@@ -134,7 +134,7 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
     parseValue(text)
     {
         var validPrefixes = ["url", "linear-gradient", "radial-gradient", "repeating-linear-gradient", "repeating-radial-gradient"];
-        return validPrefixes.some((item) => text.startsWith(item)) ? [text, text] : null;
+        return validPrefixes.some(function(item) { return text.startsWith(item); }) ? [text, text] : null;
     }
 
     // Private

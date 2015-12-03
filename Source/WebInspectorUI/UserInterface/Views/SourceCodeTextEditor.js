@@ -1303,8 +1303,9 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         return true;
     }
 
-    tokenTrackingControllerHighlightedRangeReleased(tokenTrackingController, forceHide = false)
+    tokenTrackingControllerHighlightedRangeReleased(tokenTrackingController, forceHide)
     {
+        forceHide = forceHide || false;
         if (forceHide || !this._mouseIsOverPopover)
             this._dismissPopover();
     }

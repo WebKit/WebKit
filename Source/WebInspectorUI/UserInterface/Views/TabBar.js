@@ -381,7 +381,7 @@ WebInspector.TabBar = class TabBar extends WebInspector.View
 
     hasNormalTab()
     {
-        return this._tabBarItems.some((tab) => !tab.pinned);
+        return this._tabBarItems.some(function(tab) { return !tab.pinned; });
     }
 
     // Protected

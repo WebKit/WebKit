@@ -1,5 +1,42 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Convert arrow functions and default parameters to vanilla JS so things work on the branch.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.createNewTabWithType):
+        * UserInterface/Base/URLUtilities.js:
+        (WebInspector.truncateURL):
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._buildHighlightConfig):
+        * UserInterface/Controllers/DebuggerManager.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype.update):
+        (WebInspector.CookieStorageContentView.prototype._filterCookies.resourceMatchesStorageDomain):
+        (WebInspector.CookieStorageContentView.prototype._filterCookies):
+        * UserInterface/Views/FindBanner.js:
+        (WebInspector.FindBanner):
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView.prototype._allowableTabTypes):
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover.prototype.update):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WebInspector.ProbeSetDetailsSection.prototype._probeSetHasSamples):
+        (WebInspector.ProbeSetDetailsSection):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerHighlightedRangeReleased):
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype.hasNormalTab):
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph.prototype._needsSelectedRecordLayout):
+        (WebInspector.TimelineOverviewGraph):
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._needsMarkerLayout):
+        (WebInspector.TimelineRuler.prototype._needsSelectionLayout):
+        * UserInterface/Views/VisualStyleBackgroundPicker.js:
+        (WebInspector.VisualStyleBackgroundPicker.prototype.parseValue):
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Merge r192921. rdar://problem/23221163
 
     2015-12-01  Joseph Pecoraro  <pecoraro@apple.com>

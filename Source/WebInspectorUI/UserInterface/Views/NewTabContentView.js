@@ -117,8 +117,8 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
     _allowableTabTypes()
     {
         var tabItemElements = this.tabItemElements;
-        var tabTypes = tabItemElements.map((tabItemElement) => tabItemElement[WebInspector.NewTabContentView.TypeSymbol]);
-        return tabTypes.filter((type) => WebInspector.isNewTabWithTypeAllowed(type));
+        var tabTypes = tabItemElements.map(function(tabItemElement) { return tabItemElement[WebInspector.NewTabContentView.TypeSymbol]; });
+        return tabTypes.filter(function(type) { return WebInspector.isNewTabWithTypeAllowed(type); });
     }
 
     _updateTabItems()

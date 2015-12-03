@@ -502,7 +502,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         if (this._scheduledMarkerLayoutUpdateIdentifier)
             return;
 
-        this._scheduledMarkerLayoutUpdateIdentifier = requestAnimationFrame(() => {
+        this._scheduledMarkerLayoutUpdateIdentifier = requestAnimationFrame(function() {
             this._scheduledMarkerLayoutUpdateIdentifier = undefined;
 
             var visibleWidth = this.element.clientWidth;
@@ -510,7 +510,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
                 return;
 
             this._updateMarkers(visibleWidth, this.duration);
-        });
+        }.bind(this));
     }
 
     _needsSelectionLayout()
@@ -525,7 +525,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         if (this._scheduledSelectionLayoutUpdateIdentifier)
             return;
 
-        this._scheduledSelectionLayoutUpdateIdentifier = requestAnimationFrame(() => {
+        this._scheduledSelectionLayoutUpdateIdentifier = requestAnimationFrame(function() {
             this._scheduledSelectionLayoutUpdateIdentifier = undefined;
 
             var visibleWidth = this.element.clientWidth;
@@ -533,7 +533,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
                 return;
 
             this._updateSelection(visibleWidth, this.duration);
-        });
+        }.bind(this));
     }
 
     _recalculate()

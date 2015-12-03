@@ -457,8 +457,10 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
         DOMAgent.setInspectModeEnabled(enabled, this._buildHighlightConfig(), callback.bind(this));
     }
 
-    _buildHighlightConfig(mode = "all")
+    _buildHighlightConfig(mode)
     {
+        mode = mode || "all";
+
         var highlightConfig = {showInfo: mode === "all"};
 
         if (mode === "all" || mode === "content")

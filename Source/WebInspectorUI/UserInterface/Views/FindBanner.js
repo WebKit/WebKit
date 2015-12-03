@@ -25,9 +25,11 @@
 
 WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
 {
-    constructor(delegate, className, fixed = false)
+    constructor(delegate, className, fixed)
     {
         super();
+
+        fixed = fixed || false;
 
         this._delegate = delegate || null;
 

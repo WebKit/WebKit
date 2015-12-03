@@ -216,10 +216,13 @@ WebInspector.displayNameForURL = function(url, urlComponents)
     return displayName || WebInspector.displayNameForHost(urlComponents.host) || url;
 };
 
-WebInspector.truncateURL = function(url, multiline = false, dataURIMaxSize = 6)
+WebInspector.truncateURL = function(url, multiline, dataURIMaxSize)
 {
     if (!url.startsWith("data:"))
         return url;
+
+    multiline = multiline || false;
+    dataURIMaxSize = dataURIMaxSize || 6;
 
     var dataIndex = url.indexOf(",") + 1;
     var header = url.slice(0, dataIndex);

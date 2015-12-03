@@ -516,9 +516,11 @@ WebInspector.isNewTabWithTypeAllowed = function(tabType)
     return true;
 };
 
-WebInspector.createNewTabWithType = function(tabType, options = {})
+WebInspector.createNewTabWithType = function(tabType, options)
 {
     console.assert(this.isNewTabWithTypeAllowed(tabType));
+
+    options = options || {};
 
     var {referencedView, shouldReplaceTab, shouldShowNewTab} = options;
     console.assert(!referencedView || referencedView instanceof WebInspector.TabContentView, referencedView);
