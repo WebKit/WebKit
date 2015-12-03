@@ -103,7 +103,7 @@ WebInspector.ProfileNodeTreeElement = class ProfileNodeTreeElement extends WebIn
 
     onattach()
     {
-        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+        super.onattach();
 
         console.assert(this.element);
 

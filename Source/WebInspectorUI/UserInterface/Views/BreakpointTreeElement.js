@@ -105,7 +105,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
 
     onattach()
     {
-        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+        super.onattach();
 
         this._listeners.install();
 
@@ -116,7 +116,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
 
     ondetach()
     {
-        WebInspector.GeneralTreeElement.prototype.ondetach.call(this);
+        super.ondetach();
 
         this._listeners.uninstall();
 

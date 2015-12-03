@@ -60,7 +60,7 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
 
     onattach()
     {
-        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+        super.onattach();
 
         console.assert(this.element);
 
