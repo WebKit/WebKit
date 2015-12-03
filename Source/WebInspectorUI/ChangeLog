@@ -1,5 +1,23 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187158. rdar://problem/23221163
+
+    2015-07-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Change syntax highlighting color for regular expressions to make them more readable
+            https://bugs.webkit.org/show_bug.cgi?id=146956
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/FormattedValue.css:
+            (.formatted-regexp):
+            * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+            (.syntax-highlighted :matches(.css-string, .javascript-string, .html-attribute-value)):
+            (.syntax-highlighted .javascript-regexp):
+            (.syntax-highlighted :matches(.css-string, .javascript-string, .javascript-regexp, .html-attribute-value)): Deleted.
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187147. rdar://problem/23221163
 
     2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
