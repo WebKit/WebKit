@@ -91,7 +91,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
             case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
                 if (includeDetailsInMainTitle) {
                     var timeoutString =  Number.secondsToString(timelineRecord.details.timeout / 1000);
-                    alternateSubtitle = subtitle.appendChild(document.createElement("span"));
+                    alternateSubtitle = document.createElement("span");
                     alternateSubtitle.classList.add("alternate-subtitle");
                     if (timelineRecord.details.repeating)
                         alternateSubtitle.textContent = WebInspector.UIString("%s interval").format(timeoutString);
