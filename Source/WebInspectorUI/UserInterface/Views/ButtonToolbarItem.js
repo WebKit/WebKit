@@ -25,9 +25,9 @@
 
 WebInspector.ButtonToolbarItem = class ButtonToolbarItem extends WebInspector.ButtonNavigationItem
 {
-    constructor(identifier, toolTip, label, image, suppressEmboss, role)
+    constructor(identifier, toolTip, label, image, role)
     {
-        super(identifier, toolTip, image, 16, 16, suppressEmboss, role);
+        super(identifier, toolTip, image, 16, 16, role);
 
         if (typeof label === "string") {
             this._labelElement = document.createElement("div");

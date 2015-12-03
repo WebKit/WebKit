@@ -25,9 +25,9 @@
 
 WebInspector.ToggleButtonNavigationItem = class ToggleButtonNavigationItem extends WebInspector.ButtonNavigationItem
 {
-    constructor(identifier, defaultToolTip, alternateToolTip, defaultImage, alternateImage, imageWidth, imageHeight, suppressEmboss)
+    constructor(identifier, defaultToolTip, alternateToolTip, defaultImage, alternateImage, imageWidth, imageHeight)
     {
-        super(identifier, defaultToolTip, defaultImage, imageWidth, imageHeight, suppressEmboss);
+        super(identifier, defaultToolTip, defaultImage, imageWidth, imageHeight);
 
         this._toggled = false;
         this._defaultImage = defaultImage;

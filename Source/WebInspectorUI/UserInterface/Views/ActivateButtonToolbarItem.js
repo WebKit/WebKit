@@ -25,9 +25,9 @@
 
 WebInspector.ActivateButtonToolbarItem = class ActivateButtonToolbarItem extends WebInspector.ActivateButtonNavigationItem
 {
-    constructor(identifier, defaultToolTip, activatedToolTip, label, image, suppressEmboss, role)
+    constructor(identifier, defaultToolTip, activatedToolTip, label, image, role)
     {
-        super(identifier, defaultToolTip, activatedToolTip, image, 32, 32, suppressEmboss, role);
+        super(identifier, defaultToolTip, activatedToolTip, image, 16, 16, role);
 
         if (typeof label === "string") {
             this._labelElement = document.createElement("div");

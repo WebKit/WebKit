@@ -25,7 +25,7 @@
 
 WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspector.NavigationItem
 {
-    constructor(identifier, toolTipOrLabel, image, imageWidth, imageHeight, suppressEmboss, role, label)
+    constructor(identifier, toolTipOrLabel, image, imageWidth, imageHeight, role, label)
     {
         super(identifier);
 
@@ -97,8 +97,8 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
         this._image = newImage;
 
         this._glyphElement = useSVGSymbol(this._image, "glyph");
-        this._glyphElement.setAttribute("width", this._imageWidth + "px");
-        this._glyphElement.setAttribute("height", this._imageHeight + "px");
+        this._glyphElement.style.width = this._imageWidth + "px";
+        this._glyphElement.style.height = this._imageHeight + "px";
         this._element.appendChild(this._glyphElement);
     }
 
