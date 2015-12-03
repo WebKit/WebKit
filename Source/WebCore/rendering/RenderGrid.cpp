@@ -1688,7 +1688,7 @@ void RenderGrid::updateAutoMarginsInRowAxisIfNeeded(RenderBox& child)
 {
     ASSERT(!child.isOutOfFlowPositioned());
 
-    LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalWidth().value() - child.logicalWidth();
+    LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalWidth().value() - child.logicalWidth() - child.marginLogicalWidth();
     if (availableAlignmentSpace <= 0)
         return;
 
@@ -1710,7 +1710,7 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
 {
     ASSERT(!child.isOutOfFlowPositioned());
 
-    LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalHeight().value() - child.logicalHeight();
+    LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalHeight().value() - child.logicalHeight() - child.marginLogicalHeight();
     if (availableAlignmentSpace <= 0)
         return;
 

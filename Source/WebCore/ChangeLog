@@ -1,3 +1,20 @@
+2015-12-03  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] margin-left:auto and margin-top:auto discards the margin on opposite side
+        https://bugs.webkit.org/show_bug.cgi?id=151802
+
+        Reviewed by Sergio Villar Senin.
+
+        When resolving auto margins so that they use the available space, in the
+        corresponding axis, we must consider that there might be other specified
+        margins. Such margins must account to determine the actual available space.
+
+        Test: fast/css-grid-layout/grid-item-auto-margins-must-respect-specified-margins.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::updateAutoMarginsInRowAxisIfNeeded):
+        (WebCore::RenderGrid::updateAutoMarginsInColumnAxisIfNeeded):
+
 2015-12-02  Antti Koivisto  <antti@apple.com>
 
         Move ResourceLoadScheduler to WebKit1
