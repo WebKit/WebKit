@@ -1,5 +1,19 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187434. rdar://problem/23221163
+
+    2015-07-27  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: " = $0" in Elements panel can cause a jerk by pushing nodes below it
+            https://bugs.webkit.org/show_bug.cgi?id=147318
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/DOMTreeOutline.css:
+            (.dom-tree-outline li.selected > span::after):
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187405. rdar://problem/23221163
 
     2015-07-25  Nikita Vasilyev  <nvasilyev@apple.com>

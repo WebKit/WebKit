@@ -75,6 +75,8 @@
 .dom-tree-outline li.selected > span::after {
     content: " = $0";
     opacity: 0.33;
+    position: absolute;
+    white-space: pre;
 }
 
 .dom-tree-outline:focus li.selected > span::after {
