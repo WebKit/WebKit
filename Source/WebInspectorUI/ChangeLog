@@ -1,5 +1,19 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188636. rdar://problem/23221163
+
+    2015-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            REGRESSION (r188581): Web Inspector: Console user command isn't visible after reloading the page
+            https://bugs.webkit.org/show_bug.cgi?id=148166
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Controllers/JavaScriptLogViewController.js:
+            (WebInspector.JavaScriptLogViewController.prototype.startNewSession):
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188635. rdar://problem/23221163
 
     2015-08-19  Nikita Vasilyev  <nvasilyev@apple.com>
