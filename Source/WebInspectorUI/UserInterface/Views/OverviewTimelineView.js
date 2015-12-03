@@ -55,6 +55,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
         recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
         recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
+        recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
 
         this._pendingRepresentedObjects = [];
     }
@@ -362,5 +363,11 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     _dataGridNodeSelected(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+    }
+
+    _recordingReset(event)
+    {
+        this._timelineRuler.clearMarkers();
+        this._timelineRuler.addMarker(this._currentTimeMarker);
     }
 };
