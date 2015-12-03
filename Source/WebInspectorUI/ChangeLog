@@ -1,5 +1,14 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Address warnings from the console.assert stripping phase
+        for console.assert statements lacking a trailing semicolon.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View.prototype.makeRootView):
+        (WebInspector.View.prototype.didDetach):
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Convert arrow functions and default parameters to vanilla JS so things work on the branch.
 
         * UserInterface/Base/Main.js:
