@@ -323,6 +323,41 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
             ].join(" ");
         }
 
+        // Balance item values so that all non-zero chart segments are visible.
+        var minimumDisplayValue = this._total * 0.015;
+
+        var items = [];
+        for (var item of this._items.values()) {
+            item.displayValue = item.value ? Math.max(minimumDisplayValue, item.value) : 0;
+            if (item.displayValue)
+                items.push(item);
+        }
+
+        if (items.length > 1) {
+            items.sort(function(a, b) { return a.value - b.value; });
+
+            var largeItemCount = items.length;
+            var totalAdjustedValue = 0;
+            for (var item of items) {
+                if (item.value < minimumDisplayValue) {
+                    totalAdjustedValue += minimumDisplayValue - item.value;
+                    largeItemCount--;
+                    continue;
+                }
+
+                if (!totalAdjustedValue || !largeItemCount)
+                    break;
+
+                var donatedValue = totalAdjustedValue / largeItemCount;
+                if (item.displayValue - donatedValue >= minimumDisplayValue) {
+                    item.displayValue -= donatedValue;
+                    totalAdjustedValue -= donatedValue;
+                }
+
+                largeItemCount--;
+            }
+        }
+
         var center = this._chartSize / 2;
         var startAngle = -Math.PI / 2;
         var endAngle = 0;
@@ -342,7 +377,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
                 continue;
             }
 
-            var angle = (item.value / this._total) * Math.PI * 2;
+            var angle = (item.displayValue / this._total) * Math.PI * 2;
             endAngle = startAngle + angle;
 
             path.setAttribute("d", createSegmentPathData(center, startAngle, endAngle, this._radius, this._innerRadius));
