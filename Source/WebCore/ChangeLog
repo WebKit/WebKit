@@ -1,3 +1,11 @@
+2015-12-03  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the Windows build.
+
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::javaScriptRuntimeFlags):
+        (WebCore::JSWorkerGlobalScopeBase::queueTaskToEventLoop):
+
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-advance.html fails.
