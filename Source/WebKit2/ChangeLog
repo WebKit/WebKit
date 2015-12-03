@@ -1,3 +1,20 @@
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
+        Merge r192745. rdar://problem/23221163
+
+    2015-11-23  Brian Burg  <bburg@apple.com>
+
+            Web Inspector: when inspecting the inspector, add the inspection level to the title bar
+            https://bugs.webkit.org/show_bug.cgi?id=151555
+
+            Reviewed by Timothy Hatcher.
+
+            If the inspection level says we are inspecting an inspector, include the level
+            in the title bar to easily disambiguate it from the base level inspector.
+
+            * UIProcess/mac/WebInspectorProxyMac.mm:
+            (WebKit::WebInspectorProxy::updateInspectorWindowTitle):
+
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
         Merge r189883. rdar://problem/23221163
