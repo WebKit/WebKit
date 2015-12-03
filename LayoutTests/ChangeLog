@@ -1,5 +1,26 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188756. rdar://problem/23221163
+
+    2015-08-20  Brian Burg  <bburg@apple.com>
+
+            Web Inspector: add a regression test for the fix introduced in r188679
+            https://bugs.webkit.org/show_bug.cgi?id=148223
+
+            Reviewed by Joseph Pecoraro.
+
+            Add a regression test to check the number of DOMTree instances that
+            listen to DOMTreeManager.
+
+            * TestExpectations: Don't skip the inspector/dom/ directory.
+            * http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation-expected.txt: Added.
+            * http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html: Added.
+            * http/tests/inspector/dom/resources/nested-frame-1-deep.html: Added.
+            * http/tests/inspector/dom/resources/nested-frame-2-deep.html: Added.
+            * http/tests/inspector/dom/resources/nested-frame-base.html: Added.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188631. rdar://problem/23221163
 
     2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>

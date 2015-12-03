@@ -55,6 +55,16 @@ WebInspector.Object = class Object
         listeners.push({thisObject, listener});
     }
 
+    static singleFireEventListener(eventType, listener, thisObject)
+    {
+        var wrappedCallback = function() {
+            this.removeEventListener(eventType, wrappedCallback, null);
+            listener.apply(thisObject, arguments);
+        }.bind(this);
+
+        this.addEventListener(eventType, wrappedCallback, null);
+    }
+
     static removeEventListener(eventType, listener, thisObject)
     {
         eventType = eventType || null;
@@ -100,12 +110,28 @@ WebInspector.Object = class Object
         return true;
     }
 
+    // This should only be used within regression tests to detect leaks.
+    static retainedObjectsWithPrototype(proto)
+    {
+        var results = new Set;
+        for (var eventType in this._listeners) {
+            var recordsForEvent = this._listeners[eventType];
+            for (var listener of recordsForEvent) {
+                if (listener.thisObject instanceof proto)
+                    results.add(listener.thisObject);
+            }
+        }
+        return results;
+    }
+
     // Public
 
     addEventListener() { return WebInspector.Object.addEventListener.apply(this, arguments); }
+    singleFireEventListener() { return WebInspector.Object.singleFireEventListener.apply(this, arguments); }
     removeEventListener() { return WebInspector.Object.removeEventListener.apply(this, arguments); }
     removeAllListeners() { return WebInspector.Object.removeAllListeners.apply(this, arguments); }
     hasEventListeners() { return WebInspector.Object.hasEventListeners.apply(this, arguments); }
+    retainedObjectsWithPrototype() { return WebInspector.Object.retainedObjectsWithPrototype.apply(this, arguments); }
 
     dispatchEventToListeners(eventType, eventData)
     {
