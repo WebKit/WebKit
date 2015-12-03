@@ -86,10 +86,10 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         // We only need a refresh if the new range time changes the visible portion of this record.
         var profileStart = this._profileNode.startTime;
         var profileEnd = this._profileNode.endTime;
-        var oldStartBoundary = clamp(profileStart, oldRangeStartTime, profileEnd);
-        var oldEndBoundary = clamp(profileStart, oldRangeEndTime, profileEnd);
-        var newStartBoundary = clamp(profileStart, startTime, profileEnd);
-        var newEndBoundary = clamp(profileStart, endTime, profileEnd);
+        var oldStartBoundary = Number.constrain(oldRangeStartTime, profileStart, profileEnd);
+        var oldEndBoundary = Number.constrain(oldRangeEndTime, profileStart, profileEnd);
+        var newStartBoundary = Number.constrain(startTime, profileStart, profileEnd);
+        var newEndBoundary = Number.constrain(endTime, profileStart, profileEnd);
 
         if (oldStartBoundary !== newStartBoundary || oldEndBoundary !== newEndBoundary)
             this.needsRefresh();

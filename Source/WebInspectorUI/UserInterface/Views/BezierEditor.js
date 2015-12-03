@@ -187,7 +187,7 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
     _updateControlPointsForMouseEvent(event, calculateSelectedControlPoint)
     {
         var point = WebInspector.Point.fromEventInElement(event, this._bezierContainer);
-        point.x = clamp(0, point.x - this._controlHandleRadius, this._bezierWidth);
+        point.x = Number.constrain(point.x - this._controlHandleRadius, 0, this._bezierWidth);
         point.y -= this._controlHandleRadius + this._padding;
 
         if (calculateSelectedControlPoint) {
