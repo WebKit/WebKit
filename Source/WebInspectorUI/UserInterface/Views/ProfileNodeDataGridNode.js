@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,63 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileNodeDataGridNode = function(profileNode, baseStartTime, rangeStartTime, rangeEndTime)
+WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends WebInspector.TimelineDataGridNode
 {
-    var hasChildren = !!profileNode.childNodes.length;
+    constructor(profileNode, baseStartTime, rangeStartTime, rangeEndTime)
+    {
+        var hasChildren = !!profileNode.childNodes.length;
 
-    WebInspector.TimelineDataGridNode.call(this, false, null, hasChildren);
+        super(false, null, hasChildren);
 
-    this._profileNode = profileNode;
-    this._baseStartTime = baseStartTime || 0;
-    this._rangeStartTime = rangeStartTime || 0;
-    this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
+        this._profileNode = profileNode;
+        this._baseStartTime = baseStartTime || 0;
+        this._rangeStartTime = rangeStartTime || 0;
+        this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
 
-    this._data = this._profileNode.computeCallInfoForTimeRange(this._rangeStartTime, this._rangeEndTime);
-    this._data.location = this._profileNode.sourceCodeLocation;
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.ProfileNodeDataGridNode);
-
-WebInspector.ProfileNodeDataGridNode.IconStyleClassName = "icon";
-
-WebInspector.ProfileNodeDataGridNode.prototype = {
-    constructor: WebInspector.ProfileNodeDataGridNode,
-    __proto__: WebInspector.TimelineDataGridNode.prototype,
+        this._data = this._profileNode.computeCallInfoForTimeRange(this._rangeStartTime, this._rangeEndTime);
+        this._data.location = this._profileNode.sourceCodeLocation;
+    }
 
     // Public
 
     get profileNode()
     {
         return this._profileNode;
-    },
+    }
 
     get records()
     {
         return null;
-    },
+    }
 
     get baseStartTime()
     {
         return this._baseStartTime;
-    },
+    }
 
     get rangeStartTime()
     {
         return this._rangeStartTime;
-    },
+    }
 
     get rangeEndTime()
     {
         return this._rangeEndTime;
-    },
+    }
 
     get data()
     {
         return this._data;
-    },
+    }
 
-    updateRangeTimes: function(startTime, endTime)
+    updateRangeTimes(startTime, endTime)
     {
         var oldRangeStartTime = this._rangeStartTime;
         var oldRangeEndTime = this._rangeEndTime;
@@ -100,17 +93,17 @@ WebInspector.ProfileNodeDataGridNode.prototype = {
 
         if (oldStartBoundary !== newStartBoundary || oldEndBoundary !== newEndBoundary)
             this.needsRefresh();
-    },
+    }
 
-    refresh: function()
+    refresh()
     {
         this._data = this._profileNode.computeCallInfoForTimeRange(this._rangeStartTime, this._rangeEndTime);
         this._data.location = this._profileNode.sourceCodeLocation;
 
-        WebInspector.TimelineDataGridNode.prototype.refresh.call(this);
-    },
+        super.refresh();
+    }
 
-    createCellContent: function(columnIdentifier, cell)
+    createCellContent(columnIdentifier, cell)
     {
         const emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
@@ -125,6 +118,6 @@ WebInspector.ProfileNodeDataGridNode.prototype = {
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
         }
 
-        return WebInspector.TimelineDataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
+        return super.createCellContent(columnIdentifier, cell);
     }
 };

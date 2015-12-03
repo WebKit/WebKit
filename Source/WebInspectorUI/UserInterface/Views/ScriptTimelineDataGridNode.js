@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineDataGridNode = function(scriptTimelineRecord, baseStartTime, rangeStartTime, rangeEndTime)
+WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WebInspector.TimelineDataGridNode
 {
-    WebInspector.TimelineDataGridNode.call(this, false, null);
+    constructor(scriptTimelineRecord, baseStartTime, rangeStartTime, rangeEndTime)
+    {
+        super(false, null);
 
-    this._record = scriptTimelineRecord;
-    this._baseStartTime = baseStartTime || 0;
-    this._rangeStartTime = rangeStartTime || 0;
-    this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.ScriptTimelineDataGridNode);
-
-WebInspector.ScriptTimelineDataGridNode.IconStyleClassName = "icon";
-
-WebInspector.ScriptTimelineDataGridNode.prototype = {
-    constructor: WebInspector.ScriptTimelineDataGridNode,
-    __proto__: WebInspector.TimelineDataGridNode.prototype,
+        this._record = scriptTimelineRecord;
+        this._baseStartTime = baseStartTime || 0;
+        this._rangeStartTime = rangeStartTime || 0;
+        this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
+    }
 
     // Public
 
     get record()
     {
         return this._record;
-    },
+    }
 
     get records()
     {
         return [this._record];
-    },
+    }
 
     get baseStartTime()
     {
         return this._baseStartTime;
-    },
+    }
 
     get rangeStartTime()
     {
         return this._rangeStartTime;
-    },
+    }
 
     get rangeEndTime()
     {
         return this._rangeEndTime;
-    },
+    }
 
     get data()
     {
@@ -86,9 +79,9 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
 
         return {eventType: this._record.eventType, startTime, selfTime: duration, totalTime: duration,
             averageTime: duration, callCount: 1, location: callFrameOrSourceCodeLocation};
-    },
+    }
 
-    updateRangeTimes: function(startTime, endTime)
+    updateRangeTimes(startTime, endTime)
     {
         var oldRangeStartTime = this._rangeStartTime;
         var oldRangeEndTime = this._rangeEndTime;
@@ -113,9 +106,9 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
 
         if (oldStartBoundary !== newStartBoundary || oldEndBoundary !== newEndBoundary)
             this.needsRefresh();
-    },
+    }
 
-    createCellContent: function(columnIdentifier, cell)
+    createCellContent(columnIdentifier, cell)
     {
         const emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
@@ -133,6 +126,6 @@ WebInspector.ScriptTimelineDataGridNode.prototype = {
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
         }
 
-        return WebInspector.TimelineDataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
+        return super.createCellContent(columnIdentifier, cell);
     }
 };

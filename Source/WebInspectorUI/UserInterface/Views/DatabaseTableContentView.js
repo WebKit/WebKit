@@ -86,7 +86,7 @@ WebInspector.DatabaseTableContentView.prototype = {
         // how to sort arbitrary columns.
         this.element.removeChildren();
 
-        this._dataGrid = new WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
+        this._dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
         if (!this._dataGrid || !this._dataGrid.element) {
             this._dataGrid = undefined;
 
