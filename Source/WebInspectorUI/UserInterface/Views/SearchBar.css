@@ -46,3 +46,9 @@
 .search-bar > input[type="search"]:focus {
     background-color: white;
 }
+
+/* Make the search field's background white when it is not focused and has content.
+   Needs to be a separate rule. See http://webkit.org/b/118162 */
+.search-bar > input[type="search"]:not(:placeholder-shown) {
+    background-color: white;
+}
