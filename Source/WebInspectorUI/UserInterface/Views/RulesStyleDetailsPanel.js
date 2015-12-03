@@ -279,7 +279,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                         continue;
                     }
 
-                    if (matchedSelectorText.includes(pseudoElement.selectorText) || !ownerRule.selectorIsGreater(pseudoElement.style.ownerRule.selectors))
+                    if (matchedSelectorText.includes(pseudoElement.selectorText) || !ownerRule.selectorIsGreater(pseudoElement.style.ownerRule.mostSpecificSelector))
                         pseudoElement.lastMatchingSelector = matchedSelectorText;
                 }
             }
