@@ -474,11 +474,22 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _handleBeforeChange(codeMirror, change)
     {
-        if (change.origin !== "+delete" || (!change.to.line && !change.to.ch) || this._completionController.isShowingCompletions())
+        if (change.origin !== "+delete" || this._completionController.isShowingCompletions())
             return CodeMirror.Pass;
 
-        var marks = codeMirror.findMarksAt(change.to);
+        if (!change.to.line && !change.to.ch) {
+            if (codeMirror.lineCount() === 1)
+                return CodeMirror.Pass;
 
+            var line = codeMirror.getLine(change.to.line);
+            if (line && line.trim().length)
+                return CodeMirror.Pass;
+
+            codeMirror.execCommand("deleteLine");
+            return;
+        }
+
+        var marks = codeMirror.findMarksAt(change.to);
         if (!marks.length)
             return CodeMirror.Pass;
 
