@@ -1,3 +1,20 @@
+2015-12-03  Keith Rollin  <krollin@apple.com>
+
+        [Win] fast/forms/HTMLOptionElement_label03.html failing on win7
+        https://bugs.webkit.org/show_bug.cgi?id=150909
+        rdar://problem/23539673
+
+        Reviewed by Darin Adler.
+
+        Mark fast/forms/HTMLOptionElement_label03.html as being expected to
+        pass. Also update some text in HTMLOptionElement_label02.html and
+        HTMLOptionElement_label03.html so that it no longer refers to our
+        trying to match IE (which we are no longer doing).
+
+        * fast/forms/HTMLOptionElement_label02.html:
+        * fast/forms/HTMLOptionElement_label03.html:
+        * platform/win/TestExpectations:
+
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-advance.html fails.

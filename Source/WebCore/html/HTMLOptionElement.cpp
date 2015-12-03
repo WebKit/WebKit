@@ -265,9 +265,9 @@ HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 
 String HTMLOptionElement::label() const
 {
-    const AtomicString& label = fastGetAttribute(labelAttr);
+    String label = fastGetAttribute(labelAttr);
     if (!label.isNull())
-        return label; 
+        return label.stripWhiteSpace(isHTMLSpace);
     return collectOptionInnerText().stripWhiteSpace(isHTMLSpace).simplifyWhiteSpace(isHTMLSpace);
 }
 

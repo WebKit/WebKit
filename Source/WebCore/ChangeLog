@@ -1,3 +1,30 @@
+2015-12-03  Keith Rollin  <krollin@apple.com>
+
+        [Win] fast/forms/HTMLOptionElement_label03.html failing on win7
+        https://bugs.webkit.org/show_bug.cgi?id=150909
+        rdar://problem/23539673
+
+        Reviewed by Darin Adler.
+
+        When returning text to be displayed, an <option> element will return
+        the value of a label attribute if it exists, or the text content as a
+        fallback. The failing test concerned the display of a <select>
+        element when it contained a sole <option> element that had a label
+        attribute set to a single space. When displayed, various
+        platform-specific bits of code will strip off the leading and trailing
+        whitespace. However, when WebKit would use this text to measure how
+        wide the <select> popup menu button should be, it would not strip off
+        spaces, leading to the calculated width being wider than necessary.
+        The approach taken to fix this is to strip whitespace in the label
+        attribute before it is returned from the <option> element.
+
+        No new tests. fast/forms/HTMLOptionElement_label03.html had been
+        marked as being expected to fail in TestExpectations; that test now
+        succeeds.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::label):
+
 2015-12-03  Sam Weinig  <sam@webkit.org>
 
         Try to fix the Windows build.
