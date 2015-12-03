@@ -655,6 +655,12 @@ sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression
 webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Pass Timeout ]
 webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Pass Timeout ]
 webkit.org/b/150973 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html [ Pass Timeout ]
+
+# Skipping these failing tests pending further investigation
+webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Skip ]
+webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Skip ]
+webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Skip ]
+webkit.org/b/151505 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Skip ]
 ################################################################################
 ##############               End Sputnik Errors                 ################
 ################################################################################

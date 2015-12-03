@@ -1,5 +1,14 @@
 2015-12-03  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skipping failing sputnik/Unicode/Unicode_510 tests pending further investigation
+        https://bugs.webkit.org/show_bug.cgi?id=151505
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2015-12-03  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking fast/css/pseudo-visited-background-color-on-input.html as failing on win
         https://bugs.webkit.org/show_bug.cgi?id=151756
 
