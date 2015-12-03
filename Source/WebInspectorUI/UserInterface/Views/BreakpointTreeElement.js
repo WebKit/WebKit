@@ -99,7 +99,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
     oncontextmenu(event)
     {
         var contextMenu = new WebInspector.ContextMenu(event);
-        this._breakpoint.appendContextMenuItems(contextMenu, this._statusImageElement);
+        WebInspector.breakpointPopoverController.appendContextMenuItems(contextMenu, this._breakpoint, this._statusImageElement);
         contextMenu.show();
     }
 
