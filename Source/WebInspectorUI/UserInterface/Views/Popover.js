@@ -314,7 +314,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         var startTime = Date.now();
         var duration = 350;
         var epsilon = 1 / (200 * duration);
-        var spline = new WebInspector.UnitBezier(0.25, 0.1, 0.25, 1);
+        var spline = new WebInspector.CubicBezier(0.25, 0.1, 0.25, 1);
 
         var fromFrame = this._frame.copy();
         var fromAnchor = this._anchorPoint.copy();

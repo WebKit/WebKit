@@ -633,12 +633,17 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
 
     createColorMarkers(range)
     {
-        return this._codeMirror.createColorMarkers(range);
+        return createCodeMirrorColorTextMarkers(this._codeMirror, range);
     }
 
     createGradientMarkers(range)
     {
-        return this._codeMirror.createGradientMarkers(range);
+        return createCodeMirrorGradientTextMarkers(this._codeMirror, range);
+    }
+
+    createCubicBezierMarkers(range)
+    {
+        return createCodeMirrorCubicBezierTextMarkers(this._codeMirror, range);
     }
 
     editingControllerForMarker(editableMarker)
@@ -648,6 +653,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
             return new WebInspector.CodeMirrorColorEditingController(this._codeMirror, editableMarker);
         case WebInspector.TextMarker.Type.Gradient:
             return new WebInspector.CodeMirrorGradientEditingController(this._codeMirror, editableMarker);
+        case WebInspector.TextMarker.Type.CubicBezier:
+            return new WebInspector.CodeMirrorBezierEditingController(this._codeMirror, editableMarker);
         default:
             return new WebInspector.CodeMirrorEditingController(this._codeMirror, editableMarker);
         }
