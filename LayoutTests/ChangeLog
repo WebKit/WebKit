@@ -1,3 +1,12 @@
+2015-12-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        fast/borders/hidpi-border-clipping-right-after-move.html
+        https://bugs.webkit.org/show_bug.cgi?id=151754
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2015-12-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL urgent gardening. Skip web-platform-tests
