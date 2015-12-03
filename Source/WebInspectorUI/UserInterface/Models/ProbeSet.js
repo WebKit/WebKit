@@ -141,6 +141,7 @@ WebInspector.ProbeSet = class ProbeSet extends WebInspector.Object
 
         console.assert(this.dataTable);
         this.dataTable.addSampleForProbe(probe, sample);
+        this.dispatchEventToListeners(WebInspector.ProbeSet.Event.SampleAdded, {probe, sample});
     }
 
     _breakpointResolvedStateDidChange(event)
@@ -153,5 +154,6 @@ WebInspector.ProbeSet.Event = {
     ProbeAdded: "probe-set-probe-added",
     ProbeRemoved: "probe-set-probe-removed",
     ResolvedStateDidChange: "probe-set-resolved-state-did-change",
+    SampleAdded: "probe-set-sample-added",
     SamplesCleared: "probe-set-samples-cleared",
 };

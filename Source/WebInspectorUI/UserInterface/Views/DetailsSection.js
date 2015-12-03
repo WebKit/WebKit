@@ -41,6 +41,7 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
 
         if (optionsElement instanceof HTMLElement) {
             this._optionsElement = optionsElement;
+            this._optionsElement.classList.add("options");
             this._optionsElement.addEventListener("mousedown", this._optionsElementMouseDown.bind(this));
             this._optionsElement.addEventListener("mouseup", this._optionsElementMouseUp.bind(this));
             this._headerElement.appendChild(this._optionsElement);

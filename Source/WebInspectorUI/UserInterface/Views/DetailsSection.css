@@ -63,6 +63,18 @@
     z-index: 200;
 }
 
+.details-section > .header > .options > .navigation-bar {
+    margin-top: 1px;
+    height: 100%;
+    float: right;
+    border: none;
+}
+
+.details-section > .header > .options > .navigation-bar > .item {
+    width: 20px;
+    height: 100%;
+}
+
 .details-section .details-section > .header {
     top: 21px;
     background-color: hsl(0, 0%, 100%);
