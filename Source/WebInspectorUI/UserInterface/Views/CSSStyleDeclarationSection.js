@@ -52,6 +52,7 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
     this._selectorElement.addEventListener("mouseout", this._handleMouseOut.bind(this));
     this._selectorElement.addEventListener("keydown", this._handleKeyDown.bind(this));
     this._selectorElement.addEventListener("keyup", this._handleKeyUp.bind(this));
+    this._selectorElement.addEventListener("paste", this._handleSelectorPaste.bind(this));
     this._headerElement.appendChild(this._selectorElement);
 
     this._originElement = document.createElement("span");
@@ -397,6 +398,43 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             selectorText = this._style.ownerRule.selectorText;
 
         return selectorText.trim();
+    },
+
+    _handleSelectorPaste: function(event)
+    {
+        if (this._style.type === WebInspector.CSSStyleDeclaration.Type.Inline || !this._style.ownerRule)
+            return;
+
+        if (!event || !event.clipboardData)
+            return;
+
+        var data = event.clipboardData.getData("text/plain");
+        if (!data)
+            return;
+
+        function parseTextForRule(text)
+        {
+            var containsBraces = /[\{\}]/;
+            if (!containsBraces.test(text))
+                return null;
+
+            var match = text.match(/([^{]+){(.*)}/);
+            if (!match)
+                return null;
+
+            // If the match "body" contains braces, parse that body as if it were a rule.
+            // This will usually happen if the user includes a media query in the copied text.
+            return containsBraces.test(match[2]) ? parseTextForRule(match[2]) : match;
+        }
+
+        var match = parseTextForRule(data);
+        if (!match)
+            return;
+
+        var selector = match[1].trim();
+        this._selectorElement.textContent = selector;
+        this._style.nodeStyles.changeRule(this._style.ownerRule, selector, match[2]);
+        event.preventDefault();
     },
 
     _handleContextMenuEvent: function(event)
