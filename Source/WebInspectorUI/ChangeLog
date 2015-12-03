@@ -1,5 +1,21 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188964. rdar://problem/23221163
+
+    2015-08-26  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Rendering Frames legend item checkbox colors are too light
+            https://bugs.webkit.org/show_bug.cgi?id=148465
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/ChartDetailsSectionRow.js:
+            (WebInspector.ChartDetailsSectionRow.prototype._addCheckboxColorFilter):
+            Gamma primitive should use an "exponent" attribute instead of "value".
+            Increased gamma exponent to 1.4.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188963. rdar://problem/23221163
 
     2015-08-26  Nikita Vasilyev  <nvasilyev@apple.com>

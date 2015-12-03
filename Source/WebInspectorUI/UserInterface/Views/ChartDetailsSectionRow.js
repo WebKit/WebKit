@@ -176,14 +176,14 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         {
             var gammaPrimitive = createSVGElement(tagName);
             gammaPrimitive.setAttribute("type", "gamma");
-            gammaPrimitive.setAttribute("value", value);
+            gammaPrimitive.setAttribute("exponent", value);
             return gammaPrimitive;
         }
 
         var componentTransferPrimitive = createSVGElement("feComponentTransfer");
-        componentTransferPrimitive.appendChild(createGammaPrimitive("feFuncR", 1.2));
-        componentTransferPrimitive.appendChild(createGammaPrimitive("feFuncG", 1.2));
-        componentTransferPrimitive.appendChild(createGammaPrimitive("feFuncB", 1.2));
+        componentTransferPrimitive.appendChild(createGammaPrimitive("feFuncR", 1.4));
+        componentTransferPrimitive.appendChild(createGammaPrimitive("feFuncG", 1.4));
+        componentTransferPrimitive.appendChild(createGammaPrimitive("feFuncB", 1.4));
         filterElement.appendChild(colorMatrixPrimitive);
         filterElement.appendChild(componentTransferPrimitive);
 
