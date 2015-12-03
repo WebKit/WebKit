@@ -252,7 +252,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         objectTree.showOnlyProperties();
 
         var treeOutline = objectTree.treeOutline;
-        const watchExpressionSectionIdentifier = "watch-expressions";
+        var watchExpressionSectionIdentifier = "watch-expressions";
         treeOutline.onadd = this._objectTreeAddHandler.bind(this, watchExpressionSectionIdentifier);
         treeOutline.onexpand = this._objectTreeExpandHandler.bind(this, watchExpressionSectionIdentifier);
         treeOutline.oncollapse = this._objectTreeCollapseHandler.bind(this, watchExpressionSectionIdentifier);

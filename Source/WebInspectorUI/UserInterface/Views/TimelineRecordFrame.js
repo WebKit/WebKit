@@ -34,6 +34,7 @@ WebInspector.TimelineRecordFrame = class TimelineRecordFrame extends WebInspecto
 
         this._graphDataSource = graphDataSource;
         this._record = record || null;
+        this._filtered = false;
     }
 
     // Public
@@ -64,6 +65,20 @@ WebInspector.TimelineRecordFrame = class TimelineRecordFrame extends WebInspecto
             return;
 
         this._element.classList.toggle("selected");
+    }
+
+    get filtered()
+    {
+        return this._filtered;
+    }
+
+    set filtered(x)
+    {
+        if (this._filtered === x)
+            return;
+
+        this._filtered = x;
+        this._element.classList.toggle("filtered");
     }
 
     refresh(graphDataSource)

@@ -144,7 +144,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         this._dataGrid.removeChildren();
 
         for (var cookie of this._cookies) {
-            const checkmark = "\u2713";
+            var checkmark = "\u2713";
             var data = {
                 "name": cookie.name,
                 "value": cookie.value,

@@ -377,6 +377,14 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     // Protected
 
+    representedObjectWasFiltered(representedObject, filtered)
+    {
+        super.representedObjectWasFiltered(representedObject, filtered);
+
+        if (representedObject instanceof WebInspector.TimelineRecord)
+            this._displayedContentView.recordWasFiltered(representedObject, filtered);
+    }
+
     updateFilter()
     {
         super.updateFilter();
@@ -407,14 +415,18 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             if (!treeElement)
                 return false;
 
-            var visible = false;
-            if (!(treeElement.record instanceof WebInspector.RenderingFrameTimelineRecord)) {
-                var taskType = WebInspector.RenderingFrameTimelineRecord.taskTypeForTimelineRecord(treeElement.record);
-                if (!this._renderingFrameTaskFilter.has(taskType))
-                    visible = true;
-            }
+            var records;
+            if (treeElement.record instanceof WebInspector.RenderingFrameTimelineRecord)
+                records = treeElement.record.children;
+            else
+                records = [treeElement.record];
 
-            if (!visible)
+            var filtered = records.every(function(record) {
+                var taskType = WebInspector.RenderingFrameTimelineRecord.taskTypeForTimelineRecord(record);
+                return this._renderingFrameTaskFilter.has(taskType);
+            }, this);
+
+            if (filtered)
                 return false;
         }
 

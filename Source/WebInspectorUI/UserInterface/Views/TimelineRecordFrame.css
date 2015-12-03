@@ -57,6 +57,10 @@ body.window-inactive .timeline-record-frame.selected {
     background: -webkit-linear-gradient(left, hsl(0, 0%, 96%), hsl(0, 0%, 96%)) no-repeat 1px -1px;
 }
 
+.timeline-record-frame.filtered > .frame {
+    opacity: 0.35;
+}
+
 .timeline-record-frame.selected > .frame {
     box-shadow: 0 -1px 0 white;
 }

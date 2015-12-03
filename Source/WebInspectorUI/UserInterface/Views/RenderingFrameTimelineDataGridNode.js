@@ -56,7 +56,7 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
 
     createCellContent(columnIdentifier, cell)
     {
-        const emptyValuePlaceholderString = "\u2014";
+        var emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {

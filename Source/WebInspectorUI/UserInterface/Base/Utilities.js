@@ -591,7 +591,7 @@ Object.defineProperty(String.prototype, "hash",
         // Matches the wtf/StringHasher.h (SuperFastHash) algorithm.
 
         // Arbitrary start value to avoid mapping all 0's to all 0's.
-        const stringHashingStartValue = 0x9e3779b9;
+        var stringHashingStartValue = 0x9e3779b9;
 
         var result = stringHashingStartValue;
         var pendingCharacter = null;
@@ -1097,7 +1097,7 @@ function decodeBase64ToBlob(base64Data, mimeType)
 {
     mimeType = mimeType || '';
 
-    const sliceSize = 1024;
+    var sliceSize = 1024;
     var byteCharacters = atob(base64Data);
     var bytesLength = byteCharacters.length;
     var slicesCount = Math.ceil(bytesLength / sliceSize);

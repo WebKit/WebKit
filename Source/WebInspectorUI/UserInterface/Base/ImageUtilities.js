@@ -275,7 +275,7 @@ function generateColoredImagesForCSS(imagePath, specifications, width, height, c
 
     canvasIdentifierPrefix = canvasIdentifierPrefix || "";
 
-    const storageKeyPrefix = "generated-colored-image-";
+    var storageKeyPrefix = "generated-colored-image-";
 
     var imageElement = null;
     var pendingImageLoadCallbacks = [];
@@ -340,8 +340,8 @@ function generateColoredImagesForCSS(imagePath, specifications, width, height, c
 
     function restoreImage(canvasIdentifier, specification)
     {
-        const storageKey = storageKeyPrefix + canvasIdentifierPrefix + canvasIdentifier;
-        const context = document.getCSSCanvasContext("2d", canvasIdentifierPrefix + canvasIdentifier, scaledWidth, scaledHeight);
+        var storageKey = storageKeyPrefix + canvasIdentifierPrefix + canvasIdentifier;
+        var context = document.getCSSCanvasContext("2d", canvasIdentifierPrefix + canvasIdentifier, scaledWidth, scaledHeight);
         restoreImageFromStorage(storageKey, context, scaledWidth, scaledHeight, specification.imageVersion || defaultImageVersion, function() {
             ensureImageIsLoaded(generateImage.bind(null, canvasIdentifier, specification));
         });
@@ -357,7 +357,7 @@ function generateColoredImagesForCSS(imagePath, specifications, width, height, c
         console.assert(specification.fillColor instanceof Array);
         console.assert(specification.fillColor.length === 3 || specification.fillColor.length === 4);
 
-        const context = document.getCSSCanvasContext("2d", canvasIdentifierPrefix + canvasIdentifier, scaledWidth, scaledHeight);
+        var context = document.getCSSCanvasContext("2d", canvasIdentifierPrefix + canvasIdentifier, scaledWidth, scaledHeight);
         context.save();
         context.scale(scaleFactor, scaleFactor);
 
@@ -378,7 +378,7 @@ function generateColoredImagesForCSS(imagePath, specifications, width, height, c
         var coloredImage = generateColoredImage(imageElement, specification.fillColor[0], specification.fillColor[1], specification.fillColor[2], specification.fillColor[3], scaledWidth, scaledHeight);
         context.drawImage(coloredImage, 0, 0, width, height);
 
-        const storageKey = storageKeyPrefix + canvasIdentifierPrefix + canvasIdentifier;
+        var storageKey = storageKeyPrefix + canvasIdentifierPrefix + canvasIdentifier;
         saveImageToStorage(storageKey, context, scaledWidth, scaledHeight, specification.imageVersion || defaultImageVersion);
         context.restore();
     }
@@ -398,9 +398,9 @@ function generateEmbossedImages(src, width, height, states, canvasIdentifierCall
     var scaledWidth = width * scaleFactor;
     var scaledHeight = height * scaleFactor;
 
-    const imageVersion = defaultImageVersion;
+    var imageVersion = defaultImageVersion;
 
-    const storageKeyPrefix = "generated-embossed-image-";
+    var storageKeyPrefix = "generated-embossed-image-";
 
     var image = null;
     var pendingImageLoadCallbacks = [];
@@ -455,8 +455,8 @@ function generateEmbossedImages(src, width, height, states, canvasIdentifierCall
 
     function restoreImage(state)
     {
-        const storageKey = storageKeyPrefix + canvasIdentifierCallback(state);
-        const context = document.getCSSCanvasContext("2d", canvasIdentifierCallback(state), scaledWidth, scaledHeight);
+        var storageKey = storageKeyPrefix + canvasIdentifierCallback(state);
+        var context = document.getCSSCanvasContext("2d", canvasIdentifierCallback(state), scaledWidth, scaledHeight);
         restoreImageFromStorage(storageKey, context, scaledWidth, scaledHeight, imageVersion, function() {
             ensureImageIsLoaded(generateImage.bind(null, state));
         });
@@ -491,7 +491,7 @@ function generateEmbossedImages(src, width, height, states, canvasIdentifierCall
 
     function generateImage(state)
     {
-        const context = document.getCSSCanvasContext("2d", canvasIdentifierCallback(state), scaledWidth, scaledHeight);
+        var context = document.getCSSCanvasContext("2d", canvasIdentifierCallback(state), scaledWidth, scaledHeight);
         context.save();
         context.scale(scaleFactor, scaleFactor);
 
@@ -519,7 +519,7 @@ function generateEmbossedImages(src, width, height, states, canvasIdentifierCall
         _applyImageMask(context, image);
 
         if (!ignoreCache) {
-            const storageKey = storageKeyPrefix + canvasIdentifierCallback(state);
+            var storageKey = storageKeyPrefix + canvasIdentifierCallback(state);
             saveImageToStorage(storageKey, context, scaledWidth, scaledHeight, imageVersion);
         }
 

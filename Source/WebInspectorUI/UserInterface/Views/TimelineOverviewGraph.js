@@ -171,6 +171,11 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         // Implemented by sub-classes if needed.
     }
 
+    recordWasFiltered(record, filtered)
+    {
+        // Implemented by sub-classes if needed.
+    }
+
     updateLayout()
     {
         if (this._scheduledLayoutUpdateIdentifier) {

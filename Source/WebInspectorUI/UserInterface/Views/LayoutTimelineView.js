@@ -265,8 +265,8 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         this._showingHighlightForRecord = record;
 
-        const contentColor = {r: 111, g: 168, b: 220, a: 0.66};
-        const outlineColor = {r: 255, g: 229, b: 153, a: 0.66};
+        var contentColor = {r: 111, g: 168, b: 220, a: 0.66};
+        var outlineColor = {r: 255, g: 229, b: 153, a: 0.66};
 
         var quad = record.quad;
         if (quad && DOMAgent.highlightQuad) {

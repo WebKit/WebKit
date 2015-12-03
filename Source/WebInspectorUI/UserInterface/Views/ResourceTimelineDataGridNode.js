@@ -93,7 +93,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         if (resource.failed || resource.canceled || resource.statusCode >= 400)
             cell.classList.add("error");
 
-        const emptyValuePlaceholderString = "\u2014";
+        var emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {

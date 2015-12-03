@@ -279,6 +279,18 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this.scrollStartTime = marker.time - (this.visibleDuration / 2);
     }
 
+    recordWasFiltered(timeline, record, filtered)
+    {
+        console.assert(this.canShowTimeline(timeline), timeline);
+
+        var overviewGraph = this._timelineOverviewGraphsMap.get(timeline);
+        console.assert(overviewGraph, "Missing overview graph for timeline type " + timeline.type);
+        if (!overviewGraph)
+            return;
+
+        overviewGraph.recordWasFiltered(record, filtered);
+    }
+
     selectRecord(timeline, record)
     {
         console.assert(this.canShowTimeline(timeline), timeline);
@@ -318,7 +330,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
             this._revealCurrentTime = false;
         }
 
-        const visibleDuration = this.visibleDuration;
+        var visibleDuration = this.visibleDuration;
 
         // Clamp the scroll start time to match what the scroll bar would allow.
         var scrollStartTime = Math.min(this._scrollStartTime, this._endTime - visibleDuration);

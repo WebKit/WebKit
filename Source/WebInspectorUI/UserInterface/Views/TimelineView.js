@@ -146,7 +146,7 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
         function checkIfLayoutIsNeeded(currentTime)
         {
             // Include some wiggle room since the current time markers can be clipped off the ends a bit and still partially visible.
-            const wiggleTime = 0.05; // 50ms
+            var wiggleTime = 0.05; // 50ms
             return this._startTime - wiggleTime <= currentTime && currentTime <= this._endTime + wiggleTime;
         }
 

@@ -52,7 +52,7 @@ WebInspector.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode exten
 
     createCellContent(columnIdentifier, cell)
     {
-        const emptyValuePlaceholderString = "\u2014";
+        var emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {

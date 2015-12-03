@@ -1361,8 +1361,8 @@ WebInspector._initializeWebSocketIfNeeded = function()
 
 WebInspector._updateSplitConsoleHeight = function(height)
 {
-    const minimumHeight = 64;
-    const maximumHeight = window.innerHeight * 0.55;
+    var minimumHeight = 64;
+    var maximumHeight = window.innerHeight * 0.55;
 
     height = Math.max(minimumHeight, Math.min(height, maximumHeight));
 
@@ -1503,7 +1503,7 @@ WebInspector._moveWindowMouseDown = function(event)
 
         // Ignore dragging on the top of the toolbar on Mac if the system handles it.
         if (WebInspector.Platform.version.release === 10) {
-            const windowDragHandledTitleBarHeight = 22;
+            var windowDragHandledTitleBarHeight = 22;
             if (event.pageY < windowDragHandledTitleBarHeight) {
                 event.preventDefault();
                 return;

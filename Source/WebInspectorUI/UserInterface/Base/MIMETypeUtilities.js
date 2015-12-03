@@ -38,7 +38,7 @@ WebInspector.fileExtensionForURL = function(url)
 
 WebInspector.mimeTypeForFileExtension = function(extension)
 {
-    const extensionToMIMEType = {
+    var extensionToMIMEType = {
         // Document types.
         "html": "text/html",
         "xhtml": "application/xhtml+xml",

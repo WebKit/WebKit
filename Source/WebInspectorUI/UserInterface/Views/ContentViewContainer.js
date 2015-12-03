@@ -146,7 +146,7 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         var provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie);
         // Don't do anything if we would have added an identical back/forward list entry.
         if (currentEntry && currentEntry.contentView === contentView && Object.shallowEqual(provisionalEntry.cookie, currentEntry.cookie)) {
-            const shouldCallShown = false;
+            var shouldCallShown = false;
             currentEntry.prepareToShow(shouldCallShown);
             return currentEntry.contentView;
         }

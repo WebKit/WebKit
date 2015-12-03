@@ -733,7 +733,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
     _keyPress(event)
     {
-        const isCommandC = event.metaKey && event.keyCode === 99;
+        var isCommandC = event.metaKey && event.keyCode === 99;
         if (!isCommandC)
             this.prompt.focus();
     }

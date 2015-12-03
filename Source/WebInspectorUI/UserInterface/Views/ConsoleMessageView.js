@@ -321,7 +321,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         }
 
         if (callFrame) {
-            const showFunctionName = !!callFrame.functionName;
+            var showFunctionName = !!callFrame.functionName;
             var locationElement = new WebInspector.CallFrameView(callFrame, showFunctionName);
             locationElement.classList.add("console-message-location");
             this._element.appendChild(locationElement);

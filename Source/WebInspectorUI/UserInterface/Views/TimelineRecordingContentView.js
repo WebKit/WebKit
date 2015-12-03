@@ -247,6 +247,14 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
         this.currentTimelineView.filterDidChange();
     }
 
+    recordWasFiltered(record, filtered)
+    {
+        if (!this.currentTimelineView)
+            return;
+
+        this._currentTimelineOverview.recordWasFiltered(this.currentTimelineView.representedObject, record, filtered);
+    }
+
     matchTreeElementAgainstCustomFilters(treeElement)
     {
         if (this.currentTimelineView && !this.currentTimelineView.matchTreeElementAgainstCustomFilters(treeElement))
@@ -546,9 +554,9 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _updateTimelineOverviewHeight()
     {
-        const timelineHeight = 36;
-        const renderingFramesTimelineHeight = 108;
-        const rulerHeight = 29;
+        var timelineHeight = 36;
+        var renderingFramesTimelineHeight = 108;
+        var rulerHeight = 29;
 
         var overviewHeight;
 
