@@ -438,7 +438,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                 if (this._delegate && typeof this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule === "function")
                     this._delegate.cssStyleDeclarationSectionFocusNextNewInspectorRule();
 
-                this._style.nodeStyles.addRuleWithSelector(this._currentSelectorText);
+                this._style.nodeStyles.addRule(this._currentSelectorText);
             }.bind(this));
         }
 

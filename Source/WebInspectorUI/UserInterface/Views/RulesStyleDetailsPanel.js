@@ -392,7 +392,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             return;
 
         this._focusNextNewInspectorRule = true;
-        this.nodeStyles.addEmptyRule();
+        this.nodeStyles.addRule();
     }
 
     // Protected
