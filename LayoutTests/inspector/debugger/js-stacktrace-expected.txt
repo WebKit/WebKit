@@ -21,14 +21,14 @@ Error object:
     {
         "functionName": "typeError",
         "url": "/inspector/debugger/js-stacktrace.html",
-        "lineNumber": "14",
-        "columnNumber": "30"
+        "lineNumber": 14,
+        "columnNumber": 30
     },
     {
         "functionName": "typeErrorWrap",
         "url": "/inspector/debugger/js-stacktrace.html",
-        "lineNumber": "7",
-        "columnNumber": "21"
+        "lineNumber": 7,
+        "columnNumber": 21
     }
 ]
 
@@ -59,8 +59,8 @@ Error object:
     {
         "functionName": "typeError",
         "url": "/inspector/debugger/js-stacktrace.html",
-        "lineNumber": "14",
-        "columnNumber": "30"
+        "lineNumber": 14,
+        "columnNumber": 30
     },
     {
         "functionName": "map",
