@@ -52,7 +52,6 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         this._allowsTimeRangeSelection = false;
         this._minimumSelectionDuration = 0.01;
         this._formatLabelCallback = null;
-        this._suppressNextTimeRangeSelectionChangedEvent = false;
         this._timeRangeSelectionChanged = false;
 
         this._markerElementMap = new Map;
@@ -649,11 +648,6 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         if (!this._timeRangeSelectionChanged)
             return;
 
-        if (this._suppressNextTimeRangeSelectionChangedEvent) {
-            this._suppressNextTimeRangeSelectionChangedEvent = false;
-            return;
-        }
-
         this._timeRangeSelectionChanged = false;
 
         this.dispatchEventToListeners(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged);
@@ -695,8 +689,6 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
     _handleMouseMove(event)
     {
         console.assert(event.button === 0);
-
-        this._suppressNextTimeRangeSelectionChangedEvent = !this._selectionIsMove;
 
         if (this._selectionIsMove) {
             var currentMousePosition = Math.max(this._moveSelectionMaximumLeftOffset, Math.min(this._moveSelectionMaximumRightOffset, event.pageX));
