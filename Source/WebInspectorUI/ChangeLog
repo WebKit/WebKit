@@ -1,5 +1,20 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188728. rdar://problem/23221163
+
+    2015-08-20  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: Font size between computed and set value is off in visual styles popups
+            https://bugs.webkit.org/show_bug.cgi?id=148226
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/VisualStylePropertyEditor.css:
+            (.visual-style-property-container > .visual-style-property-value-container > .visual-style-special-property-placeholder):
+            Increased font-size to match the font-size of the overlaid select element.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188727. rdar://problem/23221163
 
     2015-08-20  Matt Baker  <mattbaker@apple.com>
