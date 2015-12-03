@@ -530,21 +530,21 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case "ArrayExpression":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression,
-                elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
+                elements: node.elements.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ArrayPattern":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern,
-                elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
+                elements: node.elements.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ArrowFunctionExpression":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression,
                 id: this._createInternalSyntaxTree(node.id),
-                params: node.params.map(this._createInternalSyntaxTree.bind(this)),
-                defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
+                params: node.params.map(this._createInternalSyntaxTree, this),
+                defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
                 expression: node.expression, // Boolean indicating if the body a single expression or a block statement.
                 typeProfilingReturnDivot: node.range[0]
@@ -568,7 +568,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case "BlockStatement":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.BlockStatement,
-                body: node.body.map(this._createInternalSyntaxTree.bind(this))
+                body: node.body.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "BinaryExpression":
@@ -589,7 +589,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.CallExpression,
                 callee: this._createInternalSyntaxTree(node.callee),
-                arguments: node.arguments.map(this._createInternalSyntaxTree.bind(this))
+                arguments: node.arguments.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "CatchClause":
@@ -602,7 +602,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case "ClassBody":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ClassBody,
-                body: node.body.map(this._createInternalSyntaxTree.bind(this))
+                body: node.body.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ClassDeclaration":
@@ -687,8 +687,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration,
                 id: this._createInternalSyntaxTree(node.id),
-                params: node.params.map(this._createInternalSyntaxTree.bind(this)),
-                defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
+                params: node.params.map(this._createInternalSyntaxTree, this),
+                defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
                 typeProfilingReturnDivot: node.range[0]
             };
@@ -697,8 +697,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression,
                 id: this._createInternalSyntaxTree(node.id),
-                params: node.params.map(this._createInternalSyntaxTree.bind(this)),
-                defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
+                params: node.params.map(this._createInternalSyntaxTree, this),
+                defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
                 typeProfilingReturnDivot: node.range[0] // This may be overridden in the Property AST node.
             };
@@ -770,26 +770,26 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.NewExpression,
                 callee: this._createInternalSyntaxTree(node.callee),
-                arguments: node.arguments.map(this._createInternalSyntaxTree.bind(this))
+                arguments: node.arguments.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ObjectExpression":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression,
-                properties: node.properties.map(this._createInternalSyntaxTree.bind(this))
+                properties: node.properties.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ObjectPattern":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern,
-                properties: node.properties.map(this._createInternalSyntaxTree.bind(this))
+                properties: node.properties.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "Program":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.Program,
                 sourceType: node.sourceType,
-                body: node.body.map(this._createInternalSyntaxTree.bind(this))
+                body: node.body.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "Property":
@@ -813,7 +813,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case "SequenceExpression":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.SequenceExpression,
-                expressions: node.expressions.map(this._createInternalSyntaxTree.bind(this))
+                expressions: node.expressions.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "SpreadElement":
@@ -831,14 +831,14 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.SwitchStatement,
                 discriminant: this._createInternalSyntaxTree(node.discriminant),
-                cases: node.cases.map(this._createInternalSyntaxTree.bind(this))
+                cases: node.cases.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "SwitchCase":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.SwitchCase,
                 test: this._createInternalSyntaxTree(node.test),
-                consequent: node.consequent.map(this._createInternalSyntaxTree.bind(this))
+                consequent: node.consequent.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "TaggedTemplateExpression":
@@ -858,8 +858,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case "TemplateLiteral":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.TemplateLiteral,
-                quasis: node.quasis.map(this._createInternalSyntaxTree.bind(this)),
-                expressions: node.expressions.map(this._createInternalSyntaxTree.bind(this))
+                quasis: node.quasis.map(this._createInternalSyntaxTree, this),
+                expressions: node.expressions.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ThisExpression":
@@ -899,7 +899,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case "VariableDeclaration":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration,
-                declarations: node.declarations.map(this._createInternalSyntaxTree.bind(this)),
+                declarations: node.declarations.map(this._createInternalSyntaxTree, this),
                 kind: node.kind
             };
             break;
