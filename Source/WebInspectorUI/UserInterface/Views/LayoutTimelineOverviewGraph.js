@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineOverviewGraph = function(timeline, timelineOverview)
+WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WebInspector.TimelineOverviewGraph
 {
-    WebInspector.TimelineOverviewGraph.call(this, timeline, timelineOverview);
+    constructor(timeline, timelineOverview)
+    {
+        super(timeline, timelineOverview);
 
-    this.element.classList.add("layout");
+        this.element.classList.add("layout");
 
-    this._layoutTimeline = timeline;
-    this._layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
+        this._layoutTimeline = timeline;
+        this._layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
-    this.reset();
-};
-
-WebInspector.LayoutTimelineOverviewGraph.prototype = {
-    constructor: WebInspector.LayoutTimelineOverviewGraph,
-    __proto__: WebInspector.TimelineOverviewGraph.prototype,
+        this.reset();
+    }
 
     // Public
 
-    reset: function()
+    reset()
     {
-        WebInspector.TimelineOverviewGraph.prototype.reset.call(this);
+        super.reset();
 
         function createRecordRow()
         {
@@ -58,19 +56,19 @@ WebInspector.LayoutTimelineOverviewGraph.prototype = {
         this._timelineRecordBarMap = new Map;
         this._timelineLayoutRecordRow = createRecordRow.call(this);
         this._timelinePaintRecordRow = createRecordRow.call(this);
-    },
+    }
 
-    updateLayout: function()
+    updateLayout()
     {
-        WebInspector.TimelineOverviewGraph.prototype.updateLayout.call(this);
+        super.updateLayout();
 
         this._updateRowLayout(this._timelinePaintRecordRow);
         this._updateRowLayout(this._timelineLayoutRecordRow);
-    },
+    }
 
     // Private
 
-    _updateRowLayout: function(row)
+    _updateRowLayout(row)
     {
         var secondsPerPixel = this.timelineOverview.secondsPerPixel;
         var recordBarIndex = 0;
@@ -98,9 +96,9 @@ WebInspector.LayoutTimelineOverviewGraph.prototype = {
             row.recordBars[recordBarIndex].records = null;
             row.recordBars[recordBarIndex].element.remove();
         }
-    },
+    }
 
-    _layoutTimelineRecordAdded: function(event)
+    _layoutTimelineRecordAdded(event)
     {
         var layoutTimelineRecord = event.data.record;
         console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);

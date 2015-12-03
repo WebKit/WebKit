@@ -23,26 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LinearTimelineOverview = function(timelineRecording)
+WebInspector.LinearTimelineOverview = class LinearTimelineOverview extends WebInspector.TimelineOverview
 {
-    // FIXME: Convert this to a WebInspector.TimelineOverview subclass, and call super().
+    constructor(timelineRecording)
+    {
+        var defaultSettingsValues = {
+            durationPerPixel: 0.01,
+            selectionStartValue: 0,
+            selectionDuration: 15
+        };
 
-    var defaultSettingsValues = {
-        durationPerPixel: 0.01,
-        selectionStartValue: 0,
-        selectionDuration: 15
-    };
-
-    WebInspector.TimelineOverview.call(this, "linear", timelineRecording, 0.0001, 60, defaultSettingsValues);
-};
-
-WebInspector.LinearTimelineOverview.prototype = {
-    constructor: WebInspector.LinearTimelineOverview,
-    __proto__: WebInspector.TimelineOverview.prototype,
+        super("linear", timelineRecording, 0.0001, 60, defaultSettingsValues);
+    }
 
     // Protected
 
-    canShowTimeline: function(timeline)
+    canShowTimeline(timeline)
     {
         return timeline.type !== WebInspector.TimelineRecord.Type.RenderingFrame;
     }

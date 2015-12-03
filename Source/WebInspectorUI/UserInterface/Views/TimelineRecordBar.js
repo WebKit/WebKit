@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,185 +23,166 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecordBar = function(records, renderMode)
+WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Object
 {
-    // FIXME: Convert this to a WebInspector.Object subclass, and call super().
-    // WebInspector.Object.call(this);
-
-    this._element = document.createElement("div");
-    this._element.classList.add("timeline-record-bar");
-
-    this.renderMode = renderMode;
-    this.records = records;
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineRecordBar);
-
-WebInspector.TimelineRecordBar.BarSegmentStyleClassName = "segment";
-WebInspector.TimelineRecordBar.InactiveStyleClassName = "inactive";
-WebInspector.TimelineRecordBar.UnfinishedStyleClassName = "unfinished";
-WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName = "has-inactive-segment";
-WebInspector.TimelineRecordBar.MinimumWidthPixels = 4;
-WebInspector.TimelineRecordBar.MinimumMarginPixels = 1;
-
-WebInspector.TimelineRecordBar.RenderMode = {
-    Normal: "timeline-record-bar-normal-render-mode",
-    InactiveOnly: "timeline-record-bar-inactive-only-render-mode",
-    ActiveOnly: "timeline-record-bar-active-only-render-mode"
-};
-
-WebInspector.TimelineRecordBar.createCombinedBars = function(records, secondsPerPixel, graphDataSource, createBarCallback)
-{
-    if (!records.length)
-        return;
-
-    var startTime = graphDataSource.startTime;
-    var currentTime = graphDataSource.currentTime;
-    var endTime = graphDataSource.endTime;
-
-    var visibleRecords = [];
-    var usesActiveStartTime = false;
-    var lastRecordType = null;
-
-    // FIXME: Do a binary search for records that fall inside start and current time.
-
-    for (var record of records) {
-        if (isNaN(record.startTime))
-            continue;
-
-        // If this bar is completely before the bounds of the graph, skip this record.
-        if (record.endTime < startTime)
-            continue;
-
-        // If this record is completely after the current time or end time, break out now.
-        // Records are sorted, so all records after this will be beyond the current or end time too.
-        if (record.startTime > currentTime || record.startTime > endTime)
-            break;
-
-        if (record.usesActiveStartTime)
-            usesActiveStartTime = true;
-
-        // If one record uses active time the rest are assumed to use it.
-        console.assert(record.usesActiveStartTime === usesActiveStartTime);
-
-        // Only a single record type is supported right now.
-        console.assert(!lastRecordType || record.type === lastRecordType);
-
-        visibleRecords.push(record);
-
-        lastRecordType = record.type;
-    }
-
-    if (!visibleRecords.length)
-        return;
-
-    if (visibleRecords.length === 1) {
-        createBarCallback(visibleRecords, WebInspector.TimelineRecordBar.RenderMode.Normal);
-        return;
-    }
-
-    function compareByActiveStartTime(a, b)
+    constructor(records, renderMode)
     {
-        return a.activeStartTime - b.activeStartTime;
+        super();
+
+        this._element = document.createElement("div");
+        this._element.classList.add("timeline-record-bar");
+
+        this.renderMode = renderMode;
+        this.records = records;
     }
 
-    var minimumDuration = secondsPerPixel * WebInspector.TimelineRecordBar.MinimumWidthPixels;
-    var minimumMargin = secondsPerPixel * WebInspector.TimelineRecordBar.MinimumMarginPixels;
+    static createCombinedBars(records, secondsPerPixel, graphDataSource, createBarCallback)
+    {
+        if (!records.length)
+            return;
 
-    if (usesActiveStartTime) {
-        var inactiveStartTime = NaN;
-        var inactiveEndTime = NaN;
-        var inactiveRecords = [];
+        var startTime = graphDataSource.startTime;
+        var currentTime = graphDataSource.currentTime;
+        var endTime = graphDataSource.endTime;
 
-        for (var record of visibleRecords) {
-            // Check if the previous record is far enough away to create the inactive bar.
-            if (!isNaN(inactiveStartTime) && inactiveStartTime + Math.max(inactiveEndTime - inactiveStartTime, minimumDuration) + minimumMargin <= record.startTime) {
-                createBarCallback(inactiveRecords, WebInspector.TimelineRecordBar.RenderMode.InactiveOnly);
-                inactiveRecords = [];
-                inactiveStartTime = NaN;
-                inactiveEndTime = NaN;
+        var visibleRecords = [];
+        var usesActiveStartTime = false;
+        var lastRecordType = null;
+
+        // FIXME: Do a binary search for records that fall inside start and current time.
+
+        for (var record of records) {
+            if (isNaN(record.startTime))
+                continue;
+
+            // If this bar is completely before the bounds of the graph, skip this record.
+            if (record.endTime < startTime)
+                continue;
+
+            // If this record is completely after the current time or end time, break out now.
+            // Records are sorted, so all records after this will be beyond the current or end time too.
+            if (record.startTime > currentTime || record.startTime > endTime)
+                break;
+
+            if (record.usesActiveStartTime)
+                usesActiveStartTime = true;
+
+            // If one record uses active time the rest are assumed to use it.
+            console.assert(record.usesActiveStartTime === usesActiveStartTime);
+
+            // Only a single record type is supported right now.
+            console.assert(!lastRecordType || record.type === lastRecordType);
+
+            visibleRecords.push(record);
+
+            lastRecordType = record.type;
+        }
+
+        if (!visibleRecords.length)
+            return;
+
+        if (visibleRecords.length === 1) {
+            createBarCallback(visibleRecords, WebInspector.TimelineRecordBar.RenderMode.Normal);
+            return;
+        }
+
+        function compareByActiveStartTime(a, b)
+        {
+            return a.activeStartTime - b.activeStartTime;
+        }
+
+        var minimumDuration = secondsPerPixel * WebInspector.TimelineRecordBar.MinimumWidthPixels;
+        var minimumMargin = secondsPerPixel * WebInspector.TimelineRecordBar.MinimumMarginPixels;
+
+        if (usesActiveStartTime) {
+            var inactiveStartTime = NaN;
+            var inactiveEndTime = NaN;
+            var inactiveRecords = [];
+
+            for (var record of visibleRecords) {
+                // Check if the previous record is far enough away to create the inactive bar.
+                if (!isNaN(inactiveStartTime) && inactiveStartTime + Math.max(inactiveEndTime - inactiveStartTime, minimumDuration) + minimumMargin <= record.startTime) {
+                    createBarCallback(inactiveRecords, WebInspector.TimelineRecordBar.RenderMode.InactiveOnly);
+                    inactiveRecords = [];
+                    inactiveStartTime = NaN;
+                    inactiveEndTime = NaN;
+                }
+
+                // If this is a new bar, peg the start time.
+                if (isNaN(inactiveStartTime))
+                    inactiveStartTime = record.startTime;
+
+                // Update the end time to be the maximum we encounter. inactiveEndTime might be NaN, so "|| 0" to prevent Math.max from returning NaN.
+                inactiveEndTime = Math.max(inactiveEndTime || 0, record.activeStartTime);
+
+                inactiveRecords.push(record);
             }
 
+            // Create the inactive bar for the last record if needed.
+            if (!isNaN(inactiveStartTime))
+                createBarCallback(inactiveRecords, WebInspector.TimelineRecordBar.RenderMode.InactiveOnly);
+
+            visibleRecords.sort(compareByActiveStartTime);
+        }
+
+        lastRecordType = null;
+
+        var activeStartTime = NaN;
+        var activeEndTime = NaN;
+        var activeRecords = [];
+
+        var startTimeProperty = usesActiveStartTime ? "activeStartTime" : "startTime";
+
+        for (var record of visibleRecords) {
+            // Check if the previous record is far enough away to create the active bar. We also create it now if the current record has no active state time.
+            if (!isNaN(activeStartTime) && (activeStartTime + Math.max(activeEndTime - activeStartTime, minimumDuration) + minimumMargin <= record[startTimeProperty]
+                || (isNaN(record[startTimeProperty]) && !isNaN(activeEndTime)))) {
+                createBarCallback(activeRecords, WebInspector.TimelineRecordBar.RenderMode.ActiveOnly);
+                activeRecords = [];
+                activeStartTime = NaN;
+                activeEndTime = NaN;
+            }
+
+            if (isNaN(record[startTimeProperty]))
+                continue;
+
             // If this is a new bar, peg the start time.
-            if (isNaN(inactiveStartTime))
-                inactiveStartTime = record.startTime;
+            if (isNaN(activeStartTime))
+                activeStartTime = record[startTimeProperty];
 
-            // Update the end time to be the maximum we encounter. inactiveEndTime might be NaN, so "|| 0" to prevent Math.max from returning NaN.
-            inactiveEndTime = Math.max(inactiveEndTime || 0, record.activeStartTime);
+            // Update the end time to be the maximum we encounter. activeEndTime might be NaN, so "|| 0" to prevent Math.max from returning NaN.
+            if (!isNaN(record.endTime))
+                activeEndTime = Math.max(activeEndTime || 0, record.endTime);
 
-            inactiveRecords.push(record);
+            activeRecords.push(record);
         }
 
-        // Create the inactive bar for the last record if needed.
-        if (!isNaN(inactiveStartTime))
-            createBarCallback(inactiveRecords, WebInspector.TimelineRecordBar.RenderMode.InactiveOnly);
-
-        visibleRecords.sort(compareByActiveStartTime);
-    }
-
-    lastRecordType = null;
-
-    var activeStartTime = NaN;
-    var activeEndTime = NaN;
-    var activeRecords = [];
-
-    var startTimeProperty = usesActiveStartTime ? "activeStartTime" : "startTime";
-
-    for (var record of visibleRecords) {
-        // Check if the previous record is far enough away to create the active bar. We also create it now if the current record has no active state time.
-        if (!isNaN(activeStartTime) && (activeStartTime + Math.max(activeEndTime - activeStartTime, minimumDuration) + minimumMargin <= record[startTimeProperty]
-            || (isNaN(record[startTimeProperty]) && !isNaN(activeEndTime)))) {
+        // Create the active bar for the last record if needed.
+        if (!isNaN(activeStartTime))
             createBarCallback(activeRecords, WebInspector.TimelineRecordBar.RenderMode.ActiveOnly);
-            activeRecords = [];
-            activeStartTime = NaN;
-            activeEndTime = NaN;
-        }
-
-        if (isNaN(record[startTimeProperty]))
-            continue;
-
-        // If this is a new bar, peg the start time.
-        if (isNaN(activeStartTime))
-            activeStartTime = record[startTimeProperty];
-
-        // Update the end time to be the maximum we encounter. activeEndTime might be NaN, so "|| 0" to prevent Math.max from returning NaN.
-        if (!isNaN(record.endTime))
-            activeEndTime = Math.max(activeEndTime || 0, record.endTime);
-
-        activeRecords.push(record);
     }
-
-    // Create the active bar for the last record if needed.
-    if (!isNaN(activeStartTime))
-        createBarCallback(activeRecords, WebInspector.TimelineRecordBar.RenderMode.ActiveOnly);
-};
-
-WebInspector.TimelineRecordBar.prototype = {
-    constructor: WebInspector.TimelineRecordBar,
-    __proto__: WebInspector.Object.prototype,
 
     // Public
 
     get element()
     {
         return this._element;
-    },
+    }
 
     get renderMode()
     {
         return this._renderMode;
-    },
+    }
 
     set renderMode(renderMode)
     {
         this._renderMode = renderMode || WebInspector.TimelineRecordBar.RenderMode.Normal;
-    },
+    }
 
     get records()
     {
         return this._records;
-    },
+    }
 
     set records(records)
     {
@@ -226,9 +207,9 @@ WebInspector.TimelineRecordBar.prototype = {
             if (this._records[0].eventType)
                 this._element.classList.add(this._records[0].eventType);
         }
-    },
+    }
 
-    refresh: function(graphDataSource)
+    refresh(graphDataSource)
     {
         if (!this._records || !this._records.length)
             return false;
@@ -260,7 +241,7 @@ WebInspector.TimelineRecordBar.prototype = {
 
         var graphDuration = graphEndTime - graphStartTime;
 
-        this._element.classList.toggle(WebInspector.TimelineRecordBar.UnfinishedStyleClassName, barUnfinished);
+        this._element.classList.toggle("unfinished", barUnfinished);
 
         var newBarLeftPosition = (barStartTime - graphStartTime) / graphDuration;
         this._updateElementPosition(this._element, newBarLeftPosition, "left");
@@ -270,11 +251,11 @@ WebInspector.TimelineRecordBar.prototype = {
 
         if (!this._activeBarElement && this._renderMode !== WebInspector.TimelineRecordBar.RenderMode.InactiveOnly) {
             this._activeBarElement = document.createElement("div");
-            this._activeBarElement.classList.add(WebInspector.TimelineRecordBar.BarSegmentStyleClassName);
+            this._activeBarElement.classList.add("segment");
         }
 
         if (!firstRecord.usesActiveStartTime) {
-            this._element.classList.remove(WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName);
+            this._element.classList.remove("has-inactive-segment");
 
             if (this._inactiveBarElement)
                 this._inactiveBarElement.remove();
@@ -296,7 +277,7 @@ WebInspector.TimelineRecordBar.prototype = {
             return true;
         }
 
-        this._element.classList.add(WebInspector.TimelineRecordBar.HasInactiveSegmentStyleClassName);
+        this._element.classList.add("has-inactive-segment");
 
         // Find the earliest active start time for active only rendering, and the latest for the other modes.
         // This matches the values that TimelineRecordBar.createCombinedBars uses when combining.
@@ -308,7 +289,7 @@ WebInspector.TimelineRecordBar.prototype = {
         var barDuration = barEndTime - barStartTime;
 
         var inactiveUnfinished = isNaN(barActiveStartTime) || barActiveStartTime >= graphCurrentTime;
-        this._element.classList.toggle(WebInspector.TimelineRecordBar.UnfinishedStyleClassName, inactiveUnfinished);
+        this._element.classList.toggle("unfinished", inactiveUnfinished);
 
         if (inactiveUnfinished)
             barActiveStartTime = graphCurrentTime;
@@ -318,8 +299,8 @@ WebInspector.TimelineRecordBar.prototype = {
         if (this._renderMode !== WebInspector.TimelineRecordBar.RenderMode.ActiveOnly) {
             if (!this._inactiveBarElement) {
                 this._inactiveBarElement = document.createElement("div");
-                this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.BarSegmentStyleClassName);
-                this._inactiveBarElement.classList.add(WebInspector.TimelineRecordBar.InactiveStyleClassName);
+                this._inactiveBarElement.classList.add("segment");
+                this._inactiveBarElement.classList.add("inactive");
             }
 
             this._updateElementPosition(this._inactiveBarElement, 1 - middlePercentage, "right");
@@ -339,11 +320,11 @@ WebInspector.TimelineRecordBar.prototype = {
             this._activeBarElement.remove();
 
         return true;
-    },
+    }
 
     // Private
 
-    _updateElementPosition: function(element, newPosition, property)
+    _updateElementPosition(element, newPosition, property)
     {
         newPosition *= 100;
         newPosition = newPosition.toFixed(2);
@@ -352,4 +333,13 @@ WebInspector.TimelineRecordBar.prototype = {
         if (currentPosition !== newPosition)
             element.style[property] = newPosition + "%";
     }
+};
+
+WebInspector.TimelineRecordBar.MinimumWidthPixels = 4;
+WebInspector.TimelineRecordBar.MinimumMarginPixels = 1;
+
+WebInspector.TimelineRecordBar.RenderMode = {
+    Normal: "timeline-record-bar-normal-render-mode",
+    InactiveOnly: "timeline-record-bar-inactive-only-render-mode",
+    ActiveOnly: "timeline-record-bar-active-only-render-mode"
 };

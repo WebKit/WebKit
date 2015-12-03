@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,75 +23,73 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.OverviewTimelineView = function(recording, extraArguments)
+WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspector.TimelineView
 {
-    WebInspector.TimelineView.call(this, recording, extraArguments);
+    constructor(recording, extraArguments)
+    {
+        super(recording, extraArguments);
 
-    this._recording = recording;
+        this._recording = recording;
 
-    var columns = {"graph": {width: "100%"}};
+        var columns = {"graph": {width: "100%"}};
 
-    this._dataGrid = new WebInspector.DataGrid(columns);
-    this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
-    this._dataGrid.element.classList.add("no-header");
+        this._dataGrid = new WebInspector.DataGrid(columns);
+        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+        this._dataGrid.element.classList.add("no-header");
 
-    this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this.navigationSidebarTreeOutline, this._dataGrid);
+        this._treeOutlineDataGridSynchronizer = new WebInspector.TreeOutlineDataGridSynchronizer(this.navigationSidebarTreeOutline, this._dataGrid);
 
-    this._timelineRuler = new WebInspector.TimelineRuler;
-    this._timelineRuler.allowsClippedLabels = true;
-    this.element.appendChild(this._timelineRuler.element);
+        this._timelineRuler = new WebInspector.TimelineRuler;
+        this._timelineRuler.allowsClippedLabels = true;
+        this.element.appendChild(this._timelineRuler.element);
 
-    this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
-    this._timelineRuler.addMarker(this._currentTimeMarker);
+        this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
+        this._timelineRuler.addMarker(this._currentTimeMarker);
 
-    this.element.classList.add("overview");
-    this.element.appendChild(this._dataGrid.element);
+        this.element.classList.add("overview");
+        this.element.appendChild(this._dataGrid.element);
 
-    this._networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
-    this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+        this._networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
+        this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
-    recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
+        recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
 
-    this._pendingRepresentedObjects = [];
-};
-
-WebInspector.OverviewTimelineView.prototype = {
-    constructor: WebInspector.OverviewTimelineView,
-    __proto__: WebInspector.TimelineView.prototype,
+        this._pendingRepresentedObjects = [];
+    }
 
     // Public
 
     get navigationSidebarTreeOutlineLabel()
     {
         return WebInspector.UIString("Timeline Events");
-    },
+    }
 
     get secondsPerPixel()
     {
         return this._timelineRuler.secondsPerPixel;
-    },
+    }
 
     set secondsPerPixel(x)
     {
         this._timelineRuler.secondsPerPixel = x;
-    },
+    }
 
-    shown: function()
+    shown()
     {
-        WebInspector.ContentView.prototype.shown.call(this);
+        super.shown();
 
         this._treeOutlineDataGridSynchronizer.synchronize();
-    },
+    }
 
-    closed: function()
+    closed()
     {
         this._networkTimeline.removeEventListener(null, null, this);
         this._recording.removeEventListener(null, null, this);
-    },
+    }
 
-    updateLayout: function()
+    updateLayout()
     {
-        WebInspector.TimelineView.prototype.updateLayout.call(this);
+        super.updateLayout();
 
         var oldZeroTime = this._timelineRuler.zeroTime;
         var oldStartTime = this._timelineRuler.startTime;
@@ -116,7 +114,7 @@ WebInspector.OverviewTimelineView.prototype = {
         this._timelineRuler.updateLayout();
 
         this._processPendingRepresentedObjects();
-    },
+    }
 
     get selectionPathComponents()
     {
@@ -142,26 +140,26 @@ WebInspector.OverviewTimelineView.prototype = {
         }
 
         return pathComponents;
-    },
+    }
 
     // Protected
 
-    treeElementPathComponentSelected: function(event)
+    treeElementPathComponentSelected(event)
     {
         var dataGridNode = this._treeOutlineDataGridSynchronizer.dataGridNodeForTreeElement(event.data.pathComponent.generalTreeElement);
         if (!dataGridNode)
             return;
         dataGridNode.revealAndSelect();
-    },
+    }
 
-    canShowContentViewForTreeElement: function(treeElement)
+    canShowContentViewForTreeElement(treeElement)
     {
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement)
             return true;
-        return WebInspector.TimelineView.prototype.canShowContentViewForTreeElement(treeElement);
-    },
+        return super.canShowContentViewForTreeElement(treeElement);
+    }
 
-    showContentViewForTreeElement: function(treeElement)
+    showContentViewForTreeElement(treeElement)
     {
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
             WebInspector.showSourceCode(treeElement.representedObject);
@@ -179,11 +177,11 @@ WebInspector.OverviewTimelineView.prototype = {
         }
 
         WebInspector.showOriginalOrFormattedSourceCodeLocation(treeElement.sourceCodeTimeline.sourceCodeLocation);
-    },
+    }
 
     // Private
 
-    _compareTreeElementsByDetails: function(a, b)
+    _compareTreeElementsByDetails(a, b)
     {
         if (a instanceof WebInspector.SourceCodeTimelineTreeElement && b instanceof WebInspector.ResourceTreeElement)
             return -1;
@@ -213,9 +211,9 @@ WebInspector.OverviewTimelineView.prototype = {
 
         // Fallback to comparing by start time for ResourceTreeElement or anything else.
         return this._compareTreeElementsByStartTime(a, b);
-    },
+    }
 
-    _compareTreeElementsByStartTime: function(a, b)
+    _compareTreeElementsByStartTime(a, b)
     {
         function getStartTime(treeElement)
         {
@@ -234,18 +232,18 @@ WebInspector.OverviewTimelineView.prototype = {
 
         // Fallback to comparing titles.
         return a.mainTitle.localeCompare(b.mainTitle);
-    },
+    }
 
-    _insertTreeElement: function(treeElement, parentTreeElement)
+    _insertTreeElement(treeElement, parentTreeElement)
     {
         console.assert(treeElement);
         console.assert(!treeElement.parent);
         console.assert(parentTreeElement);
 
         parentTreeElement.insertChild(treeElement, insertionIndexForObjectInListSortedByFunction(treeElement, parentTreeElement.children, this._compareTreeElementsByStartTime.bind(this)));
-    },
+    }
 
-    _addResourceToTreeIfNeeded: function(resource)
+    _addResourceToTreeIfNeeded(resource)
     {
         console.assert(resource);
         if (!resource)
@@ -290,9 +288,9 @@ WebInspector.OverviewTimelineView.prototype = {
         this._insertTreeElement(resourceTreeElement, parentTreeElement);
 
         return resourceTreeElement;
-    },
+    }
 
-    _addSourceCodeTimeline: function(sourceCodeTimeline)
+    _addSourceCodeTimeline(sourceCodeTimeline)
     {
         var parentTreeElement = sourceCodeTimeline.sourceCodeLocation ? this._addResourceToTreeIfNeeded(sourceCodeTimeline.sourceCode) : this.navigationSidebarTreeOutline;
         console.assert(parentTreeElement);
@@ -304,9 +302,9 @@ WebInspector.OverviewTimelineView.prototype = {
 
         this._treeOutlineDataGridSynchronizer.associate(sourceCodeTimelineTreeElement, sourceCodeTimelineDataGridNode);
         this._insertTreeElement(sourceCodeTimelineTreeElement, parentTreeElement);
-    },
+    }
 
-    _processPendingRepresentedObjects: function()
+    _processPendingRepresentedObjects()
     {
         if (!this._pendingRepresentedObjects || !this._pendingRepresentedObjects.length)
             return;
@@ -321,9 +319,9 @@ WebInspector.OverviewTimelineView.prototype = {
         }
 
         this._pendingRepresentedObjects = [];
-    },
+    }
 
-    _networkTimelineRecordAdded: function(event)
+    _networkTimelineRecordAdded(event)
     {
         var resourceTimelineRecord = event.data.record;
         console.assert(resourceTimelineRecord instanceof WebInspector.ResourceTimelineRecord);
@@ -334,9 +332,9 @@ WebInspector.OverviewTimelineView.prototype = {
 
         // We don't expect to have any source code timelines yet. Those should be added with _sourceCodeTimelineAdded.
         console.assert(!this._recording.sourceCodeTimelinesForSourceCode(resourceTimelineRecord.resource).length);
-    },
+    }
 
-    _sourceCodeTimelineAdded: function(event)
+    _sourceCodeTimelineAdded(event)
     {
         var sourceCodeTimeline = event.data.sourceCodeTimeline;
         console.assert(sourceCodeTimeline);
@@ -346,9 +344,9 @@ WebInspector.OverviewTimelineView.prototype = {
         this._pendingRepresentedObjects.push(sourceCodeTimeline);
 
         this.needsLayout();
-    },
+    }
 
-    _dataGridNodeSelected: function(event)
+    _dataGridNodeSelected(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
     }
