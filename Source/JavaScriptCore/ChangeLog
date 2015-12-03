@@ -1,3 +1,11 @@
+2015-12-02  Saam barati  <sbarati@apple.com>
+
+        Insert a FIXME comment FTLLazySlowPath.h to remind us to remove/refactor the ScratchRegisterAllocator field.
+
+        Rubber-stamped by Filip Pizlo.
+
+        * ftl/FTLLazySlowPath.h:
+
 2015-12-02  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Remove insertElement() from FTLB3Output

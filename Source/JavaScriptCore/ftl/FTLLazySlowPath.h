@@ -107,6 +107,12 @@ private:
     RefPtr<Generator> m_generator;
 #if !FTL_USES_B3
     GPRReg m_newZeroValueRegister;
+    // FIXME: Remove this field in one of two ways:
+    // 1) When landing B3, we should remove this field because it will no
+    // longer be the case where a location being in SP means it's zero.
+    // 2) If we don't land B3, this same idea can be expressed in less
+    // memory using just a single GPRReg.
+    // https://bugs.webkit.org/show_bug.cgi?id=151768
     ScratchRegisterAllocator m_scratchRegisterAllocator;
 #endif // FTL_USES_B3
 };
