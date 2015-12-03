@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView extends WebInspector.ApplicationCacheFrame
+WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView extends WebInspector.ContentView
 {
     constructor(representedObject)
     {
