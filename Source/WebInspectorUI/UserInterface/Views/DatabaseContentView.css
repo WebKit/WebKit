@@ -25,6 +25,8 @@
 
 .storage-view {    
     font-family: Menlo, monospace;
+
+    outline: none;
 }
 
 .storage-view .data-grid {
@@ -42,19 +44,27 @@
     -webkit-text-size-adjust: auto;
 }
 
-.database-query-prompt {
-    position: relative;
-    padding: 4px 22px 4px 11px;
-    min-height: 16px;
-    white-space: pre-wrap;
-    -webkit-user-modify: read-write-plaintext-only;
-    -webkit-user-select: text;
-    
-    /* Added to remove outline */
-    outline: none;
+.storage-view > .console-prompt {
+    display: flex;
+    flex: 1;
+    align-items: flex-start;
+    padding: 4px 0;
 }
 
-:matches(.database-user-query, .database-query-prompt, .database-query-result)::before {
+.storage-view > .console-prompt::before {
+    position: relative;
+    z-index: 1;
+
+    top: 2px;
+    left: 4px;
+
+    width: 10px;
+    height: 10px;
+
+    content: url(../Images/UserInputPrompt.svg);
+}
+
+:matches(.database-user-query, .database-query-result)::before {
     position: absolute;
     display: block;
     z-index: 1;
@@ -65,10 +75,6 @@
     height: 10px;
     margin-top: -5px;
     -webkit-user-select: none;
-}
-
-.database-query-prompt::before {
-    background-image: url(../Images/UserInputPrompt.svg);
 }
 
 .database-user-query {
@@ -96,6 +102,10 @@
 
 .database-query-result.error {
     color: red;
+    -webkit-user-select: text;
+}
+
+.database-query-result.no-results {
     -webkit-user-select: text;
 }
 

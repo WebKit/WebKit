@@ -25,9 +25,9 @@
 
 WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.View
 {
-    constructor(delegate, mimeType, element)
+    constructor(delegate, mimeType)
     {
-        super(element);
+        super();
 
         mimeType = parseMIMEType(mimeType).type;
 
