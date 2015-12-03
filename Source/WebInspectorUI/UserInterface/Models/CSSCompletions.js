@@ -39,24 +39,33 @@ WebInspector.CSSCompletions = class CSSCompletions
         this._longhands = {};
         this._shorthands = {};
 
-        for (var property of properties) {
-            var propertyName = property.name;
-            this._values.push(propertyName);
+        // The `properties` parameter can be either a list of objects with 'name' / 'longhand'
+        // properties when initialized from the protocol for CSSCompletions.cssNameCompletions.
+        // Or it may just a list of strings when quickly initialized for other completion purposes.
+        if (properties.length && typeof properties[0] === "string")
+            this._values = this._values.concat(properties);
+        else {
+            for (var property of properties) {
+                var propertyName = property.name;
+                console.assert(propertyName);
 
-            var longhands = property.longhands;
-            if (longhands) {
-                this._longhands[propertyName] = longhands;
+                this._values.push(propertyName);
 
-                for (var j = 0; j < longhands.length; ++j) {
-                    var longhandName = longhands[j];
+                var longhands = property.longhands;
+                if (longhands) {
+                    this._longhands[propertyName] = longhands;
 
-                    var shorthands = this._shorthands[longhandName];
-                    if (!shorthands) {
-                        shorthands = [];
-                        this._shorthands[longhandName] = shorthands;
+                    for (var j = 0; j < longhands.length; ++j) {
+                        var longhandName = longhands[j];
+
+                        var shorthands = this._shorthands[longhandName];
+                        if (!shorthands) {
+                            shorthands = [];
+                            this._shorthands[longhandName] = shorthands;
+                        }
+
+                        shorthands.push(propertyName);
                     }
-
-                    shorthands.push(propertyName);
                 }
             }
         }
