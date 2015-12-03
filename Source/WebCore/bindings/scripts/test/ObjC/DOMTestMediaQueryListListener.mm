@@ -55,13 +55,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 - (void)method:(DOMMediaQueryListListener *)listener
 {
     WebCore::JSMainThreadNullState state;

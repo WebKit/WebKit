@@ -156,14 +156,6 @@ static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *se
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_private && _private->includedInWebKitStatistics)
-        --WebHTMLRepresentationCount;
-
-    [super finalize];
-}
-
 - (void)_redirectDataToManualLoader:(id<WebPluginManualLoader>)manualLoader forPluginView:(NSView *)pluginView
 {
     _private->manualLoader = manualLoader;

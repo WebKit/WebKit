@@ -67,13 +67,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 - (BOOL)callbackWithNoParam
 {
     WebCore::JSMainThreadNullState state;

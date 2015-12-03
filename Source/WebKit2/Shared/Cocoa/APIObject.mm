@@ -69,7 +69,6 @@
 #import "_WKUserContentFilterInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
-#import <objc/objc-auto.h>
 
 namespace API {
 
@@ -259,11 +258,6 @@ void* Object::newObject(size_t size, Type type)
 
     Object& object = wrapper._apiObject;
     object.m_wrapper = wrapper;
-
-#if PLATFORM(MAC)
-    if (objc_collectingEnabled())
-        object.ref();
-#endif
 
     return &object;
 }

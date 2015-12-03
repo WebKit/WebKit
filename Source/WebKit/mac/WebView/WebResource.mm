@@ -71,7 +71,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (instancetype)init
@@ -97,13 +96,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (coreResource)
         coreResource->deref();
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (coreResource)
-        coreResource->deref();
-    [super finalize];
 }
 
 @end

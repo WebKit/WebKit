@@ -37,7 +37,6 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/TextIndicatorWindow.h>
-#import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -124,7 +123,6 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (id)init 
@@ -153,11 +151,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     _geolocationProvider = [WebGeolocationProviderIOS sharedGeolocationProvider];
 #endif
 
-#if !PLATFORM(IOS)
-    shouldCloseWithWindow = objc_collectingEnabled();
-#else
     shouldCloseWithWindow = false;
-#endif
 
     pluginDatabaseClientCount++;
 
@@ -211,18 +205,6 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 #endif
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-#if !PLATFORM(IOS)
-    ASSERT(!insertionPasteboard);
-#endif
-#if ENABLE(VIDEO)
-    ASSERT(!fullscreenController);
-#endif
-
-    [super finalize];
 }
 
 @end

@@ -33,7 +33,6 @@
 #import "WebScriptObjectProtocol.h"
 #import "runtime/FunctionPrototype.h"
 #import "runtime_method.h"
-#import <objc/objc-auto.h>
 #import <runtime/Error.h>
 #import <runtime/JSLock.h>
 #import <runtime/ObjectPrototype.h>
@@ -137,21 +136,10 @@ ObjcInstance::~ObjcInstance()
     [pool drain];
 }
 
-static NSAutoreleasePool* allocateAutoReleasePool()
-{
-    // If GC is enabled an autorelease pool is unnecessary, and the
-    // pool cannot be protected from GC so may be collected leading
-    // to a crash when we try to drain the release pool.
-    if (objc_collectingEnabled())
-        return nil;
-
-    return [[NSAutoreleasePool alloc] init];
-}
-
 void ObjcInstance::virtualBegin()
 {
     if (!_pool)
-        _pool = allocateAutoReleasePool();
+        _pool = [[NSAutoreleasePool alloc] init];
     _beginCount++;
 }
 

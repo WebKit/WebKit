@@ -104,7 +104,6 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (id)init
@@ -126,20 +125,6 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     }
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    WebCoreThreadViolationCheckRoundOne();
-    BackForwardList* backForwardList = core(self);
-    ASSERT(backForwardList);
-    if (backForwardList) {
-        ASSERT(backForwardList->closed());
-        backForwardLists().remove(backForwardList);
-        backForwardList->deref();
-    }
-        
-    [super finalize];
 }
 
 - (void)_close

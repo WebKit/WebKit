@@ -1,3 +1,69 @@
+2015-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove Objective-C GC support
+        https://bugs.webkit.org/show_bug.cgi?id=151819
+        rdar://problem/23746991
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject initialize]): Deleted.
+        (-[WebScriptObject finalize]): Deleted.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObject.mm:
+        (-[DOMTestActiveDOMObject finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm:
+        (-[DOMTestCallback finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestCallbackFunction.mm:
+        (-[DOMTestCallbackFunction finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestCustomConstructorWithNoInterfaceObject.mm:
+        (-[DOMTestCustomConstructorWithNoInterfaceObject finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetter.mm:
+        (-[DOMTestCustomNamedGetter finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.mm:
+        (-[DOMTestEventConstructor finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestEventTarget.mm:
+        (-[DOMTestEventTarget finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestException.mm:
+        (-[DOMTestException finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestGenerateIsReachable.mm:
+        (-[DOMTestGenerateIsReachable finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm:
+        (-[DOMTestInterface finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestJSBuiltinConstructor.mm:
+        (-[DOMTestJSBuiltinConstructor finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestMediaQueryListListener.mm:
+        (-[DOMTestMediaQueryListListener finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructor.mm:
+        (-[DOMTestNamedConstructor finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestNondeterministic.mm:
+        (-[DOMTestNondeterministic finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructors.mm:
+        (-[DOMTestOverloadedConstructors finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestOverrideBuiltins.mm:
+        (-[DOMTestOverrideBuiltins finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.mm:
+        (-[DOMTestSerializedScriptValueInterface finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.mm:
+        (-[DOMTestTypedefs finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMattribute.mm:
+        (-[DOMattribute finalize]): Deleted.
+        * bindings/scripts/test/ObjC/DOMreadonly.mm:
+        (-[DOMreadonly finalize]): Deleted.
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::virtualBegin):
+        (allocateAutoReleasePool): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        * platform/mac/SharedBufferMac.mm:
+        (+[WebCoreSharedBufferData initialize]): Deleted.
+        (-[WebCoreSharedBufferData finalize]): Deleted.
+        * platform/mac/WebCoreObjCExtras.h:
+        (WebCoreObjCFinalizeOnMainThread): Deleted.
+
 2015-12-03  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Print out simple line layout statistics for the current page from command line.

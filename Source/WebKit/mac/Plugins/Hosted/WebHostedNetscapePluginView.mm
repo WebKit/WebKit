@@ -76,7 +76,6 @@ extern "C" {
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
     WKSendUserChangeNotifications();
 }
 

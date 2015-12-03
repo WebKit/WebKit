@@ -76,7 +76,6 @@ using namespace WebCore;
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
-    WebCoreObjCFinalizeOnMainThread(self);
     WKSendUserChangeNotifications();
 }
 
@@ -126,13 +125,6 @@ using namespace WebCore;
     ASSERT(!_isStarted);
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT(!_isStarted);
-
-    [super finalize];
 }
 
 - (WebNetscapePluginPackage *)pluginPackage

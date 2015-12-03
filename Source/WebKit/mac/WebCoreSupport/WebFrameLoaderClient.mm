@@ -2303,7 +2303,6 @@ void WebFrameLoaderClient::prefetchDNS(const String& hostname)
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (id)initWithFrame:(Frame*)frame policyFunction:(FramePolicyFunction)policyFunction

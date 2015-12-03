@@ -46,7 +46,6 @@
 #import "WebTiledBackingLayer.h"
 #import <AVFoundation/AVFoundation.h>
 #import <QuartzCore/QuartzCore.h>
-#import <objc/objc-auto.h>
 #import <objc/runtime.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>

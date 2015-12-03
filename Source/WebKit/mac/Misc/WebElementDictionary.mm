@@ -71,7 +71,6 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 + (void)initializeLookupTable
@@ -121,12 +120,6 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     [_cache release];
     [_nilValues release];
     [super dealloc];
-}
-
-- (void)finalize
-{
-    delete _result;
-    [super finalize];
 }
 
 - (void)_fillCache

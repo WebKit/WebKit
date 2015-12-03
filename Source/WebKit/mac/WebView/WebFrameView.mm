@@ -419,14 +419,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [super dealloc];
 }
 
-- (void)finalize 
-{
-    if (_private && _private->includedInWebKitStatistics)
-        --WebFrameViewCount;
-
-    [super finalize];
-}
-
 #if PLATFORM(IOS)
 - (BOOL)scrollView:(WAKScrollView *)scrollView shouldScrollToPoint:(CGPoint)point
 {

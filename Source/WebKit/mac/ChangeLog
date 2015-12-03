@@ -1,3 +1,78 @@
+2015-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove Objective-C GC support
+        https://bugs.webkit.org/show_bug.cgi?id=151819
+        rdar://problem/23746991
+
+        Reviewed by Dan Bernstein.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (+[CarbonWindowAdapter initialize]): Deleted.
+        (-[CarbonWindowAdapter finalize]): Deleted.
+        * Configurations/Base.xcconfig:
+        * History/WebBackForwardList.mm:
+        (+[WebBackForwardList initialize]): Deleted.
+        (-[WebBackForwardList finalize]): Deleted.
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate finalize]): Deleted.
+        (-[WebHistory finalize]): Deleted.
+        * History/WebHistoryItem.mm:
+        (+[WebHistoryItem initialize]): Deleted.
+        (-[WebHistoryItem finalize]): Deleted.
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initialize]): Deleted.
+        (-[WebElementDictionary finalize]): Deleted.
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (+[WebHostedNetscapePluginView initialize]): Deleted.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView finalize]): Deleted.
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage finalize]): Deleted.
+        * Plugins/WebNetscapePluginView.mm:
+        (+[WebNetscapePluginView initialize]): Deleted.
+        (-[WebNetscapePluginView finalize]): Deleted.
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck finalize]): Deleted.
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebUndoStep initialize]): Deleted.
+        (-[WebUndoStep finalize]): Deleted.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebOpenPanelResultListener.mm:
+        (-[WebOpenPanelResultListener finalize]): Deleted.
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin finalize]): Deleted.
+        * WebView/WebArchive.mm:
+        (+[WebArchivePrivate initialize]): Deleted.
+        * WebView/WebDataSource.mm:
+        (+[WebDataSource initialize]): Deleted.
+        (-[WebDataSource finalize]): Deleted.
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView finalize]): Deleted.
+        * WebView/WebFrame.mm:
+        (-[WebFramePrivate setWebFrameView:]):
+        (-[WebFramePrivate finalize]): Deleted.
+        (-[WebFrame finalize]): Deleted.
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView finalize]): Deleted.
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation finalize]): Deleted.
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLViewPrivate initialize]):
+        (-[WebHTMLViewPrivate finalize]): Deleted.
+        (+[WebHTMLView initialize]): Deleted.
+        (-[WebHTMLView finalize]): Deleted.
+        * WebView/WebResource.mm:
+        (+[WebResourcePrivate initialize]): Deleted.
+        (-[WebResourcePrivate finalize]): Deleted.
+        * WebView/WebTextIterator.mm:
+        (+[WebTextIteratorPrivate initialize]): Deleted.
+        * WebView/WebView.mm:
+        (-[WebView finalize]): Deleted.
+        * WebView/WebViewData.mm:
+        (+[WebViewPrivate initialize]): Deleted.
+        (-[WebViewPrivate init]): Deleted.
+        (-[WebViewPrivate finalize]): Deleted.
+
 2015-12-02  Antti Koivisto  <antti@apple.com>
 
         Move ResourceLoadScheduler to WebKit1

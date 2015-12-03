@@ -192,7 +192,6 @@
 #import <WebKitSystemInterface.h>
 #import <bindings/ScriptValue.h>
 #import <mach-o/dyld.h>
-#import <objc/objc-auto.h>
 #import <objc/runtime.h>
 #import <runtime/ArrayPrototype.h>
 #import <runtime/DateInstance.h>
@@ -264,6 +263,7 @@
 #import <WebCore/WebCoreThreadRun.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
+#import <libkern/OSAtomic.h>
 #import <wtf/FastMalloc.h>
 #endif // !PLATFORM(IOS)
 
@@ -5147,15 +5147,6 @@ static bool needsWebViewInitThreadWorkaround()
     }
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT(_private->closed);
-
-    --WebViewCount;
-
-    [super finalize];
 }
 
 - (void)close

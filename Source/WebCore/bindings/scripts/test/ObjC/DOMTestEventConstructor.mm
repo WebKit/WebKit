@@ -55,13 +55,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 - (NSString *)attr1
 {
     WebCore::JSMainThreadNullState state;

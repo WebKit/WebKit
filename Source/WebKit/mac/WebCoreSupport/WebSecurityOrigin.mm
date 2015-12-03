@@ -114,13 +114,6 @@ using namespace WebCore;
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_private)
-        reinterpret_cast<SecurityOrigin*>(_private)->deref();
-    [super finalize];
-}
-
 @end
 
 @implementation WebSecurityOrigin (WebInternal)

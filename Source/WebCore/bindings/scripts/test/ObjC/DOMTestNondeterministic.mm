@@ -54,13 +54,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 - (int)nondeterministicReadonlyAttr
 {
     WebCore::JSMainThreadNullState state;

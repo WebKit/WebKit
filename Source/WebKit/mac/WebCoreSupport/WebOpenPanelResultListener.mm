@@ -51,12 +51,6 @@ using namespace WebCore;
     ASSERT(!_chooser);
     [super dealloc];
 }
-
-- (void)finalize
-{
-    ASSERT(!_chooser);
-    [super finalize];
-}
 #endif
 
 - (void)cancel

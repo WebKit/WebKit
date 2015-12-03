@@ -131,12 +131,6 @@ static Class customScrollerClass;
     [super dealloc];
 }
 
-- (void)finalize
-{
-    delete _private;
-    [super finalize];
-}
-
 - (void)setAllowsHorizontalScrolling:(BOOL)flag
 {
     if (_private->hScrollModeLocked)

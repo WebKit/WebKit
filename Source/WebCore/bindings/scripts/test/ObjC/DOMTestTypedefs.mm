@@ -57,13 +57,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 - (unsigned long long)unsignedLongLongAttr
 {
     WebCore::JSMainThreadNullState state;

@@ -273,7 +273,6 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 // Given a reference to a Carbon window that is to be encapsulated, and an indicator of whether or not this object should take responsibility for disposing of the Carbon window, initialize.
@@ -294,11 +293,6 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Do the standard Cocoa thing.
     [super dealloc];
-}
-
-- (void)finalize {
-    if (_eventHandler) RemoveEventHandler(_eventHandler);
-    [super finalize];
 }
 
 - (WindowRef)windowRef {

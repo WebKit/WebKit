@@ -61,13 +61,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 #if ENABLE(Condition22) || ENABLE(Condition23)
 - (NSString *)implementsStr1
 {

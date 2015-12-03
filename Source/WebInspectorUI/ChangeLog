@@ -1,3 +1,13 @@
+2015-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove Objective-C GC support
+        https://bugs.webkit.org/show_bug.cgi?id=151819
+        rdar://problem/23746991
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+
 2015-12-03  Matt Baker  <mattbaker@apple.com>
 
         Uncaught Exception in Web Inspector: TypeError: null is not an object (evaluating 'dataGridNode.element.classList')

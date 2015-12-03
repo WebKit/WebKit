@@ -77,13 +77,6 @@ using namespace WebCore;
     return [[[self alloc] initWithRequest:request target:target resultObject:obj selector:selector controller:controller contextInfo:contextInfo] autorelease];
 }
 
-- (void)finalize
-{
-    // mandatory to complete or cancel before releasing this object
-    ASSERT(_done);
-    [super finalize];
-}
-
 - (void)dealloc
 {
     // mandatory to complete or cancel before releasing this object

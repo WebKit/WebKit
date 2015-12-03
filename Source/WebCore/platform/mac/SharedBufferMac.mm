@@ -50,7 +50,6 @@ using namespace WebCore;
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
 #endif // !USE(WEB_THREAD)
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (void)dealloc
@@ -59,11 +58,6 @@ using namespace WebCore;
         return;
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    [super finalize];
 }
 
 - (id)initWithSharedBufferDataBuffer:(SharedBuffer::DataBuffer*)dataBuffer

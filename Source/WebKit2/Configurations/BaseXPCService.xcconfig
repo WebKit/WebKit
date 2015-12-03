@@ -23,8 +23,6 @@
 
 #include "BaseTarget.xcconfig"
 
-GCC_ENABLE_OBJC_GC = NO;
-
 INSTALL_PATH = $(INSTALL_PATH_$(WK_XPC_SERVICE_VARIANT));
 
 INSTALL_PATH_Normal[sdk=iphone*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/XPCServices;

@@ -145,11 +145,6 @@ private:
     [super dealloc];
 }
 
-- (void)finalize
-{
-    [super finalize];
-}
-
 // MARK: MODIFYING CONTENTS
 
 static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningOfDay, NSTimeInterval& beginningOfNextDay)
@@ -737,14 +732,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
                                                   object:nil];
     [_historyPrivate release];
     [super dealloc];
-}
-
-- (void)finalize
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSSystemTimeZoneDidChangeNotification
-                                                  object:nil];
-    [super finalize];
 }
 
 // MARK: MODIFYING CONTENTS

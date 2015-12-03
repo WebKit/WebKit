@@ -53,13 +53,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 @end
 
 WebCore::TestOverloadedConstructors* core(DOMTestOverloadedConstructors *wrapper)

@@ -133,7 +133,6 @@ my %conflictMethod = (
     "description" => "NSObject",
     "doesNotRecognizeSelector:" => "NSObject",
     "encodeWithCoder:" => "NSObject",
-    "finalize" => "NSObject",
     "forwardInvocation:" => "NSObject",
     "hash" => "NSObject",
     "init" => "NSObject",
@@ -1215,7 +1214,7 @@ sub GenerateImplementation
     # START implementation
     push(@implContent, "\@implementation $className\n\n");
 
-    # Only generate 'dealloc' and 'finalize' methods for direct subclasses of DOMObject.
+    # Only generate 'dealloc' for direct subclasses of DOMObject.
     if ($parentImplClassName eq "Object") {
         $implIncludes{"WebCoreObjCExtras.h"} = 1;
         push(@implContent, "- (void)dealloc\n");
@@ -1234,21 +1233,6 @@ sub GenerateImplementation
         }
         push(@implContent, "    [super dealloc];\n");
         push(@implContent, "}\n\n");
-
-        push(@implContent, "- (void)finalize\n");
-        push(@implContent, "{\n");
-        if ($interfaceName eq "NodeIterator") {
-            push(@implContent, "    if (_internal) {\n");
-            push(@implContent, "        [self detach];\n");
-            push(@implContent, "        IMPL->deref();\n");
-            push(@implContent, "    };\n");
-        } else {
-            push(@implContent, "    if (_internal)\n");
-            push(@implContent, "        IMPL->deref();\n");
-        }
-        push(@implContent, "    [super finalize];\n");
-        push(@implContent, "}\n\n");
-        
     }
 
     %attributeNames = ();

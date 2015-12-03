@@ -119,7 +119,6 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (id)initWithUndoStep:(PassRefPtr<UndoStep>)step
@@ -138,11 +137,6 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
         return;
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    [super finalize];
 }
 
 + (WebUndoStep *)stepWithUndoStep:(PassRefPtr<UndoStep>)step

@@ -125,7 +125,6 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (instancetype)init
@@ -152,18 +151,6 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     [_private release];
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    WebCoreThreadViolationCheckRoundOne();
-
-    // FIXME: ~HistoryItem is what releases the history item's icon from the icon database
-    // It's probably not good to release icons from the database only when the object is garbage-collected. 
-    // Need to change design so this happens at a predictable time.
-    historyItemWrappers().remove(_private->_historyItem.get());
-
-    [super finalize];
 }
 
 - (id)copyWithZone:(NSZone *)zone

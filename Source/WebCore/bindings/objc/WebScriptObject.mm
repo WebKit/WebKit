@@ -150,7 +150,6 @@ static void addExceptionToConsole(ExecState* exec)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
 #endif // !USE(WEB_THREAD)
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 + (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(RootObject*)originRootObject rootObject:(RootObject*)rootObject
@@ -288,20 +287,6 @@ static void addExceptionToConsole(ExecState* exec)
     [_private release];
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_private->rootObject && _private->rootObject->isValid())
-        _private->rootObject->gcUnprotect(_private->imp);
-
-    if (_private->rootObject)
-        _private->rootObject->deref();
-
-    if (_private->originRootObject)
-        _private->originRootObject->deref();
-
-    [super finalize];
 }
 
 + (BOOL)throwException:(NSString *)exceptionMessage

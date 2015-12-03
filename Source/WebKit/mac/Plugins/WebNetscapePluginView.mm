@@ -194,7 +194,6 @@ typedef struct {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
-    WebCoreObjCFinalizeOnMainThread(self);
     WKSendUserChangeNotifications();
 }
 
@@ -1377,15 +1376,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self fini];
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT(!_isStarted);
-
-    [self fini];
-
-    [super finalize];
 }
 
 - (void)drawRect:(NSRect)rect

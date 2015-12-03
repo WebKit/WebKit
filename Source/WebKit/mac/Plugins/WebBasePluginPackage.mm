@@ -69,7 +69,6 @@ using namespace WebCore;
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
@@ -271,14 +270,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     [pluginDatabases release];
     
     [super dealloc];
-}
-
-- (void)finalize
-{
-    ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
-    [pluginDatabases release];
-
-    [super finalize];
 }
 
 - (const String&)path

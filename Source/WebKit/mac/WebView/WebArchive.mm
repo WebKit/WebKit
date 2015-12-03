@@ -72,7 +72,6 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #endif
-    WebCoreObjCFinalizeOnMainThread(self);
 }
 
 - (instancetype)init

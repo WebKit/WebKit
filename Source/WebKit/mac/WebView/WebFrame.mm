@@ -192,12 +192,7 @@ NSString *NSAccessibilityEnhancedUserInterfaceAttribute = @"AXEnhancedUserInterf
     [super dealloc];
 }
 
-- (void)finalize
-{
-    [super finalize];
-}
-
-- (void)setWebFrameView:(WebFrameView *)v 
+- (void)setWebFrameView:(WebFrameView *)v
 { 
     [v retain];
     [webFrameView release];
@@ -2370,14 +2365,6 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     [_private release];
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (_private && _private->includedInWebKitStatistics)
-        --WebFrameCount;
-
-    [super finalize];
 }
 
 - (NSString *)name

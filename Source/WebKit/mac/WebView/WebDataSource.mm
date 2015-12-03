@@ -156,7 +156,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         WTF::initializeMainThreadToProcessMainThread();
         RunLoop::initializeMainRunLoop();
 #endif
-        WebCoreObjCFinalizeOnMainThread(self);
     }
 }
 
@@ -438,16 +437,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     delete toPrivate(_private);
 
     [super dealloc];
-}
-
-- (void)finalize
-{
-    if (toPrivate(_private) && toPrivate(_private)->includedInWebKitStatistics)
-        --WebDataSourceCount;
-
-    delete toPrivate(_private);
-
-    [super finalize];
 }
 
 - (NSData *)data

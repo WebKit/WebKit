@@ -59,13 +59,6 @@
     [super dealloc];
 }
 
-- (void)finalize
-{
-    if (_internal)
-        IMPL->deref();
-    [super finalize];
-}
-
 - (DOMNode *)item:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
