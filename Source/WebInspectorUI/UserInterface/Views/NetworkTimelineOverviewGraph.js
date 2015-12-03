@@ -61,12 +61,11 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
         }
     }
 
-    updateLayout()
+    // Protected
+
+    layout()
     {
-        super.updateLayout();
-
         var secondsPerPixel = this.timelineOverview.secondsPerPixel;
-
         var recordBarIndex = 0;
 
         function createBar(rowElement, rowRecordBars, records, renderMode)

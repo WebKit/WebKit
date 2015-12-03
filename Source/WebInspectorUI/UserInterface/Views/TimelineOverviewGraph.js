@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInspector.Object
+WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInspector.View
 {
     constructor(timelineOverview)
     {
         super();
 
-        this.element = document.createElement("div");
         this.element.classList.add("timeline-overview-graph");
 
         this._zeroTime = 0;
@@ -39,8 +38,7 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         this._timelineOverview = timelineOverview;
         this._selectedRecord = null;
         this._selectedRecordChanged = false;
-        this._scheduledLayoutUpdateIdentifier = 0;
-        this._scheduledSelectedRecordLayoutUpdateIdentifier = 0;
+        this._scheduledSelectedRecordLayoutUpdateIdentifier = undefined;
     }
 
     // Public
@@ -176,35 +174,16 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         // Implemented by sub-classes if needed.
     }
 
-    updateLayout()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = 0;
-        }
-
-        // Implemented by sub-classes if needed.
-    }
-
-    updateLayoutIfNeeded()
-    {
-        if (!this._scheduledLayoutUpdateIdentifier)
-            return;
-        this.updateLayout();
-    }
-
-    // Protected
-
     needsLayout()
     {
+        // FIXME: needsLayout can be removed once <https://webkit.org/b/150741> is fixed.
         if (!this._visible)
             return;
 
-        if (this._scheduledLayoutUpdateIdentifier)
-            return;
-
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
+        super.needsLayout();
     }
+
+    // Protected
 
     dispatchSelectedRecordChangedEvent()
     {
@@ -226,20 +205,16 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
     _needsSelectedRecordLayout()
     {
         // If layout is scheduled, abort since the selected record will be updated when layout happens.
-        if (this._scheduledLayoutUpdateIdentifier)
+        if (this.layoutPending)
             return;
 
         if (this._scheduledSelectedRecordLayoutUpdateIdentifier)
             return;
 
-        function update()
-        {
-            this._scheduledSelectedRecordLayoutUpdateIdentifier = 0;
-
+        this._scheduledSelectedRecordLayoutUpdateIdentifier = requestAnimationFrame(() => {
+            this._scheduledSelectedRecordLayoutUpdateIdentifier = undefined;
             this.updateSelectedRecord();
-        }
-
-        this._scheduledSelectedRecordLayoutUpdateIdentifier = requestAnimationFrame(update.bind(this));
+        });
     }
 };
 

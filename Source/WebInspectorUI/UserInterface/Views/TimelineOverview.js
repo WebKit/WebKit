@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Object
+WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 {
     constructor(identifier, timelineRecording, minimumDurationPerPixel, maximumDurationPerPixel, defaultSettingsValues)
     {
@@ -37,16 +37,15 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
 
-        this._element = document.createElement("div");
-        this._element.classList.add("timeline-overview", identifier);
-        this._element.addEventListener("wheel", this._handleWheelEvent.bind(this));
-        this._element.addEventListener("gesturestart", this._handleGestureStart.bind(this));
-        this._element.addEventListener("gesturechange", this._handleGestureChange.bind(this));
-        this._element.addEventListener("gestureend", this._handleGestureEnd.bind(this));
+        this.element.classList.add("timeline-overview", identifier);
+        this.element.addEventListener("wheel", this._handleWheelEvent.bind(this));
+        this.element.addEventListener("gesturestart", this._handleGestureStart.bind(this));
+        this.element.addEventListener("gesturechange", this._handleGestureChange.bind(this));
+        this.element.addEventListener("gestureend", this._handleGestureEnd.bind(this));
 
         this._graphsContainerElement = document.createElement("div");
         this._graphsContainerElement.classList.add("graphs-container");
-        this._element.appendChild(this._graphsContainerElement);
+        this.element.appendChild(this._graphsContainerElement);
 
         this._timelineOverviewGraphsMap = new Map;
 
@@ -56,7 +55,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._timelineRuler.element.addEventListener("mousedown", this._timelineRulerMouseDown.bind(this));
         this._timelineRuler.element.addEventListener("click", this._timelineRulerMouseClicked.bind(this));
         this._timelineRuler.addEventListener(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
-        this._element.appendChild(this._timelineRuler.element);
+        this.addSubview(this._timelineRuler);
 
         this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
         this._timelineRuler.addMarker(this._currentTimeMarker);
@@ -64,7 +63,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._scrollContainerElement = document.createElement("div");
         this._scrollContainerElement.classList.add("scroll-container");
         this._scrollContainerElement.addEventListener("scroll", this._handleScrollEvent.bind(this));
-        this._element.appendChild(this._scrollContainerElement);
+        this.element.appendChild(this._scrollContainerElement);
 
         this._scrollWidthSizer = document.createElement("div");
         this._scrollWidthSizer.classList.add("scroll-width-sizer");
@@ -100,11 +99,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
 
     // Public
 
-    get element()
-    {
-        return this._element;
-    }
-
     get startTime()
     {
         return this._startTime;
@@ -117,7 +111,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
 
         this._startTime = x || 0;
 
-        this._needsLayout();
+        this.needsLayout();
     }
 
     get currentTime()
@@ -133,7 +127,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._currentTime = x || 0;
         this._revealCurrentTime = true;
 
-        this._needsLayout();
+        this.needsLayout();
     }
 
     get secondsPerPixel()
@@ -157,7 +151,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._durationPerPixel = x;
         this._durationPerPixelSetting.value = x;
 
-        this._needsLayout();
+        this.needsLayout();
     }
 
     get pixelAlignDuration()
@@ -188,7 +182,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
 
         this._endTime = x || 0;
 
-        this._needsLayout();
+        this.needsLayout();
     }
 
     get scrollStartTime()
@@ -203,7 +197,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
 
         this._scrollStartTime = x || 0;
 
-        this._needsLayout();
+        this.needsLayout();
     }
 
     get visibleDuration()
@@ -311,13 +305,34 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this.updateLayout();
     }
 
-    updateLayout()
+    updateLayoutIfNeeded()
     {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = undefined;
+        if (this.layoutPending) {
+            super.updateLayoutIfNeeded();
+            return;
         }
 
+        this._timelineRuler.updateLayoutIfNeeded();
+
+        for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
+            timelineOverviewGraph.updateLayoutIfNeeded();
+    }
+
+    // Protected
+
+    get timelineRuler()
+    {
+        return this._timelineRuler;
+    }
+
+    canShowTimeline(timeline)
+    {
+        // Implemented by subclasses.
+        console.error("Needs to be implemented by a subclass.");
+    }
+
+    layout()
+    {
         // Calculate the required width based on the duration and seconds per pixel.
         var duration = this._endTime - this._startTime;
         var newWidth = Math.ceil(duration / this._durationPerPixel);
@@ -347,8 +362,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
             this._scrollContainerElement.scrollLeft = Math.ceil((scrollStartTime - this._startTime) / this._durationPerPixel);
         }
 
-        this._timelineRuler.updateLayout();
-
         for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values()) {
             timelineOverviewGraph.zeroTime = this._startTime;
             timelineOverviewGraph.startTime = scrollStartTime;
@@ -356,32 +369,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
             timelineOverviewGraph.endTime = scrollStartTime + visibleDuration;
             timelineOverviewGraph.updateLayout();
         }
-    }
-
-    updateLayoutIfNeeded()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            this.updateLayout();
-            return;
-        }
-
-        this._timelineRuler.updateLayoutIfNeeded();
-
-        for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
-            timelineOverviewGraph.updateLayoutIfNeeded();
-    }
-
-    // Protected
-
-    get timelineRuler()
-    {
-        return this._timelineRuler;
-    }
-
-    canShowTimeline(timeline)
-    {
-        // Implemented by subclasses.
-        console.error("Needs to be implemented by a subclass.");
     }
 
     // Private
@@ -444,7 +431,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         }
 
         // Remember the mouse position in time.
-        var mouseOffset = event.pageX - this._element.totalOffsetLeft;
+        var mouseOffset = event.pageX - this.element.totalOffsetLeft;
         var mousePositionTime = this._scrollStartTime + (mouseOffset * this._durationPerPixel);
         var deviceDirection = event.webkitDirectionInvertedFromDevice ? 1 : -1;
         var delta = event.deltaY * (this._durationPerPixel / WebInspector.TimelineOverview.ScrollDeltaDenominator) * deviceDirection;
@@ -476,7 +463,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
             return;
         }
 
-        var mouseOffset = event.pageX - this._element.totalOffsetLeft;
+        var mouseOffset = event.pageX - this.element.totalOffsetLeft;
         var mousePositionTime = this._scrollStartTime + (mouseOffset * this._durationPerPixel);
 
         this._handlingGesture = true;
@@ -492,7 +479,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         // Cap zooming out at 5x.
         var scale = Math.max(1/5, event.scale);
 
-        var mouseOffset = event.pageX - this._element.totalOffsetLeft;
+        var mouseOffset = event.pageX - this.element.totalOffsetLeft;
         var newSecondsPerPixel = this._gestureStartDurationPerPixel / scale;
 
         this.secondsPerPixel = newSecondsPerPixel;
@@ -523,6 +510,8 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         var overviewGraph = WebInspector.TimelineOverviewGraph.createForTimeline(timeline, this);
         overviewGraph.addEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
         this._timelineOverviewGraphsMap.set(timeline, overviewGraph);
+
+        // FIXME: use View.prototype.addSubview(overviewGraph) once <https://webkit.org/b/150982> is fixed.
         this._graphsContainerElement.appendChild(overviewGraph.element);
     }
 
@@ -537,7 +526,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
 
         var overviewGraph = this._timelineOverviewGraphsMap.take(timeline);
         overviewGraph.removeEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
-        this._graphsContainerElement.removeChild(overviewGraph.element);
+        overviewGraph.element.remove();
     }
 
     _markerAdded(event)

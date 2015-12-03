@@ -58,10 +58,10 @@ WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph ext
         this._timelinePaintRecordRow = createRecordRow.call(this);
     }
 
-    updateLayout()
-    {
-        super.updateLayout();
+    // Protected
 
+    layout()
+    {
         this._updateRowLayout(this._timelinePaintRecordRow);
         this._updateRowLayout(this._timelineLayoutRecordRow);
     }

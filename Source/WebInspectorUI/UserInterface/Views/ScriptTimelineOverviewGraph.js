@@ -50,12 +50,11 @@ WebInspector.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph ext
         this.element.removeChildren();
     }
 
-    updateLayout()
+    // Protected
+
+    layout()
     {
-        super.updateLayout();
-
         var secondsPerPixel = this.timelineOverview.secondsPerPixel;
-
         var recordBarIndex = 0;
 
         function createBar(records, renderMode)

@@ -93,10 +93,10 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         this._timelineRecordFrames[frameIndex].filtered = filtered;
     }
 
-    updateLayout()
-    {
-        super.updateLayout();
+    // Protected
 
+    layout()
+    {
         if (!this._renderingFrameTimeline.records.length)
             return;
 
@@ -130,8 +130,6 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
         this._updateDividers();
         this._updateFrameMarker();
     }
-
-    // Protected
 
     updateSelectedRecord()
     {
