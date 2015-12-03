@@ -352,6 +352,7 @@ WebInspector.contentLoaded = function()
 
     this._updateDockNavigationItems();
     this._updateToolbarHeight();
+    this._setupViewHierarchy();
 
     this._pendingOpenTabs = [];
 
@@ -1368,6 +1369,20 @@ WebInspector._updateToolbarHeight = function()
 {
     if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10)
         InspectorFrontendHost.setToolbarHeight(this.toolbar.element.offsetHeight);
+};
+
+WebInspector._setupViewHierarchy = function()
+{
+    var rootView = new WebInspector.View(document.body);
+    rootView.addSubview(this.toolbar);
+    rootView.addSubview(this.tabBar);
+    rootView.addSubview(this.tabBrowser);
+    rootView.addSubview(this.splitContentBrowser);
+    rootView.addSubview(this.quickConsole);
+
+    // FIXME: add navigation and details sidebars to the tree once <https://webkit.org/b/151057> is fixed.
+
+    rootView.makeRootView();
 };
 
 WebInspector._tabBrowserSelectedTabContentViewDidChange = function(event)
