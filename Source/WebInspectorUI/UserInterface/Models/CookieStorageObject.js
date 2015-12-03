@@ -47,7 +47,7 @@ WebInspector.CookieStorageObject = class CookieStorageObject
     {
         if (cookieDomain.charAt(0) !== ".")
             return resourceDomain === cookieDomain;
-        return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
+        return !!resourceDomain.match(new RegExp("^(?:[^\\.]+\\.)*" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
     }
 
     // Public
@@ -61,7 +61,7 @@ WebInspector.CookieStorageObject = class CookieStorageObject
     {
         // FIXME <https://webkit.org/b/151413>: This class should actually store cookie data for this host.
         cookie[WebInspector.CookieStorageObject.CookieHostCookieKey] = this.host;
-    }    
+    }
 };
 
 WebInspector.CookieStorageObject.TypeIdentifier = "cookie-storage";
