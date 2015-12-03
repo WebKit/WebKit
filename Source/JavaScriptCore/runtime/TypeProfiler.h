@@ -40,28 +40,53 @@ class TypeDescription;
 
 namespace JSC {
 
+enum TypeProfilerSearchDescriptor {
+    TypeProfilerSearchDescriptorNormal = 1,
+    TypeProfilerSearchDescriptorFunctionReturn = 2
+};
+
 struct QueryKey {
     QueryKey()
         : m_sourceID(0)
         , m_divot(0)
+        , m_searchDescriptor(TypeProfilerSearchDescriptorFunctionReturn)
     { }
 
-    QueryKey(intptr_t sourceID, unsigned divot)
+    QueryKey(intptr_t sourceID, unsigned divot, TypeProfilerSearchDescriptor searchDescriptor)
         : m_sourceID(sourceID)
         , m_divot(divot)
+        , m_searchDescriptor(searchDescriptor)
     { }
 
     QueryKey(WTF::HashTableDeletedValueType)
         : m_sourceID(INTPTR_MAX)
         , m_divot(UINT_MAX)
+        , m_searchDescriptor(TypeProfilerSearchDescriptorFunctionReturn)
     { }
 
-    bool isHashTableDeletedValue() const { return m_sourceID == INTPTR_MAX && m_divot == UINT_MAX; }
-    bool operator==(const QueryKey& other) const { return m_sourceID == other.m_sourceID && m_divot == other.m_divot; }
-    unsigned hash() const { return m_sourceID + m_divot; }
+    bool isHashTableDeletedValue() const 
+    { 
+        return m_sourceID == INTPTR_MAX 
+            && m_divot == UINT_MAX
+            && m_searchDescriptor == TypeProfilerSearchDescriptorFunctionReturn;
+    }
+
+    bool operator==(const QueryKey& other) const
+    {
+        return m_sourceID == other.m_sourceID 
+            && m_divot == other.m_divot
+            && m_searchDescriptor == other.m_searchDescriptor;
+    }
+
+    unsigned hash() const 
+    { 
+        unsigned hash = m_sourceID + m_divot * m_searchDescriptor;
+        return hash;
+    }
 
     intptr_t m_sourceID;
     unsigned m_divot;
+    TypeProfilerSearchDescriptor m_searchDescriptor;
 };
 
 struct QueryKeyHash {
@@ -80,18 +105,15 @@ template<> struct DefaultHash<JSC::QueryKey> {
 };
 
 template<typename T> struct HashTraits;
-template<> struct HashTraits<JSC::QueryKey> : SimpleClassHashTraits<JSC::QueryKey> { };
+template<> struct HashTraits<JSC::QueryKey> : SimpleClassHashTraits<JSC::QueryKey> {
+    static const bool emptyValueIsZero = false;
+};
 
 } // namespace WTF
 
 namespace JSC {
 
 class VM;
-
-enum TypeProfilerSearchDescriptor {
-    TypeProfilerSearchDescriptorNormal = 1,
-    TypeProfilerSearchDescriptorFunctionReturn = 2
-};
 
 class TypeProfiler {
 public:

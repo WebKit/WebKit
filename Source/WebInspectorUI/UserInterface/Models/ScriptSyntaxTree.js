@@ -128,7 +128,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         function removeFunctionsFilter(node)
         {
             return node.type !== WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression
-                && node.type !== WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration;
+                && node.type !== WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration
+                && node.type !== WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression;
         }
 
         var nodes = this.filter(removeFunctionsFilter, startNode);
@@ -148,10 +149,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
 
     static functionReturnDivot(node)
     {
-        console.assert(
-            node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration 
-            || node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression 
-            || node.type === WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition);
+        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression || node.type === WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition || node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression); 
 
         // COMPATIBILITY (iOS 9): Legacy Backends view the return type as being the opening "{" of the function body. 
         // After iOS 9, this is to move to the start of the function statement/expression. See below:
@@ -179,6 +177,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             switch (node.type) {
             case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
             case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
+            case WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
                 for (var param of node.params) {
                     for (var identifier of this._gatherIdentifiersInDeclaration(param)) {
                         allRequests.push({
@@ -189,7 +188,6 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                         allRequestNodes.push(identifier);
                     }
                 }
-
 
                 allRequests.push({
                     typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn,
@@ -368,6 +366,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
         case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
+        case WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
             callback(node, state);
             this._recurse(node.id, callback, state);
             this._recurseArray(node.params, callback, state);
@@ -527,6 +526,29 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
 
         var result = null;
         switch (node.type) {
+        case "ArrayExpression":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression,
+                elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
+            };
+            break;
+        case "ArrayPattern":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern,
+                elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
+            };
+            break;
+        case "ArrowFunctionExpression":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression,
+                id: this._createInternalSyntaxTree(node.id),
+                params: node.params.map(this._createInternalSyntaxTree.bind(this)),
+                defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
+                body: this._createInternalSyntaxTree(node.body),
+                expression: node.expression, // Boolean indicating if the body a single expression or a block statement.
+                isGetterOrSetter: false
+            };
+            break;
         case "AssignmentExpression":
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.AssignmentExpression,
@@ -540,18 +562,6 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.AssignmentPattern,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right),
-            };
-            break;
-        case "ArrayExpression":
-            result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression,
-                elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
-            };
-            break;
-        case "ArrayPattern":
-            result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern,
-                elements: node.elements.map(this._createInternalSyntaxTree.bind(this))
             };
             break;
         case "BlockStatement":
@@ -942,6 +952,7 @@ WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor = {
 WebInspector.ScriptSyntaxTree.NodeType = {
     ArrayExpression: Symbol("array-expression"),
     ArrayPattern: Symbol("array-pattern"),
+    ArrowFunctionExpression: Symbol("arrow-function-expression"),
     AssignmentExpression: Symbol("assignment-expression"),
     AssignmentPattern: Symbol("assignment-pattern"),
     BinaryExpression: Symbol("binary-expression"),
