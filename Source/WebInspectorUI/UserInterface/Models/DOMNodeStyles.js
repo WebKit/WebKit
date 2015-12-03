@@ -257,6 +257,24 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
     }
 
+    addRuleWithSelector(selector)
+    {
+        if (!selector)
+            return;
+
+        function addedRule(error, rulePayload)
+        {
+            if (error)
+                return;
+
+            DOMAgent.markUndoableState();
+
+            this.refresh();
+        }
+
+        CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector}, addedRule.bind(this));
+    }
+
     get matchedRules()
     {
         return this._matchedRules;
