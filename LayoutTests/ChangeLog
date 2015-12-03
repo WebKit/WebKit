@@ -1,3 +1,16 @@
+2015-12-02  Mark Lam  <mark.lam@apple.com>
+
+        Polymorphic operand types for DFG and FTL mul.
+        https://bugs.webkit.org/show_bug.cgi?id=151746
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/ftl-object-mul-expected.txt: Added.
+        * js/regress/ftl-object-mul.html: Added.
+        * js/regress/script-tests/ftl-object-mul.js: Added.
+        (o1.valueOf):
+        (foo):
+
 2015-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unify font-variant-* with font-variant shorthand

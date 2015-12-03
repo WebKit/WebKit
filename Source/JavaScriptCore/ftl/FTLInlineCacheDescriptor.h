@@ -165,6 +165,12 @@ protected:
     SnippetOperand m_rightOperand;
 };
 
+class ArithMulDescriptor : public BinaryOpDescriptor {
+public:
+    ArithMulDescriptor(unsigned stackmapID, CodeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand);
+    static size_t icSize();
+};
+
 class ArithSubDescriptor : public BinaryOpDescriptor {
 public:
     ArithSubDescriptor(unsigned stackmapID, CodeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand);

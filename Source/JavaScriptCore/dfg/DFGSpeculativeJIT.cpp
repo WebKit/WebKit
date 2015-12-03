@@ -39,6 +39,7 @@
 #include "DFGSlowPathGenerator.h"
 #include "DirectArguments.h"
 #include "JITAddGenerator.h"
+#include "JITMulGenerator.h"
 #include "JITSubGenerator.h"
 #include "JSArrowFunction.h"
 #include "JSCInlines.h"
@@ -3443,7 +3444,108 @@ void SpeculativeJIT::compileArithMul(Node* node)
         doubleResult(result.fpr(), node);
         return;
     }
-        
+
+    case UntypedUse: {
+        Edge& leftChild = node->child1();
+        Edge& rightChild = node->child2();
+
+        if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node())) {
+            JSValueOperand left(this, leftChild);
+            JSValueOperand right(this, rightChild);
+            JSValueRegs leftRegs = left.jsValueRegs();
+            JSValueRegs rightRegs = right.jsValueRegs();
+#if USE(JSVALUE64)
+            GPRTemporary result(this);
+            JSValueRegs resultRegs = JSValueRegs(result.gpr());
+#else
+            GPRTemporary resultTag(this);
+            GPRTemporary resultPayload(this);
+            JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
+#endif
+            flushRegisters();
+            callOperation(operationValueMul, resultRegs, leftRegs, rightRegs);
+            m_jit.exceptionCheck();
+
+            jsValueResult(resultRegs, node);
+            return;
+        }
+
+        Optional<JSValueOperand> left;
+        Optional<JSValueOperand> right;
+
+        JSValueRegs leftRegs;
+        JSValueRegs rightRegs;
+
+        FPRTemporary leftNumber(this);
+        FPRTemporary rightNumber(this);
+        FPRReg leftFPR = leftNumber.fpr();
+        FPRReg rightFPR = rightNumber.fpr();
+
+#if USE(JSVALUE64)
+        GPRTemporary result(this);
+        JSValueRegs resultRegs = JSValueRegs(result.gpr());
+        GPRTemporary scratch(this);
+        GPRReg scratchGPR = scratch.gpr();
+        FPRReg scratchFPR = InvalidFPRReg;
+#else
+        GPRTemporary resultTag(this);
+        GPRTemporary resultPayload(this);
+        JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
+        GPRReg scratchGPR = resultTag.gpr();
+        FPRTemporary fprScratch(this);
+        FPRReg scratchFPR = fprScratch.fpr();
+#endif
+
+        SnippetOperand leftOperand(m_state.forNode(leftChild).resultType());
+        SnippetOperand rightOperand(m_state.forNode(rightChild).resultType());
+
+        if (leftChild->isInt32Constant())
+            leftOperand.setConstInt32(leftChild->asInt32());
+        if (rightChild->isInt32Constant())
+            rightOperand.setConstInt32(rightChild->asInt32());
+
+        RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+        if (!leftOperand.isPositiveConstInt32()) {
+            left = JSValueOperand(this, leftChild);
+            leftRegs = left->jsValueRegs();
+        }
+        if (!rightOperand.isPositiveConstInt32()) {
+            right = JSValueOperand(this, rightChild);
+            rightRegs = right->jsValueRegs();
+        }
+
+        JITMulGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
+            leftFPR, rightFPR, scratchGPR, scratchFPR);
+        gen.generateFastPath(m_jit);
+
+        ASSERT(gen.didEmitFastPath());
+        gen.endJumpList().append(m_jit.jump());
+
+        gen.slowPathJumpList().link(&m_jit);
+        silentSpillAllRegisters(resultRegs);
+
+        if (leftOperand.isPositiveConstInt32()) {
+            leftRegs = resultRegs;
+            int64_t leftConst = leftOperand.asConstInt32();
+            m_jit.moveValue(JSValue(leftConst), leftRegs);
+        }
+        if (rightOperand.isPositiveConstInt32()) {
+            rightRegs = resultRegs;
+            int64_t rightConst = rightOperand.asConstInt32();
+            m_jit.moveValue(JSValue(rightConst), rightRegs);
+        }
+
+        callOperation(operationValueMul, resultRegs, leftRegs, rightRegs);
+
+        silentFillAllRegisters(resultRegs);
+        m_jit.exceptionCheck();
+
+        gen.endJumpList().link(&m_jit);
+        jsValueResult(resultRegs, node);
+        return;
+    }
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return;

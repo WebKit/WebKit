@@ -43,8 +43,8 @@ var values = [
     '-0x7fff',
     '0x10000',
     '-0x10000',
-    '0x7ffffff',
-    '-0x7ffffff',
+    '0x7fffffff',
+    '-0x7fffffff',
     '0x100000000',
     '-0x100000000',
 
@@ -59,8 +59,8 @@ var values = [
     '"-0x7fff"',
     '"0x10000"',
     '"-0x10000"',
-    '"0x7ffffff"',
-    '"-0x7ffffff"',
+    '"0x7fffffff"',
+    '"-0x7fffffff"',
     '"0x100000000"',
     '"-0x100000000"',
 ];

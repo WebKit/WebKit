@@ -334,12 +334,16 @@ private:
             SpeculatedType right = node->child2()->prediction();
             
             if (left && right) {
-                if (m_graph.mulShouldSpeculateInt32(node, m_pass))
-                    changed |= mergePrediction(SpecInt32);
-                else if (m_graph.mulShouldSpeculateMachineInt(node, m_pass))
-                    changed |= mergePrediction(SpecInt52);
-                else
-                    changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
+                    && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
+                    if (m_graph.mulShouldSpeculateInt32(node, m_pass))
+                        changed |= mergePrediction(SpecInt32);
+                    else if (m_graph.mulShouldSpeculateMachineInt(node, m_pass))
+                        changed |= mergePrediction(SpecInt52);
+                    else
+                        changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
+                } else
+                    changed |= mergePrediction(SpecInt32 | SpecBytecodeDouble);
             }
             break;
         }

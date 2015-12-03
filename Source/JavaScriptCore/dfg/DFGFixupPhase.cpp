@@ -227,9 +227,18 @@ private:
         }
             
         case ArithMul: {
+            Edge& leftChild = node->child1();
+            Edge& rightChild = node->child2();
+            if (Node::shouldSpeculateUntypedForArithmetic(leftChild.node(), rightChild.node())
+                || m_graph.hasExitSite(node->origin.semantic, BadType)) {
+                fixEdge<UntypedUse>(leftChild);
+                fixEdge<UntypedUse>(rightChild);
+                node->setResult(NodeResultJS);
+                break;
+            }
             if (m_graph.mulShouldSpeculateInt32(node, FixupPass)) {
-                fixIntOrBooleanEdge(node->child1());
-                fixIntOrBooleanEdge(node->child2());
+                fixIntOrBooleanEdge(leftChild);
+                fixIntOrBooleanEdge(rightChild);
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
                 else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
@@ -239,8 +248,8 @@ private:
                 break;
             }
             if (m_graph.mulShouldSpeculateMachineInt(node, FixupPass)) {
-                fixEdge<Int52RepUse>(node->child1());
-                fixEdge<Int52RepUse>(node->child2());
+                fixEdge<Int52RepUse>(leftChild);
+                fixEdge<Int52RepUse>(rightChild);
                 if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                     node->setArithMode(Arith::CheckOverflow);
                 else
@@ -248,8 +257,8 @@ private:
                 node->setResult(NodeResultInt52);
                 break;
             }
-            fixDoubleOrBooleanEdge(node->child1());
-            fixDoubleOrBooleanEdge(node->child2());
+            fixDoubleOrBooleanEdge(leftChild);
+            fixDoubleOrBooleanEdge(rightChild);
             node->setResult(NodeResultDouble);
             break;
         }

@@ -232,6 +232,7 @@ public:
                             maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, m_graph.localsLiveInBytecode(opCatchOrigin).bitCount());
                         break;
                     }
+                    case ArithMul:
                     case ArithSub:
                     case GetById:
                     case GetByIdFlush:
@@ -1485,8 +1486,8 @@ private:
     
     void compileValueAdd()
     {
-        auto leftChild = m_node->child1();
-        auto rightChild = m_node->child2();
+        Edge& leftChild = m_node->child1();
+        Edge& rightChild = m_node->child2();
 
         if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
             setJSValue(vmCall(m_out.int64, m_out.operation(operationValueAddNotNumber), m_callFrame,
@@ -1809,7 +1810,60 @@ private:
                 m_out.doubleMul(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
-            
+
+        case UntypedUse: {
+            Edge& leftChild = m_node->child1();
+            Edge& rightChild = m_node->child2();
+
+            if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
+                setJSValue(vmCall(m_out.int64, m_out.operation(operationValueMul), m_callFrame,
+                    lowJSValue(leftChild), lowJSValue(rightChild)));
+                return;
+            }
+
+            unsigned stackmapID = m_stackmapIDs++;
+
+            if (Options::verboseCompilation())
+                dataLog("    Emitting ArithMul patchpoint with stackmap #", stackmapID, "\n");
+
+#if FTL_USES_B3
+            CRASH();
+#else
+            LValue left = lowJSValue(leftChild);
+            LValue right = lowJSValue(rightChild);
+
+            SnippetOperand leftOperand(abstractValue(leftChild).resultType());
+            SnippetOperand rightOperand(abstractValue(rightChild).resultType());
+
+            if (leftChild->isInt32Constant())
+                leftOperand.setConstInt32(leftChild->asInt32());
+            if (rightChild->isInt32Constant())
+                rightOperand.setConstInt32(rightChild->asInt32());
+
+            RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+            // Arguments: id, bytes, target, numArgs, args...
+            StackmapArgumentList arguments;
+            arguments.append(m_out.constInt64(stackmapID));
+            arguments.append(m_out.constInt32(ArithSubDescriptor::icSize()));
+            arguments.append(constNull(m_out.ref8));
+            arguments.append(m_out.constInt32(2));
+            arguments.append(left);
+            arguments.append(right);
+
+            appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
+                ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
+
+            LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
+            setInstructionCallingConvention(call, LLVMAnyRegCallConv);
+
+            m_ftlState.binaryOps.append(ArithMulDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
+
+            setJSValue(call);
+#endif
+            break;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;

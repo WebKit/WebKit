@@ -336,16 +336,7 @@ static void generateBinaryOpICFastPath(
         CCallHelpers::Jump done;
         CCallHelpers::Jump slowPathStart;
 
-        switch (ic.nodeType()) {
-        case ArithSub:
-            generateArithSubFastPath(ic, fastPathJIT, result, left, right, usedRegisters, done, slowPathStart);
-            break;
-        case ValueAdd:
-            generateValueAddFastPath(ic, fastPathJIT, result, left, right, usedRegisters, done, slowPathStart);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+        generateBinaryOpFastPath(ic, fastPathJIT, result, left, right, usedRegisters, done, slowPathStart);
 
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
         const char* fastPathICName = ic.fastPathICName();

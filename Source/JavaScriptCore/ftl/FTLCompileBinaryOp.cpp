@@ -32,6 +32,7 @@
 #include "FTLInlineCacheDescriptor.h"
 #include "GPRInfo.h"
 #include "JITAddGenerator.h"
+#include "JITMulGenerator.h"
 #include "JITSubGenerator.h"
 #include "ScratchRegisterAllocator.h"
 
@@ -152,11 +153,11 @@ private:
     GPRReg m_savedTagTypeNumberRegister { InvalidGPRReg };
 };
 
-void generateArithSubFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
+template<typename BinaryArithOpGenerator>
+void generateBinaryArithOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     GPRReg result, GPRReg left, GPRReg right, RegisterSet usedRegisters,
     CCallHelpers::Jump& done, CCallHelpers::Jump& slowPathStart)
 {
-    ASSERT(ic.nodeType() == ArithSub);
     ScratchRegisterAllocator allocator(usedRegisters);
 
     BinarySnippetRegisterContext context(allocator, result, left, right);
@@ -166,7 +167,7 @@ void generateArithSubFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     FPRReg rightFPR = allocator.allocateScratchFPR();
     FPRReg scratchFPR = InvalidFPRReg;
 
-    JITSubGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
+    BinaryArithOpGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
         JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
 
     auto numberOfBytesUsedToPreserveReusedRegisters =
@@ -189,41 +190,23 @@ void generateArithSubFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     slowPathStart = jit.jump();
 }
 
-void generateValueAddFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
+void generateBinaryOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     GPRReg result, GPRReg left, GPRReg right, RegisterSet usedRegisters,
     CCallHelpers::Jump& done, CCallHelpers::Jump& slowPathStart)
 {
-    ASSERT(ic.nodeType() == ValueAdd);
-    ScratchRegisterAllocator allocator(usedRegisters);
-
-    BinarySnippetRegisterContext context(allocator, result, left, right);
-
-    GPRReg scratchGPR = allocator.allocateScratchGPR();
-    FPRReg leftFPR = allocator.allocateScratchFPR();
-    FPRReg rightFPR = allocator.allocateScratchFPR();
-    FPRReg scratchFPR = InvalidFPRReg;
-
-    JITAddGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
-        JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
-
-    auto numberOfBytesUsedToPreserveReusedRegisters =
-    allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
-
-    context.initializeRegisters(jit);
-    gen.generateFastPath(jit);
-
-    ASSERT(gen.didEmitFastPath());
-    gen.endJumpList().link(&jit);
-    context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
-    done = jit.jump();
-
-    gen.slowPathJumpList().link(&jit);
-    context.restoreRegisters(jit);
-    allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters,
-        ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
-    slowPathStart = jit.jump();
+    switch (ic.nodeType()) {
+    case ArithMul:
+        generateBinaryArithOpFastPath<JITMulGenerator>(ic, jit, result, left, right, usedRegisters, done, slowPathStart);
+        break;
+    case ArithSub:
+        generateBinaryArithOpFastPath<JITSubGenerator>(ic, jit, result, left, right, usedRegisters, done, slowPathStart);
+        break;
+    case ValueAdd:
+        generateBinaryArithOpFastPath<JITAddGenerator>(ic, jit, result, left, right, usedRegisters, done, slowPathStart);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 } } // namespace JSC::FTL

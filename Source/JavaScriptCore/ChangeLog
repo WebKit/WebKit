@@ -1,3 +1,64 @@
+2015-12-02  Mark Lam  <mark.lam@apple.com>
+
+        Polymorphic operand types for DFG and FTL mul.
+        https://bugs.webkit.org/show_bug.cgi?id=151746
+
+        Reviewed by Filip Pizlo.
+
+        Perf on benchmarks is neutral except for the newly added JSRegress ftl-object-mul
+        test which shows a 2.16x speed up on x86_64 FTL, 1.27x speed up on x86_64 DFG,
+        and 1.56x on x86 DFG. 
+
+        The speed up comes not from the mul operator itself, but from the fact that the
+        polymorphic operand types support now allow the test function to run without OSR
+        exiting, thereby realizing the DFG and FTL's speed up on other work that the test
+        function does.
+
+        This patch has passed the layout tests on x86_64 with a debug build.
+        It passed the JSC tests with x86 and x86_64 debug builds.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        * ftl/FTLCompile.cpp:
+        - Changed to call generateBinaryOpFastPath() instead now, and let it dispatch to
+          the appropriate snippet generator.
+
+        * ftl/FTLCompileBinaryOp.cpp:
+        (JSC::FTL::generateBinaryArithOpFastPath):
+        (JSC::FTL::generateBinaryOpFastPath):
+        (JSC::FTL::generateArithSubFastPath): Deleted.
+        (JSC::FTL::generateValueAddFastPath): Deleted.
+        - Refactored these functions to eliminate the need for copy-pasting every time
+          we add support for another binary arithmetic snippet.
+
+        * ftl/FTLCompileBinaryOp.h:
+        * ftl/FTLInlineCacheDescriptor.h:
+        * ftl/FTLInlineCacheDescriptorInlines.h:
+        (JSC::FTL::ArithMulDescriptor::ArithMulDescriptor):
+        (JSC::FTL::ArithMulDescriptor::icSize):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfArithMul):
+        * ftl/FTLInlineCacheSize.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        * jit/JITMulGenerator.h:
+        (JSC::JITMulGenerator::JITMulGenerator):
+
+        * tests/stress/op_mul.js:
+        - Updated a test value: the interesting value for imminent overflow from an
+          int32 is 0x7fffffff, not 0x7ffffff.
+
 2015-12-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r192753): Remote Web Inspector: Applications and Debuggables not showing up in debuggers
