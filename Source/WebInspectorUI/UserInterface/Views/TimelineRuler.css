@@ -104,13 +104,28 @@ body.window-inactive .timeline-ruler > .header > .divider {
     transform: translateX(-1px);
 
     border-left-width: 1px;
-    border-left-style: dashed;
+    border-left-style: solid;
     border-left-color: hsla(0, 0%, 50%, 0.5);
+
+    pointer-events: all;
+}
+
+/* Larger tooltip area */
+.timeline-ruler > .markers > .marker {
+    z-index: 20;
+    width: 3px;
+}
+.timeline-ruler > .markers > .marker::before {
+    width: 3px;
+    content: "";
+    position: absolute;
+    left: -3px;
+    top: 0;
+    bottom: 0;
 }
 
 .timeline-ruler > .markers > .marker.current-time {
     border-left-color: red;
-    border-left-style: solid;
 }
 
 .timeline-ruler > .markers > .marker.current-time::before {
@@ -128,15 +143,18 @@ body.window-inactive .timeline-ruler > .header > .divider {
 }
 
 .timeline-ruler > .markers > .marker.load-event {
-    border-left-color: hsla(0, 100%, 50%, 0.5);
+    border-left-color: hsl(0, 100%, 50%);
+    opacity: 0.25;
 }
 
 .timeline-ruler > .markers > .marker.dom-content-event {
-    border-left-color: hsla(240, 100%, 50%, 0.5);
+    border-left-color: hsl(240, 100%, 50%);
+    opacity: 0.25;
 }
 
 .timeline-ruler > .markers > .marker.timestamp {
-    border-left-color: hsla(119, 100%, 21%, 0.5);
+    border-left-color: hsl(119, 100%, 21%);
+    opacity: 0.25;
 }
 
 .timeline-ruler > .selection-drag {

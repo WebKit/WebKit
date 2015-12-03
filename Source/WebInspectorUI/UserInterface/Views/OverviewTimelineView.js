@@ -53,6 +53,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
+        recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
 
         this._pendingRepresentedObjects = [];
     }
@@ -351,6 +352,11 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         this._pendingRepresentedObjects.push(sourceCodeTimeline);
 
         this.needsLayout();
+    }
+
+    _markerAdded(event)
+    {
+        this._timelineRuler.addMarker(event.data.marker);
     }
 
     _dataGridNodeSelected(event)

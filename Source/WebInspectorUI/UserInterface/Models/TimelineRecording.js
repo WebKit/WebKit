@@ -148,9 +148,11 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimelineRemoved, {timeline});
     }
 
-    addEventMarker(eventMarker)
+    addEventMarker(marker)
     {
-        this._eventMarkers.push(eventMarker);
+        this._eventMarkers.push(marker);
+
+        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.MarkerAdded, {marker});
     }
 
     addRecord(record)
@@ -280,7 +282,8 @@ WebInspector.TimelineRecording.Event = {
     SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
     TimelineAdded: "timeline-recording-timeline-added",
     TimelineRemoved: "timeline-recording-timeline-removed",
-    TimesUpdated: "timeline-recording-times-updated"
+    TimesUpdated: "timeline-recording-times-updated",
+    MarkerAdded: "timeline-recording-marker-added",
 };
 
 WebInspector.TimelineRecording.isLegacy = undefined;

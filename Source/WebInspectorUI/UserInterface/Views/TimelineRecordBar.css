@@ -26,6 +26,7 @@
 .timeline-record-bar {
     position: absolute;
     height: 12px;
+    z-index: 1;
 }
 
 .timeline-record-bar > .segment {
