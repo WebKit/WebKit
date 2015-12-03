@@ -1,3 +1,17 @@
+2015-12-03  Daniel Bates  <dabates@apple.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION in WebCore::DocumentOrderedMap::add()
+        https://bugs.webkit.org/show_bug.cgi?id=126662
+        <rdar://problem/15775508>
+
+        Reviewed by Brent Fulgham.
+
+        Add test to ensure that we do not assert when inserting a subtree that has an element with
+        a duplicate id before removing the original subtree.
+
+        * svg/custom/insert-subtree-with-duplicate-id-before-removing-subtree-expected.txt: Added.
+        * svg/custom/insert-subtree-with-duplicate-id-before-removing-subtree.svg: Added.
+
 2015-12-03  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] margin-left:auto and margin-top:auto discards the margin on opposite side
