@@ -79,7 +79,7 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
         this.element.classList.add("rendering-frame");
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._renderingFrameTimelineRecordAdded, this);
 
@@ -129,15 +129,6 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         this.representedObject.removeEventListener(null, null, this);
 
         this._dataGrid.closed();
-    }
-
-    updateLayout()
-    {
-        super.updateLayout();
-
-        this._dataGrid.updateLayout();
-
-        this._processPendingRecords();
     }
 
     get selectionPathComponents()
@@ -243,6 +234,11 @@ WebInspector.RenderingFrameTimelineView = class RenderingFrameTimelineView exten
         if (treeElement instanceof WebInspector.ProfileNodeTreeElement)
             return new WebInspector.ProfileNodeDataGridNode(treeElement.profileNode, this.zeroTime, this.startTime, this.endTime);
         return null;
+    }
+
+    layout()
+    {
+        this._processPendingRecords();
     }
 
     // Private

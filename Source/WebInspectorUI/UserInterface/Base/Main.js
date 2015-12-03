@@ -1279,6 +1279,7 @@ WebInspector._windowBlurred = function(event)
 WebInspector._windowResized = function(event)
 {
     this.toolbar.updateLayout();
+    this.tabBar.updateLayout();
     this._tabBrowserSizeDidChange();
 };
 

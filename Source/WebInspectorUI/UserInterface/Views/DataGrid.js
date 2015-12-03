@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DataGrid = class DataGrid extends WebInspector.Object
+WebInspector.DataGrid = class DataGrid extends WebInspector.View
 {
     constructor(columnsData, editCallback, deleteCallback, preferredColumnOrder)
     {
@@ -48,7 +48,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
         this.resizers = [];
         this._columnWidthsInitialized = false;
 
-        this.element = document.createElement("div");
         this.element.className = "data-grid";
         this.element.tabIndex = 0;
         this.element.addEventListener("keydown", this._keyDown.bind(this), false);
@@ -400,7 +399,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
         for (var [identifier, column] of this.columns)
             column["element"].style.width = widths[identifier] + "%";
         this._columnWidthsInitialized = false;
-        this.updateLayout();
+        this.needsLayout();
     }
 
     insertColumn(columnIdentifier, columnData, insertionIndex)
@@ -552,9 +551,9 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
     //
     // If this function is not called after the DataGrid is attached to its
     // parent element, then the DataGrid's columns will not be resizable.
-    updateLayout()
+    layout()
     {
-        // Do not attempt to use offsetes if we're not attached to the document tree yet.
+        // Do not attempt to use offsets if we're not attached to the document tree yet.
         if (!this._columnWidthsInitialized && this.element.offsetWidth) {
             // Give all the columns initial widths now so that during a resize,
             // when the two columns that get resized get a percent value for
@@ -580,7 +579,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
         }
 
         this._positionResizerElements();
-        this.dispatchEventToListeners(WebInspector.DataGrid.Event.DidLayout);
     }
 
     columnWidthsMap()
@@ -602,7 +600,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
             this._dataTableColumnGroupElement.children[ordinal].style.width = width;
         }
 
-        this.updateLayout();
+        this.needsLayout();
     }
 
     _isColumnVisible(columnIdentifier)
@@ -1260,7 +1258,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
 
         this._positionResizerElements();
         event.preventDefault();
-        this.dispatchEventToListeners(WebInspector.DataGrid.Event.DidLayout);
     }
 
     resizerDragEnded(resizer)
@@ -1270,12 +1267,10 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
             return;
 
         this._currentResizer = null;
-        this.dispatchEventToListeners(WebInspector.DataGrid.Event.DidLayout);
     }
 };
 
 WebInspector.DataGrid.Event = {
-    DidLayout: "datagrid-did-layout",
     SortChanged: "datagrid-sort-changed",
     SelectedNodeChanged: "datagrid-selected-node-changed",
     ExpandedNode: "datagrid-expanded-node",

@@ -23,29 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
+WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 {
     constructor(element, delegate, disableBackForward)
     {
-        super();
+        super(element);
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add("content-browser");
+        this.element.classList.add("content-browser");
 
         this._navigationBar = new WebInspector.NavigationBar;
-        this._element.appendChild(this._navigationBar.element);
+        this.addSubview(this._navigationBar);
 
         this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
-        this._element.appendChild(this._contentViewContainer.element);
+        this.addSubview(this._contentViewContainer);
 
         this._findBanner = new WebInspector.FindBanner(this);
         this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidShow, this._findBannerDidShow, this);
         this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidHide, this._findBannerDidHide, this);
 
         if (!disableBackForward) {
-            this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this), this._element);
-            this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this), this._element);
+            this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Left, this._backButtonClicked.bind(this), this.element);
+            this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Right, this._forwardButtonClicked.bind(this), this.element);
 
             this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), "Images/BackForwardArrows.svg#back-arrow-mask", 8, 13);
             this._backButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._backButtonClicked, this);
@@ -80,11 +79,6 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
     }
 
     // Public
-
-    get element()
-    {
-        return this._element;
-    }
 
     get navigationBar()
     {
@@ -131,12 +125,6 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
         }
 
         return representedObjects;
-    }
-
-    updateLayout()
-    {
-        this._navigationBar.updateLayout();
-        this._contentViewContainer.updateLayout();
     }
 
     showContentViewForRepresentedObject(representedObject, cookie, extraArguments)

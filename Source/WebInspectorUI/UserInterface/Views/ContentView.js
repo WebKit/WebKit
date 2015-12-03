@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ContentView = class ContentView extends WebInspector.Object
+WebInspector.ContentView = class ContentView extends WebInspector.View
 {
     constructor(representedObject, extraArguments)
     {
@@ -34,8 +34,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.Object
 
         this._representedObject = representedObject;
 
-        this._element = document.createElement("div");
-        this._element.classList.add("content-view");
+        this.element.classList.add("content-view");
 
         this._parentContainer = null;
     }
@@ -195,11 +194,6 @@ WebInspector.ContentView = class ContentView extends WebInspector.Object
         return [];
     }
 
-    get element()
-    {
-        return this._element;
-    }
-
     get parentContainer()
     {
         return this._parentContainer;
@@ -243,11 +237,6 @@ WebInspector.ContentView = class ContentView extends WebInspector.Object
     {
         // Implemented by subclasses.
         return true;
-    }
-
-    updateLayout()
-    {
-        // Implemented by subclasses.
     }
 
     shown()

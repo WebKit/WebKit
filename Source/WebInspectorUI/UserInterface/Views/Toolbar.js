@@ -34,30 +34,30 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
 
         this._controlSectionElement = document.createElement("div");
         this._controlSectionElement.className = WebInspector.Toolbar.ControlSectionStyleClassName;
-        this._element.appendChild(this._controlSectionElement);
+        this.element.appendChild(this._controlSectionElement);
 
         this._leftSectionElement = document.createElement("div");
         this._leftSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.LeftItemSectionStyleClassName;
-        this._element.appendChild(this._leftSectionElement);
+        this.element.appendChild(this._leftSectionElement);
 
         this._centerLeftSectionElement = document.createElement("div");
         this._centerLeftSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.CenterLeftItemSectionStyleClassName;
-        this._element.appendChild(this._centerLeftSectionElement);
+        this.element.appendChild(this._centerLeftSectionElement);
 
         this._centerSectionElement = document.createElement("div");
         this._centerSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.CenterItemSectionStyleClassName;
-        this._element.appendChild(this._centerSectionElement);
+        this.element.appendChild(this._centerSectionElement);
 
         this._centerRightSectionElement = document.createElement("div");
         this._centerRightSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.CenterRightItemSectionStyleClassName;
-        this._element.appendChild(this._centerRightSectionElement);
+        this.element.appendChild(this._centerRightSectionElement);
 
         this._rightSectionElement = document.createElement("div");
         this._rightSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.RightItemSectionStyleClassName;
-        this._element.appendChild(this._rightSectionElement);
+        this.element.appendChild(this._rightSectionElement);
 
         if (!dontAllowModeChanges)
-            this._element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
+            this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
     }
 
     // Public
@@ -73,15 +73,15 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
             return;
 
         if (this._displayMode)
-            this._element.classList.remove(this._displayMode);
+            this.element.classList.remove(this._displayMode);
 
         // Revert the forced icon-only mode if it was applied.
         if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal)
-            this._element.classList.remove(WebInspector.Toolbar.DisplayMode.IconOnly);
+            this.element.classList.remove(WebInspector.Toolbar.DisplayMode.IconOnly);
 
         this._displayMode = mode;
 
-        this._element.classList.add(mode);
+        this.element.classList.add(mode);
 
         this.updateLayout();
 
@@ -99,62 +99,15 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
             return;
 
         if (this._sizeMode)
-            this._element.classList.remove(this._sizeMode);
+            this.element.classList.remove(this._sizeMode);
 
         this._sizeMode = mode;
 
-        this._element.classList.add(mode);
+        this.element.classList.add(mode);
 
         this.updateLayout();
 
         this.dispatchEventToListeners(WebInspector.Toolbar.Event.SizeModeDidChange);
-    }
-
-    customUpdateLayout()
-    {
-        // Bail early if our sections are not created yet. This means we are being called during construction.
-        if (!this._leftSectionElement || !this._centerSectionElement || !this._rightSectionElement)
-            return;
-
-        // Force collapsed style for JavaScript debuggables.
-        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
-            this._element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
-            return;
-        }
-
-        // Remove the collapsed style class to test if the items can fit at full width.
-        this._element.classList.remove(WebInspector.NavigationBar.CollapsedStyleClassName);
-
-        // Revert the forced icon-only mode if it was applied.
-        if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal) {
-            this._element.classList.remove(WebInspector.Toolbar.DisplayMode.IconOnly);
-            this._element.classList.add(WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
-        }
-
-        function isOverflowingToolbar()
-        {
-            var controlSectionWidth = this._controlSectionElement.realOffsetWidth;
-            var leftSectionWidth = this._leftSectionElement.realOffsetWidth;
-            var centerLeftSectionWidth = this._centerLeftSectionElement.realOffsetWidth;
-            var centerSectionWidth = this._centerSectionElement.realOffsetWidth;
-            var centerRightSectionWidth = this._centerRightSectionElement.realOffsetWidth;
-            var rightSectionWidth = this._rightSectionElement.realOffsetWidth;
-
-            var toolbarWidth = Math.round(this.element.realOffsetWidth);
-            return Math.round(controlSectionWidth + leftSectionWidth + centerLeftSectionWidth + centerSectionWidth + centerRightSectionWidth + rightSectionWidth) > toolbarWidth;
-        }
-
-        // Only the horizontal display mode supports collapsing labels.
-        // If any sections are overflowing the toolbar then force the display mode to be icon only.
-        if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal && isOverflowingToolbar.call(this)) {
-            this._element.classList.remove(WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
-            this._element.classList.add(WebInspector.Toolbar.DisplayMode.IconOnly);
-        }
-
-        if (!isOverflowingToolbar.call(this))
-            return;
-
-        this._element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
     }
 
     addToolbarItem(toolbarItem, sectionIdentifier)
@@ -191,6 +144,55 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
         console.assert(sectionElement);
 
         this.addNavigationItem(toolbarItem, sectionElement);
+    }
+
+    // Protected
+
+    layout()
+    {
+        // Bail early if our sections are not created yet. This means we are being called during construction.
+        if (!this._leftSectionElement || !this._centerSectionElement || !this._rightSectionElement)
+            return;
+
+        // Force collapsed style for JavaScript debuggables.
+        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
+            this.element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
+            return;
+        }
+
+        // Remove the collapsed style class to test if the items can fit at full width.
+        this.element.classList.remove(WebInspector.NavigationBar.CollapsedStyleClassName);
+
+        // Revert the forced icon-only mode if it was applied.
+        if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal) {
+            this.element.classList.remove(WebInspector.Toolbar.DisplayMode.IconOnly);
+            this.element.classList.add(WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
+        }
+
+        function isOverflowingToolbar()
+        {
+            var controlSectionWidth = this._controlSectionElement.realOffsetWidth;
+            var leftSectionWidth = this._leftSectionElement.realOffsetWidth;
+            var centerLeftSectionWidth = this._centerLeftSectionElement.realOffsetWidth;
+            var centerSectionWidth = this._centerSectionElement.realOffsetWidth;
+            var centerRightSectionWidth = this._centerRightSectionElement.realOffsetWidth;
+            var rightSectionWidth = this._rightSectionElement.realOffsetWidth;
+
+            var toolbarWidth = Math.round(this.element.realOffsetWidth);
+            return Math.round(controlSectionWidth + leftSectionWidth + centerLeftSectionWidth + centerSectionWidth + centerRightSectionWidth + rightSectionWidth) > toolbarWidth;
+        }
+
+        // Only the horizontal display mode supports collapsing labels.
+        // If any sections are overflowing the toolbar then force the display mode to be icon only.
+        if (this._displayMode === WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal && isOverflowingToolbar.call(this)) {
+            this.element.classList.remove(WebInspector.Toolbar.DisplayMode.IconAndLabelHorizontal);
+            this.element.classList.add(WebInspector.Toolbar.DisplayMode.IconOnly);
+        }
+
+        if (!isOverflowingToolbar.call(this))
+            return;
+
+        this.element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
     }
 
     // Private

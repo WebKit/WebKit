@@ -23,16 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.Object
+WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.View
 {
     constructor(delegate, mimeType, element)
     {
-        super();
+        super(element);
 
         mimeType = parseMIMEType(mimeType).type;
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add("console-prompt", WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.classList.add("console-prompt", WebInspector.SyntaxHighlightedStyleClassName);
 
         this._delegate = delegate || null;
 
@@ -65,11 +64,6 @@ WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.Object
     }
 
     // Public
-
-    get element()
-    {
-        return this._element;
-    }
 
     get delegate()
     {
@@ -126,11 +120,6 @@ WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.Object
         this._codeMirror.refresh();
     }
 
-    updateLayout()
-    {
-        this._codeMirror.refresh();
-    }
-
     updateCompletions(completions, implicitSuffix)
     {
         this._completionController.updateCompletions(completions, implicitSuffix);
@@ -156,6 +145,11 @@ WebInspector.ConsolePrompt = class ConsolePrompt extends WebInspector.Object
         // Only allow escape to complete if there is text in the prompt. Otherwise allow it to pass through
         // so escape to toggle the quick console still works.
         return !!this.text;
+    }
+
+    layout()
+    {
+        this._codeMirror.refresh();
     }
 
     // Private

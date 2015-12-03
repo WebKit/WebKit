@@ -86,7 +86,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         this.navigationSidebarTreeOutline.element.addEventListener("mouseleave", this._mouseLeaveTreeOutline.bind(this));
 
         this.element.classList.add("layout");
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
@@ -133,15 +133,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         this._updateHighlight();
     }
 
-    updateLayout()
-    {
-        super.updateLayout();
-
-        this._dataGrid.updateLayout();
-
-        this._processPendingRecords();
-    }
-
     matchTreeElementAgainstCustomFilters(treeElement)
     {
         return this._dataGrid.treeElementMatchesActiveScopeFilters(treeElement);
@@ -183,6 +174,11 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         super.treeElementSelected(treeElement, selectedByUser);
 
         this._updateHighlight();
+    }
+
+    layout()
+    {
+        this._processPendingRecords();
     }
 
     // Private

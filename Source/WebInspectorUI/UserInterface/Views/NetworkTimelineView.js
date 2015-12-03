@@ -93,7 +93,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
         this.element.classList.add("network");
-        this.element.appendChild(this._dataGrid.element);
+        this.addSubview(this._dataGrid);
 
         timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
@@ -127,15 +127,6 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         this.representedObject.removeEventListener(null, null, this);
 
         this._dataGrid.closed();
-    }
-
-    updateLayout()
-    {
-        super.updateLayout();
-
-        this._dataGrid.updateLayout();
-
-        this._processPendingRecords();
     }
 
     matchTreeElementAgainstCustomFilters(treeElement)
@@ -185,6 +176,11 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
             return;
 
         super.treeElementSelected(treeElement, selectedByUser);
+    }
+
+    layout()
+    {
+        this._processPendingRecords();
     }
 
     // Private

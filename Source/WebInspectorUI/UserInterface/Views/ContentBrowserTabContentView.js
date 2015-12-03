@@ -42,7 +42,6 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
 
         this._lastSelectedDetailsSidebarPanelSetting = new WebInspector.Setting(identifier + "-last-selected-details-sidebar-panel", null);
 
-        this._contentBrowser = this._contentBrowser;
         this._contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.showDetailsSidebarPanels, this);
         this._contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
 
@@ -82,7 +81,7 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
             WebInspector.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._detailsSidebarPanelSelected, this);
         }
 
-        this.element.appendChild(this._contentBrowser.element);
+        this.addSubview(this._contentBrowser);
     }
 
     // Public
@@ -120,13 +119,6 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
             this.navigationSidebarPanel.closed();
 
         this._contentBrowser.contentViewContainer.closeAllContentViews();
-    }
-
-    updateLayout()
-    {
-        super.updateLayout();
-
-        this._contentBrowser.updateLayout();
     }
 
     get managesDetailsSidebarPanels()
