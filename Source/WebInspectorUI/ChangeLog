@@ -1,5 +1,19 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188007. rdar://problem/23221163
+
+    2015-08-05  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: REGRESSION (r187900): Breakpoint context menu is broken in Debugger tab
+            https://bugs.webkit.org/show_bug.cgi?id=147699
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/SourceCodeTextEditor.js:
+            Skip only the separator and "Reveal in Debugger tab" menu items.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188006. rdar://problem/23221163
 
     2015-08-05  Brian Burg  <bburg@apple.com>
