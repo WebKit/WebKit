@@ -60,7 +60,7 @@ WebInspector.CSSObserver = class CSSObserver
     // COMPATIBILITY (iOS 7): regionLayoutUpdated was removed and replaced by regionOversetChanged.
     regionLayoutUpdated(namedFlow)
     {
-        WebInspector.domTreeManager.regionLayoutUpdated(namedFlow);
+        this.regionOversetChanged(namedFlow);
     }
 
     regionOversetChanged(namedFlow)
