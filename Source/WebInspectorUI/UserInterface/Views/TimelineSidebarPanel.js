@@ -905,7 +905,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             var label = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(taskType);
             var value = records.reduce(function(previousValue, currentValue) { return previousValue + currentValue.durationForTask(taskType); }, 0);
             var color = this._chartColors.get(taskType);
-            return {id: taskType, label, value, color, checkbox: taskType !== WebInspector.RenderingFrameTimelineRecord.TaskType.Other};
+            var checkbox = taskType !== WebInspector.RenderingFrameTimelineRecord.TaskType.Other;
+            var checked = checkbox && !this._renderingFrameTaskFilter.has(taskType);
+            return {id: taskType, label, value, color, checkbox, checked};
         }, this);
 
         this._frameSelectionChartRow.data = chartData;
