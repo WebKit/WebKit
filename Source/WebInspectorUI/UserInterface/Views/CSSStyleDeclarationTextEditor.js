@@ -568,21 +568,20 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return switchRule.call(this);
 
         var trimmedPreviousLine = previousLine ? previousLine.trimRight() : "";
-        var previousAnchor;
-        var previousHead;
+        var previousAnchor = 0;
+        var previousHead = line.length;
         var isComment = this._textAtCursorIsComment(codeMirror, cursor);
 
         if (cursor.ch === line.indexOf(":") || line.indexOf(":") < 0 || isComment) {
             if (previousLine) {
                 --cursor.line;
+                previousHead = trimmedPreviousLine.length;
 
-                if (this._textAtCursorIsComment(codeMirror, cursor)) {
-                    previousAnchor = 0;
-                    previousHead = trimmedPreviousLine.length;
-                } else {
+                if (!this._textAtCursorIsComment(codeMirror, cursor)) {
                     var colon = /(?::\s*)/.exec(previousLine);
                     previousAnchor = colon ? colon.index + colon[0].length : 0;
-                    previousHead = trimmedPreviousLine.length - trimmedPreviousLine.endsWith(";");
+                    if (trimmedPreviousLine.includes(";"))
+                        previousHead = trimmedPreviousLine.lastIndexOf(";");
                 }
                 
                 codeMirror.setSelection({line: cursor.line, ch: previousAnchor}, {line: cursor.line, ch: previousHead});
@@ -597,10 +596,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return switchRule.call(this);
         }
 
-        if (isComment) {
-            previousAnchor = 0;
-            previousHead = line.length;
-        } else {
+        if (!isComment) {
             var match = /(?:[^:;\s]\s*)+/.exec(line);
             previousAnchor = match.index;
             previousHead = previousAnchor + match[0].length;
@@ -648,15 +644,16 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         }
 
         var hasEndingSemicolon = trimmedLine.endsWith(";");
+        var pastLastSemicolon = line.includes(";") && cursor.ch >= line.lastIndexOf(";");
 
-        if (cursor.ch >= line.trimRight().length - hasEndingSemicolon) {
+        if (cursor.ch >= line.trimRight().length - hasEndingSemicolon || pastLastSemicolon) {
             this._completionController.completeAtCurrentPositionIfNeeded().then(function(result) {
                 if (result !== WebInspector.CodeMirrorCompletionController.UpdatePromise.NoCompletionsFound)
                     return;
 
                 var replacement = "";
 
-                if (!hasEndingSemicolon && !this._textAtCursorIsComment(codeMirror, cursor))
+                if (!hasEndingSemicolon && !pastLastSemicolon && !this._textAtCursorIsComment(codeMirror, cursor))
                     replacement += ";";
 
                 if (lastLine)
