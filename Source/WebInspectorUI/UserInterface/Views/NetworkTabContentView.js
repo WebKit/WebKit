@@ -23,29 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTabContentView = function(identifier)
+WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInspector.ContentBrowserTabContentView
 {
-    var tabBarItem = new WebInspector.TabBarItem("Images/Network.svg", WebInspector.UIString("Network"));
-    var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+    constructor(identifier)
+    {
+        var tabBarItem = new WebInspector.TabBarItem("Images/Network.svg", WebInspector.UIString("Network"));
+        var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
-    WebInspector.ContentBrowserTabContentView.call(this, identifier || "network", "network", tabBarItem, WebInspector.NetworkSidebarPanel, detailsSidebarPanels);
-};
-
-WebInspector.NetworkTabContentView.prototype = {
-    constructor: WebInspector.NetworkTabContentView,
-    __proto__: WebInspector.ContentBrowserTabContentView.prototype,
+        super(identifier || "network", "network", tabBarItem, WebInspector.NetworkSidebarPanel, detailsSidebarPanels);
+    }
 
     // Public
 
     get type()
     {
         return WebInspector.NetworkTabContentView.Type;
-    },
+    }
 
-    canShowRepresentedObject: function(representedObject)
+    canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WebInspector.Resource;
-    },
+    }
 
     get supportsSplitContentBrowser()
     {

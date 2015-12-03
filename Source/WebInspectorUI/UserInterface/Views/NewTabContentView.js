@@ -23,56 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NewTabContentView = function(identifier)
+WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.TabContentView
 {
-    var tabBarItem = new WebInspector.TabBarItem("Images/NewTab.svg", WebInspector.UIString("New Tab"));
+    constructor(identifier)
+    {
+        var tabBarItem = new WebInspector.TabBarItem("Images/NewTab.svg", WebInspector.UIString("New Tab"));
 
-    WebInspector.TabContentView.call(this, identifier || "new-tab", "new-tab", tabBarItem);
+        super(identifier || "new-tab", "new-tab", tabBarItem);
 
-    var allowedNewTabs = [
-        {image: "Images/Console.svg", title: WebInspector.UIString("Console"), type: WebInspector.ConsoleTabContentView.Type},
-        {image: "Images/Debugger.svg", title: WebInspector.UIString("Debugger"), type: WebInspector.DebuggerTabContentView.Type},
-        {image: "Images/Elements.svg", title: WebInspector.UIString("Elements"), type: WebInspector.ElementsTabContentView.Type},
-        {image: "Images/Network.svg", title: WebInspector.UIString("Network"), type: WebInspector.NetworkTabContentView.Type},
-        {image: "Images/Resources.svg", title: WebInspector.UIString("Resources"), type: WebInspector.ResourcesTabContentView.Type},
-        {image: "Images/Storage.svg", title: WebInspector.UIString("Storage"), type: WebInspector.StorageTabContentView.Type},
-        {image: "Images/Timeline.svg", title: WebInspector.UIString("Timelines"), type: WebInspector.TimelineTabContentView.Type}
-    ];
+        var allowedNewTabs = [
+            {image: "Images/Console.svg", title: WebInspector.UIString("Console"), type: WebInspector.ConsoleTabContentView.Type},
+            {image: "Images/Debugger.svg", title: WebInspector.UIString("Debugger"), type: WebInspector.DebuggerTabContentView.Type},
+            {image: "Images/Elements.svg", title: WebInspector.UIString("Elements"), type: WebInspector.ElementsTabContentView.Type},
+            {image: "Images/Network.svg", title: WebInspector.UIString("Network"), type: WebInspector.NetworkTabContentView.Type},
+            {image: "Images/Resources.svg", title: WebInspector.UIString("Resources"), type: WebInspector.ResourcesTabContentView.Type},
+            {image: "Images/Storage.svg", title: WebInspector.UIString("Storage"), type: WebInspector.StorageTabContentView.Type},
+            {image: "Images/Timeline.svg", title: WebInspector.UIString("Timelines"), type: WebInspector.TimelineTabContentView.Type}
+        ];
 
-    allowedNewTabs.sort(function(a, b) { return a.title.localeCompare(b.title); });
+        allowedNewTabs.sort(function(a, b) { return a.title.localeCompare(b.title); });
 
-    for (var info of allowedNewTabs) {
-        if (!WebInspector.isTabTypeAllowed(info.type))
-            continue;
+        for (var info of allowedNewTabs) {
+            if (!WebInspector.isTabTypeAllowed(info.type))
+                continue;
 
-        var tabItemElement = document.createElement("div");
-        tabItemElement.classList.add(WebInspector.NewTabContentView.TabItemStyleClassName);
-        tabItemElement.addEventListener("click", this._createNewTab.bind(this, info.type));
-        tabItemElement[WebInspector.NewTabContentView.TypeSymbol] = info.type;
+            var tabItemElement = document.createElement("div");
+            tabItemElement.classList.add(WebInspector.NewTabContentView.TabItemStyleClassName);
+            tabItemElement.addEventListener("click", this._createNewTab.bind(this, info.type));
+            tabItemElement[WebInspector.NewTabContentView.TypeSymbol] = info.type;
 
-        var boxElement = tabItemElement.appendChild(document.createElement("div"));
-        boxElement.classList.add("box");
+            var boxElement = tabItemElement.appendChild(document.createElement("div"));
+            boxElement.classList.add("box");
 
-        var imageElement = boxElement.appendChild(document.createElement("img"));
-        imageElement.src = info.image;
+            var imageElement = boxElement.appendChild(document.createElement("img"));
+            imageElement.src = info.image;
 
-        var labelElement = tabItemElement.appendChild(document.createElement("label"));
-        labelElement.textContent = info.title;
+            var labelElement = tabItemElement.appendChild(document.createElement("label"));
+            labelElement.textContent = info.title;
 
-        this.element.appendChild(tabItemElement);
+            this.element.appendChild(tabItemElement);
+        }
     }
-};
-
-WebInspector.NewTabContentView.prototype = {
-    constructor: WebInspector.NewTabContentView,
-    __proto__: WebInspector.TabContentView.prototype,
 
     // Public
 
     get type()
     {
         return WebInspector.NewTabContentView.Type;
-    },
+    }
 
     shown()
     {
@@ -80,12 +78,12 @@ WebInspector.NewTabContentView.prototype = {
         WebInspector.tabBrowser.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._updateTabItems, this);
 
         this._updateTabItems();
-    },
+    }
 
     hidden()
     {
         WebInspector.tabBrowser.tabBar.removeEventListener(null, null, this);
-    },
+    }
 
     // Private
 
@@ -95,7 +93,7 @@ WebInspector.NewTabContentView.prototype = {
             return;
 
         WebInspector.createNewTab(tabType, this);
-    },
+    }
 
     _updateTabItems()
     {

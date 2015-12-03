@@ -23,26 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StorageTabContentView = function(identifier)
+WebInspector.StorageTabContentView = class StorageTabContentView extends WebInspector.ContentBrowserTabContentView
 {
-    var tabBarItem = new WebInspector.TabBarItem("Images/Storage.svg", WebInspector.UIString("Storage"));
-    var detailsSidebarPanels = [WebInspector.applicationCacheDetailsSidebarPanel];
+    constructor(identifier)
+    {
+        var tabBarItem = new WebInspector.TabBarItem("Images/Storage.svg", WebInspector.UIString("Storage"));
+        var detailsSidebarPanels = [WebInspector.applicationCacheDetailsSidebarPanel];
 
-    WebInspector.ContentBrowserTabContentView.call(this, identifier || "storage", "storage", tabBarItem, WebInspector.StorageSidebarPanel, detailsSidebarPanels);
-};
-
-WebInspector.StorageTabContentView.prototype = {
-    constructor: WebInspector.StorageTabContentView,
-    __proto__: WebInspector.ContentBrowserTabContentView.prototype,
+        super(identifier || "storage", "storage", tabBarItem, WebInspector.StorageSidebarPanel, detailsSidebarPanels);
+    }
 
     // Public
 
     get type()
     {
         return WebInspector.StorageTabContentView.Type;
-    },
+    }
 
-    canShowRepresentedObject: function(representedObject)
+    canShowRepresentedObject(representedObject)
     {
         return representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||
             representedObject instanceof WebInspector.DatabaseTableObject || representedObject instanceof WebInspector.DatabaseObject ||

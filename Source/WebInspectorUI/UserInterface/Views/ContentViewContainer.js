@@ -106,7 +106,7 @@ WebInspector.ContentViewContainer.prototype = {
             return null;
 
         // No existing content view found, make a new one.
-        contentView = new WebInspector.ContentView(representedObject, extraArguments);
+        contentView = WebInspector.ContentView.createFromRepresentedObject(representedObject, extraArguments);
 
         console.assert(contentView, "Unknown representedObject", representedObject);
         if (!contentView)

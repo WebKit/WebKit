@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ClusterContentView = function(representedObject)
+WebInspector.ClusterContentView = class className extends WebInspector.ContentView
 {
-    WebInspector.ContentView.call(this, representedObject);
+    constructor(representedObject)
+    {
+        super(representedObject);
 
-    this.element.classList.add("cluster");
+        this.element.classList.add("cluster");
 
-    this._contentViewContainer = new WebInspector.ContentViewContainer();
-    this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
-    this.element.appendChild(this._contentViewContainer.element);
+        this._contentViewContainer = new WebInspector.ContentViewContainer();
+        this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
+        this.element.appendChild(this._contentViewContainer.element);
 
-    WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
-    WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
-    WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
-};
-
-WebInspector.ClusterContentView.prototype = {
-    constructor: WebInspector.ClusterContentView,
+        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
+    }
 
     // Public
 
@@ -47,101 +46,101 @@ WebInspector.ClusterContentView.prototype = {
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         return currentContentView ? currentContentView.navigationItems : [];
-    },
+    }
 
     get contentViewContainer()
     {
         return this._contentViewContainer;
-    },
+    }
 
     get supportsSplitContentBrowser()
     {
         if (this._contentViewContainer.currentContentView)
             return this._contentViewContainer.currentContentView.supportsSplitContentBrowser;
         return true;
-    },
+    }
 
-    updateLayout: function()
+    updateLayout()
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         if (currentContentView)
             currentContentView.updateLayout();
-    },
+    }
 
-    shown: function()
+    shown()
     {
         this._contentViewContainer.shown();
-    },
+    }
 
-    hidden: function()
+    hidden()
     {
         this._contentViewContainer.hidden();
-    },
+    }
 
-    closed: function()
+    closed()
     {
         this._contentViewContainer.closeAllContentViews();
 
         WebInspector.ContentView.removeEventListener(null, null, this);
-    },
+    }
 
-    canGoBack: function()
+    canGoBack()
     {
         return this._contentViewContainer.canGoBack();
-    },
+    }
 
-    canGoForward: function()
+    canGoForward()
     {
         return this._contentViewContainer.canGoForward();
-    },
+    }
 
-    goBack: function()
+    goBack()
     {
         this._contentViewContainer.goBack();
-    },
+    }
 
-    goForward: function()
+    goForward()
     {
         this._contentViewContainer.goForward();
-    },
+    }
 
     get selectionPathComponents()
     {
         if (!this._contentViewContainer.currentContentView)
             return [];
         return this._contentViewContainer.currentContentView.selectionPathComponents;
-    },
+    }
 
     get supplementalRepresentedObjects()
     {
         if (!this._contentViewContainer.currentContentView)
             return [];
         return this._contentViewContainer.currentContentView.supplementalRepresentedObjects;
-    },
+    }
 
     get handleCopyEvent()
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         return currentContentView && typeof currentContentView.handleCopyEvent === "function" ? currentContentView.handleCopyEvent.bind(currentContentView) : null;
-    },
+    }
 
     get supportsSave()
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         return currentContentView && currentContentView.supportsSave;
-    },
+    }
 
     get saveData()
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         return currentContentView && currentContentView.saveData || null;
-    },
+    }
 
     get supportsSearch()
     {
         // Always return true so we can intercept the search query to resend it when switching content views.
         return true;
-    },
+    }
 
     get numberOfSearchResults()
     {
@@ -149,7 +148,7 @@ WebInspector.ClusterContentView.prototype = {
         if (!currentContentView || !currentContentView.supportsSearch)
             return null;
         return currentContentView.numberOfSearchResults;
-    },
+    }
 
     get hasPerformedSearch()
     {
@@ -157,7 +156,7 @@ WebInspector.ClusterContentView.prototype = {
         if (!currentContentView || !currentContentView.supportsSearch)
             return false;
         return currentContentView.hasPerformedSearch;
-    },
+    }
 
     set automaticallyRevealFirstSearchResult(reveal)
     {
@@ -165,9 +164,9 @@ WebInspector.ClusterContentView.prototype = {
         if (!currentContentView || !currentContentView.supportsSearch)
             return;
         currentContentView.automaticallyRevealFirstSearchResult = reveal;
-    },
+    }
 
-    performSearch: function(query)
+    performSearch(query)
     {
         this._searchQuery = query;
 
@@ -175,9 +174,9 @@ WebInspector.ClusterContentView.prototype = {
         if (!currentContentView || !currentContentView.supportsSearch)
             return;
         currentContentView.performSearch(query);
-    },
+    }
 
-    searchCleared: function()
+    searchCleared()
     {
         this._searchQuery = null;
 
@@ -185,35 +184,35 @@ WebInspector.ClusterContentView.prototype = {
         if (!currentContentView || !currentContentView.supportsSearch)
             return;
         currentContentView.searchCleared();
-    },
+    }
 
-    searchQueryWithSelection: function()
+    searchQueryWithSelection()
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         if (!currentContentView || !currentContentView.supportsSearch)
             return null;
         return currentContentView.searchQueryWithSelection();
-    },
+    }
 
-    revealPreviousSearchResult: function(changeFocus)
+    revealPreviousSearchResult(changeFocus)
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         if (!currentContentView || !currentContentView.supportsSearch)
             return;
         currentContentView.revealPreviousSearchResult(changeFocus);
-    },
+    }
 
-    revealNextSearchResult: function(changeFocus)
+    revealNextSearchResult(changeFocus)
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         if (!currentContentView || !currentContentView.supportsSearch)
             return;
         currentContentView.revealNextSearchResult(changeFocus);
-    },
+    }
 
     // Private
 
-    _currentContentViewDidChange: function(event)
+    _currentContentViewDidChange(event)
     {
         var currentContentView = this._contentViewContainer.currentContentView;
         if (currentContentView && currentContentView.supportsSearch) {
@@ -226,28 +225,26 @@ WebInspector.ClusterContentView.prototype = {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
         this.dispatchEventToListeners(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange);
         this.dispatchEventToListeners(WebInspector.ContentView.Event.NavigationItemsDidChange);
-    },
+    }
 
-    _contentViewSelectionPathComponentDidChange: function(event)
+    _contentViewSelectionPathComponentDidChange(event)
     {
         if (event.target !== this._contentViewContainer.currentContentView)
             return;
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-    },
+    }
 
-    _contentViewSupplementalRepresentedObjectsDidChange: function(event)
+    _contentViewSupplementalRepresentedObjectsDidChange(event)
     {
         if (event.target !== this._contentViewContainer.currentContentView)
             return;
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange);
-    },
+    }
 
-    _contentViewNumberOfSearchResultsDidChange: function(event)
+    _contentViewNumberOfSearchResultsDidChange(event)
     {
         if (event.target !== this._contentViewContainer.currentContentView)
             return;
         this.dispatchEventToListeners(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange);
     }
 };
-
-WebInspector.ClusterContentView.prototype.__proto__ = WebInspector.ContentView.prototype;

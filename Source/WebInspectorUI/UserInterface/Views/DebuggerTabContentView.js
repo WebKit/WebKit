@@ -23,26 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggerTabContentView = function(identifier)
+WebInspector.DebuggerTabContentView = class DebuggerTabContentView extends WebInspector.ContentBrowserTabContentView
 {
-    var tabBarItem = new WebInspector.TabBarItem("Images/Debugger.svg", WebInspector.UIString("Debugger"));
-    var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.scopeChainDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+    constructor(identifier)
+    {
+        var tabBarItem = new WebInspector.TabBarItem("Images/Debugger.svg", WebInspector.UIString("Debugger"));
+        var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.scopeChainDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
-    WebInspector.ContentBrowserTabContentView.call(this, identifier || "debugger", "debugger", tabBarItem, WebInspector.DebuggerSidebarPanel, detailsSidebarPanels);
-};
-
-WebInspector.DebuggerTabContentView.prototype = {
-    constructor: WebInspector.DebuggerTabContentView,
-    __proto__: WebInspector.ContentBrowserTabContentView.prototype,
+        super(identifier || "debugger", "debugger", tabBarItem, WebInspector.DebuggerSidebarPanel, detailsSidebarPanels);
+    }
 
     // Public
 
     get type()
     {
         return WebInspector.DebuggerTabContentView.Type;
-    },
+    }
 
-    canShowRepresentedObject: function(representedObject)
+    canShowRepresentedObject(representedObject)
     {
         if (representedObject instanceof WebInspector.Script)
             return true;
@@ -51,9 +49,9 @@ WebInspector.DebuggerTabContentView.prototype = {
             return false;
 
         return representedObject.type === WebInspector.Resource.Type.Document || representedObject.type === WebInspector.Resource.Type.Script;
-    },
+    }
 
-    showDetailsSidebarPanels: function()
+    showDetailsSidebarPanels()
     {
         WebInspector.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels.call(this);
 
@@ -63,14 +61,14 @@ WebInspector.DebuggerTabContentView.prototype = {
         WebInspector.scopeChainDetailsSidebarPanel.show();
 
         this._showScopeChainDetailsSidebarPanel = false;
-    },
+    }
 
-    showScopeChainDetailsSidebarPanel: function()
+    showScopeChainDetailsSidebarPanel()
     {
         this._showScopeChainDetailsSidebarPanel = true;
-    },
+    }
 
-    revealAndSelectBreakpoint: function(breakpoint)
+    revealAndSelectBreakpoint(breakpoint)
     {
         console.assert(breakpoint instanceof WebInspector.Breakpoint);
 

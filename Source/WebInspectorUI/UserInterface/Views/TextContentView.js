@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,153 +23,150 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextContentView = function(string, mimeType)
+WebInspector.TextContentView = class TextContentView extends WebInspector.ContentView
 {
-    WebInspector.ContentView.call(this, string);
+    constructor(string, mimeType)
+    {
+        super(string);
 
-    this.element.classList.add("text");
+        this.element.classList.add("text");
 
-    this._textEditor = new WebInspector.TextEditor;
-    this._textEditor.addEventListener(WebInspector.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
-    this._textEditor.addEventListener(WebInspector.TextEditor.Event.FormattingDidChange, this._textEditorFormattingDidChange, this);
+        this._textEditor = new WebInspector.TextEditor;
+        this._textEditor.addEventListener(WebInspector.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
+        this._textEditor.addEventListener(WebInspector.TextEditor.Event.FormattingDidChange, this._textEditorFormattingDidChange, this);
 
-    this.element.appendChild(this._textEditor.element);
+        this.element.appendChild(this._textEditor.element);
 
-    this._textEditor.readOnly = true;
-    this._textEditor.mimeType = mimeType;
-    this._textEditor.string = string;
+        this._textEditor.readOnly = true;
+        this._textEditor.mimeType = mimeType;
+        this._textEditor.string = string;
 
-    var toolTip = WebInspector.UIString("Pretty print");
-    var activatedToolTip = WebInspector.UIString("Original formatting");
-    this._prettyPrintButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("pretty-print", toolTip, activatedToolTip, "Images/NavigationItemCurleyBraces.svg", 13, 13);
-    this._prettyPrintButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePrettyPrint, this);
-    this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
+        var toolTip = WebInspector.UIString("Pretty print");
+        var activatedToolTip = WebInspector.UIString("Original formatting");
+        this._prettyPrintButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("pretty-print", toolTip, activatedToolTip, "Images/NavigationItemCurleyBraces.svg", 13, 13);
+        this._prettyPrintButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePrettyPrint, this);
+        this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
 
-    var toolTipTypes = WebInspector.UIString("Show type information");
-    var activatedToolTipTypes = WebInspector.UIString("Hide type information");
-    this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", 13, 14);
-    this._showTypesButtonNavigationItem.enabled = false;
-};
-
-WebInspector.TextContentView.prototype = {
-    constructor: WebInspector.TextContentView,
+        var toolTipTypes = WebInspector.UIString("Show type information");
+        var activatedToolTipTypes = WebInspector.UIString("Hide type information");
+        this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", 13, 14);
+        this._showTypesButtonNavigationItem.enabled = false;
+    }
 
     // Public
 
     get textEditor()
     {
         return this._textEditor;
-    },
+    }
 
     get navigationItems()
     {
         return [this._prettyPrintButtonNavigationItem, this._showTypesButtonNavigationItem];
-    },
+    }
 
-    revealPosition: function(position, textRangeToSelect, forceUnformatted)
+    revealPosition(position, textRangeToSelect, forceUnformatted)
     {
         this._textEditor.revealPosition(position, textRangeToSelect, forceUnformatted);
-    },
+    }
 
-    shown: function()
+    shown()
     {
-        WebInspector.ContentView.prototype.shown.call(this);
+        super.shown();
 
         this._textEditor.shown();
-    },
+    }
 
-    hidden: function()
+    hidden()
     {
-        WebInspector.ContentView.prototype.hidden.call(this);
+        super.hidden();
 
         this._textEditor.hidden();
-    },
+    }
 
-    closed: function()
+    closed()
     {
-        WebInspector.ContentView.prototype.closed.call(this);
+        super.closed();
 
         this._textEditor.close();
-    },
+    }
 
     get supportsSave()
     {
         return true;
-    },
+    }
 
     get saveData()
     {
         var url = "web-inspector:///" + encodeURI(WebInspector.UIString("Untitled")) + ".txt";
         return {url, content: this._textEditor.string, forceSaveAs: true};
-    },
+    }
 
     get supportsSearch()
     {
         return true;
-    },
+    }
 
     get numberOfSearchResults()
     {
         return this._textEditor.numberOfSearchResults;
-    },
+    }
 
     get hasPerformedSearch()
     {
         return this._textEditor.currentSearchQuery !== null;
-    },
+    }
 
     set automaticallyRevealFirstSearchResult(reveal)
     {
         this._textEditor.automaticallyRevealFirstSearchResult = reveal;
-    },
+    }
 
-    performSearch: function(query)
+    performSearch(query)
     {
         this._textEditor.performSearch(query);
-    },
+    }
 
-    searchCleared: function()
+    searchCleared()
     {
         this._textEditor.searchCleared();
-    },
+    }
 
-    searchQueryWithSelection: function()
+    searchQueryWithSelection()
     {
         return this._textEditor.searchQueryWithSelection();
-    },
+    }
 
-    revealPreviousSearchResult: function(changeFocus)
+    revealPreviousSearchResult(changeFocus)
     {
         this._textEditor.revealPreviousSearchResult(changeFocus);
-    },
+    }
 
-    revealNextSearchResult: function(changeFocus)
+    revealNextSearchResult(changeFocus)
     {
         this._textEditor.revealNextSearchResult(changeFocus);
-    },
+    }
 
-    updateLayout: function()
+    updateLayout()
     {
         this._textEditor.updateLayout();
-    },
+    }
 
     // Private
 
-    _togglePrettyPrint: function(event)
+    _togglePrettyPrint(event)
     {
         var activated = !this._prettyPrintButtonNavigationItem.activated;
         this._textEditor.formatted = activated;
-    },
+    }
 
-    _textEditorFormattingDidChange: function(event)
+    _textEditorFormattingDidChange(event)
     {
         this._prettyPrintButtonNavigationItem.activated = this._textEditor.formatted;
-    },
+    }
 
-    _numberOfSearchResultsDidChange: function(event)
+    _numberOfSearchResultsDidChange(event)
     {
         this.dispatchEventToListeners(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange);
     }
 };
-
-WebInspector.TextContentView.prototype.__proto__ = WebInspector.ContentView.prototype;
