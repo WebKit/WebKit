@@ -538,7 +538,6 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         if (valid) {
             this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
             this._selectorElement.title = null;
-            this.refresh();
             return;
         }
 
