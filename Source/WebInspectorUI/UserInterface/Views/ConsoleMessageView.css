@@ -33,7 +33,7 @@
     padding: 1px 6px;
     border-radius: 3px;
     border: 1px solid transparent;
-    background-color: rgb(34, 131, 246);
+    background-color: hsl(212, 92%, 54%);
     color: white;
     font-size: 10px;
     -webkit-user-select: none;
@@ -47,7 +47,7 @@
     margin: 0 4px 0 0;
 
     height: 15px;
-    background-color: rgb(128, 151, 189);
+    background-color: hsl(217, 31%, 62%);
     vertical-align: middle;
     white-space: nowrap;
 
@@ -94,13 +94,13 @@
 }
 
 .console-message-preview-divider {
-    color: rgba(0, 0, 0, 0.33);
+    color: hsla(0, 0%, 0%, 0.33);
 }
 
 .console-message-enclosed {
     font-family: Menlo, monospace;
     font-size: 11px;
-    color: rgba(0, 0, 0, 0.33);
+    color: hsla(0, 0%, 0%, 0.33);
 }
 
 .console-message .console-message-extra-parameters-container,
@@ -208,13 +208,13 @@
 }
 
 .console-user-command > .console-message-text {
-    color: rgb(0, 128, 255);
+    color: hsl(209, 100%, 50%);
     -webkit-user-select: text;
 }
 
 .console-saved-variable {
     font-style: normal;
-    color: rgba(0, 0, 0, 0.33);
+    color: hsla(0, 0%, 0%, 0.33);
 }
 
 .console-user-command,

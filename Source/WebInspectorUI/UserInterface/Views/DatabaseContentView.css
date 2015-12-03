@@ -32,7 +32,7 @@
 }
 
 .storage-view .storage-table-error {
-    color: rgb(66%, 33%, 33%);
+    color: hsl(0, 33%, 49%);
 }
 
 .storage-view.query {
@@ -73,7 +73,7 @@
 
 .database-user-query {
     position: relative;
-    border-bottom: 1px solid rgb(245, 245, 245);
+    border-bottom: 1px solid hsl(0, 0%, 96%);
     padding: 4px 22px 4px 18px;
     min-height: 16px;
 }
@@ -83,7 +83,7 @@
 }
 
 .database-query-text {
-    color: rgb(0, 128, 255);
+    color: hsl(209, 100%, 50%);
     -webkit-user-select: text;
 }
 

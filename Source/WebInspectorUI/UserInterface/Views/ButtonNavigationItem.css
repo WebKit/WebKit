@@ -33,7 +33,7 @@
     margin: 0 2px;
 
     line-height: 11px;
-    color: rgb(46, 46, 46);
+    color: hsl(0, 0%, 18%);
     border: 1px solid transparent;
     border-radius: 3px;
     text-align: center;
@@ -69,7 +69,7 @@ body.window-inactive .navigation-bar .item.button.disabled:not(.suppress-emboss)
 }
 
 .navigation-bar .item.button.suppress-emboss > .glyph {
-    background-color: rgb(95, 95, 95);
+    background-color: hsl(0, 0%, 37%);
 }
 
 .navigation-bar .item.button.suppress-emboss:active > .glyph {

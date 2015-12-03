@@ -24,7 +24,7 @@
  */
 
 .details-section > .content > .group > .row.chart > .title {
-    color: rgb(57, 57, 57);
+    color: hsl(0, 0%, 22%);
 
     white-space: nowrap;
     overflow: hidden;
@@ -59,11 +59,11 @@
     height: 8px;
     margin-right: 6px;
 
-    border: solid 1px rgb(102, 102, 102);
+    border: solid 1px hsl(0, 0%, 40%);
 }
 
 .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label {
-    color: rgb(51, 51, 51);
+    color: hsl(0, 0%, 20%);
 }
 
 .details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .value {

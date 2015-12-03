@@ -24,9 +24,9 @@
  */
 
 .item.resource.failed {
-    color: rgb(224, 16, 16) !important;
+    color: hsl(0, 86%, 47%) !important;
 }
 
 .item.resource.failed .subtitle {
-    color: rgba(224, 16, 16, 0.7) !important;
+    color: hsla(0, 86%, 47%, 0.7) !important;
 }

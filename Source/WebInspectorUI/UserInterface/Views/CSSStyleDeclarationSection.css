@@ -88,7 +88,7 @@
 
 .style-declaration-section > .header > .selector {
     font-family: Menlo, monospace;
-    color: rgb(128, 128, 128);
+    color: hsl(0, 0%, 50%);
 
     outline: none;
 
@@ -142,7 +142,7 @@
 .style-declaration-section > .header > .origin {
     line-height: 10px;
 
-    color: rgb(128, 128, 128);
+    color: hsl(0, 0%, 50%);
 
     word-wrap: break-word;
     white-space: nowrap;

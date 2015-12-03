@@ -40,7 +40,7 @@
 }
 
 .content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(odd) {
-    background-color: rgb(243, 246, 250);
+    background-color: hsl(214, 41%, 96%);
 }
 
 .content-view.indexed-database-object-store > .data-grid table.data tr.filler {

@@ -44,7 +44,7 @@
 }
 
 .popover .edit-breakpoint-popover-content > table > tr > th {
-    color: rgb(89, 89, 89);
+    color: hsl(0, 0%, 34%);
     font-weight: bold;
     text-align: right;
     width: 1px; /* Shrink to fit. */

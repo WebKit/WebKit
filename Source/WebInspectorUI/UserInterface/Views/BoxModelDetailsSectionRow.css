@@ -38,8 +38,8 @@
 }
 
 .details-section .row.box-model .position {
-    border: 1px rgb(66%, 66%, 66%) dotted;
-    background-color: rgb(231, 231, 231);
+    border: 1px hsl(0, 0%, 65%) dotted;
+    background-color: hsl(0, 0%, 90%);
     display: inline-block;
     text-align: center;
     padding: 3px;
@@ -48,7 +48,7 @@
 
 .details-section .row.box-model .margin {
     border: 1px dashed;
-    background-color: rgb(231, 231, 231);
+    background-color: hsl(0, 0%, 90%);
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -57,12 +57,12 @@
 }
 
 .details-section .row.box-model .margin.active {
-    background-color: rgba(246, 178, 107, .66);
+    background-color: hsla(30, 88%, 69%, 0.66);
 }
 
 .details-section .row.box-model .border {
     border: 1px black solid;
-    background-color: rgb(231, 231, 231);
+    background-color: hsl(0, 0%, 90%);
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -71,12 +71,12 @@
 }
 
 .details-section .row.box-model .border.active {
-    background-color: rgba(255, 229, 153, .66);
+    background-color: hsla(44, 100%, 80%, 0.66);
 }
 
 .details-section .row.box-model .padding {
     border: 1px grey dashed;
-    background-color: rgb(231, 231, 231);
+    background-color: hsl(0, 0%, 90%);
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -85,13 +85,13 @@
 }
 
 .details-section .row.box-model .padding.active {
-    background-color: rgba(147, 196, 125, .55);
+    background-color: hsla(101, 37%, 62%, 0.55);
 }
 
 .details-section .row.box-model .content {
     position: static;
     border: 1px gray solid;
-    background-color: rgb(231, 231, 231);
+    background-color: hsl(0, 0%, 90%);
     display: inline-block;
     text-align: center;
     vertical-align: middle;
@@ -102,7 +102,7 @@
 }
 
 .details-section .row.box-model .content.active {
-    background-color: rgba(111, 168, 220, .66);
+    background-color: hsla(208, 60%, 64%, 0.66);
 }
 
 .details-section .row.box-model .content span {

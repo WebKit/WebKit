@@ -31,8 +31,8 @@
 .timeline-record-bar > .segment {
     position: absolute;
     height: 100%;
-    background-color: rgb(225, 225, 225);
-    border: 1px solid rgb(200, 200, 200);
+    background-color: hsl(0, 0%, 88%);
+    border: 1px solid hsl(0, 0%, 78%);
     border-radius: 3px;
     min-width: 4px;
     z-index: 1;
@@ -65,36 +65,36 @@
 }
 
 :matches(:focus, .force-focus) .selected .timeline-record-bar > .segment.inactive {
-    background-color: rgb(196, 215, 242) !important;
+    background-color: hsl(215, 63%, 85%) !important;
 }
 
 :matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
-    border-left: 1px solid rgba(56, 121, 217, 0.7) !important;
+    border-left: 1px solid hsla(215, 67%, 53%, 0.7) !important;
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment {
-    background-color: rgb(120, 176, 225);
-    border-color: rgb(61, 147, 200);
+    background-color: hsl(207, 63%, 67%);
+    border-color: hsl(202, 55%, 51%);
 }
 
 .timeline-record-bar.timeline-record-type-network > .segment.inactive {
-    background-color: rgb(167, 204, 237);
-    border-color: rgb(127, 185, 220);
+    background-color: hsl(208, 66%, 79%);
+    border-color: hsl(202, 57%, 68%);
 }
 
 .timeline-record-bar.timeline-record-type-layout > .segment {
-    background-color: rgb(234, 153, 153);
-    border-color: rgb(212, 108, 108);
+    background-color: hsl(0, 65%, 75%);
+    border-color: hsl(0, 54%, 62%);
 }
 
 
 .timeline-record-bar.timeline-record-type-layout.layout-timeline-record-paint > .segment,
 .timeline-record-bar.timeline-record-type-layout.layout-timeline-record-composite > .segment {
-    background-color: rgb(176, 204, 105);
-    border-color: rgb(152, 188, 77);
+    background-color: hsl(76, 49%, 60%);
+    border-color: hsl(79, 45%, 51%);
 }
 
 .timeline-record-bar.timeline-record-type-script > .segment {
-    background-color: rgb(190, 148, 233);
-    border-color: rgb(153, 113, 185);
+    background-color: hsl(269, 65%, 74%);
+    border-color: hsl(273, 33%, 58%);
 }

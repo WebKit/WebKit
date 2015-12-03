@@ -28,8 +28,8 @@
     justify-content: center;
     flex-wrap: wrap;
 
-    box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
-    border-bottom: 1px solid rgb(179, 179, 179);
+    box-shadow: inset hsla(0, 0%, 100%, 0.2) 0 1px 0;
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 
     height: 29px;
 
@@ -40,7 +40,7 @@
 }
 
 body.window-inactive .navigation-bar {
-    border-bottom-color: rgb(219, 219, 219);
+    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .navigation-bar .item {

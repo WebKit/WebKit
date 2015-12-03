@@ -45,7 +45,7 @@
 
     opacity: 0;
 
-    border-bottom: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 }
 
 .sidebar > .panel.navigation > .overflow-shadow.top {
@@ -54,7 +54,7 @@
 }
 
 body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
-    border-bottom-color: rgb(219, 219, 219);
+    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .sidebar > .panel.navigation > .empty-content-placeholder {
@@ -77,9 +77,9 @@ body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
     font-size: 13px;
 
     color: white;
-    background-color: rgba(0, 0, 0, 0.15);
-    text-shadow: rgba(0, 0, 0, 0.2) 0 1px 0;
-    box-shadow: inset rgba(0, 0, 0, 0.2) 0 1px 0, rgba(255, 255, 255, 0.4) 0 1px 0;
+    background-color: hsla(0, 0%, 0%, 0.15);
+    text-shadow: hsla(0, 0%, 0%, 0.2) 0 1px 0;
+    box-shadow: inset hsla(0, 0%, 0%, 0.2) 0 1px 0, hsla(0, 0%, 100%, 0.4) 0 1px 0;
 
     border-radius: 6px;
     padding: 5px 15px 6px;
@@ -199,16 +199,16 @@ body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
 }
 
 .navigation-sidebar-panel-content-tree-outline .item.selected {
-    background-color: rgb(212, 212, 212);
+    background-color: hsl(0, 0%, 83%);
 }
 
 .navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected {
     color: white;
-    background-color: rgb(0, 128, 252);
+    background-color: hsl(209, 100%, 49%);
 }
 
 body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected {
-    background-color: rgb(212, 212, 212);
+    background-color: hsl(0, 0%, 83%);
 }
 
 .navigation-sidebar-panel-content-tree-outline .item .titles {
@@ -225,8 +225,8 @@ body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.select
 }
 
 .navigation-sidebar-panel-content-tree-outline .item .highlighted {
-    background-color: rgba(235, 215, 38, 0.2);
-    border-bottom: 1px solid rgb(237, 202, 71);
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
 }
 
 .navigation-sidebar-panel-content-tree-outline .item .titles.no-subtitle {
@@ -240,11 +240,11 @@ body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.select
 
 .navigation-sidebar-panel-content-tree-outline .item .subtitle {
     font-size: 9px;
-    color: rgba(0, 0, 0, 0.7);
+    color: hsla(0, 0%, 0%, 0.7);
 }
 
 .navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .subtitle {
-    color: rgba(255, 255, 255, 0.9);
+    color: hsla(0, 0%, 100%, 0.9);
 }
 
 .navigation-sidebar-panel-content-tree-outline .item .titles.no-subtitle .subtitle,

@@ -46,11 +46,11 @@
 }
 
 .panel.details.layer-tree .name-column :matches(.pseudo-element, .reflection) {
-    color: rgb(128, 128, 128);
+    color: hsl(0, 0%, 50%);
 }
 
 .panel.details.layer-tree tr.selected .name-column :matches(.pseudo-element, .reflection) {
-    color: rgba(255, 255, 255, 0.75);
+    color: hsla(0, 0%, 100%, 0.75);
 }
 
 .panel.details.layer-tree .bottom-bar {
@@ -58,7 +58,7 @@
     display: flex;
     bottom: 0;
     width: 100%;
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsl(0, 0%, 70%);
     background-color: white;
 }
 

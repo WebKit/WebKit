@@ -32,7 +32,7 @@
 
     overflow: hidden;
 
-    -webkit-mask-image: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%);
+    -webkit-mask-image: -webkit-linear-gradient(hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 1) 10%);
 }
 
 .timeline-record-frame > .frame {
@@ -51,10 +51,10 @@
     box-sizing: border-box;
 
     min-height: 3px;
-    background-color: rgb(231, 231, 231);
+    background-color: hsl(0, 0%, 90%);
     border-style: solid solid none solid;
     border-width: 1px;
-    border-color: rgb(211, 211, 211);
+    border-color: hsl(0, 0%, 82%);
 }
 
 .timeline-record-frame > .frame > .duration:last-child {
@@ -62,16 +62,16 @@
 }
 
 .timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-script {
-    background-color: rgb(190, 148, 233);
-    border-color: rgb(153, 113, 185);
+    background-color: hsl(269, 65%, 74%);
+    border-color: hsl(273, 33%, 58%);
 }
 
 .timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-layout {
-    background-color: rgb(234, 153, 153);
-    border-color: rgb(212, 108, 108);
+    background-color: hsl(0, 65%, 75%);
+    border-color: hsl(0, 54%, 62%);
 }
 
 .timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-paint {
-    background-color: rgb(176, 204, 105);
-    border-color: rgb(152, 188, 77);
+    background-color: hsl(76, 49%, 60%);
+    border-color: hsl(79, 45%, 51%);
 }

@@ -42,9 +42,9 @@
 
     height: 23px;
 
-    border-bottom: 1px solid rgb(179, 179, 179);
-    background-color: rgb(242, 242, 242);
-    color: rgb(57, 57, 57);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
+    background-color: hsl(0, 0%, 94%);
+    color: hsl(0, 0%, 22%);
 
     white-space: nowrap;
     overflow: hidden;
@@ -59,7 +59,7 @@
 }
 
 body.window-inactive .sidebar > .panel.navigation.network > .title-bar {
-    border-bottom-color: rgb(219, 219, 219);
+    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .sidebar > .panel.navigation.network.network-grid-content-view-showing > .content {
@@ -91,6 +91,6 @@ body.window-inactive .sidebar > .panel.navigation.network > .title-bar {
 }
 
 .sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline {
-    background-image: linear-gradient(to bottom, transparent, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03));
+    background-image: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03));
     background-size: 100% 40px;
 }

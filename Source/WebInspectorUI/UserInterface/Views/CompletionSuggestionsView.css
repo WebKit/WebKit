@@ -27,7 +27,7 @@
     position: absolute;
     display: block;
 
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: hsla(0, 0%, 100%, 0.9);
     border-radius: 5px;
 
     z-index: 100;
@@ -35,7 +35,7 @@
     margin-top: -1px;
     margin-left: -10px;
 
-    box-shadow: rgba(0, 0, 0, 0.25) 0 5px 10px, rgba(0, 0, 0, 0.15) 0 0 0 1px;
+    box-shadow: hsla(0, 0%, 0%, 0.25) 0 5px 10px, hsla(0, 0%, 0%, 0.15) 0 0 0 1px;
 }
 
 .completion-suggestions > .completion-suggestions-container {
@@ -70,9 +70,9 @@
 
 .completion-suggestions-container:not(:active) > .item.selected,
 .completion-suggestions-container > .item:active {
-    box-shadow: inset rgb(87, 152, 206) 0 1px 0;
-    background: linear-gradient(to bottom, rgb(110, 167, 216), rgb(36, 114, 181));
+    box-shadow: inset hsl(207, 54%, 57%) 0 1px 0;
+    background: linear-gradient(to bottom, hsl(207, 57%, 63%), hsl(207, 66%, 42%));
 
     color: white;
-    text-shadow: rgb(51, 88, 123) 0 1px 0;
+    text-shadow: hsl(209, 41%, 34%) 0 1px 0;
 }

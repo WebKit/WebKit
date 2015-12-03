@@ -24,7 +24,7 @@
  */
 
 .content-view.resource.image {
-    background-color: rgb(231, 231, 231);
+    background-color: hsl(0, 0%, 90%);
 
     overflow-x: hidden;
     overflow-y: auto;

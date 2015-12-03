@@ -44,7 +44,7 @@ body.mavericks.docked .toolbar {
 
 body.window-inactive:not(.mavericks) .toolbar {
     background-image: none;
-    background-color: rgb(246, 246, 246);
+    background-color: hsl(0, 0%, 96%);
 }
 
 body.mac-platform:not(.docked, .mavericks) .toolbar {

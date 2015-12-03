@@ -44,29 +44,29 @@
 }
 
 .type-token-function, .type-token-boolean {
-    background-color: rgb(204, 59, 191);
+    background-color: hsl(305, 58%, 51%);
 }
 
 .type-token-number {
-    background-color: rgb(59, 112, 226);
+    background-color: hsl(220, 74%, 55%);
 }
 
 .type-token-string {
-    background-color: rgb(223, 53, 46);
+    background-color: hsl(2, 73%, 52%);
 }
 
 .type-token-symbol {
-    background-color: rgb(63, 169, 156);
+    background-color: hsl(172, 45%, 45%);
 }
 
 .type-token-default {
-    background-color: rgb(118, 174, 29);
+    background-color: hsl(83, 71%, 39%);
 }
 
 .type-token-empty {
-    background-color: rgb(126, 126, 126);
+    background-color: hsl(0, 0%, 49%);
 }
 
 .type-token-many {
-    background-color: rgb(237, 132, 0);
+    background-color: hsl(33, 100%, 46%);
 }

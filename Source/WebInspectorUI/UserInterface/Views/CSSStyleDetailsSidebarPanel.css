@@ -48,7 +48,7 @@
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {
     padding: 10px;
-    border-bottom: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 
     display: flex;
     flex-flow: row wrap;
@@ -63,7 +63,7 @@
 }
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label {
-    color: rgb(96, 96, 96);
+    color: hsl(0, 0%, 37%);
     text-shadow: white 0 1px 0;
 
     margin: 0 5px;
@@ -78,7 +78,7 @@
     bottom: 0;
     width: 100%;
     background-color: white;
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsl(0, 0%, 70%);
 }
 
 .sidebar > .panel.details.css-style > .content:not(.has-filter-bar) + .filter-bar {
@@ -87,8 +87,8 @@
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress .filter-matching {
     display: inline;
-    background-color: rgba(235, 215, 38, 0.5);
-    border-bottom: 1px solid rgb(237, 202, 71);
+    background-color: hsla(53, 83%, 53%, 0.5);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
     opacity: 1;
 }
 
@@ -104,7 +104,7 @@
 .sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-has-label) {
     margin-top: 0;
     border-top: none;
-    border-bottom: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 }
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section > .header > .selector > .filter-matching {

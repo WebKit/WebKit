@@ -30,7 +30,7 @@
     align-items: flex-end;
 
     background-color: white;
-    border-top: 1px solid rgb(190, 190, 190);
+    border-top: 1px solid hsl(0, 0%, 74%);
     padding: 3px 0 4px;
 
     outline: none;
@@ -40,11 +40,11 @@
 }
 
 body.window-inactive .quick-console {
-    border-top-color: rgb(219, 219, 219);
+    border-top-color: hsl(0, 0%, 85%);
 }
 
 .quick-console.showing-log {
-    border-top-color: rgb(240, 240, 240) !important;
+    border-top-color: hsl(0, 0%, 94%) !important;
 }
 
 .quick-console > .console-prompt {

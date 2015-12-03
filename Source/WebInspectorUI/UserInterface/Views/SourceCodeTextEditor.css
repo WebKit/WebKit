@@ -29,11 +29,11 @@
 }
 
 .source-code.text-editor > .CodeMirror .warning {
-    background-color: rgb(253, 249, 226);
+    background-color: hsl(51, 87%, 93%);
 }
 
 .source-code.text-editor > .CodeMirror .error {
-    background-color: rgb(255, 220, 208);
+    background-color: hsl(15, 100%, 90%);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget {
@@ -88,27 +88,27 @@
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.warning {
-    background-color: rgb(253, 249, 226);
+    background-color: hsl(51, 87%, 93%);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline.warning {
-    background-color: rgb(254, 233, 177);
+    background-color: hsl(43, 97%, 84%);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline.warning > .arrow {
-    border-right-color: rgb(254, 233, 177);
+    border-right-color: hsl(43, 97%, 84%);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.error {
-    background-color: rgb(255, 220, 208);
+    background-color: hsl(15, 100%, 90%);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline.error {
-    background-color: rgb(255, 173, 153);
+    background-color: hsl(11, 100%, 80%);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline.error > .arrow {
-    border-right-color: rgb(255, 173, 153);
+    border-right-color: hsl(11, 100%, 80%);
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget > .text {
@@ -159,7 +159,7 @@
 }
 
 .popover .debugger-popover-content > .body {
-    border-top: 1px solid rgb(194, 194, 147);
+    border-top: 1px solid hsl(60, 27%, 66%);
     overflow: auto;
     margin-top: 5px;
     padding-top: 5px;

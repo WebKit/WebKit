@@ -33,19 +33,19 @@
 
 .navigation-bar .item.radio.button.text-only:hover {
     color: white;
-    background-color: rgba(34, 131, 246, 0.5);
+    background-color: hsla(212, 92%, 54%, 0.5);
 }
 
 .navigation-bar .item.radio.button.text-only.selected {
     color: white;
-    background-color: rgba(34, 131, 246, 1);
+    background-color: hsl(212, 92%, 54%);
 }
 
 .navigation-bar .item.radio.button.text-only:active {
     color: white;
-    background-color: rgba(34, 131, 246, 0.55);
+    background-color: hsla(212, 92%, 54%, 0.55);
 }
 
 .navigation-bar .item.radio.button.text-only.selected:active {
-    background-color: rgba(31, 105, 238, 1);
+    background-color: hsl(218, 85%, 52%);
 }
