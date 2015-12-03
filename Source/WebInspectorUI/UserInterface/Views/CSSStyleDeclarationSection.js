@@ -80,13 +80,13 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
             if (style.inherited)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.Author)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Author)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.User)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.User)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.UserAgent)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSRule.Type.Inspector)
+            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector)
                 iconClassName = WebInspector.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName;
             break;
 
@@ -234,19 +234,19 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             } else {
                 var originString;
                 switch (this._style.ownerRule.type) {
-                case WebInspector.CSSRule.Type.Author:
+                case WebInspector.CSSStyleSheet.Type.Author:
                     originString = WebInspector.UIString("Author Stylesheet");
                     break;
 
-                case WebInspector.CSSRule.Type.User:
+                case WebInspector.CSSStyleSheet.Type.User:
                     originString = WebInspector.UIString("User Stylesheet");
                     break;
 
-                case WebInspector.CSSRule.Type.UserAgent:
+                case WebInspector.CSSStyleSheet.Type.UserAgent:
                     originString = WebInspector.UIString("User Agent Stylesheet");
                     break;
 
-                case WebInspector.CSSRule.Type.Inspector:
+                case WebInspector.CSSStyleSheet.Type.Inspector:
                     originString = WebInspector.UIString("Web Inspector");
                     break;
                 }

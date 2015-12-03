@@ -56,7 +56,6 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     static protocolStyleSheetOriginToEnum(origin)
     {
-        // FIXME: Switch from CSSRule.Type to CSSStyleSheet.Type everywhere.
         switch (origin) {
         case CSSAgent.StyleSheetOrigin.Regular:
             return WebInspector.CSSStyleSheet.Type.Author;
@@ -67,8 +66,25 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         case CSSAgent.StyleSheetOrigin.Inspector:
             return WebInspector.CSSStyleSheet.Type.Inspector;
         default:
-            console.assert(false, "Unknown StyleSheetOrigin", origin);
+            console.assert(false, "Unknown CSS.StyleSheetOrigin", origin);
             return CSSAgent.StyleSheetOrigin.Regular;
+        }
+    }
+
+    static protocolMediaSourceToEnum(source)
+    {
+        switch (source) {
+        case CSSAgent.CSSMediaSource.MediaRule:
+            return WebInspector.CSSMedia.Type.MediaRule;
+        case CSSAgent.CSSMediaSource.ImportRule:
+            return WebInspector.CSSMedia.Type.ImportRule;
+        case CSSAgent.CSSMediaSource.LinkedSheet:
+            return WebInspector.CSSMedia.Type.LinkedStyleSheet;
+        case CSSAgent.CSSMediaSource.InlineSheet:
+            return WebInspector.CSSMedia.Type.InlineStyleSheet;
+        default:
+            console.assert(false, "Unknown CSS.CSSMediaSource", origin);
+            return WebInspector.CSSMedia.Type.MediaRule;
         }
     }
 

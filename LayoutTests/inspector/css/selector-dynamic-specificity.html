@@ -33,7 +33,7 @@ function test() {
 
         for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
             var rule = nodeStyles.matchedRules[i];
-            if (rule.type !== WebInspector.CSSRule.Type.Author)
+            if (rule.type !== WebInspector.CSSStyleSheet.Type.Author)
                 continue;
 
             if (seenRules.some(function(r) { return r.isEqualTo(rule); }))
