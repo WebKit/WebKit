@@ -1095,7 +1095,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (hasText)
             attrSpanElement.appendChild(document.createTextNode("=\u200B\""));
 
-        if (name === "src" || name === "href") {
+        if (name === "src" || /\bhref\b/.test(name)) {
             var baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
             var rewrittenURL = absoluteURL(value, baseURL);
             value = value.insertWordBreakCharacters();
