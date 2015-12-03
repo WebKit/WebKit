@@ -102,16 +102,16 @@ WebInspector.DOMTreeUpdater.prototype = {
             this._updateModifiedNodesTimeout = null;
         }
 
-        let updatedParentTreeElements = [];
+        var updatedParentTreeElements = [];
         for (let recentlyModifiedNode of this._recentlyModifiedNodes) {
-            let parent = recentlyModifiedNode.parent;
-            let node = recentlyModifiedNode.node;
-            let changeInfo = null;
+            var parent = recentlyModifiedNode.parent;
+            var node = recentlyModifiedNode.node;
+            var changeInfo = null;
             if (recentlyModifiedNode.attribute)
                 changeInfo = {type: WebInspector.DOMTreeElement.ChangeType.Attribute, attribute: recentlyModifiedNode.attribute};
 
             if (recentlyModifiedNode.updated) {
-                let nodeTreeElement = this._treeOutline.findTreeElement(node);
+                var nodeTreeElement = this._treeOutline.findTreeElement(node);
                 if (!nodeTreeElement)
                     continue;
 
@@ -124,7 +124,7 @@ WebInspector.DOMTreeUpdater.prototype = {
             if (!parent)
                 continue;
 
-            let parentNodeItem = this._treeOutline.findTreeElement(parent);
+            var parentNodeItem = this._treeOutline.findTreeElement(parent);
             if (parentNodeItem && !parentNodeItem.alreadyUpdatedChildren) {
                 parentNodeItem.updateTitle();
                 parentNodeItem.updateChildren();

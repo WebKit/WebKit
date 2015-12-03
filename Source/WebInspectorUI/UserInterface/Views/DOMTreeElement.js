@@ -1081,17 +1081,17 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _buildAttributeDOM(parentElement, name, value, node)
     {
-        let hasText = (value.length > 0);
-        let attrSpanElement = parentElement.createChild("span", "html-attribute");
-        let attrNameElement = attrSpanElement.createChild("span", "html-attribute-name");
+        var hasText = (value.length > 0);
+        var attrSpanElement = parentElement.createChild("span", "html-attribute");
+        var attrNameElement = attrSpanElement.createChild("span", "html-attribute-name");
         attrNameElement.textContent = name;
-        let attrValueElement = null;
+        var attrValueElement = null;
         if (hasText)
             attrSpanElement.appendChild(document.createTextNode("=\u200B\""));
 
         if (name === "src" || name === "href") {
-            let baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
-            let rewrittenURL = absoluteURL(value, baseURL);
+            var baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
+            var rewrittenURL = absoluteURL(value, baseURL);
             value = value.insertWordBreakCharacters();
             if (!rewrittenURL) {
                 attrValueElement = attrSpanElement.createChild("span", "html-attribute-value");
@@ -1470,7 +1470,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
 
         for (let change of this._nodeStateChanges) {
-            let element = change.element;
+            var element = change.element;
             if (!element)
                 continue;
 
