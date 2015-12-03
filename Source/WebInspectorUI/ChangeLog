@@ -1,5 +1,21 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r192063. rdar://problem/23221163
+
+    2015-11-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Toolbar "Inspect Node" button not highlighting when active
+            https://bugs.webkit.org/show_bug.cgi?id=150938
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/ButtonToolbarItem.css:
+            (.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) > .glyph):
+            (.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated) > .glyph):
+            Copy the navigation-bar button activated styles to toolbar.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r192050. rdar://problem/23221163
 
     2015-11-04  Matt Baker  <mattbaker@apple.com>
