@@ -508,6 +508,7 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
             var afterTabSizesAndPositions = this._recordTabBarItemSizesAndPositions();
 
             this._applyTabBarItemSizesAndPositions(beforeTabSizesAndPositions);
+            this.element.classList.add("static-layout");
 
             function animateTabs()
             {
