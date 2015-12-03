@@ -28,6 +28,7 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
     constructor(identifier)
     {
         var tabBarItem = new WebInspector.TabBarItem("Images/NewTab.svg", WebInspector.UIString("New Tab"));
+        tabBarItem.isDefaultTab = true;
 
         super(identifier || "new-tab", "new-tab", tabBarItem);
 
