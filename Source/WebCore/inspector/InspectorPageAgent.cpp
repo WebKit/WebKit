@@ -258,6 +258,9 @@ String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResourc
 
 CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
 {
+    if (url.isNull())
+        return nullptr;
+
     CachedResource* cachedResource = frame->document()->cachedResourceLoader().cachedResource(url);
     if (!cachedResource) {
         ResourceRequest request(url);

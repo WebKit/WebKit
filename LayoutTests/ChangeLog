@@ -1,5 +1,19 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r192592. rdar://problem/23221163
+
+    2015-11-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Client Blocked Resource Requests causes Crash under InspectorPageAgent::cachedResource
+            https://bugs.webkit.org/show_bug.cgi?id=151398
+
+            Reviewed by Brian Burg.
+
+            * inspector/network/client-blocked-load-expected.txt: Added.
+            * inspector/network/client-blocked-load.html: Added.
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Merge r186891. rdar://problem/23221163
 
     2015-07-16  Joseph Pecoraro  <pecoraro@apple.com>
