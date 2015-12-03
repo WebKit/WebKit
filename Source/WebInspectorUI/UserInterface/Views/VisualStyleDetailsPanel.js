@@ -790,7 +790,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         var backgroundImageRow = new WebInspector.DetailsSectionRow;
 
-        var backgroundImage = new WebInspector.VisualStyleURLInput("background-image", WebInspector.UIString("Image"), this._keywords.defaults.concat(["None"]));
+        var backgroundImage = new WebInspector.VisualStyleBackgroundPicker("background-image", WebInspector.UIString("Type"), this._keywords.defaults.concat(["None"]));
 
         backgroundImageRow.element.appendChild(backgroundImage.element);
 
