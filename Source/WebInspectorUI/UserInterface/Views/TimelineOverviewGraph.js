@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineOverviewGraph = function(timeline)
+WebInspector.TimelineOverviewGraph = function(timeline, timelineOverview)
 {
     if (this.constructor === WebInspector.TimelineOverviewGraph) {
         // When instantiated directly return an instance of a type-based concrete subclass.
@@ -32,16 +32,16 @@ WebInspector.TimelineOverviewGraph = function(timeline)
 
         var timelineType = timeline.type;
         if (timelineType === WebInspector.TimelineRecord.Type.Network)
-            return new WebInspector.NetworkTimelineOverviewGraph(timeline);
+            return new WebInspector.NetworkTimelineOverviewGraph(timeline, timelineOverview);
 
         if (timelineType === WebInspector.TimelineRecord.Type.Layout)
-            return new WebInspector.LayoutTimelineOverviewGraph(timeline);
+            return new WebInspector.LayoutTimelineOverviewGraph(timeline, timelineOverview);
 
         if (timelineType === WebInspector.TimelineRecord.Type.Script)
-            return new WebInspector.ScriptTimelineOverviewGraph(timeline);
+            return new WebInspector.ScriptTimelineOverviewGraph(timeline, timelineOverview);
 
         if (timelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
-            return new WebInspector.RenderingFrameTimelineOverviewGraph(timeline);
+            return new WebInspector.RenderingFrameTimelineOverviewGraph(timeline, timelineOverview);
 
         throw Error("Can't make a graph for an unknown timeline.");
     }
@@ -59,7 +59,15 @@ WebInspector.TimelineOverviewGraph = function(timeline)
     this._startTime = 0;
     this._endTime = 5;
     this._currentTime = 0;
-    this._timelineOverview = null;
+    this._timelineOverview = timelineOverview;
+    this._selectedRecord = null;
+    this._selectedRecordChanged = false;
+    this._scheduledLayoutUpdateIdentifier = 0;
+    this._scheduledSelectedRecordLayoutUpdateIdentifier = 0;
+};
+
+WebInspector.TimelineOverviewGraph.Event = {
+    RecordSelected: "timeline-overview-graph-record-selected"
 };
 
 WebInspector.TimelineOverviewGraph.prototype = {
@@ -136,14 +144,25 @@ WebInspector.TimelineOverviewGraph.prototype = {
         return this._timelineOverview;
     },
 
-    set timelineOverview(x)
-    {
-        this._timelineOverview = x;
-    },
-
     get visible()
     {
         return this._visible;
+    },
+
+    get selectedRecord()
+    {
+        return this._selectedRecord;
+    },
+
+    set selectedRecord(x)
+    {
+        if (this._selectedRecord === x)
+            return;
+
+        this._selectedRecord = x;
+        this._selectedRecordChanged = true;
+
+        this._needsSelectedRecordLayout();
     },
 
     shown: function()
@@ -166,7 +185,7 @@ WebInspector.TimelineOverviewGraph.prototype = {
     {
         if (this._scheduledLayoutUpdateIdentifier) {
             cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            delete this._scheduledLayoutUpdateIdentifier;
+            this._scheduledLayoutUpdateIdentifier = 0;
         }
 
         // Implemented by sub-classes if needed.
@@ -190,5 +209,41 @@ WebInspector.TimelineOverviewGraph.prototype = {
             return;
 
         this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
+    },
+
+    dispatchSelectedRecordChangedEvent: function()
+    {
+        if (!this._selectedRecordChanged)
+            return;
+
+        this._selectedRecordChanged = false;
+
+        this.dispatchEventToListeners(WebInspector.TimelineOverviewGraph.Event.RecordSelected, {record: this.selectedRecord});
+    },
+
+    updateSelectedRecord: function()
+    {
+        // Implemented by sub-classes if needed.
+    },
+
+    // Private
+
+    _needsSelectedRecordLayout: function()
+    {
+        // If layout is scheduled, abort since the selected record will be updated when layout happens.
+        if (this._scheduledLayoutUpdateIdentifier)
+            return;
+
+        if (this._scheduledSelectedRecordLayoutUpdateIdentifier)
+            return;
+
+        function update()
+        {
+            this._scheduledSelectedRecordLayoutUpdateIdentifier = 0;
+
+            this.updateSelectedRecord();
+        }
+
+        this._scheduledSelectedRecordLayoutUpdateIdentifier = requestAnimationFrame(update.bind(this));
     }
 };

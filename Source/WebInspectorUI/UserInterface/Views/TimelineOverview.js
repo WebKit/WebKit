@@ -45,6 +45,8 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
     this._timelineRuler = new WebInspector.TimelineRuler;
     this._timelineRuler.allowsClippedLabels = true;
     this._timelineRuler.allowsTimeRangeSelection = true;
+    this._timelineRuler.element.addEventListener("mousedown", this._timelineRulerMouseDown.bind(this));
+    this._timelineRuler.element.addEventListener("click", this._timelineRulerMouseClicked.bind(this));
     this._timelineRuler.addEventListener(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
     this._element.appendChild(this._timelineRuler.element);
 
@@ -76,6 +78,7 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
     this._mouseWheelDelta = 0;
     this._scrollStartTime = 0;
     this._cachedScrollContainerWidth = NaN;
+    this._timelineRulerSelectionChanged = false;
 
     this.selectionStartTime = this._selectionStartValueSetting.value;
     this.selectionDuration = this._selectionDurationSetting.value;
@@ -90,6 +93,7 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
 WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
 
 WebInspector.TimelineOverview.Event = {
+    RecordSelected: "timeline-overview-record-selected",
     TimeRangeSelectionChanged: "timeline-overview-time-range-selection-changed"
 };
 
@@ -285,6 +289,18 @@ WebInspector.TimelineOverview.prototype = {
         this.scrollStartTime = marker.time - (this.visibleDuration / 2);
     },
 
+    selectRecord: function(timeline, record)
+    {
+        console.assert(this.canShowTimeline(timeline), timeline);
+
+        var overviewGraph = this._timelineOverviewGraphsMap.get(timeline);
+        console.assert(overviewGraph, "Missing overview graph for timeline type " + timeline.type);
+        if (!overviewGraph)
+            return;
+
+        overviewGraph.selectedRecord = record;
+    },
+
     updateLayoutForResize: function()
     {
         this._cachedScrollContainerWidth = NaN;
@@ -456,8 +472,8 @@ WebInspector.TimelineOverview.prototype = {
         if (!this.canShowTimeline(timeline))
             return;
 
-        var overviewGraph = new WebInspector.TimelineOverviewGraph(timeline);
-        overviewGraph.timelineOverview = this;
+        var overviewGraph = new WebInspector.TimelineOverviewGraph(timeline, this);
+        overviewGraph.addEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
         this._timelineOverviewGraphsMap.set(timeline, overviewGraph);
         this._graphsContainerElement.appendChild(overviewGraph.element);
     },
@@ -472,16 +488,50 @@ WebInspector.TimelineOverview.prototype = {
         console.assert(this._timelineOverviewGraphsMap.has(timeline), timeline);
 
         var overviewGraph = this._timelineOverviewGraphsMap.take(timeline);
-        overviewGraph.timelineOverview = null;
+        overviewGraph.removeEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
         this._graphsContainerElement.removeChild(overviewGraph.element);
+    },
+
+    _timelineRulerMouseDown: function(event)
+    {
+        this._timelineRulerSelectionChanged = false;
+    },
+
+    _timelineRulerMouseClicked: function(event)
+    {
+        if (this._timelineRulerSelectionChanged)
+            return;
+
+        for (var overviewGraph of this._timelineOverviewGraphsMap.values()) {
+            var graphRect = overviewGraph.element.getBoundingClientRect();
+            if (!(event.pageX >= graphRect.left && event.pageX <= graphRect.right && event.pageY >= graphRect.top && event.pageY <= graphRect.bottom))
+                continue;
+
+            // Clone the event to dispatch it on the overview graph element.
+            var newClickEvent = new event.constructor(event.type, event);
+            overviewGraph.element.dispatchEvent(newClickEvent);
+            return;
+        }
     },
 
     _timeRangeSelectionChanged: function(event)
     {
+        this._timelineRulerSelectionChanged = true;
         this._selectionStartValueSetting.value = this.selectionStartTime - this._startTime;
         this._selectionDurationSetting.value = this.selectionDuration;
 
         this.dispatchEventToListeners(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged);
+    },
+
+    _recordSelected: function(event)
+    {
+        for ([timeline, overviewGraph] of this._timelineOverviewGraphsMap) {
+            if (overviewGraph !== event.target)
+                continue;
+
+            this.dispatchEventToListeners(WebInspector.TimelineOverview.Event.RecordSelected, {timeline, record: event.data.record});
+            return;
+        }
     },
 
     _resetSelection: function()
@@ -489,5 +539,5 @@ WebInspector.TimelineOverview.prototype = {
         this.secondsPerPixel = this._defaultSettingsValues.durationPerPixel;
         this.selectionStartTime = this._defaultSettingsValues.selectionStartValue;
         this.selectionDuration = this._defaultSettingsValues.selectionDuration;
-    },
+    }
 };

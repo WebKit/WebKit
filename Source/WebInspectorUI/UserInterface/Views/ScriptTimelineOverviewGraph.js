@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineOverviewGraph = function(timeline)
+WebInspector.ScriptTimelineOverviewGraph = function(timeline, timelineOverview)
 {
-    WebInspector.TimelineOverviewGraph.call(this, timeline);
+    WebInspector.TimelineOverviewGraph.call(this, timeline, timelineOverview);
 
     this.element.classList.add("script");
 

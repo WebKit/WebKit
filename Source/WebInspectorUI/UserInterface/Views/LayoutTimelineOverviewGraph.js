@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineOverviewGraph = function(timeline)
+WebInspector.LayoutTimelineOverviewGraph = function(timeline, timelineOverview)
 {
-    WebInspector.TimelineOverviewGraph.call(this, timeline);
+    WebInspector.TimelineOverviewGraph.call(this, timeline, timelineOverview);
 
     this.element.classList.add("layout");
 

@@ -143,11 +143,6 @@ WebInspector.RenderingFrameTimelineView.prototype = {
         return pathComponents;
     },
 
-    filterDidChange: function()
-    {
-        WebInspector.TimelineView.prototype.filterDidChange.call(this);
-    },
-
     matchTreeElementAgainstCustomFilters: function(treeElement)
     {
         return this._dataGrid.treeElementMatchesActiveScopeFilters(treeElement);
@@ -178,6 +173,15 @@ WebInspector.RenderingFrameTimelineView.prototype = {
         }
 
         WebInspector.TimelineView.prototype.showContentViewForTreeElement.call(this, treeElement);
+    },
+
+    treeElementDeselected: function(treeElement)
+    {
+        var dataGridNode = this._dataGrid.dataGridNodeForTreeElement(treeElement);
+        if (!dataGridNode)
+            return;
+
+        dataGridNode.deselect();
     },
 
     treeElementSelected: function(treeElement, selectedByUser)
