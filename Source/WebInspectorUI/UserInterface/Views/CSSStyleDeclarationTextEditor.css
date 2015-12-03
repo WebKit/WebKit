@@ -91,7 +91,7 @@
 }
 
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .invalid-warning-marker.clickable:hover {
-    -webkit-filter: brightness(0.9);
+    filter: brightness(0.9);
 }
 
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker {
@@ -113,11 +113,11 @@
 }
 
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:hover {
-    -webkit-filter: brightness(0.9);
+    filter: brightness(0.9);
 }
 
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .cubic-bezier-marker:active {
-    -webkit-filter: brightness(0.8);
+    filter: brightness(0.8);
 }
 
 .computed .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.implicit,
