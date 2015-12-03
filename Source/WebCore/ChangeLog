@@ -1,3 +1,9 @@
+2015-12-03  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build-fix; missing include.
+
+        * html/HTMLVideoElement.cpp:
+
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-skip-deleted.html crashes.
