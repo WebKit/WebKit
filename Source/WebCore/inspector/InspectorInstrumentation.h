@@ -210,9 +210,6 @@ public:
     static void didRunJavaScriptDialog(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResource(CachedResource&);
 
-    static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned startLine);
-    static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned endLine);
-
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
 
     // FIXME: Convert to ScriptArguments to match non-worker context.
@@ -395,9 +392,6 @@ private:
     static InspectorInstrumentationCookie willRunJavaScriptDialogImpl(InstrumentingAgents&, const String& message);
     static void didRunJavaScriptDialogImpl(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResourceImpl(CachedResource&);
-
-    static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents&, unsigned startLine, Frame*);
-    static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned endLine);
 
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
 
@@ -1119,21 +1113,6 @@ inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& 
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     willDestroyCachedResourceImpl(cachedResource);
-}
-
-inline InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTML(Document* document, unsigned startLine)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willWriteHTMLImpl(*instrumentingAgents, startLine, document->frame());
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentationCookie& cookie, unsigned endLine)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didWriteHTMLImpl(cookie, endLine);
 }
 
 inline void InspectorInstrumentation::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)

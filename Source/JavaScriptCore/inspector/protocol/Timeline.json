@@ -16,7 +16,6 @@
                 "Composite",
                 "RenderingFrame",
                 "ScrollLayer",
-                "ParseHTML",
                 "TimerInstall",
                 "TimerRemove",
                 "TimerFire",
