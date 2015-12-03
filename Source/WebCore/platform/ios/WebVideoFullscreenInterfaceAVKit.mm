@@ -1327,6 +1327,9 @@ void WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture()
             [m_window setHidden:YES];
             [[m_playerViewController view] setHidden:YES];
         }];
+    } else {
+        [m_window setHidden:YES];
+        [[m_playerViewController view] setHidden:YES];
     }
 
     if (m_fullscreenChangeObserver)
