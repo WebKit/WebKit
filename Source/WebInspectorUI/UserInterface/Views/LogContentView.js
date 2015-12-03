@@ -155,9 +155,9 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         // We want to remove focusable children after those pending dispatches too.
         InspectorBackend.runAfterPendingDispatches(this._clearFocusableChildren.bind(this));
 
-        // We only auto show the console if the message is a result.
+        // We only auto show the console if the message is a non-synthetic result.
         // This is when the user evaluated something directly in the prompt.
-        if (type !== WebInspector.ConsoleMessage.MessageType.Result)
+        if (type !== WebInspector.ConsoleMessage.MessageType.Result || messageView.message.synthetic)
             return;
 
         if (!WebInspector.isShowingConsoleTab())
