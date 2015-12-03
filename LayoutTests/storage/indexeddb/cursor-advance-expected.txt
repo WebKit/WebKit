@@ -181,13 +181,13 @@ PASS Exception was thrown.
 PASS cursor.advance(0) threw TypeError: Failed to execute 'advance' on 'IDBCursor': A count argument with value 0 (zero) was supplied, must be greater than 0.
 Expecting TypeError exception from cursor.advance(-1)
 PASS Exception was thrown.
-PASS cursor.advance(-1) threw TypeError: Failed to execute 'advance' on 'IDBCursor': Value is outside the 'unsigned long' value range.
+PASS cursor.advance(-1) threw TypeError: Value -1 is outside the range [0, 4294967295]
 Expecting TypeError exception from cursor.advance(0x100000000)
 PASS Exception was thrown.
-PASS cursor.advance(0x100000000) threw TypeError: Failed to execute 'advance' on 'IDBCursor': Value is outside the 'unsigned long' value range.
+PASS cursor.advance(0x100000000) threw TypeError: Value 4294967296 is outside the range [0, 4294967295]
 Expecting TypeError exception from cursor.advance(0x20000000000000)
 PASS Exception was thrown.
-PASS cursor.advance(0x20000000000000) threw TypeError: Failed to execute 'advance' on 'IDBCursor': Value is outside the 'unsigned long' value range.
+PASS cursor.advance(0x20000000000000) threw TypeError: Value 9007199254740992 is outside the range [0, 4294967295]
 
 testEdges():
 trans = db.transaction(objectStoreName, 'readonly')

@@ -455,9 +455,9 @@ public:
         RefPtr<IDBCursorWithValue> idbCursor = requestResult->idbCursorWithValue();
 
         if (m_skipCount) {
-            ExceptionCode ec = 0;
+            ExceptionCodeWithMessage ec;
             idbCursor->advance(m_skipCount, ec);
-            if (ec)
+            if (ec.code)
                 m_requestCallback->sendFailure("Could not advance cursor.");
             m_skipCount = 0;
             return;

@@ -56,7 +56,7 @@ public:
     virtual IDBAny* source() override final;
 
     virtual RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override final;
-    virtual void advance(unsigned long, ExceptionCode&) override final;
+    virtual void advance(unsigned long, ExceptionCodeWithMessage&) override final;
     virtual void continueFunction(ScriptExecutionContext*, ExceptionCode&) override final;
     virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) override final;

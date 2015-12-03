@@ -68,14 +68,15 @@ class Frame;
 class URL;
 class Node;
 
-typedef int ExceptionCode;
-
+struct ExceptionCodeWithMessage;
 struct ExceptionDetails {
     String message;
     int lineNumber { 0 };
     int columnNumber { 0 };
     String sourceURL;
 };
+
+typedef int ExceptionCode;
 
 DOMWindow& activeDOMWindow(JSC::ExecState*);
 DOMWindow& firstDOMWindow(JSC::ExecState*);
@@ -289,6 +290,7 @@ JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode);
 
 // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);
+void setDOMException(JSC::ExecState*, const ExceptionCodeWithMessage&);
 
 JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
 

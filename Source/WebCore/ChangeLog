@@ -1,3 +1,32 @@
+2015-12-03  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/cursor-advance.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151731
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursor.idl:
+        
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::advance): Return a custom exception message for TypeError.
+        * Modules/indexeddb/client/IDBCursorImpl.h:
+        
+        * Modules/indexeddb/legacy/LegacyCursor.cpp:
+        (WebCore::LegacyCursor::advance):
+        * Modules/indexeddb/legacy/LegacyCursor.h:
+        
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMException):
+        (WebCore::setDOMException):
+        * bindings/js/JSDOMBinding.h:
+        
+        * bindings/scripts/IDLAttributes.txt:
+        
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2015-12-03  Brent Fulgham  <bfulgham@apple.com>
 
         Allow JavaScript to iterate over plugins for local files

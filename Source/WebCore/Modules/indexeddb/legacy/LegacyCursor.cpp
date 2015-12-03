@@ -127,29 +127,29 @@ RefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState& state, Deprecated::Scrip
     return objectStore->put(IDBDatabaseBackend::CursorUpdate, LegacyAny::create(this), state, value, m_currentPrimaryKey, ec);
 }
 
-void LegacyCursor::advance(unsigned long count, ExceptionCode& ec)
+void LegacyCursor::advance(unsigned long count, ExceptionCodeWithMessage& ec)
 {
-    ec = 0;
+    ec.code = 0;
     LOG(StorageAPI, "LegacyCursor::advance");
     if (!m_gotValue) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return;
     }
 
     if (!count) {
-        ec = TypeError;
+        ec.code = TypeError;
         return;
     }
 
     m_request->setPendingCursor(this);
     m_gotValue = false;
-    m_backend->advance(count, m_request, ec);
-    ASSERT(!ec);
+    m_backend->advance(count, m_request, ec.code);
+    ASSERT(!ec.code);
 }
 
 void LegacyCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)

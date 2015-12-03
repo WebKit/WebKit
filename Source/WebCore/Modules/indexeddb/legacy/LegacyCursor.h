@@ -62,7 +62,7 @@ public:
     IDBAny* source() override;
 
     RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override;
-    void advance(unsigned long, ExceptionCode&) override;
+    void advance(unsigned long, ExceptionCodeWithMessage&) override;
     // FIXME: Try to modify the code generator so this overload is unneeded.
     void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) override { continueFunction(static_cast<IDBKey*>(nullptr), ec); }
     void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override;

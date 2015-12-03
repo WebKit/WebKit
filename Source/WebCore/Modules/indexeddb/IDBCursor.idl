@@ -34,7 +34,7 @@
     readonly attribute any primaryKey;
 
     [CallWith=ScriptState, RaisesException] IDBRequest update(any value);
-    [RaisesException] void advance([EnforceRange] unsigned long count);
+    [RaisesExceptionWithMessage] void advance([EnforceRange] unsigned long count);
     [CallWith=ScriptExecutionContext, ImplementedAs=continueFunction, RaisesException] void continue(optional any key);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesException] IDBRequest delete();
 };

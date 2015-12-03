@@ -44,7 +44,7 @@ class IDBCallbacks;
 class IDBRequest;
 class ScriptExecutionContext;
 
-typedef int ExceptionCode;
+struct ExceptionCodeWithMessage;
 
 class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
 public:
@@ -66,7 +66,7 @@ public:
     virtual IDBAny* source() = 0;
 
     virtual RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
-    virtual void advance(unsigned long, ExceptionCode&) = 0;
+    virtual void advance(unsigned long, ExceptionCodeWithMessage&) = 0;
     // FIXME: Try to modify the code generator so this overload is unneeded.
     virtual void continueFunction(ScriptExecutionContext*, ExceptionCode&) = 0;
     virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;

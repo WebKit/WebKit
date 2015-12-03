@@ -107,6 +107,7 @@ PassContext
 Private
 PutForwards=*
 RaisesException
+RaisesExceptionWithMessage
 Reflect=*
 Replaceable
 ReplaceableConstructor

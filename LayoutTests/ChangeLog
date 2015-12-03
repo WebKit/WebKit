@@ -1,3 +1,13 @@
+2015-12-03  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/cursor-advance.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151731
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/cursor-advance-expected.txt:
+
 2015-12-03  Brent Fulgham  <bfulgham@apple.com>
 
         Allow JavaScript to iterate over plugins for local files

@@ -144,32 +144,33 @@ RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::
     return request;
 }
 
-void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
+void IDBCursor::advance(unsigned long count, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::advance");
 
     if (!m_request) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
     
     if (!count) {
-        ec = TypeError;
+        ec.code = TypeError;
+        ec.message = ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': A count argument with value 0 (zero) was supplied, must be greater than 0.");
         return;
     }
 
     if (sourcesDeleted()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
     if (!transaction().isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return;
     }
 
     if (!m_gotValue) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
