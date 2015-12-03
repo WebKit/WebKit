@@ -196,6 +196,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
                 var recordPayload = recordPayloads[entry.index];
                 var record = this._processEvent(recordPayload, entry.parent);
                 if (record) {
+                    record.parent = entry.parentRecord;
                     records.push(record);
                     if (entry.parentRecord)
                         entry.parentRecord.children.push(record);

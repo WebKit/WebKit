@@ -31,7 +31,6 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout, timeline);
 
-        this.navigationSidebarTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
         this.navigationSidebarTreeOutline.element.classList.add("layout");
 
         var columns = {eventType: {}, location: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
@@ -196,6 +195,27 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
             var dataGridNode = new WebInspector.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
+
+            var stack = [{children: layoutTimelineRecord.children, parentTreeElement: treeElement, index: 0}];
+            while (stack.length) {
+                var entry = stack.lastValue;
+                if (entry.index >= entry.children.length) {
+                    stack.pop();
+                    continue;
+                }
+
+                var childRecord = entry.children[entry.index];
+                console.assert(childRecord.type === WebInspector.TimelineRecord.Type.Layout, childRecord);
+
+                var childTreeElement = new WebInspector.TimelineRecordTreeElement(childRecord, WebInspector.SourceCodeLocation.NameStyle.Short);
+                var layoutDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
+                console.assert(entry.parentTreeElement, "entry without parent!");
+                this._dataGrid.addRowInSortOrder(childTreeElement, layoutDataGridNode, entry.parentTreeElement);
+
+                if (childTreeElement && childRecord.children.length)
+                    stack.push({children: childRecord.children, parentTreeElement: childTreeElement, index: 0});
+                ++entry.index;
+            }
         }
 
         this._pendingRecords = [];
@@ -205,6 +225,10 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
     {
         var layoutTimelineRecord = event.data.record;
         console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);
+
+        // Only add top-level records, to avoid processing child records multiple times.
+        if (!(layoutTimelineRecord.parent instanceof WebInspector.RenderingFrameTimelineRecord))
+            return;
 
         this._pendingRecords.push(layoutTimelineRecord);
 
