@@ -217,7 +217,7 @@ class JavascriptMinify(object):
                     do_newline = False
 
                 write(next1)
-                if not in_re and next1 in "'\"":
+                if not in_re and next1 in "'\"`":
                     in_quote = next1
                     quote_buf = []
 
