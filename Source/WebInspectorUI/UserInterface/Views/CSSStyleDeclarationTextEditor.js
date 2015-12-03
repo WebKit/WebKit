@@ -43,8 +43,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._filterResultPropertyNames = null;
         this._sortProperties = false;
 
-        this._prefixWhitespace = "";
-        this._suffixWhitespace = "";
+        this._prefixWhitespace = "\n";
+        this._suffixWhitespace = "\n";
         this._linePrefixWhitespace = "";
 
         this._delegate = delegate || null;
@@ -54,7 +54,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             lineWrapping: true,
             mode: "css-rule",
             electricChars: false,
-            indentWithTabs: true,
+            indentWithTabs: false,
             indentUnit: 4,
             smartIndent: false,
             matchBrackets: true,
@@ -1606,7 +1606,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     {
         if (this._commitChangesTimeout) {
             clearTimeout(this._commitChangesTimeout);
-            delete this._commitChangesTimeout;
+            this._commitChangesTimeout = null;
         }
 
         this._removeEditingLineClasses();
@@ -1627,28 +1627,24 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._ignoreCodeMirrorContentDidChangeEvent = true;
 
             this._clearTextMarkers(false, true);
-
             this._codeMirror.setValue("");
             this._codeMirror.clearHistory();
             this._codeMirror.markClean();
 
-            delete this._ignoreCodeMirrorContentDidChangeEvent;
-
+            this._ignoreCodeMirrorContentDidChangeEvent = false;
             return;
         }
 
         function update()
         {
             // Remember the cursor position/selection.
-            var selectionAnchor = this._codeMirror.getCursor("anchor");
-            var selectionHead = this._codeMirror.getCursor("head");
             var isEditorReadOnly = this._codeMirror.getOption("readOnly");
-            var styleText = this._style.text.trim();
-            var findWhitespace = /\s+/g;
+            var styleText = this._style.text;
+            var trimmedStyleText = styleText.trim();
 
             // We only need to format non-empty styles, but prepare checkbox placeholders
             // in any case because that will indent the cursor when the User starts typing.
-            if (!styleText && !isEditorReadOnly) {
+            if (!trimmedStyleText && !isEditorReadOnly) {
                 this._markLinesWithCheckboxPlaceholder();
                 return;
             }
@@ -1668,8 +1664,25 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 return;
             }
 
+            var selectionAnchor = this._codeMirror.getCursor("anchor");
+            var selectionHead = this._codeMirror.getCursor("head");
+            var whitespaceRegex = /\s+/g;
+
+            // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+            this._linePrefixWhitespace = "    ";
+            var styleTextPrefixWhitespace = styleText.match(/^\s*/);
+
+            // If there is a match and the style text contains a newline, attempt to pull out the prefix whitespace
+            // in front of the first line of CSS to use for every line.  If  there is no newline, we want to avoid
+            // adding multiple spaces to a single line CSS rule and instead format it on multiple lines.
+            if (styleTextPrefixWhitespace && trimmedStyleText.includes("\n")) {
+                var linePrefixWhitespaceMatch = styleTextPrefixWhitespace[0].match(/[^\S\n]+$/);
+                if (linePrefixWhitespaceMatch)
+                    this._linePrefixWhitespace = linePrefixWhitespaceMatch[0];
+            }
+
             // Set non-optimized, valid and invalid styles in preparation for the Formatter.
-            this._codeMirror.setValue(styleText);
+            this._codeMirror.setValue(trimmedStyleText);
 
             // Now the Formatter pretty prints the styles.
             this._codeMirror.setValue(this._formattedContentFromEditor());
@@ -1682,7 +1695,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._iterateOverProperties(false, function(cssProperty) {
                 cssProperty.__refreshedAfterBlur = false;
 
-                var propertyTextSansWhitespace = cssProperty.text.replace(findWhitespace, "");
+                var propertyTextSansWhitespace = cssProperty.text.replace(whitespaceRegex, "");
                 var existingProperties = cssPropertiesMap.get(propertyTextSansWhitespace) || [];
                 existingProperties.push(cssProperty);
 
@@ -1693,24 +1706,21 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             // CSSProperty instance for that property exists. If not, then don't create a TextMarker.
             this._codeMirror.eachLine(function(lineHandler) {
                 var lineNumber = lineHandler.lineNo();
-                var lineContentSansWhitespace = lineHandler.text.replace(findWhitespace, "");
+                var lineContentSansWhitespace = lineHandler.text.replace(whitespaceRegex, "");
                 var properties = cssPropertiesMap.get(lineContentSansWhitespace);
-
                 if (!properties) {
                     this._createCommentedCheckboxMarker(lineHandler);
                     return;
                 }
 
-                for (var property of properties) {
+                for (let property of properties) {
                     if (property.__refreshedAfterBlur)
                         continue;
 
                     var from = {line: lineNumber, ch: 0};
                     var to = {line: lineNumber};
-
                     this._createTextMarkerForPropertyIfNeeded(from, to, property);
                     property.__refreshedAfterBlur = true;
-
                     break;
                 }
             }.bind(this));
@@ -1737,7 +1747,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this._ignoreCodeMirrorContentDidChangeEvent = true;
         this._codeMirror.operation(update.bind(this));
-        delete this._ignoreCodeMirrorContentDidChangeEvent;
+        this._ignoreCodeMirrorContentDidChangeEvent = false;
     }
 
     _updateJumpToSymbolTrackingMode()
