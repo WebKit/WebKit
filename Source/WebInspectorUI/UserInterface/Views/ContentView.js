@@ -75,7 +75,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.Object
 
         if (representedObject instanceof WebInspector.Breakpoint) {
             if (representedObject.sourceCodeLocation)
-                return new WebInspector.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
+                return WebInspector.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
         }
 
         if (representedObject instanceof WebInspector.DOMStorageObject)

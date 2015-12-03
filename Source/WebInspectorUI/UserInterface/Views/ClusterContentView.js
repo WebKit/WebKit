@@ -31,7 +31,7 @@ WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.
 
         this.element.classList.add("cluster");
 
-        this._contentViewContainer = new WebInspector.ContentViewContainer();
+        this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
         this.element.appendChild(this._contentViewContainer.element);
 

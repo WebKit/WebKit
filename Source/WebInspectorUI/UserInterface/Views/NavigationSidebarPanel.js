@@ -37,7 +37,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         this._contentTreeOutline = this.createContentTreeOutline(true);
 
-        this._filterBar = new WebInspector.FilterBar();
+        this._filterBar = new WebInspector.FilterBar;
         this._filterBar.addEventListener(WebInspector.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
         this.element.appendChild(this._filterBar.element);
 
