@@ -1,5 +1,20 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188963. rdar://problem/23221163
+
+    2015-08-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Make DOM node attribute changes highlighting less obnoxious
+            https://bugs.webkit.org/show_bug.cgi?id=148050
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/Views/DOMTreeOutline.css:
+            (@keyframes node-state-changed): Change color to a light green.
+            (.node-state-changed): Add a slight ease-in for the animation function.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188962. rdar://problem/23221163
 
     2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>

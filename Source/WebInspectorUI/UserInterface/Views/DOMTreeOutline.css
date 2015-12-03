@@ -167,10 +167,9 @@
 }
 
 @keyframes node-state-changed {
-    from { background-color: hsla(212, 92%, 54%, 0.5); }
+    from { background-color: hsla(83, 100%, 48%, 0.4); }
 }
 
 .node-state-changed {
-    animation: node-state-changed 1s cubic-bezier(0, 0, 0.25, 1);
-    border-radius: 3px;
+    animation: node-state-changed 1s cubic-bezier(0.25, 0, 0.25, 1);
 }
