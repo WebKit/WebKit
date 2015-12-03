@@ -1,3 +1,49 @@
+2015-12-03  Saam barati  <sbarati@apple.com>
+
+        FTL::OSRExitDescriptor should use less memory by having a companion object that dies after compilation
+        https://bugs.webkit.org/show_bug.cgi?id=151795
+
+        Reviewed by Geoffrey Garen.
+
+        There were a few fields on FTL::OSRExitDescriptor that are only
+        needed during compilation. This patch introduces OSRExitDescriptorImpl 
+        which is a struct that we create for each OSRExitDescriptor. The difference is 
+        that OSRExitDescriptorImpl lives off of FTL::State so it dies after we compile.
+        This way no unnecessary fields persist after the compilation.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExceptionHandlerManager.cpp:
+        (JSC::FTL::ExceptionHandlerManager::lazySlowPathExceptionTarget):
+        (JSC::FTL::ExceptionHandlerManager::getCallOSRExitCommon):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExitDescriptor::validateReferences):
+        (JSC::FTL::OSRExitDescriptor::emitOSRExit):
+        (JSC::FTL::OSRExitDescriptor::emitOSRExitLater):
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::gatherRegistersToSpillForCallIfException):
+        (JSC::FTL::OSRExit::willArriveAtExitFromIndirectExceptionCheck):
+        (JSC::FTL::exceptionTypeWillArriveAtOSRExitFromGenericUnwind):
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromGenericUnwind):
+        (JSC::FTL::OSRExit::willArriveAtOSRExitFromCallOperation):
+        (JSC::FTL::OSRExitDescriptor::isExceptionHandler): Deleted.
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExitDescriptorImpl::OSRExitDescriptorImpl):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLState.h:
+
 2015-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix 64-bit Windows build after r193125.

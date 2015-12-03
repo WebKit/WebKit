@@ -101,6 +101,7 @@ public:
     Vector<JSTailCall> jsTailCalls;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;
+    SegmentedVector<OSRExitDescriptorImpl> osrExitDescriptorImpls;
     void* unwindDataSection;
     size_t unwindDataSectionSize;
     RefPtr<DataSection> stackmapsSection;

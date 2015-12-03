@@ -482,23 +482,28 @@ static void fixFunctionBasedOnStackMaps(
     }
 
     RELEASE_ASSERT(state.jitCode->osrExit.size() == 0);
+    HashMap<OSRExitDescriptor*, OSRExitDescriptorImpl*> genericUnwindOSRExitDescriptors;
     for (unsigned i = 0; i < state.jitCode->osrExitDescriptors.size(); i++) {
-        OSRExitDescriptor& exitDescriptor = state.jitCode->osrExitDescriptors[i];
-        auto iter = recordMap.find(exitDescriptor.m_stackmapID);
+        OSRExitDescriptor* exitDescriptor = &state.jitCode->osrExitDescriptors[i];
+        auto iter = recordMap.find(exitDescriptor->m_stackmapID);
         if (iter == recordMap.end()) {
             // It was optimized out.
             continue;
         }
 
-        for (unsigned j = exitDescriptor.m_values.size(); j--;)
-            exitDescriptor.m_values[j] = exitDescriptor.m_values[j].withLocalsOffset(localsOffset);
-        for (ExitTimeObjectMaterialization* materialization : exitDescriptor.m_materializations)
+        OSRExitDescriptorImpl& exitDescriptorImpl = state.osrExitDescriptorImpls[i];
+        if (exceptionTypeWillArriveAtOSRExitFromGenericUnwind(exitDescriptorImpl.m_exceptionType))
+            genericUnwindOSRExitDescriptors.add(exitDescriptor, &exitDescriptorImpl);
+
+        for (unsigned j = exitDescriptor->m_values.size(); j--;)
+            exitDescriptor->m_values[j] = exitDescriptor->m_values[j].withLocalsOffset(localsOffset);
+        for (ExitTimeObjectMaterialization* materialization : exitDescriptor->m_materializations)
             materialization->accountForLocalsOffset(localsOffset);
 
         for (unsigned j = 0; j < iter->value.size(); j++) {
             {
                 uint32_t stackmapRecordIndex = iter->value[j].index;
-                OSRExit exit(&exitDescriptor, stackmapRecordIndex);
+                OSRExit exit(exitDescriptor, exitDescriptorImpl, stackmapRecordIndex);
                 state.jitCode->osrExit.append(exit);
                 state.finalizer->osrExit.append(OSRExitCompilationInfo());
             }
@@ -506,29 +511,29 @@ static void fixFunctionBasedOnStackMaps(
             OSRExit& exit = state.jitCode->osrExit.last();
             if (exit.willArriveAtExitFromIndirectExceptionCheck()) {
                 StackMaps::Record& record = iter->value[j].record;
-                RELEASE_ASSERT(exit.m_descriptor->m_semanticCodeOriginForCallFrameHeader.isSet());
-                CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor->m_semanticCodeOriginForCallFrameHeader);
+                RELEASE_ASSERT(exitDescriptorImpl.m_semanticCodeOriginForCallFrameHeader.isSet());
+                CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exitDescriptorImpl.m_semanticCodeOriginForCallFrameHeader);
                 exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
 
                 OSRExit* callOperationExit = nullptr;
-                if (exitDescriptor.m_exceptionType == ExceptionType::BinaryOpGenerator) {
+                if (exitDescriptorImpl.m_exceptionType == ExceptionType::BinaryOpGenerator) {
                     exceptionHandlerManager.addNewCallOperationExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
                     callOperationExit = &exit;
                 } else
                     exceptionHandlerManager.addNewExit(iter->value[j].index, state.jitCode->osrExit.size() - 1);
                 
-                if (exitDescriptor.m_exceptionType == ExceptionType::GetById || exitDescriptor.m_exceptionType == ExceptionType::PutById) {
+                if (exitDescriptorImpl.m_exceptionType == ExceptionType::GetById || exitDescriptorImpl.m_exceptionType == ExceptionType::PutById) {
                     // We create two different OSRExits for GetById and PutById.
                     // One exit that will be arrived at from the genericUnwind exception handler path,
                     // and the other that will be arrived at from the callOperation exception handler path.
                     // This code here generates the second callOperation variant.
                     uint32_t stackmapRecordIndex = iter->value[j].index;
-                    OSRExit exit(&exitDescriptor, stackmapRecordIndex);
-                    if (exitDescriptor.m_exceptionType == ExceptionType::GetById)
+                    OSRExit exit(exitDescriptor, exitDescriptorImpl, stackmapRecordIndex);
+                    if (exitDescriptorImpl.m_exceptionType == ExceptionType::GetById)
                         exit.m_exceptionType = ExceptionType::GetByIdCallOperation;
                     else
                         exit.m_exceptionType = ExceptionType::PutByIdCallOperation;
-                    CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exit.m_descriptor->m_semanticCodeOriginForCallFrameHeader);
+                    CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(exitDescriptorImpl.m_semanticCodeOriginForCallFrameHeader);
                     exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
 
                     state.jitCode->osrExit.append(exit);
@@ -543,19 +548,19 @@ static void fixFunctionBasedOnStackMaps(
                 //
                 // We set the registers needing spillage here because they need to be set
                 // before we generate OSR exits so the exit knows to do the proper recovery.
-                if (exitDescriptor.m_exceptionType == ExceptionType::JSCall) {
+                if (exitDescriptorImpl.m_exceptionType == ExceptionType::JSCall) {
                     // Call patchpoints might have values we want to do value recovery
                     // on inside volatile registers. We need to collect the volatile
                     // registers we want to do value recovery on here because they must
                     // be preserved to the stack before the call, that way the OSR exit
                     // exception handler can recover them into the proper registers.
                     exit.gatherRegistersToSpillForCallIfException(stackmaps, record);
-                } else if (exitDescriptor.m_exceptionType == ExceptionType::GetById) {
+                } else if (exitDescriptorImpl.m_exceptionType == ExceptionType::GetById) {
                     GPRReg result = record.locations[0].directGPR();
                     GPRReg base = record.locations[1].directGPR();
                     if (base == result)
                         callOperationExit->registersToPreserveForCallThatMightThrow.set(base);
-                } else if (exitDescriptor.m_exceptionType == ExceptionType::BinaryOpGenerator) {
+                } else if (exitDescriptorImpl.m_exceptionType == ExceptionType::BinaryOpGenerator) {
                     GPRReg result = record.locations[0].directGPR();
                     GPRReg left = record.locations[1].directGPR();
                     GPRReg right = record.locations[2].directGPR();
@@ -592,7 +597,7 @@ static void fixFunctionBasedOnStackMaps(
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
 
             if (exit.willArriveAtOSRExitFromGenericUnwind()) {
-                HandlerInfo newHandler = exit.m_descriptor->m_baselineExceptionHandler;
+                HandlerInfo newHandler = genericUnwindOSRExitDescriptors.get(exit.m_descriptor)->m_baselineExceptionHandler;
                 newHandler.start = exit.m_exceptionHandlerCallSiteIndex.bits();
                 newHandler.end = exit.m_exceptionHandlerCallSiteIndex.bits() + 1;
                 newHandler.nativeCode = info.m_thunkAddress;

@@ -45,24 +45,13 @@ using namespace B3;
 using namespace DFG;
 
 OSRExitDescriptor::OSRExitDescriptor(
-    ExitKind exitKind, ExceptionType exceptionType, DataFormat profileDataFormat,
-    MethodOfGettingAValueProfile valueProfile, CodeOrigin codeOrigin,
-    CodeOrigin originForProfile, unsigned numberOfArguments,
-    unsigned numberOfLocals)
-    : m_kind(exitKind)
-    , m_exceptionType(exceptionType)
-    , m_codeOrigin(codeOrigin)
-    , m_codeOriginForExitProfile(originForProfile)
-    , m_profileDataFormat(profileDataFormat)
+    DataFormat profileDataFormat, MethodOfGettingAValueProfile valueProfile,
+    unsigned numberOfArguments, unsigned numberOfLocals)
+    : m_profileDataFormat(profileDataFormat)
     , m_valueProfile(valueProfile)
     , m_values(numberOfArguments, numberOfLocals)
     , m_isInvalidationPoint(false)
 {
-}
-
-bool OSRExitDescriptor::isExceptionHandler() const
-{
-    return m_exceptionType != ExceptionType::None;
 }
 
 void OSRExitDescriptor::validateReferences(const TrackedReferences& trackedReferences)
@@ -76,17 +65,17 @@ void OSRExitDescriptor::validateReferences(const TrackedReferences& trackedRefer
 
 #if FTL_USES_B3
 RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExit(
-    State& state, CCallHelpers& jit, const StackmapGenerationParams& params, unsigned offset)
+    State& state, OSRExitDescriptorImpl* exitDescriptorImpl, CCallHelpers& jit, const StackmapGenerationParams& params, unsigned offset)
 {
-    RefPtr<OSRExitHandle> handle = prepareOSRExitHandle(state, params, offset);
+    RefPtr<OSRExitHandle> handle = prepareOSRExitHandle(state, exitDescriptorImpl, params, offset);
     handle->emitExitThunk(jit);
     return handle;
 }
 
 RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
-    State& state, const StackmapGenerationParams& params, unsigned offset)
+    State& state, OSRExitDescriptorImpl* exitDescriptorImpl, const StackmapGenerationParams& params, unsigned offset)
 {
-    RefPtr<OSRExitHandle> handle = prepareOSRExitHandle(state, params, offset);
+    RefPtr<OSRExitHandle> handle = prepareOSRExitHandle(state, exitDescriptorImpl, params, offset);
     params.context->latePaths.append(
         createSharedTask<Air::GenerationContext::LatePathFunction>(
             [handle] (CCallHelpers& jit, Air::GenerationContext&) {
@@ -96,11 +85,11 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::emitOSRExitLater(
 }
 
 RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
-    State& state, const StackmapGenerationParams& params, unsigned offset)
+    State& state, OSRExitDescriptorImpl* exitDescriptorImpl, const StackmapGenerationParams& params, unsigned offset)
 {
     unsigned index = state.jitCode->osrExit.size();
     RefPtr<OSRExitHandle> handle = adoptRef(
-        new OSRExitHandle(index, state.jitCode->osrExit.alloc(this)));
+        new OSRExitHandle(index, state.jitCode->osrExit.alloc(this, *exitDescriptorImpl)));
     for (unsigned i = offset; i < params.reps.size(); ++i)
         handle->exit.m_valueReps.append(params.reps[i]);
     handle->exit.m_valueReps.shrinkToFit();
@@ -109,19 +98,19 @@ RefPtr<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
 #endif // FTL_USES_B3
 
 OSRExit::OSRExit(
-    OSRExitDescriptor* descriptor
+    OSRExitDescriptor* descriptor, OSRExitDescriptorImpl& exitDescriptorImpl
 #if !FTL_USES_B3
     , uint32_t stackmapRecordIndex
 #endif // !FTL_USES_B3
     )
-    : OSRExitBase(descriptor->m_kind, descriptor->m_codeOrigin, descriptor->m_codeOriginForExitProfile)
+    : OSRExitBase(exitDescriptorImpl.m_kind, exitDescriptorImpl.m_codeOrigin, exitDescriptorImpl.m_codeOriginForExitProfile)
     , m_descriptor(descriptor)
 #if !FTL_USES_B3
     , m_stackmapRecordIndex(stackmapRecordIndex)
 #endif // !FTL_USES_B3
-    , m_exceptionType(descriptor->m_exceptionType)
+    , m_exceptionType(exitDescriptorImpl.m_exceptionType)
 {
-    m_isExceptionHandler = descriptor->isExceptionHandler();
+    m_isExceptionHandler = exitDescriptorImpl.m_exceptionType != ExceptionType::None;
 }
 
 CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
@@ -140,7 +129,7 @@ CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
 #if !FTL_USES_B3
 void OSRExit::gatherRegistersToSpillForCallIfException(StackMaps& stackmaps, StackMaps::Record& record)
 {
-    RELEASE_ASSERT(m_descriptor->m_exceptionType == ExceptionType::JSCall);
+    RELEASE_ASSERT(m_exceptionType == ExceptionType::JSCall);
 
     RegisterSet volatileRegisters = RegisterSet::volatileRegistersForJSCall();
 
@@ -226,9 +215,9 @@ bool OSRExit::willArriveAtExitFromIndirectExceptionCheck() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool OSRExit::willArriveAtOSRExitFromGenericUnwind() const
+bool exceptionTypeWillArriveAtOSRExitFromGenericUnwind(ExceptionType exceptionType)
 {
-    switch (m_exceptionType) {
+    switch (exceptionType) {
     case ExceptionType::JSCall:
     case ExceptionType::GetById:
     case ExceptionType::PutById:
@@ -237,6 +226,11 @@ bool OSRExit::willArriveAtOSRExitFromGenericUnwind() const
         return false;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool OSRExit::willArriveAtOSRExitFromGenericUnwind() const
+{
+    return exceptionTypeWillArriveAtOSRExitFromGenericUnwind(m_exceptionType);
 }
 
 bool OSRExit::willArriveAtOSRExitFromCallOperation() const
