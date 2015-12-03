@@ -192,6 +192,11 @@ public:
                 VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
                 VALIDATE(value->type() == Int64, ("At ", *value));
                 break;
+            case Clz:
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
+                VALIDATE(isInt(value->type()), ("At ", *value));
+                break;
             case Trunc:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Int64, ("At ", *value));

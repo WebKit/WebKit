@@ -214,6 +214,14 @@ ConvertInt32ToDouble U:G, D:F
 ConvertInt64ToDouble U:G, D:F
     Tmp, Tmp
 
+CountLeadingZeros32 U:G, D:G
+    Tmp, Tmp
+    Addr, Tmp
+
+CountLeadingZeros64 U:G, D:G
+    Tmp, Tmp
+    Addr, Tmp
+
 # Note that Move operates over the full register size, which is either 32-bit or 64-bit depending on
 # the platform. I'm not entirely sure that this is a good thing; it might be better to just have a
 # Move64 instruction. OTOH, our MacroAssemblers already have this notion of "move()" that basically

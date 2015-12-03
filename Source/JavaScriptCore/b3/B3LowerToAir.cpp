@@ -1463,6 +1463,11 @@ private:
             return;
         }
 
+        case Clz: {
+            appendUnOp<CountLeadingZeros32, CountLeadingZeros64, Air::Oops>(m_value->child(0));
+            return;
+        }
+
         case Sqrt: {
             appendUnOp<Air::Oops, Air::Oops, SqrtDouble>(m_value->child(0));
             return;

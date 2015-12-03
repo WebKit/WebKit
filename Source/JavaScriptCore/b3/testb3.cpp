@@ -1885,6 +1885,64 @@ void testZShrArgImm32(uint32_t a, uint32_t b)
     CHECK(compileAndRun<uint32_t>(proc, a) == (a >> b));
 }
 
+template<typename IntegerType>
+static unsigned countLeadingZero(IntegerType value)
+{
+    unsigned bitCount = sizeof(IntegerType) * 8;
+    if (!value)
+        return bitCount;
+
+    unsigned counter = 0;
+    while (!(static_cast<uint64_t>(value) & (1l << (bitCount - 1)))) {
+        value <<= 1;
+        ++counter;
+    }
+    return counter;
+}
+
+void testClzArg64(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* clzValue = root->appendNew<Value>(proc, Clz, Origin(), argument);
+    root->appendNew<ControlValue>(proc, Return, Origin(), clzValue);
+    CHECK(compileAndRun<unsigned>(proc, a) == countLeadingZero(a));
+}
+
+void testClzMem64(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* value = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* clzValue = root->appendNew<Value>(proc, Clz, Origin(), value);
+    root->appendNew<ControlValue>(proc, Return, Origin(), clzValue);
+    CHECK(compileAndRun<unsigned>(proc, &a) == countLeadingZero(a));
+}
+
+void testClzArg32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* clzValue = root->appendNew<Value>(proc, Clz, Origin(), argument);
+    root->appendNew<ControlValue>(proc, Return, Origin(), clzValue);
+    CHECK(compileAndRun<unsigned>(proc, a) == countLeadingZero(a));
+}
+
+void testClzMem32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* value = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* clzValue = root->appendNew<Value>(proc, Clz, Origin(), value);
+    root->appendNew<ControlValue>(proc, Return, Origin(), clzValue);
+    CHECK(compileAndRun<unsigned>(proc, &a) == countLeadingZero(a));
+}
+
 void testSqrtArg(double a)
 {
     Procedure proc;
@@ -5317,8 +5375,8 @@ static const std::array<DoubleOperand, 9>& doubleOperands()
     static const std::array<DoubleOperand, 9> operands = {{
         { "M_PI", M_PI },
         { "-M_PI", -M_PI },
-        { "1", 1 },
-        { "-1", -1 },
+        { "1.", 1 },
+        { "-1.", -1 },
         { "0", 0 },
         { "negativeZero()", negativeZero() },
         { "posInfinity()", posInfinity() },
@@ -5834,6 +5892,11 @@ void run(const char* filter)
     RUN(testZShrArgImm32(0xffffffff, 0));
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
+
+    RUN_UNARY(testClzArg64, int64Operands());
+    RUN_UNARY(testClzMem64, int64Operands());
+    RUN_UNARY(testClzArg32, int32Operands());
+    RUN_UNARY(testClzMem32, int64Operands());
 
     RUN_UNARY(testSqrtArg, doubleOperands());
     RUN_UNARY(testSqrtImm, doubleOperands());

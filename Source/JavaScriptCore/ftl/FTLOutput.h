@@ -147,9 +147,9 @@ public:
     {
         return call(doubleType, ceil64Intrinsic(), operand);
     }
-    LValue ctlz32(LValue xOperand, LValue yOperand)
+    LValue ctlz32(LValue operand)
     {
-        return call(int32, ctlz32Intrinsic(), xOperand, yOperand);
+        return call(int32, ctlz32Intrinsic(), operand, booleanFalse);
     }
     LValue addWithOverflow32(LValue left, LValue right)
     {

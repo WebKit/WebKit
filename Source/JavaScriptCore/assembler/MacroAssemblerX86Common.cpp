@@ -552,6 +552,8 @@ void MacroAssemblerX86Common::probe(MacroAssemblerX86Common::ProbeFunction funct
 MacroAssemblerX86Common::SSE2CheckState MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;
 #endif
 
+MacroAssemblerX86Common::LZCNTCheckState MacroAssemblerX86Common::s_lzcntCheckState = LZCNTCheckState::NotChecked;
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))

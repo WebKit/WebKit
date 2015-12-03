@@ -1,3 +1,58 @@
+2015-12-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add CLZ support to B3
+        https://bugs.webkit.org/show_bug.cgi?id=151799
+
+        Reviewed by Michael Saboff.
+
+        Previously we were counting on LLVM to select LZCNT
+        when its available.
+        Since we have to do that ourself now, I added feature
+        detection based on the CPUID. The MacroAssembler just
+        pick the best available lowering based on the platform.
+
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::countLeadingZeros32):
+        (JSC::MacroAssemblerX86Common::supportsLZCNT):
+        (JSC::MacroAssemblerX86Common::clz32AfterBsr):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::countLeadingZeros64):
+        (JSC::MacroAssemblerX86_64::clz64AfterBsr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::lzcnt_rr):
+        (JSC::X86Assembler::lzcnt_mr):
+        (JSC::X86Assembler::lzcntq_rr):
+        (JSC::X86Assembler::lzcntq_mr):
+        (JSC::X86Assembler::bsr_mr):
+        (JSC::X86Assembler::bsrq_rr):
+        (JSC::X86Assembler::bsrq_mr):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::countLeadingZero):
+        (JSC::B3::testClzArg64):
+        (JSC::B3::testClzMem64):
+        (JSC::B3::testClzArg32):
+        (JSC::B3::testClzMem32):
+        (JSC::B3::doubleOperands):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::ctlz32):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithClz32):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::ctlz32):
+
 2015-12-02  Mark Lam  <mark.lam@apple.com>
 
         Polymorphic operand types for DFG and FTL mul.

@@ -148,7 +148,7 @@ public:
     LValue bitNot(LValue);
 
     LValue ceil64(LValue operand) { CRASH(); }
-    LValue ctlz32(LValue xOperand, LValue yOperand) { CRASH(); }
+    LValue ctlz32(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Clz, origin(), operand); }
     LValue addWithOverflow32(LValue left, LValue right) { CRASH(); }
     LValue subWithOverflow32(LValue left, LValue right) { CRASH(); }
     LValue mulWithOverflow32(LValue left, LValue right) { CRASH(); }

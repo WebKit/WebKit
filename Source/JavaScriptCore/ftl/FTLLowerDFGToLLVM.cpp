@@ -1728,8 +1728,7 @@ private:
     void compileArithClz32()
     {
         LValue operand = lowInt32(m_node->child1());
-        LValue isZeroUndef = m_out.booleanFalse;
-        setInt32(m_out.ctlz32(operand, isZeroUndef));
+        setInt32(m_out.ctlz32(operand));
     }
     
     void compileArithMul()

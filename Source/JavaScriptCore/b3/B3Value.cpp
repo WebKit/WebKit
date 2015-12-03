@@ -325,6 +325,7 @@ Effects Value::effects() const
     case Shl:
     case SShr:
     case ZShr:
+    case Clz:
     case Sqrt:
     case BitwiseCast:
     case SExt8:
@@ -406,6 +407,7 @@ ValueKey Value::key() const
     case SExt16:
     case SExt32:
     case ZExt32:
+    case Clz:
     case Trunc:
     case FRound:
     case IToD:
@@ -498,6 +500,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case Shl:
     case SShr:
     case ZShr:
+    case Clz:
     case Sqrt:
     case CheckAdd:
     case CheckSub:

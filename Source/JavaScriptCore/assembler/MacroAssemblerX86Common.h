@@ -205,14 +205,22 @@ public:
 
     void countLeadingZeros32(RegisterID src, RegisterID dst)
     {
+        if (supportsLZCNT()) {
+            m_assembler.lzcnt_rr(src, dst);
+            return;
+        }
         m_assembler.bsr_rr(src, dst);
-        Jump srcIsNonZero = m_assembler.jCC(x86Condition(NonZero));
-        move(TrustedImm32(32), dst);
+        clz32AfterBsr(dst);
+    }
 
-        Jump skipNonZeroCase = jump();
-        srcIsNonZero.link(this);
-        xor32(TrustedImm32(0x1f), dst);
-        skipNonZeroCase.link(this);
+    void countLeadingZeros32(Address src, RegisterID dst)
+    {
+        if (supportsLZCNT()) {
+            m_assembler.lzcnt_mr(src.offset, src.base, dst);
+            return;
+        }
+        m_assembler.bsr_mr(src.offset, src.base, dst);
+        clz32AfterBsr(dst);
     }
 
     void lshift32(RegisterID shift_amount, RegisterID dest)
@@ -1706,6 +1714,31 @@ protected:
 #endif
     }
     
+    static bool supportsLZCNT()
+    {
+        if (s_lzcntCheckState == LZCNTCheckState::NotChecked) {
+            int flags = 0;
+#if COMPILER(MSVC)
+            _asm {
+                mov eax, 0x80000001
+                cpuid;
+                mov flags, ecx;
+            }
+#elif COMPILER(GCC_OR_CLANG)
+            asm (
+                "movl $0x80000001, %%eax;"
+                "cpuid;"
+                "movl %%ecx, %0;"
+                : "=g" (flags)
+                :
+                : "%eax", "%ebx", "%ecx", "%edx"
+                );
+#endif
+            s_lzcntCheckState = (flags & 0x20) ? LZCNTCheckState::Set : LZCNTCheckState::Clear;
+        }
+        return s_lzcntCheckState == LZCNTCheckState::Set;
+    }
+
 private:
     // Only MacroAssemblerX86 should be using the following method; SSE2 is always available on
     // x86_64, and clients & subclasses of MacroAssembler should be using 'supportsFloatingPoint()'.
@@ -1738,6 +1771,19 @@ private:
     void add32AndSetFlags(TrustedImm32 imm, Address address)
     {
         m_assembler.addl_im(imm.m_value, address.offset, address.base);
+    }
+
+    // If lzcnt is not available, use this after BSR
+    // to count the leading zeros.
+    void clz32AfterBsr(RegisterID dst)
+    {
+        Jump srcIsNonZero = m_assembler.jCC(x86Condition(NonZero));
+        move(TrustedImm32(32), dst);
+
+        Jump skipNonZeroCase = jump();
+        srcIsNonZero.link(this);
+        xor32(TrustedImm32(0x1f), dst);
+        skipNonZeroCase.link(this);
     }
 
 #if CPU(X86)
@@ -1803,6 +1849,13 @@ private:
     }
 
 #endif
+
+    enum class LZCNTCheckState {
+        NotChecked,
+        Clear,
+        Set
+    };
+    static LZCNTCheckState s_lzcntCheckState;
 };
 
 } // namespace JSC

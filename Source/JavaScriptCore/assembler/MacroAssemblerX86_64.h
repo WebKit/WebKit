@@ -334,6 +334,26 @@ public:
         and64(scratchRegister(), srcDest);
     }
 
+    void countLeadingZeros64(RegisterID src, RegisterID dst)
+    {
+        if (supportsLZCNT()) {
+            m_assembler.lzcntq_rr(src, dst);
+            return;
+        }
+        m_assembler.bsrq_rr(src, dst);
+        clz64AfterBsr(dst);
+    }
+
+    void countLeadingZeros64(Address src, RegisterID dst)
+    {
+        if (supportsLZCNT()) {
+            m_assembler.lzcntq_mr(src.offset, src.base, dst);
+            return;
+        }
+        m_assembler.bsrq_mr(src.offset, src.base, dst);
+        clz64AfterBsr(dst);
+    }
+
     void lshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shlq_i8r(imm.m_value, dest);
@@ -1045,6 +1065,19 @@ private:
             move(imm, scratchRegister());
             add64(scratchRegister(), dest);
         }
+    }
+
+    // If lzcnt is not available, use this after BSR
+    // to count the leading zeros.
+    void clz64AfterBsr(RegisterID dst)
+    {
+        Jump srcIsNonZero = m_assembler.jCC(x86Condition(NonZero));
+        move(TrustedImm32(64), dst);
+
+        Jump skipNonZeroCase = jump();
+        srcIsNonZero.link(this);
+        xor64(TrustedImm32(0x3f), dst);
+        skipNonZeroCase.link(this);
     }
 
     friend class LinkBuffer;
