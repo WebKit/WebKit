@@ -61,8 +61,11 @@ WebInspector.SearchBar = class SearchBar extends WebInspector.NavigationItem
 
     focus()
     {
-        this._searchInput.focus();
-        this._searchInput.select();
+        // FIXME: Workaround for: <https://webkit.org/b/149504> Caret missing from <input> after clearing text and calling select()
+        if (!this._searchInput.value.length)
+            this._searchInput.focus();
+        else
+            this._searchInput.select();
     }
 
     // Private

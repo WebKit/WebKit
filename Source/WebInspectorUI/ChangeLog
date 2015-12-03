@@ -1,5 +1,22 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r190285. rdar://problem/23221163
+
+    2015-09-28  João Oliveira  <hello@jxs.pt>
+
+            Web Inspector: search shortcut in split console moves focus to search box, but doesn't show caret
+            https://bugs.webkit.org/show_bug.cgi?id=149223
+
+            Reviewed by Timothy Hatcher.
+
+            When pressing console find shortcut (CMD+F) SearchBar now checks if there's text on _searchInput
+            if so text is selected, if the textbox is empty, textbox gains focus.
+
+            * UserInterface/Views/SearchBar.js:
+            (WebInspector.SearchBar.prototype.focus):
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r190186. rdar://problem/23221163
 
     2015-09-23  Saam barati  <sbarati@apple.com>
