@@ -1,3 +1,19 @@
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
+        Merge r186724. rdar://problem/23221163
+
+    2015-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Inspector should be able to be docked to the bottom of a narrow window
+            https://bugs.webkit.org/show_bug.cgi?id=146871
+
+            Reviewed by Timothy Hatcher.
+
+            * UIProcess/WebInspectorProxy.cpp:
+            * UIProcess/mac/WebInspectorProxyMac.mm:
+            (WebKit::WebInspectorProxy::platformCanAttach):
+            * WebProcess/WebPage/WebInspector.cpp:
+
 2015-10-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r190141. rdar://problem/23075536
