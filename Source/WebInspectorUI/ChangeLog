@@ -1,5 +1,18 @@
 2015-12-01  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r186748. rdar://problem/23221163
+
+    2015-07-12  Timothy Hatcher  <timothy@apple.com>
+
+            Web Inspector: Add -apple-system-monospaced-numbers to font and font-family autocomplete
+            https://bugs.webkit.org/show_bug.cgi?id=146865
+
+            Reviewed by Daniel Bates.
+
+            * UserInterface/Models/CSSKeywordCompletions.js:
+
+2015-12-01  Timothy Hatcher  <timothy@apple.com>
+
         Merge r186724. rdar://problem/23221163
 
     2015-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
