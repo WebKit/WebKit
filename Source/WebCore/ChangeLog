@@ -1,3 +1,53 @@
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
+        Merge r192641. rdar://problem/23221163
+
+    2015-11-19  Brian Burg  <bburg@apple.com>
+
+            REGRESSION(r8780): Backwards delete by word incorrectly appends deleted text to kill ring, should be prepend
+            https://bugs.webkit.org/show_bug.cgi?id=151300
+
+            Reviewed by Darin Adler.
+
+            Over 11 years ago, someone was in a big hurry to fix a bunch
+            of emacs keybindings bugs, and accidentally regressed the kill ring
+            behavior for backwards-delete-word. It should prepend to the beginning.
+
+            This patch fixes the regression and cleans up the kill ring-related
+            code in Editor and commands. It also adds some tests to cover the
+            regressed code a bit better.
+
+            Tests: editing/pasteboard/emacs-killring-alternating-append-prepend.html
+                   editing/pasteboard/emacs-killring-backward-delete-prepend.html
+
+            * editing/Editor.cpp:
+
+                Use more explicit names for insertion mode parameters and member variables.
+
+            (WebCore::Editor::deleteWithDirection):
+            (WebCore::Editor::performDelete):
+            (WebCore::Editor::addRangeToKillRing):
+            (WebCore::Editor::addTextToKillRing):
+
+                Only one call site for now, but another will be added in a dependent fix.
+
+            (WebCore::Editor::addToKillRing): Deleted.
+            * editing/Editor.h:
+            * editing/TypingCommand.cpp:
+            (WebCore::TypingCommand::TypingCommand):
+            (WebCore::TypingCommand::deleteKeyPressed):
+            (WebCore::TypingCommand::forwardDeleteKeyPressed):
+            (WebCore::TypingCommand::doApply):
+            * editing/TypingCommand.h:
+            * platform/mac/KillRingMac.mm:
+            (WebCore::KillRing::append):
+            (WebCore::KillRing::prepend):
+
+                It turns out that the native API implicitly clears the kill sequence when
+                alternating between prepend and append operations. Its behavior does not match
+                what Sublime Text or Emacs do in this case. Clear the previous operation flag
+                to prevent this behavior from happening.
+
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
         Merge r191967. rdar://problem/23221163

@@ -331,7 +331,7 @@ bool Editor::isSelectTrailingWhitespaceEnabled()
     return client() && client()->isSelectTrailingWhitespaceEnabled();
 }
 
-bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity granularity, bool killRing, bool isTypingAction)
+bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity granularity, bool shouldAddToKillRing, bool isTypingAction)
 {
     if (!canEdit())
         return false;
@@ -341,8 +341,8 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
             TypingCommand::deleteKeyPressed(document(), canSmartCopyOrDelete() ? TypingCommand::SmartDelete : 0, granularity);
             revealSelectionAfterEditingOperation();
         } else {
-            if (killRing)
-                addToKillRing(selectedRange().get(), false);
+            if (shouldAddToKillRing)
+                addRangeToKillRing(*selectedRange().get(), KillRingInsertionMode::AppendText);
             deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
             // Implicitly calls revealSelectionAfterEditingOperation().
         }
@@ -350,8 +350,8 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
         TypingCommand::Options options = 0;
         if (canSmartCopyOrDelete())
             options |= TypingCommand::SmartDelete;
-        if (killRing)
-            options |= TypingCommand::KillRing;
+        if (shouldAddToKillRing)
+            options |= TypingCommand::AddsToKillRing;
         switch (direction) {
         case DirectionForward:
         case DirectionRight:
@@ -368,7 +368,7 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
     // FIXME: We should to move this down into deleteKeyPressed.
     // clear the "start new kill ring sequence" setting, because it was set to true
     // when the selection was updated by deleting the range
-    if (killRing)
+    if (shouldAddToKillRing)
         setStartNewKillRingSequence(false);
 
     return true;
@@ -1093,7 +1093,6 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 Editor::Editor(Frame& frame)
     : m_frame(frame)
     , m_ignoreCompositionSelectionChange(false)
-    , m_shouldStartNewKillRingSequence(false)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
     , m_killRing(std::make_unique<KillRing>())
@@ -1332,7 +1331,7 @@ void Editor::performDelete()
         return;
     }
 
-    addToKillRing(selectedRange().get(), false);
+    addRangeToKillRing(*selectedRange().get(), KillRingInsertionMode::AppendText);
     deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
 
     // clear the "start new kill ring sequence" setting, because it was set to true
@@ -2848,17 +2847,29 @@ void Editor::transpose()
     replaceSelectionWithText(transposed, false, false, EditActionInsert);
 }
 
-void Editor::addToKillRing(Range* range, bool prepend)
+void Editor::addRangeToKillRing(const Range& range, KillRingInsertionMode mode)
+{
+    addTextToKillRing(plainText(&range), mode);
+}
+
+void Editor::addTextToKillRing(const String& text, KillRingInsertionMode mode)
 {
     if (m_shouldStartNewKillRingSequence)
         killRing().startNewSequence();
 
-    String text = plainText(range);
-    if (prepend)
-        killRing().prepend(text);
-    else
-        killRing().append(text);
     m_shouldStartNewKillRingSequence = false;
+
+    // If the kill was from a backwards motion, prepend to the kill ring.
+    // This will ensure that alternating forward and backward kills will
+    // build up the original string in the kill ring without permuting it.
+    switch (mode) {
+    case KillRingInsertionMode::PrependText:
+        killRing().prepend(text);
+        break;
+    case KillRingInsertionMode::AppendText:
+        killRing().append(text);
+        break;
+    }
 }
 
 void Editor::startAlternativeTextUITimer()
