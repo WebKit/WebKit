@@ -1,3 +1,17 @@
+2015-12-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove stuffs related to alloca from FTLB3Output
+        https://bugs.webkit.org/show_bug.cgi?id=151780
+
+        Reviewed by Mark Lam.
+
+        We can use the Phis directly with B3 :)
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::alloca): Deleted.
+        (JSC::FTL::Output::get): Deleted.
+        (JSC::FTL::Output::set): Deleted.
+
 2015-12-02  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Add sin(), cos(), pow() and log() to B3
