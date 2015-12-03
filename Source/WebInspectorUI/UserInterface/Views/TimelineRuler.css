@@ -169,6 +169,14 @@ body.window-inactive .timeline-ruler > .header > .divider {
     background-color: white;
 }
 
+.timeline-ruler.both-handles-clamped > .selection-handle {
+    z-index: 14;
+}
+
+.timeline-ruler > .selection-handle.clamped.hidden {
+    display: none;
+}
+
 .timeline-ruler > .selection-handle.left {
     -webkit-transform: translateX(-4px);
 }
