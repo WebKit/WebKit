@@ -1,5 +1,25 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r189761. rdar://problem/23221163
+
+    2015-09-14  Brian Burg  <bburg@apple.com>
+
+            Web Inspector: backend command promises are not rejected when a protocol error occurs
+            https://bugs.webkit.org/show_bug.cgi?id=141403
+
+            Reviewed by Joseph Pecoraro.
+
+            Fix a few corner cases for how InspectorBackend delivers command failures.
+
+            * UserInterface/Protocol/InspectorBackend.js:
+            (InspectorBackend.Command.prototype.deliverFailure): Added.
+            (InspectorBackend.Command.prototype._invokeWithArguments):
+
+                If argument-checking fails, return a rejected promise or invoke the supplied callback
+                on a zero-delay setTimeout to ensure that the reply is asynchronous.
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r189759. rdar://problem/23221163
 
     2015-09-14  Brian Burg  <bburg@apple.com>
