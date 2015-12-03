@@ -1,3 +1,31 @@
+2015-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a basic compositing Animometer test
+        https://bugs.webkit.org/show_bug.cgi?id=151724
+
+        Reviewed by Dean Jackson.
+        
+        Add a "bouncing particles" test that moves composited layers around, optionally with a filter.
+        
+        This is added under a new "Miscellaneous" category.
+        
+        Remove the test templates category from the UI.
+
+        * Animometer/runner/resources/tests.js:
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js:
+        (BouncingCssShape.prototype.animate):
+        * Animometer/tests/misc/compositing-transforms.html: Added.
+        * Animometer/tests/misc/resources/compositing-transforms.js: Added.
+        (BouncingCompositedImage):
+        (BouncingCompositedImage.prototype._move):
+        (BouncingCompositedImage.prototype.animate):
+        (CompositingTransformsStage):
+        (CompositingTransformsStage.prototype.createParticle):
+        (CompositingTransformsStage.prototype.particleWillBeRemoved):
+        (CompositedTransformsBenchmark):
+        (CompositedTransformsBenchmark.prototype.createStage):
+        (window.benchmarkClient.create):
+
 2015-11-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Fix the graphics benchmark complexity bounds adjustment

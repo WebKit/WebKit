@@ -39,7 +39,7 @@ BouncingCssShape.prototype._move = function()
 BouncingCssShape.prototype.animate = function(timeDelta)
 {
     BouncingParticle.prototype.animate.call(this, timeDelta);
-    this._rotater.next(timeDelta);    
+    this._rotater.next(timeDelta);
     this._move();
 }
 

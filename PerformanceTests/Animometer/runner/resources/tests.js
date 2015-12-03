@@ -236,19 +236,11 @@ Suites.push(new Suite("Complex examples",
     ]
 ));
 
-Suites.push(new Suite("Test Templates",
+Suites.push(new Suite("Miscellaneous Tests",
     [
         {
-            url: "template/template-css.html",
-            name: "CSS template"
-        },
-        {
-            url: "template/template-canvas.html",
-            name: "canvas template"
-        },
-        {
-            url: "template/template-svg.html",
-            name: "SVG template"
+            url: "misc/compositing-transforms.html?particleWidth=50&particleHeight=50&filters=yes&imageSrc=../resources/yin-yang.svg",
+            name: "Composited Transforms"
         },
     ]
 ));
