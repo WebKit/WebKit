@@ -25,6 +25,7 @@
 
 .navigation-bar .item.button {
     width: 26px;
+    justify-content: center;
 }
 
 .navigation-bar .item.button.text-only {
@@ -38,19 +39,25 @@
     border-radius: 3px;
     text-align: center;
     height: auto;
-
-    justify-content: center;
 }
 
 .navigation-bar .item.button > .glyph {
-    width: 100%;
-    height: 100%;
-
-    background-repeat: no-repeat;
-    background-position: center center;
+    color: hsl(0, 0%, 30%);
 }
 
-body.window-inactive .navigation-bar .item.button:not(.suppress-emboss) > .glyph {
+.navigation-bar .item.button:not(.disabled):active > .glyph {
+    color: hsl(0, 0%, 15%);
+}
+
+.navigation-bar .item.button:not(.disabled):matches(:focus, .activate.activated, .radio.selected) > .glyph {
+    color: hsl(212, 92%, 54%);
+}
+
+.navigation-bar .item.button:not(.disabled):active:matches(:focus, .activate.activated, .radio.selected) > .glyph {
+    color: hsl(218, 85%, 52%);
+}
+
+body.window-inactive .navigation-bar .item.button > .glyph {
     opacity: 0.65;
 }
 
@@ -58,24 +65,6 @@ body.window-inactive .navigation-bar .item.button:not(.suppress-emboss) > .glyph
     opacity: 0.55 !important;
 }
 
-body.window-inactive .navigation-bar .item.button.disabled:not(.suppress-emboss) > .glyph {
+body.window-inactive .navigation-bar .item.button.disabled > .glyph {
     opacity: 0.35 !important;
-}
-
-.navigation-bar .item.button.suppress-emboss {
-    background-image: none !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-}
-
-.navigation-bar .item.button.suppress-emboss > .glyph {
-    background-color: hsl(0, 0%, 37%);
-}
-
-.navigation-bar .item.button.suppress-emboss:active > .glyph {
-    opacity: 1;
-}
-
-.navigation-bar .item.button.suppress-emboss.disabled > .glyph {
-    opacity: 0.7 !important;
 }

@@ -53,42 +53,17 @@ WebInspector.ActivateButtonNavigationItem = class ActivateButtonNavigationItem e
 
     set activated(flag)
     {
+        this.element.classList.toggle(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName, flag);
+
         if (flag) {
             this.toolTip = this._activatedToolTip;
-            this.element.classList.add(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName);
             if (this._role === "tab")
                 this.element.setAttribute("aria-selected", "true");
         } else {
             this.toolTip = this._defaultToolTip;
-            this.element.classList.remove(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName);
             if (this._role === "tab")
                 this.element.removeAttribute("aria-selected");
         }
-    }
-
-    generateStyleText(parentSelector)
-    {
-        var classNames = this._classNames.join(".");
-
-        if (this._suppressEmboss)
-            var styleText = parentSelector + " ." + classNames + " > .glyph { width: " +  this._imageWidth + "px; height: " + this._imageHeight + "px; }\n";
-        else {
-            var activatedClassName = "." + WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName;
-
-            // Default state.
-            var styleText = parentSelector + " ." + classNames + " > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier(WebInspector.ButtonNavigationItem.States.Normal) + "); background-size: " +  this._imageWidth + "px " + this._imageHeight + "px; }\n";
-
-            // Pressed state.
-            styleText += parentSelector + " ." + classNames + ":not(.disabled):active > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier(WebInspector.ButtonNavigationItem.States.Active) + "); }\n";
-
-            // Activated state.
-            styleText += parentSelector + " ." + classNames + activatedClassName + ":not(.disabled) > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier(WebInspector.ButtonNavigationItem.States.Focus) + "); }\n";
-
-            // Activated and pressed state.
-            styleText += parentSelector + " ." + classNames + activatedClassName + ":not(.disabled):active > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier(WebInspector.ButtonNavigationItem.States.ActiveFocus) + "); }\n";
-        }
-
-        return styleText;
     }
 
     // Protected

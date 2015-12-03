@@ -29,9 +29,6 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
     {
         super(identifier);
 
-        this._embossedImageStates = WebInspector.ButtonNavigationItem.States;
-        this._imageCacheable = true;
-
         console.assert(identifier);
         console.assert(toolTipOrLabel);
 
@@ -46,10 +43,6 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
 
         this._imageWidth = imageWidth || 16;
         this._imageHeight = imageHeight || 16;
-        this._suppressEmboss = suppressEmboss || false;
-
-        if (suppressEmboss)
-            this._element.classList.add(WebInspector.ButtonNavigationItem.SuppressEmbossStyleClassName);
 
         if (image)
             this.image = image;
@@ -103,11 +96,10 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
 
         this._image = newImage;
 
-        this._glyphElement = document.createElement("div");
-        this._glyphElement.className = "glyph";
+        this._glyphElement = useSVGSymbol(this._image, "glyph");
+        this._glyphElement.setAttribute("width", this._imageWidth + "px");
+        this._glyphElement.setAttribute("height", this._imageHeight + "px");
         this._element.appendChild(this._glyphElement);
-
-        this._updateImage();
     }
 
     get enabled()
@@ -121,39 +113,6 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
             this._element.classList.remove(WebInspector.ButtonNavigationItem.DisabledStyleClassName);
         else
             this._element.classList.add(WebInspector.ButtonNavigationItem.DisabledStyleClassName);
-    }
-
-    get suppressBezel()
-    {
-        return this._element.classList.contains(WebInspector.ButtonNavigationItem.SuppressBezelStyleClassName);
-    }
-
-    set suppressBezel(flag)
-    {
-        if (flag)
-            this._element.classList.add(WebInspector.ButtonNavigationItem.SuppressBezelStyleClassName);
-        else
-            this._element.classList.remove(WebInspector.ButtonNavigationItem.SuppressBezelStyleClassName);
-    }
-
-    generateStyleText(parentSelector)
-    {
-        var classNames = this._classNames.join(".");
-
-        if (this._suppressEmboss)
-            var styleText = parentSelector + " ." + classNames + " > .glyph { width: " +  this._imageWidth + "px; height: " + this._imageHeight + "px; }\n";
-        else {
-            // Default state.
-            var styleText = parentSelector + " ." + classNames + " > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier() + "); background-size: " +  this._imageWidth + "px " + this._imageHeight + "px; }\n";
-
-            // Pressed state.
-            styleText += parentSelector + " ." + classNames + ":not(.disabled):active > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier(WebInspector.ButtonNavigationItem.States.Active) + "); }\n";
-
-            // Focused state.
-            styleText += parentSelector + " ." + classNames + ":not(.disabled):focus > .glyph { background-image: -webkit-canvas(" + this._canvasIdentifier(WebInspector.ButtonNavigationItem.States.Focus) + "); }\n";
-        }
-
-        return styleText;
     }
 
     // Protected
@@ -171,40 +130,10 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
             return;
         this.dispatchEventToListeners(WebInspector.ButtonNavigationItem.Event.Clicked);
     }
-
-    _canvasIdentifier(state)
-    {
-        console.assert(!this._suppressEmboss);
-        return "navigation-item-" + this._identifier + "-" + (state || WebInspector.ButtonNavigationItem.States.Normal);
-    }
-
-    _updateImage()
-    {
-        if (this._suppressEmboss)
-            this._glyphElement.style.webkitMask = "url(" + this._image + ")";
-        else
-            this._generateImages();
-    }
-
-    _generateImages()
-    {
-        console.assert(!this._suppressEmboss);
-        if (this._suppressEmboss)
-            return;
-        generateEmbossedImages(this.image, this._imageWidth, this._imageHeight, this._embossedImageStates, this._canvasIdentifier.bind(this), !this._imageCacheable);
-    }
 }
 
 WebInspector.ButtonNavigationItem.DisabledStyleClassName = "disabled";
-WebInspector.ButtonNavigationItem.SuppressBezelStyleClassName = "suppress-bezel";
-WebInspector.ButtonNavigationItem.SuppressEmbossStyleClassName = "suppress-emboss";
 WebInspector.ButtonNavigationItem.TextOnlyClassName = "text-only";
-
-WebInspector.ButtonNavigationItem.States = {};
-WebInspector.ButtonNavigationItem.States.Normal = "normal";
-WebInspector.ButtonNavigationItem.States.Active = "active";
-WebInspector.ButtonNavigationItem.States.Focus = "focus";
-WebInspector.ButtonNavigationItem.States.ActiveFocus = "active-focus";
 
 WebInspector.ButtonNavigationItem.Event = {
     Clicked: "button-navigation-item-clicked"

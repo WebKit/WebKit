@@ -77,7 +77,7 @@
     width: 23px;
     height: 21px;
     padding: 4px 5px;
-    filter: opacity(0.7);
+    opacity: 0.7;
 }
 
 .details-section.visual-style-selector-section:not(.collapsed) > .content {
