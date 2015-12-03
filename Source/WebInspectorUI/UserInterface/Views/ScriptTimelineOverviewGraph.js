@@ -27,7 +27,7 @@ WebInspector.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph ext
 {
     constructor(timeline, timelineOverview)
     {
-        super(timeline, timelineOverview);
+        super(timelineOverview);
 
         this.element.classList.add("script");
 

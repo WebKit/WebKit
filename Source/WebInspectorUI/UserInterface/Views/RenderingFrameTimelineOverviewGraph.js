@@ -27,7 +27,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineO
 {
     constructor(timeline, timelineOverview)
     {
-        super(timeline, timelineOverview);
+        super(timelineOverview);
 
         this.element.classList.add("rendering-frame");
         this.element.addEventListener("click", this._mouseClicked.bind(this));

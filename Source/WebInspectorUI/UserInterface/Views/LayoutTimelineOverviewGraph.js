@@ -27,7 +27,7 @@ WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph ext
 {
     constructor(timeline, timelineOverview)
     {
-        super(timeline, timelineOverview);
+        super(timelineOverview);
 
         this.element.classList.add("layout");
 
