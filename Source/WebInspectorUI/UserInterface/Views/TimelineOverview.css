@@ -61,7 +61,7 @@
     -webkit-transform: translateX(5px);
 }
 
-.timeline-overview.frames > .timeline-ruler > .markers,
+.timeline-overview.frames > .timeline-ruler > .markers > .divider,
 .timeline-overview.frames > .timeline-ruler:not(.both-handles-clamped) > .shaded-area.right {
     -webkit-transform: translateX(1px);
 }
