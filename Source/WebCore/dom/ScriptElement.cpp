@@ -59,9 +59,15 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     : m_element(element)
     , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
     , m_parserInserted(parserInserted)
+    , m_isExternalScript(false)
     , m_alreadyStarted(alreadyStarted)
+    , m_haveFiredLoad(false)
+    , m_willBeParserExecuted(false)
+    , m_readyToBeParserExecuted(false)
+    , m_willExecuteWhenDocumentFinishedParsing(false)
     , m_forceAsync(!parserInserted)
-    , m_errorEventTimer(*this, &ScriptElement::dispatchErrorEvent)
+    , m_willExecuteInOrder(false)
+    , m_requestUsesAccessControl(false)
 {
     if (parserInserted && m_element.document().scriptableDocumentParser() && !m_element.document().isInDocumentWrite())
         m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
@@ -269,7 +275,10 @@ bool ScriptElement::requestScript(const String& sourceUrl)
     if (m_cachedScript)
         return true;
 
-    m_errorEventTimer.startOneShot(0);
+    RefPtr<Element> element = &m_element;
+    callOnMainThread([this, element] {
+        dispatchErrorEvent();
+    });
     return false;
 }
 
