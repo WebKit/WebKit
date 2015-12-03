@@ -47,8 +47,6 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
         this.filterBar.placeholder = WebInspector.UIString("Filter Search Results");
 
-        this._lastSearchedPageSetting = new WebInspector.Setting("last-searched-page", null);
-
         this._searchQuerySetting = new WebInspector.Setting("search-sidebar-query", "");
         this._inputElement.value = this._searchQuerySetting.value;
 
@@ -81,7 +79,6 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
         this._inputElement.value = searchQuery;
         this._searchQuerySetting.value = searchQuery;
-        this._lastSearchedPageSetting.value = searchQuery && WebInspector.frameResourceManager.mainFrame ? WebInspector.frameResourceManager.mainFrame.url.hash : null;
 
         this.hideEmptyContentPlaceholder();
 
@@ -342,26 +339,11 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
             this._delayedSearchTimeout = undefined;
         }
 
+        this.contentTreeOutline.removeChildren();
         this.contentBrowser.contentViewContainer.closeAllContentViews();
 
         if (this.visible)
             this.focusSearchField();
-
-        // Only if the last page searched is the same as the current page.
-        var mainFrame = event.target;
-        if (this._lastSearchedPageSetting.value !== mainFrame.url.hash)
-            return;
-
-        function delayedWork()
-        {
-            this._delayedSearchTimeout = undefined;
-
-            // Search for whatever is in the input field. This was populated with the last used search term.
-            this.performSearch(this._inputElement.value);
-        }
-
-        // Perform the search on a delay so we have a better chance of finding subresource results.
-        this._delayedSearchTimeout = setTimeout(delayedWork.bind(this), 500);
     }
 
     _treeElementSelected(treeElement, selectedByUser)
