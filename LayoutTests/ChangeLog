@@ -1,3 +1,21 @@
+2015-12-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow JavaScript to iterate over plugins for local files
+        https://bugs.webkit.org/show_bug.cgi?id=151783
+        <rdar://problem/23692113>
+
+        Modify the existing 'local file' plugin tests so that they don't turn on the debugging
+        flag to allow iterating over all plugins. Then create a new HTTP test (based on the
+        existing plugin-javascript-access test) to make sure that plugin iteration is blocked
+        for non-local-file access.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/plugins/plugin-javascript-access-expected.txt: Added.
+        * http/tests/plugins/plugin-javascript-access.html: Added.
+        * plugins/plugin-javascript-access.html: Remove unneeded 'internals.setShowAllPlugins' call.
+        * plugins/script-tests/navigator-mimeTypes-length.js: Ditto.
+
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-skip-deleted.html fails.

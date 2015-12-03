@@ -8,9 +8,6 @@
 if (window.testRunner)
     testRunner.dumpAsText()
 
-if (window.internals)
-    internals.setShowAllPlugins(true);
-
 navigator.plugins.refresh(false); // Supposedly helps if new plug-ins were added.
 
 var foundTestPlugin = false;

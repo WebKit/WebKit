@@ -31,6 +31,7 @@
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "DatabaseProvider.h"
+#include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
 #include "Editor.h"
@@ -517,6 +518,11 @@ PluginData& Page::pluginData() const
     if (!m_pluginData)
         m_pluginData = PluginData::create(this);
     return *m_pluginData;
+}
+
+bool Page::showAllPlugins() const
+{
+    return m_showAllPlugins || mainFrame().loader().documentLoader()->url().isLocalFile();
 }
 
 inline MediaCanStartListener* Page::takeAnyMediaCanStartListener()

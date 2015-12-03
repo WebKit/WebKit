@@ -487,7 +487,7 @@ public:
 #endif
 
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
-    bool showAllPlugins() const { return m_showAllPlugins; }
+    bool showAllPlugins() const;
 
 private:
     WEBCORE_EXPORT void initGroup();

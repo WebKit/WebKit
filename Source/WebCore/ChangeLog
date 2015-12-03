@@ -1,3 +1,19 @@
+2015-12-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow JavaScript to iterate over plugins for local files
+        https://bugs.webkit.org/show_bug.cgi?id=151783
+        <rdar://problem/23692113>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/plugins/plugin-javascript-access.html
+              plugins/plugin-javascript-access.html
+
+        * page/Page.cpp:
+        (WebCore::Page::showAllPlugins): True if we set the debugging flag to show
+        all plugins, or if the document's origin is from a local file.
+        * page/Page.h:
+
 2015-12-03  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build-fix; missing include.
