@@ -187,11 +187,7 @@ body.window-inactive #split-content-browser {
     display: none;
 }
 
-#split-content-browser > .navigation-bar > :matches(.hierarchical-path, .log-search-bar, .log-scope-bar) {
-    pointer-events: none;
-}
-
-#split-content-browser > .navigation-bar > :matches(.log-search-bar, .log-scope-bar) > :matches(li, input) {
+#split-content-browser > .navigation-bar > .log-scope-bar > li {
     pointer-events: all;
 }
 

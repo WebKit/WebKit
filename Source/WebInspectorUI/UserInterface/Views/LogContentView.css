@@ -185,12 +185,6 @@
     display: none;
 }
 
-.search-bar.log-search-bar > input[type="search"] {
-    width: 150px;
-    border: 1px solid hsla(0, 0%, 0%, 0.35);
-    padding-left: 4px;
-}
-
 .search-in-progress .console-item.filtered-out-by-search {
     display: none;
 }
