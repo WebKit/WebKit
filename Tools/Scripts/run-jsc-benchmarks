@@ -2819,22 +2819,31 @@ begin
   else
     config = {}
   end
-  OCTANE_PATH = Pathname.new(config["OctanePath"])
-  BROWSERMARK_PATH = Pathname.new(config["BrowserMarkPath"])
-  BROWSERMARK_JS_PATH = Pathname.new(config["BrowserMarkJSPath"])
-  BROWSERMARK_DOM_PATH = Pathname.new(config["BrowserMarkDOMPath"])
-  ASMBENCH_PATH = Pathname.new(config["AsmBenchPath"])
-  COMPRESSIONBENCH_PATH = Pathname.new(config["CompressionBenchPath"])
-  DSPJS_FILTRR_PATH = Pathname.new(config["DSPJSFiltrrPath"])
-  DSPJS_ROUTE9_PATH = Pathname.new(config["DSPJSRoute9Path"])
-  DSPJS_STARFIELD_PATH = Pathname.new(config["DSPJSStarfieldPath"])
-  DSPJS_QUAKE3_PATH = Pathname.new(config["DSPJSQuake3Path"])
-  DSPJS_MANDELBROT_PATH = Pathname.new(config["DSPJSMandelbrotPath"])
-  DSPJS_JSLINUX_PATH = Pathname.new(config["DSPJSLinuxPath"])
-  DSPJS_AMMOJS_ASMJS_PATH = Pathname.new(config["DSPJSAmmoJSAsmJSPath"])
-  DSPJS_AMMOJS_REGULAR_PATH = Pathname.new(config["DSPJSAmmoJSRegularPath"])
-  JSBENCH_PATH = Pathname.new(config["JSBenchPath"])
-  KRAKEN_PATH = Pathname.new(config["KrakenPath"])
+
+  def pathname_if_exist config
+    if config
+      Pathname.new config
+    else
+      config
+    end
+  end
+
+  OCTANE_PATH = pathname_if_exist(config["OctanePath"])
+  BROWSERMARK_PATH = pathname_if_exist(config["BrowserMarkPath"])
+  BROWSERMARK_JS_PATH = pathname_if_exist(config["BrowserMarkJSPath"])
+  BROWSERMARK_DOM_PATH = pathname_if_exist(config["BrowserMarkDOMPath"])
+  ASMBENCH_PATH = pathname_if_exist(config["AsmBenchPath"])
+  COMPRESSIONBENCH_PATH = pathname_if_exist(config["CompressionBenchPath"])
+  DSPJS_FILTRR_PATH = pathname_if_exist(config["DSPJSFiltrrPath"])
+  DSPJS_ROUTE9_PATH = pathname_if_exist(config["DSPJSRoute9Path"])
+  DSPJS_STARFIELD_PATH = pathname_if_exist(config["DSPJSStarfieldPath"])
+  DSPJS_QUAKE3_PATH = pathname_if_exist(config["DSPJSQuake3Path"])
+  DSPJS_MANDELBROT_PATH = pathname_if_exist(config["DSPJSMandelbrotPath"])
+  DSPJS_JSLINUX_PATH = pathname_if_exist(config["DSPJSLinuxPath"])
+  DSPJS_AMMOJS_ASMJS_PATH = pathname_if_exist(config["DSPJSAmmoJSAsmJSPath"])
+  DSPJS_AMMOJS_REGULAR_PATH = pathname_if_exist(config["DSPJSAmmoJSRegularPath"])
+  JSBENCH_PATH = pathname_if_exist(config["JSBenchPath"])
+  KRAKEN_PATH = pathname_if_exist(config["KrakenPath"])
   
   # If the --dont-copy-vms option was passed, it overrides the --force-vm-copy option.
   if $dontCopyVMs

@@ -1,3 +1,15 @@
+2015-12-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Allow nil for unspecified benchmark pathes
+        https://bugs.webkit.org/show_bug.cgi?id=151784
+
+        Reviewed by Filip Pizlo.
+
+        `Pathname.new(nil)` will raise an error.
+        Only generate Pathname if the benchmark path is specified.
+
+        * Scripts/run-jsc-benchmarks:
+
 2015-12-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Run non-http tests without Cygwin
