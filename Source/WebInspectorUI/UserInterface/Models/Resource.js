@@ -644,8 +644,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         this._scripts.push(script);
 
-        console.assert(this._type !== WebInspector.Resource.Type.Other);
-        console.assert(this._type === WebInspector.Resource.Type.Script || this._type === WebInspector.Resource.Type.Document);
+        if (this._type === WebInspector.Resource.Type.Other) {
+            var oldType = this._type;
+            this._type = WebInspector.Resource.Type.Script;
+            this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType});
+        }
     }
 
     saveIdentityToCookie(cookie)
