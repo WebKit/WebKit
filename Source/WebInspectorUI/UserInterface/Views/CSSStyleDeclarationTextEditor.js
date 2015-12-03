@@ -967,10 +967,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 && !property.implicit && typeof this._delegate.cssStyleDeclarationTextEditorShowProperty === "function") {
 
             var arrowElement = WebInspector.createGoToArrowButton();
+            arrowElement.title = "Option-click to show source";
 
             var delegate = this._delegate;
-            arrowElement.addEventListener("click", function() {
-                delegate.cssStyleDeclarationTextEditorShowProperty(property);
+            arrowElement.addEventListener("click", function(event) {
+                delegate.cssStyleDeclarationTextEditorShowProperty(property, event.altKey);
             });
 
             this._codeMirror.setUniqueBookmark(to, arrowElement);
