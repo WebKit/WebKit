@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#import "CDMSessionAVStreamSession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "FileSystem.h"
 #import "Logging.h"
@@ -703,19 +704,15 @@ AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(CDMSession* session)
 {
-    if (m_session) {
-        for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
-            m_session->removeSourceBuffer(sourceBuffer.get());
-        m_session = nullptr;
-    }
+    if (session == m_session)
+        return;
 
     m_session = toCDMSessionMediaSourceAVFObjC(session);
 
-    if (m_session) {
-        m_session->setStreamSession(m_streamSession.get());
-        for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
-            m_session->addSourceBuffer(sourceBuffer.get());
-    }
+    if (CDMSessionAVStreamSession* cdmStreamSession = toCDMSessionAVStreamSession(m_session))
+        cdmStreamSession->setStreamSession(m_streamSession.get());
+    for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
+        sourceBuffer->setCDMSession(m_session);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)

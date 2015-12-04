@@ -116,6 +116,7 @@ struct MediaEngineSupportParameters {
 
 extern const PlatformMedia NoPlatformMedia;
 
+class CDMSessionClient;
 class CachedResourceLoader;
 class ContentType;
 class GraphicsContext;
@@ -359,7 +360,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    std::unique_ptr<CDMSession> createSession(const String& keySystem);
+    std::unique_ptr<CDMSession> createSession(const String& keySystem, CDMSessionClient*);
     void setCDMSession(CDMSession*);
     void keyAdded();
 #endif

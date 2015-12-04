@@ -39,7 +39,7 @@ namespace WebCore {
 
 class MockCDMSession : public CDMSession {
 public:
-    MockCDMSession();
+    MockCDMSession(CDMSessionClient*);
     virtual ~MockCDMSession() { }
 
     virtual void setClient(CDMSessionClient* client) override { m_client = client; }
@@ -71,9 +71,9 @@ bool MockCDM::supportsMIMEType(const String& mimeType)
     return equalIgnoringCase(mimeType, "video/mock");
 }
 
-std::unique_ptr<CDMSession> MockCDM::createSession()
+std::unique_ptr<CDMSession> MockCDM::createSession(CDMSessionClient* client)
 {
-    return std::make_unique<MockCDMSession>();
+    return std::make_unique<MockCDMSession>(client);
 }
 
 static Uint8Array* initDataPrefix()
@@ -106,8 +106,9 @@ static String generateSessionId()
     return String::number(monotonicallyIncreasingSessionId++);
 }
 
-MockCDMSession::MockCDMSession()
-    : m_sessionId(generateSessionId())
+MockCDMSession::MockCDMSession(CDMSessionClient* client)
+    : m_client(client)
+    , m_sessionId(generateSessionId())
 {
 }
 

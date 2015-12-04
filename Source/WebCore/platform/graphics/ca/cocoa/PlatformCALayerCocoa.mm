@@ -66,6 +66,7 @@
 #endif
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
 using namespace WebCore;

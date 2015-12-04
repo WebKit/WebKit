@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,62 +29,60 @@
 #include "CDMSession.h"
 #include "SourceBufferPrivateAVFObjC.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
-OBJC_CLASS AVStreamSession;
-OBJC_CLASS CDMSessionMediaSourceAVFObjCObserver;
+OBJC_CLASS AVStreamDataParser;
+OBJC_CLASS NSError;
 
 namespace WebCore {
 
+class CDMPrivateMediaSourceAVFObjC;
+
 class CDMSessionMediaSourceAVFObjC : public CDMSession, public SourceBufferPrivateAVFObjCErrorClient {
 public:
-    CDMSessionMediaSourceAVFObjC(const Vector<int>& protocolVersions);
+    CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC&, CDMSessionClient*);
     virtual ~CDMSessionMediaSourceAVFObjC();
 
-    virtual CDMSessionType type() override { return CDMSessionTypeMediaSourceAVFObjC; }
+    virtual void addParser(AVStreamDataParser*) = 0;
+    virtual void removeParser(AVStreamDataParser*) = 0;
+
+    // CDMSession
     virtual void setClient(CDMSessionClient* client) override { m_client = client; }
     virtual const String& sessionId() const override { return m_sessionId; }
-    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
-    virtual void releaseKeys() override;
-    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
+    // SourceBufferPrivateAVFObjCErrorClient
     virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) override;
     virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) override;
 
-    void setStreamSession(AVStreamSession *);
-
     void addSourceBuffer(SourceBufferPrivateAVFObjC*);
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);
-
     void setSessionId(const String& sessionId) { m_sessionId = sessionId; }
 
-protected:
-    String storagePath() const;
-    PassRefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode);
+    void invalidateCDM() { m_cdm = nullptr; }
 
+protected:
+    static long systemCodeForError(NSError *);
+    String storagePath() const;
+
+    CDMPrivateMediaSourceAVFObjC* m_cdm;
+    CDMSessionClient* m_client { nullptr };
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
-    CDMSessionClient* m_client;
-    RetainPtr<AVStreamSession> m_streamSession;
-    RefPtr<Uint8Array> m_initData;
     RefPtr<Uint8Array> m_certificate;
-    RetainPtr<NSData> m_expiredSession;
-    RetainPtr<CDMSessionMediaSourceAVFObjCObserver> m_dataParserObserver;
-    Vector<int> m_protocolVersions;
     String m_sessionId;
-    enum { Normal, KeyRelease } m_mode;
-    bool m_stopped = { false };
+    bool m_stopped { false };
 };
 
 inline CDMSessionMediaSourceAVFObjC* toCDMSessionMediaSourceAVFObjC(CDMSession* session)
 {
-    if (!session || session->type() != CDMSessionTypeMediaSourceAVFObjC)
+    if (!session || (session->type() != CDMSessionTypeAVStreamSession && session->type() != CDMSessionTypeAVContentKeySession))
         return nullptr;
     return static_cast<CDMSessionMediaSourceAVFObjC*>(session);
 }
 
 }
 
-#endif
+#endif // ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
 #endif // CDMSessionMediaSourceAVFObjC_h

@@ -1,3 +1,140 @@
+2015-12-01  Jer Noble  <jer.noble@apple.com>
+
+        Adopt AVContentKeySession
+        https://bugs.webkit.org/show_bug.cgi?id=151221
+
+        Reviewed by Eric Carlson.
+
+        Adopt a new API for managing key state, AVContentKeySession. Because this necessitates a change
+        in both the initialization data returned by the needkey event, and passed into the createSession()
+        method, bump the protocol version number (to 3), and keep supporting the old key management API
+        for legacy content.
+
+        To do so, move most of the implementation of CDMPrivateMediaSourceAVFObjC into a new subclass,
+        CDMSessionAVStreamSession, and add a new subclass, CDMSessionAVContentKeySession, to support the
+        new API.
+
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.h:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::CDMPrivateMediaSourceAVFObjC): Moved to implementation file.
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::validKeySystemRE): Support "com.apple.fps.3_x".
+        (WebCore::CDMPrivateMediaSourceAVFObjC::~CDMPrivateMediaSourceAVFObjC): Invalidate all outstanding sessions.
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystem): Only support "com.apple.fps.3_x" if the AVContentKeySession class is available.
+        (WebCore::CDMPrivateMediaSourceAVFObjC::createSession): Create an instance of CDMSessionAVContentKeySession if "com.apple.fps.3_x" is specified and AVContentKeySession is available.
+        (WebCore::CDMPrivateMediaSourceAVFObjC::invalidateSession): Remove session from the list of outstanding sessions.
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsMIMEType): Deleted.
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h: Copied from Source/WebCore/platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h.
+        (WebCore::CDMSessionAVContentKeySession::hasContentKeySession): Simple accessor.
+        (WebCore::toCDMSessionAVContentKeySession): Safe casting.
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm: Added.
+        (-[CDMSessionAVContentKeySessionDelegate initWithParent:]): Simple constructor.
+        (-[CDMSessionAVContentKeySessionDelegate invalidate]): Remove reference to parent.
+        (-[CDMSessionAVContentKeySessionDelegate contentKeySession:willProvideKeyRequestInitializationDataForTrackID:]): Pass to parent.
+        (-[CDMSessionAVContentKeySessionDelegate contentKeySession:didProvideKeyRequestInitializationData:requestHandling:]): Ditto.
+        (-[CDMSessionAVContentKeySessionDelegate contentKeySessionContentProtectionSessionIdentifierDidChange:]): Ditto.
+        (WebCore::CDMSessionAVContentKeySession::CDMSessionAVContentKeySession): Create the delegate.
+        (WebCore::CDMSessionAVContentKeySession::~CDMSessionAVContentKeySession): Invalidate the delegate and remove all parsers.
+        (WebCore::CDMSessionAVContentKeySession::isAvailable): Return true if AVContentKeySession class is available.
+        (WebCore::CDMSessionAVContentKeySession::generateKeyRequest): Support "keyrelease" message, setting of the certificate, and creating key request object. 
+        (WebCore::CDMSessionAVContentKeySession::releaseKeys): Retrieve keys from storage location.
+        (WebCore::isEqual): Compares a Uint8Array to a char*.
+        (WebCore::CDMSessionAVContentKeySession::update): Support "acknowledged" message, "renew" message, and key addition.
+        (WebCore::CDMSessionAVContentKeySession::addParser): Add the parser to the AVContentKeySession.
+        (WebCore::CDMSessionAVContentKeySession::removeParser): Remove parser from same.
+        (WebCore::CDMSessionAVContentKeySession::generateKeyReleaseMessage): Retrieve key release message from AVContentKeySession.
+        (WebCore::CDMSessionAVContentKeySession::didProvideContentKeyRequest): Simple setter.
+        (WebCore::CDMSessionAVContentKeySession::contentKeySession): Lazily create the AVContentKeySession.
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h: Copied from Source/WebCore/platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h.
+        (WebCore::toCDMSessionAVStreamSession):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm: Copied from Source/WebCore/platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm.
+        (-[CDMSessionAVStreamSessionObserver initWithParent:]): Moved from CDMSessionMediaSourceAVFObjcObserver.
+        (-[CDMSessionAVStreamSessionObserver contentProtectionSessionIdentifierChanged:]): Ditto.
+        (WebCore::CDMSessionAVStreamSession::CDMSessionAVStreamSession): Ditto.
+        (WebCore::CDMSessionAVStreamSession::~CDMSessionAVStreamSession): Ditto.
+        (WebCore::CDMSessionAVStreamSession::generateKeyRequest): Ditto.
+        (WebCore::CDMSessionAVStreamSession::releaseKeys): Ditto.
+        (WebCore::isEqual): Ditto.
+        (WebCore::CDMSessionAVStreamSession::update): Ditto.
+        (WebCore::CDMSessionAVStreamSession::setStreamSession): Ditto.
+        (WebCore::CDMSessionAVStreamSession::addParser): Ditto.
+        (WebCore::CDMSessionAVStreamSession::removeParser): Ditto.
+        (WebCore::CDMSessionAVStreamSession::generateKeyReleaseMessage): Ditto.
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        (WebCore::CDMSessionMediaSourceAVFObjC::invalidateCDM): Clear the m_cdm.
+        (WebCore::toCDMSessionMediaSourceAVFObjC):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC):
+        (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC): Instruct our CDM to invalidate their references to us.
+        (WebCore::CDMSessionMediaSourceAVFObjC::addSourceBuffer): Call addParser().
+        (WebCore::CDMSessionMediaSourceAVFObjC::removeSourceBuffer): Call removeParser().
+        (WebCore::CDMSessionMediaSourceAVFObjC::layerDidReceiveError): Deleted.
+        (WebCore::CDMSessionMediaSourceAVFObjC::rendererDidReceiveError): Deleted.
+        
+        To give us a chance to create a CDMPrivate before we continue decoding media data, "block" further decoding
+        on the background thread by creating a semaphore and passing it to the main thread, to be triggered when
+        a CDM is created and attached to this source buffer.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::setCDMSession):
+        (-[WebAVStreamDataParserListener streamDataParserWillProvideContentKeyRequestInitializationData:forTrackID:]): Deleted.
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+
+        Drive-by fix: Only throw an error from keyRequestTimerFired() if the underlying call to
+        generateKeyRequest() returned an error, rather than just failed to create a message.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::keyRequestTimerFired):
+
+        Drive-by fix: Pass the CDMSessionClient into CDM::createSession() so that it is immediately available
+        in the CDMSessionPrivate constructor, rather than setting the client immediately after construction.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::createSession):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/CDMPrivateClearKey.cpp:
+        (WebCore::CDMPrivateClearKey::createSession):
+        * Modules/encryptedmedia/CDMPrivateClearKey.h:
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp:
+        (WebCore::CDMPrivateMediaPlayer::createSession):
+        * Modules/encryptedmedia/CDMPrivateMediaPlayer.h:
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::CDMSessionClearKey):
+        * Modules/encryptedmedia/CDMSessionClearKey.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        * platform/graphics/CDMSession.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::createSession):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::createSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::cdmSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded): Deleted.
+        * testing/MockCDM.cpp:
+        (WebCore::MockCDM::createSession):
+        (WebCore::MockCDMSession::MockCDMSession):
+        * testing/MockCDM.h:
+
+        Add new files to the project:
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+
 2015-12-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-update.html fails.

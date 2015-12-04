@@ -86,6 +86,7 @@ public:
     bool hasStreamSession() { return m_streamSession; }
     AVStreamSession *streamSession();
     virtual void setCDMSession(CDMSession*) override;
+    CDMSessionMediaSourceAVFObjC* cdmSession() const { return m_session; }
     void keyNeeded(Uint8Array*);
 #endif
 

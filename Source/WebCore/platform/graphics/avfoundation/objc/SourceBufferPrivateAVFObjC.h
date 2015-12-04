@@ -29,9 +29,11 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #include "SourceBufferPrivate.h"
+#include <dispatch/semaphore.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -53,6 +55,7 @@ typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
 
+class CDMSessionMediaSourceAVFObjC;
 class MediaSourcePrivateAVFObjC;
 class TimeRanges;
 class AudioTrackPrivate;
@@ -80,7 +83,7 @@ public:
     void didProvideMediaDataForTrackID(int trackID, CMSampleBufferRef, const String& mediaType, unsigned flags);
     void didReachEndOfTrackWithTrackID(int trackID, const String& mediaType);
     void willProvideContentKeyRequestInitializationDataForTrackID(int trackID);
-    void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, int trackID);
+    void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, int trackID, OSObjectPtr<dispatch_semaphore_t>);
 
     bool processCodedFrame(int trackID, CMSampleBufferRef, const String& mediaType);
 
@@ -96,6 +99,7 @@ public:
 
     int protectedTrackID() const { return m_protectedTrackID; }
     AVStreamDataParser* parser() const { return m_parser.get(); }
+    void setCDMSession(CDMSessionMediaSourceAVFObjC*);
 
     void flush();
 
@@ -142,9 +146,11 @@ private:
     HashMap<int, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
+    OSObjectPtr<dispatch_semaphore_t> m_hasSessionSemaphore;
 
     MediaSourcePrivateAVFObjC* m_mediaSource;
     SourceBufferPrivateClient* m_client;
+    CDMSessionMediaSourceAVFObjC* m_session { nullptr };
 
     FloatSize m_cachedSize;
     bool m_parsingSucceeded;

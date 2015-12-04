@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionAVFoundationObjC_h
-#define CDMSessionAVFoundationObjC_h
+#ifndef CDMSessionAVStreamSession_h
+#define CDMSessionAVStreamSession_h
 
-#include "CDMSession.h"
+#include "CDMSessionMediaSourceAVFObjC.h"
+#include "SourceBufferPrivateAVFObjC.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
-OBJC_CLASS AVAssetResourceLoadingRequest;
+OBJC_CLASS AVStreamSession;
+OBJC_CLASS CDMSessionAVStreamSessionObserver;
 
 namespace WebCore {
 
-class MediaPlayerPrivateAVFoundationObjC;
+class CDMPrivateMediaSourceAVFObjC;
 
-class CDMSessionAVFoundationObjC : public CDMSession {
+class CDMSessionAVStreamSession : public CDMSessionMediaSourceAVFObjC {
 public:
-    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, CDMSessionClient*);
-    virtual ~CDMSessionAVFoundationObjC() { }
+    CDMSessionAVStreamSession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC&, CDMSessionClient*);
+    virtual ~CDMSessionAVStreamSession();
 
-    virtual CDMSessionType type() override { return CDMSessionTypeAVFoundationObjC; }
-    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
-    virtual const String& sessionId() const override { return m_sessionId; }
+    // CDMSession
+    virtual CDMSessionType type() override { return CDMSessionTypeAVStreamSession; }
     virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
     virtual void releaseKeys() override;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
+    // CDMSessionMediaSourceAVFObjC
+    void addParser(AVStreamDataParser*) override;
+    void removeParser(AVStreamDataParser*) override;
+
+    void setStreamSession(AVStreamSession*);
+
 protected:
-    MediaPlayerPrivateAVFoundationObjC* m_parent;
-    CDMSessionClient* m_client;
-    String m_sessionId;
-    RetainPtr<AVAssetResourceLoadingRequest> m_request;
+    PassRefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode);
+
+    WeakPtrFactory<CDMSessionAVStreamSession> m_weakPtrFactory;
+    RetainPtr<AVStreamSession> m_streamSession;
+    RefPtr<Uint8Array> m_initData;
+    RefPtr<Uint8Array> m_certificate;
+    RetainPtr<NSData> m_expiredSession;
+    RetainPtr<CDMSessionAVStreamSessionObserver> m_dataParserObserver;
+    Vector<int> m_protocolVersions;
+    enum { Normal, KeyRelease } m_mode;
 };
+
+inline CDMSessionAVStreamSession* toCDMSessionAVStreamSession(CDMSession* session)
+{
+    if (!session || session->type() != CDMSessionTypeAVStreamSession)
+        return nullptr;
+    return static_cast<CDMSessionAVStreamSession*>(session);
+}
 
 }
 
 #endif
 
-#endif // CDMSessionAVFoundationObjC_h
+#endif // CDMSessionAVStreamSession_h

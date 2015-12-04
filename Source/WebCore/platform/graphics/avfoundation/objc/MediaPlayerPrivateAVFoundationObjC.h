@@ -255,7 +255,7 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    std::unique_ptr<CDMSession> createSession(const String& keySystem) override;
+    std::unique_ptr<CDMSession> createSession(const String& keySystem, CDMSessionClient*) override;
 #endif
 
     virtual String languageOfPrimaryAudioTrack() const override;

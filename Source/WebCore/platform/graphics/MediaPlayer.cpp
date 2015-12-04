@@ -532,9 +532,9 @@ MediaPlayer::MediaKeyException MediaPlayer::cancelKeyRequest(const String& keySy
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-std::unique_ptr<CDMSession> MediaPlayer::createSession(const String& keySystem)
+std::unique_ptr<CDMSession> MediaPlayer::createSession(const String& keySystem, CDMSessionClient* client)
 {
-    return m_private->createSession(keySystem);
+    return m_private->createSession(keySystem, client);
 }
 
 void MediaPlayer::setCDMSession(CDMSession* session)

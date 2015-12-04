@@ -29,28 +29,33 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
 #include "CDMPrivate.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CDM;
+class CDMSessionMediaSourceAVFObjC;
 
 class CDMPrivateMediaSourceAVFObjC : public CDMPrivateInterface {
 public:
     explicit CDMPrivateMediaSourceAVFObjC(CDM* cdm)
         : m_cdm(cdm)
     { }
-    virtual ~CDMPrivateMediaSourceAVFObjC() { }
+    virtual ~CDMPrivateMediaSourceAVFObjC();
 
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
     virtual bool supportsMIMEType(const String& mimeType) override;
-    virtual std::unique_ptr<CDMSession> createSession() override;
+    virtual std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
 
     CDM* cdm() const { return m_cdm; }
 
+    void invalidateSession(CDMSessionMediaSourceAVFObjC*);
+
 protected:
     CDM* m_cdm;
+    Vector<CDMSessionMediaSourceAVFObjC*> m_sessions;
 };
 
 }

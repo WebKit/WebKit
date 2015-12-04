@@ -58,7 +58,8 @@ enum CDMSessionType {
     CDMSessionTypeUnknown,
     CDMSessionTypeClearKey,
     CDMSessionTypeAVFoundationObjC,
-    CDMSessionTypeMediaSourceAVFObjC,
+    CDMSessionTypeAVStreamSession,
+    CDMSessionTypeAVContentKeySession,
 };
 
 class CDMSession {
