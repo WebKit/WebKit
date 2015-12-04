@@ -1,3 +1,17 @@
+2015-12-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the use of GraphicsContextStateSaver from RenderLayer::paintLayerByApplyingTransform
+        https://bugs.webkit.org/show_bug.cgi?id=151829
+
+        Reviewed by Simon Fraser.
+
+        Set the CTM of the GraphicsContext to its original value before changing
+        it. This is a lot cheaper than using GraphicsContextStateSaver to save the
+        whole state of the GraphicsContext and restore it back;
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+
 2015-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Update MediaStreamTrack.getCapabilities
