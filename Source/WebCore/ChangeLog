@@ -1,5 +1,36 @@
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188631. rdar://problem/23581597
+
+    2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Links for rules in <style> are incorrect, do not account for <style> offset in the document
+            https://bugs.webkit.org/show_bug.cgi?id=148141
+
+            Reviewed by Brian Burg.
+
+            Test: inspector/css/getAllStyleSheets.html
+
+            * css/CSSStyleSheet.h:
+            * css/CSSStyleSheet.cpp:
+            (WebCore::CSSStyleSheet::create):
+            (WebCore::CSSStyleSheet::createInline):
+            (WebCore::CSSStyleSheet::CSSStyleSheet):
+            Include the starting position when created by the Parser.
+            Default to the minimum position, which should never be
+            possible for an inline <style> because the "<style>" characters
+            themselves require at least some offset.
+
+            * dom/InlineStyleSheetOwner.cpp:
+            (WebCore::InlineStyleSheetOwner::createSheet):
+            Provide the start position offset for this stylesheet if it was inline.
+
+            * inspector/InspectorStyleSheet.cpp:
+            (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+            Include new protocol values for the style sheet.
+
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187496. rdar://problem/23581597
 
     2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
