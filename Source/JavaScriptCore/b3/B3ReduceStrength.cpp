@@ -571,6 +571,17 @@ private:
                 break;
             }
 
+            // Turn this: Select(BitAnd(bool, xyz1), a, b)
+            // Into this: Select(bool, a, b)
+            if (m_value->child(0)->opcode() == BitAnd
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->asInt() & 1
+                && m_value->child(0)->child(0)->returnsBool()) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+                break;
+            }
+
             // Turn this: Select(stuff, x, x)
             // Into this: x
             if (m_value->child(1) == m_value->child(2)) {
@@ -845,7 +856,17 @@ private:
                 std::swap(branch->taken(), branch->notTaken());
                 m_changed = true;
             }
-            
+
+            // Turn this: Branch(BitAnd(bool, xyb1), then, else)
+            // Into this: Branch(bool, then, else)
+            if (branch->child(0)->opcode() == BitAnd
+                && branch->child(0)->child(1)->hasInt()
+                && branch->child(0)->child(1)->asInt() & 1
+                && branch->child(0)->child(0)->returnsBool()) {
+                branch->child(0) = branch->child(0)->child(0);
+                m_changed = true;
+            }
+
             TriState triState = branch->child(0)->asTriState();
 
             // Turn this: Branch(0, then, else)

@@ -266,7 +266,7 @@ bool Value::returnsBool() const
     case Const32:
         return asInt32() == 0 || asInt32() == 1;
     case BitAnd:
-        return child(1)->isInt32(1);
+        return child(1)->hasInt() && child(1)->asInt() & 1;
     case Equal:
     case NotEqual:
     case LessThan:

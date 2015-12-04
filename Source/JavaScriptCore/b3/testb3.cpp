@@ -998,6 +998,29 @@ void testBitAndImmBitAndArgImm32(int a, int b, int c)
     CHECK(compileAndRun<int>(proc, b) == (a & (b & c)));
 }
 
+void testBitAndWithMaskReturnsBooleans(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* equal = root->appendNew<Value>(proc, Equal, Origin(), arg0, arg1);
+    Value* maskedEqual = root->appendNew<Value>(proc, BitAnd, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0x5),
+        equal);
+    Value* inverted = root->appendNew<Value>(proc, BitXor, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0x1),
+        maskedEqual);
+    Value* select = root->appendNew<Value>(proc, Select, Origin(), inverted,
+        root->appendNew<Const64Value>(proc, Origin(), 42),
+        root->appendNew<Const64Value>(proc, Origin(), -5));
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), select);
+
+    int64_t expected = (a == b) ? -5 : 42;
+    CHECK(compileAndRun<int64_t>(proc, a, b) == expected);
+}
+
 void testBitOrArgs(int64_t a, int64_t b)
 {
     Procedure proc;
@@ -5781,6 +5804,7 @@ void run(const char* filter)
     RUN(testBitAndImmBitAndArgImm32(7, 2, 3));
     RUN(testBitAndImmBitAndArgImm32(6, 1, 6));
     RUN(testBitAndImmBitAndArgImm32(24, 0xffff, 7));
+    RUN_BINARY(testBitAndWithMaskReturnsBooleans, int64Operands(), int64Operands());
 
     RUN(testBitOrArgs(43, 43));
     RUN(testBitOrArgs(43, 0));
