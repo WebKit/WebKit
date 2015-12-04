@@ -797,7 +797,9 @@ private:
 
             Arg arg;
             switch (value.rep().kind()) {
-            case ValueRep::Any:
+            case ValueRep::WarmAny:
+            case ValueRep::ColdAny:
+            case ValueRep::LateColdAny:
                 if (imm(value.value()))
                     arg = imm(value.value());
                 else if (value.value()->hasInt64())
@@ -1700,7 +1702,9 @@ private:
             Vector<Inst> after;
             if (patchpointValue->type() != Void) {
                 switch (patchpointValue->resultConstraint.kind()) {
-                case ValueRep::Any:
+                case ValueRep::WarmAny:
+                case ValueRep::ColdAny:
+                case ValueRep::LateColdAny:
                 case ValueRep::SomeRegister:
                     inst.args.append(tmp(patchpointValue));
                     break;
@@ -1761,7 +1765,7 @@ private:
 
             Air::Opcode opcode = Air::Oops;
             Commutativity commutativity = NotCommutative;
-            Arg::Role stackmapRole = Arg::Use;
+            StackmapSpecial::RoleMode stackmapRole = StackmapSpecial::SameAsRep;
             switch (m_value->opcode()) {
             case CheckAdd:
                 opcode = opcodeForType(BranchAdd32, BranchAdd64, Air::Oops, m_value->type());
@@ -1772,7 +1776,7 @@ private:
                 break;
             case CheckMul:
                 opcode = opcodeForType(BranchMul32, BranchMul64, Air::Oops, checkValue->type());
-                stackmapRole = Arg::LateUse;
+                stackmapRole = StackmapSpecial::ForceLateUse;
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();

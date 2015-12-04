@@ -45,6 +45,11 @@ public:
     StackmapSpecial();
     virtual ~StackmapSpecial();
 
+    enum RoleMode : int8_t {
+        SameAsRep,
+        ForceLateUse
+    };
+
 protected:
     void reportUsedRegisters(Air::Inst&, const RegisterSet&) override;
     const RegisterSet& extraEarlyClobberedRegs(Air::Inst&) override;
@@ -52,10 +57,10 @@ protected:
 
     // Note that this does not override generate() or dumpImpl()/deepDumpImpl(). We have many some
     // subclasses that implement that.
-
     void forEachArgImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-        Air::Inst&, Air::Arg::Role role, const ScopedLambda<Air::Inst::EachArgCallback>&);
+        Air::Inst&, RoleMode, const ScopedLambda<Air::Inst::EachArgCallback>&);
+    
     bool isValidImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
         Air::Inst&);
@@ -72,6 +77,12 @@ protected:
 };
 
 } } // namespace JSC::B3
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::B3::StackmapSpecial::RoleMode);
+
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)
 

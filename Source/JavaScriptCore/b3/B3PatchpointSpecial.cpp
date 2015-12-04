@@ -49,12 +49,12 @@ void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgC
     // https://bugs.webkit.org/show_bug.cgi?id=151335
     
     if (inst.origin->type() == Void) {
-        forEachArgImpl(0, 1, inst, Arg::Use, callback);
+        forEachArgImpl(0, 1, inst, SameAsRep, callback);
         return;
     }
 
     callback(inst.args[1], Arg::Def, inst.origin->airType());
-    forEachArgImpl(0, 2, inst, Arg::Use, callback);
+    forEachArgImpl(0, 2, inst, SameAsRep, callback);
 }
 
 bool PatchpointSpecial::isValid(Inst& inst)
@@ -80,7 +80,7 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
 
     if (argIndex == 1) {
         switch (inst.origin->as<PatchpointValue>()->resultConstraint.kind()) {
-        case ValueRep::Any:
+        case ValueRep::WarmAny:
         case ValueRep::StackArgument:
             return true;
         case ValueRep::SomeRegister:

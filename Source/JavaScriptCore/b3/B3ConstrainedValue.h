@@ -42,7 +42,7 @@ public:
 
     ConstrainedValue(Value* value)
         : m_value(value)
-        , m_rep(ValueRep::Any)
+        , m_rep(ValueRep::WarmAny)
     {
     }
 

@@ -51,9 +51,9 @@ public:
     // of substitution could be made so long as there are no interfering writes.
     Effects effects;
 
-    // The input representation (i.e. constraint) of the return value. This defaults to Any if the type is
-    // Void and it defaults to SomeRegister otherwise. It's illegal to mess with this if the type is Void.
-    // Otherwise you can set this to any input constraint.
+    // The input representation (i.e. constraint) of the return value. This defaults to WarmAny if the
+    // type is Void and it defaults to SomeRegister otherwise. It's illegal to mess with this if the type
+    // is Void. Otherwise you can set this to any input constraint.
     ValueRep resultConstraint;
 
 protected:

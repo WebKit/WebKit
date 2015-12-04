@@ -47,8 +47,8 @@ CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left
     ASSERT(B3::isInt(type()));
     ASSERT(left->type() == right->type());
     ASSERT(opcode == CheckAdd || opcode == CheckSub || opcode == CheckMul);
-    append(ConstrainedValue(left, ValueRep::Any));
-    append(ConstrainedValue(right, ValueRep::Any));
+    append(ConstrainedValue(left, ValueRep::WarmAny));
+    append(ConstrainedValue(right, ValueRep::WarmAny));
 }
 
 // Use this form for Check.
@@ -56,7 +56,7 @@ CheckValue::CheckValue(unsigned index, Opcode opcode, Origin origin, Value* pred
     : StackmapValue(index, CheckedOpcode, opcode, Void, origin)
 {
     ASSERT(opcode == Check);
-    append(ConstrainedValue(predicate, ValueRep::Any));
+    append(ConstrainedValue(predicate, ValueRep::WarmAny));
 }
 
 } } // namespace JSC::B3

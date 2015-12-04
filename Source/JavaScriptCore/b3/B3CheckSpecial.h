@@ -57,12 +57,12 @@ public:
     public:
         Key()
             : m_opcode(Air::Nop)
-            , m_stackmapRole(Air::Arg::Use)
+            , m_stackmapRole(SameAsRep)
             , m_numArgs(0)
         {
         }
         
-        Key(Air::Opcode opcode, unsigned numArgs, Air::Arg::Role stackmapRole = Air::Arg::Use)
+        Key(Air::Opcode opcode, unsigned numArgs, RoleMode stackmapRole = SameAsRep)
             : m_opcode(opcode)
             , m_stackmapRole(stackmapRole)
             , m_numArgs(numArgs)
@@ -87,13 +87,13 @@ public:
 
         Air::Opcode opcode() const { return m_opcode; }
         unsigned numArgs() const { return m_numArgs; }
-        Air::Arg::Role stackmapRole() const { return m_stackmapRole; }
+        RoleMode stackmapRole() const { return m_stackmapRole; }
 
         void dump(PrintStream& out) const;
 
         Key(WTF::HashTableDeletedValueType)
             : m_opcode(Air::Nop)
-            , m_stackmapRole(Air::Arg::Use)
+            , m_stackmapRole(SameAsRep)
             , m_numArgs(1)
         {
         }
@@ -111,11 +111,11 @@ public:
         
     private:
         Air::Opcode m_opcode;
-        Air::Arg::Role m_stackmapRole;
+        RoleMode m_stackmapRole;
         unsigned m_numArgs;
     };
     
-    CheckSpecial(Air::Opcode, unsigned numArgs, Air::Arg::Role stackmapRole = Air::Arg::Use);
+    CheckSpecial(Air::Opcode, unsigned numArgs, RoleMode stackmapRole = SameAsRep);
     CheckSpecial(const Key&);
     ~CheckSpecial();
 
@@ -140,7 +140,7 @@ protected:
 
 private:
     Air::Opcode m_checkOpcode;
-    Air::Arg::Role m_stackmapRole;
+    RoleMode m_stackmapRole;
     unsigned m_numCheckArgs;
 };
 

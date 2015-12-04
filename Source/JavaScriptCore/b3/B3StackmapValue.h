@@ -84,11 +84,12 @@ public:
     // children().append(). That will work fine, but it's not recommended.
     void append(const ConstrainedValue&);
 
+    // Helper for appending cold any's. This often used by clients to implement OSR.
     template<typename VectorType>
-    void appendAnys(const VectorType& vector)
+    void appendColdAnys(const VectorType& vector)
     {
         for (Value* value : vector)
-            append(value);
+            append(ConstrainedValue(value, ValueRep::ColdAny));
     }
 
     // This is a helper for something you might do a lot of: append a value that should be constrained
@@ -202,7 +203,7 @@ public:
 
     ConstrainedValue constrainedChild(unsigned index) const
     {
-        return ConstrainedValue(child(index), index < m_reps.size() ? m_reps[index] : ValueRep());
+        return ConstrainedValue(child(index), index < m_reps.size() ? m_reps[index] : ValueRep::ColdAny);
     }
 
     void setConstrainedChild(unsigned index, const ConstrainedValue&);

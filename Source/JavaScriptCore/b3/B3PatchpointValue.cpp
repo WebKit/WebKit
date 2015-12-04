@@ -43,7 +43,7 @@ void PatchpointValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 PatchpointValue::PatchpointValue(unsigned index, Type type, Origin origin)
     : Base(index, CheckedOpcode, Patchpoint, type, origin)
     , effects(Effects::forCall())
-    , resultConstraint(type == Void ? ValueRep::Any : ValueRep::SomeRegister)
+    , resultConstraint(type == Void ? ValueRep::WarmAny : ValueRep::SomeRegister)
 {
 }
 

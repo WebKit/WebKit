@@ -291,9 +291,21 @@ public:
                 break;
             case Patchpoint:
                 if (value->type() == Void)
-                    VALIDATE(value->as<PatchpointValue>()->resultConstraint == ValueRep::Any, ("At ", *value));
-                else
+                    VALIDATE(value->as<PatchpointValue>()->resultConstraint == ValueRep::WarmAny, ("At ", *value));
+                else {
+                    switch (value->as<PatchpointValue>()->resultConstraint.kind()) {
+                    case ValueRep::WarmAny:
+                    case ValueRep::SomeRegister:
+                    case ValueRep::Register:
+                    case ValueRep::StackArgument:
+                        break;
+                    default:
+                        VALIDATE(false, ("At ", *value));
+                        break;
+                    }
+                    
                     validateStackmapConstraint(value, ConstrainedValue(value, value->as<PatchpointValue>()->resultConstraint));
+                }
                 validateStackmap(value);
                 break;
             case CheckAdd:
@@ -302,14 +314,14 @@ public:
                 VALIDATE(value->numChildren() >= 2, ("At ", *value));
                 VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
                 VALIDATE(isInt(value->child(1)->type()), ("At ", *value));
-                VALIDATE(value->as<StackmapValue>()->constrainedChild(0).rep() == ValueRep::Any, ("At ", *value));
-                VALIDATE(value->as<StackmapValue>()->constrainedChild(1).rep() == ValueRep::Any, ("At ", *value));
+                VALIDATE(value->as<StackmapValue>()->constrainedChild(0).rep() == ValueRep::WarmAny, ("At ", *value));
+                VALIDATE(value->as<StackmapValue>()->constrainedChild(1).rep() == ValueRep::WarmAny, ("At ", *value));
                 validateStackmap(value);
                 break;
             case Check:
                 VALIDATE(value->numChildren() >= 1, ("At ", *value));
                 VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
-                VALIDATE(value->as<StackmapValue>()->constrainedChild(0).rep() == ValueRep::Any, ("At ", *value));
+                VALIDATE(value->as<StackmapValue>()->constrainedChild(0).rep() == ValueRep::WarmAny, ("At ", *value));
                 validateStackmap(value);
                 break;
             case Upsilon:
@@ -349,7 +361,9 @@ private:
     void validateStackmapConstraint(Value* context, const ConstrainedValue& value)
     {
         switch (value.rep().kind()) {
-        case ValueRep::Any:
+        case ValueRep::WarmAny:
+        case ValueRep::ColdAny:
+        case ValueRep::LateColdAny:
         case ValueRep::SomeRegister:
         case ValueRep::StackArgument:
             break;

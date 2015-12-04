@@ -1,5 +1,84 @@
 2015-12-03  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 Patchpoint and Check opcodes should be able to specify WarmAny, ColdAny, and LateColdAny
+        https://bugs.webkit.org/show_bug.cgi?id=151335
+
+        Reviewed by Geoffrey Garen.
+
+        This removes ValueRep::Any and replaces it with ValueRep::WarmAny, ValueRep::ColdAny, and
+        ValueRep::LateColdAny. I think that conceptually the most obvious users of patchpoints are inline
+        caches, which would use WarmAny for their non-OSR inputs. For this reason, I make WarmAny the
+        default.
+
+        However, the StackmapValue optimization that provides a default ValueRep for any that are missing
+        was meant for OSR. So, this optimization now uses ColdAny.
+
+        This patch wires this change through the whole compiler and adds some tests.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::dump):
+        (JSC::B3::CheckSpecial::CheckSpecial):
+        * b3/B3CheckSpecial.h:
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::opcode):
+        (JSC::B3::CheckSpecial::Key::numArgs):
+        (JSC::B3::CheckSpecial::Key::stackmapRole):
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::CheckValue):
+        * b3/B3ConstrainedValue.h:
+        (JSC::B3::ConstrainedValue::ConstrainedValue):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::fillStackmap):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        (JSC::B3::PatchpointSpecial::isValid):
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/B3PatchpointValue.h:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::admitsStackImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        (WTF::printInternal):
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::append):
+        (JSC::B3::StackmapValue::setConstraint):
+        * b3/B3StackmapValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::dump):
+        (WTF::printInternal):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::ValueRep):
+        (JSC::B3::ValueRep::reg):
+        (JSC::B3::ValueRep::operator!=):
+        (JSC::B3::ValueRep::operator bool):
+        (JSC::B3::ValueRep::isAny):
+        (JSC::B3::ValueRep::isSomeRegister):
+        * b3/testb3.cpp:
+        (JSC::B3::compileAndRun):
+        (JSC::B3::add32):
+        (JSC::B3::test42):
+        (JSC::B3::testSimplePatchpoint):
+        (JSC::B3::testPatchpointWithEarlyClobber):
+        (JSC::B3::testPatchpointFixedRegister):
+        (JSC::B3::testPatchpointAny):
+        (JSC::B3::testPatchpointLotsOfLateAnys):
+        (JSC::B3::testPatchpointAnyImm):
+        (JSC::B3::testPatchpointManyImms):
+        (JSC::B3::testPatchpointWithRegisterResult):
+        (JSC::B3::testPatchpointWithAnyResult):
+        (JSC::B3::run):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+
+2015-12-03  Filip Pizlo  <fpizlo@apple.com>
+
         B3 patchpoints should allow specifying output constraints
         https://bugs.webkit.org/show_bug.cgi?id=151809
 

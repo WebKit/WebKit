@@ -73,7 +73,7 @@ const RegisterSet& StackmapSpecial::extraEarlyClobberedRegs(Inst& inst)
 
 void StackmapSpecial::forEachArgImpl(
     unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
-    Inst& inst, Arg::Role role, const ScopedLambda<Inst::EachArgCallback>& callback)
+    Inst& inst, RoleMode roleMode, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
     StackmapValue* value = inst.origin->as<StackmapValue>();
     ASSERT(value);
@@ -87,11 +87,30 @@ void StackmapSpecial::forEachArgImpl(
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
 
-        Arg::Role thisRole = role;
-        
-        // Cool down the role if the use is cold.
-        if (child.rep().kind() == ValueRep::Any && thisRole == Arg::Use)
-            thisRole = Arg::ColdUse;
+        Arg::Role role;
+        switch (roleMode) {
+        case SameAsRep:
+            switch (child.rep().kind()) {
+            case ValueRep::WarmAny:
+            case ValueRep::SomeRegister:
+            case ValueRep::Register:
+            case ValueRep::Stack:
+            case ValueRep::StackArgument:
+            case ValueRep::Constant:
+                role = Arg::Use;
+                break;
+            case ValueRep::ColdAny:
+                role = Arg::ColdUse;
+                break;
+            case ValueRep::LateColdAny:
+                role = Arg::LateUse;
+                break;
+            }
+            break;
+        case ForceLateUse:
+            role = Arg::LateUse;
+            break;
+        }
         
         callback(arg, role, Arg::typeForB3Type(child.value()->type()));
     }
@@ -154,7 +173,7 @@ bool StackmapSpecial::admitsStackImpl(
     
     // We only admit stack for Any's, since Stack is not a valid input constraint, and StackArgument
     // translates to a CallArg in Air.
-    if (value->m_reps[stackmapArgIndex].kind() == ValueRep::Any)
+    if (value->m_reps[stackmapArgIndex].isAny())
         return true;
 
     return false;
@@ -193,7 +212,9 @@ bool StackmapSpecial::isArgValidForValue(const Arg::Arg& arg, Value* value)
 bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, const ValueRep& rep)
 {
     switch (rep.kind()) {
-    case ValueRep::Any:
+    case ValueRep::WarmAny:
+    case ValueRep::ColdAny:
+    case ValueRep::LateColdAny:
         // We already verified by isArgValidForValue().
         return true;
     case ValueRep::SomeRegister:
@@ -240,5 +261,24 @@ ValueRep StackmapSpecial::repForArg(Code& code, const Arg& arg)
 }
 
 } } // namespace JSC::B3
+
+namespace WTF {
+
+using namespace JSC::B3;
+
+void printInternal(PrintStream& out, StackmapSpecial::RoleMode mode)
+{
+    switch (mode) {
+    case StackmapSpecial::SameAsRep:
+        out.print("SameAsRep");
+        return;
+    case StackmapSpecial::ForceLateUse:
+        out.print("ForceLateUse");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
 
 #endif // ENABLE(B3_JIT)

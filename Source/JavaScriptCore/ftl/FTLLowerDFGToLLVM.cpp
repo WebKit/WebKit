@@ -9378,7 +9378,7 @@ private:
         OSRExitDescriptorImpl* exitDescriptorImpl = &m_ftlState.osrExitDescriptorImpls.last();
         
         unsigned offset = value->numChildren();
-        value->appendAnys(buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last(), lowValue));
+        value->appendColdAnys(buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last(), lowValue));
 
         State* state = &m_ftlState;
         value->setGenerator(

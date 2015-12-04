@@ -70,7 +70,7 @@ CheckSpecial::Key::Key(const Inst& inst)
 {
     m_opcode = inst.opcode;
     m_numArgs = inst.args.size();
-    m_stackmapRole = Arg::Use;
+    m_stackmapRole = SameAsRep;
 }
 
 void CheckSpecial::Key::dump(PrintStream& out) const
@@ -78,7 +78,7 @@ void CheckSpecial::Key::dump(PrintStream& out) const
     out.print(m_opcode, "(", m_numArgs, ",", m_stackmapRole, ")");
 }
 
-CheckSpecial::CheckSpecial(Air::Opcode opcode, unsigned numArgs, Arg::Role stackmapRole)
+CheckSpecial::CheckSpecial(Air::Opcode opcode, unsigned numArgs, RoleMode stackmapRole)
     : m_checkOpcode(opcode)
     , m_stackmapRole(stackmapRole)
     , m_numCheckArgs(numArgs)

@@ -93,7 +93,7 @@ public:
                     ValueKey key = child->key();
                     if (stackmap
                         && goesInTable(key)
-                        && stackmap->constrainedChild(childIndex).rep() == ValueRep::Any) {
+                        && stackmap->constrainedChild(childIndex).rep().isAny()) {
                         // This is a weird special case. When we constant-fold an argument to a
                         // stackmap, and that argument has the Any constraint, we want to just
                         // tell the stackmap's generator that the argument is a constant rather

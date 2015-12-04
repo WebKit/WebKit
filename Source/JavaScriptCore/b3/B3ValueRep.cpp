@@ -34,7 +34,9 @@ void ValueRep::dump(PrintStream& out) const
 {
     out.print(m_kind);
     switch (m_kind) {
-    case Any:
+    case WarmAny:
+    case ColdAny:
+    case LateColdAny:
     case SomeRegister:
         return;
     case Register:
@@ -62,8 +64,14 @@ using namespace JSC::B3;
 void printInternal(PrintStream& out, ValueRep::Kind kind)
 {
     switch (kind) {
-    case ValueRep::Any:
-        out.print("Any");
+    case ValueRep::WarmAny:
+        out.print("WarmAny");
+        return;
+    case ValueRep::ColdAny:
+        out.print("ColdAny");
+        return;
+    case ValueRep::LateColdAny:
+        out.print("LateColdAny");
         return;
     case ValueRep::SomeRegister:
         out.print("SomeRegister");
