@@ -89,6 +89,7 @@ storage/indexeddb/mozilla [ Pass ]
 storage/indexeddb/transaction-abort.html [ Pass ]
 storage/indexeddb/transaction-error.html [ Pass ]
 storage/indexeddb/transaction-event-propagation.html [ Pass ]
+storage/indexeddb/version-change-exclusive.html [ Pass ]
 
 # No workers support in Modern IDB yet
 storage/indexeddb/basics-workers.html

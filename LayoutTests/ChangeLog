@@ -1,5 +1,17 @@
 2015-12-04  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/version-change-exclusive.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=151870
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/double-open-expected.txt: Added.
+        * storage/indexeddb/modern/double-open.html: Added.
+        * storage/indexeddb/version-change-exclusive-expected.txt:
+
+2015-12-04  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/exceptions.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=151732
 

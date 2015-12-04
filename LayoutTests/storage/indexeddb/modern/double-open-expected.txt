@@ -1,0 +1,4 @@
+This test makes sure that quickly opening the same database multiple times is successful without the backend ASSERTing or crashing.
+Second request done
+done
+

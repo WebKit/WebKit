@@ -1,0 +1,38 @@
+This test makes sure that quickly opening the same database multiple times is successful without the backend ASSERTing or crashing.<br>
+<div id="logger"></div>
+<script>
+
+function log(msg)
+{
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+function done()
+{
+    log("done");
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var req1 = indexedDB.open("testDB");
+req1.onerror = function() {
+    log("First request unexpected error");
+    done();
+}
+
+var req2 = indexedDB.open("testDB");
+req2.onsuccess = function() {
+    log("Second request done");
+    done();
+}
+req2.onerror = function() {
+    log("Second request unexpected error");
+    done();
+}
+
+</script>

@@ -1,5 +1,21 @@
 2015-12-04  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/version-change-exclusive.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=151870
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/double-open.html
+              storage/indexeddb/version-change-exclusive.html
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::openDatabaseConnection): Delay handling open operations
+          while the first is still in progress.
+        (WebCore::IDBServer::UniqueIDBDatabase::didOpenBackingStore):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+2015-12-04  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/exceptions.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=151732
 

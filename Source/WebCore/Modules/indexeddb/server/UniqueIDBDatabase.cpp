@@ -63,11 +63,16 @@ void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection
     auto operation = IDBServerOperation::create(connection, requestData);
     m_pendingOpenDatabaseOperations.append(WTF::move(operation));
 
+    // An open operation is already in progress, so this one has to wait.
+    if (m_isOpeningBackingStore)
+        return;
+
     if (m_databaseInfo) {
         handleOpenDatabaseOperations();
         return;
     }
-    
+
+    m_isOpeningBackingStore = true;
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::openBackingStore, m_identifier));
 }
 
@@ -306,6 +311,9 @@ void UniqueIDBDatabase::didOpenBackingStore(const IDBDatabaseInfo& info)
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didOpenBackingStore");
     
     m_databaseInfo = std::make_unique<IDBDatabaseInfo>(info);
+
+    ASSERT(m_isOpeningBackingStore);
+    m_isOpeningBackingStore = false;
 
     handleOpenDatabaseOperations();
 }
