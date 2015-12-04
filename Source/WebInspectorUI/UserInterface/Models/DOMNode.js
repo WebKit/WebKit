@@ -125,6 +125,18 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
 
     // Public
 
+    get frameIdentifier()
+    {
+        return this._frameIdentifier || this.ownerDocument.frameIdentifier;
+    }
+
+    get frame()
+    {
+        if (!this._frame)
+            this._frame = WebInspector.frameResourceManager.frameForIdentifier(this.frameIdentifier);
+        return this._frame;
+    }
+
     get children()
     {
         if (!this._children)
@@ -633,11 +645,6 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             if (callback)
                 callback.apply(null, arguments);
         };
-    }
-
-    get frameIdentifier()
-    {
-        return this._frameIdentifier;
     }
 };
 
