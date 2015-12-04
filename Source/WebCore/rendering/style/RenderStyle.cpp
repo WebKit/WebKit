@@ -554,6 +554,11 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         if (rareNonInheritedData->m_dashboardRegions != other.rareNonInheritedData->m_dashboardRegions)
             return true;
 #endif
+
+        if (!rareNonInheritedData->willChangeDataEquivalent(*other.rareNonInheritedData.get())) {
+            changedContextSensitiveProperties |= ContextSensitivePropertyWillChange;
+            // Don't return; keep looking for another change
+        }
     }
 
     if (rareInheritedData.get() != other.rareInheritedData.get()) {
