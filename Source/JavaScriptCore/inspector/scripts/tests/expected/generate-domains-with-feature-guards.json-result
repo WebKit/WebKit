@@ -165,9 +165,9 @@ protected:
 class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network1BackendDispatcher> create(BackendDispatcher*, Network1BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) override;
+    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
-    void loadResource(long callId, const InspectorObject& message);
+    void loadResource(long requestId, RefPtr<InspectorObject>&& parameters);
 private:
     Network1BackendDispatcher(BackendDispatcher&, Network1BackendDispatcherHandler*);
     Network1BackendDispatcherHandler* m_agent;
@@ -221,6 +221,7 @@ private:
 
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -249,21 +250,24 @@ Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendD
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
 }
 
-void Network1BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void Network1BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<Network1BackendDispatcher> protect(*this);
 
+    RefPtr<InspectorObject> parameters;
+    message->getObject(ASCIILiteral("params"), parameters);
+
     if (method == "loadResource")
-        loadResource(callId, message);
+        loadResource(requestId, WTF::move(parameters));
     else
-        m_backendDispatcher->reportProtocolError(&callId, BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
 
-void Network1BackendDispatcher::loadResource(long callId, const InspectorObject&)
+void Network1BackendDispatcher::loadResource(long requestId, RefPtr<InspectorObject>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
-        m_alternateDispatcher->loadResource(callId);
+        m_alternateDispatcher->loadResource(requestId);
         return;
     }
 #endif
@@ -272,7 +276,10 @@ void Network1BackendDispatcher::loadResource(long callId, const InspectorObject&
     Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource(error);
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    if (!error.length())
+        m_backendDispatcher->sendResponse(requestId, WTF::move(result));
+    else
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 #endif // PLATFORM(WEB_COMMANDS)
 
@@ -627,7 +634,7 @@ namespace Inspector {
 class ObjCInspectorNetwork1BackendDispatcher final : public AlternateNetwork1BackendDispatcher {
 public:
     ObjCInspectorNetwork1BackendDispatcher(id<RWIProtocolNetwork1DomainHandler> handler) { m_delegate = handler; }
-    virtual void loadResource(long callId) override;
+    virtual void loadResource(long requestId) override;
 private:
     RetainPtr<id<RWIProtocolNetwork1DomainHandler>> m_delegate;
 };
@@ -822,14 +829,15 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 #if PLATFORM(WEB_COMMANDS)
-void ObjCInspectorNetwork1BackendDispatcher::loadResource(long callId)
+void ObjCInspectorNetwork1BackendDispatcher::loadResource(long requestId)
 {
     id errorCallback = ^(NSString *error) {
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), error);
+        backendDispatcher()->reportProtocolError(requestId, BackendDispatcher::ServerError, error);
+        backendDispatcher()->sendPendingErrors();
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());
+        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
     };
 
     [m_delegate loadResourceWithErrorCallback:errorCallback successCallback:successCallback];

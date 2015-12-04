@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 The Chromium Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 #define InspectorBackendDispatcher_h
 
 #include "InspectorProtocolTypes.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,34 +44,35 @@ public:
     SupplementalBackendDispatcher(BackendDispatcher& backendDispatcher)
         : m_backendDispatcher(backendDispatcher) { }
     virtual ~SupplementalBackendDispatcher() { }
-    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) = 0;
+    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) = 0;
 protected:
     Ref<BackendDispatcher> m_backendDispatcher;
 };
 
-class JS_EXPORT_PRIVATE BackendDispatcher : public RefCounted<BackendDispatcher> {
+class BackendDispatcher : public RefCounted<BackendDispatcher> {
 public:
-    static Ref<BackendDispatcher> create(FrontendChannel*);
+    JS_EXPORT_PRIVATE static Ref<BackendDispatcher> create(FrontendChannel*);
 
     class JS_EXPORT_PRIVATE CallbackBase : public RefCounted<CallbackBase> {
     public:
-        CallbackBase(Ref<BackendDispatcher>&&, int id);
+        CallbackBase(Ref<BackendDispatcher>&&, long requestId);
 
         bool isActive() const;
-        void sendFailure(const ErrorString&);
         void disable() { m_alreadySent = true; }
 
-    protected:
-        void sendIfActive(RefPtr<InspectorObject>&& partialMessage, const ErrorString& invocationError);
+        void sendSuccess(RefPtr<InspectorObject>&&);
+        void sendFailure(const ErrorString&);
 
     private:
         Ref<BackendDispatcher> m_backendDispatcher;
-        int m_id;
-        bool m_alreadySent;
+        long m_requestId;
+        bool m_alreadySent { false };
     };
 
     void clearFrontend() { m_frontendChannel = nullptr; }
     bool isActive() const { return !!m_frontendChannel; }
+
+    bool hasProtocolErrors() const { return m_protocolErrors.size() > 0; }
 
     enum CommonErrorCode {
         ParseError = 0,
@@ -82,25 +84,42 @@ public:
     };
 
     void registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher*);
-    void dispatch(const String& message);
-    void sendResponse(long callId, RefPtr<InspectorObject>&& result, const ErrorString& invocationError);
-    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
-    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, RefPtr<Inspector::Protocol::Array<String>>&& data) const;
+    JS_EXPORT_PRIVATE void dispatch(const String& message);
 
-    static int getInteger(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static double getDouble(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static String getString(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static bool getBoolean(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static RefPtr<InspectorValue> getValue(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static RefPtr<InspectorObject> getObject(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static RefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
+    JS_EXPORT_PRIVATE void sendResponse(long requestId, RefPtr<InspectorObject>&& result);
+    JS_EXPORT_PRIVATE void sendPendingErrors();
+
+    void reportProtocolError(CommonErrorCode, const String& errorMessage);
+    JS_EXPORT_PRIVATE void reportProtocolError(Optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
+
+    template<typename T>
+    T getPropertyValue(InspectorObject*, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(InspectorValue&, T&)>, const char* typeName);
+
+    int getInteger(InspectorObject*, const String& name, bool* valueFound);
+    double getDouble(InspectorObject*, const String& name, bool* valueFound);
+    String getString(InspectorObject*, const String& name, bool* valueFound);
+    bool getBoolean(InspectorObject*, const String& name, bool* valueFound);
+    RefPtr<InspectorValue> getValue(InspectorObject*, const String& name, bool* valueFound);
+    RefPtr<InspectorObject> getObject(InspectorObject*, const String& name, bool* valueFound);
+    RefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound);
 
 private:
-    BackendDispatcher(FrontendChannel* FrontendChannel)
-        : m_frontendChannel(FrontendChannel) { }
+    BackendDispatcher(FrontendChannel* channel)
+        : m_frontendChannel(channel)
+    {
+    }
 
     FrontendChannel* m_frontendChannel;
     HashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
+
+    // Protocol errors reported for the top-level request being processed.
+    // If processing a request triggers async responses, then any related errors will
+    // be attributed to the top-level request, but generate separate error messages.
+    Vector<std::tuple<CommonErrorCode, String>> m_protocolErrors;
+
+    // For synchronously handled requests, avoid plumbing requestId through every
+    // call that could potentially fail with a protocol error.
+    Optional<long> m_currentRequestId { Nullopt };
 };
 
 } // namespace Inspector
