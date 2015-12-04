@@ -1,3 +1,28 @@
+2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add signExt() to FTLB3Output
+        https://bugs.webkit.org/show_bug.cgi?id=151853
+
+        Reviewed by Geoffrey Garen.
+
+        Rename signExt() to signExt32To64(). This is just to separate
+        it explicitly from the remaining signExt() used inside FTLOutput.
+
+        Then use the SExt32 for implementing that in B3.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::signExt32To64):
+        (JSC::FTL::Output::signExt): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInt52Rep):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetDirectPname):
+        (JSC::FTL::DFG::LowerDFGToLLVM::strictInt52ToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::strictInt52ToJSValue):
+        (JSC::FTL::DFG::LowerDFGToLLVM::jsValueToStrictInt52):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::signExt32To64):
+        (JSC::FTL::Output::signExt):
+
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Unskip many inspector/debugger tests

@@ -1274,7 +1274,7 @@ private:
     {
         switch (m_node->child1().useKind()) {
         case Int32Use:
-            setStrictInt52(m_out.signExt(lowInt32(m_node->child1()), m_out.int64));
+            setStrictInt52(m_out.signExt32To64(lowInt32(m_node->child1())));
             return;
             
         case MachineIntUse:
@@ -5807,9 +5807,8 @@ private:
 
         m_out.appendTo(outOfLineLoad, slowCase);
         LValue storage = loadButterflyReadOnly(base);
-        LValue realIndex = m_out.signExt(
-            m_out.neg(m_out.sub(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity))), 
-            m_out.int64);
+        LValue realIndex = m_out.signExt32To64(
+            m_out.neg(m_out.sub(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity))));
         int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
         ValueFromBlock outOfLineResult = m_out.anchor(
             m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), storage, realIndex, ScaleEight, offsetOfFirstProperty)));
@@ -8342,7 +8341,7 @@ private:
         LValue result = m_out.castToInt32(value);
         FTL_TYPE_CHECK(
             noValue(), edge, SpecInt32,
-            m_out.notEqual(m_out.signExt(result, m_out.int64), value));
+            m_out.notEqual(m_out.signExt32To64(result), value));
         setInt32(edge.node(), result);
         return result;
     }
@@ -8362,7 +8361,7 @@ private:
             
         LValue int32Value = m_out.castToInt32(value);
         m_out.branch(
-            m_out.equal(m_out.signExt(int32Value, m_out.int64), value),
+            m_out.equal(m_out.signExt32To64(int32Value), value),
             unsure(isInt32), unsure(isDouble));
         
         LBasicBlock lastNext = m_out.appendTo(isInt32, isDouble);
@@ -8450,7 +8449,7 @@ private:
         LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
             
         ValueFromBlock intToInt52 = m_out.anchor(
-            m_out.signExt(unboxInt32(boxedValue), m_out.int64));
+            m_out.signExt32To64(unboxInt32(boxedValue)));
         m_out.jump(continuation);
             
         m_out.appendTo(doubleCase, continuation);

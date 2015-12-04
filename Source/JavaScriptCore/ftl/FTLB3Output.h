@@ -171,7 +171,7 @@ public:
     static bool hasSensibleDoubleToInt() { CRASH(); }
     LValue sensibleDoubleToInt(LValue) { CRASH(); }
 
-    LValue signExt(LValue value, LType type) { CRASH(); }
+    LValue signExt32To64(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::SExt32, origin(), value); }
     LValue zeroExt(LValue value, LType type) { return m_block->appendNew<B3::Value>(m_proc, B3::ZExt32, type, origin(), value); }
     LValue zeroExtPtr(LValue value) { return zeroExt(value, B3::Int64); }
     LValue fpToInt(LValue value, LType type) { CRASH(); }

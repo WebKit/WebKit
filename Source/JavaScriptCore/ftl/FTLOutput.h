@@ -211,8 +211,8 @@ public:
 
     static bool hasSensibleDoubleToInt() { return isX86(); }
     LValue sensibleDoubleToInt(LValue);
-    
-    LValue signExt(LValue value, LType type) { return buildSExt(m_builder, value, type); }
+
+    LValue signExt32To64(LValue value) { return signExt(value, int64); }
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }
     LValue zeroExtPtr(LValue value) { return zeroExt(value, intPtr); }
     LValue fpToInt(LValue value, LType type) { return buildFPToSI(m_builder, value, type); }
@@ -444,6 +444,9 @@ public:
     LBuilder m_builder;
     LBasicBlock m_block;
     LBasicBlock m_nextBlock;
+
+private:
+    LValue signExt(LValue value, LType type) { return buildSExt(m_builder, value, type); }
 };
 
 inline LValue Output::load8SignExt32(TypedPointer pointer)
