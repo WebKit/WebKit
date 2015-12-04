@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script src="../../resources/js-test.js"></script>
+<canvas id="source"></canvas>
+
+<script>
+
+description("Tests for the imageSmoothingQuality attribute.");
+
+if (window.testRunner)
+   testRunner.overridePreference("WebKitCanvasUsesAcceleratedDrawing", 0);
+
+var source = document.getElementById("source");
+source.width = 60;
+source.height = 12;
+var sourceContext = source.getContext("2d");
+var sourceImage = sourceContext.createImageData(source.width, source.height);
+
+function drawBlackDot(x, y) {
+    var offset = y * 4 * source.width + x * 4;
+    sourceImage.data[offset + 0] = 0; // R
+    sourceImage.data[offset + 1] = 0; // G
+    sourceImage.data[offset + 2] = 0; // B
+    sourceImage.data[offset + 3] = 255; // Alpha
+}
+
+for (var x = 0; x < source.width; x++) {
+    drawBlackDot(x, 1)
+    drawBlackDot(x, 2);
+}
+
+sourceContext.putImageData(sourceImage, 0, 0);
+
+function scaleTestResults(quality){
+	var canvas = document.createElement("canvas");
+	canvas.id = quality + "Canvas";
+	document.body.appendChild(canvas);
+	canvas.width = sourceImage.width / 4;
+    canvas.height = sourceImage.height / 4;
+    return scaleImageData(canvas, quality);
+}
+
+function scaleImageData(destinationCanvas, quality) {
+    var context = destinationCanvas.getContext("2d");
+
+    if (quality)
+        context.imageSmoothingQuality = quality;
+
+    context.drawImage(source, 0, 0, destinationCanvas.width, destinationCanvas.height);
+    var data = context.getImageData(0, 0, 1, 1).data;
+    context.clearRect(0, 0, destinationCanvas.width, destinationCanvas.height);
+    return JSON.stringify(data);
+}
+
+function testInvalidInput(badInput){
+	shouldNotThrow(badInput);
+	shouldBe("highContext.imageSmoothingQuality", "'high'");
+}
+
+function sampleAlpha(data){
+	return data[3];
+}
+
+debug("");
+
+var lowData = scaleTestResults("low");
+var lowContext = document.getElementById("lowCanvas").getContext('2d');
+shouldBe("lowContext.imageSmoothingQuality", "'low'");
+
+var mediumData = scaleTestResults("medium");
+var mediumContext = document.getElementById("mediumCanvas").getContext('2d');
+shouldBe("mediumContext.imageSmoothingQuality", "'medium'");
+
+var highData = scaleTestResults("high");
+var highContext = document.getElementById("highCanvas").getContext('2d');
+shouldBe("highContext.imageSmoothingQuality", "'high'");
+
+debug("");
+shouldNotBe("lowData", "mediumData");
+shouldNotBe("mediumData", "highData");
+shouldNotBe("lowData", "highData");
+
+debug("");
+shouldBeGreaterThanOrEqual("sampleAlpha(lowData)", "sampleAlpha(mediumData)");
+shouldBeGreaterThanOrEqual("sampleAlpha(mediumData)", "sampleAlpha(highData)");
+
+debug("");
+var defaultContext = sourceContext;
+shouldBe("defaultContext.imageSmoothingQuality", "'low'");
+
+debug("");
+shouldBe("highContext.imageSmoothingEnabled = false; highContext.imageSmoothingQuality", "'high'");
+shouldBe("highContext.imageSmoothingQuality = 'medium'; highContext.imageSmoothingQuality", "'medium'");
+
+debug("");
+evalAndLog("highContext.imageSmoothingEnabled = true; highContext.imageSmoothingQuality = 'high';");
+var highCanvas = document.getElementById("highCanvas");
+testInvalidInput("scaleImageData(highCanvas, '3223')");
+testInvalidInput("scaleImageData(highCanvas, 'bad_input')");
+testInvalidInput("scaleImageData(highCanvas, 'LOW')");
+testInvalidInput("scaleImageData(highCanvas, 'Medium')");
+
+debug("");
+evalAndLog("highContext.save(); highContext.imageSmoothingQuality = 'medium';");
+shouldBe("highContext.restore(); highContext.imageSmoothingQuality", "'high'");
+shouldBe("scaleImageData(highCanvas, highCanvas.imageSmoothingQuality);", "highData");
+
+debug("");
+
+</script>
+</body>
+</html>

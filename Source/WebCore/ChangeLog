@@ -1,5 +1,33 @@
 2015-12-03  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190383. rdar://problem/23732393
+
+    2015-09-30  Katlyn Graff  <kgraff@apple.com>
+
+            Add support for the imageSmoothingQuality property for CanvasRenderingContext2D.
+            https://bugs.webkit.org/show_bug.cgi?id=149541
+
+            Reviewed by Ryosuke Niwa.
+
+            As documented here: https://html.spec.whatwg.org/multipage/scripting.html#image-smoothing
+            Exposes the smooothing quality of algorithms used for scaling images. Valid input
+            values are low, medium, and high: associated algorithms are expected to vary for
+            differing hardware. setImageSmoothingQuality provides a handle into CGInterpolationQuality.
+
+            Test: fast/canvas/canvas-imageSmoothingQuality.html
+
+            * html/canvas/CanvasRenderingContext2D.cpp:
+            (WebCore::CanvasRenderingContext2D::State::State):
+            (WebCore::CanvasRenderingContext2D::State::operator=):
+            (WebCore::smoothingToInterpolationQuality):
+            (WebCore::CanvasRenderingContext2D::imageSmoothingQuality):
+            (WebCore::CanvasRenderingContext2D::setImageSmoothingQuality):
+            (WebCore::CanvasRenderingContext2D::setImageSmoothingEnabled):
+            * html/canvas/CanvasRenderingContext2D.h:
+            * html/canvas/CanvasRenderingContext2D.idl:
+
+2015-12-03  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r189427. rdar://problem/23732393
 
     2015-09-04  Myles C. Maxfield  <mmaxfield@apple.com>
