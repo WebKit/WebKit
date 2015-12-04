@@ -17,7 +17,7 @@ function draw()
     srcCtx.fillRect(0, 0, 1, 1);
     srcCtx.fillStyle = "rgb(0, 255, 0)";
     srcCtx.fillRect(1, 0, 1, 1);
-    dstCtx.webkitImageSmoothingEnabled = false;
+    dstCtx.imageSmoothingEnabled = false;
     dstCtx.drawImage(srcCanvas, 0, 0, 2, 1, 0, 0, 300, 300);
 }
 

@@ -186,6 +186,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     readonly attribute float webkitBackingStorePixelRatio;
 
-    attribute boolean webkitImageSmoothingEnabled;
+    attribute boolean imageSmoothingEnabled;
+    [ImplementedAs=imageSmoothingEnabled] attribute boolean webkitImageSmoothingEnabled;
 };
 

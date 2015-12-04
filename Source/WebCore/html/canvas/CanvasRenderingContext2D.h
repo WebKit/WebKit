@@ -225,8 +225,8 @@ public:
     LineCap getLineCap() const { return state().m_lineCap; }
     LineJoin getLineJoin() const { return state().m_lineJoin; }
 
-    bool webkitImageSmoothingEnabled() const;
-    void setWebkitImageSmoothingEnabled(bool);
+    bool imageSmoothingEnabled() const;
+    void setImageSmoothingEnabled(bool);
 
 private:
     enum class Direction {
