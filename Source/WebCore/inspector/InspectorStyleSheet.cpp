@@ -637,15 +637,30 @@ String InspectorStyleSheet::ruleSelector(const InspectorCSSId& id, ExceptionCode
     return rule->selectorText();
 }
 
+static bool isValidSelectorListString(const String& selector, Document* document)
+{
+    CSSSelectorList selectorList;
+    createCSSParser(document)->parseSelector(selector, selectorList);
+    return selectorList.isValid();
+}
+
 bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector, ExceptionCode& ec)
 {
     if (!checkPageStyleSheet(ec))
         return false;
+
+    // If the selector is invalid, do not proceed any further.
+    if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument())) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+
     CSSStyleRule* rule = ruleForId(id);
     if (!rule) {
         ec = NOT_FOUND_ERR;
         return false;
     }
+
     CSSStyleSheet* styleSheet = rule->parentStyleSheet();
     if (!styleSheet || !ensureParsedDataReady()) {
         ec = NOT_FOUND_ERR;
@@ -671,18 +686,11 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
     return true;
 }
 
-static bool checkStyleRuleSelector(Document* document, const String& selector)
-{
-    CSSSelectorList selectorList;
-    createCSSParser(document)->parseSelector(selector, selectorList);
-    return selectorList.isValid();
-}
-
 CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode& ec)
 {
     if (!checkPageStyleSheet(ec))
         return nullptr;
-    if (!checkStyleRuleSelector(m_pageStyleSheet->ownerDocument(), selector)) {
+    if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument())) {
         ec = SYNTAX_ERR;
         return nullptr;
     }
