@@ -177,9 +177,13 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
             overflow = true;
         }
 
-        if (overflow)
-            element.appendChild(document.createTextNode(", \u2026"));
-        element.appendChild(document.createTextNode(isIterator ? "]" : "}"));
+        if (overflow) {
+            if (limit > 0)
+                element.append(", ");
+            element.append("\u2026");
+        }
+
+        element.append(isIterator ? "]" : "}");
 
         return lossless;
     }
@@ -238,9 +242,13 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
             overflow = true;
         }
 
-        if (overflow)
-            element.appendChild(document.createTextNode(", \u2026"));
-        element.appendChild(document.createTextNode(isArray ? "]" : "}"));
+        if (overflow) {
+            if (limit > 0)
+                element.append(", ");
+            element.append("\u2026");
+        }
+
+        element.append(isArray ? "]" : "}");
 
         return lossless;
     }
