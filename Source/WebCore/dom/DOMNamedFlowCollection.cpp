@@ -43,7 +43,7 @@ unsigned long DOMNamedFlowCollection::length() const
     return m_namedFlows.size();
 }
 
-PassRefPtr<WebKitNamedFlow> DOMNamedFlowCollection::item(unsigned long index) const
+RefPtr<WebKitNamedFlow> DOMNamedFlowCollection::item(unsigned long index) const
 {
     if (index >= static_cast<unsigned long>(m_namedFlows.size()))
         return nullptr;

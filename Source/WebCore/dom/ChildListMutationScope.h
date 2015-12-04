@@ -46,7 +46,7 @@ class MutationObserverInterestGroup;
 // ChildListMutationAccumulator is not meant to be used directly; ChildListMutationScope is the public interface.
 class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator> {
 public:
-    static PassRefPtr<ChildListMutationAccumulator> getOrCreate(ContainerNode&);
+    static RefPtr<ChildListMutationAccumulator> getOrCreate(ContainerNode&);
     ~ChildListMutationAccumulator();
 
     void childAdded(Node&);

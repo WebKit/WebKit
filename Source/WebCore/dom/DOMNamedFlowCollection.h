@@ -31,7 +31,6 @@
 
 #include "NamedFlowCollection.h"
 #include <wtf/ListHashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -48,7 +47,7 @@ public:
     }
 
     unsigned long length() const;
-    PassRefPtr<WebKitNamedFlow> item(unsigned long index) const;
+    RefPtr<WebKitNamedFlow> item(unsigned long index) const;
     RefPtr<WebKitNamedFlow> namedItem(const AtomicString& name) const;
     Vector<AtomicString> supportedPropertyNames();
 

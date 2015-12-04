@@ -39,7 +39,7 @@ CompositionEvent::CompositionEvent()
 {
 }
 
-CompositionEvent::CompositionEvent(const AtomicString& type, PassRefPtr<AbstractView> view, const String& data)
+CompositionEvent::CompositionEvent(const AtomicString& type, AbstractView* view, const String& data)
     : UIEvent(type, true, true, view, 0)
     , m_data(data)
 {
@@ -55,7 +55,7 @@ CompositionEvent::~CompositionEvent()
 {
 }
 
-void CompositionEvent::initCompositionEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view, const String& data)
+void CompositionEvent::initCompositionEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, const String& data)
 {
     if (dispatched())
         return;

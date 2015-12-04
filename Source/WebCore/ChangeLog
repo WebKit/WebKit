@@ -1,3 +1,37 @@
+2015-12-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce uses of PassRefPtr in DOM - 1
+        https://bugs.webkit.org/show_bug.cgi?id=149788
+
+        Reviewed by Darin Adler.
+
+        As a step to purge PassRefPtr, this patch reduces the uses in WebCore/dom.
+
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::ChildListMutationAccumulator::getOrCreate):
+        * dom/ChildListMutationScope.h:
+        * dom/ClipboardEvent.cpp:
+        (WebCore::ClipboardEvent::ClipboardEvent):
+        * dom/ClipboardEvent.h:
+        * dom/CompositionEvent.cpp:
+        (WebCore::CompositionEvent::CompositionEvent):
+        (WebCore::CompositionEvent::initCompositionEvent):
+        * dom/CompositionEvent.h:
+        * dom/DOMNamedFlowCollection.cpp:
+        (WebCore::DOMNamedFlowCollection::item):
+        * dom/DOMNamedFlowCollection.h:
+        * dom/DOMStringList.h:
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::getLastEvent):
+        * dom/DeviceMotionController.h:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::getLastEvent):
+        * dom/DeviceOrientationController.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent):
+        * page/DeviceController.h:
+        (WebCore::DeviceController::getLastEvent):
+
 2015-12-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the use of GraphicsContextStateSaver from RenderLayer::paintLayerByApplyingTransform
