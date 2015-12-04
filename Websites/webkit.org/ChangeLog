@@ -1,5 +1,11 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Avoid double slashes after redirect for directories.
+
+        * .htaccess:
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Fix directory redirects some more.
 
         * .htaccess:
