@@ -44,10 +44,9 @@ inline void InspectorInstrumentation::addMessageToConsole(Page& page, std::uniqu
     addMessageToConsoleImpl(instrumentingAgentsForPage(page), WTF::move(message));
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, std::unique_ptr<Inspector::ConsoleMessage> message)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope*, std::unique_ptr<Inspector::ConsoleMessage>)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
-        addMessageToConsoleImpl(*instrumentingAgents, WTF::move(message));
+    // FIXME: <https://webkit.org/b/127634> Web Inspector: support debugging web workers
 }
 
 inline void InspectorInstrumentation::consoleCount(Page& page, JSC::ExecState* state, RefPtr<Inspector::ScriptArguments>&& arguments)

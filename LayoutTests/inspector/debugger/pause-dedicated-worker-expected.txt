@@ -1,5 +1,0 @@
-Started worker
-Worker created
-didConnectToWorker
-SUCCESS: Worker paused
-

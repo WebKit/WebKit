@@ -1159,7 +1159,6 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Page.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Runtime.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Timeline.json
-    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Worker.json
 )
 
 if (ENABLE_INDEXED_DATABASE)

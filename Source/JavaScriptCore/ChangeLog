@@ -1,5 +1,31 @@
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove untested and unused Worker inspection
+        https://bugs.webkit.org/show_bug.cgi?id=151848
+
+        Reviewed by Brian Burg.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::willExecuteProgram):
+        * debugger/Debugger.h:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        (Inspector::JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::ScriptDebugServer):
+        * inspector/ScriptDebugServer.h:
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::run): Deleted.
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectConsoleAgent.h:
+        * inspector/protocol/Runtime.json:
+        * inspector/protocol/Worker.json: Removed.
+
+2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Specifically Identify the Global Lexical Environment Scope
         https://bugs.webkit.org/show_bug.cgi?id=151828
 

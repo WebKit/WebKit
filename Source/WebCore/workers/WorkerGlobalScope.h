@@ -46,7 +46,6 @@ namespace WebCore {
 
     class Blob;
     class ScheduledAction;
-    class WorkerInspectorController;
     class WorkerLocation;
     class WorkerNavigator;
     class WorkerThread;
@@ -94,8 +93,6 @@ namespace WebCore {
 
         virtual bool isContextThread() const override;
         virtual bool isJSExecutionForbidden() const override;
-
-        WorkerInspectorController& workerInspectorController() { return *m_workerInspectorController; }
 
         // These methods are used for GC marking. See JSWorkerGlobalScope::visitChildrenVirtual(SlotVisitor&) in
         // JSWorkerGlobalScopeCustom.cpp.
@@ -161,7 +158,6 @@ namespace WebCore {
         std::unique_ptr<WorkerScriptController> m_script;
         WorkerThread& m_thread;
 
-        const std::unique_ptr<WorkerInspectorController> m_workerInspectorController;
         bool m_closing;
 
         HashSet<Observer*> m_workerObservers;

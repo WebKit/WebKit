@@ -50,7 +50,6 @@
 #include "InspectorPageAgent.h"
 #include "InspectorReplayAgent.h"
 #include "InspectorTimelineAgent.h"
-#include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
@@ -153,7 +152,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
     m_agents.append(WTF::move(domStorageAgentPtr));
 
-    auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(pageContext, pageAgent, InspectorTimelineAgent::PageInspector);
+    auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(pageContext, pageAgent);
     m_timelineAgent = timelineAgentPtr.get();
     m_agents.append(WTF::move(timelineAgentPtr));
 
@@ -169,7 +168,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgent));
     m_agents.append(std::make_unique<InspectorHeapAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, pageAgent));
-    m_agents.append(std::make_unique<InspectorWorkerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());

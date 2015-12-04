@@ -46,8 +46,8 @@ using namespace JSC;
 
 namespace Inspector {
 
-ScriptDebugServer::ScriptDebugServer(VM& vm, bool isInWorkerThread)
-    : Debugger(vm, isInWorkerThread)
+ScriptDebugServer::ScriptDebugServer(VM& vm)
+    : Debugger(vm)
 {
 }
 

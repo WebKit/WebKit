@@ -546,10 +546,6 @@
                 "description": "Releases all remote objects that belong to a given group."
             },
             {
-                "name": "run",
-                "description": "Tells inspected instance(worker or page) that it can run in case it was started paused."
-            },
-            {
                 "name": "enable",
                 "description": "Enables reporting of execution contexts creation by means of <code>executionContextCreated</code> event. When the reporting gets enabled the event will be sent immediately for each existing execution context."
             },
@@ -2585,76 +2581,6 @@
             },
             {
                 "name": "resetProfiles"
-            }
-        ]
-    },
-    {
-        "domain": "Worker",
-        "types": [],
-        "commands": [
-            {
-                "name": "enable"
-            },
-            {
-                "name": "disable"
-            },
-            {
-                "name": "sendMessageToWorker",
-                "parameters": [
-                    { "name": "workerId", "type": "integer" },
-                    { "name": "message", "type": "object" }
-                ]
-            },
-            {
-                "name": "canInspectWorkers",
-                "description": "Tells whether browser supports workers inspection.",
-                "returns": [
-                    { "name": "result", "type": "boolean", "description": "True if browser has workers support." }
-                ]
-            },
-            {
-                "name": "connectToWorker",
-                "parameters": [
-                    { "name": "workerId", "type": "integer" }
-                ]
-            },
-            {
-                "name": "disconnectFromWorker",
-                "parameters": [
-                    { "name": "workerId", "type": "integer" }
-                ]
-            },
-            {
-                "name": "setAutoconnectToWorkers",
-                "parameters": [
-                    { "name": "value", "type": "boolean" }
-                ]
-            }
-        ],
-        "events": [
-            {
-                "name": "workerCreated",
-                "parameters": [
-                    { "name": "workerId", "type": "integer" },
-                    { "name": "url", "type": "string" },
-                    { "name": "inspectorConnected", "type": "boolean" }
-                ]
-            },
-            {
-                "name": "workerTerminated",
-                "parameters": [
-                    { "name": "workerId", "type": "integer" }
-                ]
-            },
-            {
-                "name": "dispatchMessageFromWorker",
-                "parameters": [
-                    { "name": "workerId", "type": "integer" },
-                    { "name": "message", "type": "object" }
-                ]
-            },
-            {
-                "name": "disconnectedFromWorker"
             }
         ]
     },

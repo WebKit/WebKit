@@ -4484,9 +4484,6 @@
     <ClCompile Include="..\bindings\js\WorkerScriptController.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\WorkerScriptDebugServer.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\plugins\DOMMimeType.cpp">
       <Filter>plugins</Filter>
     </ClCompile>
@@ -4691,9 +4688,6 @@
     <ClCompile Include="..\inspector\InspectorTimelineAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorWorkerAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\InstrumentingAgents.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -4725,18 +4719,6 @@
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\WebInjectedScriptManager.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\WorkerConsoleAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\WorkerDebuggerAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\WorkerInspectorController.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\WorkerRuntimeAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\mathml\MathMLAllInOne.cpp">
@@ -11983,12 +11965,6 @@
     <ClInclude Include="..\inspector\InspectorWebAgentBase.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\InspectorWorkerAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\InspectorWorkerResource.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\InstrumentingAgents.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -12020,18 +11996,6 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\WebInjectedScriptManager.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\WorkerConsoleAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\WorkerDebuggerAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\WorkerInspectorController.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\WorkerRuntimeAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\mathml\MathMLElement.h">

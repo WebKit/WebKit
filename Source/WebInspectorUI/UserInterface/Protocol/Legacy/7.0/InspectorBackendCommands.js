@@ -88,7 +88,6 @@ InspectorBackend.registerCommand("Runtime.callFunctionOn", [{"name": "objectId",
 InspectorBackend.registerCommand("Runtime.getProperties", [{"name": "objectId", "type": "string", "optional": false}, {"name": "ownProperties", "type": "boolean", "optional": true}], ["result", "internalProperties"]);
 InspectorBackend.registerCommand("Runtime.releaseObject", [{"name": "objectId", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Runtime.releaseObjectGroup", [{"name": "objectGroup", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("Runtime.run", [], []);
 InspectorBackend.registerCommand("Runtime.enable", [], []);
 InspectorBackend.registerCommand("Runtime.disable", [], []);
 InspectorBackend.activateDomain("Runtime");
@@ -309,21 +308,6 @@ InspectorBackend.registerCommand("Profiler.getCPUProfile", [{"name": "uid", "typ
 InspectorBackend.registerCommand("Profiler.removeProfile", [{"name": "type", "type": "string", "optional": false}, {"name": "uid", "type": "number", "optional": false}], []);
 InspectorBackend.registerCommand("Profiler.clearProfiles", [], []);
 InspectorBackend.activateDomain("Profiler");
-
-// Worker.
-InspectorBackend.registerWorkerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Worker");
-InspectorBackend.registerEvent("Worker.workerCreated", ["workerId", "url", "inspectorConnected"]);
-InspectorBackend.registerEvent("Worker.workerTerminated", ["workerId"]);
-InspectorBackend.registerEvent("Worker.dispatchMessageFromWorker", ["workerId", "message"]);
-InspectorBackend.registerEvent("Worker.disconnectedFromWorker", []);
-InspectorBackend.registerCommand("Worker.enable", [], []);
-InspectorBackend.registerCommand("Worker.disable", [], []);
-InspectorBackend.registerCommand("Worker.sendMessageToWorker", [{"name": "workerId", "type": "number", "optional": false}, {"name": "message", "type": "object", "optional": false}], []);
-InspectorBackend.registerCommand("Worker.canInspectWorkers", [], ["result"]);
-InspectorBackend.registerCommand("Worker.connectToWorker", [{"name": "workerId", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("Worker.disconnectFromWorker", [{"name": "workerId", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("Worker.setAutoconnectToWorkers", [{"name": "value", "type": "boolean", "optional": false}], []);
-InspectorBackend.activateDomain("Worker");
 
 // LayerTree.
 InspectorBackend.registerLayerTreeDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "LayerTree");

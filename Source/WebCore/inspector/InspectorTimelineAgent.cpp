@@ -594,12 +594,11 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorType type)
+InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("Timeline"), context)
     , m_frontendDispatcher(std::make_unique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
-    , m_inspectorType(type)
 {
 }
 

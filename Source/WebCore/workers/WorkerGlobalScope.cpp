@@ -43,7 +43,6 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "URL.h"
-#include "WorkerInspectorController.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerObjectProxy.h"
@@ -69,7 +68,6 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, Wo
     , m_userAgent(userAgent)
     , m_script(std::make_unique<WorkerScriptController>(this))
     , m_thread(thread)
-    , m_workerInspectorController(std::make_unique<WorkerInspectorController>(*this))
     , m_closing(false)
     , m_eventQueue(*this)
     , m_topOrigin(topOrigin)

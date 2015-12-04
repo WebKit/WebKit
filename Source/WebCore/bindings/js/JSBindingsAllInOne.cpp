@@ -148,4 +148,3 @@
 #include "SerializedScriptValue.cpp"
 #include "WebCoreTypedArrayController.cpp"
 #include "WorkerScriptController.cpp"
-#include "WorkerScriptDebugServer.cpp"

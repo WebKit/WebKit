@@ -92,9 +92,7 @@ class InspectorTimelineAgent final
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum InspectorType { PageInspector, WorkerInspector };
-
-    InspectorTimelineAgent(WebAgentContext&, InspectorPageAgent*, InspectorType);
+    InspectorTimelineAgent(WebAgentContext&, InspectorPageAgent*);
     virtual ~InspectorTimelineAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -200,7 +198,6 @@ private:
     int m_id { 1 };
     int m_callStackDepth { 0 };
     int m_maxCallStackDepth { 5 };
-    InspectorType m_inspectorType;
 
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 

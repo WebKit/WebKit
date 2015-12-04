@@ -1,3 +1,85 @@
+2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove untested and unused Worker inspection
+        https://bugs.webkit.org/show_bug.cgi?id=151848
+
+        Reviewed by Brian Burg.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/WorkerScriptController.cpp:
+        * bindings/js/WorkerScriptDebugServer.cpp: Removed.
+        * bindings/js/WorkerScriptDebugServer.h: Removed.
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController): Deleted.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didStartWorkerGlobalScopeImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript): Deleted.
+        (WebCore::InspectorInstrumentation::workerGlobalScopeTerminatedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope): Deleted.
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForNonDocumentContext): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForContext):
+        (WebCore::InspectorInstrumentation::shouldPauseDedicatedWorkerOnStart): Deleted.
+        (WebCore::InspectorInstrumentation::didStartWorkerGlobalScope): Deleted.
+        (WebCore::InspectorInstrumentation::workerGlobalScopeTerminated): Deleted.
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWebAgentBase.h:
+        (WebCore::WorkerAgentContext::WorkerAgentContext): Deleted.
+        * inspector/InspectorWorkerAgent.cpp: Removed.
+        * inspector/InspectorWorkerAgent.h: Removed.
+        * inspector/InspectorWorkerResource.h: Removed.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset): Deleted.
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::workerRuntimeAgent): Deleted.
+        (WebCore::InstrumentingAgents::setWorkerRuntimeAgent): Deleted.
+        (WebCore::InstrumentingAgents::inspectorWorkerAgent): Deleted.
+        (WebCore::InstrumentingAgents::setInspectorWorkerAgent): Deleted.
+        * inspector/PageConsoleAgent.h:
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::PageScriptDebugServer):
+        * inspector/WorkerConsoleAgent.cpp: Removed.
+        * inspector/WorkerConsoleAgent.h: Removed.
+        * inspector/WorkerDebuggerAgent.cpp: Removed.
+        * inspector/WorkerDebuggerAgent.h: Removed.
+        * inspector/WorkerInspectorController.cpp: Removed.
+        * inspector/WorkerInspectorController.h: Removed.
+        * inspector/WorkerRuntimeAgent.cpp: Removed.
+        * inspector/WorkerRuntimeAgent.h: Removed.
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished): Deleted.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope): Deleted.
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope): Deleted.
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::workerInspectorController): Deleted.
+        * workers/WorkerGlobalScopeProxy.h:
+        (WebCore::WorkerGlobalScopeProxy::PageInspector::~PageInspector): Deleted.
+        (WebCore::WorkerGlobalScopeProxy::connectToInspector): Deleted.
+        (WebCore::WorkerGlobalScopeProxy::disconnectFromInspector): Deleted.
+        (WebCore::WorkerGlobalScopeProxy::sendMessageToInspector): Deleted.
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy): Deleted.
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope): Deleted.
+        (WebCore::WorkerMessagingProxy::connectToInspector): Deleted.
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector): Deleted.
+        (WebCore::WorkerMessagingProxy::sendMessageToInspector): Deleted.
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyedInternal): Deleted.
+        (WebCore::WorkerMessagingProxy::terminateWorkerGlobalScope): Deleted.
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector): Deleted.
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerReportingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread): Deleted.
+
 2015-12-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix height computation of grid items with borders inside fr tracks

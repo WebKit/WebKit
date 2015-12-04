@@ -100,7 +100,6 @@ class StyleRule;
 class ThreadableLoaderClient;
 class URL;
 class WorkerGlobalScope;
-class WorkerGlobalScopeProxy;
 class XMLHttpRequest;
 
 struct ReplayPosition;
@@ -224,11 +223,6 @@ public:
     static void didOpenDatabase(ScriptExecutionContext*, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 
     static void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
-
-    static bool shouldPauseDedicatedWorkerOnStart(ScriptExecutionContext*);
-    static void didStartWorkerGlobalScope(ScriptExecutionContext*, WorkerGlobalScopeProxy*, const URL&);
-    static void workerGlobalScopeTerminated(ScriptExecutionContext*, WorkerGlobalScopeProxy*);
-    static void willEvaluateWorkerScript(WorkerGlobalScope*, int workerThreadStartMode);
 
 #if ENABLE(WEB_REPLAY)
     static void sessionCreated(Page&, RefPtr<ReplaySession>&&);
@@ -399,10 +393,6 @@ private:
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
-    static bool shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents&);
-    static void didStartWorkerGlobalScopeImpl(InstrumentingAgents&, WorkerGlobalScopeProxy*, const URL&);
-    static void workerGlobalScopeTerminatedImpl(InstrumentingAgents&, WorkerGlobalScopeProxy*);
-
 #if ENABLE(WEB_REPLAY)
     static void sessionCreatedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
     static void sessionLoadedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
@@ -445,9 +435,6 @@ private:
     static InstrumentingAgents* instrumentingAgentsForDocument(Document&);
     static InstrumentingAgents* instrumentingAgentsForDocument(Document*);
     static InstrumentingAgents* instrumentingAgentsForRenderer(RenderObject*);
-
-    static InstrumentingAgents* instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope*);
-    static InstrumentingAgents* instrumentingAgentsForNonDocumentContext(ScriptExecutionContext*);
 
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 
@@ -1065,26 +1052,6 @@ inline void InspectorInstrumentation::didDispatchDOMStorageEvent(const String& k
         didDispatchDOMStorageEventImpl(*instrumentingAgents, key, oldValue, newValue, storageType, securityOrigin, page);
 }
 
-inline bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStart(ScriptExecutionContext* context)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return shouldPauseDedicatedWorkerOnStartImpl(*instrumentingAgents);
-    return false;
-}
-
-inline void InspectorInstrumentation::didStartWorkerGlobalScope(ScriptExecutionContext* context, WorkerGlobalScopeProxy* proxy, const URL& url)
-{
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didStartWorkerGlobalScopeImpl(*instrumentingAgents, proxy, url);
-}
-
-inline void InspectorInstrumentation::workerGlobalScopeTerminated(ScriptExecutionContext* context, WorkerGlobalScopeProxy* proxy)
-{
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        workerGlobalScopeTerminatedImpl(*instrumentingAgents, proxy);
-}
-
 #if ENABLE(WEB_SOCKETS)
 inline void InspectorInstrumentation::didCreateWebSocket(Document* document, unsigned long identifier, const URL& requestURL)
 {
@@ -1276,7 +1243,7 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForCont
         return nullptr;
     if (is<Document>(*context))
         return instrumentingAgentsForPage(downcast<Document>(context)->page());
-    return instrumentingAgentsForNonDocumentContext(context);
+    return nullptr;
 }
 
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(Frame* frame)

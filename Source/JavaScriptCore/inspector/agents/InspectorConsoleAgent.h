@@ -64,8 +64,6 @@ public:
     virtual void setMonitoringXHREnabled(ErrorString&, bool enabled) override = 0;
     virtual void addInspectedNode(ErrorString&, int nodeId) override = 0;
 
-    virtual bool isWorkerAgent() const = 0;
-
     bool enabled() const { return m_enabled; }
     void reset();
 

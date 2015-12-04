@@ -113,14 +113,13 @@ private:
     Debugger& m_debugger;
 };
 
-Debugger::Debugger(VM& vm, bool isInWorkerThread)
+Debugger::Debugger(VM& vm)
     : m_vm(vm)
     , m_pauseOnExceptionsState(DontPauseOnExceptions)
     , m_pauseOnNextStatement(false)
     , m_isPaused(false)
     , m_breakpointsActivated(true)
     , m_hasHandlerForExceptionCallback(false)
-    , m_isInWorkerThread(isInWorkerThread)
     , m_suppressAllPauses(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_reasonForPause(NotPaused)
@@ -707,13 +706,7 @@ void Debugger::willExecuteProgram(CallFrame* callFrame)
         return;
 
     PauseReasonDeclaration reason(*this, PausedAtStartOfProgram);
-    // FIXME: This check for whether we're debugging a worker thread is a workaround
-    // for https://bugs.webkit.org/show_bug.cgi?id=102637. Remove it when we rework
-    // the debugger implementation to not require callbacks.
-    if (!m_isInWorkerThread)
-        updateCallFrameAndPauseIfNeeded(callFrame);
-    else if (isStepping())
-        updateCallFrame(callFrame);
+    updateCallFrameAndPauseIfNeeded(callFrame);
 }
 
 void Debugger::didExecuteProgram(CallFrame* callFrame)

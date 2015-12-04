@@ -32,12 +32,6 @@
 #include "config.h"
 #include "InstrumentingAgents.h"
 
-#include "InspectorController.h"
-#include "Page.h"
-#include "WorkerGlobalScope.h"
-#include "WorkerInspectorController.h"
-#include <wtf/MainThread.h>
-
 using namespace Inspector;
 
 namespace WebCore {
@@ -57,7 +51,6 @@ void InstrumentingAgents::reset()
     m_inspectorDOMAgent = nullptr;
     m_inspectorNetworkAgent = nullptr;
     m_pageRuntimeAgent = nullptr;
-    m_workerRuntimeAgent = nullptr;
     m_inspectorTimelineAgent = nullptr;
     m_persistentInspectorTimelineAgent = nullptr;
     m_inspectorDOMStorageAgent = nullptr;
@@ -69,7 +62,6 @@ void InstrumentingAgents::reset()
     m_inspectorDebuggerAgent = nullptr;
     m_pageDebuggerAgent = nullptr;
     m_inspectorDOMDebuggerAgent = nullptr;
-    m_inspectorWorkerAgent = nullptr;
 }
 
 } // namespace WebCore

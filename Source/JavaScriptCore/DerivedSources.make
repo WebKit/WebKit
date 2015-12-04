@@ -194,7 +194,6 @@ INSPECTOR_DOMAINS = \
     $(JavaScriptCore)/inspector/protocol/Page.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json \
     $(JavaScriptCore)/inspector/protocol/Timeline.json \
-    $(JavaScriptCore)/inspector/protocol/Worker.json \
 #
 
 ifeq ($(findstring ENABLE_INDEXED_DATABASE,$(FEATURE_DEFINES)), ENABLE_INDEXED_DATABASE)

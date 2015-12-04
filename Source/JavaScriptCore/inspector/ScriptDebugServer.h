@@ -63,7 +63,7 @@ protected:
     typedef HashSet<ScriptDebugListener*> ListenerSet;
     typedef void (ScriptDebugServer::*JavaScriptExecutionCallback)(ScriptDebugListener*);
 
-    ScriptDebugServer(JSC::VM&, bool isInWorkerThread = false);
+    ScriptDebugServer(JSC::VM&);
     ~ScriptDebugServer();
 
     virtual void attachDebugger() = 0;

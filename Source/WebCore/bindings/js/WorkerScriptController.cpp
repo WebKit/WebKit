@@ -34,7 +34,6 @@
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerObjectProxy.h"
-#include "WorkerScriptDebugServer.h"
 #include "WorkerThread.h"
 #include <bindings/ScriptValue.h>
 #include <heap/StrongInlines.h>

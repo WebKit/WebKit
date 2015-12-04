@@ -161,8 +161,6 @@ void Worker::notifyFinished()
         dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else {
         WorkerThreadStartMode startMode = DontPauseWorkerGlobalScopeOnStart;
-        if (InspectorInstrumentation::shouldPauseDedicatedWorkerOnStart(scriptExecutionContext()))
-            startMode = PauseWorkerGlobalScopeOnStart;
         m_contextProxy->startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), startMode);
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
     }

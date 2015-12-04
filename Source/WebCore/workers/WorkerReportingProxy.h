@@ -45,8 +45,6 @@ namespace WebCore {
 
         virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, int columnNumber, const String& sourceURL) = 0;
 
-        virtual void postMessageToPageInspector(const String&) = 0;
-
         // Invoked when close() is invoked on the worker context.
         virtual void workerGlobalScopeClosed() = 0;
 

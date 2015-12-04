@@ -35,7 +35,7 @@ using namespace JSC;
 namespace Inspector {
 
 JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer(JSGlobalObject& globalObject)
-    : ScriptDebugServer(globalObject.vm(), false)
+    : ScriptDebugServer(globalObject.vm())
     , m_globalObject(globalObject)
 {
 }

@@ -55,13 +55,10 @@ class InspectorNetworkAgent;
 class InspectorPageAgent;
 class InspectorReplayAgent;
 class InspectorTimelineAgent;
-class InspectorWorkerAgent;
 class Page;
 class PageDebuggerAgent;
 class PageRuntimeAgent;
 class WebConsoleAgent;
-class WorkerGlobalScope;
-class WorkerRuntimeAgent;
 
 class InstrumentingAgents : public RefCounted<InstrumentingAgents> {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
@@ -99,9 +96,6 @@ public:
     PageRuntimeAgent* pageRuntimeAgent() const { return m_pageRuntimeAgent; }
     void setPageRuntimeAgent(PageRuntimeAgent* agent) { m_pageRuntimeAgent = agent; }
 
-    WorkerRuntimeAgent* workerRuntimeAgent() const { return m_workerRuntimeAgent; }
-    void setWorkerRuntimeAgent(WorkerRuntimeAgent* agent) { m_workerRuntimeAgent = agent; }
-
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
 
@@ -131,9 +125,6 @@ public:
     InspectorDOMDebuggerAgent* inspectorDOMDebuggerAgent() const { return m_inspectorDOMDebuggerAgent; }
     void setInspectorDOMDebuggerAgent(InspectorDOMDebuggerAgent* agent) { m_inspectorDOMDebuggerAgent = agent; }
 
-    InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
-    void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
-
     InspectorLayerTreeAgent* inspectorLayerTreeAgent() const { return m_inspectorLayerTreeAgent; }
     void setInspectorLayerTreeAgent(InspectorLayerTreeAgent* agent) { m_inspectorLayerTreeAgent = agent; }
 
@@ -150,7 +141,6 @@ private:
     InspectorDOMAgent* m_inspectorDOMAgent { nullptr };
     InspectorNetworkAgent* m_inspectorNetworkAgent { nullptr };
     PageRuntimeAgent* m_pageRuntimeAgent { nullptr };
-    WorkerRuntimeAgent* m_workerRuntimeAgent { nullptr };
     InspectorTimelineAgent* m_inspectorTimelineAgent { nullptr };
     InspectorTimelineAgent* m_persistentInspectorTimelineAgent { nullptr };
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent { nullptr };
@@ -162,7 +152,6 @@ private:
     Inspector::InspectorDebuggerAgent* m_inspectorDebuggerAgent { nullptr };
     PageDebuggerAgent* m_pageDebuggerAgent { nullptr };
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent { nullptr };
-    InspectorWorkerAgent* m_inspectorWorkerAgent { nullptr };
 };
 
 } // namespace WebCore

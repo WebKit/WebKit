@@ -44,7 +44,7 @@ typedef ExecState CallFrame;
 
 class JS_EXPORT_PRIVATE Debugger {
 public:
-    Debugger(VM&, bool isInWorkerThread = false);
+    Debugger(VM&);
     virtual ~Debugger();
 
     VM& vm() { return m_vm; }
@@ -198,7 +198,6 @@ private:
     bool m_isPaused : 1;
     bool m_breakpointsActivated : 1;
     bool m_hasHandlerForExceptionCallback : 1;
-    bool m_isInWorkerThread : 1;
     bool m_suppressAllPauses : 1;
     unsigned m_steppingMode : 1; // SteppingMode
 

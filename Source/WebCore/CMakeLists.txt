@@ -1259,7 +1259,6 @@ set(WebCore_SOURCES
     bindings/js/WebCoreJSBuiltins.cpp
     bindings/js/WebCoreTypedArrayController.cpp
     bindings/js/WorkerScriptController.cpp
-    bindings/js/WorkerScriptDebugServer.cpp
 
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp
@@ -1899,7 +1898,6 @@ set(WebCore_SOURCES
     inspector/InspectorPageAgent.cpp
     inspector/InspectorStyleSheet.cpp
     inspector/InspectorTimelineAgent.cpp
-    inspector/InspectorWorkerAgent.cpp
     inspector/InstrumentingAgents.cpp
     inspector/NetworkResourcesData.cpp
     inspector/PageConsoleAgent.cpp
@@ -1911,10 +1909,6 @@ set(WebCore_SOURCES
     inspector/WebDebuggerAgent.cpp
     inspector/WebInjectedScriptHost.cpp
     inspector/WebInjectedScriptManager.cpp
-    inspector/WorkerConsoleAgent.cpp
-    inspector/WorkerDebuggerAgent.cpp
-    inspector/WorkerInspectorController.cpp
-    inspector/WorkerRuntimeAgent.cpp
 
     loader/ContentFilter.cpp
     loader/CookieJar.cpp

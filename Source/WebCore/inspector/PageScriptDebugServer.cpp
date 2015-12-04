@@ -52,7 +52,7 @@ using namespace Inspector;
 namespace WebCore {
 
 PageScriptDebugServer::PageScriptDebugServer(Page& page)
-    : ScriptDebugServer(WebCore::JSDOMWindowBase::commonVM(), false)
+    : ScriptDebugServer(WebCore::JSDOMWindowBase::commonVM())
     , m_page(page)
 {
 }

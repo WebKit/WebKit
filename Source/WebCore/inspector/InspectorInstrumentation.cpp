@@ -51,7 +51,6 @@
 #include "InspectorNetworkAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorTimelineAgent.h"
-#include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "PageDebuggerAgent.h"
@@ -62,10 +61,6 @@
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "WebConsoleAgent.h"
-#include "WorkerGlobalScope.h"
-#include "WorkerInspectorController.h"
-#include "WorkerRuntimeAgent.h"
-#include "WorkerThread.h"
 #include "XMLHttpRequest.h"
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptArguments.h>
@@ -911,38 +906,6 @@ void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgent
         domStorageAgent->didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin, page);
 }
 
-bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents& instrumentingAgents)
-{
-    if (InspectorWorkerAgent* workerAgent = instrumentingAgents.inspectorWorkerAgent())
-        return workerAgent->shouldPauseDedicatedWorkerOnStart();
-    return false;
-}
-
-void InspectorInstrumentation::didStartWorkerGlobalScopeImpl(InstrumentingAgents& instrumentingAgents, WorkerGlobalScopeProxy* workerGlobalScopeProxy, const URL& url)
-{
-    if (InspectorWorkerAgent* workerAgent = instrumentingAgents.inspectorWorkerAgent())
-        workerAgent->didStartWorkerGlobalScope(workerGlobalScopeProxy, url);
-}
-
-void InspectorInstrumentation::willEvaluateWorkerScript(WorkerGlobalScope* workerGlobalScope, int workerThreadStartMode)
-{
-    if (workerThreadStartMode != PauseWorkerGlobalScopeOnStart)
-        return;
-
-    InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope);
-    if (!instrumentingAgents)
-        return;
-
-    if (WorkerRuntimeAgent* runtimeAgent = instrumentingAgents->workerRuntimeAgent())
-        runtimeAgent->pauseWorkerGlobalScope(workerGlobalScope);
-}
-
-void InspectorInstrumentation::workerGlobalScopeTerminatedImpl(InstrumentingAgents& instrumentingAgents, WorkerGlobalScopeProxy* proxy)
-{
-    if (InspectorWorkerAgent* workerAgent = instrumentingAgents.inspectorWorkerAgent())
-        workerAgent->workerGlobalScopeTerminated(proxy);
-}
-
 #if ENABLE(WEB_SOCKETS)
 void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const URL& requestURL)
 {
@@ -1197,19 +1160,6 @@ InstrumentingAgents& InspectorInstrumentation::instrumentingAgentsForPage(Page& 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(RenderObject* renderer)
 {
     return instrumentingAgentsForFrame(renderer->frame());
-}
-
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
-{
-    return workerGlobalScope ? &workerGlobalScope->workerInspectorController().m_instrumentingAgents.get() : nullptr;
-}
-
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocumentContext(ScriptExecutionContext* context)
-{
-    ASSERT(context);
-    if (is<WorkerGlobalScope>(*context))
-        return instrumentingAgentsForWorkerGlobalScope(downcast<WorkerGlobalScope>(context));
-    return nullptr;
 }
 
 void InspectorInstrumentation::layerTreeDidChangeImpl(InstrumentingAgents& instrumentingAgents)

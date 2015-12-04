@@ -37,14 +37,10 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
-#include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "PageGroup.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
-#include "WorkerDebuggerAgent.h"
-#include "WorkerInspectorController.h"
-#include <inspector/InspectorAgentBase.h>
 #include <inspector/ScriptCallStack.h>
 #include <runtime/ConsoleTypes.h>
 #include <wtf/MainThread.h>
@@ -63,7 +59,6 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
     , m_unconfirmedMessageCount(0)
     , m_workerThreadHadPendingActivity(false)
     , m_askedToTerminate(false)
-    , m_pageInspector(nullptr)
 {
     ASSERT(m_workerObject);
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
@@ -85,7 +80,6 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode, document.contentSecurityPolicy()->deprecatedHeader(), document.contentSecurityPolicy()->deprecatedHeaderType(), document.topOrigin());
     workerThreadCreated(thread);
     thread->start();
-    InspectorInstrumentation::didStartWorkerGlobalScope(m_scriptExecutionContext.get(), this, scriptURL);
 }
 
 void WorkerMessagingProxy::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> message, std::unique_ptr<MessagePortChannelArray> channels)
@@ -211,38 +205,6 @@ void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
     });
 }
 
-void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspector* pageInspector)
-{
-    if (m_askedToTerminate)
-        return;
-    ASSERT(!m_pageInspector);
-    m_pageInspector = pageInspector;
-    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).workerInspectorController().connectFrontend();
-    }, WorkerDebuggerAgent::debuggerTaskMode);
-}
-
-void WorkerMessagingProxy::disconnectFromInspector()
-{
-    m_pageInspector = nullptr;
-    if (m_askedToTerminate)
-        return;
-    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).workerInspectorController().disconnectFrontend(Inspector::DisconnectReason::InspectorDestroyed);
-    }, WorkerDebuggerAgent::debuggerTaskMode);
-}
-
-void WorkerMessagingProxy::sendMessageToInspector(const String& message)
-{
-    if (m_askedToTerminate)
-        return;
-    StringCapture capturedMessage(message);
-    m_workerThread->runLoop().postTaskForMode([capturedMessage] (ScriptExecutionContext& context) {
-        downcast<WorkerGlobalScope>(context).workerInspectorController().dispatchMessageFromFrontend(capturedMessage.string());
-    }, WorkerDebuggerAgent::debuggerTaskMode);
-    WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(m_workerThread.get());
-}
-
 void WorkerMessagingProxy::workerGlobalScopeDestroyed()
 {
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
@@ -266,8 +228,6 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
     m_askedToTerminate = true;
     m_workerThread = nullptr;
 
-    InspectorInstrumentation::workerGlobalScopeTerminated(m_scriptExecutionContext.get(), this);
-
     if (m_mayBeDestroyed)
         delete this;
 }
@@ -280,17 +240,6 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
 
     if (m_workerThread)
         m_workerThread->stop();
-
-    InspectorInstrumentation::workerGlobalScopeTerminated(m_scriptExecutionContext.get(), this);
-}
-
-void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
-{
-    StringCapture capturedMessage(message);
-    m_scriptExecutionContext->postTask([this, capturedMessage] (ScriptExecutionContext&) {
-        if (m_pageInspector)
-            m_pageInspector->dispatchMessageFromWorker(capturedMessage.string());
-    });
 }
 
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)

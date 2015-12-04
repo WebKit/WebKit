@@ -59,15 +59,6 @@ namespace WebCore {
         virtual void workerObjectDestroyed() = 0;
 
         virtual void notifyNetworkStateChange(bool isOnline) = 0;
-
-        class PageInspector {
-        public:
-            virtual ~PageInspector() { }
-            virtual void dispatchMessageFromWorker(const String&) = 0;
-        };
-        virtual void connectToInspector(PageInspector*) { }
-        virtual void disconnectFromInspector() { }
-        virtual void sendMessageToInspector(const String&) { }
     };
 
 } // namespace WebCore

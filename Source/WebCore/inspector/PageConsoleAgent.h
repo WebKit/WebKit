@@ -47,7 +47,6 @@ public:
     virtual ~PageConsoleAgent() { }
 
 private:
-    virtual bool isWorkerAgent() const override { return false; }
     virtual void clearMessages(ErrorString&) override;
     virtual void addInspectedNode(ErrorString&, int nodeId) override;
 

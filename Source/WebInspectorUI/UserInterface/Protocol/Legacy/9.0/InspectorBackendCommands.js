@@ -322,7 +322,6 @@ InspectorBackend.registerCommand("Runtime.getCollectionEntries", [{"name": "obje
 InspectorBackend.registerCommand("Runtime.saveResult", [{"name": "value", "type": "object", "optional": false}, {"name": "contextId", "type": "number", "optional": true}], ["savedResultIndex"]);
 InspectorBackend.registerCommand("Runtime.releaseObject", [{"name": "objectId", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Runtime.releaseObjectGroup", [{"name": "objectGroup", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("Runtime.run", [], []);
 InspectorBackend.registerCommand("Runtime.enable", [], []);
 InspectorBackend.registerCommand("Runtime.disable", [], []);
 InspectorBackend.registerCommand("Runtime.getRuntimeTypesForVariablesAtOffsets", [{"name": "locations", "type": "object", "optional": false}], ["types"]);
@@ -340,18 +339,3 @@ InspectorBackend.registerEvent("Timeline.recordingStopped", []);
 InspectorBackend.registerCommand("Timeline.start", [{"name": "maxCallStackDepth", "type": "number", "optional": true}], []);
 InspectorBackend.registerCommand("Timeline.stop", [], []);
 InspectorBackend.activateDomain("Timeline", "web");
-
-// Worker.
-InspectorBackend.registerWorkerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Worker");
-InspectorBackend.registerEvent("Worker.workerCreated", ["workerId", "url", "inspectorConnected"]);
-InspectorBackend.registerEvent("Worker.workerTerminated", ["workerId"]);
-InspectorBackend.registerEvent("Worker.dispatchMessageFromWorker", ["workerId", "message"]);
-InspectorBackend.registerEvent("Worker.disconnectedFromWorker", []);
-InspectorBackend.registerCommand("Worker.enable", [], []);
-InspectorBackend.registerCommand("Worker.disable", [], []);
-InspectorBackend.registerCommand("Worker.sendMessageToWorker", [{"name": "workerId", "type": "number", "optional": false}, {"name": "message", "type": "object", "optional": false}], []);
-InspectorBackend.registerCommand("Worker.canInspectWorkers", [], ["result"]);
-InspectorBackend.registerCommand("Worker.connectToWorker", [{"name": "workerId", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("Worker.disconnectFromWorker", [{"name": "workerId", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("Worker.setAutoconnectToWorkers", [{"name": "value", "type": "boolean", "optional": false}], []);
-InspectorBackend.activateDomain("Worker", "web");
