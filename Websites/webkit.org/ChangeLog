@@ -1,5 +1,11 @@
 2015-12-04  Jonathan Davis  <jond@apple.com>
 
+        Added redirects for old webkit.org archive.
+
+        * .htaccess:
+
+2015-12-04  Jonathan Davis  <jond@apple.com>
+
         Removing empty directories from the old site.
 
         Reviewed by Timothy Hatcher.
