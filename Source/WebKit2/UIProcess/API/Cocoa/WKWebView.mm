@@ -2771,7 +2771,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData
 {
-    return [self _immediateActionAnimationControllerForHitTestResult:wrapper(*hitTestResult) withType:(_WKImmediateActionType)type userData:(id)userData];
+    return [self _immediateActionAnimationControllerForHitTestResult:wrapper(*hitTestResult) withType:(_WKImmediateActionType)type userData:static_cast<id<NSSecureCoding>>(userData->wrapper())];
 }
 
 // We don't expose these various bits of SPI like WKView does,

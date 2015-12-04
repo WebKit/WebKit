@@ -1,3 +1,15 @@
+2015-12-04  Beth Dakin  <bdakin@apple.com>
+
+        Crash in clients using userData in 
+        _immediateActionAnimationControllerForHitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=151887
+
+        Reviewed by Sam Weinig.
+
+        Cast this correctly.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _web_immediateActionAnimationControllerForHitTestResultInternal:withType:userData:]):
+
 2015-12-04  Gavin Barraclough  <barraclough@apple.com>
 
         Background state not being tracked correctly for PDFs on iOS
