@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -1368,6 +1368,17 @@ URL Element::absoluteLinkURL() const
 
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkAttribute));
 }
+
+#if ENABLE(TOUCH_EVENTS)
+bool Element::allowsDoubleTapGesture() const
+{
+    if (renderStyle() && renderStyle()->touchAction() != TouchAction::Auto)
+        return false;
+
+    Element* parent = parentElement();
+    return !parent || parent->allowsDoubleTapGesture();
+}
+#endif
 
 // Returns true is the given attribute is an event handler.
 // We consider an event handler any attribute that begins with "on".

@@ -5254,6 +5254,37 @@ template<> inline CSSPrimitiveValue::operator ContentDistributionType() const
     return ContentDistributionStretch;
 }
 
+#if ENABLE(TOUCH_EVENTS)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TouchAction touchAction)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (touchAction) {
+    case TouchAction::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case TouchAction::Manipulation:
+        m_value.valueID = CSSValueManipulation;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TouchAction() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return TouchAction::Auto;
+    case CSSValueManipulation:
+        return TouchAction::Manipulation;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return TouchAction::Auto;
+}
+#endif
+
 #if ENABLE(CSS_SCROLL_SNAP)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapType e)
     : CSSValue(PrimitiveClass)

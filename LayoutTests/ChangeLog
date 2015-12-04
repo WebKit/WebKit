@@ -1,5 +1,31 @@
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191452. rdar://problem/23732400
+
+    2015-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Implement touch-action: manipulation; for iOS
+            https://bugs.webkit.org/show_bug.cgi?id=149854
+            <rdar://problem/23017145>
+
+            Reviewed by Benjamin Poulain.
+
+            Add tests to check that the manipulation and auto values of the touch-action property can be
+            properly parsed and can be obtained through computed style. Also tests that putting touch-action:
+            manipulation on an element and tapping repeatedly on it will fire clicks instead of recognizing
+            double taps and causing the viewport to zoom.
+
+            * TestExpectations:
+            * css3/touch-action/touch-action-computed-style-expected.txt: Added.
+            * css3/touch-action/touch-action-computed-style.html: Added.
+            * css3/touch-action/touch-action-manipulation-fast-clicks-expected.txt: Added.
+            * css3/touch-action/touch-action-manipulation-fast-clicks.html: Added.
+            * css3/touch-action/touch-action-parsing-expected.txt: Added.
+            * css3/touch-action/touch-action-parsing.html: Added.
+            * platform/ios-simulator-wk2/TestExpectations:
+
+2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191072. rdar://problem/23732400
 
     2015-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>

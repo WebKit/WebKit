@@ -1,5 +1,50 @@
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191452. rdar://problem/23732400
+
+    2015-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Implement touch-action: manipulation; for iOS
+            https://bugs.webkit.org/show_bug.cgi?id=149854
+            <rdar://problem/23017145>
+
+            Reviewed by Benjamin Poulain.
+
+            Implements the manipulation value for the CSS property touch-action. Adds support for
+            parsing the touch-action property and two of its values: auto and manipulation.
+
+            Tests: css3/touch-action/touch-action-computed-style.html
+                   css3/touch-action/touch-action-manipulation-fast-clicks.html
+                   css3/touch-action/touch-action-parsing.html
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::ComputedStyleExtractor::propertyValue):
+            * css/CSSParser.cpp:
+            (WebCore::isValidKeywordPropertyAndValue):
+            (WebCore::isKeywordPropertyID):
+            (WebCore::CSSParser::parseValue):
+            * css/CSSPrimitiveValueMappings.h:
+            (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+            (WebCore::CSSPrimitiveValue::operator TouchAction):
+            * css/CSSPropertyNames.in:
+            * css/CSSValueKeywords.in:
+            * dom/Element.cpp:
+            (WebCore::Element::allowsDoubleTapGesture): Here, we determine whether an element that resulted from
+                hit-testing a touch should allow double-tap gestures. To do this, we walk up the element's parents,
+                stopping when we detect an element that disallows double tap gestures by having a touch-action other
+                than auto or by hitting the root node.
+            * dom/Element.h:
+            * dom/Node.h:
+            (WebCore::Node::allowsDoubleTapGesture):
+            * rendering/style/RenderStyle.h:
+            * rendering/style/RenderStyleConstants.h:
+            * rendering/style/StyleRareNonInheritedData.cpp:
+            (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+            (WebCore::StyleRareNonInheritedData::operator==):
+            * rendering/style/StyleRareNonInheritedData.h:
+
+2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190595. rdar://problem/23732402
 
     2015-10-05  Dean Jackson  <dino@apple.com>

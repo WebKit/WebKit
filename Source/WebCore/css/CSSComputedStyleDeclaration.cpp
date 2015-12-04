@@ -2943,6 +2943,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(style.get(), style->tapHighlightColor());
+        case CSSPropertyTouchAction:
+            return cssValuePool.createValue(style->touchAction());
 #endif
 #if PLATFORM(IOS)
         case CSSPropertyWebkitTouchCallout:
