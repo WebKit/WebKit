@@ -66,6 +66,7 @@
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Stopwatch.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace Inspector;

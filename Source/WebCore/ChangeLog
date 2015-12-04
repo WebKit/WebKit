@@ -1,3 +1,41 @@
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
+        Merge r191732. rdar://problem/23581597
+
+    2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Clean up and audit TimelineRecordFactory records
+            https://bugs.webkit.org/show_bug.cgi?id=150660
+
+            Reviewed by Brian Burg.
+
+            Cleanup included removing unused methods and payload data that the
+            frontend wasn't likely to use. Also added ASCIILiteral and removed
+            unnecessary includes.
+
+            * inspector/InspectorNetworkAgent.cpp:
+            * inspector/InspectorPageAgent.cpp:
+            * inspector/InspectorTimelineAgent.cpp:
+            (WebCore::InspectorTimelineAgent::willLayout):
+            * inspector/InspectorTimelineAgent.h:
+            * inspector/TimelineRecordFactory.cpp:
+            (WebCore::TimelineRecordFactory::createGenericRecord):
+            (WebCore::TimelineRecordFactory::createFunctionCallData):
+            (WebCore::TimelineRecordFactory::createConsoleProfileData):
+            (WebCore::TimelineRecordFactory::createEventDispatchData):
+            (WebCore::TimelineRecordFactory::createGenericTimerData):
+            (WebCore::TimelineRecordFactory::createTimerInstallData):
+            (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+            (WebCore::TimelineRecordFactory::createTimeStampData):
+            (WebCore::TimelineRecordFactory::createParseHTMLData):
+            (WebCore::TimelineRecordFactory::createAnimationFrameData):
+            (WebCore::TimelineRecordFactory::createPaintData):
+            (WebCore::TimelineRecordFactory::appendLayoutRoot):
+            (WebCore::TimelineRecordFactory::createBackgroundRecord): Deleted.
+            (WebCore::TimelineRecordFactory::createLayoutData): Deleted.
+            * inspector/TimelineRecordFactory.h:
+            (WebCore::TimelineRecordFactory::TimelineRecordFactory):
+
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
         Merge r191651. rdar://problem/23581597
