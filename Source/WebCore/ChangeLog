@@ -1,5 +1,21 @@
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r188227. rdar://problem/23581597
+
+    2015-08-10  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: [iOS] Allow inspector to retrieve a list of system fonts
+            https://bugs.webkit.org/show_bug.cgi?id=147033
+
+            Reviewed by Joseph Pecoraro.
+
+            Implement systemFontFamilies for iOS.
+
+            * platform/graphics/ios/FontCacheIOS.mm:
+            (WebCore::FontCache::systemFontFamilies):
+
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
         Merge r187249. rdar://problem/23581597
 
     2015-07-23  Devin Rousso  <drousso@apple.com>
