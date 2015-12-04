@@ -1185,7 +1185,7 @@ InjectedScript.RemoteObject.prototype = {
                     preview.lossless = false;
                 }
                 this._appendPropertyPreview(preview, internal, {name, type, value: symbolString}, propertiesThreshold);
-                return;
+                continue;
             }
 
             // Object.
