@@ -87,7 +87,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
     , m_transaction(&transaction)
     , m_connection(transaction.serverConnection())
     , m_resourceIdentifier(transaction.serverConnection())
-    , m_source(IDBAny::create(cursor))
+    , m_source(cursor.source())
     , m_pendingCursor(&cursor)
 {
     suspendIfNeeded();
