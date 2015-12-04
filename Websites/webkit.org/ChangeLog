@@ -1,3 +1,9 @@
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
+        Fix directory redirect ordering.
+
+        * .htaccess:
+
 2015-12-03  Jonathan Davis  <jond@apple.com>
 
         Fixed cache logic so download data is correctly available.
