@@ -60,6 +60,55 @@ bool WillChangeData::containsProperty(CSSPropertyID property) const
     return false;
 }
 
+// "If any non-initial value of a property would create a stacking context on the element,
+// specifying that property in will-change must create a stacking context on the element."
+static bool propertyCreatesStackingContext(CSSPropertyID property)
+{
+    switch (property) {
+    case CSSPropertyClipPath:
+    case CSSPropertyWebkitClipPath:
+    case CSSPropertyMask:
+    case CSSPropertyOpacity:
+    case CSSPropertyPosition:
+    case CSSPropertyZIndex:
+    case CSSPropertyWebkitBackfaceVisibility:
+    case CSSPropertyWebkitBoxReflect:
+#if ENABLE(CSS_COMPOSITING)
+    case CSSPropertyMixBlendMode:
+    case CSSPropertyIsolation:
+#endif
+    case CSSPropertyWebkitFilter:
+#if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyWebkitBackdropFilter:
+#endif
+    case CSSPropertyWebkitMask:
+    case CSSPropertyWebkitMaskImage:
+    case CSSPropertyWebkitMaskBoxImage:
+    case CSSPropertyPerspective:
+    case CSSPropertyTransform:
+    case CSSPropertyTransformStyle:
+    case CSSPropertyWebkitTransformStyle:
+#if ENABLE(CSS_REGIONS)
+    case CSSPropertyWebkitFlowFrom:
+#endif
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    case CSSPropertyWebkitOverflowScrolling:
+#endif
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool WillChangeData::createsStackingContext() const
+{
+    for (const auto& feature : m_animatableFeatures) {
+        if (feature.feature() == Property && propertyCreatesStackingContext(feature.property()))
+            return true;
+    }
+    return false;
+}
+
 void WillChangeData::addFeature(Feature feature, CSSPropertyID propertyID)
 {
     ASSERT(feature == Property || propertyID == CSSPropertyInvalid);

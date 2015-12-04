@@ -9,6 +9,7 @@ fast/events/mouse-force-up.html [ Skip ]
 # No support for Filters Level 2
 compositing/media-controls-bar-appearance.html [ Skip ]
 compositing/media-controls-bar-appearance-big.html [ Skip ]
+fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
 
 # No support for non-HLS Media Selection Group
 media/accessiblity-describes-video.html [ Skip ]
