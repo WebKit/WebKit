@@ -76,7 +76,7 @@ WebInspector.CSSCompletions = class CSSCompletions
 
     // Static
 
-    static requestCSSNameCompletions()
+    static requestCSSCompletions()
     {
         if (WebInspector.CSSCompletions.cssNameCompletions)
             return;
@@ -158,8 +158,21 @@ WebInspector.CSSCompletions = class CSSCompletions
             updateCodeMirrorCSSMode("text/x-scss");
         }
 
-        if (window.CSSAgent)
+        function fontFamilyNamesCallback(error, fontFamilyNames)
+        {
+            if (error)
+                return;
+
+            WebInspector.CSSKeywordCompletions.addPropertyCompletionValues("font-family", fontFamilyNames);
+            WebInspector.CSSKeywordCompletions.addPropertyCompletionValues("font", fontFamilyNames);
+        }
+
+        if (window.CSSAgent) {
             CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
+
+            if (CSSAgent.getSupportedSystemFontFamilyNames)
+                CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
+        }
     }
 
     // Public

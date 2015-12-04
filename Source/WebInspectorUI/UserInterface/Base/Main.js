@@ -90,7 +90,7 @@ WebInspector.loaded = function()
         InspectorAgent.enable();
 
     // Perform one-time tasks.
-    WebInspector.CSSCompletions.requestCSSNameCompletions();
+    WebInspector.CSSCompletions.requestCSSCompletions();
     this._generateDisclosureTriangleImages();
 
     // Listen for the ProvisionalLoadStarted event before registering for events so our code gets called before any managers or sidebars.
@@ -501,7 +501,7 @@ WebInspector.activateExtraDomains = function(domains)
 
     this.notifications.dispatchEventToListeners(WebInspector.Notification.ExtraDomainsActivated, {"domains": domains});
 
-    WebInspector.CSSCompletions.requestCSSNameCompletions();
+    WebInspector.CSSCompletions.requestCSSCompletions();
 
     this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();

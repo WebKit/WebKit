@@ -527,6 +527,26 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     return fontForPlatformData(alternateFont);
 }
 
+Vector<String> FontCache::systemFontFamilies()
+{
+    Vector<String> fontFamilies;
+    RetainPtr<CFArrayRef> availableFontFamilies = adoptCF(CTFontManagerCopyAvailableFontFamilyNames());
+    CFIndex count = CFArrayGetCount(availableFontFamilies.get());
+    for (CFIndex i = 0; i < count; ++i) {
+        CFStringRef fontName = static_cast<CFStringRef>(CFArrayGetValueAtIndex(availableFontFamilies.get(), i));
+        if (CFGetTypeID(fontName) != CFStringGetTypeID()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        // We don't want to make the hidden system fonts visible and since they
+        // all begin with a period, ignore all fonts that begin with a period.
+        if (CFStringHasPrefix(fontName, CFSTR(".")))
+            continue;
+        fontFamilies.append(fontName);
+    }
+    return fontFamilies;
+}
+
 RefPtr<Font> FontCache::similarFont(const FontDescription& description)
 {
     // Attempt to find an appropriate font using a match based on 

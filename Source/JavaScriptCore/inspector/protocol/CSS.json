@@ -348,6 +348,13 @@
             "description": "Returns all supported CSS property names."
         },
         {
+            "name": "getSupportedSystemFontFamilyNames",
+            "returns": [
+                { "name": "fontFamilyNames", "type": "array", "items": { "type": "string" }, "description": "Supported system font families." }
+            ],
+            "description": "Returns all supported system font family names."
+        },
+        {
             "name": "forcePseudoState",
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The element id for which to force the pseudo state." },

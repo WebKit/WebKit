@@ -462,6 +462,13 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     return lastResortFallbackFont(description);
 }
 
+Vector<String> FontCache::systemFontFamilies()
+{
+    // FIXME: <https://webkit.org/b/147033> Web Inspector: [iOS] Allow inspector to retrieve a list of system fonts
+    Vector<String> fontFamilies;
+    return fontFamilies;
+}
+
 RefPtr<Font> FontCache::similarFont(const FontDescription& description)
 {
     // Attempt to find an appropriate font using a match based on the presence of keywords in

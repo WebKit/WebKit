@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+// Testing that we can get the fonts on the system and that the fonts contain some universal fonts (arial, times, etc).
+function test() {
+    function hasFontFamily(fontFamilies, fontFamily) {
+        return (fontFamilies.includes(fontFamily) ? "PASS: Includes " : "FAIL: Missing ") + fontFamily;
+    }
+
+    function fontFamilyNamesCallback(error, fontFamilyNames) {
+        InspectorTest.assert(!error, "Error in getting font family names.");
+
+        if (!error) {
+            InspectorTest.log("Has at least 5 fonts: " + (fontFamilyNames.length >= 5));
+            InspectorTest.log(hasFontFamily(fontFamilyNames, "Arial"));
+            InspectorTest.log(hasFontFamily(fontFamilyNames, "Times"));
+        }
+
+        InspectorTest.completeTest();
+    }
+    CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
+}
+</script>
+</head>
+<body onload="runTest()"></body>
+</html>
