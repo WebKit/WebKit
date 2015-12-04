@@ -1,3 +1,20 @@
+2015-12-03  David Kilzer  <ddkilzer@apple.com>
+
+        DumpRenderTree: Use-after-free in createBitmapContext() in PixelDumpSupportMac.mm
+        <http://webkit.org/b/151845>
+
+        Reviewed by Simon Fraser.
+
+        Fixes the following static analyzer warning:
+            DumpRenderTree/mac/PixelDumpSupportMac.mm:67:9: warning: Use of memory after it is freed
+                    WTFLogAlways("DumpRenderTree: CGBitmapContextCreate(%p, %llu, %llu, 8, %llu, %p, 0x%x) failed\n", buffer, pixelsHigh, pixelsWide, rowBytes, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContext): Free 'buffer' after using it in logging
+        to fix the use-after-free.  Assign a value of nullptr to buffer
+        so we don't return with it set to a freed address.
+
 2015-12-03  Jer Noble  <jer.noble@apple.com>
 
         Expose WebCore's InvisibleAutoplayNotPermitted setting to WebKit & WebKit2
