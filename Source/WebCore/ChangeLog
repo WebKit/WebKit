@@ -1,3 +1,23 @@
+2015-12-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix height computation of grid items with borders inside fr tracks
+        https://bugs.webkit.org/show_bug.cgi?id=151798
+
+        Reviewed by Zalan Bujtas.
+
+        Since r192154 we run a second pass of the track sizing
+        algorithm whenever the height of the grid is indefinite in
+        order to properly compute row sizes. The available space
+        passed to the track sizing algorithm must not contain neither
+        borders nor paddings, otherwise it will think that it has more
+        space available than the existing one. We should use the
+        height of the content box instead.
+
+        Test: fast/css-grid-layout/grid-item-with-border-in-fr.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/cursor-index-delete.html fails.

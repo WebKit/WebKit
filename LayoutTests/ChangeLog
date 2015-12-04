@@ -1,3 +1,13 @@
+2015-12-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix height computation of grid items with borders inside fr tracks
+        https://bugs.webkit.org/show_bug.cgi?id=151798
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css-grid-layout/grid-item-with-border-in-fr-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-with-border-in-fr.html: Added.
+
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix up tests that refer to non-standard IDBVersionChangeEvent.dataLoss.
