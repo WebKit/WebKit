@@ -2512,7 +2512,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitBoxOrdinalGroup:
         validPrimitive = validateUnit(valueWithCalculation, FInteger | FNonNeg, CSSStrictMode) && valueWithCalculation.value().fValue;
         break;
-    case CSSPropertyWebkitFilter:
+    case CSSPropertyFilter:
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
 #endif
@@ -9144,6 +9144,7 @@ bool CSSParser::isGeneratedImageValue(CSSParserValue& value) const
         || equalIgnoringCase(value.function->name, "repeating-radial-gradient(")
         || equalIgnoringCase(value.function->name, "-webkit-canvas(")
         || equalIgnoringCase(value.function->name, "-webkit-cross-fade(")
+        || equalIgnoringCase(value.function->name, "filter(")
         || equalIgnoringCase(value.function->name, "-webkit-filter(")
         || equalIgnoringCase(value.function->name, "-webkit-named-image(");
 }
@@ -9188,7 +9189,7 @@ bool CSSParser::parseGeneratedImage(CSSParserValueList& valueList, RefPtr<CSSVal
     if (equalIgnoringCase(parserValue.function->name, "-webkit-cross-fade("))
         return parseCrossfade(valueList, value);
 
-    if (equalIgnoringCase(parserValue.function->name, "-webkit-filter("))
+    if (equalIgnoringCase(parserValue.function->name, "filter(") || equalIgnoringCase(parserValue.function->name, "-webkit-filter("))
         return parseFilterImage(valueList, value);
 
     if (equalIgnoringCase(parserValue.function->name, "-webkit-named-image("))
@@ -9866,7 +9867,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
     }
     case WebKitCSSFilterValue::DropShadowFilterOperation: {
         // drop-shadow() takes a single shadow.
-        RefPtr<CSSValueList> shadowValueList = parseShadow(args, CSSPropertyWebkitFilter);
+        RefPtr<CSSValueList> shadowValueList = parseShadow(args, CSSPropertyFilter);
         if (!shadowValueList || shadowValueList->length() != 1)
             return nullptr;
         

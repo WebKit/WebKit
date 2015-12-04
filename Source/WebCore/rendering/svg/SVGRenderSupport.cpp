@@ -452,7 +452,7 @@ void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* 
 #if ENABLE(CSS_COMPOSITING)
 bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
 {
-    return style.svgStyle().isolatesBlending() || style.hasBlendMode() || style.opacity() < 1.0f;
+    return style.svgStyle().isolatesBlending() || style.hasFilter() || style.hasBlendMode() || style.opacity() < 1.0f;
 }
 
 void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderElement& renderer)

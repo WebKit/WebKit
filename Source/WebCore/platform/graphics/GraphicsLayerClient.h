@@ -55,7 +55,7 @@ enum AnimatedPropertyID {
     AnimatedPropertyTransform,
     AnimatedPropertyOpacity,
     AnimatedPropertyBackgroundColor,
-    AnimatedPropertyWebkitFilter
+    AnimatedPropertyFilter
 #if ENABLE(FILTERS_LEVEL_2)
     , AnimatedPropertyWebkitBackdropFilter
 #endif

@@ -77,7 +77,7 @@ static bool propertyCreatesStackingContext(CSSPropertyID property)
     case CSSPropertyMixBlendMode:
     case CSSPropertyIsolation:
 #endif
-    case CSSPropertyWebkitFilter:
+    case CSSPropertyFilter:
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
 #endif
@@ -113,7 +113,7 @@ static bool propertyTriggersCompositing(CSSPropertyID property)
 {
     switch (property) {
     case CSSPropertyOpacity:
-    case CSSPropertyWebkitFilter:
+    case CSSPropertyFilter:
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
 #endif

@@ -571,7 +571,7 @@ class PropertyWrapperAcceleratedFilter : public PropertyWrapper<const FilterOper
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperAcceleratedFilter()
-        : PropertyWrapper<const FilterOperations&>(CSSPropertyWebkitFilter, &RenderStyle::filter, &RenderStyle::setFilter)
+        : PropertyWrapper<const FilterOperations&>(CSSPropertyFilter, &RenderStyle::filter, &RenderStyle::setFilter)
     {
     }
 

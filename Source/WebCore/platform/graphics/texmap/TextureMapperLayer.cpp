@@ -661,7 +661,7 @@ void TextureMapperLayer::syncAnimations()
     if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity))
         m_currentOpacity = m_state.opacity;
 
-    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitFilter))
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyFilter))
         m_currentFilters = m_state.filters;
 }
 

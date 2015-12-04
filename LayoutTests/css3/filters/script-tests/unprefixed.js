@@ -1,4 +1,4 @@
-description("Test the computed style of the filter property.");
+description("Test that -webkit-filter matches filter.");
 
 // These have to be global for the test helpers to see them.
 var stylesheet, filterStyle, subRule;
@@ -11,7 +11,7 @@ function testComputedFilterRule(description, rule, expectedLength, expectedTypes
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet.insertRule("body { filter: " + rule + "; }", 0);
+    stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
 
     filterStyle = window.getComputedStyle(document.body).getPropertyCSSValue("filter");
     shouldBe("filterStyle.length", "" + expectedLength);

@@ -238,7 +238,7 @@ static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
         return ASCIILiteral("opacity");
     case AnimatedPropertyBackgroundColor:
         return ASCIILiteral("backgroundColor");
-    case AnimatedPropertyWebkitFilter:
+    case AnimatedPropertyFilter:
         return ASCIILiteral("filters");
 #if ENABLE(FILTERS_LEVEL_2)
     case AnimatedPropertyWebkitBackdropFilter:
@@ -611,7 +611,7 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
             if (currAnimation.m_property == AnimatedPropertyTransform
                 || currAnimation.m_property == AnimatedPropertyOpacity
                 || currAnimation.m_property == AnimatedPropertyBackgroundColor
-                || currAnimation.m_property == AnimatedPropertyWebkitFilter)
+                || currAnimation.m_property == AnimatedPropertyFilter)
                 moveOrCopyLayerAnimation(operation, animationIdentifier(currAnimation.m_name, currAnimation.m_property, currAnimation.m_index, currAnimation.m_subIndex), fromLayer, toLayer);
         }
     }
@@ -894,7 +894,7 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
     bool createdAnimations = false;
     if (valueList.property() == AnimatedPropertyTransform)
         createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, timeOffset, boxSize);
-    else if (valueList.property() == AnimatedPropertyWebkitFilter) {
+    else if (valueList.property() == AnimatedPropertyFilter) {
         if (supportsAcceleratedFilterAnimations())
             createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, timeOffset);
     }
@@ -2634,7 +2634,7 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
 
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
-    ASSERT(valueList.property() != AnimatedPropertyTransform && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyWebkitFilter));
+    ASSERT(valueList.property() != AnimatedPropertyTransform && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyFilter));
 
     bool isKeyframe = valueList.size() > 2;
     bool valuesOK;
@@ -2769,9 +2769,9 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
 bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
 #if ENABLE(FILTERS_LEVEL_2)
-    ASSERT(valueList.property() == AnimatedPropertyWebkitFilter || valueList.property() == AnimatedPropertyWebkitBackdropFilter);
+    ASSERT(valueList.property() == AnimatedPropertyFilter || valueList.property() == AnimatedPropertyWebkitBackdropFilter);
 #else
-    ASSERT(valueList.property() == AnimatedPropertyWebkitFilter);
+    ASSERT(valueList.property() == AnimatedPropertyFilter);
 #endif
 
     int listIndex = validateFilterOperations(valueList);
