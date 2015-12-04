@@ -92,6 +92,11 @@ function table_of_contents_index( $content, $post_id ) {
     return $content;
 }
 
+function is_super_cache_enabled() {
+    global $super_cache_enabled;
+    return (isset($super_cache_enabled) && true === $super_cache_enabled);
+}
+
 function tag_post_image_luminance( $post_id ) {
     $threshold = 128;
     $tags = array();

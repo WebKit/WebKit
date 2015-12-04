@@ -1,5 +1,13 @@
 2015-12-03  Jonathan Davis  <jond@apple.com>
 
+        Fixed transient behavior when the cache plugin is enabled.
+
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/includes.php:
+        * wp-content/themes/webkit/nightly.php:
+
+2015-12-03  Jonathan Davis  <jond@apple.com>
+
         Add sub-section anchors to code style guidelines
         https://bugs.webkit.org/show_bug.cgi?id=151770
 

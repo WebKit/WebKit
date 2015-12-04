@@ -19,7 +19,7 @@ function get_nightly_download_details( $type = 'mac' ) {
         $type = $types[0];
     
     $cachekey = 'nightly_download_' . $type;
-    if ( false !== ( $cached = get_transient($cachekey) ) )
+    if ( is_super_cache_enabled() || false !== ( $cached = get_transient($cachekey) ) )
         return json_decode($cached);
 	
     $url = sprintf(WEBKIT_NIGHTLY_ARCHIVE_URL, $type);
@@ -30,7 +30,7 @@ function get_nightly_download_details( $type = 'mac' ) {
     
     if ( ! empty($data) ) {
         $record = explode(',', $data);
-        set_transient($cachekey, json_encode($record), DAY_IN_SECONDS);
+        set_transient($cachekey, json_encode($record), HOUR_IN_SECONDS * 6); // Expire every 6 hours
         return $record;
 	}
     
