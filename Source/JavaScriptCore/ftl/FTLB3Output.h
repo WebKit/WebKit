@@ -133,7 +133,7 @@ public:
     LValue doubleSub(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Sub, origin(), left, right); }
     LValue doubleMul(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Mul, origin(), left, right); }
     LValue doubleDiv(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Div, origin(), left, right); }
-    LValue doubleRem(LValue left, LValue right) { CRASH(); }
+    LValue doubleRem(LValue left, LValue right) { return callWithoutSideEffects(B3::Double, fmod, left, right); }
     LValue doubleNeg(LValue value)
     {
         return sub(doubleZero, value);

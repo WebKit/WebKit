@@ -1,5 +1,15 @@
 2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Add doubleRem() to FTLB3Output
+        https://bugs.webkit.org/show_bug.cgi?id=151851
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleRem):
+
+2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Add signExt() to FTLB3Output
         https://bugs.webkit.org/show_bug.cgi?id=151853
 
