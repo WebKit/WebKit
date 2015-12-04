@@ -33,6 +33,7 @@
 #include "ElementRareData.h"
 #include "FlowThreadController.h"
 #include "InsertionPoint.h"
+#include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "MainFrame.h"
 #include "NodeRenderStyle.h"
@@ -464,6 +465,7 @@ static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId 
     if (!needsPseudoElement(current, pseudoId))
         return;
     Ref<PseudoElement> pseudoElement = PseudoElement::create(current, pseudoId);
+    InspectorInstrumentation::pseudoElementCreated(pseudoElement->document().page(), pseudoElement.get());
     setBeforeOrAfterPseudoElement(current, pseudoElement.copyRef(), pseudoId);
     attachRenderTree(pseudoElement.get(), *current.renderStyle(), renderTreePosition, nullptr);
 }
