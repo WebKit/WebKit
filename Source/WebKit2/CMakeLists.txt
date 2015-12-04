@@ -563,7 +563,7 @@ set(WebKit2_SOURCES
     WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
     WebProcess/Network/NetworkProcessConnection.cpp
-    WebProcess/Network/WebResourceLoadScheduler.cpp
+    WebProcess/Network/WebLoaderStrategy.cpp
     WebProcess/Network/WebResourceLoader.cpp
 
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp

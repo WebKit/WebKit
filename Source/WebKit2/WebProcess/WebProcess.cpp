@@ -49,6 +49,7 @@
 #include "WebFrameNetworkingContext.h"
 #include "WebGeolocationManager.h"
 #include "WebIconDatabaseProxy.h"
+#include "WebLoaderStrategy.h"
 #include "WebMediaCacheManager.h"
 #include "WebMediaKeyStorageManager.h"
 #include "WebMemorySampler.h"
@@ -60,7 +61,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
-#include "WebResourceLoadScheduler.h"
 #include "WebsiteData.h"
 #include "WebsiteDataTypes.h"
 #include <JavaScriptCore/JSLock.h>
@@ -154,8 +154,8 @@ WebProcess::WebProcess()
     , m_cacheModel(CacheModelDocumentViewer)
     , m_fullKeyboardAccessEnabled(false)
     , m_textCheckerState()
-    , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
-    , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
+    , m_iconDatabaseProxy(*new WebIconDatabaseProxy(this))
+    , m_webLoaderStrategy(*new WebLoaderStrategy)
     , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
@@ -263,7 +263,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         supplement->initialize(parameters);
 
 #if ENABLE(ICONDATABASE)
-    m_iconDatabaseProxy->setEnabled(parameters.iconDatabaseEnabled);
+    m_iconDatabaseProxy.setEnabled(parameters.iconDatabaseEnabled);
 #endif
 
     if (!parameters.applicationCacheDirectory.isEmpty())
@@ -999,12 +999,12 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 
     m_networkProcessConnection = nullptr;
     
-    m_webResourceLoadScheduler->networkProcessCrashed();
+    m_webLoaderStrategy.networkProcessCrashed();
 }
 
-WebResourceLoadScheduler& WebProcess::webResourceLoadScheduler()
+WebLoaderStrategy& WebProcess::webLoaderStrategy()
 {
-    return *m_webResourceLoadScheduler;
+    return m_webLoaderStrategy;
 }
 
 #if ENABLE(DATABASE_PROCESS)

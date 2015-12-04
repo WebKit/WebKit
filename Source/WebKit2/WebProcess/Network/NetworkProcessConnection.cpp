@@ -29,8 +29,8 @@
 #include "DataReference.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebLoaderStrategy.h"
 #include "WebProcess.h"
-#include "WebResourceLoadScheduler.h"
 #include "WebResourceLoaderMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/MemoryCache.h>
@@ -54,7 +54,7 @@ NetworkProcessConnection::~NetworkProcessConnection()
 void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
-        if (WebResourceLoader* webResourceLoader = WebProcess::singleton().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
+        if (WebResourceLoader* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(decoder.destinationID()))
             webResourceLoader->didReceiveWebResourceLoaderMessage(connection, decoder);
         
         return;

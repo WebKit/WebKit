@@ -78,10 +78,10 @@ class UserData;
 class WebConnectionToUIProcess;
 class WebFrame;
 class WebIconDatabaseProxy;
+class WebLoaderStrategy;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
-class WebResourceLoadScheduler;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
@@ -152,7 +152,7 @@ public:
 
     NetworkProcessConnection* networkConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
-    WebResourceLoadScheduler& webResourceLoadScheduler();
+    WebLoaderStrategy& webLoaderStrategy();
 
 #if ENABLE(DATABASE_PROCESS)
     void webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection*);
@@ -330,11 +330,11 @@ private:
 
     TextCheckerState m_textCheckerState;
 
-    WebIconDatabaseProxy* m_iconDatabaseProxy;
+    WebIconDatabaseProxy& m_iconDatabaseProxy;
 
     void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
-    WebResourceLoadScheduler* m_webResourceLoadScheduler;
+    WebLoaderStrategy& m_webLoaderStrategy;
     HashSet<String> m_dnsPrefetchedHosts;
     WebCore::HysteresisActivity m_dnsPrefetchHystereris;
 

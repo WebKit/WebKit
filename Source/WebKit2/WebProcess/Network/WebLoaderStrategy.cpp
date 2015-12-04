@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebResourceLoadScheduler.h"
+#include "WebLoaderStrategy.h"
 
 #include "HangDetectionDisabler.h"
 #include "Logging.h"
@@ -59,16 +59,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebResourceLoadScheduler::WebResourceLoadScheduler()
-    : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebResourceLoadScheduler::internallyFailedLoadTimerFired)
+WebLoaderStrategy::WebLoaderStrategy()
+    : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
 {
 }
 
-WebResourceLoadScheduler::~WebResourceLoadScheduler()
+WebLoaderStrategy::~WebLoaderStrategy()
 {
 }
 
-RefPtr<SubresourceLoader> WebResourceLoadScheduler::loadResource(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> WebLoaderStrategy::loadResource(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
@@ -76,7 +76,7 @@ RefPtr<SubresourceLoader> WebResourceLoadScheduler::loadResource(Frame* frame, C
     return loader;
 }
 
-RefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
+RefPtr<NetscapePlugInStreamLoader> WebLoaderStrategy::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
@@ -119,7 +119,7 @@ static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)
     return 0_ms;
 }
 
-void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, CachedResource* resource, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+void WebLoaderStrategy::scheduleLoad(ResourceLoader* resourceLoader, CachedResource* resource, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
     ASSERT(resourceLoader);
 
@@ -130,33 +130,33 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     // If the DocumentLoader schedules this as an archive resource load,
     // then we should remember the ResourceLoader in our records but not schedule it in the NetworkProcess.
     if (resourceLoader->documentLoader()->scheduleArchiveLoad(resourceLoader, resourceLoader->request())) {
-        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader->url().string().utf8().data());
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader->url().string().utf8().data());
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
         return;
     }
 #endif
 
     if (resourceLoader->documentLoader()->applicationCacheHost()->maybeLoadResource(resourceLoader, resourceLoader->request(), resourceLoader->request().url())) {
-        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be loaded from application cache.", resourceLoader->url().string().utf8().data());
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded from application cache.", resourceLoader->url().string().utf8().data());
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
         return;
     }
 
     if (resourceLoader->request().url().protocolIsData()) {
-        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be loaded as data.", resourceLoader->url().string().utf8().data());
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be loaded as data.", resourceLoader->url().string().utf8().data());
         startLocalLoad(*resourceLoader);
         return;
     }
 
 #if USE(QUICK_LOOK)
     if (resourceLoader->request().url().protocolIs(QLPreviewProtocol())) {
-        LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader->url().string().utf8().data());
+        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as a QuickLook resource.", resourceLoader->url().string().utf8().data());
         startLocalLoad(*resourceLoader);
         return;
     }
 #endif
 
-    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader->url().string().utf8().data(), static_cast<int>(resourceLoader->request().priority()));
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader->url().string().utf8().data(), static_cast<int>(resourceLoader->request().priority()));
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent;
     StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
@@ -195,13 +195,13 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
 }
 
-void WebResourceLoadScheduler::scheduleInternallyFailedLoad(WebCore::ResourceLoader* resourceLoader)
+void WebLoaderStrategy::scheduleInternallyFailedLoad(WebCore::ResourceLoader* resourceLoader)
 {
     m_internallyFailedResourceLoaders.add(resourceLoader);
     m_internallyFailedLoadTimer.startOneShot(0);
 }
 
-void WebResourceLoadScheduler::internallyFailedLoadTimerFired()
+void WebLoaderStrategy::internallyFailedLoadTimerFired()
 {
     Vector<RefPtr<ResourceLoader>> internallyFailedResourceLoaders;
     copyToVector(m_internallyFailedResourceLoaders, internallyFailedResourceLoaders);
@@ -210,16 +210,16 @@ void WebResourceLoadScheduler::internallyFailedLoadTimerFired()
         internallyFailedResourceLoaders[i]->didFail(internalError(internallyFailedResourceLoaders[i]->url()));
 }
 
-void WebResourceLoadScheduler::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
+void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
 {
     resourceLoader.start();
     m_webResourceLoaders.set(resourceLoader.identifier(), WebResourceLoader::create(&resourceLoader));
 }
 
-void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
+void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
-    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::remove, url '%s'", resourceLoader->url().string().utf8().data());
+    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::remove, url '%s'", resourceLoader->url().string().utf8().data());
 
     if (m_internallyFailedResourceLoaders.contains(resourceLoader)) {
         m_internallyFailedResourceLoaders.remove(resourceLoader);
@@ -228,7 +228,7 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     
     ResourceLoadIdentifier identifier = resourceLoader->identifier();
     if (!identifier) {
-        LOG_ERROR("WebResourceLoadScheduler removing a ResourceLoader that has no identifier.");
+        LOG_ERROR("WebLoaderStrategy removing a ResourceLoader that has no identifier.");
         return;
     }
     
@@ -244,35 +244,35 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     loader->detachFromCoreLoader();
 }
 
-void WebResourceLoadScheduler::setDefersLoading(ResourceLoader* resourceLoader, bool defers)
+void WebLoaderStrategy::setDefersLoading(ResourceLoader* resourceLoader, bool defers)
 {
     ResourceLoadIdentifier identifier = resourceLoader->identifier();
     WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::SetDefersLoading(identifier, defers), 0);
 }
 
-void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const URL&)
+void WebLoaderStrategy::crossOriginRedirectReceived(ResourceLoader*, const URL&)
 {
     // We handle cross origin redirects entirely within the NetworkProcess.
     // We override this call in the WebProcess to make it a no-op.
 }
 
-void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority)
+void WebLoaderStrategy::servePendingRequests(ResourceLoadPriority)
 {
     // This overrides the base class version.
     // We don't need to do anything as this is handled by the network process.
 }
 
-void WebResourceLoadScheduler::suspendPendingRequests()
+void WebLoaderStrategy::suspendPendingRequests()
 {
     // Network process does keep requests in pending state.
 }
 
-void WebResourceLoadScheduler::resumePendingRequests()
+void WebLoaderStrategy::resumePendingRequests()
 {
     // Network process does keep requests in pending state.
 }
 
-void WebResourceLoadScheduler::networkProcessCrashed()
+void WebLoaderStrategy::networkProcessCrashed()
 {
     HashMap<unsigned long, RefPtr<WebResourceLoader>>::iterator end = m_webResourceLoaders.end();
     for (HashMap<unsigned long, RefPtr<WebResourceLoader>>::iterator i = m_webResourceLoaders.begin(); i != end; ++i)
@@ -281,7 +281,7 @@ void WebResourceLoadScheduler::networkProcessCrashed()
     m_webResourceLoaders.clear();
 }
 
-void WebResourceLoadScheduler::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     WebFrameNetworkingContext* webContext = static_cast<WebFrameNetworkingContext*>(context);
     // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
@@ -312,7 +312,7 @@ void WebResourceLoadScheduler::loadResourceSynchronously(NetworkingContext* cont
     }
 }
 
-void WebResourceLoadScheduler::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage)
+void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.

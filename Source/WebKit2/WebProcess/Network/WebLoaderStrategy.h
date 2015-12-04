@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebResourceLoadScheduler_h
-#define WebResourceLoadScheduler_h
+#ifndef WebLoaderStrategy_h
+#define WebLoaderStrategy_h
 
 #include "WebResourceLoader.h"
 #include <WebCore/LoaderStrategy.h>
@@ -35,28 +35,27 @@
 namespace WebKit {
 
 class NetworkProcessConnection;
-class WebResourceLoadScheduler;
 typedef uint64_t ResourceLoadIdentifier;
 
-class WebResourceLoadScheduler : public WebCore::LoaderStrategy {
-    WTF_MAKE_NONCOPYABLE(WebResourceLoadScheduler); WTF_MAKE_FAST_ALLOCATED;
+class WebLoaderStrategy : public WebCore::LoaderStrategy {
+    WTF_MAKE_NONCOPYABLE(WebLoaderStrategy); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebResourceLoadScheduler();
-    virtual ~WebResourceLoadScheduler();
+    WebLoaderStrategy();
+    ~WebLoaderStrategy() override;
     
-    virtual RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
-    virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
+    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
+    void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
 
-    virtual void remove(WebCore::ResourceLoader*) override;
-    virtual void setDefersLoading(WebCore::ResourceLoader*, bool) override;
-    virtual void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
+    void remove(WebCore::ResourceLoader*) override;
+    void setDefersLoading(WebCore::ResourceLoader*, bool) override;
+    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
     
-    virtual void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority) override;
+    void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority) override;
 
-    virtual void suspendPendingRequests() override;
-    virtual void resumePendingRequests() override;
+    void suspendPendingRequests() override;
+    void resumePendingRequests() override;
 
-    virtual void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, bool shouldUseCredentialStorage) override;
+    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, bool shouldUseCredentialStorage) override;
 
     WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
     RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&);
@@ -70,11 +69,11 @@ private:
     void startLocalLoad(WebCore::ResourceLoader&);
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
-    RunLoop::Timer<WebResourceLoadScheduler> m_internallyFailedLoadTimer;
+    RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
 };
 
 } // namespace WebKit
 
-#endif // WebResourceLoadScheduler_h
+#endif

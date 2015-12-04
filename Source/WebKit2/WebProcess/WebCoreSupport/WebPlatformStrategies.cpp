@@ -41,12 +41,12 @@
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
 #include "WebIDBFactoryBackend.h"
+#include "WebLoaderStrategy.h"
 #include "WebPage.h"
 #include "WebPasteboardOverrides.h"
 #include "WebPasteboardProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
-#include "WebResourceLoadScheduler.h"
 #include <WebCore/Color.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/IDBFactoryBackendInterface.h>
@@ -91,7 +91,7 @@ CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
 
 LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 {
-    return &WebProcess::singleton().webResourceLoadScheduler();
+    return &WebProcess::singleton().webLoaderStrategy();
 }
 
 PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()

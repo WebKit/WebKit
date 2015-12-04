@@ -1,3 +1,71 @@
+2015-12-04  Antti Koivisto  <antti@apple.com>
+
+        Rename WebResourceLoadScheduler to WebLoaderStrategy
+        https://bugs.webkit.org/show_bug.cgi?id=151854
+
+        Reviewed by Anders Carlsson.
+
+        It implements WebCore::LoaderStrategy and doesn't do any scheduling.
+
+        * CMakeLists.txt:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/WebLoaderStrategy.cpp: Copied from Source/WebKit2/WebProcess/Network/WebResourceLoadScheduler.cpp.
+        (WebKit::WebLoaderStrategy::WebLoaderStrategy):
+        (WebKit::WebLoaderStrategy::~WebLoaderStrategy):
+        (WebKit::WebLoaderStrategy::loadResource):
+        (WebKit::WebLoaderStrategy::schedulePluginStreamLoad):
+        (WebKit::maximumBufferingTime):
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleInternallyFailedLoad):
+        (WebKit::WebLoaderStrategy::internallyFailedLoadTimerFired):
+        (WebKit::WebLoaderStrategy::startLocalLoad):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::setDefersLoading):
+        (WebKit::WebLoaderStrategy::crossOriginRedirectReceived):
+        (WebKit::WebLoaderStrategy::servePendingRequests):
+        (WebKit::WebLoaderStrategy::suspendPendingRequests):
+        (WebKit::WebLoaderStrategy::resumePendingRequests):
+        (WebKit::WebLoaderStrategy::networkProcessCrashed):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::createPingHandle):
+        (WebKit::WebResourceLoadScheduler::WebResourceLoadScheduler): Deleted.
+        (WebKit::WebResourceLoadScheduler::~WebResourceLoadScheduler): Deleted.
+        (WebKit::WebResourceLoadScheduler::loadResource): Deleted.
+        (WebKit::WebResourceLoadScheduler::schedulePluginStreamLoad): Deleted.
+        (WebKit::WebResourceLoadScheduler::scheduleLoad): Deleted.
+        (WebKit::WebResourceLoadScheduler::scheduleInternallyFailedLoad): Deleted.
+        (WebKit::WebResourceLoadScheduler::internallyFailedLoadTimerFired): Deleted.
+        (WebKit::WebResourceLoadScheduler::startLocalLoad): Deleted.
+        (WebKit::WebResourceLoadScheduler::remove): Deleted.
+        (WebKit::WebResourceLoadScheduler::setDefersLoading): Deleted.
+        (WebKit::WebResourceLoadScheduler::crossOriginRedirectReceived): Deleted.
+        (WebKit::WebResourceLoadScheduler::servePendingRequests): Deleted.
+        (WebKit::WebResourceLoadScheduler::suspendPendingRequests): Deleted.
+        (WebKit::WebResourceLoadScheduler::resumePendingRequests): Deleted.
+        (WebKit::WebResourceLoadScheduler::networkProcessCrashed): Deleted.
+        (WebKit::WebResourceLoadScheduler::loadResourceSynchronously): Deleted.
+        (WebKit::WebResourceLoadScheduler::createPingHandle): Deleted.
+        * WebProcess/Network/WebLoaderStrategy.h: Copied from Source/WebKit2/WebProcess/Network/WebResourceLoadScheduler.h.
+        (WebKit::WebLoaderStrategy::webResourceLoaderForIdentifier):
+        (WebKit::WebResourceLoadScheduler::webResourceLoaderForIdentifier): Deleted.
+        * WebProcess/Network/WebResourceLoadScheduler.cpp: Removed.
+        * WebProcess/Network/WebResourceLoadScheduler.h: Removed.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::start):
+        (WebKit::PluginView::Stream::cancel):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createLoaderStrategy):
+        (WebKit::WebPlatformStrategies::createPasteboardStrategy):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::webLoaderStrategy):
+        (WebKit::WebProcess::webResourceLoadScheduler): Deleted.
+        * WebProcess/WebProcess.h:
+
 2015-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Have layer memory use consult the backing store format
