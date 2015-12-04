@@ -39,6 +39,8 @@ static const unsigned long kCTFontTableOS2 = 'OS/2';
 bool fontHasMathTable(CTFontRef ctFont)
 {
     RetainPtr<CFArrayRef> tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
+    if (!tableTags)
+        return false;
     CFIndex numTables = CFArrayGetCount(tableTags.get());
     for (CFIndex index = 0; index < numTables; ++index) {
         CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);

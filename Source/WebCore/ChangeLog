@@ -1,3 +1,16 @@
+2015-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Some fonts cause CTFontCopyAvailableTables() to return nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=151884
+        <rdar://problem/23752253>
+
+        Reviewed by Brian Burg.
+
+        No new tests.
+
+        * platform/graphics/opentype/OpenTypeCG.cpp:
+        (WebCore::OpenType::fontHasMathTable):
+
 2015-12-04  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build-fix; Add new parameter to overloaded createSession() method in MediaPlayerPrivateAVFoundationCF.
