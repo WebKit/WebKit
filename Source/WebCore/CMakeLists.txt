@@ -2499,6 +2499,7 @@ set(WebCore_SOURCES
     rendering/style/StyleSurroundData.cpp
     rendering/style/StyleTransformData.cpp
     rendering/style/StyleVisualData.cpp
+    rendering/style/WillChangeData.cpp
 
     rendering/svg/RenderSVGBlock.cpp
     rendering/svg/RenderSVGContainer.cpp
