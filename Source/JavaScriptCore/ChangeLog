@@ -1,3 +1,14 @@
+2015-12-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Having a bad time has a really awful time when it runs at the same time as the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=151882
+        rdar://problem/23547038
+
+        Unreviewed, really adding the test this time.
+
+        * tests/stress/ftl-has-a-bad-time.js: Added.
+        (foo):
+
 2015-12-04  Mark Lam  <mark.lam@apple.com>
 
         Snippefy bitwise operators for the baseline JIT.
