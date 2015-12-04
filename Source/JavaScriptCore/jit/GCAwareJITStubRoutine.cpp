@@ -115,11 +115,13 @@ void GCAwareJITStubRoutineWithExceptionHandler::aboutToDie()
 
 void GCAwareJITStubRoutineWithExceptionHandler::observeZeroRefCount()
 {
+#if ENABLE(DFG_JIT)
     if (m_codeBlockWithExceptionHandler) {
         m_codeBlockWithExceptionHandler->jitCode()->dfgCommon()->removeCallSiteIndex(m_exceptionHandlerCallSiteIndex);
         m_codeBlockWithExceptionHandler->removeExceptionHandlerForCallSite(m_exceptionHandlerCallSiteIndex);
         m_codeBlockWithExceptionHandler = nullptr;
     }
+#endif
 
     Base::observeZeroRefCount();
 }
