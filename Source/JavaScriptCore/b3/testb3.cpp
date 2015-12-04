@@ -3720,6 +3720,87 @@ void testPatchpointManyImms()
     CHECK(!compileAndRun<int>(proc));
 }
 
+void testPatchpointWithRegisterResult()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    patchpoint->resultConstraint = ValueRep::reg(GPRInfo::nonArgGPR0);
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            CHECK(params.reps.size() == 3);
+            CHECK(params.reps[0] == ValueRep::reg(GPRInfo::nonArgGPR0));
+            CHECK(params.reps[1].isGPR());
+            CHECK(params.reps[2].isGPR());
+            jit.move(params.reps[1].gpr(), GPRInfo::nonArgGPR0);
+            jit.add32(params.reps[2].gpr(), GPRInfo::nonArgGPR0);
+        });
+    root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+}
+
+void testPatchpointWithStackArgumentResult()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+    patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    patchpoint->resultConstraint = ValueRep::stackArgument(0);
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            CHECK(params.reps.size() == 3);
+            CHECK(params.reps[0] == ValueRep::stack(-static_cast<intptr_t>(proc.frameSize())));
+            CHECK(params.reps[1].isGPR());
+            CHECK(params.reps[2].isGPR());
+            jit.store32(params.reps[1].gpr(), CCallHelpers::Address(CCallHelpers::stackPointerRegister, 0));
+            jit.add32(params.reps[2].gpr(), CCallHelpers::Address(CCallHelpers::stackPointerRegister, 0));
+        });
+    root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+    CHECK(compileAndRun<int>(proc, 1, 2) == 3);
+}
+
+void testPatchpointWithAnyResult()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Double, Origin());
+    patchpoint->append(ConstrainedValue(arg1, ValueRep::SomeRegister));
+    patchpoint->append(ConstrainedValue(arg2, ValueRep::SomeRegister));
+    patchpoint->resultConstraint = ValueRep::Any;
+    patchpoint->clobberLate(RegisterSet::allFPRs());
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet(GPRInfo::regT0));
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            CHECK(params.reps.size() == 3);
+            CHECK(params.reps[0].isStack());
+            CHECK(params.reps[1].isGPR());
+            CHECK(params.reps[2].isGPR());
+            jit.move(params.reps[1].gpr(), GPRInfo::regT0);
+            jit.add32(params.reps[2].gpr(), GPRInfo::regT0);
+            jit.convertInt32ToDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
+            jit.storeDouble(FPRInfo::fpRegT0, CCallHelpers::Address(GPRInfo::callFrameRegister, params.reps[0].offsetFromFP()));
+        });
+    root->appendNew<ControlValue>(proc, Return, Origin(), patchpoint);
+
+    CHECK(compileAndRun<double>(proc, 1, 2) == 3);
+}
+
 void testSimpleCheck()
 {
     Procedure proc;
@@ -5979,6 +6060,9 @@ void run(const char* filter)
     RUN(testPatchpointAny());
     RUN(testPatchpointAnyImm());
     RUN(testPatchpointManyImms());
+    RUN(testPatchpointWithRegisterResult());
+    RUN(testPatchpointWithStackArgumentResult());
+    RUN(testPatchpointWithAnyResult());
     RUN(testSimpleCheck());
     RUN(testCheckLessThan());
     RUN(testCheckMegaCombo());

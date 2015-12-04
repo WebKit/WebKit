@@ -290,6 +290,10 @@ public:
                 // return type.
                 break;
             case Patchpoint:
+                if (value->type() == Void)
+                    VALIDATE(value->as<PatchpointValue>()->resultConstraint == ValueRep::Any, ("At ", *value));
+                else
+                    validateStackmapConstraint(value, ConstrainedValue(value, value->as<PatchpointValue>()->resultConstraint));
                 validateStackmap(value);
                 break;
             case CheckAdd:
@@ -338,14 +342,26 @@ private:
         StackmapValue* stackmap = value->as<StackmapValue>();
         VALIDATE(stackmap, ("At ", *value));
         VALIDATE(stackmap->numChildren() >= stackmap->reps().size(), ("At ", *stackmap));
-        for (unsigned i = 0; i < stackmap->reps().size(); ++i) {
-            const ValueRep& rep = stackmap->reps()[i];
-            if (rep.kind() != ValueRep::Register)
-                continue;
-            if (rep.reg().isGPR())
-                VALIDATE(isInt(stackmap->child(i)->type()), ("At ", *stackmap));
+        for (ConstrainedValue child : stackmap->constrainedChildren())
+            validateStackmapConstraint(stackmap, child);
+    }
+    
+    void validateStackmapConstraint(Value* context, const ConstrainedValue& value)
+    {
+        switch (value.rep().kind()) {
+        case ValueRep::Any:
+        case ValueRep::SomeRegister:
+        case ValueRep::StackArgument:
+            break;
+        case ValueRep::Register:
+            if (value.rep().reg().isGPR())
+                VALIDATE(isInt(value.value()->type()), ("At ", *context, ": ", value));
             else
-                VALIDATE(isFloat(stackmap->child(i)->type()), ("At ", *stackmap));
+                VALIDATE(isFloat(value.value()->type()), ("At ", *context, ": ", value));
+            break;
+        default:
+            VALIDATE(false, ("At ", *context, ": ", value));
+            break;
         }
     }
 

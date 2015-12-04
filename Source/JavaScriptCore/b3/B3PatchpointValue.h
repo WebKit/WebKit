@@ -36,11 +36,28 @@ namespace JSC { namespace B3 {
 
 class PatchpointValue : public StackmapValue {
 public:
+    typedef StackmapValue Base;
+    
     static bool accepts(Opcode opcode) { return opcode == Patchpoint; }
 
     ~PatchpointValue();
 
+    // The effects of the patchpoint. This defaults to Effects::forCall(), but you can set it to anything.
+    //
+    // If there are no effects, B3 is free to assume any use of this PatchpointValue can be replaced with
+    // a use of a different PatchpointValue, so long as the other one also has no effects and has the
+    // same children. Note that this comparison ignores child constraints, the result constraint, and all
+    // other StackmapValue meta-data. If there are read effects but not write effects, then this same sort
+    // of substitution could be made so long as there are no interfering writes.
     Effects effects;
+
+    // The input representation (i.e. constraint) of the return value. This defaults to Any if the type is
+    // Void and it defaults to SomeRegister otherwise. It's illegal to mess with this if the type is Void.
+    // Otherwise you can set this to any input constraint.
+    ValueRep resultConstraint;
+
+protected:
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
 private:
     friend class Procedure;

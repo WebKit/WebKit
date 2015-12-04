@@ -34,9 +34,16 @@ PatchpointValue::~PatchpointValue()
 {
 }
 
+void PatchpointValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
+{
+    Base::dumpMeta(comma, out);
+    out.print(comma, "resultConstraint = ", resultConstraint);
+}
+
 PatchpointValue::PatchpointValue(unsigned index, Type type, Origin origin)
-    : StackmapValue(index, CheckedOpcode, Patchpoint, type, origin)
+    : Base(index, CheckedOpcode, Patchpoint, type, origin)
     , effects(Effects::forCall())
+    , resultConstraint(type == Void ? ValueRep::Any : ValueRep::SomeRegister)
 {
 }
 

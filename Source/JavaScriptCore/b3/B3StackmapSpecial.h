@@ -66,6 +66,8 @@ protected:
     // Appends the reps for the Inst's args, starting with numIgnoredArgs, to the given vector.
     void appendRepsImpl(Air::GenerationContext&, unsigned numIgnoredArgs, Air::Inst&, Vector<ValueRep>&);
 
+    static bool isArgValidForValue(const Air::Arg&, Value*);
+    static bool isArgValidForRep(Air::Code&, const Air::Arg&, const ValueRep&);
     static ValueRep repForArg(Air::Code&, const Air::Arg&);
 };
 

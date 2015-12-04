@@ -224,7 +224,7 @@ public:
     const Air::Code& code() const { return *m_code; }
     Air::Code& code() { return *m_code; }
 
-    unsigned frameSize() const;
+    JS_EXPORT_PRIVATE unsigned frameSize() const;
     const RegisterAtOffsetList& calleeSaveRegisters() const;
 
 private:

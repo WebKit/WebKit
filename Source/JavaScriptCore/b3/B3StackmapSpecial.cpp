@@ -118,26 +118,8 @@ bool StackmapSpecial::isValidImpl(
     for (unsigned i = 0; i < inst.args.size() - numIgnoredAirArgs; ++i) {
         Value* child = value->child(i + numIgnoredB3Args);
         Arg& arg = inst.args[i + numIgnoredAirArgs];
-        
-        switch (arg.kind()) {
-        case Arg::Tmp:
-        case Arg::Imm:
-        case Arg::Imm64:
-        case Arg::Stack:
-        case Arg::CallArg:
-            break; // OK
-        case Arg::Addr:
-            if (arg.base() != Tmp(GPRInfo::callFrameRegister)
-                && arg.base() != Tmp(MacroAssembler::stackPointerRegister))
-                return false;
-            break;
-        default:
-            return false;
-        }
-        
-        Arg::Type type = Arg::typeForB3Type(child->type());
 
-        if (!arg.isType(type))
+        if (!isArgValidForValue(arg, child))
             return false;
     }
 
@@ -149,39 +131,8 @@ bool StackmapSpecial::isValidImpl(
         ValueRep& rep = value->m_reps[i];
         Arg& arg = inst.args[i - numIgnoredB3Args + numIgnoredAirArgs];
 
-        switch (rep.kind()) {
-        case ValueRep::Any:
-            // We already verified this above.
-            break;
-        case ValueRep::SomeRegister:
-            if (!arg.isTmp())
-                return false;
-            break;
-        case ValueRep::Register:
-            if (arg != Tmp(rep.reg()))
-                return false;
-            break;
-        case ValueRep::Stack:
-            // This is not a valid input representation.
-            ASSERT_NOT_REACHED();
-            break;
-        case ValueRep::StackArgument:
-            if (arg == Arg::callArg(rep.offsetFromSP()))
-                break;
-            if (arg.isAddr() && code().frameSize()) {
-                if (arg.base() == Tmp(GPRInfo::callFrameRegister)
-                    && arg.offset() == rep.offsetFromSP() - code().frameSize())
-                    break;
-                if (arg.base() == Tmp(MacroAssembler::stackPointerRegister)
-                    && arg.offset() == rep.offsetFromSP())
-                    break;
-            }
+        if (!isArgValidForRep(code(), arg, rep))
             return false;
-        case ValueRep::Constant:
-            // This is not a valid input representation.
-            ASSERT_NOT_REACHED();
-            break;
-        }
     }
 
     return true;
@@ -214,6 +165,57 @@ void StackmapSpecial::appendRepsImpl(
 {
     for (unsigned i = numIgnoredArgs; i < inst.args.size(); ++i)
         result.append(repForArg(*context.code, inst.args[i]));
+}
+
+bool StackmapSpecial::isArgValidForValue(const Arg::Arg& arg, Value* value)
+{
+    switch (arg.kind()) {
+    case Arg::Tmp:
+    case Arg::Imm:
+    case Arg::Imm64:
+    case Arg::Stack:
+    case Arg::CallArg:
+        break; // OK
+    case Arg::Addr:
+        if (arg.base() != Tmp(GPRInfo::callFrameRegister)
+            && arg.base() != Tmp(MacroAssembler::stackPointerRegister))
+            return false;
+        break;
+    default:
+        return false;
+    }
+    
+    Arg::Type type = Arg::typeForB3Type(value->type());
+
+    return arg.isType(type);
+}
+
+bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, const ValueRep& rep)
+{
+    switch (rep.kind()) {
+    case ValueRep::Any:
+        // We already verified by isArgValidForValue().
+        return true;
+    case ValueRep::SomeRegister:
+        return arg.isTmp();
+    case ValueRep::Register:
+        return arg == Tmp(rep.reg());
+    case ValueRep::StackArgument:
+        if (arg == Arg::callArg(rep.offsetFromSP()))
+            return true;
+        if (arg.isAddr() && code.frameSize()) {
+            if (arg.base() == Tmp(GPRInfo::callFrameRegister)
+                && arg.offset() == rep.offsetFromSP() - code.frameSize())
+                return true;
+            if (arg.base() == Tmp(MacroAssembler::stackPointerRegister)
+                && arg.offset() == rep.offsetFromSP())
+                return true;
+        }
+        return false;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    }
 }
 
 ValueRep StackmapSpecial::repForArg(Code& code, const Arg& arg)

@@ -1696,13 +1696,38 @@ private:
             ensureSpecial(m_patchpointSpecial);
             
             Inst inst(Patch, patchpointValue, Arg::special(m_patchpointSpecial));
-            
-            if (patchpointValue->type() != Void)
-                inst.args.append(tmp(patchpointValue));
+
+            Vector<Inst> after;
+            if (patchpointValue->type() != Void) {
+                switch (patchpointValue->resultConstraint.kind()) {
+                case ValueRep::Any:
+                case ValueRep::SomeRegister:
+                    inst.args.append(tmp(patchpointValue));
+                    break;
+                case ValueRep::Register: {
+                    Tmp reg = Tmp(patchpointValue->resultConstraint.reg());
+                    inst.args.append(reg);
+                    after.append(Inst(
+                        relaxedMoveForType(patchpointValue->type()), m_value, reg, tmp(patchpointValue)));
+                    break;
+                }
+                case ValueRep::StackArgument: {
+                    Arg arg = Arg::callArg(patchpointValue->resultConstraint.offsetFromSP());
+                    inst.args.append(arg);
+                    after.append(Inst(
+                        moveForType(patchpointValue->type()), m_value, arg, tmp(patchpointValue)));
+                    break;
+                }
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
             
             fillStackmap(inst, patchpointValue, 0);
             
             m_insts.last().append(WTF::move(inst));
+            m_insts.last().appendVector(after);
             return;
         }
 

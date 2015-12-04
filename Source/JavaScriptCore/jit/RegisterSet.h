@@ -59,7 +59,7 @@ public:
 #endif
     static RegisterSet volatileRegistersForJSCall();
     static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
-    static RegisterSet macroScratchRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet macroScratchRegisters();
     JS_EXPORT_PRIVATE static RegisterSet allGPRs();
     JS_EXPORT_PRIVATE static RegisterSet allFPRs();
     static RegisterSet allRegisters();

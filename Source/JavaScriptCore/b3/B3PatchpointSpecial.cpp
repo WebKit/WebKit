@@ -64,9 +64,10 @@ bool PatchpointSpecial::isValid(Inst& inst)
 
     if (inst.args.size() < 2)
         return false;
-    if (inst.args[1].kind() != Arg::Tmp)
+    PatchpointValue* patchpoint = inst.origin->as<PatchpointValue>();
+    if (!isArgValidForValue(inst.args[1], patchpoint))
         return false;
-    if (!inst.args[1].isType(inst.origin->airType()))
+    if (!isArgValidForRep(code(), inst.args[1], patchpoint->resultConstraint))
         return false;
 
     return isValidImpl(0, 2, inst);
@@ -77,8 +78,19 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
     if (inst.origin->type() == Void)
         return admitsStackImpl(0, 1, inst, argIndex);
 
-    if (argIndex == 1)
-        return false;
+    if (argIndex == 1) {
+        switch (inst.origin->as<PatchpointValue>()->resultConstraint.kind()) {
+        case ValueRep::Any:
+        case ValueRep::StackArgument:
+            return true;
+        case ValueRep::SomeRegister:
+        case ValueRep::Register:
+            return false;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return false;
+        }
+    }
 
     return admitsStackImpl(0, 2, inst, argIndex);
 }

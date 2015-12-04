@@ -1,3 +1,51 @@
+2015-12-03  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 patchpoints should allow specifying output constraints
+        https://bugs.webkit.org/show_bug.cgi?id=151809
+
+        Reviewed by Benjamin Poulain.
+
+        JS call patchpoints should put their result into the result register, while most other patchpoints
+        should put their results into some register. I think that it's best if we just allow arbitrary
+        constraints on the result of a patchpoint. And by "arbitrary" I mean allowing the same kinds of
+        constraints as we allow on the stackmap children.
+
+        This also adds a large comment in B3StackmapValue.h that lays out the philosophy of our stackmaps
+        and patchpoints. I found it useful to write down the plan since it's pretty subtle.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::isValid):
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::~PatchpointValue):
+        (JSC::B3::PatchpointValue::dumpMeta):
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/B3PatchpointValue.h:
+        (JSC::B3::PatchpointValue::accepts):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::code):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        (JSC::B3::StackmapSpecial::appendRepsImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForValue):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        (JSC::B3::StackmapSpecial::repForArg):
+        * b3/B3StackmapSpecial.h:
+        * b3/B3StackmapValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::doubleValue):
+        * b3/testb3.cpp:
+        (JSC::B3::testPatchpointManyImms):
+        (JSC::B3::testPatchpointWithRegisterResult):
+        (JSC::B3::testPatchpointWithStackArgumentResult):
+        (JSC::B3::testPatchpointWithAnyResult):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::run):
+        * jit/RegisterSet.h:
+
 2015-12-03  Anders Carlsson  <andersca@apple.com>
 
         Remove Objective-C GC support

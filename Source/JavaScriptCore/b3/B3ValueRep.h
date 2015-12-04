@@ -194,7 +194,7 @@ public:
         return bitwise_cast<double>(value());
     }
 
-    void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
 private:
     Kind m_kind;
