@@ -1,3 +1,14 @@
+2015-12-04  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build-fix; Add new parameter to overloaded createSession() method in MediaPlayerPrivateAVFoundationCF.
+
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        (WebCore::CDMSessionAVFoundationCF::CDMSessionAVFoundationCF):
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createSession):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+
 2015-12-01  Jer Noble  <jer.noble@apple.com>
 
         Adopt AVContentKeySession

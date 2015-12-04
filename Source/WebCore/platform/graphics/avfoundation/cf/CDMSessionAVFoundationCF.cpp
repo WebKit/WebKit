@@ -44,9 +44,9 @@
 
 namespace WebCore {
 
-CDMSessionAVFoundationCF::CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF* parent)
+CDMSessionAVFoundationCF::CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF* parent, CDMSessionClient* client)
     : m_parent(parent)
-    , m_client(nullptr)
+    , m_client(client)
     , m_sessionId(createCanonicalUUIDString())
 {
 }
