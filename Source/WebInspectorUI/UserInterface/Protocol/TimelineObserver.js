@@ -32,13 +32,13 @@ WebInspector.TimelineObserver = class TimelineObserver
         WebInspector.timelineManager.eventRecorded(record);
     }
 
-    recordingStarted()
+    recordingStarted(startTime)
     {
-        WebInspector.timelineManager.capturingStarted();
+        WebInspector.timelineManager.capturingStarted(startTime);
     }
 
-    recordingStopped()
+    recordingStopped(endTime)
     {
-        WebInspector.timelineManager.capturingStopped();
+        WebInspector.timelineManager.capturingStopped(endTime);
     }
 };
