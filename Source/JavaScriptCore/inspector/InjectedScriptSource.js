@@ -810,8 +810,8 @@ InjectedScript.prototype = {
         case 1: // Node.ELEMENT_NODE
             if (node.id)
                 return "<" + nodeName + " id=\"" + node.id + "\">";
-            if (node.className)
-                return "<" + nodeName + " class=\"" + node.className + "\">";
+            if (node.classList.length)
+                return "<" + nodeName + " class=\"" + node.classList.toString() + "\">";
             if (nodeName === "input" && node.type)
                 return "<" + nodeName + " type=\"" + node.type + "\">";
             return "<" + nodeName + ">";
