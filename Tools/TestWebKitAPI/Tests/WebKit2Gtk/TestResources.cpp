@@ -190,6 +190,13 @@ public:
         } else if (uri == kServer->getURIForPath("/javascript.js")) {
             g_assert_cmpint(m_resourceDataSize, ==, strlen(kJavascript));
             g_assert(!strncmp(m_resourceData.get(), kJavascript, m_resourceDataSize));
+        } else if (uri == kServer->getURIForPath("/blank.ico")) {
+            GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
+            GUniqueOutPtr<char> contents;
+            gsize contentsLength;
+            g_file_get_contents(filePath.get(), &contents.outPtr(), &contentsLength, nullptr);
+            g_assert_cmpint(m_resourceDataSize, ==, contentsLength);
+            g_assert(!memcmp(m_resourceData.get(), contents.get(), contentsLength));
         } else
             g_assert_not_reached();
         m_resourceData.reset();
@@ -518,9 +525,7 @@ static void testWebResourceActiveURI(ResourceURITrackingTest* test, gconstpointe
 static void testWebResourceGetData(ResourcesTest* test, gconstpointer)
 {
     test->loadURI(kServer->getURIForPath("/").data());
-    // FIXME: this should be 4 instead of 3, but we don't get the css image resource
-    // due to bug https://bugs.webkit.org/show_bug.cgi?id=78510.
-    test->waitUntilResourcesLoaded(3);
+    test->waitUntilResourcesLoaded(4);
 
     WebKitWebResource* resource = webkit_web_view_get_main_resource(test->m_webView);
     g_assert(resource);

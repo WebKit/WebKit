@@ -1,3 +1,21 @@
+2015-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test /webkit2/WebKitWebResource/get-data is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=151797
+
+        Reviewed by Martin Robinson.
+
+        Since we switched to use the network process to run the unit tests
+        the test /webkit2/WebKitWebResource/get-data sometimes fails and
+        sometimes passes. We are now also getting the notification for the
+        css image. Since we wait for 3 resources, sometimes the css image
+        is loaded before and then checkResourceData is called for it, but
+        not handled. When the css image is the last one loaded the test
+        passes. So, we just need to wait for the 4 resources.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        (testWebResourceGetData):
+
 2015-12-03  David Kilzer  <ddkilzer@apple.com>
 
         DumpRenderTree: Use-after-free in createBitmapContext() in PixelDumpSupportMac.mm
