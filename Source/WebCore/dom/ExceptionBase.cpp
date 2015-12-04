@@ -33,11 +33,16 @@
 
 namespace WebCore {
 
-ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description)
+ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description, MessageSource messageSource)
     : m_code(description.code)
     , m_name(description.name)
     , m_description(description.description)
 {
+    if (messageSource == MessageSource::UseDescription) {
+        m_message = m_description;
+        return;
+    }
+
     if (description.name)
         m_message = m_name + ": " + description.typeName + " Exception " + String::number(description.code);
     else

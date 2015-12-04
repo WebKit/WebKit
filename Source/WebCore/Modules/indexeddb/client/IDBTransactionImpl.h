@@ -68,8 +68,8 @@ public:
     virtual const String& mode() const override final;
     virtual WebCore::IDBDatabase* db() override final;
     virtual RefPtr<DOMError> error() const override final;
-    virtual RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCode&) override final;
-    virtual void abort(ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&) override final;
+    virtual void abort(ExceptionCodeWithMessage&) override final;
 
     virtual EventTargetInterface eventTargetInterface() const override final { return IDBTransactionEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }

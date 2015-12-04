@@ -1,3 +1,83 @@
+2015-12-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/exceptions.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151732
+
+        Reviewed by Alex Christensen.
+
+        Lots of new wk2-specific expectations to keep Legacy IDB passing for now.
+        
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_index5-expected.txt: Added.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_index6-expected.txt: Added.
+        * platform/wk2/imported/w3c/indexeddb/idbcursor_continue_invalid-expected.txt: Added.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_get7-expected.txt: Added.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_getKey7-expected.txt: Added.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_openCursor2-expected.txt: Added.
+        * platform/wk2/imported/w3c/indexeddb/idbindex_openKeyCursor3-expected.txt: Added.
+        * platform/wk2/imported/w3c/indexeddb/keypath-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/aborted-versionchange-closes-expected.txt: Copied from LayoutTests/storage/indexeddb/aborted-versionchange-closes-expected.txt.
+        * platform/wk2/storage/indexeddb/bad-keypath-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/bad-keypath-expected.txt.
+        * platform/wk2/storage/indexeddb/basics-expected.txt: Copied from LayoutTests/storage/indexeddb/basics-expected.txt.
+        * platform/wk2/storage/indexeddb/clear-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/clear-expected.txt.
+        * platform/wk2/storage/indexeddb/create-and-remove-object-store-expected.txt: Copied from LayoutTests/storage/indexeddb/create-and-remove-object-store-expected.txt.
+        * platform/wk2/storage/indexeddb/create-objectstore-basics-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/create-objectstore-basics-expected.txt.
+        * platform/wk2/storage/indexeddb/cursor-continue-dir-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/cursor-continue-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/cursor-finished-expected.txt: Copied from LayoutTests/storage/indexeddb/cursor-finished-expected.txt.
+        * platform/wk2/storage/indexeddb/cursors-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/cursors-expected.txt.
+        * platform/wk2/storage/indexeddb/database-basics-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/deleteIndex-bug110792-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/index-count-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/intversion-close-in-oncomplete-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/invalid-keys-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/key-requirements-delete-null-key-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt.
+        * platform/wk2/storage/indexeddb/key-requirements-inline-and-passed-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt.
+        * platform/wk2/storage/indexeddb/key-requirements-put-no-key-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt.
+        * platform/wk2/storage/indexeddb/key-requirements-put-null-key-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt.
+        * platform/wk2/storage/indexeddb/key-type-array-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/keypath-arrays-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/keypath-edges-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/keyrange-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/mozilla/clear-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/clear-expected.txt.
+        * platform/wk2/storage/indexeddb/mozilla/create-objectstore-basics-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/create-objectstore-basics-expected.txt.
+        * platform/wk2/storage/indexeddb/mozilla/cursors-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/cursors-expected.txt.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt.
+        * platform/wk2/storage/indexeddb/mozilla/readonly-transactions-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/readonly-transactions-expected.txt.
+        * platform/wk2/storage/indexeddb/object-lookups-in-versionchange-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/objectstore-count-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/open-cursor-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/readonly-transactions-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/readonly-transactions-expected.txt.
+        * platform/wk2/storage/indexeddb/removed-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/request-result-cache-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/transaction-abort-expected.txt: Copied from LayoutTests/storage/indexeddb/transaction-abort-expected.txt.
+        * platform/wk2/storage/indexeddb/transaction-active-flag-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/transaction-after-close-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/transaction-read-only-expected.txt: Added.
+        * platform/wk2/storage/indexeddb/version-change-exclusive-expected.txt: Added.
+        * storage/indexeddb/aborted-versionchange-closes-expected.txt:
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/cursor-finished-expected.txt:
+        * storage/indexeddb/exceptions-expected.txt:
+        * storage/indexeddb/modern/createobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/double-abort-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-expected.txt:
+        * storage/indexeddb/mozilla/bad-keypath-expected.txt:
+        * storage/indexeddb/mozilla/clear-expected.txt:
+        * storage/indexeddb/mozilla/create-objectstore-basics-expected.txt:
+        * storage/indexeddb/mozilla/cursors-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt:
+        * storage/indexeddb/mozilla/readonly-transactions-expected.txt:
+        * storage/indexeddb/resources/exceptions.js:
+        (testObjectStore):
+        * storage/indexeddb/transaction-abort-expected.txt:
+
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Unskip many inspector/debugger tests

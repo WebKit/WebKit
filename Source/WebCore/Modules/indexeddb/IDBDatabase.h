@@ -44,7 +44,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-typedef int ExceptionCode;
+struct ExceptionCodeWithMessage;
 
 class IDBDatabase : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
@@ -55,11 +55,11 @@ public:
     virtual uint64_t version() const = 0;
     virtual RefPtr<DOMStringList> objectStoreNames() const = 0;
 
-    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) = 0;
-    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) = 0;
-    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&) = 0;
-    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) = 0;
-    virtual void deleteObjectStore(const String& name, ExceptionCode&) = 0;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCodeWithMessage&) = 0;
+    virtual void deleteObjectStore(const String& name, ExceptionCodeWithMessage&) = 0;
     virtual void close() = 0;
 
     using RefCounted<IDBDatabase>::ref;

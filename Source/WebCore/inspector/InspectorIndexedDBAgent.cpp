@@ -117,9 +117,9 @@ public:
         }
 
         IDBRequest* idbRequest = static_cast<IDBRequest*>(event->target());
-        ExceptionCode ec = 0;
+        ExceptionCodeWithMessage ec;
         RefPtr<IDBAny> requestResult = idbRequest->result(ec);
-        if (ec) {
+        if (ec.code) {
             m_requestCallback->sendFailure("Could not get result in callback.");
             return;
         }
@@ -179,9 +179,9 @@ public:
         }
 
         IDBOpenDBRequest* idbOpenDBRequest = static_cast<IDBOpenDBRequest*>(event->target());
-        ExceptionCode ec = 0;
+        ExceptionCodeWithMessage ec;
         RefPtr<IDBAny> requestResult = idbOpenDBRequest->result(ec);
-        if (ec) {
+        if (ec.code) {
             m_executableWithDatabase->requestCallback().sendFailure("Could not get result in callback.");
             return;
         }
@@ -221,27 +221,27 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
 
 static RefPtr<IDBTransaction> transactionForDatabase(ScriptExecutionContext* scriptExecutionContext, IDBDatabase* idbDatabase, const String& objectStoreName, const String& mode = IDBTransaction::modeReadOnly())
 {
-    ExceptionCode ec = 0;
+    ExceptionCodeWithMessage ec;
     RefPtr<IDBTransaction> idbTransaction = idbDatabase->transaction(scriptExecutionContext, objectStoreName, mode, ec);
-    if (ec)
+    if (ec.code)
         return nullptr;
     return WTF::move(idbTransaction);
 }
 
 static RefPtr<IDBObjectStore> objectStoreForTransaction(IDBTransaction* idbTransaction, const String& objectStoreName)
 {
-    ExceptionCode ec = 0;
+    ExceptionCodeWithMessage ec;
     RefPtr<IDBObjectStore> idbObjectStore = idbTransaction->objectStore(objectStoreName, ec);
-    if (ec)
+    if (ec.code)
         return nullptr;
     return WTF::move(idbObjectStore);
 }
 
 static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, const String& indexName)
 {
-    ExceptionCode ec = 0;
+    ExceptionCodeWithMessage ec;
     RefPtr<IDBIndex> idbIndex = idbObjectStore->index(indexName, ec);
-    if (ec)
+    if (ec.code)
         return nullptr;
     return WTF::move(idbIndex);
 }
@@ -437,9 +437,9 @@ public:
         }
 
         IDBRequest* idbRequest = static_cast<IDBRequest*>(event->target());
-        ExceptionCode ec = 0;
-        RefPtr<IDBAny> requestResult = idbRequest->result(ec);
-        if (ec) {
+        ExceptionCodeWithMessage ecwm;
+        RefPtr<IDBAny> requestResult = idbRequest->result(ecwm);
+        if (ecwm.code) {
             m_requestCallback->sendFailure("Could not get result in callback.");
             return;
         }
@@ -469,8 +469,9 @@ public:
         }
 
         // Continue cursor before making injected script calls, otherwise transaction might be finished.
+        ExceptionCodeWithMessage ec;
         idbCursor->continueFunction(nullptr, ec);
-        if (ec) {
+        if (ec.code) {
             m_requestCallback->sendFailure("Could not continue cursor.");
             return;
         }
@@ -534,7 +535,7 @@ public:
 
         Ref<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), m_skipCount, m_pageSize);
 
-        ExceptionCode ec = 0;
+        ExceptionCodeWithMessage ec;
         RefPtr<IDBRequest> idbRequest;
         if (!m_indexName.isEmpty()) {
             RefPtr<IDBIndex> idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
@@ -748,11 +749,11 @@ public:
             return;
         }
 
-        ExceptionCode ec = 0;
+        ExceptionCodeWithMessage ec;
         RefPtr<IDBRequest> idbRequest = idbObjectStore->clear(context(), ec);
-        ASSERT(!ec);
-        if (ec) {
-            m_requestCallback->sendFailure(String::format("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), ec));
+        ASSERT(!ec.code);
+        if (ec.code) {
+            m_requestCallback->sendFailure(String::format("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), ec.code));
             return;
         }
         idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()), false);

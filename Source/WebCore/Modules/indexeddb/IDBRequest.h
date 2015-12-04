@@ -42,6 +42,8 @@ namespace WebCore {
 
 class IDBTransaction;
 
+struct ExceptionCodeWithMessage;
+
 typedef int ExceptionCode;
 
 // Defined in the IDL
@@ -55,9 +57,9 @@ class IDBRequest : public ScriptWrappable, public EventTargetWithInlineData, pub
 public:
     virtual ~IDBRequest() { }
 
-    virtual RefPtr<IDBAny> result(ExceptionCode&) const = 0;
+    virtual RefPtr<IDBAny> result(ExceptionCodeWithMessage&) const = 0;
     virtual unsigned short errorCode(ExceptionCode&) const = 0;
-    virtual RefPtr<DOMError> error(ExceptionCode&) const = 0;
+    virtual RefPtr<DOMError> error(ExceptionCodeWithMessage&) const = 0;
     virtual RefPtr<IDBAny> source() const = 0;
     virtual RefPtr<IDBTransaction> transaction() const = 0;
 

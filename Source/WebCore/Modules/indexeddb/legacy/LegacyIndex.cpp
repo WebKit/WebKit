@@ -54,19 +54,19 @@ LegacyIndex::~LegacyIndex()
 {
 }
 
-RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, const String& directionString, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openCursor");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
-    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec);
-    if (ec)
+    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec.code);
+    if (ec.code)
         return 0;
 
     RefPtr<LegacyRequest> request = LegacyRequest::create(context, LegacyAny::create(this), m_transaction.get());
@@ -75,24 +75,24 @@ RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, IDBK
     return request;
 }
 
-RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openCursor");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return openCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::count");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     RefPtr<LegacyRequest> request = LegacyRequest::create(context, LegacyAny::create(this), m_transaction.get());
@@ -100,28 +100,28 @@ RefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, IDBKeyRan
     return request;
 }
 
-RefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::count");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return count(context, keyRange.get(), ec);
 }
 
-RefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, const String& directionString, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, const String& directionString, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openKeyCursor");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
-    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec);
-    if (ec)
+    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec.code);
+    if (ec.code)
         return 0;
 
     RefPtr<LegacyRequest> request = LegacyRequest::create(context, LegacyAny::create(this), m_transaction.get());
@@ -130,37 +130,37 @@ RefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, I
     return request;
 }
 
-RefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openKeyCursor");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return openKeyCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::get");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return get(context, keyRange.get(), ec);
 }
 
-RefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::get");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     if (!keyRange) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return 0;
     }
 
@@ -169,29 +169,29 @@ RefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, IDBKeyRange
     return request;
 }
 
-RefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::getKey");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
 
     return getKey(context, keyRange.get(), ec);
 }
 
-RefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyIndex::getKey");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     if (!keyRange) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return 0;
     }
 

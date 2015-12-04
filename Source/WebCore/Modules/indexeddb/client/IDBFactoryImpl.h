@@ -46,7 +46,7 @@ public:
     virtual RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
 
-    virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&) override final;
+    virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&) override final;
 
 private:
     IDBFactory(IDBConnectionToServer&);

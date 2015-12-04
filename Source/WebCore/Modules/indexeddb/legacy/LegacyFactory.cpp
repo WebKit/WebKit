@@ -146,7 +146,7 @@ RefPtr<IDBOpenDBRequest> LegacyFactory::deleteDatabase(ScriptExecutionContext* c
     return request;
 }
 
-short LegacyFactory::cmp(ScriptExecutionContext* context, const Deprecated::ScriptValue& firstValue, const Deprecated::ScriptValue& secondValue, ExceptionCode& ec)
+short LegacyFactory::cmp(ScriptExecutionContext* context, const Deprecated::ScriptValue& firstValue, const Deprecated::ScriptValue& secondValue, ExceptionCodeWithMessage& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> first = scriptValueToIDBKey(&requestState, firstValue);
@@ -156,7 +156,7 @@ short LegacyFactory::cmp(ScriptExecutionContext* context, const Deprecated::Scri
     ASSERT(second);
 
     if (!first->isValid() || !second->isValid()) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return 0;
     }
 

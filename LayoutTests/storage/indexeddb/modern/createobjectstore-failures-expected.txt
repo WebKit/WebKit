@@ -1,23 +1,23 @@
 ALERT: Initial upgrade needed: Old version - 0 New version - 1
-ALERT: Failed to create object store with both autoincrement and an empty keypath: Error: InvalidAccessError: DOM IDBDatabase Exception 15
+ALERT: Failed to create object store with both autoincrement and an empty keypath: Error: Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.
 ALERT: Object store names:
-ALERT: Failed to create object store with both autoincrement and a sequence keypath: Error: InvalidAccessError: DOM IDBDatabase Exception 15
+ALERT: Failed to create object store with both autoincrement and a sequence keypath: Error: Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.
 ALERT: Object store names:
-ALERT: Failed to create object store with invalid keyPath: Error: SyntaxError: DOM IDBDatabase Exception 12
+ALERT: Failed to create object store with invalid keyPath: Error: Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.
 ALERT: Object store names:
 ALERT: Actually created an object store
 ALERT: Object store names:
 ALERT: TestObjectStore1
-ALERT: Failed to create TestObjectStore a second time: Error: ConstraintError: DOM IDBDatabase Exception 0
+ALERT: Failed to create TestObjectStore a second time: Error: Failed to execute 'createObjectStore' on 'IDBDatabase': An object store with the specified name already exists.
 ALERT: Object store names:
 ALERT: TestObjectStore1
 ALERT: Initial upgrade versionchange transaction complete
 ALERT: Object store names:
 ALERT: TestObjectStore1
-ALERT: Failed to create object store while there is no version change transaction: Error: InvalidStateError: DOM IDBDatabase Exception 11
+ALERT: Failed to create object store while there is no version change transaction: Error: Failed to execute 'createObjectStore' on 'IDBDatabase': The database is not running a version change transaction.
 ALERT: Object store names:
 ALERT: TestObjectStore1
-ALERT: Failed to create object store outside of onupgradeneeded: Error: InvalidStateError: DOM IDBDatabase Exception 11
+ALERT: Failed to create object store outside of onupgradeneeded: Error: Failed to execute 'createObjectStore' on 'IDBDatabase': The database is not running a version change transaction.
 ALERT: Object store names:
 ALERT: TestObjectStore1
 ALERT: Done

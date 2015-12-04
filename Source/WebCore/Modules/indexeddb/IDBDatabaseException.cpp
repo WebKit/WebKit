@@ -78,7 +78,7 @@ bool IDBDatabaseException::initializeDescription(ExceptionCode ec, ExceptionCode
 
     description->typeName = "DOM IDBDatabase";
     description->code = entry->code;
-    description->type = DOMCoreExceptionType;
+    description->type = IDBDatabaseExceptionType;
 
     description->name = entry ? entry->name : 0;
     description->description = entry ? entry->description : 0;

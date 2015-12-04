@@ -37,10 +37,10 @@
     readonly attribute unsigned long long version;
     readonly attribute DOMStringList objectStoreNames;
 
-    [Custom, RaisesException] IDBObjectStore createObjectStore(DOMString name, optional Dictionary options);
-    [RaisesException] void deleteObjectStore(DOMString name);
-    [Custom, CallWith=ScriptExecutionContext, RaisesException] IDBTransaction transaction(DOMString storeName, [Default=NullString] optional DOMString mode);
-    [Custom, CallWith=ScriptExecutionContext, RaisesException] IDBTransaction transaction(sequence<DOMString> storeNames, [Default=NullString] optional DOMString mode);
+    [Custom, RaisesExceptionWithMessage] IDBObjectStore createObjectStore(DOMString name, optional Dictionary options);
+    [RaisesExceptionWithMessage] void deleteObjectStore(DOMString name);
+    [Custom, CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBTransaction transaction(DOMString storeName, [Default=NullString] optional DOMString mode);
+    [Custom, CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBTransaction transaction(sequence<DOMString> storeNames, [Default=NullString] optional DOMString mode);
     void close();
 
     attribute EventHandler onabort;

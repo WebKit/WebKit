@@ -67,30 +67,30 @@ public:
     virtual RefPtr<IDBTransaction> transaction() = 0;
     virtual bool autoIncrement() const = 0;
 
-    virtual RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) = 0;
 
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCodeWithMessage&) = 0;
 
-    virtual RefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCode&) = 0;
+    virtual RefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCodeWithMessage&) = 0;
 
-    virtual RefPtr<IDBIndex> index(const String& name, ExceptionCode&) = 0;
-    virtual void deleteIndex(const String& name, ExceptionCode&) = 0;
+    virtual RefPtr<IDBIndex> index(const String& name, ExceptionCodeWithMessage&) = 0;
+    virtual void deleteIndex(const String& name, ExceptionCodeWithMessage&) = 0;
 
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) = 0;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) = 0;
 
 protected:
     IDBObjectStore();

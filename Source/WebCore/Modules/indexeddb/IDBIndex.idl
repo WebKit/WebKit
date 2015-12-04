@@ -34,17 +34,17 @@
     readonly attribute boolean multiEntry;
     readonly attribute boolean unique;
 
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openCursor(optional IDBKeyRange? range, optional DOMString direction);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openCursor(any key, optional DOMString direction);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest openCursor(optional IDBKeyRange? range, optional DOMString direction);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest openCursor(any key, optional DOMString direction);
 
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openKeyCursor(optional IDBKeyRange? range, optional DOMString  direction);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openKeyCursor(any key, optional DOMString direction);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest openKeyCursor(optional IDBKeyRange? range, optional DOMString  direction);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest openKeyCursor(any key, optional DOMString direction);
 
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest get(IDBKeyRange? key);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest get(any key);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest getKey(IDBKeyRange? key);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest getKey(any key);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest count(optional IDBKeyRange? range);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest count(any key);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest get(IDBKeyRange? key);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest get(any key);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest getKey(IDBKeyRange? key);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest getKey(any key);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(optional IDBKeyRange? range);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] IDBRequest count(any key);
 };
 

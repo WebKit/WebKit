@@ -61,14 +61,14 @@ public:
     const Deprecated::ScriptValue& value() const override;
     IDBAny* source() override;
 
-    RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override;
+    RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) override;
     void advance(unsigned long, ExceptionCodeWithMessage&) override;
     // FIXME: Try to modify the code generator so this overload is unneeded.
-    void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) override { continueFunction(static_cast<IDBKey*>(nullptr), ec); }
-    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override;
-    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) override;
+    void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage& ec) override { continueFunction(static_cast<IDBKey*>(nullptr), ec); }
+    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override;
+    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override;
 
-    void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
+    void continueFunction(PassRefPtr<IDBKey>, ExceptionCodeWithMessage&);
     void postSuccessHandlerCallback();
     void close();
     void setValueReady(DOMRequestState*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, Deprecated::ScriptValue&);

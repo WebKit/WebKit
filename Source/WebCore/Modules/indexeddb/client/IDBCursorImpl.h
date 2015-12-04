@@ -55,13 +55,13 @@ public:
     virtual const Deprecated::ScriptValue& value() const override final;
     virtual IDBAny* source() override final;
 
-    virtual RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCodeWithMessage&) override final;
     virtual void advance(unsigned long, ExceptionCodeWithMessage&) override final;
-    virtual void continueFunction(ScriptExecutionContext*, ExceptionCode&) override final;
-    virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) override final;
+    virtual void continueFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
+    virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
 
-    void continueFunction(const IDBKeyData&, ExceptionCode&);
+    void continueFunction(const IDBKeyData&, ExceptionCodeWithMessage&);
 
     const IDBCursorInfo& info() const { return m_info; }
 

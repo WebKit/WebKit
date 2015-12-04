@@ -65,25 +65,25 @@ public:
     int64_t id() const { return m_metadata.id; }
 
     // FIXME: Try to modify the code generator so this is unneeded.
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec) override final { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openCursor(context, key, IDBCursor::directionNext(), ec); }
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) override final { return count(context, static_cast<IDBKeyRange*>(nullptr), ec); }
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec) override final { return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec) override final { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec) override final { return openCursor(context, key, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec) override final { return count(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
 
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openKeyCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec) override final { return openKeyCursor(context, keyRange, IDBCursor::directionNext(), ec); }
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openKeyCursor(context, key, IDBCursor::directionNext(), ec); }
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec) override final { return openKeyCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec) override final { return openKeyCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec) override final { return openKeyCursor(context, key, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) override final;
 
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
 
     void markDeleted() { m_deleted = true; }
 

@@ -1,0 +1,58 @@
+Test IndexedDB Array-type keyPaths
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "keypath-arrays.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+store = db.createObjectStore('store', {keyPath: ['a', 'b']})
+store.createIndex('index', ['c', 'd'])
+Expecting exception from db.createObjectStore('store-with-generator', {keyPath: ['a', 'b'], autoIncrement: true})
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_ACCESS_ERR
+Exception message: An invalid operation was performed on an object.
+Expecting exception from store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_ACCESS_ERR
+Exception message: An invalid operation was performed on an object.
+
+Empty arrays are not valid key paths:
+Expecting exception from db.createObjectStore('store-keypath-empty-array', {keyPath: []})
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
+Exception message: The keypath argument contains an invalid key path.
+Expecting exception from store.createIndex('index-keypath-empty-array', [])
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
+Exception message: The keypath argument contains an invalid key path.
+
+testKeyPaths():
+transaction = db.transaction(['store'], 'readwrite')
+store = transaction.objectStore('store')
+index = store.index('index')
+
+request = store.put({a: 1, b: 2, c: 3, d: 4})
+request = store.put({a: 5, b: 6, c: 7, d: 8})
+request = store.openCursor()
+cursor = request.result
+PASS cursor is non-null.
+PASS JSON.stringify(cursor.key) is "[1,2]"
+cursor = request.result
+PASS cursor is non-null.
+PASS JSON.stringify(cursor.key) is "[5,6]"
+request = index.openCursor()
+cursor = request.result
+PASS cursor is non-null.
+PASS JSON.stringify(cursor.primaryKey) is "[1,2]"
+PASS JSON.stringify(cursor.key) is "[3,4]"
+cursor = request.result
+PASS cursor is non-null.
+PASS JSON.stringify(cursor.primaryKey) is "[5,6]"
+PASS JSON.stringify(cursor.key) is "[7,8]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

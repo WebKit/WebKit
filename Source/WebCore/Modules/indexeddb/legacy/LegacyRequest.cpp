@@ -95,19 +95,19 @@ LegacyRequest::~LegacyRequest()
 {
 }
 
-RefPtr<IDBAny> LegacyRequest::result(ExceptionCode& ec) const
+RefPtr<IDBAny> LegacyRequest::result(ExceptionCodeWithMessage& ec) const
 {
     if (m_readyState != IDBRequestReadyState::Done) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     return m_result;
 }
 
-RefPtr<DOMError> LegacyRequest::error(ExceptionCode& ec) const
+RefPtr<DOMError> LegacyRequest::error(ExceptionCodeWithMessage& ec) const
 {
     if (m_readyState != IDBRequestReadyState::Done) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     return m_error;
@@ -530,7 +530,8 @@ bool LegacyRequest::dispatchEvent(Event& event)
         // doesn't receive a second error) and before deactivating (which might trigger commit).
         if (event.type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {
             m_transaction->setError(m_error, m_errorMessage);
-            m_transaction->abort(IGNORE_EXCEPTION);
+            ExceptionCodeWithMessage ec;
+            m_transaction->abort(ec);
         }
 
         // If this was the last request in the transaction's list, it may commit here.
@@ -551,7 +552,8 @@ void LegacyRequest::uncaughtExceptionInEventHandler()
 {
     if (m_transaction && !m_requestAborted) {
         m_transaction->setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::AbortError)), "Uncaught exception in event handler.");
-        m_transaction->abort(IGNORE_EXCEPTION);
+        ExceptionCodeWithMessage ec;
+        m_transaction->abort(ec);
     }
 }
 

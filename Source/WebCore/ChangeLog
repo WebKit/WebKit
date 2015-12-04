@@ -1,3 +1,166 @@
+2015-12-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/exceptions.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151732
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        - Lots of customized exception messages for IDB code to match the text expectations.
+        - Updates to the test expectations where we can't/won't match them exactly.
+        - And a couple of little required behavior changes exposed by the test
+
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBDatabaseException.cpp:
+        (WebCore::IDBDatabaseException::initializeDescription):
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransaction.idl:
+        
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::update):
+        (WebCore::IDBClient::IDBCursor::advance):
+        (WebCore::IDBClient::IDBCursor::continueFunction):
+        (WebCore::IDBClient::IDBCursor::deleteFunction):
+        * Modules/indexeddb/client/IDBCursorImpl.h:
+        
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::createObjectStore):
+        (WebCore::IDBClient::IDBDatabase::transaction):
+        (WebCore::IDBClient::IDBDatabase::deleteObjectStore):
+        * Modules/indexeddb/client/IDBDatabaseImpl.h:
+        
+        * Modules/indexeddb/client/IDBFactoryImpl.cpp:
+        (WebCore::IDBClient::IDBFactory::cmp):
+        * Modules/indexeddb/client/IDBFactoryImpl.h:
+        
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::openCursor):
+        (WebCore::IDBClient::IDBIndex::count):
+        (WebCore::IDBClient::IDBIndex::doCount):
+        (WebCore::IDBClient::IDBIndex::openKeyCursor):
+        (WebCore::IDBClient::IDBIndex::get):
+        (WebCore::IDBClient::IDBIndex::doGet):
+        (WebCore::IDBClient::IDBIndex::getKey):
+        (WebCore::IDBClient::IDBIndex::doGetKey):
+        * Modules/indexeddb/client/IDBIndexImpl.h:
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::openCursor):
+        (WebCore::IDBClient::IDBObjectStore::get):
+        (WebCore::IDBClient::IDBObjectStore::add):
+        (WebCore::IDBClient::IDBObjectStore::put):
+        (WebCore::IDBClient::IDBObjectStore::putForCursorUpdate):
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd):
+        (WebCore::IDBClient::IDBObjectStore::deleteFunction):
+        (WebCore::IDBClient::IDBObjectStore::clear):
+        (WebCore::IDBClient::IDBObjectStore::createIndex):
+        (WebCore::IDBClient::IDBObjectStore::index):
+        (WebCore::IDBClient::IDBObjectStore::deleteIndex):
+        (WebCore::IDBClient::IDBObjectStore::count):
+        (WebCore::IDBClient::IDBObjectStore::doCount):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::result):
+        (WebCore::IDBClient::IDBRequest::error):
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::objectStore):
+        (WebCore::IDBClient::IDBTransaction::abortDueToFailedRequest):
+        (WebCore::IDBClient::IDBTransaction::abort):
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+
+        * Modules/indexeddb/legacy/LegacyCursor.cpp:
+        (WebCore::LegacyCursor::update):
+        (WebCore::LegacyCursor::continueFunction):
+        (WebCore::LegacyCursor::deleteFunction):
+        * Modules/indexeddb/legacy/LegacyCursor.h:
+
+        * Modules/indexeddb/legacy/LegacyDatabase.cpp:
+        (WebCore::LegacyDatabase::createObjectStore):
+        (WebCore::LegacyDatabase::deleteObjectStore):
+        (WebCore::LegacyDatabase::transaction):
+        (WebCore::LegacyDatabase::forceClose):
+        * Modules/indexeddb/legacy/LegacyDatabase.h:
+
+        * Modules/indexeddb/legacy/LegacyFactory.cpp:
+        (WebCore::LegacyFactory::cmp):
+        * Modules/indexeddb/legacy/LegacyFactory.h:
+
+        * Modules/indexeddb/legacy/LegacyIndex.cpp:
+        (WebCore::LegacyIndex::openCursor):
+        (WebCore::LegacyIndex::count):
+        (WebCore::LegacyIndex::openKeyCursor):
+        (WebCore::LegacyIndex::get):
+        (WebCore::LegacyIndex::getKey):
+        * Modules/indexeddb/legacy/LegacyIndex.h:
+
+        * Modules/indexeddb/legacy/LegacyObjectStore.cpp:
+        (WebCore::LegacyObjectStore::get):
+        (WebCore::LegacyObjectStore::add):
+        (WebCore::LegacyObjectStore::put):
+        (WebCore::LegacyObjectStore::deleteFunction):
+        (WebCore::LegacyObjectStore::clear):
+        (WebCore::LegacyObjectStore::createIndex):
+        (WebCore::LegacyObjectStore::index):
+        (WebCore::LegacyObjectStore::deleteIndex):
+        (WebCore::LegacyObjectStore::openCursor):
+        (WebCore::LegacyObjectStore::count):
+        * Modules/indexeddb/legacy/LegacyObjectStore.h:
+        (WebCore::LegacyObjectStore::createIndex):
+        (WebCore::LegacyObjectStore::count):
+
+        * Modules/indexeddb/legacy/LegacyRequest.cpp:
+        (WebCore::LegacyRequest::result):
+        (WebCore::LegacyRequest::error):
+        (WebCore::LegacyRequest::dispatchEvent):
+        (WebCore::LegacyRequest::uncaughtExceptionInEventHandler):
+        * Modules/indexeddb/legacy/LegacyRequest.h:
+
+        * Modules/indexeddb/legacy/LegacyTransaction.cpp:
+        (WebCore::LegacyTransaction::objectStore):
+        (WebCore::LegacyTransaction::abort):
+        (WebCore::LegacyTransaction::stop):
+        * Modules/indexeddb/legacy/LegacyTransaction.h:
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMException): For IDBDatabase exceptions, use createWithDescriptionAsMessage
+
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        (WebCore::JSIDBDatabase::createObjectStore):
+        (WebCore::JSIDBDatabase::transaction):
+
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::putOrAdd):
+        (WebCore::JSIDBObjectStore::createIndex):
+
+        * dom/DOMCoreException.h:
+        (WebCore::DOMCoreException::createWithDescriptionAsMessage): Create an exception whose message
+          is the description.
+        (WebCore::DOMCoreException::DOMCoreException):
+
+        * dom/ExceptionBase.cpp:
+        (WebCore::ExceptionBase::ExceptionBase): Add a flag to determine where the message comes from
+        * dom/ExceptionBase.h:
+
+        * dom/make_dom_exceptions.pl:
+        (generateHeader): Add an IDBDatabaseException type
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove untested and unused Worker inspection

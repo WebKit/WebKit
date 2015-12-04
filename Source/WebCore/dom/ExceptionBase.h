@@ -47,7 +47,11 @@ public:
     String toString() const;
 
 protected:
-    explicit ExceptionBase(const ExceptionCodeDescription&);
+    enum class MessageSource {
+        ConstructMessage,
+        UseDescription,
+    };
+    explicit ExceptionBase(const ExceptionCodeDescription&, MessageSource = MessageSource::ConstructMessage);
 
 private:
     unsigned short m_code;

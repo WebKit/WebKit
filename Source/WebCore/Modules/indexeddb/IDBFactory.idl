@@ -30,6 +30,6 @@
 ] interface IDBFactory {
     [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest open(DOMString name, [EnforceRange] optional unsigned long long version);
     [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest deleteDatabase(DOMString name);
-    [CallWith=ScriptExecutionContext, RaisesException] short cmp(any first, any second);
+    [CallWith=ScriptExecutionContext, RaisesExceptionWithMessage] short cmp(any first, any second);
 };
 

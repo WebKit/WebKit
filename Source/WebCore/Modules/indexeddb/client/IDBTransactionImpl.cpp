@@ -121,17 +121,12 @@ RefPtr<DOMError> IDBTransaction::error() const
     return m_domError;
 }
 
-RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& objectStoreName, ExceptionCode& ec)
+RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& objectStoreName, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBTransaction::objectStore");
 
-    if (objectStoreName.isEmpty()) {
-        ec = NOT_FOUND_ERR;
-        return nullptr;
-    }
-
     if (isFinishedOrFinishing()) {
-        ec = INVALID_STATE_ERR;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return nullptr;
     }
 
@@ -149,13 +144,15 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
 
     auto* info = m_database->info().infoForExistingObjectStore(objectStoreName);
     if (!info) {
-        ec = NOT_FOUND_ERR;
+        ec.code = IDBDatabaseException::NotFoundError;
+        ec.message = ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.");
         return nullptr;
     }
 
     // Version change transactions are scoped to every object store in the database.
-    if (!found && !isVersionChange()) {
-        ec = NOT_FOUND_ERR;
+    if (!info || (!found && !isVersionChange())) {
+        ec.code = IDBDatabaseException::NotFoundError;
+        ec.message = ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.");
         return nullptr;
     }
 
@@ -172,16 +169,17 @@ void IDBTransaction::abortDueToFailedRequest(DOMError& error)
     ASSERT(!isFinishedOrFinishing());
 
     m_domError = &error;
-    ExceptionCode ec;
+    ExceptionCodeWithMessage ec;
     abort(ec);
 }
 
-void IDBTransaction::abort(ExceptionCode& ec)
+void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBTransaction::abort");
 
     if (isFinishedOrFinishing()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.");
         return;
     }
 

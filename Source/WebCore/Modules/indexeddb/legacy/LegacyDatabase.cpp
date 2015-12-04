@@ -161,7 +161,7 @@ uint64_t LegacyDatabase::version() const
     return m_metadata.version != IDBDatabaseMetadata::NoIntVersion ? m_metadata.version : static_cast<uint64_t>(IDBDatabaseMetadata::DefaultIntVersion);
 }
 
-RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
+RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCodeWithMessage& ec)
 {
     IDBKeyPath keyPath;
     bool autoIncrement = false;
@@ -179,30 +179,30 @@ RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, con
     return createObjectStore(name, keyPath, autoIncrement, ec);
 }
 
-RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, ExceptionCode& ec)
+RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyDatabase::createObjectStore");
     if (!m_versionChangeTransaction) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_versionChangeTransaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
 
     if (containsObjectStore(name)) {
-        ec = IDBDatabaseException::ConstraintError;
+        ec.code = IDBDatabaseException::ConstraintError;
         return 0;
     }
 
     if (!keyPath.isNull() && !keyPath.isValid()) {
-        ec = IDBDatabaseException::SyntaxError;
+        ec.code = IDBDatabaseException::SyntaxError;
         return 0;
     }
 
     if (autoIncrement && ((keyPath.type() == IndexedDB::KeyPathType::String && keyPath.string().isEmpty()) || keyPath.type() == IndexedDB::KeyPathType::Array)) {
-        ec = IDBDatabaseException::InvalidAccessError;
+        ec.code = IDBDatabaseException::InvalidAccessError;
         return 0;
     }
 
@@ -218,21 +218,21 @@ RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, con
     return objectStore.release();
 }
 
-void LegacyDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
+void LegacyDatabase::deleteObjectStore(const String& name, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyDatabase::deleteObjectStore");
     if (!m_versionChangeTransaction) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
     if (!m_versionChangeTransaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return;
     }
 
     int64_t objectStoreId = findObjectStoreId(name);
     if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
-        ec = IDBDatabaseException::NotFoundError;
+        ec.code = IDBDatabaseException::NotFoundError;
         return;
     }
 
@@ -241,20 +241,20 @@ void LegacyDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
     m_metadata.objectStores.remove(objectStoreId);
 }
 
-RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const Vector<String>& scope, const String& modeString, ExceptionCode& ec)
+RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const Vector<String>& scope, const String& modeString, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyDatabase::transaction");
     if (!scope.size()) {
-        ec = IDBDatabaseException::InvalidAccessError;
+        ec.code = IDBDatabaseException::InvalidAccessError;
         return 0;
     }
 
-    IndexedDB::TransactionMode mode = IDBTransaction::stringToMode(modeString, ec);
-    if (ec)
+    IndexedDB::TransactionMode mode = IDBTransaction::stringToMode(modeString, ec.code);
+    if (ec.code)
         return 0;
 
     if (m_versionChangeTransaction || m_closePending) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
 
@@ -262,7 +262,7 @@ RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* conte
     for (auto& name : scope) {
         int64_t objectStoreId = findObjectStoreId(name);
         if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
-            ec = IDBDatabaseException::NotFoundError;
+            ec.code = IDBDatabaseException::NotFoundError;
             return 0;
         }
         objectStoreIds.append(objectStoreId);
@@ -275,7 +275,7 @@ RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* conte
     return transaction.release();
 }
 
-RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const String& storeName, const String& mode, ExceptionCode& ec)
+RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const String& storeName, const String& mode, ExceptionCodeWithMessage& ec)
 {
     RefPtr<DOMStringList> storeNames = DOMStringList::create();
     storeNames->append(storeName);
@@ -284,8 +284,9 @@ RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* conte
 
 void LegacyDatabase::forceClose()
 {
+    ExceptionCodeWithMessage ec;
     for (auto& transaction : m_transactions.values())
-        transaction->abort(IGNORE_EXCEPTION);
+        transaction->abort(ec);
     this->close();
 }
 

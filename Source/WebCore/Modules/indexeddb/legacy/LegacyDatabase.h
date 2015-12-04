@@ -65,11 +65,11 @@ public:
     virtual uint64_t version() const override final;
     virtual RefPtr<DOMStringList> objectStoreNames() const override final;
 
-    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) override final;
-    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) override final;
-    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&) override final;
-    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) override final;
-    virtual void deleteObjectStore(const String& name, ExceptionCode&) override final;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCodeWithMessage&) override final;
+    virtual void deleteObjectStore(const String& name, ExceptionCodeWithMessage&) override final;
     virtual void close() override final;
 
     // IDBDatabaseCallbacks
@@ -105,7 +105,7 @@ public:
 private:
     LegacyDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
 
-    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> scope, const String& mode, ExceptionCode& ec) { return transaction(context, *scope, mode, ec); }
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> scope, const String& mode, ExceptionCodeWithMessage& ec) { return transaction(context, *scope, mode, ec); }
 
     // ActiveDOMObject API.
     void stop() override;

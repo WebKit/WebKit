@@ -58,30 +58,30 @@ public:
     virtual RefPtr<WebCore::IDBTransaction> transaction() override final;
     virtual bool autoIncrement() const override final;
 
-    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBIndex> index(const String& name, ExceptionCode&) override final;
-    virtual void deleteIndex(const String& name, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> clear(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBIndex> index(const String& name, ExceptionCodeWithMessage&) override final;
+    virtual void deleteIndex(const String& name, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&) override final;
+    virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&) override final;
 
-    RefPtr<IDBRequest> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&);
+    RefPtr<IDBRequest> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
 
-    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, JSC::JSValue key, ExceptionCode&);
+    RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, JSC::JSValue key, ExceptionCodeWithMessage&);
 
     void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
@@ -100,8 +100,8 @@ private:
         DoNotPerform,
     };
 
-    RefPtr<IDBRequest> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck, ExceptionCode&);
-    RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCode&);
+    RefPtr<IDBRequest> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck, ExceptionCodeWithMessage&);
+    RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
 
     IDBObjectStoreInfo m_info;
     Ref<IDBTransaction> m_transaction;

@@ -68,19 +68,19 @@ RefPtr<DOMStringList> LegacyObjectStore::indexNames() const
     return indexNames.release();
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::get");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!keyRange) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     RefPtr<LegacyRequest> request = LegacyRequest::create(context, LegacyAny::create(this), m_transaction.get());
@@ -88,15 +88,15 @@ RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, IDBKe
     return request.release();
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return get(context, keyRange.get(), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
     auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
@@ -104,28 +104,28 @@ RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, JSC::JSValue va
     return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, deprecatedValue, dKey, ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
     auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
     return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, deprecatedValue, static_cast<IDBKey*>(nullptr), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
     auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
     return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, deprecatedValue, Deprecated::ScriptValue(state.vm(), key), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
     auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
     return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, deprecatedValue, static_cast<IDBKey*>(nullptr), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, RefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, RefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCodeWithMessage& ec)
 {
     ScriptExecutionContext* context = scriptExecutionContextFromExecState(&state);
     DOMRequestState requestState(context);
@@ -133,19 +133,19 @@ RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, R
     return put(putMode, source, state, value, key.release(), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, RefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, RefPtr<IDBKey> prpKey, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, RefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, RefPtr<IDBKey> prpKey, ExceptionCodeWithMessage& ec)
 {
     RefPtr<IDBKey> key = prpKey;
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return nullptr;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return nullptr;
     }
     if (m_transaction->isReadOnly()) {
-        ec = IDBDatabaseException::ReadOnlyError;
+        ec.code = IDBDatabaseException::ReadOnlyError;
         return nullptr;
     }
 
@@ -155,7 +155,7 @@ RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, R
 
     if (serializedValue->hasBlobURLs()) {
         // FIXME: Add Blob/File/FileList support
-        ec = IDBDatabaseException::DataCloneError;
+        ec.code = IDBDatabaseException::DataCloneError;
         return nullptr;
     }
 
@@ -167,26 +167,26 @@ RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, R
     DOMRequestState requestState(context);
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && usesInLineKeys && key) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return nullptr;
     }
     if (!usesInLineKeys && !hasKeyGenerator && !key) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return nullptr;
     }
     if (usesInLineKeys) {
         RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(requestState.exec(), value, keyPath);
         if (keyPathKey && !keyPathKey->isValid()) {
-            ec = IDBDatabaseException::DataError;
+            ec.code = IDBDatabaseException::DataError;
             return nullptr;
         }
         if (!hasKeyGenerator && !keyPathKey) {
-            ec = IDBDatabaseException::DataError;
+            ec.code = IDBDatabaseException::DataError;
             return nullptr;
         }
         if (hasKeyGenerator && !keyPathKey) {
             if (!canInjectIDBKeyIntoScriptValue(&requestState, value, keyPath)) {
-                ec = IDBDatabaseException::DataError;
+                ec.code = IDBDatabaseException::DataError;
                 return nullptr;
             }
         }
@@ -194,7 +194,7 @@ RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, R
             key = keyPathKey;
     }
     if (key && !key->isValid()) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return nullptr;
     }
 
@@ -225,23 +225,23 @@ RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, R
     return request.release();
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::delete");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     if (m_transaction->isReadOnly()) {
-        ec = IDBDatabaseException::ReadOnlyError;
+        ec.code = IDBDatabaseException::ReadOnlyError;
         return 0;
     }
     if (!keyRange) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return 0;
     }
 
@@ -250,27 +250,27 @@ RefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* con
     return request.release();
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return deleteFunction(context, keyRange.get(), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::clear(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::clear");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     if (m_transaction->isReadOnly()) {
-        ec = IDBDatabaseException::ReadOnlyError;
+        ec.code = IDBDatabaseException::ReadOnlyError;
         return 0;
     }
 
@@ -321,7 +321,9 @@ private:
         Vector<int64_t, 1> indexIds;
         indexIds.append(m_indexMetadata.id);
         if (cursor) {
-            cursor->continueFunction(static_cast<IDBKey*>(nullptr), ASSERT_NO_EXCEPTION);
+            ExceptionCodeWithMessage ec;
+            cursor->continueFunction(static_cast<IDBKey*>(nullptr), ec);
+            ASSERT(!ec.code);
 
             RefPtr<IDBKey> primaryKey = cursor->idbPrimaryKey();
             Deprecated::ScriptValue value = cursor->value();
@@ -355,7 +357,7 @@ private:
 };
 }
 
-RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCode& ec)
+RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCodeWithMessage& ec)
 {
     bool unique = false;
     options.get("unique", unique);
@@ -366,32 +368,32 @@ RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context,
     return createIndex(context, name, keyPath, unique, multiEntry, ec);
 }
 
-RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCode& ec)
+RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::createIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     if (!keyPath.isValid()) {
-        ec = IDBDatabaseException::SyntaxError;
+        ec.code = IDBDatabaseException::SyntaxError;
         return 0;
     }
     if (name.isNull()) {
-        ec = TypeError;
+        ec.code = TypeError;
         return 0;
     }
     if (containsIndex(name)) {
-        ec = IDBDatabaseException::ConstraintError;
+        ec.code = IDBDatabaseException::ConstraintError;
         return 0;
     }
 
     if (keyPath.type() == IndexedDB::KeyPathType::Array && multiEntry) {
-        ec = IDBDatabaseException::InvalidAccessError;
+        ec.code = IDBDatabaseException::InvalidAccessError;
         return 0;
     }
 
@@ -405,23 +407,23 @@ RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context,
     m_indexMap.set(name, index);
     m_metadata.indexes.set(indexId, metadata);
 
-    ASSERT(!ec);
-    if (ec)
+    ASSERT(!ec.code);
+    if (ec.code)
         return 0;
 
     ASSERT_UNUSED(context, context);
     return index.release();
 }
 
-RefPtr<IDBIndex> LegacyObjectStore::index(const String& name, ExceptionCode& ec)
+RefPtr<IDBIndex> LegacyObjectStore::index(const String& name, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::index");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (m_transaction->isFinished()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
 
@@ -431,7 +433,7 @@ RefPtr<IDBIndex> LegacyObjectStore::index(const String& name, ExceptionCode& ec)
 
     int64_t indexId = findIndexId(name);
     if (indexId == IDBIndexMetadata::InvalidId) {
-        ec = IDBDatabaseException::NotFoundError;
+        ec.code = IDBDatabaseException::NotFoundError;
         return 0;
     }
 
@@ -450,20 +452,20 @@ RefPtr<IDBIndex> LegacyObjectStore::index(const String& name, ExceptionCode& ec)
     return index.release();
 }
 
-void LegacyObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
+void LegacyObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::deleteIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return;
     }
     int64_t indexId = findIndexId(name);
     if (indexId == IDBIndexMetadata::InvalidId) {
-        ec = IDBDatabaseException::NotFoundError;
+        ec.code = IDBDatabaseException::NotFoundError;
         return;
     }
 
@@ -477,39 +479,39 @@ void LegacyObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
     }
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, keyRange, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, key, IDBCursor::directionNext(), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& direction, ExceptionCodeWithMessage& ec)
 {
     return openCursor(context, range, direction, IDBDatabaseBackend::NormalTask, ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& directionString, IDBDatabaseBackend::TaskType taskType, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& directionString, IDBDatabaseBackend::TaskType taskType, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::openCursor");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
-    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec);
-    if (ec)
+    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec.code);
+    if (ec.code)
         return 0;
 
     RefPtr<LegacyRequest> request = LegacyRequest::create(context, LegacyAny::create(this), m_transaction.get());
@@ -519,23 +521,23 @@ RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context
     return request.release();
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage& ec)
 {
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return openCursor(context, keyRange.get(), direction, ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::count");
     if (m_deleted) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     RefPtr<LegacyRequest> request = LegacyRequest::create(context, LegacyAny::create(this), m_transaction.get());
@@ -543,10 +545,10 @@ RefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, IDB
     return request.release();
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
 {
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
-    if (ec)
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec.code);
+    if (ec.code)
         return 0;
     return count(context, keyRange.get(), ec);
 }

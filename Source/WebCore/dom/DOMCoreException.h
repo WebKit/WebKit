@@ -40,11 +40,16 @@ public:
         return adoptRef(*new DOMCoreException(description));
     }
 
+    static Ref<DOMCoreException> createWithDescriptionAsMessage(const ExceptionCodeDescription& description)
+    {
+        return adoptRef(*new DOMCoreException(description, ExceptionBase::MessageSource::UseDescription));
+    }
+
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
-private:
-    explicit DOMCoreException(const ExceptionCodeDescription& description)
-        : ExceptionBase(description)
+protected:
+    explicit DOMCoreException(const ExceptionCodeDescription& description, ExceptionBase::MessageSource messageSource = MessageSource::ConstructMessage)
+        : ExceptionBase(description, messageSource)
     {
     }
 };

@@ -36,8 +36,8 @@
     JSGenerateToNativeObject,
     SkipVTableValidation,
 ] interface IDBRequest : EventTarget {
-    [GetterRaisesException] readonly attribute IDBAny result;
-    [GetterRaisesException] readonly attribute DOMError error;
+    [GetterRaisesExceptionWithMessage] readonly attribute IDBAny result;
+    [GetterRaisesExceptionWithMessage] readonly attribute DOMError error;
     readonly attribute IDBAny source;
     readonly attribute IDBTransaction transaction;
     readonly attribute DOMString readyState;

@@ -1,5 +1,5 @@
 ALERT: Initial upgrade needed: Old version - 0 New version - 1
-ALERT: Second abort failed: Error: InvalidStateError: DOM IDBDatabase Exception 11
+ALERT: Second abort failed: Error: Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.
 ALERT: Initial upgrade versionchange transaction aborted
 ALERT: Done
 This test aborts the same transaction twice, making the appropriate exception is thrown.

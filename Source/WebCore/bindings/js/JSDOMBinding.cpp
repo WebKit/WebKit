@@ -31,6 +31,7 @@
 #include "ExceptionInterfaces.h"
 #include "Frame.h"
 #include "HTMLParserIdioms.h"
+#include "IDBDatabaseException.h"
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
 #include "SecurityOrigin.h"
@@ -259,6 +260,10 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     JSValue errorObject;
     switch (description.type) {
         DOM_EXCEPTION_INTERFACES_FOR_EACH(TRY_TO_CREATE_EXCEPTION)
+#if ENABLE(INDEXED_DATABASE)
+    case IDBDatabaseExceptionType:
+        errorObject = toJS(exec, globalObject, DOMCoreException::createWithDescriptionAsMessage(description));
+#endif
     }
     
     ASSERT(errorObject);

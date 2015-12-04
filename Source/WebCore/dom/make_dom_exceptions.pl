@@ -93,6 +93,9 @@ sub generateHeader()
         print F "#endif\n" if $conditional;
     }
 
+    print F "#if ENABLE(INDEXED_DATABASE)\n";
+    print F "    IDBDatabaseExceptionType,\n";
+    print F "#endif\n";
     print F "};\n";
     print F "\n";
     print F "struct ExceptionCodeDescription {\n";

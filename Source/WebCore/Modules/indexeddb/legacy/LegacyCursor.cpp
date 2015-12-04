@@ -96,20 +96,20 @@ IDBAny* LegacyCursor::source()
     return m_source.get();
 }
 
-RefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCodeWithMessage& ec)
 {
     LOG(StorageAPI, "LegacyCursor::update");
 
     if (!m_gotValue || isKeyCursor()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     if (m_transaction->isReadOnly()) {
-        ec = IDBDatabaseException::ReadOnlyError;
+        ec.code = IDBDatabaseException::ReadOnlyError;
         return 0;
     }
 
@@ -119,7 +119,7 @@ RefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState& state, Deprecated::Scrip
     if (usesInLineKeys) {
         RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(m_request->requestState()->exec(), value, keyPath);
         if (!keyPathKey || !keyPathKey->isEqual(m_currentPrimaryKey.get())) {
-            ec = IDBDatabaseException::DataError;
+            ec.code = IDBDatabaseException::DataError;
             return 0;
         }
     }
@@ -152,29 +152,29 @@ void LegacyCursor::advance(unsigned long count, ExceptionCodeWithMessage& ec)
     ASSERT(!ec.code);
 }
 
-void LegacyCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+void LegacyCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCodeWithMessage& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
     continueFunction(key.release(), ec);
 }
 
-void LegacyCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
+void LegacyCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCodeWithMessage& ec)
 {
-    ec = 0;
+    ec.code = 0;
     LOG(StorageAPI, "LegacyCursor::continue");
     if (key && !key->isValid()) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
         return;
     }
 
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return;
     }
 
     if (!m_gotValue) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
@@ -182,12 +182,12 @@ void LegacyCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
         ASSERT(m_currentKey);
         if (m_direction == IndexedDB::CursorDirection::Next || m_direction == IndexedDB::CursorDirection::NextNoDuplicate) {
             if (!m_currentKey->isLessThan(key.get())) {
-                ec = IDBDatabaseException::DataError;
+                ec.code = IDBDatabaseException::DataError;
                 return;
             }
         } else {
             if (!key->isLessThan(m_currentKey.get())) {
-                ec = IDBDatabaseException::DataError;
+                ec.code = IDBDatabaseException::DataError;
                 return;
             }
         }
@@ -197,30 +197,30 @@ void LegacyCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
     //        will be on the original context openCursor was called on. Is this right?
     m_request->setPendingCursor(this);
     m_gotValue = false;
-    m_backend->continueFunction(key, m_request, ec);
-    ASSERT(!ec);
+    m_backend->continueFunction(key, m_request, ec.code);
+    ASSERT(!ec.code);
 }
 
-RefPtr<IDBRequest> LegacyCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
 {
-    ec = 0;
+    ec.code = 0;
     LOG(StorageAPI, "LegacyCursor::delete");
     if (!m_transaction->isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
     if (m_transaction->isReadOnly()) {
-        ec = IDBDatabaseException::ReadOnlyError;
+        ec.code = IDBDatabaseException::ReadOnlyError;
         return 0;
     }
 
     if (!m_gotValue || isKeyCursor()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     RefPtr<LegacyRequest> request = LegacyRequest::create(context, LegacyAny::create(this), m_transaction.get());
-    m_backend->deleteFunction(request, ec);
-    ASSERT(!ec);
+    m_backend->deleteFunction(request, ec.code);
+    ASSERT(!ec.code);
     return request.release();
 }
 

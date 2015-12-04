@@ -120,12 +120,13 @@ IDBRequest::~IDBRequest()
     }
 }
 
-RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCode& ec) const
+RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCodeWithMessage& ec) const
 {
     if (m_readyState == IDBRequestReadyState::Done)
         return m_result;
 
-    ec = IDBDatabaseException::InvalidStateError;
+    ec.code = IDBDatabaseException::InvalidStateError;
+    ec.message = ASCIILiteral("Failed to read the 'result' property from 'IDBRequest': The request has not finished.");
     return nullptr;
 }
 
@@ -134,12 +135,13 @@ unsigned short IDBRequest::errorCode(ExceptionCode&) const
     return 0;
 }
 
-RefPtr<DOMError> IDBRequest::error(ExceptionCode& ec) const
+RefPtr<DOMError> IDBRequest::error(ExceptionCodeWithMessage& ec) const
 {
     if (m_readyState == IDBRequestReadyState::Done)
         return m_domError;
 
-    ec = IDBDatabaseException::InvalidStateError;
+    ec.code = IDBDatabaseException::InvalidStateError;
+    ec.message = ASCIILiteral("Failed to read the 'error' property from 'IDBRequest': The request has not finished.");
     return nullptr;
 }
 

@@ -1,10 +1,10 @@
 ALERT: Upgrade needed: Old version - 0 New version - 1
-ALERT: Failed to start a transaction while a versionChange transaction was in progress - Error: InvalidStateError: DOM IDBDatabase Exception 11
+ALERT: Failed to start a transaction while a versionChange transaction was in progress - Error: Failed to execute 'transaction' on 'IDBDatabase': A version change transaction is running.
 ALERT: versionchange transaction completed
-ALERT: Failed to start a transaction with an empty set of object stores - Error: InvalidAccessError: DOM IDBDatabase Exception 15
-ALERT: Failed to start a transaction to a nonexistent object store - Error: NotFoundError: DOM IDBDatabase Exception 8
-ALERT: Failed to start a transaction with an invalid mode - TypeError: Type error
-ALERT: Failed to explicitly start a versionchange transaction - TypeError: Type error
-ALERT: Failed to explicitly start a transaction with the close pending flag set - Error: InvalidStateError: DOM IDBDatabase Exception 11
+ALERT: Failed to start a transaction with an empty set of object stores - Error: Failed to execute 'transaction' on 'IDBDatabase': The storeNames parameter was empty.
+ALERT: Failed to start a transaction to a nonexistent object store - Error: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
+ALERT: Failed to start a transaction with an invalid mode - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('invalid-mode') is not one of 'readonly' or 'readwrite'.
+ALERT: Failed to explicitly start a versionchange transaction - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('invalid-mode') is not one of 'readonly' or 'readwrite'.
+ALERT: Failed to explicitly start a transaction with the close pending flag set - Error: An operation was called on an object on which it is not allowed or at a time when it is not allowed.
 ALERT: Done
 This tests some obvious failures that can happen while calling IDBDatabase.transaction()

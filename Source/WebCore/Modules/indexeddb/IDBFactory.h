@@ -41,6 +41,8 @@ class IDBKeyRange;
 class IDBFactoryBackendInterface;
 class ScriptExecutionContext;
 
+struct ExceptionCodeWithMessage;
+
 typedef int ExceptionCode;
 
 class IDBFactory : public RefCounted<IDBFactory> {
@@ -56,7 +58,7 @@ public:
     virtual RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) = 0;
     virtual RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) = 0;
 
-    virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&) = 0;
+    virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCodeWithMessage&) = 0;
 
 protected:
     IDBFactory();

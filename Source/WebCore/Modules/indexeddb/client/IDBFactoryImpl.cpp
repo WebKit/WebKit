@@ -28,8 +28,10 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMRequestState.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "IDBBindingUtilities.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBOpenDBRequestImpl.h"
 #include "Logging.h"
@@ -148,9 +150,22 @@ RefPtr<WebCore::IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionCont
     return adoptRef(&request.leakRef());
 }
 
-short IDBFactory::cmp(ScriptExecutionContext*, const Deprecated::ScriptValue&, const Deprecated::ScriptValue&, ExceptionCode&)
+short IDBFactory::cmp(ScriptExecutionContext* context, const Deprecated::ScriptValue& firstValue, const Deprecated::ScriptValue& secondValue, ExceptionCodeWithMessage& ec)
 {
-    return 0;
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> first = scriptValueToIDBKey(&requestState, firstValue);
+    RefPtr<IDBKey> second = scriptValueToIDBKey(&requestState, secondValue);
+
+    ASSERT(first);
+    ASSERT(second);
+
+    if (!first->isValid() || !second->isValid()) {
+        ec.code = IDBDatabaseException::DataError;
+        ec.message = ASCIILiteral("Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.");
+        return 0;
+    }
+
+    return static_cast<short>(first->compare(second.get()));
 }
 
 } // namespace IDBClient

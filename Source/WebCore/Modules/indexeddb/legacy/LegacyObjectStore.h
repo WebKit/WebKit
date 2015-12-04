@@ -67,37 +67,37 @@ public:
     RefPtr<IDBTransaction> transaction() { return m_transaction; }
     bool autoIncrement() const { return m_metadata.autoIncrement; }
 
-    RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCode&);
-    RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCode&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, IDBDatabaseBackend::TaskType, ExceptionCode&);
-    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&);
+    RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, IDBDatabaseBackend::TaskType, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCodeWithMessage&);
 
-    RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
-    RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&);
-    RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&);
-    RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&);
-    RefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, RefPtr<LegacyAny>, JSC::ExecState&, Deprecated::ScriptValue&, RefPtr<IDBKey>, ExceptionCode&);
-    RefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, RefPtr<LegacyAny> source, JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
+    RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, RefPtr<LegacyAny>, JSC::ExecState&, Deprecated::ScriptValue&, RefPtr<IDBKey>, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, RefPtr<LegacyAny> source, JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
 
-    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&);
-    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
-    RefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
+    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCodeWithMessage&);
 
-    RefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, const Dictionary& options, ExceptionCode& ec) { return createIndex(context, name, IDBKeyPath(keyPath), options, ec); }
-    RefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const Vector<String>& keyPath, const Dictionary& options, ExceptionCode& ec) { return createIndex(context, name, IDBKeyPath(keyPath), options, ec); }
-    RefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, const Dictionary&, ExceptionCode&);
-    RefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCode&);
+    RefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, const Dictionary& options, ExceptionCodeWithMessage& ec) { return createIndex(context, name, IDBKeyPath(keyPath), options, ec); }
+    RefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const Vector<String>& keyPath, const Dictionary& options, ExceptionCodeWithMessage& ec) { return createIndex(context, name, IDBKeyPath(keyPath), options, ec); }
+    RefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, const Dictionary&, ExceptionCodeWithMessage&);
+    RefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCodeWithMessage&);
 
-    RefPtr<IDBIndex> index(const String& name, ExceptionCode&);
-    void deleteIndex(const String& name, ExceptionCode&);
+    RefPtr<IDBIndex> index(const String& name, ExceptionCodeWithMessage&);
+    void deleteIndex(const String& name, ExceptionCodeWithMessage&);
 
-    RefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) { return count(context, static_cast<IDBKeyRange*>(nullptr), ec); }
-    RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&);
-    RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
+    RefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec) { return count(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCodeWithMessage&);
+    RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage&);
 
     void markDeleted() { m_deleted = true; }
     void transactionFinished();

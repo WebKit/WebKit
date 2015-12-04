@@ -110,36 +110,56 @@ IDBAny* IDBCursor::source()
     return &m_source.get();
 }
 
-RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::ScriptValue& value, ExceptionCode& ec)
+RefPtr<WebCore::IDBRequest> IDBCursor::update(JSC::ExecState& exec, Deprecated::ScriptValue& value, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::update");
 
     if (sourcesDeleted()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return nullptr;
     }
 
     if (!transaction().isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
+        ec.message = ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The transaction is inactive or finished.");
         return nullptr;
     }
 
     if (transaction().isReadOnly()) {
-        ec = IDBDatabaseException::ReadOnlyError;
+        ec.code = IDBDatabaseException::ReadOnlyError;
+        ec.message = ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The record may not be updated inside a read-only transaction.");
         return nullptr;
     }
 
     if (!m_gotValue) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return nullptr;
     }
 
     if (isKeyCursor()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor.");
         return nullptr;
     }
 
+    auto& objectStore = effectiveObjectStore();
+    auto& keyPath = objectStore.info().keyPath();
+    const bool usesInLineKeys = !keyPath.isNull();
+    if (usesInLineKeys) {
+        RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(exec, value, keyPath);
+        IDBKeyData keyPathKeyData(keyPathKey.get());
+        if (!keyPathKey || keyPathKeyData != m_currentPrimaryKeyData) {
+            ec.code = IDBDatabaseException::DataError;
+            ec.message = ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key.");
+            return nullptr;
+        }
+    }
+
     auto request = effectiveObjectStore().putForCursorUpdate(exec, value.jsValue(), m_deprecatedCurrentPrimaryKey.jsValue(), ec);
+    if (ec.code)
+        return nullptr;
+
+    ASSERT(request);
     request->setSource(*this);
     return request;
 }
@@ -166,11 +186,13 @@ void IDBCursor::advance(unsigned long count, ExceptionCodeWithMessage& ec)
 
     if (!transaction().isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
+        ec.message = ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': The transaction is inactive or finished.");
         return;
     }
 
     if (!m_gotValue) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'advance' on 'IDBCursor': The cursor is being iterated or has iterated past its end.");
         return;
     }
 
@@ -179,20 +201,20 @@ void IDBCursor::advance(unsigned long count, ExceptionCodeWithMessage& ec)
     uncheckedIteratorCursor(IDBKeyData(), count);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext* context, ExceptionCode& ec)
+void IDBCursor::continueFunction(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
 {
     if (!context) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
     continueFunction(IDBKeyData(), ec);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCodeWithMessage& ec)
 {
     if (!context) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
@@ -201,42 +223,47 @@ void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecat
     continueFunction(key.get(), ec);
 }
 
-void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCode& ec)
+void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::continueFunction");
 
     if (!m_request) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
     if (sourcesDeleted()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return;
     }
 
     if (!transaction().isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
+        ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The transaction is inactive or finished.");
         return;
     }
 
     if (!m_gotValue) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The cursor is being iterated or has iterated past its end.");
         return;
     }
 
     if (!key.isNull() && !key.isValid()) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
+        ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The parameter is not a valid key.");
         return;
     }
 
     if (m_info.isDirectionForward()) {
         if (!key.isNull() && key.compare(m_currentPrimaryKeyData) <= 0) {
-            ec = IDBDatabaseException::DataError;
+            ec.code = IDBDatabaseException::DataError;
+            ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The parameter is less than or equal to this cursor's position.");
             return;
         }
     } else if (!key.isNull() && key.compare(m_currentPrimaryKeyData) >= 0) {
-        ec = IDBDatabaseException::DataError;
+        ec.code = IDBDatabaseException::DataError;
+        ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The parameter is greater than or equal to this cursor's position.");
         return;
     }
 
@@ -251,32 +278,40 @@ void IDBCursor::uncheckedIteratorCursor(const IDBKeyData& key, unsigned long cou
     transaction().iterateCursor(*this, key, count);
 }
 
-RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<WebCore::IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCodeWithMessage& ec)
 {
     LOG(IndexedDB, "IDBCursor::deleteFunction");
 
     if (!context) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return nullptr;
     }
 
     if (sourcesDeleted()) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
         return nullptr;
     }
 
     if (!transaction().isActive()) {
-        ec = IDBDatabaseException::TransactionInactiveError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
+        ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBCursor': The transaction is inactive or finished.");
         return nullptr;
     }
 
     if (transaction().isReadOnly()) {
-        ec = IDBDatabaseException::ReadOnlyError;
+        ec.code = IDBDatabaseException::ReadOnlyError;
+        ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBCursor': The record may not be deleted inside a read-only transaction.");
         return nullptr;
     }
 
     if (!m_gotValue) {
-        ec = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::InvalidStateError;
+        return nullptr;
+    }
+
+    if (isKeyCursor()) {
+        ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'delete' on 'IDBCursor': The cursor is a key cursor.");
         return nullptr;
     }
 

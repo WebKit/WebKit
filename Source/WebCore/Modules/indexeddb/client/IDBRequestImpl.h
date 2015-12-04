@@ -60,9 +60,9 @@ public:
 
     virtual ~IDBRequest() override;
 
-    virtual RefPtr<WebCore::IDBAny> result(ExceptionCode&) const override;
+    virtual RefPtr<WebCore::IDBAny> result(ExceptionCodeWithMessage&) const override;
     virtual unsigned short errorCode(ExceptionCode&) const override;
-    virtual RefPtr<DOMError> error(ExceptionCode&) const override;
+    virtual RefPtr<DOMError> error(ExceptionCodeWithMessage&) const override;
     virtual RefPtr<WebCore::IDBAny> source() const override;
     virtual RefPtr<WebCore::IDBTransaction> transaction() const override;
     virtual const String& readyState() const override;

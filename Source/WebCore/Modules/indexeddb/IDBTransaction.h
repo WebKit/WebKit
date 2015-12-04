@@ -44,6 +44,8 @@ class IDBDatabaseBackend;
 class IDBDatabaseError;
 class IDBObjectStore;
 class IDBOpenDBRequest;
+
+struct ExceptionCodeWithMessage;
 struct IDBObjectStoreMetadata;
 
 class IDBTransaction : public ScriptWrappable, public RefCounted<IDBTransaction>, public EventTargetWithInlineData, public ActiveDOMObject {
@@ -63,8 +65,8 @@ public:
     virtual const String& mode() const = 0;
     virtual IDBDatabase* db() = 0;
     virtual RefPtr<DOMError> error() const = 0;
-    virtual RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&) = 0;
-    virtual void abort(ExceptionCode&) = 0;
+    virtual RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&) = 0;
+    virtual void abort(ExceptionCodeWithMessage&) = 0;
 
     using RefCounted<IDBTransaction>::ref;
     using RefCounted<IDBTransaction>::deref;

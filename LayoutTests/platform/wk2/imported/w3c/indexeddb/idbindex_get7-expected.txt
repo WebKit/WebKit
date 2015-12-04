@@ -1,0 +1,5 @@
+
+FAIL IDBIndex.get() - throw TransactionInactiveError on aborted transaction assert_throws: function "function (){
+            index.get("data");
+        }" threw object "Error: A request was placed against a transaction which i..." that is not a DOMException InvalidStateError: property "code" is equal to 0, expected 11
+
