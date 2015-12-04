@@ -74,6 +74,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirCCallSpecial.cpp
     b3/air/AirCode.cpp
     b3/air/AirEliminateDeadCode.cpp
+    b3/air/AirFixPartialRegisterStalls.cpp
     b3/air/AirGenerate.cpp
     b3/air/AirGenerated.cpp
     b3/air/AirHandleCalleeSaves.cpp

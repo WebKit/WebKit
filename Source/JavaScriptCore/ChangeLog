@@ -1,5 +1,14 @@
 2015-12-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [cmake] Fix the B3 build after r192946
+        https://bugs.webkit.org/show_bug.cgi?id=151857
+
+        Reviewed by Michael Saboff.
+
+        * CMakeLists.txt:
+
+2015-12-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         [AArch64] Typo fix after r189575
         https://bugs.webkit.org/show_bug.cgi?id=151855
 
