@@ -1,5 +1,90 @@
 2015-12-03  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r189427. rdar://problem/23732393
+
+    2015-09-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Rename members of CanvasRenderingContext2D::State
+            https://bugs.webkit.org/show_bug.cgi?id=148889
+
+            Reviewed by Tim Horton.
+
+            CanvasRenderingContext2D::State is a struct, so its members should not start with m_.
+
+            No new tests because there is no behavior change.
+
+            * html/canvas/CanvasRenderingContext2D.cpp:
+            (WebCore::CanvasRenderingContext2D::State::State):
+            (WebCore::CanvasRenderingContext2D::State::operator=):
+            (WebCore::CanvasRenderingContext2D::restore):
+            (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+            (WebCore::CanvasRenderingContext2D::setFillStyle):
+            (WebCore::CanvasRenderingContext2D::lineWidth):
+            (WebCore::CanvasRenderingContext2D::setLineWidth):
+            (WebCore::CanvasRenderingContext2D::lineCap):
+            (WebCore::CanvasRenderingContext2D::setLineCap):
+            (WebCore::CanvasRenderingContext2D::lineJoin):
+            (WebCore::CanvasRenderingContext2D::setLineJoin):
+            (WebCore::CanvasRenderingContext2D::miterLimit):
+            (WebCore::CanvasRenderingContext2D::setMiterLimit):
+            (WebCore::CanvasRenderingContext2D::shadowOffsetX):
+            (WebCore::CanvasRenderingContext2D::setShadowOffsetX):
+            (WebCore::CanvasRenderingContext2D::shadowOffsetY):
+            (WebCore::CanvasRenderingContext2D::setShadowOffsetY):
+            (WebCore::CanvasRenderingContext2D::shadowBlur):
+            (WebCore::CanvasRenderingContext2D::setShadowBlur):
+            (WebCore::CanvasRenderingContext2D::shadowColor):
+            (WebCore::CanvasRenderingContext2D::setShadowColor):
+            (WebCore::CanvasRenderingContext2D::getLineDash):
+            (WebCore::CanvasRenderingContext2D::setLineDash):
+            (WebCore::CanvasRenderingContext2D::setWebkitLineDash):
+            (WebCore::CanvasRenderingContext2D::lineDashOffset):
+            (WebCore::CanvasRenderingContext2D::setLineDashOffset):
+            (WebCore::CanvasRenderingContext2D::applyLineDash):
+            (WebCore::CanvasRenderingContext2D::globalAlpha):
+            (WebCore::CanvasRenderingContext2D::setGlobalAlpha):
+            (WebCore::CanvasRenderingContext2D::globalCompositeOperation):
+            (WebCore::CanvasRenderingContext2D::setGlobalCompositeOperation):
+            (WebCore::CanvasRenderingContext2D::scale):
+            (WebCore::CanvasRenderingContext2D::rotate):
+            (WebCore::CanvasRenderingContext2D::translate):
+            (WebCore::CanvasRenderingContext2D::transform):
+            (WebCore::CanvasRenderingContext2D::setTransform):
+            (WebCore::CanvasRenderingContext2D::setStrokeColor):
+            (WebCore::CanvasRenderingContext2D::setFillColor):
+            (WebCore::CanvasRenderingContext2D::fillInternal):
+            (WebCore::CanvasRenderingContext2D::strokeInternal):
+            (WebCore::CanvasRenderingContext2D::clipInternal):
+            (WebCore::CanvasRenderingContext2D::isPointInPathInternal):
+            (WebCore::CanvasRenderingContext2D::isPointInStrokeInternal):
+            (WebCore::CanvasRenderingContext2D::clearRect):
+            (WebCore::CanvasRenderingContext2D::fillRect):
+            (WebCore::CanvasRenderingContext2D::strokeRect):
+            (WebCore::CanvasRenderingContext2D::setShadow):
+            (WebCore::CanvasRenderingContext2D::applyShadow):
+            (WebCore::CanvasRenderingContext2D::shouldDrawShadows):
+            (WebCore::CanvasRenderingContext2D::drawImage):
+            (WebCore::CanvasRenderingContext2D::transformAreaToDevice):
+            (WebCore::CanvasRenderingContext2D::rectContainsCanvas):
+            (WebCore::CanvasRenderingContext2D::compositeBuffer):
+            (WebCore::CanvasRenderingContext2D::didDraw):
+            (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal):
+            (WebCore::CanvasRenderingContext2D::font):
+            (WebCore::CanvasRenderingContext2D::setFont):
+            (WebCore::CanvasRenderingContext2D::textAlign):
+            (WebCore::CanvasRenderingContext2D::setTextAlign):
+            (WebCore::CanvasRenderingContext2D::textBaseline):
+            (WebCore::CanvasRenderingContext2D::setTextBaseline):
+            (WebCore::CanvasRenderingContext2D::direction):
+            (WebCore::CanvasRenderingContext2D::setDirection):
+            (WebCore::CanvasRenderingContext2D::drawTextInternal):
+            (WebCore::CanvasRenderingContext2D::inflateStrokeRect):
+            (WebCore::CanvasRenderingContext2D::imageSmoothingEnabled):
+            (WebCore::CanvasRenderingContext2D::setImageSmoothingEnabled):
+            * html/canvas/CanvasRenderingContext2D.h:
+
+2015-12-03  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188194. rdar://problem/23732393
 
     2015-08-08  Dean Jackson  <dino@apple.com>
