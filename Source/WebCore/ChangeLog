@@ -1,5 +1,32 @@
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r191651. rdar://problem/23581597
+
+    2015-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Remove Timeline MarkDOMContent and MarkLoad, data is already available
+            https://bugs.webkit.org/show_bug.cgi?id=150615
+
+            Reviewed by Timothy Hatcher.
+
+            The timestamp only event data is already available from `Page.domContentEventFired`
+            and `Page.loadEventFired` events. We can drop the Timeline specific events in
+            favor of these which have existed for a very long time (before iOS 7).
+
+            * inspector/InspectorInstrumentation.cpp:
+            (WebCore::InspectorInstrumentation::loadEventFiredImpl):
+            (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl): Deleted.
+            * inspector/InspectorTimelineAgent.cpp:
+            (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent): Deleted.
+            (WebCore::InspectorTimelineAgent::didMarkLoadEvent): Deleted.
+            (WebCore::toProtocol): Deleted.
+            * inspector/InspectorTimelineAgent.h:
+            * inspector/TimelineRecordFactory.cpp:
+            (WebCore::TimelineRecordFactory::createMarkData): Deleted.
+            * inspector/TimelineRecordFactory.h:
+
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
         Merge r189104. rdar://problem/23581597
 
     2015-08-28  Joseph Pecoraro  <pecoraro@apple.com>

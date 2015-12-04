@@ -21,8 +21,6 @@
                 "TimerRemove",
                 "TimerFire",
                 "EvaluateScript",
-                "MarkLoad",
-                "MarkDOMContent",
                 "TimeStamp",
                 "Time",
                 "TimeEnd",

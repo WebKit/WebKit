@@ -255,7 +255,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             this.refresh();
         }
 
-        let selector = this._node.appropriateSelectorFor(true);
+        var selector = this._node.appropriateSelectorFor(true);
 
         // COMPATIBILITY (iOS 9): Before CSS.createStyleSheet, CSS.addRule could be called with a contextNode.
         if (!CSSAgent.createStyleSheet) {
