@@ -113,7 +113,8 @@ function test()
         {expression: "input = document.createElement('input'); input.type = 'password'; input"},
         {expression: "text = document.createTextNode('text content'); text"},
         {expression: "comment = document.createComment('comment content'); comment"},
-        {expression: "[document.body, div, span, input, text, comment]"},
+        {expression: "svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect'); svgElement.classList.add('test'); svgElement"},
+        {expression: "[document.body, div, span, input, text, comment, svgElement]"},
 
         // Node Collections (NodeLists / Collections)
         {expression: "document.all", browserOnly: true}, // HTMLAllCollection

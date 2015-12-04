@@ -1826,20 +1826,64 @@ EXPRESSION: comment = document.createComment('comment content'); comment
 }
 
 -----------------------------------------------------
-EXPRESSION: [document.body, div, span, input, text, comment]
+EXPRESSION: svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect'); svgElement.classList.add('test'); svgElement
+{
+  "_type": "object",
+  "_subtype": "node",
+  "_objectId": "<filtered>",
+  "_description": "rect.test",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "node",
+    "_description": "rect.test",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "x",
+        "_type": "object",
+        "_value": "SVGAnimatedLength"
+      },
+      {
+        "_name": "y",
+        "_type": "object",
+        "_value": "SVGAnimatedLength"
+      },
+      {
+        "_name": "width",
+        "_type": "object",
+        "_value": "SVGAnimatedLength"
+      },
+      {
+        "_name": "height",
+        "_type": "object",
+        "_value": "SVGAnimatedLength"
+      },
+      {
+        "_name": "rx",
+        "_type": "object",
+        "_value": "SVGAnimatedLength"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [document.body, div, span, input, text, comment, svgElement]
 {
   "_type": "object",
   "_subtype": "array",
   "_objectId": "<filtered>",
   "_description": "Array",
-  "_size": 6,
+  "_size": 7,
   "_preview": {
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
     "_lossless": false,
     "_overflow": false,
-    "_size": 6,
+    "_size": 7,
     "_properties": [
       {
         "_name": "0",
@@ -1876,6 +1920,12 @@ EXPRESSION: [document.body, div, span, input, text, comment]
         "_type": "object",
         "_subtype": "node",
         "_value": "<!--comment content-->"
+      },
+      {
+        "_name": "6",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "<rect class=\"test\">"
       }
     ],
     "_entries": null

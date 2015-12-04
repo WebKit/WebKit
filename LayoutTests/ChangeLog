@@ -1,5 +1,19 @@
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r187897. rdar://problem/23581597
+
+    2015-08-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Object previews for SVG elements shows SVGAnimatedString instead of text
+            https://bugs.webkit.org/show_bug.cgi?id=147328
+
+            Reviewed by Timothy Hatcher.
+
+            * inspector/model/remote-object-expected.txt:
+            * inspector/model/remote-object.html:
+
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
         Merge r192592. rdar://problem/23581597
 
     2015-11-18  Joseph Pecoraro  <pecoraro@apple.com>
