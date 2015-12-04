@@ -1005,6 +1005,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         }
     }
 
+    [_contentView _setDoubleTapGesturesEnabled:[_scrollView isZoomEnabled] && [_scrollView minimumZoomScale] < [_scrollView maximumZoomScale]];
+
     [self _updateScrollViewBackground];
 
     if (_gestureController)
