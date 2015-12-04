@@ -114,6 +114,8 @@ public:
     // Functions for use after parsing.
     bool sawError() const { return m_error; }
     String getErrorMessage() const { return m_lexErrorMessage; }
+    String sourceURL() const { return m_sourceURLDirective; }
+    String sourceMappingURL() const { return m_sourceMappingURLDirective; }
     void clear();
     void setOffset(int offset, int lineStartOffset)
     {
@@ -139,8 +141,6 @@ public:
     {
         m_terminator = terminator;
     }
-
-    SourceProvider* sourceProvider() const { return m_source->provider(); }
 
     JSTokenType lexExpectIdentifier(JSToken*, unsigned, bool strictMode);
 
@@ -178,6 +178,8 @@ private:
     ALWAYS_INLINE const Identifier* makeEmptyIdentifier();
 
     ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
+    
+    ALWAYS_INLINE void skipWhitespace();
 
     template <int shiftAmount> void internalShift();
     template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
@@ -204,6 +206,12 @@ private:
     ALWAYS_INLINE bool parseNumberAfterExponentIndicator();
     ALWAYS_INLINE bool parseMultilineComment();
 
+    ALWAYS_INLINE void parseCommentDirective();
+    ALWAYS_INLINE String parseCommentDirectiveValue();
+
+    template <unsigned length>
+    ALWAYS_INLINE bool consume(const char (&input)[length]);
+
     static const size_t initialReadBufferCapacity = 32;
 
     int m_lineNumber;
@@ -228,6 +236,9 @@ private:
     bool m_atLineStart;
     bool m_error;
     String m_lexErrorMessage;
+
+    String m_sourceURLDirective;
+    String m_sourceMappingURLDirective;
 
     T m_current;
 

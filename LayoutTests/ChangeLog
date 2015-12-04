@@ -1,5 +1,20 @@
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r191355. rdar://problem/23581597
+
+    2015-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: JavaScriptCore should parse sourceURL and sourceMappingURL directives
+            https://bugs.webkit.org/show_bug.cgi?id=150096
+
+            Reviewed by Geoffrey Garen.
+
+            * inspector/debugger/sourceURLs-expected.txt: Added.
+            * inspector/debugger/sourceURLs.html: Added.
+            sourceURL and sourceMappingURL detection.
+
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188403. rdar://problem/23581597
 
     2015-08-13  Joseph Pecoraro  <pecoraro@apple.com>
