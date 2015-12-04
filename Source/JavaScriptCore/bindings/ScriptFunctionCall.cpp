@@ -140,7 +140,8 @@ Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
         result = JSC::call(m_exec, function, callType, callData, thisObject, m_arguments, exception);
 
     if (exception) {
-        hadException = true;
+        // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.
+        hadException = !isTerminatedExecutionException(exception);
         return Deprecated::ScriptValue();
     }
 

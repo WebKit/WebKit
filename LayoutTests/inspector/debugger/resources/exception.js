@@ -5,7 +5,7 @@ function exceptionBasic()
 
 function exceptionDOM()
 {
-    document.body.appendChild(0);
+    document.body.removeChild(document.createElement("span"));
 }
 
 function throwString()

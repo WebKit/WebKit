@@ -1,5 +1,24 @@
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unskip many inspector/debugger tests
+        https://bugs.webkit.org/show_bug.cgi?id=151843
+
+        Reviewed by Timothy Hatcher.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        Skip specific tests.
+
+        * platform/mac-wk2/TestExpectations:
+        Test no longer existed.
+
+        * inspector/debugger/resources/exception.js:
+        (exceptionDOM):
+        Keep the code outputing a NotFoundException. This particular
+        invocation was recently changed to throw a TypeError.
+
+2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove untested and unused Worker inspection
         https://bugs.webkit.org/show_bug.cgi?id=151848
 

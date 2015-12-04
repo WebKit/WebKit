@@ -743,9 +743,16 @@ webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.
 webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 
-# webkit.org/b/100846, webkit.org/b/136715, webkit.org/b/148642, webkit.org/b/148654
-inspector/debugger
-inspector/dom-debugger/node-removed.html
+webkit.org/b/151832 inspector/debugger/break-on-uncaught-exception-throw-in-promise-rethrow-in-catch.html
+webkit.org/b/151832 inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-with-catch.html
+webkit.org/b/151832 inspector/debugger/break-on-uncaught-exception-throw-in-promise-then.html
+webkit.org/b/151832 inspector/debugger/break-on-uncaught-exception-throw-in-promise-with-catch.html
+webkit.org/b/151832 inspector/debugger/break-on-uncaught-exception-throw-in-promise.html
+inspector/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html
+inspector/debugger/didSampleProbe-multiple-probes.html
+inspector/debugger/nested-inspectors.html
+inspector/debugger/pause-reason.html
+inspector/debugger/regress-133182.html
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
 

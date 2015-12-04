@@ -1,5 +1,17 @@
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unskip many inspector/debugger tests
+        https://bugs.webkit.org/show_bug.cgi?id=151843
+
+        Reviewed by Timothy Hatcher.
+
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        Ignore TerminationExceptions, as those aren't real execution
+        exceptions and may be seen on Workers that have closed.
+
+2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove untested and unused Worker inspection
         https://bugs.webkit.org/show_bug.cgi?id=151848
 

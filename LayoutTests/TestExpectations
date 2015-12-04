@@ -126,7 +126,6 @@ webkit.org/b/148036 http/tests/inspector/replay/ [ Skip ]
 
 webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 
-webkit.org/b/133761 inspector/debugger/breakpoint-action-detach.html [ Skip ]
 webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-rethrow-in-catch.html [ Skip ]
 webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-with-catch.html [ Skip ]
 webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-then.html [ Skip ]
