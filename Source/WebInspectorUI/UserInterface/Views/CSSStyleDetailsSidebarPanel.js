@@ -91,7 +91,12 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         this._filterBar = new WebInspector.FilterBar;
         this._filterBar.placeholder = WebInspector.UIString("Filter Styles");
         this._filterBar.addEventListener(WebInspector.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
-        this.element.appendChild(this._filterBar.element);
+        optionsContainer.appendChild(this._filterBar.element);
+
+        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this.refresh, this);
+        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetRemoved, this.refresh, this);
+
+        this.element.appendChild(optionsContainer);
     }
 
     // Public

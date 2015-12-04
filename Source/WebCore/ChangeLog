@@ -1,5 +1,76 @@
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r189002. rdar://problem/23581597
+
+    2015-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Implement tracking of active stylesheets in the frontend
+            https://bugs.webkit.org/show_bug.cgi?id=105828
+
+            Reviewed by Timothy Hatcher.
+
+            Tests: inspector/css/stylesheet-events-basic.html
+                   inspector/css/stylesheet-events-imports.html
+                   inspector/css/stylesheet-events-inspector-stylesheet.html
+
+            * inspector/InspectorInstrumentation.cpp:
+            (WebCore::InspectorInstrumentation::documentDetachedImpl):
+            (WebCore::InspectorInstrumentation::activeStyleSheetsUpdatedImpl):
+            * inspector/InspectorInstrumentation.h:
+            (WebCore::InspectorInstrumentation::documentDetached):
+            (WebCore::InspectorInstrumentation::activeStyleSheetsUpdated):
+            New hooks for when a document is detached or a document's style sheets are updated.
+
+            * dom/Document.cpp:
+            (WebCore::Document::prepareForDestruction):
+            Inform the inspector so the CSSAgent can remove document related data.
+
+            * dom/DocumentStyleSheetCollection.h:
+            * dom/DocumentStyleSheetCollection.cpp:
+            (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+            Inform the inspector so the CSSAgent can push stylesheet related events.
+
+            (WebCore::DocumentStyleSheetCollection::activeStyleSheetsForInspector): Added.
+            CSSStyleSheets for the inspector include non-disabled author stylesheets
+            even if they are empty.
+
+            * inspector/InspectorCSSAgent.h:
+            * inspector/InspectorCSSAgent.cpp:
+            (WebCore::InspectorCSSAgent::reset):
+            (WebCore::InspectorCSSAgent::documentDetached):
+            Handling for the new list of known document to CSSStyleSheets map.
+
+            (WebCore::InspectorCSSAgent::enable):
+            When the CSS domain is enabled, tell the frontend about known stylesheets.
+
+            (WebCore::InspectorCSSAgent::activeStyleSheetsUpdated):
+            (WebCore::InspectorCSSAgent::setActiveStyleSheetsForDocument):
+            Diff the old list of known stylesheets to the new list of stylesheets
+            for an individual document. Then send appropriate added/removed events.
+
+            (WebCore::InspectorCSSAgent::collectAllStyleSheets):
+            (WebCore::InspectorCSSAgent::collectAllDocumentStyleSheets):
+            (WebCore::InspectorCSSAgent::collectStyleSheets):
+            Collect stylesheets recursively. A stylesheet may link to other stylesheets
+            through @import statements.
+
+            (WebCore::InspectorCSSAgent::getAllStyleSheets):
+            Use the new methods, this command should go away as it will no longer be useful.
+
+            (WebCore::InspectorCSSAgent::unbindStyleSheet):
+            (WebCore::InspectorCSSAgent::bindStyleSheet):
+            Create an InspectorStyleSheet from a CSSStyleSheet and add to the appropriate lists.
+            Likewise, unbinding will remove from the appropriate lists.
+
+            (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+            (WebCore::InspectorCSSAgent::detectOrigin):
+            When creating the inspector stylesheet, which is a <style> element,
+            it will push a StyleSheetAdded event. In the process of binding this
+            new stylesheet use the m_creatingViaInspectorStyleSheet to add it to
+            out list of Inspector Stylesheets.
+
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
         Merge r188631. rdar://problem/23581597
 
     2015-08-18  Joseph Pecoraro  <pecoraro@apple.com>

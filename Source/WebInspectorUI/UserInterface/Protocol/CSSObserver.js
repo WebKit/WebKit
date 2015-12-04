@@ -37,14 +37,14 @@ WebInspector.CSSObserver = class CSSObserver
         WebInspector.cssStyleManager.styleSheetChanged(styleSheetId);
     }
 
-    styleSheetAdded(header)
+    styleSheetAdded(styleSheetInfo)
     {
-        // FIXME: Not implemented. <rdar://problem/13213680>
+        WebInspector.cssStyleManager.styleSheetAdded(styleSheetInfo);
     }
 
-    styleSheetRemoved(header)
+    styleSheetRemoved(id)
     {
-        // FIXME: Not implemented. <rdar://problem/13213680>
+        WebInspector.cssStyleManager.styleSheetRemoved(id);
     }
 
     namedFlowCreated(namedFlow)

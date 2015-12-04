@@ -389,6 +389,20 @@
             "description": "Fired whenever a stylesheet is changed as a result of the client operation."
         },
         {
+            "name": "styleSheetAdded",
+            "parameters": [
+                { "name": "header", "$ref": "CSSStyleSheetHeader", "description": "Added stylesheet metainfo." }
+            ],
+            "description": "Fired whenever an active document stylesheet is added."
+        },
+        {
+            "name": "styleSheetRemoved",
+            "parameters": [
+                { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Identifier of the removed stylesheet." }
+            ],
+            "description": "Fired whenever an active document stylesheet is removed."
+        },
+        {
             "name": "namedFlowCreated",
             "parameters": [
                 { "name": "namedFlow", "$ref": "NamedFlow", "description": "The new Named Flow." }

@@ -613,7 +613,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
     _pauseReasonFromPayload(payload)
     {
-        // FIXME: Handle other backend pause seasons.
+        // FIXME: Handle other backend pause reasons.
         switch (payload) {
         case DebuggerAgent.PausedReason.Assert:
             return WebInspector.DebuggerManager.PauseReason.Assertion;

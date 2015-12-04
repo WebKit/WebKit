@@ -122,8 +122,10 @@ public:
     static void didRemoveDOMAttr(Document&, Element&, const AtomicString& name);
     static void characterDataModified(Document&, CharacterData&);
     static void didInvalidateStyleAttr(Document&, Node&);
+    static void documentDetached(Document&);
     static void frameWindowDiscarded(Frame*, DOMWindow*);
     static void mediaQueryResultChanged(Document&);
+    static void activeStyleSheetsUpdated(Document&);
     static void didPushShadowRoot(Element& host, ShadowRoot&);
     static void willPopShadowRoot(Element& host, ShadowRoot&);
     static void pseudoElementCreated(Page*, PseudoElement&);
@@ -303,8 +305,10 @@ private:
     static void didRemoveDOMAttrImpl(InstrumentingAgents&, Element&, const AtomicString& name);
     static void characterDataModifiedImpl(InstrumentingAgents&, CharacterData&);
     static void didInvalidateStyleAttrImpl(InstrumentingAgents&, Node&);
+    static void documentDetachedImpl(InstrumentingAgents&, Document&);
     static void frameWindowDiscardedImpl(InstrumentingAgents&, DOMWindow*);
     static void mediaQueryResultChangedImpl(InstrumentingAgents&);
+    static void activeStyleSheetsUpdatedImpl(InstrumentingAgents&, Document&);
     static void didPushShadowRootImpl(InstrumentingAgents&, Element& host, ShadowRoot&);
     static void willPopShadowRootImpl(InstrumentingAgents&, Element& host, ShadowRoot&);
     static void pseudoElementCreatedImpl(InstrumentingAgents&, PseudoElement&);
@@ -542,6 +546,13 @@ inline void InspectorInstrumentation::didInvalidateStyleAttr(Document& document,
         didInvalidateStyleAttrImpl(*instrumentingAgents, node);
 }
 
+inline void InspectorInstrumentation::documentDetached(Document& document)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        documentDetachedImpl(*instrumentingAgents, document);
+}
+
 inline void InspectorInstrumentation::frameWindowDiscarded(Frame* frame, DOMWindow* domWindow)
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
@@ -553,6 +564,13 @@ inline void InspectorInstrumentation::mediaQueryResultChanged(Document& document
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         mediaQueryResultChangedImpl(*instrumentingAgents);
+}
+
+inline void InspectorInstrumentation::activeStyleSheetsUpdated(Document& document)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        activeStyleSheetsUpdatedImpl(*instrumentingAgents, document);
 }
 
 inline void InspectorInstrumentation::didPushShadowRoot(Element& host, ShadowRoot& root)
