@@ -973,7 +973,7 @@ std::unique_ptr<RegisterAtOffsetList> parseUnwindInfo(void* section, size_t size
                 registerOffsets->append(RegisterAtOffset(ARM64Registers::q20, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v21:
-                append(RegisterAtOffset(ARM64Registers::q21, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
+                registerOffsets->append(RegisterAtOffset(ARM64Registers::q21, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));
                 break;
             case UNW_ARM64_v22:
                 registerOffsets->append(RegisterAtOffset(ARM64Registers::q22, prolog.savedRegisters[i].offset + prolog.cfaRegisterOffset));

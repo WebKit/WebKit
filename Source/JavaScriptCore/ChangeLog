@@ -1,3 +1,13 @@
+2015-12-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [AArch64] Typo fix after r189575
+        https://bugs.webkit.org/show_bug.cgi?id=151855
+
+        Reviewed by Michael Saboff.
+
+        * ftl/FTLUnwindInfo.cpp:
+        (JSC::FTL::parseUnwindInfo):
+
 2015-12-03  Filip Pizlo  <fpizlo@apple.com>
 
         B3 Patchpoint and Check opcodes should be able to specify WarmAny, ColdAny, and LateColdAny
