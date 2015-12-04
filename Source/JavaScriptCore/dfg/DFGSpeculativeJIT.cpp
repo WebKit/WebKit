@@ -1494,8 +1494,9 @@ void SpeculativeJIT::compileCurrentBlock()
                 m_currentNode->origin.semantic.bytecodeIndex, m_jit.debugOffset());
             dataLog("\n");
         }
-        
-        m_jit.jitAssertNoException();
+
+        if (Options::validateDFGExceptionHandling() && mayExit(m_jit.graph(), m_currentNode) != DoesNotExit)
+            m_jit.jitReleaseAssertNoException();
 
         compile(m_currentNode);
         

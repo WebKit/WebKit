@@ -252,6 +252,9 @@ static void scaleJITPolicy()
 
 static void recomputeDependentOptions()
 {
+#if !defined(NDEBUG)
+    Options::validateDFGExceptionHandling() = true;
+#endif
 #if !ENABLE(JIT)
     Options::useLLInt() = true;
     Options::useJIT() = false;

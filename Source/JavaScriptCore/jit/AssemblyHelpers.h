@@ -995,7 +995,6 @@ public:
     void jitAssertIsNull(GPRReg);
     void jitAssertTagsInPlace();
     void jitAssertArgumentCountSane();
-    void jitAssertNoException();
 #else
     void jitAssertIsInt32(GPRReg) { }
     void jitAssertIsJSInt32(GPRReg) { }
@@ -1006,8 +1005,9 @@ public:
     void jitAssertIsNull(GPRReg) { }
     void jitAssertTagsInPlace() { }
     void jitAssertArgumentCountSane() { }
-    void jitAssertNoException() { }
 #endif
+
+    void jitReleaseAssertNoException();
     
     void purifyNaN(FPRReg);
 

@@ -299,7 +299,9 @@ void AssemblyHelpers::jitAssertArgumentCountSane()
     ok.link(this);
 }
 
-void AssemblyHelpers::jitAssertNoException()
+#endif // !ASSERT_DISABLED
+
+void AssemblyHelpers::jitReleaseAssertNoException()
 {
     Jump noException;
 #if USE(JSVALUE64)
@@ -310,8 +312,6 @@ void AssemblyHelpers::jitAssertNoException()
     abortWithReason(JITUncoughtExceptionAfterCall);
     noException.link(this);
 }
-
-#endif // !ASSERT_DISABLED
 
 void AssemblyHelpers::callExceptionFuzz()
 {

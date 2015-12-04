@@ -1,3 +1,25 @@
+2015-12-04  Keith Miller  <keith_miller@apple.com>
+
+        Add an option to emit instructions validating exceptions in the DFG rather than always emiting them.
+        https://bugs.webkit.org/show_bug.cgi?id=151841
+
+        Reviewed by Saam Barati.
+
+        Add a new option that validates the DFG execption checking. The default value for the option is
+        true in Debug builds and false in Release builds. Additionally, renamed jitAssertNoException to
+        jitReleaseAssertNoException for consistency with our ASSERT naming convention.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitReleaseAssertNoException):
+        (JSC::AssemblyHelpers::jitAssertNoException): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::jitAssertNoException): Deleted.
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2015-12-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(DFG_JIT) build after r190735
