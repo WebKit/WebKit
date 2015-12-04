@@ -925,6 +925,8 @@ private:
         }
             
         case NewArray: {
+            watchHavingABadTime(node);
+            
             for (unsigned i = m_graph.varArgNumChildren(node); i--;) {
                 node->setIndexingType(
                     leastUpperBoundOfIndexingTypeAndType(
@@ -962,6 +964,8 @@ private:
         }
             
         case NewTypedArray: {
+            watchHavingABadTime(node);
+            
             if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
                 node->clearFlags(NodeMustGenerate);
@@ -971,6 +975,7 @@ private:
         }
             
         case NewArrayWithSize: {
+            watchHavingABadTime(node);
             fixEdge<Int32Use>(node->child1());
             break;
         }
@@ -1449,6 +1454,20 @@ private:
             break;
 #endif
         }
+    }
+
+    void watchHavingABadTime(Node* node)
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+
+        // If this global object is not having a bad time, watch it. We go down this path anytime the code
+        // does an array allocation. The types of array allocations may change if we start to have a bad
+        // time. It's easier to reason about this if we know that whenever the types change after we start
+        // optimizing, the code just gets thrown out. Doing this at FixupPhase is just early enough, since
+        // prior to this point nobody should have been doing optimizations based on the indexing type of
+        // the allocation.
+        if (!globalObject->isHavingABadTime())
+            m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
     }
     
     template<UseKind useKind>

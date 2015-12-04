@@ -949,7 +949,15 @@ struct Node {
             return false;
         }
     }
-    
+
+    // Return the indexing type that an array allocation *wants* to use. It may end up using a different
+    // type if we're having a bad time. You can determine the actual indexing type by asking the global
+    // object:
+    //
+    //     m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())
+    //
+    // This will give you a Structure*, and that will have some indexing type that may be different from
+    // the this one.
     IndexingType indexingType()
     {
         ASSERT(hasIndexingType());

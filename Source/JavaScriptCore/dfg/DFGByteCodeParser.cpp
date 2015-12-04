@@ -2418,13 +2418,6 @@ bool ByteCodeParser::handleConstantInternalFunction(
     if (verbose)
         dataLog("    Handling constant internal function ", JSValue(function), "\n");
     
-    // If we ever find that we have a lot of internal functions that we specialize for,
-    // then we should probably have some sort of hashtable dispatch, or maybe even
-    // dispatch straight through the MethodTable of the InternalFunction. But for now,
-    // it seems that this case is hit infrequently enough, and the number of functions
-    // we know about is small enough, that having just a linear cascade of if statements
-    // is good enough.
-    
     if (function->classInfo() == ArrayConstructor::info()) {
         if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
             return false;

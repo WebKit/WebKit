@@ -1,3 +1,64 @@
+2015-12-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Having a bad time has a really awful time when it runs at the same time as the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=151882
+        rdar://problem/23547038
+
+        Reviewed by Geoffrey Garen.
+
+        The DFG's use of watchpoints for havingABadTime goes back a long time. We introduced this feature
+        when we first introduced watchpoints. That left it open to a lot of bitrot. On top of that, this
+        code doesn't get tested much because having a bad time is not something that is really supposed to
+        happen.
+
+        Well, now I've got reports that it does happen - or at least, we know that it is because of
+        crashes in an assertion that could only be triggered if a bad time was had. In the meantime, we
+        added two new features without adequately testing havingABadTime: concurrent JIT and FTL.
+        Concurrency means that we have to worry about the havingABadTime watchpoint triggering during
+        compilation. FTL means that we have new code and new optimizations that needs to deal with this
+        feature correctly.
+
+        The bug can arise via race condition or just goofy profiling. As in the newly added test, we could
+        first profile an allocation thinking that it will allocate sane arrays. Then we might have a bad
+        time, and then compile that function with the FTL. The ByteCodeParser will represent the
+        allocation with a NewArray node that has a sane indexingType(). But when we go to lower the Node,
+        we observe that the Structure* that the JSGlobalObject tells us to use has a different indexing
+        type. This is a feature of havingABadTime that the DFG knew about, but the FTL didn't. The FTL
+        didn't know about it because we didn't have adequate tests, and this code rarely gets triggered in
+        the wild. So, the FTL had a silly assertion that the indexing types match. They absolutely don't
+        have to match.
+
+        There is another bug, a race condition, that remains even if we remove the bad assertion. We set
+        the havingABadTime watchpoint late in compilation, and we do it based on whether the watchpoint is
+        still OK. This means that we could parse a function before we have a bad time and then do
+        optimizations (for example in AbstractInterpreter) like proving that the structure set associated
+        with the value returned by the NewArray is the one with a sane indexing type. Then, after those
+        optimizations have already been done, we will go to set the watchpoint. But just as we are doing
+        this, we could haveABadTime on the main thread. Currently this sort of almost works because
+        having a bad time requires doing a GC, and we can't GC until the watchpoint collection phase. But
+        that feels too fragile. So, this phase moves the setting of the watchpoint to the FixupPhase. This
+        is consistent with our long-term goal of removing the WatchpointCollectionPhase. Moving this to
+        FixupPhase means that we set the watchpoint before doing any optimizations. So, if having a bad
+        time happens before the FixupPhase then all optimizations will agree that we're having a bad time
+        and so everything is fine; if we have a bad time after FixupPhase then we will cancel the
+        compilation anyway.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::watchHavingABadTime):
+        (JSC::DFG::FixupPhase::createToString):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIndexingType):
+        (JSC::DFG::Node::indexingType):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewArrayBuffer):
+        * tests/stress/ftl-has-a-bad-time.js: Added.
+
 2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Use Div and ChillDiv in FTL(B3)Output
