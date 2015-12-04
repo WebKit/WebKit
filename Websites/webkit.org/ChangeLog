@@ -1,5 +1,14 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Yet another attempt to fix the http blog redirects.
+
+        Removing the blog folder should do it.
+
+        * .htaccess:
+        * blog: Removed.
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Another attempt to fix the http blog redirects.
 
         * .htaccess:
