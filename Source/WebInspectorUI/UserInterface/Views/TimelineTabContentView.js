@@ -27,10 +27,24 @@ WebInspector.TimelineTabContentView = class TimelineTabContentView extends WebIn
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/Timeline.svg", WebInspector.UIString("Timelines"));
-        var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+        let {image, title} = WebInspector.TimelineTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
         super(identifier || "timeline", "timeline", tabBarItem, WebInspector.TimelineSidebarPanel, detailsSidebarPanels);
+    }
+
+    static tabInfo()
+    {
+        return {
+            image: "Images/Timeline.svg",
+            title: WebInspector.UIString("Timelines"),
+        };
+    }
+
+    static isTabAllowed()
+    {
+        return !!window.TimelineAgent;
     }
 
     // Public

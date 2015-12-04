@@ -27,14 +27,28 @@ WebInspector.SearchTabContentView = class SearchTabContentView extends WebInspec
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/SearchResults.svg", WebInspector.UIString("Search"));
-        var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel,
+        let {image, title} = WebInspector.SearchTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel,
             WebInspector.domNodeDetailsSidebarPanel, WebInspector.cssStyleDetailsSidebarPanel];
 
         if (WebInspector.layerTreeDetailsSidebarPanel)
             detailsSidebarPanels.push(WebInspector.layerTreeDetailsSidebarPanel);
 
         super(identifier || "search", "search", tabBarItem, WebInspector.SearchSidebarPanel, detailsSidebarPanels);
+    }
+
+    static tabInfo()
+    {
+        return {
+            image: "Images/SearchResults.svg",
+            title: WebInspector.UIString("Search"),
+        };
+    }
+
+    static isEphemeral()
+    {
+        return true;
     }
 
     // Public

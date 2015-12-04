@@ -55,6 +55,24 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
         this._cookieSetting = new WebInspector.Setting(identifier + "-tab-cookie", {});
     }
 
+    static isTabAllowed()
+    {
+        // Returns false if a necessary domain or other features are unavailable.
+        return true;
+    }
+
+    static isEphemeral()
+    {
+        // Returns true if the tab should not be shown in the new tab content view.
+        return false;
+    }
+
+    static shouldSaveTab()
+    {
+        // Returns false if the tab should not be restored when re-opening the Inspector.
+        return true;
+    }
+
     // Public
 
     get type()

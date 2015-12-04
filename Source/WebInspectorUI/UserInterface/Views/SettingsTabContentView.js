@@ -32,6 +32,17 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         super(identifier || "settings", "settings", tabBarItem);
     }
 
+    static isTabAllowed()
+    {
+        // FIXME (149284): This tab isn't ready to be shown yet.
+        return false;
+    }
+
+    static shouldSaveTab()
+    {
+        return false;
+    }
+
     // Public
 
     get type()

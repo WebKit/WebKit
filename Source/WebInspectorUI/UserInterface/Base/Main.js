@@ -365,6 +365,26 @@ WebInspector.contentLoaded = function()
     this._updateToolbarHeight();
     this._setupViewHierarchy();
 
+    // These tabs are always available for selecting, modulo isTabAllowed().
+    // Other tabs may be engineering-only or toggled at runtime if incomplete.
+    let productionTabClasses = [
+        WebInspector.ConsoleTabContentView,
+        WebInspector.DebuggerTabContentView,
+        WebInspector.ElementsTabContentView,
+        WebInspector.NetworkTabContentView,
+        WebInspector.NewTabContentView,
+        WebInspector.ResourcesTabContentView,
+        WebInspector.SearchTabContentView,
+        WebInspector.StorageTabContentView,
+        WebInspector.TimelineTabContentView,
+    ];
+
+    this._knownTabClassesByType = new Map;
+    // Set tab classes directly. The public API triggers other updates and
+    // notifications that won't work or have no listeners at this point.
+    for (let tabClass of productionTabClasses)
+        this._knownTabClassesByType.set(tabClass.Type, tabClass);
+
     this._pendingOpenTabs = [];
 
     let openTabTypes = this._openTabsSetting.value;
@@ -376,7 +396,7 @@ WebInspector.contentLoaded = function()
             continue;
         }
 
-        let tabContentView = this._tabContentViewForType(tabType);
+        let tabContentView = this._createTabContentViewForType(tabType);
         if (!tabContentView)
             continue;
         this.tabBrowser.addTabForContentView(tabContentView, true);
@@ -417,57 +437,39 @@ WebInspector.contentLoaded = function()
 
 WebInspector.isTabTypeAllowed = function(tabType)
 {
-    switch (tabType) {
-    case WebInspector.ElementsTabContentView.Type:
-        return !!window.DOMAgent;
-    case WebInspector.NetworkTabContentView.Type:
-        return !!window.NetworkAgent && !!window.PageAgent;
-    case WebInspector.StorageTabContentView.Type:
-        return !!window.DOMStorageAgent || !!window.DatabaseAgent || !!window.IndexedDBAgent;
-    case WebInspector.TimelineTabContentView.Type:
-        return !!window.TimelineAgent;
-    }
+    let tabClass = this._knownTabClassesByType.get(tabType);
+    if (!tabClass)
+        return false;
 
-    return true;
+    return tabClass.isTabAllowed();
 };
 
-WebInspector._tabContentViewForType = function(tabType)
+WebInspector.knownTabClasses = function()
 {
-    switch (tabType) {
-    case WebInspector.ConsoleTabContentView.Type:
-        return new WebInspector.ConsoleTabContentView;
-    case WebInspector.DebuggerTabContentView.Type:
-        return new WebInspector.DebuggerTabContentView;
-    case WebInspector.ElementsTabContentView.Type:
-        return new WebInspector.ElementsTabContentView;
-    case WebInspector.NetworkTabContentView.Type:
-        return new WebInspector.NetworkTabContentView;
-    case WebInspector.NewTabContentView.Type:
-        return new WebInspector.NewTabContentView;
-    case WebInspector.ResourcesTabContentView.Type:
-        return new WebInspector.ResourcesTabContentView;
-    case WebInspector.SearchTabContentView.Type:
-        return new WebInspector.SearchTabContentView;
-    case WebInspector.StorageTabContentView.Type:
-        return new WebInspector.StorageTabContentView;
-    case WebInspector.TimelineTabContentView.Type:
-        return new WebInspector.TimelineTabContentView;
-    default:
+    return new Set(this._knownTabClassesByType.values());
+}
+
+WebInspector._createTabContentViewForType = function(tabType)
+{
+    let tabClass = this._knownTabClassesByType.get(tabType);
+    if (!tabClass) {
         console.error("Unknown tab type", tabType);
+        return null;
     }
 
-    return null;
+    console.assert(WebInspector.TabContentView.isPrototypeOf(tabClass));
+    return new tabClass;
 };
 
 WebInspector._rememberOpenTabs = function()
 {
-    var openTabs = [];
+    let openTabs = [];
 
-    for (var tabBarItem of this.tabBar.tabBarItems) {
-        var tabContentView = tabBarItem.representedObject;
+    for (let tabBarItem of this.tabBar.tabBarItems) {
+        let tabContentView = tabBarItem.representedObject;
         if (!(tabContentView instanceof WebInspector.TabContentView))
             continue;
-        if (tabContentView instanceof WebInspector.SettingsTabContentView || tabContentView instanceof WebInspector.NewTabContentView)
+        if (!tabContentView.constructor.shouldSaveTab())
             continue;
         console.assert(tabContentView.type, "Tab type can't be null, undefined, or empty string", tabContentView.type, tabContentView);
         openTabs.push(tabContentView.type);
@@ -482,11 +484,10 @@ WebInspector._rememberOpenTabs = function()
 
 WebInspector._updateNewTabButtonState = function(event)
 {
-    var newTabAllowed = this.isNewTabWithTypeAllowed(WebInspector.ConsoleTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.ElementsTabContentView.Type)
-        || this.isNewTabWithTypeAllowed(WebInspector.ResourcesTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.StorageTabContentView.Type)
-        || this.isNewTabWithTypeAllowed(WebInspector.TimelineTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.DebuggerTabContentView.Type)
-        || this.isNewTabWithTypeAllowed(WebInspector.NetworkTabContentView.Type);
-    this.tabBar.newTabItem.disabled = !newTabAllowed;
+    let allTabs = [...this._knownTabClassesByType.values()];
+    let addableTabs = allTabs.filter((tabClass) => !tabClass.isEphemeral());
+    let canMakeNewTab = addableTabs.some((tabClass) => this.isNewTabWithTypeAllowed(tabClass.Type));
+    this.tabBar.newTabItem.disabled = !canMakeNewTab;
 };
 
 WebInspector._newTabItemClicked = function(event)
@@ -500,9 +501,32 @@ WebInspector._openDefaultTab = function(event)
     this.showNewTabTab();
 };
 
+WebInspector._tryToRestorePendingTabs = function()
+{
+    let stillPendingOpenTabs = [];
+    for (let {tabType, index} of this._pendingOpenTabs) {
+        if (!this.isTabTypeAllowed(tabType)) {
+            stillPendingOpenTabs.push({tabType, index});
+            continue;
+        }
+
+        let tabContentView = this._createTabContentViewForType(tabType);
+        if (!tabContentView)
+            continue;
+
+        this.tabBrowser.addTabForContentView(tabContentView, true, index);
+
+        tabContentView.restoreStateFromCookie(WebInspector.StateRestorationType.Load);
+    }
+
+    this._pendingOpenTabs = stillPendingOpenTabs;
+
+    this._updateNewTabButtonState();
+}
+
 WebInspector.showNewTabTab = function(shouldAnimate)
 {
-    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.NewTabContentView);
+    let tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.NewTabContentView);
     if (!tabContentView)
         tabContentView = new WebInspector.NewTabContentView;
     this.tabBrowser.showTabForContentView(tabContentView, !shouldAnimate);
@@ -510,15 +534,16 @@ WebInspector.showNewTabTab = function(shouldAnimate)
 
 WebInspector.isNewTabWithTypeAllowed = function(tabType)
 {
-    if (!this.isTabTypeAllowed(tabType))
+    let tabClass = this._knownTabClassesByType.get(tabType);
+    if (!tabClass || !tabClass.isTabAllowed())
         return false;
 
     // Only allow one tab per class for now.
-    for (var tabBarItem of this.tabBar.tabBarItems) {
-        var tabContentView = tabBarItem.representedObject;
+    for (let tabBarItem of this.tabBar.tabBarItems) {
+        let tabContentView = tabBarItem.representedObject;
         if (!(tabContentView instanceof WebInspector.TabContentView))
             continue;
-        if (tabContentView.type === tabType)
+        if (tabContentView.constructor === tabClass)
             return false;
     }
 
@@ -533,7 +558,7 @@ WebInspector.createNewTabWithType = function(tabType, options = {})
     console.assert(!referencedView || referencedView instanceof WebInspector.TabContentView, referencedView);
     console.assert(!shouldReplaceTab || referencedView, "Must provide a reference view to replace a tab.");
 
-    let tabContentView = this._tabContentViewForType(tabType);
+    let tabContentView = this._createTabContentViewForType(tabType);
     const suppressAnimations = true;
     let insertionIndex = referencedView ? this.tabBar.tabBarItems.indexOf(referencedView.tabBarItem) : undefined;
     this.tabBrowser.addTabForContentView(tabContentView, suppressAnimations, insertionIndex);
@@ -544,6 +569,21 @@ WebInspector.createNewTabWithType = function(tabType, options = {})
     if (shouldShowNewTab)
         this.tabBrowser.showTabForContentView(tabContentView);
 };
+
+WebInspector.registerTabClass = function(tabClass)
+{
+    console.assert(WebInspector.TabContentView.isPrototypeOf(tabClass));
+    if (!WebInspector.TabContentView.isPrototypeOf(tabClass))
+        return;
+
+    if (this._knownTabClassesByType.has(tabClass.Type))
+        return;
+
+    this._knownTabClassesByType.set(tabClass.Type, tabClass);
+
+    this._tryToRestorePendingTabs();
+    this.notifications.dispatchEventToListeners(WebInspector.Notification.TabTypesChanged);
+}
 
 WebInspector.activateExtraDomains = function(domains)
 {
@@ -561,26 +601,7 @@ WebInspector.activateExtraDomains = function(domains)
 
     this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();
-
-    let stillPendingOpenTabs = [];
-    for (let {tabType, index} of this._pendingOpenTabs) {
-        if (!this.isTabTypeAllowed(tabType)) {
-            stillPendingOpenTabs.push({tabType, index});
-            continue;
-        }
-
-        let tabContentView = this._tabContentViewForType(tabType);
-        if (!tabContentView)
-            continue;
-
-        this.tabBrowser.addTabForContentView(tabContentView, true, index);
-
-        tabContentView.restoreStateFromCookie(WebInspector.StateRestorationType.Load);
-    }
-
-    this._pendingOpenTabs = stillPendingOpenTabs;
-
-    this._updateNewTabButtonState();
+    this._tryToRestorePendingTabs();
 };
 
 WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBrowser, representedObject)

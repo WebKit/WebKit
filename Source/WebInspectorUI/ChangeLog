@@ -1,3 +1,101 @@
+2015-12-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: support runtime registration of tab type associations
+        https://bugs.webkit.org/show_bug.cgi?id=151594
+
+        Reviewed by Joseph Pecoraro.
+
+        We want to add special tabs that only exist in engineering builds
+        for debugging purposes. Though the relevant models and views can be
+        put in the Debug/ directory to exclude them from production builds,
+        there's no way to register tabs conditionally at runtime; tabs are
+        hardcoded.
+
+        This patch makes it possible to register new tab types at runtime.
+        First, WebInspector keeps a map of known, registered tab classes.
+        Details that were hardcoded before---whether to show in New Tab,
+        whether a tab can be instantiated given the active domains, UI text,
+        etc.---are now static methods on the base TabContentView or overidden
+        in its subclasses. Lastly, a public method allows code in Bootstrap.js
+        to register tabs at runtime. Doing so sends a notification so the
+        NewTabContentView can show the newly available tab item.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.isTabTypeAllowed):
+        (WebInspector.knownTabClasses): Added, used by NewTabContentView.
+        (WebInspector._createTabContentViewForType): Renamed from _tabContentViewForType.
+        (WebInspector._rememberOpenTabs):
+        (WebInspector._updateNewTabButtonState):
+        (WebInspector._tryToRestorePendingTabs): Added.
+
+        Whenever a new tab is registered, try to restore pending tabs, since
+        an extra tab won't be added initially when production tabs are added.
+        But, it could have been saved in the Setting for opened tabs.
+
+        (WebInspector.showNewTabTab):
+        (WebInspector.isNewTabWithTypeAllowed):
+        (WebInspector.createNewTabWithType):
+        (WebInspector._tabContentViewForType): Deleted.
+        * UserInterface/Base/Object.js:
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WebInspector.ConsoleTabContentView):
+        (WebInspector.ConsoleTabContentView.tabInfo): Added.
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WebInspector.DebuggerTabContentView):
+        (WebInspector.DebuggerTabContentView.tabInfo): Added.
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WebInspector.ElementsTabContentView):
+        (WebInspector.ElementsTabContentView.tabInfo): Added.
+        (WebInspector.ElementsTabContentView.isTabAllowed): Added.
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WebInspector.NetworkTabContentView):
+        (WebInspector.NetworkTabContentView.tabInfo): Added.
+        (WebInspector.NetworkTabContentView.isTabAllowed): Added.
+        * UserInterface/Views/NewTabContentView.js:
+
+        Keep a list of shown tab items, so we don't have to query the DOM
+        to update enabled/disabled state. Put tree construction inside a
+        layout() override and dirty the view whenever known tab types change.
+
+        (WebInspector.NewTabContentView):
+        (WebInspector.NewTabContentView.tabInfo): Added.
+        (WebInspector.NewTabContentView.isEphemeral): Added.
+        (WebInspector.NewTabContentView.shouldSaveTab): Added.
+        (WebInspector.NewTabContentView.prototype.layout): Added.
+        (WebInspector.NewTabContentView.prototype._updateShownTabs): Added.
+        (WebInspector.NewTabContentView.prototype._allowableTabTypes):
+        (WebInspector.NewTabContentView.prototype._updateTabItems):
+        (WebInspector.NewTabContentView.prototype.get tabItemElements): Deleted.
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView):
+        (WebInspector.ResourcesTabContentView.tabInfo): Added.
+        * UserInterface/Views/SearchTabContentView.js:
+        (WebInspector.SearchTabContentView):
+        (WebInspector.SearchTabContentView.tabInfo): Added.
+        (WebInspector.SearchTabContentView.isEphemeral): Added.
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.isTabAllowed): Added.
+        (WebInspector.SettingsTabContentView.shouldSaveTab): Added.
+        * UserInterface/Views/StorageTabContentView.js:
+        (WebInspector.StorageTabContentView):
+        (WebInspector.StorageTabContentView.tabInfo): Added.
+        (WebInspector.StorageTabContentView.isTabAllowed): Added.
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser.showTabForContentView):
+
+        Add a workaround for <https://webkit.org/b/151876>. This bug is
+        revealed by the changes to NewTabContentView in this patch.
+
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView.isTabAllowed): Added.
+        (WebInspector.TabContentView.isEphemeral): Added.
+        (WebInspector.TabContentView.shouldSaveTab): Added.
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView):
+        (WebInspector.TimelineTabContentView.tabInfo): Added.
+        (WebInspector.TimelineTabContentView.isTabAllowed): Added.
+
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove untested and unused Worker inspection

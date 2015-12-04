@@ -27,8 +27,9 @@ WebInspector.ElementsTabContentView = class ElementsTabContentView extends WebIn
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/Elements.svg", WebInspector.UIString("Elements"));
-        var detailsSidebarPanels = [WebInspector.domNodeDetailsSidebarPanel, WebInspector.cssStyleDetailsSidebarPanel];
+        let {image, title} = WebInspector.ElementsTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let detailsSidebarPanels = [WebInspector.domNodeDetailsSidebarPanel, WebInspector.cssStyleDetailsSidebarPanel];
 
         if (WebInspector.layerTreeDetailsSidebarPanel)
             detailsSidebarPanels.push(WebInspector.layerTreeDetailsSidebarPanel);
@@ -39,6 +40,19 @@ WebInspector.ElementsTabContentView = class ElementsTabContentView extends WebIn
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this._showDOMTreeContentView();
+    }
+
+    static tabInfo()
+    {
+        return {
+            image: "Images/Elements.svg",
+            title: WebInspector.UIString("Elements"),
+        };
+    }
+
+    static isTabAllowed()
+    {
+        return !!window.DOMAgent;
     }
 
     // Public

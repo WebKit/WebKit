@@ -27,8 +27,9 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/Resources.svg", WebInspector.UIString("Resources"));
-        var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+        let {image, title} = WebInspector.ResourcesTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
         // FIXME: Until ContentFlows are moved to the Elements tab, these details sidebar panels need to be included.
         detailsSidebarPanels = detailsSidebarPanels.concat([WebInspector.domNodeDetailsSidebarPanel, WebInspector.cssStyleDetailsSidebarPanel]);
@@ -36,6 +37,14 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
             detailsSidebarPanels.push(WebInspector.layerTreeDetailsSidebarPanel);
 
         super(identifier || "resources", "resources", tabBarItem, WebInspector.ResourceSidebarPanel, detailsSidebarPanels);
+    }
+
+    static tabInfo()
+    {
+        return {
+            image: "Images/Resources.svg",
+            title: WebInspector.UIString("Resources"),
+        };
     }
 
     // Public

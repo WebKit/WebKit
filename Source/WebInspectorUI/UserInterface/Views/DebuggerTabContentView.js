@@ -27,10 +27,19 @@ WebInspector.DebuggerTabContentView = class DebuggerTabContentView extends WebIn
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/Debugger.svg", WebInspector.UIString("Debugger"));
-        var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.scopeChainDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+        let {image, title} = WebInspector.DebuggerTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.scopeChainDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
         super(identifier || "debugger", "debugger", tabBarItem, WebInspector.DebuggerSidebarPanel, detailsSidebarPanels);
+    }
+
+    static tabInfo()
+    {
+        return {
+            image: "Images/Debugger.svg",
+            title: WebInspector.UIString("Debugger"),
+        };
     }
 
     // Public

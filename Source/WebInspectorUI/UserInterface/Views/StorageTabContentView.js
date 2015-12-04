@@ -27,10 +27,24 @@ WebInspector.StorageTabContentView = class StorageTabContentView extends WebInsp
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/Storage.svg", WebInspector.UIString("Storage"));
-        var detailsSidebarPanels = [WebInspector.applicationCacheDetailsSidebarPanel];
+        let {image, title} = WebInspector.StorageTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let detailsSidebarPanels = [WebInspector.applicationCacheDetailsSidebarPanel];
 
         super(identifier || "storage", "storage", tabBarItem, WebInspector.StorageSidebarPanel, detailsSidebarPanels);
+    }
+
+    static tabInfo()
+    {
+        return {
+            image: "Images/Storage.svg",
+            title: WebInspector.UIString("Storage"),
+        };
+    }
+
+    static isTabAllowed()
+    {
+        return !!window.DOMStorageAgent || !!window.DatabaseAgent || !!window.IndexedDBAgent;
     }
 
     // Public

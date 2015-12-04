@@ -27,10 +27,24 @@ WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInsp
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/Network.svg", WebInspector.UIString("Network"));
-        var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+        let {image, title} = WebInspector.NetworkTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
+        let detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
         super(identifier || "network", "network", tabBarItem, WebInspector.NetworkSidebarPanel, detailsSidebarPanels);
+    }
+
+    static tabInfo()
+    {
+        return {
+            image: "Images/Network.svg",
+            title: WebInspector.UIString("Network"),
+        };
+    }
+
+    static isTabAllowed()
+    {
+        return !!window.NetworkAgent && !!window.PageAgent;
     }
 
     // Public

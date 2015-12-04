@@ -27,43 +27,34 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
 {
     constructor(identifier)
     {
-        var tabBarItem = new WebInspector.TabBarItem("Images/NewTab.svg", WebInspector.UIString("New Tab"));
+        let {image, title} = WebInspector.NewTabContentView.tabInfo();
+        let tabBarItem = new WebInspector.TabBarItem(image, title);
         tabBarItem.isDefaultTab = true;
 
         super(identifier || "new-tab", "new-tab", tabBarItem);
 
-        var allowedNewTabs = [
-            {image: "Images/Console.svg", title: WebInspector.UIString("Console"), type: WebInspector.ConsoleTabContentView.Type},
-            {image: "Images/Debugger.svg", title: WebInspector.UIString("Debugger"), type: WebInspector.DebuggerTabContentView.Type},
-            {image: "Images/Elements.svg", title: WebInspector.UIString("Elements"), type: WebInspector.ElementsTabContentView.Type},
-            {image: "Images/Network.svg", title: WebInspector.UIString("Network"), type: WebInspector.NetworkTabContentView.Type},
-            {image: "Images/Resources.svg", title: WebInspector.UIString("Resources"), type: WebInspector.ResourcesTabContentView.Type},
-            {image: "Images/Storage.svg", title: WebInspector.UIString("Storage"), type: WebInspector.StorageTabContentView.Type},
-            {image: "Images/Timeline.svg", title: WebInspector.UIString("Timelines"), type: WebInspector.TimelineTabContentView.Type}
-        ];
+        WebInspector.notifications.addEventListener(WebInspector.Notification.TabTypesChanged, this._updateShownTabs.bind(this));
 
-        allowedNewTabs.sort(function(a, b) { return a.title.localeCompare(b.title); });
+        this._tabElementsByTabClass = new Map;
+        this._updateShownTabs();
+    }
 
-        for (var info of allowedNewTabs) {
-            if (!WebInspector.isTabTypeAllowed(info.type))
-                continue;
+    static tabInfo()
+    {
+        return {
+            image: "Images/NewTab.svg",
+            title: WebInspector.UIString("New Tab"),
+        };
+    }
 
-            var tabItemElement = document.createElement("div");
-            tabItemElement.classList.add(WebInspector.NewTabContentView.TabItemStyleClassName);
-            tabItemElement.addEventListener("click", this._createNewTabWithType.bind(this, info.type));
-            tabItemElement[WebInspector.NewTabContentView.TypeSymbol] = info.type;
+    static isEphemeral()
+    {
+        return true;
+    }
 
-            var boxElement = tabItemElement.appendChild(document.createElement("div"));
-            boxElement.classList.add("box");
-
-            var imageElement = boxElement.appendChild(document.createElement("img"));
-            imageElement.src = info.image;
-
-            var labelElement = tabItemElement.appendChild(document.createElement("label"));
-            labelElement.textContent = info.title;
-
-            this.element.appendChild(tabItemElement);
-        }
+    static shouldSaveTab()
+    {
+        return false;
     }
 
     // Public
@@ -93,9 +84,32 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
         return false;
     }
 
-    get tabItemElements()
+    layout()
     {
-        return Array.from(this.element.querySelectorAll("." + WebInspector.NewTabContentView.TabItemStyleClassName));
+        this._tabElementsByTabClass.clear();
+        this.element.removeChildren();
+
+        for (let tabClass of this._shownTabClasses) {
+            let tabItemElement = document.createElement("div");
+            tabItemElement.classList.add("tab-item");
+            tabItemElement.addEventListener("click", this._createNewTabWithType.bind(this, tabClass.Type));
+            tabItemElement[WebInspector.NewTabContentView.TypeSymbol] = tabClass.Type;
+
+            let boxElement = tabItemElement.appendChild(document.createElement("div"));
+            boxElement.classList.add("box");
+
+            let info = tabClass.tabInfo();
+            let imageElement = boxElement.appendChild(document.createElement("img"));
+            imageElement.src = info.image;
+
+            let labelElement = tabItemElement.appendChild(document.createElement("label"));
+            labelElement.textContent = info.title;
+
+            this.element.appendChild(tabItemElement);
+            this._tabElementsByTabClass.set(tabClass, tabItemElement);
+        }
+
+        this._updateTabItems();
     }
 
     // Private
@@ -114,19 +128,29 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
         WebInspector.createNewTabWithType(tabType, options);
     }
 
+    _updateShownTabs()
+    {
+        let allTabClasses = [...WebInspector.knownTabClasses()];
+        let allowedTabClasses = allTabClasses.filter((tabClass) => tabClass.isTabAllowed() && !tabClass.isEphemeral());
+        allowedTabClasses.sort((a, b) => a.tabInfo().title.localeCompare(b.tabInfo().title));
+
+        if (Object.shallowEqual(this._shownTabClasses, allowedTabClasses))
+            return;
+
+        this._shownTabClasses = allowedTabClasses;
+        this.needsLayout();
+    }
+
     _allowableTabTypes()
     {
-        let tabItemElements = this.tabItemElements;
-        let tabTypes = tabItemElements.map((tabItemElement) => tabItemElement[WebInspector.NewTabContentView.TypeSymbol]);
+        let tabTypes = this._shownTabClasses.map((tabClass) => tabClass.Type);
         return tabTypes.filter((type) => WebInspector.isNewTabWithTypeAllowed(type));
     }
 
     _updateTabItems()
     {
-        let tabItemElements = this.tabItemElements;
-        for (let tabItemElement of tabItemElements) {
-            let type = tabItemElement[WebInspector.NewTabContentView.TypeSymbol];
-            let allowed = WebInspector.isNewTabWithTypeAllowed(type);
+        for (let [tabClass, tabItemElement] of this._tabElementsByTabClass.entries()) {
+            let allowed = WebInspector.isNewTabWithTypeAllowed(tabClass.Type);
             tabItemElement.classList.toggle(WebInspector.NewTabContentView.DisabledStyleClassName, !allowed);
         }
     }
