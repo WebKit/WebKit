@@ -2007,6 +2007,13 @@
 		FE3913541B794F6E00EDAF71 /* LiveObjectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */; };
 		FE3913551B794F8A00EDAF71 /* LiveObjectData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913511B794AC900EDAF71 /* LiveObjectData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913531B794AC900EDAF71 /* LiveObjectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE3A06A81C10BC8100390FDD /* JITBitwiseBinaryOpGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A71C10BC7400390FDD /* JITBitwiseBinaryOpGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE3A06AC1C10C39E00390FDD /* JITBitOrGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
+		FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
+		FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE3A06B31C10CB8E00390FDD /* JITBitXorGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
+		FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */; settings = {ASSET_TAGS = (); }; };
 		FE4238901BE18C3C00514737 /* JITSubGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */; };
 		FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
@@ -4172,6 +4179,13 @@
 		FE3913511B794AC900EDAF71 /* LiveObjectData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveObjectData.h; sourceTree = "<group>"; };
 		FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveObjectList.cpp; sourceTree = "<group>"; };
 		FE3913531B794AC900EDAF71 /* LiveObjectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveObjectList.h; sourceTree = "<group>"; };
+		FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitOrGenerator.cpp; sourceTree = "<group>"; };
+		FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitOrGenerator.h; sourceTree = "<group>"; };
+		FE3A06A71C10BC7400390FDD /* JITBitwiseBinaryOpGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitwiseBinaryOpGenerator.h; sourceTree = "<group>"; };
+		FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitAndGenerator.cpp; sourceTree = "<group>"; };
+		FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitAndGenerator.h; sourceTree = "<group>"; };
+		FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitXorGenerator.cpp; sourceTree = "<group>"; };
+		FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitXorGenerator.h; sourceTree = "<group>"; };
 		FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITSubGenerator.cpp; sourceTree = "<group>"; };
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
 		FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionOverrides.h; sourceTree = "<group>"; };
@@ -4842,6 +4856,13 @@
 				FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */,
 				86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */,
 				A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */,
+				FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */,
+				FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */,
+				FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */,
+				FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */,
+				FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */,
+				FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */,
+				FE3A06A71C10BC7400390FDD /* JITBitwiseBinaryOpGenerator.h */,
 				86CC85A20EE79B7400288682 /* JITCall.cpp */,
 				146FE51111A710430087AE66 /* JITCall32_64.cpp */,
 				0F8F94431667635200D61971 /* JITCode.cpp */,
@@ -6847,6 +6868,7 @@
 				0F338E111BF0276C0013C88F /* B3OpaqueByproduct.h in Headers */,
 				99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */,
 				99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */,
+				FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */,
 				99DA00A41BD5993100F4575C /* builtins_model.py in Headers */,
 				99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */,
 				41DEA1321B9F3163006D65DD /* BuiltinUtils.h in Headers */,
@@ -7112,6 +7134,7 @@
 				0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */,
 				0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */,
 				0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */,
+				FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */,
 				0FE7211E193B9C590031F6ED /* DFGTransition.h in Headers */,
 				0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */,
 				0FBE0F7716C1DB120082C5E8 /* DFGUnificationPhase.h in Headers */,
@@ -7365,6 +7388,7 @@
 				86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */,
 				0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */,
 				0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */,
+				FE3A06A81C10BC8100390FDD /* JITBitwiseBinaryOpGenerator.h in Headers */,
 				0F46808214BA572D00BFE272 /* JITExceptions.h in Headers */,
 				0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */,
 				86CC85A10EE79A4700288682 /* JITInlines.h in Headers */,
@@ -7653,6 +7677,7 @@
 				0FB1058C1675483300F8AB6E /* ProfilerOSRExit.h in Headers */,
 				0FB1058E1675483A00F8AB6E /* ProfilerOSRExitSite.h in Headers */,
 				0F13912C16771C3D009CCB07 /* ProfilerProfiledBytecodes.h in Headers */,
+				FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */,
 				0FD3E40E1B618B6600C80E1E /* PropertyCondition.h in Headers */,
 				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
@@ -8591,6 +8616,7 @@
 				0FC09791146A6F7100CF2442 /* DFGOSRExit.cpp in Sources */,
 				0F235BEB17178E7300690C7F /* DFGOSRExitBase.cpp in Sources */,
 				0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */,
+				FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */,
 				0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */,
 				0FC0977214693AF900CF2442 /* DFGOSRExitCompiler64.cpp in Sources */,
 				0F7025A91714B0FA00382C0E /* DFGOSRExitCompilerCommon.cpp in Sources */,
@@ -8755,6 +8781,7 @@
 				A593CF7C1840360300BFCE27 /* InspectorBackendDispatcher.cpp in Sources */,
 				A532438718568335002ED692 /* InspectorBackendDispatchers.cpp in Sources */,
 				A5FD0081189B191A00633231 /* InspectorConsoleAgent.cpp in Sources */,
+				FE3A06B31C10CB8E00390FDD /* JITBitXorGenerator.cpp in Sources */,
 				A57D23E51890CEBF0031C7FA /* InspectorDebuggerAgent.cpp in Sources */,
 				A532438918568335002ED692 /* InspectorFrontendDispatchers.cpp in Sources */,
 				99F1A6FE1B8E6D9400463B26 /* InspectorFrontendRouter.cpp in Sources */,
@@ -8930,6 +8957,7 @@
 				A729009C17976C6000317298 /* MacroAssemblerARMv7.cpp in Sources */,
 				FE68C6381B90DE0B0042BCB3 /* MacroAssemblerPrinter.cpp in Sources */,
 				A7A4AE0817973B26005612B1 /* MacroAssemblerX86Common.cpp in Sources */,
+				FE3A06AC1C10C39E00390FDD /* JITBitOrGenerator.cpp in Sources */,
 				A700873917CBE85300C3E643 /* MapConstructor.cpp in Sources */,
 				A74DEF93182D991400522C22 /* MapIteratorPrototype.cpp in Sources */,
 				A700873D17CBE8D300C3E643 /* MapPrototype.cpp in Sources */,

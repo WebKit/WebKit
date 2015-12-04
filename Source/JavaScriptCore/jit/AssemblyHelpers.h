@@ -149,6 +149,14 @@ public:
 #endif
     }
 
+    void moveValueRegs(JSValueRegs srcRegs, JSValueRegs destRegs)
+    {
+#if USE(JSVALUE32_64)
+        move(srcRegs.tagGPR(), destRegs.tagGPR());
+#endif
+        move(srcRegs.payloadGPR(), destRegs.payloadGPR());
+    }
+
     void moveValue(JSValue value, JSValueRegs regs)
     {
 #if USE(JSVALUE64)
@@ -685,13 +693,20 @@ public:
         return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
 #endif
     }
-    
+
+#if USE(JSVALUE64)
+    Jump branchIfNotInt32(GPRReg gpr, TagRegistersMode mode = HaveTagRegisters)
+    {
+        if (mode == HaveTagRegisters)
+            return branch64(Below, gpr, GPRInfo::tagTypeNumberRegister);
+        return branch64(Below, gpr, TrustedImm64(TagTypeNumber));
+    }
+#endif
+
     Jump branchIfNotInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        if (mode == HaveTagRegisters)
-            return branch64(Below, regs.gpr(), GPRInfo::tagTypeNumberRegister);
-        return branch64(Below, regs.gpr(), TrustedImm64(TagTypeNumber));
+        return branchIfNotInt32(regs.gpr(), mode);
 #else
         UNUSED_PARAM(mode);
         return branch32(NotEqual, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));

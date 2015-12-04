@@ -452,6 +452,9 @@ set(JavaScriptCore_SOURCES
     jit/JITAddGenerator.cpp
     jit/JITArithmetic.cpp
     jit/JITArithmetic32_64.cpp
+    jit/JITBitAndGenerator.cpp
+    jit/JITBitOrGenerator.cpp
+    jit/JITBitXorGenerator.cpp
     jit/JITCall.cpp
     jit/JITCall32_64.cpp
     jit/JITCode.cpp

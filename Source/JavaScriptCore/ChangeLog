@@ -1,3 +1,81 @@
+2015-12-04  Mark Lam  <mark.lam@apple.com>
+
+        Snippefy bitwise operators for the baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=151680
+
+        Reviewed by Geoffrey Garen.
+
+        This patch has passed the JSC tests on x86 and x86_64.  It has also passed the
+        layout tests on x86_64.
+
+        With the DFG enabled, perf is neutral on x86_64 and x86.
+        With the DFG disabled on x86_64, some AsmBench tests are showing progressions e.g.
+            gcc-loops.cpp           1.0269x faster
+            stepanov_container.cpp  1.0180x faster
+
+        With the DFG disabled on x86, perf is neutral.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::moveValueRegs):
+        (JSC::AssemblyHelpers::branchIfNotInt32):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBitwiseBinaryOpFastPath):
+        - Template for the bitwise operations.
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        - Specializes emitBitwiseBinaryOpFastPath() with the respective snippet generators.
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        - Implement respective slow paths.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_bitand): Deleted.
+        (JSC::JIT::emitSlow_op_bitand): Deleted.
+        (JSC::JIT::emit_op_bitor): Deleted.
+        (JSC::JIT::emitSlow_op_bitor): Deleted.
+        (JSC::JIT::emit_op_bitxor): Deleted.
+        (JSC::JIT::emitSlow_op_bitxor): Deleted.
+        - Now unified with the 64-bit version using snippets. 
+
+        * jit/JITBitAndGenerator.cpp: Added.
+        (JSC::JITBitAndGenerator::generateFastPath):
+        * jit/JITBitAndGenerator.h: Added.
+        (JSC::JITBitAndGenerator::JITBitAndGenerator):
+        * jit/JITBitOrGenerator.cpp: Added.
+        (JSC::JITBitOrGenerator::generateFastPath):
+        * jit/JITBitOrGenerator.h: Added.
+        (JSC::JITBitOrGenerator::JITBitOrGenerator):
+        * jit/JITBitXorGenerator.cpp: Added.
+        (JSC::JITBitXorGenerator::generateFastPath):
+        * jit/JITBitXorGenerator.h: Added.
+        (JSC::JITBitXorGenerator::JITBitXorGenerator):
+        * jit/JITBitwiseBinaryOpGenerator.h: Added.
+        (JSC::JITBitwiseBinaryOpGenerator::JITBitwiseBinaryOpGenerator):
+        (JSC::JITBitwiseBinaryOpGenerator::didEmitFastPath):
+        (JSC::JITBitwiseBinaryOpGenerator::endJumpList):
+        (JSC::JITBitwiseBinaryOpGenerator::slowPathJumpList):
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_bitxor): Deleted.
+        (JSC::JIT::emit_op_bitor): Deleted.
+        (JSC::JIT::emitSlow_op_bitxor): Deleted.
+        (JSC::JIT::emitSlow_op_bitor): Deleted.
+        * jit/SnippetOperand.h:
+        (JSC::SnippetOperand::SnippetOperand):
+
+        * tests/stress/op_bitand.js:
+        * tests/stress/op_bitor.js:
+        * tests/stress/op_bitxor.js:
+        - Fix a test value typo: it's supposed to be 0x7fffffff, not 0x7ffffff.
+
 2015-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         Having a bad time has a really awful time when it runs at the same time as the JIT

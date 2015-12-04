@@ -644,6 +644,9 @@
     <ClCompile Include="..\jit\JITAddGenerator.cpp" />
     <ClCompile Include="..\jit\JITArithmetic.cpp" />
     <ClCompile Include="..\jit\JITArithmetic32_64.cpp" />
+    <ClCompile Include="..\jit\JITBitAndGenerator.cpp" />
+    <ClCompile Include="..\jit\JITBitOrGenerator.cpp" />
+    <ClCompile Include="..\jit\JITBitXorGenerator.cpp" />
     <ClCompile Include="..\jit\JITCall.cpp" />
     <ClCompile Include="..\jit\JITCall32_64.cpp" />
     <ClCompile Include="..\jit\JITCode.cpp" />
@@ -1472,6 +1475,10 @@
     <ClInclude Include="..\jit\HostCallReturnValue.h" />
     <ClInclude Include="..\jit\JIT.h" />
     <ClInclude Include="..\jit\JITAddGenerator.h" />
+    <ClInclude Include="..\jit\JITBitAndGenerator.h" />
+    <ClInclude Include="..\jit\JITBitOrGenerator.h" />
+    <ClInclude Include="..\jit\JITBitXorGenerator.h" />
+    <ClInclude Include="..\jit\JITBitwiseBinaryOpGenerator.h" />
     <ClInclude Include="..\jit\JITCode.h" />
     <ClInclude Include="..\jit\JITCompilationEffort.h" />
     <ClInclude Include="..\jit\JITDisassembler.h" />

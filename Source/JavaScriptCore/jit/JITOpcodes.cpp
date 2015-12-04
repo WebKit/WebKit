@@ -401,23 +401,6 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
 
 }
 
-void JIT::emit_op_bitxor(Instruction* currentInstruction)
-{
-    emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
-    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
-    xor64(regT1, regT0);
-    emitTagInt(regT0, regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
-}
-
-void JIT::emit_op_bitor(Instruction* currentInstruction)
-{
-    emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
-    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
-    or64(regT1, regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     ASSERT(regT0 == returnValueGPR);
@@ -817,20 +800,6 @@ void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntr
     linkSlowCase(iter);
     callOperation(operationConvertJSValueToBoolean, regT0);
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), currentInstruction[2].u.operand);
-}
-
-void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitxor);
-    slowPathCall.call();
-}
-
-void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitor);
-    slowPathCall.call();
 }
 
 void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

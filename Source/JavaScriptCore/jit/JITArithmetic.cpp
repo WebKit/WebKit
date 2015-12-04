@@ -30,6 +30,9 @@
 
 #include "CodeBlock.h"
 #include "JITAddGenerator.h"
+#include "JITBitAndGenerator.h"
+#include "JITBitOrGenerator.h"
+#include "JITBitXorGenerator.h"
 #include "JITDivGenerator.h"
 #include "JITInlines.h"
 #include "JITMulGenerator.h"
@@ -525,42 +528,6 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
     }
 }
 
-void JIT::emit_op_bitand(Instruction* currentInstruction)
-{
-    int result = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-
-    if (isOperandConstantInt(op1)) {
-        emitGetVirtualRegister(op2, regT0);
-        emitJumpSlowCaseIfNotInt(regT0);
-        int32_t imm = getOperandConstantInt(op1);
-        and64(Imm32(imm), regT0);
-        if (imm >= 0)
-            emitTagInt(regT0, regT0);
-    } else if (isOperandConstantInt(op2)) {
-        emitGetVirtualRegister(op1, regT0);
-        emitJumpSlowCaseIfNotInt(regT0);
-        int32_t imm = getOperandConstantInt(op2);
-        and64(Imm32(imm), regT0);
-        if (imm >= 0)
-            emitTagInt(regT0, regT0);
-    } else {
-        emitGetVirtualRegisters(op1, regT0, op2, regT1);
-        and64(regT1, regT0);
-        emitJumpSlowCaseIfNotInt(regT0);
-    }
-    emitPutVirtualRegister(result);
-}
-
-void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitand);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_inc(Instruction* currentInstruction)
 {
     int srcDst = currentInstruction[1].u.operand;
@@ -663,6 +630,100 @@ void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
 /* ------------------------------ END: OP_MOD ------------------------------ */
 
 #endif // USE(JSVALUE64)
+
+template<typename SnippetGenerator>
+void JIT::emitBitwiseBinaryOpFastPath(Instruction* currentInstruction)
+{
+    int result = currentInstruction[1].u.operand;
+    int op1 = currentInstruction[2].u.operand;
+    int op2 = currentInstruction[3].u.operand;
+
+#if USE(JSVALUE64)
+    JSValueRegs leftRegs = JSValueRegs(GPRInfo::regT0);
+    JSValueRegs rightRegs = JSValueRegs(GPRInfo::regT1);
+    JSValueRegs resultRegs = leftRegs;
+    GPRReg scratchGPR = GPRInfo::regT2;
+#else
+    JSValueRegs leftRegs = JSValueRegs(GPRInfo::regT1, GPRInfo::regT0);
+    JSValueRegs rightRegs = JSValueRegs(GPRInfo::regT3, GPRInfo::regT2);
+    JSValueRegs resultRegs = leftRegs;
+    GPRReg scratchGPR = InvalidGPRReg;
+#endif
+
+    SnippetOperand leftOperand;
+    SnippetOperand rightOperand;
+
+    if (isOperandConstantInt(op1))
+        leftOperand.setConstInt32(getOperandConstantInt(op1));
+    if (isOperandConstantInt(op2))
+        rightOperand.setConstInt32(getOperandConstantInt(op2));
+
+    RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+    if (!leftOperand.isConst())
+        emitGetVirtualRegister(op1, leftRegs);
+    if (!rightOperand.isConst())
+        emitGetVirtualRegister(op2, rightRegs);
+
+    SnippetGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, scratchGPR);
+
+    gen.generateFastPath(*this);
+
+    if (gen.didEmitFastPath()) {
+        gen.endJumpList().link(this);
+#if USE(JSVALUE32_64)
+        emitStoreInt32(result, resultRegs.payloadGPR(), op1 == result || op2 == result);
+#else
+        emitPutVirtualRegister(result, resultRegs);
+#endif
+
+        addSlowCase(gen.slowPathJumpList());
+    } else {
+        ASSERT(gen.endJumpList().empty());
+        ASSERT(gen.slowPathJumpList().empty());
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
+        slowPathCall.call();
+    }
+}
+
+void JIT::emit_op_bitand(Instruction* currentInstruction)
+{
+    emitBitwiseBinaryOpFastPath<JITBitAndGenerator>(currentInstruction);
+}
+
+void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitand);
+    slowPathCall.call();
+}
+
+void JIT::emit_op_bitor(Instruction* currentInstruction)
+{
+    emitBitwiseBinaryOpFastPath<JITBitOrGenerator>(currentInstruction);
+}
+
+void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitor);
+    slowPathCall.call();
+}
+
+void JIT::emit_op_bitxor(Instruction* currentInstruction)
+{
+    emitBitwiseBinaryOpFastPath<JITBitXorGenerator>(currentInstruction);
+}
+
+void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitxor);
+    slowPathCall.call();
+}
 
 void JIT::emit_op_add(Instruction* currentInstruction)
 {

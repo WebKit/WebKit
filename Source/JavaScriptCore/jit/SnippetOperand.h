@@ -40,6 +40,10 @@ class SnippetOperand {
     };
 
 public:
+    SnippetOperand()
+        : m_resultType(ResultType::unknownType())
+    { }
+
     SnippetOperand(ResultType resultType)
         : m_resultType(resultType)
     { }

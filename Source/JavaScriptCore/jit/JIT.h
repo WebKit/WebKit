@@ -826,6 +826,9 @@ namespace JSC {
         MacroAssembler::Call callOperation(J_JITOperation_EJscCJ, int, GPRReg, JSCell*, GPRReg, GPRReg);
 #endif
 
+        template<typename SnippetGenerator>
+        void emitBitwiseBinaryOpFastPath(Instruction* currentInstruction);
+
         Jump checkStructure(RegisterID reg, Structure* structure);
 
         void updateTopCallFrame();
