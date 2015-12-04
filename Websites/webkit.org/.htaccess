@@ -8,7 +8,7 @@ RewriteCond %{HTTP_HOST} ^queues.webkit.org$
 RewriteRule (.*) https://webkit-queues.webkit.org$1 [L,R=301]
 
 RewriteCond %{HTTP_HOST} ^blog.webkit.org$
-RewriteRule (.*) https://webkit.org/blog$1 [L,R=301]
+RewriteRule (.*) https://webkit.org/blog/$1 [L,R=301]
 
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP_HOST} ^(www\.)?(.*)$

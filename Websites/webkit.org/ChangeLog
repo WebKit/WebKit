@@ -1,5 +1,11 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Fix blog.webkit.org redirects.
+
+        * .htaccess:
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Add redirects for the demos folder.
 
         * .htaccess:
