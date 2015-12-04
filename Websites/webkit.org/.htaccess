@@ -12,7 +12,7 @@ RewriteRule (.*) https://webkit.org/blog/$1 [L,R=301]
 
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP_HOST} ^(www\.)?(.*)$
-RewriteRule ^(.*)$ https://%2/$1 [L,R=301]
+RewriteRule (.*) https://%2/$1 [R=301]
 
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
 RewriteRule .* - [F]
