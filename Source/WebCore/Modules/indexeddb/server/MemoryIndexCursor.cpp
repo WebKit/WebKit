@@ -46,15 +46,14 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& in
     if (!valueStore)
         return;
 
-    IndexValueStore::Iterator iterator;
     if (m_info.isDirectionForward())
-        iterator = valueStore->find(m_info.range().lowerKey, m_info.range().lowerOpen);
+        m_currentIterator = valueStore->find(m_info.range().lowerKey, m_info.range().lowerOpen);
     else
-        iterator = valueStore->reverseFind(m_info.range().upperKey, m_info.duplicity(), m_info.range().upperOpen);
+        m_currentIterator = valueStore->reverseFind(m_info.range().upperKey, m_info.duplicity(), m_info.range().upperOpen);
 
-    if (iterator.isValid()) {
-        m_currentKey = iterator.key();
-        m_currentPrimaryKey = iterator.primaryKey();
+    if (m_currentIterator.isValid()) {
+        m_currentKey = m_currentIterator.key();
+        m_currentPrimaryKey = m_currentIterator.primaryKey();
         m_index.cursorDidBecomeClean(*this);
     }
 }
@@ -65,6 +64,11 @@ MemoryIndexCursor::~MemoryIndexCursor()
 
 void MemoryIndexCursor::currentData(IDBGetResult& getResult)
 {
+    if (!m_currentIterator.isValid()) {
+        getResult = { };
+        return;
+    }
+
     if (m_info.cursorType() == IndexedDB::CursorType::KeyOnly)
         getResult = { m_currentKey, m_currentPrimaryKey };
     else
