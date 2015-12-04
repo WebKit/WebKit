@@ -1,4 +1,4 @@
-DirectoryIndex index.php
+DirectoryIndex index.php index.html
 AddType application/x-httpd-php html
 AddType text/cache-manifest manifest
 

@@ -1,5 +1,11 @@
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
+        Allow index.html indexes again.
+
+        * .htaccess:
+
+2015-12-03  Timothy Hatcher  <timothy@apple.com>
+
         Remove the old site files.
 
         * asking_questions.html: Removed.
