@@ -95,8 +95,8 @@ RefPtr<RealtimeMediaSourceCapabilities> MockRealtimeMediaSource::capabilities()
     if (m_capabilities)
         return m_capabilities;
 
-    m_capabilities = RealtimeMediaSourceCapabilities::create();
-    m_capabilities->setSourceId(id());
+    m_capabilities = RealtimeMediaSourceCapabilities::create(supportedConstraints());
+    m_capabilities->setDeviceId(id());
     initializeCapabilities(*m_capabilities.get());
 
     return m_capabilities;

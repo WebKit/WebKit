@@ -48,7 +48,7 @@ enum MediaStreamTrackState { "new", "live", "ended" };
 
     MediaTrackConstraints getConstraints();
     [Custom] MediaSourceSettings getSettings();
-    MediaStreamCapabilities getCapabilities(); // returns either AllVideoCapabilities or AllAudioCapabilities
+    [Custom] MediaTrackCapabilities getCapabilities();
     void applyConstraints(Dictionary constraints);
 
     attribute EventHandler onoverconstrained;

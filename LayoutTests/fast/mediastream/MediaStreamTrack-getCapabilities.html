@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+            var mediaStream;
+
+            function limitPrecision(value, precision)
+            {
+                if (typeof value === "string")
+                    return `"${value}`;
+
+                if (typeof value === "number" && value % 1 != 0)
+                    return value.toFixed(precision);
+                return value;
+            }
+
+            function capabilityRange(name, object)
+            {
+                if (Array.isArray(object)) {
+                    if (!object.length)
+                        return "[ ]";
+
+                    var value = "[";
+                    for (i = 0; i < object.length; i++)
+                        value += ` ${object[i]},`;
+
+                    return value.slice(0, -1) + " ]";
+                }
+
+                var value = "{";
+                for (var property in object) {
+                        value += ` ${property}: ${limitPrecision(object[property], 3)},`;
+                }
+                
+                if (value.length)
+                    value = value.slice(0, -1);
+
+
+                return value + " }";
+            }
+
+            function listTrackProperties(track)
+            {
+                debug(`${track.kind} track capabilities:`);
+                capabilities = track.getCapabilities();
+                for (var property in capabilities) {
+                    if (capabilities.hasOwnProperty(property) || capabilities.__proto__.hasOwnProperty(property))
+                        if (property == "deviceId")
+                            value = "&lt;UUID>";
+                        else if (typeof capabilities[property] === "object")
+                            value = capabilityRange(property, capabilities[property]);
+                        else
+                            value = limitPrecision(capabilities[property], 2);
+                        debug(`  capabilities.${property} = ${value}`);
+                }
+                debug("");
+            }
+
+            function gotStream(stream)
+            {
+                mediaStream = stream;
+                listTrackProperties(mediaStream.getVideoTracks()[0]);
+                listTrackProperties(mediaStream.getAudioTracks()[0]);
+                finishJSTest();
+            }
+
+            function start()
+            {
+                description("Tests MediaStreamTrack.getCapabilities.");
+                getUserMedia("allow", {audio:true, video:true}, gotStream);
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

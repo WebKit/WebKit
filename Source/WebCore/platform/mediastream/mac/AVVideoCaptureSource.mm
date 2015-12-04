@@ -108,10 +108,9 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
 {
 }
 
-void AVVideoCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
+void AVVideoCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities&)
 {
     // FIXME: finish this implementation
-    capabilities.setSourceId(id());
 }
 
 void AVVideoCaptureSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)

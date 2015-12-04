@@ -55,7 +55,7 @@ public:
     const AtomicString& facingMode() const;
 
     bool supportsVolume() const { return m_sourceSettings.supportsVolume(); }
-    unsigned long volume() const { return m_sourceSettings.volume(); }
+    double volume() const { return m_sourceSettings.volume(); }
 
     bool supportsSampleRate() const { return m_sourceSettings.supportsSampleRate(); }
     unsigned long sampleRate() const { return m_sourceSettings.sampleRate(); }

@@ -221,15 +221,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasource/SourceBufferList.idl
     Modules/mediasource/VideoPlaybackQuality.idl
 
-    Modules/mediastream/AllAudioCapabilities.idl
-    Modules/mediastream/AllVideoCapabilities.idl
-    Modules/mediastream/CapabilityRange.idl
     Modules/mediastream/DOMURLMediaStream.idl
     Modules/mediastream/HTMLMediaElementMediaStream.idl
     Modules/mediastream/MediaDeviceInfo.idl
     Modules/mediastream/MediaDevices.idl
     Modules/mediastream/MediaStream.idl
-    Modules/mediastream/MediaStreamCapabilities.idl
     Modules/mediastream/MediaStreamEvent.idl
     Modules/mediastream/MediaStreamTrack.idl
     Modules/mediastream/MediaStreamTrackEvent.idl
@@ -943,7 +939,6 @@ set(WebCore_SOURCES
     Modules/mediasource/SourceBufferList.cpp
     Modules/mediasource/VideoPlaybackQuality.cpp
 
-    Modules/mediastream/CapabilityRange.cpp
     Modules/mediastream/DOMURLMediaStream.cpp
     Modules/mediastream/HTMLMediaElementMediaStream.cpp
     Modules/mediastream/MediaConstraintsImpl.cpp
@@ -953,7 +948,6 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaEndpointPeerConnection.cpp
     Modules/mediastream/MediaSourceSettings.cpp
     Modules/mediastream/MediaStream.cpp
-    Modules/mediastream/MediaStreamCapabilities.cpp
     Modules/mediastream/MediaStreamEvent.cpp
     Modules/mediastream/MediaStreamRegistry.cpp
     Modules/mediastream/MediaStreamTrack.cpp
@@ -1206,7 +1200,6 @@ set(WebCore_SOURCES
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
-    bindings/js/JSMediaStreamCapabilitiesCustom.cpp
     bindings/js/JSMediaStreamTrackCustom.cpp
     bindings/js/JSMediaTrackSupportedConstraintsCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp

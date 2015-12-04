@@ -46,7 +46,6 @@ class AudioSourceProvider;
 class Dictionary;
 class MediaConstraintsImpl;
 class MediaSourceSettings;
-class MediaStreamCapabilities;
 class MediaTrackConstraints;
 
 class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamTrackPrivate::Observer {
@@ -80,7 +79,7 @@ public:
 
     RefPtr<MediaTrackConstraints> getConstraints() const;
     RefPtr<MediaSourceSettings> getSettings() const;
-    RefPtr<MediaStreamCapabilities> getCapabilities() const;
+    RefPtr<RealtimeMediaSourceCapabilities> getCapabilities() const;
     void applyConstraints(const Dictionary&);
     void applyConstraints(const MediaConstraints&);
 

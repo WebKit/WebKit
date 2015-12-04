@@ -35,101 +35,154 @@
 
 namespace WebCore {
 
-class RealtimeMediaSourceCapabilityRange {
+class CapabilityValueOrRange {
 public:
-    
-    RealtimeMediaSourceCapabilityRange(float min, float max, bool supported = true)
-        : m_type(Float)
-    {
-        m_min.asFloat = min;
-        m_max.asFloat = max;
-        m_supported = supported;
-    }
-    
-    RealtimeMediaSourceCapabilityRange(unsigned long min, unsigned long max, bool supported = true)
-        : m_type(ULong)
-    {
-        m_min.asULong = min;
-        m_max.asULong = max;
-        m_supported = supported;
-    }
-    
-    RealtimeMediaSourceCapabilityRange()
-    {
-        m_type = Undefined;
-        m_min.asULong = 0;
-        m_max.asULong = 0;
-        m_supported = false;
-    }
-    
-    enum Type { Undefined, Float, ULong };
-    
+
+    enum Type {
+        Undefined,
+        Double,
+        ULong,
+        DoubleRange,
+        ULongRange,
+    };
+    Type type() const { return m_type; }
+
     union ValueUnion {
         unsigned long asULong;
-        float asFloat;
+        double asDouble;
     };
+
+    CapabilityValueOrRange()
+        : m_type(Undefined)
+    {
+    }
+
+    CapabilityValueOrRange(double value)
+        : m_type(Double)
+    {
+        m_minOrValue.asDouble = value;
+    }
+
+    CapabilityValueOrRange(unsigned long value)
+        : m_type(ULong)
+    {
+        m_minOrValue.asULong = value;
+    }
+
+    CapabilityValueOrRange(double min, double max)
+        : m_type(DoubleRange)
+    {
+        m_minOrValue.asDouble = min;
+        m_max.asDouble = max;
+    }
     
-    const ValueUnion& min() const { return m_min; }
-    const ValueUnion& max() const { return m_max; }
-    Type type() const { return m_type; }
-    bool supported() const { return m_supported; }
-    
+    CapabilityValueOrRange(unsigned long min, unsigned long max)
+        : m_type(ULongRange)
+    {
+        m_minOrValue.asULong = min;
+        m_max.asULong = max;
+    }
+
+    const ValueUnion& rangeMin() const
+    {
+        ASSERT(m_type == DoubleRange || m_type == ULongRange);
+        return m_minOrValue;
+    }
+
+    const ValueUnion& rangeMax() const
+    {
+        ASSERT(m_type == DoubleRange || m_type == ULongRange);
+        return m_max;
+    }
+
+    const ValueUnion& value() const
+    {
+        ASSERT(m_type == Double || m_type == ULong);
+        return m_minOrValue;
+    }
+
 private:
-    ValueUnion m_min;
+    ValueUnion m_minOrValue;
     ValueUnion m_max;
     Type m_type;
-    bool m_supported;
 };
 
 class RealtimeMediaSourceCapabilities : public RefCounted<RealtimeMediaSourceCapabilities> {
 public:
-    static PassRefPtr<RealtimeMediaSourceCapabilities> create()
+    static PassRefPtr<RealtimeMediaSourceCapabilities> create(const RealtimeMediaSourceSupportedConstraints& supportedConstraints)
     {
-        return adoptRef(new RealtimeMediaSourceCapabilities());
+        return adoptRef(new RealtimeMediaSourceCapabilities(supportedConstraints));
     }
 
     ~RealtimeMediaSourceCapabilities() { }
 
-    const Vector<AtomicString>& sourceId() { return m_sourceId; }
-    void setSourceId(const AtomicString& id)  { m_sourceId.reserveCapacity(1); m_sourceId.insert(0, id); }
+    bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
+    const CapabilityValueOrRange& width() { return m_width; }
+    void setWidth(const CapabilityValueOrRange& width) { m_width = width; }
 
-    const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& facingModes() { return m_facingMode; }
+    bool supportsHeight() const { return m_supportedConstraints.supportsHeight(); }
+    const CapabilityValueOrRange& height() { return m_height; }
+    void setHeight(const CapabilityValueOrRange& height) { m_height = height; }
+
+    bool supportsFrameRate() const { return m_supportedConstraints.supportsFrameRate(); }
+    const CapabilityValueOrRange& frameRate() { return m_frameRate; }
+    void setFrameRate(const CapabilityValueOrRange& frameRate) { m_frameRate = frameRate; }
+
+    bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
+    const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& facingMode() { return m_facingMode; }
     void addFacingMode(RealtimeMediaSourceSettings::VideoFacingMode mode) { m_facingMode.append(mode); }
 
-    const RealtimeMediaSourceCapabilityRange& width() { return m_width; }
-    void setWidthRange(const RealtimeMediaSourceCapabilityRange& width) { m_width = width; }
+    bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
+    const CapabilityValueOrRange& aspectRatio() { return m_aspectRatio; }
+    void setAspectRatio(const CapabilityValueOrRange& aspectRatio) { m_aspectRatio = aspectRatio; }
 
-    const RealtimeMediaSourceCapabilityRange& height() { return m_height; }
-    void setHeightRange(const RealtimeMediaSourceCapabilityRange& height) { m_height = height; }
+    bool supportsVolume() const { return m_supportedConstraints.supportsVolume(); }
+    const CapabilityValueOrRange& volume() { return m_volume; }
+    void setVolume(const CapabilityValueOrRange& volume) { m_volume = volume; }
 
-    const RealtimeMediaSourceCapabilityRange& frameRate() { return m_frameRate; }
-    void setFrameRateRange(const RealtimeMediaSourceCapabilityRange& frameRate) { m_frameRate = frameRate; }
+    bool supportsSampleRate() const { return m_supportedConstraints.supportsSampleRate(); }
+    const CapabilityValueOrRange& sampleRate() { return m_sampleRate; }
+    void setSampleRate(const CapabilityValueOrRange& sampleRate) { m_sampleRate = sampleRate; }
 
-    const RealtimeMediaSourceCapabilityRange& aspectRatio() { return m_aspectRatio; }
-    void setAspectRatioRange(const RealtimeMediaSourceCapabilityRange& aspectRatio) { m_aspectRatio = aspectRatio; }
+    bool supportsSampleSize() const { return m_supportedConstraints.supportsSampleSize(); }
+    const CapabilityValueOrRange& sampleSize() { return m_sampleSize; }
+    void setSampleSize(const CapabilityValueOrRange& sampleSize) { m_sampleSize = sampleSize; }
 
-    const RealtimeMediaSourceCapabilityRange& volume() { return m_volume; }
-    void setVolumeRange(const RealtimeMediaSourceCapabilityRange& volume) { m_volume = volume; }
+    enum class EchoCancellation {
+        ReadOnly = 0,
+        ReadWrite = 1,
+    };
+    bool supportsEchoCancellation() const { return m_supportedConstraints.supportsEchoCancellation(); }
+    EchoCancellation echoCancellation() { return m_echoCancellation; }
+    void setEchoCancellation(EchoCancellation echoCancellation) { m_echoCancellation = echoCancellation; }
 
-    bool hasVideoSource() { return m_videoSource; }
-    void setHasVideoSource(bool isVideo) { m_videoSource = isVideo; }
+    bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
+    const AtomicString& deviceId() { return m_deviceId; }
+    void setDeviceId(const AtomicString& id)  { m_deviceId = id; }
 
+    bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
+    const AtomicString& groupId() { return m_groupId; }
+    void setGroupId(const AtomicString& id)  { m_groupId = id; }
+    
 private:
-    RealtimeMediaSourceCapabilities()
-        : m_videoSource(false)
+    RealtimeMediaSourceCapabilities(const RealtimeMediaSourceSupportedConstraints& supportedConstraints)
+        : m_supportedConstraints(supportedConstraints)
     {
     }
 
-    Vector<AtomicString> m_sourceId;
+    CapabilityValueOrRange m_width;
+    CapabilityValueOrRange m_height;
+    CapabilityValueOrRange m_aspectRatio;
+    CapabilityValueOrRange m_frameRate;
     Vector<RealtimeMediaSourceSettings::VideoFacingMode> m_facingMode;
+    CapabilityValueOrRange m_volume;
+    CapabilityValueOrRange m_sampleRate;
+    CapabilityValueOrRange m_sampleSize;
+    EchoCancellation m_echoCancellation;
+    AtomicString m_deviceId;
+    AtomicString m_groupId;
 
-    RealtimeMediaSourceCapabilityRange m_width;
-    RealtimeMediaSourceCapabilityRange m_height;
-    RealtimeMediaSourceCapabilityRange m_frameRate;
-    RealtimeMediaSourceCapabilityRange m_aspectRatio;
-    RealtimeMediaSourceCapabilityRange m_volume;
-
-    bool m_videoSource;
+    const RealtimeMediaSourceSupportedConstraints& m_supportedConstraints;
 };
 
 } // namespace WebCore

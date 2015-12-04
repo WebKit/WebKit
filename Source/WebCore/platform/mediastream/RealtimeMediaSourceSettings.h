@@ -67,8 +67,8 @@ public:
     void setFacingMode(VideoFacingMode facingMode) { m_facingMode = facingMode; }
 
     bool supportsVolume() const { return m_supportedConstraints.supportsVolume(); }
-    unsigned long volume() const { return m_volume; }
-    void setVolume(unsigned long volume) { m_volume = volume; }
+    double volume() const { return m_volume; }
+    void setVolume(double volume) { m_volume = volume; }
 
     bool supportsSampleRate() const { return m_supportedConstraints.supportsSampleRate(); }
     unsigned long sampleRate() const { return m_sampleRate; }
@@ -98,7 +98,7 @@ private:
     float m_aspectRatio { 0 };
     float m_frameRate { 0 };
     VideoFacingMode m_facingMode { Unknown };
-    unsigned long m_volume { 0 };
+    double m_volume { 0 };
     unsigned long m_sampleRate { 0 };
     unsigned long m_sampleSize { 0 };
     bool m_echoCancellation { 0 };

@@ -1,3 +1,127 @@
+2015-12-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Update MediaStreamTrack.getCapabilities
+        https://bugs.webkit.org/show_bug.cgi?id=151728
+
+        Reviewed by Jer Noble.
+
+        Test: fast/mediastream/MediaStreamTrack-getCapabilities.html
+
+        * CMakeLists.txt: Remove files deleted from the repository.
+
+        * DerivedSources.make: Ditto.
+
+        * Modules/mediastream/AllAudioCapabilities.h: Removed.
+        * Modules/mediastream/AllAudioCapabilities.idl: Removed.
+        * Modules/mediastream/AllVideoCapabilities.h: Removed.
+        * Modules/mediastream/AllVideoCapabilities.idl: Removed.
+        * Modules/mediastream/CapabilityRange.cpp: Removed.
+        * Modules/mediastream/CapabilityRange.h: Removed.
+        * Modules/mediastream/CapabilityRange.idl: Removed.
+
+        * Modules/mediastream/MediaSourceSettings.h:
+        (WebCore::MediaSourceSettings::supportsVolume): Volume is a double.
+        (WebCore::MediaSourceSettings::volume): Double.
+
+        * Modules/mediastream/MediaStreamCapabilities.cpp: Removed.
+        * Modules/mediastream/MediaStreamCapabilities.h: Removed.
+        * Modules/mediastream/MediaStreamCapabilities.idl: Removed.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::getCapabilities): MediaStreamCapabilities is gone, return a RealtimeMediaSourceCapabilities.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+
+        * WebCore.xcodeproj/project.pbxproj: Remove files deleted from the repository.
+        * bindings/js/JSMediaStreamTrackCustom.cpp:
+        (WebCore::capabilityValue):
+        (WebCore::JSMediaStreamTrack::getCapabilities): Create and return a dictionary of capatilities.
+
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        (WebCore::CapabilityValueOrRange::type):
+        (WebCore::CapabilityValueOrRange::CapabilityValueOrRange):
+        (WebCore::CapabilityValueOrRange::rangeMin):
+        (WebCore::CapabilityValueOrRange::rangeMax):
+        (WebCore::CapabilityValueOrRange::value):
+        (WebCore::RealtimeMediaSourceCapabilities::create):
+        (WebCore::RealtimeMediaSourceCapabilities::~RealtimeMediaSourceCapabilities):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsWidth):
+        (WebCore::RealtimeMediaSourceCapabilities::width):
+        (WebCore::RealtimeMediaSourceCapabilities::setWidth):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsHeight):
+        (WebCore::RealtimeMediaSourceCapabilities::height):
+        (WebCore::RealtimeMediaSourceCapabilities::setHeight):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsFrameRate):
+        (WebCore::RealtimeMediaSourceCapabilities::frameRate):
+        (WebCore::RealtimeMediaSourceCapabilities::setFrameRate):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsFacingMode):
+        (WebCore::RealtimeMediaSourceCapabilities::facingMode):
+        (WebCore::RealtimeMediaSourceCapabilities::addFacingMode):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsAspectRatio):
+        (WebCore::RealtimeMediaSourceCapabilities::aspectRatio):
+        (WebCore::RealtimeMediaSourceCapabilities::setAspectRatio):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsVolume):
+        (WebCore::RealtimeMediaSourceCapabilities::volume):
+        (WebCore::RealtimeMediaSourceCapabilities::setVolume):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsSampleRate):
+        (WebCore::RealtimeMediaSourceCapabilities::sampleRate):
+        (WebCore::RealtimeMediaSourceCapabilities::setSampleRate):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsSampleSize):
+        (WebCore::RealtimeMediaSourceCapabilities::sampleSize):
+        (WebCore::RealtimeMediaSourceCapabilities::setSampleSize):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsEchoCancellation):
+        (WebCore::RealtimeMediaSourceCapabilities::echoCancellation):
+        (WebCore::RealtimeMediaSourceCapabilities::setEchoCancellation):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsDeviceId):
+        (WebCore::RealtimeMediaSourceCapabilities::deviceId):
+        (WebCore::RealtimeMediaSourceCapabilities::setDeviceId):
+        (WebCore::RealtimeMediaSourceCapabilities::supportsGroupId):
+        (WebCore::RealtimeMediaSourceCapabilities::groupId):
+        (WebCore::RealtimeMediaSourceCapabilities::setGroupId):
+        (WebCore::RealtimeMediaSourceCapabilities::RealtimeMediaSourceCapabilities):
+        (WebCore::RealtimeMediaSourceCapabilityRange::RealtimeMediaSourceCapabilityRange): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilityRange::min): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilityRange::max): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilityRange::type): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilityRange::supported): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::sourceId): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setSourceId): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::facingModes): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setWidthRange): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setHeightRange): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setFrameRateRange): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setAspectRatioRange): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setVolumeRange): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::hasVideoSource): Deleted.
+        (WebCore::RealtimeMediaSourceCapabilities::setHasVideoSource): Deleted.
+
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        (WebCore::RealtimeMediaSourceSettings::volume): Volume is a double.
+        (WebCore::RealtimeMediaSourceSettings::setVolume): Ditt.
+
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::initializeCapabilities): Initialize volume capability.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::capabilities): RealtimeMediaSourceCapabilities constructor takes
+          supportedConstraints. sourceId -> deviceId.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::initializeCapabilities): DeviceId is set by the base class.
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm: Drive-by cleanup, remove unused code.
+
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::initializeCapabilities): Updated.
+        (WebCore::MockRealtimeAudioSource::initializeSupportedConstraints): Ditto.
+
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::capabilities): sourceId -> deviceId.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::initializeCapabilities): Updated.
+        (WebCore::MockRealtimeVideoSource::initializeSupportedConstraints): Ditto.
+
 2015-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Have layer memory use consult the backing store format

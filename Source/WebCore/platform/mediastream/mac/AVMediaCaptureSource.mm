@@ -28,7 +28,9 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "AVCaptureDeviceManager.h"
 #import "AudioSourceProvider.h"
+#import "CoreMediaSoftLink.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "RealtimeMediaSourceSettings.h"
@@ -38,8 +40,6 @@
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
-
-#import "CoreMediaSoftLink.h"
 
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceType;
@@ -188,8 +188,9 @@ RealtimeMediaSourceSupportedConstraints& AVMediaCaptureSource::supportedConstrai
 RefPtr<RealtimeMediaSourceCapabilities> AVMediaCaptureSource::capabilities()
 {
     if (!m_capabilities) {
-        m_capabilities = RealtimeMediaSourceCapabilities::create();
-        m_capabilities->setSourceId(id());
+        m_capabilities = RealtimeMediaSourceCapabilities::create(AVCaptureDeviceManager::singleton().supportedConstraints());
+        m_capabilities->setDeviceId(id());
+
         initializeCapabilities(*m_capabilities.get());
     }
     return m_capabilities;

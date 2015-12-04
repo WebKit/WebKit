@@ -34,10 +34,7 @@
 #import "CARingBuffer.h"
 #import "Logging.h"
 #import "MediaTimeAVFoundation.h"
-#import <AVFoundation/AVAssetTrack.h>
-#import <AVFoundation/AVAudioMix.h>
-#import <AVFoundation/AVMediaFormat.h>
-#import <AVFoundation/AVPlayerItem.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
 
@@ -47,12 +44,7 @@
 
 #import "CoreMediaSoftLink.h"
 
-SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_FRAMEWORK(AudioToolbox)
-
-SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
-SOFT_LINK_CLASS(AVFoundation, AVMutableAudioMix)
-SOFT_LINK_CLASS(AVFoundation, AVMutableAudioMixInputParameters)
 
 SOFT_LINK(AudioToolbox, AudioConverterConvertComplexBuffer, OSStatus, (AudioConverterRef inAudioConverter, UInt32 inNumberPCMFrames, const AudioBufferList* inInputData, AudioBufferList* outOutputData), (inAudioConverter, inNumberPCMFrames, inInputData, outOutputData))
 SOFT_LINK(AudioToolbox, AudioConverterNew, OSStatus, (const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverterRef* outAudioConverter), (inSourceFormat, inDestinationFormat, outAudioConverter))

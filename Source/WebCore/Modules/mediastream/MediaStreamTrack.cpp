@@ -30,8 +30,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AllAudioCapabilities.h"
-#include "AllVideoCapabilities.h"
 #include "Dictionary.h"
 #include "Event.h"
 #include "ExceptionCode.h"
@@ -167,9 +165,9 @@ RefPtr<MediaSourceSettings> MediaStreamTrack::getSettings() const
     return MediaSourceSettings::create(m_private->settings());
 }
 
-RefPtr<MediaStreamCapabilities> MediaStreamTrack::getCapabilities() const
+RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrack::getCapabilities() const
 {
-    return MediaStreamCapabilities::create(m_private->capabilities());
+    return m_private->capabilities();
 }
 
 void MediaStreamTrack::applyConstraints(const Dictionary& constraints)

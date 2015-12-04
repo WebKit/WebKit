@@ -57,12 +57,14 @@ void MockRealtimeAudioSource::updateSettings(RealtimeMediaSourceSettings& settin
 
 void MockRealtimeAudioSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
-    capabilities.setVolumeRange(RealtimeMediaSourceCapabilityRange(0UL, 100UL, true));
+    capabilities.setVolume(CapabilityValueOrRange(0, 1.0));
+    capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
 }
 
 void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)
 {
     supportedConstraints.setSupportsVolume(true);
+    supportedConstraints.setSupportsEchoCancellation(true);
 }
 
 } // namespace WebCore

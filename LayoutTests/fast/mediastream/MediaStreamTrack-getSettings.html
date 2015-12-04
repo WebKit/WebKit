@@ -5,6 +5,7 @@
         <script src="./resources/getUserMedia-helper.js"></script>
         <script>
             var mediaStream;
+            var track;
 
             function limitPrecision(value, precision)
             {
@@ -13,26 +14,46 @@
                 return value;
             }
             
-            function listTrackProperties(track)
+            function listTrackSettings(track)
             {
-                debug(`${track.kind} track:`);
+                debug(`${track.kind} track settings:`);
                 settings = track.getSettings();
                 for (var property in settings) {
-                    if (settings.hasOwnProperty(property) || settings.__proto__.hasOwnProperty(property))
+                    if (settings.hasOwnProperty(property) || settings.__proto__.hasOwnProperty(property)) {
                         if (property == "deviceId")
                             value = "&lt;UUID>";
                         else
-                            value = limitPrecision(settings[property], 2);
+                            value = limitPrecision(settings[property], 3);
                         debug(`  settings.${property} = ${value}`);
+                    }
                 }
+
                 debug("");
+            }
+
+            function checkTrackSettings(t)
+            {
+                track = t;
+
+                capabilities = track.getCapabilities();
+                settings = track.getSettings();
+                for (var property in settings) {
+                    if (settings.hasOwnProperty(property) || settings.__proto__.hasOwnProperty(property)) {
+                        shouldBeTrue(`"${property}" in track.getCapabilities()`);
+                    }
+                }
             }
 
             function gotStream(stream)
             {
                 mediaStream = stream;
-                listTrackProperties(mediaStream.getVideoTracks()[0]);
-                listTrackProperties(mediaStream.getAudioTracks()[0]);
+
+                listTrackSettings(mediaStream.getVideoTracks()[0]);
+                listTrackSettings(mediaStream.getAudioTracks()[0]);
+
+                debug('According to the spec: "[every setting] MUST be a member of the set defined for that property by getCapabilities()"<br>');
+                checkTrackSettings(mediaStream.getVideoTracks()[0]);
+                checkTrackSettings(mediaStream.getAudioTracks()[0]);
                 finishJSTest();
             }
 

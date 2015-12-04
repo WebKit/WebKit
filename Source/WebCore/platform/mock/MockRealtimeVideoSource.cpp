@@ -103,10 +103,10 @@ void MockRealtimeVideoSource::initializeCapabilities(RealtimeMediaSourceCapabili
 {
     capabilities.addFacingMode(RealtimeMediaSourceSettings::User);
     capabilities.addFacingMode(RealtimeMediaSourceSettings::Environment);
-    capabilities.setWidthRange(RealtimeMediaSourceCapabilityRange(320UL, 1920UL, true));
-    capabilities.setHeightRange(RealtimeMediaSourceCapabilityRange(240UL, 1080UL, true));
-    capabilities.setFrameRateRange(RealtimeMediaSourceCapabilityRange(15.0f, 60.0f, true));
-    capabilities.setAspectRatioRange(RealtimeMediaSourceCapabilityRange(4 / 3.0f, 16 / 9.0f, true));
+    capabilities.setWidth(CapabilityValueOrRange(320UL, 1920UL));
+    capabilities.setHeight(CapabilityValueOrRange(240UL, 1080UL));
+    capabilities.setFrameRate(CapabilityValueOrRange(15.0, 60.0));
+    capabilities.setAspectRatio(CapabilityValueOrRange(4 / 3.0, 16 / 9.0));
 }
 
 void MockRealtimeVideoSource::initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints)
