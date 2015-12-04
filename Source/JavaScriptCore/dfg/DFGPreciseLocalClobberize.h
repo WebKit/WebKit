@@ -42,7 +42,7 @@ public:
         : m_graph(graph)
         , m_node(node)
         , m_read(read)
-        , m_write(write)
+        , m_unconditionalWrite(write)
         , m_def(def)
     {
     }
@@ -70,7 +70,7 @@ public:
         // We expect stack writes to already be precisely characterized by DFG::clobberize().
         if (heap.kind() == Stack) {
             RELEASE_ASSERT(!heap.payload().isTop());
-            callIfAppropriate(m_write, VirtualRegister(heap.payload().value32()));
+            callIfAppropriate(m_unconditionalWrite, VirtualRegister(heap.payload().value32()));
             return;
         }
         
@@ -153,7 +153,7 @@ private:
     Graph& m_graph;
     Node* m_node;
     const ReadFunctor& m_read;
-    const WriteFunctor& m_write;
+    const WriteFunctor& m_unconditionalWrite;
     const DefFunctor& m_def;
 };
 
