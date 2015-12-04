@@ -1,3 +1,9 @@
+2015-12-03  Jonathan Davis  <jond@apple.com>
+
+        Fixed cache logic so download data is correctly available.
+
+        * wp-content/themes/webkit/nightly.php:
+
 2015-12-03  Timothy Hatcher  <timothy@apple.com>
 
         Add some missing redirects for directories of the old site.

@@ -19,7 +19,7 @@ function get_nightly_download_details( $type = 'mac' ) {
         $type = $types[0];
     
     $cachekey = 'nightly_download_' . $type;
-    if ( is_super_cache_enabled() || false !== ( $cached = get_transient($cachekey) ) )
+    if ( false !== ( $cached = get_transient($cachekey) ) )
         return json_decode($cached);
 	
     $url = sprintf(WEBKIT_NIGHTLY_ARCHIVE_URL, $type);
