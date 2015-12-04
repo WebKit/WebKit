@@ -111,6 +111,8 @@ struct PrintInfo;
 - (void)_navigationGestureDidBegin;
 - (void)_navigationGestureDidEnd;
 
+@property (nonatomic, readonly) BOOL _isBackground;
+
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 
 @property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;

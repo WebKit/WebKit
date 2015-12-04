@@ -1,3 +1,40 @@
+2015-12-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Background state not being tracked correctly for PDFs on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=151886
+
+        Reviewed by Anders Carlson.
+
+        The problem here is that when viewing a PDF we don't have an ApplicationStateTracker.
+        (While we do have a content view - which normally holds the ApplicationStateTracker -
+        the content view is not in a window, and only has an ApplicationStateTracker while in a
+        window). For now, let's give the WKPDFView an ApplicationStateTracker of its very own.
+        In the future we may want to refactor ownership of the ApplicationStateTracker up to
+        the WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isBackground]):
+            - Added, checks background state of content/PDF view.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            - expose _isBackground to PageClientImplIOS.
+        * UIProcess/ApplicationStateTracker.h:
+        (WebKit::ApplicationStateTracker::isInBackground):
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::isBackgroundState):
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+            - generalize WKContentView -> UIView, so this may now also be a WKPDFView.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewVisible):
+            - check background state via the WKWebView.
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView willMoveToWindow:]):
+        (-[WKPDFView didMoveToWindow]):
+        (-[WKPDFView isBackground]):
+        (-[WKPDFView _applicationDidEnterBackground]):
+        (-[WKPDFView _applicationWillEnterForeground]):
+            - added methods to initialize ApplicationStateTracker, access background state, & callbacks to the page proxy.
+
 2015-12-04  Antti Koivisto  <antti@apple.com>
 
         Rename WebResourceLoadScheduler to WebLoaderStrategy

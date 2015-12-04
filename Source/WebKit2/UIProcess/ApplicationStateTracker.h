@@ -33,13 +33,13 @@
 #import <wtf/WeakPtr.h>
 
 OBJC_CLASS BKSApplicationStateMonitor;
-OBJC_CLASS WKContentView;
+OBJC_CLASS UIView;
 
 namespace WebKit {
 
 class ApplicationStateTracker {
 public:
-    ApplicationStateTracker(WKContentView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector);
+    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector);
     ~ApplicationStateTracker();
 
     bool isInBackground() const { return m_isInBackground; }
@@ -48,7 +48,7 @@ private:
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 
-    WeakObjCPtr<WKContentView> m_view;
+    WeakObjCPtr<UIView> m_view;
     SEL m_didEnterBackgroundSelector;
     SEL m_willEnterForegroundSelector;
 

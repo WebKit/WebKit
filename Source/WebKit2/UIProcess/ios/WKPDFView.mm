@@ -30,6 +30,7 @@
 
 #import "APIFindClient.h"
 #import "APIUIClient.h"
+#import "ApplicationStateTracker.h"
 #import "CorePDFSPI.h"
 #import "SessionState.h"
 #import "UIKitSPI.h"
@@ -46,6 +47,7 @@
 #import <wtf/Vector.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 const CGFloat pdfPageMargin = 8;
 const CGFloat pdfMinimumZoomScale = 1;
@@ -108,6 +110,8 @@ typedef struct {
     dispatch_queue_t _findQueue;
 
     RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
+
+    std::unique_ptr<ApplicationStateTracker> _applicationStateTracker;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -842,6 +846,47 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
     [self _didFailToUnlock];
     return NO;
+}
+
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
+    if (newWindow)
+        return;
+    
+    ASSERT(self.window);
+    ASSERT(_applicationStateTracker);
+    _applicationStateTracker = nullptr;
+}
+
+- (void)didMoveToWindow
+{
+    if (!self.window)
+        return;
+
+    ASSERT(!_applicationStateTracker);
+    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
+}
+
+- (BOOL)isBackground
+{
+    if (!_applicationStateTracker)
+        return YES;
+
+    return _applicationStateTracker->isInBackground();
+}
+
+- (void)_applicationDidEnterBackground
+{
+    _webView->_page->applicationDidEnterBackground();
+    _webView->_page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
+}
+
+- (void)_applicationWillEnterForeground
+{
+    _webView->_page->applicationWillEnterForeground();
+    if (auto drawingArea = _webView->_page->drawingArea())
+        drawingArea->hideContentUntilAnyUpdate();
+    _webView->_page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true, WebPageProxy::ViewStateChangeDispatchMode::Immediate);
 }
 
 @end
