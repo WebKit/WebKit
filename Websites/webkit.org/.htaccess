@@ -46,7 +46,6 @@ Redirect 301 /coding/technical-articles.html /blog/
 Redirect 301 /conference /meeting/
 Redirect 301 /contact.html /getting-started/#staying-in-touch
 RedirectMatch 301 ^/projects/ /project/
-Redirect 301 /projects/ /project/
 Redirect 301 /projects /project/
 Redirect 301 /quality/bugpriorities.html /bug-prioritization/
 Redirect 301 /quality/bugwriting.html /bug-report-guidelines/
