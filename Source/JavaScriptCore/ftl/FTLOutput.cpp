@@ -75,6 +75,47 @@ LBasicBlock Output::newBlock(const char* name)
     return insertBasicBlock(m_context, m_nextBlock, name);
 }
 
+LValue Output::chillDiv(LValue numerator, LValue denominator)
+{
+    LBasicBlock unsafeDenominator = FTL_NEW_BLOCK(*this, ("ChillDiv unsafe denominator"));
+    LBasicBlock continuation = FTL_NEW_BLOCK(*this, ("ChillDiv continuation"));
+    LBasicBlock done = FTL_NEW_BLOCK(*this, ("ChillDiv done"));
+    LBasicBlock divByZero = FTL_NEW_BLOCK(*this, ("ChillDiv divide by zero"));
+    LBasicBlock notDivByZero = FTL_NEW_BLOCK(*this, ("ChillDiv not divide by zero"));
+    LBasicBlock neg2ToThe31ByNeg1 = FTL_NEW_BLOCK(*this, ("ArithDiv -2^31/-1"));
+
+    LValue adjustedDenominator = add(denominator, int32One);
+    branch(
+        above(adjustedDenominator, int32One),
+        usually(continuation), rarely(unsafeDenominator));
+
+    Vector<ValueFromBlock, 3> results;
+    LBasicBlock lastNext = appendTo(unsafeDenominator, continuation);
+
+    LValue neg2ToThe31 = constInt32(-2147483647-1);
+    branch(isZero32(denominator), rarely(divByZero), usually(notDivByZero));
+
+    appendTo(divByZero, notDivByZero);
+    results.append(anchor(int32Zero));
+    jump(done);
+
+    appendTo(notDivByZero, neg2ToThe31ByNeg1);
+    branch(equal(numerator, neg2ToThe31),
+        rarely(neg2ToThe31ByNeg1), usually(continuation));
+
+    appendTo(neg2ToThe31ByNeg1, continuation);
+    results.append(anchor(neg2ToThe31));
+    jump(done);
+
+    appendTo(continuation, done);
+    LValue result = div(numerator, denominator);
+    results.append(anchor(result));
+    jump(done);
+
+    appendTo(done, lastNext);
+    return phi(int32, results);
+}
+
 LValue Output::sensibleDoubleToInt(LValue value)
 {
     RELEASE_ASSERT(isX86());

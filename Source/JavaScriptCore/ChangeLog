@@ -1,5 +1,27 @@
 2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Use Div and ChillDiv in FTL(B3)Output
+        https://bugs.webkit.org/show_bug.cgi?id=151844
+
+        Reviewed by Geoffrey Garen.
+
+        I copied part of the code of compileArithDiv()
+        to create a new function FTLOutput::childDiv().
+
+        With childDiv() being a concept of FTLOutput,
+        FTLB3Output was updated accordingly.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::div):
+        (JSC::FTL::Output::chillDiv):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithDiv):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::chillDiv):
+        * ftl/FTLOutput.h:
+
+2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Extend the strength reduction of B3's BitAnd with booleans
         https://bugs.webkit.org/show_bug.cgi?id=151852
 

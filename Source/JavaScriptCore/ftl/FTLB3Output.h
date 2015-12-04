@@ -121,7 +121,8 @@ public:
     LValue add(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Add, origin(), left, right); }
     LValue sub(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Sub, origin(), left, right); }
     LValue mul(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Mul, origin(), left, right); }
-    LValue div(LValue left, LValue right) { CRASH(); }
+    LValue div(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Div, origin(), left, right); }
+    LValue chillDiv(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ChillDiv, origin(), left, right); }
     LValue rem(LValue left, LValue right) { CRASH(); }
     LValue neg(LValue value)
     {
