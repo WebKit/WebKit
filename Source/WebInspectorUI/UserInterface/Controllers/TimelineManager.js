@@ -332,10 +332,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             if (!recordPayload.children)
                 return null;
 
-            var children = this._processNestedRecords(recordPayload.children, recordPayload);
-            if (!children.length)
-                return null;
-            return new WebInspector.RenderingFrameTimelineRecord(startTime, endTime, children);
+            return new WebInspector.RenderingFrameTimelineRecord(startTime, endTime);
 
         case TimelineAgent.EventType.EvaluateScript:
             if (!sourceCodeLocation) {

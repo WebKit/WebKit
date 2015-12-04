@@ -1,5 +1,39 @@
 2015-12-02  Timothy Hatcher  <timothy@apple.com>
 
+        Merge r191967. rdar://problem/23221163
+
+    2015-11-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Handle or Remove ParseHTML Timeline Event Records
+            https://bugs.webkit.org/show_bug.cgi?id=150689
+
+            Reviewed by Timothy Hatcher.
+
+            Remove ParseHTML nesting recordings. We were not using them
+            and for most pages their self-time is very small in comparison
+            to other events. We may consider adding it back later for
+            UI purposes but for now the frontend doesn't use the records
+            so lets remove it.
+
+            * html/parser/HTMLDocumentParser.cpp:
+            (WebCore::HTMLDocumentParser::pumpTokenizer): Deleted.
+            * inspector/InspectorInstrumentation.cpp:
+            (WebCore::InspectorInstrumentation::willWriteHTMLImpl): Deleted.
+            (WebCore::InspectorInstrumentation::didWriteHTMLImpl): Deleted.
+            * inspector/InspectorInstrumentation.h:
+            (WebCore::InspectorInstrumentation::willWriteHTML): Deleted.
+            (WebCore::InspectorInstrumentation::didWriteHTML): Deleted.
+            * inspector/InspectorTimelineAgent.cpp:
+            (WebCore::InspectorTimelineAgent::willWriteHTML): Deleted.
+            (WebCore::InspectorTimelineAgent::didWriteHTML): Deleted.
+            (WebCore::toProtocol): Deleted.
+            * inspector/InspectorTimelineAgent.h:
+            * inspector/TimelineRecordFactory.cpp:
+            (WebCore::TimelineRecordFactory::createParseHTMLData): Deleted.
+            * inspector/TimelineRecordFactory.h:
+
+2015-12-02  Timothy Hatcher  <timothy@apple.com>
+
         Merge r191732. rdar://problem/23581597
 
     2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
