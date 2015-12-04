@@ -113,11 +113,8 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
                 return jsNumber(JSJavaScriptCallFrame::FUNCTION_NAME_SCOPE);
             if (scope->isWithScope())
                 return jsNumber(JSJavaScriptCallFrame::WITH_SCOPE);
-            if (scope->isGlobalLexicalEnvironment()) {
-                // FIXME: We need a way to better describe this scope.
-                // It's currently best described as a "closure" scope.
-                return jsNumber(JSJavaScriptCallFrame::CLOSURE_SCOPE);
-            }
+            if (scope->isGlobalLexicalEnvironment())
+                return jsNumber(JSJavaScriptCallFrame::GLOBAL_LEXICAL_ENVIRONMENT_SCOPE);
             if (scope->isGlobalScope()) {
                 ASSERT(++iter == end);
                 return jsNumber(JSJavaScriptCallFrame::GLOBAL_SCOPE);

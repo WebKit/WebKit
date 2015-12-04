@@ -208,6 +208,11 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                     title = WebInspector.UIString("Global Variables");
                     collapsedByDefault = true;
                     break;
+
+                case WebInspector.ScopeChainNode.Type.GlobalLexicalEnvironment:
+                    title = WebInspector.UIString("Global Lexical Environment");
+                    collapsedByDefault = true;
+                    break;
             }
 
             let detailsSectionIdentifier = scope.type + "-" + sectionCountByType.get(scope.type);

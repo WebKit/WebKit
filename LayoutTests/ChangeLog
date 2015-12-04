@@ -1,3 +1,16 @@
+2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Specifically Identify the Global Lexical Environment Scope
+        https://bugs.webkit.org/show_bug.cgi?id=151828
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/breakpoint-scope-expected.txt:
+        * inspector/debugger/breakpoint-scope.html:
+        * inspector/debugger/resources/scope.js:
+        Update the test to include something in the global lexical
+        environment and ensure it is identified as such.
+
 2015-12-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix height computation of grid items with borders inside fr tracks

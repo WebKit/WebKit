@@ -1,3 +1,30 @@
+2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Specifically Identify the Global Lexical Environment Scope
+        https://bugs.webkit.org/show_bug.cgi?id=151828
+
+        Reviewed by Brian Burg.
+
+        * inspector/InjectedScriptSource.js:
+        Include the new scope type.
+
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::scopeType):
+        Set the new value for the new scope type.
+
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation): Deleted.
+        (Inspector::jsJavaScriptCallFrameConstantGLOBAL_SCOPE): Deleted.
+        (Inspector::jsJavaScriptCallFrameConstantLOCAL_SCOPE): Deleted.
+        (Inspector::jsJavaScriptCallFrameConstantWITH_SCOPE): Deleted.
+        (Inspector::jsJavaScriptCallFrameConstantCLOSURE_SCOPE): Deleted.
+        (Inspector::jsJavaScriptCallFrameConstantCATCH_SCOPE): Deleted.
+        (Inspector::jsJavaScriptCallFrameConstantFUNCTION_NAME_SCOPE): Deleted.
+        Remove unused constants on the JavaScriptCallFrame object.
+        Currently they are just hardcoded in InjectedScriptSource
+        and they don't make sense on instances anyways.
+
 2015-12-04  Keith Miller  <keith_miller@apple.com>
 
         Add an option to emit instructions validating exceptions in the DFG rather than always emiting them.

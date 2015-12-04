@@ -1368,6 +1368,7 @@ InjectedScript.CallFrameProxy._scopeTypeNames = {
     3: "closure", // CLOSURE_SCOPE
     4: "catch", // CATCH_SCOPE
     5: "functionName", // FUNCTION_NAME_SCOPE
+    6: "globalLexicalEnvironment", // GLOBAL_LEXICAL_ENVIRONMENT_SCOPE
 }
 
 InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeObject, groupId)

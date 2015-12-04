@@ -603,6 +603,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         case "functionName":
             type = WebInspector.ScopeChainNode.Type.FunctionName;
             break;
+        case "globalLexicalEnvironment":
+            type = WebInspector.ScopeChainNode.Type.GlobalLexicalEnvironment;
+            break;
         default:
             console.error("Unknown type: " + payload.type);
         }
