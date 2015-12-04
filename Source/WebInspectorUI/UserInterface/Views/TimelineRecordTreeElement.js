@@ -25,7 +25,7 @@
 
 WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends WebInspector.GeneralTreeElement
 {
-    constructor(timelineRecord, subtitleNameStyle, includeTimerIdentifierInMainTitle, sourceCodeLocation, representedObject)
+    constructor(timelineRecord, subtitleNameStyle, includeDetailsInMainTitle, sourceCodeLocation, representedObject)
     {
         console.assert(timelineRecord);
 
@@ -73,7 +73,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
             break;
 
         case WebInspector.TimelineRecord.Type.Script:
-            title = WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeTimerIdentifierInMainTitle);
+            title = WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeDetailsInMainTitle);
 
             switch (timelineRecord.eventType) {
             case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:

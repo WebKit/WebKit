@@ -1,3 +1,13 @@
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/23764741> REGRESSION: Recording does not show the progress till the recording is stopped.
+
+        Fix a merge issue where variable names did not match and was causing an exception.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+
 2015-12-03  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r188530. rdar://problem/23732374

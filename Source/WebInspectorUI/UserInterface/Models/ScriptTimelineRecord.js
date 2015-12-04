@@ -161,7 +161,7 @@ WebInspector.ScriptTimelineRecord.EventType = {
     ConsoleProfileRecorded: "script-timeline-record-console-profile-recorded"
 };
 
-WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeTimerIdentifierInMainTitle)
+WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeDetailsInMainTitle)
 {
     if (details && !WebInspector.ScriptTimelineRecord._eventDisplayNames) {
         // These display names are not localized because they closely represent
@@ -336,7 +336,7 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
             return WebInspector.UIString("“%s” Profile Recorded").format(details);
         return WebInspector.UIString("Console Profile Recorded");
     case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
-        if (details && includeTimerIdentifierInMainTitle)
+        if (details && includeDetailsInMainTitle)
             return WebInspector.UIString("Timer %s Fired").format(details);
         return WebInspector.UIString("Timer Fired");
     case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
@@ -344,7 +344,7 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
             return WebInspector.UIString("Timer %s Installed").format(details.timerId);
         return WebInspector.UIString("Timer Installed");
     case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
-        if (details && includeTimerIdentifierInMainTitle)
+        if (details && includeDetailsInMainTitle)
             return WebInspector.UIString("Timer %s Removed").format(details);
         return WebInspector.UIString("Timer Removed");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired:
