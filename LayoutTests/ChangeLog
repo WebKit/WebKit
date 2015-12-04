@@ -1,5 +1,21 @@
 2015-12-03  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Fix up tests that refer to non-standard IDBVersionChangeEvent.dataLoss.
+        https://bugs.webkit.org/show_bug.cgi?id=151850
+
+        Reviewed by Andy Estes.
+
+        * platform/mac-wk1/TestExpectations:
+        
+        * storage/indexeddb/data-corruption-expected.txt: Removed.
+        * storage/indexeddb/data-corruption.html: Removed.
+        * storage/indexeddb/resources/data-corruption.js: Removed.
+
+        * storage/indexeddb/events-expected.txt:
+        * storage/indexeddb/resources/events.js:
+
+2015-12-03  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/cursor-index-delete.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=151847
 
