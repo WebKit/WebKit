@@ -177,6 +177,11 @@ private:
                              const LayoutRect& nextLine, const Color);
     RenderBoxModelObject* continuationBefore(RenderObject* beforeChild);
 
+    bool willChangeCreatesStackingContext() const
+    {
+        return style().willChange() && style().willChange()->canCreateStackingContextOnInline();
+    }
+
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 };
 
