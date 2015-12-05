@@ -28,7 +28,7 @@ function xhrPromise(url) {
         xhrRequest.send();
     });
 }
-var origin = new URL("https://<?php echo WP_HOST == "webkit.org" ? "svn.webkit.org" : WP_HOST; ?>/");
+var origin = new URL("https://<?php echo WP_HOST == "webkit.org" || WP_HOST == "www.webkit.org" ? "svn.webkit.org" : WP_HOST; ?>/");
 var loadJavaScriptCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/JavaScriptCore/features.json", origin));
 var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/WebCore/features.json", origin));
 </script>

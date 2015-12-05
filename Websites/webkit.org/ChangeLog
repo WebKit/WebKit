@@ -1,3 +1,9 @@
+2015-12-05  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a 404 error when the site loads via www.webkit.org.
+
+        * wp-content/themes/webkit/status.php:
+
 2015-12-04  Timothy Hatcher  <timothy@apple.com>
 
         Fix toggling so hidden links are not clickable still.
