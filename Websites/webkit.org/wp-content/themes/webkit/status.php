@@ -487,7 +487,7 @@ function initializeStatusPage() {
         // Add sub-feature here
         if (hasSpecificationObject) {
             var specification = featureObject.specification;
-            var specSpan = createLinkWithHeading("span", null, specification.name, ("#specification-" + specification.name));
+            var specSpan = createLinkWithHeading("span", null, specification.name, ("#specification-" + specification.name.toLowerCase().replace(/ /g, '-')));
             specSpan.className = "internal-reference";
             titleElement.appendChild(specSpan);
         }
@@ -545,7 +545,7 @@ function initializeStatusPage() {
 
             if (hasSpecificationObject) {
                 var specification = featureObject.specification;
-                var li = createLinkWithHeading("li", "Parent feature", specification.name, ("#specification-" + specification.name));
+                var li = createLinkWithHeading("li", "Parent feature", specification.name, "#specification-" + specification.name.toLowerCase().replace(/ /g, '-'));
                 li.className = "internal-reference";
                 moreInfoList.appendChild(li);
             }
