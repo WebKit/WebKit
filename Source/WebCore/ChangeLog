@@ -1,5 +1,159 @@
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190209. rdar://problem/23732363
+
+    2015-09-24  David Hyatt  <hyatt@apple.com>
+
+            Add support for CSS Custom Properties (in preparation for implementing CSS Variables).
+            https://bugs.webkit.org/show_bug.cgi?id=130397
+
+            Reviewed by Antti Koivisto.
+
+            Added new tests in fast/css/custom-properties.
+
+            * WebCore.xcodeproj/project.pbxproj:
+            Add new header files to the project (CSSCustomPropertyValue and StyleCustomPropertyData).
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::ComputedStyleExtractor::customPropertyValue):
+            (WebCore::ComputedStyleExtractor::propertyValue):
+            If a custom property value is queried (i.e., it starts with "--"), then we use our
+            customPropertyValue lookup to go to the RenderStyle and fetch the appropriate custom property
+            value from the StyleCustomPropertyData.
+
+            (WebCore::CSSComputedStyleDeclaration::length):
+            (WebCore::CSSComputedStyleDeclaration::item):
+            Patched to include custom properties in the returned array. They appear at the end of the array
+            after the built-in properties.
+
+            (WebCore::ComputedStyleExtractor::propertyMatches):
+            Patched to check custom properties.
+
+            (WebCore::ComputedStyleExtractor::copyPropertiesInSet):
+            Make sure the custom properties get copied into the StyleDeclaration.
+
+            (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+            (WebCore::CSSComputedStyleDeclaration::getPropertyValue):
+            Patched to call customPropertyValue for custom properties.
+
+            * css/CSSComputedStyleDeclaration.h:
+            Add customPropertyValue() to ComputedStyleExtractor.
+
+            * css/CSSCustomPropertyValue.h: Added.
+            (WebCore::CSSCustomPropertyValue::create):
+            (WebCore::CSSCustomPropertyValue::equals):
+            (WebCore::CSSCustomPropertyValue::customCSSText):
+            (WebCore::CSSCustomPropertyValue::name):
+            (WebCore::CSSCustomPropertyValue::value):
+            (WebCore::CSSCustomPropertyValue::CSSCustomPropertyValue):
+            Custom properties are parsed as a property with an ID of CSSPropertyCustom and a CSSCustomPropertyValue
+            that holds both the name and the value of the property. Ultimately we might want to just ditch property IDs in
+            favor of AtomicStrings for all properties, and then the need to special case custom properties would go
+            away. For now, though, this is the way we work custom properties into the existing system.
+
+            * css/CSSGrammar.y.in:
+            Add a production for recognizing custom properties and storing them using a property ID of CSSPropertyCustom
+            and a CSSCustomPropertyValue that has the name/value pair.
+
+            * css/CSSParser.cpp:
+            (WebCore::filterProperties):
+            Patched to track seen custom properties and to handle them correctly.
+
+            (WebCore::CSSParser::createStyleProperties):
+            Pass in a seenCustomProperties table to ensure we bail when encountering the same custom property twice.
+
+            (WebCore::CSSParser::addCustomPropertyDeclaration):
+            Called from the grammar production to create the CSSCustomPropertyValue.
+
+            (WebCore::isCustomPropertyIdentifier):
+            Recognize the -- custom property during lexing.
+
+            (WebCore::CSSParser::parseIdentifier):
+            Patched to return a CUSTOM_PROPERTY token when a custom property is identified.
+
+             * css/CSSParser.h:
+            (WebCore::isCustomPropertyName):
+            Add a helper function for asking if a property name is custom.
+
+            * css/CSSValue.cpp:
+            (WebCore::CSSValue::equals):
+            (WebCore::CSSValue::cssText):
+            (WebCore::CSSValue::destroy):
+            * css/CSSValue.h:
+            Patched to add support for CSSCustomPropertyValue.
+
+            * css/PropertySetCSSStyleDeclaration.cpp:
+            (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValue):
+            (WebCore::PropertySetCSSStyleDeclaration::getPropertyValue):
+            (WebCore::PropertySetCSSStyleDeclaration::getPropertyPriority):
+            (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+            (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+            Add code for handling custom properties in the CSS OM.
+
+            * css/StyleProperties.cpp:
+            (WebCore::StyleProperties::getPropertyValue):
+            (WebCore::StyleProperties::getCustomPropertyValue):
+            (WebCore::StyleProperties::getPropertyCSSValue):
+            (WebCore::StyleProperties::getCustomPropertyCSSValue):
+            (WebCore::MutableStyleProperties::removeProperty):
+            (WebCore::MutableStyleProperties::removeCustomProperty):
+            (WebCore::StyleProperties::propertyIsImportant):
+            (WebCore::StyleProperties::customPropertyIsImportant):
+            (WebCore::MutableStyleProperties::setProperty):
+            (WebCore::MutableStyleProperties::setCustomProperty):
+            (WebCore::MutableStyleProperties::addParsedProperty):
+            (WebCore::MutableStyleProperties::findPropertyIndex):
+            (WebCore::ImmutableStyleProperties::findCustomPropertyIndex):
+            (WebCore::MutableStyleProperties::findCustomPropertyIndex):
+            (WebCore::MutableStyleProperties::findCSSPropertyWithID):
+            (WebCore::MutableStyleProperties::findCustomCSSPropertyWithName):
+            (WebCore::StyleProperties::propertyMatches):
+            (WebCore::StyleProperties::PropertyReference::cssName):
+            * css/StyleProperties.h:
+            (WebCore::StyleProperties::findCustomPropertyIndex):
+            Patched to support handling custom properties in the CSS OM. We have to create equivalent methods that operate
+            on AtomicString propertyNames instead of on property IDs.
+
+            * css/StyleResolver.cpp:
+            (WebCore::StyleResolver::CascadedProperties::customProperties):
+            (WebCore::StyleResolver::styleForKeyframe):
+            (WebCore::StyleResolver::styleForPage):
+            (WebCore::StyleResolver::applyMatchedProperties):
+            (WebCore::StyleResolver::applyProperty):
+            (WebCore::StyleResolver::CascadedProperties::set):
+            (WebCore::StyleResolver::applyCascadedProperties):
+            The resolver has to hold a HashMap from AtomicStrings to Properties. It matches identically to how built-in
+            properties work except that an extensible table (HashMap) is used to hold the property data.
+
+            * css/makeprop.pl:
+            Patched to include the special CSSPropertyCustom value of 1 (just after the CSSPropertyInvalid id value but before the first
+            built-in property value).
+
+            * inspector/InspectorStyleSheet.cpp:
+            (WebCore::InspectorStyle::getText):
+            (WebCore::lowercasePropertyName):
+            (WebCore::InspectorStyle::populateAllProperties):
+            Patch inspector to not lowercase CSS custom property names, since they are case-sensitive.
+
+            * rendering/style/RenderStyle.h:
+            * rendering/style/StyleCustomPropertyData.h: Added.
+            (WebCore::StyleCustomPropertyData::create):
+            (WebCore::StyleCustomPropertyData::copy):
+            (WebCore::StyleCustomPropertyData::operator==):
+            (WebCore::StyleCustomPropertyData::operator!=):
+            (WebCore::StyleCustomPropertyData::setCustomPropertyValue):
+            (WebCore::StyleCustomPropertyData::getCustomPropertyValue):
+            (WebCore::StyleCustomPropertyData::hasCustomProperty):
+            (WebCore::StyleCustomPropertyData::StyleCustomPropertyData):
+            * rendering/style/StyleRareInheritedData.cpp:
+            (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+            (WebCore::StyleRareInheritedData::operator==):
+            * rendering/style/StyleRareInheritedData.h:
+            The front end storage in the RenderStyle for custom properties. For now, custom properties are always inherited, so the
+            data is in StyleRareInheritedData.
+
+2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191452. rdar://problem/23732400
 
     2015-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>

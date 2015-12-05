@@ -1,5 +1,34 @@
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190209. rdar://problem/23732363
+
+    2015-09-24  David Hyatt  <hyatt@apple.com>
+
+            Add support for CSS Custom Properties (in preparation for implementing CSS Variables).
+            https://bugs.webkit.org/show_bug.cgi?id=130397
+
+            Reviewed by Antti Koivisto.
+
+            * fast/css/custom-properties: Added.
+            * fast/css/custom-properties/computed-style-access-expected.html: Added.
+            * fast/css/custom-properties/computed-style-access-inherited-expected.html: Added.
+            * fast/css/custom-properties/computed-style-access-inherited.html: Added.
+            * fast/css/custom-properties/computed-style-access.html: Added.
+            * fast/css/custom-properties/inline-style-property-get-expected.html: Added.
+            * fast/css/custom-properties/inline-style-property-get.html: Added.
+            * fast/css/custom-properties/rule-property-get-css-value-expected.html: Added.
+            * fast/css/custom-properties/rule-property-get-css-value.html: Added.
+            * fast/css/custom-properties/rule-property-get-expected.html: Added.
+            * fast/css/custom-properties/rule-property-get.html: Added.
+            * fast/css/custom-properties/rule-property-priority-expected.html: Added.
+            * fast/css/custom-properties/rule-property-priority.html: Added.
+            * fast/css/custom-properties/rule-property-set-expected.html: Added.
+            * fast/css/custom-properties/rule-property-set.html: Added.
+            * fast/css/custom-properties/rule-serialization-expected.html: Added.
+            * fast/css/custom-properties/rule-serialization.html: Added.
+
+2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191452. rdar://problem/23732400
 
     2015-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>

@@ -26,7 +26,9 @@
 #define StyleRareInheritedData_h
 
 #include "Color.h"
+#include "DataRef.h"
 #include "Length.h"
+#include "StyleCustomPropertyData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicString.h>
@@ -76,6 +78,8 @@ public:
     float m_effectiveZoom;
     
     Length wordSpacing;
+
+    DataRef<StyleCustomPropertyData> m_customProperties;
 
     // Paged media properties.
     short widows;

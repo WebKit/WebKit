@@ -348,6 +348,14 @@ bool InspectorStyle::getText(String* result) const
     return true;
 }
 
+static String lowercasePropertyName(const String& name)
+{
+    // Custom properties are case-sensitive.
+    if (name.length() > 2 && name.characterAt(0) == '-' && name.characterAt(1) == '-')
+        return name;
+    return name.lower();
+}
+
 bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* result) const
 {
     HashSet<String> sourcePropertyNames;
@@ -362,16 +370,16 @@ bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
             InspectorStyleProperty p(*it, true, false);
             p.setRawTextFromStyleDeclaration(styleDeclaration);
             result->append(p);
-            sourcePropertyNames.add(it->name.lower());
+            sourcePropertyNames.add(lowercasePropertyName(it->name));
         }
     }
 
     for (int i = 0, size = m_style->length(); i < size; ++i) {
         String name = m_style->item(i);
-        if (sourcePropertyNames.contains(name.lower()))
+        String lowerName = lowercasePropertyName(name);
+        if (sourcePropertyNames.contains(lowerName))
             continue;
-
-        sourcePropertyNames.add(name.lower());
+        sourcePropertyNames.add(lowerName);
         result->append(InspectorStyleProperty(CSSPropertySourceData(name, m_style->getPropertyValue(name), !m_style->getPropertyPriority(name).isEmpty(), true, SourceRange()), false, false));
     }
 
