@@ -1,5 +1,22 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191201. rdar://problem/23772907
+
+    2015-10-16  David Hyatt  <hyatt@apple.com>
+
+            ASSERT in imported/blink/fast/block/float/overhanging-float-crashes-when-sibling-becomes-formatting-context.html
+            https://bugs.webkit.org/show_bug.cgi?id=150249
+
+            Reviewed by Myles Maxfield.
+
+            Covered by existing tests.
+
+            * css/CSSValue.cpp:
+            (WebCore::CSSValue::equals):
+            Make sure the "unset" value has an equals implementation.
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191178. rdar://problem/23772788
 
     2015-10-16  David Hyatt  <hyatt@apple.com>
