@@ -3705,6 +3705,12 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
     }
     
     CodeBlock* theReplacement = replacement();
+
+    // If our replacement is baseline code, the debugger has probably attached and recompiled the function.
+    // No threshold to change.
+    if ((result == CompilationSuccessful) && (theReplacement->jitType() == JITCode::BaselineJIT))
+        return;
+
     if ((result == CompilationSuccessful) != (theReplacement != this)) {
         dataLog(*this, ": we have result = ", result, " but ");
         if (theReplacement == this)

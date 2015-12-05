@@ -1,3 +1,18 @@
+2015-12-04  Michael Saboff  <msaboff@apple.com>
+
+        CRASH: CodeBlock::setOptimizationThresholdBasedOnCompilationResult + 567
+        https://bugs.webkit.org/show_bug.cgi?id=151892
+
+        Reviewed by Mark Lam.
+
+        When the debugger is in the process of attaching and it recompiles functions
+        for debugging, there can also be a DFG compilation running concurrently.
+        When we go to update the optimization threshold and find that the replacement
+        is also baseline code, we shouldn't update the threshold.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+
 2015-12-04  Jonathan Davis  <jond@apple.com>
 
         Update feature status for up-to-date status information.
