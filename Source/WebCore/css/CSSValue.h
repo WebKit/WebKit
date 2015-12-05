@@ -32,7 +32,8 @@ namespace WebCore {
 
 class CachedResource;
 class StyleSheetContents;
-    
+enum CSSPropertyID : uint16_t;
+
 // FIXME: The current CSSValue and subclasses should be turned into internal types (StyleValue).
 // The few subtypes that are actually exposed in CSSOM can be seen in the cloneForCSSOM() function.
 // They should be handled by separate wrapper classes.
@@ -45,8 +46,8 @@ public:
         CSS_PRIMITIVE_VALUE = 1,
         CSS_VALUE_LIST = 2,
         CSS_CUSTOM = 3,
-        CSS_INITIAL = 4
-
+        CSS_INITIAL = 4,
+        CSS_UNSET = 5
     };
 
     // Override RefCounted's deref() to ensure operator delete is called on
@@ -92,6 +93,9 @@ public:
     bool isImplicitInitialValue() const;
     bool isInheritedValue() const { return m_classType == InheritedClass; }
     bool isInitialValue() const { return m_classType == InitialClass; }
+    bool isUnsetValue() const { return m_classType == UnsetClass; }
+    bool treatAsInitialValue(CSSPropertyID) const;
+    bool treatAsInheritedValue(CSSPropertyID) const;
     bool isLinearGradientValue() const { return m_classType == LinearGradientClass; }
     bool isRadialGradientValue() const { return m_classType == RadialGradientClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
@@ -164,6 +168,7 @@ protected:
 
         InheritedClass,
         InitialClass,
+        UnsetClass,
 
         ReflectClass,
         ShadowClass,

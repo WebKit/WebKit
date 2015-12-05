@@ -1932,7 +1932,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
     bool isInherit = state.parentStyle() && valueToCheckForInheritInitial->isInheritedValue();
     bool isInitial = valueToCheckForInheritInitial->isInitialValue() || (!state.parentStyle() && valueToCheckForInheritInitial->isInheritedValue());
-
+    
+    if (valueToCheckForInheritInitial->isUnsetValue()) {
+        if (CSSProperty::isInheritedProperty(id))
+            isInherit = true;
+        else
+            isInitial = true;
+    }
+    
     ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
 
     if (!state.applyPropertyToRegularStyle() && (!state.applyPropertyToVisitedLinkStyle() || !isValidVisitedLinkProperty(id))) {
