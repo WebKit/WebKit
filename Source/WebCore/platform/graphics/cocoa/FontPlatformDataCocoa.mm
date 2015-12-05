@@ -102,7 +102,7 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 CTFontRef FontPlatformData::registeredFont() const
 {
     CTFontRef platformFont = font();
-    ASSERT(!CORETEXT_WEB_FONTS || platformFont);
+    ASSERT(platformFont);
     if (platformFont && adoptCF(CTFontCopyAttribute(platformFont, kCTFontURLAttribute)))
         return platformFont;
     return nullptr;
@@ -175,19 +175,13 @@ CTFontRef FontPlatformData::ctFont() const
     if (m_ctFont)
         return m_ctFont.get();
 
-    ASSERT(m_cgFont.get());
+    ASSERT(m_font);
+    ASSERT(m_cgFont);
     m_ctFont = m_font;
-    if (m_ctFont) {
-        CTFontDescriptorRef fontDescriptor;
-        RetainPtr<CFStringRef> postScriptName = adoptCF(CTFontCopyPostScriptName(m_ctFont.get()));
-        fontDescriptor = cascadeToLastResortFontDescriptor();
-        m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), m_size, 0, fontDescriptor));
-    } else {
-#if CORETEXT_WEB_FONTS
-        ASSERT_NOT_REACHED();
-#endif
-        m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), m_size, 0, cascadeToLastResortFontDescriptor()));
-    }
+    CTFontDescriptorRef fontDescriptor;
+    RetainPtr<CFStringRef> postScriptName = adoptCF(CTFontCopyPostScriptName(m_ctFont.get()));
+    fontDescriptor = cascadeToLastResortFontDescriptor();
+    m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), m_size, 0, fontDescriptor));
 
     if (m_widthVariant != RegularWidth) {
         int featureTypeValue = kTextSpacingType;

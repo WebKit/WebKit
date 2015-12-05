@@ -39,38 +39,20 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     int size = fontDescription.computedPixelSize();
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
-#if CORETEXT_WEB_FONTS
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
     font = preparePlatformFont(font.get(), fontDescription.textRenderingMode(), &fontFaceFeatures, &fontFaceVariantSettings, fontDescription.featureSettings(), fontDescription.variantSettings());
     return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode());
-#else
-    UNUSED_PARAM(fontFaceFeatures);
-    UNUSED_PARAM(fontFaceVariantSettings);
-    return FontPlatformData(m_cgFont.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode());
-#endif
 }
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
 {
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
 
-#if CORETEXT_WEB_FONTS
     RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(bufferData.get()));
     if (!fontDescriptor)
         return nullptr;
 
     return std::make_unique<FontCustomPlatformData>(fontDescriptor.get());
-
-#else
-
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(bufferData.get()));
-
-    RetainPtr<CGFontRef> cgFontRef = adoptCF(CGFontCreateWithDataProvider(dataProvider.get()));
-    if (!cgFontRef)
-        return nullptr;
-
-    return std::make_unique<FontCustomPlatformData>(cgFontRef.get());
-#endif
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

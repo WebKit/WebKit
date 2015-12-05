@@ -40,13 +40,8 @@ class SharedBuffer;
 struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
-#if CORETEXT_WEB_FONTS
     explicit FontCustomPlatformData(CTFontDescriptorRef fontDescriptor)
         : m_fontDescriptor(fontDescriptor)
-#else
-    explicit FontCustomPlatformData(CGFontRef cgFont)
-        : m_cgFont(cgFont)
-#endif
     {
     }
 
@@ -56,11 +51,7 @@ public:
 
     static bool supportsFormat(const String&);
 
-#if CORETEXT_WEB_FONTS
     RetainPtr<CTFontDescriptorRef> m_fontDescriptor;
-#else
-    RetainPtr<CGFontRef> m_cgFont;
-#endif
 };
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);

@@ -1,3 +1,26 @@
+2015-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove CORETEXT_WEB_FONTS
+        https://bugs.webkit.org/show_bug.cgi?id=151891
+
+        Reviewed by Simon Fraser.
+
+        The only platform where this was turned off (Mavericks) is no longer supported.
+
+        No new tests because there is no behavior difference.
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformCreateScaledFont): Deleted.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::registeredFont):
+        (WebCore::FontPlatformData::ctFont):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Deleted.
+        (WebCore::createFontCustomPlatformData): Deleted.
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Deleted.
+        * platform/text/TextFlags.h:
+
 2015-12-04  Zalan Bujtas  <zalan@apple.com>
 
         Garbage in page tiles when document is too long.
