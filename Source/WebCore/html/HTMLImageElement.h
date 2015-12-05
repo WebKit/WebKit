@@ -122,6 +122,10 @@ private:
     virtual HTMLImageElement& asHTMLElement() override final { return *this; }
     virtual const HTMLImageElement& asHTMLElement() const override final { return *this; }
 
+    void selectImageSource();
+
+    ImageCandidate bestFitSourceFromPictureElement();
+
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
@@ -141,6 +145,8 @@ private:
     bool hasImageControls() const;
     virtual bool childShouldCreateRenderer(const Node&) const override;
 #endif
+
+    friend class HTMLPictureElement;
 };
 
 } //namespace

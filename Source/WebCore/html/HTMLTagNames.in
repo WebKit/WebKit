@@ -97,6 +97,7 @@ option
 output constructorNeedsFormElement
 p interfaceName=HTMLParagraphElement
 param
+picture interfaceName=HTMLPictureElement
 plaintext interfaceName=HTMLElement
 pre
 progress interfaceName=HTMLProgressElement
@@ -112,7 +113,7 @@ script constructorNeedsCreatedByParser
 section interfaceName=HTMLElement
 select constructorNeedsFormElement
 small interfaceName=HTMLElement
-source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
+source
 span
 strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
