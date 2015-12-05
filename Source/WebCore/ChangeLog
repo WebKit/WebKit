@@ -1,5 +1,18 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187709. rdar://problem/23769732
+
+    2015-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Fix the build
+
+            Unreviewed.
+
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::lookupCTFont):
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190667. rdar://problem/23769584
 
     2015-10-06  Simon Fraser  <simon.fraser@apple.com>
