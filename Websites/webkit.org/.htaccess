@@ -16,6 +16,9 @@ RewriteRule (.*) https://webkit.org/blog/$1 [L,R=301]
 RewriteCond %{HTTP_HOST} ^(www\.)(.*)$
 RewriteRule (.*) https://%2/$1 [L,R=301]
 
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}/$1 [L,R=301]
+
 # Old Sunspider versions
 Redirect 301 /perf/sunspider-0.9/sunspider.html /perf/sunspider/sunspider.html
 Redirect 301 /perf/sunspider-0.9.1/sunspider.html /perf/sunspider/sunspider.html

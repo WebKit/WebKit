@@ -1,5 +1,11 @@
 2015-12-05  Timothy Hatcher  <timothy@apple.com>
 
+        One last fix for https redirect.
+
+        * wp-content/themes/webkit/.htaccess:
+
+2015-12-05  Timothy Hatcher  <timothy@apple.com>
+
         Attempt to fix www redirect again.
 
         * wp-content/themes/webkit/.htaccess:
