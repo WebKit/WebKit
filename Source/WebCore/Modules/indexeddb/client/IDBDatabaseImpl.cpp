@@ -143,6 +143,7 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
 
     if (m_closePending) {
         ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.");
         return nullptr;
     }
 

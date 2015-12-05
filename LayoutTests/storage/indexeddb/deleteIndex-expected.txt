@@ -14,7 +14,7 @@ PASS Exception was thrown.
 PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
 Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The specified index was not found.
-PASS objectStore.deleteIndex() threw exception TypeError: Failed to execute 'deleteIndex' on 'IDBObjectStore': 1 argument required, but only 0 present..
+PASS objectStore.deleteIndex() threw exception TypeError: Not enough arguments.
 index = objectStore.createIndex('first', 'first');
 Expecting exception from objectStore.deleteIndex('FIRST')
 PASS Exception was thrown.
@@ -33,7 +33,7 @@ Expecting exception from objectStore.deleteIndex('second')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The transaction has finished.
+Exception message: Failed to execute 'deleteIndex' on 'IDBObjectStore': The transaction is inactive or finished.
 PASS successfullyParsed is true
 
 TEST COMPLETE

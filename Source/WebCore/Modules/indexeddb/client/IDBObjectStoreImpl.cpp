@@ -502,6 +502,7 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCodeWithMessage& e
 
     if (!m_transaction->isActive()) {
         ec.code = IDBDatabaseException::TransactionInactiveError;
+        ec.message = ASCIILiteral("Failed to execute 'deleteIndex' on 'IDBObjectStore': The transaction is inactive or finished.");
         return;
     }
 
