@@ -1,5 +1,50 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188146. rdar://problem/23769732
+
+    2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Implement font-feature-settings
+            https://bugs.webkit.org/show_bug.cgi?id=147722
+
+            Reviewed by Simon Fraser.
+
+            Fonts with features are simply modeled as new font objects. Font
+            feature information is contained within FontDescription, and our
+            caches are correctly sensitive to this information. Therefore,
+            we just need to make our font lookup code honor the request to
+            use certain features.
+
+            This patch creates a file, FontCacheCoreText.cpp, which will be the
+            new home of all shared OS X / iOS FontCache code. Over time, I will
+            be moving more and more source into this file, until there is
+            nothing left of FontCacheMac.mm and FontCacheIOS.mm. For now, the
+            only function in this file is the code which applies font features.
+
+            Test: css3/font-feature-settings-preinstalled-fonts.html
+
+            * WebCore.xcodeproj/project.pbxproj: Add FontCacheCoreText.cpp.
+            * platform/graphics/FontCache.h:
+            * platform/graphics/cocoa/FontCacheCoreText.cpp: Added.
+            (WebCore::appendTrueTypeFeature): What the name says.
+            (WebCore::appendOpenTypeFeature): Ditto.
+            (WebCore::applyFontFeatureSettings): Ditto.
+            * platform/graphics/ios/FontCacheIOS.mm:
+            (WebCore::FontCache::getSystemFontFallbackForCharacters): Call
+            applyFontFeatureSettings().
+            (WebCore::FontCache::createFontPlatformData): Ditto.
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::fontWithFamily): Ditto.
+            (WebCore::FontCache::systemFallbackForCharacters): Ditto.
+            (WebCore::FontCache::createFontPlatformData): Ditto.
+            * platform/graphics/mac/FontCustomPlatformData.cpp:
+            (WebCore::FontCustomPlatformData::fontPlatformData): Ditto.
+            * rendering/RenderThemeIOS.mm:
+            (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+            Ditto.
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187982. rdar://problem/23769732
 
     2015-08-05  Myles C. Maxfield  <mmaxfield@apple.com>

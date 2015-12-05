@@ -39,7 +39,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA)
 #include <CoreText/CTFont.h>
 #endif
 
@@ -180,6 +180,10 @@ private:
 #endif
     friend class Font;
 };
+
+#if PLATFORM(COCOA)
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings&);
+#endif
 
 #if !PLATFORM(MAC)
 inline void FontCache::platformPurgeInactiveFontData()
