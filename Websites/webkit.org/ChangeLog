@@ -1,5 +1,11 @@
 2015-12-05  Timothy Hatcher  <timothy@apple.com>
 
+        Fix www redirect again.
+
+        * wp-content/themes/webkit/.htaccess:
+
+2015-12-05  Timothy Hatcher  <timothy@apple.com>
+
         Fix www redirect when https was used and restore status URL code.
 
         * wp-content/themes/webkit/.htaccess:
