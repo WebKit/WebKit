@@ -1,5 +1,12 @@
 2015-12-05  Timothy Hatcher  <timothy@apple.com>
 
+        Fix www redirect when https was used and restore status URL code.
+
+        * wp-content/themes/webkit/.htaccess:
+        * wp-content/themes/webkit/status.php:
+
+2015-12-05  Timothy Hatcher  <timothy@apple.com>
+
         Another attempt to fix a 404 error when the site loads via www.webkit.org.
 
         * wp-content/themes/webkit/status.php:

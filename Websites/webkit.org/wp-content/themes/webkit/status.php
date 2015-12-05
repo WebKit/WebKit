@@ -28,7 +28,7 @@ function xhrPromise(url) {
         xhrRequest.send();
     });
 }
-var origin = new URL("https://svn.webkit.org/");
+var origin = new URL("https://<?php echo strpos(WP_HOST, "webkit.org") !== false ? "svn.webkit.org" : WP_HOST; ?>/");
 var loadJavaScriptCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/JavaScriptCore/features.json", origin));
 var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/WebCore/features.json", origin));
 </script>
