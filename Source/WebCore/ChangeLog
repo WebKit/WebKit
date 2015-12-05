@@ -1,3 +1,30 @@
+2015-12-04  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Flip test expectations around so we only list failures.
+        https://bugs.webkit.org/show_bug.cgi?id=151880
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered by all existing tests).
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::stop):
+        (WebCore::IDBClient::IDBRequest::enqueueEvent):
+        (WebCore::IDBClient::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::abortDueToFailedRequest):
+        (WebCore::IDBClient::IDBTransaction::hasPendingActivity):
+        (WebCore::IDBClient::IDBTransaction::stop):
+        (WebCore::IDBClient::IDBTransaction::enqueueEvent):
+        (WebCore::IDBClient::IDBTransaction::dispatchEvent):
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+        
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyToScriptValue): Protection against a ScriptExecutionContext that no longer has an ExecState.
+          A full reworking on the binding utilities to prevent this through is covered by b/151890
+
 2015-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Some fonts cause CTFontCopyAvailableTables() to return nullptr

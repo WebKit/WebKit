@@ -505,6 +505,9 @@ JSValue idbValueDataToJSValue(JSC::ExecState& exec, const ThreadSafeDataBuffer& 
 Deprecated::ScriptValue idbKeyToScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKey> key)
 {
     ExecState* exec = requestState->exec();
+    if (!exec)
+        return { };
+
     return Deprecated::ScriptValue(exec->vm(), idbKeyToJSValue(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), key.get()));
 }
 

@@ -110,7 +110,8 @@ protected:
     virtual const char* activeDOMObjectName() const override final;
     virtual bool canSuspendForDocumentSuspension() const override final;
     virtual bool hasPendingActivity() const override final;
-    
+    virtual void stop() override final;
+
     // EventTarget.
     virtual void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
     virtual void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
@@ -138,6 +139,8 @@ private:
     IndexedDB::IndexRecordType m_requestedIndexRecordType;
 
     RefPtr<IDBCursor> m_pendingCursor;
+
+    bool m_contextStopped { false };
 };
 
 } // namespace IDBClient

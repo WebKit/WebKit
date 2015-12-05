@@ -166,7 +166,8 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
 void IDBTransaction::abortDueToFailedRequest(DOMError& error)
 {
     LOG(IndexedDB, "IDBTransaction::abortDueToFailedRequest");
-    ASSERT(!isFinishedOrFinishing());
+    if (isFinishedOrFinishing())
+        return;
 
     m_domError = &error;
     ExceptionCodeWithMessage ec;
@@ -227,7 +228,13 @@ bool IDBTransaction::canSuspendForDocumentSuspension() const
 
 bool IDBTransaction::hasPendingActivity() const
 {
-    return m_state != IndexedDB::TransactionState::Finished;
+    return !m_contextStopped && m_state != IndexedDB::TransactionState::Finished;
+}
+
+void IDBTransaction::stop()
+{
+    ASSERT(!m_contextStopped);
+    m_contextStopped = true;
 }
 
 bool IDBTransaction::isActive() const
@@ -395,7 +402,7 @@ void IDBTransaction::enqueueEvent(Ref<Event>&& event)
 {
     ASSERT(m_state != IndexedDB::TransactionState::Finished);
 
-    if (!scriptExecutionContext())
+    if (!scriptExecutionContext() || m_contextStopped)
         return;
 
     event->setTarget(this);
@@ -407,6 +414,7 @@ bool IDBTransaction::dispatchEvent(Event& event)
     LOG(IndexedDB, "IDBTransaction::dispatchEvent");
 
     ASSERT(scriptExecutionContext());
+    ASSERT(!m_contextStopped);
     ASSERT(event.target() == this);
     ASSERT(event.type() == eventNames().completeEvent || event.type() == eventNames().abortEvent);
 

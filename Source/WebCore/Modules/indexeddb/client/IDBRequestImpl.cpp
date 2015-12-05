@@ -237,9 +237,15 @@ bool IDBRequest::hasPendingActivity() const
     return m_hasPendingActivity;
 }
 
+void IDBRequest::stop()
+{
+    ASSERT(!m_contextStopped);
+    m_contextStopped = true;
+}
+
 void IDBRequest::enqueueEvent(Ref<Event>&& event)
 {
-    if (!scriptExecutionContext())
+    if (!scriptExecutionContext() || m_contextStopped)
         return;
 
     event->setTarget(this);
@@ -251,6 +257,7 @@ bool IDBRequest::dispatchEvent(Event& event)
     LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().characters8(), this);
 
     ASSERT(m_hasPendingActivity);
+    ASSERT(!m_contextStopped);
 
     if (event.type() != eventNames().blockedEvent)
         m_readyState = IDBRequestReadyState::Done;

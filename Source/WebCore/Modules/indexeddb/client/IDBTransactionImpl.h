@@ -81,6 +81,7 @@ public:
     virtual const char* activeDOMObjectName() const override final;
     virtual bool canSuspendForDocumentSuspension() const override final;
     virtual bool hasPendingActivity() const override final;
+    virtual void stop() override final;
 
     const IDBTransactionInfo info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }
@@ -207,6 +208,8 @@ private:
     HashMap<String, RefPtr<IDBObjectStore>> m_referencedObjectStores;
 
     HashSet<RefPtr<IDBRequest>> m_openRequests;
+
+    bool m_contextStopped { false };
 };
 
 class TransactionActivator {
