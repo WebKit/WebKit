@@ -73,6 +73,7 @@ inspector/indexeddb
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/deleted-objects.html [ Skip ]
 storage/indexeddb/dont-wedge.html [ Skip ]
+storage/indexeddb/index-multientry.html [ Skip ]
 storage/indexeddb/intversion-two-opens-no-versions.html [ Skip ]
 storage/indexeddb/keypath-basics.html [ Skip ]
 storage/indexeddb/keypath-fetch-key.html [ Skip ]
