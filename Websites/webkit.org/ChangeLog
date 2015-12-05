@@ -1,5 +1,11 @@
 2015-12-05  Timothy Hatcher  <timothy@apple.com>
 
+        Another attempt to fix a 404 error when the site loads via www.webkit.org.
+
+        * wp-content/themes/webkit/status.php:
+
+2015-12-05  Timothy Hatcher  <timothy@apple.com>
+
         Fix a 404 error when the site loads via www.webkit.org.
 
         * wp-content/themes/webkit/status.php:
