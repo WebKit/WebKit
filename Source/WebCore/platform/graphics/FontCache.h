@@ -182,7 +182,7 @@ private:
 };
 
 #if PLATFORM(COCOA)
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings&);
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings*);
 #endif
 
 #if !PLATFORM(MAC)

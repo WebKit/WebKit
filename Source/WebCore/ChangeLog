@@ -1,5 +1,34 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188168. rdar://problem/23769732
+
+    2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Post-review comments on r188146
+            https://bugs.webkit.org/show_bug.cgi?id=147793
+
+            Reviewed by Daniel Bates.
+
+            No new tests because there is no behavior change.
+
+            * platform/graphics/FontCache.h:
+            * platform/graphics/cocoa/FontCacheCoreText.cpp:
+            (WebCore::appendTrueTypeFeature):
+            (WebCore::appendOpenTypeFeature):
+            (WebCore::applyFontFeatureSettings):
+            * platform/graphics/ios/FontCacheIOS.mm:
+            (WebCore::FontCache::getSystemFontFallbackForCharacters):
+            (WebCore::FontCache::createFontPlatformData):
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::fontWithFamily):
+            (WebCore::FontCache::systemFallbackForCharacters):
+            * platform/graphics/mac/FontCustomPlatformData.cpp:
+            (WebCore::FontCustomPlatformData::fontPlatformData):
+            * rendering/RenderThemeIOS.mm:
+            (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188146. rdar://problem/23769732
 
     2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
