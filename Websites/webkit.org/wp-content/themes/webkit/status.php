@@ -129,16 +129,14 @@ ul.features {
 .feature-description + *,
 .feature-description .feature-desc,
 .feature-description .comment {
-    height: 0;
-    opacity: 0;
+    display: none;
     margin: 0;
 }
 
 .feature.opened .feature-description + *,
 .feature.opened .feature-desc,
 .feature.opened .feature-description .comment {
-    opacity: 1;
-    height: auto;
+    display: block;
     margin-bottom: 3rem;
 }
 
