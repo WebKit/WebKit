@@ -1,3 +1,28 @@
+2015-12-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Place an upper bound on canvas pixel count
+        https://bugs.webkit.org/show_bug.cgi?id=151825
+        <rdar://problem/23324916>
+
+        Reviewed by Simon Fraser.
+
+        Malformed JavaScript can attempt to create lots of canvas contexts. Limit the amount of memory
+        we will use for this purpose to some percentage of system RAM.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::removeFromActivePixelMemory): Added helper function
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement): Call new 'releaseImageBufferAndContext' method
+        to ensure ImageBuffer and graphics context state are properly cleaned up.
+        (WebCore::maxActivePixels): Use one quarter of the system RAM, or 1 GB (whichever is more) as
+        an upper bound on active pixel memory.
+        (WebCore::HTMLCanvasElement::getContext): If we are attempting to create a context that will cause
+        us to exceed the allowed active pixel count, fail.
+        (WebCore::HTMLCanvasElement::releaseImageBufferAndContext): Added helper function
+        (WebCore::HTMLCanvasElement::setSurfaceSize): Use the new 'releaseImageBufferAndContext' method
+        to handle active pixel memory counts.
+        (WebCore::HTMLCanvasElement::createImageBuffer): Refuse to create a backing buffer if it will
+        exceed our available pixel memory.
+
 2015-12-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add some more custom exception messages, passing some more tests.
