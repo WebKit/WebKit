@@ -1,5 +1,135 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191252. rdar://problem/23772905
+
+    2015-10-17  David Hyatt  <hyatt@apple.com>
+
+            Implement the CSS4 'revert' keyword.
+            https://bugs.webkit.org/show_bug.cgi?id=149702
+
+            Reviewed by Simon Fraser.
+
+            Added new tests in fast/css and fast/css/variables.
+
+            * CMakeLists.txt:
+            * WebCore.xcodeproj/project.pbxproj:
+            Add CSSRevertValue to the project and makefiles.
+
+            * css/CSSParser.cpp:
+            (WebCore::parseKeywordValue):
+            Make sure to handle "revert" in the keyword parsing path (along with inherit/initial/unset).
+
+            (WebCore::CSSParser::parseValue):
+            (WebCore::CSSParser::parseCustomPropertyDeclaration):
+            At the parser level, "revert" is just like inherit/initial/unset and gets its own special
+            singleton value, CSSRevertValue.
+
+            * css/CSSRevertValue.cpp: Added.
+            (WebCore::CSSRevertValue::customCSSText):
+            * css/CSSRevertValue.h: Added.
+            (WebCore::CSSRevertValue::create):
+            (WebCore::CSSRevertValue::equals):
+            (WebCore::CSSRevertValue::CSSRevertValue):
+            This value is identical to the inherit/initial/unset values, i.e., its own special value
+            that can be used to indicate a revert when doing style resolution.
+
+            * css/CSSValue.cpp:
+            (WebCore::CSSValue::cssValueType):
+            (WebCore::CSSValue::equals):
+            (WebCore::CSSValue::cssText):
+            (WebCore::CSSValue::destroy):
+            * css/CSSValue.h:
+            (WebCore::CSSValue::isInheritedValue):
+            (WebCore::CSSValue::isInitialValue):
+            (WebCore::CSSValue::isUnsetValue):
+            (WebCore::CSSValue::isRevertValue):
+            Add the RevertClass to CSSValue and make sure it is handled in all the appropriate methods.
+
+            * css/CSSValueKeywords.in:
+            Add the "revert" keyword to the list of allowed CSS keywords.
+
+            * css/CSSValuePool.cpp:
+            (WebCore::CSSValuePool::CSSValuePool):
+            * css/CSSValuePool.h:
+            (WebCore::CSSValuePool::createRevertValue):
+            Add support for a CSSRevertValue singleton, just like inherit/unset/initial.
+
+            * css/FontLoader.cpp:
+            (WebCore::FontLoader::resolveFontStyle):
+            Add "unset" and "revert" as special keywords to be ignored. This code seems to be turned off,
+            but patching it anyway.
+
+            * css/SelectorChecker.h:
+            Add a MatchDefault value of 0 to the LinkMatchMask. This enables it to be used as an index
+            to the correct value in Property (in the style resolution code).
+
+            * css/StyleResolver.cpp:
+            (WebCore::StyleResolver::State::initForStyleResolve):
+            Delete any lingering old CascadedProperty rollbacks for UA/user rules.
+
+            (WebCore::StyleResolver::styleForKeyframe):
+            (WebCore::StyleResolver::styleForPage):
+            (WebCore::StyleResolver::applyMatchedProperties):
+            Pass along the MatchResult as an additional parameter, since we need it to lazily compute
+            the cascade rollbacks if the "revert" keyword is encountered.
+
+            (WebCore::StyleResolver::cascadedPropertiesForRollback):
+            This method will lazily create and return a new CascadedProperties pointer that is cached
+            in the StyleResolver's state. This will contain only UA rules (for user reverts) and UA/user
+            rules (for author reverts). These will only be computed at most once for a given element
+            when doing a reversion, and they will be computed lazily, i.e., only if a revert is
+            requested.
+
+            (WebCore::StyleResolver::applyProperty):
+            Pass along the LinkMatchMask and the MatchResult to applyProperty. This way we know specifically
+            which link type we were computing if we have to revert (so that we roll back and look at the
+            same index in the reverted version). The MatchResult is passed along because it is needed
+            to build the CascadedProperties rollbacks.
+
+            The basic idea is that if a revert is encountered, the level that the rule came from is
+            checked. If it is UA level, just treat as "unset." If it is author or user level, get
+            the correct CascadedProperties rollback and repeat the applyProperty using the property
+            found in the rollback. If the property is not present in the cascade rollback, then the
+            revert becomes an unset.
+
+            (WebCore::StyleResolver::CascadedProperties::hasCustomProperty):
+            (WebCore::StyleResolver::CascadedProperties::customProperty):
+            Helpers used by applyProperty to check on custom properties, since they can revert too
+            just like a regular property can.
+
+            (WebCore::StyleResolver::CascadedProperties::setPropertyInternal):
+            (WebCore::StyleResolver::CascadedProperties::set):
+            (WebCore::StyleResolver::CascadedProperties::setDeferred):
+            Passing along the CascadeLevel (UA, User, Author) so that it can be stored in the Property.
+            This way when we do property application, we always know where the rule came from so
+            that the reversion can be handled properly.
+
+            (WebCore::StyleResolver::CascadedProperties::addStyleProperties):
+            (WebCore::cascadeLevelForIndex):
+            (WebCore::StyleResolver::CascadedProperties::addMatches):
+            When style properties are added, also figure out the CascadeLevel and pass it along to be
+            stored in the Property. We use the MatchResult's ranges to know where a property comes from.
+
+            (WebCore::StyleResolver::CascadedProperties::applyDeferredProperties):
+            (WebCore::StyleResolver::CascadedProperties::Property::apply):
+            (WebCore::StyleResolver::applyCascadedProperties):
+            Pass along the MatchResult so we know how to build the rollback.
+
+            * css/StyleResolver.h:
+            (WebCore::StyleResolver::State::cascadeLevel):
+            (WebCore::StyleResolver::State::setCascadeLevel):
+            (WebCore::StyleResolver::State::authorRollback):
+            (WebCore::StyleResolver::State::userRollback):
+            (WebCore::StyleResolver::State::setAuthorRollback):
+            (WebCore::StyleResolver::State::setUserRollback):
+            (WebCore::StyleResolver::state):
+            (WebCore::StyleResolver::cascadeLevel):
+            (WebCore::StyleResolver::setCascadeLevel):
+            Move CascadedProperties into the header. Add CascadeLevel to Property. Add the level and
+            rollbacks to the resolver's state.
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191201. rdar://problem/23772907
 
     2015-10-16  David Hyatt  <hyatt@apple.com>

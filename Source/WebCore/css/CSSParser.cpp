@@ -57,6 +57,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
+#include "CSSRevertValue.h"
 #include "CSSSelector.h"
 #include "CSSShadowValue.h"
 #include "CSSStyleSheet.h"
@@ -1191,10 +1192,10 @@ static CSSParser::ParseResult parseKeywordValue(MutableStyleProperties* declarat
     if (!isKeywordPropertyID(propertyId)) {
         // All properties accept the values of "initial" and "inherit".
         String lowerCaseString = string.lower();
-        if (lowerCaseString != "initial" && lowerCaseString != "inherit" && lowerCaseString != "unset")
+        if (lowerCaseString != "initial" && lowerCaseString != "inherit" && lowerCaseString != "unset" && lowerCaseString != "revert")
             return CSSParser::ParseResult::Error;
 
-        // Parse initial/inherit/unset shorthands using the CSSParser.
+        // Parse initial/inherit/unset/revert shorthands using the CSSParser.
         if (shorthandForProperty(propertyId).length())
             return CSSParser::ParseResult::Error;
     }
@@ -1213,6 +1214,8 @@ static CSSParser::ParseResult parseKeywordValue(MutableStyleProperties* declarat
         value = cssValuePool().createExplicitInitialValue();
     else if (valueID == CSSValueUnset)
         value = cssValuePool().createUnsetValue();
+    else if (valueID == CSSValueRevert)
+        value = cssValuePool().createRevertValue();
     else if (isValidKeywordPropertyAndValue(propertyId, valueID, parserContext, styleSheetContents))
         value = cssValuePool().createIdentifierValue(valueID);
     else
@@ -1951,7 +1954,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     } else if (id == CSSValueUnset) {
         if (num != 1)
             return false;
-        addExpandedPropertyForValue(propId, cssValuePool.createUnsetValue(), important);
+        addExpandedPropertyForValue(propId, cssValuePool().createUnsetValue(), important);
+        return true;
+    } else if (id == CSSValueRevert) {
+        if (num != 1)
+            return false;
+        addExpandedPropertyForValue(propId, cssValuePool().createRevertValue(), important);
         return true;
     }
     
@@ -4172,6 +4180,8 @@ bool CSSParser::parseCustomPropertyDeclaration(bool important, CSSValueID id)
         value = cssValuePool().createExplicitInitialValue();
     else if (id == CSSValueUnset)
         value = cssValuePool().createUnsetValue();
+    else if (id == CSSValueRevert)
+        value = cssValuePool().createRevertValue();
     else {
         RefPtr<CSSValueList> valueList = CSSValueList::createFromParserValueList(*m_valueList);
         if (m_valueList->containsVariables())

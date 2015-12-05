@@ -4,6 +4,7 @@
 inherit
 initial
 unset
+revert
 
 //
 // CSS_PROP_OUTLINE_STYLE

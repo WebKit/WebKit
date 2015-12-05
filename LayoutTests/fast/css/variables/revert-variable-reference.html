@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+--><html><head><title>CSS Test: Test declaring a variable whose value consists of a reference to a variable whose value is "revert".</title>
+<style>
+body {
+  --b: green;
+  color: red;
+}
+p {
+  color: orange;
+  --a: var(--b);
+  --b: revert;
+  color: var(--a);
+}
+</style>
+</head><body><p>This text must be green.</p>
+</body></html>
