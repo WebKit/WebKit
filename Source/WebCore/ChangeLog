@@ -1,5 +1,45 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191178. rdar://problem/23772788
+
+    2015-10-16  David Hyatt  <hyatt@apple.com>
+
+            Implement the "all" CSS property.
+            https://bugs.webkit.org/show_bug.cgi?id=116966
+
+            Reviewed by Zalan Bujtas.
+
+            Added new tests in fast/css.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::ComputedStyleExtractor::propertyValue):
+            Don't support "all" from computed style for now.
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue):
+            Make sure to bail after checking inherit/unset/initial for all, since you can't actually
+            accept longhand values in the shorthand declarations.
+
+            (WebCore::CSSParser::parseAnimationProperty):
+            "all" for animations is a special value and should not be confused with the property. It
+            animates everything and does not omit unicode-bidi/direction the way the "all" property does.
+
+            * css/CSSPropertyNames.in:
+            Add the "all" property to the list and use a special keyword in the Longhands value, "all",
+            that makeprop.pl will look for. This way we don't have to dump every single CSS property
+            into the Longhands expression, since that would be nuts.
+
+            * css/StyleProperties.cpp:
+            (WebCore::StyleProperties::getPropertyValue):
+            Look for a common value across all properties supported by "all". That way you can get
+            back inherit/initial/unset from it.
+
+            * css/makeprop.pl:
+            Make the perl script look for "all" in the longhand list, and if it sees it, put every
+            single CSS property into the list for the all shorthand.
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191155. rdar://problem/23772908
 
     2015-10-15  David Hyatt  <hyatt@apple.com>
