@@ -487,7 +487,7 @@ function initializeStatusPage() {
         // Add sub-feature here
         if (hasSpecificationObject) {
             var specification = featureObject.specification;
-            var specSpan = createLinkWithHeading("span", null, specification.name, ("#specification-" + specification.name.toLowerCase().replace(/ /g, '-')));
+            var specSpan = createLinkWithHeading("span", null, specification.name, "#specification-" + specification.name.toLowerCase().replace(/ /g, '-'));
             specSpan.className = "internal-reference";
             titleElement.appendChild(specSpan);
         }
@@ -582,7 +582,7 @@ function initializeStatusPage() {
             for (var feature of featureObject.features) {
                 var link = document.createElement("a");
                 link.textContent = feature.name;
-                link.href = "#feature-" + feature.name;
+                link.href = "#feature-" + feature.name.toLowerCase().replace(/ /g, '-');
 
                 var li = document.createElement("li");
                 li.appendChild(link);

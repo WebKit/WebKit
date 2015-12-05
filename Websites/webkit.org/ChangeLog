@@ -1,3 +1,9 @@
+2015-12-04  Timothy Hatcher  <timothy@apple.com>
+
+        Fix another place where feature status internal reference links were wrong.
+
+        * wp-content/themes/webkit/status.php:
+
 2015-12-04  Jonathan Davis  <jond@apple.com>
 
         Fixed feature status internal reference links.
