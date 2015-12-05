@@ -1,3 +1,18 @@
+2015-12-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r193486.
+        https://bugs.webkit.org/show_bug.cgi?id=151904
+
+        Causes Infinite Recursion in Timeline Recording (Requested by
+        JoePeck on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: when a marked-dirty subview is attached to a
+        parent View, dirtyDescendantsCount gets out of sync"
+        https://bugs.webkit.org/show_bug.cgi?id=151876
+        http://trac.webkit.org/changeset/193486
+
 2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception with Reload shortcut in JSContext Inspector

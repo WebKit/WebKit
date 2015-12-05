@@ -138,6 +138,7 @@ WebInspector.NewTabContentView = class NewTabContentView extends WebInspector.Ta
             return;
 
         this._shownTabClasses = allowedTabClasses;
+        this.needsLayout();
     }
 
     _allowableTabTypes()
