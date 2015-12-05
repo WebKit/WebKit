@@ -41,10 +41,17 @@ extern "C" void GlobalToLocal(Point*);
 
 using namespace std;
 
+#if defined(__GNUC__)
+#define CRASH() do { \
+    *(int *)(uintptr_t)0xbbadbeef = 0; \
+    __builtin_trap(); /* More reliable, but doesn't say BBADBEEF. */ \
+} while (false)
+#else
 #define CRASH() do { \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
-} while(false)
+} while (false)
+#endif
 
 static bool getEntryPointsWasCalled;
 static bool initializeWasCalled;
@@ -349,29 +356,30 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
 
-    if (obj) {
-        obj->lastWindow = *window;
+    if (!obj)
+        return NPERR_GENERIC_ERROR;
 
-        if (obj->logSetWindow) {
-            pluginLog(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
-            obj->logSetWindow = FALSE;
-            executeScript(obj, "testRunner.notifyDone();");
-        }
+    obj->lastWindow = *window;
 
-        if (obj->onSetWindow)
-            executeScript(obj, obj->onSetWindow);
-
-        if (obj->testWindowOpen) {
-            testWindowOpen(instance);
-            obj->testWindowOpen = FALSE;
-        }
-
-        if (obj->testKeyboardFocusForPlugins) {
-            obj->eventLogging = true;
-            executeScript(obj, "eventSender.keyDown('A');");
-        }
+    if (obj->logSetWindow) {
+        pluginLog(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
+        obj->logSetWindow = FALSE;
+        executeScript(obj, "testRunner.notifyDone();");
     }
-    
+
+    if (obj->onSetWindow)
+        executeScript(obj, obj->onSetWindow);
+
+    if (obj->testWindowOpen) {
+        testWindowOpen(instance);
+        obj->testWindowOpen = FALSE;
+    }
+
+    if (obj->testKeyboardFocusForPlugins) {
+        obj->eventLogging = true;
+        executeScript(obj, "eventSender.keyDown('A');");
+    }
+
     return obj->pluginTest->NPP_SetWindow(window);
 }
 

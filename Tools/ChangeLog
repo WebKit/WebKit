@@ -1,3 +1,26 @@
+2015-12-04  David Kilzer  <ddkilzer@apple.com>
+
+        TestNetscapePlugIn: Fix remaining static analyzer warnings
+        <http://webkit.org/b/151888>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes the following static analyzer warnings:
+            Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp:101:9: warning: Called function pointer is null (null dereference)
+                    CRASH();
+                    ^~~~~~~
+            Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp:46:5: note: expanded from macro 'CRASH'
+                ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
+                ^~~~~~~~~~~~~~~~
+            Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp:375:12: warning: Access to field 'pluginTest' results in a dereference of a null pointer (loaded from variable 'obj')
+                return obj->pluginTest->NPP_SetWindow(window);
+                       ^~~~~~~~~~~~~~~
+            2 warnings generated.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (CRASH): Use __builtin_trap() for gcc/clang.
+        (NPP_SetWindow): Add early return if obj is nullptr.
+
 2015-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebResource/get-data is flaky
