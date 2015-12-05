@@ -4154,12 +4154,11 @@ bool CSSParser::parseCustomPropertyDeclaration(bool important, CSSValueID id)
     if (m_customPropertyName.isEmpty() || !m_valueList)
         return false;
     
-    auto& cssValuePool = CSSValuePool::singleton();
     RefPtr<CSSValue> value;
     if (id == CSSValueInherit)
-        value = cssValuePool.createInheritedValue();
+        value = cssValuePool().createInheritedValue();
     else if (id == CSSValueInitial)
-        value = cssValuePool.createExplicitInitialValue();
+        value = cssValuePool().createExplicitInitialValue();
     else {
         RefPtr<CSSValueList> valueList = CSSValueList::createFromParserValueList(*m_valueList);
         if (m_valueList->containsVariables())
