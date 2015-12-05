@@ -1,5 +1,14 @@
 2015-12-04  Jonathan Davis  <jond@apple.com>
 
+        Update feature status for up-to-date status information.
+        https://bugs.webkit.org/show_bug.cgi?id=151821
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/status.php:
+
+2015-12-04  Jonathan Davis  <jond@apple.com>
+
         Added redirects for old webkit.org archive.
 
         * .htaccess:

@@ -34,7 +34,7 @@
     {
         "name": "CSS Painting API Level 1",
         "status": {
-            "status": "Under consideration"
+            "status": "Under Consideration"
         },
         "url": "https://drafts.css-houdini.org/css-paint-api/",
         "keywords": ["css", "houdini"],
@@ -49,7 +49,7 @@
     {
         "name": "CSS Properties and Values API Level 1",
         "status": {
-            "status": "Under consideration"
+            "status": "Under Consideration"
         },
         "url": "https://drafts.css-houdini.org/css-properties-values-api/",
         "keywords": ["css", "houdini"],
@@ -136,7 +136,7 @@
     {
         "name": "Service Workers",
         "status": {
-            "status": "No active development"
+            "status": "Under Consideration"
         },
         "url": "http://www.w3.org/TR/2015/WD-service-workers-20150625/",
         "keywords": ["service workers"],
@@ -209,9 +209,10 @@
     {
         "name": "WebRTC",
         "status": {
-            "status": "No active development"
+            "status": "In Development"
         },
         "url": "http://www.w3.org/TR/webrtc/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=124288",
         "keywords": ["webrtc"],
         "category": "webapps",
         "description": "An API to facilitate real-time communication for browser-to-browser applications.",
@@ -332,9 +333,10 @@
     {
         "name": "Custom Elements",
         "status": {
-            "status": "No active development"
+            "status": "Prototyping"
         },
         "url": "http://w3c.github.io/webcomponents/spec/custom/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=150225",
         "specification": "Web Components",
         "description": "Define a custom HTML tag and associate it with an ES6 class.",
         "contact": {
@@ -382,7 +384,7 @@
     {
         "name": "HTML imports",
         "status": {
-            "status": "No active development"
+            "status": "Not Considering"
         },
         "url": "http://w3c.github.io/webcomponents/spec/imports/",
         "specification": "Web Components",
@@ -437,7 +439,7 @@
     {
         "name": "Picture element",
         "status": {
-            "status": "In development",
+            "status": "In Development",
             "enabled-by-default": false
         },
         "url": "https://html.spec.whatwg.org/multipage/embedded-content.html#the-picture-element",

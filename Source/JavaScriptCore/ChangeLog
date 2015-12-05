@@ -1,3 +1,12 @@
+2015-12-04  Jonathan Davis  <jond@apple.com>
+
+        Update feature status for up-to-date status information.
+        https://bugs.webkit.org/show_bug.cgi?id=151821
+
+        Reviewed by Timothy Hatcher.
+
+        * features.json:
+
 2015-12-04  Saam barati  <sbarati@apple.com>
 
         OSR exits that are exception handlers should emit less code eagerly in the thunk generator, and instead, should defer as much code generation as possible to be lazily generated in the exit itself

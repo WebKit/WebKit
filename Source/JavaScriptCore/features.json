@@ -126,18 +126,6 @@
         "specification": "ES6"
     },
     {
-        "name": "for...of Loops",
-        "status": {
-            "status": "Done",
-            "enabled-by-default": true
-        },
-        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-for-in-and-for-of-statements",
-        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of",
-        "description": "The for...of loops iterate over the values provided by the iterator of the target object.",
-        "specification": "ES6",
-        "comment": "Older versions of WebKit only supported iterating JavaScript arrays."
-    },
-    {
         "name": "Generators",
         "status": {
             "status": "In Development",
@@ -174,17 +162,6 @@
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-modules",
         "documentation-url": "https://hacks.mozilla.org/2015/08/es6-in-depth-modules/",
         "description": "Modules make modularizing code and splitting it across different files easy because the syntax and semantics are now standard in the JavaScript langauge.",
-        "specification": "ES6"
-    },
-    {
-        "name": "new.target",
-        "status": {
-            "status": "Done",
-            "enabled-by-default": true
-        },
-        "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-built-in-function-objects",
-        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target",
-        "description": "new.target allows you to detect if a function or constructor was instantiated with the new operator, or if instead it was called using normal function calling syntax.",
         "specification": "ES6"
     },
     {
@@ -225,9 +202,10 @@
     {
         "name": "Proxy Objects",
         "status": {
-            "status": "No active development"
+            "status": "Under Consideration"
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-proxy-objects",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=35731",
         "specification": "ES6",
         "description": "An intermediary object that defines custom basic behaviors of another object such as property lookup, assignment, enumeration.",
         "contact": {
@@ -344,6 +322,29 @@
             "name": "Yusuke Suzuki",
             "email": "utatane.tea@gmail.com"
         }
+    },
+    {
+        "name": "for...of Loops",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-for-in-and-for-of-statements",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of",
+        "description": "The for...of loops iterate over the values provided by the iterator of the target object.",
+        "specification": "ES6",
+        "comment": "Older versions of WebKit only supported iterating JavaScript arrays."
+    },
+    {
+        "name": "new.target",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-built-in-function-objects",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target",
+        "description": "new.target allows you to detect if a function or constructor was instantiated with the new operator, or if instead it was called using normal function calling syntax.",
+        "specification": "ES6"
     }
     ]
 }

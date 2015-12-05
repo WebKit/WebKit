@@ -28,7 +28,7 @@ function xhrPromise(url) {
         xhrRequest.send();
     });
 }
-var origin = new URL("https://svn.webkit.org/");
+var origin = new URL("https://<?php echo WP_HOST == "webkit.org" ? "svn.webkit.org" : WP_HOST; ?>/");
 var loadJavaScriptCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/JavaScriptCore/features.json", origin));
 var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/WebCore/features.json", origin));
 </script>
@@ -108,8 +108,8 @@ ul.features {
     border-radius: 3px;
     padding: 1em;
     margin: 1em 0 !important;
-    max-height: intrinsic;  
-    min-height: 3rem;          
+    max-height: intrinsic;
+    min-height: 3rem;
     overflow-y: hidden;
     cursor: pointer;
     -webkit-transition: background-color 0.3s ease-in;
@@ -181,6 +181,10 @@ ul.features {
     padding-left: 0.5em;
 }
 
+.feature-header h3 a {
+    color: #444;
+}
+
 .feature-header h3 .internal-reference a:hover {
     color: inherit;
     text-decoration: underline;
@@ -202,7 +206,7 @@ ul.feature-details {
     display: inline-block;
     position: relative;
     min-width: 4em;
-    text-align: right; 
+    text-align: right;
 }
 
 .feature-status,
@@ -272,6 +276,16 @@ ul.feature-details {
 }
 
 
+#status-filters .under-consideration,
+.feature-status.under-consideration,
+.feature-status.under-consideration a {
+    color: #cc9d00;
+}
+
+.status-marker.under-consideration {
+    border-color: #FFC500 transparent transparent transparent;
+}
+
 .feature-status.removed,
 .feature-status.removed a {
     color: #999999;
@@ -280,9 +294,6 @@ ul.feature-details {
 .status-marker.removed {
     border-color: #999999 transparent transparent transparent;
 }
-
-
-
 
 .feature-filters {
     position: relative;
@@ -319,12 +330,19 @@ ul.feature-details {
     top: -3px;
 }
 
+h3 a[name], .admin-bar h3 a[name] {
+    top: initial;
+    width: auto;
+    display: inline-block;
+    visibility: visible;
+}
+
 @media only screen and (max-width: 508px) {
     #feature-filters,
     #feature-list {
         width: 100%;
     }
-    
+
     #feature-filters {
         border: 1px solid #dddddd;
         border-radius: 3px;
@@ -334,7 +352,15 @@ ul.feature-details {
         margin-right: 0;
         margin-bottom: 3rem;
     }
-    
+
+    .feature-header h3 {
+        font-size: 2rem;
+    }
+
+    .feature-status {
+        font-size: 1.6rem;
+        margin-top: 0.4rem;
+    }
 }
 
 </style>
@@ -348,7 +374,7 @@ ul.feature-details {
                 <input type="text" id="search" placeholder="Search filter&hellip;" title="Filter the feature list." required>
                 <ul id="status-filters">
                 </ul>
-                
+
             </form>
 
             <div id="feature-list">
@@ -377,14 +403,14 @@ ul.feature-details {
 
 <script>
 function initializeStatusPage() {
-    
+
     function sortAlphabetically(array) {
         array.sort(function(a, b){
             var aName = a.name.toLowerCase();
             var bName = b.name.toLowerCase();
 
             var nameCompareResult = aName.localeCompare(bName);
-            
+
             if ( nameCompareResult )
                 return nameCompareResult;
 
@@ -420,25 +446,30 @@ function initializeStatusPage() {
         var hasReferenceLink = "url" in featureObject;
         var hasContactObject = "contact" in featureObject;
         var hasSpecificationObject = "specification" in featureObject;
-        
+
         container.addEventListener('click', function (e) {
             if ( container.className.indexOf('opened') !== -1 ) {
                 container.className = container.className.replace(' opened','');
             } else container.className += " opened";
         });
-        
+
         container.className = "feature";
 
+        var slug = featureObject.name.toLowerCase().replace(/ /g, '-');
         if ("features" in featureObject) {
-            container.setAttribute("id", "specification-" + featureObject.name);
+            container.setAttribute("id", "specification-" + slug);
         } else {
-            container.setAttribute("id", "feature-" + featureObject.name);
+            container.setAttribute("id", "feature-" + slug);
+        }
+
+        if (window.location.hash && window.location.hash == "#" + container.getAttribute('id')) {
+            container.className += " opened";
         }
 
         var cornerStatus = document.createElement('div');
         cornerStatus.className = "status-marker ";
         container.appendChild(cornerStatus);
-        
+
         var descriptionContainer = document.createElement('div');
         descriptionContainer.className = "feature-description";
 
@@ -447,7 +478,11 @@ function initializeStatusPage() {
         descriptionContainer.appendChild(featureHeaderContainer);
 
         var titleElement = document.createElement("h3");
-        titleElement.textContent = featureObject.name;
+        var anchorLinkElement = document.createElement("a");
+        anchorLinkElement.href = "#" + container.getAttribute("id");
+        anchorLinkElement.name = container.getAttribute("id");
+        anchorLinkElement.textContent = featureObject.name;
+        titleElement.appendChild(anchorLinkElement);
 
         // Add sub-feature here
         if (hasSpecificationObject) {
@@ -456,6 +491,7 @@ function initializeStatusPage() {
             specSpan.className = "internal-reference";
             titleElement.appendChild(specSpan);
         }
+
         featureHeaderContainer.appendChild(titleElement);
 
         if ("status" in featureObject) {
@@ -572,11 +608,11 @@ function initializeStatusPage() {
         var inputField = document.getElementById('search');
         var featuresEls = document.querySelectorAll('.features > li');
         var statusFilters = {};
-        
+
         featuresArray.forEach(function(feature, i) {
             feature.el = featuresEls[i];
             feature.visible = true;
-            
+
             if (feature.status != undefined) {
                 featureStatusKey = feature.status.status.toLocaleLowerCase();
 
@@ -585,9 +621,9 @@ function initializeStatusPage() {
 
             }
         });
-        
+
         var statusLength = statusFilters.length;
-        
+
         for (var key in statusFilters) {
             var status = statusFilters[key];
             var entry = document.createElement("li");
@@ -602,7 +638,7 @@ function initializeStatusPage() {
             entry.appendChild(label);
             statusContainer.appendChild(entry);
         }
-                
+
         filtersForm.addEventListener('click', function (e) {
             if ( filtersForm.className.indexOf('opened') !== -1 ) {
                 filtersForm.className = filtersForm.className.replace(' opened','');
@@ -610,7 +646,7 @@ function initializeStatusPage() {
         });
 
         inputField.addEventListener('input', search);
-        
+
         var inputs = [].slice.call(filtersForm.getElementsByTagName('input'));
         inputs.forEach(function (input,i) {
             input.addEventListener('click', function (e) {
@@ -634,13 +670,13 @@ function initializeStatusPage() {
     function searchFeatures(featuresArray, searchTerm, statusFilters) {
         featuresArray.forEach(function(feature) {
             var visible = isSearchMatch(feature, searchTerm) && isStatusFiltered(feature, statusFilters);
-            
+
             if (visible && !feature.visible) {
                 feature.el.className = 'feature';
             } else if (!visible && feature.visible) {
                 feature.el.className = 'feature is-hidden';
             }
-            
+
             feature.visible = visible;
         });
     }
@@ -660,11 +696,11 @@ function initializeStatusPage() {
     function isStatusFiltered(feature, activeFilters) {
         if (activeFilters.length == 0)
             return true;
-        if (feature.status === undefined) 
+        if (feature.status === undefined)
             return false;
         if (activeFilters.indexOf(feature.status.status.toLowerCase()) != -1)
             return true;
-        
+
         return false;
     }
 
@@ -700,10 +736,16 @@ function initializeStatusPage() {
         }
 
         var everythingToShow = allFeatures.concat(allSpecifications);
-        
+
         sortAlphabetically(everythingToShow);
         renderFeaturesAndSpecifications(everythingToShow);
         initSearch(everythingToShow);
+
+        if (window.location.hash) {
+            var hash = window.location.hash;
+            window.location.hash = ""; // Change hash so navigation takes place
+            window.location.hash = hash;
+        }
     }
 
     function displayError(error) {
