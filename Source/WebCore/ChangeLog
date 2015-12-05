@@ -1,5 +1,226 @@
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191128. rdar://problem/23732363
+
+    2015-10-14  David Hyatt  <hyatt@apple.com>
+
+            Implement CSS Variables.
+            https://bugs.webkit.org/show_bug.cgi?id=19660
+
+            Reviewed by Dean Jackson.
+
+            Added new tests in fast/css/custom-properties and fast/css/variables.
+
+            * CMakeLists.txt:
+            * WebCore.xcodeproj/project.pbxproj:
+            Add CSSVariableValue.cpp and CSSVariableDependentValue.cpp to builds.
+
+            * css/CSSCalculationValue.cpp:
+            (WebCore::hasDoubleValue):
+            Handle the new CSS_PARSER_WHITESPACE value.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::ComputedStyleExtractor::customPropertyValue):
+            Patched to make sure style is updated so that dynamic changes to custom properties are reflected
+            immediately when querying values.
+
+            (WebCore::CSSComputedStyleDeclaration::length):
+            (WebCore::CSSComputedStyleDeclaration::item):
+            The custom properties table is a reference and not a pointer now.
+
+            * css/CSSCustomPropertyValue.h:
+            (WebCore::CSSCustomPropertyValue::create):
+            (WebCore::CSSCustomPropertyValue::createInvalid):
+            (WebCore::CSSCustomPropertyValue::customCSSText):
+            (WebCore::CSSCustomPropertyValue::equals):
+            (WebCore::CSSCustomPropertyValue::isInvalid):
+            (WebCore::CSSCustomPropertyValue::containsVariables):
+            (WebCore::CSSCustomPropertyValue::value):
+            (WebCore::CSSCustomPropertyValue::CSSCustomPropertyValue):
+            The CSSCustomPropertyValue represents a custom property/value pair in the back end. It holds on
+            to both the property name and a CSSValueList that has the original parser terms. This class also
+            doubles as the invalid-at-compute-time value for custom properties when they contain cycles, etc.
+
+            * css/CSSFunctionValue.cpp:
+            (WebCore::CSSFunctionValue::buildParserValueSubstitutingVariables):
+             * css/CSSFunctionValue.h:
+            (WebCore::CSSFunctionValue::buildParserValueSubstitutingVariables):
+            Hands back a CSSParserValue for a function with variables replaced with their real values (or fallback).
+
+            * css/CSSGrammar.y.in:
+            Many changes to support the var() syntax and to handle error conditions and cases.
+
+            * css/CSSParser.cpp:
+            (WebCore::filterProperties):
+            Null check the value here. Shouldn't happen, but being paranoid.
+
+            (WebCore::CSSParser::parseVariableDependentValue):
+            This function converts a CSSValueList back into a CSSParserValueList and then passes
+            it off to the parser. If the result parses, successfully, then the parsed CSSValue is handed back.
+
+            (WebCore::CSSParser::parseValue):
+            Detect when a property value contains variables and simply make a CSSVariableDependentValue to hold
+            a copy of the parser value list (as a CSSValueList). We defer parsing the list until compute-time
+            when we know the values of the variables to use.
+
+            (WebCore::CSSParser::parseCustomPropertyDeclaration):
+            Add support for inherit, initial and variable references in custom properties.
+
+            (WebCore::CSSParser::detectFunctionTypeToken):
+            Add support for detection of the "var" token.
+
+            (WebCore::CSSParser::realLex):
+            Fix the parsing of custom properties to allow "--" and to allow them to start with digits, e.g., "--0".
+
+            * css/CSSParser.h:
+            Add parseVariableDependentValue function for handling variable substitution and subsequent parsing
+            of the resolved parser value list.
+
+            * css/CSSParserValues.cpp:
+            (WebCore::CSSParserValueList::containsVariables):
+            Get rid of the toString() function (no longer needed) and replace it with containsVariables(). This
+            check is used to figure out if a parser value list has variables and thus needs to defer parsing
+            until later.
+
+            (WebCore::CSSParserValue::createCSSValue):
+            Add support for the creation of values for variables, CSSVariableValues.
+
+            (WebCore::CSSParserValueList::toString): Deleted.
+            No longer needed.
+
+            * css/CSSParserValues.h:
+            Add CSSParserVariable as a new kind of parser value. This represents a var() that is encountered
+            during parsing. It is similar to a function except it has to hold both the reference (custom property name)
+            and fallback arguments.
+
+            * css/CSSPrimitiveValue.cpp:
+            (WebCore::isValidCSSUnitTypeForDoubleConversion):
+            (WebCore::CSSPrimitiveValue::cleanup):
+            (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText):
+            (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+            (WebCore::CSSPrimitiveValue::equals):
+            Add support for CSS_PARSER_WHITESPACE as a way of preserving whitespace as a parsed item (variables can
+            be only whitespace, and this has to be retained).
+
+            (WebCore::CSSPrimitiveValue::buildParserValue):
+            Conversion from a CSSPrimitiveValue back into a parser value is handled by this function.
+
+            * css/CSSPrimitiveValue.h:
+            (WebCore::CSSPrimitiveValue::isParserOperator):
+            (WebCore::CSSPrimitiveValue::parserOperator):
+            Add ability to get parser operator info. Add the buildParserValue declaration.
+
+            * css/CSSValue.cpp:
+            (WebCore::CSSValue::equals):
+            (WebCore::CSSValue::cssText):
+            (WebCore::CSSValue::destroy):
+            (WebCore::CSSValue::cloneForCSSOM):
+            (WebCore::CSSValue::isInvalidCustomPropertyValue):
+            * css/CSSValue.h:
+            Add support for variable values and variable dependent values.
+
+            * css/CSSValueList.cpp:
+            (WebCore::CSSValueList::customCSSText):
+            Improve serialization to not output extra spaces when a comma operator is a value.
+
+            (WebCore::CSSValueList::containsVariables):
+            Whether or not a CSSVariableValue can be found somewhere within the list (or its descendants).
+
+            (WebCore::CSSValueList::checkVariablesForCycles):
+            Called to check variables for cycles.
+
+            (WebCore::CSSValueList::buildParserValueSubstitutingVariables):
+            (WebCore::CSSValueList::buildParserValueListSubstitutingVariables):
+            Functions that handle converting the value list to a parser value list while making
+            variable substitutions along the way.
+
+            * css/CSSValueList.h:
+            Add the new buildParserXXX functions.
+
+            * css/CSSVariableDependentValue.cpp: Added.
+            (WebCore::CSSVariableDependentValue::checkVariablesForCycles):
+            * css/CSSVariableDependentValue.h: Added.
+            (WebCore::CSSVariableDependentValue::create):
+            (WebCore::CSSVariableDependentValue::customCSSText):
+            (WebCore::CSSVariableDependentValue::equals):
+            (WebCore::CSSVariableDependentValue::propertyID):
+            (WebCore::CSSVariableDependentValue::valueList):
+            (WebCore::CSSVariableDependentValue::CSSVariableDependentValue):
+            This value represents a list of terms that have not had variables substituted yet. The list
+            is held by the value so that it can be converted back into a parser value list once the
+            variable values are known.
+
+            * css/CSSVariableValue.cpp: Added.
+            (WebCore::CSSVariableValue::CSSVariableValue):
+            (WebCore::CSSVariableValue::customCSSText):
+            (WebCore::CSSVariableValue::equals):
+            (WebCore::CSSVariableValue::buildParserValueListSubstitutingVariables):
+            * css/CSSVariableValue.h: Added.
+            (WebCore::CSSVariableValue::create):
+            (WebCore::CSSVariableValue::name):
+            (WebCore::CSSVariableValue::fallbackArguments):
+            This value represents a var() itself. It knows how to do the substitution of the variable
+            value and to apply fallback if that value is not present.
+
+            * css/StyleProperties.cpp:
+            (WebCore::StyleProperties::getPropertyValue):
+            (WebCore::StyleProperties::borderSpacingValue):
+            (WebCore::StyleProperties::getLayeredShorthandValue):
+            (WebCore::StyleProperties::getShorthandValue):
+            (WebCore::StyleProperties::getCommonValue):
+            (WebCore::StyleProperties::getPropertyCSSValue):
+            (WebCore::StyleProperties::getPropertyCSSValueInternal):
+            (WebCore::StyleProperties::asText):
+            (WebCore::StyleProperties::copyPropertiesInSet):
+            * css/StyleProperties.h:
+            Patched to factor property fetching into an internal method so that variables can work with shorthands
+            in the CSS OM.
+
+            * css/StyleResolver.cpp:
+            (WebCore::StyleResolver::applyProperty):
+            Resolve variable values at compute time. If they fail to resolve, use inherit or initial as the
+            value (depending on whether the property inherits by default).
+
+            (WebCore::StyleResolver::resolvedVariableValue):
+            Helper function that calls parseVariableDependentValue and gets the resolved result.
+
+            (WebCore::StyleResolver::applyCascadedProperties):
+            After custom properties have been collected, we check for cycles and perform variable substitutions.
+            This way we get all the variables replaced before we inherit down the style tree.
+
+            * css/StyleResolver.h:
+            Add resolvedVariableValue declaration.
+
+            * css/makeprop.pl:
+            Make sure custom properties are inherited by default.
+
+            * rendering/style/RenderStyle.cpp:
+            (WebCore::RenderStyle::checkVariablesInCustomProperties):
+            This function handles updating variables with cycles to be invalid in the RenderStyle. It then also
+            handles the replacement of variables found in custom properties with resolved values. All custom
+            properties are either invalid or are real non-variable-dependent value lists after this function
+            completes.
+
+            * rendering/style/RenderStyle.h:
+            Add checkVariablesInCustomProperties declaration.
+
+            * rendering/style/StyleCustomPropertyData.h:
+            (WebCore::StyleCustomPropertyData::create):
+            (WebCore::StyleCustomPropertyData::copy):
+            (WebCore::StyleCustomPropertyData::operator==):
+            (WebCore::StyleCustomPropertyData::operator!=):
+            (WebCore::StyleCustomPropertyData::setCustomPropertyValue):
+            (WebCore::StyleCustomPropertyData::getCustomPropertyValue):
+            (WebCore::StyleCustomPropertyData::values):
+            (WebCore::StyleCustomPropertyData::hasCustomProperty):
+            (WebCore::StyleCustomPropertyData::containsVariables):
+            (WebCore::StyleCustomPropertyData::setContainsVariables):
+            (WebCore::StyleCustomPropertyData::StyleCustomPropertyData):
+            Miscellaneous cleanup, and the addition of whether or not the properties still contain variable
+            dependent values that need to be resolved.
+
+2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190231. rdar://problem/23732363
 
     2015-09-24  David Hyatt  <hyatt@apple.com>

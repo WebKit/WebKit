@@ -21,7 +21,11 @@
 #include "config.h"
 #include "CSSValueList.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSParserValues.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSVariableDependentValue.h"
+#include "CSSVariableValue.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -114,7 +118,13 @@ String CSSValueList::customCSSText() const
     }
 
     for (auto& value : m_values) {
-        if (!result.isEmpty())
+        bool suppressSeparator = false;
+        if (m_valueListSeparator == SpaceSeparator && value->isPrimitiveValue()) {
+            auto* primitiveValue = &downcast<CSSPrimitiveValue>(*value.ptr());
+            if (primitiveValue->parserOperator() == ',')
+                suppressSeparator = true;
+        }
+        if (!suppressSeparator && !result.isEmpty())
             result.append(separator);
         result.append(value.get().cssText());
     }
@@ -174,4 +184,100 @@ PassRefPtr<CSSValueList> CSSValueList::cloneForCSSOM() const
     return adoptRef(new CSSValueList(*this));
 }
 
+
+bool CSSValueList::containsVariables() const
+{
+    for (unsigned i = 0; i < m_values.size(); i++) {
+        if (m_values[i]->isVariableValue())
+            return true;
+        if (m_values[i]->isFunctionValue()) {
+            auto& functionValue = downcast<CSSFunctionValue>(*item(i));
+            CSSValueList* args = functionValue.arguments();
+            if (args && args->containsVariables())
+                return true;
+        } else if (m_values[i]->isValueList()) {
+            auto& listValue = downcast<CSSValueList>(*item(i));
+            if (listValue.containsVariables())
+                return true;
+        }
+    }
+    return false;
+}
+
+bool CSSValueList::checkVariablesForCycles(CustomPropertyValueMap& customProperties, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
+{
+    for (unsigned i = 0; i < m_values.size(); i++) {
+        auto* value = item(i);
+        if (value->isVariableValue()) {
+            auto& variableValue = downcast<CSSVariableValue>(*value);
+            if (seenProperties.contains(variableValue.name()))
+                return false;
+            RefPtr<CSSValue> value = customProperties.get(variableValue.name());
+            if (value && value->isVariableDependentValue() && !downcast<CSSVariableDependentValue>(*value).checkVariablesForCycles(variableValue.name(), customProperties, seenProperties, invalidProperties))
+                return false;
+
+            // Have to check the fallback values.
+            auto* fallbackArgs = variableValue.fallbackArguments();
+            if (!fallbackArgs || !fallbackArgs->length())
+                continue;
+            
+            if (!fallbackArgs->checkVariablesForCycles(customProperties, seenProperties, invalidProperties))
+                return false;
+        } else if (value->isFunctionValue()) {
+            auto& functionValue = downcast<CSSFunctionValue>(*value);
+            auto* args = functionValue.arguments();
+            if (args && !args->checkVariablesForCycles(customProperties, seenProperties, invalidProperties))
+                return false;
+        } else if (value->isValueList()) {
+            auto& listValue = downcast<CSSValueList>(*value);
+            if (!listValue.checkVariablesForCycles(customProperties, seenProperties, invalidProperties))
+                return false;
+        }
+    }
+    return true;
+}
+
+bool CSSValueList::buildParserValueSubstitutingVariables(CSSParserValue* result, const CustomPropertyValueMap& customProperties) const
+{
+    result->id = CSSValueInvalid;
+    result->unit = CSSParserValue::ValueList;
+    result->valueList = new CSSParserValueList();
+    return buildParserValueListSubstitutingVariables(result->valueList, customProperties);
+}
+
+bool CSSValueList::buildParserValueListSubstitutingVariables(CSSParserValueList* parserList, const CustomPropertyValueMap& customProperties) const
+{
+    for (unsigned i = 0; i < m_values.size(); ++i) {
+        CSSParserValue result;
+        result.id = CSSValueInvalid;
+        switch (m_values[i]->classType()) {
+        case FunctionClass:
+            if (!downcast<CSSFunctionValue>(*m_values[i].ptr()).buildParserValueSubstitutingVariables(&result, customProperties))
+                return false;
+            parserList->addValue(result);
+            break;
+        case ValueListClass:
+            if (!downcast<CSSValueList>(*m_values[i].ptr()).buildParserValueSubstitutingVariables(&result, customProperties))
+                return false;
+            parserList->addValue(result);
+            break;
+        case VariableClass: {
+            if (!downcast<CSSVariableValue>(*m_values[i].ptr()).buildParserValueListSubstitutingVariables(parserList, customProperties))
+                return false;
+            break;
+        }
+        case PrimitiveClass:
+            // FIXME: Will have to change this if we start preserving invalid tokens.
+            if (downcast<CSSPrimitiveValue>(*m_values[i].ptr()).buildParserValue(&result))
+                parserList->addValue(result);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+            return false;
+        }
+    }
+    return true;
+}
+    
 } // namespace WebCore

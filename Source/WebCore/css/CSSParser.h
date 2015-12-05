@@ -57,6 +57,7 @@ class CSSValueList;
 class CSSBasicShape;
 class CSSBasicShapeInset;
 class CSSGridLineNamesValue;
+class CSSVariableDependentValue;
 class Document;
 class Element;
 class ImmutableStyleProperties;
@@ -144,7 +145,7 @@ public:
     bool parseQuotes(CSSPropertyID, bool important);
     bool parseAlt(CSSPropertyID, bool important);
     
-    bool parseCustomPropertyDeclaration(bool important);
+    bool parseCustomPropertyDeclaration(bool important, CSSValueID);
     
     PassRefPtr<CSSValue> parseAttr(CSSParserValueList& args);
     PassRefPtr<CSSValue> parseBackgroundColor();
@@ -466,6 +467,8 @@ public:
     static bool isCalculation(CSSParserValue&);
 
     void setCustomPropertyName(const AtomicString& propertyName) { m_customPropertyName = propertyName; }
+
+    RefPtr<CSSValue> parseVariableDependentValue(CSSPropertyID, const CSSVariableDependentValue&, const CustomPropertyValueMap& customProperties);
 
 private:
     bool is8BitSource() { return m_is8BitSource; }

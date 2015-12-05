@@ -1,5 +1,36 @@
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191128. rdar://problem/23732363
+
+    2015-10-14  David Hyatt  <hyatt@apple.com>
+
+            Implement CSS Variables.
+            https://bugs.webkit.org/show_bug.cgi?id=19660
+
+            Reviewed by Dean Jackson.
+
+            * fast/css/custom-properties/inheritance-expected.html: Added.
+            * fast/css/custom-properties/inheritance.html: Added.
+            * fast/css/variables: Added.
+            * fast/css/variables/custom-property-computed-style-access-expected.html: Added.
+            * fast/css/variables/custom-property-computed-style-access.html: Added.
+            * fast/css/variables/custom-property-dynamic-update-expected.html: Added.
+            * fast/css/variables/custom-property-dynamic-update.html: Added.
+            * fast/css/variables/custom-property-simple-cycle-expected.html: Added.
+            * fast/css/variables/custom-property-simple-cycle.html: Added.
+            * fast/css/variables/inherited-fallback-expected.html: Added.
+            * fast/css/variables/inherited-fallback.html: Added.
+            * fast/css/variables/invalid-reference-expected.html: Added.
+            * fast/css/variables/invalid-reference.html: Added.
+            * fast/css/variables/rule-property-get-css-value-expected.html: Added.
+            * fast/css/variables/rule-property-get-css-value.html: Added.
+            * fast/css/variables/rule-property-get-expected.html: Added.
+            * fast/css/variables/rule-property-get.html: Added.
+            * fast/css/variables/rule-serialization-expected.html: Added.
+            * fast/css/variables/rule-serialization.html: Added.
+
+2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190209. rdar://problem/23732363
 
     2015-09-24  David Hyatt  <hyatt@apple.com>
