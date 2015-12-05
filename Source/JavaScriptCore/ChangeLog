@@ -1,3 +1,15 @@
+2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Fix Value::returnsBool() after r193436
+        https://bugs.webkit.org/show_bug.cgi?id=151902
+
+        Reviewed by Saam Barati.
+
+        I forgot to carry a test from Branch and Select :(
+
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::returnsBool):
+
 2015-12-04  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Number.prototype.toLocaleString in ECMA-402
