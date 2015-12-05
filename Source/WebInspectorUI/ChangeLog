@@ -1,3 +1,19 @@
+2015-12-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: when a marked-dirty subview is attached to a parent View, dirtyDescendantsCount gets out of sync
+        https://bugs.webkit.org/show_bug.cgi?id=151876
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView.prototype._updateShownTabs):
+        Removed workaround added in https://bugs.webkit.org/show_bug.cgi?id=151594.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View._scheduleLayoutForView):
+        Always perform a synchronous layout when a view that isn't descended from the
+        root view schedules a layout.
+
 2015-12-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: support runtime registration of tab type associations

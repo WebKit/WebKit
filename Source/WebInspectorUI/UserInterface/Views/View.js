@@ -182,20 +182,30 @@ WebInspector.View = class View extends WebInspector.Object
 
     static _scheduleLayoutForView(view)
     {
-        // Asynchronous layouts aren't scheduled until the root view has been set.
-        // If the root view hasn't been set, switch to a synchronous layout.
-        if (!WebInspector.View._rootView) {
+        let isDescendantOfRoot = false;
+        let parentView = view.parentView;
+        while (parentView) {
+            parentView._dirtyDescendantsCount++;
+            if (parentView === WebInspector.View._rootView) {
+                isDescendantOfRoot = true;
+                break;
+            }
+            parentView = parentView.parentView;
+        }
+
+        // If the view is not attached to the main view tree, switch to a synchronous layout.
+        if (!isDescendantOfRoot) {
+            parentView = view.parentView;
+            while (parentView) {
+                parentView._dirtyDescendantsCount--;
+                parentView = parentView.parentView;
+            }
+
             view._layoutSubtree();
             return;
         }
 
         view._dirty = true;
-
-        let parentView = view.parentView;
-        while (parentView) {
-            parentView._dirtyDescendantsCount++;
-            parentView = parentView.parentView;
-        }
 
         if (WebInspector.View._scheduledLayoutUpdateIdentifier)
             return;
