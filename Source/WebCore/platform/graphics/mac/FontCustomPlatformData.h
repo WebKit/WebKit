@@ -32,6 +32,7 @@ typedef const struct __CTFontDescriptor* CTFontDescriptorRef;
 
 namespace WebCore {
 
+class FontDescription;
 class FontPlatformData;
 class SharedBuffer;
 
@@ -50,7 +51,7 @@ public:
 
     ~FontCustomPlatformData();
 
-    FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
+    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic);
 
     static bool supportsFormat(const String&);
 

@@ -187,14 +187,14 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
     // We cannot create a scaled font here.
 }
 
-FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool italic, FontOrientation orientation)
+FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, const FontDescription& description, bool bold, bool italic)
     : m_fallbacks(nullptr)
-    , m_size(size)
+    , m_size(description.computedPixelSize())
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
     , m_fixedWidth(false)
     , m_scaledFont(nullptr)
-    , m_orientation(orientation)
+    , m_orientation(description.orientation())
 {
     buildScaledFont(fontFace);
 
