@@ -25,9 +25,12 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
+
+class CSSValue;
 
 class StyleCustomPropertyData : public RefCounted<StyleCustomPropertyData> {
 public:
@@ -37,11 +40,11 @@ public:
     bool operator==(const StyleCustomPropertyData& o) const { return m_values == o.m_values; }
     bool operator!=(const StyleCustomPropertyData &o) const { return !(*this == o); }
     
-    void setCustomPropertyValue(const AtomicString& name, const String& value) { m_values.set(name, value); }
-    String getCustomPropertyValue(const AtomicString& name) const { return m_values.get(name); }
+    void setCustomPropertyValue(const AtomicString& name, const RefPtr<CSSValue>& value) { m_values.set(name, value); }
+    RefPtr<CSSValue> getCustomPropertyValue(const AtomicString& name) const { return m_values.get(name); }
     bool hasCustomProperty(const AtomicString& name) const { return m_values.contains(name); }
 
-    HashMap<AtomicString, String> m_values;
+    HashMap<AtomicString, RefPtr<CSSValue>> m_values;
     
 private:
     explicit StyleCustomPropertyData()
@@ -49,7 +52,7 @@ private:
     { }
     StyleCustomPropertyData(const StyleCustomPropertyData& other)
         : RefCounted<StyleCustomPropertyData>()
-        , m_values(HashMap<AtomicString, String>(other.m_values))
+        , m_values(HashMap<AtomicString, RefPtr<CSSValue>>(other.m_values))
     { }
 };
 

@@ -1,5 +1,86 @@
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190231. rdar://problem/23732363
+
+    2015-09-24  David Hyatt  <hyatt@apple.com>
+
+            Keep the already-parsed list of terms in custom property values so that we don't have to re-parse them
+            later when doing variable resolution.
+            https://bugs.webkit.org/show_bug.cgi?id=149544
+
+            Reviewed by Dean Jackson.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::ComputedStyleExtractor::customPropertyValue):
+            (WebCore::ComputedStyleExtractor::customPropertyText):
+            Add a helper for getting the raw text. More closely parallels how non-custom properties work with the
+            extractor.
+
+            (WebCore::ComputedStyleExtractor::propertyValue):
+            Change propertyValue to use customPropertyText.
+
+            (WebCore::ComputedStyleExtractor::copyPropertiesInSet):
+            Don't copy CSS custom properties into the style declaration. This is just used for things like editing, so
+            we didn't need to be putting the custom properties into this set.
+
+            (WebCore::CSSComputedStyleDeclaration::getPropertyValue):
+            Patched to go straight to the serialized string value.
+
+            (WebCore::ComputedStyleExtractor::customPropertyValue): Deleted.
+            Replaced by customPropertyText.
+
+            * css/CSSComputedStyleDeclaration.h:
+            Rename customPropertyValue to customPropertyText and make it just return a String.
+
+            * css/CSSCustomPropertyValue.h:
+            (WebCore::CSSCustomPropertyValue::create):
+            (WebCore::CSSCustomPropertyValue::customCSSText):
+            (WebCore::CSSCustomPropertyValue::name):
+            (WebCore::CSSCustomPropertyValue::equals):
+            (WebCore::CSSCustomPropertyValue::CSSCustomPropertyValue):
+            (WebCore::CSSCustomPropertyValue::value): Deleted.
+            Changed to hold both a CSSParserValueList, which it adopts from the CSSParser, and a string value that
+            is constructed lazily only if the value is serialized. Now the problematic serialization code will only
+            run if someone uses the CSS OM to trigger a serialization (this should be a rare occurrence, so perf
+            improves with this change).
+
+            * css/CSSGrammar.y.in:
+            Change parsing of custom properties to be identical to regular properties. This refactoring allows
+            us to simply invoke the parser from style declarations as well and makes everything behave more
+            similarly to normal property parsing.
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue):
+            (WebCore::CSSParser::parseCustomPropertyValue):
+            (WebCore::CSSParser::parseCustomPropertyDeclaration):
+            (WebCore::CSSParser::addCustomPropertyDeclaration): Deleted.
+            * css/CSSParser.h:
+            (WebCore::CSSParser::setCustomPropertyName):
+            We now have a method for parsing custom properties that can be invoked from style declarations. The
+            parser list is now adopted by the CSSCustomPropertyValue.
+
+            * css/CSSParserValues.cpp:
+            (WebCore::CSSParserValueList::toString):
+            Build the string serialization code right into CSSParserValueList.
+
+            * css/CSSParserValues.h:
+            Add a toString() method for serialization.
+
+            * css/StyleProperties.cpp:
+            (WebCore::MutableStyleProperties::setProperty):
+            (WebCore::MutableStyleProperties::setCustomProperty):
+            Changed to use the new CSSParser functions. This makes the code behave almost identically to regular
+            property parsing.
+
+            * css/StyleResolver.cpp:
+            (WebCore::StyleResolver::applyProperty):
+            * rendering/style/RenderStyle.h:
+            * rendering/style/StyleCustomPropertyData.h:
+            Change the mapping on RenderStyle to store the custom CSS values. This way we can get to the original
+            parser lists for each variable when it comes time to do variable resolution.
+
+2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190209. rdar://problem/23732363
 
     2015-09-24  David Hyatt  <hyatt@apple.com>

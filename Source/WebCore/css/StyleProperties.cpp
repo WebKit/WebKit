@@ -728,7 +728,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     return CSSParser::parseValue(this, propertyID, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
-bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, StyleSheetContents* /*contextStyleSheet*/)
+bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, StyleSheetContents* contextStyleSheet)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -737,10 +737,7 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    RefPtr<CSSCustomPropertyValue> customValue = CSSCustomPropertyValue::create(propertyName, value);
-    addParsedProperty(CSSProperty(CSSPropertyCustom, customValue, important));
-    
-    return true;
+    return CSSParser::parseCustomPropertyValue(this, propertyName, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> prpValue, bool important)

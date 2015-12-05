@@ -1539,10 +1539,21 @@ decl_list_recovery:
 
 declaration:
     CUSTOM_PROPERTY maybe_space ':' maybe_space expr priority {
+        $$ = false;
+        bool isPropertyParsed = false;
         std::unique_ptr<CSSParserValueList> propertyValue($5);
-        parser->addCustomPropertyDeclaration($1, propertyValue.get(), $6);
-        $$ = true;
-        parser->markPropertyEnd($6, true);
+        if (propertyValue) {
+            parser->m_valueList = WTF::move(propertyValue);
+            int oldParsedProperties = parser->m_parsedProperties.size();
+            parser->setCustomPropertyName($1);
+            $$ = parser->parseValue(CSSPropertyCustom, $6);
+            if (!$$)
+                parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
+            else
+                isPropertyParsed = true;
+            parser->m_valueList = nullptr;
+        }
+        parser->markPropertyEnd($6, isPropertyParsed);
     }
     | property ':' maybe_space expr priority {
         $$ = false;
