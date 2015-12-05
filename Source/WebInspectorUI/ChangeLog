@@ -1,3 +1,20 @@
+2015-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exception with Reload shortcut in JSContext Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=151896
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Do not implicitly prevent default on these keyboard shortcuts
+        so we can system beep if we do not do anything.
+
+        (WebInspector._reloadPage):
+        (WebInspector._reloadPageIgnoringCache):
+        Bail if there is no PageAgent without preventing default for
+        a beep system beep. Prevent default if we did something.
+
 2015-12-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: when a marked-dirty subview is attached to a parent View, dirtyDescendantsCount gets out of sync

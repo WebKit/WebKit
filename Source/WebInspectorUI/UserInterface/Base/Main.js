@@ -266,6 +266,7 @@ WebInspector.contentLoaded = function()
 
     this._reloadPageKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "R", this._reloadPage.bind(this));
     this._reloadPageIgnoringCacheKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "R", this._reloadPageIgnoringCache.bind(this));
+    this._reloadPageKeyboardShortcut.implicitlyPreventsDefault = this._reloadPageIgnoringCacheKeyboardShortcut = false;
 
     this._consoleTabKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Option | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "C", this._showConsoleTab.bind(this));
     this._quickConsoleKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Apostrophe, this._focusConsolePrompt.bind(this));
@@ -1692,7 +1693,11 @@ WebInspector._downloadWebArchive = function(event)
 
 WebInspector._reloadPage = function(event)
 {
+    if (!window.PageAgent)
+        return;
+
     PageAgent.reload();
+    event.preventDefault();
 };
 
 WebInspector._reloadPageClicked = function(event)
@@ -1703,7 +1708,11 @@ WebInspector._reloadPageClicked = function(event)
 
 WebInspector._reloadPageIgnoringCache = function(event)
 {
+    if (!window.PageAgent)
+        return;
+
     PageAgent.reload(true);
+    event.preventDefault();
 };
 
 WebInspector._updateReloadToolbarButton = function()
