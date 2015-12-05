@@ -1,3 +1,24 @@
+2015-12-04  Zalan Bujtas  <zalan@apple.com>
+
+        Garbage in page tiles when document is too long.
+        https://bugs.webkit.org/show_bug.cgi?id=151906
+        rdar://problem/23695858
+
+        Reviewed by Simon Fraser.
+
+        This patch partially fixes the broken concept(webkit.org/b/151908) of having a nearlyMax/2 sized rectangle to define infiniteness.
+        (see LayoutRect::infiniteRect() and ClipRect::isInfinite())
+
+        Covered by existing test.
+
+        * rendering/ClipRect.h: Branch for infinite clipping.
+        (WebCore::ClipRect::intersect):
+        (WebCore::ClipRect::intersects):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect): Do not clip when clipping is infinite.
+        (WebCore::RenderLayer::restoreClip):
+        (WebCore::RenderLayer::calculateClipRects):
+
 2015-12-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add some more custom exception messages, passing some more tests.
