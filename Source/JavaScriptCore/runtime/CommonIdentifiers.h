@@ -338,6 +338,9 @@
     macro(generatorValue) \
     macro(generatorThis) \
     macro(generatorResumeMode) \
+    macro(Collator) \
+    macro(DateTimeFormat) \
+    macro(NumberFormat) \
 
 
 namespace JSC {

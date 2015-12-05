@@ -1,3 +1,24 @@
+2015-12-04  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Number.prototype.toLocaleString in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147610
+
+        Reviewed by Benjamin Poulain.
+
+        Add toLocaleString in builtin JavaScript that delegates formatting to Intl.NumberFormat.
+        Keep exisiting native implementation for use if INTL flag is disabled.
+
+        * CMakeLists.txt: Add NumberPrototype.js.
+        * DerivedSources.make: Add NumberPrototype.js.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/NumberPrototype.js: Added.
+        (toLocaleString):
+        * runtime/CommonIdentifiers.h: Add private names for Intl constructors.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Expose Intl constructors to builtin js.
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation): Replace toLocaleString implementation.
+
 2015-12-04  Michael Saboff  <msaboff@apple.com>
 
         CRASH: CodeBlock::setOptimizationThresholdBasedOnCompilationResult + 567

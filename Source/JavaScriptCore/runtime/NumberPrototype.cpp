@@ -24,10 +24,11 @@
 
 #include "BigInteger.h"
 #include "Error.h"
+#include "JSCBuiltins.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "JSCInlines.h"
 #include "Uint16WithFraction.h"
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
@@ -75,10 +76,14 @@ NumberPrototype::NumberPrototype(VM& vm, Structure* structure)
 {
 }
 
-void NumberPrototype::finishCreation(VM& vm, JSGlobalObject*)
+void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     setInternalValue(vm, jsNumber(0));
+
+#if ENABLE(INTL)
+    JSC_BUILTIN_FUNCTION("toLocaleString", numberPrototypeToLocaleStringCodeGenerator, DontEnum);
+#endif // ENABLE(INTL)
 
     ASSERT(inherits(info()));
 }

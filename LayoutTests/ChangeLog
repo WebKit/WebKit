@@ -1,3 +1,17 @@
+2015-12-04  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Number.prototype.toLocaleString in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147610
+
+        Reviewed by Benjamin Poulain.
+
+        Add tests for ECMA-402 Number.prototype.toLocaleString.
+        Since NumberFormat is not fully implemented, don't test locale-specific behavior yet.
+
+        * js/number-toLocaleString-expected.txt: Added.
+        * js/number-toLocaleString.html: Added.
+        * js/script-tests/number-toLocaleString.js: Added.
+
 2015-12-04  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Flip test expectations around so we only list failures.
