@@ -113,6 +113,9 @@ extern "C" {
 void compileOSRExit(ExecState* exec)
 {
     SamplingRegion samplingRegion("DFG OSR Exit Compilation");
+
+    if (exec->vm().callFrameForCatch)
+        RELEASE_ASSERT(exec->vm().callFrameForCatch == exec);
     
     CodeBlock* codeBlock = exec->codeBlock();
     ASSERT(codeBlock);
@@ -146,6 +149,15 @@ void compileOSRExit(ExecState* exec)
     {
         CCallHelpers jit(vm, codeBlock);
         OSRExitCompiler exitCompiler(jit);
+
+        if (exit.m_willArriveAtOSRExitFromGenericUnwind) {
+            // We are acting as a defacto op_catch because we arrive here from genericUnwind().
+            // So, we must restore our call frame and stack pointer.
+            jit.restoreCalleeSavesFromVMCalleeSavesBuffer();
+            jit.loadPtr(vm->addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
+            jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
+                GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+        }
 
         jit.jitAssertHasValidCallFrame();
         

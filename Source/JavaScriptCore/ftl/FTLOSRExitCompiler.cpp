@@ -206,6 +206,26 @@ static void compileStub(
 
     CCallHelpers jit(vm, codeBlock);
 
+    // The first thing we need to do is restablish our frame in the case of an exception.
+    if (exit.willArriveAtOSRExitFromGenericUnwind()) {
+        RELEASE_ASSERT(vm->callFrameForCatch); // The first time we hit this exit, like at all other times, this field should be non-null.
+        jit.restoreCalleeSavesFromVMCalleeSavesBuffer();
+        jit.loadPtr(vm->addressOfCallFrameForCatch(), MacroAssembler::framePointerRegister);
+        jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
+            MacroAssembler::framePointerRegister, CCallHelpers::stackPointerRegister);
+
+        if (exit.needsRegisterRecoveryOnGenericUnwindOSRExitPath())
+            exit.recoverRegistersFromSpillSlot(jit, jitCode->osrExitFromGenericUnwindStackSpillSlot);
+
+        // Do a pushToSave because that's what the exit compiler below expects the stack
+        // to look like because that's the last thing the ExitThunkGenerator does. The code
+        // below doesn't actually use the value that was pushed, but it does rely on the
+        // general shape of the stack being as it is in the non-exception OSR case.
+        jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(0xbadbeef));
+    } else if (exit.willArriveAtOSRExitFromCallOperation())
+        exit.recoverRegistersFromSpillSlot(jit, jitCode->osrExitFromGenericUnwindStackSpillSlot);
+    
+
     // We need scratch space to save all registers, to build up the JS stack, to deal with unwind
     // fixup, pointers to all of the objects we materialize, and the elements inside those objects
     // that we materialize.
@@ -560,6 +580,9 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
 
     if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
         dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
+
+    if (exec->vm().callFrameForCatch)
+        RELEASE_ASSERT(exec->vm().callFrameForCatch == exec);
     
     CodeBlock* codeBlock = exec->codeBlock();
     

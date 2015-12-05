@@ -93,6 +93,7 @@ public:
     
     JITCode* ftl() override;
     DFG::CommonData* dfgCommon() override;
+    static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
     
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
@@ -101,6 +102,7 @@ public:
     StackMaps stackmaps;
 #endif // !FTL_USES_B3
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
+    int32_t osrExitFromGenericUnwindStackSpillSlot;
     
 private:
     CodePtr m_addressForCall;

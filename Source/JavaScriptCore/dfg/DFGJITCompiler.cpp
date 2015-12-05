@@ -86,14 +86,6 @@ void JITCompiler::linkOSRExits()
         else
             info.m_replacementDestination = label();
 
-        if (exit.m_willArriveAtOSRExitFromGenericUnwind) {
-            // We are acting as a defacto op_catch because we arrive here from genericUnwind().
-            // So, we must restore our call frame and stack pointer.
-            restoreCalleeSavesFromVMCalleeSavesBuffer();
-            loadPtr(vm()->addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
-            addPtr(TrustedImm32(graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
-        }
-
         jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &vm()->osrExitIndex);
         exit.setPatchableCodeOffset(patchableJump());

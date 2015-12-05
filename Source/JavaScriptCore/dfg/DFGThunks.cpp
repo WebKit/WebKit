@@ -30,17 +30,22 @@
 
 #include "CCallHelpers.h"
 #include "DFGOSRExitCompiler.h"
+#include "DFGJITCode.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "JSCInlines.h"
+#include "DFGOSRExitCompilerCommon.h"
 
 namespace JSC { namespace DFG {
 
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 {
     MacroAssembler jit;
+
+    // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
+    adjustFrameAndStackInOSRExitCompilerThunk<DFG::JITCode>(jit, vm, JITCode::DFGJIT);
     
     size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
     ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(scratchSize);

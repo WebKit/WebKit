@@ -122,6 +122,8 @@ public:
     void setOSREntryBlock(VM& vm, const JSCell* owner, CodeBlock* osrEntryBlock) { m_osrEntryBlock.set(vm, owner, osrEntryBlock); }
     void clearOSREntryBlock() { m_osrEntryBlock.clear(); }
 #endif
+
+    static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
     
 private:
     friend class JITCompiler; // Allow JITCompiler to call setCodeRef().

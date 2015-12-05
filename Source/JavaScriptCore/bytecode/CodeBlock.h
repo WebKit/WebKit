@@ -302,6 +302,7 @@ public:
         m_jitCode = code;
     }
     PassRefPtr<JITCode> jitCode() { return m_jitCode; }
+    static ptrdiff_t jitCodeOffset() { return OBJECT_OFFSETOF(CodeBlock, m_jitCode); }
     JITCode::JITType jitType() const
     {
         JITCode* jitCode = m_jitCode.get();

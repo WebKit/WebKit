@@ -427,7 +427,8 @@ static void fixFunctionBasedOnStackMaps(
     
     int localsOffset = offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
     int varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
-    int jsCallThatMightThrowSpillOffset = offsetOfStackRegion(recordMap, state.exceptionHandlingSpillSlotStackmapID);
+    int osrExitFromGenericUnwindStackSpillSlot  = offsetOfStackRegion(recordMap, state.exceptionHandlingSpillSlotStackmapID);
+    jitCode->osrExitFromGenericUnwindStackSpillSlot = osrExitFromGenericUnwindStackSpillSlot;
     
     for (unsigned i = graph.m_inlineVariableData.size(); i--;) {
         InlineCallFrame* inlineCallFrame = graph.m_inlineVariableData[i].inlineCallFrame;
@@ -571,7 +572,7 @@ static void fixFunctionBasedOnStackMaps(
         }
     }
     ExitThunkGenerator exitThunkGenerator(state);
-    exitThunkGenerator.emitThunks(jsCallThatMightThrowSpillOffset);
+    exitThunkGenerator.emitThunks();
     if (exitThunkGenerator.didThings()) {
         RELEASE_ASSERT(state.finalizer->osrExit.size());
         
@@ -675,7 +676,7 @@ static void fixFunctionBasedOnStackMaps(
                     // taking place by ensuring we spill the original base value and then recover it from
                     // the spill slot as the first step in OSR exit.
                     if (OSRExit* exit = exceptionHandlerManager.callOperationOSRExit(iter->value[i].index))
-                        exit->spillRegistersToSpillSlot(slowPathJIT, jsCallThatMightThrowSpillOffset);
+                        exit->spillRegistersToSpillSlot(slowPathJIT, osrExitFromGenericUnwindStackSpillSlot);
                 }
                 MacroAssembler::Call call = callOperation(
                     state, usedRegisters, slowPathJIT, codeOrigin, addedUniqueExceptionJump ? &exceptionJumpsToLink.last().first : &exceptionTarget,
@@ -794,7 +795,7 @@ static void fixFunctionBasedOnStackMaps(
                     // This situation has a really interesting register preservation story.
                     // See comment above for GetByIds.
                     if (OSRExit* exit = exceptionHandlerManager.callOperationOSRExit(iter->value[i].index))
-                        exit->spillRegistersToSpillSlot(slowPathJIT, jsCallThatMightThrowSpillOffset);
+                        exit->spillRegistersToSpillSlot(slowPathJIT, osrExitFromGenericUnwindStackSpillSlot);
                 }
 
                 callOperation(state, usedRegisters, slowPathJIT, codeOrigin, addedUniqueExceptionJump ? &exceptionJumpsToLink.last().first : &exceptionTarget,
@@ -916,7 +917,7 @@ static void fixFunctionBasedOnStackMaps(
         JSCall& call = state.jsCalls[i];
 
         CCallHelpers fastPathJIT(&vm, codeBlock);
-        call.emit(fastPathJIT, state, jsCallThatMightThrowSpillOffset);
+        call.emit(fastPathJIT, state, osrExitFromGenericUnwindStackSpillSlot);
 
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
 
@@ -931,7 +932,7 @@ static void fixFunctionBasedOnStackMaps(
         JSCallVarargs& call = state.jsCallVarargses[i];
         
         CCallHelpers fastPathJIT(&vm, codeBlock);
-        call.emit(fastPathJIT, state, varargsSpillSlotsOffset, jsCallThatMightThrowSpillOffset);
+        call.emit(fastPathJIT, state, varargsSpillSlotsOffset, osrExitFromGenericUnwindStackSpillSlot);
 
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
         size_t sizeOfIC = sizeOfICFor(call.node());

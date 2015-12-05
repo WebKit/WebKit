@@ -1,3 +1,58 @@
+2015-12-04  Saam barati  <sbarati@apple.com>
+
+        OSR exits that are exception handlers should emit less code eagerly in the thunk generator, and instead, should defer as much code generation as possible to be lazily generated in the exit itself
+        https://bugs.webkit.org/show_bug.cgi?id=151406
+
+        Reviewed by Filip Pizlo.
+
+        We no longer emit any extra code eagerly for an OSRExit that
+        is an exception handler. We emit all code lazily in the exit
+        itself. This has one interesting consequence which is that the
+        actual C call to compile the exit goes through an OSR exit generation
+        thunk that must now be aware of resetting the call frame and the stack
+        pointer to their proper values before making the compileOSRExit C
+        call. This has one interesting consequence in the FTL because the
+        FTL will do a pushToSaveImmediateWithoutTouchingRegisters with the
+        OSR exit index. We must take care to preserve this exit index when
+        we reset the stack pointer by re-pushing it onto the stack.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::jitCode):
+        (JSC::CodeBlock::jitCodeOffset):
+        (JSC::CodeBlock::jitType):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::frameRegisterCountOffset):
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::setOSREntryBlock):
+        (JSC::DFG::JITCode::clearOSREntryBlock):
+        (JSC::DFG::JITCode::commonDataOffset):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (JSC::DFG::adjustFrameAndStackInOSRExitCompilerThunk):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::~ExitThunkGenerator):
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        (JSC::FTL::ExitThunkGenerator::emitThunks):
+        * ftl/FTLExitThunkGenerator.h:
+        (JSC::FTL::ExitThunkGenerator::didThings):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::commonDataOffset):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::lazySlowPathGenerationThunkGenerator):
+        (JSC::FTL::registerClobberCheck):
+
 2015-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         Having a bad time has a really awful time when it runs at the same time as the JIT

@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "AssemblyHelpers.h"
+#include "DFGOSRExitCompilerCommon.h"
 #include "FPRInfo.h"
 #include "FTLOSRExitCompiler.h"
 #include "FTLOperations.h"
@@ -40,10 +41,20 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
+enum class FrameAndStackAdjustmentRequirement {
+    Needed, 
+    NotNeeded 
+};
+
 static MacroAssemblerCodeRef genericGenerationThunkGenerator(
-    VM* vm, FunctionPtr generationFunction, const char* name, unsigned extraPopsToRestore)
+    VM* vm, FunctionPtr generationFunction, const char* name, unsigned extraPopsToRestore, FrameAndStackAdjustmentRequirement frameAndStackAdjustmentRequirement)
 {
     AssemblyHelpers jit(vm, 0);
+
+    if (frameAndStackAdjustmentRequirement == FrameAndStackAdjustmentRequirement::Needed) {
+        // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
+        adjustFrameAndStackInOSRExitCompilerThunk<FTL::JITCode>(jit, vm, JITCode::FTLJIT);
+    }
     
     // Note that the "return address" will be the ID that we pass to the generation function.
     
@@ -115,14 +126,14 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 {
     unsigned extraPopsToRestore = 0;
     return genericGenerationThunkGenerator(
-        vm, compileFTLOSRExit, "FTL OSR exit generation thunk", extraPopsToRestore);
+        vm, compileFTLOSRExit, "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
 }
 
 MacroAssemblerCodeRef lazySlowPathGenerationThunkGenerator(VM* vm)
 {
     unsigned extraPopsToRestore = 1;
     return genericGenerationThunkGenerator(
-        vm, compileFTLLazySlowPath, "FTL lazy slow path generation thunk", extraPopsToRestore);
+        vm, compileFTLLazySlowPath, "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
 }
 
 static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
