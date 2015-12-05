@@ -1,3 +1,16 @@
+2015-12-05  David Kilzer  <ddkilzer@apple.com>
+
+        prepare-ChangeLog: Fix some warning messages when using svn
+        <http://webkit.org/b/151914>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists): Simplify logic so that we never call
+        normalizePath() with an undefined value.
+        (attributeCommand): Quote $subPath for the shell so that we
+        don't try to run "svn propget" on invalid paths.
+
 2015-12-04  David Kilzer  <ddkilzer@apple.com>
 
         TestNetscapePlugIn: Fix remaining static analyzer warnings

@@ -285,8 +285,7 @@ sub generateFunctionLists($$$$$)
         my $file;
         open DIFF, "-|", diffCommand($changedFiles, $gitCommit, $gitIndex, $mergeBase) or die "The diff failed: $!.\n";
         while (<DIFF>) {
-            $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
-            $file = normalizePath($file);
+            $file = normalizePath(makeFilePathRelative($1)) if $_ =~ diffHeaderFormat();
             if (defined $file) {
                 my ($before_start, $before_end) = extractLineRangeBeforeChange($_);
                 if ($before_start >= 1 && $before_end >= 1) {
@@ -1961,7 +1960,7 @@ sub attributeCommand($$)
                 $foundAttribute = 1;
                 next;
             }
-            my $command = SVN . " propget $attr $subPath";
+            my $command = SVN . " propget $attr '$subPath'";
             my $attrib = $attributeCache{$attr}{$subPath} || `$command`;
             chomp $attrib;
             if ($attrib eq "1") {
