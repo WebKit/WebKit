@@ -31,9 +31,6 @@
 #else
 
 @interface NSFont (Private)
-+ (NSFont *)findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(id) language;
-+ (NSFont *)findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(id) language;
-
 + (NSFont *)systemFontOfSize:(CGFloat)size weight:(CGFloat)weight;
 @end
 

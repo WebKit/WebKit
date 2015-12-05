@@ -1,3 +1,36 @@
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r187982. rdar://problem/23769732
+
+    2015-08-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [OS X] Migrate to CTFontCreateForCharactersWithLanguage from [NSFont findFontLike:forString:withRange:inLanguage]
+            https://bugs.webkit.org/show_bug.cgi?id=147483
+
+            Reviewed by Dean Jackson.
+
+            [NSFont findFontLike:forString:withRange:inLanguage] doesn't properly handle its last argument. In
+            addition, we want to be moving away from NSFont in the first place and on to Core Text. This new
+            CoreText function correctly handles its language argument, which is required for language-specific
+            font fallback.
+
+            This patch rolls r187707 back in which was rolled out in r187802 due to test flakiness. This patch
+            fixes the flakiness.
+
+            No new tests because there is no behavior change.
+
+            * platform/graphics/FontCache.cpp:
+            (WebCore::FontCache::purgeInactiveFontData):
+            * platform/graphics/FontCache.h:
+            (WebCore::FontCache::platformPurgeInactiveFontData):
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::fallbackDedupSet):
+            (WebCore::FontCache::platformPurgeInactiveFontData):
+            (WebCore::lookupCTFont):
+            (WebCore::FontCache::systemFallbackForCharacters):
+            * platform/spi/cocoa/CoreTextSPI.h:
+            * platform/spi/mac/NSFontSPI.h:
+
 2015-12-04  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r191825. rdar://problem/23732363
