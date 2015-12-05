@@ -65,6 +65,10 @@ bool WillChangeData::containsProperty(CSSPropertyID property) const
 static bool propertyCreatesStackingContext(CSSPropertyID property)
 {
     switch (property) {
+    case CSSPropertyPerspective:
+    case CSSPropertyTransform:
+    case CSSPropertyTransformStyle:
+    case CSSPropertyWebkitTransformStyle:
     case CSSPropertyClipPath:
     case CSSPropertyWebkitClipPath:
     case CSSPropertyMask:
@@ -86,19 +90,6 @@ static bool propertyCreatesStackingContext(CSSPropertyID property)
 #if ENABLE(CSS_REGIONS)
     case CSSPropertyWebkitFlowFrom:
 #endif
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool propertyCreatesStackingContextOnBoxesOnly(CSSPropertyID property)
-{
-    switch (property) {
-    case CSSPropertyPerspective:
-    case CSSPropertyTransform:
-    case CSSPropertyTransformStyle:
-    case CSSPropertyWebkitTransformStyle:
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
@@ -142,8 +133,7 @@ void WillChangeData::addFeature(Feature feature, CSSPropertyID propertyID)
     ASSERT(feature == Property || propertyID == CSSPropertyInvalid);
     m_animatableFeatures.append(AnimatableFeature(feature, propertyID));
 
-    m_canCreateStackingContextOnInline |= propertyCreatesStackingContext(propertyID);
-    m_canCreateStackingContext |= m_canCreateStackingContextOnInline | propertyCreatesStackingContextOnBoxesOnly(propertyID);
+    m_canCreateStackingContext |= propertyCreatesStackingContext(propertyID);
 
     m_canTriggerCompositingOnInline |= propertyTriggersCompositing(propertyID);
     m_canTriggerCompositing |= m_canTriggerCompositingOnInline | propertyTriggersCompositingOnBoxesOnly(propertyID);

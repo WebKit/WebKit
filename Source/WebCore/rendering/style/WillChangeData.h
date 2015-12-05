@@ -55,8 +55,6 @@ public:
     bool containsProperty(CSSPropertyID) const;
 
     bool canCreateStackingContext() const { return m_canCreateStackingContext; }
-    bool canCreateStackingContextOnInline() const { return m_canCreateStackingContextOnInline; }
-
     bool canTriggerCompositing() const { return m_canTriggerCompositing; }
     bool canTriggerCompositingOnInline() const { return m_canTriggerCompositingOnInline; }
 
@@ -124,7 +122,6 @@ private:
 
     Vector<AnimatableFeature, 1> m_animatableFeatures;
     bool m_canCreateStackingContext { false };
-    bool m_canCreateStackingContextOnInline { false };
     bool m_canTriggerCompositing { false };
     bool m_canTriggerCompositingOnInline { false };
 };

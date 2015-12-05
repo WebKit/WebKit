@@ -18,9 +18,10 @@
         }
         
         .potential-stacking-context {
-            position: relative;
             z-index: auto;
             background-color: silver;
+            display: inline;
+            padding: 20px;
         }
         
         .child {
@@ -45,7 +46,7 @@
         function doTest()
         {
             for (value of willChangeValues) {
-                makeStackingElement('will-change', value.property);
+                makeStackingElement('opacity', value.stacking ? '0.999999' : '1');
             }
         }
         

@@ -1,5 +1,29 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190667. rdar://problem/23769584
+
+    2015-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+            will-change should trigger stacking context based purely on properties
+            https://bugs.webkit.org/show_bug.cgi?id=148068
+
+            Reviewed by Zalan Bujtas.
+
+            Previously, our will-change implementation didn't trigger stacking context
+            on an inline if the will-change property didn't apply to inlines (like 'transform').
+            However, this doesn't agree with the CSS-WG consensus (https://lists.w3.org/Archives/Public/www-style/2015Sep/0112.html).
+
+            Change behavior to have stacking context creation behavior for will-change be
+            identical for inlines and blocks.
+
+            * platform/mac/TestExpectations: Fails on Mavericks because no backdrop-filter there.
+            * fast/css/will-change/resources/will-change-stacking-helper.js:
+            (makeStackingInline):
+            * fast/css/will-change/will-change-creates-stacking-context-inline-expected.html: Added.
+            * fast/css/will-change/will-change-creates-stacking-context-inline.html: Added.
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188604. rdar://problem/23769584
 
     2015-08-18  Simon Fraser  <simon.fraser@apple.com>
