@@ -410,20 +410,16 @@ public:
         return m_block->appendNew<B3::PatchpointValue>(m_proc, type, origin());
     }
 
-    void trap() { CRASH(); }
+    void trap()
+    {
+        m_block->appendNew<B3::ControlValue>(m_proc, B3::Oops, origin());
+    }
 
     ValueFromBlock anchor(LValue value)
     {
         B3::UpsilonValue* upsilon = m_block->appendNew<B3::UpsilonValue>(m_proc, origin(), value);
         return ValueFromBlock(upsilon, m_block);
     }
-
-#pragma mark - Intrinsics
-
-    LValue stackmapIntrinsic() { CRASH(); }
-    LValue frameAddressIntrinsic() { CRASH(); }
-    LValue patchpointInt64Intrinsic() { CRASH(); }
-    LValue patchpointVoidIntrinsic() { CRASH(); }
 
 #pragma mark - States
     B3::Procedure& m_proc;

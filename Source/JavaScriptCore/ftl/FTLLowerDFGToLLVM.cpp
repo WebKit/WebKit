@@ -9795,9 +9795,13 @@ private:
 #if ENABLE(MASM_PROBE)
     void probe(std::function<void (CCallHelpers::ProbeContext*)> probeFunc)
     {
+#if FTL_USES_B3
+        UNUSED_PARAM(probeFunc);
+#else // !FTL_USES_B3
         uint32_t stackmapID = m_stackmapIDs++;
         m_ftlState.probes.append(ProbeDescriptor(stackmapID, probeFunc));
         m_out.call(m_out.voidType, m_out.stackmapIntrinsic(), m_out.constInt64(stackmapID), m_out.constInt32(sizeOfProbe()));
+#endif // !FTL_USES_B3
     }
 #endif
 

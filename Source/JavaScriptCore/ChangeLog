@@ -1,5 +1,21 @@
 2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Some more cleanup of FTLB3Output
+        https://bugs.webkit.org/show_bug.cgi?id=151834
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::trap):
+        (JSC::FTL::Output::stackmapIntrinsic): Deleted.
+        (JSC::FTL::Output::frameAddressIntrinsic): Deleted.
+        (JSC::FTL::Output::patchpointInt64Intrinsic): Deleted.
+        (JSC::FTL::Output::patchpointVoidIntrinsic): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::probe):
+
+2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Fix Value::returnsBool() after r193436
         https://bugs.webkit.org/show_bug.cgi?id=151902
 
