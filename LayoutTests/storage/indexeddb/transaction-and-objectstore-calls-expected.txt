@@ -83,7 +83,7 @@ PASS code is DOMException.NOT_FOUND_ERR
 PASS ename is 'NotFoundError'
 Exception message: Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.
 
-PASS trans = db.transaction() threw exception TypeError: Failed to execute 'transaction' on 'IDBDatabase': 1 argument required, but only 0 present..
+PASS trans = db.transaction() threw exception TypeError: Not enough arguments.
 
 Expecting exception from db.transaction(['x'])
 PASS Exception was thrown.
@@ -154,14 +154,14 @@ PASS trans is non-null.
 PASS store is non-null.
 Expecting exception from trans.objectStore('store')
 PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'objectStore' on 'IDBTransaction': The transaction has finished.
+PASS code is 0
+PASS ename is 'TransactionInactiveError'
+Exception message: Failed to execute 'objectStore' on 'IDBTransaction': The transaction is inactive or finished.
 Expecting exception from store.index('index')
 PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Exception message: Failed to execute 'index' on 'IDBObjectStore': The transaction has finished.
+PASS code is 0
+PASS ename is 'TransactionInactiveError'
+Exception message: Failed to execute 'index' on 'IDBObjectStore': The transaction is inactive or finished.
 PASS successfullyParsed is true
 
 TEST COMPLETE

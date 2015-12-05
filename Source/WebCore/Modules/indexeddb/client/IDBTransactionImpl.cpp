@@ -126,7 +126,8 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
     LOG(IndexedDB, "IDBTransaction::objectStore");
 
     if (isFinishedOrFinishing()) {
-        ec.code = IDBDatabaseException::InvalidStateError;
+        ec.code = IDBDatabaseException::TransactionInactiveError;
+        ec.message = ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction is inactive or finished.");
         return nullptr;
     }
 
