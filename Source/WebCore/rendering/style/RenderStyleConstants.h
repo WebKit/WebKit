@@ -637,13 +637,6 @@ enum Isolation { IsolationAuto, IsolationIsolate };
 // Fill, Stroke, ViewBox are just used for SVG.
 enum CSSBoxType { BoxMissing = 0, MarginBox, BorderBox, PaddingBox, ContentBox, Fill, Stroke, ViewBox };
 
-#if ENABLE(TOUCH_EVENTS)
-enum class TouchAction {
-    Auto,
-    Manipulation
-};
-#endif
-
 #if ENABLE(CSS_SCROLL_SNAP)
 enum class ScrollSnapType {
     None,

@@ -528,10 +528,6 @@ public:
     void dispatchSubtreeModifiedEvent();
     bool dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
 
-#if ENABLE(TOUCH_EVENTS)
-    virtual bool allowsDoubleTapGesture() const { return true; }
-#endif
-
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     bool dispatchTouchEvent(PassRefPtr<TouchEvent>);
 #endif

@@ -485,10 +485,6 @@ public:
 
     WEBCORE_EXPORT URL absoluteLinkURL() const;
 
-#if ENABLE(TOUCH_EVENTS)
-    virtual bool allowsDoubleTapGesture() const override;
-#endif
-
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
