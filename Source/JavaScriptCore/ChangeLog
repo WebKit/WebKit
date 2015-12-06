@@ -1,3 +1,19 @@
+2015-12-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove FTLOutput's fence support
+        https://bugs.webkit.org/show_bug.cgi?id=151909
+
+        Reviewed by Sam Weinig.
+
+        Unused code is unused.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::fence): Deleted.
+        (JSC::FTL::Output::fenceAcqRel): Deleted.
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::fence): Deleted.
+        (JSC::FTL::Output::fenceAcqRel): Deleted.
+
 2015-12-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Some more cleanup of FTLB3Output

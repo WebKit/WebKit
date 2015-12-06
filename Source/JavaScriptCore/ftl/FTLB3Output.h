@@ -336,9 +336,6 @@ public:
     LValue select(LValue value, LValue taken, LValue notTaken) { return m_block->appendNew<B3::Value>(m_proc, B3::Select, origin(), value, taken, notTaken); }
     LValue extractValue(LValue aggVal, unsigned index) { CRASH(); }
 
-    LValue fence(LAtomicOrdering ordering = LLVMAtomicOrderingSequentiallyConsistent, SynchronizationScope scope = CrossThread) { CRASH(); }
-    LValue fenceAcqRel() { CRASH(); }
-
     template<typename VectorType>
     LValue call(LType type, LValue function, const VectorType& vector) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), B3::Value::AdjacencyList(vector)); }
     LValue call(LType type, LValue function) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin()); }
