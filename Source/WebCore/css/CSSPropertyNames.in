@@ -107,6 +107,7 @@ font-weight [Inherited, Custom=All]
 text-rendering [Inherited, FontProperty, NameForMethods=TextRenderingMode]
 font-feature-settings [Inherited, FontProperty, Custom=Initial|Inherit, Converter=FontFeatureSettings, NameForMethods=FeatureSettings]
 -webkit-font-kerning [Inherited, FontProperty, NameForMethods=Kerning]
+font-kerning = -webkit-font-kerning
 -webkit-font-smoothing [Inherited, FontProperty]
 font-variant-ligatures [Inherited, FontProperty, NameForMethods=VariantLigatures, Custom=All]
 font-variant-position [Inherited, FontProperty, NameForMethods=VariantPosition]
