@@ -411,6 +411,8 @@ static NSSet *allowedFontFamilySet()
         @"Verdana",
         @"Webdings",
         @"WebKit WeightWatcher",
+        @"FontWithFeaturesOTF",
+        @"FontWithFeaturesTTF",
         @"Wingdings 2",
         @"Wingdings 3",
         @"Wingdings",
@@ -560,6 +562,8 @@ static void activateTestingFonts()
         "WebKitWeightWatcher800.ttf",
         "WebKitWeightWatcher900.ttf",
         "SampleFont.sfont",
+        "FontWithFeatures.ttf",
+        "FontWithFeatures.otf",
         0
     };
 
@@ -630,6 +634,8 @@ static void activateFontsIOS()
     fontData(WeightWatcher700);
     fontData(WeightWatcher800);
     fontData(WeightWatcher900);
+    fontData(FontWithFeaturesTTF);
+    fontData(FontWithFeaturesOTF);
 }
 #endif // !PLATFORM(IOS)
 
