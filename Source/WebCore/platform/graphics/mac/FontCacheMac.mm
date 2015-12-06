@@ -297,6 +297,7 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 #else
 
     UNUSED_PARAM(featureSettings);
+    UNUSED_PARAM(variantSettings);
 
     NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (weight >= FontWeight600 ? NSBoldFontMask : 0);
     if (hasDesiredFamilyToAvailableFamilyMapping(family, desiredTraitsForNameMatch, availableFamily)) {
