@@ -31,6 +31,7 @@
 #include "CSSFontSelector.h"
 #include "Document.h"
 #include "Font.h"
+#include "FontCache.h"
 #include "FontDescription.h"
 #include "RuntimeEnabledFeatures.h"
 
@@ -113,17 +114,11 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
         return FontRanges();
 
     FontTraitsMask desiredTraitsMask = fontDescription.traitsMask();
-    // FIXME: Unify this function with FontDescriptionFontDataCacheKey in FontCache.h (Or just use the regular FontCache instead of this)
-    unsigned hashKey = ((fontDescription.computedPixelSize() + 1) << (FontTraitsMaskWidth + FontWidthVariantWidth + FontSynthesisWidth + 1))
-        | (fontDescription.fontSynthesis() << (FontTraitsMaskWidth + FontWidthVariantWidth + 1))
-        | ((fontDescription.orientation() == Vertical ? 1 : 0) << (FontTraitsMaskWidth + FontWidthVariantWidth))
-        | fontDescription.widthVariant() << FontTraitsMaskWidth
-        | desiredTraitsMask;
 
-    auto addResult = m_descriptionToRangesMap.add(hashKey, FontRanges());
+    auto addResult = m_descriptionToRangesMap.add(FontDescriptionFontDataCacheKey(fontDescription), FontRanges()); 
     auto& fontRanges = addResult.iterator->value;
 
-    if (addResult.isNewEntry) {
+    if (true /*addResult.isNewEntry*/) {
         for (auto& face : m_fontFaces) {
             if (!face->isValid())
                 continue;

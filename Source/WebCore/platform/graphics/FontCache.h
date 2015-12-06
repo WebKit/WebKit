@@ -139,6 +139,20 @@ private:
     FontFeatureSettings m_featureSettings;
 };
 
+struct FontDescriptionKeyHash {
+    static unsigned hash(const FontDescriptionFontDataCacheKey& key)
+    {
+        return key.computeHash();
+    }
+
+    static bool equal(const FontDescriptionFontDataCacheKey& a, const FontDescriptionFontDataCacheKey& b)
+    {
+        return a == b;
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
 class FontCache {
     friend class WTF::NeverDestroyed<FontCache>;
 
