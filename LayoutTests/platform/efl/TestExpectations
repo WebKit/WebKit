@@ -81,6 +81,8 @@ fast/text/emoji.html [ Skip ]
 # This test has been added for ios port since r185842.
 fast/text/arabic-times-new-roman.html [ Skip ]
 
+css3/font-feature-settings-rendering-2.html [ Skip ]
+
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------
