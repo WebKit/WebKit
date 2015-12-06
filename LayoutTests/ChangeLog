@@ -1,5 +1,37 @@
 2015-12-05  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191151.
+
+    2015-10-15  David Hyatt  <hyatt@apple.com>
+
+            Add support for the CSS 'unset' keyword.
+            https://bugs.webkit.org/show_bug.cgi?id=148614
+
+            Reviewed by Dean Jackson.
+
+            * TestExpectations:
+            Remove the 3 failing variables tests that used the unset keyword now that they pass.
+
+            * fast/css/unset-keyword-expected.html: Added.
+            * fast/css/unset-keyword.html: Added.
+            New test for both inherited and initial properties.
+
+            * fast/css/variables/test-suite/129-expected.html: Added.
+            * fast/css/variables/test-suite/129.html: Added.
+            * fast/css/variables/test-suite/130-expected.html: Added.
+            * fast/css/variables/test-suite/130.html: Added.
+            * fast/css/variables/test-suite/134-expected.html: Added.
+            * fast/css/variables/test-suite/134.html: Added.
+            * fast/css/variables/test-suite/failures/129-expected.html: Removed.
+            * fast/css/variables/test-suite/failures/129.html: Removed.
+            * fast/css/variables/test-suite/failures/130-expected.html: Removed.
+            * fast/css/variables/test-suite/failures/130.html: Removed.
+            * fast/css/variables/test-suite/failures/134-expected.html: Removed.
+            * fast/css/variables/test-suite/failures/134.html: Removed.
+            Move these tests into the passing directory.
+
+2015-12-05  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r191128.
 
     2015-10-14  David Hyatt  <hyatt@apple.com>

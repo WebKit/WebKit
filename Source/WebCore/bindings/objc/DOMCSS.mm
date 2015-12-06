@@ -124,6 +124,7 @@ Class kitClass(WebCore::CSSValue* impl)
             return [DOMCSSValueList class];
         case WebCore::CSSValue::CSS_INHERIT:
         case WebCore::CSSValue::CSS_INITIAL:
+        case WebCore::CSSValue::CSS_UNSET:
             return [DOMCSSValue class];
         case WebCore::CSSValue::CSS_CUSTOM:
             return [DOMCSSValue class];
