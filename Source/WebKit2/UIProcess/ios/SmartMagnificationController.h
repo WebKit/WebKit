@@ -48,7 +48,6 @@ public:
 
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
     void handleResetMagnificationGesture(WebCore::FloatPoint origin);
-    void adjustSmartMagnificationTargetRectAndZoomScales(bool addMagnificationPadding, WebCore::FloatRect& targetRect, double& minimumScale, double& maximumScale);
 
 private:
     // IPC::MessageReceiver.

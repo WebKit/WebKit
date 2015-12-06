@@ -1005,7 +1005,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         }
     }
 
-    [_contentView _setDoubleTapGesturesEnabled:self._viewportIsUserScalable];
+    [_contentView _setDoubleTapGesturesEnabled:[_scrollView isZoomEnabled] && [_scrollView minimumZoomScale] < [_scrollView maximumZoomScale]];
 
     [self _updateScrollViewBackground];
 
@@ -1392,13 +1392,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
                         force:YES];
 }
 
-- (CGFloat)_contentZoomScale
+- (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance
 {
-    return contentZoomScale(self);
-}
+    const float maximumScaleFactorDeltaForPanScroll = 0.02;
 
-- (CGFloat)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale
-{
+    double currentScale = contentZoomScale(self);
+
     WebCore::FloatSize unobscuredContentSize([self _contentRectForUserInteraction].size);
     double horizontalScale = unobscuredContentSize.width() * currentScale / targetRect.width();
     double verticalScale = unobscuredContentSize.height() * currentScale / targetRect.height();
@@ -1406,16 +1405,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     horizontalScale = std::min(std::max(horizontalScale, minimumScale), maximumScale);
     verticalScale = std::min(std::max(verticalScale, minimumScale), maximumScale);
 
-    return fitEntireRect ? std::min(horizontalScale, verticalScale) : horizontalScale;
-}
-
-- (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance
-{
-    const float maximumScaleFactorDeltaForPanScroll = 0.02;
-
-    double currentScale = contentZoomScale(self);
-    double targetScale = [self _targetContentZoomScaleForRect:targetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
-
+    double targetScale = fitEntireRect ? std::min(horizontalScale, verticalScale) : horizontalScale;
     if (fabs(targetScale - currentScale) < maximumScaleFactorDeltaForPanScroll) {
         if ([self _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance])
             return true;
@@ -3062,11 +3052,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (CGFloat)_viewportMetaTagWidth
 {
     return _viewportMetaTagWidth;
-}
-
-- (BOOL)_viewportIsUserScalable
-{
-    return [_scrollView isZoomEnabled] && [_scrollView minimumZoomScale] < [_scrollView maximumZoomScale];
 }
 
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter

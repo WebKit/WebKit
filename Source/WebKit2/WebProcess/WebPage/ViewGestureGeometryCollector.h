@@ -32,7 +32,6 @@
 namespace WebCore {
 class FloatPoint;
 class FloatRect;
-class Node;
 }
 
 namespace WebKit {
@@ -45,7 +44,6 @@ public:
     ~ViewGestureGeometryCollector();
 
     void mainFrameDidLayout();
-    void computeZoomInformationForNode(WebCore::Node&, WebCore::FloatPoint& origin, WebCore::FloatRect& renderRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale);
 
 private:
     // IPC::MessageReceiver.
