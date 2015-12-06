@@ -161,6 +161,8 @@ static NSSet *allowedFontFamilySet()
         @"Verdana",
         @"Webdings",
         @"WebKit WeightWatcher",
+        @"FontWithFeaturesOTF",
+        @"FontWithFeaturesTTF",
         @"Wingdings 2",
         @"Wingdings 3",
         @"Wingdings",
@@ -301,6 +303,8 @@ void activateFonts()
         "WebKitWeightWatcher800.ttf",
         "WebKitWeightWatcher900.ttf",
         "SampleFont.sfont",
+        "FontWithFeatures.otf",
+        "FontWithFeatures.ttf",
         0
     };
 
