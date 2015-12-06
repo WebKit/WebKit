@@ -77,6 +77,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_justifyContent(RenderStyle::initialContentAlignment())
     , m_justifyItems(RenderStyle::initialSelfAlignment())
     , m_justifySelf(RenderStyle::initialSelfAlignment())
+#if ENABLE(TOUCH_EVENTS)
+    , m_touchAction(static_cast<unsigned>(RenderStyle::initialTouchAction()))
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     , m_scrollSnapType(static_cast<unsigned>(RenderStyle::initialScrollSnapType()))
 #endif
@@ -166,6 +169,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_justifyContent(o.m_justifyContent)
     , m_justifyItems(o.m_justifyItems)
     , m_justifySelf(o.m_justifySelf)
+#if ENABLE(TOUCH_EVENTS)
+    , m_touchAction(o.m_touchAction)
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     , m_scrollSnapType(o.m_scrollSnapType)
 #endif
@@ -280,6 +286,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_borderFit == o.m_borderFit
         && m_textCombine == o.m_textCombine
         && m_textDecorationStyle == o.m_textDecorationStyle
+#if ENABLE(TOUCH_EVENTS)
+        && m_touchAction == o.m_touchAction
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
         && m_scrollSnapType == o.m_scrollSnapType
 #endif
