@@ -1,5 +1,15 @@
 2015-12-05  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r192129. rdar://problem/23221177
+
+    2015-11-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix GTK build after r191981
+
+        * html/HTMLFormControlElement.cpp:
+
+2015-12-05  David Kilzer  <ddkilzer@apple.com>
+
         Merge r191981. rdar://problem/23221177
 
     2015-10-30  Jon Honeycutt  <jhoneycutt@apple.com>
