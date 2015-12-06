@@ -1,5 +1,18 @@
 2015-12-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r193599.
+
+    2015-12-06  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION (r193575): variantSettings is unused when PLATFORM_FONT_LOOKUP is disabled
+            <rdar://problem/23769741>
+
+            * platform/graphics/mac/FontCacheMac.mm:
+            (WebCore::fontWithFamily): Mark variantSettings as ununsed when
+            PLATFORM_FONT_LOOKUP is disabled.
+
+2015-12-06  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188114.  rdar://problem/23221171
 
     2015-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
