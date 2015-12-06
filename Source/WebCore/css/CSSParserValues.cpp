@@ -40,6 +40,8 @@ void destroy(const CSSParserValue& value)
         delete value.function;
     else if (value.unit == CSSParserValue::ValueList)
         delete value.valueList;
+    else if (value.unit == CSSParserValue::Variable)
+        delete value.variable;
 }
 
 CSSParserValueList::~CSSParserValueList()
