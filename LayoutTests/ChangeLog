@@ -1,5 +1,20 @@
 2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190697. rdar://problem/23769727
+
+    2015-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Test font-variant-* and font-feature-settings with TrueType fonts
+            https://bugs.webkit.org/show_bug.cgi?id=149776
+
+            Reviewed by Simon Fraser.
+
+            * css3/font-feature-settings-rendering-2-expected.html:
+            * css3/font-feature-settings-rendering-2.html:
+            * css3/resources/FontWithFeatures.ttf: Added.
+
+2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r193575. rdar://problem/23769689
 
     2015-09-23  Myles C. Maxfield  <mmaxfield@apple.com>

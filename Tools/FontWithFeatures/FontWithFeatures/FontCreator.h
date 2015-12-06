@@ -28,6 +28,11 @@
 
 #include <vector>
 
-std::vector<uint8_t> generateFont();
+enum class Type {
+    OpenType,
+    TrueType
+};
+
+std::vector<uint8_t> generateFont(Type);
 
 #endif /* FontCreator_h */

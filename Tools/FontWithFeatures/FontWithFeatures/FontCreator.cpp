@@ -82,7 +82,6 @@ static void writeCFFEncodedNumber(V& vector, float number)
 }
 
 static const char rLineTo = 0x05;
-static const char rrCurveTo = 0x08;
 static const char endChar = 0x0e;
 static const char rMoveTo = 0x15;
 
@@ -102,14 +101,9 @@ public:
         return std::move(result);
     }
 
-    void moveTo(std::pair<float, float> targetPoint, bool closed)
+    void moveTo(std::pair<float, float> targetPoint)
     {
-        if (closed && !result.empty())
-            closePath();
-
-        std::pair<float, float> destination = targetPoint;
-
-        writePoint(destination);
+        writePoint(targetPoint);
         result.push_back(rMoveTo);
 
         startingPoint = current;
@@ -117,22 +111,8 @@ public:
 
     void lineTo(std::pair<float, float> targetPoint)
     {
-        std::pair<float, float> destination = targetPoint;
-
-        writePoint(destination);
+        writePoint(targetPoint);
         result.push_back(rLineTo);
-    }
-
-    void curveToCubic(std::pair<float, float> point1, std::pair<float, float> point2, std::pair<float, float> targetPoint)
-    {
-        std::pair<float, float> destination1 = point1;
-        std::pair<float, float> destination2 = point2;
-        std::pair<float, float> destination3 = targetPoint;
-
-        writePoint(destination1);
-        writePoint(destination2);
-        writePoint(destination3);
-        result.push_back(rrCurveTo);
     }
 
     void closePath()
@@ -156,10 +136,94 @@ private:
     std::pair<float, float> current;
 };
 
+class GLYFBuilder {
+public:
+    GLYFBuilder(float, std::pair<float, float>)
+    {
+    }
+
+    std::vector<uint8_t> takeResult()
+    {
+        std::vector<uint8_t> result;
+        append16(result, endPtsOfContours.size());
+        append16(result, clampTo<int16_t>(minX));
+        append16(result, clampTo<int16_t>(minY));
+        append16(result, clampTo<int16_t>(maxX));
+        append16(result, clampTo<int16_t>(maxY));
+
+        for (uint16_t p : endPtsOfContours)
+            append16(result, p);
+        append16(result, 0);
+        for (uint8_t f : flags)
+            result.push_back(f);
+        for (uint16_t c : xCoordinates)
+            append16(result, c);
+        for (uint16_t c : yCoordinates)
+            append16(result, c);
+
+        return result;
+    }
+
+    void moveTo(std::pair<float, float> targetPoint)
+    {
+        writePoint(targetPoint, true);
+
+        startingPoint = current;
+    }
+
+    void lineTo(std::pair<float, float> targetPoint)
+    {
+        writePoint(targetPoint, true);
+    }
+
+    void closePath()
+    {
+        if (current != startingPoint)
+            lineTo(startingPoint);
+        endPtsOfContours.push_back(pointCount - 1);
+    }
+
+private:
+    void writePoint(std::pair<float, float> destination, bool onCurve)
+    {
+        flags.push_back(onCurve ? 1 : 0); // Flags
+
+        std::pair<float, float> delta = std::make_pair(destination.first - current.first, destination.second - current.second);
+        xCoordinates.push_back(delta.first);
+        yCoordinates.push_back(delta.second);
+
+        current = destination;
+        minX = std::min(minX, destination.first);
+        maxX = std::max(maxX, destination.first);
+        minY = std::min(minY, destination.second);
+        maxY = std::max(maxY, destination.second);
+        ++pointCount;
+    }
+
+    static void append16(std::vector<uint8_t>& destination, uint16_t value)
+    {
+        destination.push_back(value >> 8);
+        destination.push_back(value);
+    }
+
+    std::vector<uint16_t> endPtsOfContours;
+    std::vector<uint8_t> flags;
+    std::vector<int16_t> xCoordinates;
+    std::vector<int16_t> yCoordinates;
+    std::pair<float, float> startingPoint;
+    std::pair<float, float> current;
+    float minX { std::numeric_limits<float>::max() };
+    float maxX { std::numeric_limits<float>::min() };
+    float minY { std::numeric_limits<float>::max() };
+    float maxY { std::numeric_limits<float>::min() };
+    unsigned pointCount { 0 };
+};
+
+template <typename T>
 std::vector<uint8_t> generateBoxCharString()
 {
-    CFFBuilder builder(unitsPerEm, std::make_pair(0.f, 0.f));
-    builder.moveTo(std::make_pair(200.f, 200.f), false);
+    T builder(unitsPerEm, std::make_pair(0.f, 0.f));
+    builder.moveTo(std::make_pair(200.f, 200.f));
     builder.lineTo(std::make_pair(200.f, 800.f));
     builder.lineTo(std::make_pair(800.f, 800.f));
     builder.lineTo(std::make_pair(800.f, 200.f));
@@ -167,10 +231,11 @@ std::vector<uint8_t> generateBoxCharString()
     return builder.takeResult();
 }
 
+template <typename T>
 std::vector<uint8_t> generateCheckCharString()
 {
-    CFFBuilder builder(unitsPerEm, std::make_pair(0.f, 0.f));
-    builder.moveTo(std::make_pair(200.f, 500.f), false);
+    T builder(unitsPerEm, std::make_pair(0.f, 0.f));
+    builder.moveTo(std::make_pair(200.f, 500.f));
     builder.lineTo(std::make_pair(250.f, 550.f));
     builder.lineTo(std::make_pair(500.f, 300.f));
     builder.lineTo(std::make_pair(900.f, 700.f));
@@ -180,10 +245,11 @@ std::vector<uint8_t> generateCheckCharString()
     return builder.takeResult();
 }
 
+template <typename T>
 std::vector<uint8_t> generateXCharString()
 {
-    CFFBuilder builder(unitsPerEm, std::make_pair(0.f, 0.f));
-    builder.moveTo(std::make_pair(500.0f, 550.0f), false);
+    T builder(unitsPerEm, std::make_pair(0.f, 0.f));
+    builder.moveTo(std::make_pair(500.0f, 550.0f));
     builder.lineTo(std::make_pair(900.f, 950.f));
     builder.lineTo(std::make_pair(950.f, 900.f));
     builder.lineTo(std::make_pair(550.f, 500.f));
@@ -199,7 +265,8 @@ std::vector<uint8_t> generateXCharString()
     return builder.takeResult();
 }
 
-std::vector<uint8_t>& charStringForGlyph(uint16_t glyph, std::vector<uint8_t>& boxCharString, std::vector<uint8_t>& checkCharString, std::vector<uint8_t>& xCharString)
+template<typename T>
+const T& itemForGlyph(uint16_t glyph, const T& boxCharString, const T& checkCharString, const T& xCharString)
 {
     if (!glyph)
         return boxCharString;
@@ -208,18 +275,43 @@ std::vector<uint8_t>& charStringForGlyph(uint16_t glyph, std::vector<uint8_t>& b
     return xCharString;
 }
 
+struct FeatureSelector {
+    uint16_t selector;
+    std::string name;
+    uint16_t stringIndex;
+    bool defaultSelector;
+};
+
+struct FeatureType {
+    uint16_t type;
+    std::string name;
+    uint16_t stringIndex;
+    size_t settingTableOffsetLocation;
+    std::vector<FeatureSelector> selectors;
+    bool exclusive;
+};
+
 class Generator {
 public:
-    std::vector<uint8_t> generate()
+    std::vector<uint8_t> generate(Type type)
     {
-        uint16_t numTables = 10;
+        featureDescription = generateFeatureDescription();
+
+        uint16_t numTables = type == Type::OpenType ? 10 : 12;
         uint16_t roundedNumTables = roundDownToPowerOfTwo(numTables);
         uint16_t searchRange = roundedNumTables * 16; // searchRange: "(Maximum power of 2 <= numTables) x 16."
 
-        result.push_back('O');
-        result.push_back('T');
-        result.push_back('T');
-        result.push_back('O');
+        if (type == Type::OpenType) {
+            result.push_back('O');
+            result.push_back('T');
+            result.push_back('T');
+            result.push_back('O');
+        } else {
+            result.push_back('t');
+            result.push_back('r');
+            result.push_back('u');
+            result.push_back('e');
+        }
         append16(numTables);
         append16(searchRange);
         append16(integralLog2(roundedNumTables)); // entrySelector: "Log2(maximum power of 2 <= numTables)."
@@ -231,15 +323,25 @@ public:
         for (size_t i = 0; i < directoryEntrySize * numTables; ++i)
             result.push_back(0);
 
-        appendTable("CFF ", &Generator::appendCFFTable);
-        appendTable("GSUB", &Generator::appendGSUBTable);
+        if (type == Type::OpenType) {
+            appendTable("CFF ", &Generator::appendCFFTable);
+            appendTable("GSUB", &Generator::appendGSUBTable);
+        }
         appendTable("OS/2", &Generator::appendOS2Table);
         appendTable("cmap", &Generator::appendCMAPTable);
+        if (type == Type::TrueType) {
+            appendTable("feat", &Generator::appendFEATTable);
+            appendTable("glyf", &Generator::appendGLYFTable);
+        }
         auto headTableOffset = result.size();
         appendTable("head", &Generator::appendHEADTable);
         appendTable("hhea", &Generator::appendHHEATable);
         appendTable("hmtx", &Generator::appendHMTXTable);
+        if (type == Type::TrueType)
+            appendTable("loca", &Generator::appendLOCATable);
         appendTable("maxp", &Generator::appendMAXPTable);
+        if (type == Type::TrueType)
+            appendTable("morx", &Generator::appendMORXTable);
         appendTable("name", &Generator::appendNAMETable);
         appendTable("post", &Generator::appendPOSTTable);
 
@@ -248,6 +350,7 @@ public:
         // checksumAdjustment: "To compute: set it to 0, calculate the checksum for the 'head' table and put it in the table directory,
         // sum the entire font as uint32, then store B1B0AFBA - sum. The checksum for the 'head' table will now be wrong. That is OK."
         overwrite32(headTableOffset + 8, 0xB1B0AFBAU - calculateChecksum(0, result.size()));
+
         return std::move(result);
     }
 
@@ -330,6 +433,132 @@ private:
         result[location + 1] = value >> 16;
         result[location + 2] = value >> 8;
         result[location + 3] = value;
+    }
+
+    void insertSelector(std::vector<FeatureSelector>& selectors, uint16_t selector, std::string selectorString, bool defaultSelector)
+    {
+        selectors.push_back({selector, selectorString, m_stringIndex++, defaultSelector});
+    }
+
+    void insertFeature(std::vector<FeatureType>& result, uint16_t type, std::string typeString, uint16_t selector, std::string selectorString, bool exclusive)
+    {
+        // O(n) but performance is not an issue here
+        for (size_t i = 0; i < result.size(); ++i) {
+            if (result[i].type == type) {
+                insertSelector(result[i].selectors, selector, selectorString, false);
+                return;
+            }
+        }
+        result.push_back({type, typeString, m_stringIndex++, 0, std::vector<FeatureSelector>(), exclusive});
+        insertSelector(result[result.size() - 1].selectors, selector, selectorString, true);
+    }
+
+    static const uint16_t kCharacterShapeType = 20;
+    static const uint16_t kContextualAlternatesType = 36;
+    static const uint16_t kFractionsType = 11;
+    static const uint16_t kLetterCaseType = 3;
+    static const uint16_t kLigaturesType = 1;
+    static const uint16_t kLowerCaseType = 37;
+    static const uint16_t kNumberCaseType = 21;
+    static const uint16_t kNumberSpacingType = 6;
+    static const uint16_t kRubyKanaType = 28;
+    static const uint16_t kStyleOptionsType = 19;
+    static const uint16_t kTextSpacingType = 22;
+    static const uint16_t kTypographicExtrasType = 14;
+    static const uint16_t kUpperCaseType = 38;
+    static const uint16_t kVerticalPositionType = 10;
+
+    static const uint16_t kCommonLigaturesOffSelector = 3;
+    static const uint16_t kCommonLigaturesOnSelector = 2;
+    static const uint16_t kContextualAlternatesOffSelector = 1;
+    static const uint16_t kContextualAlternatesOnSelector = 0;
+    static const uint16_t kContextualLigaturesOffSelector = 19;
+    static const uint16_t kContextualLigaturesOnSelector = 18;
+    static const uint16_t kDiagonalFractionsSelector = 2;
+    static const uint16_t kHistoricalLigaturesOffSelector = 21;
+    static const uint16_t kHistoricalLigaturesOnSelector = 20;
+    static const uint16_t kInferiorsSelector = 2;
+    static const uint16_t kJIS1978CharactersSelector = 2;
+    static const uint16_t kJIS1983CharactersSelector = 3;
+    static const uint16_t kJIS1990CharactersSelector = 4;
+    static const uint16_t kJIS2004CharactersSelector = 11;
+    static const uint16_t kLowerCaseNumbersSelector = 0;
+    static const uint16_t kLowerCasePetiteCapsSelector = 2;
+    static const uint16_t kLowerCaseSmallCapsSelector = 1;
+    static const uint16_t kMonospacedNumbersSelector = 0;
+    static const uint16_t kMonospacedTextSelector = 1;
+    static const uint16_t kOrdinalsSelector = 3;
+    static const uint16_t kProportionalNumbersSelector = 1;
+    static const uint16_t kProportionalTextSelector = 0;
+    static const uint16_t kRareLigaturesOffSelector = 5;
+    static const uint16_t kRareLigaturesOnSelector = 4;
+    static const uint16_t kRubyKanaOnSelector = 2;
+    static const uint16_t kRubyKanaSelector = 1;
+    static const uint16_t kSimplifiedCharactersSelector = 1;
+    static const uint16_t kSlashedZeroOnSelector = 4;
+    static const uint16_t kSuperiorsSelector = 1;
+    static const uint16_t kTitlingCapsSelector = 4;
+    static const uint16_t kTraditionalCharactersSelector = 0;
+    static const uint16_t kUpperCaseNumbersSelector = 1;
+    static const uint16_t kUpperCasePetiteCapsSelector = 2;
+    static const uint16_t kUpperCaseSmallCapsSelector = 1;
+    static const uint16_t kVerticalFractionsSelector = 1;
+
+    static const uint16_t defaultUnusedSelector = 99;
+
+    std::vector<FeatureType> generateFeatureDescription()
+    {
+        std::vector<FeatureType> result;
+
+        // For any given feature type, the first selector inside it is the default selector for that type.
+        insertFeature(result, kLigaturesType, "kLigaturesType", kCommonLigaturesOnSelector, "kCommonLigaturesOnSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kContextualLigaturesOnSelector, "kContextualLigaturesOnSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kCommonLigaturesOffSelector, "kCommonLigaturesOffSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kContextualLigaturesOffSelector, "kContextualLigaturesOffSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kRareLigaturesOnSelector, "kRareLigaturesOnSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kRareLigaturesOffSelector, "kRareLigaturesOffSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kHistoricalLigaturesOnSelector, "kHistoricalLigaturesOnSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kHistoricalLigaturesOffSelector, "kHistoricalLigaturesOffSelector", false);
+        insertFeature(result, kContextualAlternatesType, "kContextualAlternatesType", kContextualAlternatesOnSelector, "kContextualAlternatesOnSelector", false);
+        insertFeature(result, kContextualAlternatesType, "kContextualAlternatesType", kContextualAlternatesOffSelector, "kContextualAlternatesOffSelector", false);
+        insertFeature(result, kVerticalPositionType, "kVerticalPositionType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kVerticalPositionType, "kVerticalPositionType", kInferiorsSelector, "kInferiorsSelector", true);
+        insertFeature(result, kVerticalPositionType, "kVerticalPositionType", kSuperiorsSelector, "kSuperiorsSelector", true);
+        insertFeature(result, kLowerCaseType, "kLowerCaseType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kUpperCaseType, "kUpperCaseType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kLowerCaseType, "kLowerCaseType", kLowerCaseSmallCapsSelector, "kLowerCaseSmallCapsSelector", true);
+        insertFeature(result, kUpperCaseType, "kUpperCaseType", kUpperCaseSmallCapsSelector, "kUpperCaseSmallCapsSelector", true);
+        insertFeature(result, kLowerCaseType, "kLowerCaseType", kLowerCasePetiteCapsSelector, "kLowerCasePetiteCapsSelector", true);
+        insertFeature(result, kUpperCaseType, "kUpperCaseType", kUpperCasePetiteCapsSelector, "kUpperCasePetiteCapsSelector", true);
+        insertFeature(result, kLetterCaseType, "kLetterCaseType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kLetterCaseType, "kLetterCaseType", 14, "14", true);
+        insertFeature(result, kStyleOptionsType, "kStyleOptionsType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kStyleOptionsType, "kStyleOptionsType", kTitlingCapsSelector, "kTitlingCapsSelector", true);
+        insertFeature(result, kNumberCaseType, "kNumberCaseType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kNumberCaseType, "kNumberCaseType", kUpperCaseNumbersSelector, "kUpperCaseNumbersSelector", true);
+        insertFeature(result, kNumberCaseType, "kNumberCaseType", kLowerCaseNumbersSelector, "kLowerCaseNumbersSelector", true);
+        insertFeature(result, kNumberSpacingType, "kNumberSpacingType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kNumberSpacingType, "kNumberSpacingType", kProportionalNumbersSelector, "kProportionalNumbersSelector", true);
+        insertFeature(result, kNumberSpacingType, "kNumberSpacingType", kMonospacedNumbersSelector, "kMonospacedNumbersSelector", true);
+        insertFeature(result, kFractionsType, "kFractionsType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kFractionsType, "kFractionsType", kDiagonalFractionsSelector, "kDiagonalFractionsSelector", true);
+        insertFeature(result, kFractionsType, "kFractionsType", kVerticalFractionsSelector, "kVerticalFractionsSelector", true);
+        insertFeature(result, kVerticalPositionType, "kVerticalPositionType", kOrdinalsSelector, "kOrdinalsSelector", true);
+        insertFeature(result, kTypographicExtrasType, "kTypographicExtrasType", kSlashedZeroOnSelector, "kSlashedZeroOnSelector", false);
+        insertFeature(result, kLigaturesType, "kLigaturesType", kHistoricalLigaturesOnSelector, "kHistoricalLigaturesOnSelector", false);
+        insertFeature(result, kCharacterShapeType, "kCharacterShapeType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kCharacterShapeType, "kCharacterShapeType", kJIS1978CharactersSelector, "kJIS1978CharactersSelector", true);
+        insertFeature(result, kCharacterShapeType, "kCharacterShapeType", kJIS1983CharactersSelector, "kJIS1983CharactersSelector", true);
+        insertFeature(result, kCharacterShapeType, "kCharacterShapeType", kJIS1990CharactersSelector, "kJIS1990CharactersSelector", true);
+        insertFeature(result, kCharacterShapeType, "kCharacterShapeType", kJIS2004CharactersSelector, "kJIS2004CharactersSelector", true);
+        insertFeature(result, kCharacterShapeType, "kCharacterShapeType", kSimplifiedCharactersSelector, "kSimplifiedCharactersSelector", true);
+        insertFeature(result, kCharacterShapeType, "kCharacterShapeType", kTraditionalCharactersSelector, "kTraditionalCharactersSelector", true);
+        insertFeature(result, kTextSpacingType, "kTextSpacingType", defaultUnusedSelector, "defaultUnusedSelector", true);
+        insertFeature(result, kTextSpacingType, "kTextSpacingType", kMonospacedTextSelector, "kMonospacedTextSelector", true);
+        insertFeature(result, kTextSpacingType, "kTextSpacingType", kProportionalTextSelector, "kProportionalTextSelector", true);
+        insertFeature(result, kRubyKanaType, "kRubyKanaType", kRubyKanaOnSelector, "kRubyKanaOnSelector", false);
+
+        return result;
     }
     
     void appendCFFTable()
@@ -418,9 +647,9 @@ private:
             append16(i);
 
         // CharStrings INDEX
-        std::vector<uint8_t> boxCharString = generateBoxCharString();
-        std::vector<uint8_t> checkCharString = generateCheckCharString();
-        std::vector<uint8_t> xCharString = generateXCharString();
+        std::vector<uint8_t> boxCharString = generateBoxCharString<CFFBuilder>();
+        std::vector<uint8_t> checkCharString = generateCheckCharString<CFFBuilder>();
+        std::vector<uint8_t> xCharString = generateXCharString<CFFBuilder>();
         assert(numGlyphs > 26);
         overwrite32(charstringsOffsetLocation, static_cast<uint32_t>(result.size() - startingOffset));
         append16(numGlyphs);
@@ -428,13 +657,132 @@ private:
         offset = 1;
         append32(offset);
         for (uint16_t glyph = 0; glyph < numGlyphs; ++glyph) {
-            offset += charStringForGlyph(glyph, boxCharString, checkCharString, xCharString).size();
+            offset += itemForGlyph(glyph, boxCharString, checkCharString, xCharString).size();
             append32(offset);
         }
         for (uint16_t glyph = 0; glyph < numGlyphs; ++glyph) {
-            std::vector<uint8_t>& charString = charStringForGlyph(glyph, boxCharString, checkCharString, xCharString);
+            const std::vector<uint8_t>& charString = itemForGlyph(glyph, boxCharString, checkCharString, xCharString);
             result.insert(result.end(), charString.begin(), charString.end());
         }
+    }
+
+    // Keep in sync with loca
+    void appendGLYFTable()
+    {
+        std::vector<uint8_t> boxCharString = generateBoxCharString<GLYFBuilder>();
+        std::vector<uint8_t> checkCharString = generateCheckCharString<GLYFBuilder>();
+        std::vector<uint8_t> xCharString = generateXCharString<GLYFBuilder>();
+        for (uint16_t glyph = 0; glyph < numGlyphs; ++glyph) {
+            const std::vector<uint8_t>& charString = itemForGlyph(glyph, boxCharString, checkCharString, xCharString);
+            result.insert(result.end(), charString.begin(), charString.end());
+        }
+    }
+
+    // Keep in sync with glyf
+    void appendLOCATable()
+    {
+        std::vector<uint8_t> boxCharString = generateBoxCharString<GLYFBuilder>();
+        std::vector<uint8_t> checkCharString = generateCheckCharString<GLYFBuilder>();
+        std::vector<uint8_t> xCharString = generateXCharString<GLYFBuilder>();
+        uint32_t index = 0;
+        for (uint16_t glyph = 0; glyph < numGlyphs; ++glyph) {
+            append32(index);
+            index += itemForGlyph(glyph, boxCharString, checkCharString, xCharString).size();
+        }
+        append32(index);
+    }
+
+    void appendFEATTable()
+    {
+        size_t tableLocation = result.size();
+        append32(0x00010000); // Version
+        append16(featureDescription.size()); // Number of entries in the feature name array
+        append16(0); // reserved
+        append32(0); // reserved
+
+        // Feature name array
+        for (FeatureType& type : featureDescription) {
+            append16(type.type); // Feature type
+            append16(type.selectors.size()); // Number of settings
+            type.settingTableOffsetLocation = result.size();
+            append32(0); // Offset in bytes from beginning of this table to feature's setting name array
+            append16(type.exclusive ? 0x8000 : 0); // Flags. 0x8000 = Exclusive
+            append16(type.stringIndex + m_baseStringIndex); // Index in the name table for the name of this feature
+        }
+
+        // Setting name array
+        for (FeatureType& type : featureDescription) {
+            overwrite32(type.settingTableOffsetLocation, static_cast<uint32_t>(result.size() - tableLocation));
+            for (FeatureSelector& selector : type.selectors) {
+                append16(selector.selector); // Setting: kNormalPositionSelector (initial setting is default)
+                append16(selector.stringIndex + m_baseStringIndex); // Index in the name table for the name of this setting
+            }
+        }
+    }
+
+    void appendMetamorphosisChain(const FeatureType& type, const FeatureSelector& selector, uint16_t glyphToReplace, uint16_t withMe)
+    {
+        size_t chainLocation = result.size();
+        append32(type.exclusive && selector.defaultSelector ? 1 : 0); // Default flags
+        size_t chainSizeLocation = result.size();
+        append32(0); // Placeholder for chain length in bytes (padded to multiple of 4)
+        append32(2); // Number of feature subtable entries
+        append32(1); // Number of subtables in the chain
+
+        // Feature table
+        append16(type.type); // Feature type
+        append16(selector.selector); // Feature selector
+        append32(1); // Enable flags
+        append32(0xFFFFFFFF); // disable flags
+
+        // Feature table 2
+        append16(0); // Feature type: kAllTypographicFeaturesType
+        append16(1); // Feature selector: kAllTypeFeaturesOffSelector
+        append32(0); // Enable flags
+        append32(0); // disable flags
+
+        // Metamorphosis subtable
+        size_t metamorphosisSubtableSizeLocation = result.size();
+        append32(0); // Placeholder for chain length in bytes (padded to multiple of 4)
+        append32(4); // Coverage flags and subtable type. Subtable type 4: Noncontextual ("swash") subtable
+        append32(1); // subFeature flags
+
+        // Non-contextual glyph substitution subtable
+        append16(6); // Lookup format: sorted list of (glyph index, lookup value) pairs
+        
+        // BinSrchHeader
+        append16(4); // Size of a lookup unit for this search in bytes
+        append16(1); // Number of units to be searched
+        append16(4); // Search range: The value of unitSize times the largest power of 2 that is less than or equal to the value of nUnits.
+        append16(0); // Entry selector: The log base 2 of the largest power of 2 less than or equal to the value of nUnits.
+        append16(0); // Range shift: The value of unitSize times the difference of the value of nUnits minus the largest power of 2 less than or equal to the value of nUnits.
+        // Entries
+        append16(glyphToReplace);
+        append16(withMe);
+
+        overwrite32(metamorphosisSubtableSizeLocation, static_cast<uint32_t>(result.size() - metamorphosisSubtableSizeLocation));
+
+        while (result.size() % 4)
+            result.push_back(0);
+        overwrite32(chainSizeLocation, static_cast<uint32_t>(result.size() - chainLocation));
+    }
+
+    void appendMORXTable()
+    {
+        append16(2); // Version
+        append16(0); // Unused
+        size_t numberOfChainsLocation = result.size();
+        append32(0); // Number of metamorphosis chains placeholder
+
+        int count = 0;
+        for (FeatureType& type : featureDescription) {
+            for (FeatureSelector& selector : type.selectors) {
+                appendMetamorphosisChain(type, selector, count + 3, 1);
+                count++;
+            }
+        }
+    
+        overwrite32(numberOfChainsLocation, count);
     }
 
     void appendSubstitutionSubtable(size_t subtableRecordLocation, uint16_t iGetReplaced, uint16_t replacedWithMe)
@@ -677,7 +1025,7 @@ private:
         append16(0); // Traits
         append16(3); // Smallest readable size in pixels
         append16(0); // Might contain LTR or RTL glyphs
-        append16(0); // Short offsets in the 'loca' table. However, OTF fonts don't have a 'loca' table so this is irrelevant
+        append16(1); // Long offsets in the 'loca' table.
         append16(0); // Glyph data format
     }
     
@@ -705,8 +1053,8 @@ private:
     void appendHMTXTable()
     {
         for (unsigned i = 0; i < numGlyphs; ++i) {
-            append16(clampTo<uint16_t>(unitsPerEm)); // horizontal advance
-            append16(clampTo<int16_t>(0)); // left side bearing
+            append16(clampTo<uint16_t>(static_cast<int32_t>(unitsPerEm))); // horizontal advance
+            append16(itemForGlyph(i, 200, 200, 50)); // left side bearing
         }
     }
     
@@ -728,24 +1076,46 @@ private:
         append16(numGlyphs); // Maximum number of glyphs referenced at top level
         append16(0); // No compound glyphs
     }
-    
-    void appendNAMETable()
+
+    void appendNameSubtable(const std::string& s, uint16_t nameIdentifier)
     {
-        std::string fontName = "MylesFont";
-
-        append16(0); // Format selector
-        append16(1); // Number of name records in table
-        append16(18); // Offset in bytes to the beginning of name character strings
-
         append16(0); // Unicode
         append16(3); // Unicode version 2.0 or later
         append16(0); // Language
-        append16(1); // Name identifier. 1 = Font family
-        append16(fontName.length());
-        append16(0); // Offset into name data
+        append16(m_baseStringIndex + nameIdentifier); // Name identifier
+        append16(s.length());
+        append16(m_nameOffset); // Offset into name data
+        m_nameOffset += s.size() * 2; // Code units get 2 bytes each
+    }
 
-        for (auto codeUnit : fontName)
+    void append2ByteASCIIString(std::string& s)
+    {
+        for (auto codeUnit : s)
             append16(codeUnit);
+    }
+
+    void appendNAMETable()
+    {
+        std::string familyName = "MylesFont"; // 1: Font Family
+
+        uint16_t numberOfRecords = m_stringIndex + 1;
+        append16(0); // Format selector
+        append16(numberOfRecords); // Number of name records in table
+        append16(6 + 12 * numberOfRecords); // Offset in bytes to the beginning of name character strings
+
+        appendNameSubtable(familyName, 1); // 1: Font Family
+        for (FeatureType& type : featureDescription) {
+            appendNameSubtable(type.name, type.stringIndex);
+            for (FeatureSelector& selector : type.selectors)
+                appendNameSubtable(selector.name, selector.stringIndex);
+        }
+
+        append2ByteASCIIString(familyName);
+        for (FeatureType& type : featureDescription) {
+            append2ByteASCIIString(type.name);
+            for (FeatureSelector& selector : type.selectors)
+                append2ByteASCIIString(selector.name);
+        }
     }
     
     void appendPOSTTable()
@@ -796,10 +1166,14 @@ private:
     }
 
     unsigned m_tablesAppendedCount { 0 };
+    unsigned m_nameOffset { 0 };
+    static constexpr uint16_t m_baseStringIndex { 257 };
+    uint16_t m_stringIndex { 0 };
+    std::vector<FeatureType> featureDescription;
     std::vector<uint8_t> result;
 };
 
-std::vector<uint8_t> generateFont()
+std::vector<uint8_t> generateFont(Type type)
 {
-    return Generator().generate();
+    return Generator().generate(type);
 }
