@@ -266,16 +266,12 @@ compositing/rtl/rtl-iframe-relative.html [ Skip ]
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-# Font feature settings is not implemented.
-css3/font-feature-settings-rendering.html
-
-# This feature is disabled on Mavericks.
-[ Mavericks ] http/tests/navigation/page-cache-pending-image-load.html [ Skip ]
-[ Mavericks ] http/tests/navigation/page-cache-pending-image-load-cache-partition.html [ Skip ]
-[ Mavericks ] http/tests/navigation/page-cache-xhr.html [ Skip ]
-
-webkit.org/b/149246 [ Mavericks Yosemite ] css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
-webkit.org/b/149246 [ Mavericks Yosemite ] css3/font-variant-all.html [ ImageOnlyFailure ]
+# Font features are not implemented on Mavericks.
+webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/149246 [ Mavericks ] css3/font-variant-all.html [ ImageOnlyFailure ]
+webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/149246 [ Mavericks ] css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
+webkit.org/b/149246 [ Mavericks ] css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
 
 # This feature is disabled on Mavericks.
 [ Mavericks ] http/tests/navigation/page-cache-pending-image-load.html [ Skip ]
