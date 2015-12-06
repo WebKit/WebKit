@@ -51,7 +51,7 @@ CDMSessionAVFoundationCF::CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundatio
 {
 }
 
-PassRefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
+RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
 {
     UNUSED_PARAM(mimeType);
 

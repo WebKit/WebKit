@@ -35,7 +35,6 @@
 #include <bindings/ScriptValue.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/Float32Array.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -77,7 +76,7 @@ typedef int ExceptionCode;
 class Internals : public RefCounted<Internals>
                 , public ContextDestructionObserver {
 public:
-    static PassRefPtr<Internals> create(Document*);
+    static Ref<Internals> create(Document*);
     virtual ~Internals();
 
     static void resetToConsistentState(Page*);
@@ -104,7 +103,7 @@ public:
     void clearPageCache();
     unsigned pageCacheSize() const;
 
-    PassRefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Node*, ExceptionCode&) const;
+    RefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Node*, ExceptionCode&) const;
 
     Node* ensureShadowRoot(Element* host, ExceptionCode&);
     Node* ensureUserAgentShadowRoot(Element* host, ExceptionCode&);
@@ -155,7 +154,7 @@ public:
     String inspectorHighlightObject(ExceptionCode&);
 
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
-    PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
+    RefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     void addTextMatchMarker(const Range*, bool isActive);
     void setMarkedTextMatchesAreHighlighted(bool, ExceptionCode&);
@@ -178,11 +177,11 @@ public:
 
     void paintControlTints(ExceptionCode&);
 
-    PassRefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode&);
+    RefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode&);
     unsigned locationFromRange(Element* scope, const Range*, ExceptionCode&);
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
     String rangeAsText(const Range*, ExceptionCode&);
-    PassRefPtr<Range> subrange(Range* range, int rangeLocation, int rangeLength, ExceptionCode&);
+    RefPtr<Range> subrange(Range*, int rangeLocation, int rangeLength, ExceptionCode&);
     RefPtr<Range> rangeForDictionaryLookupAtLocation(int x, int y, ExceptionCode&);
 
     void setDelegatesScrolling(bool enabled, ExceptionCode&);
@@ -199,7 +198,7 @@ public:
     unsigned wheelEventHandlerCount(ExceptionCode&);
     unsigned touchEventHandlerCount(ExceptionCode&);
 
-    PassRefPtr<NodeList> nodesFromRect(Document*, int x, int y, unsigned topPadding, unsigned rightPadding,
+    RefPtr<NodeList> nodesFromRect(Document*, int x, int y, unsigned topPadding, unsigned rightPadding,
         unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent, ExceptionCode&) const;
 
     String parserMetaData(Deprecated::ScriptValue = Deprecated::ScriptValue());
@@ -299,9 +298,9 @@ public:
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
     void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
 
-    PassRefPtr<MallocStatistics> mallocStatistics() const;
-    PassRefPtr<TypeConversions> typeConversions() const;
-    PassRefPtr<MemoryInfo> memoryInfo() const;
+    Ref<MallocStatistics> mallocStatistics() const;
+    Ref<TypeConversions> typeConversions() const;
+    Ref<MemoryInfo> memoryInfo() const;
 
     Vector<String> getReferencedFilePaths() const;
 
@@ -321,8 +320,8 @@ public:
     void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*, ExceptionCode&);
     unsigned layoutCount() const;
 
-    PassRefPtr<ArrayBuffer> serializeObject(PassRefPtr<SerializedScriptValue>) const;
-    PassRefPtr<SerializedScriptValue> deserializeBuffer(PassRefPtr<ArrayBuffer>) const;
+    RefPtr<ArrayBuffer> serializeObject(PassRefPtr<SerializedScriptValue>) const;
+    RefPtr<SerializedScriptValue> deserializeBuffer(PassRefPtr<ArrayBuffer>) const;
 
     bool isFromCurrentWorld(Deprecated::ScriptValue) const;
 
@@ -363,7 +362,7 @@ public:
     void setCaptionDisplayMode(const String&, ExceptionCode&);
 
 #if ENABLE(VIDEO)
-    PassRefPtr<TimeRanges> createTimeRanges(Float32Array* startTimes, Float32Array* endTimes);
+    Ref<TimeRanges> createTimeRanges(Float32Array* startTimes, Float32Array* endTimes);
     double closestTimeToTimeRanges(double time, TimeRanges*);
 #endif
 

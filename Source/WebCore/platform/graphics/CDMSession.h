@@ -69,7 +69,7 @@ public:
     virtual CDMSessionType type() { return CDMSessionTypeUnknown; }
     virtual void setClient(CDMSessionClient*) = 0;
     virtual const String& sessionId() const = 0;
-    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) = 0;
+    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) = 0;
     virtual void releaseKeys() = 0;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) = 0;
     virtual RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const { return nullptr; }

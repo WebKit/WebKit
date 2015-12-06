@@ -27,14 +27,13 @@
 #define TypeConversions_h
 
 #include <wtf/FastMalloc.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class TypeConversions : public RefCounted<TypeConversions> {
 public:
-    static PassRefPtr<TypeConversions> create() { return adoptRef(new TypeConversions()); }
+    static Ref<TypeConversions> create() { return adoptRef(*new TypeConversions()); }
 
     long testLong() { return m_long; }
     void setTestLong(long value) { m_long = value; }
