@@ -1009,7 +1009,7 @@ inline-box
 initial-letter
 replaced
 
-// -webkit-font-feature-settings
+// font-feature-settings
 on
 off
 
