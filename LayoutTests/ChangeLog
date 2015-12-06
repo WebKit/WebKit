@@ -1,5 +1,21 @@
 2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190999. rdar://problem/23769821
+
+    2015-10-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Unprefix font-kerning
+            https://bugs.webkit.org/show_bug.cgi?id=150080
+
+            Reviewed by Sam Weinig.
+
+            This is the last property in CSS3 Fonts which is prefixed.
+
+            * fast/text/font-kerning-expected.html:
+            * fast/text/font-kerning.html:
+
+2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190848. rdar://problem/23769770
 
     2015-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
