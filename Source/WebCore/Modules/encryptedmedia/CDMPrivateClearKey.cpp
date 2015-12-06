@@ -59,9 +59,9 @@ bool CDMPrivateClearKey::supportsMIMEType(const String& mimeType)
     return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
 }
 
-std::unique_ptr<CDMSession> CDMPrivateClearKey::createSession()
+std::unique_ptr<CDMSession> CDMPrivateClearKey::createSession(CDMSessionClient* client)
 {
-    return std::make_unique<CDMSessionClearKey>();
+    return std::make_unique<CDMSessionClearKey>(client);
 }
 
 }

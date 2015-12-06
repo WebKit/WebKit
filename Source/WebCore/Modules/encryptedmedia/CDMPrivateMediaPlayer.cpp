@@ -55,13 +55,13 @@ bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType)
     return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
 }
 
-std::unique_ptr<CDMSession> CDMPrivateMediaPlayer::createSession()
+std::unique_ptr<CDMSession> CDMPrivateMediaPlayer::createSession(CDMSessionClient* client)
 {
     MediaPlayer* mediaPlayer = m_cdm->mediaPlayer();
     if (!mediaPlayer)
         return nullptr;
 
-    return mediaPlayer->createSession(m_cdm->keySystem());
+    return mediaPlayer->createSession(m_cdm->keySystem(), client);
 }
 
 }

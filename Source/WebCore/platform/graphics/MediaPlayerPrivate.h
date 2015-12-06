@@ -230,7 +230,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    virtual std::unique_ptr<CDMSession> createSession(const String&) { return nullptr; }
+    virtual std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*) { return nullptr; }
     virtual void setCDMSession(CDMSession*) { }
     virtual void keyAdded() { }
 #endif

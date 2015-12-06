@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CDMSessionClearKey : public CDMSession {
 public:
-    CDMSessionClearKey();
+    CDMSessionClearKey(CDMSessionClient*);
     virtual ~CDMSessionClearKey();
 
     // CDMSessionPrivate

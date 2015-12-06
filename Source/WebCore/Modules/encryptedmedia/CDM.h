@@ -63,7 +63,7 @@ public:
     ~CDM();
 
     bool supportsMIMEType(const String&) const;
-    std::unique_ptr<CDMSession> createSession();
+    std::unique_ptr<CDMSession> createSession(CDMSessionClient*);
 
     const String& keySystem() const { return m_keySystem; }
 

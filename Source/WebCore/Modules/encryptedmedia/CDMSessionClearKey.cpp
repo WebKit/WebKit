@@ -59,8 +59,9 @@ static VM& clearKeyVM()
     return *vm.get();
 }
 
-CDMSessionClearKey::CDMSessionClearKey()
-    : m_sessionId(createCanonicalUUIDString())
+CDMSessionClearKey::CDMSessionClearKey(CDMSessionClient* client)
+    : m_client(client)
+    , m_sessionId(createCanonicalUUIDString())
 {
 }
 

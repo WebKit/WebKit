@@ -52,11 +52,10 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext* context, MediaKeys* key
     , m_keys(keys)
     , m_keySystem(keySystem)
     , m_asyncEventQueue(*this)
-    , m_session(keys->cdm()->createSession())
+    , m_session(keys->cdm()->createSession(this))
     , m_keyRequestTimer(*this, &MediaKeySession::keyRequestTimerFired)
     , m_addKeyTimer(*this, &MediaKeySession::addKeyTimerFired)
 {
-    m_session->setClient(this);
 }
 
 MediaKeySession::~MediaKeySession()
@@ -119,7 +118,7 @@ void MediaKeySession::keyRequestTimerFired()
         RefPtr<Uint8Array> keyRequest = m_session->generateKeyRequest(request.mimeType, request.initData.get(), destinationURL, errorCode, systemCode);
 
         // Otherwise [if a request is not successfully generated]:
-        if (!keyRequest) {
+        if (errorCode) {
             // 3.1. Create a new MediaKeyError object with the following attributes:
             //      code = the appropriate MediaKeyError code
             //      systemCode = a Key System-specific value, if provided, and 0 otherwise
@@ -134,7 +133,8 @@ void MediaKeySession::keyRequestTimerFired()
         //    The event is of type MediaKeyMessageEvent and has:
         //    message = key request
         //    destinationURL = destinationURL
-        sendMessage(keyRequest.get(), destinationURL);
+        if (keyRequest)
+            sendMessage(keyRequest.get(), destinationURL);
     }
 }
 
