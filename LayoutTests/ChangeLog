@@ -1,3 +1,18 @@
+2015-12-05  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r191981. rdar://problem/23221177
+
+    2015-10-30  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Implement support for the autocomplete attribute
+        https://bugs.webkit.org/show_bug.cgi?id=150731
+        rdar://problem/21078968
+
+        Reviewed by Brent Fulgham.
+
+        * fast/forms/autocomplete-tokens-expected.txt: Added.
+        * fast/forms/autocomplete-tokens.html: Added.
+
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r190868. rdar://problem/23769564
