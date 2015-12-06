@@ -71,7 +71,6 @@ static bool propertyCreatesStackingContext(CSSPropertyID property)
     case CSSPropertyOpacity:
     case CSSPropertyPosition:
     case CSSPropertyZIndex:
-    case CSSPropertyWebkitBackfaceVisibility:
     case CSSPropertyWebkitBoxReflect:
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:

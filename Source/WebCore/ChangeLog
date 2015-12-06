@@ -1,5 +1,32 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188604. rdar://problem/23769564
+
+    2015-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+            will-change: backface-visibility should not cause stacking context
+            https://bugs.webkit.org/show_bug.cgi?id=148091
+
+            Reviewed by Zalan Bujtas.
+
+            Take CSSPropertyWebkitBackfaceVisibility out of the list of properties that causes
+            will-change to create stacking context, since no value of the property creates
+            stacking.
+
+            Move willChangeCreatesStackingContext() and shouldWillChangeCreateStackingContext()
+            into RenderInline since it's only called from there.
+
+            * rendering/RenderElement.cpp:
+            (WebCore::RenderElement::shouldWillChangeCreateStackingContext): Deleted.
+            * rendering/RenderElement.h:
+            (WebCore::RenderElement::willChangeCreatesStackingContext): Deleted.
+            * rendering/RenderInline.h:
+            (WebCore::RenderInline::willChangeCreatesStackingContext):
+            * rendering/style/WillChangeData.cpp:
+            (WebCore::propertyCreatesStackingContext): Deleted.
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188130. rdar://problem/23769683
 
     2015-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
