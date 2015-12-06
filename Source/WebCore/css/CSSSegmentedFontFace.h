@@ -26,6 +26,7 @@
 #ifndef CSSSegmentedFontFace_h
 #define CSSSegmentedFontFace_h
 
+#include "FontCache.h"
 #include "FontRanges.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -73,7 +74,7 @@ private:
 #endif
 
     CSSFontSelector* m_fontSelector;
-    HashMap<unsigned, FontRanges> m_descriptionToRangesMap;
+    HashMap<FontDescriptionFontDataCacheKey, FontRanges, FontDescriptionKeyHash, WTF::SimpleClassHashTraits<FontDescriptionFontDataCacheKey>> m_descriptionToRangesMap; 
     Vector<RefPtr<CSSFontFace>, 1> m_fontFaces;
 #if ENABLE(FONT_LOAD_EVENTS)
     Vector<RefPtr<LoadFontCallback>> m_callbacks;
