@@ -26,6 +26,7 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "SelectorPseudoTypeMap.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -64,6 +65,24 @@ void CSSParserValueList::extend(CSSParserValueList& valueList)
 {
     for (unsigned int i = 0; i < valueList.size(); ++i)
         m_values.append(*(valueList.valueAt(i)));
+}
+
+String CSSParserValueList::toString()
+{
+    // Build up a set of CSSValues and serialize them using cssText, separating multiple values
+    // with spaces.
+    // FIXME: Teach CSSParserValues how to serialize so that we don't have to create CSSValues
+    // just to perform this serialization.
+    StringBuilder builder;
+    for (unsigned i = 0; i < size(); i++) {
+        if (i)
+            builder.append(' ');
+        RefPtr<CSSValue> cssValue = valueAt(i)->createCSSValue();
+        if (!cssValue)
+            return "";
+        builder.append(cssValue->cssText());
+    }
+    return builder.toString().lower();
 }
 
 PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
