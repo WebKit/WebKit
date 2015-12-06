@@ -1,5 +1,15 @@
 2015-12-06  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191646.
+
+    2015-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed, fix a failing iOS WK2 test.
+
+            * fast/events/ios/viewport-device-width-allows-double-tap-zoom-out-expected.txt:
+
+2015-12-06  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r191644.
 
     2015-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
