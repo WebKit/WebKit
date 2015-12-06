@@ -1,5 +1,29 @@
 2015-12-05  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191178.
+
+    2015-10-16  David Hyatt  <hyatt@apple.com>
+
+            Implement the "all" CSS property.
+            https://bugs.webkit.org/show_bug.cgi?id=116966
+
+            Reviewed by Zalan Bujtas.
+
+            Added tests for the "all property, including a variables test!
+
+            * fast/css/all-keyword-direction-expected.html: Added.
+            * fast/css/all-keyword-direction.html: Added.
+            * fast/css/all-keyword-inherit-expected.html: Added.
+            * fast/css/all-keyword-inherit.html: Added.
+            * fast/css/all-keyword-initial-expected.html: Added.
+            * fast/css/all-keyword-initial.html: Added.
+            * fast/css/all-keyword-unset-expected.html: Added.
+            * fast/css/all-keyword-unset.html: Added.
+            * fast/css/variables/all-keyword-unset-expected.html: Added.
+            * fast/css/variables/all-keyword-unset.html: Added.
+
+2015-12-05  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r191151.
 
     2015-10-15  David Hyatt  <hyatt@apple.com>

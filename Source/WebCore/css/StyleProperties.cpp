@@ -127,6 +127,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 
     // Shorthand and 4-values properties
     switch (propertyID) {
+    case CSSPropertyAll:
+        return getCommonValue(allShorthand());
     case CSSPropertyAnimation:
         return getLayeredShorthandValue(animationShorthand());
     case CSSPropertyBorderSpacing:

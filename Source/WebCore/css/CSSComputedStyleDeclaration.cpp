@@ -3239,6 +3239,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return zoomAdjustedPixelValueForLength(style->svgStyle().y(), *style);
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
+        case CSSPropertyAll:
         case CSSPropertyAnimation:
         case CSSPropertyWebkitTextEmphasis:
         case CSSPropertyTextLineThrough:
