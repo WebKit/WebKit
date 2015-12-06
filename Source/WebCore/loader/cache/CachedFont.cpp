@@ -123,14 +123,13 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 
 RefPtr<Font> CachedFont::createFont(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, bool)
 {
-    return Font::create(platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic,
-        fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
+    return Font::create(platformDataFromCustomData(fontDescription, syntheticBold, syntheticItalic), true, false);
 }
 
-FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant widthVariant, FontRenderingMode renderingMode)
+FontPlatformData CachedFont::platformDataFromCustomData(const FontDescription& fontDescription, bool bold, bool italic)
 {
     ASSERT(m_fontCustomPlatformData);
-    return m_fontCustomPlatformData->fontPlatformData(static_cast<int>(size), bold, italic, orientation, widthVariant, renderingMode);
+    return m_fontCustomPlatformData->fontPlatformData(fontDescription, bold, italic);
 }
 
 void CachedFont::allClientsRemoved()
