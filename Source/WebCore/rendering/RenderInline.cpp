@@ -136,7 +136,7 @@ static RenderElement* inFlowPositionedInlineAncestor(RenderElement* p)
             return p;
         p = p->parent();
     }
-    return 0;
+    return nullptr;
 }
 
 static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, const RenderStyle* newStyle, const RenderStyle* oldStyle)

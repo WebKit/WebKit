@@ -27,7 +27,7 @@ var willChangeValues = [
     { 'property' : '-webkit-flow-from', 'stacking' : true },
 ];
 
-function makeStackingBlock(stackingProperty, value)
+function makeStackingElement(stackingProperty, value)
 {
     var container = document.createElement('div');
     container.className = 'container';
@@ -48,4 +48,3 @@ function makeStackingBlock(stackingProperty, value)
     
     document.body.appendChild(container);
 }
-
