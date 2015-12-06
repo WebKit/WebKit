@@ -180,7 +180,8 @@ JSValue eval(CallFrame* callFrame)
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!callFrame->vm().exception());
 
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, sourceCode, callerScopeChain);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock, callerCodeBlock->isStrictMode(), thisTDZMode, callerCodeBlock->unlinkedCodeBlock()->isDerivedConstructorContext(), callerCodeBlock->unlinkedCodeBlock()->isArrowFunction(), sourceCode, callerScopeChain);
+
         if (!eval)
             return jsUndefined();
     }

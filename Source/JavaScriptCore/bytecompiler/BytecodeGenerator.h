@@ -66,6 +66,8 @@ namespace JSC {
         ExpectArrayConstructor
     };
 
+    enum class ThisResolutionType { Local, Scoped };
+    
     class CallArguments {
     public:
         CallArguments(BytecodeGenerator&, ArgumentsNode*, unsigned additionalArguments = 0);
@@ -280,6 +282,11 @@ namespace JSC {
         const CommonIdentifiers& propertyNames() const { return *m_vm->propertyNames; }
 
         bool isConstructor() const { return m_codeBlock->isConstructor(); }
+        bool isDerivedConstructorContext() const { return m_codeBlock->isDerivedConstructorContext(); }
+        bool usesArrowFunction() const { return m_scopeNode->usesArrowFunction(); }
+        bool needsToUpdateArrowFunctionContext() const { return m_needsToUpdateArrowFunctionContext; }
+        bool usesEval() const { return m_scopeNode->usesEval(); }
+        bool usesThis() const { return m_scopeNode->usesThis(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
         GeneratorThisMode generatorThisMode() const { return m_codeBlock->generatorThisMode(); }
         SuperBinding superBinding() const { return m_codeBlock->superBinding(); }
@@ -288,7 +295,7 @@ namespace JSC {
 
         bool isArgumentNumber(const Identifier&, int);
 
-        Variable variable(const Identifier&);
+        Variable variable(const Identifier&, ThisResolutionType = ThisResolutionType::Local);
         
         enum ExistingVariableMode { VerifyExisting, IgnoreExisting };
         void createVariable(const Identifier&, VarKind, SymbolTable*, ExistingVariableMode = VerifyExisting); // Creates the variable, or asserts that the already-created variable is sufficiently compatible.
@@ -296,7 +303,11 @@ namespace JSC {
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
         RegisterID* argumentsRegister() { return m_argumentsRegister; }
-        RegisterID* newTarget() { return m_newTargetRegister; }
+        RegisterID* newTarget()
+        {
+            return !m_codeBlock->isArrowFunction() || m_isNewTargetLoadedInArrowFunction
+                ? m_newTargetRegister : emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
+        }
 
         RegisterID* scopeRegister() { return m_scopeRegister; }
 
@@ -484,6 +495,10 @@ namespace JSC {
         void emitProfileType(RegisterID* registerToProfile, const JSTextPosition& startDivot, const JSTextPosition& endDivot);
 
         void emitProfileControlFlow(int);
+        
+        RegisterID* emitLoadArrowFunctionLexicalEnvironment();
+        void emitLoadThisFromArrowFunctionLexicalEnvironment();
+        RegisterID* emitLoadNewTargetFromArrowFunctionLexicalEnvironment();
 
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);
@@ -628,6 +643,10 @@ namespace JSC {
         void emitGetScope();
         RegisterID* emitPushWithScope(RegisterID* objectScope);
         void emitPopWithScope();
+        void emitPutThisToArrowFunctionContextScope();
+        void emitPutNewTargetToArrowFunctionContextScope();
+        void emitPutDerivedConstructorToArrowFunctionContextScope();
+        RegisterID* emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment();
 
         void emitDebugHook(DebugHookID, unsigned line, unsigned charOffset, unsigned lineStart);
 
@@ -720,7 +739,6 @@ namespace JSC {
 
         void allocateCalleeSaveSpace();
         void allocateAndEmitScope();
-        RegisterID* emitLoadArrowFunctionThis(RegisterID*);
         void emitComplexPopScopes(RegisterID*, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
 
         typedef HashMap<double, JSValue> NumberMap;
@@ -772,6 +790,8 @@ namespace JSC {
         
         UnlinkedFunctionExecutable* makeFunction(FunctionMetadataNode* metadata)
         {
+            bool newisDerivedConstructorContext = constructorKind() == ConstructorKind::Derived || (m_isDerivedConstructorContext && metadata->parseMode() == SourceParseMode::ArrowFunctionMode);
+
             VariableEnvironment variablesUnderTDZ;
             getVariablesUnderTDZ(variablesUnderTDZ);
 
@@ -790,7 +810,7 @@ namespace JSC {
             if (parseMode == SourceParseMode::GeneratorBodyMode && isConstructor())
                 generatorThisMode = GeneratorThisMode::Empty;
 
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, generatorThisMode, variablesUnderTDZ);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, generatorThisMode, variablesUnderTDZ, newisDerivedConstructorContext);
         }
 
         void getVariablesUnderTDZ(VariableEnvironment&);
@@ -801,6 +821,7 @@ namespace JSC {
         void initializeParameters(FunctionParameters&);
         void initializeVarLexicalEnvironment(int symbolTableConstantIndex);
         void initializeDefaultParameterValuesAndSetupFunctionScopeStack(FunctionParameters&, FunctionNode*, SymbolTable*, int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures);
+        void initializeArrowFunctionContextScopeIfNeeded(SymbolTable* = nullptr);
 
     public:
         JSString* addStringConstant(const Identifier&);
@@ -843,6 +864,8 @@ namespace JSC {
         RegisterID* m_globalObjectRegister { nullptr };
         RegisterID* m_newTargetRegister { nullptr };
         RegisterID* m_linkTimeConstantRegisters[LinkTimeConstantCount];
+        RegisterID* m_arrowFunctionContextLexicalEnvironmentRegister { nullptr };
+        RefPtr<RegisterID> m_resolvedArrowFunctionScopeContextRegister;
 
         SegmentedVector<RegisterID*, 16> m_localRegistersForCalleeSaveRegisters;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
@@ -898,6 +921,9 @@ namespace JSC {
         bool m_isBuiltinFunction { false };
         bool m_usesNonStrictEval { false };
         bool m_inTailPosition { false };
+        bool m_isDerivedConstructorContext { false };
+        bool m_needsToUpdateArrowFunctionContext;
+        bool m_isNewTargetLoadedInArrowFunction { false };
     };
 
 }

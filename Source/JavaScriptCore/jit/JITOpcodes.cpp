@@ -667,14 +667,6 @@ void JIT::emit_op_get_scope(Instruction* currentInstruction)
     loadPtr(Address(regT0, JSFunction::offsetOfScopeChain()), regT0);
     emitStoreCell(dst, regT0);
 }
-    
-void JIT::emit_op_load_arrowfunction_this(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
-    loadPtr(Address(regT0, JSArrowFunction::offsetOfThisValue()), regT0);
-    emitStoreCell(dst, regT0);
-}
 
 void JIT::emit_op_to_this(Instruction* currentInstruction)
 {
@@ -969,23 +961,14 @@ void JIT::emit_op_new_generator_func(Instruction* currentInstruction)
 
 void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
 {
-    OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(currentInstruction->u.opcode);
-    bool isArrowFunction = opcodeID == op_new_arrow_func_exp;
-    
     Jump notUndefinedScope;
     int dst = currentInstruction[1].u.operand;
 #if USE(JSVALUE64)
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    if (isArrowFunction)
-        emitGetVirtualRegister(currentInstruction[4].u.operand, regT1);
     notUndefinedScope = branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsUndefined())));
     store64(TrustedImm64(JSValue::encode(jsUndefined())), Address(callFrameRegister, sizeof(Register) * dst));
 #else
     emitLoadPayload(currentInstruction[2].u.operand, regT0);
-    if (isArrowFunction) {
-        int value = currentInstruction[4].u.operand;
-        emitLoad(value, regT3, regT2);
-    }
     notUndefinedScope = branch32(NotEqual, tagFor(currentInstruction[2].u.operand), TrustedImm32(JSValue::UndefinedTag));
     emitStore(dst, jsUndefined());
 #endif
@@ -993,20 +976,15 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
     notUndefinedScope.link(this);
         
     FunctionExecutable* function = m_codeBlock->functionExpr(currentInstruction[3].u.operand);
-    if (isArrowFunction)
-#if USE(JSVALUE64)
-        callOperation(operationNewArrowFunction, dst, regT0, function, regT1);
-#else 
-        callOperation(operationNewArrowFunction, dst, regT0, function, regT3, regT2);
-#endif
+    OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(currentInstruction->u.opcode);
+
+    if (opcodeID == op_new_func_exp || opcodeID == op_new_arrow_func_exp)
+        callOperation(operationNewFunction, dst, regT0, function);
     else {
-        if (opcodeID == op_new_func_exp)
-            callOperation(operationNewFunction, dst, regT0, function);
-        else {
-            ASSERT(opcodeID == op_new_generator_func_exp);
-            callOperation(operationNewGeneratorFunction, dst, regT0, function);
-        }
+        ASSERT(opcodeID == op_new_generator_func_exp);
+        callOperation(operationNewGeneratorFunction, dst, regT0, function);
     }
+
     done.link(this);
 }
 

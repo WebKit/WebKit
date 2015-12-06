@@ -1978,11 +1978,11 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         semanticFailIfTrue(m_vm->propertyNames->arguments == *functionInfo.name, "'", functionInfo.name->impl(), "' is not a valid function name in strict mode");
         semanticFailIfTrue(m_vm->propertyNames->eval == *functionInfo.name, "'", functionInfo.name->impl(), "' is not a valid function name in strict mode");
     }
-    if (functionScope->hasDirectSuper()) {
+    if (functionScope->hasDirectSuper() && functionBodyType == StandardFunctionBodyBlock) {
         semanticFailIfTrue(!isClassConstructor, "Cannot call super() outside of a class constructor");
         semanticFailIfTrue(constructorKind != ConstructorKind::Derived, "Cannot call super() in a base class constructor");
     }
-    if (functionScope->needsSuperBinding())
+    if (functionScope->needsSuperBinding() && functionBodyType == StandardFunctionBodyBlock)
         semanticFailIfTrue(expectedSuperBinding == SuperBinding::NotNeeded, "super can only be used in a method of a derived class");
 
     JSTokenLocation location = JSTokenLocation(m_token.m_location);

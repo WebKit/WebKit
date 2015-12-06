@@ -1559,6 +1559,7 @@ namespace JSC {
 
         bool usesEval() const { return m_features & EvalFeature; }
         bool usesArguments() const { return (m_features & ArgumentsFeature) && !(m_features & ShadowsArgumentsFeature); }
+        bool usesArrowFunction() const { return m_features & ArrowFunctionFeature; }
         bool modifiesParameter() const { return m_features & ModifiedParameterFeature; }
         bool modifiesArguments() const { return m_features & (EvalFeature | ModifiedArgumentsFeature); }
         bool isStrictMode() const { return m_features & StrictModeFeature; }

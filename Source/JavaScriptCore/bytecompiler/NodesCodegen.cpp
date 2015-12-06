@@ -146,7 +146,10 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* ThisNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    if (m_shouldAlwaysEmitTDZCheck || generator.constructorKind() == ConstructorKind::Derived || generator.generatorThisMode() == GeneratorThisMode::Empty)
+    if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext())
+        generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
+
+    if (m_shouldAlwaysEmitTDZCheck || generator.constructorKind() == ConstructorKind::Derived || generator.generatorThisMode() == GeneratorThisMode::Empty || generator.isDerivedConstructorContext())
         generator.emitTDZCheck(generator.thisRegister());
 
     if (dst == generator.ignoredResult())
@@ -164,6 +167,9 @@ RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 {
     if (dst == generator.ignoredResult())
         return 0;
+
+    if (generator.isDerivedConstructorContext())
+        return generator.emitGetById(generator.finalDestination(dst), generator.emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment(), generator.propertyNames().underscoreProto);
 
     RegisterID callee;
     callee.setIndex(JSStack::Callee);
@@ -696,6 +702,21 @@ CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argume
 
 RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    // We need try to load 'this' before call eval in constructor, because 'this' can created by 'super' in some of the arrow function
+    // var A = class A {
+    //   constructor () { this.id = 'A'; }
+    // }
+    //
+    // var B = class B extend A {
+    //    constructor () {
+    //       var arrow = () => super();
+    //       arrow();
+    //       eval("this.id = 'B'");
+    //    }
+    // }
+    if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext())
+        generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
+
     Variable var = generator.variable(generator.propertyNames().eval);
     if (RegisterID* local = var.local()) {
         RefPtr<RegisterID> func = generator.emitMove(generator.tempDestination(dst), local);
@@ -723,11 +744,16 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
     CallArguments callArguments(generator, m_args);
     if (m_expr->isSuperNode()) {
-        ASSERT(generator.isConstructor());
-        ASSERT(generator.constructorKind() == ConstructorKind::Derived);
+        ASSERT(generator.isConstructor() || generator.isDerivedConstructorContext());
+        ASSERT(generator.constructorKind() == ConstructorKind::Derived || generator.isDerivedConstructorContext());
         generator.emitMove(callArguments.thisRegister(), generator.newTarget());
         RegisterID* ret = generator.emitConstruct(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd());
         generator.emitMove(generator.thisRegister(), ret);
+        
+        bool isConstructorKindDerived = generator.constructorKind() == ConstructorKind::Derived;
+        if (generator.isDerivedConstructorContext() || (isConstructorKindDerived && generator.needsToUpdateArrowFunctionContext()))
+            generator.emitPutThisToArrowFunctionContextScope();
+        
         return ret;
     }
     generator.emitLoad(callArguments.thisRegister(), jsUndefined());
@@ -3052,6 +3078,9 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
         // If there is no return we must automatically insert one.
         if (!returnNode) {
+            if (generator.constructorKind() == ConstructorKind::Derived && generator.needsToUpdateArrowFunctionContext())
+                generator.emitLoadThisFromArrowFunctionLexicalEnvironment(); // Arrow function can invoke 'super' in constructor and before leave constructor we need load 'this' from lexical arrow function environment
+            
             RegisterID* r0 = generator.isConstructor() ? generator.thisRegister() : generator.emitLoad(0, jsUndefined());
             generator.emitProfileType(r0, ProfileTypeBytecodeFunctionReturnStatement); // Do not emit expression info for this profile because it's not in the user's source code.
             ASSERT(startOffset() >= lineStartOffset());

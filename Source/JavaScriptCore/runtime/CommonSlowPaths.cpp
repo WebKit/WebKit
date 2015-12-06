@@ -224,6 +224,11 @@ SLOW_PATH_DECL(slow_path_create_this)
     BEGIN();
     JSFunction* constructor = jsCast<JSFunction*>(OP(2).jsValue().asCell());
 
+#if !ASSERT_DISABLED
+    ConstructData constructData;
+    ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS || constructor->jsExecutable()->isArrowFunction());
+#endif
+
     auto& cacheWriteBarrier = pc[4].u.jsCell;
     if (!cacheWriteBarrier)
         cacheWriteBarrier.set(exec->vm(), exec->codeBlock(), constructor);

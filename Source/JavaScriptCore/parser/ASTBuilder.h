@@ -376,7 +376,7 @@ public:
 
     ExpressionNode* createArrowFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)
     {
-        usesThis();
+        usesArrowFunction();
         SourceCode source = m_sourceCode->subExpression(functionInfo.startOffset, functionInfo.body->isArrowFunctionBodyExpression() ? functionInfo.endOffset - 1 : functionInfo.endOffset, functionInfo.startLine, functionInfo.bodyStartColumn);
         ArrowFuncExprNode* result = new (m_parserArena) ArrowFuncExprNode(location, *functionInfo.name, functionInfo.body, source);
         functionInfo.body->setLoc(functionInfo.startLine, functionInfo.endLine, location.startOffset, location.lineStartOffset);
@@ -917,6 +917,7 @@ private:
 
     void incConstants() { m_scope.m_numConstants++; }
     void usesThis() { m_scope.m_features |= ThisFeature; }
+    void usesArrowFunction() { m_scope.m_features |= ArrowFunctionFeature; }
     void usesArguments() { m_scope.m_features |= ArgumentsFeature; }
     void usesWith() { m_scope.m_features |= WithFeature; }
     void usesEval() 

@@ -55,11 +55,12 @@ namespace JSC {
             return nullptr;
         }
         
-        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, bool inStrictContext, ThisTDZMode thisTDZMode, const SourceCode& evalSource, JSScope* scope)
+        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, bool inStrictContext, ThisTDZMode thisTDZMode, bool isDerivedConstructorContext, bool isArrowFunctionContext, const SourceCode& evalSource, JSScope* scope)
         {
             VariableEnvironment variablesUnderTDZ;
             JSScope::collectVariablesUnderTDZ(scope, variablesUnderTDZ);
-            EvalExecutable* evalExecutable = EvalExecutable::create(exec, evalSource, inStrictContext, thisTDZMode, &variablesUnderTDZ);
+            EvalExecutable* evalExecutable = EvalExecutable::create(exec, evalSource, inStrictContext, thisTDZMode, isDerivedConstructorContext, isArrowFunctionContext, &variablesUnderTDZ);
+
             if (!evalExecutable)
                 return nullptr;
 

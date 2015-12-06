@@ -745,7 +745,7 @@
 - path: es6/arrow_functions_lexical_arguments_binding.js
   cmd: runES6 :fail
 - path: es6/arrow_functions_lexical_new.target_binding.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/arrow_functions_lexical_super_binding.js
   cmd: runES6 :fail
 - path: es6/arrow_functions_no_prototype_property.js

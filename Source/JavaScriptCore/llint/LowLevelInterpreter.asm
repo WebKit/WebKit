@@ -1472,7 +1472,7 @@ _llint_op_new_generator_func_exp:
 _llint_op_new_arrow_func_exp:
     traceExecution()
     callSlowPath(_llint_slow_path_new_arrow_func_exp)
-    dispatch(5)
+    dispatch(4)
 
 _llint_op_call:
     traceExecution()

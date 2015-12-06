@@ -107,7 +107,6 @@ bool doesGC(Graph& graph, Node* node)
     case GetButterflyReadOnly:
     case CheckArray:
     case GetScope:
-    case LoadArrowFunctionThis:
     case SkipScope:
     case GetClosureVar:
     case PutClosureVar:
