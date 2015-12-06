@@ -73,6 +73,7 @@ public:
     bool isCanvasValue() const { return m_classType == CanvasClass; }
     bool isCrossfadeValue() const { return m_classType == CrossfadeClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
+    bool isCustomPropertyValue() const { return m_classType == CustomPropertyClass; }
     bool isFunctionValue() const { return m_classType == FunctionClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
@@ -176,7 +177,8 @@ protected:
 #endif
 
         CSSContentDistributionClass,
-
+        CustomPropertyClass,
+        
         // List class types must appear after ValueListClass.
         ValueListClass,
 #if ENABLE(CSS_IMAGE_SET)

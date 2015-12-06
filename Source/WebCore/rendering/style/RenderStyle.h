@@ -513,6 +513,11 @@ public:
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 
+    void setCustomPropertyValue(const AtomicString& name, const String& value) { rareInheritedData.access()->m_customProperties.access()->setCustomPropertyValue(name, value); }
+    String getCustomPropertyValue(const AtomicString& name) const { return rareInheritedData->m_customProperties->getCustomPropertyValue(name); }
+    bool hasCustomProperty(const AtomicString& name) const { return rareInheritedData->m_customProperties->hasCustomProperty(name); }
+    const HashMap<AtomicString, String>* customProperties() const { return &(rareInheritedData->m_customProperties->m_values); }
+
     void setHasViewportUnits(bool hasViewportUnits = true) { noninherited_flags.setHasViewportUnits(hasViewportUnits); }
     bool hasViewportUnits() const { return noninherited_flags.hasViewportUnits(); }
 

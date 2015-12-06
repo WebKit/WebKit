@@ -92,6 +92,10 @@ public:
     String getPropertyShorthand(CSSPropertyID) const;
     bool isPropertyImplicit(CSSPropertyID) const;
 
+    RefPtr<CSSValue> getCustomPropertyCSSValue(const String& propertyName) const;
+    String getCustomPropertyValue(const String& propertyName) const;
+    bool customPropertyIsImportant(const String& propertyName) const;
+
     Ref<MutableStyleProperties> copyBlockProperties() const;
 
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
@@ -132,7 +136,8 @@ protected:
     { }
 
     int findPropertyIndex(CSSPropertyID) const;
-
+    int findCustomPropertyIndex(const String& propertyName) const;
+    
     unsigned m_cssParserMode : 2;
     mutable unsigned m_isMutable : 1;
     unsigned m_arraySize : 29;
@@ -163,7 +168,8 @@ public:
     const CSSValue** valueArray() const;
     const StylePropertyMetadata* metadataArray() const;
     int findPropertyIndex(CSSPropertyID) const;
-
+    int findCustomPropertyIndex(const String& propertyName) const;
+    
     void* m_storage;
 
 private:
@@ -221,8 +227,13 @@ public:
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(StyledElement* parentElement);
 
     int findPropertyIndex(CSSPropertyID) const;
-
+    int findCustomPropertyIndex(const String& propertyName) const;
+    
     Vector<CSSProperty, 4> m_propertyVector;
+
+    // Methods for querying and altering CSS custom properties.
+    bool setCustomProperty(const String& propertyName, const String& value, bool important = false, StyleSheetContents* contextStyleSheet = 0);
+    bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
 
 private:
     explicit MutableStyleProperties(CSSParserMode);
@@ -231,6 +242,7 @@ private:
 
     bool removeShorthandProperty(CSSPropertyID);
     CSSProperty* findCSSPropertyWithID(CSSPropertyID);
+    CSSProperty* findCustomCSSPropertyWithName(const String&);
     std::unique_ptr<PropertySetCSSStyleDeclaration> m_cssomWrapper;
 
     friend class StyleProperties;
@@ -277,6 +289,13 @@ inline int StyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
     if (is<MutableStyleProperties>(*this))
         return downcast<MutableStyleProperties>(*this).findPropertyIndex(propertyID);
     return downcast<ImmutableStyleProperties>(*this).findPropertyIndex(propertyID);
+}
+
+inline int StyleProperties::findCustomPropertyIndex(const String& propertyName) const
+{
+    if (is<MutableStyleProperties>(*this))
+        return downcast<MutableStyleProperties>(*this).findCustomPropertyIndex(propertyName);
+    return downcast<ImmutableStyleProperties>(*this).findCustomPropertyIndex(propertyName);
 }
 
 } // namespace WebCore

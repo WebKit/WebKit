@@ -1,0 +1,11 @@
+<html>
+<head>
+<style>
+:root { --one: 10px; --two: 20px; }
+</style>
+<body>
+<script>
+document.write(document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("--one").cssText + " " + document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("--two").cssText)
+</script>
+</body>
+</html.

@@ -33,6 +33,7 @@
 #include "CSSBorderImage.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSDefaultStyleSheets.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceRule.h"
@@ -140,6 +141,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicStringHash.h>
 
 #if ENABLE(CSS_GRID_LAYOUT)
 #include "CSSGridLineNamesValue.h"
@@ -190,14 +192,17 @@ public:
 
     void applyDeferredProperties(StyleResolver&);
 
+    HashMap<AtomicString, Property>& customProperties() { return m_customProperties; }
+    
 private:
     void addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType);
 
-    Property m_properties[numCSSProperties + 1];
-    std::bitset<numCSSProperties + 1> m_propertyIsPresent;
+    Property m_properties[numCSSProperties + 2];
+    std::bitset<numCSSProperties + 2> m_propertyIsPresent;
 
     Vector<Property, 8> m_deferredProperties;
+    HashMap<AtomicString, Property> m_customProperties;
 
     TextDirection m_direction;
     WritingMode m_writingMode;
@@ -862,6 +867,9 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
     // decl, there's nothing to override. So just add the first properties.
     CascadedProperties cascade(direction, writingMode);
     cascade.addMatches(result, false, 0, result.matchedProperties().size() - 1);
+    
+    // Resolve custom properties first.
+    applyCascadedProperties(cascade, CSSPropertyCustom, CSSPropertyCustom);
 
     applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
@@ -1027,6 +1035,9 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     CascadedProperties cascade(direction, writingMode);
     cascade.addMatches(result, false, 0, result.matchedProperties().size() - 1);
+
+    // Resolve custom properties first.
+    applyCascadedProperties(cascade, CSSPropertyCustom, CSSPropertyCustom);
 
     applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
@@ -1710,6 +1721,9 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
         applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
         adjustStyleForInterCharacterRuby();
+    
+        // Resolve custom variables first.
+        applyCascadedProperties(cascade, CSSPropertyCustom, CSSPropertyCustom);
 
         // Start by applying properties that other properties may depend on.
         applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
@@ -1725,6 +1739,9 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     cascade.addMatches(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
     cascade.addMatches(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
     cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+    
+    // Resolve custom properties first.
+    applyCascadedProperties(cascade, CSSPropertyCustom, CSSPropertyCustom);
 
     applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
     
@@ -1905,6 +1922,12 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
     if (isInherit && !state.parentStyle()->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(id))
         state.parentStyle()->setHasExplicitlyInheritedProperties();
+    
+    if (id == CSSPropertyCustom) {
+        CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*value);
+        state.style()->setCustomPropertyValue(customProperty->name(), customProperty->value());
+        return;
+    }
 
     // Use the generated StyleBuilder.
     StyleBuilder::applyProperty(id, *this, *value, isInitial, isInherit);
@@ -2549,6 +2572,24 @@ void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue
 
     auto& property = m_properties[id];
     ASSERT(id < m_propertyIsPresent.size());
+    if (id == CSSPropertyCustom) {
+        m_propertyIsPresent.set(id);
+        const auto& customValue = downcast<CSSCustomPropertyValue>(cssValue);
+        bool hasValue = customProperties().contains(customValue.name());
+        if (!hasValue) {
+            Property property;
+            property.id = id;
+            memset(property.cssValue, 0, sizeof(property.cssValue));
+            setPropertyInternal(property, id, cssValue, linkMatchType);
+            customProperties().set(customValue.name(), property);
+        } else {
+            Property property = customProperties().get(customValue.name());
+            setPropertyInternal(property, id, cssValue, linkMatchType);
+            customProperties().set(customValue.name(), property);
+        }
+        return;
+    }
+    
     if (!m_propertyIsPresent[id])
         memset(property.cssValue, 0, sizeof(property.cssValue));
     m_propertyIsPresent.set(id);
@@ -2646,6 +2687,12 @@ void StyleResolver::applyCascadedProperties(CascadedProperties& cascade, int fir
         CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
         if (!cascade.hasProperty(propertyID))
             continue;
+        if (propertyID == CSSPropertyCustom) {
+            HashMap<AtomicString, CascadedProperties::Property>::iterator end = cascade.customProperties().end();
+            for (HashMap<AtomicString, CascadedProperties::Property>::iterator it = cascade.customProperties().begin(); it != end; ++it)
+                it->value.apply(*this);
+            continue;
+        }
         auto& property = cascade.property(propertyID);
         ASSERT(!shouldApplyPropertyInParseOrder(propertyID));
         property.apply(*this);
