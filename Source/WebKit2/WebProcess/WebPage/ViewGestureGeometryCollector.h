@@ -45,7 +45,6 @@ public:
     ~ViewGestureGeometryCollector();
 
     void mainFrameDidLayout();
-    void computeZoomInformationForNode(WebCore::Node&, WebCore::FloatPoint& origin, WebCore::FloatRect& renderRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale);
 
 private:
     // IPC::MessageReceiver.
@@ -62,6 +61,7 @@ private:
 #endif
 
     void dispatchDidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect targetRect, WebCore::FloatRect visibleContentRect, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
+    void computeZoomInformationForNode(WebCore::Node&, WebCore::FloatPoint& origin, WebCore::FloatRect& renderRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale);
 
     WebPage& m_webPage;
 

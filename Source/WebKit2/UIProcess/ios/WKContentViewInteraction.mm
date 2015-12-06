@@ -388,6 +388,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_actionSheetAssistant setDelegate:self];
     _smartMagnificationController = std::make_unique<SmartMagnificationController>(self);
     _isExpectingFastSingleTapCommit = NO;
+    _showDebugTapHighlightsForFastClicking = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitShowFastClickDebugTapHighlights"];
 }
 
 - (void)cleanupInteraction
@@ -752,7 +753,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
 
 - (void)_showTapHighlight
 {
-    if (!highlightedQuadsAreSmallerThanRect(_tapHighlightInformation.quads, _page->unobscuredContentRect()))
+    if (!highlightedQuadsAreSmallerThanRect(_tapHighlightInformation.quads, _page->unobscuredContentRect()) && !_showDebugTapHighlightsForFastClicking)
         return;
 
     if (!_highlightView) {
@@ -772,12 +773,15 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
 
     _isTapHighlightIDValid = NO;
 
-    _tapHighlightInformation.color = color;
     _tapHighlightInformation.quads = highlightedQuads;
     _tapHighlightInformation.topLeftRadius = topLeftRadius;
     _tapHighlightInformation.topRightRadius = topRightRadius;
     _tapHighlightInformation.bottomLeftRadius = bottomLeftRadius;
     _tapHighlightInformation.bottomRightRadius = bottomRightRadius;
+    if (_showDebugTapHighlightsForFastClicking)
+        _tapHighlightInformation.color = [self _tapHighlightColorForFastClick:![_doubleTapGestureRecognizer isEnabled]];
+    else
+        _tapHighlightInformation.color = color;
 
     if (_potentialTapInProgress) {
         _hasTapHighlightForPotentialTap = YES;
@@ -792,40 +796,15 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
     }
 }
 
-- (CGFloat)_fastClickZoomThreshold
+- (BOOL)_mayDisableDoubleTapGesturesDuringSingleTap
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (![defaults boolForKey:@"WebKitFastClickingEnabled"])
-        return 0;
-
-    return [defaults floatForKey:@"WebKitFastClickZoomThreshold"];
+    return _potentialTapInProgress;
 }
 
-- (BOOL)_allowDoubleTapToZoomForCurrentZoomScale:(CGFloat)currentZoomScale andTargetZoomScale:(CGFloat)targetZoomScale
-{
-    CGFloat zoomThreshold = [self _fastClickZoomThreshold];
-    if (!zoomThreshold)
-        return YES;
-
-    CGFloat minimumZoomRatioForDoubleTapToZoomIn = 1 + zoomThreshold;
-    CGFloat maximumZoomRatioForDoubleTapToZoomOut = 1 / minimumZoomRatioForDoubleTapToZoomIn;
-    CGFloat zoomRatio = targetZoomScale / currentZoomScale;
-    return zoomRatio < maximumZoomRatioForDoubleTapToZoomOut || zoomRatio > minimumZoomRatioForDoubleTapToZoomIn;
-}
-
-- (void)_disableDoubleTapGesturesUntilTapIsFinishedIfNecessary:(uint64_t)requestID allowsDoubleTapZoom:(bool)allowsDoubleTapZoom targetRect:(WebCore::FloatRect)targetRect isReplaced:(BOOL)isReplacedElement minimumScale:(double)minimumScale maximumScale:(double)maximumScale
+- (void)_disableDoubleTapGesturesDuringTapIfNecessary:(uint64_t)requestID
 {
     if (!_potentialTapInProgress || _latestTapID != requestID)
         return;
-
-    if (allowsDoubleTapZoom) {
-        // Though the element allows us to zoom in on double tap, we avoid this behavior in favor of fast clicking if the difference in scale is insignificant.
-        _smartMagnificationController->adjustSmartMagnificationTargetRectAndZoomScales(!isReplacedElement, targetRect, minimumScale, maximumScale);
-        CGFloat currentZoomScale = [_webView _contentZoomScale];
-        CGFloat targetZoomScale = [_webView _targetContentZoomScaleForRect:targetRect currentScale:currentZoomScale fitEntireRect:isReplacedElement minimumScale:minimumScale maximumScale:maximumScale];
-        if ([self _allowDoubleTapToZoomForCurrentZoomScale:currentZoomScale andTargetZoomScale:targetZoomScale])
-            return;
-    }
 
     [self _setDoubleTapGesturesEnabled:NO];
 }
@@ -1064,7 +1043,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_finishInteraction
 {
     _isTapHighlightIDValid = NO;
-    [UIView animateWithDuration:0.1
+    CGFloat tapHighlightFadeDuration = _showDebugTapHighlightsForFastClicking ? 0.25 : 0.1;
+    [UIView animateWithDuration:tapHighlightFadeDuration
                      animations:^{
                          [_highlightView layer].opacity = 0;
                      }
@@ -1170,7 +1150,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_endPotentialTapAndEnableDoubleTapGesturesIfNecessary
 {
-    if (_webView._viewportIsUserScalable)
+    if (_webView._allowsDoubleTapGestures)
         [self _setDoubleTapGesturesEnabled:YES];
 
     _potentialTapInProgress = NO;
@@ -2326,6 +2306,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     });
 }
 
+- (WebCore::Color)_tapHighlightColorForFastClick:(BOOL)forFastClick
+{
+    ASSERT(_showDebugTapHighlightsForFastClicking);
+    return forFastClick ? WebCore::Color(0, 225, 0, 127) : WebCore::Color(225, 0, 0, 127);
+}
+
 - (void)_setDoubleTapGesturesEnabled:(BOOL)enabled
 {
     if (enabled && ![_doubleTapGestureRecognizer isEnabled]) {
@@ -2335,6 +2321,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         [_doubleTapGestureRecognizer setDelegate:nil];
         [self _createAndConfigureDoubleTapGestureRecognizer];
     }
+
+    if (_showDebugTapHighlightsForFastClicking && !enabled)
+        _tapHighlightInformation.color = [self _tapHighlightColorForFastClick:YES];
+
     [_doubleTapGestureRecognizer setEnabled:enabled];
 }
 

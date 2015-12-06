@@ -1,3 +1,30 @@
+2015-12-06  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r191644.
+
+    2015-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Implement viewport-width-based fast-click heuristic
+            https://bugs.webkit.org/show_bug.cgi?id=150604
+            <rdar://problem/23267308>
+
+            Reviewed by Simon Fraser.
+
+            Implement a new fast-click heuristic that applies to viewports with width = device-width. Adds
+            new tests to check various fast-clicking behaviors. These three tests check (for pages with width=
+            device-width) that:
+
+            - Double-tapping to zoom still works when the scale is not the initial scale.
+            - If the page is at initial scale, we fire fast-clicks instead of zooming.
+            - When zooming out from element scale, we end up at initial scale instead of minimum scale.
+
+            * fast/events/ios/viewport-device-width-allows-double-tap-zoom-out-expected.txt: Added.
+            * fast/events/ios/viewport-device-width-allows-double-tap-zoom-out.html: Added.
+            * fast/events/ios/viewport-device-width-at-initial-scale-fast-clicks-expected.txt: Added.
+            * fast/events/ios/viewport-device-width-at-initial-scale-fast-clicks.html: Added.
+            * fast/events/ios/viewport-zooms-from-element-to-initial-scale-expected.txt: Added.
+            * fast/events/ios/viewport-zooms-from-element-to-initial-scale.html: Added.
+
 2015-12-05  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r192953.
