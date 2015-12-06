@@ -662,6 +662,16 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
 {
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation);
     sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get());
+    if (m_potentialTapNode) {
+        FloatPoint origin = position;
+        FloatRect renderRect;
+        bool isReplaced;
+        double viewportMinimumScale;
+        double viewportMaximumScale;
+
+        m_viewGestureGeometryCollector.computeZoomInformationForNode(*m_potentialTapNode.get(), origin, renderRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+        send(Messages::WebPageProxy::DisableDoubleTapGesturesUntilTapIsFinishedIfNecessary(requestID, true, renderRect, isReplaced, viewportMinimumScale, viewportMaximumScale));
+    }
 }
 
 void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)

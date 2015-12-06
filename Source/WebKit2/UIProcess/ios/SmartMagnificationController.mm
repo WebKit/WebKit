@@ -78,6 +78,17 @@ void SmartMagnificationController::handleResetMagnificationGesture(FloatPoint or
     [m_contentView _zoomOutWithOrigin:origin];
 }
 
+void SmartMagnificationController::adjustSmartMagnificationTargetRectAndZoomScales(bool addMagnificationPadding, WebCore::FloatRect& targetRect, double& minimumScale, double& maximumScale)
+{
+    if (addMagnificationPadding) {
+        targetRect.inflateX(smartMagnificationElementPadding * targetRect.width());
+        targetRect.inflateY(smartMagnificationElementPadding * targetRect.height());
+    }
+
+    minimumScale = std::max(minimumScale, smartMagnificationMinimumScale);
+    maximumScale = std::min(maximumScale, smartMagnificationMaximumScale);
+}
+
 void SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale)
 {
     if (targetRect.isEmpty()) {
@@ -85,14 +96,9 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
         [m_contentView _zoomOutWithOrigin:origin];
         return;
     }
-
-    if (!isReplacedElement) {
-        targetRect.inflateX(smartMagnificationElementPadding * targetRect.width());
-        targetRect.inflateY(smartMagnificationElementPadding * targetRect.height());
-    }
-
-    double maximumScale = std::min(viewportMaximumScale, smartMagnificationMaximumScale);
-    double minimumScale = std::max(viewportMinimumScale, smartMagnificationMinimumScale);
+    double minimumScale = viewportMinimumScale;
+    double maximumScale = viewportMaximumScale;
+    adjustSmartMagnificationTargetRectAndZoomScales(!isReplacedElement, targetRect, minimumScale, maximumScale);
 
     // FIXME: Check if text selection wants to consume the double tap before we attempt magnification.
 
@@ -118,12 +124,9 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
 
 void SmartMagnificationController::magnify(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale)
 {
-    targetRect.inflateX(smartMagnificationElementPadding * targetRect.width());
-    targetRect.inflateY(smartMagnificationElementPadding * targetRect.height());
-
-    double maximumScale = std::min(viewportMaximumScale, smartMagnificationMaximumScale);
-    double minimumScale = std::max(viewportMinimumScale, smartMagnificationMinimumScale);
-
+    double maximumScale = viewportMaximumScale;
+    double minimumScale = viewportMinimumScale;
+    adjustSmartMagnificationTargetRectAndZoomScales(true, targetRect, minimumScale, maximumScale);
     [m_contentView _zoomToRect:targetRect withOrigin:origin fitEntireRect:NO minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
 }
 

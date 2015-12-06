@@ -128,6 +128,7 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 // The viewport meta tag width is negative if the value is not defined.
 @property (nonatomic, readonly) CGFloat _viewportMetaTagWidth;
+@property (nonatomic, readonly) BOOL _viewportIsUserScalable;
 
 @property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
 
