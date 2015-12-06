@@ -1,5 +1,21 @@
 2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191032. rdar://problem/23769770
+
+    2015-10-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [iOS] Build fix
+
+            Unreviewed.
+
+            Mach-O section names are limited to 16 characters.
+
+            * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig:
+            * DumpRenderTree/mac/DumpRenderTree.mm:
+            (activateFontsIOS):
+
+2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190848. rdar://problem/23769770
 
     2015-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
