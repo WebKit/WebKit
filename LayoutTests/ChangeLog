@@ -1,3 +1,58 @@
+2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r193575. rdar://problem/23769689
+
+    2015-09-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] [Font Features] Implement font-variant-*
+        https://bugs.webkit.org/show_bug.cgi?id=148413
+
+        Reviewed by Darin Adler.
+
+        Updating tests because font-variant-ligatures is being unprefixed.
+
+        Also, update css3/resources/FontWithFeatures.otf to support "lnum" feature.
+
+        * css3/font-feature-settings-rendering-2-expected.html:
+        * css3/font-feature-settings-rendering-2.html:
+        * css3/font-variant-all-webfont-expected.html: Added.
+        * css3/font-variant-all-webfont.html: Added.
+        * css3/font-variant-parsing-expected.txt: Added.
+        * css3/font-variant-parsing.html: Added.
+        * css3/resources/FontWithFeatures.otf:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/css/parsing-font-variant-ligatures.html:
+        * fast/text/font-variant-ligatures.html:
+        * platform/mac/TestExpectations:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
+    2015-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font feature settings comparisons are order-dependent and case-dependent
+        https://bugs.webkit.org/show_bug.cgi?id=147719
+
+        Reviewed by Benjamin Poulain.
+
+        Make the test insensitive to order and case.
+
+        * css3/font-feature-settings-parsing-expected.txt:
+        * css3/font-feature-settings-parsing.html:
+
+    2015-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [font-features] Map OpenType feature tags to TrueType feature selectors
+        https://bugs.webkit.org/show_bug.cgi?id=147819
+
+        Reviewed by Dean Jackson.
+
+        Updated test results.
+
+        * platform/mac/css3/font-feature-settings-preinstalled-fonts-expected.png: Added.
+        * platform/mac/css3/font-feature-settings-preinstalled-fonts-expected.txt:
+
 2015-12-05  Dana Burkart  <dburkart@apple.com>
 
         Merge r190564. rdar://problem/23769693

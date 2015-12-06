@@ -470,7 +470,7 @@ private:
 
     void appendGSUBTable()
     {
-        std::vector<std::array<char, 5>> features {{"liga"}, {"clig"}, {"dlig"}, {"hlig"}, {"calt"}, {"subs"}, {"sups"}, {"smcp"}, {"c2sc"}, {"pcap"}, {"c2pc"}, {"unic"}, {"titl"}, {"onum"}, {"pnum"}, {"tnum"}, {"frac"}, {"afrc"}, {"ordn"}, {"zero"}, {"hist"}, {"jp78"}, {"jp83"}, {"jp90"}, {"jp04"}, {"smpl"}, {"trad"}, {"fwid"}, {"pwid"}, {"ruby"}};
+        std::vector<std::array<char, 5>> features {{"liga"}, {"clig"}, {"dlig"}, {"hlig"}, {"calt"}, {"subs"}, {"sups"}, {"smcp"}, {"c2sc"}, {"pcap"}, {"c2pc"}, {"unic"}, {"titl"}, {"lnum"}, {"onum"}, {"pnum"}, {"tnum"}, {"frac"}, {"afrc"}, {"ordn"}, {"zero"}, {"hist"}, {"jp78"}, {"jp83"}, {"jp90"}, {"jp04"}, {"smpl"}, {"trad"}, {"fwid"}, {"pwid"}, {"ruby"}};
         auto tableLocation = result.size();
         auto headerSize = 10;
 

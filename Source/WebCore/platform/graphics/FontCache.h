@@ -32,11 +32,13 @@
 
 #include "FontDescription.h"
 #include "Timer.h"
+#include <array>
 #include <limits.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -67,40 +69,74 @@ typedef IMLangFontLink IMLangFontLinkType;
 
 // This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
 struct FontDescriptionFontDataCacheKey {
-    explicit FontDescriptionFontDataCacheKey(unsigned size = 0)
-        : size(size)
-        , weight(0)
-        , flags(0)
-    { }
+    FontDescriptionFontDataCacheKey() = default;
+
     FontDescriptionFontDataCacheKey(const FontDescription& description)
-        : size(description.computedPixelSize())
-        , weight(description.weight())
-        , flags(makeFlagKey(description))
+        : m_size(description.computedPixelSize())
+        , m_weight(description.weight())
+        , m_flags(makeFlagsKey(description))
+        , m_featureSettings(description.featureSettings())
     { }
-    static unsigned makeFlagKey(const FontDescription& description)
+
+    explicit FontDescriptionFontDataCacheKey(WTF::HashTableDeletedValueType)
+        : m_size(cHashTableDeletedSize)
+    { }
+
+    bool operator==(const FontDescriptionFontDataCacheKey& other) const
     {
-        return static_cast<unsigned>(description.fontSynthesis()) << 6
+        return m_size == other.m_size && m_weight == other.m_weight && m_flags == other.m_flags
+            && m_featureSettings == other.m_featureSettings;
+    }
+
+    bool operator!=(const FontDescriptionFontDataCacheKey& other) const
+    {
+        return !(*this == other);
+    }
+
+    bool isHashTableDeletedValue() const { return m_size == cHashTableDeletedSize; }
+
+    inline unsigned computeHash() const
+    {
+        unsigned hashValues[] = { m_size, m_weight, m_flags[0], m_flags[1], m_featureSettings.hash() };
+        return StringHasher::hashMemory(hashValues, sizeof(hashValues));
+    }
+
+private:
+    static std::array<unsigned, 2> makeFlagsKey(const FontDescription& description)
+    {
+        static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
+        unsigned first = static_cast<unsigned>(description.script()) << 9
+            | static_cast<unsigned>(description.smallCaps()) << 8
+            | static_cast<unsigned>(description.fontSynthesis()) << 6
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2
             | static_cast<unsigned>(description.italic()) << 1
             | static_cast<unsigned>(description.renderingMode());
+        unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 27
+            | static_cast<unsigned>(description.variantEastAsianWidth()) << 25
+            | static_cast<unsigned>(description.variantEastAsianVariant()) << 22
+            | static_cast<unsigned>(description.variantAlternates()) << 21
+            | static_cast<unsigned>(description.variantNumericSlashedZero()) << 20
+            | static_cast<unsigned>(description.variantNumericOrdinal()) << 19
+            | static_cast<unsigned>(description.variantNumericFraction()) << 17
+            | static_cast<unsigned>(description.variantNumericSpacing()) << 15
+            | static_cast<unsigned>(description.variantNumericFigure()) << 13
+            | static_cast<unsigned>(description.variantCaps()) << 10
+            | static_cast<unsigned>(description.variantPosition()) << 8
+            | static_cast<unsigned>(description.variantContextualAlternates()) << 6
+            | static_cast<unsigned>(description.variantHistoricalLigatures()) << 4
+            | static_cast<unsigned>(description.variantDiscretionaryLigatures()) << 2
+            | static_cast<unsigned>(description.variantCommonLigatures());
+        return {{ first, second }};
     }
-    bool operator==(const FontDescriptionFontDataCacheKey& other) const
-    {
-        return size == other.size && weight == other.weight && flags == other.flags;
-    }
-    bool operator!=(const FontDescriptionFontDataCacheKey& other) const
-    {
-        return !(*this == other);
-    }
-    inline unsigned computeHash() const
-    {
-        return StringHasher::hashMemory<sizeof(FontDescriptionFontDataCacheKey)>(this);
-    }
-    unsigned size;
-    unsigned weight;
-    unsigned flags;
+
+    static const unsigned cHashTableDeletedSize = 0xFFFFFFFFU;
+
+    unsigned m_size { 0 };
+    unsigned m_weight { 0 };
+    std::array<unsigned, 2> m_flags {{ 0, 0 }};
+    FontFeatureSettings m_featureSettings;
 };
 
 class FontCache {
@@ -182,7 +218,7 @@ private:
 };
 
 #if PLATFORM(COCOA)
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings*);
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings&, const FontVariantSettings&);
 #endif
 
 #if !PLATFORM(MAC)

@@ -26,21 +26,51 @@
 #include "config.h"
 #include "FontFeatureSettings.h"
 
+#include <wtf/text/AtomicStringHash.h>
+
 namespace WebCore {
 
-FontFeature::FontFeature(const AtomicString& tag, int value)
+FontFeature::FontFeature(const FontFeatureTag& tag, int value)
     : m_tag(tag)
     , m_value(value)
 {
 }
 
-bool FontFeature::operator==(const FontFeature& other)
+FontFeature::FontFeature(FontFeatureTag&& tag, int value)
+    : m_tag(WTF::move(tag))
+    , m_value(value)
+{
+}
+
+bool FontFeature::operator==(const FontFeature& other) const
 {
     return m_tag == other.m_tag && m_value == other.m_value;
 }
 
-FontFeatureSettings::FontFeatureSettings()
+bool FontFeature::operator<(const FontFeature& other) const
 {
+    return (m_tag < other.m_tag) || (m_tag == other.m_tag && m_value < other.m_value);
+}
+
+void FontFeatureSettings::insert(FontFeature&& feature)
+{
+    // This vector will almost always have 0 or 1 items in it. Don't bother with the overhead of a binary search or a hash set.
+    size_t i;
+    for (i = 0; i < m_list.size(); ++i) {
+        if (feature < m_list[i])
+            break;
+    }
+    m_list.insert(i, WTF::move(feature));
+}
+
+unsigned FontFeatureSettings::hash() const
+{
+    unsigned result = 0;
+    for (size_t i = 0; i < size(); ++i) {
+        auto& item = at(i);
+        result = WTF::pairIntHash(result, WTF::pairIntHash(FontFeatureTagHash::hash(item.tag()), item.value()));
+    }
+    return result;
 }
 
 }

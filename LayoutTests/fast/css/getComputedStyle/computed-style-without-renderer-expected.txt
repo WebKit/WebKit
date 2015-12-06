@@ -158,7 +158,12 @@ justify-self: auto
 justify-items: auto
 -webkit-font-kerning: auto
 -webkit-font-smoothing: auto
--webkit-font-variant-ligatures: normal
+font-variant-ligatures: normal
+font-variant-position: normal
+font-variant-caps: normal
+font-variant-numeric: normal
+font-variant-alternates: normal
+font-variant-east-asian: normal
 -webkit-hyphenate-character: auto
 -webkit-hyphenate-limit-after: auto
 -webkit-hyphenate-limit-before: auto

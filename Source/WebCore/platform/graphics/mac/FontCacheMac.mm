@@ -264,7 +264,7 @@ static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, F
 // Family name is somewhat of a misnomer here. We first attempt to find an exact match
 // comparing the desiredFamily to the PostScript name of the installed fonts. If that fails
 // we then do a search based on the family names of the installed fonts.
-static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, const FontFeatureSettings* featureSettings, float size)
+static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, float size)
 {
     if (const auto& specialCase = fontWithFamilySpecialCase(family, weight, desiredTraits, size))
         return specialCase.value();
@@ -287,7 +287,7 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 
     NSString *desiredFamily = family;
     RetainPtr<CTFontRef> foundFont = adoptCF(CTFontCreateForCSS((CFStringRef)desiredFamily, toCoreTextFontWeight(weight), requestedTraits, size));
-    foundFont = applyFontFeatureSettings(foundFont.get(), featureSettings);
+    foundFont = applyFontFeatureSettings(foundFont.get(), featureSettings, variantSettings);
     if (!foundFont)
         return nil;
     font = CFBridgingRelease(CFRetain(foundFont.get()));
@@ -512,7 +512,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     const FontPlatformData& platformData = originalFontData->platformData();
     NSFont *nsFont = platformData.nsFont();
     RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), characters, length);
-    result = applyFontFeatureSettings(result.get(), description.featureSettings());
+    result = applyFontFeatureSettings(result.get(), description.featureSettings(), description.variantSettings());
     if (!result)
         return nullptr;
 
@@ -671,7 +671,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     NSFontTraitMask traits = fontDescription.italic() ? NSFontItalicTrait : 0;
     float size = fontDescription.computedPixelSize();
 
-    NSFont *nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), size);
+    NSFont *nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), size);
     if (!nsFont) {
         if (!shouldAutoActivateFontIfNeeded(family))
             return nullptr;
@@ -680,7 +680,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         [NSFont fontWithName:family size:size];
 
-        nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), size);
+        nsFont = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), size);
         if (!nsFont)
             return nullptr;
     }
