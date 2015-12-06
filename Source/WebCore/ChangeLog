@@ -1,3 +1,48 @@
+2015-12-05  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r191981. rdar://problem/23732379
+
+    2015-10-30  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Implement support for the autocomplete attribute
+        https://bugs.webkit.org/show_bug.cgi?id=150731
+        rdar://problem/21078968
+
+        The autocomplete attribute is defined by
+        https://html.spec.whatwg.org/multipage/forms.html#autofill.
+
+        Reviewed by Brent Fulgham.
+
+        Test: fast/forms/autocomplete-tokens.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::isContactToken):
+        Return true if this is a contact token.
+        (WebCore::categoryForAutofillFieldToken):
+        Adds all of the autofill field tokens to a map, and returns the
+        category for a given token.
+        (WebCore::maxTokensForAutofillFieldCategory):
+        Return the maximum number of tokens an autofill category supports.
+        (WebCore::HTMLFormControlElement::parseAutocompleteAttribute):
+        Implement the processing model defined in
+        https://html.spec.whatwg.org/multipage/forms.html#processing-model-3
+        with respect to the IDL-exposed autofill value.
+        (WebCore::HTMLFormControlElement::setAutocomplete):
+        Set the autocomplete attribute to the given string.
+
+        * html/HTMLFormControlElement.h:
+        Declare setAutocomplete() and autocomplete().
+
+        * html/HTMLInputElement.idl:
+        Remove the Reflect attribute. We now have custom processing for getting
+        this attribute.
+
+        * html/HTMLSelectElement.idl:
+        Declare the autocomplete attribute.
+
+        * html/HTMLTextAreaElement.idl:
+        Ditto.
+
 2015-12-05  Dana Burkart  <dburkart@apple.com>
 
         Merge r190564. rdar://problem/23769747

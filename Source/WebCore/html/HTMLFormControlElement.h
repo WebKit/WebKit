@@ -114,6 +114,9 @@ public:
 
     static HTMLFormControlElement* enclosingFormControlElement(Node*);
 
+    String autocomplete() const;
+    void setAutocomplete(const String&);
+
     using Node::ref;
     using Node::deref;
 

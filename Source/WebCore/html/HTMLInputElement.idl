@@ -22,7 +22,7 @@
 interface HTMLInputElement : HTMLElement {
     [Reflect] attribute DOMString accept;
     [Reflect] attribute DOMString alt;
-    [Reflect] attribute DOMString autocomplete;
+    attribute DOMString autocomplete;
     [Reflect] attribute boolean autofocus;
     [Reflect=checked] attribute boolean defaultChecked;
     attribute boolean checked;

@@ -61,4 +61,6 @@
     void setCustomValidity([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
     readonly attribute NodeList labels;
+
+    attribute DOMString autocomplete;
 };
