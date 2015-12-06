@@ -347,6 +347,8 @@ public:
     bool parseRegionThread(CSSPropertyID, bool important);
 
     bool parseFontVariantLigatures(bool important);
+    bool parseFontVariantNumeric(bool important);
+    bool parseFontVariantEastAsian(bool important);
 
     bool parseWillChange(bool important);
 

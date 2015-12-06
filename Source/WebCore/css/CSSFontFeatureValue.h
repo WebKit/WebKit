@@ -27,27 +27,27 @@
 #define CSSFontFeatureValue_h
 
 #include "CSSValue.h"
-#include <wtf/text/WTFString.h>
+#include "FontFeatureSettings.h"
 
 namespace WebCore {
 
 class CSSFontFeatureValue : public CSSValue {
 public:
-    static Ref<CSSFontFeatureValue> create(const String& tag, int value)
+    static Ref<CSSFontFeatureValue> create(FontFeatureTag&& tag, int value)
     {
-        return adoptRef(*new CSSFontFeatureValue(tag, value));
+        return adoptRef(*new CSSFontFeatureValue(WTF::move(tag), value));
     }
 
-    const String& tag() const { return m_tag; }
+    const FontFeatureTag& tag() const { return m_tag; }
     int value() const { return m_value; }
     String customCSSText() const;
 
     bool equals(const CSSFontFeatureValue&) const;
 
 private:
-    CSSFontFeatureValue(const String&, int);
+    CSSFontFeatureValue(FontFeatureTag&&, int);
 
-    String m_tag;
+    FontFeatureTag m_tag;
     const int m_value;
 };
 

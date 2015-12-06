@@ -11,10 +11,10 @@
     function test(value, expectedCSSText, expectedComputedCSSText)
     {
         var element = document.createElement("div");
-        element.style.setProperty("-webkit-font-variant-ligatures", value);
-        var cssText = element.style.webkitFontVariantLigatures;
+        element.style.setProperty("font-variant-ligatures", value);
+        var cssText = element.style.fontVariantLigatures;
         document.body.appendChild(element);
-        var computedCSSText = getComputedStyle(element).webkitFontVariantLigatures;
+        var computedCSSText = getComputedStyle(element).fontVariantLigatures;
         document.body.removeChild(element);
         if (cssText === expectedCSSText && computedCSSText == expectedComputedCSSText)
             log("PASS: '" + value + "' parsed as '" + expectedCSSText + "' and computed to '" + computedCSSText + "'");

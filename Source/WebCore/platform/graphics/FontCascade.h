@@ -333,14 +333,14 @@ private:
             break;
         }
 
-        switch (m_fontDescription.commonLigaturesState()) {
-        case FontDescription::DisabledLigaturesState:
+        switch (m_fontDescription.variantCommonLigatures()) {
+        case FontVariantLigatures::No:
             features &= ~Ligatures;
             break;
-        case FontDescription::EnabledLigaturesState:
+        case FontVariantLigatures::Yes:
             features |= Ligatures;
             break;
-        case FontDescription::NormalLigaturesState:
+        default:
             break;
         }
 

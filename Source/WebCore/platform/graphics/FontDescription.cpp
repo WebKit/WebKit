@@ -40,8 +40,6 @@ struct SameSizeAsFontDescription {
     uint32_t bitfields2 : 8;
 };
 
-COMPILE_ASSERT(sizeof(FontDescription) == sizeof(SameSizeAsFontDescription), FontDescription_should_stay_small);
-
 FontWeight FontDescription::lighterWeight(void) const
 {
     switch (m_weight) {

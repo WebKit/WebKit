@@ -112,7 +112,7 @@ public:
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     static bool convertOverflowScrolling(StyleResolver&, CSSValue&);
 #endif
-    static RefPtr<FontFeatureSettings> convertFontFeatureSettings(StyleResolver&, CSSValue&);
+    static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, CSSValue&);
     static SVGLength convertSVGLength(StyleResolver&, CSSValue&);
     static Vector<SVGLength> convertSVGLengthVector(StyleResolver&, CSSValue&);
     static Vector<SVGLength> convertStrokeDashArray(StyleResolver&, CSSValue&);
@@ -1003,19 +1003,19 @@ inline Optional<FilterOperations> StyleBuilderConverter::convertFilterOperations
     return Nullopt;
 }
 
-inline RefPtr<FontFeatureSettings> StyleBuilderConverter::convertFontFeatureSettings(StyleResolver&, CSSValue& value)
+inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
-        return nullptr;
+        return { };
     }
 
-    RefPtr<FontFeatureSettings> settings = FontFeatureSettings::create();
+    FontFeatureSettings settings;
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& feature = downcast<CSSFontFeatureValue>(item.get());
-        settings->append(FontFeature(feature.tag(), feature.value()));
+        settings.insert(FontFeature(feature.tag(), feature.value()));
     }
-    return WTF::move(settings);
+    return settings;
 }
 
 #if PLATFORM(IOS)

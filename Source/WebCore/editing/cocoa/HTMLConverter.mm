@@ -1156,7 +1156,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         }
     }
 
-    String fontLigatures = _caches->propertyValueForNode(element, CSSPropertyWebkitFontVariantLigatures);
+    String fontLigatures = _caches->propertyValueForNode(element, CSSPropertyFontVariantLigatures);
     if (fontLigatures.length()) {
         if (fontLigatures.contains("normal"))
             ;   // default: whatever the system decides to do

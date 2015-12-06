@@ -1,3 +1,308 @@
+2015-09-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] [Font Features] Implement font-variant-*
+        https://bugs.webkit.org/show_bug.cgi?id=148413
+
+        Reviewed by Darin Adler.
+
+        This patch is the first pass of implementing of the font-variant-* properties. Specifically,
+        these properties are:
+        font-variant-ligatures
+        font-variant-position
+        font-variant-caps
+        font-variant-numeric
+        font-variant-alternates
+        font-variant-east-asian
+
+        These new properties are held inside FontDescription as bit fields. At font creation time,
+        we consult with the FontDescription to figure out which variants are specified. We then
+        convert those variants to font features, and resolve these font features with the additional
+        features specified by font-feature-settings (as the spec requires). This patch also makes
+        our caches sensitive to these new properties of FontDescription so we don't look up cached,
+        stale fonts.
+
+        The implementation has some caveats, however. They are listed here:
+        1. These new properties need to interact correctly with @font-face declarations. In
+        particular, only certain properties of the FontDescription should be considered when
+        detecting if a @font-face declaration applies to a particular element. This discrimination
+        does not happen correctly. In addition, any feature-specific CSS properties inside the
+        @font-face declaration need to be consulted at a particular point during the feature
+        resolve. This does not currently occur.
+        2. One of the properties, font-variant-alternates, has a few values which require custom
+        CSS functions, which makes modeling the properties as bit fields tricky. These extra values
+        need to be implemented. This patch implements all the values which do not require extra CSS
+        features.
+        3. These new properties have a shorthand, font-variant, which is designed to be backward-
+        compatible with CSS 2.1's concept of font-variant. In particular, CSS 2.1 allows you to use
+        "normal" and "small-caps" with font-variant. Both of these values are values of the new
+        property font-variant-caps. However, our existing implementation of small-caps does not
+        use font features when they exist; instead, it simply draws text at a smaller font size and
+        uses (effectively) text-transform to force capital letters. This implementation needs to be
+        unified with the new font-variant-caps property so that we can expand font-variant to be
+        a shorthand for the new properties.
+        4. font-variant-position and font-variant-caps should provide appropriate synthesis if no
+        matching font-feature exists.
+        5. FontCascade::typesettingFeatures() is now no-longer accurate. Fixing this would be large
+        enough to warrant its own patch.
+        6. These properties are not tested with TrueType fonts.
+
+        Tests: css3/font-variant-all-webfont.html
+               css3/font-variant-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp: Reconstruct StyleProperties from a RenderStyle.
+        (WebCore::appendLigaturesValue):
+        (WebCore::fontVariantLigaturesPropertyValue):
+        (WebCore::fontVariantPositionPropertyValue):
+        (WebCore::fontVariantCapsPropertyValue):
+        (WebCore::fontVariantNumericPropertyValue):
+        (WebCore::fontVariantAlternatesPropertyValue):
+        (WebCore::fontVariantEastAsianPropertyValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSFontFeatureValue.cpp: Update to FontFeatureTag instead of WTF::String.
+        (WebCore::CSSFontFeatureValue::CSSFontFeatureValue):
+        (WebCore::CSSFontFeatureValue::customCSSText):
+        * css/CSSFontFeatureValue.h: Ditto.
+        (WebCore::CSSFontFeatureValue::create):
+        (WebCore::CSSFontFeatureValue::tag):
+        * css/CSSParser.cpp: Parse the new properties according to the CSS3 fonts spec.
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFontFeatureTag):
+        (WebCore::CSSParser::parseFontVariantLigatures):
+        (WebCore::CSSParser::parseFontVariantNumeric):
+        (WebCore::CSSParser::parseFontVariantEastAsian):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h: For the three properties which are simple keyword value
+        properties, implement casting operators to automatically convert between RenderStyle
+        objects and CSS property objects.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator FontVariantPosition):
+        (WebCore::CSSPrimitiveValue::operator FontVariantCaps):
+        (WebCore::CSSPrimitiveValue::operator FontVariantAlternates):
+        * css/CSSPropertyNames.in: New properties.
+        * css/CSSValueKeywords.in: New values.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontFeatureSettings): Update to not use
+        RefPtrs.
+        * css/StyleBuilderCustom.h: Properties which are not simple keyword value properties are
+        decomposed into multiple members of FontDescription. These properties exist to convert
+        between these aggregate members and the CSS properties.
+        (WebCore::StyleBuilderCustom::applyInheritFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyInitialFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyInheritFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyInitialFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyInheritFontVariantEastAsian):
+        (WebCore::StyleBuilderCustom::applyInitialFontVariantEastAsian):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantEastAsian):
+        (WebCore::StyleBuilderCustom::applyInitialWebkitFontVariantLigatures): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritWebkitFontVariantLigatures): Deleted.
+        (WebCore::StyleBuilderCustom::applyValueWebkitFontVariantLigatures): Deleted.
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::computedAttributesForElement): Unprefix font-variant-ligatures.
+        * platform/graphics/FontCache.h: Update cache to be sensitive to new state in
+        FontDescription.
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        (WebCore::FontDescriptionKey::operator==):
+        (WebCore::FontDescriptionKey::computeHash):
+        (WebCore::FontDescriptionKey::makeFlagsKey):
+        (WebCore::FontDescriptionKey::makeFlagKey): Deleted.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::codePath): These new variants should trigger the complex text
+        codepath.
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::computeTypesettingFeatures): Update to use new state enum.
+        * platform/graphics/FontDescription.cpp: Add state to hold new property values.
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontCascadeDescription::FontCascadeDescription): Deleted.
+        * platform/graphics/FontDescription.h: Add state to hold new property values.
+        (WebCore::FontDescription::featureSettings):
+        (WebCore::FontDescription::variantCommonLigatures):
+        (WebCore::FontDescription::variantDiscretionaryLigatures):
+        (WebCore::FontDescription::variantHistoricalLigatures):
+        (WebCore::FontDescription::variantContextualAlternates):
+        (WebCore::FontDescription::variantPosition):
+        (WebCore::FontDescription::variantCaps):
+        (WebCore::FontDescription::variantNumericFigure):
+        (WebCore::FontDescription::variantNumericSpacing):
+        (WebCore::FontDescription::variantNumericFraction):
+        (WebCore::FontDescription::variantNumericOrdinal):
+        (WebCore::FontDescription::variantNumericSlashedZero):
+        (WebCore::FontDescription::variantAlternates):
+        (WebCore::FontDescription::variantEastAsianVariant):
+        (WebCore::FontDescription::variantEastAsianWidth):
+        (WebCore::FontDescription::variantEastAsianRuby):
+        (WebCore::FontDescription::variantSettings):
+        (WebCore::FontDescription::setFeatureSettings):
+        (WebCore::FontDescription::setVariantCommonLigatures):
+        (WebCore::FontDescription::setVariantDiscretionaryLigatures):
+        (WebCore::FontDescription::setVariantHistoricalLigatures):
+        (WebCore::FontDescription::setVariantContextualAlternates):
+        (WebCore::FontDescription::setVariantPosition):
+        (WebCore::FontDescription::setVariantCaps):
+        (WebCore::FontDescription::setVariantNumericFigure):
+        (WebCore::FontDescription::setVariantNumericSpacing):
+        (WebCore::FontDescription::setVariantNumericFraction):
+        (WebCore::FontDescription::setVariantNumericOrdinal):
+        (WebCore::FontDescription::setVariantNumericSlashedZero):
+        (WebCore::FontDescription::setVariantAlternates):
+        (WebCore::FontDescription::setVariantEastAsianVariant):
+        (WebCore::FontDescription::setVariantEastAsianWidth):
+        (WebCore::FontDescription::setVariantEastAsianRuby):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontCascadeDescription::initialVariantPosition):
+        (WebCore::FontCascadeDescription::initialVariantCaps):
+        (WebCore::FontCascadeDescription::initialVariantAlternates):
+        (WebCore::FontCascadeDescription::commonLigaturesState): Deleted.
+        (WebCore::FontCascadeDescription::discretionaryLigaturesState): Deleted.
+        (WebCore::FontCascadeDescription::historicalLigaturesState): Deleted.
+        (WebCore::FontCascadeDescription::setCommonLigaturesState): Deleted.
+        (WebCore::FontCascadeDescription::setDiscretionaryLigaturesState): Deleted.
+        (WebCore::FontCascadeDescription::setHistoricalLigaturesState): Deleted.
+        (WebCore::FontCascadeDescription::operator==): Deleted.
+        * platform/graphics/FontFeatureSettings.cpp: Update to use FontFeatureTag instead of
+        WTF::String.
+        (WebCore::FontFeature::FontFeature):
+        (WebCore::FontFeature::operator==):
+        (WebCore::FontFeature::operator<):
+        (WebCore::FontFeatureSettings::hash):
+        (WebCore::FontFeatureSettings::create): Deleted.
+        * platform/graphics/FontFeatureSettings.h: Update to use FontFeatureTag instead of
+        WTF::String.
+        (WebCore::fontFeatureTag):
+        (WebCore::FontFeatureTagHash::hash):
+        (WebCore::FontFeatureTagHash::equal):
+        (WebCore::FontFeatureTagHashTraits::constructDeletedValue):
+        (WebCore::FontFeatureTagHashTraits::isDeletedValue):
+        (WebCore::FontFeature::tag):
+        (WebCore::FontFeatureSettings::operator==):
+        (WebCore::FontFeatureSettings::begin):
+        (WebCore::FontFeatureSettings::end):
+        (WebCore::FontFeatureSettings::FontFeatureSettings): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp: Ditto. Also, when computing font
+        features, consult with the state inside FontDescription.
+        (WebCore::tagEquals):
+        (WebCore::appendTrueTypeFeature):
+        (WebCore::appendOpenTypeFeature):
+        (WebCore::computeFeatureSettingsFromVariants):
+        (WebCore::preparePlatformFont):
+        (WebCore::platformFontLookupWithFamily):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp: Update to use references instead of
+        pointers.
+        (WebCore::HarfBuzzShaper::setFontFeatures):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamily): Ditto.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Be sensitive to new state inside FontDescription.
+        * platform/text/TextFlags.h:
+        (WebCore::FontVariantSettings::isAllNormal): New state enums.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription): Be sensitive to new state inside
+        FontDescription.
+        * rendering/line/BreakingContext.h:
+
+2015-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clean up makeFontCascadeCacheKey()
+        https://bugs.webkit.org/show_bug.cgi?id=147430
+
+        Reviewed by Benjamin Poulain.
+
+        FontDescriptionKey is designed to encapsulate all the cacheable properties of a FontDescription.
+        However, a higher-level cache, FontCascadeCacheKey, was taking some values from FontDescriptions.
+        The fact that there wasn't a bug before is just a happy coincidence. This patch moves those bits
+        from the higher-level cache and puts them into FontDescriptionKey where they belong.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::makeFlagKey):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::operator==):
+        (WebCore::makeFontSelectorFlags): Deleted.
+        (WebCore::makeFontCascadeCacheKey): Deleted.
+        (WebCore::computeFontCascadeCacheHash): Deleted.
+
+2015-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make FontDescriptionKey sensitive to FontFeatureSettings
+        https://bugs.webkit.org/show_bug.cgi?id=147751
+
+        Reviewed by Anders Carlsson.
+
+        Just like how FontDescription hashes should be sensitive to locale, they should
+        also be sensitive to font features.
+
+        This patch also fixes operator== for FontDescriptionKey, which was previously
+        comparing hashes for equality instead of the underlying data. Comparing hashes
+        for equality is useless inside hashmaps.
+
+        This is in preparation for implementing font-feature-settings.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::isHashTableDeletedValue):
+        (WebCore::FontPlatformDataCacheKey::hashTableDeletedSize): Deleted.
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        (WebCore::FontDescriptionKey::operator==):
+        (WebCore::FontDescriptionKey::operator!=):
+        (WebCore::FontDescriptionKey::isHashTableDeletedValue):
+        (WebCore::FontDescriptionKey::computeHash):
+        * platform/graphics/FontFeatureSettings.cpp:
+        (WebCore::FontFeature::hash):
+        (WebCore::FontFeatureSettings::hash):
+        * platform/graphics/FontFeatureSettings.h:
+
+2015-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font feature settings comparisons are order-dependent and case-dependent
+        https://bugs.webkit.org/show_bug.cgi?id=147719
+
+        Reviewed by Benjamin Poulain.
+
+        We should make our settings vector order-independent and case-independent.
+
+        Test: css3/font-feature-settings-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFeatureTag):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontFeatureSettings):
+        * platform/graphics/FontFeatureSettings.cpp:
+        (WebCore::FontFeature::FontFeature):
+        (WebCore::FontFeature::operator==):
+        (WebCore::FontFeatureSettings::FontFeatureSettings):
+        * platform/graphics/FontFeatureSettings.h:
+        (WebCore::FontFeature::FontFeature):
+        (WebCore::FontFeature::operator==):
+        (WebCore::FontFeature::operator<):
+        (WebCore::FontFeatureSettings::insert):
+        (WebCore::FontFeatureSettings::FontFeatureSettings):
+        (WebCore::FontFeatureSettings::append): Deleted.
+
+2015-08-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [font-features] Map OpenType feature tags to TrueType feature selectors
+        https://bugs.webkit.org/show_bug.cgi?id=147819
+
+        Reviewed by Dean Jackson.
+
+        Allow uses of font-feature-settings even on TrueType fonts.
+
+        Test: css3/font-feature-settings-preinstalled-fonts.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::appendRawTrueTypeFeature):
+        (WebCore::appendTrueTypeFeature):
+
 2015-12-05  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r193479.
