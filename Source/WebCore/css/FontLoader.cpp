@@ -300,7 +300,7 @@ bool FontLoader::resolveFontStyle(const String& fontString, FontCascade& font)
         return false;
     
     String fontValue = parsedStyle->getPropertyValue(CSSPropertyFont);
-    if (fontValue == "inherit" || fontValue == "initial")
+    if (fontValue == "inherit" || fontValue == "initial" || fontValue == "unset" || fontValue == "revert")
         return false;
 
     RefPtr<RenderStyle> style = RenderStyle::create();

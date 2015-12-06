@@ -1,5 +1,31 @@
 2015-12-05  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191252.
+
+    2015-10-17  David Hyatt  <hyatt@apple.com>
+
+            Implement the CSS4 'revert' keyword.
+            https://bugs.webkit.org/show_bug.cgi?id=149702
+
+            Reviewed by Simon Fraser.
+
+            * fast/css/all-keyword-revert-expected.html: Added.
+            * fast/css/all-keyword-revert.html: Added.
+            * fast/css/revert-color-expected.html: Added.
+            * fast/css/revert-color.html: Added.
+            * fast/css/revert-margins-expected.html: Added.
+            * fast/css/revert-margins.html: Added.
+            * fast/css/variables/all-keyword-revert-expected.html: Added.
+            * fast/css/variables/all-keyword-revert.html: Added.
+            * fast/css/variables/revert-inheritance-expected.html: Added.
+            * fast/css/variables/revert-inheritance.html: Added.
+            * fast/css/variables/revert-no-inheritance-expected.html: Added.
+            * fast/css/variables/revert-no-inheritance.html: Added.
+            * fast/css/variables/revert-variable-reference-expected.html: Added.
+            * fast/css/variables/revert-variable-reference.html: Added.
+
+2015-12-05  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r191178.
 
     2015-10-16  David Hyatt  <hyatt@apple.com>

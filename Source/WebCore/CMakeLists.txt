@@ -1300,6 +1300,7 @@ set(WebCore_SOURCES
     css/CSSProperty.cpp
     css/CSSPropertySourceData.cpp
     css/CSSReflectValue.cpp
+    css/CSSRevertValue.cpp
     css/CSSRule.cpp
     css/CSSRuleList.cpp
     css/CSSSegmentedFontFace.cpp

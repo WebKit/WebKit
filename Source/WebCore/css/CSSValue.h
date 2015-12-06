@@ -47,7 +47,8 @@ public:
         CSS_VALUE_LIST = 2,
         CSS_CUSTOM = 3,
         CSS_INITIAL = 4,
-        CSS_UNSET = 5
+        CSS_UNSET = 5,
+        CSS_REVERT = 6
     };
 
     // Override RefCounted's deref() to ensure operator delete is called on
@@ -94,6 +95,7 @@ public:
     bool isInheritedValue() const { return m_classType == InheritedClass; }
     bool isInitialValue() const { return m_classType == InitialClass; }
     bool isUnsetValue() const { return m_classType == UnsetClass; }
+    bool isRevertValue() const { return m_classType == RevertClass; }
     bool treatAsInitialValue(CSSPropertyID) const;
     bool treatAsInheritedValue(CSSPropertyID) const;
     bool isLinearGradientValue() const { return m_classType == LinearGradientClass; }
@@ -169,6 +171,7 @@ protected:
         InheritedClass,
         InitialClass,
         UnsetClass,
+        RevertClass,
 
         ReflectClass,
         ShadowClass,
