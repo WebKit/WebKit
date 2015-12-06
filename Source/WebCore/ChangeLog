@@ -1,5 +1,25 @@
 2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190895. rdar://problem/23769817
+
+    2015-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Font Features] Tiny cleanup regarding FontCascade::typesettingFeatures()
+            https://bugs.webkit.org/show_bug.cgi?id=150051
+
+            Reviewed by Simon Fraser.
+
+            There are no typesetting features which aren't kerning nor ligatures.
+
+            No new tests because there is no behavior difference.
+
+            * platform/graphics/FontCascade.cpp:
+            (WebCore::FontCascade::codePath):
+            * platform/graphics/WidthIterator.h:
+            (WebCore::WidthIterator::supportsTypesettingFeatures): Deleted.
+
+2015-12-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190999. rdar://problem/23769821
 
     2015-10-13  Myles C. Maxfield  <mmaxfield@apple.com>

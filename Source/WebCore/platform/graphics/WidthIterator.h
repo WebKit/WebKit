@@ -58,15 +58,6 @@ public:
     Vector<SVGGlyph::ArabicForm>& arabicForms() { return m_arabicForms; }
 #endif
 
-    static bool supportsTypesettingFeatures(const FontCascade& font)
-    {
-#if PLATFORM(COCOA)
-        return !(font.typesettingFeatures() & ~(Kerning | Ligatures));
-#else
-        return !font.typesettingFeatures();
-#endif
-    }
-
     const FontCascade* m_font;
 
     const TextRun& m_run;
