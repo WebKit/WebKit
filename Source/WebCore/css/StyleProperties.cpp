@@ -29,6 +29,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "CSSVariableDependentValue.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertyShorthand.h"
@@ -209,7 +210,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyWebkitAnimation:
         return getLayeredShorthandValue(webkitAnimationShorthand());
     case CSSPropertyMarker: {
-        RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
+        RefPtr<CSSValue> value = getPropertyCSSValueInternal(CSSPropertyMarkerStart);
         if (value)
             return value->cssText();
         return String();
@@ -231,8 +232,11 @@ String StyleProperties::getCustomPropertyValue(const String& propertyName) const
 
 String StyleProperties::borderSpacingValue(const StylePropertyShorthand& shorthand) const
 {
-    RefPtr<CSSValue> horizontalValue = getPropertyCSSValue(shorthand.properties()[0]);
-    RefPtr<CSSValue> verticalValue = getPropertyCSSValue(shorthand.properties()[1]);
+    RefPtr<CSSValue> horizontalValue = getPropertyCSSValueInternal(shorthand.properties()[0]);
+    if (horizontalValue && horizontalValue->isVariableDependentValue())
+        return horizontalValue->cssText();
+    
+    RefPtr<CSSValue> verticalValue = getPropertyCSSValueInternal(shorthand.properties()[1]);
 
     // While standard border-spacing property does not allow specifying border-spacing-vertical without
     // specifying border-spacing-horizontal <http://www.w3.org/TR/CSS21/tables.html#separated-borders>,
@@ -375,8 +379,10 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
     size_t numLayers = 0;
 
     for (unsigned i = 0; i < size; ++i) {
-        values[i] = getPropertyCSSValue(shorthand.properties()[i]);
+        values[i] = getPropertyCSSValueInternal(shorthand.properties()[i]);
         if (values[i]) {
+            if (values[i]->isVariableDependentValue())
+                return values[i]->cssText();
             if (values[i]->isBaseValueList())
                 numLayers = std::max(downcast<CSSValueList>(*values[i]).length(), numLayers);
             else
@@ -511,9 +517,11 @@ String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthan
     StringBuilder result;
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         if (!isPropertyImplicit(shorthand.properties()[i])) {
-            RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
+            RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[i]);
             if (!value)
                 return String();
+            if (value->isVariableDependentValue())
+                return value->cssText();
             String valueText = value->cssText();
             if (!i)
                 commonValue = valueText;
@@ -540,10 +548,12 @@ String StyleProperties::getCommonValue(const StylePropertyShorthand& shorthand) 
     String res;
     bool lastPropertyWasImportant = false;
     for (unsigned i = 0; i < shorthand.length(); ++i) {
-        RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
+        RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[i]);
         // FIXME: CSSInitialValue::cssText should generate the right value.
         if (!value)
             return String();
+        if (value->isVariableDependentValue())
+            return value->cssText();
         String text = value->cssText();
         if (text.isNull())
             return String();
@@ -589,6 +599,17 @@ String StyleProperties::borderPropertyValue(CommonValueMode valueMode) const
 }
 
 PassRefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
+{
+    PassRefPtr<CSSValue> value = getPropertyCSSValueInternal(propertyID);
+    if (value && value->isVariableDependentValue()) {
+        auto& dependentValue = downcast<CSSVariableDependentValue>(*value);
+        if (dependentValue.propertyID() != propertyID)
+            return CSSCustomPropertyValue::createInvalid(); // Have to return special "pending-substitution" value.
+    }
+    return value;
+}
+
+PassRefPtr<CSSValue> StyleProperties::getPropertyCSSValueInternal(CSSPropertyID propertyID) const
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
@@ -878,153 +899,159 @@ String StyleProperties::asText() const
         CSSPropertyID shorthandPropertyID = CSSPropertyInvalid;
         CSSPropertyID borderFallbackShorthandProperty = CSSPropertyInvalid;
         String value;
+        
+        if (property.value() && property.value()->isVariableDependentValue()) {
+            auto& dependentValue = downcast<CSSVariableDependentValue>(*property.value());
+            if (dependentValue.propertyID() != propertyID)
+                shorthandPropertyID = dependentValue.propertyID();
+        } else {
+            switch (propertyID) {
+            case CSSPropertyAnimationName:
+            case CSSPropertyAnimationDuration:
+            case CSSPropertyAnimationTimingFunction:
+            case CSSPropertyAnimationDelay:
+            case CSSPropertyAnimationIterationCount:
+            case CSSPropertyAnimationDirection:
+            case CSSPropertyAnimationFillMode:
+                shorthandPropertyID = CSSPropertyAnimation;
+                break;
+            case CSSPropertyBackgroundPositionX:
+                positionXPropertyIndex = n;
+                continue;
+            case CSSPropertyBackgroundPositionY:
+                positionYPropertyIndex = n;
+                continue;
+            case CSSPropertyBackgroundRepeatX:
+                repeatXPropertyIndex = n;
+                continue;
+            case CSSPropertyBackgroundRepeatY:
+                repeatYPropertyIndex = n;
+                continue;
+            case CSSPropertyBorderTopWidth:
+            case CSSPropertyBorderRightWidth:
+            case CSSPropertyBorderBottomWidth:
+            case CSSPropertyBorderLeftWidth:
+                if (!borderFallbackShorthandProperty)
+                    borderFallbackShorthandProperty = CSSPropertyBorderWidth;
+                FALLTHROUGH;
+            case CSSPropertyBorderTopStyle:
+            case CSSPropertyBorderRightStyle:
+            case CSSPropertyBorderBottomStyle:
+            case CSSPropertyBorderLeftStyle:
+                if (!borderFallbackShorthandProperty)
+                    borderFallbackShorthandProperty = CSSPropertyBorderStyle;
+                FALLTHROUGH;
+            case CSSPropertyBorderTopColor:
+            case CSSPropertyBorderRightColor:
+            case CSSPropertyBorderBottomColor:
+            case CSSPropertyBorderLeftColor:
+                if (!borderFallbackShorthandProperty)
+                    borderFallbackShorthandProperty = CSSPropertyBorderColor;
 
-        switch (propertyID) {
-        case CSSPropertyAnimationName:
-        case CSSPropertyAnimationDuration:
-        case CSSPropertyAnimationTimingFunction:
-        case CSSPropertyAnimationDelay:
-        case CSSPropertyAnimationIterationCount:
-        case CSSPropertyAnimationDirection:
-        case CSSPropertyAnimationFillMode:
-            shorthandPropertyID = CSSPropertyAnimation;
-            break;
-        case CSSPropertyBackgroundPositionX:
-            positionXPropertyIndex = n;
-            continue;
-        case CSSPropertyBackgroundPositionY:
-            positionYPropertyIndex = n;
-            continue;
-        case CSSPropertyBackgroundRepeatX:
-            repeatXPropertyIndex = n;
-            continue;
-        case CSSPropertyBackgroundRepeatY:
-            repeatYPropertyIndex = n;
-            continue;
-        case CSSPropertyBorderTopWidth:
-        case CSSPropertyBorderRightWidth:
-        case CSSPropertyBorderBottomWidth:
-        case CSSPropertyBorderLeftWidth:
-            if (!borderFallbackShorthandProperty)
-                borderFallbackShorthandProperty = CSSPropertyBorderWidth;
-            FALLTHROUGH;
-        case CSSPropertyBorderTopStyle:
-        case CSSPropertyBorderRightStyle:
-        case CSSPropertyBorderBottomStyle:
-        case CSSPropertyBorderLeftStyle:
-            if (!borderFallbackShorthandProperty)
-                borderFallbackShorthandProperty = CSSPropertyBorderStyle;
-            FALLTHROUGH;
-        case CSSPropertyBorderTopColor:
-        case CSSPropertyBorderRightColor:
-        case CSSPropertyBorderBottomColor:
-        case CSSPropertyBorderLeftColor:
-            if (!borderFallbackShorthandProperty)
-                borderFallbackShorthandProperty = CSSPropertyBorderColor;
-
-            // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
-            ASSERT(CSSPropertyBorder - firstCSSProperty < shorthandPropertyAppeared.size());
-            if (!shorthandPropertyAppeared[CSSPropertyBorder - firstCSSProperty]) {
-                value = borderPropertyValue(ReturnNullOnUncommonValues);
-                if (value.isNull())
-                    shorthandPropertyAppeared.set(CSSPropertyBorder - firstCSSProperty);
-                else
+                // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
+                ASSERT(CSSPropertyBorder - firstCSSProperty < shorthandPropertyAppeared.size());
+                if (!shorthandPropertyAppeared[CSSPropertyBorder - firstCSSProperty]) {
+                    value = borderPropertyValue(ReturnNullOnUncommonValues);
+                    if (value.isNull())
+                        shorthandPropertyAppeared.set(CSSPropertyBorder - firstCSSProperty);
+                    else
+                        shorthandPropertyID = CSSPropertyBorder;
+                } else if (shorthandPropertyUsed[CSSPropertyBorder - firstCSSProperty])
                     shorthandPropertyID = CSSPropertyBorder;
-            } else if (shorthandPropertyUsed[CSSPropertyBorder - firstCSSProperty])
-                shorthandPropertyID = CSSPropertyBorder;
-            if (!shorthandPropertyID)
-                shorthandPropertyID = borderFallbackShorthandProperty;
-            break;
-        case CSSPropertyWebkitBorderHorizontalSpacing:
-        case CSSPropertyWebkitBorderVerticalSpacing:
-            shorthandPropertyID = CSSPropertyBorderSpacing;
-            break;
-        case CSSPropertyFontFamily:
-        case CSSPropertyLineHeight:
-        case CSSPropertyFontSize:
-        case CSSPropertyFontStyle:
-        case CSSPropertyFontVariant:
-        case CSSPropertyFontWeight:
-            // Don't use CSSPropertyFont because old UAs can't recognize them but are important for editing.
-            break;
-        case CSSPropertyListStyleType:
-        case CSSPropertyListStylePosition:
-        case CSSPropertyListStyleImage:
-            shorthandPropertyID = CSSPropertyListStyle;
-            break;
-        case CSSPropertyMarginTop:
-        case CSSPropertyMarginRight:
-        case CSSPropertyMarginBottom:
-        case CSSPropertyMarginLeft:
-            shorthandPropertyID = CSSPropertyMargin;
-            break;
-        case CSSPropertyOutlineWidth:
-        case CSSPropertyOutlineStyle:
-        case CSSPropertyOutlineColor:
-            shorthandPropertyID = CSSPropertyOutline;
-            break;
-        case CSSPropertyOverflowX:
-        case CSSPropertyOverflowY:
-            shorthandPropertyID = CSSPropertyOverflow;
-            break;
-        case CSSPropertyPaddingTop:
-        case CSSPropertyPaddingRight:
-        case CSSPropertyPaddingBottom:
-        case CSSPropertyPaddingLeft:
-            shorthandPropertyID = CSSPropertyPadding;
-            break;
-        case CSSPropertyTransitionProperty:
-        case CSSPropertyTransitionDuration:
-        case CSSPropertyTransitionTimingFunction:
-        case CSSPropertyTransitionDelay:
-            shorthandPropertyID = CSSPropertyTransition;
-            break;
-        case CSSPropertyWebkitAnimationName:
-        case CSSPropertyWebkitAnimationDuration:
-        case CSSPropertyWebkitAnimationTimingFunction:
-        case CSSPropertyWebkitAnimationDelay:
-        case CSSPropertyWebkitAnimationIterationCount:
-        case CSSPropertyWebkitAnimationDirection:
-        case CSSPropertyWebkitAnimationFillMode:
-            shorthandPropertyID = CSSPropertyWebkitAnimation;
-            break;
-        case CSSPropertyFlexDirection:
-        case CSSPropertyFlexWrap:
-            shorthandPropertyID = CSSPropertyFlexFlow;
-            break;
-        case CSSPropertyFlexBasis:
-        case CSSPropertyFlexGrow:
-        case CSSPropertyFlexShrink:
-            shorthandPropertyID = CSSPropertyFlex;
-            break;
-        case CSSPropertyWebkitMaskPositionX:
-        case CSSPropertyWebkitMaskPositionY:
-        case CSSPropertyWebkitMaskRepeatX:
-        case CSSPropertyWebkitMaskRepeatY:
-        case CSSPropertyWebkitMaskImage:
-        case CSSPropertyWebkitMaskRepeat:
-        case CSSPropertyWebkitMaskPosition:
-        case CSSPropertyWebkitMaskClip:
-        case CSSPropertyWebkitMaskOrigin:
-            shorthandPropertyID = CSSPropertyWebkitMask;
-            break;
-        case CSSPropertyPerspectiveOriginX:
-        case CSSPropertyPerspectiveOriginY:
-            shorthandPropertyID = CSSPropertyPerspectiveOrigin;
-            break;
-        case CSSPropertyTransformOriginX:
-        case CSSPropertyTransformOriginY:
-        case CSSPropertyTransformOriginZ:
-            shorthandPropertyID = CSSPropertyTransformOrigin;
-            break;
-        case CSSPropertyWebkitTransitionProperty:
-        case CSSPropertyWebkitTransitionDuration:
-        case CSSPropertyWebkitTransitionTimingFunction:
-        case CSSPropertyWebkitTransitionDelay:
-            shorthandPropertyID = CSSPropertyWebkitTransition;
-            break;
-        default:
-            break;
+                if (!shorthandPropertyID)
+                    shorthandPropertyID = borderFallbackShorthandProperty;
+                break;
+            case CSSPropertyWebkitBorderHorizontalSpacing:
+            case CSSPropertyWebkitBorderVerticalSpacing:
+                shorthandPropertyID = CSSPropertyBorderSpacing;
+                break;
+            case CSSPropertyFontFamily:
+            case CSSPropertyLineHeight:
+            case CSSPropertyFontSize:
+            case CSSPropertyFontStyle:
+            case CSSPropertyFontVariant:
+            case CSSPropertyFontWeight:
+                // Don't use CSSPropertyFont because old UAs can't recognize them but are important for editing.
+                break;
+            case CSSPropertyListStyleType:
+            case CSSPropertyListStylePosition:
+            case CSSPropertyListStyleImage:
+                shorthandPropertyID = CSSPropertyListStyle;
+                break;
+            case CSSPropertyMarginTop:
+            case CSSPropertyMarginRight:
+            case CSSPropertyMarginBottom:
+            case CSSPropertyMarginLeft:
+                shorthandPropertyID = CSSPropertyMargin;
+                break;
+            case CSSPropertyOutlineWidth:
+            case CSSPropertyOutlineStyle:
+            case CSSPropertyOutlineColor:
+                shorthandPropertyID = CSSPropertyOutline;
+                break;
+            case CSSPropertyOverflowX:
+            case CSSPropertyOverflowY:
+                shorthandPropertyID = CSSPropertyOverflow;
+                break;
+            case CSSPropertyPaddingTop:
+            case CSSPropertyPaddingRight:
+            case CSSPropertyPaddingBottom:
+            case CSSPropertyPaddingLeft:
+                shorthandPropertyID = CSSPropertyPadding;
+                break;
+            case CSSPropertyTransitionProperty:
+            case CSSPropertyTransitionDuration:
+            case CSSPropertyTransitionTimingFunction:
+            case CSSPropertyTransitionDelay:
+                shorthandPropertyID = CSSPropertyTransition;
+                break;
+            case CSSPropertyWebkitAnimationName:
+            case CSSPropertyWebkitAnimationDuration:
+            case CSSPropertyWebkitAnimationTimingFunction:
+            case CSSPropertyWebkitAnimationDelay:
+            case CSSPropertyWebkitAnimationIterationCount:
+            case CSSPropertyWebkitAnimationDirection:
+            case CSSPropertyWebkitAnimationFillMode:
+                shorthandPropertyID = CSSPropertyWebkitAnimation;
+                break;
+            case CSSPropertyFlexDirection:
+            case CSSPropertyFlexWrap:
+                shorthandPropertyID = CSSPropertyFlexFlow;
+                break;
+            case CSSPropertyFlexBasis:
+            case CSSPropertyFlexGrow:
+            case CSSPropertyFlexShrink:
+                shorthandPropertyID = CSSPropertyFlex;
+                break;
+            case CSSPropertyWebkitMaskPositionX:
+            case CSSPropertyWebkitMaskPositionY:
+            case CSSPropertyWebkitMaskRepeatX:
+            case CSSPropertyWebkitMaskRepeatY:
+            case CSSPropertyWebkitMaskImage:
+            case CSSPropertyWebkitMaskRepeat:
+            case CSSPropertyWebkitMaskPosition:
+            case CSSPropertyWebkitMaskClip:
+            case CSSPropertyWebkitMaskOrigin:
+                shorthandPropertyID = CSSPropertyWebkitMask;
+                break;
+            case CSSPropertyPerspectiveOriginX:
+            case CSSPropertyPerspectiveOriginY:
+                shorthandPropertyID = CSSPropertyPerspectiveOrigin;
+                break;
+            case CSSPropertyTransformOriginX:
+            case CSSPropertyTransformOriginY:
+            case CSSPropertyTransformOriginZ:
+                shorthandPropertyID = CSSPropertyTransformOrigin;
+                break;
+            case CSSPropertyWebkitTransitionProperty:
+            case CSSPropertyWebkitTransitionDuration:
+            case CSSPropertyWebkitTransitionTimingFunction:
+            case CSSPropertyWebkitTransitionDelay:
+                shorthandPropertyID = CSSPropertyWebkitTransition;
+                break;
+            default:
+                break;
+            }
         }
 
         unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
@@ -1318,7 +1345,7 @@ Ref<MutableStyleProperties> StyleProperties::copyPropertiesInSet(const CSSProper
     Vector<CSSProperty, 256> list;
     list.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
+        RefPtr<CSSValue> value = getPropertyCSSValueInternal(set[i]);
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }

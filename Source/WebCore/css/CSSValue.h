@@ -60,6 +60,7 @@ public:
     Type cssValueType() const;
 
     String cssText() const;
+
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
@@ -74,6 +75,9 @@ public:
     bool isCrossfadeValue() const { return m_classType == CrossfadeClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
     bool isCustomPropertyValue() const { return m_classType == CustomPropertyClass; }
+    bool isInvalidCustomPropertyValue() const;
+    bool isVariableDependentValue() const { return m_classType == VariableDependentClass; }
+    bool isVariableValue() const { return m_classType == VariableClass; }
     bool isFunctionValue() const { return m_classType == FunctionClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
@@ -178,7 +182,9 @@ protected:
 
         CSSContentDistributionClass,
         CustomPropertyClass,
-        
+        VariableDependentClass,
+        VariableClass,
+
         // List class types must appear after ValueListClass.
         ValueListClass,
 #if ENABLE(CSS_IMAGE_SET)
@@ -235,6 +241,8 @@ protected:
 
 private:
     unsigned m_classType : ClassTypeBits; // ClassType
+    
+friend class CSSValueList;
 };
 
 template<typename CSSValueType>
@@ -265,6 +273,8 @@ inline bool compareCSSValue(const Ref<CSSValueType>& first, const Ref<CSSValueTy
 {
     return first.get().equals(second);
 }
+
+typedef HashMap<AtomicString, RefPtr<CSSValue>> CustomPropertyValueMap;
 
 } // namespace WebCore
 

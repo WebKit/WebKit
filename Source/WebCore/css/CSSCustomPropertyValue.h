@@ -28,22 +28,28 @@
 
 #include "CSSParserValues.h"
 #include "CSSValue.h"
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CSSCustomPropertyValue : public CSSValue {
 public:
-    static Ref<CSSCustomPropertyValue> create(const AtomicString& name, std::unique_ptr<CSSParserValueList>& valueList)
+    static Ref<CSSCustomPropertyValue> create(const AtomicString& name, RefPtr<CSSValue>& value)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, valueList));
+        return adoptRef(*new CSSCustomPropertyValue(name, value));
+    }
+    
+    static Ref<CSSCustomPropertyValue> createInvalid()
+    {
+        return adoptRef(*new CSSCustomPropertyValue(emptyString(), emptyString()));
     }
     
     String customCSSText() const
     {
         if (!m_serialized) {
             m_serialized = true;
-            m_stringValue = m_parserValue ? m_parserValue->toString() : "";
+            m_stringValue = m_value ? m_value->cssText() : emptyString();
         }
         return m_stringValue;
     }
@@ -54,18 +60,33 @@ public:
     // is rarely used, so serialization to compare is probably fine.
     bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && customCSSText() == other.customCSSText(); }
 
+    bool isInvalid() const { return !m_value; }
+    bool containsVariables() const { return m_containsVariables; }
+
+    const RefPtr<CSSValue> value() const { return m_value.get(); }
+
 private:
-    CSSCustomPropertyValue(const AtomicString& name, std::unique_ptr<CSSParserValueList>& valueList)
+    CSSCustomPropertyValue(const AtomicString& name, RefPtr<CSSValue>& value)
         : CSSValue(CustomPropertyClass)
         , m_name(name)
-        , m_parserValue(WTF::move(valueList))
-        , m_serialized(false)
+        , m_value(value)
+        , m_containsVariables(value && value->isVariableDependentValue())
+        , m_serialized(!value)
+    {
+    }
+    
+    CSSCustomPropertyValue(const AtomicString& name, const String& serializedValue)
+        : CSSValue(CustomPropertyClass)
+        , m_name(name)
+        , m_stringValue(serializedValue)
+        , m_serialized(true)
     {
     }
 
     const AtomicString m_name;
-    std::unique_ptr<CSSParserValueList> m_parserValue;
+    RefPtr<CSSValue> m_value;
     mutable String m_stringValue;
+    bool m_containsVariables { false };
     mutable bool m_serialized;
 };
 

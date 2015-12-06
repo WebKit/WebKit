@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+struct CSSParserValue;
 class CSSParserValueList;
 
 class CSSValueList : public CSSValue {
@@ -78,6 +79,12 @@ public:
     
     PassRefPtr<CSSValueList> cloneForCSSOM() const;
 
+    bool containsVariables() const;
+    bool checkVariablesForCycles(CustomPropertyValueMap& customProperties, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+    
+    bool buildParserValueListSubstitutingVariables(CSSParserValueList*, const CustomPropertyValueMap& customProperties) const;
+    bool buildParserValueSubstitutingVariables(CSSParserValue*, const CustomPropertyValueMap& customProperties) const;
+    
 protected:
     CSSValueList(ClassType, ValueListSeparator);
     CSSValueList(const CSSValueList& cloneFrom);

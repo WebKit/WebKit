@@ -236,7 +236,7 @@ String getJSPropertyName(CSSPropertyID id)
 
 static const bool isInheritedPropertyTable[numCSSProperties + $numPredefinedProperties] = {
     false, // CSSPropertyInvalid
-    false, // CSSPropertyCustom
+    true, // CSSPropertyCustom
 EOF
 
 foreach my $name (@names) {

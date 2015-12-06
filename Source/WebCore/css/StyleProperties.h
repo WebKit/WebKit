@@ -152,7 +152,9 @@ private:
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
-
+    
+    PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) const;
+    
     friend class PropertySetCSSStyleDeclaration;
 };
 

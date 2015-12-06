@@ -471,6 +471,7 @@ private:
     bool canShareStyleWithControl(StyledElement*) const;
 
     void applyProperty(CSSPropertyID, CSSValue*);
+    RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSVariableDependentValue&);
 
     void applySVGProperty(CSSPropertyID, CSSValue*);
 
