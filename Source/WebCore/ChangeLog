@@ -1,5 +1,21 @@
 2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191155. rdar://problem/23772889
+
+    2015-10-15  David Hyatt  <hyatt@apple.com>
+
+            Patch parseKeywordValue to accept "unset" so that it goes down the faster parsing path.
+            https://bugs.webkit.org/show_bug.cgi?id=150213
+
+            Reviewed by Dean Jackson.
+
+            No new tests as correctness doesn't change (just speed).
+
+            * css/CSSParser.cpp:
+            (WebCore::parseKeywordValue):
+
+2015-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190667. rdar://problem/23769564
 
     2015-10-06  Simon Fraser  <simon.fraser@apple.com>
