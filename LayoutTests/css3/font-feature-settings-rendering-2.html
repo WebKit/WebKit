@@ -20,7 +20,7 @@ function addElement(feature, c) {
         var element = document.createElement("span");
         element.textContent = c;
         element.style.fontFamily = "FontFeaturesTest";
-        element.style.webkitFontFeatureSettings = '"' + feature + '" ' + state;
+        element.style.fontFeatureSettings = '"' + feature + '" ' + state;
         insertionpoint.appendChild(element);
     });
     insertionpoint.appendChild(document.createTextNode(" "));
