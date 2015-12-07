@@ -1,3 +1,16 @@
+2015-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ASSERTION FAILED: m_plan.weakReferences.contains(structure).
+        https://bugs.webkit.org/show_bug.cgi?id=151952
+
+        Reviewed by Mark Lam.
+
+        Fix a bug revealed by the new ftl-has-a-bad-time.js test. It turns out that our handling of
+        structures reachable from the compiler wasn't accounting for having a bad time.
+
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+
 2015-12-07  Saam barati  <sbarati@apple.com>
 
         Add op_watchdog opcode that is generated when VM has a watchdog
