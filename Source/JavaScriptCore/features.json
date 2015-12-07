@@ -129,12 +129,13 @@
         "name": "Generators",
         "status": {
             "status": "In Development",
-            "enabled-by-default": false
+            "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-generator-objects",
         "specification": "ES6",
         "description": "An iterative function object that is interruptable and resumable.",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=150290",
+        "documentation-url": "https://hacks.mozilla.org/2015/05/es6-in-depth-generators/",
         "contact": {
             "name": "Yusuke Suzuki",
             "twitter": "@Constellation",
@@ -224,6 +225,22 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
         "description": "The Reflect API is a way to set properties and call methods on certain objects that can be intercepted by ES6 Proxies.",
         "specification": "ES6"
+    },
+    {
+        "name": "Rest Parameter",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://www.ecma-international.org/ecma-262/6.0/#sec-function-definitions",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters",
+        "description": "Rest parameters allow you to collect the arguments, or the arguments after some offset, of a function into a JS array.",
+        "specification": "ES6",
+        "contact": {
+            "name": "Saam Barati",
+            "email": "sbarati@apple.com",
+            "twitter": "@saambarati"
+        }
     },
     {
         "name": "Set Data Structure",
