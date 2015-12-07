@@ -1,5 +1,23 @@
 2015-12-07  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Miscellaneous test cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=151968
+
+        Reviewed by Sam Weinig.
+
+        - Reorganize TestExpectations a bit.
+        - Remove two tests that primarily test features that have been removed from the spec.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/cursor-continueprimarykey-expected.txt: Removed.
+        * storage/indexeddb/cursor-continueprimarykey.html: Removed.
+        * storage/indexeddb/factory-basics-expected.txt: Removed.
+        * storage/indexeddb/factory-basics.html: Removed.
+        * storage/indexeddb/resources/cursor-continueprimarykey.js: Removed.
+        * storage/indexeddb/resources/factory-basics.js: Removed.
+
+2015-12-07  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/factory-deletedatabase.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=151966
         

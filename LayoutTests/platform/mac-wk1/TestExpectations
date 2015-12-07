@@ -110,9 +110,6 @@ storage/indexeddb/unblocked-version-changes.html [ Skip ]
 # IDB tests with text failures                                                             
 storage/indexeddb/createIndex-after-failure.html [ Failure ]
 storage/indexeddb/cursor-continue.html [ Failure ]
-storage/indexeddb/cursor-continueprimarykey.html [ Failure ]
-storage/indexeddb/cursor-leak.html [ Failure ]
-storage/indexeddb/cursor-request-cycle.html [ Failure ]
 storage/indexeddb/database-deletepending-flag.html [ Failure ]
 storage/indexeddb/database-wrapper.html [ Failure ]
 storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html [ Failure ]
@@ -120,7 +117,6 @@ storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html [ Failure 
 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html [ Failure ]
 storage/indexeddb/deletedatabase-not-blocked.html [ Failure ]
 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
-storage/indexeddb/factory-basics.html [ Failure ]
 storage/indexeddb/factory-cmp.html [ Failure ]
 storage/indexeddb/index-basics.html [ Failure ]
 storage/indexeddb/index-count.html [ Failure ]
@@ -146,11 +142,15 @@ storage/indexeddb/pending-version-change-on-exit.html [ Failure ]
 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
-storage/indexeddb/request-leak.html [ Failure ]
 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
 storage/indexeddb/setversion-not-blocked.html [ Failure ]
 storage/indexeddb/transaction-scope-sequencing.html [ Failure ]
 storage/indexeddb/version-change-abort.html [ Failure ]
+
+# Relies on internals.observeGC
+storage/indexeddb/cursor-leak.html [ Failure ]
+storage/indexeddb/cursor-request-cycle.html [ Failure ]
+storage/indexeddb/request-leak.html [ Failure ]
 
 # No workers support in Modern IDB yet
 storage/indexeddb/basics-workers.html
