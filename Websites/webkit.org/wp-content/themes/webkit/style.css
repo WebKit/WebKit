@@ -20,16 +20,16 @@ article, aside, canvas, details,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, section, summary,
 time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font: inherit;
-	vertical-align: baseline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
-	display: block;
+    display: block;
 }
 html {
     font-family: "Myriad Set Pro","Helvetica Neue",sans-serif;
@@ -40,22 +40,22 @@ body {
     background-color: #f7f7f7;
     font-size: 1.6rem;
     font-weight: 400;
-	line-height: 1.4;
+    line-height: 1.4;
 }
 ol, ul {
-	list-style: none;
+    list-style: none;
 }
 blockquote, q {
-	quotes: none;
+    quotes: none;
 }
 blockquote:before, blockquote:after,
 q:before, q:after {
-	content: '';
-	content: none;
+    content: '';
+    content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 p:empty {
     display: none;
@@ -136,31 +136,31 @@ h6 a[name] {
 }
 
 .screen-reader-text {
-	clip: rect(1px, 1px, 1px, 1px);
-	position: absolute !important;
-	height: 1px;
-	width: 1px;
-	overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
 }
 
 .screen-reader-text:focus {
-	background-color: #f1f1f1;
-	border-radius: 3px;
-	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
-	clip: auto !important;
-	color: #21759b;
-	display: block;
-	font-size: 14px;
-	font-size: 0.875rem;
-	font-weight: bold;
-	height: auto;
-	left: 5px;
-	line-height: normal;
-	padding: 15px 23px 14px;
-	text-decoration: none;
-	top: 5px;
-	width: auto;
-	z-index: 100000; /* Above WP toolbar. */
+    background-color: #f1f1f1;
+    border-radius: 3px;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+    clip: auto !important;
+    color: #21759b;
+    display: block;
+    font-size: 14px;
+    font-size: 0.875rem;
+    font-weight: bold;
+    height: auto;
+    left: 5px;
+    line-height: normal;
+    padding: 15px 23px 14px;
+    text-decoration: none;
+    top: 5px;
+    width: auto;
+    z-index: 100000; /* Above WP toolbar. */
 }
 
 /** Page Layout **/
@@ -690,11 +690,11 @@ footer .menu {
 /** Code Syntax Highlighting **/
 pre {
     width: calc(100% + 6rem);
-	overflow: auto;
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
     background: #f2f2f2;
-	border: 1px solid #E6E6E6;
-	border-radius: 3px;
+    border: 1px solid #E6E6E6;
+    border-radius: 3px;
 
     box-sizing: border-box;
     padding: 3rem;
@@ -703,7 +703,7 @@ pre {
 
 code {
     color: #555555;
-	font-size: 1.6rem;
+    font-size: 1.6rem;
     line-height: 2.5rem;
 }
 
@@ -1291,9 +1291,9 @@ article,
 }
 
 .feature.opened .feature-header:after {
-	-webkit-transform: rotateX(-180deg);
-	-moz-transform: rotateX(-180deg);
-	transform: rotateX(-180deg);
+    -webkit-transform: rotateX(-180deg);
+    -moz-transform: rotateX(-180deg);
+    transform: rotateX(-180deg);
     perspective: 600;
 }
 
@@ -1349,19 +1349,27 @@ footer nav a:hover {
     text-decoration: none;
 }
 
-header nav .menu-item-has-children .label-toggle {
-    background: url('images/menu-down.svg') right 0.7rem no-repeat;
-    background-size: 1rem;
+header .menu-item-has-children .label-toggle::after {
+    background: url('images/menu-down.svg') no-repeat;
+    background-size: 1.2rem;
     display: inline-block;
-    padding-right: 1.5rem;
+    padding-right: 1.2rem;
+    padding-top: 0.8rem;
+    margin-left: 0.5rem;
+    margin-top: -0.1rem;
+    content: '';
+    
+    -webkit-transition: transform 0.3s ease-out;
+    -moz-transition: transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
 }
 
-header nav .menu-item { /* add bottom dimension to main menu items */
+header .menu-item { /* add bottom dimension to main menu items */
     padding-bottom: 3rem;
 }
 
 /* Improves mouse accessibility of menus */
-header .menu > .menu-item-has-children:hover > a::before {
+/*header .menu > .menu-item-has-children:hover > a::before {
     position: absolute;
     content: '';
     width: 100%;
@@ -1370,14 +1378,15 @@ header .menu > .menu-item-has-children:hover > a::before {
     top: 2rem;
     right: -3rem;
 }
-
+*/
 .sub-menu-layer {
     text-align: center;
     padding: 3rem;
     box-sizing: border-box;
 
-    width: 210px;
-    margin-left: -110px;
+    width: 21rem;
+    margin-left: -11rem;
+    margin-top: -99rem;
     
     position: absolute;
     top: 7rem;    
@@ -1426,14 +1435,15 @@ header .menu > .menu-item-has-children:hover > a::before {
 }
 
 .menu > .menu-item > a:focus ~ .sub-menu,
-.menu > .menu-item.open-menu> .sub-menu,
+.menu > .menu-item.open-menu > .sub-menu,
 .menu > .menu-item:hover > .sub-menu,
-.menu > .menu-item > .menu-toggle:checked ~ .sub-menu {
+.menu > .menu-item > .menu-toggle:checked + .sub-menu {
     display: block;
     box-sizing: border-box;
     z-index: 1;
     opacity: 1;
     top: 8rem;    
+    margin-top: 0;
 }
 
 /** Screen Breakpoints **/
@@ -1487,13 +1497,25 @@ header .menu > .menu-item-has-children:hover > a::before {
 
 @media only screen and (max-width: 920px) {
     
-    header nav .main-menu.label-toggle {
+    .main-menu.label-toggle {
         display: inline-block;
         margin: 1.5rem 0 2.5rem;
         height: 3rem;
         width: 3rem;
         background: url('images/menu-down.svg') no-repeat 50%;
         cursor: pointer;
+        
+        -webkit-transition: transform 0.3s ease-out;
+        -moz-transition: transform 0.3s ease-out;
+        transition: transform 0.3s ease-out;
+    }
+    
+    .menu-toggle:checked + .main-menu.label-toggle,
+    header .menu-item > .menu-toggle:checked + a > .label-toggle::after {
+        -webkit-transform: rotateX(-180deg);
+        -moz-transform: rotateX(-180deg);
+        transform: rotateX(-180deg);
+        perspective: 600;
     }
 
     header .menu {
@@ -1511,7 +1533,7 @@ header .menu > .menu-item-has-children:hover > a::before {
         background: rgba(255,255,255,0.8);
     }
 
-    header nav .menu-toggle:checked ~ ul {
+    header .menu-toggle:checked ~ ul {
         display: block;
         opacity: 1;
     }
@@ -1570,23 +1592,19 @@ header .menu > .menu-item-has-children:hover > a::before {
         margin-left: -11px;
     }
     
-    header .menu-toggle:checked ~ .sub-menu {
-        text-align: left;
-    }
-
-    header .menu > .menu-item:hover > .sub-menu,
     header .menu > .menu-item > .menu-toggle:checked ~ .sub-menu {
         position: relative;
         top: 1.5rem;
+        margin-top: 0;
     }
-    
+        
     footer nav li {
         padding: 0 3rem 3rem 0;
     }
 
 }
 
-@media only screen and (max-width: 782px) {
+@media only screen and (max-width: 690px) {
     
     .featured-tile {
         padding: 0;
@@ -1698,9 +1716,9 @@ header .menu > .menu-item-has-children:hover > a::before {
     }
 
     .feature-filters.opened:after {
-    	-webkit-transform: rotateX(-180deg);
-    	-moz-transform: rotateX(-180deg);
-    	transform: rotateX(-180deg);
+        -webkit-transform: rotateX(-180deg);
+        -moz-transform: rotateX(-180deg);
+        transform: rotateX(-180deg);
     }
     
     #wpadminbar {
@@ -1738,9 +1756,9 @@ header .menu > .menu-item-has-children:hover > a::before {
     }
     
     .menu-toggle:checked ~ .table-of-contents label:after {
-    	-webkit-transform: rotateX(-180deg);
-    	-moz-transform: rotateX(-180deg);
-    	transform: rotateX(-180deg);
+        -webkit-transform: rotateX(-180deg);
+        -moz-transform: rotateX(-180deg);
+        transform: rotateX(-180deg);
     }
     
     .table-of-contents h6 {
@@ -1856,9 +1874,9 @@ header .menu > .menu-item-has-children:hover > a::before {
     }
     
     .menu-toggle:checked ~ .table-of-contents label:after {
-    	-webkit-transform: rotateX(-180deg);
-    	-moz-transform: rotateX(-180deg);
-    	transform: rotateX(-180deg);
+        -webkit-transform: rotateX(-180deg);
+        -moz-transform: rotateX(-180deg);
+        transform: rotateX(-180deg);
     }
     
     .table-of-contents h6 {

@@ -33,7 +33,7 @@
 <?php wp_nav_menu( array(
 'walker'          => new Responsive_Toggle_Walker_Nav_Menu(),
 'theme_location'  => 'site-nav',
-'items_wrap'      => '<label for="%1$s-toggle" class="label-toggle main-menu" data-open="Main Menu" data-close="Close Menu" onclick></label><input type="checkbox" id="%1$s-toggle" class="menu-toggle" /><ul id="%1$s" class="%2$s" role="menubar">%3$s</ul>',
+'items_wrap'      => '<input type="checkbox" id="%1$s-toggle" class="menu-toggle" /><label for="%1$s-toggle" class="label-toggle main-menu" data-open="Main Menu" data-close="Close Menu"></label><ul id="%1$s" class="%2$s" role="menubar">%3$s</ul>',
 ) ); ?></nav>
         </div>
     </header>

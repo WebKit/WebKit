@@ -1,3 +1,57 @@
+2015-12-07  Jonathan Davis  <jond@apple.com>
+
+        Address UX issues with the Contribute menu.
+        https://bugs.webkit.org/show_bug.cgi?id=151874
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/header.php:
+        * wp-content/themes/webkit/style.css:
+        (time, mark, audio, video):
+        (footer, header, hgroup, menu, nav, section):
+        (html):
+        (body):
+        (ol, ul):
+        (blockquote, q):
+        (q:before, q:after):
+        (table):
+        (p:empty):
+        (.admin-bar p > a[name]::before):
+        (.screen-reader-text):
+        (.screen-reader-text:focus):
+        (pre):
+        (code):
+        (.feature-header:after):
+        (.feature.opened .feature-header:after):
+        (footer nav a:hover):
+        (header .menu-item-has-children .label-toggle::after):
+        (header .menu-item):
+        (.sub-menu-layer):
+        (.sub-menu-layer .menu-item:first-child):
+        (.menu > .menu-item > .menu-toggle:checked + .sub-menu):
+        (@media only screen and (max-width: 920px)):
+        (header .menu-item > .menu-toggle:checked + a > .label-toggle::after):
+        (header .menu):
+        (header .menu-toggle:checked ~ ul):
+        (header .sub-menu-layer:before):
+        (header .menu > .menu-item > .menu-toggle:checked ~ .sub-menu):
+        (footer nav li):
+        (@media only screen and (max-width: 690px)):
+        (.feature-filters:after):
+        (.feature-filters.opened:after):
+        (#wpadminbar):
+        (.table-of-contents label:after):
+        (.menu-toggle:checked ~ .table-of-contents label:after):
+        (.table-of-contents h6):
+        (header nav .menu-item-has-children .label-toggle): Deleted.
+        (header nav .menu-item): Deleted.
+        (header .menu > .menu-item-has-children:hover > a::before): Deleted.
+        (.menu > .menu-item > .menu-toggle:checked ~ .sub-menu): Deleted.
+        (header nav .menu-toggle:checked ~ ul): Deleted.
+        (header .menu-toggle:checked ~ .sub-menu): Deleted.
+        (@media only screen and (max-width: 782px)): Deleted.
+
 2015-12-05  Timothy Hatcher  <timothy@apple.com>
 
         One last fix for https redirect.

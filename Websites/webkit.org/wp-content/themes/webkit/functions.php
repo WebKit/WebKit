@@ -210,8 +210,6 @@ class Responsive_Toggle_Walker_Nav_Menu extends Walker_Nav_Menu {
 
     public function start_lvl( &$output, $depth = 0, $args = array() ) {
         $output .= "\n" . str_repeat("\t", $depth);
-        if ( ! empty($this->toggleid) )
-            $output .= "<input type=\"checkbox\" id=\"toggle-{$this->toggleid}\" class=\"menu-toggle\" />";
         $classes = array("sub-menu");
         if ( 0 == $depth ) {
             $classes[] = "sub-menu-layer";
@@ -232,9 +230,10 @@ class Responsive_Toggle_Walker_Nav_Menu extends Walker_Nav_Menu {
         $after = $args->link_after;
 
         if ( in_array('menu-item-has-children', $item->classes) && 0 == $depth ) {
+            $this->toggleid = $item->ID;
+            $args->before .= "<input type=\"checkbox\" id=\"toggle-{$item->ID}\" class=\"menu-toggle\" />";
             $args->link_before = "<label for=\"toggle-{$item->ID}\" class=\"label-toggle\">" . $args->link_before;
             $args->link_after .= "</label>";
-            $this->toggleid = $item->ID;
             $item->url = '#nav-sub-menu';
         } elseif ( in_array('menu-item-has-children', $item->classes) && 1 == $depth ) {
             // $item->role = "presentation";
