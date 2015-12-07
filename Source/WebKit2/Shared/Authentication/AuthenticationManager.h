@@ -74,6 +74,7 @@ public:
 
 private:
     struct Challenge {
+        uint64_t pageID;
         WebCore::AuthenticationChallenge challenge;
 #if USE(NETWORK_SESSION)
         ChallengeCompletionHandler completionHandler;
@@ -86,7 +87,7 @@ private:
     bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const WebCore::CertificateInfo&);
 
     uint64_t addChallengeToChallengeMap(const Challenge&);
-    bool shouldCoalesceChallenge(uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
+    bool shouldCoalesceChallenge(uint64_t pageID, uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
 
     void useCredentialForSingleChallenge(uint64_t challengeID, const WebCore::Credential&, const WebCore::CertificateInfo&);
     void continueWithoutCredentialForSingleChallenge(uint64_t challengeID);

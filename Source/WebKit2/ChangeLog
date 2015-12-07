@@ -1,3 +1,24 @@
+2015-12-07  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Regression(r187691): If a page is showing an auth pane in one tab, any new tabs with same page hang until credentials are entered in first tab
+        https://bugs.webkit.org/show_bug.cgi?id=151960
+        <rdar://problem/23618112>
+
+        Reviewed by Alex Christensen.
+
+        After r187691, if a page is showing an auth pane in one tab, any new
+        tabs with same page hang until credentials are entered in first tab.
+        This is because we coalescing all authentication challenges from the
+        same domain, no matter what tab they are for. This can be confusing
+        so we now only coalesce authentication challenges within each tab,
+        by leveraging the pageID (in addition to the domain).
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::shouldCoalesceChallenge):
+        (WebKit::AuthenticationManager::coalesceChallengesMatching):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+
 2015-12-07  Beth Dakin  <bdakin@apple.com>
 
         Hook up request and show for typing candidates in WK1

@@ -76,13 +76,13 @@ uint64_t AuthenticationManager::addChallengeToChallengeMap(const Challenge& chal
     return challengeID;
 }
 
-bool AuthenticationManager::shouldCoalesceChallenge(uint64_t challengeID, const AuthenticationChallenge& challenge) const
+bool AuthenticationManager::shouldCoalesceChallenge(uint64_t pageID, uint64_t challengeID, const AuthenticationChallenge& challenge) const
 {
     if (!canCoalesceChallenge(challenge))
         return false;
 
     for (auto& item : m_challenges) {
-        if (item.key != challengeID && ProtectionSpace::compare(challenge.protectionSpace(), item.value.challenge.protectionSpace()))
+        if (item.key != challengeID && item.value.pageID == pageID && ProtectionSpace::compare(challenge.protectionSpace(), item.value.challenge.protectionSpace()))
             return true;
     }
     return false;
@@ -100,7 +100,7 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
         return challengesToCoalesce;
 
     for (auto& item : m_challenges) {
-        if (item.key != challengeID && ProtectionSpace::compare(challenge.challenge.protectionSpace(), item.value.challenge.protectionSpace()))
+        if (item.key != challengeID && item.value.pageID == challenge.pageID && ProtectionSpace::compare(challenge.challenge.protectionSpace(), item.value.challenge.protectionSpace()))
             challengesToCoalesce.append(item.key);
     }
 
@@ -112,14 +112,15 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, c
     ASSERT(frame);
     ASSERT(frame->page());
 
-    uint64_t challengeID = addChallengeToChallengeMap({authenticationChallenge
+    auto pageID = frame->page()->pageID();
+    uint64_t challengeID = addChallengeToChallengeMap({pageID, authenticationChallenge
 #if USE(NETWORK_SESSION)
         , ChallengeCompletionHandler()
 #endif
     });
 
-    // Coalesce challenges in the same protection space.
-    if (shouldCoalesceChallenge(challengeID, authenticationChallenge))
+    // Coalesce challenges in the same protection space and in the same page.
+    if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
         return;
     
     m_process->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, challengeID), frame->page()->pageID());
@@ -131,8 +132,10 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
     ASSERT(pageID);
     ASSERT(frameID);
 
-    uint64_t challengeID = addChallengeToChallengeMap({authenticationChallenge, completionHandler});
-    if (shouldCoalesceChallenge(challengeID, authenticationChallenge))
+    uint64_t challengeID = addChallengeToChallengeMap({pageID, authenticationChallenge, completionHandler});
+
+    // Coalesce challenges in the same protection space and in the same page.
+    if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
         return;
     
     m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, challengeID));
@@ -143,12 +146,14 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
     ASSERT(pageID);
     ASSERT(frameID);
 
-    uint64_t challengeID = addChallengeToChallengeMap({authenticationChallenge
+    uint64_t challengeID = addChallengeToChallengeMap({pageID, authenticationChallenge
 #if USE(NETWORK_SESSION)
         , ChallengeCompletionHandler()
 #endif
     });
-    if (shouldCoalesceChallenge(challengeID, authenticationChallenge))
+
+    // Coalesce challenges in the same protection space and in the same page.
+    if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
         return;
     
     m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, challengeID));
@@ -157,8 +162,11 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
 #if !USE(NETWORK_SESSION)
 void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download, const AuthenticationChallenge& authenticationChallenge)
 {
-    uint64_t challengeID = addChallengeToChallengeMap({authenticationChallenge});
-    if (shouldCoalesceChallenge(challengeID, authenticationChallenge))
+    uint64_t dummyPageID = 0;
+    uint64_t challengeID = addChallengeToChallengeMap({dummyPageID, authenticationChallenge});
+
+    // Coalesce challenges in the same protection space and in the same page.
+    if (shouldCoalesceChallenge(dummyPageID, challengeID, authenticationChallenge))
         return;
 
     download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
