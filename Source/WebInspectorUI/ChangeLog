@@ -1,3 +1,15 @@
+2015-12-06  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Regression (r192936) - changing selectors in the visual styles sidebar is broken
+        https://bugs.webkit.org/show_bug.cgi?id=151924
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection):
+        (WebInspector.VisualStyleSelectorSection.prototype._selectorChanged):
+        Now uses an event listener instead of an "onselect" function.
+
 2015-12-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Comparisons in setters should use the massaged value (" = x || 0/false/null/etc")

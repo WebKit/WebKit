@@ -55,7 +55,8 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         selectorSection.element.appendChild(selectorListElement);
 
         this._selectors = new WebInspector.TreeOutline(selectorListElement);
-        this._selectors.onselect = this._selectorChanged.bind(this);
+        this._selectors.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._selectorChanged, this);
+
         this._focusNextNewInspectorRule = false;
 
         let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-selector-section-add-rule", WebInspector.UIString("Click to add a new rule."));
@@ -209,9 +210,9 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
 
     // Private
 
-    _selectorChanged(selectedTreeElement)
+    _selectorChanged(event)
     {
-        console.assert(selectedTreeElement);
+        let selectedTreeElement = event.data.selectedElement;
         if (!selectedTreeElement)
             return;
 
