@@ -117,7 +117,7 @@
 - (NSString *)supplementalStr1
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::TestSupplemental::supplementalStr1(IMPL);
+    return WebCore::TestSupplemental::supplementalStr1(*IMPL);
 }
 #endif
 
@@ -125,13 +125,13 @@
 - (NSString *)supplementalStr2
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::TestSupplemental::supplementalStr2(IMPL);
+    return WebCore::TestSupplemental::supplementalStr2(*IMPL);
 }
 
 - (void)setSupplementalStr2:(NSString *)newSupplementalStr2
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::TestSupplemental::setSupplementalStr2(IMPL, newSupplementalStr2);
+    WebCore::TestSupplemental::setSupplementalStr2(*IMPL, newSupplementalStr2);
 }
 #endif
 
@@ -139,13 +139,13 @@
 - (NSString *)supplementalStr3
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::TestSupplemental::supplementalStr3(IMPL);
+    return WebCore::TestSupplemental::supplementalStr3(*IMPL);
 }
 
 - (void)setSupplementalStr3:(NSString *)newSupplementalStr3
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::TestSupplemental::setSupplementalStr3(IMPL, newSupplementalStr3);
+    WebCore::TestSupplemental::setSupplementalStr3(*IMPL, newSupplementalStr3);
 }
 #endif
 
@@ -153,7 +153,7 @@
 - (DOMNode *)supplementalNode
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::TestSupplemental::supplementalNode(IMPL)));
+    return kit(WTF::getPtr(WebCore::TestSupplemental::supplementalNode(*IMPL)));
 }
 
 - (void)setSupplementalNode:(DOMNode *)newSupplementalNode
@@ -161,7 +161,7 @@
     WebCore::JSMainThreadNullState state;
     ASSERT(newSupplementalNode);
 
-    WebCore::TestSupplemental::setSupplementalNode(IMPL, core(newSupplementalNode));
+    WebCore::TestSupplemental::setSupplementalNode(*IMPL, core(newSupplementalNode));
 }
 #endif
 
@@ -169,13 +169,13 @@
 - (unsigned short)builtinAttribute
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::TestSupplemental::builtinAttribute(IMPL);
+    return WebCore::TestSupplemental::builtinAttribute(*IMPL);
 }
 
 - (void)setBuiltinAttribute:(unsigned short)newBuiltinAttribute
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::TestSupplemental::setBuiltinAttribute(IMPL, newBuiltinAttribute);
+    WebCore::TestSupplemental::setBuiltinAttribute(*IMPL, newBuiltinAttribute);
 }
 #endif
 
@@ -227,7 +227,7 @@
 - (void)supplementalMethod1
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::TestSupplemental::supplementalMethod1(IMPL);
+    WebCore::TestSupplemental::supplementalMethod1(*IMPL);
 }
 
 #endif
@@ -238,7 +238,7 @@
 {
     WebCore::JSMainThreadNullState state;
     WebCore::ExceptionCode ec = 0;
-    DOMTestObj *result = kit(WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(IMPL, strArg, core(objArg), ec)));
+    DOMTestObj *result = kit(WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(*IMPL, strArg, core(objArg), ec)));
     WebCore::raiseOnDOMError(ec);
     return result;
 }
@@ -250,7 +250,7 @@
 - (void)supplementalMethod3
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::TestSupplemental::supplementalMethod3(IMPL);
+    WebCore::TestSupplemental::supplementalMethod3(*IMPL);
 }
 
 #endif
@@ -260,7 +260,7 @@
 - (void)supplementalMethod4
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::TestSupplemental::supplementalMethod4(IMPL);
+    WebCore::TestSupplemental::supplementalMethod4(*IMPL);
 }
 
 #endif
@@ -270,7 +270,7 @@
 - (void)builtinFunction
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::TestSupplemental::builtinFunction(IMPL);
+    WebCore::TestSupplemental::builtinFunction(*IMPL);
 }
 
 #endif

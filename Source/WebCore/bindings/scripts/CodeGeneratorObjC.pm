@@ -1281,7 +1281,7 @@ sub GenerateImplementation
             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                $getterContentHead = "WebCore::${implementedBy}::${getterExpressionPrefix}IMPL";
+                $getterContentHead = "WebCore::${implementedBy}::${getterExpressionPrefix}*IMPL";
             } else {
                 $getterContentHead = "IMPL->$getterExpressionPrefix";
             }
@@ -1421,7 +1421,7 @@ sub GenerateImplementation
                 if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                     my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                     $implIncludes{"${implementedBy}.h"} = 1;
-                    unshift(@arguments, "IMPL");
+                    unshift(@arguments, "*IMPL");
                     $functionName = "WebCore::${implementedBy}::${functionName}";
                 } else {
                     $functionName = "IMPL->${functionName}";
@@ -1549,7 +1549,7 @@ sub GenerateImplementation
             if ($function->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
-                unshift(@parameterNames, $caller);
+                unshift(@parameterNames, "*" . $caller);
                 $content = "WebCore::${implementedBy}::" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")";
             } else {
                 my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($functionName);

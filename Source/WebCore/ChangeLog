@@ -1,3 +1,31 @@
+2015-12-07  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        Update Objective-C code generator to pass a reference to calling object for partial interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=151739
+
+        Reviewed by Darin Adler.
+
+        The fix updates the Objective-C code generator to pass a reference to calling object for partial interfaces.
+        The change from pass by pointer to pass by reference was introduced in r192849.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm:
+        (-[DOMTestInterface supplementalStr1]):
+        (-[DOMTestInterface supplementalStr2]):
+        (-[DOMTestInterface setSupplementalStr2:]):
+        (-[DOMTestInterface supplementalStr3]):
+        (-[DOMTestInterface setSupplementalStr3:]):
+        (-[DOMTestInterface supplementalNode]):
+        (-[DOMTestInterface setSupplementalNode:]):
+        (-[DOMTestInterface builtinAttribute]):
+        (-[DOMTestInterface setBuiltinAttribute:]):
+        (-[DOMTestInterface supplementalMethod1]):
+        (-[DOMTestInterface supplementalMethod2:objArg:]):
+        (-[DOMTestInterface supplementalMethod3]):
+        (-[DOMTestInterface supplementalMethod4]):
+        (-[DOMTestInterface builtinFunction]):
+
 2015-12-07  Chris Dumez  <cdumez@apple.com>
 
         Crash in MemoryCache::pruneDeadResourcesToSize()
