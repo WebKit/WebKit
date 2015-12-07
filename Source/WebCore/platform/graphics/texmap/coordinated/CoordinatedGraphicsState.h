@@ -44,6 +44,10 @@
 #include "GraphicsSurfaceToken.h"
 #endif
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
+#include "TextureMapperPlatformLayerProxy.h"
+#endif
+
 namespace WebCore {
 
 class CoordinatedSurface;
@@ -130,6 +134,9 @@ struct CoordinatedGraphicsLayerState {
 #if USE(GRAPHICS_SURFACE)
         , platformLayerFrontBuffer(0)
 #endif
+#if USE(COORDINATED_GRAPHICS_THREADED)
+        , platformLayerProxy(0)
+#endif
     {
     }
 
@@ -162,6 +169,10 @@ struct CoordinatedGraphicsLayerState {
     GraphicsSurfaceToken platformLayerToken;
     uint32_t platformLayerFrontBuffer;
     GraphicsSurface::Flags platformLayerSurfaceFlags;
+#endif
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    RefPtr<TextureMapperPlatformLayerProxy> platformLayerProxy;
 #endif
 
     IntSize committedScrollOffset;

@@ -1,3 +1,21 @@
+2015-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [ThreadedCompositor] Add support for PlatformLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=143299
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        Swap pending buffers of TextureMapperPlatformLayerProxies before painting contents.
+        (WebKit::CoordinatedGraphicsScene::syncPlatformLayerIfNeeded):
+        In threaded compositor, CoordinatedGraphicsScence only cares about creation and deletion
+        of platform layers.
+
+        (WebKit::CoordinatedGraphicsScene::onNewBufferAvailable):
+        Whenever new buffer comes via TextureMapperPlatformLayerProxy, CoordinatedGraphicsScene will
+        update the scene if it is needed.
+
 2015-12-07  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] Allow applications to force Accelerated Compositing mode

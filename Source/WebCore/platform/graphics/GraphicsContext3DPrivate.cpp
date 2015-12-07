@@ -63,7 +63,7 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, G
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
-#if USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS_THREADED)
     if (client())
         client()->platformLayerWillBeDestroyed();
 #endif
@@ -79,7 +79,13 @@ PlatformGraphicsContext3D GraphicsContext3DPrivate::platformContext()
     return m_glContext ? m_glContext->platformContext() : GLContext::getCurrent()->platformContext();
 }
 
-#if USE(TEXTURE_MAPPER)
+#if USE(COORDINATED_GRAPHICS_THREADED)
+RefPtr<TextureMapperPlatformLayerProxy> GraphicsContext3DPrivate::proxy() const
+{
+    notImplemented();
+    return nullptr;
+}
+#elif USE(TEXTURE_MAPPER)
 void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (!m_glContext)

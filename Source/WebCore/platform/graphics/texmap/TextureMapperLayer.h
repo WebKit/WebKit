@@ -78,7 +78,9 @@ public:
     TextureMapper* textureMapper() const { return rootLayer().m_textureMapper; }
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
 
+#if !USE(COORDINATED_GRAPHICS)
     void setChildren(const Vector<GraphicsLayer*>&);
+#endif
     void setChildren(const Vector<TextureMapperLayer*>&);
     void setMaskLayer(TextureMapperLayer*);
     void setReplicaLayer(TextureMapperLayer*);

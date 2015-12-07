@@ -29,6 +29,7 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "TextureMapperAnimation.h"
+#include "TextureMapperPlatformLayer.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 #include "TransformationMatrix.h"
@@ -57,6 +58,9 @@ public:
 
 class CoordinatedGraphicsLayer : public GraphicsLayer
     , public TiledBackingStoreClient
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    , public TextureMapperPlatformLayer::Client
+#endif
     , public CoordinatedImageBacking::Host {
 public:
     explicit CoordinatedGraphicsLayer(Type, GraphicsLayerClient&);
@@ -155,9 +159,13 @@ private:
         RecreatePlatformLayer = CreateAndSyncPlatformLayer | DestroyPlatformLayer
     };
 
-    void syncPlatformLayer();
     void destroyPlatformLayerIfNeeded();
     void createPlatformLayerIfNeeded();
+#endif
+    void syncPlatformLayer();
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    void platformLayerWillBeDestroyed();
+    void setPlatformLayerNeedsDisplay();
 #endif
 
     virtual void setDebugBorder(const Color&, float width) override;
@@ -222,6 +230,9 @@ private:
 #if USE(GRAPHICS_SURFACE)
     bool m_isValidPlatformLayer : 1;
     unsigned m_pendingPlatformLayerOperation : 3;
+#endif
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    bool m_shouldSyncPlatformLayer : 1;
 #endif
 
     CoordinatedGraphicsLayerClient* m_coordinator;

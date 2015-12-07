@@ -445,12 +445,14 @@ TextureMapperLayer::~TextureMapperLayer()
     removeFromParent();
 }
 
+#if !USE(COORDINATED_GRAPHICS)
 void TextureMapperLayer::setChildren(const Vector<GraphicsLayer*>& newChildren)
 {
     removeAllChildren();
     for (auto* child : newChildren)
         addChild(&downcast<GraphicsLayerTextureMapper>(child)->layer());
 }
+#endif
 
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)
 {

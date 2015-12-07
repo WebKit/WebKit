@@ -1,5 +1,62 @@
 2015-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
 
+        [ThreadedCompositor] Add support for PlatformLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=143299
+
+        Reviewed by Žan Doberšek.
+
+        This patch implements TextureMapperPlatformLayerProxy and TextureMapperPlatformLayerBuffer to
+        send a texture (actual texture or BitmapTexture) to the compositing thread directly.
+        Platform layer renderers should implement TextureMapperPlatformLayerProxyProvider to establish
+        a connection to the compositing thread. After the connection has been established, the renderer
+        can render its contents to the TextureMapperPlatformLayerBuffer and pass it to the compositing thread
+        via TextureMapperPlatformLayer proxy.
+        The buffer can be an unmanaged texture (a.k.a. platform texture) or BitmapTexture.
+        For the unmanaged texture, the renderer should manage its life cycle itself. For the BitmapTexture,
+        it will be managed by TextureMapperPlatformLayerProxy. In that case, used (swapped) buffer will be
+        recycled because the renderer will use same size and format until it changes its size.
+
+        No new tests needed.
+
+        * PlatformGTK.cmake:
+        Adds TextureMapperPlatformLayerBuffer and TextureMapperPlaytformLayerProxy.
+
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/cairo/ImageBufferDataCairo.h:
+        Adds mock implementation.
+
+        * platform/graphics/PlatformLayer.h:
+        Adds TextureMapperPlatformLayerProxyProvider as a PlatformLayer for the Threaded Compositor
+
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        (WebCore::BitmapTextureGL::internalFormat): Adds a getter to check the
+        internal format of texture to check reusability.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        Exclude GraphicsLayerTextureMapper from build when we are using Coordinated Graphics.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp: Added.
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h: Added.
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp: Added.
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h: Added.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::create):
+        Because we removed GraphicsLayerTextureMapper from build, we need to add own factory function.
+
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::platformLayerWillBeDestroyed):
+        (WebCore::CoordinatedGraphicsLayer::setPlatformLayerNeedsDisplay):
+        Implements sync operations for TextureMapperPlatformLayerProxy
+
+2015-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
         Fix GTK+ build with GStreamer GL
         https://bugs.webkit.org/show_bug.cgi?id=151939
 

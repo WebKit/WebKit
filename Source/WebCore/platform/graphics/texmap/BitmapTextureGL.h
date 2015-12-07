@@ -69,6 +69,8 @@ public:
     const FilterInfo* filterInfo() const { return &m_filterInfo; }
     TextureMapperGL::ClipStack& clipStack() { return m_clipStack; }
 
+    GC3Dint internalFormat() const { return m_internalFormat; }
+
 private:
 
     Platform3DObject m_id;
