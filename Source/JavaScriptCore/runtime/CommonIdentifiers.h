@@ -341,8 +341,6 @@
     macro(Collator) \
     macro(DateTimeFormat) \
     macro(NumberFormat) \
-    macro(newTargetLocal) \
-    macro(derivedConstructor) \
 
 
 namespace JSC {

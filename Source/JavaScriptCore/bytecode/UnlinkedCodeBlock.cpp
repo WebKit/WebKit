@@ -67,8 +67,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_constructorKind(static_cast<unsigned>(info.constructorKind()))
     , m_generatorThisMode(static_cast<unsigned>(info.generatorThisMode()))
     , m_superBinding(static_cast<unsigned>(info.superBinding()))
-    , m_isDerivedConstructorContext(info.isDerivedConstructorContext())
-    , m_isArrowFunctionContext(info.isArrowFunctionContext())
     , m_firstLine(0)
     , m_lineCount(0)
     , m_endColumn(UINT_MAX)

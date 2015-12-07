@@ -147,19 +147,17 @@ inline bool functionNameScopeIsDynamic(bool usesEval, bool isStrictMode)
 
 typedef unsigned CodeFeatures;
 
-const CodeFeatures NoFeatures =                       0;
-const CodeFeatures EvalFeature =                 1 << 0;
-const CodeFeatures ArgumentsFeature =            1 << 1;
-const CodeFeatures WithFeature =                 1 << 2;
-const CodeFeatures ThisFeature =                 1 << 3;
-const CodeFeatures StrictModeFeature =           1 << 4;
-const CodeFeatures ShadowsArgumentsFeature =     1 << 5;
-const CodeFeatures ModifiedParameterFeature =    1 << 6;
-const CodeFeatures ModifiedArgumentsFeature =    1 << 7;
-const CodeFeatures ArrowFunctionFeature =        1 << 8;
-const CodeFeatures ArrowFunctionContextFeature = 1 << 9;
+const CodeFeatures NoFeatures =                    0;
+const CodeFeatures EvalFeature =              1 << 0;
+const CodeFeatures ArgumentsFeature =         1 << 1;
+const CodeFeatures WithFeature =              1 << 2;
+const CodeFeatures ThisFeature =              1 << 3;
+const CodeFeatures StrictModeFeature =        1 << 4;
+const CodeFeatures ShadowsArgumentsFeature =  1 << 5;
+const CodeFeatures ModifiedParameterFeature = 1 << 6;
+const CodeFeatures ModifiedArgumentsFeature = 1 << 7;
 
-const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ModifiedParameterFeature | ArrowFunctionFeature | ArrowFunctionContextFeature;
+const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature | ModifiedParameterFeature;
 
 } // namespace JSC
 

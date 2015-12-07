@@ -838,14 +838,17 @@ private:
 
         case NewFunction:
         case NewArrowFunction: {
+            bool isArrowFunction = node->op() == NewArrowFunction;
             if (node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid()) {
                 m_heap.escape(node->child1().node());
                 break;
             }
             
-            target = &m_heap.newAllocation(node, Allocation::Kind::Function);
+            target = &m_heap.newAllocation(node, isArrowFunction ? Allocation::Kind::NewArrowFunction : Allocation::Kind::Function);
             writes.add(FunctionExecutablePLoc, LazyNode(node->cellOperand()));
             writes.add(FunctionActivationPLoc, LazyNode(node->child1().node()));
+            if (isArrowFunction)
+                writes.add(ArrowFunctionBoundThisPLoc, LazyNode(node->child2().node()));
             break;
         }
 
@@ -1015,6 +1018,14 @@ private:
                 m_heap.escape(node->child1().node());
             break;
 
+        case LoadArrowFunctionThis:
+            target = m_heap.onlyLocalAllocation(node->child1().node());
+            if (target && target->isArrowFunctionAllocation())
+                exactRead = ArrowFunctionBoundThisPLoc;
+            else
+                m_heap.escape(node->child1().node());
+            break;
+        
         case GetScope:
             target = m_heap.onlyLocalAllocation(node->child1().node());
             if (target && target->isFunctionAllocation())
@@ -2034,8 +2045,9 @@ private:
         
         case NewFunction:
         case NewArrowFunction: {
+            bool isArrowFunction = node->op() == NewArrowFunction;
             Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
-            ASSERT(locations.size() == 2);
+            ASSERT(locations.size() == (isArrowFunction ? 3 : 2));
                 
             PromotedHeapLocation executable(FunctionExecutablePLoc, allocation.identifier());
             ASSERT_UNUSED(executable, locations.contains(executable));
@@ -2044,6 +2056,13 @@ private:
             ASSERT(locations.contains(activation));
 
             node->child1() = Edge(resolve(block, activation), KnownCellUse);
+            
+            if (isArrowFunction) {
+                PromotedHeapLocation boundThis(ArrowFunctionBoundThisPLoc, allocation.identifier());
+                ASSERT(locations.contains(boundThis));
+                node->child2() = Edge(resolve(block, boundThis), CellUse);
+            }
+            
             break;
         }
 

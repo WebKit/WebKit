@@ -223,6 +223,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_end)
         DEFINE_OP(op_enter)
         DEFINE_OP(op_get_scope)
+        DEFINE_OP(op_load_arrowfunction_this)
         DEFINE_OP(op_eq)
         DEFINE_OP(op_eq_null)
         case op_get_array_length:

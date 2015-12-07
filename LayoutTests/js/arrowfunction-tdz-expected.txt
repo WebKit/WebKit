@@ -4,14 +4,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS isReferenceError is true
-PASS isReferenceError is true
-PASS d.id is 'a'
-PASS e.id is 'a'
-PASS f.id is 'a'
-PASS isReferenceError is true
-PASS g.id is 'a'
-PASS h.id is 'a'
-PASS i.id is 'a'
 PASS successfullyParsed is true
 
 TEST COMPLETE
