@@ -154,14 +154,14 @@ PASS trans is non-null.
 PASS store is non-null.
 Expecting exception from trans.objectStore('store')
 PASS Exception was thrown.
-PASS code is 0
-PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'objectStore' on 'IDBTransaction': The transaction is inactive or finished.
+PASS code is 11
+PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.
 Expecting exception from store.index('index')
 PASS Exception was thrown.
-PASS code is 0
-PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'index' on 'IDBObjectStore': The transaction is inactive or finished.
+PASS code is 11
+PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'index' on 'IDBObjectStore': The transaction is finished.
 PASS successfullyParsed is true
 
 TEST COMPLETE

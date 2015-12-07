@@ -41,7 +41,7 @@ Expecting exception from objectStore.get(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'get' on 'IDBObjectStore': No key or key range specified.
+Exception message: The data provided does not meet requirements.
 runIndexStoreTests()
 index.get(IDBKeyRange.only(3))
 PASS result.x is 3
@@ -63,7 +63,7 @@ Expecting exception from index.get(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'get' on 'IDBIndex': No key or key range specified.
+Exception message: The data provided does not meet requirements.
 runIndexKeyTests()
 index.getKey(IDBKeyRange.only(3))
 PASS result is 3
@@ -85,7 +85,7 @@ Expecting exception from index.getKey(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'getKey' on 'IDBIndex': No key or key range specified.
+Exception message: The data provided does not meet requirements.
 finishJSTest()
 PASS successfullyParsed is true
 

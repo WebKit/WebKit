@@ -462,9 +462,9 @@ RefPtr<WebCore::IDBIndex> IDBObjectStore::index(const String& indexName, Excepti
         return nullptr;
     }
 
-    if (!m_transaction->isActive()) {
-        ec.code = IDBDatabaseException::TransactionInactiveError;
-        ec.message = ASCIILiteral("Failed to execute 'index' on 'IDBObjectStore': The transaction is inactive or finished.");
+    if (m_transaction->isFinishedOrFinishing()) {
+        ec.code = IDBDatabaseException::InvalidStateError;
+        ec.message = ASCIILiteral("Failed to execute 'index' on 'IDBObjectStore': The transaction is finished.");
         return nullptr;
     }
 

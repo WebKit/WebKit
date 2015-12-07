@@ -1,3 +1,23 @@
+2015-12-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Add some more custom exception messages, passing some more tests..
+        https://bugs.webkit.org/show_bug.cgi?id=151912
+
+        Reviewed by Andy Estes.
+
+        * platform/mac-wk1/TestExpectations:
+        
+        * storage/indexeddb/exceptions-expected.txt:
+        * storage/indexeddb/get-keyrange-expected.txt:
+        * storage/indexeddb/invalid-keys-expected.txt:
+        * storage/indexeddb/keypath-edges-expected.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/transaction-active-flag-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+
+        * storage/indexeddb/resources/exceptions.js:
+        * storage/indexeddb/resources/transaction-and-objectstore-calls.js:
+
 2015-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/dom/Window/property-access-on-cached-window-after-frame-removed.html as failing on Win

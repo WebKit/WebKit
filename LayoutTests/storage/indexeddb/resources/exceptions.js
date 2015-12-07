@@ -185,7 +185,7 @@ function testObjectStore()
     debug("There is no index with the given name, compared in a case-sensitive manner, in the connected database.");
     evalAndExpectException("store.index('no-such-index')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
     debug("Occurs if a request is made on a source object that has been deleted or removed, or if the transaction the object store belongs to has finished.");
-    evalAndExpectException("storeFromInactiveTransaction.index('index')", "0", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.index('index')", "11", "'InvalidStateError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");

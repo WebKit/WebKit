@@ -98,8 +98,8 @@ function afterComplete()
     debug("transaction complete, ensuring methods fail");
     shouldBeNonNull("trans");
     shouldBeNonNull("store");
-    evalAndExpectException("trans.objectStore('store')", "0", "'TransactionInactiveError'");
-    evalAndExpectException("store.index('index')", "0", "'TransactionInactiveError'");
+    evalAndExpectException("trans.objectStore('store')", "11", "'InvalidStateError'");
+    evalAndExpectException("store.index('index')", "11", "'InvalidStateError'");
 
     finishJSTest();
 }

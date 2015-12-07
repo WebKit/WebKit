@@ -234,9 +234,9 @@ Exception message: Failed to execute 'index' on 'IDBObjectStore': The specified 
 Occurs if a request is made on a source object that has been deleted or removed, or if the transaction the object store belongs to has finished.
 Expecting exception from storeFromInactiveTransaction.index('index')
 PASS Exception was thrown.
-PASS code is 0
-PASS ename is 'TransactionInactiveError'
-Exception message: Failed to execute 'index' on 'IDBObjectStore': The transaction is inactive or finished.
+PASS code is 11
+PASS ename is 'InvalidStateError'
+Exception message: Failed to execute 'index' on 'IDBObjectStore': The transaction is finished.
 
 IDBObjectStore.openCursor()
 If the range parameter is specified but is not a valid key or a key range, this method throws a DOMException of type DataError.
