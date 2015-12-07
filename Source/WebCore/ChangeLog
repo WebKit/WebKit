@@ -1,3 +1,17 @@
+2015-12-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Uncaught Exception page should have better styles and handle more error cases
+        https://bugs.webkit.org/show_bug.cgi?id=151923
+
+        Reviewed by Timothy Hatcher.
+
+        Add a check for InspectorFrontendAPI before calling it. This can fail
+        easily if an uncaught exception stalls initial loading, or whenever
+        the Inspector frontend is reloaded.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::evaluateOnLoad):
+
 2015-12-07  Beth Dakin  <bdakin@apple.com>
 
         Hook up request and show for typing candidates in WK1

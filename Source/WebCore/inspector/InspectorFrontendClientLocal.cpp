@@ -371,7 +371,7 @@ bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)
 void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)
 {
     if (m_frontendLoaded)
-        m_frontendPage->mainFrame().script().executeScript("InspectorFrontendAPI.dispatch(" + expression + ")");
+        m_frontendPage->mainFrame().script().executeScript("if (InspectorFrontendAPI) InspectorFrontendAPI.dispatch(" + expression + ")");
     else
         m_evaluateOnLoad.append(expression);
 }

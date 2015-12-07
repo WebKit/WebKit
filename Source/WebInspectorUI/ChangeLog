@@ -1,3 +1,53 @@
+2015-12-07  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Uncaught Exception page should have better styles and handle more error cases
+        https://bugs.webkit.org/show_bug.cgi?id=151923
+
+        Reviewed by Timothy Hatcher.
+
+        Restructure the Uncaught Exception reporting page to act more like
+        a modal sheet. Distinguish between uncaught exceptions before and
+        after the frontend is initially loaded. If the frontend is loaded,
+        add a clickable link that dismisses the sheet and ignores the error.
+        If the inspector finished loading, then only show at most one
+        exception at a time, since subsequent interactions can cause spurious
+        errors when the sheet is active.
+
+        Split existing code into multiple functions so it's easier to follow.
+        Add miscellaneous guards against internal corruption and weird cases.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Store the flag on the global object
+        in case WebInspector becomes shadowed or otherwise unusable.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css: Renamed from Source/WebInspectorUI/UserInterface/Debug/CatchEarlyErrors.css.
+        (div.sheet-container):
+        (div.uncaught-exception-sheet):
+        (div.uncaught-exception-sheet a):
+        (div.uncaught-exception-sheet a:active):
+        (div.uncaught-exception-sheet h2):
+        (div.uncaught-exception-sheet h1 > img):
+        (div.uncaught-exception-sheet h2 > img):
+        (div.uncaught-exception-sheet dl):
+        (div.uncaught-exception-sheet dt):
+        (div.uncaught-exception-sheet dd):
+        (div.uncaught-exception-sheet ul):
+        (div.uncaught-exception-sheet li):
+        * UserInterface/Debug/UncaughtExceptionReporter.js: Renamed from CatchEarlyErrors.js.
+        (stopEventPropagation): Allow clicking whitelisted links on the sheet.
+        (blockEventHandlers):
+        (unblockEventHandlers):
+        (handleUncaughtException):
+        (dismissErrorSheet):
+        (createErrorSheet.insertWordBreakCharacters):
+        (createErrorSheet):
+        (handleLinkClick):
+        * UserInterface/Main.html:
+        * UserInterface/Protocol/MessageDispatcher.js:
+        (WebInspector.dispatchMessageFromBackend): Don't try to dispatch
+        messages from the backend when showing the error sheet. They will
+        probably fail, so suspend dispatching until the sheet is dismissed.
+
 2015-12-06  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Regression (r192936) - changing selectors in the visual styles sidebar is broken

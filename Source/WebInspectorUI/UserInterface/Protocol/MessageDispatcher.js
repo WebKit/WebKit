@@ -65,6 +65,12 @@ WebInspector.dispatchMessageFromBackend = function(message)
 
     this._messagesToDispatch.push(message);
 
+    // If something has gone wrong and the uncaught exception sheet is showing,
+    // then don't try to dispatch more messages. Dispatching causes spurious uncaught
+    // exceptions and cause the sheet to overflow with hundreds of logged exceptions.
+    if (window.__uncaughtExceptions && window.__uncaughtExceptions.length)
+        return;
+
     if (this._dispatchTimeout)
         return;
 

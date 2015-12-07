@@ -175,8 +175,9 @@ WebInspector.loaded = function()
 
 WebInspector.contentLoaded = function()
 {
-    // If a loading error page was already shown, then don't set up the Inspector UI.
-    if (window.__earlyErrors)
+    // If there was an uncaught exception earlier during loading, then
+    // abort loading more content. We could be in an inconsistent state.
+    if (window.__uncaughtExceptions)
         return;
 
     // Register for global events.
@@ -430,7 +431,8 @@ WebInspector.contentLoaded = function()
     if (this._showingSplitConsoleSetting.value)
         this.showSplitConsole();
 
-    this._contentLoaded = true;
+    // Store this on the window in case the WebInspector global gets corrupted.
+    window.__frontendCompletedLoad = true;
 
     if (this.runBootstrapOperations)
         this.runBootstrapOperations();
