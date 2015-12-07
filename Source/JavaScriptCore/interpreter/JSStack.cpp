@@ -40,6 +40,14 @@ namespace JSC {
 #if !ENABLE(JIT)
 static size_t committedBytesCount = 0;
 
+static size_t commitSize()
+{
+    static size_t size = 0;
+    if (!size)
+        size = std::max(16 * 1024, getpagesize());
+    return size;
+}
+
 static StaticLock stackStatisticsMutex;
 #endif // !ENABLE(JIT)
 
@@ -55,7 +63,7 @@ JSStack::JSStack(VM& vm)
     size_t capacity = Options::maxPerThreadStackUsage();
     ASSERT(capacity && isPageAligned(capacity));
 
-    m_reservation = PageReservation::reserve(WTF::roundUpToMultipleOf(commitSize, capacity), OSAllocator::JSVMStackPages);
+    m_reservation = PageReservation::reserve(WTF::roundUpToMultipleOf(commitSize(), capacity), OSAllocator::JSVMStackPages);
     setStackLimit(highAddress());
     m_commitTop = highAddress();
     
@@ -89,7 +97,7 @@ bool JSStack::growSlowCase(Register* newTopOfStack)
     // have it is still within our budget. If not, we'll fail to grow and
     // return false.
     ptrdiff_t delta = reinterpret_cast<char*>(m_commitTop) - reinterpret_cast<char*>(newTopOfStackWithReservedZone);
-    delta = WTF::roundUpToMultipleOf(commitSize, delta);
+    delta = WTF::roundUpToMultipleOf(commitSize(), delta);
     Register* newCommitTop = m_commitTop - (delta / sizeof(Register));
     if (newCommitTop < reservationTop())
         return false;

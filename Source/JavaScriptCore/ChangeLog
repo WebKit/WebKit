@@ -1,3 +1,18 @@
+2015-12-07  Alberto Garcia  <berto@igalia.com>
+
+        Crashes on PPC64 due to mprotect() on address not aligned to the page size
+        https://bugs.webkit.org/show_bug.cgi?id=130237
+
+        Reviewed by Mark Lam.
+
+        Make sure that commitSize is at least as big as the page size.
+
+        * interpreter/JSStack.cpp:
+        (JSC::commitSize):
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::growSlowCase):
+        * interpreter/JSStack.h:
+
 2015-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be able to make JS->JS calls
