@@ -1,3 +1,13 @@
+2015-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [B3] Typo fix after r193386 to fix the build
+        https://bugs.webkit.org/show_bug.cgi?id=151860
+
+        Reviewed by Filip Pizlo.
+
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::isArgValidForValue):
+
 2015-12-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Implement scheduleTimer and cancelTimer in IncrementalSweeper class

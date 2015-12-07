@@ -186,7 +186,7 @@ void StackmapSpecial::appendRepsImpl(
         result.append(repForArg(*context.code, inst.args[i]));
 }
 
-bool StackmapSpecial::isArgValidForValue(const Arg::Arg& arg, Value* value)
+bool StackmapSpecial::isArgValidForValue(const Air::Arg& arg, Value* value)
 {
     switch (arg.kind()) {
     case Arg::Tmp:
