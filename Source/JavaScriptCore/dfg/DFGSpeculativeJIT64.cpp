@@ -4460,12 +4460,12 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case CheckWatchdogTimer: {
-        ASSERT(m_jit.vm()->watchdog);
+        ASSERT(m_jit.vm()->watchdog());
         GPRTemporary unused(this);
         GPRReg unusedGPR = unused.gpr();
 
         JITCompiler::Jump timerDidFire = m_jit.branchTest8(JITCompiler::NonZero,
-            JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog->timerDidFireAddress()));
+            JITCompiler::AbsoluteAddress(m_jit.vm()->watchdog()->timerDidFireAddress()));
 
         addSlowPathGenerator(slowPathCall(timerDidFire, this, operationHandleWatchdogTimer, unusedGPR));
         break;

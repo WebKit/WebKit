@@ -1,3 +1,59 @@
+2015-12-07  Saam barati  <sbarati@apple.com>
+
+        Add op_watchdog opcode that is generated when VM has a watchdog
+        https://bugs.webkit.org/show_bug.cgi?id=151954
+
+        Reviewed by Mark Lam.
+
+        This patch also makes watchdog a private member
+        of VM and adds a getter function.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupClearExecutionTimeLimit):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoopHint):
+        (JSC::BytecodeGenerator::emitWatchdog):
+        (JSC::BytecodeGenerator::retrieveLastBinaryOp):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckWatchdogTimer):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_watchdog):
+        (JSC::JIT::emitSlow_op_watchdog):
+        (JSC::JIT::emit_op_new_regexp):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/VM.cpp:
+        (JSC::VM::ensureWatchdog):
+        * runtime/VM.h:
+        (JSC::VM::watchdog):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+        * runtime/VMInlines.h:
+        (JSC::VM::shouldTriggerTermination):
+
 2015-12-07  Alberto Garcia  <berto@igalia.com>
 
         Crashes on PPC64 due to mprotect() on address not aligned to the page size

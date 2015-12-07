@@ -108,8 +108,8 @@ void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)
 {
     VM& vm = *toJS(group);
     JSLockHolder locker(&vm);
-    if (vm.watchdog)
-        vm.watchdog->setTimeLimit(Watchdog::noTimeLimit);
+    if (vm.watchdog())
+        vm.watchdog()->setTimeLimit(Watchdog::noTimeLimit);
 }
 
 // From the API's perspective, a global context remains alive iff it has been JSGlobalContextRetained.

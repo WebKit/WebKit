@@ -1283,6 +1283,10 @@ void CodeBlock::dumpBytecode(
             printLocationAndOp(out, exec, location, it, "loop_hint");
             break;
         }
+        case op_watchdog: {
+            printLocationAndOp(out, exec, location, it, "watchdog");
+            break;
+        }
         case op_switch_imm: {
             int tableIndex = (++it)->u.operand;
             int defaultTarget = (++it)->u.operand;

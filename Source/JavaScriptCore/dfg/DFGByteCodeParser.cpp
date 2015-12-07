@@ -4466,11 +4466,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_currentBlock->isOSRTarget = true;
 
             addToGraph(LoopHint);
-            
-            if (m_vm->watchdog)
-                addToGraph(CheckWatchdogTimer);
-            
             NEXT_OPCODE(op_loop_hint);
+        }
+        
+        case op_watchdog: {
+            addToGraph(CheckWatchdogTimer);
+            NEXT_OPCODE(op_watchdog); 
         }
             
         case op_create_lexical_environment: {

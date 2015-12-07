@@ -46,8 +46,8 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
         // observe time xone changes.
         vm.resetDateCache();
 
-        if (vm.watchdog)
-            vm.watchdog->enteredVM();
+        if (vm.watchdog())
+            vm.watchdog()->enteredVM();
     }
 
     vm.clearLastException();
@@ -63,8 +63,8 @@ VMEntryScope::~VMEntryScope()
     if (m_vm.entryScope != this)
         return;
 
-    if (m_vm.watchdog)
-        m_vm.watchdog->exitedVM();
+    if (m_vm.watchdog())
+        m_vm.watchdog()->exitedVM();
 
     m_vm.entryScope = nullptr;
 

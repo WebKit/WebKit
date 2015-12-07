@@ -1011,6 +1011,13 @@ UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 void BytecodeGenerator::emitLoopHint()
 {
     emitOpcode(op_loop_hint);
+    emitWatchdog();
+}
+
+void BytecodeGenerator::emitWatchdog()
+{
+    if (vm()->watchdog())
+        emitOpcode(op_watchdog);
 }
 
 void BytecodeGenerator::retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index)

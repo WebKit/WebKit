@@ -402,20 +402,20 @@ VM*& VM::sharedInstanceInternal()
 
 Watchdog& VM::ensureWatchdog()
 {
-    if (!watchdog) {
-        watchdog = adoptRef(new Watchdog());
+    if (!m_watchdog) {
+        m_watchdog = adoptRef(new Watchdog());
         
         // The LLINT peeks into the Watchdog object directly. In order to do that,
         // the LLINT assumes that the internal shape of a std::unique_ptr is the
         // same as a plain C++ pointer, and loads the address of Watchdog from it.
-        RELEASE_ASSERT(*reinterpret_cast<Watchdog**>(&watchdog) == watchdog.get());
+        RELEASE_ASSERT(*reinterpret_cast<Watchdog**>(&m_watchdog) == m_watchdog.get());
 
         // And if we've previously compiled any functions, we need to revert
         // them because they don't have the needed polling checks for the watchdog
         // yet.
         deleteAllCode();
     }
-    return *watchdog;
+    return *m_watchdog;
 }
 
 #if ENABLE(JIT)

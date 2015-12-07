@@ -33,9 +33,9 @@ namespace JSC {
     
 bool VM::shouldTriggerTermination(ExecState* exec)
 {
-    if (!watchdog)
+    if (!watchdog())
         return false;
-    return watchdog->shouldTerminate(exec);
+    return watchdog()->shouldTerminate(exec);
 }
 
 } // namespace JSC

@@ -585,6 +585,8 @@ namespace JSC {
         PassRefPtr<Label> emitJumpIfNotFunctionApply(RegisterID* cond, Label* target);
         void emitPopScopes(RegisterID* srcDst, int targetScopeDepth);
 
+        void emitWatchdog();
+
         RegisterID* emitHasIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);
         RegisterID* emitHasStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator);
         RegisterID* emitHasGenericProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName);

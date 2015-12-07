@@ -1,3 +1,16 @@
+2015-12-07  Saam barati  <sbarati@apple.com>
+
+        Add op_watchdog opcode that is generated when VM has a watchdog
+        https://bugs.webkit.org/show_bug.cgi?id=151954
+
+        Reviewed by Mark Lam.
+
+        No new tests because JSC already has tests for this.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::scheduleExecutionTermination):
+        (WebCore::WorkerScriptController::isTerminatingExecution):
+
 2015-12-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Uncaught Exception page should have better styles and handle more error cases

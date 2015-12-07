@@ -892,10 +892,6 @@ void JIT::emit_op_loop_hint(Instruction*)
         addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
             AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     }
-
-    // Emit the watchdog timer check:
-    if (m_vm->watchdog)
-        addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog->timerDidFireAddress())));
 }
 
 void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
@@ -920,15 +916,19 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
         emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
     }
 #endif
+}
 
-    // Emit the slow path of the watchdog timer check:
-    if (m_vm->watchdog) {
-        linkSlowCase(iter);
-        callOperation(operationHandleWatchdogTimer);
+void JIT::emit_op_watchdog(Instruction*)
+{
+    ASSERT(m_vm->watchdog());
+    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->watchdog()->timerDidFireAddress())));
+}
 
-        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
-    }
-
+void JIT::emitSlow_op_watchdog(Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+{
+    ASSERT(m_vm->watchdog());
+    linkSlowCase(iter);
+    callOperation(operationHandleWatchdogTimer);
 }
 
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)

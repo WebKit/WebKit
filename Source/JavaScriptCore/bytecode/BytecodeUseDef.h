@@ -54,6 +54,7 @@ void computeUsesForBytecodeOffset(
     case op_create_direct_arguments:
     case op_create_out_of_band_arguments:
     case op_get_rest_length:
+    case op_watchdog:
         return;
     case op_assert:
     case op_get_scope:
@@ -309,6 +310,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_profile_type:
     case op_profile_control_flow:
     case op_put_to_arguments:
+    case op_watchdog:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);
 #undef LLINT_HELPER_OPCODES

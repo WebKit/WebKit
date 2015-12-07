@@ -240,6 +240,7 @@ public:
     JS_EXPORT_PRIVATE ~VM();
 
     JS_EXPORT_PRIVATE Watchdog& ensureWatchdog();
+    JS_EXPORT_PRIVATE Watchdog* watchdog() { return m_watchdog.get(); }
 
 private:
     RefPtr<JSLock> m_apiLock;
@@ -263,8 +264,6 @@ public:
     ClientData* clientData;
     VMEntryFrame* topVMEntryFrame;
     ExecState* topCallFrame;
-    RefPtr<Watchdog> watchdog;
-
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
     Strong<Structure> terminatedExecutionErrorStructure;
@@ -650,6 +649,7 @@ private:
     unsigned m_controlFlowProfilerEnabledCount;
     Deque<std::unique_ptr<QueuedTask>> m_microtaskQueue;
     MallocPtr<EncodedJSValue> m_exceptionFuzzBuffer;
+    RefPtr<Watchdog> m_watchdog;
 };
 
 #if ENABLE(GC_VALIDATION)

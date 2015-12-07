@@ -153,8 +153,8 @@ void WorkerScriptController::scheduleExecutionTermination()
     LockHolder locker(m_scheduledTerminationMutex);
     m_isTerminatingExecution = true;
 
-    ASSERT(m_vm->watchdog);
-    m_vm->watchdog->terminateSoon();
+    ASSERT(m_vm->watchdog());
+    m_vm->watchdog()->terminateSoon();
 }
 
 bool WorkerScriptController::isTerminatingExecution() const

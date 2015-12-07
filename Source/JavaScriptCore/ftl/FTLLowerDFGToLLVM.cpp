@@ -6181,7 +6181,7 @@ private:
         LBasicBlock timerDidFire = FTL_NEW_BLOCK(m_out, ("CheckWatchdogTimer timer did fire"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CheckWatchdogTimer continuation"));
         
-        LValue state = m_out.load8ZeroExt32(m_out.absolute(vm().watchdog->timerDidFireAddress()));
+        LValue state = m_out.load8ZeroExt32(m_out.absolute(vm().watchdog()->timerDidFireAddress()));
         m_out.branch(m_out.isZero32(state),
             usually(continuation), rarely(timerDidFire));
 
