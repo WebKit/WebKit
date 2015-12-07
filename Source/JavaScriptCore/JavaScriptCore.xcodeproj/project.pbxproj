@@ -2008,7 +2008,7 @@
 		FE3913551B794F8A00EDAF71 /* LiveObjectData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913511B794AC900EDAF71 /* LiveObjectData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913531B794AC900EDAF71 /* LiveObjectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; settings = {ASSET_TAGS = (); }; };
-		FE3A06A81C10BC8100390FDD /* JITBitwiseBinaryOpGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A71C10BC7400390FDD /* JITBitwiseBinaryOpGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE3A06A81C10BC8100390FDD /* JITBitBinaryOpGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */; settings = {ASSET_TAGS = (); }; };
 		FE3A06AC1C10C39E00390FDD /* JITBitOrGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
 		FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
 		FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */; settings = {ASSET_TAGS = (); }; };
@@ -4182,7 +4182,7 @@
 		FE3913531B794AC900EDAF71 /* LiveObjectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveObjectList.h; sourceTree = "<group>"; };
 		FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitOrGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitOrGenerator.h; sourceTree = "<group>"; };
-		FE3A06A71C10BC7400390FDD /* JITBitwiseBinaryOpGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitwiseBinaryOpGenerator.h; sourceTree = "<group>"; };
+		FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitBinaryOpGenerator.h; sourceTree = "<group>"; };
 		FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitAndGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitAndGenerator.h; sourceTree = "<group>"; };
 		FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitXorGenerator.cpp; sourceTree = "<group>"; };
@@ -4863,7 +4863,7 @@
 				FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */,
 				FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */,
 				FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */,
-				FE3A06A71C10BC7400390FDD /* JITBitwiseBinaryOpGenerator.h */,
+				FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */,
 				86CC85A20EE79B7400288682 /* JITCall.cpp */,
 				146FE51111A710430087AE66 /* JITCall32_64.cpp */,
 				0F8F94431667635200D61971 /* JITCode.cpp */,
@@ -7390,7 +7390,7 @@
 				86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */,
 				0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */,
 				0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */,
-				FE3A06A81C10BC8100390FDD /* JITBitwiseBinaryOpGenerator.h in Headers */,
+				FE3A06A81C10BC8100390FDD /* JITBitBinaryOpGenerator.h in Headers */,
 				0F46808214BA572D00BFE272 /* JITExceptions.h in Headers */,
 				0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */,
 				86CC85A10EE79A4700288682 /* JITInlines.h in Headers */,

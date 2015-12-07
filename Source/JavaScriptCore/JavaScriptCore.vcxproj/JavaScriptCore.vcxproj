@@ -1476,9 +1476,9 @@
     <ClInclude Include="..\jit\JIT.h" />
     <ClInclude Include="..\jit\JITAddGenerator.h" />
     <ClInclude Include="..\jit\JITBitAndGenerator.h" />
+    <ClInclude Include="..\jit\JITBitBinaryOpGenerator.h" />
     <ClInclude Include="..\jit\JITBitOrGenerator.h" />
     <ClInclude Include="..\jit\JITBitXorGenerator.h" />
-    <ClInclude Include="..\jit\JITBitwiseBinaryOpGenerator.h" />
     <ClInclude Include="..\jit\JITCode.h" />
     <ClInclude Include="..\jit\JITCompilationEffort.h" />
     <ClInclude Include="..\jit\JITDisassembler.h" />

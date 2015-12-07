@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JITBitwiseBinaryOpGenerator_h
-#define JITBitwiseBinaryOpGenerator_h
+#ifndef JITBitBinaryOpGenerator_h
+#define JITBitBinaryOpGenerator_h
 
 #if ENABLE(JIT)
 
@@ -33,9 +33,9 @@
 
 namespace JSC {
 
-class JITBitwiseBinaryOpGenerator {
+class JITBitBinaryOpGenerator {
 public:
-    JITBitwiseBinaryOpGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
+    JITBitBinaryOpGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right, GPRReg scratchGPR)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
@@ -68,4 +68,4 @@ protected:
 
 #endif // ENABLE(JIT)
 
-#endif // JITBitwiseBinaryOpGenerator_h
+#endif // JITBitBinaryOpGenerator_h

@@ -2540,13 +2540,13 @@
     <ClInclude Include="..\jit\JITBitAndGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>
+    <ClInclude Include="..\jit\JITBitBinaryOpGenerator.h">
+      <Filter>jit</Filter>
+    </ClInclude>
     <ClInclude Include="..\jit\JITBitOrGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITBitXorGenerator.h">
-      <Filter>jit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jit\JITBitwiseBinaryOpGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITCode.h">

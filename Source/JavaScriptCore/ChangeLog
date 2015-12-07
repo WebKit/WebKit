@@ -1,3 +1,38 @@
+2015-12-07  Mark Lam  <mark.lam@apple.com>
+
+        Rename JITBitwiseBinaryOpGenerator to JITBitBinaryOpGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=151945
+
+        Reviewed by Saam Barati.
+
+        The lshift operator also need to inherit from JITBitBinaryOpGenerator.  Calling
+        it "BitBinaryOp" makes more sense than "BitwiseBinaryOp" in that case, and still
+        makes sense for the bitand, bitor, and bitxor operators.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBitBinaryOpFastPath):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitBitwiseBinaryOpFastPath): Deleted.
+        * jit/JITBitAndGenerator.h:
+        (JSC::JITBitAndGenerator::JITBitAndGenerator):
+        * jit/JITBitBinaryOpGenerator.h: Copied from Source/JavaScriptCore/jit/JITBitwiseBinaryOpGenerator.h.
+        (JSC::JITBitBinaryOpGenerator::JITBitBinaryOpGenerator):
+        (JSC::JITBitwiseBinaryOpGenerator::JITBitwiseBinaryOpGenerator): Deleted.
+        * jit/JITBitOrGenerator.h:
+        (JSC::JITBitOrGenerator::JITBitOrGenerator):
+        * jit/JITBitXorGenerator.h:
+        (JSC::JITBitXorGenerator::JITBitXorGenerator):
+        * jit/JITBitwiseBinaryOpGenerator.h: Removed.
+
 2015-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [B3] Typo fix after r193386 to fix the build

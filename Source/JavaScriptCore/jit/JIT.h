@@ -827,7 +827,7 @@ namespace JSC {
 #endif
 
         template<typename SnippetGenerator>
-        void emitBitwiseBinaryOpFastPath(Instruction* currentInstruction);
+        void emitBitBinaryOpFastPath(Instruction* currentInstruction);
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 

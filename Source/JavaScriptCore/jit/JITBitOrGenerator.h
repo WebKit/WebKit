@@ -28,15 +28,15 @@
 
 #if ENABLE(JIT)
 
-#include "JITBitwiseBinaryOpGenerator.h"
+#include "JITBitBinaryOpGenerator.h"
 
 namespace JSC {
 
-class JITBitOrGenerator : public JITBitwiseBinaryOpGenerator {
+class JITBitOrGenerator : public JITBitBinaryOpGenerator {
 public:
     JITBitOrGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right, GPRReg unused = InvalidGPRReg)
-        : JITBitwiseBinaryOpGenerator(leftOperand, rightOperand, result, left, right, unused)
+        : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right, unused)
     { }
 
     void generateFastPath(CCallHelpers&);

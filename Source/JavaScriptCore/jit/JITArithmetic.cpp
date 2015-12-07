@@ -632,7 +632,7 @@ void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
 #endif // USE(JSVALUE64)
 
 template<typename SnippetGenerator>
-void JIT::emitBitwiseBinaryOpFastPath(Instruction* currentInstruction)
+void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction)
 {
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
@@ -688,7 +688,7 @@ void JIT::emitBitwiseBinaryOpFastPath(Instruction* currentInstruction)
 
 void JIT::emit_op_bitand(Instruction* currentInstruction)
 {
-    emitBitwiseBinaryOpFastPath<JITBitAndGenerator>(currentInstruction);
+    emitBitBinaryOpFastPath<JITBitAndGenerator>(currentInstruction);
 }
 
 void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -701,7 +701,7 @@ void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEnt
 
 void JIT::emit_op_bitor(Instruction* currentInstruction)
 {
-    emitBitwiseBinaryOpFastPath<JITBitOrGenerator>(currentInstruction);
+    emitBitBinaryOpFastPath<JITBitOrGenerator>(currentInstruction);
 }
 
 void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -714,7 +714,7 @@ void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntr
 
 void JIT::emit_op_bitxor(Instruction* currentInstruction)
 {
-    emitBitwiseBinaryOpFastPath<JITBitXorGenerator>(currentInstruction);
+    emitBitBinaryOpFastPath<JITBitXorGenerator>(currentInstruction);
 }
 
 void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
