@@ -1,3 +1,15 @@
+2015-12-06  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [es6] Arrow function syntax. Fix tests after 149338 landing
+        https://bugs.webkit.org/show_bug.cgi?id=151927
+
+        Reviewed by Saam Barati.
+
+        After landing patch for 149338 errors appear in for ES6 Generator. Current fix is removed assert 
+        that was removed by patch with implemenation of ES6 Generator.
+ 
+        * runtime/CommonSlowPaths.cpp:
+
 2015-12-05 Aleksandr Skachkov   <gskachkov@gmail.com>
 
         [ES6] "super" and "this" should be lexically bound inside an arrow function and should live in a JSLexicalEnvironment
