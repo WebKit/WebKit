@@ -26,6 +26,7 @@
 #ifndef SVGRenderTreeAsText_h
 #define SVGRenderTreeAsText_h
 
+#include "RenderTreeAsText.h"
 #include "TextStream.h"
 
 namespace WebCore {
@@ -48,15 +49,15 @@ class AffineTransform;
 class SVGUnitTypes;
 
 // functions used by the main RenderTreeAsText code
-void write(TextStream&, const RenderSVGShape&, int indent);
-void write(TextStream&, const RenderSVGRoot&, int indent);
-void writeSVGGradientStop(TextStream&, const RenderSVGGradientStop&, int indent);
-void writeSVGResourceContainer(TextStream&, const RenderSVGResourceContainer&, int indent);
-void writeSVGContainer(TextStream&, const RenderSVGContainer&, int indent);
-void writeSVGImage(TextStream&, const RenderSVGImage&, int indent);
-void writeSVGInlineText(TextStream&, const RenderSVGInlineText&, int indent);
-void writeSVGText(TextStream&, const RenderSVGText&, int indent);
-void writeResources(TextStream&, const RenderObject&, int indent);
+void write(TextStream&, const RenderSVGShape&, int indent, RenderAsTextBehavior);
+void write(TextStream&, const RenderSVGRoot&, int indent, RenderAsTextBehavior);
+void writeSVGGradientStop(TextStream&, const RenderSVGGradientStop&, int indent, RenderAsTextBehavior);
+void writeSVGResourceContainer(TextStream&, const RenderSVGResourceContainer&, int indent, RenderAsTextBehavior);
+void writeSVGContainer(TextStream&, const RenderSVGContainer&, int indent, RenderAsTextBehavior);
+void writeSVGImage(TextStream&, const RenderSVGImage&, int indent, RenderAsTextBehavior);
+void writeSVGInlineText(TextStream&, const RenderSVGInlineText&, int indent, RenderAsTextBehavior);
+void writeSVGText(TextStream&, const RenderSVGText&, int indent, RenderAsTextBehavior);
+void writeResources(TextStream&, const RenderObject&, int indent, RenderAsTextBehavior);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.

@@ -36,16 +36,17 @@ class RenderObject;
 class TextStream;
 
 enum RenderAsTextBehaviorFlags {
-    RenderAsTextBehaviorNormal = 0,
-    RenderAsTextShowAllLayers = 1 << 0, // Dump all layers, not just those that would paint.
-    RenderAsTextShowLayerNesting = 1 << 1, // Annotate the layer lists.
-    RenderAsTextShowCompositedLayers = 1 << 2, // Show which layers are composited.
-    RenderAsTextShowAddresses = 1 << 3, // Show layer and renderer addresses.
-    RenderAsTextShowIDAndClass = 1 << 4, // Show id and class attributes
-    RenderAsTextPrintingMode = 1 << 5, // Dump the tree in printing mode.
-    RenderAsTextDontUpdateLayout = 1 << 6, // Don't update layout, to make it safe to call showLayerTree() from the debugger inside layout or painting code.
-    RenderAsTextShowLayoutState = 1 << 7, // Print the various 'needs layout' bits on renderers.
-    RenderAsTextShowOverflow = 1 << 8 // Print layout and visual overflow.
+    RenderAsTextBehaviorNormal          = 0,
+    RenderAsTextShowAllLayers           = 1 << 0, // Dump all layers, not just those that would paint.
+    RenderAsTextShowLayerNesting        = 1 << 1, // Annotate the layer lists.
+    RenderAsTextShowCompositedLayers    = 1 << 2, // Show which layers are composited.
+    RenderAsTextShowAddresses           = 1 << 3, // Show layer and renderer addresses.
+    RenderAsTextShowIDAndClass          = 1 << 4, // Show id and class attributes
+    RenderAsTextPrintingMode            = 1 << 5, // Dump the tree in printing mode.
+    RenderAsTextDontUpdateLayout        = 1 << 6, // Don't update layout, to make it safe to call showLayerTree() from the debugger inside layout or painting code.
+    RenderAsTextShowLayoutState         = 1 << 7, // Print the various 'needs layout' bits on renderers.
+    RenderAsTextShowOverflow            = 1 << 8, // Print layout and visual overflow.
+    RenderAsTextShowSVGGeometry         = 1 << 9, // Print additional geometry for SVG objects.
 };
 typedef unsigned RenderAsTextBehavior;
 
@@ -53,6 +54,7 @@ typedef unsigned RenderAsTextBehavior;
 WEBCORE_EXPORT String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 WEBCORE_EXPORT String externalRepresentation(Element*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 void write(TextStream&, const RenderObject&, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+void writeDebugInfo(TextStream&, const RenderObject&, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
 class RenderTreeAsText {
 // FIXME: This is a cheesy hack to allow easy access to RenderStyle colors.  It won't be needed if we convert

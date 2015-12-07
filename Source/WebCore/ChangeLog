@@ -1,5 +1,41 @@
 2015-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Show more information about SVG renderers in showLayerTree() output
+        https://bugs.webkit.org/show_bug.cgi?id=151930
+
+        Reviewed by Zalan Bujtas.
+        
+        In showLayerTree() output, for SVG renderers show:
+        - visual and layout overflow, for boxes
+        - frame rect, for boxes
+        - layout state
+        - class and id
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::showLayerTree):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeDebugInfo): New function to share dumping with svg output.
+        (WebCore::write):
+        * rendering/RenderTreeAsText.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writePositionAndStyle): Show the frameRect for boxes (e.g. RenderSVGRoot).
+        Much more useful that showing the clippedOverflowRect.
+        (WebCore::writeStandardPrefix):
+        (WebCore::writeChildren):
+        (WebCore::writeSVGResourceContainer):
+        (WebCore::writeSVGContainer):
+        (WebCore::write):
+        (WebCore::writeSVGText):
+        (WebCore::writeSVGInlineText):
+        (WebCore::writeSVGImage):
+        (WebCore::writeSVGGradientStop):
+        (WebCore::writeResources):
+        (WebCore::operator<<): Deleted.
+        * rendering/svg/SVGRenderTreeAsText.h:
+
+2015-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         Clipping along compositing borders in svg-edit
         https://bugs.webkit.org/show_bug.cgi?id=151791
 
