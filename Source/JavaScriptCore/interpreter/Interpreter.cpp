@@ -1304,7 +1304,7 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
         return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
     ModuleProgramCodeBlock* codeBlock = executable->codeBlock();
 
-    if (UNLIKELY(vm.watchdog && vm.watchdog->didFire(callFrame)))
+    if (UNLIKELY(vm.shouldTriggerTermination(callFrame)))
         return throwTerminatedExecutionException(callFrame);
 
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.

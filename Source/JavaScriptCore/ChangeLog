@@ -1,3 +1,22 @@
+2015-12-07  Saam barati  <sbarati@apple.com>
+
+        Rename Watchdog::didFire to Watchdog::shouldTerminate because that's what didFire really meant
+        https://bugs.webkit.org/show_bug.cgi?id=151944
+
+        Reviewed by Mark Lam.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/VMInlines.h:
+        (JSC::VM::shouldTriggerTermination):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::terminateSoon):
+        (JSC::Watchdog::shouldTerminateSlow):
+        (JSC::Watchdog::didFireSlow): Deleted.
+        * runtime/Watchdog.h:
+        (JSC::Watchdog::shouldTerminate):
+        (JSC::Watchdog::didFire): Deleted.
+
 2015-12-07  Mark Lam  <mark.lam@apple.com>
 
         Rename JITBitwiseBinaryOpGenerator to JITBitBinaryOpGenerator.

@@ -83,7 +83,7 @@ JS_EXPORT_PRIVATE void Watchdog::terminateSoon()
     m_timerDidFire = true;
 }
 
-bool Watchdog::didFireSlow(ExecState* exec)
+bool Watchdog::shouldTerminateSlow(ExecState* exec)
 {
     {
         LockHolder locker(m_lock);

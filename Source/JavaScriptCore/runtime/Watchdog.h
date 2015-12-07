@@ -47,11 +47,11 @@ public:
     void setTimeLimit(std::chrono::microseconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
     JS_EXPORT_PRIVATE void terminateSoon();
 
-    bool didFire(ExecState* exec)
+    bool shouldTerminate(ExecState* exec)
     {
         if (!m_timerDidFire)
             return false;
-        return didFireSlow(exec);
+        return shouldTerminateSlow(exec);
     }
 
     bool hasTimeLimit();
@@ -66,7 +66,7 @@ private:
     void startTimer(LockHolder&, std::chrono::microseconds timeLimit);
     void stopTimer(LockHolder&);
 
-    bool didFireSlow(ExecState*);
+    bool shouldTerminateSlow(ExecState*);
 
     // m_timerDidFire indicates whether the timer fired. The Watchdog
     // still needs to check if the allowed CPU time has elapsed. If so, then

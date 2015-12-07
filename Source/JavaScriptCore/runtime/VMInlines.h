@@ -35,7 +35,7 @@ bool VM::shouldTriggerTermination(ExecState* exec)
 {
     if (!watchdog)
         return false;
-    return watchdog->didFire(exec);
+    return watchdog->shouldTerminate(exec);
 }
 
 } // namespace JSC
