@@ -143,6 +143,7 @@ static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKit
 
 static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, WebKitURIResponse* redirectResponse, gpointer)
 {
+    gboolean returnValue = FALSE;
     const char* requestURI = webkit_uri_request_get_uri(request);
     g_assert(requestURI);
 
@@ -165,10 +166,17 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
         SoupMessageHeaders* headers = webkit_uri_request_get_http_headers(request);
         g_assert(headers);
         soup_message_headers_append(headers, "DNT", "1");
+    } else if (g_str_has_suffix(requestURI, "/http-get-method")) {
+        g_assert_cmpstr(webkit_uri_request_get_http_method(request), ==, "GET");
+        g_assert(webkit_uri_request_get_http_method(request) == SOUP_METHOD_GET);
+    } else if (g_str_has_suffix(requestURI, "/http-post-method")) {
+        g_assert_cmpstr(webkit_uri_request_get_http_method(request), ==, "POST");
+        g_assert(webkit_uri_request_get_http_method(request) == SOUP_METHOD_POST);
+        returnValue = TRUE;
     } else if (g_str_has_suffix(requestURI, "/cancel-this.js"))
-        return TRUE;
+        returnValue = TRUE;
 
-    return FALSE;
+    return returnValue;
 }
 
 static GVariant* serializeContextMenu(WebKitContextMenu* menu)

@@ -1,5 +1,21 @@
 2015-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add webkit_uri_request_get_http_method
+        https://bugs.webkit.org/show_bug.cgi?id=151601
+
+        Reviewed by Martin Robinson.
+
+        Add test case to check HTTP method of WebKitURIRequest.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp:
+        (testURIRequestHTTPMethod):
+        (serverCallback):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (sendRequestCallback):
+
+2015-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add WebKitWebPage::console-message-sent signal to Web Extensions API
         https://bugs.webkit.org/show_bug.cgi?id=79918
 

@@ -462,6 +462,7 @@ WebKitURIRequest
 webkit_uri_request_new
 webkit_uri_request_get_uri
 webkit_uri_request_set_uri
+webkit_uri_request_get_http_method
 webkit_uri_request_get_http_headers
 
 <SUBSECTION Standard>

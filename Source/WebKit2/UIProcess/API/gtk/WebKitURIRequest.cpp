@@ -48,6 +48,7 @@ using namespace WebCore;
 struct _WebKitURIRequestPrivate {
     WebCore::ResourceRequest resourceRequest;
     CString uri;
+    const char* httpMethod;
     GUniquePtr<SoupMessageHeaders> httpHeaders;
 };
 
@@ -169,6 +170,32 @@ SoupMessageHeaders* webkit_uri_request_get_http_headers(WebKitURIRequest* reques
     request->priv->httpHeaders.reset(soup_message_headers_new(SOUP_MESSAGE_HEADERS_REQUEST));
     request->priv->resourceRequest.updateSoupMessageHeaders(request->priv->httpHeaders.get());
     return request->priv->httpHeaders.get();
+}
+
+/**
+ * webkit_uri_request_get_http_method:
+ * @request: a #WebKitURIRequest
+ *
+ * Get the HTTP method of the #WebKitURIRequest.
+ *
+ * Returns: the HTTP method of the #WebKitURIRequest or %NULL if @request is not
+ *    an HTTP request.
+ *
+ * Since: 2.12
+ */
+const gchar* webkit_uri_request_get_http_method(WebKitURIRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_REQUEST(request), nullptr);
+
+    if (!request->priv->resourceRequest.url().protocolIsInHTTPFamily())
+        return nullptr;
+
+    if (request->priv->resourceRequest.httpMethod().isEmpty())
+        return nullptr;
+
+    if (!request->priv->httpMethod)
+        request->priv->httpMethod = g_intern_string(request->priv->resourceRequest.httpMethod().utf8().data());
+    return request->priv->httpMethod;
 }
 
 WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const ResourceRequest& resourceRequest)

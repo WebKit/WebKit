@@ -70,6 +70,9 @@ WEBKIT_API void
 webkit_uri_request_set_uri          (WebKitURIRequest *request,
                                      const gchar      *uri);
 
+WEBKIT_API const gchar *
+webkit_uri_request_get_http_method  (WebKitURIRequest *request);
+
 WEBKIT_API SoupMessageHeaders *
 webkit_uri_request_get_http_headers (WebKitURIRequest *request);
 
