@@ -205,6 +205,10 @@ section {
     height: 600px;
     display: none;
     padding: 10px;
+}
+
+.display-progress-bar section,
+.display-statistics-table section {
     border: 6px solid rgb(235, 235, 235);
     border-radius: 20px;
 }
@@ -263,11 +267,14 @@ section#home {
     align-content: center;
 }
 
+section#home h2 {
+    font-size: 1.2em;
+}
+
 section#home > suites,
-section#home > options {
+#options {
     padding: 10px;
     margin: 10px;
-    height: 50%;
 }
 
 section#home > suites {
@@ -277,18 +284,13 @@ section#home > suites {
     flex: 0 1 40%;
 }
 
-section#home > options {
+#options {
     -webkit-flex: 1 1 auto;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
 }
 
-section#home > options > label {
-    margin: 2em;
-    line-height: 2;
-}
-
-section#home > header > h2 {
+section#home > header > h1 {
     margin: 0 auto;
     width: 70%;
     text-align: center;
@@ -305,6 +307,31 @@ section#home > suites input[type="number"] {
 
 section#home > suites input[type="number"].selected {
     display: inline;
+}
+
+#options ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#options h3 {
+    font-size: 1em;
+    font-weight: inherit;
+    margin: 0 0 .3em 0;
+    padding: 0;
+}
+
+#options > form > ul > li {
+    padding: 0 0 1em 0;
+}
+
+#options ul ul {
+    padding: 0;
+}
+
+#options li {
+    padding: .1em 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -334,7 +361,8 @@ section#running > #running-test > iframe {
     overflow: hidden;
 }
 
-section#running > #progress {
+.display-progress-bar section#running > #progress,
+.display-statistics-table section#running > #progress {
     position: absolute;
     bottom: -6px;
     left: 60px;
@@ -345,7 +373,8 @@ section#running > #progress {
     border-right: 6px solid rgb(46, 51, 55);
 }
 
-section#running > #progress > #progress-completed {
+.display-progress-bar section#running > #progress > #progress-completed,
+.display-statistics-table section#running > #progress > #progress-completed {
     position: absolute;
     top: 0;
     left: 0;

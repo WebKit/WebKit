@@ -1,3 +1,44 @@
+2015-12-07  Jon Lee  <jonlee@apple.com>
+
+        Update options for benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=151956
+
+        Reviewed by Simon Fraser.
+
+        Move "Fix test complexity" and "Adaptive" checkboxes into a radio group.
+
+        Move "Show running results" into a radio group, and add options to remove the HUD.
+
+        * Animometer/runner/animometer.html: Get rid of the preamble. Wrap the options
+        in a form for easier referencing in JS.
+        * Animometer/runner/resources/animometer.css: Show the surrounding border if the
+        body's display-minimal class name is set.
+        * Animometer/runner/resources/animometer.js:
+
+        Update the way optionsManager gets and sets default values. Include support for
+        radio groups.
+        (window.optionsManager.valueForOption):
+        (window.optionsManager.updateUIFromLocalStorage):
+        (window.optionsManager.updateLocalStorageFromUI):
+
+        (window.benchmarkRunnerClient.willStartFirstIteration):
+        (window.sectionsManager.setupRunningSectionStyle):
+        (window.suitesManager._treeElement): Fly-by whitespace fix.
+        (window.suitesManager._suitesElements): Ditto.
+        (window.suitesManager.updateEditsElementsState): Update options check.
+        (window.suitesManager.updateDisplay): Add a new update function for the HUD.
+        Attach a class to the body depending on the user's choice.
+        (window.benchmarkController.initialize): Add an event listener when the form
+        radio buttons update.
+        (window.benchmarkController.onFormChanged):
+        (window.optionsManager._optionsElements): Deleted.
+        (window.optionsManager._adaptiveTestElement): Deleted.
+        (window.benchmarkController.onChangeAdaptiveTestCheckbox): Deleted.
+        * Animometer/tests/resources/main.js:
+        (Benchmark.prototype.update): Update options checks.
+        * Animometer/tests/resources/stage.js: Update option check.
+        (StageBenchmark.prototype.showResults):
+
 2015-12-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add a basic compositing Animometer test

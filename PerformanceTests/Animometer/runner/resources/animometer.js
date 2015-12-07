@@ -33,7 +33,7 @@ window.benchmarkRunnerClient = {
         this._resultsTable = new ResultsTable(document.querySelector("section#results > data > table"), Headers);
         
         this.progressBar = new ProgressBar(document.getElementById("progress-completed"), this.testsCount);
-        this.recordTable = new ResultsTable(document.querySelector("section#running > #record > table"), Headers);
+        this.recordTable = new ResultsTable(document.querySelector("section#running #record > table"), Headers);
     },
     
     didRunSuites: function (suitesSamplers)
@@ -134,55 +134,61 @@ window.sectionsManager =
 
     setupRunningSectionStyle: function(options)
     {
-        if (!options["show-running-results"])
+        if (options["display"] != "statistics-table")
             document.getElementById("record").style.display = "none";
     }
 }
 
 window.optionsManager =
 {
-    _optionsElements : function()
+    valueForOption: function(name)
     {
-        return document.querySelectorAll("section#home > options input");;
-    },
-    
-    _adaptiveTestElement: function()
-    {
-        return document.querySelector("section#home > options #adaptive-test");;
+        var formElement = document.forms["benchmark-options"].elements[name];
+        if (formElement.type == "checkbox")
+            return formElement.checked;
+        return formElement.value;
     },
     
     updateUIFromLocalStorage: function()
     {
-        var optionsElements = this._optionsElements();
+        var formElements = document.forms["benchmark-options"].elements;
 
-        for (var i = 0; i < optionsElements.length; ++i) {
-            var optionElement = optionsElements[i];
-            
-            var value = localStorage.getItem(optionElement.id);
+        for (var i = 0; i < formElements.length; ++i) {
+            var formElement = formElements[i];
+            var name = formElement.id || formElement.name;
+            var type = formElement.type;
+
+            var value = localStorage.getItem(name);
             if (value === null)
                 continue;
 
-            if (optionElement.getAttribute("type") == "number")
-                optionElement.value = +value;
-            else if (optionElement.getAttribute("type") == "checkbox")
-                optionElement.checked = value == "true";
+            if (type == "number")
+                formElements[name].value = +value;
+            else if (type == "checkbox")
+                formElements[name].checked = value == "true";
+            else if (type == "radio")
+                formElements[name].value = value;
         }
     },
 
     updateLocalStorageFromUI: function()
     {
-        var optionsElements = this._optionsElements();
+        var formElements = document.forms["benchmark-options"].elements;
         var options = {};        
 
-        for (var i = 0; i < optionsElements.length; ++i) {
-            var optionElement = optionsElements[i];
-        
-            if (optionElement.getAttribute("type") == "number")
-                options[optionElement.id] = optionElement.value;
-            else if (optionElement.getAttribute("type") == "checkbox")
-                options[optionElement.id] = optionElement.checked;
+        for (var i = 0; i < formElements.length; ++i) {
+            var formElement = formElements[i];
+            var name = formElement.id || formElement.name;
+            var type = formElement.type;
+
+            if (type == "number")
+                options[name] = formElement.value;
+            else if (type == "checkbox")
+                options[name] = formElement.checked;
+            else if (type == "radio")
+                options[name] = formElements[name].value;
     
-            localStorage.setItem(optionElement.id, options[optionElement.id]);
+            localStorage.setItem(name, options[name]);
         }
         
         return options;
@@ -191,12 +197,12 @@ window.optionsManager =
 
 window.suitesManager =
 {
-    _treeElement : function()
+    _treeElement: function()
     {
         return document.querySelector("suites > .tree");
     },
     
-    _suitesElements : function()
+    _suitesElements: function()
     {
         return document.querySelectorAll("#home > suites > ul > li");
     },
@@ -317,17 +323,22 @@ window.suitesManager =
     updateEditsElementsState: function()
     {
         var editsElements = this._editsElements();
-        var show = !optionsManager._adaptiveTestElement().checked;
+        var showComplexityInputs = optionsManager.valueForOption("adjustment") == "fixed";
 
         for (var i = 0; i < editsElements.length; ++i) {
             var editElement = editsElements[i];
-            if (show)
+            if (showComplexityInputs)
                 editElement.classList.add("selected");
             else
                 editElement.classList.remove("selected");
         }
     },
-    
+
+    updateDisplay: function()
+    {
+        document.body.className = "display-" + optionsManager.valueForOption("display");
+    },
+
     updateUIFromLocalStorage: function()
     {
         var suitesElements = this._suitesElements();
@@ -410,15 +421,23 @@ window.benchmarkController =
 {
     initialize: function()
     {
+        document.forms["benchmark-options"].addEventListener("change", benchmarkController.onFormChanged, true);
         optionsManager.updateUIFromLocalStorage();
         suitesManager.createElements();
         suitesManager.updateUIFromLocalStorage();
+        suitesManager.updateDisplay();
         suitesManager.updateEditsElementsState();
     },
 
-    onChangeAdaptiveTestCheckbox: function()
+    onFormChanged: function(event)
     {
-        suitesManager.updateEditsElementsState();
+        if (event.target.name == "adjustment") {
+            suitesManager.updateEditsElementsState();
+            return;
+        }
+        if (event.target.name == "display") {
+            suitesManager.updateDisplay();
+        }
     },
     
     _runBenchmark: function(suites, options)

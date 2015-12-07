@@ -166,11 +166,13 @@ Benchmark.prototype =
         }
 
         var tuneValue = 0;
-        if (this._options["complexity"] && !this._options["adaptive-test"]) {
-            // this.tune(0) returns the current complexity of the test.
-            tuneValue = this._options["complexity"] - this.tune(0);
+        if (this._options["adjustment"] == "fixed") {
+            if (this._options["complexity"]) {
+                // this.tune(0) returns the current complexity of the test.
+                tuneValue = this._options["complexity"] - this.tune(0);
+            }
         }
-        else if (!(this._isSampling && this._options["fix-test-complexity"])) {
+        else if (!(this._isSampling && this._options["adjustment"] == "fixed-after-warmup")) {
             // The relationship between frameRate and test complexity is inverse-proportional so we
             // need to use the negative of PIDController.tune() to change the complexity of the test.
             tuneValue = -this._controller.tune(currentTimeOffset, timeDelta, currentFrameRate);

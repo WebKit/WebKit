@@ -15,25 +15,44 @@
     <main>
         <section id="home" class="selected">
             <header>
-                <h2>
-                    Animometer is a browser benchmark that measures the complexity of an animation for
-                    which a browser can achieve 50 FPS (frame per second). It uses adaptive animations
-                    to tune their complexities to stay close to 50 FPS.
-                </h2>
+                <h1>Animometer</h1>
             </header>
             <suites>
                 <h2>Suites:</h2>
                 <ul class="tree"></ul>
             </suites>
-            <options>
+            <div id="options">
                 <h2>Options:</h2>
-                <label>Test interval: <input id="test-interval" type="number" value="10"> seconds</label><br>
-                <label>Frame rate: <input id="frame-rate" type="number" value="50"> fps</label><br>
-                <label><input id="estimated-frame-rate" type="checkbox" checked> Estimated Frame Rate</label><br>
-                <label><input id="fix-test-complexity" type="checkbox"> Fix test complexity after warmup</label><br>
-                <label><input id="show-running-results" type="checkbox"> Show running results</label><br>
-                <label><input id="adaptive-test" type="checkbox" checked onchange="benchmarkController.onChangeAdaptiveTestCheckbox()"> Adaptive test</label>
-            </options>
+                <form name="benchmark-options">
+                <ul>
+                <li>
+                    <label>Test length: <input type="number" id="test-interval" value="10"> seconds each</label>
+                </li>
+                <li>
+                    <h3>Display:</h3>
+                    <ul>
+                        <li><label><input name="display" type="radio" value="minimal" checked> Minimal</label></li>
+                        <li><label><input name="display" type="radio" value="progress-bar"> Progress bar</label></li>
+                        <li><label><input name="display" type="radio" value="statistics-table"> Statistics table</label></li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Adjusting the test complexity:</h3>
+                    <ul>
+                        <li><label><input name="adjustment" type="radio" value="fixed"> Keep constant</label></li>
+                        <li><label><input name="adjustment" type="radio" value="fixed-after-warmup"> Keep constant after warmup to target FPS</label></li>
+                        <li><label><input name="adjustment" type="radio" value="adaptive" checked> Maintain target FPS</label></li>
+                    </ul>
+                </li>
+                <li>
+                    <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label>
+                </li>
+                <li>
+                    <label><input type="checkbox" id="estimated-frame-rate" checked> Filter frame rate calculation</label>
+                </li>
+                </ul>
+                </form>
+            </div>
             <footer>
                 <button class="large-button" onclick="benchmarkController.startTest()">Start Test</button>
             </footer>
