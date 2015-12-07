@@ -54,6 +54,10 @@ public:
     DashArray dashesForIntersectionsWithRect(const FloatRect& lineExtents);
 
 private:
+    void paintTextWithStyle(int startOffset, int endOffset, const TextPaintStyle&, const ShadowData*);
+    void paintEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle&, const ShadowData*);
+
+private:
     GraphicsContext& m_context;
     TextPaintStyle& m_textPaintStyle;
     TextPaintStyle& m_selectionPaintStyle;

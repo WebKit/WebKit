@@ -1,3 +1,18 @@
+2015-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        Refactor TextPainter::paintText() into sub methods.
+        https://bugs.webkit.org/show_bug.cgi?id=151962
+
+        Reviewed by Myles C. Maxfield.
+
+        No change in functionality.
+
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextWithEmphasisIfNeeded):
+        (WebCore::TextPainter::paintTextWithStyle):
+        (WebCore::TextPainter::paintText):
+        * rendering/TextPainter.h:
+
 2015-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Clean up virtual functions in MediaPlayerPrivateGStreamerBase

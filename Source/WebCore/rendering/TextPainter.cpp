@@ -150,63 +150,49 @@ static void paintTextWithShadows(GraphicsContext& context, const FontCascade& fo
     } while (shadow || !lastShadowIterationShouldDrawText);
 }
 
+void TextPainter::paintEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle& paintStyle, const ShadowData* shadow)
+{
+    if (m_emphasisMark.isEmpty())
+        return;
+
+    FloatPoint boxOrigin = m_boxRect.location();
+    updateGraphicsContext(m_context, paintStyle, UseEmphasisMarkColor);
+    static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView(&objectReplacementCharacter, 1));
+    TextRun& emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : m_textRun;
+    FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + m_boxRect.width() / 2, boxOrigin.y() + m_font.fontMetrics().ascent()) : m_textOrigin;
+    if (m_combinedText)
+        m_context.concatCTM(rotation(m_boxRect, Clockwise));
+
+    // FIXME: Truncate right-to-left text correctly.
+    paintTextWithShadows(m_context, m_combinedText ? m_combinedText->originalFont() : m_font, emphasisMarkTextRun, m_emphasisMark, m_emphasisMarkOffset, startOffset, endOffset, m_length, emphasisMarkTextOrigin, m_boxRect, shadow, paintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
+
+    if (m_combinedText)
+        m_context.concatCTM(rotation(m_boxRect, Counterclockwise));
+}
+
+void TextPainter::paintTextWithStyle(int startOffset, int endOffset, const TextPaintStyle& paintStyle, const ShadowData* shadow)
+{
+    GraphicsContextStateSaver stateSaver(m_context, paintStyle.strokeWidth > 0);
+    updateGraphicsContext(m_context, paintStyle);
+    // FIXME: Truncate right-to-left text correctly.
+    paintTextWithShadows(m_context, m_font, m_textRun, nullAtom, 0, startOffset, endOffset, m_length, m_textOrigin, m_boxRect, shadow, paintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
+    paintEmphasisMarksIfNeeded(startOffset, endOffset, paintStyle, shadow);
+}
+    
 void TextPainter::paintText()
 {
-    FloatPoint boxOrigin = m_boxRect.location();
-
     if (!m_paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode. It's probably dangerous to leave that mutated as a side
         // effect, so only when we know we're stroking, do a save/restore.
-        GraphicsContextStateSaver stateSaver(m_context, m_textPaintStyle.strokeWidth > 0);
-
-        updateGraphicsContext(m_context, m_textPaintStyle);
-        if (!m_paintSelectedTextSeparately || m_endPositionInTextRun <= m_startPositionInTextRun) {
-            // FIXME: Truncate right-to-left text correctly.
-            paintTextWithShadows(m_context, m_font, m_textRun, nullAtom, 0, 0, m_length, m_length, m_textOrigin, m_boxRect, m_textShadow, m_textPaintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
-        } else
-            paintTextWithShadows(m_context, m_font, m_textRun, nullAtom, 0, m_endPositionInTextRun, m_startPositionInTextRun, m_length, m_textOrigin, m_boxRect, m_textShadow, m_textPaintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
-
-        if (!m_emphasisMark.isEmpty()) {
-            updateGraphicsContext(m_context, m_textPaintStyle, UseEmphasisMarkColor);
-
-            static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView(&objectReplacementCharacter, 1));
-            TextRun& emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : m_textRun;
-            FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + m_boxRect.width() / 2, boxOrigin.y() + m_font.fontMetrics().ascent()) : m_textOrigin;
-            if (m_combinedText)
-                m_context.concatCTM(rotation(m_boxRect, Clockwise));
-
-            if (!m_paintSelectedTextSeparately || m_endPositionInTextRun <= m_startPositionInTextRun) {
-                // FIXME: Truncate right-to-left text correctly.
-                paintTextWithShadows(m_context, m_combinedText ? m_combinedText->originalFont() : m_font, emphasisMarkTextRun, m_emphasisMark, m_emphasisMarkOffset, 0, m_length, m_length, emphasisMarkTextOrigin, m_boxRect, m_textShadow, m_textPaintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
-            } else
-                paintTextWithShadows(m_context, m_combinedText ? m_combinedText->originalFont() : m_font, emphasisMarkTextRun, m_emphasisMark, m_emphasisMarkOffset, m_endPositionInTextRun, m_startPositionInTextRun, m_length, emphasisMarkTextOrigin, m_boxRect, m_textShadow, m_textPaintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
-
-            if (m_combinedText)
-                m_context.concatCTM(rotation(m_boxRect, Counterclockwise));
-        }
+        bool fullLengthPaint = !m_paintSelectedTextSeparately || m_endPositionInTextRun <= m_startPositionInTextRun;
+        int startOffset = fullLengthPaint ? 0 : m_endPositionInTextRun;
+        int endOffset = fullLengthPaint ? m_length : m_startPositionInTextRun;
+        paintTextWithStyle(startOffset, endOffset, m_textPaintStyle, m_textShadow);
     }
 
-    if ((m_paintSelectedTextOnly || m_paintSelectedTextSeparately) && m_startPositionInTextRun < m_endPositionInTextRun) {
-        // paint only the text that is selected
-        GraphicsContextStateSaver stateSaver(m_context, m_selectionPaintStyle.strokeWidth > 0);
-
-        updateGraphicsContext(m_context, m_selectionPaintStyle);
-        paintTextWithShadows(m_context, m_font, m_textRun, nullAtom, 0, m_startPositionInTextRun, m_endPositionInTextRun, m_length, m_textOrigin, m_boxRect, m_selectionShadow, m_selectionPaintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
-        if (!m_emphasisMark.isEmpty()) {
-            updateGraphicsContext(m_context, m_selectionPaintStyle, UseEmphasisMarkColor);
-
-            DEPRECATED_DEFINE_STATIC_LOCAL(TextRun, objectReplacementCharacterTextRun, (StringView(&objectReplacementCharacter, 1)));
-            TextRun& emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun : m_textRun;
-            FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + m_boxRect.width() / 2, boxOrigin.y() + m_font.fontMetrics().ascent()) : m_textOrigin;
-            if (m_combinedText)
-                m_context.concatCTM(rotation(m_boxRect, Clockwise));
-
-            paintTextWithShadows(m_context, m_combinedText ? m_combinedText->originalFont() : m_font, emphasisMarkTextRun, m_emphasisMark, m_emphasisMarkOffset, m_startPositionInTextRun, m_endPositionInTextRun, m_length, emphasisMarkTextOrigin, m_boxRect, m_selectionShadow, m_selectionPaintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
-
-            if (m_combinedText)
-                m_context.concatCTM(rotation(m_boxRect, Counterclockwise));
-        }
-    }
+    // paint only the text that is selected
+    if ((m_paintSelectedTextOnly || m_paintSelectedTextSeparately) && m_startPositionInTextRun < m_endPositionInTextRun)
+        paintTextWithStyle(m_startPositionInTextRun, m_endPositionInTextRun, m_selectionPaintStyle, m_selectionShadow);
 }
 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
