@@ -37,7 +37,4 @@ autogenargs='--enable-introspection'
 # for a module, so we do it here globally since it's a good idea for all other modules as well.
 buildroot = os.path.join(os.path.dirname(checkoutroot), "Build")
 
-if use_lib64:
-    os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(buildroot, 'Mesa', 'lib64', 'gallium'))
-else:
-    os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(buildroot, 'Mesa', 'lib', 'gallium'))
+os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(buildroot, 'Mesa', 'lib', 'gallium'))

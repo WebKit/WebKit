@@ -24,8 +24,8 @@ import shlex
 import subprocess
 import sys
 
-# 3.12.0
-jhbuild_revision = '5f42e91b05f55bcf1346899fa39fee4e3becca6f'
+# First release to support --exit-on-error option
+jhbuild_revision = 'f524fbe120ebb4b7d209ce0d035cd3d2e4a66bd4'
 
 def determine_platform():
     if '--efl' in sys.argv:
@@ -123,4 +123,4 @@ if os.environ.has_key('UNDER_JHBUILD') and os.environ.has_key('ACLOCAL_FLAGS'):
 
 ensure_jhbuild(platform)
 
-os.execve(jhbuild_path, [jhbuild_path, '--no-interact', '-f', jhbuildutils.get_config_file_for_platform(platform)] + sys.argv[2:], os.environ)
+os.execve(jhbuild_path, [jhbuild_path, '--exit-on-error', '--no-interact', '-f', jhbuildutils.get_config_file_for_platform(platform)] + sys.argv[2:], os.environ)

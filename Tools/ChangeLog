@@ -1,3 +1,19 @@
+2015-12-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        'jhbuild build' should fail immediately when building any module fails
+        https://bugs.webkit.org/show_bug.cgi?id=145697
+
+        Reviewed by Carlos Garcia Campos.
+
+        * efl/jhbuildrc: Update jhbuildrc to account for the removal of the use_lib64 option.
+        * gtk/jhbuildrc: Update jhbuildrc to account for the removal of the use_lib64 option.
+        Everything is placed under lib instead of lib64 now.
+        * jhbuild/jhbuild-wrapper: Update jhbuild to the latest upstream commit, and pass
+        --exit-on-error when running 'jhbuild build'.
+        * jhbuild/jhbuildrc_common.py:
+        (init): Don't override PKG_CONFIG_PATH, CMAKE_PREFIX_PATH, or CMAKE_LIBRARY_PATH. Modern
+        jhbuild should be able to handle these for us without breaking things....
+
 2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Add support to import w3c tests from a repository with a different root that the main repo dir

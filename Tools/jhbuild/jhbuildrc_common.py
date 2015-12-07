@@ -72,17 +72,15 @@ def init(jhbuildrc_globals, jhbuild_platform):
     os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
 
     # Use system libraries while building.
-    if jhbuildrc_globals['use_lib64']:
-        _library_dir = 'lib64'
-    else:
-        _library_dir = 'lib'
     addpath = jhbuildrc_globals['addpath']
-    addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', _library_dir, 'pkgconfig'))
+    system_libdirs = jhbuildrc_globals['system_libdirs']
+    for libdir in system_libdirs:
+        addpath('PKG_CONFIG_PATH', os.path.join(libdir, 'pkgconfig'))
     addpath('PKG_CONFIG_PATH', os.path.join(os.sep, 'usr', 'share', 'pkgconfig'))
 
     prefix = jhbuildrc_globals['prefix']
     addpath('CMAKE_PREFIX_PATH', prefix)
-    addpath('CMAKE_LIBRARY_PATH', os.path.join(prefix, _library_dir))
+    addpath('CMAKE_LIBRARY_PATH', os.path.join(prefix, 'lib'))
 
     if 'JHBUILD_MIRROR' in os.environ:
         jhbuildrc_globals['dvcs_mirror_dir'] = os.environ['JHBUILD_MIRROR']
