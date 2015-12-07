@@ -1,3 +1,29 @@
+2015-12-06  David Kilzer  <ddkilzer@apple.com>
+
+        TestNetscapePlugIn: Fix leaks found by static analyzer
+        <http://webkit.org/b/151881>
+
+        Reviewed by Darin Adler.
+
+        Fixes the following leaks found by the static analyzer:
+            DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:808:16: warning: Potential leak of memory pointed to by 'path'
+                    return false;
+                           ^~~~~
+            DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:808:16: warning: Potential leak of memory pointed to by 'target'
+                    return false;
+                           ^~~~~
+            DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:808:16: warning: Potential leak of memory pointed to by 'url'
+                    return false;
+                           ^~~~~
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (toCString): Switch to returning std::unique_ptr<char[]>.  Add
+        early return if allocation fails.
+        (testPostURLFile): Switch to using std::unique_ptr<char[]>.
+        Make sure to call fclose() on filehandle, even for an early
+        return.
+        (testSetStatus): Switch to using std::unique_ptr<char[]>.
+
 2015-12-05  David Kilzer  <ddkilzer@apple.com>
 
         prepare-ChangeLog: Fix some warning messages when using svn
