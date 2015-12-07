@@ -1,3 +1,15 @@
+2015-12-07  Beth Dakin  <bdakin@apple.com>
+
+        Hook up request and show for typing candidates in WK1
+        https://bugs.webkit.org/show_bug.cgi?id=151831
+        -and corresponding-
+        <rdar://problem/23751214>
+
+        Reviewed by Enrica Casucci.
+
+        Empty client for now.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2015-12-07  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][Mac] socketpair assertion failure

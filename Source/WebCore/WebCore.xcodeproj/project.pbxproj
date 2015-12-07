@@ -3556,6 +3556,7 @@
 		933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933A14A90B7D1D0900A53FFD /* DOMTextEvent.mm */; };
 		933A14B80B7D1D5200A53FFD /* JSTextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */; };
 		933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14B70B7D1D5200A53FFD /* JSTextEvent.h */; };
+		933C7A751C0FBC440034FB97 /* NSSpellCheckerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 933C7A741C0FBC440034FB97 /* NSSpellCheckerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9343CB8112F25E510033C5EE /* TextCodecUTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9343CB7F12F25E510033C5EE /* TextCodecUTF8.cpp */; };
 		9343CB8212F25E510033C5EE /* TextCodecUTF8.h in Headers */ = {isa = PBXBuildFile; fileRef = 9343CB8012F25E510033C5EE /* TextCodecUTF8.h */; };
 		93442C9E0D2B335C00338FF9 /* HTMLTableRowsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */; };
@@ -11050,6 +11051,7 @@
 		933A14A90B7D1D0900A53FFD /* DOMTextEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMTextEvent.mm; sourceTree = "<group>"; };
 		933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextEvent.cpp; sourceTree = "<group>"; };
 		933A14B70B7D1D5200A53FFD /* JSTextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextEvent.h; sourceTree = "<group>"; };
+		933C7A741C0FBC440034FB97 /* NSSpellCheckerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSpellCheckerSPI.h; sourceTree = "<group>"; };
 		9343CB7F12F25E510033C5EE /* TextCodecUTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUTF8.cpp; sourceTree = "<group>"; };
 		9343CB8012F25E510033C5EE /* TextCodecUTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF8.h; sourceTree = "<group>"; };
 		93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableRowsCollection.h; sourceTree = "<group>"; };
@@ -18656,6 +18658,7 @@
 				F40EA8AA1B867D6500CE5581 /* NSScrollingInputFilterSPI.h */,
 				2DCB837719F99BBA00A7FBE4 /* NSSharingServicePickerSPI.h */,
 				2DCB837819F99BBA00A7FBE4 /* NSSharingServiceSPI.h */,
+				933C7A741C0FBC440034FB97 /* NSSpellCheckerSPI.h */,
 				2D77AC281BF2B9860072470A /* NSTextFinderSPI.h */,
 				2D77AC2C1BF2B9A00072470A /* NSViewSPI.h */,
 				2D0CF8161BCF5DE1007A4937 /* NSWindowSPI.h */,
@@ -27665,6 +27668,7 @@
 				83C1D430178D5AB500141E68 /* SVGPathSegLinetoHorizontalAbs.h in Headers */,
 				83C1D431178D5AB500141E68 /* SVGPathSegLinetoHorizontalRel.h in Headers */,
 				83C1D432178D5AB500141E68 /* SVGPathSegLinetoRel.h in Headers */,
+				933C7A751C0FBC440034FB97 /* NSSpellCheckerSPI.h in Headers */,
 				B2227A7D0D00BF220071B782 /* SVGPathSegLinetoVertical.h in Headers */,
 				83C1D433178D5AB500141E68 /* SVGPathSegLinetoVerticalAbs.h in Headers */,
 				83C1D434178D5AB500141E68 /* SVGPathSegLinetoVerticalRel.h in Headers */,

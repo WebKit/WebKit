@@ -54,18 +54,25 @@
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
+#import <WebCore/Editor.h>
+#import <WebCore/FloatQuad.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SpellChecker.h>
 #import <WebCore/StyleProperties.h>
+#import <WebCore/TextIterator.h>
 #import <WebCore/UndoStep.h>
 #import <WebCore/UserTypingGestureIndicator.h>
+#import <WebCore/VisibleUnits.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
@@ -189,6 +196,7 @@ WebEditorClient::WebEditorClient(WebView *webView)
     , m_delayingContentChangeNotifications(0)
     , m_hasDelayedContentChangeNotification(0)
 #endif
+    , m_weakPtrFactory(this)
 {
 }
 
@@ -1102,6 +1110,114 @@ void WebEditorClient::willSetInputMethodState()
 void WebEditorClient::setInputMethodState(bool)
 {
 }
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& selection)
+{
+    RefPtr<Range> selectedRange = selection.toNormalizedRange();
+    if (!selectedRange)
+        return;
+
+    m_lastSelectionForRequestedCandidates = selection;
+
+    VisiblePosition selectionStart = selection.visibleStart();
+    VisiblePosition selectionEnd = selection.visibleEnd();
+
+    // Use the surrounding paragraphs of text as context.
+    VisiblePosition paragraphStart = startOfParagraph(selectionStart);
+    VisiblePosition paragraphEnd = endOfParagraph(selectionEnd);
+
+    int lengthToSelectionStart = TextIterator::rangeLength(makeRange(paragraphStart, selectionStart).get());
+    int lengthToSelectionEnd = TextIterator::rangeLength(makeRange(paragraphStart, selectionEnd).get());
+    NSRange rangeForCandidates = NSMakeRange(lengthToSelectionStart, lengthToSelectionEnd - lengthToSelectionStart);
+
+    String fullPlainTextStringOfParagraph = plainText(makeRange(paragraphStart, paragraphEnd).get());
+
+    NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
+    auto weakEditor = m_weakPtrFactory.createWeakPtr();
+    [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:rangeForCandidates inString:fullPlainTextStringOfParagraph types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakEditor](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!weakEditor)
+                return;
+            weakEditor->handleRequestedCandidates(sequenceNumber, candidates);
+        });
+    }];
+}
+
+static RefPtr<Range> candidateRangeForSelection(const VisibleSelection& selection, Frame* frame)
+{
+    return selection.isCaret() ? wordRangeFromPosition(selection.start()) : frame->selection().toNormalizedRange();
+}
+
+static bool candidateWouldReplaceText(const VisibleSelection& selection)
+{
+    // If the character behind the caret in the current selection is anything but a space or a newline then we should
+    // replace the whole current word with the candidate.
+    UChar32 characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection = 0;
+    charactersAroundPosition(selection.visibleStart(), characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection);
+    return !(characterBeforeSelection == '\0' || characterBeforeSelection == '\n' || characterBeforeSelection == ' ');
+}
+
+void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
+{
+    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    if (!frame)
+        return;
+
+    const VisibleSelection& selection = frame->selection().selection();
+    if (selection != m_lastSelectionForRequestedCandidates)
+        return;
+
+    RefPtr<Range> rangeForCurrentlyTypedString = candidateRangeForSelection(selection, frame);
+    NSString *currentlyTypedString;
+    if (rangeForCurrentlyTypedString && candidateWouldReplaceText(selection))
+        currentlyTypedString = plainText(rangeForCurrentlyTypedString.get());
+    else
+        currentlyTypedString = @"";
+
+    RefPtr<Range> selectedRange = frame->selection().selection().toNormalizedRange();
+    if (!selectedRange)
+        return;
+
+    IntRect rectForSelectionCandidates;
+    Vector<FloatQuad> quads;
+    selectedRange->absoluteTextQuads(quads);
+    if (!quads.isEmpty())
+        rectForSelectionCandidates = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
+
+    auto weakEditor = m_weakPtrFactory.createWeakPtr();
+    [[NSSpellChecker sharedSpellChecker] showCandidates:candidates forString:currentlyTypedString inRect:rectForSelectionCandidates view:m_webView completionHandler:[weakEditor](NSTextCheckingResult *acceptedCandidate) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!weakEditor)
+                return;
+            weakEditor->handleAcceptedCandidate(acceptedCandidate);
+        });
+    }];
+
+}
+
+void WebEditorClient::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate)
+{
+    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    if (!frame)
+        return;
+
+    const VisibleSelection& selection = frame->selection().selection();
+    if (selection != m_lastSelectionForRequestedCandidates)
+        return;
+
+    RefPtr<Range> candidateRange = candidateRangeForSelection(selection, frame);
+
+    frame->editor().setIgnoreCompositionSelectionChange(true);
+
+    if (candidateWouldReplaceText(selection))
+        frame->selection().setSelectedRange(candidateRange.get(), UPSTREAM, true);
+
+    frame->editor().insertText(acceptedCandidate.replacementString, 0);
+    frame->editor().insertText(String(" "), 0);
+    frame->editor().setIgnoreCompositionSelectionChange(false);
+}
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 
 #if !PLATFORM(IOS)
 @interface WebEditorSpellCheckResponder : NSObject

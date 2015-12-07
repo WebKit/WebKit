@@ -29,9 +29,11 @@
 
 #import <WebCore/EditorClient.h>
 #import <WebCore/TextCheckerClient.h>
+#import <WebCore/VisibleSelection.h>
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/text/StringView.h>
 
 #if PLATFORM(IOS)
@@ -167,6 +169,12 @@ private:
     virtual void setInputMethodState(bool enabled) override;
     virtual void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>) override;
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    virtual void requestCandidatesForSelection(const WebCore::VisibleSelection&) override;
+    void handleRequestedCandidates(NSInteger, NSArray<NSTextCheckingResult *> *);
+    void handleAcceptedCandidate(NSTextCheckingResult *);
+#endif
+
     void registerUndoOrRedoStep(PassRefPtr<WebCore::UndoStep>, bool isRedo);
 
     WebView *m_webView;
@@ -177,6 +185,10 @@ private:
     bool m_delayingContentChangeNotifications;
     bool m_hasDelayedContentChangeNotification;
 #endif
+
+    WebCore::VisibleSelection m_lastSelectionForRequestedCandidates;
+
+    WeakPtrFactory<WebEditorClient> m_weakPtrFactory;
 };
 
 #if PLATFORM(COCOA)

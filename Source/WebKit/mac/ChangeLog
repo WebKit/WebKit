@@ -1,3 +1,36 @@
+2015-12-07  Beth Dakin  <bdakin@apple.com>
+
+        Hook up request and show for typing candidates in WK1
+        https://bugs.webkit.org/show_bug.cgi?id=151831
+        -and corresponding-
+        <rdar://problem/23751214>
+
+        Reviewed by Enrica Casucci.
+
+        Add member variables to WebEditorClient. One is a WeakPtrFactory for the 
+        asynchronous handlers, and the other caches the VisibleSelection at the time 
+        candidates were requested so that we can make sure the candidates are still 
+        valid once we receive them.
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+
+        Call [NSSpellChecker requestCandidatesForSelectedRange] with the appropriate 
+        parameters.
+        (WebEditorClient::requestCandidatesForSelection):
+
+        Two helpers to compute information that we need for both of the handlers 
+        below.
+        (candidateRangeForSelection):
+        (candidateWouldReplaceText):
+
+        In this handler, we just need to call [NSSpellChecker showCandidates] with 
+        the appropriate parameters.
+        (WebEditorClient::handleRequestedCandidates):
+
+        Once a candidate is accepted, it should be inserted in the right way.
+        (WebEditorClient::handleAcceptedCandidate):
+
 2015-12-03  Jer Noble  <jer.noble@apple.com>
 
         Expose WebCore's InvisibleAutoplayNotPermitted setting to WebKit & WebKit2
