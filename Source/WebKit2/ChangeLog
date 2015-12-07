@@ -1,3 +1,20 @@
+2015-12-07  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] Allow applications to force Accelerated Compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=150558
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable forcing Accelerated Compositing mode to be always on if
+        a WEBKIT_FORCE_COMPOSITING_MODE environment variable is set.
+
+        This can be useful for controlled environments where we know that
+        AC always on works well enough, to get smoother animations.
+
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore): Set forceCompositingMode
+        setting to true if the environment variable is found.
+
 2015-12-07  Jon Forsberg  <jon.orebro@gmail.com>
 
         [GTK] Add webkit_uri_request_get_http_method

@@ -45,6 +45,9 @@ void WebPreferences::platformInitializeStore()
 #endif
 #if !ENABLE(OPENGL)
     setAcceleratedCompositingEnabled(false);
+#else
+    if (getenv("WEBKIT_FORCE_COMPOSITING_MODE"))
+        setForceCompositingMode(true);
 #endif
 }
 
