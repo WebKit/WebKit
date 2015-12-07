@@ -122,7 +122,7 @@ protected:
 
     static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
 #if USE(GSTREAMER_GL)
-    static gboolean drawCallback(MediaPlayerPrivateGStreamerBase*, GstContext*, GstSample*);
+    static gboolean drawCallback(MediaPlayerPrivateGStreamerBase*, GstGLContext*, GstSample*);
 #endif
 
     void notifyPlayerOfVolumeChange();

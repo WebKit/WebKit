@@ -108,7 +108,7 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
 #if USE(GSTREAMER_GL)
-    , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint())
+    , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamerBase::repaint)
 #endif
     , m_usingFallbackVideoSink(false)
 {
@@ -444,7 +444,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 
         LockHolder locker(m_drawMutex);
         m_drawTimer.startOneShot(0);
-        m_drawCondition.wait();
+        m_drawCondition.wait(m_drawMutex);
     }
 #else
     repaint();
@@ -457,7 +457,7 @@ void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreame
 }
 
 #if USE(GSTREAMER_GL)
-gboolean MediaPlayerPrivateGStreamerBase::drawCallback(MediaPlayerPrivateGStreamerBase* player, GstContext*, GstSample* sample)
+gboolean MediaPlayerPrivateGStreamerBase::drawCallback(MediaPlayerPrivateGStreamerBase* player, GstGLContext*, GstSample* sample)
 {
     player->triggerRepaint(sample);
     return TRUE;
