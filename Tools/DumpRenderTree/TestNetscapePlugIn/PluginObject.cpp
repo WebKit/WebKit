@@ -974,7 +974,7 @@ bool testWindowOpen(NPP npp)
 
 static bool testSetStatus(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
-    std::unique_ptr<char[]> message(nullptr);
+    std::unique_ptr<char[]> message;
     if (argCount && NPVARIANT_IS_STRING(args[0])) {
         NPString statusString = NPVARIANT_TO_STRING(args[0]);
         message = toCString(statusString);

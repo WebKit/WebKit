@@ -1,3 +1,12 @@
+2015-12-07  David Kilzer  <ddkilzer@apple.com>
+
+        TestNetscapePlugIn: Address review comment on 193607
+        <http://webkit.org/b/151881>
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (testSetStatus): Initializing std::unique_ptr<char[]> with
+        nullptr is redundant.
+
 2015-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_uri_request_get_http_method
