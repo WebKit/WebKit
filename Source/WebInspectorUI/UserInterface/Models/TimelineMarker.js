@@ -45,10 +45,14 @@ WebInspector.TimelineMarker = class TimelineMarker extends WebInspector.Object
 
     set time(x)
     {
+        console.assert(typeof x === "number", "Time should be a number.");
+
+        x = x || 0;
+
         if (this._time === x)
             return;
 
-        this._time = x || 0;
+        this._time = x;
 
         this.dispatchEventToListeners(WebInspector.TimelineMarker.Event.TimeChanged);
     }

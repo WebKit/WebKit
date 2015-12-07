@@ -1325,10 +1325,12 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
     set hidden(x)
     {
-        if (x === this._hidden)
+        x = !!x;
+
+        if (this._hidden === x)
             return;
 
-        this._hidden = x || false;
+        this._hidden = x;
         if (this._element)
             this._element.classList.toggle("hidden", this._hidden);
     }
@@ -1410,7 +1412,14 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
     set data(x)
     {
-        this._data = x || {};
+        console.assert(typeof x === "object", "Data should be an object.");
+
+        x = x || {};
+
+        if (Object.shallowEqual(this._data, x))
+            return;
+
+        this._data = x;
         this.needsRefresh();
     }
 

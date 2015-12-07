@@ -76,18 +76,21 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
     set classNames(x)
     {
-        if (this._listItemNode && this._classNames) {
-            this._listItemNode.classList.remove(...this._classNames);
-        }
+        x = x || [];
 
         if (typeof x === "string")
             x = [x];
 
-        this._classNames = x || [];
+        if (Object.shallowEqual(this._classNames, x))
+            return;
 
-        if (this._listItemNode) {
+        if (this._listItemNode && this._classNames)
+            this._listItemNode.classList.remove(...this._classNames);
+
+        this._classNames = x;
+
+        if (this._listItemNode)
             this._listItemNode.classList.add(...this._classNames);
-        }
     }
 
     addClassName(className)
@@ -153,7 +156,12 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
     set mainTitle(x)
     {
-        this._mainTitle = x || "";
+        x = x || "";
+
+        if (this._mainTitle === x)
+            return;
+
+        this._mainTitle = x;
         this._updateTitleElements();
         this.didChange();
         this.dispatchEventToListeners(WebInspector.GeneralTreeElement.Event.MainTitleDidChange);
@@ -166,7 +174,12 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
     set subtitle(x)
     {
-        this._subtitle = x || "";
+        x = x || "";
+
+        if (this._subtitle === x)
+            return;
+
+        this._subtitle = x;
         this._updateTitleElements();
         this.didChange();
     }
@@ -178,6 +191,8 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
     set status(x)
     {
+        x = x || "";
+
         if (this._status === x)
             return;
 
@@ -186,7 +201,7 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
             this._statusElement.className = WebInspector.GeneralTreeElement.StatusElementStyleClassName;
         }
 
-        this._status = x || "";
+        this._status = x;
         this._updateStatusElement();
     }
 
@@ -202,7 +217,7 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
     set tooltipHandledSeparately(x)
     {
-        this._tooltipHandledSeparately = x || false;
+        this._tooltipHandledSeparately = !!x;
     }
 
     // Overrides from TreeElement (Private)

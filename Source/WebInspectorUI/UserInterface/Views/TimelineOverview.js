@@ -106,10 +106,12 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
     set startTime(x)
     {
+        x = x || 0;
+
         if (this._startTime === x)
             return;
 
-        this._startTime = x || 0;
+        this._startTime = x;
 
         this.needsLayout();
     }
@@ -121,10 +123,12 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
     set currentTime(x)
     {
+        x = x || 0;
+
         if (this._currentTime === x)
             return;
 
-        this._currentTime = x || 0;
+        this._currentTime = x;
         this._revealCurrentTime = true;
 
         this.needsLayout();
@@ -177,10 +181,12 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
     set endTime(x)
     {
+        x = x || 0;
+
         if (this._endTime === x)
             return;
 
-        this._endTime = x || 0;
+        this._endTime = x;
 
         this.needsLayout();
     }
@@ -192,10 +198,12 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
     set scrollStartTime(x)
     {
+        x = x || 0;
+
         if (this._scrollStartTime === x)
             return;
 
-        this._scrollStartTime = x || 0;
+        this._scrollStartTime = x;
 
         this.needsLayout();
     }
@@ -220,7 +228,10 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
     {
         x = x || 0;
 
-        var selectionDuration = this.selectionDuration;
+        if (this._timelineRuler.selectionStartTime === x)
+            return;
+
+        let selectionDuration = this.selectionDuration;
         this._timelineRuler.selectionStartTime = x;
         this._timelineRuler.selectionEndTime = x + selectionDuration;
     }

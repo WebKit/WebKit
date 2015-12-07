@@ -47,6 +47,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         this._selectionStartTime = 0;
         this._selectionEndTime = Infinity;
         this._endTimePinned = false;
+        this._snapInterval = 0;
         this._allowsClippedLabels = false;
         this._allowsTimeRangeSelection = false;
         this._minimumSelectionDuration = 0.01;
@@ -65,10 +66,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set allowsClippedLabels(x)
     {
+        x = !!x;
+
         if (this._allowsClippedLabels === x)
             return;
 
-        this._allowsClippedLabels = x || false;
+        this._allowsClippedLabels = x;
 
         this.needsLayout();
     }
@@ -77,10 +80,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
     {
         console.assert(typeof x === "function" || !x, x);
 
+        x = x || null;
+
         if (this._formatLabelCallback === x)
             return;
 
-        this._formatLabelCallback = x || null;
+        this._formatLabelCallback = x;
 
         this.needsLayout();
     }
@@ -92,10 +97,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set allowsTimeRangeSelection(x)
     {
+        x = !!x;
+
         if (this._allowsTimeRangeSelection === x)
             return;
 
-        this._allowsTimeRangeSelection = x || false;
+        this._allowsTimeRangeSelection = x;
 
         if (x) {
             this._mouseDownEventListener = this._handleMouseDown.bind(this);
@@ -158,10 +165,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set zeroTime(x)
     {
+        x = x || 0;
+
         if (this._zeroTime === x)
             return;
 
-        this._zeroTime = x || 0;
+        this._zeroTime = x;
 
         this.needsLayout();
     }
@@ -173,10 +182,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set startTime(x)
     {
+        x = x || 0;
+
         if (this._startTime === x)
             return;
 
-        this._startTime = x || 0;
+        this._startTime = x;
 
         if (!isNaN(this._duration))
             this._endTime = this._startTime + this._duration;
@@ -191,22 +202,6 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         return this.endTime - this.startTime;
     }
 
-    set duration(x)
-    {
-        if (this._duration === x)
-            return;
-
-        this._duration = x || NaN;
-
-        if (!isNaN(this._duration)) {
-            this._endTime = this._startTime + this._duration;
-            this._endTimePinned = true;
-        } else
-            this._endTimePinned = false;
-
-        this.needsLayout();
-    }
-
     get endTime()
     {
         if (!this._endTimePinned && this.layoutPending)
@@ -216,10 +211,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set endTime(x)
     {
+        x = x || 0;
+
         if (this._endTime === x)
             return;
 
-        this._endTime = x || 0;
+        this._endTime = x;
         this._endTimePinned = true;
 
         this.needsLayout();
@@ -234,10 +231,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set secondsPerPixel(x)
     {
+        x = x || 0;
+
         if (this._secondsPerPixel === x)
             return;
 
-        this._secondsPerPixel = x || 0;
+        this._secondsPerPixel = x;
         this._endTimePinned = false;
         this._currentSliceTime = 0;
 
@@ -264,11 +263,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set selectionStartTime(x)
     {
-        x = this._snapValue(x);
+        x = this._snapValue(x) || 0;
+
         if (this._selectionStartTime === x)
             return;
 
-        this._selectionStartTime = x || 0;
+        this._selectionStartTime = x;
         this._timeRangeSelectionChanged = true;
 
         this._needsSelectionLayout();
@@ -281,11 +281,12 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
     set selectionEndTime(x)
     {
-        x = this._snapValue(x);
+        x = this._snapValue(x) || 0;
+
         if (this._selectionEndTime === x)
             return;
 
-        this._selectionEndTime = x || 0;
+        this._selectionEndTime = x;
         this._timeRangeSelectionChanged = true;
 
         this._needsSelectionLayout();

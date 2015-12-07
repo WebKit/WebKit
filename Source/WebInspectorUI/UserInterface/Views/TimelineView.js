@@ -90,10 +90,12 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     set zeroTime(x)
     {
+        x = x || 0;
+
         if (this._zeroTime === x)
             return;
 
-        this._zeroTime = x || 0;
+        this._zeroTime = x;
 
         this.needsLayout();
     }
@@ -105,10 +107,12 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     set startTime(x)
     {
+        x = x || 0;
+
         if (this._startTime === x)
             return;
 
-        this._startTime = x || 0;
+        this._startTime = x;
 
         this.needsLayout();
     }
@@ -120,10 +124,12 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     set endTime(x)
     {
+        x = x || 0;
+
         if (this._endTime === x)
             return;
 
-        this._endTime = x || 0;
+        this._endTime = x;
 
         this.needsLayout();
     }
@@ -135,12 +141,14 @@ WebInspector.TimelineView = class TimelineView extends WebInspector.ContentView
 
     set currentTime(x)
     {
+        x = x || 0;
+
         if (this._currentTime === x)
             return;
 
-        var oldCurrentTime = this._currentTime;
+        let oldCurrentTime = this._currentTime;
 
-        this._currentTime = x || 0;
+        this._currentTime = x;
 
         function checkIfLayoutIsNeeded(currentTime)
         {
