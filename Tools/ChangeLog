@@ -1,3 +1,12 @@
+2015-12-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][Mac] libWebExtensionTest link error
+        https://bugs.webkit.org/show_bug.cgi?id=150802
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt: add dependencies to the webextension library.
+
 2015-12-06  David Kilzer  <ddkilzer@apple.com>
 
         TestNetscapePlugIn: Fix leaks found by static analyzer
