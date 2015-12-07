@@ -1,3 +1,13 @@
+2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        http://webkit.org/b/147933 and though count queuing strategy and writable stream abort tests are fixed, there
+        are still issues with pipeTo. For that I created http://webkit.org/b/151949.
+
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-12-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add some more custom exception messages, passing some more tests..

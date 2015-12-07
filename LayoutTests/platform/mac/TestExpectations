@@ -1386,9 +1386,7 @@ webkit.org/b/149930 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failu
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass ImageOnlyFailure ]
 
 # Promises callbacks issues create problems in the writable stream tests
-webkit.org/b/147933 streams/reference-implementation/count-queuing-strategy.html [ Pass Failure ]
-webkit.org/b/147933 streams/reference-implementation/pipe-to.html [ Pass Failure ]
-webkit.org/b/147933 streams/reference-implementation/writable-stream-abort.html [ Pass Failure ]
+webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
 
 webkit.org/b/150806 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-events.htm [ Pass Failure ]
 webkit.org/b/150823 imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm [ Pass Failure ]
