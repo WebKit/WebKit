@@ -3134,6 +3134,8 @@ accessibility/treeitem-child-exposed.html [ Failure ]
 
 webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 
+webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame-removed.html [ Failure ]
+
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################
