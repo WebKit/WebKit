@@ -43,7 +43,9 @@
 #include <gio/gio.h>
 #endif
 
-#if defined(SOCK_SEQPACKET)
+// Although it's available on Darwin, SOCK_SEQPACKET seems to work differently
+// than in traditional Unix so fallback to STREAM on that platform.
+#if defined(SOCK_SEQPACKET) && !OS(DARWIN)
 #define SOCKET_TYPE SOCK_SEQPACKET
 #else
 #if PLATFORM(GTK)
