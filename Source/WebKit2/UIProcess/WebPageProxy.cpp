@@ -338,6 +338,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_notificationPermissionRequestManager(*this)
     , m_userMediaPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
+    , m_activityState(PageActivityState::NoFlags)
+    , m_userActivityStarted(false)
     , m_viewWasEverInWindow(false)
 #if PLATFORM(IOS)
     , m_alwaysRunsAtForegroundPriority(m_configuration->alwaysRunsAtForegroundPriority())
@@ -1448,12 +1450,29 @@ void WebPageProxy::dispatchViewStateChange()
     m_viewWasEverInWindow |= isNowInWindow;
 }
 
+void WebPageProxy::setPageActivityState(PageActivityState::Flags activityState)
+{
+    if (m_activityState == activityState)
+        return;
+
+    m_activityState = activityState;
+    updateActivityToken();
+}
+
 void WebPageProxy::updateActivityToken()
 {
     if (m_viewState & ViewState::IsVisuallyIdle)
         m_pageIsUserObservableCount = nullptr;
     else if (!m_pageIsUserObservableCount)
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
+
+    // Start the activity to prevent AppNap if the page activity is in progress,
+    // the page is visible and non-idle, or process suppression is disabled.
+    bool shouldHoldUserActivity = m_activityState || !(m_viewState & ViewState::IsVisuallyIdle) || !m_preferences->pageVisibilityBasedProcessSuppressionEnabled();
+    if (m_userActivityStarted != shouldHoldUserActivity) {
+        m_process->send(Messages::WebPage::SetUserActivityStarted(shouldHoldUserActivity), m_pageID);
+        m_userActivityStarted = shouldHoldUserActivity;
+    }
 
 #if PLATFORM(IOS)
     if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority)
@@ -2732,6 +2751,7 @@ void WebPageProxy::preferencesDidChange()
 #endif
 
     updateProccessSuppressionState();
+    updateActivityToken();
 
     m_pageClient.preferencesDidChange();
 

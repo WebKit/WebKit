@@ -420,6 +420,7 @@ public:
     bool isInWindow() const { return m_viewState & WebCore::ViewState::IsInWindow; }
     void waitForDidUpdateViewState();
     void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
+    void setPageActivityState(WebCore::PageActivityState::Flags);
 
     void layerHostingModeDidChange();
 
@@ -1556,6 +1557,8 @@ private:
     UserMediaPermissionRequestManagerProxy m_userMediaPermissionRequestManager;
 
     WebCore::ViewState::Flags m_viewState;
+    WebCore::PageActivityState::Flags m_activityState;
+    bool m_userActivityStarted;
     bool m_viewWasEverInWindow;
 #if PLATFORM(IOS)
     bool m_allowsMediaDocumentInlinePlayback { false };

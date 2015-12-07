@@ -341,7 +341,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_scrollPinningBehavior(DoNotPin)
     , m_useAsyncScrolling(false)
     , m_viewState(parameters.viewState)
-    , m_processSuppressionEnabled(true)
+    , m_activityState(PageActivityState::NoFlags)
     , m_userActivity("Process suppression disabled for page.")
     , m_pendingNavigationID(0)
 #if ENABLE(WEBGL)
@@ -448,7 +448,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setViewState(m_viewState);
     if (!isVisible())
         m_page->setIsPrerender();
-    updateUserActivity();
 
     updateIsInWindow(true);
 
@@ -534,18 +533,16 @@ void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
 
 void WebPage::setPageActivityState(PageActivityState::Flags activityState)
 {
-    PageActivityState::Flags changed = m_activityState ^ activityState;
-    m_activityState = activityState;
+    if (m_activityState == activityState)
+        return;
 
-    if (changed)
-        updateUserActivity();
+    m_activityState = activityState;
+    send(Messages::WebPageProxy::SetPageActivityState(activityState));
 }
 
-void WebPage::updateUserActivity()
+void WebPage::setUserActivityStarted(bool started)
 {
-    // Start the activity to prevent AppNap if the page activity is in progress,
-    // the page is visible and non-idle, or process suppression is disabled.
-    if (m_activityState || !(m_viewState & ViewState::IsVisuallyIdle) || !m_processSuppressionEnabled)
+    if (started)
         m_userActivity.start();
     else
         m_userActivity.stop();
@@ -2371,9 +2368,6 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
     ViewState::Flags changed = m_viewState ^ viewState;
     m_viewState = viewState;
 
-    if (changed)
-        updateUserActivity();
-
     m_page->setViewState(viewState);
     for (auto* pluginView : m_pluginViews)
         pluginView->viewStateDidChange(changed);
@@ -2930,12 +2924,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(SERVICE_CONTROLS)
     settings.setServiceControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::serviceControlsEnabledKey()));
 #endif
-
-    bool processSuppressionEnabled = store.getBoolValueForKey(WebPreferencesKey::pageVisibilityBasedProcessSuppressionEnabledKey());
-    if (m_processSuppressionEnabled != processSuppressionEnabled) {
-        m_processSuppressionEnabled = processSuppressionEnabled;
-        updateUserActivity();
-    }
 
     platformPreferencesDidChange(store);
 

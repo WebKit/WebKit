@@ -1,3 +1,37 @@
+2015-12-05  Gavin Barraclough  <barraclough@apple.com>
+
+        UIProcess should determine AppNap state for WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=151964
+
+        Reviewed by Anders Carlson.
+
+        Step 1 in unifying this with the iOS process suppression mechanism is to move the decision out of the WebContent process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        (WebKit::WebPageProxy::setPageActivityState):
+        (WebKit::WebPageProxy::updateActivityToken):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isInWindow):
+        (WebKit::WebPageProxy::didUpdateViewState):
+        * UIProcess/WebPageProxy.messages.in:
+            - WebPage now propagates PageActivityState to the WebPageProxy, for use
+              determining the supression state of the WebProcess.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+        (WebKit::WebPage::setPageActivityState):
+        (WebKit::WebPage::setUserActivityStarted):
+        (WebKit::WebPage::setViewState):
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::updateUserActivity): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+            - WebPage no longer determines when to update it's own UserActivity - instead,
+              let the UI process do so. As such, no longer need to track whether process
+              supression is enabled. Instead, add message to
+
 2015-12-07  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Regression(r187691): If a page is showing an auth pane in one tab, any new tabs with same page hang until credentials are entered in first tab
