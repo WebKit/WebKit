@@ -335,17 +335,6 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 
     m_pageUIClient = std::make_unique<PageUIClientEfl>(this);
 
-    WKPageGroupRef wkPageGroup = WKPageGetPageGroup(wkPage());
-    WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
-    WKPreferencesSetWebGLEnabled(wkPreferences, true);
-    WKPreferencesSetFullScreenEnabled(wkPreferences, true);
-    WKPreferencesSetWebAudioEnabled(wkPreferences, true);
-    WKPreferencesSetOfflineWebApplicationCacheEnabled(wkPreferences, true);
-#if ENABLE(SPELLCHECK)
-    WKPreferencesSetAsynchronousSpellCheckingEnabled(wkPreferences, true);
-#endif
-    WKPreferencesSetInteractiveFormValidationEnabled(wkPreferences, true);
-
     WKPageSetBackgroundExtendsBeyondPage(wkPage(), true);
 
     // Enable mouse events by default

@@ -1,3 +1,17 @@
+2015-12-07  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Moving preference settings from EwkView to WebPreferencesEfl
+        https://bugs.webkit.org/show_bug.cgi?id=151928
+
+        Reviewed by Gyuyoung Kim.
+
+        It implements WebPreferences::platformInitializeStore() in WebPreferencesEfl.cpp.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/efl/WebPreferencesEfl.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+
 2015-12-04  Anders Carlsson  <andersca@apple.com>
 
         Crash when secondary clicking on a link on yahoo.com
