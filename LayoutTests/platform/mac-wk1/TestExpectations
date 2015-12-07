@@ -110,7 +110,6 @@ storage/indexeddb/unblocked-version-changes.html [ Skip ]
 # IDB tests with text failures                                                             
 storage/indexeddb/createIndex-after-failure.html [ Failure ]
 storage/indexeddb/cursor-continue.html [ Failure ]
-storage/indexeddb/cursor-continue-validity.html [ Failure ]
 storage/indexeddb/cursor-continueprimarykey.html [ Failure ]
 storage/indexeddb/cursor-leak.html [ Failure ]
 storage/indexeddb/cursor-request-cycle.html [ Failure ]

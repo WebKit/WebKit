@@ -98,6 +98,10 @@ public:
     Iterator find(const IDBKeyData&, const IDBKeyData& primaryKey);
     Iterator reverseFind(const IDBKeyData&, const IDBKeyData& primaryKey, CursorDuplicity);
 
+#ifndef NDEBUG
+    String loggingString() const;
+#endif
+
 private:
     std::set<IDBKeyData>::iterator lowestIteratorInRange(const IDBKeyRangeData&) const;
     std::set<IDBKeyData>::reverse_iterator highestReverseIteratorInRange(const IDBKeyRangeData&) const;

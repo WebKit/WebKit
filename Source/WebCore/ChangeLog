@@ -1,3 +1,24 @@
+2015-12-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/cursor-continue-validity.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151961
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        When an index cursor's iterator was invalidated, there were some cases where it did 
+        not correctly find the next iterator to pick up where it left off.
+
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::update):
+        (WebCore::IDBClient::IDBCursor::deleteFunction):
+        
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::find):
+        (WebCore::IDBServer::IndexValueStore::loggingString):
+        * Modules/indexeddb/server/IndexValueStore.h:
+
 2015-12-07  Zalan Bujtas  <zalan@apple.com>
 
         Refactor TextPainter::paintText() into sub methods.

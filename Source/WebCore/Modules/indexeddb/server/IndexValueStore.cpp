@@ -212,6 +212,15 @@ IndexValueStore::Iterator IndexValueStore::find(const IDBKeyData& key, const IDB
     auto record = m_records.get(*iterator);
     ASSERT(record);
 
+    // If the main record iterator is not equal to the key we were looking for,
+    // we know the primary key record should be the first.
+    if (*iterator != key) {
+        auto primaryIterator = record->begin();
+        ASSERT(primaryIterator.isValid());
+
+        return { *this, iterator, primaryIterator };
+    }
+
     auto primaryIterator = record->find(primaryKey);
     if (primaryIterator.isValid())
         return { *this, iterator, primaryIterator };
@@ -373,6 +382,18 @@ const IDBKeyData& IndexValueStore::Iterator::primaryKey()
     ASSERT(isValid());
     return m_primaryKeyIterator.key();
 }
+
+#ifndef NDEBUG
+String IndexValueStore::loggingString() const
+{
+    String result;
+    for (auto& key : m_orderedKeys) {
+        result.append(makeString("Key: ", key.loggingString()));
+        result.append(makeString("  Entry has ", String::number(m_records.get(key)->getCount()), " entries"));
+    }
+    return result;
+}
+#endif
 
 } // namespace IDBServer
 } // namespace WebCore
