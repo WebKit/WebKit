@@ -61,84 +61,85 @@ void printSimpleLineLayoutBlockList();
 #endif
 
 enum AvoidanceReason_ : uint64_t {
-    NoReason                            = 1LLU  << 0,
-    FlowIsInsideRegion                  = 1LLU  << 1,
-    FlowHasHorizonalWritingMode         = 1LLU  << 2,
-    FlowHasOutline                      = 1LLU  << 3,
-    FlowIsRuby                          = 1LLU  << 4,
-    FlowIsPaginated                     = 1LLU  << 5,
-    FlowHasTextOverflow                 = 1LLU  << 6,
-    FlowIsDepricatedFlexBox             = 1LLU  << 7,
-    FlowParentIsPlaceholderElement      = 1LLU  << 8,
-    FlowParentIsTextAreaWithWrapping    = 1LLU  << 9,
-    FlowHasNonSupportedChild            = 1LLU  << 10,
-    FlowHasUnsupportedFloat             = 1LLU  << 11,
-    FlowHasTextDecoration               = 1LLU  << 12,
-    FlowIsJustifyAligned                = 1LLU  << 13,
-    FlowHasOverflowVisible              = 1LLU  << 14,
-    FlowIsNotLTR                        = 1LLU  << 15,
-    FlowHasLineBoxContainProperty       = 1LLU  << 16,
-    FlowIsNotTopToBottom                = 1LLU  << 17,
-    FlowHasLineBreak                    = 1LLU  << 18,
-    FlowHasWordBreak                    = 1LLU  << 19,
-    FlowHasNonNormalUnicodeBiDi         = 1LLU  << 20,
-    FlowHasRTLOrdering                  = 1LLU  << 21,
-    FlowHasLineAlignEdges               = 1LLU  << 22,
-    FlowHasLineSnap                     = 1LLU  << 23,
-    FlowHasHypensAuto                   = 1LLU  << 24,
-    FlowHasTextEmphasisFillOrMark       = 1LLU  << 25,
-    FlowHasTextShadow                   = 1LLU  << 26,
-    FlowHasPseudoFirstLine              = 1LLU  << 27,
-    FlowHasPseudoFirstLetter            = 1LLU  << 28,
-    FlowHasTextCombine                  = 1LLU  << 29,
-    FlowHasTextFillBox                  = 1LLU  << 30,
-    FlowHasBorderFitLines               = 1LLU  << 31,
-    FlowHasNonAutoLineBreak             = 1LLU  << 32,
-    FlowHasNonAutoTrailingWord          = 1LLU  << 33,
-    FlowHasSVGFont                      = 1LLU  << 34,
-    FlowTextIsEmpty                     = 1LLU  << 35,
-    FlowTextHasNoBreakSpace             = 1LLU  << 36,
-    FlowTextHasSoftHyphen               = 1LLU  << 37,
-    FlowTextHasDirectionCharacter       = 1LLU  << 38,
-    FlowIsMissingPrimaryFont            = 1LLU  << 39,
-    FlowFontIsMissingGlyph              = 1LLU  << 40,
-    FlowTextIsCombineText               = 1LLU  << 41,
-    FlowTextIsRenderCounter             = 1LLU  << 42,
-    FlowTextIsRenderQuote               = 1LLU  << 43,
-    FlowTextIsTextFragment              = 1LLU  << 44,
-    FlowTextIsSVGInlineText             = 1LLU  << 45,
-    FlowFontIsNotSimple                 = 1LLU  << 46,
-    FeatureIsDisabled                   = 1LLU  << 47,
-    FlowHasNoParent                     = 1LLU  << 48,
-    FlowHasNoChild                      = 1LLU  << 49,
-    EndOfReasons                        = 1LLU  << 50
+    FlowIsInsideRegion                  = 1LLU  << 0,
+    FlowHasHorizonalWritingMode         = 1LLU  << 1,
+    FlowHasOutline                      = 1LLU  << 2,
+    FlowIsRuby                          = 1LLU  << 3,
+    FlowIsPaginated                     = 1LLU  << 4,
+    FlowHasTextOverflow                 = 1LLU  << 5,
+    FlowIsDepricatedFlexBox             = 1LLU  << 6,
+    FlowParentIsPlaceholderElement      = 1LLU  << 7,
+    FlowParentIsTextAreaWithWrapping    = 1LLU  << 8,
+    FlowHasNonSupportedChild            = 1LLU  << 9,
+    FlowHasUnsupportedFloat             = 1LLU  << 10,
+    FlowHasTextDecoration               = 1LLU  << 11,
+    FlowIsJustifyAligned                = 1LLU  << 12,
+    FlowHasOverflowVisible              = 1LLU  << 13,
+    FlowIsNotLTR                        = 1LLU  << 14,
+    FlowHasLineBoxContainProperty       = 1LLU  << 15,
+    FlowIsNotTopToBottom                = 1LLU  << 16,
+    FlowHasLineBreak                    = 1LLU  << 17,
+    FlowHasWordBreak                    = 1LLU  << 18,
+    FlowHasNonNormalUnicodeBiDi         = 1LLU  << 19,
+    FlowHasRTLOrdering                  = 1LLU  << 20,
+    FlowHasLineAlignEdges               = 1LLU  << 21,
+    FlowHasLineSnap                     = 1LLU  << 22,
+    FlowHasHypensAuto                   = 1LLU  << 23,
+    FlowHasTextEmphasisFillOrMark       = 1LLU  << 24,
+    FlowHasTextShadow                   = 1LLU  << 25,
+    FlowHasPseudoFirstLine              = 1LLU  << 26,
+    FlowHasPseudoFirstLetter            = 1LLU  << 27,
+    FlowHasTextCombine                  = 1LLU  << 28,
+    FlowHasTextFillBox                  = 1LLU  << 29,
+    FlowHasBorderFitLines               = 1LLU  << 30,
+    FlowHasNonAutoLineBreak             = 1LLU  << 31,
+    FlowHasNonAutoTrailingWord          = 1LLU  << 32,
+    FlowHasSVGFont                      = 1LLU  << 33,
+    FlowTextIsEmpty                     = 1LLU  << 34,
+    FlowTextHasNoBreakSpace             = 1LLU  << 35,
+    FlowTextHasSoftHyphen               = 1LLU  << 36,
+    FlowTextHasDirectionCharacter       = 1LLU  << 37,
+    FlowIsMissingPrimaryFont            = 1LLU  << 38,
+    FlowFontIsMissingGlyph              = 1LLU  << 39,
+    FlowTextIsCombineText               = 1LLU  << 40,
+    FlowTextIsRenderCounter             = 1LLU  << 41,
+    FlowTextIsRenderQuote               = 1LLU  << 42,
+    FlowTextIsTextFragment              = 1LLU  << 43,
+    FlowTextIsSVGInlineText             = 1LLU  << 44,
+    FlowFontIsNotSimple                 = 1LLU  << 45,
+    FeatureIsDisabled                   = 1LLU  << 46,
+    FlowHasNoParent                     = 1LLU  << 47,
+    FlowHasNoChild                      = 1LLU  << 48,
+    EndOfReasons                        = 1LLU  << 49
 };
+const unsigned NoReason = 0;
+
 typedef uint64_t AvoidanceReason;
 typedef uint64_t AvoidanceReasonFlags;
 
-enum class FallThrough { Yes, No };
+enum class IncludeReasons { First , All };
 
 #ifndef NDEBUG
-#define SET_REASON_AND_RETURN_IF_NEEDED(reasons, reason, fallthrough) { \
+#define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
         reasons |= reason; \
-        if (fallthrough == FallThrough::No) \
+        if (includeReasons == IncludeReasons::First) \
             return reasons; \
     }
 #else
-#define SET_REASON_AND_RETURN_IF_NEEDED(reasons, reason, fallthrough) { \
-        ASSERT_UNUSED(fallthrough, fallthrough == FallThrough::No); \
+#define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
+        ASSERT_UNUSED(includeReasons, includeReasons == IncludeReasons::First); \
         reasons |= reason; \
         return reasons; \
     }
 #endif
 
 template <typename CharacterType>
-static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const Font& font, FallThrough fallthrough)
+static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned length, const Font& font, IncludeReasons includeReasons)
 {
-    AvoidanceReasonFlags reasons = NoReason;
+    AvoidanceReasonFlags reasons = { };
     // FIXME: <textarea maxlength=0> generates empty text node.
     if (!length)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextIsEmpty, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsEmpty, reasons, includeReasons);
 
     for (unsigned i = 0; i < length; ++i) {
         UChar character = text[i];
@@ -147,118 +148,118 @@ static AvoidanceReasonFlags canUseForText(const CharacterType* text, unsigned le
 
         // These would be easy to support.
         if (character == noBreakSpace)
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextHasNoBreakSpace, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasNoBreakSpace, reasons, includeReasons);
         if (character == softHyphen)
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextHasSoftHyphen, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSoftHyphen, reasons, includeReasons);
 
         UCharDirection direction = u_charDirection(character);
         if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
             || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
             || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
             || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextHasDirectionCharacter, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
 
         if (!font.glyphForCharacter(character))
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowFontIsMissingGlyph, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsMissingGlyph, reasons, includeReasons);
     }
     return reasons;
 }
 
-static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const Font& font, FallThrough fallthrough)
+static AvoidanceReasonFlags canUseForText(const RenderText& textRenderer, const Font& font, IncludeReasons includeReasons)
 {
     if (textRenderer.is8Bit())
-        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font, fallthrough);
-    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font, fallthrough);
+        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font, includeReasons);
+    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font, includeReasons);
 }
 
-static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, FallThrough fallthrough)
+static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, IncludeReasons includeReasons)
 {
-    AvoidanceReasonFlags reasons = NoReason;
+    AvoidanceReasonFlags reasons = { };
     // We assume that all lines have metrics based purely on the primary font.
     const auto& style = flow.style();
     auto& primaryFont = style.fontCascade().primaryFont();
     if (primaryFont.isLoading())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsMissingPrimaryFont, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
     if (primaryFont.isSVGFont())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasSVGFont, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasSVGFont, reasons, includeReasons);
 
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
         if (textRenderer.isCombineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextIsCombineText, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);
         if (textRenderer.isCounter())
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextIsRenderCounter, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
         if (textRenderer.isQuote())
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextIsRenderQuote, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderQuote, reasons, includeReasons);
         if (textRenderer.isTextFragment())
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextIsTextFragment, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (textRenderer.isSVGInlineText())
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowTextIsSVGInlineText, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
         if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowFontIsNotSimple, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowFontIsNotSimple, reasons, includeReasons);
 
-        auto textReasons = canUseForText(textRenderer, primaryFont, fallthrough);
+        auto textReasons = canUseForText(textRenderer, primaryFont, includeReasons);
         if (textReasons != NoReason)
-            SET_REASON_AND_RETURN_IF_NEEDED(reasons, textReasons, fallthrough);
+            SET_REASON_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }
     return reasons;
 }
 
-static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, FallThrough fallthrough)
+static AvoidanceReasonFlags canUseForStyle(const RenderStyle& style, IncludeReasons includeReasons)
 {
-    AvoidanceReasonFlags reasons = NoReason;
+    AvoidanceReasonFlags reasons = { };
     if (style.textOverflow())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasTextOverflow, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
     if (style.textDecorationsInEffect() != TextDecorationNone)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasTextDecoration, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextDecoration, reasons, includeReasons);
     if (style.textAlign() == JUSTIFY)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsJustifyAligned, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsJustifyAligned, reasons, includeReasons);
     // Non-visible overflow should be pretty easy to support.
     if (style.overflowX() != OVISIBLE || style.overflowY() != OVISIBLE)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasOverflowVisible, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowVisible, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsNotLTR, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
     if (style.lineBoxContain() != RenderStyle::initialLineBoxContain())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasLineBoxContainProperty, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.writingMode() != TopToBottomWritingMode)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsNotTopToBottom, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
     if (style.lineBreak() != LineBreakAuto)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasLineBreak, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBreak, reasons, includeReasons);
     if (style.wordBreak() != NormalWordBreak)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasWordBreak, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasWordBreak, reasons, includeReasons);
     if (style.unicodeBidi() != UBNormal)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasNonNormalUnicodeBiDi, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonNormalUnicodeBiDi, reasons, includeReasons);
     if (style.rtlOrdering() != LogicalOrder)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasRTLOrdering, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasRTLOrdering, reasons, includeReasons);
     if (style.lineAlign() != LineAlignNone)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasLineAlignEdges, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnapNone)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasLineSnap, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
     if (style.hyphens() == HyphensAuto)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasHypensAuto, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHypensAuto, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFillFilled || style.textEmphasisMark() != TextEmphasisMarkNone)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasTextEmphasisFillOrMark, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.textShadow())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasTextShadow, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextShadow, reasons, includeReasons);
     if (style.hasPseudoStyle(FIRST_LINE))
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasPseudoFirstLine, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLine, reasons, includeReasons);
     if (style.hasPseudoStyle(FIRST_LETTER))
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasPseudoFirstLetter, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLetter, reasons, includeReasons);
     if (style.hasTextCombine())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasTextCombine, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
     if (style.backgroundClip() == TextFillBox)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasTextFillBox, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextFillBox, reasons, includeReasons);
     if (style.borderFit() == BorderFitLines)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasBorderFitLines, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasBorderFitLines, reasons, includeReasons);
     if (style.lineBreak() != LineBreakAuto)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasNonAutoLineBreak, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonAutoLineBreak, reasons, includeReasons);
 #if ENABLE(CSS_TRAILING_WORD)
     if (style.trailingWord() != TrailingWord::Auto)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasNonAutoTrailingWord, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonAutoTrailingWord, reasons, includeReasons);
 #endif
     return reasons;
 }
 
-static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, FallThrough fallthrough)
+static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeReasons includeReasons)
 {
 #ifndef NDEBUG
     static std::once_flag onceFlag;
@@ -267,36 +268,36 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Fal
         registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutReasons", printSimpleLineLayoutBlockList);
     });
 #endif
-    AvoidanceReasonFlags reasons = NoReason;
+    AvoidanceReasonFlags reasons = { };
     if (!flow.frame().settings().simpleLineLayoutEnabled())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FeatureIsDisabled, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
     if (!flow.parent())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasNoParent, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoParent, reasons, includeReasons);
     if (!flow.firstChild())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasNoChild, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoChild, reasons, includeReasons);
     if (flow.flowThreadState() != RenderObject::NotInsideFlowThread)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsInsideRegion, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideRegion, reasons, includeReasons);
     if (!flow.isHorizontalWritingMode())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasHorizonalWritingMode, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHorizonalWritingMode, reasons, includeReasons);
     if (flow.hasOutline())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasOutline, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOutline, reasons, includeReasons);
     if (flow.isRubyText() || flow.isRubyBase())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsRuby, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsRuby, reasons, includeReasons);
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsPaginated, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
     if (flow.isAnonymous() && flow.firstLineBlock())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasPseudoFirstLine, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLine, reasons, includeReasons);
     if (flow.isAnonymousBlock() && flow.parent()->style().textOverflow())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasTextOverflow, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
     if (flow.parent()->isDeprecatedFlexibleBox())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowIsDepricatedFlexBox, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsDepricatedFlexBox, reasons, includeReasons);
     // FIXME: Placeholders do something strange.
     if (is<RenderTextControl>(*flow.parent()) && downcast<RenderTextControl>(*flow.parent()).textFormControlElement().placeholderElement())
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowParentIsPlaceholderElement, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsPlaceholderElement, reasons, includeReasons);
     // FIXME: Implementation of wrap=hard looks into lineboxes.
     if (flow.parent()->isTextArea() && flow.parent()->element()->fastHasAttribute(HTMLNames::wrapAttr))
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowParentIsTextAreaWithWrapping, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsTextAreaWithWrapping, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (const auto* child = flow.firstChild(); child;) {
@@ -308,12 +309,12 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Fal
             child = child->nextSibling();
             continue;
         }
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasNonSupportedChild, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
         break;
     }
-    auto styleReasons = canUseForStyle(flow.style(), fallthrough);
+    auto styleReasons = canUseForStyle(flow.style(), includeReasons);
     if (styleReasons != NoReason)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, styleReasons, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
     // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
     if (flow.containsFloats()) {
         float minimumWidthNeeded = std::numeric_limits<float>::max();
@@ -326,23 +327,23 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Fal
                 // if a float has a shape, we cannot tell if content will need to be shifted until after we lay it out,
                 // since the amount of space is not uniform for the height of the float.
                 if (floatingObject->renderer().shapeOutsideInfo())
-                    SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasUnsupportedFloat, fallthrough);
+                    SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
 #endif
                 float availableWidth = flow.availableLogicalWidthForLine(floatingObject->y(), false);
                 if (availableWidth < minimumWidthNeeded)
-                    SET_REASON_AND_RETURN_IF_NEEDED(reasons, FlowHasUnsupportedFloat, fallthrough);
+                    SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
             }
         }
     }
-    auto fontAndTextReasons = canUseForFontAndText(flow, fallthrough);
+    auto fontAndTextReasons = canUseForFontAndText(flow, includeReasons);
     if (fontAndTextReasons != NoReason)
-        SET_REASON_AND_RETURN_IF_NEEDED(reasons, fontAndTextReasons, fallthrough);
+        SET_REASON_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
     return reasons;
 }
 
 bool canUseFor(const RenderBlockFlow& flow)
 {
-    return canUseForWithReason(flow, FallThrough::No) == NoReason;
+    return canUseForWithReason(flow, IncludeReasons::First) == NoReason;
 }
 
 static float computeLineLeft(ETextAlign textAlign, float availableWidth, float committedWidth, float logicalLeftOffset)
@@ -1009,7 +1010,7 @@ void printSimpleLineLayoutBlockList()
     TextStream stream;
     stream << "---------------------------------------------------\n";
     for (const auto* flow : leafRenderers) {
-        auto reason = canUseForWithReason(*flow, FallThrough::Yes);
+        auto reason = canUseForWithReason(*flow, IncludeReasons::All);
         if (reason == NoReason)
             continue;
         unsigned printedLength = 30;
@@ -1041,7 +1042,7 @@ void printSimpleLineLayoutCoverage()
     for (const auto* flow : leafRenderers) {
         auto flowLength = textLengthForSubtree(*flow);
         textLength += flowLength;
-        auto reasons = canUseForWithReason(*flow, FallThrough::Yes);
+        auto reasons = canUseForWithReason(*flow, IncludeReasons::All);
         if (reasons == NoReason)
             continue;
         ++numberOfUnsupportedLeafBlocks;

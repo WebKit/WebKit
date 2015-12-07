@@ -1,3 +1,18 @@
+2015-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        Addressing post-review comments on r193374.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForText):
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+        (WebCore::SimpleLineLayout::canUseForStyle):
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        (WebCore::SimpleLineLayout::canUseFor):
+        (WebCore::SimpleLineLayout::printSimpleLineLayoutBlockList):
+        (WebCore::SimpleLineLayout::printSimpleLineLayoutCoverage):
+
 2015-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove CORETEXT_WEB_FONTS
