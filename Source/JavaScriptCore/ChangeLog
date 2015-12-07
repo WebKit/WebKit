@@ -1,3 +1,18 @@
+2015-12-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Implement scheduleTimer and cancelTimer in IncrementalSweeper class
+        https://bugs.webkit.org/show_bug.cgi?id=151656
+
+        Reviewed by Csaba Osztrogonác.
+
+        Support IncremntalSweeper using Ecore_Timer.
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::cancelTimer):
+        * heap/IncrementalSweeper.h:
+
 2015-12-06  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.toLocaleLowerCase in ECMA-402

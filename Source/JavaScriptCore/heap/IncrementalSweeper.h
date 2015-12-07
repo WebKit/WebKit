@@ -49,13 +49,16 @@ public:
     bool sweepNextBlock();
     void willFinishSweeping();
 
-#if USE(CF) || (USE(GLIB) && !PLATFORM(EFL))
+#if USE(CF) || PLATFORM(EFL) || USE(GLIB)
 private:
     void doSweep(double startTime);
     void scheduleTimer();
     void cancelTimer();
     
     Vector<MarkedBlock*>& m_blocksToSweep;
+#if PLATFORM(EFL)
+    bool m_isTimerFrozen;
+#endif
 #endif
 };
 
