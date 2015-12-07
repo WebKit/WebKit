@@ -100,9 +100,6 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
         prevIndex = i;
     }
 
-    double scale = 1;
-    double offset = 0;
-
     if (prevIndex == -1)
         prevIndex = 0;
 
@@ -122,8 +119,8 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     fromStyle = prevKeyframe.style();
     toStyle = nextKeyframe.style();
     
-    offset = prevKeyframe.key();
-    scale = 1.0 / (nextKeyframe.key() - prevKeyframe.key());
+    double offset = prevKeyframe.key();
+    double scale = 1.0 / (nextKeyframe.key() - prevKeyframe.key());
 
     prog = progress(scale, offset, prevKeyframe.timingFunction(name()));
 }

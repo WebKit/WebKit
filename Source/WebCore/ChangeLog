@@ -1,5 +1,32 @@
 2015-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r187121): Can't get to the main content of the page at https://theintercept.com/drone-papers/
+        https://bugs.webkit.org/show_bug.cgi?id=151849
+        rdar://problem/23132828
+
+        Reviewed by Zalan Bujtas.
+        
+        This page uses a fill-forwards animation where the last keyframe has height: auto.
+        After r187121, we tried to blend the height Length value from the last keyframe to the
+        first keyframe with progress=0 (which should pick up the 'auto' from the last keyframe).
+        
+        However, Length::blend() just considered both 0 and 'auto' to be zero, and returned
+        the 0 length.
+        
+        So fix Length::blend() to return the "from" length if progress is zero.
+
+        Test: animations/fill-forwards-auto-height.html
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Length::blend takes a double, so don't narrow to float.
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty): Declare two variables
+        at first use.
+        * platform/Length.h:
+        (WebCore::Length::blend):
+
+2015-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         Give SVGTransformList some inline vector capacity
         https://bugs.webkit.org/show_bug.cgi?id=151644
 

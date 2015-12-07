@@ -1,3 +1,22 @@
+2015-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r187121): Can't get to the main content of the page at https://theintercept.com/drone-papers/
+        https://bugs.webkit.org/show_bug.cgi?id=151849
+        rdar://problem/23132828
+
+        Reviewed by Zalan Bujtas.
+        
+        New ref test.
+        
+        The behavior of imported/blink/transitions/transition-not-interpolable.html changed
+        with this patch, but that test is trying to determine if transitions run to/from
+        'auto' values, and doing it wrong. The current patch doesn't change the user-visible
+        behavior of transitions with 'auto' endpoints (covered by http://webkit.org/b/38243).
+
+        * animations/fill-forwards-auto-height-expected.html: Added.
+        * animations/fill-forwards-auto-height.html: Added.
+        * imported/blink/transitions/transition-not-interpolable-expected.txt:
+
 2015-12-06  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION(r193584): Causes heap use-after-free crashes in Web Inspector tests with AddressSanitizer (Requested by ddkilzer on #webkit).
