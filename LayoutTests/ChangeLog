@@ -1,3 +1,12 @@
+2015-12-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Removing Yosemite flag from flaky test http/tests/cache/disk-cache/disk-cache-request-max-stale.html
+       https://bugs.webkit.org/show_bug.cgi?id=151661
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2015-12-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed EFL gardening. Mark some of blink tests to failure since r190629.

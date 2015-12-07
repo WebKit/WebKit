@@ -282,7 +282,7 @@ webkit.org/b/151326 [ Yosemite+ ] webarchive/loading/missing-data.html [ Pass Cr
 
 webkit.org/b/151455 [ Yosemite ] http/tests/xmlhttprequest/workers/methods-async.html [ Pass Timeout ]
 
-webkit.org/b/151661 [ Yosemite ] http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Pass Timeout ]
+webkit.org/b/151661 http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Pass Timeout ]
 
 webkit.org/b/150542 fast/forms/state-restore-per-form.html [ Pass Timeout ]
 
