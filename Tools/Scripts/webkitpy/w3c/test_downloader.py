@@ -51,8 +51,7 @@ class TestDownloader(object):
         return options
 
     @staticmethod
-    def load_test_repositories():
-        filesystem = FileSystem()
+    def load_test_repositories(filesystem=FileSystem()):
         webkit_finder = WebKitFinder(filesystem)
         test_repositories_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'TestRepositories')
         return json.loads(filesystem.read_text_file(test_repositories_path))
@@ -65,7 +64,7 @@ class TestDownloader(object):
 
         self.repository_directory = repository_directory
 
-        self.test_repositories = self.load_test_repositories()
+        self.test_repositories = self.load_test_repositories(self._filesystem)
 
         self.paths_to_skip = []
         self.paths_to_import = []

@@ -1,3 +1,22 @@
+2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Mock TestRepositories in W3C importer tests
+        https://bugs.webkit.org/show_bug.cgi?id=151938
+
+        Reviewed by Youenn Fablet.
+
+        The test importer tests should use a fake repository instead of using the real one. The reason why this happened
+        is because the test repository method reading the file was using the filesystem directly instead of taking the
+        host one. This patch changes that.
+
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.load_test_repositories): Take a filesystem and use it. If we get no filesystem, we use the
+        default one.
+        (TestDownloader.__init__): When loading the repositories, pass the host filesystem.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_harnesslinks_conversion):
+        (TestImporterTest.test_submodules_generation): Use a fake test repository file.
+
 2015-12-07  David Kilzer  <ddkilzer@apple.com>
 
         TestNetscapePlugIn: Address review comment on 193607
