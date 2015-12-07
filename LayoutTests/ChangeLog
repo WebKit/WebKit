@@ -1,3 +1,15 @@
+2015-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Clipping along compositing borders in svg-edit
+        https://bugs.webkit.org/show_bug.cgi?id=151791
+
+        Reviewed by Zalan Bujtas.
+        
+        Ref test that triggers recomputation of overflow.
+
+        * svg/overflow/visual-overflow-change-expected.html: Added.
+        * svg/overflow/visual-overflow-change.html: Added.
+
 2015-12-06  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.toLocaleLowerCase in ECMA-402

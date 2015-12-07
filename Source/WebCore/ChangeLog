@@ -1,5 +1,21 @@
 2015-12-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Clipping along compositing borders in svg-edit
+        https://bugs.webkit.org/show_bug.cgi?id=151791
+
+        Reviewed by Zalan Bujtas.
+        
+        RenderSVGRoot::layout() failed to clear overflow before recomputing
+        visual overflow, which could cause it to get stuck with stale overflow.
+        This would cause underpainting if its size went from small to large.
+
+        Test: svg/overflow/visual-overflow-change.html
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+
+2015-12-06  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r187121): Can't get to the main content of the page at https://theintercept.com/drone-papers/
         https://bugs.webkit.org/show_bug.cgi?id=151849
         rdar://problem/23132828

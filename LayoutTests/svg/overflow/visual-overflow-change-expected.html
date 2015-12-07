@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<head>
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .svgcanvas {
+            position: relative;
+            width: 3800px;
+            height: 600px;
+            display: inline-block;
+            overflow: hidden;
+        }
+        
+        .indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3800px; /* Trigger composited tiling */
+            height: 600px;
+            display: inline-block;
+            background-color: red;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+        
+        #svgroot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: gray;
+        }
+        
+        svg {
+            border: 4px solid black;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+    <!-- You should see no red -->
+    <div class="indicator"></div>
+    <div class="composited svgcanvas">
+        <svg id="svgroot" width="1920" height="1400" overflow="visible">
+          <svg id="canvasBackground" x="540" y="480" width="640" height="480" overflow="none">
+            <rect width="100%" height="100%" fill="green"/>
+          </svg>
+        </svg>
+    </div>
+</div>
