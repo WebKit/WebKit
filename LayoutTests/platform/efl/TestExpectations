@@ -2715,3 +2715,12 @@ css2.1/tables/table-anonymous-objects-208.xht [ Missing ]
 # EFL layout test has been broken since r192796. SKip web-platform-tests until fixing this problem.
 # http://trac.webkit.org/changeset/192796
 Bug(EFL) imported/w3c/web-platform-tests [ Skip ]
+
+webkit.org/b/151943 imported/blink/editing/execCommand/4128080-2.html [ Failure ]
+webkit.org/b/151943 imported/blink/fast/events/click-with-large-negative-text-indent.html [ Failure ]
+webkit.org/b/151943 imported/blink/fast/replaced/image-map-alt-content.html [ Failure ]
+webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase.html [ Failure ]
+webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive.html [ Failure ]
+webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html [ Failure ]
+webkit.org/b/151943 imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code.html [ Failure ]
+webkit.org/b/151943 imported/blink/media/track/media-element-move-to-new-document-assert.html [ Failure ]

@@ -1,3 +1,9 @@
+2015-12-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening. Mark some of blink tests to failure since r190629.
+
+        * platform/efl/TestExpectations:
+
 2015-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Clipping along compositing borders in svg-edit
