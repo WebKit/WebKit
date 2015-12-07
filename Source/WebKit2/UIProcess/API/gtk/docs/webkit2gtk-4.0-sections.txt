@@ -1344,6 +1344,26 @@ webkit_web_hit_test_result_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitConsoleMessage</FILE>
+WebKitConsoleMessage
+WebKitConsoleMessageSource
+WebKitConsoleMessageLevel
+webkit_console_message_copy
+webkit_console_message_free
+webkit_console_message_get_source
+webkit_console_message_get_level
+webkit_console_message_get_text
+webkit_console_message_get_line
+webkit_console_message_get_source_id
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_CONSOLE_MESSAGE
+
+<SUBSECTION Private>
+webkit_console_message_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitColorChooserRequest</FILE>
 WebKitColorChooserRequest
 webkit_color_chooser_request_get_rgba

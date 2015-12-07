@@ -47,7 +47,7 @@ class InjectedBundlePageUIClient : public API::Client<WKBundlePageUIClientBase>,
 public:
     explicit InjectedBundlePageUIClient(const WKBundlePageUIClientBase*);
 
-    void willAddMessageToConsole(WebPage*, const String& message, int32_t lineNumber) override;
+    void willAddMessageToConsole(WebPage*, MessageSource, MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) override;
     void willSetStatusbarText(WebPage*, const String&) override;
     void willRunJavaScriptAlert(WebPage*, const String&, WebFrame*) override;
     void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*) override;

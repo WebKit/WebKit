@@ -27,6 +27,7 @@
 #define APIInjectedBundlePageUIClient_h
 
 #include "WebEvent.h"
+#include <runtime/ConsoleTypes.h>
 
 namespace WebCore {
 class HitTestResult;
@@ -49,7 +50,7 @@ class PageUIClient {
 public:
     virtual ~PageUIClient() { }
 
-    virtual void willAddMessageToConsole(WebKit::WebPage*, const WTF::String& message, int32_t lineNumber) { UNUSED_PARAM(message); UNUSED_PARAM(lineNumber); }
+    virtual void willAddMessageToConsole(WebKit::WebPage*, JSC::MessageSource, JSC::MessageLevel, const WTF::String& message, unsigned lineNumber, unsigned columnNumber, const WTF::String& sourceID) { UNUSED_PARAM(message); UNUSED_PARAM(lineNumber); UNUSED_PARAM(columnNumber); UNUSED_PARAM(sourceID); }
     virtual void willSetStatusbarText(WebKit::WebPage*, const WTF::String&) { }
     virtual void willRunJavaScriptAlert(WebKit::WebPage*, const WTF::String&, WebKit::WebFrame*) { }
     virtual void willRunJavaScriptConfirm(WebKit::WebPage*, const WTF::String&, WebKit::WebFrame*) { }

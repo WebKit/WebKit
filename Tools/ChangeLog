@@ -1,3 +1,29 @@
+2015-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebPage::console-message-sent signal to Web Extensions API
+        https://bugs.webkit.org/show_bug.cgi?id=79918
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add unit tests to check the different console messages.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestConsoleMessage.cpp: Added.
+        (ConsoleMessageTest::ConsoleMessage::operator==):
+        (ConsoleMessageTest::consoleMessageReceivedCallback):
+        (ConsoleMessageTest::ConsoleMessageTest):
+        (ConsoleMessageTest::~ConsoleMessageTest):
+        (ConsoleMessageTest::waitUntilConsoleMessageReceived):
+        (testWebKitConsoleMessageConsoleAPI):
+        (testWebKitConsoleMessageJavaScriptException):
+        (testWebKitConsoleMessageNetworkError):
+        (testWebKitConsoleMessageSecurityError):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (consoleMessageSentCallback):
+        (pageCreatedCallback):
+
 2015-12-07  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] MiniBrowser doesn't exit when called ewk_view_try_close()

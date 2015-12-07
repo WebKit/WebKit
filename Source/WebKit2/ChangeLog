@@ -1,3 +1,49 @@
+2015-12-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebPage::console-message-sent signal to Web Extensions API
+        https://bugs.webkit.org/show_bug.cgi?id=79918
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add WebKitConsoleMessage boxed type that is passed to the
+        WebKitWebPage::console-message-sent signal with all the details
+        about the message.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types: Add webkit_console_message_get_type.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section to the docs.
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::willAddMessageToConsole): Add
+        paramaters for all console message details.
+        * WebProcess/InjectedBundle/API/gtk/WebKitConsoleMessage.cpp: Added.
+        (webkit_console_message_copy):
+        (webkit_console_message_free):
+        (webkit_console_message_get_source):
+        (webkit_console_message_get_level):
+        (webkit_console_message_get_text):
+        (webkit_console_message_get_line):
+        (webkit_console_message_get_source_id):
+        * WebProcess/InjectedBundle/API/gtk/WebKitConsoleMessage.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitConsoleMessagePrivate.h: Added.
+        (_WebKitConsoleMessage::_WebKitConsoleMessage):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageDidSendConsoleMessage): Emit the
+        WebKitWebPage::console-message-sent signal.
+        (didReceiveResponseForResource): Generate a console message in
+        case of HTTP failure >= 400 for consistency with the inspector.
+        (didFailLoadForResource): Generate a console message in case of
+        resource load failure for consistency with the inspector.
+        (webkit_web_page_class_init): Add WebKitWebPage::console-message-sent signal.
+        (webkitWebPageCreate): Set custom UI client.
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::willAddMessageToConsole):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::addMessageToConsole): Pass all the
+        console message details to the ui client.
+
 2015-12-07  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] MiniBrowser doesn't exit when called ewk_view_try_close()

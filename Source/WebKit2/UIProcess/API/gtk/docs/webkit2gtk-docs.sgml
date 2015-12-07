@@ -62,6 +62,7 @@
     <xi:include href="xml/WebKitScriptWorld.xml"/>
     <xi:include href="xml/WebKitWebHitTestResult.xml"/>
     <xi:include href="xml/WebKitWebEditor.xml"/>
+    <xi:include href="xml/WebKitConsoleMessage"/>
   </chapter>
 
   <index id="index-all">
@@ -96,6 +97,11 @@
   <index id="api-index-2-10" role="2.10">
     <title>Index of new symbols in 2.10</title>
     <xi:include href="xml/api-index-2.10.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-12" role="2.12">
+    <title>Index of new symbols in 2.12</title>
+    <xi:include href="xml/api-index-2.12.xml"><xi:fallback /></xi:include>
   </index>
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
