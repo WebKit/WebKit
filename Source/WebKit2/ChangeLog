@@ -1,3 +1,17 @@
+2015-12-07  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] MiniBrowser doesn't exit when called ewk_view_try_close()
+        https://bugs.webkit.org/show_bug.cgi?id=151934
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_try_close):
+        Called window_close callback immediately when WKPageTryClose returns true.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F): Improved test cases for try_close to test when content does not contain
+        onbeforeunload callback.
+
 2015-12-07  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] Moving preference settings from EwkView to WebPreferencesEfl

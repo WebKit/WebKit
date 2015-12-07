@@ -155,7 +155,8 @@ void ewk_view_try_close(Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
 
-    WKPageTryClose(impl->wkPage());
+    if (WKPageTryClose(impl->wkPage()))
+        impl->close();
 }
 
 Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)

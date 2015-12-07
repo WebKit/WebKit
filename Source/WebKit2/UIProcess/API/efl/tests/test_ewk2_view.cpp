@@ -289,6 +289,14 @@ TEST_F(EWK2ViewTest, ewk_view_try_close)
 
     ewk_view_try_close(webView());
     ASSERT_TRUE(waitUntilTrue(windowCloseCallbackCalled));
+
+    windowCloseCallbackCalled = false;
+    const char contentWithoutBeforeUnload[] = "<!doctype html><body>no callbacks for beforeunload</body>";
+    ewk_view_html_string_load(webView(), contentWithoutBeforeUnload, 0, 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    ewk_view_try_close(webView());
+    ASSERT_TRUE(waitUntilTrue(windowCloseCallbackCalled));
 }
 
 TEST_F(EWK2ViewTest, ewk_view_url_get)
