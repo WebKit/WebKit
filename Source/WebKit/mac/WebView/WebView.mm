@@ -911,6 +911,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     }
 #endif
 
+    [self updateWebViewAdditions];
+
 #if !PLATFORM(IOS)
     static bool didOneTimeInitialization = false;
 #endif
@@ -6596,6 +6598,18 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 #endif // !PLATFORM(IOS)
 
 @end
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewAdditions.mm>
+#else
+@implementation WebView (UpdateWebViewAdditions)
+
+- (void)updateWebViewAdditions
+{
+}
+
+@end
+#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 
 @implementation WebView (WebPendingPublic)
 

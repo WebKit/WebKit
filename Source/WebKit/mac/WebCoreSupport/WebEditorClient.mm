@@ -350,8 +350,10 @@ void WebEditorClient::respondToChangedContents()
 void WebEditorClient::respondToChangedSelection(Frame* frame)
 {
     NSView<WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)documentView _selectionChanged];
+        [m_webView updateWebViewAdditions];
+    }
 
 #if !PLATFORM(IOS)
     // FIXME: This quirk is needed due to <rdar://problem/5009625> - We can phase it out once Aperture can adopt the new behavior on their end

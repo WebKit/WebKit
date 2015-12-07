@@ -1,5 +1,20 @@
 2015-12-07  Beth Dakin  <bdakin@apple.com>
 
+        Add support for WebViewAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=151967
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::respondToChangedSelection):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView updateWebViewAdditions]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
+2015-12-07  Beth Dakin  <bdakin@apple.com>
+
         Hook up request and show for typing candidates in WK1
         https://bugs.webkit.org/show_bug.cgi?id=151831
         -and corresponding-

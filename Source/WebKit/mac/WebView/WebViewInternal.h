@@ -290,3 +290,7 @@ OBJC_CLASS NSTextAlternatives;
 #endif
 
 @end
+
+@interface WebView (UpdateWebViewAdditions)
+- (void)updateWebViewAdditions;
+@end
