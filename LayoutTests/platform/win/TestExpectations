@@ -3309,8 +3309,6 @@ webkit.org/b/150684 editing/input/reveal-caret-of-multiline-input.html [ Pass Fa
 
 webkit.org/b/150808 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
 
-webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
-
 webkit.org/b/150946 [ Debug ] scrollbars/custom-scrollbar-appearance-property.html [ Crash ]
 
 webkit.org/b/150948 [ Debug ] imported/blink/transitions/unprefixed-transform.html [ Pass Failure ]

@@ -1,3 +1,14 @@
+2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] pipeTo tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=151949
+
+        Unreviewed.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations: Moved the flag from Mac and Win to general as GTK+ is failing too.
+
 2015-12-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fix "old versions" when upgrading databases.
