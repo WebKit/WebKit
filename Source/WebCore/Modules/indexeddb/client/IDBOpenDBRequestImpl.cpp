@@ -141,6 +141,7 @@ void IDBOpenDBRequest::onDeleteDatabaseSuccess(const IDBResultData& resultData)
     LOG(IndexedDB, "IDBOpenDBRequest::onDeleteDatabaseSuccess() - current version is %" PRIu64, oldVersion);
 
     m_readyState = IDBRequestReadyState::Done;
+    m_result = IDBAny::createUndefined();
 
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, 0, eventNames().successEvent));
 }
