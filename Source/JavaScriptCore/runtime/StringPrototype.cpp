@@ -28,14 +28,15 @@
 #include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "Executable.h"
+#include "IntlObject.h"
+#include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSStringBuilder.h"
+#include "JSStringIterator.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
-#include "JSStringIterator.h"
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
@@ -44,6 +45,7 @@
 #include <algorithm>
 #include <unicode/uconfig.h>
 #include <unicode/unorm.h>
+#include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringView.h>
@@ -73,6 +75,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState*);
@@ -127,7 +130,11 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION("toLowerCase", stringProtoFuncToLowerCase, DontEnum, 0);
     JSC_NATIVE_FUNCTION("toUpperCase", stringProtoFuncToUpperCase, DontEnum, 0);
     JSC_NATIVE_FUNCTION("localeCompare", stringProtoFuncLocaleCompare, DontEnum, 1);
+#if ENABLE(INTL)
+    JSC_NATIVE_FUNCTION("toLocaleLowerCase", stringProtoFuncToLocaleLowerCase, DontEnum, 0);
+#else
     JSC_NATIVE_FUNCTION("toLocaleLowerCase", stringProtoFuncToLowerCase, DontEnum, 0);
+#endif
     JSC_NATIVE_FUNCTION("toLocaleUpperCase", stringProtoFuncToUpperCase, DontEnum, 0);
     JSC_NATIVE_FUNCTION("big", stringProtoFuncBig, DontEnum, 0);
     JSC_NATIVE_FUNCTION("small", stringProtoFuncSmall, DontEnum, 0);
@@ -1437,6 +1444,93 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
     JSValue a0 = exec->argument(0);
     return JSValue::encode(jsNumber(Collator().collate(s, a0.toString(exec)->value(exec))));
 }
+
+#if ENABLE(INTL)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState* state)
+{
+    // 13.1.2 String.prototype.toLocaleLowerCase ([locales])
+    // http://ecma-international.org/publications/standards/Ecma-402.htm
+
+    // 1. Let O be RequireObjectCoercible(this value).
+    JSValue thisValue = state->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(state);
+
+    // 2. Let S be ToString(O).
+    JSString* sVal = thisValue.toString(state);
+    const String& s = sVal->value(state);
+
+    // 3. ReturnIfAbrupt(S).
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // Optimization for empty strings.
+    if (s.isEmpty())
+        return JSValue::encode(sVal);
+
+    // 4. Let requestedLocales be CanonicalizeLocaleList(locales).
+    Vector<String> requestedLocales = canonicalizeLocaleList(*state, state->argument(0));
+
+    // 5. ReturnIfAbrupt(requestedLocales).
+    if (state->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // 6. Let len be the number of elements in requestedLocales.
+    size_t len = requestedLocales.size();
+
+    // 7. If len > 0, then
+    // a. Let requestedLocale be the first element of requestedLocales.
+    // 8. Else
+    // a. Let requestedLocale be DefaultLocale().
+    String requestedLocale = len > 0 ? requestedLocales.first() : defaultLocale();
+
+    // 9. Let noExtensionsLocale be the String value that is requestedLocale with all Unicode locale extension sequences (6.2.1) removed.
+    String noExtensionsLocale = removeUnicodeLocaleExtension(requestedLocale);
+
+    // 10. Let availableLocales be a List with the language tags of the languages for which the Unicode character database contains language sensitive case mappings.
+    // Note 1: As of Unicode 5.1, the availableLocales list contains the elements "az", "lt", and "tr".
+    const HashSet<String> availableLocales({ ASCIILiteral("az"), ASCIILiteral("lt"), ASCIILiteral("tr") });
+
+    // 11. Let locale be BestAvailableLocale(availableLocales, noExtensionsLocale).
+    String locale = bestAvailableLocale(availableLocales, noExtensionsLocale);
+
+    // 12. If locale is undefined, let locale be "und".
+    if (locale.isNull())
+        locale = ASCIILiteral("und");
+
+    CString utf8LocaleBuffer = locale.utf8();
+    const StringView view(s);
+    const int32_t viewLength = view.length();
+
+    // Delegate the following steps to u_strToLower.
+    // 13. Let cpList be a List containing in order the code points of S as defined in ES2015, 6.1.4, starting at the first element of S.
+    // 14. For each code point c in cpList, if the Unicode Character Database provides a lower case equivalent of c that is either language insensitive or for the language locale, then replace c in cpList with that/those equivalent code point(s).
+    // 15. Let cuList be a new List.
+    // 16. For each code point c in cpList, in order, append to cuList the elements of the UTF-16 Encoding (defined in ES2015, 6.1.4) of c.
+    // 17. Let L be a String whose elements are, in order, the elements of cuList.
+
+    // Most strings lower case will be the same size as original, so try that first.
+    UErrorCode error(U_ZERO_ERROR);
+    Vector<UChar> buffer(viewLength);
+    String lower;
+    const int32_t resultLength = u_strToLower(buffer.data(), viewLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
+    if (U_SUCCESS(error))
+        lower = String(buffer.data(), resultLength);
+    else if (error == U_BUFFER_OVERFLOW_ERROR) {
+        // Lower case needs more space than original. Try again.
+        UErrorCode error(U_ZERO_ERROR);
+        Vector<UChar> buffer(resultLength);
+        u_strToLower(buffer.data(), resultLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
+        if (U_FAILURE(error))
+            return throwVMTypeError(state, u_errorName(error));
+        lower = String(buffer.data(), resultLength);
+    } else
+        return throwVMTypeError(state, u_errorName(error));
+
+    // 18. Return L.
+    return JSValue::encode(jsString(state, lower));
+}
+#endif // ENABLE(INTL)
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)
 {

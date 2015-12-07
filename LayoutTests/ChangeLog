@@ -1,3 +1,14 @@
+2015-12-06  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement String.prototype.toLocaleLowerCase in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147608
+
+        Reviewed by Benjamin Poulain.
+
+        * js/script-tests/string-toLocaleLowerCase.js: Added.
+        * js/string-toLocaleLowerCase-expected.txt: Added.
+        * js/string-toLocaleLowerCase.html: Added.
+
 2015-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r187121): Can't get to the main content of the page at https://theintercept.com/drone-papers/

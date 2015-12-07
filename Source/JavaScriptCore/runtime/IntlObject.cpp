@@ -112,7 +112,7 @@ Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-static String defaultLocale()
+String defaultLocale()
 {
     // 6.2.4 DefaultLocale ()
     // FIXME: Implement this method.
@@ -576,7 +576,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
     return seen;
 }
 
-static String bestAvailableLocale(const HashSet<String>& availableLocales, const String& locale)
+String bestAvailableLocale(const HashSet<String>& availableLocales, const String& locale)
 {
     // 9.2.2 BestAvailableLocale (availableLocales, locale)
     // 1. Let candidate be locale.
@@ -604,7 +604,7 @@ static String bestAvailableLocale(const HashSet<String>& availableLocales, const
     return String();
 }
 
-static String removeUnicodeLocaleExtension(const String& locale)
+String removeUnicodeLocaleExtension(const String& locale)
 {
     Vector<String> parts;
     locale.split('-', parts);
