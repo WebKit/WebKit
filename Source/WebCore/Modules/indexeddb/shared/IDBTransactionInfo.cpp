@@ -44,13 +44,24 @@ IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBCon
     return result;
 }
 
-IDBTransactionInfo IDBTransactionInfo::versionChange(const IDBServer::IDBConnectionToClient& connection, uint64_t newVersion)
+IDBTransactionInfo IDBTransactionInfo::versionChange(const IDBServer::IDBConnectionToClient& connection, const IDBDatabaseInfo& originalDatabaseInfo, uint64_t newVersion)
 {
     IDBTransactionInfo result((IDBResourceIdentifier(connection)));
     result.m_mode = IndexedDB::TransactionMode::VersionChange;
     result.m_newVersion = newVersion;
+    result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(originalDatabaseInfo);
 
     return WTF::move(result);
+}
+
+IDBTransactionInfo::IDBTransactionInfo(const IDBTransactionInfo& info)
+    : m_identifier(info.identifier())
+    , m_mode(info.m_mode)
+    , m_newVersion(info.m_newVersion)
+    , m_objectStores(info.m_objectStores)
+{
+    if (info.m_originalDatabaseInfo)
+        m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*info.m_originalDatabaseInfo);
 }
 
 IDBTransactionInfo IDBTransactionInfo::isolatedCopy() const
@@ -62,6 +73,9 @@ IDBTransactionInfo IDBTransactionInfo::isolatedCopy() const
     result.m_objectStores.reserveCapacity(m_objectStores.size());
     for (auto& objectStore : m_objectStores)
         result.m_objectStores.uncheckedAppend(objectStore.isolatedCopy());
+
+    if (m_originalDatabaseInfo)
+        result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(*m_originalDatabaseInfo);
 
     return WTF::move(result);
 }

@@ -1,3 +1,45 @@
+2015-12-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Fix "old versions" when upgrading databases.
+        https://bugs.webkit.org/show_bug.cgi?id=151948
+
+        Reviewed by Alex Christensen.
+
+        No new tests (5 failing tests now pass, and updated results for a 6th test).
+
+        This includes the old version on the IDBVersionChangeEvent, as well as the version the 
+        IDBDatabase is left with if the version change transaction is aborted.
+
+        Primary mechanism of the fix is to include the original IDBDatabaseInfo along with 
+        IDBTransactionInfos that represent version change transactions.
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::willAbortTransaction):
+        (WebCore::IDBClient::IDBDatabase::didAbortTransaction):
+
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::onUpgradeNeeded):
+
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::IDBTransaction): Deleted.
+        (WebCore::IDBClient::IDBTransaction::finishAbortOrCommit): Deleted.
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+        (WebCore::IDBClient::IDBTransaction::info):
+        (WebCore::IDBClient::IDBTransaction::originalDatabaseInfo):
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::startVersionChangeTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::createVersionChangeTransaction):
+
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::versionChange):
+        (WebCore::IDBTransactionInfo::IDBTransactionInfo):
+        (WebCore::IDBTransactionInfo::isolatedCopy):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::originalDatabaseInfo):
+
 2015-12-07  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Update Objective-C code generator to pass a reference to calling object for partial interfaces

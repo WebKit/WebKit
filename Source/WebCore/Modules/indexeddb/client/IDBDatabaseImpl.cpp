@@ -307,8 +307,11 @@ void IDBDatabase::willAbortTransaction(IDBTransaction& transaction)
     ASSERT(refTransaction);
     m_abortingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
 
-    if (transaction.isVersionChange())
+    if (transaction.isVersionChange()) {
+        ASSERT(transaction.originalDatabaseInfo());
+        m_info = *transaction.originalDatabaseInfo();
         m_closePending = true;
+    }
 }
 
 void IDBDatabase::didAbortTransaction(IDBTransaction& transaction)
@@ -317,7 +320,7 @@ void IDBDatabase::didAbortTransaction(IDBTransaction& transaction)
 
     if (transaction.isVersionChange()) {
         ASSERT(transaction.originalDatabaseInfo());
-        m_info = *transaction.originalDatabaseInfo();
+        ASSERT(m_info.version() == transaction.originalDatabaseInfo()->version());
         m_closePending = true;
         m_closedInServer = true;
         m_serverConnection->databaseConnectionClosed(*this);

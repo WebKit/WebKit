@@ -119,8 +119,9 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
     Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
 
     ASSERT(transaction->info().mode() == IndexedDB::TransactionMode::VersionChange);
+    ASSERT(transaction->originalDatabaseInfo());
 
-    uint64_t oldVersion = database->info().version();
+    uint64_t oldVersion = transaction->originalDatabaseInfo()->version();
     uint64_t newVersion = transaction->info().newVersion();
 
     LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %" PRIu64 ", new is %" PRIu64, oldVersion, newVersion);

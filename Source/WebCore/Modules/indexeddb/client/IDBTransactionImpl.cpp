@@ -71,7 +71,6 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
 
     if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
         ASSERT(m_openDBRequest);
-        m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_database->info());
         m_startedOnServer = true;
     } else {
         activate();
@@ -326,8 +325,6 @@ void IDBTransaction::finishAbortOrCommit()
 {
     ASSERT(m_state != IndexedDB::TransactionState::Finished);
     m_state = IndexedDB::TransactionState::Finished;
-
-    m_originalDatabaseInfo = nullptr;
 }
 
 void IDBTransaction::didStart(const IDBError& error)

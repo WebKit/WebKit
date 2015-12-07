@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseInfo.h"
 #include "IDBResourceIdentifier.h"
 #include "IndexedDB.h"
 #include <wtf/Vector.h>
@@ -45,7 +46,9 @@ class IDBConnectionToClient;
 class IDBTransactionInfo {
 public:
     static IDBTransactionInfo clientTransaction(const IDBClient::IDBConnectionToServer&, const Vector<String>& objectStores, IndexedDB::TransactionMode);
-    static IDBTransactionInfo versionChange(const IDBServer::IDBConnectionToClient&, uint64_t newVersion);
+    static IDBTransactionInfo versionChange(const IDBServer::IDBConnectionToClient&, const IDBDatabaseInfo& originalDatabaseInfo, uint64_t newVersion);
+
+    IDBTransactionInfo(const IDBTransactionInfo&);
 
     IDBTransactionInfo isolatedCopy() const;
 
@@ -56,6 +59,8 @@ public:
 
     const Vector<String>& objectStores() const { return m_objectStores; }
 
+    IDBDatabaseInfo* originalDatabaseInfo() const { return m_originalDatabaseInfo.get(); }
+
 private:
     IDBTransactionInfo(const IDBResourceIdentifier&);
 
@@ -64,6 +69,7 @@ private:
     IndexedDB::TransactionMode m_mode { IndexedDB::TransactionMode::ReadOnly };
     uint64_t m_newVersion { 0 };
     Vector<String> m_objectStores;
+    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 };
 
 } // namespace WebCore

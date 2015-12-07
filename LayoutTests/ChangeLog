@@ -1,3 +1,14 @@
+2015-12-07  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Fix "old versions" when upgrading databases.
+        https://bugs.webkit.org/show_bug.cgi?id=151948
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-2-expected.txt:
+
 2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed.

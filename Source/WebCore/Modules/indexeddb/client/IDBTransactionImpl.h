@@ -83,10 +83,10 @@ public:
     virtual bool hasPendingActivity() const override final;
     virtual void stop() override final;
 
-    const IDBTransactionInfo info() const { return m_info; }
+    const IDBTransactionInfo& info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }
     const IDBDatabase& database() const { return m_database.get(); }
-    IDBDatabaseInfo* originalDatabaseInfo() const { return m_originalDatabaseInfo.get(); }
+    IDBDatabaseInfo* originalDatabaseInfo() const { return m_info.originalDatabaseInfo(); }
 
     void didStart(const IDBError&);
     void didAbort(const IDBError&);
@@ -188,7 +188,6 @@ private:
 
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
-    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
     IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Inactive };
     bool m_startedOnServer { false };

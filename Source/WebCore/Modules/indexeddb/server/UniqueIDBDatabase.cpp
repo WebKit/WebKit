@@ -251,6 +251,8 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
 
     m_versionChangeTransaction = &m_versionChangeDatabaseConnection->createVersionChangeTransaction(requestedVersion);
+    m_databaseInfo->setVersion(requestedVersion);
+
     m_inProgressTransactions.set(m_versionChangeTransaction->info().identifier(), m_versionChangeTransaction);
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::beginTransactionInBackingStore, m_versionChangeTransaction->info()));
 
@@ -771,7 +773,8 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
 
     if (m_versionChangeTransaction == &transaction) {
         ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
-        m_databaseInfo->setVersion(transaction.info().newVersion());
+        ASSERT(m_databaseInfo->version() == transaction.info().newVersion());
+
         m_versionChangeTransaction = nullptr;
         m_versionChangeDatabaseConnection = nullptr;
 
