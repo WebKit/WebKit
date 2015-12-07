@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLJSCall.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "DFGNode.h"
 #include "FTLState.h"
@@ -63,5 +63,5 @@ void JSCall::emit(CCallHelpers& jit, State& state, int32_t osrExitFromGenericUnw
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3
 

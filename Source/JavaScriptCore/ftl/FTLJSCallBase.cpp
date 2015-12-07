@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLJSCallBase.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "DFGNode.h"
 #include "FTLState.h"
@@ -55,12 +55,8 @@ void JSCallBase::emit(CCallHelpers& jit, State& /*state*/, int32_t osrExitFromGe
 {
     RELEASE_ASSERT(!!m_callSiteIndex);
 
-#if FTL_USES_B3
-    UNUSED_PARAM(osrExitFromGenericUnwindStackSpillSlot);
-#else // FTL_USES_B3
     if (m_correspondingGenericUnwindOSRExit)
         m_correspondingGenericUnwindOSRExit->spillRegistersToSpillSlot(jit, osrExitFromGenericUnwindStackSpillSlot);
-#endif // FTL_USES_B3
 
     jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex.bits()), CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
 
@@ -107,5 +103,5 @@ void JSCallBase::link(VM& vm, LinkBuffer& linkBuffer)
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3
 

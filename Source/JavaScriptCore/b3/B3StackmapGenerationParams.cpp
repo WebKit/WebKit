@@ -23,33 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AirGenerationContext_h
-#define AirGenerationContext_h
+#include "config.h"
+#include "B3StackmapGenerationParams.h"
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/SharedTask.h>
-#include <wtf/Vector.h>
+#include "AirCode.h"
+#include "AirGenerationContext.h"
+#include "B3StackmapValue.h"
 
-namespace JSC {
+namespace JSC { namespace B3 {
 
-class CCallHelpers;
+using namespace Air;
 
-namespace B3 { namespace Air {
+const RegisterSet& StackmapGenerationParams::usedRegisters() const
+{
+    return m_value->m_usedRegisters;
+}
 
-class Code;
+Procedure& StackmapGenerationParams::proc() const
+{
+    return m_context.code->proc();
+}
 
-struct GenerationContext {
-    typedef void LatePathFunction(CCallHelpers&, GenerationContext&);
-    typedef SharedTask<LatePathFunction> LatePath;
+StackmapGenerationParams::StackmapGenerationParams(
+    StackmapValue* value, const Vector<ValueRep>& reps, Air::GenerationContext& context)
+    : m_value(value)
+    , m_reps(reps)
+    , m_context(context)
+{
+}
 
-    Vector<RefPtr<LatePath>> latePaths;
-    Code* code;
-};
-
-} } } // namespace JSC::B3::Air
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-
-#endif // AirGenerationContext_h
 

@@ -26,7 +26,9 @@
 #ifndef FTLExceptionHandlerManager_h
 #define FTLExceptionHandlerManager_h
 
-#if ENABLE(FTL_JIT)
+#include "DFGCommon.h"
+
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "CallFrame.h"
 #include "FTLJSCall.h"
@@ -83,6 +85,6 @@ private:
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #endif // FTLExceptionHandlerManager_h

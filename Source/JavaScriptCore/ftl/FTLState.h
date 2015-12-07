@@ -96,12 +96,14 @@ public:
 #if ENABLE(MASM_PROBE)
     SegmentedVector<ProbeDescriptor> probes;
 #endif
+#if !FTL_USES_B3
     Vector<JSCall> jsCalls;
     Vector<JSCallVarargs> jsCallVarargses;
     Vector<JSTailCall> jsTailCalls;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;
     SegmentedVector<OSRExitDescriptorImpl> osrExitDescriptorImpls;
+#endif // !FTL_USES_B3
     void* unwindDataSection;
     size_t unwindDataSectionSize;
     RefPtr<DataSection> stackmapsSection;

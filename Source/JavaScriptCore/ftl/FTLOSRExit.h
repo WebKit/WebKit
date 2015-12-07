@@ -31,6 +31,7 @@
 #include "B3ValueRep.h"
 #include "CodeOrigin.h"
 #include "DFGExitProfile.h"
+#include "DFGNodeOrigin.h"
 #include "DFGOSRExitBase.h"
 #include "FTLAbbreviatedTypes.h"
 #include "FTLExitTimeObjectMaterialization.h"
@@ -51,17 +52,23 @@ namespace JSC {
 class TrackedReferences;
 
 namespace B3 {
-struct StackmapGenerationParams;
+class StackmapGenerationParams;
 namespace Air {
 struct GenerationContext;
 } // namespace Air
 } // namespace B3
 
+namespace DFG {
+struct NodeOrigin;
+} // namespace DFG;
+
 namespace FTL {
 
 class State;
 struct OSRExitDescriptorImpl;
+struct OSRExitHandle;
 
+#if !FTL_USES_B3
 enum class ExceptionType : uint8_t {
     None,
     CCallException,
@@ -75,6 +82,7 @@ enum class ExceptionType : uint8_t {
 };
 
 bool exceptionTypeWillArriveAtOSRExitFromGenericUnwind(ExceptionType);
+#endif // !FTL_USES_B3
 
 struct OSRExitDescriptor {
     OSRExitDescriptor(
@@ -91,9 +99,11 @@ struct OSRExitDescriptor {
     
     Operands<ExitValue> m_values;
     Bag<ExitTimeObjectMaterialization> m_materializations;
-    
+
+#if !FTL_USES_B3
     uint32_t m_stackmapID;
     bool m_isInvalidationPoint;
+#endif // !FTL_USES_B3
     
     void validateReferences(const TrackedReferences&);
 
@@ -105,7 +115,8 @@ struct OSRExitDescriptor {
     // on the ground. It contains information that is mostly not useful if you use this API, since after
     // this call, the OSRExit is simply ready to go.
     RefPtr<OSRExitHandle> emitOSRExit(
-        State&, OSRExitDescriptorImpl*, CCallHelpers&, const B3::StackmapGenerationParams&, unsigned offset);
+        State&, ExitKind, const DFG::NodeOrigin&, CCallHelpers&, const B3::StackmapGenerationParams&,
+        unsigned offset = 0, bool isExceptionHandler = false);
 
     // In some cases you want an OSRExit to come into existence, but you don't want to emit it right now.
     // This will emit the OSR exit in a late path. You can't be sure exactly when that will happen, but
@@ -116,16 +127,19 @@ struct OSRExitDescriptor {
     // have a place to jump to for OSR exit. It doesn't care where that OSR exit is emitted so long as it
     // eventually gets access to its label.
     RefPtr<OSRExitHandle> emitOSRExitLater(
-        State&, OSRExitDescriptorImpl*, const B3::StackmapGenerationParams&, unsigned offset);
+        State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
+        unsigned offset = 0, bool isExceptionHandler = false);
 
     // This is the low-level interface. It will create a handle representing the desire to emit code for
     // an OSR exit. You can call OSRExitHandle::emitExitThunk() once you have a place to emit it. Note
     // that the above two APIs are written in terms of this and OSRExitHandle::emitExitThunk().
     RefPtr<OSRExitHandle> prepareOSRExitHandle(
-        State&, OSRExitDescriptorImpl*, const B3::StackmapGenerationParams&, unsigned offset);
+        State&, ExitKind, const DFG::NodeOrigin&, const B3::StackmapGenerationParams&,
+        unsigned offset = 0, bool isExceptionHandler = false);
 #endif // FTL_USES_B3
 };
 
+#if !FTL_USES_B3
 struct OSRExitDescriptorImpl {
     OSRExitDescriptorImpl(ExitKind kind, CodeOrigin exitOrigin, CodeOrigin forExitProfile, ExceptionType exceptionType)
         : m_kind(kind)
@@ -142,13 +156,16 @@ struct OSRExitDescriptorImpl {
     CodeOrigin m_semanticCodeOriginForCallFrameHeader;
     HandlerInfo m_baselineExceptionHandler;
 };
+#endif // !FTL_USES_B3
 
 struct OSRExit : public DFG::OSRExitBase {
     OSRExit(
-        OSRExitDescriptor*, OSRExitDescriptorImpl&
-#if !FTL_USES_B3
-        , uint32_t stackmapRecordIndex
-#endif // !FTL_USES_B3
+        OSRExitDescriptor*,
+#if FTL_USES_B3
+        ExitKind, CodeOrigin, CodeOrigin codeOriginForExitProfile, bool isExceptionHandler
+#else // FTL_USES_B3
+        OSRExitDescriptorImpl&, uint32_t stackmapRecordIndex
+#endif // FTL_USES_B3
         );
 
     OSRExitDescriptor* m_descriptor;
@@ -157,15 +174,18 @@ struct OSRExit : public DFG::OSRExitBase {
     // This tells us where to place a jump.
     CodeLocationJump m_patchableJump;
     Vector<B3::ValueRep> m_valueReps;
+    // True if this exit is used as an exception handler for unwinding. This happens to only be set when
+    // isExceptionHandler is true, but all this actually means is that the OSR exit will assume that the
+    // machine state is as it would be coming out of genericUnwind.
+    bool m_isUnwindHandler { false };
 #else // FTL_USES_B3
     // Offset within the exit stubs of the stub for this exit.
     unsigned m_patchableCodeOffset;
     // Offset within Stackmap::records
     uint32_t m_stackmapRecordIndex;
-#endif // FTL_USES_B3
     ExceptionType m_exceptionType;
-
     RegisterSet registersToPreserveForCallThatMightThrow;
+#endif // FTL_USES_B3
 
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
@@ -177,12 +197,12 @@ struct OSRExit : public DFG::OSRExitBase {
     void gatherRegistersToSpillForCallIfException(StackMaps&, StackMaps::Record&);
     void spillRegistersToSpillSlot(CCallHelpers&, int32_t stackSpillSlot);
     void recoverRegistersFromSpillSlot(CCallHelpers& jit, int32_t stackSpillSlot);
-#endif // !FTL_USES_B3
 
     bool willArriveAtOSRExitFromGenericUnwind() const;
     bool willArriveAtExitFromIndirectExceptionCheck() const;
     bool willArriveAtOSRExitFromCallOperation() const;
     bool needsRegisterRecoveryOnGenericUnwindOSRExitPath() const;
+#endif // !FTL_USES_B3
 };
 
 

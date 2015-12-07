@@ -37,7 +37,11 @@ struct Effects {
     // True if this cannot continue execution in the current block.
     bool terminal { false };
 
-    // True if this value can cause execution to terminate abruptly.
+    // True if this value can cause execution to terminate abruptly, and that this abrupt termination is
+    // observable. Note that if exitsSideways is set to true but reads is bottom, then B3 is free to
+    // assume that after abrupt termination of this procedure, none of the heap will be read. That's
+    // usually false, so make sure that reads corresponds to the set of things that are readable after
+    // this function terminates abruptly.
     bool exitsSideways { false };
 
     // True if the instruction may change semantics if hoisted above some control flow.

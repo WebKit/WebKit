@@ -37,26 +37,7 @@
 
 namespace JSC { namespace B3 {
 
-class StackmapValue;
-
-namespace Air {
-struct GenerationContext;
-}
-
-struct StackmapGenerationParams {
-    // This is the stackmap value that we're generating.
-    StackmapValue* value;
-    
-    // This tells you the actual value representations that were chosen. This is usually different
-    // from the constraints we supplied.
-    Vector<ValueRep> reps;
-    
-    // This tells you the registers that were used.
-    RegisterSet usedRegisters;
-
-    // The Air::GenerationContext gives you even more power.
-    Air::GenerationContext* context;
-};
+class StackmapGenerationParams;
 
 typedef void StackmapGeneratorFunction(CCallHelpers&, const StackmapGenerationParams&);
 typedef SharedTask<StackmapGeneratorFunction> StackmapGenerator;
@@ -83,6 +64,13 @@ public:
     // Use this to add children. Note that you could also add children by doing
     // children().append(). That will work fine, but it's not recommended.
     void append(const ConstrainedValue&);
+
+    template<typename VectorType>
+    void appendVector(const VectorType& vector)
+    {
+        for (const auto& value : vector)
+            append(value);
+    }
 
     // Helper for appending cold any's. This often used by clients to implement OSR.
     template<typename VectorType>
@@ -285,6 +273,7 @@ protected:
 private:
     friend class CheckSpecial;
     friend class PatchpointSpecial;
+    friend class StackmapGenerationParams;
     friend class StackmapSpecial;
     
     Vector<ValueRep> m_reps;

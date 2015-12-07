@@ -304,6 +304,8 @@
 		0F338E1C1BF286EA0013C88F /* B3BlockInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */; };
 		0F338E1D1BF286EA0013C88F /* B3LowerMacros.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */; };
 		0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */; };
+		0F33FCF71C136E2500323F67 /* B3StackmapGenerationParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F33FCF51C136E2500323F67 /* B3StackmapGenerationParams.cpp */; };
+		0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F33FCF61C136E2500323F67 /* B3StackmapGenerationParams.h */; };
 		0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */; };
 		0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; };
 		0F37308C1C0BD29100052BFA /* B3PhiChildren.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F37308A1C0BD29100052BFA /* B3PhiChildren.cpp */; };
@@ -2400,6 +2402,8 @@
 		0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BlockInsertionSet.h; path = b3/B3BlockInsertionSet.h; sourceTree = "<group>"; };
 		0F338E191BF286EA0013C88F /* B3LowerMacros.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3LowerMacros.cpp; path = b3/B3LowerMacros.cpp; sourceTree = "<group>"; };
 		0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LowerMacros.h; path = b3/B3LowerMacros.h; sourceTree = "<group>"; };
+		0F33FCF51C136E2500323F67 /* B3StackmapGenerationParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackmapGenerationParams.cpp; path = b3/B3StackmapGenerationParams.cpp; sourceTree = "<group>"; };
+		0F33FCF61C136E2500323F67 /* B3StackmapGenerationParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackmapGenerationParams.h; path = b3/B3StackmapGenerationParams.h; sourceTree = "<group>"; };
 		0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGUseKind.cpp; path = dfg/DFGUseKind.cpp; sourceTree = "<group>"; };
 		0F34B14816D4200E001CDA5A /* DFGUseKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUseKind.h; path = dfg/DFGUseKind.h; sourceTree = "<group>"; };
 		0F37308A1C0BD29100052BFA /* B3PhiChildren.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3PhiChildren.cpp; path = b3/B3PhiChildren.cpp; sourceTree = "<group>"; };
@@ -4629,6 +4633,8 @@
 				0FEC84E31BDACDAC0080FF74 /* B3ProcedureInlines.h */,
 				0FEC85B71BE1462F0080FF74 /* B3ReduceStrength.cpp */,
 				0FEC85B81BE1462F0080FF74 /* B3ReduceStrength.h */,
+				0F33FCF51C136E2500323F67 /* B3StackmapGenerationParams.cpp */,
+				0F33FCF61C136E2500323F67 /* B3StackmapGenerationParams.h */,
 				0FEC84E61BDACDAC0080FF74 /* B3StackmapSpecial.cpp */,
 				0FEC84E71BDACDAC0080FF74 /* B3StackmapSpecial.h */,
 				0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */,
@@ -6976,6 +6982,7 @@
 				0FD3E4021B618AAF00C80E1E /* DFGAdaptiveInferredPropertyValueWatchpoint.h in Headers */,
 				0F18D3D01B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.h in Headers */,
 				998ED6751BED768C00DD8017 /* RemoteControllableTarget.h in Headers */,
+				0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */,
 				0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */,
 				0FFB921816D02EB20055A5DB /* DFGAllocator.h in Headers */,
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
@@ -8493,6 +8500,7 @@
 				0F8F943C1667631300D61971 /* CodeSpecializationKind.cpp in Sources */,
 				0F8F94421667633500D61971 /* CodeType.cpp in Sources */,
 				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
+				0F33FCF71C136E2500323F67 /* B3StackmapGenerationParams.cpp in Sources */,
 				A709F2F217A0AC2A00512E98 /* CommonSlowPaths.cpp in Sources */,
 				6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */,
 				A7E5A3A71797432D00E893C0 /* CompilationResult.cpp in Sources */,

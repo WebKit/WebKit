@@ -30,6 +30,7 @@
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
+#include "JSCJSValue.h"
 #include "Reg.h"
 #include <wtf/PrintStream.h>
 
@@ -199,6 +200,18 @@ public:
     double doubleValue() const
     {
         return bitwise_cast<double>(value());
+    }
+
+    ValueRep withOffset(intptr_t offset)
+    {
+        switch (kind()) {
+        case Stack:
+            return stack(offsetFromFP() + offset);
+        case StackArgument:
+            return stackArgument(offsetFromSP() + offset);
+        default:
+            return *this;
+        }
     }
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;

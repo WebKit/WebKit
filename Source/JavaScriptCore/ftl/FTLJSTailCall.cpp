@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLJSTailCall.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "CallFrameShuffler.h"
 #include "DFGNode.h"
@@ -38,26 +38,7 @@
 
 namespace JSC { namespace FTL {
 
-using namespace B3;
 using namespace DFG;
-
-#if FTL_USES_B3
-
-JSTailCall::JSTailCall(PatchpointValue* patchpoint, Node* node, const Vector<ExitValue>& arguments)
-    : JSCallBase(CallLinkInfo::TailCall, node->origin.semantic, node->origin.semantic)
-    , m_patchpoint(patchpoint)
-    , m_arguments(arguments)
-    , m_instructionOffset(0)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-void JSTailCall::emit(JITCode&, CCallHelpers&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-#else // FTL_USES_B3
 
 namespace {
 
@@ -342,8 +323,6 @@ void JSTailCall::emit(JITCode& jitCode, CCallHelpers& jit)
     m_callLinkInfo->setUpCall(m_type, m_semanticeOrigin, calleeGPR);
 }
 
-#endif // FTL_USES_B3
-
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3

@@ -30,6 +30,7 @@
 
 #include "AirGenerationContext.h"
 #include "AllowMacroScratchRegisterUsage.h"
+#include "B3StackmapGenerationParams.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGDominators.h"
@@ -4828,14 +4829,105 @@ private:
 
     void compileCallOrConstruct()
     {
+        Node* node = m_node;
+        unsigned numArgs = node->numChildren() - 1;
+
+        LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
+
 #if FTL_USES_B3
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
+        unsigned frameSize = JSStack::CallFrameHeaderSize + numArgs;
+        unsigned alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
+
+        // JS->JS calling convention requires that the caller allows this much space on top of stack to
+        // get trashed by the callee, even if not all of that space is used to pass arguments. We tell
+        // B3 this explicitly for two reasons:
+        //
+        // - We will only pass frameSize worth of stuff.
+        // - The trashed stack guarantee is logically separate from the act of passing arguments, so we
+        //   shouldn't rely on Air to infer the trashed stack property based on the arguments it ends
+        //   up seeing.
+        m_proc.requestCallArgAreaSize(alignedFrameSize);
+
+        // Collect the arguments, since this can generate code and we want to generate it before we emit
+        // the call.
+        Vector<ConstrainedValue> arguments;
+
+        // Make sure that the callee goes into GPR0 because that's where the slow path thunks expect the
+        // callee to be.
+        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(GPRInfo::regT0)));
+
+        auto addArgument = [&] (LValue value, VirtualRegister reg, int offset) {
+            intptr_t offsetFromSP =
+                (reg.offset() - JSStack::CallerFrameAndPCSize) * sizeof(EncodedJSValue) + offset;
+            arguments.append(ConstrainedValue(value, ValueRep::stackArgument(offsetFromSP)));
+        };
+
+        addArgument(jsCallee, VirtualRegister(JSStack::Callee), 0);
+        addArgument(m_out.constInt32(numArgs), VirtualRegister(JSStack::ArgumentCount), PayloadOffset);
+        for (unsigned i = 0; i < numArgs; ++i)
+            addArgument(lowJSValue(m_graph.varArgChild(node, 1 + i)), virtualRegisterForArgument(i), 0);
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->appendVector(arguments);
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
+        patchpoint->resultConstraint = ValueRep::reg(GPRInfo::returnValueGPR);
+
+        CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                CallSiteIndex callSiteIndex = state->jitCode->common.addUniqueCallSiteIndex(codeOrigin);
+
+                // FIXME: If we were handling exceptions, then at this point we would ask our descriptor
+                // to prepare and then we would modify the OSRExit data structure inside the
+                // OSRExitHandle to link it up to this call.
+                // https://bugs.webkit.org/show_bug.cgi?id=151686
+
+                jit.store32(
+                    CCallHelpers::TrustedImm32(callSiteIndex.bits()),
+                    CCallHelpers::tagFor(VirtualRegister(JSStack::ArgumentCount)));
+
+                CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
+
+                CCallHelpers::DataLabelPtr targetToCheck;
+                CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
+                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
+                    CCallHelpers::TrustedImmPtr(0));
+
+                CCallHelpers::Call fastCall = jit.nearCall();
+                CCallHelpers::Jump done = jit.jump();
+
+                slowPath.link(&jit);
+
+                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                CCallHelpers::Call slowCall = jit.nearCall();
+                done.link(&jit);
+
+                callLinkInfo->setUpCall(
+                    node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call,
+                    node->origin.semantic, GPRInfo::regT0);
+
+                jit.addPtr(
+                    CCallHelpers::TrustedImm32(-params.proc().frameSize()),
+                    GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+
+                jit.addLinkTask(
+                    [=] (LinkBuffer& linkBuffer) {
+                        MacroAssemblerCodePtr linkCall =
+                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                        linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
+
+                        callLinkInfo->setCallLocations(
+                            linkBuffer.locationOfNearCall(slowCall),
+                            linkBuffer.locationOf(targetToCheck),
+                            linkBuffer.locationOfNearCall(fastCall));
+                    });
+            });
+
+        setJSValue(patchpoint);
 #else
-        int numArgs = m_node->numChildren() - 1;
-
-        LValue jsCallee = lowJSValue(m_graph.varArgChild(m_node, 0));
-
         unsigned stackmapID = m_stackmapIDs++;
 
         unsigned frameSize = JSStack::CallFrameHeaderSize + numArgs;
@@ -4848,8 +4940,8 @@ private:
         arguments.append(getUndef(m_out.int64)); // code block
         arguments.append(jsCallee); // callee -> stack
         arguments.append(m_out.constInt64(numArgs)); // argument count and zeros for the tag
-        for (int i = 0; i < numArgs; ++i)
-            arguments.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
+        for (unsigned i = 0; i < numArgs; ++i)
+            arguments.append(lowJSValue(m_graph.varArgChild(node, 1 + i)));
         for (unsigned i = 0; i < padding; ++i)
             arguments.append(getUndef(m_out.int64));
 
@@ -4863,7 +4955,7 @@ private:
         LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMWebKitJSCallConv);
         
-        m_ftlState.jsCalls.append(JSCall(stackmapID, m_node, codeOriginDescriptionOfCallSite()));
+        m_ftlState.jsCalls.append(JSCall(stackmapID, node, codeOriginDescriptionOfCallSite()));
         
         setJSValue(call);
 #endif
@@ -5322,18 +5414,63 @@ private:
     
     void compileInvalidationPoint()
     {
-#if FTL_USES_B3
-        UNREACHABLE_FOR_PLATFORM();
-#else // FTL_USES_B3
         if (verboseCompilationEnabled())
             dataLog("    Invalidation point with availability: ", availabilityMap(), "\n");
 
         DFG_ASSERT(m_graph, m_node, m_origin.exitOK);
         
+#if FTL_USES_B3
+        B3::PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        OSRExitDescriptor* descriptor = appendOSRExitDescriptor(noValue(), nullptr);
+        NodeOrigin origin = m_origin;
+        patchpoint->appendColdAnys(buildExitArguments(descriptor, origin.forExit, noValue()));
+        
+        State* state = &m_ftlState;
+
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                // The MacroAssembler knows more about this than B3 does. The watchpointLabel() method
+                // will ensure that this is followed by a nop shadow but only when this is actually
+                // necessary.
+                CCallHelpers::Label label = jit.watchpointLabel();
+
+                RefPtr<OSRExitHandle> handle = descriptor->emitOSRExitLater(
+                    *state, UncountableInvalidation, origin, params);
+
+                RefPtr<JITCode> jitCode = state->jitCode.get();
+
+                jit.addLinkTask(
+                    [=] (LinkBuffer& linkBuffer) {
+                        JumpReplacement jumpReplacement(
+                            linkBuffer.locationOf(label),
+                            linkBuffer.locationOf(handle->label));
+                        jitCode->common.jumpReplacements.append(jumpReplacement);
+                    });
+            });
+
+        // Set some obvious things.
+        patchpoint->effects.terminal = false;
+        patchpoint->effects.writesSSAState = false;
+        patchpoint->effects.readsSSAState = false;
+        
+        // This is how we tell B3 about the possibility of jump replacement.
+        patchpoint->effects.exitsSideways = true;
+        
+        // It's not possible for some prior branch to determine the safety of this operation. It's always
+        // fine to execute this on some path that wouldn't have originally executed it before
+        // optimization.
+        patchpoint->effects.controlDependent = false;
+
+        // If this falls through then it won't write anything.
+        patchpoint->effects.writes = HeapRange();
+
+        // When this abruptly terminates, it could read any heap location.
+        patchpoint->effects.reads = HeapRange::top();
+#else // FTL_USES_B3
 
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(UncountableInvalidation, ExceptionType::None, noValue(), nullptr, m_origin);
         
-        StackmapArgumentList arguments = buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last(), FormattedValue());
+        StackmapArgumentList arguments = buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last().m_codeOrigin, FormattedValue());
         callStackmap(exitDescriptor, arguments);
         
         exitDescriptor->m_isInvalidationPoint = true;
@@ -7901,7 +8038,7 @@ private:
         result->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 Vector<Location> locations;
-                for (const B3::ValueRep& rep : params.reps)
+                for (const B3::ValueRep& rep : params)
                     locations.append(Location::forValueRep(rep));
 
                 RefPtr<LazySlowPath::Generator> generator = functor(locations);
@@ -7909,56 +8046,55 @@ private:
                 CCallHelpers::PatchableJump patchableJump = jit.patchableJump();
                 CCallHelpers::Label done = jit.label();
 
-                RegisterSet usedRegisters = params.usedRegisters;
+                RegisterSet usedRegisters = params.usedRegisters();
 
                 // FIXME: As part of handling exceptions, we need to create a concrete OSRExit here.
                 // Doing so should automagically register late paths that emit exit thunks.
-                
-                params.context->latePaths.append(
-                    createSharedTask<Air::GenerationContext::LatePathFunction>(
-                        [=] (CCallHelpers& jit, Air::GenerationContext&) {
-                            AllowMacroScratchRegisterUsage allowScratch(jit);
-                            patchableJump.m_jump.link(&jit);
-                            unsigned index = state->jitCode->lazySlowPaths.size();
-                            state->jitCode->lazySlowPaths.append(nullptr);
-                            jit.pushToSaveImmediateWithoutTouchingRegisters(
-                                CCallHelpers::TrustedImm32(index));
-                            CCallHelpers::Jump generatorJump = jit.jump();
 
-                            // Note that so long as we're here, we don't really know if our late path
-                            // runs before or after any other late paths that we might depend on, like
-                            // the exception thunk.
+                params.addLatePath(
+                    [=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                        patchableJump.m_jump.link(&jit);
+                        unsigned index = state->jitCode->lazySlowPaths.size();
+                        state->jitCode->lazySlowPaths.append(nullptr);
+                        jit.pushToSaveImmediateWithoutTouchingRegisters(
+                            CCallHelpers::TrustedImm32(index));
+                        CCallHelpers::Jump generatorJump = jit.jump();
 
-                            RefPtr<JITCode> jitCode = state->jitCode;
-                            VM* vm = &state->graph.m_vm;
+                        // Note that so long as we're here, we don't really know if our late path
+                        // runs before or after any other late paths that we might depend on, like
+                        // the exception thunk.
 
-                            jit.addLinkTask(
-                                [=] (LinkBuffer& linkBuffer) {
-                                    linkBuffer.link(
-                                        generatorJump, CodeLocationLabel(
-                                            vm->getCTIStub(
-                                                lazySlowPathGenerationThunkGenerator).code()));
+                        RefPtr<JITCode> jitCode = state->jitCode;
+                        VM* vm = &state->graph.m_vm;
+
+                        jit.addLinkTask(
+                            [=] (LinkBuffer& linkBuffer) {
+                                linkBuffer.link(
+                                    generatorJump, CodeLocationLabel(
+                                        vm->getCTIStub(
+                                            lazySlowPathGenerationThunkGenerator).code()));
                                     
-                                    CodeLocationJump linkedPatchableJump = CodeLocationJump(
-                                        linkBuffer.locationOf(patchableJump));
-                                    CodeLocationLabel linkedDone = linkBuffer.locationOf(done);
+                                CodeLocationJump linkedPatchableJump = CodeLocationJump(
+                                    linkBuffer.locationOf(patchableJump));
+                                CodeLocationLabel linkedDone = linkBuffer.locationOf(done);
 
-                                    // FIXME: Need a story for exceptions in FTL-B3. That basically means
-                                    // doing a lookup of the exception entrypoint here. We will have an
-                                    // OSR exit data structure of some sort.
-                                    // https://bugs.webkit.org/show_bug.cgi?id=151686
-                                    CodeLocationLabel exceptionTarget;
-                                    CallSiteIndex callSiteIndex =
-                                        jitCode->common.addUniqueCallSiteIndex(origin);
+                                // FIXME: Need a story for exceptions in FTL-B3. That basically means
+                                // doing a lookup of the exception entrypoint here. We will have an
+                                // OSR exit data structure of some sort.
+                                // https://bugs.webkit.org/show_bug.cgi?id=151686
+                                CodeLocationLabel exceptionTarget;
+                                CallSiteIndex callSiteIndex =
+                                    jitCode->common.addUniqueCallSiteIndex(origin);
                                     
-                                    std::unique_ptr<LazySlowPath> lazySlowPath =
-                                        std::make_unique<LazySlowPath>(
-                                            linkedPatchableJump, linkedDone, exceptionTarget,
-                                            usedRegisters, callSiteIndex, generator);
+                                std::unique_ptr<LazySlowPath> lazySlowPath =
+                                    std::make_unique<LazySlowPath>(
+                                        linkedPatchableJump, linkedDone, exceptionTarget,
+                                        usedRegisters, callSiteIndex, generator);
                                     
-                                    jitCode->lazySlowPaths[index] = WTF::move(lazySlowPath);
-                                });
-                        }));
+                                jitCode->lazySlowPaths[index] = WTF::move(lazySlowPath);
+                            });
+                    });
             });
         return result;
 #else
@@ -9213,6 +9349,7 @@ private:
         m_out.appendTo(continuation);
     }
 
+#if !FTL_USES_B3
     void appendOSRExitArgumentsForPatchpointIfWillCatchException(StackmapArgumentList& arguments, ExceptionType exceptionType, unsigned offsetOfExitArguments)
     {
         CodeOrigin opCatchOrigin;
@@ -9230,9 +9367,10 @@ private:
         exitDescriptorImpl.m_baselineExceptionHandler = *exceptionHandler;
 
         StackmapArgumentList freshList =
-            buildExitArguments(exitDescriptor, exitDescriptorImpl, noValue(), offsetOfExitArguments);
+            buildExitArguments(exitDescriptor, exitDescriptorImpl.m_codeOrigin, noValue(), offsetOfExitArguments);
         arguments.appendVector(freshList);
     }
+#endif // !FTL_USES_B3
 
     bool emitBranchToOSRExitIfWillCatchException(LValue hadException)
     {
@@ -9251,6 +9389,16 @@ private:
         return m_blocks.get(block);
     }
 
+
+#if FTL_USES_B3
+    OSRExitDescriptor* appendOSRExitDescriptor(FormattedValue lowValue, Node* highValue)
+    {
+        return &m_ftlState.jitCode->osrExitDescriptors.alloc(
+            lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
+            availabilityMap().m_locals.numberOfArguments(),
+            availabilityMap().m_locals.numberOfLocals());
+    }
+#else // FTL_USES_B3
     OSRExitDescriptor* appendOSRExitDescriptor(ExitKind kind, ExceptionType exceptionType, FormattedValue lowValue, Node* highValue, NodeOrigin origin)
     {
         OSRExitDescriptor& result = m_ftlState.jitCode->osrExitDescriptors.alloc(
@@ -9261,6 +9409,7 @@ private:
             kind, origin.forExit, origin.semantic, exceptionType);
         return &result;
     }
+#endif // FTL_USES_B3
     
     void appendOSRExit(
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition, 
@@ -9328,18 +9477,16 @@ private:
 #if FTL_USES_B3
     void blessSpeculation(B3::CheckValue* value, ExitKind kind, FormattedValue lowValue, Node* highValue, NodeOrigin origin, bool isExceptionHandler = false)
     {
-        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(
-            kind, isExceptionHandler ? ExceptionType::CCallException : ExceptionType::None, lowValue,
-            highValue, origin);
-        OSRExitDescriptorImpl* exitDescriptorImpl = &m_ftlState.osrExitDescriptorImpls.last();
+        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(lowValue, highValue);
         
         unsigned offset = value->numChildren();
-        value->appendColdAnys(buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last(), lowValue));
+        value->appendColdAnys(buildExitArguments(exitDescriptor, origin.forExit, lowValue));
 
         State* state = &m_ftlState;
         value->setGenerator(
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                exitDescriptor->emitOSRExit(*state, exitDescriptorImpl, jit, params, offset);
+                exitDescriptor->emitOSRExit(
+                    *state, kind, origin, jit, params, offset, isExceptionHandler);
             });
     }
 #endif
@@ -9347,29 +9494,29 @@ private:
 #if !FTL_USES_B3
     void emitOSRExitCall(OSRExitDescriptor* exitDescriptor, FormattedValue lowValue)
     {
-        callStackmap(exitDescriptor, buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last(), lowValue));
+        callStackmap(exitDescriptor, buildExitArguments(exitDescriptor, m_ftlState.osrExitDescriptorImpls.last().m_codeOrigin, lowValue));
     }
 #endif
 
     StackmapArgumentList buildExitArguments(
-        OSRExitDescriptor* exitDescriptor, OSRExitDescriptorImpl& exitDescriptorImpl, FormattedValue lowValue,
+        OSRExitDescriptor* exitDescriptor, CodeOrigin exitOrigin, FormattedValue lowValue,
         unsigned offsetOfExitArgumentsInStackmapLocations = 0)
     {
         StackmapArgumentList result;
         buildExitArguments(
-            exitDescriptor, exitDescriptorImpl, result, lowValue, offsetOfExitArgumentsInStackmapLocations);
+            exitDescriptor, exitOrigin, result, lowValue, offsetOfExitArgumentsInStackmapLocations);
         return result;
     }
     
     void buildExitArguments(
-        OSRExitDescriptor* exitDescriptor, OSRExitDescriptorImpl& exitDescriptorImpl, StackmapArgumentList& arguments, FormattedValue lowValue,
+        OSRExitDescriptor* exitDescriptor, CodeOrigin exitOrigin, StackmapArgumentList& arguments, FormattedValue lowValue,
         unsigned offsetOfExitArgumentsInStackmapLocations = 0)
     {
         if (!!lowValue)
             arguments.append(lowValue.value());
         
         AvailabilityMap availabilityMap = this->availabilityMap();
-        availabilityMap.pruneByLiveness(m_graph, exitDescriptorImpl.m_codeOrigin);
+        availabilityMap.pruneByLiveness(m_graph, exitOrigin);
         
         HashMap<Node*, ExitTimeObjectMaterialization*> map;
         availabilityMap.forEachAvailability(
@@ -9396,7 +9543,7 @@ private:
             if (Options::validateFTLOSRExitLiveness()) {
                 DFG_ASSERT(
                     m_graph, m_node,
-                    (!(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitDescriptorImpl.m_codeOrigin))) || m_graph.m_plan.mode == FTLForOSREntryMode);
+                    (!(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), exitOrigin))) || m_graph.m_plan.mode == FTLForOSREntryMode);
             }
             ExitValue exitValue = exitValueForAvailability(arguments, map, availability);
             if (exitValue.hasIndexInStackmapLocations())
@@ -9475,6 +9622,10 @@ private:
         StackmapArgumentList& arguments, const HashMap<Node*, ExitTimeObjectMaterialization*>& map,
         Node* node)
     {
+        // NOTE: In FTL->B3, we cannot generate code here, because m_output is positioned after the
+        // stackmap value. Like all values, the stackmap value cannot use a child that is defined after
+        // it.
+        
         ASSERT(node->shouldGenerate());
         ASSERT(node->hasResult());
 
@@ -9522,10 +9673,15 @@ private:
             return exitArgument(arguments, DataFormatStrictInt52, value.value());
         
         value = m_booleanValues.get(node);
+#if FTL_USES_B3
+        if (isValid(value))
+            return exitArgument(arguments, DataFormatBoolean, value.value());
+#else // FTL_USES_B3
         if (isValid(value)) {
             LValue valueToPass = m_out.zeroExt(value.value(), m_out.int32);
             return exitArgument(arguments, DataFormatBoolean, valueToPass);
         }
+#endif // FTL_USES_B3
         
         value = m_jsValueValues.get(node);
         if (isValid(value))

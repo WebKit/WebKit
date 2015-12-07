@@ -1016,11 +1016,6 @@ public:
         AssemblerType::replaceWithAddressComputation(label.dataLocation());
     }
 
-    void addLinkTask(RefPtr<SharedTask<void(LinkBuffer&)>> task)
-    {
-        m_linkTasks.append(task);
-    }
-
     template<typename Functor>
     void addLinkTask(const Functor& functor)
     {

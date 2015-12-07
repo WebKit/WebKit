@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLJSCallVarargs.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "DFGNode.h"
 #include "DFGOperations.h"
@@ -225,5 +225,5 @@ void JSCallVarargs::link(VM& vm, LinkBuffer& linkBuffer, CodeLocationLabel excep
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3
 

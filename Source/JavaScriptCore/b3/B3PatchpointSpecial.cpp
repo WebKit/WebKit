@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirGenerationContext.h"
+#include "B3StackmapGenerationParams.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
@@ -107,13 +108,7 @@ CCallHelpers::Jump PatchpointSpecial::generate(
         reps.append(repForArg(*context.code, inst.args[offset++]));
     appendRepsImpl(context, offset, inst, reps);
     
-    StackmapGenerationParams params;
-    params.value = value;
-    params.reps = reps;
-    params.usedRegisters = value->m_usedRegisters;
-    params.context = &context;
-
-    value->m_generator->run(jit, params);
+    value->m_generator->run(jit, StackmapGenerationParams(value, reps, context));
 
     return CCallHelpers::Jump();
 }

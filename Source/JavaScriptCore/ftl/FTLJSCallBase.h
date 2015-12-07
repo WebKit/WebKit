@@ -26,7 +26,9 @@
 #ifndef FTLJSCallBase_h
 #define FTLJSCallBase_h
 
-#if ENABLE(FTL_JIT)
+#include "DFGCommon.h"
+
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "CCallHelpers.h"
 #include "CallLinkInfo.h"
@@ -73,7 +75,7 @@ public:
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #endif // FTLJSCallBase_h
 

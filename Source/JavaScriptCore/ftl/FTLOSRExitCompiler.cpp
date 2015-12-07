@@ -207,23 +207,34 @@ static void compileStub(
     CCallHelpers jit(vm, codeBlock);
 
     // The first thing we need to do is restablish our frame in the case of an exception.
-    if (exit.willArriveAtOSRExitFromGenericUnwind()) {
+    if (
+#if FTL_USES_B3
+        exit.m_isUnwindHandler
+#else // FTL_USES_B3
+        exit.willArriveAtOSRExitFromGenericUnwind()
+#endif // FTL_USES_B3
+        ) {
         RELEASE_ASSERT(vm->callFrameForCatch); // The first time we hit this exit, like at all other times, this field should be non-null.
         jit.restoreCalleeSavesFromVMCalleeSavesBuffer();
         jit.loadPtr(vm->addressOfCallFrameForCatch(), MacroAssembler::framePointerRegister);
         jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
             MacroAssembler::framePointerRegister, CCallHelpers::stackPointerRegister);
 
+#if !FTL_USES_B3
         if (exit.needsRegisterRecoveryOnGenericUnwindOSRExitPath())
             exit.recoverRegistersFromSpillSlot(jit, jitCode->osrExitFromGenericUnwindStackSpillSlot);
+#endif // !FTL_USES_B3
 
         // Do a pushToSave because that's what the exit compiler below expects the stack
         // to look like because that's the last thing the ExitThunkGenerator does. The code
         // below doesn't actually use the value that was pushed, but it does rely on the
         // general shape of the stack being as it is in the non-exception OSR case.
         jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(0xbadbeef));
-    } else if (exit.willArriveAtOSRExitFromCallOperation())
+    }
+#if !FTL_USES_B3
+    if (exit.willArriveAtOSRExitFromCallOperation())
         exit.recoverRegistersFromSpillSlot(jit, jitCode->osrExitFromGenericUnwindStackSpillSlot);
+#endif // !FTL_USES_B3
     
 
     // We need scratch space to save all registers, to build up the JS stack, to deal with unwind
@@ -603,11 +614,17 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("    Origin: ", exit.m_codeOrigin, "\n");
         if (exit.m_codeOriginForExitProfile != exit.m_codeOrigin)
             dataLog("    Origin for exit profile: ", exit.m_codeOriginForExitProfile, "\n");
+#if !FTL_USES_B3
         dataLog("    Exit stackmap ID: ", exit.m_descriptor->m_stackmapID, "\n");
+#endif // !FTL_USES_B3
         dataLog("    Current call site index: ", exec->callSiteIndex().bits(), "\n");
-        dataLog("    Exit is exception handler: ", exit.m_isExceptionHandler,
-            " will arrive at exit from genericUnwind(): ", exit.willArriveAtOSRExitFromGenericUnwind(), 
-            " will arrive at exit from lazy slow path: ", exit.m_exceptionType == ExceptionType::LazySlowPath, "\n");
+        dataLog("    Exit is exception handler: ", exit.m_isExceptionHandler, "\n");
+#if FTL_USES_B3
+        dataLog("    Is unwind handler: ", exit.m_isUnwindHandler, "\n");
+#else // FTL_USES_B3
+        dataLog("    Will arrive at exit from genericUnwind(): ", exit.willArriveAtOSRExitFromGenericUnwind(), "\n");
+        dataLog("    Will arrive at exit from lazy slow path: ", exit.m_exceptionType == ExceptionType::LazySlowPath, "\n");
+#endif // FTL_USES_B3
         dataLog("    Exit values: ", exit.m_descriptor->m_values, "\n");
         if (!exit.m_descriptor->m_materializations.isEmpty()) {
             dataLog("    Materializations:\n");

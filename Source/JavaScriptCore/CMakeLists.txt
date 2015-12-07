@@ -125,6 +125,7 @@ set(JavaScriptCore_SOURCES
     b3/B3PhiChildren.cpp
     b3/B3Procedure.cpp
     b3/B3ReduceStrength.cpp
+    b3/B3StackmapGenerationParams.cpp
     b3/B3StackmapSpecial.cpp
     b3/B3StackmapValue.cpp
     b3/B3StackSlotKind.cpp

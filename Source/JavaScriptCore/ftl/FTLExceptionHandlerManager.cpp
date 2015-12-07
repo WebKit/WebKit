@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FTLExceptionHandlerManager.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "FTLState.h"
 
@@ -164,4 +164,4 @@ CallSiteIndex ExceptionHandlerManager::procureCallSiteIndex(uint32_t stackmapRec
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3

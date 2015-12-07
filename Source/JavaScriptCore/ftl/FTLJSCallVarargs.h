@@ -26,7 +26,9 @@
 #ifndef FTLJSCallVarargs_h
 #define FTLJSCallVarargs_h
 
-#if ENABLE(FTL_JIT)
+#include "DFGCommon.h"
+
+#if ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #include "FTLJSCallBase.h"
 
@@ -75,7 +77,7 @@ public:
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FTL_JIT) && !FTL_USES_B3
 
 #endif // FTLJSCallVarargs_h
 

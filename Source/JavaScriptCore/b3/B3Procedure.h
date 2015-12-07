@@ -221,8 +221,13 @@ public:
     // that API, then you don't have to worry about this.
     std::unique_ptr<OpaqueByproducts> releaseByproducts() { return WTF::move(m_byproducts); }
 
+    // This gives you direct access to Code. However, the idea is that clients of B3 shouldn't have to
+    // call this. So, Procedure has some methods (below) that expose some Air::Code functionality.
     const Air::Code& code() const { return *m_code; }
     Air::Code& code() { return *m_code; }
+
+    unsigned callArgAreaSize() const;
+    void requestCallArgAreaSize(unsigned size);
 
     JS_EXPORT_PRIVATE unsigned frameSize() const;
     const RegisterAtOffsetList& calleeSaveRegisters() const;

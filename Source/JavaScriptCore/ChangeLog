@@ -1,3 +1,141 @@
+2015-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be able to make JS->JS calls
+        https://bugs.webkit.org/show_bug.cgi?id=151901
+
+        Reviewed by Saam Barati.
+
+        This adds support for the Call and InvalidationPoint opcodes in DFG IR. This required doing some
+        clean-up in the OSR exit code. We don't want the B3 FTL to use a bunch of vectors to hold
+        side-state, so the use of OSRExitDescriptorImpl is not right. It makes sense in the LLVM FTL
+        because that code needs some way of saving some state from LowerDFGToLLVM to compile(), but
+        that's not how B3 FTL works. It turns out that for B3 FTL, there isn't anything in
+        OSRExitDescriptorImpl that the code in LowerDFGToLLVM can't just capture in a lambda.
+
+        This also simplifies some stackmap-related APIs, since I got tired of writing boilerplate.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::replaceWithAddressComputation):
+        (JSC::AbstractMacroAssembler::addLinkTask):
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::generate):
+        * b3/B3Effects.h:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::generate):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addDataSection):
+        (JSC::B3::Procedure::callArgAreaSize):
+        (JSC::B3::Procedure::requestCallArgAreaSize):
+        (JSC::B3::Procedure::frameSize):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::releaseByproducts):
+        (JSC::B3::Procedure::code):
+        * b3/B3StackmapGenerationParams.cpp: Added.
+        (JSC::B3::StackmapGenerationParams::usedRegisters):
+        (JSC::B3::StackmapGenerationParams::proc):
+        (JSC::B3::StackmapGenerationParams::StackmapGenerationParams):
+        * b3/B3StackmapGenerationParams.h: Added.
+        (JSC::B3::StackmapGenerationParams::value):
+        (JSC::B3::StackmapGenerationParams::reps):
+        (JSC::B3::StackmapGenerationParams::size):
+        (JSC::B3::StackmapGenerationParams::at):
+        (JSC::B3::StackmapGenerationParams::operator[]):
+        (JSC::B3::StackmapGenerationParams::begin):
+        (JSC::B3::StackmapGenerationParams::end):
+        (JSC::B3::StackmapGenerationParams::context):
+        (JSC::B3::StackmapGenerationParams::addLatePath):
+        * b3/B3StackmapValue.h:
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::doubleValue):
+        (JSC::B3::ValueRep::withOffset):
+        * b3/air/AirGenerationContext.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testSimplePatchpoint):
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithoutOuputClobbersFPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersFPArgs):
+        (JSC::B3::testPatchpointWithEarlyClobber):
+        (JSC::B3::testPatchpointCallArg):
+        (JSC::B3::testPatchpointFixedRegister):
+        (JSC::B3::testPatchpointAny):
+        (JSC::B3::testPatchpointLotsOfLateAnys):
+        (JSC::B3::testPatchpointAnyImm):
+        (JSC::B3::testPatchpointManyImms):
+        (JSC::B3::testPatchpointWithRegisterResult):
+        (JSC::B3::testPatchpointWithStackArgumentResult):
+        (JSC::B3::testPatchpointWithAnyResult):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCheckLessThan):
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testCheckAddImmCommute):
+        (JSC::B3::testCheckAddImmSomeRegister):
+        (JSC::B3::testCheckAdd):
+        (JSC::B3::testCheckAdd64):
+        (JSC::B3::testCheckSubImm):
+        (JSC::B3::testCheckSubBadImm):
+        (JSC::B3::testCheckSub):
+        (JSC::B3::testCheckSub64):
+        (JSC::B3::testCheckNeg):
+        (JSC::B3::testCheckNeg64):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul2):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::genericTestCompare):
+        * ftl/FTLExceptionHandlerManager.cpp:
+        * ftl/FTLExceptionHandlerManager.h:
+        * ftl/FTLJSCall.cpp:
+        * ftl/FTLJSCall.h:
+        * ftl/FTLJSCallBase.cpp:
+        (JSC::FTL::JSCallBase::emit):
+        * ftl/FTLJSCallBase.h:
+        * ftl/FTLJSCallVarargs.cpp:
+        * ftl/FTLJSCallVarargs.h:
+        * ftl/FTLJSTailCall.cpp:
+        (JSC::FTL::DFG::getRegisterWithAddend):
+        (JSC::FTL::JSTailCall::emit):
+        (JSC::FTL::JSTailCall::JSTailCall): Deleted.
+        * ftl/FTLJSTailCall.h:
+        (JSC::FTL::JSTailCall::stackmapID):
+        (JSC::FTL::JSTailCall::estimatedSize):
+        (JSC::FTL::JSTailCall::operator<):
+        (JSC::FTL::JSTailCall::patchpoint): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitArgumentsForPatchpointIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitBranchToOSRExitIfWillCatchException):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lowBlock):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForNode):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExitDescriptor::emitOSRExit):
+        (JSC::FTL::OSRExitDescriptor::emitOSRExitLater):
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::recoverRegistersFromSpillSlot):
+        (JSC::FTL::OSRExit::willArriveAtExitFromIndirectExceptionCheck):
+        (JSC::FTL::OSRExit::needsRegisterRecoveryOnGenericUnwindOSRExitPath):
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExitDescriptorImpl::OSRExitDescriptorImpl):
+        (JSC::FTL::OSRExit::considerAddingAsFrequentExitSite):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLState.h:
+
 2015-12-07  Saam barati  <sbarati@apple.com>
 
         Rename Watchdog::didFire to Watchdog::shouldTerminate because that's what didFire really meant
