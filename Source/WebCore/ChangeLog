@@ -1,3 +1,38 @@
+2015-12-07  Chris Dumez  <cdumez@apple.com>
+
+        Crash in MemoryCache::pruneDeadResourcesToSize()
+        https://bugs.webkit.org/show_bug.cgi?id=151833
+        <rdar://problem/22392235>
+
+        Reviewed by David Kilzer.
+
+        MemoryCache::pruneDeadResourcesToSize() is iterating over m_allResources
+        (which is a vector of LRUList). It first destroys decoded data for each
+        resource in the LRUList. Then, if it does not suffice to reach the
+        target size, and starts actually removing resources from the cache.
+
+        The issue is that this code alters m_allResources (and its LRULists) as
+        it is iterating over it. We tried to deal with this in various ways:
+        1. Increment the iterator before removing the resource pointed by the
+          iterator.
+        2. Protect the next resource in the LRUList and abort early if it is no
+          longer in the cache.
+
+        This adds code complexity and apparently does not correctly handle all
+        the edge cases as we still see crashes in this code. In particular, I
+        suspect that 2. may not be sufficient if it is possible for the next
+        resource to be moved to another LRUList (in which case, next->inCache()
+        would still return true but the iterator would however become invalid).
+
+        To make the code simpler and more robust, this patch copies the LRUList
+        (and refs the CachedResources) before iterating over it. This is a lot
+        safer and should hopefully fix the crashes we see in this function.
+
+        No new tests, no reproduction case.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneDeadResourcesToSize):
+
 2015-12-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Add some more custom exception messages, passing some more tests..
