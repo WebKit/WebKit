@@ -1,5 +1,25 @@
 2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        Add support to import w3c tests from a repository with a different root that the main repo dir
+        https://bugs.webkit.org/show_bug.cgi?id=151751
+
+        Reviewed by Ryosuke Niwa and Youenn Fablet.
+
+        We should be able to import tests from repositories that are not pure test repositories and where tests are kept
+        in a different directory than the repository root.
+
+        This patch introduces a new parameter tests_directory that we will use as root directory to search for
+        tests. All paths will be flattened when copying tests to have a less complicated directory structure. This
+        requires having the copy_path lists including tuples of origin and destination directories.
+
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader._add_test_suite_paths): Adds the paths as a tuple of origin and destination directory.
+        (TestDownloader.copy_tests): Uses the origin and destination tuple for the paths to copy when copying files.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_tests_directory): Test.
+
+2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         Mock TestRepositories in W3C importer tests
         https://bugs.webkit.org/show_bug.cgi?id=151938
 

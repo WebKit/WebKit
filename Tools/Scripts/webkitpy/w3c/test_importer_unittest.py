@@ -163,5 +163,27 @@ class TestImporterTest(unittest.TestCase):
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
         # self.assertFalse('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
 
+    def test_tests_directory(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/streams-api/reference-implementation/web-platform-tests/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
+    '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
+[
+    {
+        "name": "streams-api",
+        "url": "https://github.com/whatwg/streams.git",
+        "revision": "7cc96dd",
+        "tests_directory": "reference-implementation/web-platform-tests",
+        "paths_to_skip": [],
+        "paths_to_import": [],
+        "import_options": []
+     }
+]
+'''}
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/streams-api/reference-implementation/web-platform-tests/test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/streams-api/test.html'))
+
 
     # FIXME: Needs more tests.
