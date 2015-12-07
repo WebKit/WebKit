@@ -1,3 +1,15 @@
+2015-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Give SVGTransformList some inline vector capacity
+        https://bugs.webkit.org/show_bug.cgi?id=151644
+
+        Reviewed by Andreas Kling.
+
+        Giving SVGTransformList inline capacity of one drops time under SVGTransformList::parse() by
+        about 1% on http://animateplus.com/demos/stress-test/
+
+        * svg/SVGTransformList.h:
+
 2015-12-06  Zalan Bujtas  <zalan@apple.com>
 
         Addressing post-review comments on r193374.

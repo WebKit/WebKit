@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class SVGTransformList : public Vector<SVGTransform> {
+class SVGTransformList : public Vector<SVGTransform, 1> {
 public:
     SVGTransformList() { }
 
