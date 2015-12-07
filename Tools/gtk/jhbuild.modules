@@ -33,9 +33,7 @@
       <dep package="mesa"/>
       <dep package="openwebrtc"/>
       <dep package="libseccomp"/>
-      <if condition-set="x86_64">
-        <dep package="llvm"/>
-      </if>
+      <dep package="llvm"/>
     </dependencies>
   </metamodule>
 
@@ -368,14 +366,17 @@
             hash="sha256:3e6ecf134dbf92a74c24d79848fea3a48e59ab95408a38c6405905d95a293011"/>
   </autotools>
 
-  <autotools id="mesa" autogenargs="--enable-xlib-glx --disable-dri --with-gallium-drivers=swrast" skip-install="true">
+  <autotools id="mesa" autogenargs="--enable-xlib-glx --disable-dri --disable-egl --with-gallium-drivers=swrast" skip-install="true">
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
-    <branch module="/~brianp/mesa/10.5.4/mesa-10.5.4.tar.xz" version="10.5.4"
+    <branch module="/~brianp/mesa/11.0.6/mesa-11.0.6.tar.xz" version="11.0.6"
             checkoutdir="Mesa"
             repo="people.freedesktop.org"
-            hash="sha256:b51e723f3a20d842c88a92d809435b229fc4744ca0dbec0317d9d4a3ac4c6803">
+            hash="sha256:8340e64cdc91999840404c211496f3de38e7b4cb38db34e2f72f1642c5134760">
     </branch>
+    <dependencies>
+      <dep package="llvm"/>
+    </dependencies>
   </autotools>
 
   <autotools id="libusrsctp" supports-non-srcdir-builds="no" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">

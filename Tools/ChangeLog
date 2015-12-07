@@ -1,3 +1,19 @@
+2015-12-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] update-webkitgtk-libs cannot build mesa
+        https://bugs.webkit.org/show_bug.cgi?id=151535
+
+        Reviewed by Martin Robinson.
+
+        Upgrade to newer mesa in order to build successfully against LLVM 3.7. Add missing
+        dependency of mesa on LLVM, to ensure LLVM is built first. Build LLVM unconditionally, even
+        on architectures where FTL is not supported, to ensure mesa is always buildable, since LLVM
+        does not have a stable API and we cannot expect mesa to be buildable unless we control the
+        LLVM version. Build mesa with --disable-egl since --enable-egl conflicts with
+        --enable-xlib-glx. This fixes update-webkitgtk-libs on distros with LLVM 3.7.
+
+        * gtk/jhbuild.modules:
+
 2015-12-07  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][Mac] libWebExtensionTest link error
