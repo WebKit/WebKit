@@ -1,3 +1,15 @@
+2015-12-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Clean up virtual functions in MediaPlayerPrivateGStreamerBase
+        https://bugs.webkit.org/show_bug.cgi?id=151940
+
+        Reviewed by Carlos Garcia Campos.
+
+        - Using 'override' when appropriate
+        - Explicitly marking methods as virtual when they are inherently virtual
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2015-12-07  Saam barati  <sbarati@apple.com>
 
         Add op_watchdog opcode that is generated when VM has a watchdog
