@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Radical bar visibility</title>
+    <meta charset="utf-8"/>
+    <style>
+      math, msqrt {
+        /* Latin Modern Math has
+           RadicalRuleThickess = 40
+           em = 1000
+           So the actual rule thickness is 24 * 40 / 1000 = 0.96 < 1 pixel */
+        font-family: Latin Modern Math;
+        font-size: 24px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <p>This test passes if you see the radical bar.</p>
+
+    <div>
+      <div style="position: absolute">
+        <math>
+          <msqrt>
+            <mspace width="500px"/>
+          </msqrt>
+        </math>
+      </div>
+      <!-- blue square to hide the radical symbol -->
+      <div style="position: absolute; background: blue; width: 100px; height: 100px;"></div>
+    </div>
+
+  </body>
+</html>

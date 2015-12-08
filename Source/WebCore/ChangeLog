@@ -1,3 +1,15 @@
+2015-12-08  Frederic Wang  <fred.wang@free.fr>
+
+        [cairo] Solid stroke of lines with thickness less than 1 pixel broken after r191658
+        https://bugs.webkit.org/show_bug.cgi?id=151947
+
+        Reviewed by Martin Robinson.
+
+        Test: mathml/presentation/radical-bar-visibility.html
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLine): Force a minimal thickness of 1px
+
 2015-12-08  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [ThreadedCompositor] Support WebGL for OpenGL.

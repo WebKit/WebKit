@@ -1,3 +1,15 @@
+2015-12-08  Frederic Wang  <fred.wang@free.fr>
+
+        [cairo] Solid stroke of lines with thickness less than 1 pixel broken after r191658
+        https://bugs.webkit.org/show_bug.cgi?id=151947
+
+        Reviewed by Martin Robinson.
+
+        Add a test to check that the radical overbar appears on the screen when it has thickness less than 1px.
+
+        * mathml/presentation/radical-bar-visibility-expected-mismatch.html: Added.
+        * mathml/presentation/radical-bar-visibility.html: Added.
+
 2015-12-07  Brady Eidson  <beidson@apple.com>
 
         Move an IDB test from the "generic failure" section to the "fails because no workers" section.
