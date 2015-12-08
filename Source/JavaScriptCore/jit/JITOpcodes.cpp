@@ -915,6 +915,8 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
 
         emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
     }
+#else
+    UNUSED_PARAM(iter);
 #endif
 }
 
