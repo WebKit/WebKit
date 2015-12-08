@@ -142,8 +142,6 @@ struct WebProcessCreationParameters {
     String uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
 
-    bool shouldEnableKerningByDefault;
-    bool shouldEnableLigaturesByDefault;
     bool shouldEnableJIT;
     bool shouldEnableFTLJIT;
     
