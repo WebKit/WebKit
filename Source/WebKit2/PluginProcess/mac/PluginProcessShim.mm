@@ -32,22 +32,12 @@
 #import <Carbon/Carbon.h>
 #import <WebCore/DynamicLinkerInterposing.h>
 #import <WebKitSystemInterface.h>
-#import <stdio.h>
 #import <objc/message.h>
-
-#include <sys/shm.h>
-#include <sys/ipc.h>
-#include <sys/mman.h>
-
-#undef __APPLE_API_PRIVATE
-#include <sandbox.h>
-
-#ifndef _SANDBOX_PRIVATE_H_
-enum sandbox_filter_type {
-        SANDBOX_FILTER_NONE,
-};
-extern "C" int sandbox_check(pid_t pid, const char *operation, enum sandbox_filter_type type, ...);
-#endif
+#import <stdio.h>
+#import <sys/ipc.h>
+#import <sys/mman.h>
+#import <sys/shm.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 
 namespace WebKit {
 

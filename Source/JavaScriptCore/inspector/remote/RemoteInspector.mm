@@ -39,19 +39,9 @@
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/WTFString.h>
-
-#if __has_include(<sandbox/private.h>)
-#import <sandbox/private.h>
-#else
-enum sandbox_filter_type {
-    SANDBOX_FILTER_GLOBAL_NAME = 2,
-};
-#endif
-
-extern "C" int sandbox_check(pid_t, const char *operation, enum sandbox_filter_type, ...);
-extern "C" const enum sandbox_filter_type SANDBOX_CHECK_NO_REPORT;
 
 namespace Inspector {
 

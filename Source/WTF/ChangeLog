@@ -1,3 +1,13 @@
+2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Create a Sandbox SPI header
+        https://bugs.webkit.org/show_bug.cgi?id=151981
+
+        Reviewed by Andy Estes.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/darwin/SandboxSPI.h: Added.
+
 2015-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be able to flag the tag constants as being super important so that B3 can hoist them and Air can force them into registers

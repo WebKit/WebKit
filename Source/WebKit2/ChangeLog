@@ -1,3 +1,15 @@
+2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Create a Sandbox SPI header
+        https://bugs.webkit.org/show_bug.cgi?id=151981
+
+        Reviewed by Andy Estes.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * Shared/ios/ChildProcessIOS.mm:
+        * Shared/mac/ChildProcessMac.mm:
+        * Shared/mac/SandboxUtilities.mm:
+
 2015-12-08  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Rename UserMediaClient and UserMediaController methods

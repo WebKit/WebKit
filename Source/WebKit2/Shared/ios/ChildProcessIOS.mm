@@ -32,6 +32,7 @@
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
@@ -39,17 +40,8 @@
 #import <stdlib.h>
 #import <sysexits.h>
 
-#import <WebCore/FloatingPointEnvironment.h> 
-
 #if ENABLE(MANUAL_SANDBOXING)
-
-// We have to #undef __APPLE_API_PRIVATE to prevent sandbox.h from looking for a header file that does not exist (<rdar://problem/9679211>).
-#undef __APPLE_API_PRIVATE
-#import <sandbox.h>
-
-#define SANDBOX_NAMED_EXTERNAL 0x0003
-extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
-
+#import <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
 using namespace WebCore;

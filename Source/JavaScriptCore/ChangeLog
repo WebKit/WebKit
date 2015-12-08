@@ -1,3 +1,12 @@
+2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Create a Sandbox SPI header
+        https://bugs.webkit.org/show_bug.cgi?id=151981
+
+        Reviewed by Andy Estes.
+
+        * inspector/remote/RemoteInspector.mm:
+
 2015-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::UnificationPhase should merge isProfitableToUnbox, since this may have been set in ByteCodeParser

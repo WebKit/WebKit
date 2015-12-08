@@ -29,19 +29,8 @@
 #import <WebCore/SecuritySPI.h>
 #import <array>
 #import <sys/param.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/WTFString.h>
-
-#if __has_include(<sandbox/private.h>)
-#import <sandbox/private.h>
-#else
-enum sandbox_filter_type {
-    SANDBOX_FILTER_NONE,
-};
-extern "C" {
-int sandbox_check(pid_t, const char *operation, enum sandbox_filter_type, ...);
-int sandbox_container_path_for_pid(pid_t, char *buffer, size_t bufsize);
-}
-#endif
 
 namespace WebKit {
 
