@@ -1,5 +1,12 @@
 2015-12-07  Benjamin Poulain  <bpoulain@apple.com>
 
+        Fix a typo from r193683
+
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+
+2015-12-07  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Add Float support to B3
         https://bugs.webkit.org/show_bug.cgi?id=151974
 

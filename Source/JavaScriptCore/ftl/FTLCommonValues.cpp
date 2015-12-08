@@ -49,7 +49,7 @@ CommonValues::CommonValues(LContext context)
     , int32(B3::Int32)
     , int64(B3::Int64)
     , intPtr(B3::pointerType())
-    , floatType(B3::Doule)
+    , floatType(B3::Float)
     , doubleType(B3::Double)
 #else
     : voidType(FTL::voidType(context))
