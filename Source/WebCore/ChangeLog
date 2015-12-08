@@ -1,5 +1,25 @@
 2015-12-08  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192604.
+
+    2015-11-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WK1] Crash loading Blink layout test fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
+            https://bugs.webkit.org/show_bug.cgi?id=150198
+            <rdar://problem/23136026>
+
+            Reviewed by Brent Fulgham.
+
+            Test: fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
+
+            Properties of a contentWindow could be accessed even if the frame who owns the window is
+            detached. Therefore, check whether the document loader is still alive before using it.
+
+            * page/PerformanceTiming.cpp:
+            (WebCore::PerformanceTiming::monotonicTimeToIntegerMilliseconds):
+
+2015-12-08  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192433.
 
     2015-11-13  Jiewen Tan  <jiewen_tan@apple.com>

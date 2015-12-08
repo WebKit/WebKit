@@ -340,6 +340,9 @@ webkit.org/b/144155 [ Yosemite ] fast/frames/flattening/iframe-flattening-resize
 
 [ Debug ] editing/undo/remove-css-property-and-remove-style.html [ Pass Failure ]
 
+# Test for WK1 only
+fast/dom/Window/property-access-on-cached-window-after-frame-removed.html [ Skip ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
