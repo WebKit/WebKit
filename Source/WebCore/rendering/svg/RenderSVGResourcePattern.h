@@ -53,6 +53,8 @@ public:
 
     virtual RenderSVGResourceType resourceType() const override { return PatternResourceType; }
 
+    void collectPatternAttributes(PatternAttributes&) const;
+
 private:
     void element() const = delete;
     virtual const char* renderName() const override { return "RenderSVGResourcePattern"; }
