@@ -1,3 +1,12 @@
+2015-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix build failure due to missing forward declaration of FontVariantSettings after r191968
+        https://bugs.webkit.org/show_bug.cgi?id=151185
+
+        Reviewed by Myles C. Maxfield.
+
+        * css/CSSFontFaceSource.h:
+
 2015-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-variant-* properties in @font-face declarations should be honored
