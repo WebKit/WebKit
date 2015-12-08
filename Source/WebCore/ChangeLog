@@ -1,3 +1,31 @@
+2015-12-08  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r192281.
+
+    2015-11-10  Brent Fulgham  <bfulgham@apple.com>
+
+            Crash running webaudio/panner-loop.html
+            https://bugs.webkit.org/show_bug.cgi?id=150200
+            <rdar://problem/23136282>
+
+            Reviewed by Jer Noble.
+
+            Test: webaudio/panner-loop.html
+
+            This is based on the changes in Blink r164822:
+            https://codereview.chromium.org/130003002
+
+            Avoid infinitely recursing on audio nodes by keeping track of which nodes we've already
+            visited.
+
+            * Modules/webaudio/PannerNode.cpp:
+            (WebCore::PannerNode::pullInputs): Pass set of visited nodes so we don't revisit
+            nodes we've already serviced.
+            (WebCore::PannerNode::notifyAudioSourcesConnectedToNode): Accept visitedNodes argument
+            so we can avoid revisiting nodes. Check if the current node has already been visited
+            before processing it.
+            * Modules/webaudio/PannerNode.h:
+
 2015-12-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unify font-variant-* with font-variant shorthand
