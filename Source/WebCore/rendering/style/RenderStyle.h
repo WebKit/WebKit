@@ -1843,6 +1843,7 @@ public:
     void setLastChildState() { setUnique(); noninherited_flags.setLastChildState(true); }
 
     WEBCORE_EXPORT Color visitedDependentColor(int colorProperty) const;
+    bool backgroundColorEqualsToColorIgnoringVisited(const Color& color) const { return color == backgroundColor(); }
 
     void setHasExplicitlyInheritedProperties() { noninherited_flags.setHasExplicitlyInheritedProperties(true); }
     bool hasExplicitlyInheritedProperties() const { return noninherited_flags.hasExplicitlyInheritedProperties(); }
