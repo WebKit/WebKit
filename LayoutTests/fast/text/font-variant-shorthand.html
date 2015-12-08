@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.test {
+    font: 30px Times;
+    display: none;
+}
+#t1 {
+    font-variant-caps: small-caps;
+}
+#t2 {
+    font-variant: small-caps;
+}
+#t3 {
+    font: small-caps 30px Times;
+}
+#t4 {
+    font-variant: normal;
+    font: small-caps 30px Times;
+}
+#t5 {
+    font-variant-caps: normal;
+    font: small-caps 30px Times;
+}
+#t6 {
+    font: 30px Times;
+    font-variant-caps: small-caps;
+}
+#t7 {
+    font-variant: normal;
+    font-variant-caps: small-caps;
+}
+#t8 {
+    font-variant-caps: normal;
+    font-variant: small-caps;
+}
+#t9 {
+    font: 30px Times;
+    font-variant: small-caps;
+}
+#t10 {
+    font-variant: small-caps;
+    font: 30px Times;
+}
+#t11 {
+    font-variant-caps: small-caps;
+    font: 30px Times;
+}
+#t12 {
+    font: small-caps 30px Times;
+    font-variant-caps: normal;
+}
+#t13 {
+    font-variant: small-caps;
+    font-variant-caps: normal;
+}
+#t14 {
+    font-variant-caps: small-caps;
+    font-variant: normal;
+}
+#t15 {
+    font: small-caps 30px Times;
+    font-variant: normal;
+}
+#t16 {
+    font-variant-ligatures: common-ligatures;
+    font-variant-position: super;
+    font-variant-caps: small-caps;
+    font-variant-numeric: lining-nums;
+    font-variant-alternates: historical-forms;
+    font-variant-east-asian: simplified;
+}
+</style>
+</head>
+<body>
+
+<div class="test" id="t1">Hello</div>
+<div class="test" id="t2">Hello</div>
+<div class="test" id="t3">Hello</div>
+<div class="test" id="t4">Hello</div>
+<div class="test" id="t5">Hello</div>
+<div class="test" id="t6">Hello</div>
+<div class="test" id="t7">Hello</div>
+<div class="test" id="t8">Hello</div>
+<div class="test" id="t9">Hello</div>
+<div class="test" id="t10">Hello</div>
+<div class="test" id="t11">Hello</div>
+<div class="test" id="t12">Hello</div>
+<div class="test" id="t13">Hello</div>
+<div class="test" id="t14">Hello</div>
+<div class="test" id="t15">Hello</div>
+<div class="test" id="t16">Hello</div>
+<div class="test" id="t17">Hello</div>
+<script>
+description("This test makes sure that the two shorthand properties which set font-variant-caps get resolved correctly.");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t1')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t2')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t3')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t4')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t5')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t6')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t7')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t8')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t9')).getPropertyValue('font-variant-caps')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t10')).getPropertyValue('font-variant-caps')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t11')).getPropertyValue('font-variant-caps')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t12')).getPropertyValue('font-variant-caps')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t13')).getPropertyValue('font-variant-caps')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t14')).getPropertyValue('font-variant-caps')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t15')).getPropertyValue('font-variant-caps')", "normal");
+
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t1')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t2')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t3')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t4')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t5')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t6')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t7')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t8')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t9')).getPropertyValue('font-variant')", "small-caps");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t10')).getPropertyValue('font-variant')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t11')).getPropertyValue('font-variant')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t12')).getPropertyValue('font-variant')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t13')).getPropertyValue('font-variant')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t14')).getPropertyValue('font-variant')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t15')).getPropertyValue('font-variant')", "normal");
+
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t16')).getPropertyValue('font-variant')", "common-ligatures super small-caps lining-nums historical-forms simplified");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t17')).getPropertyValue('font-variant')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t17')).getPropertyValue('font-variant-caps')", "normal");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

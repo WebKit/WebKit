@@ -48,7 +48,6 @@ public:
         , m_nonCJKGlyphOrientation(NonCJKGlyphOrientationVerticalRight)
         , m_widthVariant(RegularWidth)
         , m_italic(FontItalicOff)
-        , m_smallCaps(FontSmallCapsOff)
         , m_isAbsoluteSize(false)
         , m_weight(FontWeightNormal)
         , m_renderingMode(NormalRenderingMode)
@@ -89,7 +88,6 @@ public:
     float computedSize() const { return m_computedSize; }
     FontItalic italic() const { return static_cast<FontItalic>(m_italic); }
     int computedPixelSize() const { return int(m_computedSize + 0.5f); }
-    FontSmallCaps smallCaps() const { return static_cast<FontSmallCaps>(m_smallCaps); }
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }
     FontWeight weight() const { return static_cast<FontWeight>(m_weight); }
     FontWeight lighterWeight() const;
@@ -157,8 +155,6 @@ public:
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setItalic(FontItalic i) { m_italic = i; }
     void setIsItalic(bool i) { setItalic(i ? FontItalicOn : FontItalicOff); }
-    void setSmallCaps(FontSmallCaps c) { m_smallCaps = c; }
-    void setIsSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(FontWeight w) { m_weight = w; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
@@ -208,7 +204,7 @@ public:
     {
         return familiesEqualForTextAutoSizing(other)
             && m_specifiedSize == other.m_specifiedSize
-            && m_smallCaps == other.m_smallCaps
+            && variantSettings() == other.other.variantSettings()
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
 #endif
@@ -238,7 +234,6 @@ private:
     unsigned m_widthVariant : 2; // FontWidthVariant
 
     unsigned m_italic : 1; // FontItalic
-    unsigned m_smallCaps : 1; // FontSmallCaps
     unsigned m_isAbsoluteSize : 1; // Whether or not CSS specified an explicit size
                                   // (logical sizes like "medium" don't count).
     unsigned m_weight : 8; // FontWeight
@@ -278,7 +273,6 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_specifiedSize == other.m_specifiedSize
         && m_computedSize == other.m_computedSize
         && m_italic == other.m_italic
-        && m_smallCaps == other.m_smallCaps
         && m_isAbsoluteSize == other.m_isAbsoluteSize
         && m_weight == other.m_weight
         && m_renderingMode == other.m_renderingMode
