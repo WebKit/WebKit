@@ -1,3 +1,12 @@
+2015-12-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/canvas/canvas-too-large-to-draw.html as flaky on ElCapitan Debug
+        https://bugs.webkit.org/show_bug.cgi?id=152009
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2015-12-08  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] "super" and "this" should be lexically bound inside an arrow function and should live in a JSLexicalEnvironment
