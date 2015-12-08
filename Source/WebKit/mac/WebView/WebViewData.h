@@ -97,7 +97,7 @@ class WebViewGroup;
 class WebSelectionServiceController;
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewDataAdditionsDeclarations.h>
 #endif
 

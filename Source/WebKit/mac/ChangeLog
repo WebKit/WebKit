@@ -1,5 +1,11 @@
 2015-12-07  Alex Christensen  <achristensen@webkit.org>
 
+        Build fix after r193675.
+
+        * WebView/WebViewData.h:
+
+2015-12-07  Alex Christensen  <achristensen@webkit.org>
+
         Build fix after r193661.
 
         Reviewed by Beth Dakin.
