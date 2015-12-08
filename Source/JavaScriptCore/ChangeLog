@@ -1,5 +1,19 @@
 2015-12-07  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] On x86, we should XOR registers instead of moving a zero immediate
+        https://bugs.webkit.org/show_bug.cgi?id=151977
+
+        Reviewed by Filip Pizlo.
+
+        It is smaller and the frontend has special support
+        for xor.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::move):
+        (JSC::MacroAssemblerX86Common::signExtend32ToPtr):
+
+2015-12-07  Benjamin Poulain  <bpoulain@apple.com>
+
         Fix a typo from r193683
 
         * ftl/FTLCommonValues.cpp:

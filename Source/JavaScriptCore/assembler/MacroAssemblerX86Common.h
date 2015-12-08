@@ -1185,12 +1185,18 @@ public:
 
     void move(TrustedImmPtr imm, RegisterID dest)
     {
-        m_assembler.movq_i64r(imm.asIntptr(), dest);
+        if (!imm.m_value)
+            m_assembler.xorq_rr(dest, dest);
+        else
+            m_assembler.movq_i64r(imm.asIntptr(), dest);
     }
 
     void move(TrustedImm64 imm, RegisterID dest)
     {
-        m_assembler.movq_i64r(imm.m_value, dest);
+        if (!imm.m_value)
+            m_assembler.xorq_rr(dest, dest);
+        else
+            m_assembler.movq_i64r(imm.m_value, dest);
     }
 
     void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
@@ -1223,7 +1229,10 @@ public:
 
     void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.mov_i32r(imm.m_value, dest);
+        if (!imm.m_value)
+            m_assembler.xorq_rr(dest, dest);
+        else
+            m_assembler.mov_i32r(imm.m_value, dest);
     }
 
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
@@ -1244,7 +1253,10 @@ public:
 
     void move(TrustedImmPtr imm, RegisterID dest)
     {
-        m_assembler.movl_i32r(imm.asIntptr(), dest);
+        if (!imm.m_value)
+            m_assembler.xorl_rr(dest, dest);
+        else
+            m_assembler.movl_i32r(imm.asIntptr(), dest);
     }
 
     void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
