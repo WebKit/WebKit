@@ -380,6 +380,8 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
         return nil;
 
     font = [NSFont fontWithName:chosenFullName size:size];
+    auto foundFont = applyFontFeatureSettings((CTFontRef)font, nullptr, nullptr, featureSettings, variantSettings);
+    font = CFBridgingRelease(CFRetain(foundFont.get()));
 
 #endif
 
