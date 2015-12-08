@@ -1079,8 +1079,20 @@ bool WebVideoFullscreenInterfaceAVKit::wirelessVideoPlaybackDisabled() const
 void WebVideoFullscreenInterfaceAVKit::applicationDidBecomeActive()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::applicationDidBecomeActive(%p)", this);
-    if (m_shouldReturnToFullscreenAfterEnteringForeground && m_videoFullscreenModel && m_videoFullscreenModel->isVisible())
+    if (m_shouldReturnToFullscreenAfterEnteringForeground && m_videoFullscreenModel && m_videoFullscreenModel->isVisible()) {
         [m_playerViewController stopPictureInPicture];
+        return;
+    }
+
+    // If we are both in PiP and in Fullscreen (i.e., via auto-PiP), and we did not stop fullscreen upon returning, it must be
+    // because the originating view is not visible, so hide the fullscreen window.
+    if (isMode(HTMLMediaElementEnums::VideoFullscreenModeStandard | HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)) {
+        RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[strongThis, this] (BOOL, NSError*) {
+            [m_window setHidden:YES];
+            [[m_playerViewController view] setHidden:YES];
+        }];
+    }
 }
 
 @interface UIWindow ()
@@ -1376,11 +1388,13 @@ void WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture()
     [m_playerViewController setShowsPlaybackControls:YES];
 
     if (m_mode & HTMLMediaElementEnums::VideoFullscreenModeStandard) {
-        RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
-        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[strongThis, this] (BOOL, NSError*) {
-            [m_window setHidden:YES];
-            [[m_playerViewController view] setHidden:YES];
-        }];
+        if (![m_playerViewController pictureInPictureWasStartedWhenEnteringBackground]) {
+            RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
+            [m_playerViewController exitFullScreenAnimated:YES completionHandler:[strongThis, this] (BOOL, NSError*) {
+                [m_window setHidden:YES];
+                [[m_playerViewController view] setHidden:YES];
+            }];
+        }
     } else {
         [m_window setHidden:YES];
         [[m_playerViewController view] setHidden:YES];
@@ -1479,6 +1493,9 @@ bool WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(WebVideoFu
         return true;
 
     if (reason == ExitFullScreenReason::PictureInPictureStarted) {
+        if ([m_playerViewController pictureInPictureWasStartedWhenEnteringBackground])
+            return false;
+
         m_shouldReturnToFullscreenWhenStoppingPiP = hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
         clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
         return true;

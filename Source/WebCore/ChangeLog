@@ -1,3 +1,18 @@
+2015-12-08  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Do not exit fullscreen mode during auto-PiP.
+        https://bugs.webkit.org/show_bug.cgi?id=151889
+
+        Reviewed by Darin Adler.
+
+        When auto-PiPing, do not exit fullscreen mode, as that causes a two-step animation upon returing from auto-PiP.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::applicationDidBecomeActive): Handle the case where we open Safari after an
+            auto-PiP by clicking on a link; if so, hide the fullscreen window.
+        (WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture): Do not exit fullscreen during auto-PiP.
+        (WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason): Ditto.
+
 2015-12-08  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Remove unneeded function.
