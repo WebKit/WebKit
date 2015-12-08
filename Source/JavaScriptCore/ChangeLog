@@ -1,3 +1,26 @@
+2015-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL lowering should tell B3 the right block frequencies
+        https://bugs.webkit.org/show_bug.cgi?id=151531
+
+        Reviewed by Geoffrey Garen.
+
+        This glues together the DFG's view of basic block execution counts and B3's block frequencies.
+        This further improves our performance on imaging-gaussian-blur. It appears to improve the steady
+        state throughput by almost 4%.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::setFrequency):
+        (JSC::FTL::Output::newBlock):
+        (JSC::FTL::Output::insertNewBlocksBefore):
+        (JSC::FTL::Output::callWithoutSideEffects):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBlock):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::setFrequency):
+        (JSC::FTL::Output::insertNewBlocksBefore):
+
 2015-12-07  Saam barati  <sbarati@apple.com>
 
         Update JSC feature list for rest parameters and generators

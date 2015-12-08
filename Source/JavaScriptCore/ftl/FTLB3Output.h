@@ -77,10 +77,15 @@ public:
 
     void initialize(AbstractHeapRepository&);
 
+    void setFrequency(double value)
+    {
+        m_frequency = value;
+    }
+
     LBasicBlock newBlock(const char* name = "")
     {
         UNUSED_PARAM(name);
-        return m_proc.addBlock();
+        return m_proc.addBlock(m_frequency);
     }
 
     LBasicBlock insertNewBlocksBefore(LBasicBlock nextBlock)
@@ -426,6 +431,8 @@ public:
     LBasicBlock m_nextBlock { nullptr };
 
     AbstractHeapRepository* m_heaps;
+
+    double m_frequency { 1 };
 
 private:
     template<typename Function, typename... Args>

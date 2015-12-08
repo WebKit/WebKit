@@ -74,6 +74,8 @@ public:
     ~Output();
     
     void initialize(LModule, LValue, AbstractHeapRepository&);
+
+    void setFrequency(double) { }
     
     LBasicBlock insertNewBlocksBefore(LBasicBlock nextBlock)
     {

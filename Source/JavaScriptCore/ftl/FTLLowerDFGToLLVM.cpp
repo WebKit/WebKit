@@ -157,6 +157,9 @@ public:
 #else
         m_out.initialize(m_ftlState.module, m_ftlState.function, m_heaps);
 #endif
+
+        // We use prologue frequency for all of the initialization code.
+        m_out.setFrequency(1);
         
         m_prologue = FTL_NEW_BLOCK(m_out, ("Prologue"));
         LBasicBlock stackOverflow = FTL_NEW_BLOCK(m_out, ("Stack overflow"));
@@ -168,8 +171,12 @@ public:
             m_highBlock = m_graph.block(blockIndex);
             if (!m_highBlock)
                 continue;
+            m_out.setFrequency(m_highBlock->executionCount);
             m_blocks.add(m_highBlock, FTL_NEW_BLOCK(m_out, ("Block ", *m_highBlock)));
         }
+
+        // Back to prologue frequency for any bocks that get sneakily created in the initialization code.
+        m_out.setFrequency(1);
         
         m_out.appendTo(m_prologue, stackOverflow);
 #if FTL_USES_B3
@@ -434,6 +441,11 @@ private:
             dataLog("Compiling block ", *block, "\n");
         
         m_highBlock = block;
+        
+        // Make sure that any blocks created while lowering code in the high block have the frequency of
+        // the high block. This is appropriate because B3 doesn't need precise frequencies. It just needs
+        // something roughly approximate for things like register allocation.
+        m_out.setFrequency(m_highBlock->executionCount);
         
         LBasicBlock lowBlock = m_blocks.get(m_highBlock);
         
