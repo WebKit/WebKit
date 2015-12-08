@@ -1,3 +1,20 @@
+2015-12-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [EFL] some ax tests have been failed since r186692
+        https://bugs.webkit.org/show_bug.cgi?id=146887
+
+        Reviewed by Mario Sanchez Prada.
+
+        The tests were failing because there are now two WebCore accessibility
+        roles which need to implement the AtkTable interface: TableRole and
+        GridRole. Because the latter was not added in r186692, any tests with
+        ARIA role grid that accessed cells via coordinates stopped working.
+
+        No new tests; instead unskipped all the broken table tests which now pass.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2015-12-08  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [ThreadedCompositor] Add support for Cairo GL-backed ImageBuffer.

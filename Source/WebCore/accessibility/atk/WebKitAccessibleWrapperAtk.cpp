@@ -1131,7 +1131,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         interfaceMask |= 1 << WAIImage;
 
     // Table
-    if (role == TableRole)
+    if (role == TableRole || role == GridRole)
         interfaceMask |= 1 << WAITable;
 
 #if ATK_CHECK_VERSION(2,11,90)

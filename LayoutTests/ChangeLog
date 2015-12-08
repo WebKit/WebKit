@@ -1,5 +1,14 @@
 2015-12-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [EFL] some ax tests have been failed since r186692
+        https://bugs.webkit.org/show_bug.cgi?id=146887
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/efl/TestExpectations: Removed failing tests.
+
+2015-12-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [GTK] 15 accessibility tests fail since r186692.
         https://bugs.webkit.org/show_bug.cgi?id=148938
 

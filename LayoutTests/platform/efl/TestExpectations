@@ -2343,15 +2343,7 @@ editing/selection/designmode-no-caret.html [ Missing ]
 accessibility/content-editable-as-textarea.html [ Missing ]
 
 webkit.org/b/146887 accessibility/aria-roledescription.html [ Failure ]
-webkit.org/b/146887 accessibility/aria-table-hierarchy.html [ Failure ]
-webkit.org/b/146887 accessibility/aria-table-with-presentational-elements.html [ Failure ]
-webkit.org/b/146887 accessibility/aria-tables.html [ Failure ]
 webkit.org/b/146887 accessibility/list-detection.html [ Failure ]
-webkit.org/b/146887 accessibility/poorly-formed-aria-table.html [ Failure ]
-webkit.org/b/146887 accessibility/roles-exposed.html [ Failure ]
-webkit.org/b/146887 accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
-webkit.org/b/146887 accessibility/table-with-footer-section-above-body.html [ Failure ]
-webkit.org/b/146887 accessibility/table-with-missing-aria-role-rows.html [ Failure ]
 
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
