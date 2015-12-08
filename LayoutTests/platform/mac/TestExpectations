@@ -283,18 +283,6 @@ compositing/rtl/rtl-iframe-relative.html [ Skip ]
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-# Font features are not implemented on Mavericks.
-webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
-webkit.org/b/149246 [ Mavericks ] css3/font-variant-all.html [ ImageOnlyFailure ]
-webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
-webkit.org/b/149246 [ Mavericks ] css3/font-variant-font-face-all.html [ ImageOnlyFailure ]
-webkit.org/b/149246 [ Mavericks ] css3/font-variant-font-face-override.html [ ImageOnlyFailure ]
-
-# This feature is disabled on Mavericks.
-[ Mavericks ] http/tests/navigation/page-cache-pending-image-load.html [ Skip ]
-[ Mavericks ] http/tests/navigation/page-cache-pending-image-load-cache-partition.html [ Skip ]
-[ Mavericks ] http/tests/navigation/page-cache-xhr.html [ Skip ]
-
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
 
 # Skip because this platform does not support a paging mouse wheel event
@@ -385,9 +373,6 @@ fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
 fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure ]
 
-[ Mavericks ] accessibility/mac/form-control-value-settable.html [ Failure ]
-[ Mavericks ] fast/forms/input-appearance-spinbutton-up.html [ Failure ]
-[ Mavericks ] fast/forms/input-appearance-spinbutton.html [ Failure ]
 platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
 
 fast/css/resize-corner-tracking.html [ Pass Failure ]
@@ -514,8 +499,6 @@ plugins/form-value.html
 plugins/npruntime/invoke-failure.html
 
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
-
-[ Mavericks ] http/tests/multipart/invalid-image-data-standalone.html [ Skip ]
 
 # ENABLE(CUSTOM_ELEMENTS) is disabled.
 fast/dom/custom
@@ -760,9 +743,6 @@ webkit.org/b/124321 animations/resume-after-page-cache.html [ Pass Failure ]
 
 webkit.org/b/147254 media/restore-from-page-cache.html [ Pass Failure ]
 
-# After Mavericks, native text fields are rendered slightly smaller, causing backgrounds to bleed on platforms.
-[ Mavericks ] fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
-
 # These fast/forms/select tests open a pop-up menu (visible on screen even when using run-webkit-tests), and get stuck in its nested event loop.
 webkit.org/b/87748 fast/forms/select/optgroup-clicking.html [ Skip ]
 webkit.org/b/73304 fast/forms/select/menulist-popup-crash.html [ Skip ]
@@ -812,8 +792,6 @@ webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
 # These tests require an OpenType MATH font on the Apple bots.
-webkit.org/b/130322 [ Mavericks ] mathml/opentype/large-operators.html [ Failure ]
-webkit.org/b/130322 [ Mavericks ] mathml/opentype/vertical.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 
@@ -832,32 +810,11 @@ webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
-[ Mavericks ] fast/images/image-controls-basic.html [ WontFix ]
-
 # <rdar://problem/16696298>
 webkit.org/b/131886 webgl/1.0.2/conformance/textures/texture-size-limit.html [ Pass Failure ]
 webkit.org/b/131886 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure Timeout ]
 
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
-
-# Mavericks and prior do not support web timing.
-[ Mavericks ] fast/dom/navigation-type-back-forward.html [ WontFix ]
-[ Mavericks ] fast/dom/navigation-type-navigate.html [ WontFix ]
-[ Mavericks ] fast/dom/navigation-type-reload.html [ WontFix ]
-[ Mavericks ] fast/dom/webtiming-document-open.html [ WontFix ]
-[ Mavericks ] fast/dom/webtiming-navigate-within-document.html [ WontFix ]
-[ Mavericks ] fast/dom/webtiming.html [ WontFix ]
-[ Mavericks ] fast/dom/Window/web-timing-minimal-performance-now.html [ WontFix ]
-[ Mavericks ] fast/dom/Window/window-properties-performance.html [ WontFix ]
-[ Mavericks ] fast/performance [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-cross-origin-and-back1.html [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-cross-origin-redirect.php [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-no-origin.html [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-one-redirect.php [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-resolution.html [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-slow-load.php [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-ssl.php [ WontFix ]
-[ Mavericks ] http/tests/misc/webtiming-two-redirects.php [ WontFix ]
 
 # This test, originally written for Chromium, historically was not testing anything on Mac because
 # resizing didn't work. Now the test fails. I believe this bug was never fixed for the Mac port.
@@ -924,43 +881,8 @@ webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 media/track/track-datacue.html [ Skip ]
 ## --- End unimplemeted media tests ---
 
-## --- Start media tests failing on Mavericks and earlier ---
-# HTTP Auth in Media is not supported in Mavericks
-webkit.org/b/40382 [ Mavericks ] http/tests/media/video-auth.html [ WontFix ]
-
 # HTML sandboxing produces two or three messages flakily.
 webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
-
-# Newly imported W3C media tests that are flaky on Mavericks only.
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_pause.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata_noautoplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata_noautoplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart_noautoplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate_noautoplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough_noautoplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/paused_false_during_play.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_playing.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_playing_noautoplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_order_canplay_playing.html [ Pass Timeout ]
-webkit.org/b/149636 [ Mavericks ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_play.html [ Pass Timeout ]
-
-# Mavericks and prior do not support Media Source.
-[ Mavericks ] media/media-source [ WontFix ]
-[ Mavericks ] http/tests/media/media-source/ [ WontFix ]
-[ Mavericks ] fast/history/page-cache-media-source-closed.html [ WontFix ]
-[ Mavericks ] fast/history/page-cache-media-source-closed-2.html [ WontFix ]
-[ Mavericks ] fast/history/page-cache-media-source-opened.html [ WontFix ]
-[ Mavericks ] fast/history/page-cache-removed-source-buffer.html [ WontFix ]
-## --- End media tests failing on Mavericks and earlier ---
 
 # Yosemite has different expected results. It needs to rebase.
 webkit.org/b/149113 media/media-controls-play-button-updates.html [ Pass Failure ]
@@ -996,7 +918,6 @@ webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/pauseOnExit.html [ P
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/startTime.html [ Pass Failure ]
 webkit.org/b/133686 media/track/w3c/interfaces/TextTrackCue/track.html [ Pass Failure ]
 webkit.org/b/135071 media/video-seek-with-negative-playback.html [ Pass Timeout ]
-webkit.org/b/135160 [ Mavericks ] media/track/track-in-band-subtitles-too-large.html [ Failure ]
 webkit.org/b/135160 [ Yosemite+ ] media/track/track-in-band-subtitles-too-large.html [ Pass Failure Timeout Crash ]
 webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Failure ]
 webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Timeout Crash ]
@@ -1074,8 +995,6 @@ webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_4.htm
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html [ Failure ]
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 
-webkit.org/b/130234 [ Mavericks ] http/tests/media/media-play-stream-chunked-icy.html [ Skip ]
-
 media/media-document-audio-repaint.html [ Failure ]
 webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 
@@ -1118,7 +1037,6 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 
 # FIXME: Needs bugzilla (<rdar://problem/17458211>)
 [ Yosemite+ ] platform/mac/fast/text/systemFont.html [ Pass Failure ]
-[ Mavericks ] platform/mac/fast/text/systemFont.html [ Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/17476688>)
 [ Yosemite+ ] media/media-source/media-source-tracks.html [ Skip ]
@@ -1174,18 +1092,12 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 [ Yosemite+ ] storage/websql/sql-error-codes.html [ Failure ]
 
-# Specific to Yosemite's font fallback
-webkit.org/b/138328 [ Mavericks ] fast/text/font-cursive-italic-cjk.html [ Skip ]
-
 webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Pass Timeout ]
 
 # Verified passing, so override generic skip
 webkit.org/b/89235 css3/line-break [ Pass ]
 webkit.org/b/138115 css3/line-break/line-break-auto-hyphens.html [ ImageOnlyFailure ]
 webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnlyFailure ]
-
-# Backdrop filters are supported in Yosemite and above only.
-[ Mavericks ] css3/filters/backdrop [ WontFix ]
 
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
@@ -1258,18 +1170,8 @@ webkit.org/b/142142 media/video-volume-slider-drag.html [ Skip ]
 # Fails when an actual AppleTV is nearby.
 webkit.org/b/148912 media/controls/airplay-picker.html [ Pass Failure ]
 
-# Mavericks and prior do not support APNG.
-webkit.org/b/17022 [ MountainLion Mavericks ] fast/images/animated-png.html [ Skip ]
-
-# Pre-Capitan does not support asynchronous attribute setting.
-[ Mavericks ] accessibility/mac/setting-attributes-is-asynchronous.html [ Skip ]
-[ Mavericks ] accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Skip ]
-
 # OS X 10.10.3+ has the necessary glyphs.
 webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html [ Pass ]
-
-# No support for non-HLS Media Selection Group
-[ Mavericks ] media/accessiblity-describes-video.html [ Skip ]
 
 [ Yosemite+ ] media/accessiblity-describes-video.html [ Pass Failure ]
 
@@ -1297,23 +1199,23 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 webkit.org/b/150978 fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]
 
-webkit.org/b/147763 [ Mavericks Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]
+webkit.org/b/147763 [ Yosemite ] accessibility/mac/loaded-notification.html [ Skip ]
 
 # Language-specific font fallback is disabled on certain versions of OS X
-webkit.org/b/147390 [ Mavericks Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
-webkit.org/b/147390 [ Mavericks Yosemite ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
+webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han.html [ ImageOnlyFailure ]
+webkit.org/b/147390 [ Yosemite ElCapitan ] fast/text/fallback-language-han-2.html [ ImageOnlyFailure ]
 
 # This test relies on iOS-specific font fallback.
-[ Mavericks Yosemite ElCapitan ] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ Pass ImageOnlyFailure ]
+[ Yosemite ElCapitan ] fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ Pass ImageOnlyFailure ]
 
 # Started to fail after r188390
 webkit.org/b/148042 http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Failure ]
 
 # This test tests a particular system font, which is only on iOS and El Capitan.
-webkit.org/b/148119 [ Mavericks Yosemite ] fast/text/trak-optimizeLegibility.html [ Failure ]
+webkit.org/b/148119 [ Yosemite ] fast/text/trak-optimizeLegibility.html [ Failure ]
 
 # These operating systems do not have language-sensitive font fallback.
-[ Mavericks Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
+[ Yosemite ElCapitan ] css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 
 webkit.org/b/148636 inspector/css/createStyleSheet.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/css/get-system-fonts.html [ Pass Timeout ]
@@ -1338,28 +1240,11 @@ webkit.org/b/148636 inspector/model/remote-object.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/page/main-frame-resource.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/model/remote-object-weak-collection.html [ Pass Failure ]
 
-# Resource priorities are not enabled.
-webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Skip ]
+# Colorspaces on CA OpenGL layers not available in Yosemite
+[ Yosemite ] fast/canvas/webgl/match-page-color-space.html [ Skip ]
 
-# No support for Filters Level 2
-[ Mavericks ] compositing/media-controls-bar-appearance.html [ Skip ]
-[ Mavericks ] compositing/media-controls-bar-appearance-big.html [ Skip ]
-[ Mavericks ] fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
-[ Mavericks ] fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
-
-# Reftests have different expected results in Mavericks and Yosemite
-[ Mavericks ] fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
-[ Mavericks ] fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
-[ Mavericks ] fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
-[ Mavericks ] fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
-
-# Colorspaces on CA OpenGL layers not available in Mavericks and Yosemite
-[ Mavericks Yosemite ] fast/canvas/webgl/match-page-color-space.html [ Skip ]
-
-# Mocking the system language relies on Bootstrap XPC messages, which are not supported in Mavericks.
-[ Mavericks ] fast/text/international/system-language [ Pass Failure ImageOnlyFailure ]
-# Han quotes are not different on Mavericks nor Yosemite.
-[ Mavericks Yosemite ] fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
+# Han quotes are not different on Yosemite.
+[ Yosemite ] fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
@@ -1389,10 +1274,10 @@ webkit.org/b/150806 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-
 webkit.org/b/150823 imported/w3c/web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm [ Pass Failure ]
 
 # WOFF2 is only supported on certain Operating Systems.
-webkit.org/b/150830 [ Mavericks Yosemite ElCapitan ] fast/text/woff2.html [ ImageOnlyFailure ]
+webkit.org/b/150830 [ Yosemite ElCapitan ] fast/text/woff2.html [ ImageOnlyFailure ]
 
-# AppleTV not supported on Mavericks or Yosemite
-[ Mavericks Yosemite ] media/controls/airplay-picker.html
+# AppleTV not supported on Yosemite
+[ Yosemite ] media/controls/airplay-picker.html
 
 webkit.org/b/150956 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata.html [ Pass Timeout ]
 

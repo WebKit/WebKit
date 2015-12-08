@@ -1,3 +1,14 @@
+2015-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Remove Mavericks-specific TestExpectations lines
+        https://bugs.webkit.org/show_bug.cgi?id=151913
+
+        Reviewed by Alexey Proskuryakov.
+
+        Mavericks is no longer a supported OS.
+
+        * platform/mac/TestExpectations:
+
 2015-12-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Miscellaneous test cleanup.
