@@ -1,3 +1,70 @@
+2015-12-08  Mark Lam  <mark.lam@apple.com>
+
+        Snippefy shift operators for the baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=151875
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.h:
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBitBinaryOpFastPath):
+        - Don't need GPRInfo:: qualifiers.  Removed them to reduce verbosity.
+        - Also removed the emitStoreInt32() case for storing the result on 32-bit ports.
+          This is because:
+          1. The client should not make assumptions about whether the snippet fast path
+             only include cases where the result tag already contain the IntTag.
+          2. The "(op1 == result || op2 == result)" condition for skipping the IntTag
+             storage, is only valid for the bitand, bitor, and bitxor implementations.
+             It is invalid for the lshift implementation that uses this code now.
+          Instead, we'll always unconditionally store what the result tag that the
+          snippet computed for us.
+
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitRightShiftFastPath):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_lshift): Deleted.
+        (JSC::JIT::emitSlow_op_lshift): Deleted.
+        (JSC::JIT::emitRightShift): Deleted.
+        (JSC::JIT::emitRightShiftSlowCase): Deleted.
+        (JSC::JIT::emit_op_rshift): Deleted.
+        (JSC::JIT::emitSlow_op_rshift): Deleted.
+        (JSC::JIT::emit_op_urshift): Deleted.
+        (JSC::JIT::emitSlow_op_urshift): Deleted.
+
+        * jit/JITLeftShiftGenerator.cpp: Added.
+        (JSC::JITLeftShiftGenerator::generateFastPath):
+        * jit/JITLeftShiftGenerator.h: Added.
+        (JSC::JITLeftShiftGenerator::JITLeftShiftGenerator):
+        * jit/JITRightShiftGenerator.cpp: Added.
+        (JSC::JITRightShiftGenerator::generateFastPath):
+        * jit/JITRightShiftGenerator.h: Added.
+        (JSC::JITRightShiftGenerator::JITRightShiftGenerator):
+
+        * tests/stress/op_lshift.js:
+        * tests/stress/op_rshift.js:
+        * tests/stress/op_urshift.js:
+        - Fixed some values and added others that are meaningful for testing shifts.
+
+        * tests/stress/resources/binary-op-test.js:
+        (stringifyIfNeeded):
+        (generateBinaryTests):
+        - Fixed the test generator to give unique names to all the generated test
+          functions.  Without this, multiple tests may end up using the same global
+          test function.  As a result, with enough test values to test, the function may
+          get prematurely JITted, and the computed expected result which is supposed to
+          be computed by the LLINT, may end up being computed by a JIT instead.
+
 2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Create a Sandbox SPI header

@@ -34,8 +34,9 @@ function stringifyIfNeeded(x) {
 }
 
 // operandTypes are "VarVar", "VarConst", and "ConstVar".
+var funcIndex = 0;
 function generateBinaryTests(tests, opName, op, operandTypes, leftValues, rightValues) {
-    var funcName = opName + operandTypes;
+    var funcNamePrefix = opName + operandTypes;
     for (var i = 0; i < leftValues.length; i++) {
         for (var j = 0; j < rightValues.length; j++) {
             var test = { };
@@ -44,6 +45,7 @@ function generateBinaryTests(tests, opName, op, operandTypes, leftValues, rightV
             test.x = eval(xStr);
             test.y = eval(yStr);
 
+            var funcName = funcNamePrefix + funcIndex++;
             if (operandTypes == "VarVar") {
                 test.signature = funcName + "(x, y) { return x " + op + " y }";
                 test.name = test.signature + " with x:" + xStr + ", y:" + yStr;

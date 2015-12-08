@@ -465,12 +465,14 @@ set(JavaScriptCore_SOURCES
     jit/JITDivGenerator.cpp
     jit/JITExceptions.cpp
     jit/JITInlineCacheGenerator.cpp
+    jit/JITLeftShiftGenerator.cpp
     jit/JITMulGenerator.cpp
     jit/JITOpcodes.cpp
     jit/JITOpcodes32_64.cpp
     jit/JITOperations.cpp
     jit/JITPropertyAccess.cpp
     jit/JITPropertyAccess32_64.cpp
+    jit/JITRightShiftGenerator.cpp
     jit/JITStubRoutine.cpp
     jit/JITSubGenerator.cpp
     jit/JITThunks.cpp

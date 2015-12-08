@@ -2022,6 +2022,10 @@
 		FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */; settings = {ASSET_TAGS = (); }; };
 		FE3A06B31C10CB8E00390FDD /* JITBitXorGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
 		FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE3A06BD1C11040D00390FDD /* JITLeftShiftGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06B61C1103D900390FDD /* JITLeftShiftGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
+		FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE3A06BF1C11041600390FDD /* JITRightShiftGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
+		FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */; settings = {ASSET_TAGS = (); }; };
 		FE4238901BE18C3C00514737 /* JITSubGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */; };
 		FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
@@ -4203,6 +4207,10 @@
 		FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitAndGenerator.h; sourceTree = "<group>"; };
 		FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitXorGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitXorGenerator.h; sourceTree = "<group>"; };
+		FE3A06B61C1103D900390FDD /* JITLeftShiftGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITLeftShiftGenerator.cpp; sourceTree = "<group>"; };
+		FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITLeftShiftGenerator.h; sourceTree = "<group>"; };
+		FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITRightShiftGenerator.cpp; sourceTree = "<group>"; };
+		FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITRightShiftGenerator.h; sourceTree = "<group>"; };
 		FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITSubGenerator.cpp; sourceTree = "<group>"; };
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
 		FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionOverrides.h; sourceTree = "<group>"; };
@@ -4902,6 +4910,8 @@
 				0FB14E1C18124ACE009B6B4D /* JITInlineCacheGenerator.cpp */,
 				0FB14E1D18124ACE009B6B4D /* JITInlineCacheGenerator.h */,
 				86CC85A00EE79A4700288682 /* JITInlines.h */,
+				FE3A06B61C1103D900390FDD /* JITLeftShiftGenerator.cpp */,
+				FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */,
 				FE1879FF1BFBC73C0038BBCA /* JITMulGenerator.cpp */,
 				FE187A001BFBC73C0038BBCA /* JITMulGenerator.h */,
 				BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */,
@@ -4910,6 +4920,8 @@
 				0F24E54617EE274900ABB217 /* JITOperations.h */,
 				86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */,
 				A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */,
+				FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */,
+				FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */,
 				0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */,
 				0F766D1C15A5028D008F363E /* JITStubRoutine.h */,
 				FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */,
@@ -6801,6 +6813,7 @@
 				A5EA70E919F5B1010098F5EC /* AlternateDispatchableAgent.h in Headers */,
 				2A48D1911772365B00C65A5F /* APICallbackFunction.h in Headers */,
 				BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */,
+				FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */,
 				BCF605140E203EF800B9A64D /* ArgList.h in Headers */,
 				0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
@@ -7310,6 +7323,7 @@
 				C4703CD5192844CC0013FBEA /* generator_templates.py in Headers */,
 				0FE050191AA9091100D33B33 /* GenericArguments.h in Headers */,
 				0FE0501A1AA9091100D33B33 /* GenericArgumentsInlines.h in Headers */,
+				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
 				0FE0501B1AA9091100D33B33 /* GenericOffset.h in Headers */,
 				0F2B66E017B6B5AB00A7AE3F /* GenericTypedArrayView.h in Headers */,
 				0F2B66E117B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h in Headers */,
@@ -8831,6 +8845,7 @@
 				A1B9E23D1B4E0D6700BC7FED /* IntlCollatorPrototype.cpp in Sources */,
 				A1587D6D1B4DC14100D69849 /* IntlDateTimeFormat.cpp in Sources */,
 				A1587D6F1B4DC14100D69849 /* IntlDateTimeFormatConstructor.cpp in Sources */,
+				FE3A06BF1C11041600390FDD /* JITRightShiftGenerator.cpp in Sources */,
 				262D85B61C0D650F006ACB61 /* AirFixPartialRegisterStalls.cpp in Sources */,
 				70B7919B1C024A46002481E2 /* JSGeneratorFunction.cpp in Sources */,
 				A1587D711B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp in Sources */,
@@ -8985,6 +9000,7 @@
 				0F4680CC14BBB17A00BFE272 /* LowLevelInterpreter.cpp in Sources */,
 				A5AB49DC1BEC8082007020FB /* PerGlobalObjectWrapperWorld.cpp in Sources */,
 				14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */,
+				FE3A06BD1C11040D00390FDD /* JITLeftShiftGenerator.cpp in Sources */,
 				0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */,
 				86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */,
 				FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */,

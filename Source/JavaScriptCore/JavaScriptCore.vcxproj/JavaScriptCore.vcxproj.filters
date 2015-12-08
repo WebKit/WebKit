@@ -456,6 +456,9 @@
     <ClCompile Include="..\jit\JITExceptions.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\JITLeftShiftGenerator.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\JITMulGenerator.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -469,6 +472,9 @@
       <Filter>jit</Filter>
     </ClCompile>
     <ClCompile Include="..\jit\JITPropertyAccess32_64.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\JITRightShiftGenerator.cpp">
       <Filter>jit</Filter>
     </ClCompile>
     <ClCompile Include="..\jit\JITStubRoutine.cpp">
@@ -2567,7 +2573,13 @@
     <ClInclude Include="..\jit\JITInlines.h">
       <Filter>jit</Filter>
     </ClInclude>
+    <ClInclude Include="..\jit\JITLeftShiftGenerator.h">
+      <Filter>jit</Filter>
+    </ClInclude>
     <ClInclude Include="..\jit\JITMulGenerator.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITRightShiftGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITStubRoutine.h">
