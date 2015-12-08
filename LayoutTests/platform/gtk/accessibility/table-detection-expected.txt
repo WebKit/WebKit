@@ -17,7 +17,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 asdf	asdf
@@ -40,7 +40,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 
@@ -85,7 +85,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 
@@ -107,7 +107,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 
@@ -129,7 +129,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 asdf	asdf
@@ -152,7 +152,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 
@@ -220,7 +220,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 
@@ -230,7 +230,7 @@ AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.000000, 346.000000 }
-AXSize: { 769.000000, 27.000000 }
+AXSize: { 770.000000, 27.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Contributions
@@ -294,7 +294,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 
@@ -316,7 +316,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 asdf	asdf
@@ -363,7 +363,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 asdf
@@ -387,7 +387,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 asdf
@@ -411,7 +411,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf	asdf
 asdf	asdf
@@ -434,7 +434,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, tag:table, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 
 asdf
 asdf
@@ -479,7 +479,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:table, toolkit:WebKitGtk
 
 head	head2
 asdf	asdf

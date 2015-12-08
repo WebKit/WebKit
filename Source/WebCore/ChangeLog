@@ -1,3 +1,16 @@
+2015-12-08  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] 15 accessibility tests fail since r186692.
+        https://bugs.webkit.org/show_bug.cgi?id=148938
+
+        Reviewed by Mario Sanchez Prada.
+
+        Failing tests rebaselined.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole): Treat GridCellRole and CellRole the same.
+        (roleIsTextType): Treat GridCellRole and CellRole the same.
+
 2015-12-08  Frederic Wang  <fred.wang@free.fr>
 
         [cairo] Solid stroke of lines with thickness less than 1 pixel broken after r191658

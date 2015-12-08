@@ -564,7 +564,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_SCROLL_BAR;
     case ScrollAreaRole:
         return ATK_ROLE_SCROLL_PANE;
-    case GridRole: // Is this right?
+    case GridRole:
     case TableRole:
         return ATK_ROLE_TABLE;
     case ApplicationRole:
@@ -581,6 +581,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case CaptionRole:
         return ATK_ROLE_CAPTION;
     case CellRole:
+    case GridCellRole:
         return coreObject->inheritsPresentationalRole() ? ATK_ROLE_SECTION : ATK_ROLE_TABLE_CELL;
     case LinkRole:
     case WebCoreLinkRole:
@@ -1066,7 +1067,8 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
 static bool roleIsTextType(AccessibilityRole role)
 {
     return role == ParagraphRole || role == HeadingRole || role == DivRole || role == CellRole
-        || role == LinkRole || role == WebCoreLinkRole || role == ListItemRole || role == PreRole;
+        || role == LinkRole || role == WebCoreLinkRole || role == ListItemRole || role == PreRole
+        || role == GridCellRole;
 }
 
 static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
