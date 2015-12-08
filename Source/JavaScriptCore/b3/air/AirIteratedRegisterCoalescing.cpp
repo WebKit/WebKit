@@ -563,6 +563,11 @@ private:
         // Higher score means more desirable to spill. Lower scores maximize the likelihood that a tmp
         // gets a register.
         auto score = [&] (Tmp tmp) -> double {
+            // Air exposes the concept of "fast tmps", and we interpret that to mean that the tmp
+            // should always be in a register.
+            if (m_code.isFastTmp(tmp))
+                return 0;
+            
             // All else being equal, the score should be directly related to the degree.
             double degree = static_cast<double>(m_degrees[AbsoluteTmpMapper<type>::absoluteIndex(tmp)]);
 

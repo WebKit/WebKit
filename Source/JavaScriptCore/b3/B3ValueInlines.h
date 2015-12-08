@@ -54,14 +54,7 @@ const T* Value::as() const
 
 inline bool Value::isConstant() const
 {
-    switch (opcode()) {
-    case Const32:
-    case Const64:
-    case ConstDouble:
-        return true;
-    default:
-        return false;
-    }
+    return B3::isConstant(opcode());
 }
 
 inline bool Value::isInteger() const

@@ -31,10 +31,12 @@
 #include "B3OpaqueByproducts.h"
 #include "B3Origin.h"
 #include "B3Type.h"
+#include "B3ValueKey.h"
 #include "PureNaN.h"
 #include "RegisterAtOffsetList.h"
 #include <wtf/Bag.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/TriState.h>
@@ -44,6 +46,8 @@ namespace JSC { namespace B3 {
 
 class BasicBlock;
 class BlockInsertionSet;
+class CFG;
+class Dominators;
 class Value;
 
 namespace Air { class Code; }
@@ -69,6 +73,10 @@ public:
 
     void resetValueOwners();
     void resetReachability();
+
+    // This destroys CFG analyses. If we ask for them again, we will recompute them. Usually you
+    // should call this anytime you call resetReachability().
+    void invalidateCFG();
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
@@ -200,6 +208,13 @@ public:
 
     void deleteValue(Value*);
 
+    CFG& cfg() const { return *m_cfg; }
+
+    Dominators& dominators();
+
+    void addFastConstant(const ValueKey&);
+    bool isFastConstant(const ValueKey&);
+
     // The name has to be a string literal, since we don't do any memory management for the string.
     void setLastPhaseName(const char* name)
     {
@@ -240,6 +255,9 @@ private:
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     Vector<std::unique_ptr<Value>> m_values;
     Vector<size_t> m_valueIndexFreeList;
+    std::unique_ptr<CFG> m_cfg;
+    std::unique_ptr<Dominators> m_dominators;
+    HashSet<ValueKey> m_fastConstants;
     const char* m_lastPhaseName;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
     std::unique_ptr<Air::Code> m_code;

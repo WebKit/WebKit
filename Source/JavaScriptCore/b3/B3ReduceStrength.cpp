@@ -117,6 +117,7 @@ public:
 
             if (m_changedCFG) {
                 m_proc.resetReachability();
+                m_proc.invalidateCFG();
                 m_changed = true;
             }
 

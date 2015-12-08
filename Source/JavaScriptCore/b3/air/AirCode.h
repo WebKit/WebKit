@@ -31,6 +31,7 @@
 #include "AirBasicBlock.h"
 #include "AirSpecial.h"
 #include "AirStackSlot.h"
+#include "AirTmp.h"
 #include "RegisterAtOffsetList.h"
 #include "StackAlignment.h"
 
@@ -289,6 +290,9 @@ public:
     };
 
     SpecialsCollection specials() const { return SpecialsCollection(*this); }
+
+    void addFastTmp(Tmp);
+    bool isFastTmp(Tmp tmp) const { return m_fastTmps.contains(tmp); }
     
     // The name has to be a string literal, since we don't do any memory management for the string.
     void setLastPhaseName(const char* name)
@@ -307,6 +311,7 @@ private:
     Vector<std::unique_ptr<StackSlot>> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     Vector<std::unique_ptr<Special>> m_specials;
+    HashSet<Tmp> m_fastTmps;
     CCallSpecial* m_cCallSpecial { nullptr };
     unsigned m_numGPTmps { 0 };
     unsigned m_numFPTmps { 0 };

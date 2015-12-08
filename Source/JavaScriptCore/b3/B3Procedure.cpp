@@ -32,14 +32,17 @@
 #include "B3BasicBlockInlines.h"
 #include "B3BasicBlockUtils.h"
 #include "B3BlockWorklist.h"
+#include "B3CFG.h"
 #include "B3DataSection.h"
+#include "B3Dominators.h"
 #include "B3OpaqueByproducts.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
 
 Procedure::Procedure()
-    : m_lastPhaseName("initial")
+    : m_cfg(new CFG(*this))
+    , m_lastPhaseName("initial")
     , m_byproducts(std::make_unique<OpaqueByproducts>())
     , m_code(new Air::Code(*this))
 {
@@ -113,6 +116,11 @@ void Procedure::resetReachability()
         });
 }
 
+void Procedure::invalidateCFG()
+{
+    m_dominators = nullptr;
+}
+
 void Procedure::dump(PrintStream& out) const
 {
     for (BasicBlock* block : *this)
@@ -136,6 +144,26 @@ void Procedure::deleteValue(Value* value)
     ASSERT(m_values[value->index()].get() == value);
     m_valueIndexFreeList.append(value->index());
     m_values[value->index()] = nullptr;
+}
+
+Dominators& Procedure::dominators()
+{
+    if (!m_dominators)
+        m_dominators = std::make_unique<Dominators>(*this);
+    return *m_dominators;
+}
+
+void Procedure::addFastConstant(const ValueKey& constant)
+{
+    RELEASE_ASSERT(constant.isConstant());
+    m_fastConstants.add(constant);
+}
+
+bool Procedure::isFastConstant(const ValueKey& constant)
+{
+    if (!constant)
+        return false;
+    return m_fastConstants.contains(constant);
 }
 
 void* Procedure::addDataSection(size_t size)

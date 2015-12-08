@@ -1,3 +1,103 @@
+2015-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be able to flag the tag constants as being super important so that B3 can hoist them and Air can force them into registers
+        https://bugs.webkit.org/show_bug.cgi?id=151955
+
+        Reviewed by Geoffrey Garen.
+
+        Taught B3 about the concept of "fast constants". A client of B3 can now tell B3 which
+        constants are super important. B3 will not spill the constant in that case and will ensure
+        that the constant is materialized only once: statically once, and dynamically once per
+        procedure execution. The hoistFastConstants() algorithm in B3MoveConstants.cpp achieves this
+        by first picking the lowest common dominator of all uses of each fast constant, and then
+        picking the materialization point by finding the lowest dominator of that dominator that is
+        tied for lowest block frequency. In practice, the second step ensures that this is the lowest
+        point in the program that is not in a loop (i.e. executes no more than once dynamically per
+        procedure invocation).
+
+        Taught Air about the concept of "fast tmps". B3 tells Air that a tmp is fast if it is used to
+        hold the materialization of a fast constant. IRC will use the lowest possible spill score for
+        fast tmps. In practice, this ensures that fast constants are never spilled.
+
+        Added a small snippet of code to FTL::LowerDFGToLLVM that makes both of the tag constants
+        into fast constants.
+
+        My hope is that this very brute-force heuristic is good enough that we don't have to think
+        about constants for a while. Based on my experience with how LLVM's constant hoisting works
+        out, the heuristic in this patch is going to be tough to beat. LLVM's constant hoisting does
+        good things when it hoists the tags, and usually causes nothing but problems when it hoists
+        anything else. This is because there is no way a low-level compiler to really understand how
+        a constant materialization impacts some operation's contribution to the overall execution
+        time of a procedure. But, in the FTL we know that constant materializations for type checks
+        are a bummer because we are super comfortable placing type checks on the hottest of paths. So
+        those are the last paths where extra instructions should be added by the compiler. On the
+        other hand, all other large constant uses are on relatively cold paths, or paths that are
+        already expensive for other reasons. For example, global variable accesses have to
+        materialize a pointer to the global. But that's not really a big deal, since a load from a
+        global involves first the load itself and then type checks on the result - so probably the
+        constant materialization is just not interesting. A store to a global often involves a store
+        barrier, so the constant materialization is really not interesting. This patch codifies this
+        heuristic in a pact between Air, B3, and the FTL: FTL demands that B3 pin the two tags in
+        registers, and B3 relays the demand to Air.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3CFG.h: Added.
+        (JSC::B3::CFG::CFG):
+        (JSC::B3::CFG::root):
+        (JSC::B3::CFG::newMap):
+        (JSC::B3::CFG::successors):
+        (JSC::B3::CFG::predecessors):
+        (JSC::B3::CFG::index):
+        (JSC::B3::CFG::node):
+        (JSC::B3::CFG::numNodes):
+        (JSC::B3::CFG::dump):
+        * b3/B3Dominators.h: Added.
+        (JSC::B3::Dominators::Dominators):
+        * b3/B3IndexMap.h:
+        (JSC::B3::IndexMap::resize):
+        (JSC::B3::IndexMap::size):
+        (JSC::B3::IndexMap::operator[]):
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tmp):
+        * b3/B3MoveConstants.cpp:
+        * b3/B3Opcode.h:
+        (JSC::B3::constPtrOpcode):
+        (JSC::B3::isConstant):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        (JSC::B3::Procedure::resetReachability):
+        (JSC::B3::Procedure::invalidateCFG):
+        (JSC::B3::Procedure::dump):
+        (JSC::B3::Procedure::deleteValue):
+        (JSC::B3::Procedure::dominators):
+        (JSC::B3::Procedure::addFastConstant):
+        (JSC::B3::Procedure::isFastConstant):
+        (JSC::B3::Procedure::addDataSection):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::size):
+        (JSC::B3::Procedure::cfg):
+        (JSC::B3::Procedure::setLastPhaseName):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::isConstant):
+        (JSC::B3::Value::isInteger):
+        * b3/B3ValueKey.h:
+        (JSC::B3::ValueKey::canMaterialize):
+        (JSC::B3::ValueKey::isConstant):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::findNextBlock):
+        (JSC::B3::Air::Code::addFastTmp):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::specials):
+        (JSC::B3::Air::Code::isFastTmp):
+        (JSC::B3::Air::Code::setLastPhaseName):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * dfg/DFGDominators.h:
+        * dfg/DFGSSACalculator.cpp:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+
 2015-12-07  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.toLocaleUpperCase in ECMA-402

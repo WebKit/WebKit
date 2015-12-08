@@ -231,6 +231,18 @@ inline Opcode constPtrOpcode()
     return Const32;
 }
 
+inline bool isConstant(Opcode opcode)
+{
+    switch (opcode) {
+    case Const32:
+    case Const64:
+    case ConstDouble:
+        return true;
+    default:
+        return false;
+    }
+}
+
 } } // namespace JSC::B3
 
 namespace WTF {

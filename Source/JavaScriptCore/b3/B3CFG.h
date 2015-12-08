@@ -23,65 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3IndexMap_h
-#define B3IndexMap_h
+#ifndef B3CFG_h
+#define B3CFG_h
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/Vector.h>
+#include "B3BasicBlock.h"
+#include "B3IndexMap.h"
+#include "B3IndexSet.h"
+#include "B3Procedure.h"
 
 namespace JSC { namespace B3 {
 
-// This is a map for keys that have an index(). It's super efficient for BasicBlocks. It's only
-// efficient for Values if you don't create too many of these maps, since Values can have very
-// sparse indices and there are a lot of Values.
-
-template<typename Key, typename Value>
-class IndexMap {
+class CFG {
+    WTF_MAKE_NONCOPYABLE(CFG);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit IndexMap(size_t size = 0)
+    typedef BasicBlock* Node;
+    typedef IndexSet<BasicBlock> Set;
+    template<typename T> using Map = IndexMap<BasicBlock, T>;
+    typedef Vector<BasicBlock*, 4> List;
+
+    CFG(Procedure& proc)
+        : m_proc(proc)
     {
-        m_vector.fill(Value(), size);
     }
 
-    void resize(size_t size)
+    Node root() { return m_proc[0]; }
+
+    template<typename T>
+    Map<T> newMap() { return IndexMap<BasicBlock, T>(m_proc.size()); }
+
+    SuccessorCollection<BasicBlock, BasicBlock::SuccessorList> successors(Node node) { return node->successorBlocks(); }
+    BasicBlock::PredecessorList& predecessors(Node node) { return node->predecessors(); }
+
+    unsigned index(Node node) const { return node->index(); }
+    Node node(unsigned index) const { return m_proc[index]; }
+    unsigned numNodes() const { return m_proc.size(); }
+
+    PointerDump<BasicBlock> dump(Node node) const { return pointerDump(node); }
+
+    void dump(PrintStream& out) const
     {
-        m_vector.fill(Value(), size);
+        m_proc.dump(out);
     }
 
-    size_t size() const { return m_vector.size(); }
-
-    Value& operator[](size_t index)
-    {
-        return m_vector[index];
-    }
-
-    const Value& operator[](size_t index) const
-    {
-        return m_vector[index];
-    }
-    
-    Value& operator[](Key* key)
-    {
-        return m_vector[key->index()];
-    }
-    
-    const Value& operator[](Key* key) const
-    {
-        return m_vector[key->index()];
-    }
-
-    void clear()
-    {
-        m_vector.clear();
-    }
-    
 private:
-    Vector<Value> m_vector;
+    Procedure& m_proc;
 };
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3IndexMap_h
+#endif // B3CFG_h
+

@@ -36,6 +36,8 @@
 namespace JSC { namespace DFG {
 
 class CFG {
+    WTF_MAKE_NONCOPYABLE(CFG);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef BasicBlock* Node;
     typedef BlockSet Set;

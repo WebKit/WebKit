@@ -23,65 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3IndexMap_h
-#define B3IndexMap_h
+#ifndef B3Dominators_h
+#define B3Dominators_h
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/Vector.h>
+#include "B3CFG.h"
+#include "B3Common.h"
+#include "B3Procedure.h"
+#include <wtf/Dominators.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC { namespace B3 {
 
-// This is a map for keys that have an index(). It's super efficient for BasicBlocks. It's only
-// efficient for Values if you don't create too many of these maps, since Values can have very
-// sparse indices and there are a lot of Values.
-
-template<typename Key, typename Value>
-class IndexMap {
+class Dominators : public WTF::Dominators<CFG> {
+    WTF_MAKE_NONCOPYABLE(Dominators);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit IndexMap(size_t size = 0)
+    Dominators(Procedure& proc)
+        : WTF::Dominators<CFG>(proc.cfg(), shouldValidateIR())
     {
-        m_vector.fill(Value(), size);
     }
-
-    void resize(size_t size)
-    {
-        m_vector.fill(Value(), size);
-    }
-
-    size_t size() const { return m_vector.size(); }
-
-    Value& operator[](size_t index)
-    {
-        return m_vector[index];
-    }
-
-    const Value& operator[](size_t index) const
-    {
-        return m_vector[index];
-    }
-    
-    Value& operator[](Key* key)
-    {
-        return m_vector[key->index()];
-    }
-    
-    const Value& operator[](Key* key) const
-    {
-        return m_vector[key->index()];
-    }
-
-    void clear()
-    {
-        m_vector.clear();
-    }
-    
-private:
-    Vector<Value> m_vector;
 };
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3IndexMap_h
+#endif // B3Dominators_h
+

@@ -120,6 +120,11 @@ public:
         }
     }
 
+    bool isConstant() const
+    {
+        return B3::isConstant(opcode());
+    }
+
     // Attempts to materialize the Value for this ValueKey. May return nullptr if the value cannot
     // be materialized. This happens for CheckAdd and friends. You can use canMaterialize() to check
     // if your key is materializable.

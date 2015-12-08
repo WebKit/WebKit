@@ -26,6 +26,7 @@
 #ifndef WTFDominators_h
 #define WTFDominators_h
 
+#include <wtf/FastBitVector.h>
 #include <wtf/GraphNodeWorklist.h>
 
 namespace WTF {
@@ -120,8 +121,9 @@ public:
     {
         return from == to || strictlyDominates(from, to);
     }
-    
-    typename Graph::Node immediateDominatorOf(typename Graph::Node block) const
+
+    // Returns the immediate dominator of this block. Returns null for the root block.
+    typename Graph::Node idom(typename Graph::Node block) const
     {
         return m_data[block].idomParent;
     }
@@ -555,7 +557,7 @@ private:
     
         bool dominates(typename Graph::Node from, typename Graph::Node to) const
         {
-            return dominates(from->index, to->index);
+            return dominates(m_graph.index(from), m_graph.index(to));
         }
     
         void dump(PrintStream& out) const
@@ -593,7 +595,7 @@ private:
             return m_results[idx].setAndCheck(m_scratch);
         }
     
-        Graph m_graph;
+        Graph& m_graph;
         Vector<FastBitVector> m_results; // For each block, the bitvector of blocks that dominate it.
         FastBitVector m_scratch; // A temporary bitvector with bit for each block. We recycle this to save new/deletes.
     };
@@ -636,12 +638,12 @@ private:
                     continue;
                 dataLog("    Block ", graph.dump(graph.node(blockIndex)), ": successors = [");
                 CommaPrinter comma;
-                for (unsigned i = 0; i < block->numSuccessors(); ++i)
-                    dataLog(comma, graph.dump(block->successor(i)));
+                for (auto successor : graph.successors(block))
+                    dataLog(comma, graph.dump(successor));
                 dataLog("], predecessors = [");
                 comma = CommaPrinter();
-                for (unsigned i = 0; i < block->predecessors.size(); ++i)
-                    dataLog(comma, graph.dump(block->predecessors[i]));
+                for (auto predecessor : graph.predecessors(block))
+                    dataLog(comma, graph.dump(predecessor));
                 dataLog("]\n");
             }
             dataLog("\n");

@@ -302,8 +302,11 @@ private:
             while (shouldCopyPropagate(value))
                 value = value->child(0);
             Tmp& realTmp = m_valueToTmp[value];
-            if (!realTmp)
+            if (!realTmp) {
                 realTmp = m_code.newTmp(Arg::typeForB3Type(value->type()));
+                if (m_procedure.isFastConstant(value->key()))
+                    m_code.addFastTmp(realTmp);
+            }
             tmp = realTmp;
         }
         return tmp;

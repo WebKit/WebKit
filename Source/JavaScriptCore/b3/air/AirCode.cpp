@@ -134,6 +134,11 @@ BasicBlock* Code::findNextBlock(BasicBlock* block) const
     return nullptr;
 }
 
+void Code::addFastTmp(Tmp tmp)
+{
+    m_fastTmps.add(tmp);
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

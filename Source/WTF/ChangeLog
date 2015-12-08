@@ -1,3 +1,27 @@
+2015-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be able to flag the tag constants as being super important so that B3 can hoist them and Air can force them into registers
+        https://bugs.webkit.org/show_bug.cgi?id=151955
+
+        Reviewed by Geoffrey Garen.
+
+        Remove some remaining DFG-specific snippets from Dominators. This used to be a non-template
+        DFG class, and some time ago I hoisted it into WTF and made it generic. But since the only
+        user of the class was the DFG, this class still had a handful of DFG-specific snippets that
+        didn't compile when I started using it from B3.
+
+        Also renamed immediateDominatorOf() to idom(). This is the sort of abbreviation that we
+        wouldn't ordinarily want to have in WebKit. But WebKit does allow for abbreviations that are
+        "more canonical". The term "idom" is definitely more canonical than "immediateDominatorOf".
+
+        * wtf/Dominators.h:
+        (WTF::Dominators::dominates):
+        (WTF::Dominators::idom):
+        (WTF::Dominators::forAllStrictDominatorsOf):
+        (WTF::Dominators::NaiveDominators::dominates):
+        (WTF::Dominators::NaiveDominators::dump):
+        (WTF::Dominators::ValidationContext::handleErrors):
+
 2015-12-03  Anders Carlsson  <andersca@apple.com>
 
         Remove Objective-C GC support

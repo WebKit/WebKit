@@ -303,6 +303,13 @@ public:
 #endif
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
         m_tagMask = m_out.constInt64(TagMask);
+
+#if FTL_USES_B3
+        // Make sure that B3 knows that we really care about the mask registers. This forces the
+        // constants to be materialized in registers.
+        m_proc.addFastConstant(m_tagTypeNumber->key());
+        m_proc.addFastConstant(m_tagMask->key());
+#endif // FTL_USES_B3
         
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(JSStack::CodeBlock));
         

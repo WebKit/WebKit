@@ -58,8 +58,10 @@ public:
             processCurrentBlock();
         }
         m_changed |= m_blockInsertionSet.execute();
-        if (m_changed)
+        if (m_changed) {
             m_proc.resetReachability();
+            m_proc.invalidateCFG();
+        }
         return m_changed;
     }
     

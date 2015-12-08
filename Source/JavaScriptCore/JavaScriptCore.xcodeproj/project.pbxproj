@@ -306,6 +306,8 @@
 		0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */; };
 		0F33FCF71C136E2500323F67 /* B3StackmapGenerationParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F33FCF51C136E2500323F67 /* B3StackmapGenerationParams.cpp */; };
 		0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F33FCF61C136E2500323F67 /* B3StackmapGenerationParams.h */; };
+		0F33FCFB1C1625BE00323F67 /* B3CFG.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F33FCF91C1625BE00323F67 /* B3CFG.h */; };
+		0F33FCFC1C1625BE00323F67 /* B3Dominators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F33FCFA1C1625BE00323F67 /* B3Dominators.h */; };
 		0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */; };
 		0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; };
 		0F37308C1C0BD29100052BFA /* B3PhiChildren.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F37308A1C0BD29100052BFA /* B3PhiChildren.cpp */; };
@@ -2404,6 +2406,8 @@
 		0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LowerMacros.h; path = b3/B3LowerMacros.h; sourceTree = "<group>"; };
 		0F33FCF51C136E2500323F67 /* B3StackmapGenerationParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackmapGenerationParams.cpp; path = b3/B3StackmapGenerationParams.cpp; sourceTree = "<group>"; };
 		0F33FCF61C136E2500323F67 /* B3StackmapGenerationParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackmapGenerationParams.h; path = b3/B3StackmapGenerationParams.h; sourceTree = "<group>"; };
+		0F33FCF91C1625BE00323F67 /* B3CFG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3CFG.h; path = b3/B3CFG.h; sourceTree = "<group>"; };
+		0F33FCFA1C1625BE00323F67 /* B3Dominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Dominators.h; path = b3/B3Dominators.h; sourceTree = "<group>"; };
 		0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGUseKind.cpp; path = dfg/DFGUseKind.cpp; sourceTree = "<group>"; };
 		0F34B14816D4200E001CDA5A /* DFGUseKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUseKind.h; path = dfg/DFGUseKind.h; sourceTree = "<group>"; };
 		0F37308A1C0BD29100052BFA /* B3PhiChildren.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3PhiChildren.cpp; path = b3/B3PhiChildren.cpp; sourceTree = "<group>"; };
@@ -4567,6 +4571,7 @@
 				0FEC84BA1BDACDAC0080FF74 /* B3BlockWorklist.h */,
 				0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */,
 				0F338DF81BE96AA80013C88F /* B3CCallValue.h */,
+				0F33FCF91C1625BE00323F67 /* B3CFG.h */,
 				0FEC84BB1BDACDAC0080FF74 /* B3CheckSpecial.cpp */,
 				0FEC84BC1BDACDAC0080FF74 /* B3CheckSpecial.h */,
 				0FEC84BD1BDACDAC0080FF74 /* B3CheckValue.cpp */,
@@ -4590,6 +4595,7 @@
 				0FEC84CA1BDACDAC0080FF74 /* B3ControlValue.h */,
 				0F338E011BF0276C0013C88F /* B3DataSection.cpp */,
 				0F338E021BF0276C0013C88F /* B3DataSection.h */,
+				0F33FCFA1C1625BE00323F67 /* B3Dominators.h */,
 				0FEC85C41BE16F5A0080FF74 /* B3Effects.cpp */,
 				0FEC85BE1BE167A00080FF74 /* B3Effects.h */,
 				0FEC84CB1BDACDAC0080FF74 /* B3FrequencyClass.cpp */,
@@ -7518,6 +7524,7 @@
 				9928FF3C18AC4AEC00B8CF12 /* JSReplayInputs.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
+				0F33FCFB1C1625BE00323F67 /* B3CFG.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
@@ -7797,6 +7804,7 @@
 				705B41AE1A6E501E00716757 /* SymbolConstructor.h in Headers */,
 				996B73271BDA08EF00331B84 /* SymbolConstructor.lut.h in Headers */,
 				705B41B01A6E501E00716757 /* SymbolObject.h in Headers */,
+				0F33FCFC1C1625BE00323F67 /* B3Dominators.h in Headers */,
 				705B41B21A6E501E00716757 /* SymbolPrototype.h in Headers */,
 				996B73281BDA08EF00331B84 /* SymbolPrototype.lut.h in Headers */,
 				BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */,
