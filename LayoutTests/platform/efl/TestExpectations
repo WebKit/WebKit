@@ -2693,10 +2693,6 @@ css2.1/tables/table-anonymous-objects-206.xht [ Missing ]
 css2.1/tables/table-anonymous-objects-207.xht [ Missing ]
 css2.1/tables/table-anonymous-objects-208.xht [ Missing ]
 
-# EFL layout test has been broken since r192796. SKip web-platform-tests until fixing this problem.
-# http://trac.webkit.org/changeset/192796
-Bug(EFL) imported/w3c/web-platform-tests [ Skip ]
-
 webkit.org/b/151943 imported/blink/editing/execCommand/4128080-2.html [ Failure ]
 webkit.org/b/151943 imported/blink/fast/events/click-with-large-negative-text-indent.html [ Failure ]
 webkit.org/b/151943 imported/blink/fast/replaced/image-map-alt-content.html [ Failure ]

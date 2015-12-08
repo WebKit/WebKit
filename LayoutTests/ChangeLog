@@ -1,3 +1,12 @@
+2015-12-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] REGRESSION(r173394): MiniBrowser stucked in an infinite loop if NETWORK_CACHE is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=137692
+
+        Reviewed by Darin Adler.
+
+        * platform/efl/TestExpectations: Unskip now passing tests.
+
 2015-12-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL][AX] Rebaseline failing AX tests since r185662

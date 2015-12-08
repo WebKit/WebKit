@@ -1,3 +1,13 @@
+2015-12-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] REGRESSION(r173394): MiniBrowser stucked in an infinite loop if NETWORK_CACHE is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=137692
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime): Disable caching if NETWORK_CACHE is disabled.
+
 2015-12-08  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Add API to provide preferences before creating ewk_view
