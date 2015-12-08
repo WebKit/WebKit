@@ -38,6 +38,7 @@
 #include <mach/mach.h>
 #include <mach/vm_statistics.h>
 #include <runtime/JSLock.h>
+#include <sys/sysctl.h>
 #include <thread>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -68,6 +69,19 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
+
+static size_t vmPageSize()
+{
+    static size_t pageSize;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        size_t outputSize = sizeof(pageSize);
+        int status = sysctlbyname("vm.pagesize", &pageSize, &outputSize, nullptr, 0);
+        ASSERT_UNUSED(status, status != -1);
+        ASSERT(pageSize);
+    });
+    return pageSize;
+}
 
 template<typename T, size_t size = 70>
 class RingBuffer {
@@ -459,8 +473,7 @@ static std::array<TagInfo, 256> pagesPerVMTag()
         }
 
         if (purgeableState == VM_PURGABLE_EMPTY) {
-            static size_t vmPageSize = getpagesize();
-            tags[info.user_tag].reclaimable += size / vmPageSize;
+            tags[info.user_tag].reclaimable += size / vmPageSize();
             continue;
         }
 
@@ -533,7 +546,6 @@ static unsigned categoryForVMTag(unsigned tag)
 
 NO_RETURN void runSamplerThread(void*)
 {
-    static size_t vmPageSize = getpagesize();
     auto& data = sharedData();
     while (1) {
         float cpu = cpuUsage();
@@ -556,10 +568,10 @@ NO_RETURN void runSamplerThread(void*)
             for (auto& category : data.categories) {
                 if (category.isSubcategory) // Only do automatic tallying for top-level categories.
                     continue;
-                category.history.append(pagesPerCategory[category.type].dirty * vmPageSize);
-                category.reclaimableHistory.append(pagesPerCategory[category.type].reclaimable * vmPageSize);
+                category.history.append(pagesPerCategory[category.type].dirty * vmPageSize());
+                category.reclaimableHistory.append(pagesPerCategory[category.type].reclaimable * vmPageSize());
             }
-            data.totalDirty.append(totalDirtyPages * vmPageSize);
+            data.totalDirty.append(totalDirtyPages * vmPageSize());
 
             copyToVector(data.overlayLayers, layers);
 

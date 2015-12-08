@@ -1,3 +1,18 @@
+2015-12-08  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] ResourceUsageOverlay should query kernel for VM page size.
+        <https://webkit.org/b/151920>
+
+        Reviewed by Andy Estes.
+
+        Read the vm.pagesize sysctl to find the correct page size for memory usage calculations.
+        This fixes broken math on systems that have different hw.pagesize and vm.pagesize.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::vmPageSize):
+        (WebCore::pagesPerVMTag):
+        (WebCore::runSamplerThread):
+
 2015-12-08  Chris Dumez  <cdumez@apple.com>
 
         Add diagnostic logging to measure speculative revalidation accuracy
