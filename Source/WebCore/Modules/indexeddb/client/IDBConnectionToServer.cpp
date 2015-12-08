@@ -331,6 +331,16 @@ void IDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& tra
     transaction->didStart(error);
 }
 
+void IDBConnectionToServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didStartTransaction");
+
+    auto openDBRequest = m_openDBRequestMap.get(requestIdentifier);
+    ASSERT(openDBRequest);
+
+    openDBRequest->requestBlocked(oldVersion, newVersion);
+}
+
 void IDBConnectionToServer::databaseConnectionClosed(IDBDatabase& database)
 {
     LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionClosed");

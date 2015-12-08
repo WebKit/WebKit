@@ -1,3 +1,41 @@
+2015-12-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Fire blocked events for upgrade requests that are blocked.
+        https://bugs.webkit.org/show_bug.cgi?id=152007
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/blocked-open-db-requests.html
+              And some that used to fail now pass.
+              And some that used to timeout now complete.
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::notifyOpenDBRequestBlocked):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::IDBDatabase):
+
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::requestBlocked):
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h:
+
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::dispatchEvent):
+
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::notifyOpenDBRequestBlocked):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::handleOpenDatabaseOperations): When a request that would
+          result in a version change transaction is blocked by open connections, notify it.
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::notifyOpenDBRequestBlocked):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2015-12-08  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Compile error.

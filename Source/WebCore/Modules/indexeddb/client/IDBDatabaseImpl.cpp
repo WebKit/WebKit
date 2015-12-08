@@ -52,6 +52,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBConnectionToServer&
     , m_info(resultData.databaseInfo())
     , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
 {
+    LOG(IndexedDB, "IDBDatabase::IDBDatabase - Creating database %s with version %" PRIu64, m_info.name().utf8().data(), m_info.version());
     suspendIfNeeded();
     relaxAdoptionRequirement();
     m_serverConnection->registerDatabaseConnection(*this);

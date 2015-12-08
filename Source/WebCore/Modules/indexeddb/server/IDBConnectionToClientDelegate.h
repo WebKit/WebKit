@@ -62,6 +62,7 @@ public:
 
     virtual void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion) = 0;
     virtual void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) = 0;
+    virtual void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) = 0;
 
     virtual void ref() = 0;
     virtual void deref() = 0;

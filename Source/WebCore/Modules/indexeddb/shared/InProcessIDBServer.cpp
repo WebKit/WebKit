@@ -345,6 +345,14 @@ void InProcessIDBServer::didStartTransaction(const IDBResourceIdentifier& transa
     });
 }
 
+void InProcessIDBServer::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, requestIdentifier, oldVersion, newVersion] {
+        m_connectionToServer->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
+    });
+}
+
 void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);

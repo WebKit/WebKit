@@ -62,8 +62,8 @@ function continueTest1()
 
     transaction.oncomplete = function(event) {
         alert("readwrite transaction complete");
-        continueTest2();
         database.close();
+        continueTest2();
     }
 
     transaction.onerror = function(event) {

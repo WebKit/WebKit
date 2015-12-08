@@ -67,6 +67,8 @@ public:
     void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion);
     void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
+    void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
+
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
     

@@ -281,10 +281,10 @@ bool IDBRequest::dispatchEvent(Event& event)
     // IDBEventDispatcher::dispatch() might have set the pending activity flag back to true, suggesting the request will be reused.
     // We might also re-use the request if this event was the upgradeneeded event for an IDBOpenDBRequest.
     if (!m_hasPendingActivity)
-        m_hasPendingActivity = isOpenDBRequest() && event.type() == eventNames().upgradeneededEvent;
+        m_hasPendingActivity = isOpenDBRequest() && (event.type() == eventNames().upgradeneededEvent || event.type() == eventNames().blockedEvent);
 
-    // The request should only remain in the transaction's request list if it represents a pending cursor operation.
-    if (m_transaction && !m_pendingCursor)
+    // The request should only remain in the transaction's request list if it represents a pending cursor operation, or this is an open request that was blocked.
+    if (m_transaction && !m_pendingCursor && event.type() != eventNames().blockedEvent)
         m_transaction->removeRequest(*this);
 
     if (dontPreventDefault && event.type() == eventNames().errorEvent && m_transaction && !m_transaction->isFinishedOrFinishing()) {

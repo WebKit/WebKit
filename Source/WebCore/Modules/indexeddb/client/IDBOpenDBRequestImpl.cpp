@@ -168,6 +168,12 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
     }
 }
 
+void IDBOpenDBRequest::requestBlocked(uint64_t oldVersion, uint64_t newVersion)
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::requestBlocked");
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().blockedEvent));
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

@@ -91,6 +91,7 @@ public:
     virtual void didIterateCursor(const IDBResultData&) override final;
     virtual void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, uint64_t requestedVersion) override final;
     virtual void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
+    virtual void notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) override final;
 
     virtual void ref() override { RefCounted<InProcessIDBServer>::ref(); }
     virtual void deref() override { RefCounted<InProcessIDBServer>::deref(); }

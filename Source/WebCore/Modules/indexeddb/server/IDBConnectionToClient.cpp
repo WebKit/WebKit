@@ -133,6 +133,11 @@ void IDBConnectionToClient::didStartTransaction(const IDBResourceIdentifier& tra
     m_delegate->didStartTransaction(transactionIdentifier, error);
 }
 
+void IDBConnectionToClient::notifyOpenDBRequestBlocked(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+{
+    m_delegate->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

@@ -1,3 +1,19 @@
+2015-12-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Fire blocked events for upgrade requests that are blocked.
+        https://bugs.webkit.org/show_bug.cgi?id=152007
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
+        * storage/indexeddb/modern/blocked-open-db-requests-expected.txt: Added.
+        * storage/indexeddb/modern/blocked-open-db-requests.html: Added.
+        * storage/indexeddb/modern/resources/blocked-open-db-requests.js: Added.
+        
+        * storage/indexeddb/modern/deleteobjectstore-1.html: Fix subtly broken test.
+        * storage/indexeddb/modern/idbdatabase-deleteobjectstore-failures.html: Ditto.
+        
 2015-12-08  Mark Lam  <mark.lam@apple.com>
 
         Polymorphic operand types for DFG and FTL div.

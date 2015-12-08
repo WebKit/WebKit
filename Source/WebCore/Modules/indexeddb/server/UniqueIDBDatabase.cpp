@@ -170,6 +170,9 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
 
     // Otherwise we have to notify all those open connections and wait for them to close.
     notifyConnectionsOfVersionChangeForUpgrade();
+
+    // And we notify this OpenDBRequest that it is blocked until those connections close.
+    m_versionChangeDatabaseConnection->connectionToClient().notifyOpenDBRequestBlocked(m_versionChangeOperation->requestData().requestIdentifier(), m_databaseInfo->version(), requestedVersion);
 }
 
 bool UniqueIDBDatabase::hasAnyOpenConnections() const
