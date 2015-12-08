@@ -116,7 +116,6 @@ storage/indexeddb/delete-in-upgradeneeded-close-in-open-success.html [ Failure ]
 storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html [ Failure ]
 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange.html [ Failure ]
 storage/indexeddb/deletedatabase-not-blocked.html [ Failure ]
-storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 storage/indexeddb/factory-cmp.html [ Failure ]
 storage/indexeddb/index-basics.html [ Failure ]
 storage/indexeddb/index-count.html [ Failure ]
@@ -156,6 +155,7 @@ storage/indexeddb/request-leak.html [ Failure ]
 storage/indexeddb/basics-workers.html
 storage/indexeddb/cursor-advance-workers.html
 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html
+storage/indexeddb/dont-commit-on-blocked.html
 storage/indexeddb/factory-basics-workers.html
 storage/indexeddb/index-basics-workers.html
 storage/indexeddb/objectstore-basics-workers.html

@@ -1,3 +1,11 @@
+2015-12-07  Brady Eidson  <beidson@apple.com>
+
+        Move an IDB test from the "generic failure" section to the "fails because no workers" section.
+
+        Rubberstamped by Andy Estes.
+
+        * platform/mac-wk1/TestExpectations:
+
 2015-12-07  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement String.prototype.toLocaleUpperCase in ECMA-402
