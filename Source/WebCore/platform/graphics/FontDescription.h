@@ -40,8 +40,6 @@ using namespace WebKitFontFamilyNames;
 
 class FontDescription {
 public:
-    enum Kerning { AutoKerning, NormalKerning, NoneKerning };
-
     FontDescription()
         : m_families(1)
         , m_specifiedSize(0)
@@ -54,7 +52,7 @@ public:
         , m_isAbsoluteSize(false)
         , m_weight(FontWeightNormal)
         , m_renderingMode(NormalRenderingMode)
-        , m_kerning(AutoKerning)
+        , m_kerning(static_cast<unsigned>(Kerning::Auto))
         , m_keywordSize(0)
         , m_fontSmoothing(AutoSmoothing)
         , m_textRendering(AutoTextRendering)
@@ -164,7 +162,7 @@ public:
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(FontWeight w) { m_weight = w; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
-    void setKerning(Kerning kerning) { m_kerning = kerning; }
+    void setKerning(Kerning kerning) { m_kerning = static_cast<unsigned>(kerning); }
     void setKeywordSize(unsigned size)
     {
         ASSERT(size <= 8);
@@ -218,7 +216,7 @@ public:
     // Initial values for font properties.
     static FontItalic initialItalic() { return FontItalicOff; }
     static FontSmallCaps initialSmallCaps() { return FontSmallCapsOff; }
-    static Kerning initialKerning() { return AutoKerning; }
+    static Kerning initialKerning() { return Kerning::Auto; }
     static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }
     static TextRenderingMode initialTextRenderingMode() { return AutoTextRendering; }
     static FontSynthesis initialFontSynthesis() { return FontSynthesisWeight | FontSynthesisStyle; }
