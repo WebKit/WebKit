@@ -1,3 +1,23 @@
+2015-12-08  Zalan Bujtas  <zalan@apple.com>
+
+        Do not insert positioned renderers to multiple gPositionedDescendantsMap.
+        https://bugs.webkit.org/show_bug.cgi?id=151878
+        rdar://problem/22229889
+
+        Reviewed by Simon Fraser.
+
+        We insert positioned renderers into a static map (RenderBlock::gPositionedDescendantsMap) to keep track of them.
+        This static map is at block level. A particular absolute positioned object is added to its closest ancestor that
+        returns true for RenderElement::canContainAbsolutelyPositionedObjects().
+        canContainAbsolutelyPositionedObjects() returns true if the ancestor is either positioned or has transform.
+        If this container's style changes so that it's no longer positioned and it has no transform anymore,
+        we need to clear its static map of positioned objects (they'll get re-inserted to another ancestor at next layout).
+
+        This patch addresses the case when the renderer does not have transforms anymore.
+
+        * fast/block/positioning/crash-when-transform-is-removed-expected.txt: Added.
+        * fast/block/positioning/crash-when-transform-is-removed.html: Added.
+
 2015-12-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/canvas/canvas-too-large-to-draw.html as flaky on ElCapitan Debug
