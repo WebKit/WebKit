@@ -1,5 +1,31 @@
 2015-12-08  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192369.
+
+    2015-11-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            popstate event should be dispatched asynchronously
+            https://bugs.webkit.org/show_bug.cgi?id=36202
+            <rdar://problem/7761279>
+
+            Based on an original patch by Mihai Parparita <mihaip@chromium.org>.
+
+            Reviewed by Brent Fulgham.
+
+            * fast/loader/remove-iframe-during-history-navigation-different-expected.txt: Added.
+            * fast/loader/remove-iframe-during-history-navigation-different.html: Added.
+            Imported from Blink.
+            * fast/loader/remove-iframe-during-history-navigation-same-expected.txt: Added.
+            * fast/loader/remove-iframe-during-history-navigation-same.html: Added.
+            Ditto.
+            * fast/loader/stateobjects/popstate-fires-on-history-traversal.html:
+            Modified to account for popstate firing asynchronously.
+            * fast/loader/stateobjects/popstate-is-asynchronous-expected.txt: Added.
+            * fast/loader/stateobjects/popstate-is-asynchronous.html: Added.
+            Based on Mihai's original test. Modified to pass in current WebKit.
+
+2015-12-08  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192316.
 
     2015-11-10  Jon Honeycutt  <jhoneycutt@apple.com>
