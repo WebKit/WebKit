@@ -320,10 +320,17 @@ RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const Font
     if (!originalFont || (!features.size() && variantSettings.isAllNormal()))
         return originalFont;
 
-    // FIXME: We don't consult with the @font-face first, like the spec says we should.
+    // This algorithm is described at http://www.w3.org/TR/css3-fonts/#feature-precedence
 
-    // Spec says that font-feature-settings should override font-variant-*.
+    // Step 1: CoreText handles default features (such as required ligatures).
+
+    // Steps 2-3: Consult with @font-face
+    // FIXME: This is not yet implemented.
+
+    // Step 4: Font-variant
     auto fontFeatureSettingsFromVariants = computeFeatureSettingsFromVariants(variantSettings);
+
+    // Step 6: Font-feature-settings
     for (auto& newFeature : features)
         fontFeatureSettingsFromVariants.set(newFeature.tag(), newFeature.value());
 

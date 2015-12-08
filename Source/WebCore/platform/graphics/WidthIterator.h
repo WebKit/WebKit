@@ -52,7 +52,7 @@ public:
     const TextRun& run() const { return m_run; }
     float runWidthSoFar() const { return m_runWidthSoFar; }
     bool enableKerning() const { return m_enableKerning; }
-    bool enableLigatures() const { return m_enableLigatures; }
+    bool requiresShaping() const { return m_requiresShaping; }
 
 #if ENABLE(SVG_FONTS)
     String lastGlyphName() const { return m_lastGlyphName; }
@@ -87,7 +87,7 @@ private:
     HashSet<const Font*>* m_fallbackFonts { nullptr };
     bool m_accountForGlyphBounds { false };
     bool m_enableKerning { false };
-    bool m_enableLigatures { false };
+    bool m_requiresShaping { false };
     bool m_forTextEmphasis { false };
     float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::min() };
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };

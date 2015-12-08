@@ -1,3 +1,65 @@
+2015-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontCascade::typesettingFeatures() is not privy to font-variant-* nor font-feature-settings
+        https://bugs.webkit.org/show_bug.cgi?id=149775
+
+        Reviewed by Darin Adler.
+
+        This patch has two pieces:
+
+        We used to have a boolean, enableLigatures, which affected how we perform shaping in both our
+        simple and complex text codepaths. However, in this brave new world of font-feature-settings
+        and font-variant-*, there are many properties which may affect shaping (and multiple kinds
+        of ligatures). This patch renames this boolean to requiresShaping, and teaches it about all
+        the various properties which affect text shaping.
+
+        Similarly, one of the places which used this enableLigatures boolean was to tell CoreText
+        if it should disable ligatures. However, we now have much finer-grained control over
+        ligatures during font creation. This patch moves the responsibility of dictating which
+        font features should be enabled entirely to the Font. Therefore, getCFStringAttributes()
+        doesn't know anything about ligatures anymore; the logic inside font creation is used
+        instead.
+
+        An added benefit of moving all the font feature logic to one place is that we can implement
+        the feature resolution algorithm described in the CSS3 fonts spec. This patch adds a test to
+        makes sure that text-rendering, font-feature-settings, and font-variant-* play together
+        nicely.
+
+        Test: fast/text/multiple-feature-properties.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::applyTransforms):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::FontCascade):
+        (WebCore::FontCascade::operator=):
+        (WebCore::FontCascade::update):
+        (WebCore::FontCascade::drawText):
+        (WebCore::FontCascade::drawEmphasisMarks):
+        (WebCore::FontCascade::width):
+        (WebCore::FontCascade::adjustSelectionRectForText):
+        (WebCore::FontCascade::offsetForPosition):
+        (WebCore::FontCascade::codePath):
+        (WebCore::FontCascade::floatWidthForSimpleText):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::requiresShaping):
+        (WebCore::FontCascade::computeRequiresShaping):
+        (WebCore::FontCascade::enableLigatures): Deleted.
+        (WebCore::FontCascade::computeEnableLigatures): Deleted.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::applyFontTransforms):
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::canRenderCombiningCharacterSequence):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes):
+        * svg/SVGFontData.h:
+
 2015-10-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Split TypesettingFeatures into kerning and ligatures bools
