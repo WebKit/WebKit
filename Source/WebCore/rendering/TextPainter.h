@@ -50,8 +50,9 @@ public:
     bool textBoxIsHorizontal, TextPaintStyle& nonSelectionPaintStyle, TextPaintStyle& selectionPaintStyle);
     
     void paintText();
-
+#if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
     DashArray dashesForIntersectionsWithRect(const FloatRect& lineExtents);
+#endif
 
 private:
     void drawTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& emphasisMark, int emphasisMarkOffset,
@@ -61,7 +62,6 @@ private:
     void paintTextWithStyle(const TextPaintStyle&, int startOffset, int endOffset, const ShadowData*);
     void paintEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle&, const ShadowData*);
 
-private:
     GraphicsContext& m_context;
     TextPaintStyle& m_textPaintStyle;
     TextPaintStyle& m_selectionPaintStyle;
@@ -91,15 +91,8 @@ public:
     ~ShadowApplier();
 
 private:
-    bool isLastShadowIteration()
-    {
-        return m_shadow && !m_shadow->next();
-    }
-
-    bool shadowIsCompletelyCoveredByText(bool textIsOpaque)
-    {
-        return textIsOpaque && m_shadow && m_shadow->location() == IntPoint() && !m_shadow->radius();
-    }
+    bool isLastShadowIteration();
+    bool shadowIsCompletelyCoveredByText(bool textIsOpaque);
 
     FloatSize m_extraOffset;
     GraphicsContext& m_context;
@@ -109,6 +102,16 @@ private:
     bool m_nothingToDraw : 1;
     bool m_didSaveContext : 1;
 };
+
+inline bool ShadowApplier::isLastShadowIteration()
+{
+    return m_shadow && !m_shadow->next();
+}
+
+inline bool ShadowApplier::shadowIsCompletelyCoveredByText(bool textIsOpaque)
+{
+    return textIsOpaque && m_shadow && m_shadow->location() == IntPoint() && !m_shadow->radius();
+}
 
 } // namespace WebCore
 

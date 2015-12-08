@@ -1,5 +1,20 @@
 2015-12-08  Zalan Bujtas  <zalan@apple.com>
 
+        Light cleanup in TextPainter.
+        https://bugs.webkit.org/show_bug.cgi?id=151994
+
+        Reviewed by Darin Adler.
+
+        No change in functionality.
+
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::TextPainter):
+        * rendering/TextPainter.h: Address post review comment.
+        (WebCore::ShadowApplier::isLastShadowIteration):
+        (WebCore::ShadowApplier::shadowIsCompletelyCoveredByText):
+
+2015-12-08  Zalan Bujtas  <zalan@apple.com>
+
         Do not insert positioned renderers to multiple gPositionedDescendantsMap.
         https://bugs.webkit.org/show_bug.cgi?id=151878
         rdar://problem/22229889

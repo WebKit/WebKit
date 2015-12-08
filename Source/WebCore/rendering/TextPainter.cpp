@@ -31,31 +31,6 @@
 
 namespace WebCore {
 
-TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const FontCascade& font,
-    int startPositionInTextRun, int endPositionInTextBoxString, int length, const AtomicString& emphasisMark, RenderCombineText* combinedText, TextRun& textRun,
-    FloatRect& boxRect, FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow,
-    bool textBoxIsHorizontal, TextPaintStyle& textPaintStyle, TextPaintStyle& selectionPaintStyle)
-        : m_context(context)
-        , m_textPaintStyle(textPaintStyle)
-        , m_selectionPaintStyle(selectionPaintStyle)
-        , m_textShadow(textShadow)
-        , m_selectionShadow(selectionShadow)
-        , m_paintSelectedTextOnly(paintSelectedTextOnly)
-        , m_paintSelectedTextSeparately(paintSelectedTextSeparately)
-        , m_font(font)
-        , m_startPositionInTextRun(startPositionInTextRun)
-        , m_endPositionInTextRun(endPositionInTextBoxString)
-        , m_length(length)
-        , m_emphasisMark(emphasisMark)
-        , m_combinedText(combinedText)
-        , m_textRun(textRun)
-        , m_boxRect(boxRect)
-        , m_textOrigin(textOrigin)
-        , m_emphasisMarkOffset(emphasisMarkOffset)
-        , m_textBoxIsHorizontal(textBoxIsHorizontal)
-{
-}
-
 ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow, const FloatRect& textRect, bool lastShadowIterationShouldDrawText, bool opaque, FontOrientation orientation)
     : m_context(context)
     , m_shadow(shadow)
@@ -102,6 +77,31 @@ ShadowApplier::~ShadowApplier()
         m_context.restore();
     else if (!m_avoidDrawingShadow)
         m_context.clearShadow();
+}
+
+TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const FontCascade& font, int startPositionInTextRun,
+    int endPositionInTextBoxString, int length, const AtomicString& emphasisMark, RenderCombineText* combinedText, TextRun& textRun, FloatRect& boxRect,
+    FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow, bool textBoxIsHorizontal,
+    TextPaintStyle& textPaintStyle, TextPaintStyle& selectionPaintStyle)
+    : m_context(context)
+    , m_textPaintStyle(textPaintStyle)
+    , m_selectionPaintStyle(selectionPaintStyle)
+    , m_textShadow(textShadow)
+    , m_selectionShadow(selectionShadow)
+    , m_paintSelectedTextOnly(paintSelectedTextOnly)
+    , m_paintSelectedTextSeparately(paintSelectedTextSeparately)
+    , m_font(font)
+    , m_startPositionInTextRun(startPositionInTextRun)
+    , m_endPositionInTextRun(endPositionInTextBoxString)
+    , m_length(length)
+    , m_emphasisMark(emphasisMark)
+    , m_combinedText(combinedText)
+    , m_textRun(textRun)
+    , m_boxRect(boxRect)
+    , m_textOrigin(textOrigin)
+    , m_emphasisMarkOffset(emphasisMarkOffset)
+    , m_textBoxIsHorizontal(textBoxIsHorizontal)
+{
 }
 
 void TextPainter::drawTextOrEmphasisMarks(const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
