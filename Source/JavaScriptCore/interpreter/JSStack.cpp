@@ -42,9 +42,7 @@ static size_t committedBytesCount = 0;
 
 static size_t commitSize()
 {
-    static size_t size = 0;
-    if (!size)
-        size = std::max(static_cast<size_t>(16 * 1024), pageSize());
+    static size_t size = std::max<size_t>(16 * 1024, pageSize());
     return size;
 }
 

@@ -1,3 +1,12 @@
+2015-12-08  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed. Remove unnecessary check for 0 in commitSize().
+
+        Change suggested by Darin Adler in bug #130237.
+
+        * interpreter/JSStack.cpp:
+        (JSC::commitSize):
+
 2015-12-08  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Remove the flag to check timer state in IncrementalSweeper
