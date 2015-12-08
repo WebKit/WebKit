@@ -17,4 +17,4 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl

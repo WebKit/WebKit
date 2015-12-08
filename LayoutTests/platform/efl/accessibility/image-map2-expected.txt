@@ -17,7 +17,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: html-id:result, toolkit:WebKitEfl
+AXPlatformAttributes: html-id:result, tag:div, toolkit:WebKitEfl
 ------------
 AXRole: AXLink
 AXParent: AXWebArea
@@ -37,7 +37,7 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: http://www.apple.com/
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:link, tag:area, toolkit:WebKitEfl
 ------------
 AXRole: AXLink
 AXParent: AXWebArea
@@ -57,7 +57,7 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: http://www.apple.com/
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:link, tag:area, toolkit:WebKitEfl
 ------------
 
 

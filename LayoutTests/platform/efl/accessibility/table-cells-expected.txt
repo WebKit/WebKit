@@ -27,7 +27,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------------------
 [3,1]
 AXRole: AXCell
@@ -47,14 +47,14 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitEfl
 ------------------------
 [1,1]
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 143.000000, 66.000000 }
+AXSize: { 144.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -67,14 +67,14 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------------------
 [2,2]
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 69.000000, 30.000000 }
+AXSize: { 70.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333
@@ -87,7 +87,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------------------
 [3,5]
 AXRole: AXCell
@@ -107,7 +107,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------------------
 [100,0]
 

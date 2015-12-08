@@ -25,7 +25,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -44,7 +44,194 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 71.000000, 66.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: All<\n>Genders
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 120.000000, 30.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 120.000000, 30.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
+------------
+
+
+--------------------------
+
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 144.000000, 66.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 144.000000, 66.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 91.000000, 60.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 91.000000, 60.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
+------------
+
+
+--------------------------
+
+
+
+--------------------------
+
+
+
+--------------------------
+
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 144.000000, 66.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 144.000000, 66.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -63,194 +250,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 120.000000, 30.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: By Gender
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 120.000000, 30.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: By Gender
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-
-
---------------------------
-
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 143.000000, 66.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 143.000000, 66.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXRowHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 90.000000, 60.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: All Regions
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 1
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXRowHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 90.000000, 60.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: All Regions
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 1
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-
-
---------------------------
-
-
-
---------------------------
-
-
-
---------------------------
-
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 143.000000, 66.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 143.000000, 66.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 69.000000, 66.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: All<\n>Genders
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -269,7 +269,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -288,13 +288,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 143.000000, 66.000000 }
+AXSize: { 144.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -307,13 +307,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 143.000000, 66.000000 }
+AXSize: { 144.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -326,13 +326,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 69.000000, 66.000000 }
+AXSize: { 70.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All<\n>Genders
@@ -345,7 +345,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -364,13 +364,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 67.000000, 36.000000 }
+AXSize: { 68.000000, 36.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Females
@@ -383,13 +383,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 90.000000, 60.000000 }
+AXSize: { 91.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All Regions
@@ -402,13 +402,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 53.000000, 30.000000 }
+AXSize: { 54.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: North
@@ -421,13 +421,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 69.000000, 30.000000 }
+AXSize: { 70.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333
@@ -440,7 +440,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -459,13 +459,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 67.000000, 30.000000 }
+AXSize: { 68.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 2222
@@ -478,13 +478,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 90.000000, 60.000000 }
+AXSize: { 91.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: All Regions
@@ -497,13 +497,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 53.000000, 30.000000 }
+AXSize: { 54.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: South
@@ -516,13 +516,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 69.000000, 30.000000 }
+AXSize: { 70.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333
@@ -535,7 +535,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -554,13 +554,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 67.000000, 30.000000 }
+AXSize: { 68.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 2222
@@ -573,7 +573,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 
 

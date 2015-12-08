@@ -17,7 +17,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 asdf	asdf
@@ -40,7 +40,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -62,7 +62,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -84,7 +84,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -106,7 +106,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -128,7 +128,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 asdf	asdf
@@ -151,7 +151,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -173,7 +173,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -195,7 +195,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -217,7 +217,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -239,7 +239,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
 
 Contributions
 
@@ -261,7 +261,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
 
 Politics
 Decision '08
@@ -289,7 +289,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -311,7 +311,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 asdf	asdf
@@ -334,7 +334,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 asdf	asdf
@@ -357,7 +357,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 asdf
@@ -381,7 +381,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 asdf
@@ -405,7 +405,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf	asdf
 asdf	asdf
@@ -428,7 +428,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitEfl
 
 asdf
 asdf
@@ -473,7 +473,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:table, toolkit:WebKitEfl
 
 head	head2
 asdf	asdf

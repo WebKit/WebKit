@@ -21,7 +21,7 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: http://www.wowhead.com/?item=33924
-AXPlatformAttributes: html-id:test, toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:link, html-id:test, tag:a, toolkit:WebKitEfl
 
 Child 0:
 AXRole: AXImage
@@ -41,6 +41,6 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: LayoutTests/accessibility/resources/cake.png
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:img, tag:img, toolkit:WebKitEfl
 
 

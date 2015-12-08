@@ -27,7 +27,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:list, tag:ul, toolkit:WebKitEfl
 ------------
 AXRole: AXList
 AXParent: AXWebArea
@@ -45,7 +45,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:list, tag:ol, toolkit:WebKitEfl
 ------------
 AXRole: AXDescriptionList
 AXParent: AXWebArea
@@ -63,7 +63,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: tag:dl, toolkit:WebKitEfl
 ------------
 AXRole: AXGroup
 AXParent: AXWebArea
@@ -82,7 +82,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:group, toolkit:WebKitEfl
 ------------
 
 
@@ -103,7 +103,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitEfl
 ------------
 AXRole: AXListItem
 AXParent: AXList
@@ -122,7 +122,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitEfl
 ------------
 
 
@@ -143,7 +143,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitEfl
 ------------
 AXRole: AXListItem
 AXParent: AXList
@@ -162,7 +162,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitEfl
 ------------
 
 
@@ -183,7 +183,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: tag:dt, toolkit:WebKitEfl
 ------------
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
@@ -202,7 +202,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: tag:dd, toolkit:WebKitEfl
 ------------
 AXRole: AXDescriptionTerm
 AXParent: AXDescriptionList
@@ -221,7 +221,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: tag:dt, toolkit:WebKitEfl
 ------------
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
@@ -240,7 +240,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: tag:dd, toolkit:WebKitEfl
 ------------
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
@@ -259,7 +259,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: tag:dd, toolkit:WebKitEfl
 ------------
 
 

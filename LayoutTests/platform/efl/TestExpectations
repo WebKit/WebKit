@@ -1821,17 +1821,6 @@ webkit.org/b/112014 accessibility/textarea-insertion-point-line-number.html [ Fa
 webkit.org/b/112018 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure Crash ]
 
-webkit.org/b/111985 accessibility/image-link.html [ Failure ]
-webkit.org/b/111985 accessibility/image-map2.html [ Failure ]
-webkit.org/b/111985 accessibility/lists.html [ Failure ]
-webkit.org/b/111985 accessibility/table-attributes.html [ Failure ]
-webkit.org/b/111985 accessibility/table-cell-spans.html [ Failure ]
-webkit.org/b/111985 accessibility/table-cells.html [ Failure ]
-webkit.org/b/111985 accessibility/table-detection.html [ Failure ]
-webkit.org/b/111985 accessibility/table-one-cell.html [ Failure ]
-webkit.org/b/111985 accessibility/table-sections.html [ Failure ]
-webkit.org/b/111985 accessibility/table-with-rules.html [ Failure ]
-
 # New accessibility test added in r151079 that is failing for EFL.
 webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
 

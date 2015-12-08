@@ -34,13 +34,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 28.000000, 30.000000 }
+AXSize: { 29.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: a
@@ -53,7 +53,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -72,7 +72,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 
 
@@ -82,7 +82,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -95,13 +95,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -114,13 +114,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -133,7 +133,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 
 AXParent: (null)
@@ -167,7 +167,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -180,13 +180,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: a
@@ -199,7 +199,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -218,13 +218,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -237,13 +237,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: c
@@ -256,7 +256,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -275,13 +275,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -294,13 +294,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: c1
@@ -313,7 +313,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -332,13 +332,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -351,13 +351,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: e
@@ -370,7 +370,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -389,7 +389,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 
 
@@ -407,7 +407,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -420,13 +420,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: a
@@ -439,7 +439,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -458,7 +458,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 
 
@@ -468,7 +468,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -481,13 +481,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -500,13 +500,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -519,7 +519,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 
 AXParent: (null)
@@ -553,7 +553,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -566,13 +566,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: a
@@ -585,7 +585,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -604,13 +604,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -623,13 +623,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: c
@@ -642,7 +642,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -661,13 +661,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -680,13 +680,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: c1
@@ -699,7 +699,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -718,13 +718,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 20.000000, 30.000000 }
+AXSize: { 21.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1
@@ -737,13 +737,13 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 27.000000, 30.000000 }
+AXSize: { 28.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: e
@@ -756,7 +756,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -775,7 +775,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitEfl
 ------------
 
 
