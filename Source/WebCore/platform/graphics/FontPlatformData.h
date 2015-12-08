@@ -114,8 +114,6 @@ public:
     static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
 
-    bool allowsLigatures() const;
-
 #if USE(APPKIT)
     // FIXME: Remove this when all NSFont usage is removed.
     NSFont *nsFont() const { return reinterpret_cast<NSFont *>(const_cast<__CTFont*>(m_font.get())); }
