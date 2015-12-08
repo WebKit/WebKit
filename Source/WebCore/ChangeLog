@@ -1,5 +1,15 @@
 2015-12-08  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191746.
+
+    2015-10-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+            URTBF after r191731.
+
+            * rendering/svg/RenderSVGResourcePattern.cpp:
+
+2015-12-08  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r191731.
 
     2015-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
