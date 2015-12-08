@@ -57,7 +57,7 @@ public:
     ImmutableNFANodeBuilder(ImmutableNFANodeBuilder&& other)
         : m_immutableNFA(other.m_immutableNFA)
         , m_ranges(WTF::move(other.m_ranges))
-        , m_epsilonTransitionTargets(WTF::move(m_epsilonTransitionTargets))
+        , m_epsilonTransitionTargets(WTF::move(other.m_epsilonTransitionTargets))
         , m_actions(WTF::move(other.m_actions))
         , m_nodeId(other.m_nodeId)
         , m_finalized(other.m_finalized)

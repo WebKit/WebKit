@@ -1,3 +1,13 @@
+2015-12-08  Andy Estes  <aestes@apple.com>
+
+        ImmutableNFANodeBuilder's move constructor moves an uninitialized member variable into itself
+        https://bugs.webkit.org/show_bug.cgi?id=151982
+
+        Reviewed by Darin Adler.
+
+        * contentextensions/ImmutableNFANodeBuilder.h:
+        (WebCore::ContentExtensions::ImmutableNFANodeBuilder::ImmutableNFANodeBuilder):
+
 2015-12-08  Andreas Kling  <akling@apple.com>
 
         [Cocoa] ResourceUsageOverlay should query kernel for VM page size.
