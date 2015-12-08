@@ -1,3 +1,13 @@
+2015-12-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ API tests after r193639.
+
+        The new jhbuild version needs some more variables ot be present in
+        the builtin dict, even if they are set to None.
+
+        * jhbuild/jhbuildutils.py:
+        (enter_jhbuild_environment_if_available):
+
 2015-12-07  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Notify WebCore when notification is clicked
