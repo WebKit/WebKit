@@ -1,3 +1,10 @@
+2015-12-08  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed. Use pageSize() instead of getpagesize() after r193648
+
+        * interpreter/JSStack.cpp:
+        (JSC::commitSize):
+
 2015-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         Small style fixes in B3MoveConstants.cpp

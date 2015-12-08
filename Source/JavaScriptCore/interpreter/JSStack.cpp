@@ -44,7 +44,7 @@ static size_t commitSize()
 {
     static size_t size = 0;
     if (!size)
-        size = std::max(16 * 1024, getpagesize());
+        size = std::max(static_cast<size_t>(16 * 1024), pageSize());
     return size;
 }
 
