@@ -551,7 +551,6 @@ FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDes
 static inline FontTraitsMask toTraitsMask(CTFontSymbolicTraits ctFontTraits)
 {
     return static_cast<FontTraitsMask>(((ctFontTraits & kCTFontTraitItalic) ? FontStyleItalicMask : FontStyleNormalMask)
-        | FontVariantNormalMask
         // FontWeight600 or higher is bold for CTFonts, so choose middle values for
         // bold (600-900) and non-bold (100-500)
         | ((ctFontTraits & kCTFontTraitBold) ? FontWeight700Mask : FontWeight300Mask));

@@ -117,7 +117,6 @@ static bool betterChoice(NSFontTraitMask desiredTraits, int desiredWeight, NSFon
 static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSInteger appKitWeight)
 {
     return static_cast<FontTraitsMask>(((appKitTraits & NSFontItalicTrait) ? FontStyleItalicMask : FontStyleNormalMask)
-        | FontVariantNormalMask
         | (appKitWeight == 1 ? FontWeight100Mask :
             appKitWeight == 2 ? FontWeight200Mask :
             appKitWeight <= 4 ? FontWeight300Mask :

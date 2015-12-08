@@ -277,8 +277,6 @@ enum FontSmallCaps {
 enum {
     FontStyleNormalBit = 0,
     FontStyleItalicBit,
-    FontVariantNormalBit,
-    FontVariantSmallCapsBit,
     FontWeight100Bit,
     FontWeight200Bit,
     FontWeight300Bit,
@@ -295,10 +293,6 @@ enum FontTraitsMask {
     FontStyleNormalMask = 1 << FontStyleNormalBit,
     FontStyleItalicMask = 1 << FontStyleItalicBit,
     FontStyleMask = FontStyleNormalMask | FontStyleItalicMask,
-
-    FontVariantNormalMask = 1 << FontVariantNormalBit,
-    FontVariantSmallCapsMask = 1 << FontVariantSmallCapsBit,
-    FontVariantMask = FontVariantNormalMask | FontVariantSmallCapsMask,
 
     FontWeight100Mask = 1 << FontWeight100Bit,
     FontWeight200Mask = 1 << FontWeight200Bit,
