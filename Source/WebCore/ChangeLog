@@ -1,3 +1,14 @@
+2015-12-08  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=152008
+
+        Reviewed by Brent Fulgham.
+
+        GLuint is undefined.
+
+        * platform/graphics/GraphicsContext3D.h:
+
 2015-12-08  Zalan Bujtas  <zalan@apple.com>
 
         Light cleanup in TextPainter.
