@@ -1,3 +1,18 @@
+2015-12-08  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Adopt WebFullScreenVideoRootViewController.
+        https://bugs.webkit.org/show_bug.cgi?id=151996
+
+        Reviewed by Dan Bernstein.
+
+        Adopt WebFullScreenVideoRootViewController from WebKitAdditions. If it is not available, create and use
+        a generic UIViewController subclass.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (createFullScreenVideoRootViewControllerClass):
+        (allocWebFullScreenVideoRootViewControllerInstance):
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen):
+
 2015-12-08  Andy Estes  <aestes@apple.com>
 
         ImmutableNFANodeBuilder's move constructor moves an uninitialized member variable into itself

@@ -80,6 +80,32 @@ static const char* boolString(bool val)
 }
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebFullScreenVideoRootViewController.m>
+#else
+@interface WebFullScreenVideoRootViewController : UIViewController
+- (instancetype)initWithSourceWindow:(UIWindow *)sourceWindow;
+@end
+
+static Class createFullScreenVideoRootViewControllerClass()
+{
+    Class newClass = objc_allocateClassPair(getUIViewControllerClass(), "WebFullScreenVideoRootViewController", 0);
+
+    class_addMethod(newClass, @selector(initWithSourceWindow:), imp_implementationWithBlock(^(id self, UIWindow*){
+        return [self init];
+    }), "@@:@");
+
+    objc_registerClassPair(newClass);
+    return newClass;
+}
+
+static WebFullScreenVideoRootViewController *allocWebFullScreenVideoRootViewControllerInstance()
+{
+    static Class fullScreenVideoRootViewControllerClass = createFullScreenVideoRootViewControllerClass();
+    return [fullScreenVideoRootViewControllerClass alloc];
+}
+#endif
+
 static const double DefaultWatchdogTimerInterval = 1;
 
 @class WebAVMediaSelectionOption;
@@ -1084,7 +1110,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
             m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
         [m_window setBackgroundColor:[getUIColorClass() clearColor]];
         if (!m_viewController)
-            m_viewController = adoptNS([allocUIViewControllerInstance() init]);
+            m_viewController = adoptNS([allocWebFullScreenVideoRootViewControllerInstance() initWithSourceWindow:[parentView window]]);
         [[m_viewController view] setFrame:[m_window bounds]];
         [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];
