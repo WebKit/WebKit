@@ -1,3 +1,13 @@
+2015-12-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Mac][GTK] Fix JSC FTL build
+        https://bugs.webkit.org/show_bug.cgi?id=151915
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt: Don't pass version-script option to ld on Darwin because this platform's linker
+        doesn't support this option.
+
 2015-12-08  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed. Use pageSize() instead of getpagesize() after r193648
