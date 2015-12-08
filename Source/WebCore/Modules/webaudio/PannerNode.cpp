@@ -88,7 +88,8 @@ void PannerNode::pullInputs(size_t framesToProcess)
         m_connectionCount = context()->connectionCount();
 
         // Recursively go through all nodes connected to us.
-        notifyAudioSourcesConnectedToNode(this);
+        HashSet<AudioNode*> visitedNodes;
+        notifyAudioSourcesConnectedToNode(this, visitedNodes);
     }
     
     AudioNode::pullInputs(framesToProcess);
@@ -397,7 +398,7 @@ float PannerNode::distanceConeGain()
     return float(distanceGain * coneGain);
 }
 
-void PannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node)
+void PannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node, HashSet<AudioNode*>& visitedNodes)
 {
     ASSERT(node);
     if (!node)
@@ -416,7 +417,11 @@ void PannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node)
             for (unsigned j = 0; j < input->numberOfRenderingConnections(); ++j) {
                 AudioNodeOutput* connectedOutput = input->renderingOutput(j);
                 AudioNode* connectedNode = connectedOutput->node();
-                notifyAudioSourcesConnectedToNode(connectedNode); // recurse
+                if (visitedNodes.contains(connectedNode))
+                    continue;
+
+                visitedNodes.add(connectedNode);
+                notifyAudioSourcesConnectedToNode(connectedNode, visitedNodes);
             }
         }
     }
