@@ -1,3 +1,91 @@
+2015-10-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Split TypesettingFeatures into kerning and ligatures bools
+        https://bugs.webkit.org/show_bug.cgi?id=150074
+
+        Reviewed by Simon Fraser.
+
+        Our TypesettingFeatures type represents whether kerning or ligatures are enabled
+        when laying out text. However, now that I have implemented font-feature-settings
+        and font-variant-*, this type is wildly inadequate. There are now multiple kinds
+        of ligatures, and many other features which are neither kerning nor ligatures.
+        Adding tons of information to this type doesn't make sense because 1) We already
+        have a FontVariantSettings struct which contains this information, and 2) None
+        of the users of TypesettingFeatures care about most of these new features.
+
+        In this new world of font features, the font-kerning property isn't changing.
+        Therefore, all the code which relies only on the Kerning value in
+        TypesettingFeatures doesn't need to change. The places which rely on Ligatures,
+        however, need to be updated to understand that there are many different kinds
+        of ligatures.
+
+        Indeed, after inspection, all of the places which inspect ligatures are more
+        interested in a high-level concept of whether or not we can trust some simple
+        computation. Therefore, we really have two things we care about: Kerning, and
+        this high-level concept.
+
+        This patch is the second step to update our view of the world to include
+        font-feature-settings and font-variant-*. In particular, this patch simply
+        splits TypesettingFeatures into two Booleans, one for Kerning, and one for
+        Ligatures (which has no behavior change). Then, once they are separated, I can
+        migrate the Ligatures Boolean to take on its new meaning.
+
+        This change is purely mechanical.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator FontCascadeDescription::Kerning):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::applyTransforms):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::FontCascade):
+        (WebCore::FontCascade::operator=):
+        (WebCore::FontCascade::update):
+        (WebCore::FontCascade::drawText):
+        (WebCore::FontCascade::drawEmphasisMarks):
+        (WebCore::FontCascade::width):
+        (WebCore::FontCascade::adjustSelectionRectForText):
+        (WebCore::FontCascade::offsetForPosition):
+        (WebCore::FontCascade::setDefaultKerning):
+        (WebCore::FontCascade::setDefaultLigatures):
+        (WebCore::FontCascade::codePath):
+        (WebCore::FontCascade::floatWidthForSimpleText):
+        (WebCore::FontCascade::setDefaultTypesettingFeatures): Deleted.
+        (WebCore::FontCascade::defaultTypesettingFeatures): Deleted.
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::enableKerning):
+        (WebCore::FontCascade::enableLigatures):
+        (WebCore::FontCascade::computeEnableKerning):
+        (WebCore::FontCascade::computeEnableLigatures):
+        (WebCore::FontCascade::typesettingFeatures): Deleted.
+        (WebCore::FontCascade::computeTypesettingFeatures): Deleted.
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontCascadeDescription::FontCascadeDescription):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontCascadeDescription::setKerning):
+        (WebCore::FontCascadeDescription::initialKerning):
+        * platform/graphics/TypesettingFeatures.h: Removed.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::applyFontTransforms):
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::canRenderCombiningCharacterSequence):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+        * rendering/line/BreakingContext.h:
+        (WebCore::WordTrailingSpace::width):
+        * svg/SVGFontData.h:
+
 2015-12-07  Matthew Hanson  <matthew_hanson@apple.com>
 
         Build fix.

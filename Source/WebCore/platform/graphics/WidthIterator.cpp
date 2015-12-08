@@ -41,13 +41,10 @@ WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSe
     , m_runWidthSoFar(0)
     , m_isAfterExpansion((run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion)
     , m_finalRoundingWidth(0)
-    , m_typesettingFeatures(font->typesettingFeatures())
     , m_fallbackFonts(fallbackFonts)
     , m_accountForGlyphBounds(accountForGlyphBounds)
-    , m_maxGlyphBoundingBoxY(std::numeric_limits<float>::min())
-    , m_minGlyphBoundingBoxY(std::numeric_limits<float>::max())
-    , m_firstGlyphOverflow(0)
-    , m_lastGlyphOverflow(0)
+    , m_enableKerning(font->enableKerning())
+    , m_enableLigatures(font->enableLigatures())
     , m_forTextEmphasis(forTextEmphasis)
 {
     // If the padding is non-zero, count the number of spaces in the run
@@ -97,10 +94,8 @@ public:
 
 typedef Vector<std::pair<int, OriginalAdvancesForCharacterTreatedAsSpace>, 64> CharactersTreatedAsSpace;
 
-static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int& lastGlyphCount, const Font* font, WidthIterator& iterator, TypesettingFeatures typesettingFeatures, bool force, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int& lastGlyphCount, const Font* font, WidthIterator& iterator, bool force, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
-    ASSERT(typesettingFeatures & (Kerning | Ligatures));
-
     if (!glyphBuffer)
         return 0;
 
@@ -124,14 +119,14 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
     // We need to handle transforms on SVG fonts internally, since they are rendered internally.
     if (font->isSVGFont()) {
         // SVG font ligatures are handled during glyph selection, only kerning remaining.
-        if (iterator.run().renderingContext() && (typesettingFeatures & Kerning)) {
+        if (iterator.run().renderingContext() && iterator.enableKerning()) {
             // FIXME: We could pass the necessary context down to this level so we can lazily create rendering contexts at this point.
             // However, a larger refactoring of SVG fonts might necessary to sidestep this problem completely.
             iterator.run().renderingContext()->applySVGKerning(font, iterator, glyphBuffer, lastGlyphCount);
         }
     } else
 #endif
-        font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, typesettingFeatures);
+        font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, iterator.enableKerning(), iterator.enableLigatures());
 
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
@@ -203,7 +198,7 @@ inline auto WidthIterator::shouldApplyFontTransforms(const GlyphBuffer* glyphBuf
 {
     if (glyphBuffer && glyphBuffer->size() == lastGlyphCount + 1 && isSoftBankEmoji(previousCharacter))
         return TransformsType::Forced;
-    if (m_run.length() <= 1 || !(m_typesettingFeatures & (Kerning | Ligatures)))
+    if (m_run.length() <= 1 || !(m_enableKerning || m_enableLigatures))
         return TransformsType::None;
     return TransformsType::NotForced;
 }
@@ -269,7 +264,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         if (font != lastFontData && width) {
             auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
             if (transformsType != TransformsType::None) {
-                m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+                m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
                 if (glyphBuffer)
                     glyphBuffer->shrink(lastGlyphCount);
             }
@@ -427,7 +422,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
 
     auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
     if (transformsType != TransformsType::None) {
-        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
         if (glyphBuffer)
             glyphBuffer->shrink(lastGlyphCount);
     }

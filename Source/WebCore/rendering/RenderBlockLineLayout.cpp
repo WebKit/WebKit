@@ -485,7 +485,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
 
     float measuredWidth = 0;
 
-    bool kerningIsEnabled = font.typesettingFeatures() & Kerning;
+    bool kerningIsEnabled = font.enableKerning();
     bool canUseSimpleFontCodePath = renderer.canUseSimpleFontCodePath();
     
     // Since we don't cache glyph overflows, we need to re-measure the run if

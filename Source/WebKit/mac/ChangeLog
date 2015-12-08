@@ -1,3 +1,13 @@
+2015-10-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Split TypesettingFeatures into kerning and ligatures bools
+        https://bugs.webkit.org/show_bug.cgi?id=150074
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]):
+
 2015-10-23  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r191487. rdar://problem/22811325

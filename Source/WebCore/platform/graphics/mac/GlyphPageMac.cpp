@@ -115,7 +115,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
 
         // We ask CoreText for possible vertical variant glyphs
         RetainPtr<CFStringRef> string = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, buffer, bufferLength, kCFAllocatorNull));
-        RetainPtr<CFAttributedStringRef> attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(0, fontData->hasVerticalGlyphs() ? Vertical : Horizontal)));
+        RetainPtr<CFAttributedStringRef> attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), fontData->getCFStringAttributes(false, false, fontData->hasVerticalGlyphs() ? Vertical : Horizontal)));
         RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
 
         CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
