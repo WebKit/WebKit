@@ -71,7 +71,10 @@ WEBKIT_API const gchar *
 webkit_notification_get_body                 (WebKitNotification *notification);
 
 WEBKIT_API void
-webkit_notification_close                    (WebKitNotification* notification);
+webkit_notification_close                    (WebKitNotification *notification);
+
+WEBKIT_API void
+webkit_notification_clicked                  (WebKitNotification *notification);
 
 G_END_DECLS
 

@@ -594,6 +594,11 @@ static void notifyNotificationClosed(NotifyNotification*, WebKitNotification* we
     webkit_notification_close(webNotification);
 }
 
+static void notifyNotificationClicked(NotifyNotification*, char*, WebKitNotification* webNotification)
+{
+    webkit_notification_clicked(webNotification);
+}
+
 static void webNotificationClosed(WebKitNotification* webNotification)
 {
     NotifyNotification* notification = NOTIFY_NOTIFICATION(g_object_get_data(G_OBJECT(webNotification), gNotifyNotificationID));
@@ -615,6 +620,8 @@ static gboolean webkitWebViewShowNotification(WebKitWebView*, WebKitNotification
     if (!notification) {
         notification = notify_notification_new(webkit_notification_get_title(webNotification),
             webkit_notification_get_body(webNotification), nullptr);
+
+        notify_notification_add_action(notification, "default", _("Acknowledge"), NOTIFY_ACTION_CALLBACK(notifyNotificationClicked), webNotification, nullptr);
 
         g_signal_connect_object(notification, "closed", G_CALLBACK(notifyNotificationClosed), webNotification, static_cast<GConnectFlags>(0));
         g_signal_connect(webNotification, "closed", G_CALLBACK(webNotificationClosed), nullptr);

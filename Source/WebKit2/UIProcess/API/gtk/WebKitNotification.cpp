@@ -44,6 +44,7 @@ enum {
 
 enum {
     CLOSED,
+    CLICKED,
 
     LAST_SIGNAL
 };
@@ -149,6 +150,24 @@ static void webkit_notification_class_init(WebKitNotificationClass* notification
             nullptr,
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
+
+    /**
+     * WebKitNotification::clicked:
+     * @notification: the #WebKitNotification on which the signal is emitted
+     *
+     * Emitted when a notification has been clicked. See webkit_notification_clicked().
+     *
+     * Since: 2.12
+     */
+    signals[CLICKED] =
+        g_signal_new(
+            "clicked",
+            G_TYPE_FROM_CLASS(notificationClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0,
+            nullptr,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
 }
 
 WebKitNotification* webkitNotificationCreate(WebKitWebView* webView, const WebKit::WebNotification& webNotification)
@@ -230,4 +249,20 @@ void webkit_notification_close(WebKitNotification* notification)
     g_return_if_fail(WEBKIT_IS_NOTIFICATION(notification));
 
     g_signal_emit(notification, signals[CLOSED], 0);
+}
+
+/**
+ * webkit_notification_clicked:
+ * @notification: a #WebKitNotification
+ *
+ * Tells WebKit the notification has been clicked. This will emit the
+ * #WebKitNotification::clicked signal.
+ *
+ * Since: 2.12
+ */
+void webkit_notification_clicked(WebKitNotification* notification)
+{
+    g_return_if_fail(WEBKIT_IS_NOTIFICATION(notification));
+
+    g_signal_emit(notification, signals[CLICKED], 0);
 }

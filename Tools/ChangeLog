@@ -1,3 +1,13 @@
+2015-12-07  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Notify WebCore when notification is clicked
+        https://bugs.webkit.org/show_bug.cgi?id=151951
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewNotification): test the new API.
+
 2015-12-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         'jhbuild build' should fail immediately when building any module fails
