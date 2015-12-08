@@ -141,7 +141,8 @@ FontCascade::FontCascade(const FontPlatformData& fontData, PassRefPtr<FontSelect
     : m_weakPtrFactory(this)
     , m_letterSpacing(0)
     , m_wordSpacing(0)
-    , m_typesettingFeatures(computeTypesettingFeatures())
+    , m_enableKerning(computeEnableKerning())
+    , m_requiresShaping(computeRequiresShaping())
 {
     CTFontRef primaryFont = fontData.font();
     m_fontDescription.setSpecifiedSize(CTFontGetSize(primaryFont));
