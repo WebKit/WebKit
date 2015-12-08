@@ -164,6 +164,8 @@ public:
     JS_EXPORT_PRIVATE void collect(HeapOperation collectionType = AnyCollection);
     bool collectIfNecessaryOrDefer(); // Returns true if it did collect.
 
+    void completeAllDFGPlans();
+    
     // Use this API to report non-GC memory referenced by GC objects. Be sure to
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
@@ -290,8 +292,6 @@ private:
     void flushWriteBarrierBuffer();
     void stopAllocation();
     
-    void completeAllDFGPlans();
-
     void markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
     void gatherStackRoots(ConservativeRoots&, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
     void gatherJSStackRoots(ConservativeRoots&);

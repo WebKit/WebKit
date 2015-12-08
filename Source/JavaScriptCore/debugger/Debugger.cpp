@@ -212,6 +212,8 @@ void Debugger::setSteppingMode(SteppingMode mode)
     if (mode == m_steppingMode)
         return;
 
+    m_vm.heap.completeAllDFGPlans();
+
     m_steppingMode = mode;
     SetSteppingModeFunctor functor(this, mode);
     m_vm.heap.forEachCodeBlock(functor);
@@ -219,10 +221,6 @@ void Debugger::setSteppingMode(SteppingMode mode)
 
 void Debugger::registerCodeBlock(CodeBlock* codeBlock)
 {
-    // FIXME: We should never have to jettison a code block (due to pending breakpoints
-    // or stepping mode) that is being registered. operationOptimize() should have
-    // prevented the optimizing of such code blocks in the first place. Find a way to
-    // express this with greater clarity in the code. See <https://webkit.org/b131771>.
     applyBreakpoints(codeBlock);
     if (isStepping())
         codeBlock->setSteppingMode(CodeBlock::SteppingModeEnabled);
@@ -299,6 +297,8 @@ private:
 
 void Debugger::toggleBreakpoint(Breakpoint& breakpoint, Debugger::BreakpointState enabledOrNot)
 {
+    m_vm.heap.completeAllDFGPlans();
+
     ToggleBreakpointFunctor functor(this, breakpoint, enabledOrNot);
     m_vm.heap.forEachCodeBlock(functor);
 }
@@ -470,6 +470,8 @@ private:
 
 void Debugger::clearBreakpoints()
 {
+    m_vm.heap.completeAllDFGPlans();
+
     m_topBreakpointID = noBreakpointID;
     m_breakpointIDToBreakpoint.clear();
     m_sourceIDToBreakpoints.clear();
@@ -498,6 +500,8 @@ private:
 
 void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 {
+    m_vm.heap.completeAllDFGPlans();
+
     ClearDebuggerRequestsFunctor functor(globalObject);
     m_vm.heap.forEachCodeBlock(functor);
 }

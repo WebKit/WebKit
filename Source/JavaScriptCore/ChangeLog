@@ -1,3 +1,32 @@
+2015-12-07  Michael Saboff  <msaboff@apple.com>
+
+        CRASH: CodeBlock::setOptimizationThresholdBasedOnCompilationResult + 567
+        https://bugs.webkit.org/show_bug.cgi?id=151892
+
+        Reviewed by Geoffrey Garen.
+
+        Reverted the change made in change set r193491.
+
+        The updated change is to finish all concurrent compilations and install the resulting
+        code blocks before we make any state changes due to debugger activity.  After all code
+        blocks have been installed, we make the debugger state changes, including jettisoning
+        all optimized code blocks.
+
+        This means that we will discard the optimized code blocks we just installed,
+        but we won't do that while on the install code block path.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult): Reverted r193491.
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setSteppingMode):
+        (JSC::Debugger::registerCodeBlock):
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::clearDebuggerRequests):
+        Call Heap::completeAllDFGPlans() before updating code blocks for debugging changes.
+
+        * heap/Heap.h: Made completeAllDFGPlans() public.
+
 2015-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL lowering should tell B3 the right block frequencies
