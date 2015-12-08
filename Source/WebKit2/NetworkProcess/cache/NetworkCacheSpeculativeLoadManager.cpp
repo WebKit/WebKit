@@ -32,7 +32,10 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheSpeculativeLoad.h"
 #include "NetworkCacheSubresourcesEntry.h"
+#include "NetworkProcess.h"
+#include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HysteresisActivity.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -44,6 +47,30 @@ namespace NetworkCache {
 using namespace WebCore;
 
 static const auto preloadedEntryLifetime = 10_s;
+
+#if !LOG_DISABLED
+static HashCountedSet<String>& allSpeculativeLoadingDiagnosticMessages()
+{
+    static NeverDestroyed<HashCountedSet<String>> messages;
+    return messages;
+}
+
+static void printSpeculativeLoadingDiagnosticMessageCounts()
+{
+    LOG(NetworkCacheSpeculativePreloading, "-- Speculative loading statistics --");
+    for (auto& pair : allSpeculativeLoadingDiagnosticMessages())
+        LOG(NetworkCacheSpeculativePreloading, "%s: %u", pair.key.utf8().data(), pair.value);
+}
+#endif
+
+static void logSpeculativeLoadingDiagnosticMessage(const GlobalFrameID& frameID, const String& message)
+{
+#if !LOG_DISABLED
+    if (WebKit2LogNetworkCacheSpeculativePreloading.state == WTFLogChannelOn)
+        allSpeculativeLoadingDiagnosticMessages().add(message);
+#endif
+    NetworkProcess::singleton().logDiagnosticMessage(frameID.first, WebCore::DiagnosticLoggingKeys::networkCacheKey(), message, WebCore::ShouldSample::Yes);
+}
 
 static const AtomicString& subresourcesType()
 {
@@ -82,16 +109,27 @@ static bool responseNeedsRevalidation(const ResourceResponse& response, std::chr
     return age - lifetime > 0_ms;
 }
 
-class SpeculativeLoadManager::PreloadedEntry {
+class SpeculativeLoadManager::ExpiringEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PreloadedEntry(std::unique_ptr<Entry> entry, std::function<void()>&& lifetimeReachedHandler)
-        : m_entry(WTF::move(entry))
-        , m_lifetimeTimer(*this, &PreloadedEntry::lifetimeTimerFired)
-        , m_lifetimeReachedHandler(WTF::move(lifetimeReachedHandler))
+    explicit ExpiringEntry(std::function<void()>&& expirationHandler)
+        : m_lifetimeTimer(WTF::move(expirationHandler))
     {
         m_lifetimeTimer.startOneShot(preloadedEntryLifetime);
     }
+
+private:
+    Timer m_lifetimeTimer;
+};
+
+class SpeculativeLoadManager::PreloadedEntry : private ExpiringEntry {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    PreloadedEntry(std::unique_ptr<Entry> entry, WasRevalidated wasRevalidated, std::function<void()>&& lifetimeReachedHandler)
+        : ExpiringEntry(WTF::move(lifetimeReachedHandler))
+        , m_entry(WTF::move(entry))
+        , m_wasRevalidated(wasRevalidated == WasRevalidated::Yes)
+    { }
 
     std::unique_ptr<Entry> takeCacheEntry()
     {
@@ -99,15 +137,11 @@ public:
         return WTF::move(m_entry);
     }
 
-private:
-    void lifetimeTimerFired()
-    {
-        m_lifetimeReachedHandler();
-    }
+    bool wasRevalidated() const { return m_wasRevalidated; }
 
+private:
     std::unique_ptr<Entry> m_entry;
-    Timer m_lifetimeTimer;
-    std::function<void()> m_lifetimeReachedHandler;
+    bool m_wasRevalidated;
 };
 
 class SpeculativeLoadManager::PendingFrameLoad : public RefCounted<PendingFrameLoad> {
@@ -135,6 +169,10 @@ public:
         ASSERT(RunLoop::isMain());
         if (m_didFinishLoad)
             return;
+
+#if !LOG_DISABLED
+        printSpeculativeLoadingDiagnosticMessageCounts();
+#endif
 
         m_didFinishLoad = true;
         saveToDiskIfReady();
@@ -201,18 +239,29 @@ SpeculativeLoadManager::~SpeculativeLoadManager()
 {
 }
 
-bool SpeculativeLoadManager::retrieve(const Key& storageKey, const RetrieveCompletionHandler& completionHandler)
+bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& storageKey, const RetrieveCompletionHandler& completionHandler)
 {
     // Check already preloaded entries.
     if (auto preloadedEntry = m_preloadedEntries.take(storageKey)) {
         LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Retrieval: Using preloaded entry to satisfy request for '%s':", storageKey.identifier().utf8().data());
+        if (preloadedEntry->wasRevalidated())
+            logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey());
+        else
+            logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey());
+
         completionHandler(preloadedEntry->takeCacheEntry());
         return true;
     }
 
     // Check pending speculative revalidations.
-    if (!m_pendingPreloads.contains(storageKey))
+    if (!m_pendingPreloads.contains(storageKey)) {
+        if (m_notPreloadedEntries.remove(storageKey))
+            logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::entryWronglyNotWarmedUpKey());
+        else
+            logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::unknownEntryRequestKey());
+
         return false;
+    }
 
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Retrieval: revalidation already in progress for '%s':", storageKey.identifier().utf8().data());
 
@@ -260,13 +309,18 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
         pendingFrameLoad->registerSubresource(resourceKey);
 }
 
-void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry)
+void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, const GlobalFrameID& frameID, WasRevalidated wasRevalidated)
 {
     ASSERT(entry);
     ASSERT(!entry->needsValidation());
     auto key = entry->key();
-    m_preloadedEntries.add(key, std::make_unique<PreloadedEntry>(WTF::move(entry), [this, key]() {
-        m_preloadedEntries.remove(key);
+    m_preloadedEntries.add(key, std::make_unique<PreloadedEntry>(WTF::move(entry), wasRevalidated, [this, key, frameID] {
+        auto preloadedEntry = m_preloadedEntries.take(key);
+        ASSERT(preloadedEntry);
+        if (preloadedEntry->wasRevalidated())
+            logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey());
+        else
+            logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey());
     }));
 }
 
@@ -316,16 +370,19 @@ void SpeculativeLoadManager::revalidateEntry(std::unique_ptr<Entry> entry, const
 
     auto key = entry->key();
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
-    auto revalidator = std::make_unique<SpeculativeLoad>(frameID, constructRevalidationRequest(*entry), WTF::move(entry), [this, key](std::unique_ptr<Entry> revalidatedEntry) {
+    auto revalidator = std::make_unique<SpeculativeLoad>(frameID, constructRevalidationRequest(*entry), WTF::move(entry), [this, key, frameID](std::unique_ptr<Entry> revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         auto protectRevalidator = m_pendingPreloads.take(key);
         LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculative revalidation completed for '%s':", key.identifier().utf8().data());
 
-        if (satisfyPendingRequests(key, revalidatedEntry.get()))
+        if (satisfyPendingRequests(key, revalidatedEntry.get())) {
+            if (revalidatedEntry)
+                logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey());
             return;
+        }
 
         if (revalidatedEntry)
-            addPreloadedEntry(WTF::move(revalidatedEntry));
+            addPreloadedEntry(WTF::move(revalidatedEntry), frameID, WasRevalidated::Yes);
     });
     m_pendingPreloads.add(key, WTF::move(revalidator));
 }
@@ -336,8 +393,11 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& f
     retrieveEntryFromStorage(key, [this, key, frameID](std::unique_ptr<Entry> entry) {
         m_pendingPreloads.remove(key);
 
-        if (satisfyPendingRequests(key, entry.get()))
+        if (satisfyPendingRequests(key, entry.get())) {
+            if (entry)
+                logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey());
             return;
+        }
 
         if (!entry)
             return;
@@ -345,17 +405,23 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const GlobalFrameID& f
         if (entry->needsValidation())
             revalidateEntry(WTF::move(entry), frameID);
         else
-            addPreloadedEntry(WTF::move(entry));
+            addPreloadedEntry(WTF::move(entry), frameID, WasRevalidated::No);
     });
 }
 
 void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry)
 {
     for (auto& subresource : entry.subresources()) {
+        auto key = subresource.key;
         if (!subresource.value.isTransient)
-            preloadEntry(subresource.key, frameID);
-        else
+            preloadEntry(key, frameID);
+        else {
             LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Not preloading '%s' because it is marked as transient", subresource.key.identifier().utf8().data());
+            m_notPreloadedEntries.add(key, std::make_unique<ExpiringEntry>([this, key, frameID] {
+                logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey());
+                m_notPreloadedEntries.remove(key);
+            }));
+        }
     }
 }
 

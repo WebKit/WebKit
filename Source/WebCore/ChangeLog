@@ -1,3 +1,23 @@
+2015-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Add diagnostic logging to measure speculative revalidation accuracy
+        https://bugs.webkit.org/show_bug.cgi?id=151953
+        <rdar://problem/23092196>
+
+        Reviewed by Darin Adler.
+
+        Add diagnostic logging to measure speculative revalidation accuracy.
+
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey):
+        (WebCore::DiagnosticLoggingKeys::entryWronglyNotWarmedUpKey):
+        (WebCore::DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey):
+        (WebCore::DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey):
+        (WebCore::DiagnosticLoggingKeys::unknownEntryRequestKey):
+        (WebCore::DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey):
+        (WebCore::DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/index-cursor.html fails.

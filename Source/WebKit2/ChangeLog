@@ -1,3 +1,45 @@
+2015-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Add diagnostic logging to measure speculative revalidation accuracy
+        https://bugs.webkit.org/show_bug.cgi?id=151953
+        <rdar://problem/23092196>
+
+        Reviewed by Darin Adler.
+
+        We track the following:
+        1. Resources we knew about AND did not get requested
+           A. We did not speculate (Good)
+           B. We speculated but did not go to network (Bad)
+           C. We speculated and went to network (Very bad)
+        2. Resources we did not know about (Neutral)
+        3. Resources we knew about AND got requested
+           A. We did not speculate (Bad)
+           B. We speculated but did not go to network (Good)
+           C. We speculated and went to network (Very good)
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::allSpeculativeLoadingDiagnosticMessages):
+        (WebKit::NetworkCache::printSpeculativeLoadingDiagnosticMessageCounts):
+        (WebKit::NetworkCache::logSpeculativeLoadingDiagnosticMessage):
+        (WebKit::NetworkCache::SpeculativeLoadManager::ExpiringEntry::ExpiringEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::PreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PreloadedEntry::wasRevalidated):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::markLoadAsCompleted):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieve):
+        (WebKit::NetworkCache::SpeculativeLoadManager::addPreloadedEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::revalidateEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::preloadEntry):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        (WebKit::NetworkCache::makeSubresourcesKey): Deleted.
+        (WebKit::NetworkCache::constructRevalidationRequest): Deleted.
+        (WebKit::NetworkCache::responseNeedsRevalidation): Deleted.
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::saveToDiskIfReady): Deleted.
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveEntryFromStorage): Deleted.
+        (WebKit::NetworkCache::SpeculativeLoadManager::satisfyPendingRequests): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+
 2015-12-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] REGRESSION(r173394): MiniBrowser stucked in an infinite loop if NETWORK_CACHE is disabled

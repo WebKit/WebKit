@@ -50,10 +50,11 @@ public:
     void registerLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, const Key& resourceKey);
 
     typedef std::function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
-    bool retrieve(const Key& storageKey, const RetrieveCompletionHandler&);
+    bool retrieve(const GlobalFrameID&, const Key& storageKey, const RetrieveCompletionHandler&);
 
 private:
-    void addPreloadedEntry(std::unique_ptr<Entry>);
+    enum class WasRevalidated { No, Yes };
+    void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, WasRevalidated);
     void preloadEntry(const Key&, const GlobalFrameID&);
     void retrieveEntryFromStorage(const Key&, const RetrieveCompletionHandler&);
     void revalidateEntry(std::unique_ptr<Entry>, const GlobalFrameID&);
@@ -71,6 +72,9 @@ private:
 
     class PreloadedEntry;
     HashMap<Key, std::unique_ptr<PreloadedEntry>> m_preloadedEntries;
+
+    class ExpiringEntry;
+    HashMap<Key, std::unique_ptr<ExpiringEntry>> m_notPreloadedEntries; // For logging.
 };
 
 } // namespace NetworkCache
