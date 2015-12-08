@@ -84,7 +84,7 @@ bool UniqueIDBDatabase::hasAnyPendingCallbacks() const
         || !m_countCallbacks.isEmpty();
 }
 
-bool UniqueIDBDatabase::maybeDeleteDatabase()
+bool UniqueIDBDatabase::maybeDeleteDatabase(IDBServerOperation* newestDeleteOperation)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::maybeDeleteDatabase");
@@ -95,6 +95,10 @@ bool UniqueIDBDatabase::maybeDeleteDatabase()
             notifyConnectionsOfVersionChange(0);
             m_hasNotifiedConnectionsOfDelete = true;
         }
+
+        if (newestDeleteOperation)
+            newestDeleteOperation->connection().notifyOpenDBRequestBlocked(newestDeleteOperation->requestData().requestIdentifier(), m_databaseInfo->version(), 0);
+
         return false;
     }
 
@@ -224,6 +228,7 @@ void UniqueIDBDatabase::handleDelete(IDBConnectionToClient& connection, const ID
     LOG(IndexedDB, "(main) UniqueIDBDatabase::handleDelete");
 
     auto operation = IDBServerOperation::create(connection, requestData);
+    auto* rawOperation = &operation.get();
     m_pendingDeleteDatabaseOperations.append(WTF::move(operation));
 
     // If a different request has already come in to delete this database, there's nothing left to do.
@@ -233,7 +238,7 @@ void UniqueIDBDatabase::handleDelete(IDBConnectionToClient& connection, const ID
 
     m_deletePending = true;
 
-    maybeDeleteDatabase();
+    maybeDeleteDatabase(rawOperation);
 }
 
 void UniqueIDBDatabase::startVersionChangeTransaction()
@@ -904,7 +909,7 @@ void UniqueIDBDatabase::deleteOrRunTransactionsTimerFired()
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteOrRunTransactionsTimerFired");
 
-    if (m_deletePending && maybeDeleteDatabase())
+    if (m_deletePending && maybeDeleteDatabase(nullptr))
         return;
 
     // If the database was not deleted in the previous step, try to run a transaction now.

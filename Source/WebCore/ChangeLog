@@ -1,5 +1,20 @@
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Fire blocked events for delete requests that are blocked.
+        https://bugs.webkit.org/show_bug.cgi?id=152015
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Previous failing tests now pass, and previously timing-out tests now complete).
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeDeleteDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteOrRunTransactionsTimerFired):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+2015-12-08  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Fire blocked events for upgrade requests that are blocked.
         https://bugs.webkit.org/show_bug.cgi?id=152007
 

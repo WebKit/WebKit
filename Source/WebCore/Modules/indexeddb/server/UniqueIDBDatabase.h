@@ -106,7 +106,7 @@ private:
     
     void handleOpenDatabaseOperations();
     void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
-    bool maybeDeleteDatabase();
+    bool maybeDeleteDatabase(IDBServerOperation*);
     bool hasAnyOpenConnections() const;
 
     void startVersionChangeTransaction();
