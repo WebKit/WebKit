@@ -1,5 +1,71 @@
 2015-12-07  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r191731.
+
+    2015-10-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Exploitable crash happens when an SVG contains an indirect resource inheritance cycle
+            https://bugs.webkit.org/show_bug.cgi?id=150203
+
+            Reviewed by Brent Fulgham.
+
+            Detecting cycles in SVG resource references happens in two places.
+            1. In SVGResourcesCycleSolver::resolveCycles() which it is called from 
+               SVGResourcesCache::addResourcesFromRenderer(). When a cycle is deleted,
+               SVGResourcesCycleSolver::breakCycle() is called to break the link. In
+               the case of a cyclic resource inheritance, SVGResources::resetLinkedResource()
+               is called to break this cycle.
+            2. SVGPatternElement::collectPatternAttributes() which is called from
+               RenderSVGResourcePattern::buildPattern(). The purpose is to resolve
+               the pattern attributes and to build a tile image which can be used to
+               fill the SVG element renderer. Detecting the cyclic resource reference
+               in this function is not sufficient and can detect simple cycles like
+                <pattern id="a" xlink:href="#b"/>
+                <pattern id="b" xlink:href="#a"/>.
+               But it does not detect cycles like:
+                <pattern id="a">
+                    <rect fill="url(#b)"/>
+                </pattern>
+                <pattern id="b" xlink:href="#a"/>.
+
+            The fix is to get rid of SVGPatternElement::collectPatternAttributes() which
+            uses SVGURIReference::targetElementFromIRIString() to navigates through the
+            referenced resource elements and tries to detect cycles. Instead we can
+            implement RenderSVGResourcePattern::collectPatternAttributes() which calls
+            SVGResourcesCache::cachedResourcesForRenderer() to get the SVGResources
+            of the pattern. Then we use SVGResources::linkedResource() to navigate the
+            resource inheritance tree. The cached SVGResources is guaranteed to be free
+            of cycles.
+
+            Tests: svg/custom/pattern-content-inheritance-cycle.svg
+
+            * rendering/svg/RenderSVGResourcePattern.cpp:
+            (WebCore::RenderSVGResourcePattern::collectPatternAttributes):
+            Collect the pattern attributes through the cachedResourcesForRenderer().
+
+            (WebCore::RenderSVGResourcePattern::buildPattern):
+            Direct the call to the renderer function.
+
+            * rendering/svg/RenderSVGResourcePattern.h:
+
+            * rendering/svg/RenderSVGRoot.cpp:
+            (WebCore::RenderSVGRoot::layout):
+            RenderSVGRoot needs to call SVGResourcesCache::clientStyleChanged() for all
+            the invalidated resources. If an attribute of an SVG resource was updated
+            dynamically, the cached SVGResources associated with the renderer of this
+            resource was stale.
+
+            * rendering/svg/SVGRenderTreeAsText.cpp:
+            (WebCore::writeSVGResourceContainer):
+            Direct the call to the renderer function.        
+
+            * svg/SVGPatternElement.cpp:
+            (WebCore::SVGPatternElement::collectPatternAttributes):
+            (WebCore::setPatternAttributes): Deleted.
+            collectPatternAttributes() is a replacement of setPatternAttributes().
+
+2015-12-07  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192604.
 
     2015-11-18  Jiewen Tan  <jiewen_tan@apple.com>
