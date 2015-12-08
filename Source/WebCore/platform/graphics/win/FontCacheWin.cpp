@@ -528,7 +528,6 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
 
     unsigned traitsMask = 0;
     traitsMask |= logFont->lfItalic ? FontStyleItalicMask : FontStyleNormalMask;
-    traitsMask |= FontVariantNormalMask;
     LONG weight = adjustedGDIFontWeight(logFont->lfWeight, procData->m_familyName);
     traitsMask |= weight == FW_THIN ? FontWeight100Mask :
         weight == FW_EXTRALIGHT ? FontWeight200Mask :

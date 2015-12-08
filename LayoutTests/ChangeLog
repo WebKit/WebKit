@@ -1,3 +1,13 @@
+2015-11-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font selection should not consult font-variant property
+        https://bugs.webkit.org/show_bug.cgi?id=151537
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-selection-font-variant-expected.html: Added.
+        * fast/text/font-selection-font-variant.html: Added.
+
 2015-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete FontPlatformData::allowsLigatures()

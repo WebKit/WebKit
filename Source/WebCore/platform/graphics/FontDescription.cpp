@@ -87,7 +87,6 @@ FontWeight FontDescription::bolderWeight(void) const
 FontTraitsMask FontDescription::traitsMask() const
 {
     return static_cast<FontTraitsMask>((m_italic ? FontStyleItalicMask : FontStyleNormalMask)
-            | (m_smallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask)
             | (FontWeight100Mask << (m_weight - FontWeight100)));
     
 }
