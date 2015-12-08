@@ -32,6 +32,7 @@
 #include "FTLInlineCacheDescriptor.h"
 #include "GPRInfo.h"
 #include "JITAddGenerator.h"
+#include "JITDivGenerator.h"
 #include "JITMulGenerator.h"
 #include "JITSubGenerator.h"
 #include "ScratchRegisterAllocator.h"
@@ -153,7 +154,12 @@ private:
     GPRReg m_savedTagTypeNumberRegister { InvalidGPRReg };
 };
 
-template<typename BinaryArithOpGenerator>
+enum ScratchFPRUsage {
+    DontNeedScratchFPR,
+    NeedScratchFPR
+};
+
+template<typename BinaryArithOpGenerator, ScratchFPRUsage scratchFPRUsage = DontNeedScratchFPR>
 void generateBinaryArithOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     GPRReg result, GPRReg left, GPRReg right, RegisterSet usedRegisters,
     CCallHelpers::Jump& done, CCallHelpers::Jump& slowPathStart)
@@ -166,6 +172,8 @@ void generateBinaryArithOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     FPRReg leftFPR = allocator.allocateScratchFPR();
     FPRReg rightFPR = allocator.allocateScratchFPR();
     FPRReg scratchFPR = InvalidFPRReg;
+    if (scratchFPRUsage == NeedScratchFPR)
+        scratchFPR = allocator.allocateScratchFPR();
 
     BinaryArithOpGenerator gen(ic.leftOperand(), ic.rightOperand(), JSValueRegs(result),
         JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
@@ -195,6 +203,9 @@ void generateBinaryOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
     CCallHelpers::Jump& done, CCallHelpers::Jump& slowPathStart)
 {
     switch (ic.nodeType()) {
+    case ArithDiv:
+        generateBinaryArithOpFastPath<JITDivGenerator, NeedScratchFPR>(ic, jit, result, left, right, usedRegisters, done, slowPathStart);
+        break;
     case ArithMul:
         generateBinaryArithOpFastPath<JITMulGenerator>(ic, jit, result, left, right, usedRegisters, done, slowPathStart);
         break;

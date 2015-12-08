@@ -799,14 +799,13 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT2;
-    FPRReg scratchFPR = InvalidFPRReg;
 #else
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT4;
-    FPRReg scratchFPR = fpRegT2;
 #endif
+    FPRReg scratchFPR = fpRegT2;
 
     uint32_t* profilingCounter = &m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter;
 

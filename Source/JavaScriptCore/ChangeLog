@@ -1,3 +1,66 @@
+2015-12-08  Mark Lam  <mark.lam@apple.com>
+
+        Polymorphic operand types for DFG and FTL div.
+        https://bugs.webkit.org/show_bug.cgi?id=151747
+
+        Reviewed by Geoffrey Garen.
+
+        Perf on benchmarks is neutral.  The new JSRegress ftl-object-div test shows
+        a speed up not from the div operator itself, but from the fact that the
+        polymorphic operand types support now allow the test function to run without OSR
+        exiting, thereby realizing the DFG and FTL's speed up on other work that the test
+        function does.
+
+        This patch has passed the layout tests on x86_64 with a debug build.
+        It passed the JSC tests with x86 and x86_64 debug builds.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+
+        * ftl/FTLCompileBinaryOp.cpp:
+        (JSC::FTL::generateBinaryArithOpFastPath):
+        (JSC::FTL::generateBinaryOpFastPath):
+
+        * ftl/FTLInlineCacheDescriptor.h:
+        * ftl/FTLInlineCacheDescriptorInlines.h:
+        (JSC::FTL::ArithDivDescriptor::ArithDivDescriptor):
+        (JSC::FTL::ArithDivDescriptor::icSize):
+
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfArithDiv):
+        * ftl/FTLInlineCacheSize.h:
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        - Fixed a cut-paste bug where the op_mul IC was using the op_sub IC size.
+          This bug is benign because the op_sub IC size turns out to be larger
+          than op_mul needs.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithDiv):
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div):
+        - Fixed a bug where the scratchFPR was not allocated for the 64bit port.
+          This bug is benign because the scratchFPR is only needed if we are
+          using scratchGPR register (used for branchConvertDoubleToInt32()) is
+          >= X86Registers::r8.  Since we're always using regT2 for the scratchT2,
+          the scratchFPR is never needed.   However, we should fix this anyway to
+          be correct.
+
+        * tests/stress/op_div.js:
+        - Fixed some test values.
+
 2015-12-05 Aleksandr Skachkov   <gskachkov@gmail.com>
 
         [ES6] "super" and "this" should be lexically bound inside an arrow function and should live in a JSLexicalEnvironment

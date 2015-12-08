@@ -354,11 +354,15 @@ private:
             SpeculatedType right = node->child2()->prediction();
             
             if (left && right) {
-                if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
-                    && node->canSpeculateInt32(m_pass))
-                    changed |= mergePrediction(SpecInt32);
-                else
-                    changed |= mergePrediction(SpecBytecodeDouble);
+                if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
+                    && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
+                    if (Node::shouldSpeculateInt32OrBooleanForArithmetic(node->child1().node(), node->child2().node())
+                        && node->canSpeculateInt32(m_pass))
+                        changed |= mergePrediction(SpecInt32);
+                    else
+                        changed |= mergePrediction(SpecBytecodeDouble);
+                } else
+                    changed |= mergePrediction(SpecInt32 | SpecBytecodeDouble);
             }
             break;
         }

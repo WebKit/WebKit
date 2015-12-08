@@ -128,6 +128,23 @@ size_t sizeOfIn()
 #endif
 }
 
+size_t sizeOfArithDiv()
+{
+#if CPU(ARM64)
+#ifdef NDEBUG
+    return 180; // ARM64 release.
+#else
+    return 276; // ARM64 debug.
+#endif
+#else // CPU(X86_64)
+#ifdef NDEBUG
+    return 199; // X86_64 release.
+#else
+    return 286; // X86_64 debug.
+#endif
+#endif
+}
+
 size_t sizeOfArithMul()
 {
 #if CPU(ARM64)

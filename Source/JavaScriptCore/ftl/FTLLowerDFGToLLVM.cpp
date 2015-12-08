@@ -240,6 +240,7 @@ public:
                             maxNumberOfCatchSpills = std::max(maxNumberOfCatchSpills, m_graph.localsLiveInBytecode(opCatchOrigin).bitCount());
                         break;
                     }
+                    case ArithDiv:
                     case ArithMul:
                     case ArithSub:
                     case GetById:
@@ -1861,7 +1862,7 @@ private:
             // Arguments: id, bytes, target, numArgs, args...
             StackmapArgumentList arguments;
             arguments.append(m_out.constInt64(stackmapID));
-            arguments.append(m_out.constInt32(ArithSubDescriptor::icSize()));
+            arguments.append(m_out.constInt32(ArithMulDescriptor::icSize()));
             arguments.append(constNull(m_out.ref8));
             arguments.append(m_out.constInt32(2));
             arguments.append(left);
@@ -1943,7 +1944,72 @@ private:
                 lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
-            
+
+        case UntypedUse: {
+            Edge& leftChild = m_node->child1();
+            Edge& rightChild = m_node->child2();
+
+            if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
+                setJSValue(vmCall(m_out.int64, m_out.operation(operationValueDiv), m_callFrame,
+                    lowJSValue(leftChild), lowJSValue(rightChild)));
+                return;
+            }
+
+            unsigned stackmapID = m_stackmapIDs++;
+
+            if (Options::verboseCompilation())
+                dataLog("    Emitting ArithDiv patchpoint with stackmap #", stackmapID, "\n");
+
+#if FTL_USES_B3
+            CRASH();
+#else
+            LValue left = lowJSValue(leftChild);
+            LValue right = lowJSValue(rightChild);
+
+            SnippetOperand leftOperand(abstractValue(leftChild).resultType());
+            SnippetOperand rightOperand(abstractValue(rightChild).resultType());
+
+            if (leftChild->isInt32Constant())
+                leftOperand.setConstInt32(leftChild->asInt32());
+#if USE(JSVALUE64)
+            else if (leftChild->isDoubleConstant())
+                leftOperand.setConstDouble(leftChild->asNumber());
+#endif
+
+            if (leftOperand.isConst()) {
+                // The snippet generator only supports 1 argument as a constant.
+                // Ignore the rightChild's const-ness.
+            } else if (rightChild->isInt32Constant())
+                rightOperand.setConstInt32(rightChild->asInt32());
+#if USE(JSVALUE64)
+            else if (rightChild->isDoubleConstant())
+                rightOperand.setConstDouble(rightChild->asNumber());
+#endif
+
+            RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+            // Arguments: id, bytes, target, numArgs, args...
+            StackmapArgumentList arguments;
+            arguments.append(m_out.constInt64(stackmapID));
+            arguments.append(m_out.constInt32(ArithDivDescriptor::icSize()));
+            arguments.append(constNull(m_out.ref8));
+            arguments.append(m_out.constInt32(2));
+            arguments.append(left);
+            arguments.append(right);
+
+            appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
+                ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
+
+            LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
+            setInstructionCallingConvention(call, LLVMAnyRegCallConv);
+
+            m_ftlState.binaryOps.append(ArithDivDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
+
+            setJSValue(call);
+#endif // FTL_USES_B3
+            break;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;

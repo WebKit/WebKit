@@ -673,6 +673,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 typeOfDoubleQuotient(
                     forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
+        case UntypedUse:
+            clobberWorld(node->origin.semantic, clobberLimit);
+            forNode(node).setType(m_graph, SpecBytecodeNumber);
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;

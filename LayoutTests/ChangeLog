@@ -1,3 +1,16 @@
+2015-12-08  Mark Lam  <mark.lam@apple.com>
+
+        Polymorphic operand types for DFG and FTL div.
+        https://bugs.webkit.org/show_bug.cgi?id=151747
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/ftl-object-div-expected.txt: Added.
+        * js/regress/ftl-object-div.html: Added.
+        * js/regress/script-tests/ftl-object-div.js: Added.
+        (o1.valueOf):
+        (foo):
+
 2015-12-08  Zalan Bujtas  <zalan@apple.com>
 
         Do not insert positioned renderers to multiple gPositionedDescendantsMap.

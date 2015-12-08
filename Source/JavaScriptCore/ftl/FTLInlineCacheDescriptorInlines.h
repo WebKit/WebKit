@@ -35,6 +35,18 @@
 
 namespace JSC { namespace FTL {
 
+ArithDivDescriptor::ArithDivDescriptor(unsigned stackmapID, CodeOrigin codeOrigin,
+    const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+    : BinaryOpDescriptor(DFG::ArithDiv, stackmapID, codeOrigin, icSize(),
+        "ArithDiv", "ArithDiv IC fast path", DFG::operationValueDiv, leftOperand, rightOperand)
+{
+}
+
+size_t ArithDivDescriptor::icSize()
+{
+    return sizeOfArithDiv();
+}
+
 ArithMulDescriptor::ArithMulDescriptor(unsigned stackmapID, CodeOrigin codeOrigin,
     const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
     : BinaryOpDescriptor(DFG::ArithMul, stackmapID, codeOrigin, icSize(),

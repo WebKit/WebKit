@@ -247,15 +247,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case ArithAdd:
     case ArithNegate:
-    case ArithDiv:
     case ArithMod:
     case DoubleAsInt32:
     case UInt32ToNumber:
         def(PureValue(node, node->arithMode()));
         return;
 
-    case ArithSub:
+    case ArithDiv:
     case ArithMul:
+    case ArithSub:
         switch (node->binaryUseKind()) {
         case Int32Use:
         case Int52RepUse:
