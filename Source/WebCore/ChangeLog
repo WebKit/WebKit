@@ -1,3 +1,14 @@
+2015-12-08  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Remove unneeded function.
+        https://bugs.webkit.org/show_bug.cgi?id=151989
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::createOptimalVideoType):
+        (MFCreateMediaType): Deleted.
+
 2015-12-08  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Adopt WebFullScreenVideoRootViewController.
