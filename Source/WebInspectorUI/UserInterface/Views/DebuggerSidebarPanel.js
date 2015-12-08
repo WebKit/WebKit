@@ -122,6 +122,8 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._globalBreakpointsFolderTreeElement.appendChild(this._allUncaughtExceptionsBreakpointTreeElement);
         this._globalBreakpointsFolderTreeElement.expand();
 
+        this.suppressFilteringOnTreeElements([this._globalBreakpointsFolderTreeElement, this._allExceptionsBreakpointTreeElement, this._allUncaughtExceptionsBreakpointTreeElement]);
+
         var breakpointsRow = new WebInspector.DetailsSectionRow;
         breakpointsRow.element.appendChild(this._breakpointsContentTreeOutline.element);
 

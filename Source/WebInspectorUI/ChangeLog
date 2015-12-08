@@ -1,3 +1,23 @@
+2015-12-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Global Breakpoints should always be visible
+        https://bugs.webkit.org/show_bug.cgi?id=151066
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        Turn off filtering for Global Breakpoints elements.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.suppressFilteringOnTreeElements):
+        Allow filtering to be turned off for specific tree elements.
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement):
+        Make element visible if filtering suppressed.
+        (WebInspector.NavigationSidebarPanel.prototype._checkForEmptyFilterResults):
+        Visible elements with filtering disabled aren't considered when
+        showing/hiding the empty content placeholder.
+
 2015-12-07  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Uncaught Exception page should have better styles and handle more error cases

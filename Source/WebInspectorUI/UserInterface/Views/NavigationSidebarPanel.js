@@ -177,6 +177,16 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         return contentTreeOutline;
     }
 
+    suppressFilteringOnTreeElements(treeElements)
+    {
+        console.assert(Array.isArray(treeElements), "TreeElements should be an array.");
+
+        for (let treeElement of treeElements)
+            treeElement[WebInspector.NavigationSidebarPanel.SuppressFilteringSymbol] = true;
+
+        this._updateFilter();
+    }
+
     treeElementForRepresentedObject(representedObject)
     {
         return this._contentTreeOutline.getCachedTreeElement(representedObject);
@@ -385,7 +395,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             }
         }
 
-        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstFilterFunctions(treeElement, flags) && this.matchTreeElementAgainstCustomFilters(treeElement, flags)) {
+        let suppressFiltering = treeElement[WebInspector.NavigationSidebarPanel.SuppressFilteringSymbol];
+
+        if (suppressFiltering || (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstFilterFunctions(treeElement, flags) && this.matchTreeElementAgainstCustomFilters(treeElement, flags))) {
             // Make this element visible since it matches.
             makeVisible();
 
@@ -498,7 +510,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         // Iterate over all the top level tree elements. If any are visible, return early.
         var currentTreeElement = this._contentTreeOutline.children[0];
         while (currentTreeElement) {
-            if (!currentTreeElement.hidden) {
+            if (!currentTreeElement.hidden && !currentTreeElement[WebInspector.NavigationSidebarPanel.SuppressFilteringSymbol]) {
                 // Not hidden, so hide any empty content message.
                 this.hideEmptyContentPlaceholder();
                 this._emptyFilterResults = false;
@@ -717,6 +729,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     }
 };
 
+WebInspector.NavigationSidebarPanel.SuppressFilteringSymbol = Symbol("supresss-filtering");
 WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol = Symbol("was-expanded-during-filtering");
 
 WebInspector.NavigationSidebarPanel.OverflowShadowElementStyleClassName = "overflow-shadow";
