@@ -1,3 +1,25 @@
+2015-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        Make paintTextWithShadows a member function (TextPainter).
+        https://bugs.webkit.org/show_bug.cgi?id=151979
+
+        Reviewed by Simon Fraser.
+
+        This patch also simplifies paintTextWithShadows and
+        rearranges some of the functions' arguments. 
+
+        No change in functionality.
+
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::drawTextOrEmphasisMarks):
+        (WebCore::TextPainter::paintTextWithShadows):
+        (WebCore::TextPainter::paintEmphasisMarksIfNeeded):
+        (WebCore::TextPainter::paintTextWithStyle):
+        (WebCore::TextPainter::paintText):
+        (WebCore::drawTextOrEmphasisMarks): Deleted.
+        (WebCore::paintTextWithShadows): Deleted.
+        * rendering/TextPainter.h:
+
 2015-12-07  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/factory-deletedatabase.html fails.

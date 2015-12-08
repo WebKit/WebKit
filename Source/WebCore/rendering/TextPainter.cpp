@@ -56,15 +56,6 @@ TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, b
 {
 }
 
-static void drawTextOrEmphasisMarks(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
-    int emphasisMarkOffset, const FloatPoint& point, const int from, const int to)
-{
-    if (emphasisMark.isEmpty())
-        context.drawText(font, textRun, point, from, to);
-    else
-        context.drawEmphasisMarks(font, textRun, emphasisMark, point + IntSize(0, emphasisMarkOffset), from, to);
-}
-
 ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow, const FloatRect& textRect, bool lastShadowIterationShouldDrawText, bool opaque, FontOrientation orientation)
     : m_context(context)
     , m_shadow(shadow)
@@ -113,41 +104,53 @@ ShadowApplier::~ShadowApplier()
         m_context.clearShadow();
 }
 
-static void paintTextWithShadows(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
-    int emphasisMarkOffset, int startOffset, int endOffset, int truncationPoint, const FloatPoint& textOrigin, const FloatRect& boxRect,
-    const ShadowData* shadow, bool stroked, bool horizontal)
+void TextPainter::drawTextOrEmphasisMarks(const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
+    int emphasisMarkOffset, const FloatPoint& textOrigin, int startOffset, int endOffset)
 {
-    Color fillColor = context.fillColor();
+    auto drawText = [&](int from, int to)
+    {
+        if (emphasisMark.isEmpty())
+            m_context.drawText(font, textRun, textOrigin, from, to);
+        else
+            m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + IntSize(0, emphasisMarkOffset), from, to);
+    };
+
+    if (startOffset <= endOffset) {
+        drawText(startOffset, endOffset);
+        return;
+    }
+    
+    if (endOffset > 0)
+        drawText(0, endOffset);
+    if (startOffset < m_length)
+        drawText(startOffset, m_length);
+}
+
+void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
+    int emphasisMarkOffset, int startOffset, int endOffset, const FloatPoint& textOrigin, bool stroked)
+{
+    if (!shadow) {
+        drawTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
+        return;
+    }
+
+    Color fillColor = m_context.fillColor();
     bool opaque = !fillColor.hasAlpha();
     bool lastShadowIterationShouldDrawText = !stroked && opaque;
     if (!opaque)
-        context.setFillColor(Color::black);
-
-    do {
-        ShadowApplier shadowApplier(context, shadow, boxRect, lastShadowIterationShouldDrawText, opaque, horizontal ? Horizontal : Vertical);
-        if (shadowApplier.nothingToDraw()) {
-            shadow = shadow->next();
-            continue;
-        }
-
-        IntSize extraOffset = roundedIntSize(shadowApplier.extraOffset());
-        if (!shadow && !opaque)
-            context.setFillColor(fillColor);
-
-        if (startOffset <= endOffset)
-            drawTextOrEmphasisMarks(context, font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + extraOffset, startOffset, endOffset);
-        else {
-            if (endOffset > 0)
-                drawTextOrEmphasisMarks(context, font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + extraOffset, 0, endOffset);
-            if (startOffset < truncationPoint)
-                drawTextOrEmphasisMarks(context, font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + extraOffset, startOffset, truncationPoint);
-        }
-
-        if (!shadow)
-            break;
-
+        m_context.setFillColor(Color::black);
+    while (shadow) {
+        ShadowApplier shadowApplier(m_context, shadow, m_boxRect, lastShadowIterationShouldDrawText, opaque, m_textBoxIsHorizontal ? Horizontal : Vertical);
+        if (!shadowApplier.nothingToDraw())
+            drawTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + shadowApplier.extraOffset(), startOffset, endOffset);
         shadow = shadow->next();
-    } while (shadow || !lastShadowIterationShouldDrawText);
+    }
+
+    if (!lastShadowIterationShouldDrawText) {
+        if (!opaque)
+            m_context.setFillColor(fillColor);
+        drawTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
+    }
 }
 
 void TextPainter::paintEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle& paintStyle, const ShadowData* shadow)
@@ -164,18 +167,18 @@ void TextPainter::paintEmphasisMarksIfNeeded(int startOffset, int endOffset, con
         m_context.concatCTM(rotation(m_boxRect, Clockwise));
 
     // FIXME: Truncate right-to-left text correctly.
-    paintTextWithShadows(m_context, m_combinedText ? m_combinedText->originalFont() : m_font, emphasisMarkTextRun, m_emphasisMark, m_emphasisMarkOffset, startOffset, endOffset, m_length, emphasisMarkTextOrigin, m_boxRect, shadow, paintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
+    paintTextWithShadows(shadow, m_combinedText ? m_combinedText->originalFont() : m_font, emphasisMarkTextRun, m_emphasisMark, m_emphasisMarkOffset, startOffset, endOffset, emphasisMarkTextOrigin, paintStyle.strokeWidth > 0);
 
     if (m_combinedText)
         m_context.concatCTM(rotation(m_boxRect, Counterclockwise));
 }
 
-void TextPainter::paintTextWithStyle(int startOffset, int endOffset, const TextPaintStyle& paintStyle, const ShadowData* shadow)
+void TextPainter::paintTextWithStyle(const TextPaintStyle& paintStyle, int startOffset, int endOffset, const ShadowData* shadow)
 {
     GraphicsContextStateSaver stateSaver(m_context, paintStyle.strokeWidth > 0);
     updateGraphicsContext(m_context, paintStyle);
     // FIXME: Truncate right-to-left text correctly.
-    paintTextWithShadows(m_context, m_font, m_textRun, nullAtom, 0, startOffset, endOffset, m_length, m_textOrigin, m_boxRect, shadow, paintStyle.strokeWidth > 0, m_textBoxIsHorizontal);
+    paintTextWithShadows(shadow, m_font, m_textRun, nullAtom, 0, startOffset, endOffset, m_textOrigin, paintStyle.strokeWidth > 0);
     paintEmphasisMarksIfNeeded(startOffset, endOffset, paintStyle, shadow);
 }
     
@@ -187,12 +190,12 @@ void TextPainter::paintText()
         bool fullLengthPaint = !m_paintSelectedTextSeparately || m_endPositionInTextRun <= m_startPositionInTextRun;
         int startOffset = fullLengthPaint ? 0 : m_endPositionInTextRun;
         int endOffset = fullLengthPaint ? m_length : m_startPositionInTextRun;
-        paintTextWithStyle(startOffset, endOffset, m_textPaintStyle, m_textShadow);
+        paintTextWithStyle(m_textPaintStyle, startOffset, endOffset, m_textShadow);
     }
 
     // paint only the text that is selected
     if ((m_paintSelectedTextOnly || m_paintSelectedTextSeparately) && m_startPositionInTextRun < m_endPositionInTextRun)
-        paintTextWithStyle(m_startPositionInTextRun, m_endPositionInTextRun, m_selectionPaintStyle, m_selectionShadow);
+        paintTextWithStyle(m_selectionPaintStyle, m_startPositionInTextRun, m_endPositionInTextRun, m_selectionShadow);
 }
 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
