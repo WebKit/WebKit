@@ -82,6 +82,7 @@ public:
         NonZero = X86Assembler::ConditionNE
     };
 
+    // FIXME: it would be neat to rename this to FloatingPointCondition in every assembler.
     enum DoubleCondition {
         // These conditions will only evaluate to true if the comparison is ordered - i.e. neither operand is NaN.
         DoubleEqual = X86Assembler::ConditionE | DoubleConditionBitSpecial,
@@ -523,6 +524,16 @@ public:
         m_assembler.sqrtsd_mr(src.offset, src.base, dst);
     }
 
+    void sqrtFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.sqrtss_rr(src, dst);
+    }
+
+    void sqrtFloat(Address src, FPRegisterID dst)
+    {
+        m_assembler.sqrtss_mr(src.offset, src.base, dst);
+    }
+
     void absDouble(FPRegisterID src, FPRegisterID dst)
     {
         ASSERT(src != dst);
@@ -779,12 +790,19 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.movsd_mr(address.offset, address.base, dest);
     }
-    
+
     void loadDouble(BaseIndex address, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
         m_assembler.movsd_mr(address.offset, address.base, address.index, address.scale, dest);
     }
+
+    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movss_mr(address.offset, address.base, dest);
+    }
+
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
@@ -802,7 +820,13 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.movsd_rm(src, address.offset, address.base, address.index, address.scale);
     }
-    
+
+    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movss_rm(src, address.offset, address.base);
+    }
+
     void storeFloat(FPRegisterID src, BaseIndex address)
     {
         ASSERT(isSSE2Present());
@@ -815,10 +839,22 @@ public:
         m_assembler.cvtsd2ss_rr(src, dst);
     }
 
+    void convertDoubleToFloat(Address address, FPRegisterID dst)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvtsd2ss_mr(address.offset, address.base, dst);
+    }
+
     void convertFloatToDouble(FPRegisterID src, FPRegisterID dst)
     {
         ASSERT(isSSE2Present());
         m_assembler.cvtss2sd_rr(src, dst);
+    }
+
+    void convertFloatToDouble(Address address, FPRegisterID dst)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.cvtss2sd_mr(address.offset, address.base, dst);
     }
 
     void addDouble(FPRegisterID src, FPRegisterID dest)
@@ -844,6 +880,18 @@ public:
         m_assembler.addsd_mr(src.offset, src.base, dest);
     }
 
+    void addFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.addss_rr(src, dest);
+    }
+
+    void addFloat(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.addss_mr(src.offset, src.base, dest);
+    }
+
     void divDouble(FPRegisterID src, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
@@ -865,6 +913,18 @@ public:
         m_assembler.divsd_mr(src.offset, src.base, dest);
     }
 
+    void divFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.divss_rr(src, dest);
+    }
+
+    void divFloat(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.divss_mr(src.offset, src.base, dest);
+    }
+
     void subDouble(FPRegisterID src, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
@@ -884,6 +944,18 @@ public:
     {
         ASSERT(isSSE2Present());
         m_assembler.subsd_mr(src.offset, src.base, dest);
+    }
+
+    void subFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.subss_rr(src, dest);
+    }
+
+    void subFloat(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.subss_mr(src.offset, src.base, dest);
     }
 
     void mulDouble(FPRegisterID src, FPRegisterID dest)
@@ -909,6 +981,18 @@ public:
         m_assembler.mulsd_mr(src.offset, src.base, dest);
     }
 
+    void mulFloat(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.mulss_rr(src, dest);
+    }
+
+    void mulFloat(Address src, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.mulss_mr(src.offset, src.base, dest);
+    }
+
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());
@@ -929,27 +1013,18 @@ public:
             m_assembler.ucomisd_rr(left, right);
         else
             m_assembler.ucomisd_rr(right, left);
+        return jumpAfterFloatingPointCompare(cond, left, right);
+    }
 
-        if (cond == DoubleEqual) {
-            if (left == right)
-                return Jump(m_assembler.jnp());
-            Jump isUnordered(m_assembler.jp());
-            Jump result = Jump(m_assembler.je());
-            isUnordered.link(this);
-            return result;
-        } else if (cond == DoubleNotEqualOrUnordered) {
-            if (left == right)
-                return Jump(m_assembler.jp());
-            Jump isUnordered(m_assembler.jp());
-            Jump isEqual(m_assembler.je());
-            isUnordered.link(this);
-            Jump result = jump();
-            isEqual.link(this);
-            return result;
-        }
+    Jump branchFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
+    {
+        ASSERT(isSSE2Present());
 
-        ASSERT(!(cond & DoubleConditionBitSpecial));
-        return Jump(m_assembler.jCC(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits)));
+        if (cond & DoubleConditionBitInvert)
+            m_assembler.ucomiss_rr(left, right);
+        else
+            m_assembler.ucomiss_rr(right, left);
+        return jumpAfterFloatingPointCompare(cond, left, right);
     }
 
     // Truncates 'src' to an integer, and places the resulting 'dest'.
@@ -1126,32 +1201,18 @@ public:
             m_assembler.ucomisd_rr(left, right);
         else
             m_assembler.ucomisd_rr(right, left);
+        moveConditionallyAfterFloatingPointCompare(cond, left, right, src, dest);
+    }
 
-        if (cond == DoubleEqual) {
-            if (left == right) {
-                m_assembler.cmovnpq_rr(src, dest);
-                return;
-            }
+    void moveConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
+    {
+        ASSERT(isSSE2Present());
 
-            Jump isUnordered(m_assembler.jp());
-            m_assembler.cmoveq_rr(src, dest);
-            isUnordered.link(this);
-            return;
-        }
-
-        if (cond == DoubleNotEqualOrUnordered) {
-            if (left == right) {
-                m_assembler.cmovpq_rr(src, dest);
-                return;
-            }
-
-            m_assembler.cmovpq_rr(src, dest);
-            m_assembler.cmovneq_rr(src, dest);
-            return;
-        }
-
-        ASSERT(!(cond & DoubleConditionBitSpecial));
-        m_assembler.cmovq_rr(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), src, dest);
+        if (cond & DoubleConditionBitInvert)
+            m_assembler.ucomiss_rr(left, right);
+        else
+            m_assembler.ucomiss_rr(right, left);
+        moveConditionallyAfterFloatingPointCompare(cond, left, right, src, dest);
     }
     
     void swap(RegisterID reg1, RegisterID reg2)
@@ -1796,6 +1857,62 @@ private:
         xor32(TrustedImm32(0x1f), dst);
         skipNonZeroCase.link(this);
     }
+
+    Jump jumpAfterFloatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
+    {
+        if (cond == DoubleEqual) {
+            if (left == right)
+                return Jump(m_assembler.jnp());
+            Jump isUnordered(m_assembler.jp());
+            Jump result = Jump(m_assembler.je());
+            isUnordered.link(this);
+            return result;
+        }
+        if (cond == DoubleNotEqualOrUnordered) {
+            if (left == right)
+                return Jump(m_assembler.jp());
+            Jump isUnordered(m_assembler.jp());
+            Jump isEqual(m_assembler.je());
+            isUnordered.link(this);
+            Jump result = jump();
+            isEqual.link(this);
+            return result;
+        }
+
+        ASSERT(!(cond & DoubleConditionBitSpecial));
+        return Jump(m_assembler.jCC(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits)));
+    }
+
+#if CPU(X86_64)
+    void moveConditionallyAfterFloatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
+    {
+        if (cond == DoubleEqual) {
+            if (left == right) {
+                m_assembler.cmovnpq_rr(src, dest);
+                return;
+            }
+
+            Jump isUnordered(m_assembler.jp());
+            m_assembler.cmoveq_rr(src, dest);
+            isUnordered.link(this);
+            return;
+        }
+
+        if (cond == DoubleNotEqualOrUnordered) {
+            if (left == right) {
+                m_assembler.cmovpq_rr(src, dest);
+                return;
+            }
+
+            m_assembler.cmovpq_rr(src, dest);
+            m_assembler.cmovneq_rr(src, dest);
+            return;
+        }
+
+        ASSERT(!(cond & DoubleConditionBitSpecial));
+        cmov(static_cast<X86Assembler::Condition>(cond & ~DoubleConditionBits), src, dest);
+    }
+#endif
 
 #if CPU(X86)
 #if OS(MAC_OS_X)

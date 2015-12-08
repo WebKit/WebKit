@@ -46,6 +46,8 @@ namespace {
 bool hasPartialXmmRegUpdate(const Inst& inst)
 {
     switch (inst.opcode) {
+    case ConvertDoubleToFloat:
+    case ConvertFloatToDouble:
     case ConvertInt32ToDouble:
     case ConvertInt64ToDouble:
     case SqrtDouble:

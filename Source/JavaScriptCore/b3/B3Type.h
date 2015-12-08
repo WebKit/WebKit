@@ -37,6 +37,7 @@ enum Type : int8_t {
     Void,
     Int32,
     Int64,
+    Float,
     Double
 };
 
@@ -47,7 +48,7 @@ inline bool isInt(Type type)
 
 inline bool isFloat(Type type)
 {
-    return type == Double;
+    return type == Float || type == Double;
 }
 
 inline Type pointerType()
@@ -63,6 +64,7 @@ inline size_t sizeofType(Type type)
     case Void:
         return 0;
     case Int32:
+    case Float:
         return 4;
     case Int64:
     case Double:

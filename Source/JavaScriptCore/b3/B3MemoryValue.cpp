@@ -45,9 +45,6 @@ size_t MemoryValue::accessByteSize() const
     case Load16S:
     case Store16:
         return 2;
-    case LoadFloat:
-    case StoreFloat:
-        return 4;
     case Load:
         return sizeofType(type());
     case Store:

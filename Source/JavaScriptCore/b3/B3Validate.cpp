@@ -134,6 +134,10 @@ public:
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() == Double, ("At ", *value));
                 break;
+            case ConstFloat:
+                VALIDATE(!value->numChildren(), ("At ", *value));
+                VALIDATE(value->type() == Float, ("At ", *value));
+                break;
             case StackSlot:
             case FramePointer:
                 VALIDATE(!value->numChildren(), ("At ", *value));
@@ -177,7 +181,9 @@ public:
                 VALIDATE(value->type() != value->child(0)->type(), ("At ", *value));
                 VALIDATE(
                     (value->type() == Int64 && value->child(0)->type() == Double)
-                    || (value->type() == Double && value->child(0)->type() == Int64),
+                    || (value->type() == Double && value->child(0)->type() == Int64)
+                    || (value->type() == Float && value->child(0)->type() == Int32)
+                    || (value->type() == Int32 && value->child(0)->type() == Float),
                     ("At ", *value));
                 break;
             case SExt8:
@@ -203,10 +209,9 @@ public:
                 VALIDATE(value->type() == Int32, ("At ", *value));
                 break;
             case Sqrt:
-            case FRound:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
-                VALIDATE(value->child(0)->type() == Double, ("At ", *value));
-                VALIDATE(value->type() == Double, ("At ", *value));
+                VALIDATE(isFloat(value->child(0)->type()), ("At ", *value));
+                VALIDATE(isFloat(value->type()), ("At ", *value));
                 break;
             case IToD:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
@@ -217,6 +222,16 @@ public:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Double, ("At ", *value));
                 VALIDATE(value->type() == Int32, ("At ", *value));
+                break;
+            case FloatToDouble:
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->child(0)->type() == Float, ("At ", *value));
+                VALIDATE(value->type() == Double, ("At ", *value));
+                break;
+            case DoubleToFloat:
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->child(0)->type() == Double, ("At ", *value));
+                VALIDATE(value->type() == Float, ("At ", *value));
                 break;
             case Equal:
             case NotEqual:
@@ -252,12 +267,6 @@ public:
                 VALIDATE(value->type() == Int32, ("At ", *value));
                 validateStackAccess(value);
                 break;
-            case LoadFloat:
-                VALIDATE(value->numChildren() == 1, ("At ", *value));
-                VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
-                VALIDATE(value->type() == Double, ("At ", *value));
-                validateStackAccess(value);
-                break;
             case Load:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
@@ -268,13 +277,6 @@ public:
             case Store16:
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
-                VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
-                VALIDATE(value->type() == Void, ("At ", *value));
-                validateStackAccess(value);
-                break;
-            case StoreFloat:
-                VALIDATE(value->numChildren() == 2, ("At ", *value));
-                VALIDATE(value->child(0)->type() == Double, ("At ", *value));
                 VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
                 validateStackAccess(value);

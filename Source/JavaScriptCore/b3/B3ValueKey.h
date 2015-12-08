@@ -78,12 +78,20 @@ public:
         u.doubleValue = value;
     }
 
+    ValueKey(Opcode opcode, Type type, float value)
+        : m_opcode(opcode)
+        , m_type(type)
+    {
+        u.floatValue = value;
+    }
+
     Opcode opcode() const { return m_opcode; }
     Type type() const { return m_type; }
     unsigned childIndex(unsigned index) const { return u.indices[index]; }
     Value* child(Procedure&, unsigned index) const;
     int64_t value() const { return u.value; }
     double doubleValue() const { return u.doubleValue; }
+    double floatValue() const { return u.floatValue; }
 
     bool operator==(const ValueKey& other) const
     {
@@ -147,6 +155,7 @@ private:
         unsigned indices[3];
         int64_t value;
         double doubleValue;
+        float floatValue;
 
         U()
         {

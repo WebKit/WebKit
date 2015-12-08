@@ -58,11 +58,11 @@ public:
     const LType int32;
     const LType int64;
     const LType intPtr;
+    const LType floatType;
     const LType doubleType;
 #if !FTL_USES_B3
     const LType int8;
     const LType int16;
-    const LType floatType;
     const LType ref8;
     const LType ref16;
     const LType ref32;

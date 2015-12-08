@@ -71,8 +71,8 @@ public:
 
     unsigned numChildren() const { return m_children.size(); }
 
-    // This computes the type using the opcode.
     Type type() const { return m_type; }
+    void setType(Type type) { m_type = type; }
 
     // This is useful when lowering. Note that this is only valid for non-void values.
     Air::Arg::Type airType() const { return Air::Arg::typeForB3Type(type()); }
@@ -128,7 +128,10 @@ public:
     virtual Value* sShrConstant(Procedure&, const Value* other) const;
     virtual Value* zShrConstant(Procedure&, const Value* other) const;
     virtual Value* bitwiseCastConstant(Procedure&) const;
-    
+    virtual Value* doubleToFloatConstant(Procedure&) const;
+    virtual Value* floatToDoubleConstant(Procedure&) const;
+    virtual Value* sqrtConstant(Procedure&) const;
+
     virtual TriState equalConstant(const Value* other) const;
     virtual TriState notEqualConstant(const Value* other) const;
     virtual TriState lessThanConstant(const Value* other) const;
@@ -165,6 +168,9 @@ public:
     bool hasDouble() const;
     double asDouble() const;
     bool isEqualToDouble(double) const; // We say "isEqualToDouble" because "isDouble" would be a bit equality.
+
+    bool hasFloat() const;
+    float asFloat() const;
 
     bool hasNumber() const;
     template<typename T> bool representableAs() const;

@@ -32,6 +32,7 @@
 #include "B3Const32Value.h"
 #include "B3Const64Value.h"
 #include "B3ConstDoubleValue.h"
+#include "B3ConstFloatValue.h"
 #include "B3PatchpointValue.h"
 #include "B3Procedure.h"
 #include "B3Value.h"
@@ -141,15 +142,29 @@ inline bool Value::isEqualToDouble(double value) const
     return hasDouble() && asDouble() == value;
 }
 
+inline bool Value::hasFloat() const
+{
+    return !!as<ConstFloatValue>();
+}
+
+inline float Value::asFloat() const
+{
+    return as<ConstFloatValue>()->value();
+}
+
 inline bool Value::hasNumber() const
 {
-    return hasInt() || hasDouble();
+    return hasInt() || hasDouble() || hasFloat();
 }
 
 inline bool Value::isNegativeZero() const
 {
     if (hasDouble()) {
         double value = asDouble();
+        return !value && std::signbit(value);
+    }
+    if (hasFloat()) {
+        float value = asFloat();
         return !value && std::signbit(value);
     }
     return false;
@@ -165,6 +180,8 @@ inline bool Value::representableAs() const
         return isRepresentableAs<T>(asInt64());
     case ConstDouble:
         return isRepresentableAs<T>(asDouble());
+    case ConstFloat:
+        return isRepresentableAs<T>(asFloat());
     default:
         return false;
     }
@@ -180,6 +197,8 @@ inline T Value::asNumber() const
         return static_cast<T>(asInt64());
     case ConstDouble:
         return static_cast<T>(asDouble());
+    case ConstFloat:
+        return static_cast<T>(asFloat());
     default:
         return T();
     }

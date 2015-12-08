@@ -46,6 +46,7 @@ enum Opcode : int16_t {
     Const32,
     Const64,
     ConstDouble,
+    ConstFloat,
 
     // The magical stack slot. This is viewed as executing at the top of the program regardless of
     // where in control flow you put it. Each instance of a StackSlot Value gets a disjoint range of
@@ -96,12 +97,13 @@ enum Opcode : int16_t {
     ZExt32,
     // Takes Int64 and returns Int32:
     Trunc,
-    // Takes and returns Double:
-    FRound,
     // Takes ints and returns Double:
     IToD,
     // Takes Double and returns Int32:
     DToI32,
+    // Convert between double and float.
+    FloatToDouble,
+    DoubleToFloat,
 
     // Polymorphic comparisons, usable with any value type. Returns int32 0 or 1. Note that "Not"
     // is just Equal(x, 0), and "ToBoolean" is just NotEqual(x, 0).
@@ -128,8 +130,6 @@ enum Opcode : int16_t {
     Load8S,
     Load16Z,
     Load16S,
-    // This returns Double:
-    LoadFloat,
     // This returns whatever the return type is:
     Load,
 
@@ -137,9 +137,7 @@ enum Opcode : int16_t {
     // These take an Int32 value:
     Store8,
     Store16,
-    // This takes a Double value:
-    StoreFloat,
-    // This is a polymorphic store for Int32, Int64, and Double:
+    // This is a polymorphic store for Int32, Int64, Float, and Double.
     Store,
 
     // This is a regular ordinary C function call, using the system C calling convention. Make sure
@@ -237,6 +235,7 @@ inline bool isConstant(Opcode opcode)
     case Const32:
     case Const64:
     case ConstDouble:
+    case ConstFloat:
         return true;
     default:
         return false;

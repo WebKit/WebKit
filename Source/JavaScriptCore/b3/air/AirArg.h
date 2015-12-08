@@ -211,6 +211,7 @@ public:
         case Int32:
         case Int64:
             return GP;
+        case Float:
         case Double:
             return FP;
         }
@@ -225,6 +226,7 @@ public:
             ASSERT_NOT_REACHED();
             return Width8;
         case Int32:
+        case Float:
             return Width32;
         case Int64:
         case Double:

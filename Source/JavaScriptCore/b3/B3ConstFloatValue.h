@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3ConstDoubleValue_h
-#define B3ConstDoubleValue_h
+#ifndef B3ConstFloatValue_h
+#define B3ConstFloatValue_h
 
 #if ENABLE(B3_JIT)
 
@@ -32,13 +32,13 @@
 
 namespace JSC { namespace B3 {
 
-class JS_EXPORT_PRIVATE ConstDoubleValue : public Value {
+class JS_EXPORT_PRIVATE ConstFloatValue : public Value {
 public:
-    static bool accepts(Opcode opcode) { return opcode == ConstDouble; }
-    
-    ~ConstDoubleValue();
-    
-    double value() const { return m_value; }
+    static bool accepts(Opcode opcode) { return opcode == ConstFloat; }
+
+    ~ConstFloatValue();
+
+    float value() const { return m_value; }
 
     Value* negConstant(Procedure&) const override;
     Value* addConstant(Procedure&, int32_t other) const override;
@@ -47,7 +47,7 @@ public:
     Value* divConstant(Procedure&, const Value* other) const override;
     Value* mulConstant(Procedure&, const Value* other) const override;
     Value* bitwiseCastConstant(Procedure&) const override;
-    Value* doubleToFloatConstant(Procedure&) const override;
+    Value* floatToDoubleConstant(Procedure&) const override;
     Value* sqrtConstant(Procedure&) const override;
 
     TriState equalConstant(const Value* other) const override;
@@ -63,18 +63,18 @@ protected:
 private:
     friend class Procedure;
 
-    ConstDoubleValue(unsigned index, Origin origin, double value)
-        : Value(index, CheckedOpcode, ConstDouble, Double, origin)
+    ConstFloatValue(unsigned index, Origin origin, float value)
+        : Value(index, CheckedOpcode, ConstFloat, Float, origin)
         , m_value(value)
     {
     }
-    
-    double m_value;
+
+    float m_value;
 };
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
 
-#endif // B3ConstDoubleValue_h
+#endif // B3ConstFloatValue_h
 

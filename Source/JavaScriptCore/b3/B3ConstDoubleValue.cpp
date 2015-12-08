@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3ConstFloatValue.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 
@@ -71,6 +72,16 @@ Value* ConstDoubleValue::mulConstant(Procedure& proc, const Value* other) const
 Value* ConstDoubleValue::bitwiseCastConstant(Procedure& proc) const
 {
     return proc.add<Const64Value>(origin(), bitwise_cast<int64_t>(m_value));
+}
+
+Value* ConstDoubleValue::doubleToFloatConstant(Procedure& proc) const
+{
+    return proc.add<ConstFloatValue>(origin(), static_cast<float>(m_value));
+}
+
+Value* ConstDoubleValue::sqrtConstant(Procedure& proc) const
+{
+    return proc.add<ConstDoubleValue>(origin(), sqrt(m_value));
 }
 
 Value* ConstDoubleValue::divConstant(Procedure& proc, const Value* other) const

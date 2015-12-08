@@ -1,3 +1,237 @@
+2015-12-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add Float support to B3
+        https://bugs.webkit.org/show_bug.cgi?id=151974
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds comprehensive float support to B3.
+
+        The new phase reduceDoubleToFloat() gives us a primitive
+        version of what LLVM was giving us on floats.
+        It needs to support conversions accross Phis but that can
+        be added later.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::moveDoubleConditionallyFloat):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::sqrtFloat):
+        (JSC::MacroAssemblerX86Common::loadFloat):
+        (JSC::MacroAssemblerX86Common::storeFloat):
+        (JSC::MacroAssemblerX86Common::convertDoubleToFloat):
+        (JSC::MacroAssemblerX86Common::convertFloatToDouble):
+        (JSC::MacroAssemblerX86Common::addFloat):
+        (JSC::MacroAssemblerX86Common::divFloat):
+        (JSC::MacroAssemblerX86Common::subFloat):
+        (JSC::MacroAssemblerX86Common::mulFloat):
+        (JSC::MacroAssemblerX86Common::branchDouble):
+        (JSC::MacroAssemblerX86Common::branchFloat):
+        (JSC::MacroAssemblerX86Common::moveConditionallyDouble):
+        (JSC::MacroAssemblerX86Common::moveConditionallyFloat):
+        (JSC::MacroAssemblerX86Common::jumpAfterFloatingPointCompare):
+        (JSC::MacroAssemblerX86Common::moveConditionallyAfterFloatingPointCompare):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addss_rr):
+        (JSC::X86Assembler::addss_mr):
+        (JSC::X86Assembler::cvtsd2ss_mr):
+        (JSC::X86Assembler::cvtss2sd_mr):
+        (JSC::X86Assembler::movss_rm):
+        (JSC::X86Assembler::movss_mr):
+        (JSC::X86Assembler::mulss_rr):
+        (JSC::X86Assembler::mulss_mr):
+        (JSC::X86Assembler::subss_rr):
+        (JSC::X86Assembler::subss_mr):
+        (JSC::X86Assembler::ucomiss_rr):
+        (JSC::X86Assembler::ucomiss_mr):
+        (JSC::X86Assembler::divss_rr):
+        (JSC::X86Assembler::divss_mr):
+        (JSC::X86Assembler::sqrtss_rr):
+        (JSC::X86Assembler::sqrtss_mr):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::bitwiseCastConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::doubleToFloatConstant):
+        (JSC::B3::ConstDoubleValue::sqrtConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.cpp: Added.
+        (JSC::B3::ConstFloatValue::~ConstFloatValue):
+        (JSC::B3::ConstFloatValue::negConstant):
+        (JSC::B3::ConstFloatValue::addConstant):
+        (JSC::B3::ConstFloatValue::subConstant):
+        (JSC::B3::ConstFloatValue::mulConstant):
+        (JSC::B3::ConstFloatValue::bitwiseCastConstant):
+        (JSC::B3::ConstFloatValue::floatToDoubleConstant):
+        (JSC::B3::ConstFloatValue::sqrtConstant):
+        (JSC::B3::ConstFloatValue::divConstant):
+        (JSC::B3::ConstFloatValue::equalConstant):
+        (JSC::B3::ConstFloatValue::notEqualConstant):
+        (JSC::B3::ConstFloatValue::lessThanConstant):
+        (JSC::B3::ConstFloatValue::greaterThanConstant):
+        (JSC::B3::ConstFloatValue::lessEqualConstant):
+        (JSC::B3::ConstFloatValue::greaterEqualConstant):
+        (JSC::B3::ConstFloatValue::dumpMeta):
+        * b3/B3ConstFloatValue.h: Copied from Source/JavaScriptCore/b3/B3ConstDoubleValue.h.
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tryOpcodeForType):
+        (JSC::B3::Air::LowerToAir::opcodeForType):
+        (JSC::B3::Air::LowerToAir::appendUnOp):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::appendShift):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreUnOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::moveForType):
+        (JSC::B3::Air::LowerToAir::relaxedMoveForType):
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::createBranch):
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::createSelect):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::accessByteSize): Deleted.
+        * b3/B3MemoryValue.h:
+        * b3/B3MoveConstants.cpp:
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addIntConstant):
+        * b3/B3ReduceDoubleToFloat.cpp: Added.
+        (JSC::B3::reduceDoubleToFloat):
+        * b3/B3ReduceDoubleToFloat.h: Copied from Source/JavaScriptCore/b3/B3Type.cpp.
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Type.cpp:
+        (WTF::printInternal):
+        * b3/B3Type.h:
+        (JSC::B3::isFloat):
+        (JSC::B3::sizeofType):
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::doubleToFloatConstant):
+        (JSC::B3::Value::floatToDoubleConstant):
+        (JSC::B3::Value::sqrtConstant):
+        (JSC::B3::Value::asTriState):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::checkOpcode):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::isConstant):
+        (JSC::B3::Value::hasFloat):
+        (JSC::B3::Value::asFloat):
+        (JSC::B3::Value::hasNumber):
+        (JSC::B3::Value::isNegativeZero):
+        (JSC::B3::Value::representableAs):
+        (JSC::B3::Value::asNumber):
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize):
+        * b3/B3ValueKey.h:
+        (JSC::B3::ValueKey::ValueKey):
+        (JSC::B3::ValueKey::floatValue):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::typeForB3Type):
+        (JSC::B3::Air::Arg::widthForB3Type):
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testAddArgFloat):
+        (JSC::B3::testAddArgsFloat):
+        (JSC::B3::testAddArgImmFloat):
+        (JSC::B3::testAddImmArgFloat):
+        (JSC::B3::testAddImmsFloat):
+        (JSC::B3::testAddArgFloatWithUselessDoubleConversion):
+        (JSC::B3::testAddArgsFloatWithUselessDoubleConversion):
+        (JSC::B3::testAddArgsFloatWithEffectfulDoubleConversion):
+        (JSC::B3::testMulArgFloat):
+        (JSC::B3::testMulArgsFloat):
+        (JSC::B3::testMulArgImmFloat):
+        (JSC::B3::testMulImmArgFloat):
+        (JSC::B3::testMulImmsFloat):
+        (JSC::B3::testMulArgFloatWithUselessDoubleConversion):
+        (JSC::B3::testMulArgsFloatWithUselessDoubleConversion):
+        (JSC::B3::testMulArgsFloatWithEffectfulDoubleConversion):
+        (JSC::B3::testDivArgFloat):
+        (JSC::B3::testDivArgsFloat):
+        (JSC::B3::testDivArgImmFloat):
+        (JSC::B3::testDivImmArgFloat):
+        (JSC::B3::testDivImmsFloat):
+        (JSC::B3::testDivArgFloatWithUselessDoubleConversion):
+        (JSC::B3::testDivArgsFloatWithUselessDoubleConversion):
+        (JSC::B3::testDivArgsFloatWithEffectfulDoubleConversion):
+        (JSC::B3::testSubArgFloat):
+        (JSC::B3::testSubArgsFloat):
+        (JSC::B3::testSubArgImmFloat):
+        (JSC::B3::testSubImmArgFloat):
+        (JSC::B3::testSubImmsFloat):
+        (JSC::B3::testSubArgFloatWithUselessDoubleConversion):
+        (JSC::B3::testSubArgsFloatWithUselessDoubleConversion):
+        (JSC::B3::testSubArgsFloatWithEffectfulDoubleConversion):
+        (JSC::B3::testClzMem32):
+        (JSC::B3::testSqrtArg):
+        (JSC::B3::testSqrtImm):
+        (JSC::B3::testSqrtMem):
+        (JSC::B3::testSqrtArgWithUselessDoubleConversion):
+        (JSC::B3::testSqrtArgWithEffectfulDoubleConversion):
+        (JSC::B3::testDoubleArgToInt64BitwiseCast):
+        (JSC::B3::testDoubleImmToInt64BitwiseCast):
+        (JSC::B3::testTwoBitwiseCastOnDouble):
+        (JSC::B3::testBitwiseCastOnDoubleInMemory):
+        (JSC::B3::testInt64BArgToDoubleBitwiseCast):
+        (JSC::B3::testInt64BImmToDoubleBitwiseCast):
+        (JSC::B3::testTwoBitwiseCastOnInt64):
+        (JSC::B3::testBitwiseCastOnInt64InMemory):
+        (JSC::B3::testFloatImmToInt32BitwiseCast):
+        (JSC::B3::testBitwiseCastOnFloatInMemory):
+        (JSC::B3::testInt32BArgToFloatBitwiseCast):
+        (JSC::B3::testInt32BImmToFloatBitwiseCast):
+        (JSC::B3::testTwoBitwiseCastOnInt32):
+        (JSC::B3::testBitwiseCastOnInt32InMemory):
+        (JSC::B3::testConvertDoubleToFloatArg):
+        (JSC::B3::testConvertDoubleToFloatImm):
+        (JSC::B3::testConvertDoubleToFloatMem):
+        (JSC::B3::testConvertFloatToDoubleArg):
+        (JSC::B3::testConvertFloatToDoubleImm):
+        (JSC::B3::testConvertFloatToDoubleMem):
+        (JSC::B3::testConvertDoubleToFloatToDoubleToFloat):
+        (JSC::B3::testLoadFloatConvertDoubleConvertFloatStoreFloat):
+        (JSC::B3::testFroundArg):
+        (JSC::B3::testFroundMem):
+        (JSC::B3::testStore32):
+        (JSC::B3::modelLoad):
+        (JSC::B3::float>):
+        (JSC::B3::double>):
+        (JSC::B3::testLoad):
+        (JSC::B3::testStoreFloat):
+        (JSC::B3::testReturnFloat):
+        (JSC::B3::simpleFunctionFloat):
+        (JSC::B3::testCallSimpleFloat):
+        (JSC::B3::functionWithHellaFloatArguments):
+        (JSC::B3::testCallFunctionWithHellaFloatArguments):
+        (JSC::B3::testSelectCompareFloat):
+        (JSC::B3::testSelectCompareFloatToDouble):
+        (JSC::B3::testSelectDoubleCompareFloat):
+        (JSC::B3::testSelectFloatCompareFloat):
+        (JSC::B3::populateWithInterestingValues):
+        (JSC::B3::floatingPointOperands):
+        (JSC::B3::int64Operands):
+        (JSC::B3::run):
+        (JSC::B3::testStore): Deleted.
+        (JSC::B3::posInfinity): Deleted.
+        (JSC::B3::negInfinity): Deleted.
+        (JSC::B3::doubleOperands): Deleted.
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::loadFloatToDouble):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::fround):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+
 2015-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be able to flag the tag constants as being super important so that B3 can hoist them and Air can force them into registers

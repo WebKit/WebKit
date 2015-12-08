@@ -82,6 +82,10 @@ AddDouble U:F, UD:F
     Tmp, Tmp
     Addr, Tmp
 
+AddFloat U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 Sub32 U:G, UD:G
     Tmp, Tmp
     Imm, Addr
@@ -94,6 +98,10 @@ Sub64 U:G, UD:G
     Imm, Tmp
 
 SubDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
+SubFloat U:F, UD:F
     Tmp, Tmp
     Addr, Tmp
 
@@ -118,7 +126,15 @@ MulDouble U:F, UD:F
     Tmp, Tmp
     Addr, Tmp
 
+MulFloat U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 DivDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
+DivFloat U:F, UD:F
     Tmp, Tmp
     Addr, Tmp
 
@@ -207,6 +223,10 @@ SqrtDouble U:F, UD:F
     Tmp, Tmp
     Addr, Tmp
 
+SqrtFloat U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 ConvertInt32ToDouble U:G, D:F
     Tmp, Tmp
     Addr, Tmp
@@ -219,6 +239,14 @@ CountLeadingZeros32 U:G, D:G
     Addr, Tmp
 
 CountLeadingZeros64 U:G, D:G
+    Tmp, Tmp
+    Addr, Tmp
+
+ConvertDoubleToFloat U:F, D:F
+    Tmp, Tmp
+    Addr, Tmp
+
+ConvertFloatToDouble U:F, D:F
     Tmp, Tmp
     Addr, Tmp
 
@@ -248,6 +276,13 @@ Move32 U:G, D:G
 SignExtend32ToPtr U:G, D:G
     Tmp, Tmp
 
+MoveFloat U:F, D:F
+    Tmp, Tmp as moveDouble
+    Addr, Tmp as loadFloat
+    Index, Tmp as loadFloat
+    Tmp, Addr as storeFloat
+    Tmp, Index as storeFloat
+
 MoveDouble U:F, D:F
     Tmp, Tmp
     Addr, Tmp as loadDouble
@@ -262,9 +297,17 @@ Move64ToDouble U:G, D:F
     Tmp, Tmp
     Addr, Tmp as loadDouble
 
+MoveInt32ToPacked U:G, D:F
+    Tmp, Tmp
+    Addr, Tmp as loadFloat
+
 MoveDoubleTo64 U:F, D:G
     Tmp, Tmp
     Addr, Tmp as load64
+
+MovePackedToInt32 U:F, D:G
+    Tmp, Tmp
+    Addr, Tmp as load32
 
 Load8 U:G, D:G
     Addr, Tmp
@@ -341,6 +384,9 @@ BranchTest64 U:G, U:G, U:G /branch
 BranchDouble U:G, U:F, U:F /branch
     DoubleCond, Tmp, Tmp
 
+BranchFloat U:G, U:F, U:F /branch
+    DoubleCond, Tmp, Tmp
+
 BranchAdd32 U:G, U:G, UD:G /branch
     ResCond, Tmp, Tmp
     ResCond, Imm, Tmp
@@ -396,6 +442,9 @@ MoveConditionallyTest64 U:G, U:G, U:G, U:G, UD:G
 MoveConditionallyDouble U:G, U:F, U:F, U:G, UD:G
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
+MoveConditionallyFloat U:G, U:F, U:F, U:G, UD:G
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
+
 MoveDoubleConditionally32 U:G, U:G, U:G, U:F, UD:F
     RelCond, Tmp, Tmp, Tmp, Tmp
 
@@ -411,6 +460,9 @@ MoveDoubleConditionallyTest64 U:G, U:G, U:G, U:F, UD:F
     ResCond, Tmp, Imm, Tmp, Tmp
 
 MoveDoubleConditionallyDouble U:G, U:F, U:F, U:F, UD:F
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
+
+MoveDoubleConditionallyFloat U:G, U:F, U:F, U:F, UD:F
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
 Jump /branch

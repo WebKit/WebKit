@@ -42,11 +42,9 @@ public:
         case Load8S:
         case Load16Z:
         case Load16S:
-        case LoadFloat:
         case Load:
         case Store8:
         case Store16:
-        case StoreFloat:
         case Store:
             return true;
         default:
@@ -89,12 +87,8 @@ private:
             case Load16S:
                 ASSERT(type == Int32);
                 break;
-            case LoadFloat:
-                ASSERT(type == Double);
-                break;
             case Store8:
             case Store16:
-            case StoreFloat:
             case Store:
                 ASSERT(type == Void);
                 break;
@@ -106,7 +100,7 @@ private:
 
     // Use this form for loads where the return type is implied.
     MemoryValue(unsigned index, Opcode opcode, Origin origin, Value* pointer, int32_t offset = 0)
-        : MemoryValue(index, opcode, opcode == LoadFloat ? Double : Int32, origin, pointer, offset)
+        : MemoryValue(index, opcode, Int32, origin, pointer, offset)
     {
     }
 
@@ -122,7 +116,6 @@ private:
             switch (opcode) {
             case Store8:
             case Store16:
-            case StoreFloat:
             case Store:
                 break;
             default:

@@ -486,6 +486,15 @@ private:
 
             break;
 
+        case Sqrt:
+            // Turn this: Sqrt(constant)
+            // Into this: sqrt<value->type()>(constant)
+            if (Value* constant = m_value->child(0)->sqrtConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+            break;
+
         case BitwiseCast:
             // Turn this: BitwiseCast(constant)
             // Into this: bitwise_cast<value->type()>(constant)
@@ -538,6 +547,32 @@ private:
             if (m_value->child(0)->opcode() == SExt32 || m_value->child(0)->opcode() == ZExt32) {
                 m_value->replaceWithIdentity(m_value->child(0)->child(0));
                 m_changed = true;
+                break;
+            }
+            break;
+
+        case FloatToDouble:
+            // Turn this: FloatToDouble(constant)
+            // Into this: ConstDouble(constant)
+            if (Value* constant = m_value->child(0)->floatToDoubleConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+            break;
+
+        case DoubleToFloat:
+            // Turn this: DoubleToFloat(FloatToDouble(value))
+            // Into this: value
+            if (m_value->child(0)->opcode() == FloatToDouble) {
+                m_value->replaceWithIdentity(m_value->child(0)->child(0));
+                m_changed = true;
+                break;
+            }
+
+            // Turn this: DoubleToFloat(constant)
+            // Into this: ConstFloat(constant)
+            if (Value* constant = m_value->child(0)->doubleToFloatConstant(m_proc)) {
+                replaceWithNewValue(constant);
                 break;
             }
             break;
@@ -596,11 +631,9 @@ private:
         case Load8S:
         case Load16Z:
         case Load16S:
-        case LoadFloat:
         case Load:
         case Store8:
         case Store16:
-        case StoreFloat:
         case Store: {
             Value* address = m_value->lastChild();
             MemoryValue* memory = m_value->as<MemoryValue>();

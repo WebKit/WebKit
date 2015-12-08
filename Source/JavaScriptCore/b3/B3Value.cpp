@@ -199,6 +199,21 @@ Value* Value::bitwiseCastConstant(Procedure&) const
     return nullptr;
 }
 
+Value* Value::doubleToFloatConstant(Procedure&) const
+{
+    return nullptr;
+}
+
+Value* Value::floatToDoubleConstant(Procedure&) const
+{
+    return nullptr;
+}
+
+Value* Value::sqrtConstant(Procedure&) const
+{
+    return nullptr;
+}
+
 TriState Value::equalConstant(const Value*) const
 {
     return MixedTriState;
@@ -298,6 +313,8 @@ TriState Value::asTriState() const
     case ConstDouble:
         // Use "!= 0" to really emphasize what this mean with respect to NaN and such.
         return triState(asDouble() != 0);
+    case ConstFloat:
+        return triState(asFloat() != 0.);
     default:
         return MixedTriState;
     }
@@ -312,6 +329,7 @@ Effects Value::effects() const
     case Const32:
     case Const64:
     case ConstDouble:
+    case ConstFloat:
     case StackSlot:
     case ArgumentReg:
     case FramePointer:
@@ -334,9 +352,10 @@ Effects Value::effects() const
     case SExt32:
     case ZExt32:
     case Trunc:
-    case FRound:
     case IToD:
     case DToI32:
+    case FloatToDouble:
+    case DoubleToFloat:
     case Equal:
     case NotEqual:
     case LessThan:
@@ -356,14 +375,12 @@ Effects Value::effects() const
     case Load8S:
     case Load16Z:
     case Load16S:
-    case LoadFloat:
     case Load:
         result.reads = as<MemoryValue>()->range();
         result.controlDependent = true;
         break;
     case Store8:
     case Store16:
-    case StoreFloat:
     case Store:
         result.writes = as<MemoryValue>()->range();
         result.controlDependent = true;
@@ -410,9 +427,10 @@ ValueKey Value::key() const
     case ZExt32:
     case Clz:
     case Trunc:
-    case FRound:
     case IToD:
     case DToI32:
+    case FloatToDouble:
+    case DoubleToFloat:
     case Check:
         return ValueKey(opcode(), type(), child(0));
     case Add:
@@ -447,6 +465,8 @@ ValueKey Value::key() const
         return ValueKey(Const64, type(), asInt64());
     case ConstDouble:
         return ValueKey(ConstDouble, type(), asDouble());
+    case ConstFloat:
+        return ValueKey(ConstFloat, type(), asFloat());
     case ArgumentReg:
         return ValueKey(
             ArgumentReg, type(),
@@ -477,6 +497,7 @@ void Value::checkOpcode(Opcode opcode)
     ASSERT(!Const32Value::accepts(opcode));
     ASSERT(!Const64Value::accepts(opcode));
     ASSERT(!ConstDoubleValue::accepts(opcode));
+    ASSERT(!ConstFloatValue::accepts(opcode));
     ASSERT(!ControlValue::accepts(opcode));
     ASSERT(!MemoryValue::accepts(opcode));
     ASSERT(!PatchpointValue::accepts(opcode));
@@ -527,15 +548,24 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case SExt32:
     case ZExt32:
         return Int64;
-    case FRound:
+    case FloatToDouble:
     case IToD:
         return Double;
+    case DoubleToFloat:
+        return Float;
     case BitwiseCast:
-        if (firstChild->type() == Int64)
+        switch (firstChild->type()) {
+        case Int64:
             return Double;
-        if (firstChild->type() == Double)
+        case Double:
             return Int64;
-        ASSERT_NOT_REACHED();
+        case Int32:
+            return Float;
+        case Float:
+            return Int32;
+        case Void:
+            ASSERT_NOT_REACHED();
+        }
         return Void;
     case Nop:
         return Void;

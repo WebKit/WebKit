@@ -256,7 +256,8 @@ private:
 
     bool goesInTable(const ValueKey& key)
     {
-        return key.opcode() == ConstDouble && key != doubleZero();
+        return (key.opcode() == ConstDouble && key != doubleZero())
+        || (key.opcode() == ConstFloat && key != floatZero());
     }
 
     bool needsMotion(const ValueKey& key)
@@ -267,6 +268,11 @@ private:
     static ValueKey doubleZero()
     {
         return ValueKey(ConstDouble, Double, 0.0);
+    }
+
+    static ValueKey floatZero()
+    {
+        return ValueKey(ConstFloat, Double, 0.0);
     }
 
     Procedure& m_proc;

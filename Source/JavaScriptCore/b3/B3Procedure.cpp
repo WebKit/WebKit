@@ -69,6 +69,8 @@ Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
         return add<Const64Value>(origin, value);
     case Double:
         return add<ConstDoubleValue>(origin, static_cast<double>(value));
+    case Float:
+        return add<ConstFloatValue>(origin, static_cast<float>(value));
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;

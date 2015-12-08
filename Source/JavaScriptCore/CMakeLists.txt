@@ -104,6 +104,7 @@ set(JavaScriptCore_SOURCES
     b3/B3Const32Value.cpp
     b3/B3Const64Value.cpp
     b3/B3ConstDoubleValue.cpp
+    b3/B3ConstFloatValue.cpp
     b3/B3ConstrainedValue.cpp
     b3/B3ControlValue.cpp
     b3/B3DataSection.cpp
@@ -124,6 +125,7 @@ set(JavaScriptCore_SOURCES
     b3/B3PhaseScope.cpp
     b3/B3PhiChildren.cpp
     b3/B3Procedure.cpp
+    b3/B3ReduceDoubleToFloat.cpp
     b3/B3ReduceStrength.cpp
     b3/B3StackmapGenerationParams.cpp
     b3/B3StackmapSpecial.cpp

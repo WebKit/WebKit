@@ -92,6 +92,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case ConstDouble:
         out.print("ConstDouble");
         return;
+    case ConstFloat:
+        out.print("ConstFloat");
+        return;
     case StackSlot:
         out.print("StackSlot");
         return;
@@ -161,14 +164,17 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Trunc:
         out.print("Trunc");
         return;
-    case FRound:
-        out.print("FRound");
-        return;
     case IToD:
         out.print("IToD");
         return;
     case DToI32:
         out.print("DToI32");
+        return;
+    case FloatToDouble:
+        out.print("FloatToDouble");
+        return;
+    case DoubleToFloat:
+        out.print("DoubleToFloat");
         return;
     case Equal:
         out.print("Equal");
@@ -215,9 +221,6 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Load16S:
         out.print("Load16S");
         return;
-    case LoadFloat:
-        out.print("LoadFloat");
-        return;
     case Load:
         out.print("Load");
         return;
@@ -226,9 +229,6 @@ void printInternal(PrintStream& out, Opcode opcode)
         return;
     case Store16:
         out.print("Store16");
-        return;
-    case StoreFloat:
-        out.print("StoreFloat");
         return;
     case Store:
         out.print("Store");

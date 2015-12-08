@@ -99,9 +99,8 @@ LValue Output::load16ZeroExt32(TypedPointer pointer)
 
 LValue Output::loadFloatToDouble(TypedPointer pointer)
 {
-    LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::LoadFloat, B3::Double, origin(), pointer.value());
-    pointer.heap().decorateInstruction(load, *m_heaps);
-    return load;
+    LValue loadedFloat = load(pointer, floatType);
+    return m_block->appendNew<B3::Value>(m_proc, B3::FloatToDouble, origin(), loadedFloat);
 }
 
 void Output::store(LValue value, TypedPointer pointer)

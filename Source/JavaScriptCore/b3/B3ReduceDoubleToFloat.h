@@ -23,39 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "B3Type.h"
+#ifndef B3ReduceDoubleToFloat_h
+#define B3ReduceDoubleToFloat_h
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/PrintStream.h>
+namespace JSC { namespace B3 {
 
-namespace WTF {
+class Procedure;
 
-using namespace JSC::B3;
+// Change Double operations to Float operations when the difference is not observable
+// and doing so is likely beneficial.
+void reduceDoubleToFloat(Procedure&);
 
-void printInternal(PrintStream& out, Type type)
-{
-    switch (type) {
-    case Void:
-        out.print("Void");
-        return;
-    case Int32:
-        out.print("Int32");
-        return;
-    case Int64:
-        out.print("Int64");
-        return;
-    case Float:
-        out.print("Float");
-        return;
-    case Double:
-        out.print("Double");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-} // namespace WTF
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3ReduceDoubleToFloat_h
+

@@ -478,7 +478,7 @@ private:
 
     // By convention, we use Oops to mean "I don't know".
     Air::Opcode tryOpcodeForType(
-        Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Type type)
+        Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Air::Opcode opcodeFloat, Type type)
     {
         Air::Opcode opcode;
         switch (type) {
@@ -487,6 +487,9 @@ private:
             break;
         case Int64:
             opcode = opcode64;
+            break;
+        case Float:
+            opcode = opcodeFloat;
             break;
         case Double:
             opcode = opcodeDouble;
@@ -499,18 +502,28 @@ private:
         return opcode;
     }
 
-    Air::Opcode opcodeForType(
-        Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Type type)
+    Air::Opcode tryOpcodeForType(Air::Opcode opcode32, Air::Opcode opcode64, Type type)
     {
-        Air::Opcode opcode = tryOpcodeForType(opcode32, opcode64, opcodeDouble, type);
+        return tryOpcodeForType(opcode32, opcode64, Air::Oops, Air::Oops, type);
+    }
+
+    Air::Opcode opcodeForType(
+        Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Air::Opcode opcodeFloat, Type type)
+    {
+        Air::Opcode opcode = tryOpcodeForType(opcode32, opcode64, opcodeDouble, opcodeFloat, type);
         RELEASE_ASSERT(opcode != Air::Oops);
         return opcode;
     }
 
-    template<Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble>
+    Air::Opcode opcodeForType(Air::Opcode opcode32, Air::Opcode opcode64, Type type)
+    {
+        return tryOpcodeForType(opcode32, opcode64, Air::Oops, Air::Oops, type);
+    }
+
+    template<Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble = Air::Oops, Air::Opcode opcodeFloat = Air::Oops>
     void appendUnOp(Value* value)
     {
-        Air::Opcode opcode = opcodeForType(opcode32, opcode64, opcodeDouble, value->type());
+        Air::Opcode opcode = opcodeForType(opcode32, opcode64, opcodeDouble, opcodeFloat, value->type());
         
         Tmp result = tmp(m_value);
 
@@ -565,12 +578,10 @@ private:
         return result;
     }
 
-    template<
-        Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble,
-        Commutativity commutativity = NotCommutative>
+    template<Air::Opcode opcode32, Air::Opcode opcode64, Air::Opcode opcodeDouble, Air::Opcode opcodeFloat, Commutativity commutativity = NotCommutative>
     void appendBinOp(Value* left, Value* right)
     {
-        Air::Opcode opcode = opcodeForType(opcode32, opcode64, opcodeDouble, left->type());
+        Air::Opcode opcode = opcodeForType(opcode32, opcode64, opcodeDouble, opcodeFloat, left->type());
         
         Tmp result = tmp(m_value);
         
@@ -648,10 +659,16 @@ private:
         append(opcode, tmp(right), result);
     }
 
+    template<Air::Opcode opcode32, Air::Opcode opcode64, Commutativity commutativity = NotCommutative>
+    void appendBinOp(Value* left, Value* right)
+    {
+        appendBinOp<opcode32, opcode64, Air::Oops, Air::Oops, commutativity>(left, right);
+    }
+
     template<Air::Opcode opcode32, Air::Opcode opcode64>
     void appendShift(Value* value, Value* amount)
     {
-        Air::Opcode opcode = opcodeForType(opcode32, opcode64, Air::Oops, value->type());
+        Air::Opcode opcode = opcodeForType(opcode32, opcode64, value->type());
         
         if (imm(amount)) {
             append(Move, tmp(value), tmp(m_value));
@@ -667,7 +684,7 @@ private:
     template<Air::Opcode opcode32, Air::Opcode opcode64>
     bool tryAppendStoreUnOp(Value* value)
     {
-        Air::Opcode opcode = tryOpcodeForType(opcode32, opcode64, Air::Oops, value->type());
+        Air::Opcode opcode = tryOpcodeForType(opcode32, opcode64, value->type());
         if (opcode == Air::Oops)
             return false;
         
@@ -690,7 +707,7 @@ private:
         Air::Opcode opcode32, Air::Opcode opcode64, Commutativity commutativity = NotCommutative>
     bool tryAppendStoreBinOp(Value* left, Value* right)
     {
-        Air::Opcode opcode = tryOpcodeForType(opcode32, opcode64, Air::Oops, left->type());
+        Air::Opcode opcode = tryOpcodeForType(opcode32, opcode64, left->type());
         if (opcode == Air::Oops)
             return false;
         
@@ -749,11 +766,15 @@ private:
         case Int64:
             RELEASE_ASSERT(is64Bit());
             return Move;
+        case Float:
+            return MoveFloat;
         case Double:
             return MoveDouble;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
+        case Void:
+            break;
         }
+        RELEASE_ASSERT_NOT_REACHED();
+        return Air::Oops;
     }
 
     Air::Opcode relaxedMoveForType(Type type)
@@ -762,11 +783,14 @@ private:
         case Int32:
         case Int64:
             return Move;
+        case Float:
         case Double:
             return MoveDouble;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
+        case Void:
+            break;
         }
+        RELEASE_ASSERT_NOT_REACHED();
+        return Air::Oops;
     }
 
     template<typename... Arguments>
@@ -833,12 +857,13 @@ private:
     }
     
     // Create an Inst to do the comparison specified by the given value.
-    template<typename CompareFunctor, typename TestFunctor, typename CompareDoubleFunctor>
+    template<typename CompareFunctor, typename TestFunctor, typename CompareDoubleFunctor, typename CompareFloatFunctor>
     Inst createGenericCompare(
         Value* value,
         const CompareFunctor& compare, // Signature: (Arg::Width, Arg relCond, Arg, Arg) -> Inst
         const TestFunctor& test, // Signature: (Arg::Width, Arg resCond, Arg, Arg) -> Inst
         const CompareDoubleFunctor& compareDouble, // Signature: (Arg doubleCond, Arg, Arg) -> Inst
+        const CompareFloatFunctor& compareFloat, // Signature: (Arg doubleCond, Arg, Arg) -> Inst
         bool inverted = false)
     {
         // Chew through any negations. It's not strictly necessary for this to be a loop, but we like
@@ -962,7 +987,9 @@ private:
                 return compare(width, relCond, tmpPromise(left), tmpPromise(right));
             }
 
-            // Double comparisons can't really do anything smart.
+            // Floating point comparisons can't really do anything smart.
+            if (value->child(0)->type() == Float)
+                return compareFloat(doubleCond, tmpPromise(left), tmpPromise(right));
             return compareDouble(doubleCond, tmpPromise(left), tmpPromise(right));
         };
 
@@ -1168,6 +1195,14 @@ private:
                 }
                 return Inst();
             },
+            [this] (Arg doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
+                if (isValidForm(BranchFloat, Arg::DoubleCond, left.kind(), right.kind())) {
+                    return Inst(
+                        BranchFloat, m_value, doubleCond,
+                        left.consume(*this), right.consume(*this));
+                }
+                return Inst();
+            },
             inverted);
     }
 
@@ -1226,6 +1261,10 @@ private:
                 // https://bugs.webkit.org/show_bug.cgi?id=150903
                 return Inst();
             },
+            [this] (const Arg&, const ArgPromise&, const ArgPromise&) -> Inst {
+                // FIXME: Implement this.
+                return Inst();
+            },
             inverted);
     }
 
@@ -1235,6 +1274,7 @@ private:
         Air::Opcode moveConditionallyTest32;
         Air::Opcode moveConditionallyTest64;
         Air::Opcode moveConditionallyDouble;
+        Air::Opcode moveConditionallyFloat;
         Tmp source;
         Tmp destination;
     };
@@ -1298,6 +1338,14 @@ private:
                 if (isValidForm(config.moveConditionallyDouble, Arg::DoubleCond, left.kind(), right.kind(), Arg::Tmp, Arg::Tmp)) {
                     return Inst(
                         config.moveConditionallyDouble, m_value, doubleCond,
+                        left.consume(*this), right.consume(*this), config.source, config.destination);
+                }
+                return Inst();
+            },
+            [&] (Arg doubleCond, const ArgPromise& left, const ArgPromise& right) -> Inst {
+                if (isValidForm(config.moveConditionallyFloat, Arg::DoubleCond, left.kind(), right.kind(), Arg::Tmp, Arg::Tmp)) {
+                    return Inst(
+                        config.moveConditionallyFloat, m_value, doubleCond,
                         left.consume(*this), right.consume(*this), config.source, config.destination);
                 }
                 return Inst();
@@ -1370,21 +1418,21 @@ private:
         }
 
         case Add: {
-            appendBinOp<Add32, Add64, AddDouble, Commutative>(
+            appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }
 
         case Sub: {
             if (m_value->child(0)->isInt(0))
-                appendUnOp<Neg32, Neg64, Air::Oops>(m_value->child(1));
+                appendUnOp<Neg32, Neg64>(m_value->child(1));
             else
-                appendBinOp<Sub32, Sub64, SubDouble>(m_value->child(0), m_value->child(1));
+                appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(m_value->child(0), m_value->child(1));
             return;
         }
 
         case Mul: {
-            appendBinOp<Mul32, Mul64, MulDouble, Commutative>(
+            appendBinOp<Mul32, Mul64, MulDouble, MulFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }
@@ -1418,28 +1466,28 @@ private:
             }
             ASSERT(isFloat(m_value->type()));
 
-            appendBinOp<Air::Oops, Air::Oops, DivDouble>(m_value->child(0), m_value->child(1));
+            appendBinOp<Air::Oops, Air::Oops, DivDouble, DivFloat>(m_value->child(0), m_value->child(1));
             return;
         }
 
         case BitAnd: {
-            appendBinOp<And32, And64, Air::Oops, Commutative>(
+            appendBinOp<And32, And64, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }
 
         case BitOr: {
-            appendBinOp<Or32, Or64, Air::Oops, Commutative>(
+            appendBinOp<Or32, Or64, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }
 
         case BitXor: {
             if (m_value->child(1)->isInt(-1)) {
-                appendUnOp<Not32, Not64, Air::Oops>(m_value->child(0));
+                appendUnOp<Not32, Not64>(m_value->child(0));
                 return;
             }
-            appendBinOp<Xor32, Xor64, Air::Oops, Commutative>(
+            appendBinOp<Xor32, Xor64, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }
@@ -1449,7 +1497,7 @@ private:
                 // This optimization makes sense on X86. I don't know if it makes sense anywhere else.
                 append(Move, tmp(m_value->child(0)), tmp(m_value));
                 append(
-                    opcodeForType(Add32, Add64, Air::Oops, m_value->child(0)->type()),
+                    opcodeForType(Add32, Add64, m_value->child(0)->type()),
                     tmp(m_value), tmp(m_value));
                 return;
             }
@@ -1469,17 +1517,17 @@ private:
         }
 
         case Clz: {
-            appendUnOp<CountLeadingZeros32, CountLeadingZeros64, Air::Oops>(m_value->child(0));
+            appendUnOp<CountLeadingZeros32, CountLeadingZeros64>(m_value->child(0));
             return;
         }
 
         case Sqrt: {
-            appendUnOp<Air::Oops, Air::Oops, SqrtDouble>(m_value->child(0));
+            appendUnOp<Air::Oops, Air::Oops, SqrtDouble, SqrtFloat>(m_value->child(0));
             return;
         }
 
         case BitwiseCast: {
-            appendUnOp<Air::Oops, Move64ToDouble, MoveDoubleTo64>(m_value->child(0));
+            appendUnOp<MoveInt32ToPacked, Move64ToDouble, MoveDoubleTo64, MovePackedToInt32>(m_value->child(0));
             return;
         }
 
@@ -1545,6 +1593,16 @@ private:
             return;
         }
 
+        case FloatToDouble: {
+            appendUnOp<Air::Oops, Air::Oops, Air::Oops, ConvertFloatToDouble>(m_value->child(0));
+            return;
+        }
+
+        case DoubleToFloat: {
+            appendUnOp<Air::Oops, Air::Oops, ConvertDoubleToFloat>(m_value->child(0));
+            return;
+        }
+
         case ArgumentReg: {
             m_prologue.append(Inst(
                 moveForType(m_value->type()), m_value,
@@ -1565,10 +1623,12 @@ private:
             return;
         }
 
-        case ConstDouble: {
+        case ConstDouble:
+        case ConstFloat: {
             // We expect that the moveConstants() phase has run, and any doubles referenced from
             // stackmaps get fused.
-            RELEASE_ASSERT(isIdentical(m_value->asDouble(), 0.0));
+            RELEASE_ASSERT(m_value->opcode() == ConstFloat || isIdentical(m_value->asDouble(), 0.0));
+            RELEASE_ASSERT(m_value->opcode() == ConstDouble || isIdentical(m_value->asFloat(), 0.0));
             append(MoveZeroToDouble, tmp(m_value));
             return;
         }
@@ -1614,6 +1674,7 @@ private:
                 config.moveConditionallyTest32 = MoveConditionallyTest32;
                 config.moveConditionallyTest64 = MoveConditionallyTest64;
                 config.moveConditionallyDouble = MoveConditionallyDouble;
+                config.moveConditionallyFloat = MoveConditionallyFloat;
             } else {
                 // FIXME: it's not obvious that these are particularly efficient.
                 config.moveConditionally32 = MoveDoubleConditionally32;
@@ -1621,6 +1682,7 @@ private:
                 config.moveConditionallyTest32 = MoveDoubleConditionallyTest32;
                 config.moveConditionallyTest64 = MoveDoubleConditionallyTest64;
                 config.moveConditionallyDouble = MoveDoubleConditionallyDouble;
+                config.moveConditionallyFloat = MoveDoubleConditionallyFloat;
             }
             
             m_insts.last().append(createSelect(m_value->child(0), config));
@@ -1628,7 +1690,7 @@ private:
         }
 
         case IToD: {
-            appendUnOp<ConvertInt32ToDouble, ConvertInt64ToDouble, Air::Oops>(m_value->child(0));
+            appendUnOp<ConvertInt32ToDouble, ConvertInt64ToDouble>(m_value->child(0));
             return;
         }
 
@@ -1689,6 +1751,7 @@ private:
             case Int64:
                 append(Move, Tmp(GPRInfo::returnValueGPR), tmp(cCall));
                 break;
+            case Float:
             case Double:
                 append(MoveDouble, Tmp(FPRInfo::returnValueFPR), tmp(cCall));
                 break;
@@ -1753,7 +1816,7 @@ private:
                 append(Move, tmp(right), result);
 
                 Air::Opcode opcode =
-                    opcodeForType(BranchNeg32, BranchNeg64, Air::Oops, checkValue->type());
+                    opcodeForType(BranchNeg32, BranchNeg64, checkValue->type());
                 CheckSpecial* special = ensureCheckSpecial(opcode, 2);
 
                 Inst inst(Patch, checkValue, Arg::special(special));
@@ -1771,14 +1834,14 @@ private:
             StackmapSpecial::RoleMode stackmapRole = StackmapSpecial::SameAsRep;
             switch (m_value->opcode()) {
             case CheckAdd:
-                opcode = opcodeForType(BranchAdd32, BranchAdd64, Air::Oops, m_value->type());
+                opcode = opcodeForType(BranchAdd32, BranchAdd64, m_value->type());
                 commutativity = Commutative;
                 break;
             case CheckSub:
-                opcode = opcodeForType(BranchSub32, BranchSub64, Air::Oops, m_value->type());
+                opcode = opcodeForType(BranchSub32, BranchSub64, m_value->type());
                 break;
             case CheckMul:
-                opcode = opcodeForType(BranchMul32, BranchMul64, Air::Oops, checkValue->type());
+                opcode = opcodeForType(BranchMul32, BranchMul64, checkValue->type());
                 stackmapRole = StackmapSpecial::ForceLateUse;
                 break;
             default:

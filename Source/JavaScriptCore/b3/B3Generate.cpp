@@ -36,6 +36,7 @@
 #include "B3LowerToAir.h"
 #include "B3MoveConstants.h"
 #include "B3Procedure.h"
+#include "B3ReduceDoubleToFloat.h"
 #include "B3ReduceStrength.h"
 #include "B3TimingScope.h"
 #include "B3Validate.h"
@@ -73,6 +74,8 @@ void generateToAir(Procedure& procedure, unsigned optLevel)
     lowerMacros(procedure);
 
     if (optLevel >= 1) {
+        reduceDoubleToFloat(procedure);
+
         reduceStrength(procedure);
         
         // FIXME: Add more optimizations here.

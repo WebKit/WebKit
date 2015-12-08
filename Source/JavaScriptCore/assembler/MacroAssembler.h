@@ -1356,6 +1356,13 @@ public:
         moveDouble(src, dest);
         falseCase.link(this);
     }
+
+    void moveDoubleConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, FPRegisterID src, FPRegisterID dest)
+    {
+        Jump falseCase = branchFloat(invert(cond), left, right);
+        moveDouble(src, dest);
+        falseCase.link(this);
+    }
 #endif
 
     void lea(Address address, RegisterID dest)
