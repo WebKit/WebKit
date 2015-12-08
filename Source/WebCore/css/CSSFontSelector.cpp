@@ -33,7 +33,9 @@
 #include "CSSFontFaceSource.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFamily.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSSegmentedFontFace.h"
 #include "CSSUnicodeRangeValue.h"
@@ -43,6 +45,7 @@
 #include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
+#include "FontVariantBuilder.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "SVGFontFaceElement.h"
@@ -91,6 +94,13 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule, boo
     RefPtr<CSSValue> fontFamily = style.getPropertyCSSValue(CSSPropertyFontFamily);
     RefPtr<CSSValue> src = style.getPropertyCSSValue(CSSPropertySrc);
     RefPtr<CSSValue> unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
+    RefPtr<CSSValue> featureSettings = style.getPropertyCSSValue(CSSPropertyFontFeatureSettings); 
+    RefPtr<CSSValue> variantLigatures = style.getPropertyCSSValue(CSSPropertyFontVariantLigatures);
+    RefPtr<CSSValue> variantPosition = style.getPropertyCSSValue(CSSPropertyFontVariantPosition);
+    RefPtr<CSSValue> variantCaps = style.getPropertyCSSValue(CSSPropertyFontVariantCaps);
+    RefPtr<CSSValue> variantNumeric = style.getPropertyCSSValue(CSSPropertyFontVariantNumeric);
+    RefPtr<CSSValue> variantAlternates = style.getPropertyCSSValue(CSSPropertyFontVariantAlternates);
+    RefPtr<CSSValue> variantEastAsian = style.getPropertyCSSValue(CSSPropertyFontVariantEastAsian);
     if (!is<CSSValueList>(fontFamily.get()) || !is<CSSValueList>(src.get()) || (unicodeRange && !is<CSSValueList>(*unicodeRange)))
         return;
 
@@ -255,6 +265,31 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule, boo
             fontFace->addRange(range.from(), range.to());
         }
     }
+
+    if (featureSettings) {
+        for (auto& item : downcast<CSSValueList>(*featureSettings)) {
+            auto& feature = downcast<CSSFontFeatureValue>(item.get());
+            fontFace->insertFeature(FontFeature(feature.tag(), feature.value()));
+        }
+    }
+
+    if (variantLigatures)
+        applyValueFontVariantLigatures(*fontFace, *variantLigatures);
+
+    if (variantPosition)
+        fontFace->setVariantPosition(downcast<CSSPrimitiveValue>(*variantPosition));
+
+    if (variantCaps)
+        fontFace->setVariantCaps(downcast<CSSPrimitiveValue>(*variantCaps));
+
+    if (variantNumeric)
+        applyValueFontVariantNumeric(*fontFace, *variantNumeric);
+
+    if (variantAlternates)
+        fontFace->setVariantAlternates(downcast<CSSPrimitiveValue>(*variantAlternates));
+
+    if (variantEastAsian)
+        applyValueFontVariantEastAsian(*fontFace, *variantEastAsian);
 
     // Hash under every single family name.
     for (auto& item : familyList) {

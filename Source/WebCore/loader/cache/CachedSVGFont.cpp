@@ -51,14 +51,14 @@ CachedSVGFont::CachedSVGFont(const ResourceRequest& resourceRequest, SessionID s
 {
 }
 
-RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG)
+RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
 {
 #if ENABLE(SVG_OTF_CONVERTER)
     if (!externalSVG || firstFontFace(remoteURI))
-        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
+        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG, fontFaceFeatures, fontFaceVariantSettings);
 #else
     if (!externalSVG)
-        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
+        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG, fontFaceFeatures, fontFaceVariantSettings);
 
     if (SVGFontFaceElement* firstFontFace = this->firstFontFace(remoteURI))
         return Font::create(std::make_unique<SVGFontData>(firstFontFace), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
@@ -66,11 +66,11 @@ RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, c
     return nullptr;
 }
 
-FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription& fontDescription, bool bold, bool italic)
+FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings)
 {
     if (m_externalSVGDocument)
         return FontPlatformData(fontDescription.computedPixelSize(), bold, italic);
-    return CachedFont::platformDataFromCustomData(fontDescription, bold, italic);
+    return CachedFont::platformDataFromCustomData(fontDescription, bold, italic, fontFaceFeatures, fontFaceVariantSettings);
 }
 
 bool CachedSVGFont::ensureCustomFontData(bool externalSVG, const AtomicString& remoteURI)
