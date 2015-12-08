@@ -1,7 +1,6 @@
 /* -------------------------------------------------------------------------- */
 /*                                HTML and Body                               */
 /* -------------------------------------------------------------------------- */
-
 html,body {
     height: 100%;
     margin: 0px;
@@ -65,9 +64,8 @@ button.small-button:active {
 /* -------------------------------------------------------------------------- */
 
 .tree {
-    margin: 1em;
-    overflow-y: scroll;
-    height: 80%;
+    padding: 0;
+    list-style-type: none;
 }
 
 .tree .expand-button {
@@ -110,23 +108,21 @@ label.tree-label {
     cursor: pointer;
 }
 
-label.tree-label:before {
-    background: black;
-    color: white;
+.tree > li > label.tree-label:before {
     position: relative;
     z-index: 1;
     float: left;
-    margin: 0 1em 0 -2.1em;
+    margin: 0 0 0 -2em;
     width: 1em;
     height: 1em;
-    border-radius: 1em;
-    content: '+';
+    content: '\25B6';
     text-align: center;
-    line-height: .9em;
+    line-height: 2.5em;
+    font-size: .5em;
 }
 
-:checked ~ label.tree-label:before {
-    content: '\2013';
+.tree > li > :checked ~ label.tree-label:before {
+    content: '\25BC';
 }
 
 /* -------------------------------------------------------------------------- */
@@ -191,13 +187,25 @@ main {
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
+
     -ms-flex-align: center;
     -webkit-align-items: center;
     -webkit-box-align: center;
     align-items: center;
-    -webkit-justify-content: center;
-    -ms-flex-pack: center;
-    justify-content: center;
+
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: flex-start;
+    justify-content: flex-start;
+
+    -webkit-flex-flow: column;
+    flex-flow: column;
+}
+
+.spacer {
+    -webkit-flex: 1 0 20px;
+    -ms-flex: 1 0 20px;
+    flex: 1 0 20px;
+    width: 10px;
 }
 
 section {
@@ -205,6 +213,11 @@ section {
     height: 600px;
     display: none;
     padding: 10px;
+}
+
+section#home {
+    min-height: 600px;
+    height: initial;
 }
 
 .display-progress-bar section,
@@ -249,6 +262,10 @@ section > footer {
         width: 1600px;
         height: 800px;
     }
+
+    section#home {
+        min-height: 800px;
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -264,21 +281,21 @@ section#home {
     flex-wrap: wrap;
     -webkit-align-content: center;
     -ms-flex-line-pack: center;
-    align-content: center;
+    align-content: flex-start;
 }
 
 section#home h2 {
     font-size: 1.2em;
 }
 
-section#home > suites,
+#suites,
 #options {
     padding: 10px;
     margin: 10px;
 }
 
-section#home > suites {
-    padding-left: 80px;
+#suites {
+    padding-left: 40px;
     -webkit-flex: 0 1 40%;
     -ms-flex: 0 1 40%;
     flex: 0 1 40%;
@@ -297,16 +314,26 @@ section#home > header > h1 {
 }
 
 section#home input[type="number"] {
-    width: 70px;
+    width: 50px;
 }
  
-section#home > suites input[type="number"] {
+#suites input[type="number"] {
     display: none;
     float: right;
 }
 
-section#home > suites input[type="number"].selected {
+#suites input[type="number"].selected {
     display: inline;
+    margin: 0;
+}
+
+#suites ul ul {
+    font-size: .8em;
+    margin: 0;
+    padding: 0 0 0 1em;
+}
+
+#suites ul ul li {
 }
 
 #options ul {

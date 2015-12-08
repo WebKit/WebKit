@@ -199,12 +199,12 @@ window.suitesManager =
 {
     _treeElement: function()
     {
-        return document.querySelector("suites > .tree");
+        return document.querySelector("#suites > .tree");
     },
     
     _suitesElements: function()
     {
-        return document.querySelectorAll("#home > suites > ul > li");
+        return document.querySelectorAll("#suites > ul > li");
     },
     
     _checkboxElement: function(element)
@@ -219,7 +219,7 @@ window.suitesManager =
 
     _editsElements: function()
     {
-        return document.querySelectorAll("section#home > suites input[type='number']");
+        return document.querySelectorAll("#suites input[type='number']");
     },
         
     _localStorageNameForTest: function(suiteName, testName)
@@ -292,7 +292,7 @@ window.suitesManager =
     _createTestElement: function(listElement, test, suiteCheckbox)
     {
         var testElement = DocumentExtension.createElement("li", {}, listElement);
-        var span = DocumentExtension.createElement("span", { class: "tree-label" }, testElement);
+        var span = DocumentExtension.createElement("label", { class: "tree-label" }, testElement);
 
         var testCheckbox = DocumentExtension.createElement("input", { type: "checkbox" }, span);
         testCheckbox.test = test;

@@ -1,5 +1,30 @@
 2015-12-07  Jon Lee  <jonlee@apple.com>
 
+        Update suites for benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=151957
+
+        Reviewed by Simon Fraser.
+
+        * Animometer/runner/animometer.html: Use spacers instead of relying on
+        justify-content center to center the content. That allows the opening screen
+        to grow downward when expanding the list of choices, otherwise it expands
+        from the center, and off the top edge of the screen.
+        * Animometer/runner/resources/animometer.css:
+        (.tree): Don't overflow scroll.
+        (.tree > li > label.tree-label:before): Use better glyphs.
+        (.tree > li > :checked ~ label.tree-label:before):
+        (main): Using flex-start for justify-content so that if the section grows too
+        big it gets pinned to the top edge of the document instead of growing past it.
+        (.spacer): Make the spacers have a minimum 20px and grow evenly.
+        (section#home): Add a min-height so that the border will expand if the suite
+        tests shown make the section grow past the height.
+        * Animometer/runner/resources/animometer.js: Update the selectors.
+        (window.suitesManager._treeElement):
+        (window.suitesManager._suitesElements):
+        (window.suitesManager._editsElements):
+
+2015-12-07  Jon Lee  <jonlee@apple.com>
+
         Update options for benchmark
         https://bugs.webkit.org/show_bug.cgi?id=151956
 

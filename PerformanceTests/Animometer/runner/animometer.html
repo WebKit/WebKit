@@ -13,14 +13,16 @@
 </head>
 <body>
     <main>
+    <div class="spacer"></div>
+    <div id="section-container">
         <section id="home" class="selected">
             <header>
                 <h1>Animometer</h1>
             </header>
-            <suites>
+            <div id="suites">
                 <h2>Suites:</h2>
                 <ul class="tree"></ul>
-            </suites>
+            </div>
             <div id="options">
                 <h2>Options:</h2>
                 <form name="benchmark-options">
@@ -32,7 +34,7 @@
                     <h3>Display:</h3>
                     <ul>
                         <li><label><input name="display" type="radio" value="minimal" checked> Minimal</label></li>
-                        <li><label><input name="display" type="radio" value="progress-bar"> Progress bar</label></li>
+                        <li><label><input name="display" type="radio" value="progress-bar" checked> Progress bar</label></li>
                         <li><label><input name="display" type="radio" value="statistics-table"> Statistics table</label></li>
                     </ul>
                 </li>
@@ -115,6 +117,8 @@
                 <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>        
             </footer>
         </section>  
+    </div>
+    <div class="spacer"></div>
     </main>
 </body>
 </html>
