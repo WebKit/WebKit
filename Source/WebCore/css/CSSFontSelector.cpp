@@ -247,16 +247,16 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule, boo
     if (variantLigatures)
         applyValueFontVariantLigatures(*fontFace, *variantLigatures);
 
-    if (variantPosition)
+    if (variantPosition && is<CSSPrimitiveValue>(*variantPosition))
         fontFace->setVariantPosition(downcast<CSSPrimitiveValue>(*variantPosition));
 
-    if (variantCaps)
+    if (variantCaps && is<CSSPrimitiveValue>(*variantCaps))
         fontFace->setVariantCaps(downcast<CSSPrimitiveValue>(*variantCaps));
 
     if (variantNumeric)
         applyValueFontVariantNumeric(*fontFace, *variantNumeric);
 
-    if (variantAlternates)
+    if (variantAlternates && is<CSSPrimitiveValue>(*variantAlternates))
         fontFace->setVariantAlternates(downcast<CSSPrimitiveValue>(*variantAlternates));
 
     if (variantEastAsian)
