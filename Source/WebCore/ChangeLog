@@ -1,3 +1,42 @@
+2015-12-08  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [ThreadedCompositor] Support WebGL for OpenGL.
+        https://bugs.webkit.org/show_bug.cgi?id=143300
+
+        Reviewed by Žan Doberšek.
+
+        To remove pixel transfer operation, this patch adds m_compositorFBO which uses same depth and stencil
+        buffer with m_fbo but uses m_compositorTexture as a color attachment in GraphicsContext3D.
+        Because switching target framebuffer is cheaper than pixel transfer operation and switching color
+        attachment of m_fbo. In Threaded Compositor, when WebGL renders a scene, prepareTexture swaps
+        m_fbo with m_compositorFBO and send the color attachment to the compositor thread.
+        This patch only supports WebGL for OpenGL. OpenGLES will be covered in following-up patches.
+
+        No new tests needed.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::proxy):
+        (WebCore::GraphicsContext3DPrivate::swapBuffersIfNeeded):
+        Implement interfaces to pass a rendered texture to the compositing
+        thread.
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        Create additional compositing texture and FBO to swaping buffers for
+        threaded compositor.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::attachDepthAndStencilBufferIfNeeded):
+        Split attaching depth and stencil buffer codes from reshapeFBOs
+        to make complete framebuffer with not only m_fbo but m_compositorFBO also.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::prepareTexture):
+        If we are in the threaded compositor, we will swap m_fbo with
+        m_compositorFBO instead of copying it.
+
 2015-12-07  Zalan Bujtas  <zalan@apple.com>
 
         Make paintTextWithShadows a member function (TextPainter).

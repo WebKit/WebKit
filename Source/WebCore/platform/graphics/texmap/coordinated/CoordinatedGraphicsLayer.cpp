@@ -386,6 +386,9 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 #if USE(GRAPHICS_SURFACE)
     if (m_platformLayer)
         m_pendingPlatformLayerOperation |= SyncPlatformLayer;
+#elif USE(COORDINATED_GRAPHICS_THREADED)
+    if (m_platformLayer)
+        m_shouldSyncPlatformLayer = true;
 #endif
 
     notifyFlushRequired();

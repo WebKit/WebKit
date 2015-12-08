@@ -172,9 +172,32 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
         ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
         ::glBindTexture(GL_TEXTURE_2D, 0);
+#if USE(COORDINATED_GRAPHICS_THREADED)
+        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_compositorFBO);
+        ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_compositorTexture, 0);
+        attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
+        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+#endif
     }
 #endif
 
+    attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);
+
+    bool mustRestoreFBO = true;
+    if (m_attrs.antialias) {
+        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+        if (m_state.boundFBO == m_multisampleFBO)
+            mustRestoreFBO = false;
+    } else {
+        if (m_state.boundFBO == m_fbo)
+            mustRestoreFBO = false;
+    }
+
+    return mustRestoreFBO;
+}
+
+void GraphicsContext3D::attachDepthAndStencilBufferIfNeeded(GLuint internalDepthStencilFormat, int width, int height)
+{
     if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth)) {
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
         ::glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalDepthStencilFormat, width, height);
@@ -189,18 +212,6 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         // FIXME: cleanup
         notImplemented();
     }
-
-    bool mustRestoreFBO = true;
-    if (m_attrs.antialias) {
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-        if (m_state.boundFBO == m_multisampleFBO)
-            mustRestoreFBO = false;
-    } else {
-        if (m_state.boundFBO == m_fbo)
-            mustRestoreFBO = false;
-    }
-
-    return mustRestoreFBO;
 }
 
 void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)

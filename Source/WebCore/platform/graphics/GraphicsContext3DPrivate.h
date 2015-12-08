@@ -24,6 +24,7 @@
 #include "GraphicsContext3D.h"
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
+#include "BitmapTextureGL.h"
 #include "TextureMapperPlatformLayerProxy.h"
 #elif USE(TEXTURE_MAPPER)
 #include "TextureMapperPlatformLayer.h"
@@ -48,7 +49,7 @@ public:
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
-    virtual void swapBuffersIfNeeded() override { };
+    virtual void swapBuffersIfNeeded() override;
 #elif USE(TEXTURE_MAPPER)
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity);
 #endif
@@ -57,6 +58,11 @@ private:
     GraphicsContext3D* m_context;
     std::unique_ptr<GLContext> m_glContext;
     GraphicsContext3D::RenderStyle m_renderStyle;
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
+    RefPtr<BitmapTextureGL> m_compositorTexture;
+#endif
 };
 
 }

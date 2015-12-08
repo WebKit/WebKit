@@ -223,11 +223,24 @@ void GraphicsContext3D::prepareTexture()
 
     makeContextCurrent();
 
+#if !USE(COORDINATED_GRAPHICS_THREADED)
     TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
     TemporaryOpenGLSetting scopedDither(GL_DITHER, GL_FALSE);
-    
+#endif
+
     if (m_attrs.antialias)
         resolveMultisamplingIfNecessary();
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    std::swap(m_fbo, m_compositorFBO);
+    std::swap(m_texture, m_compositorTexture);
+
+    if (m_state.boundFBO != m_compositorFBO)
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
+    else
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    return;
+#endif
 
     ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     ::glActiveTexture(GL_TEXTURE0);
