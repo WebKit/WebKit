@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that feature resolution order is honored. For more information, click <a href="http://www.w3.org/TR/css3-fonts/#feature-precedence">here</a>. The test passes if there is a particular sequence of Xs and check marks below.
+<div style="font-family: FontWithFeaturesOTF;">
+<span style="font-variant-ligatures: common-ligatures; text-rendering: optimizeSpeed;">C</span>
+<span style="font-variant-ligatures: no-common-ligatures; text-rendering: optimizeSpeed;">C</span>
+<span style="font-variant-ligatures: common-ligatures; text-rendering: optimizeLegibility;">C</span>
+<span style="font-variant-ligatures: no-common-ligatures; text-rendering: optimizeLegibility;">C</span>
+<span style="font-feature-settings: 'liga' 1, 'clig' 1; text-rendering: optimizeSpeed;">C</span>
+<span style="font-feature-settings: 'liga' 0, 'clig' 0; text-rendering: optimizeSpeed;">C</span>
+<span style="font-feature-settings: 'liga' 1, 'clig' 1; text-rendering: optimizeLegibility;">C</span>
+<span style="font-feature-settings: 'liga' 0, 'clig' 0; text-rendering: optimizeLegibility;">C</span>
+<span style="font-variant-ligatures: common-ligatures; font-feature-settings: 'liga' 0, 'clig' 0;">C</span>
+<span style="font-variant-ligatures: no-common-ligatures; font-feature-settings: 'liga' 1, 'clig' 1;">C</span>
+</div>
+</body>
+</html>
