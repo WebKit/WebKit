@@ -1,3 +1,28 @@
+2015-12-08  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [ThreadedCompositor] Add support for Cairo GL-backed ImageBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=151986
+
+        Reviewed by Žan Doberšek.
+
+        This patch adds a support for accelerated 2d canvas which uses cairo-gl as its
+        backend to the threaded compositor. Basically, it applies same way to support
+        WebGL for the threaded compositor.
+
+        Unfortunately, we cannot swap the buffer for the accelerated 2d canvas because
+        it should preserve the buffer of the previous frame when drawing new contents.
+        Because of that, the surface of the accelerated 2d canvas will be copied for
+        each frame.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBufferData::createCompositorBuffer): Prepare a texture
+        surface to push the rendered result to the compositing thread.
+        (WebCore::ImageBufferData::swapBuffersIfNeeded): Copies the contents
+        of the canvas's surface to the compositing texture.
+        (WebCore::ImageBufferData::createCairoGLSurface): Moved to the inside
+        of ImageBufferData.
+
 2015-12-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] 15 accessibility tests fail since r186692.

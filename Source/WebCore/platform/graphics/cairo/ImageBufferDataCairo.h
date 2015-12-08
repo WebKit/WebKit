@@ -62,9 +62,17 @@ public:
     IntSize m_size;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
+    void createCairoGLSurface();
+
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
-    virtual void swapBuffersIfNeeded() override { };
+    virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const override { return m_platformLayerProxy.copyRef(); }
+    virtual void swapBuffersIfNeeded() override;
+    void createCompositorBuffer();
+
+    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
+    RefPtr<cairo_surface_t> m_compositorSurface;
+    uint32_t m_compositorTexture;
+    RefPtr<cairo_t> m_compositorCr;
 #else
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity);
 #endif
