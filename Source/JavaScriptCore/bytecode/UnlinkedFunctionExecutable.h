@@ -66,10 +66,10 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, GeneratorThisMode generatorThisMode, VariableEnvironment& parentScopeTDZVariables, RefPtr<SourceProvider>&& sourceOverride = nullptr)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionMetadataNode* node, UnlinkedFunctionKind unlinkedFunctionKind, ConstructAbility constructAbility, GeneratorThisMode generatorThisMode, VariableEnvironment& parentScopeTDZVariables, bool isDerivedConstructorContext, RefPtr<SourceProvider>&& sourceOverride = nullptr)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
-            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind, constructAbility, generatorThisMode, parentScopeTDZVariables);
+            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind, constructAbility, generatorThisMode, parentScopeTDZVariables, isDerivedConstructorContext);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -128,9 +128,13 @@ public:
     ConstructAbility constructAbility() const { return static_cast<ConstructAbility>(m_constructAbility); }
     bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
     const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
+    
+    bool isArrowFunction() const { return m_parseMode == SourceParseMode::ArrowFunctionMode; }
+    bool isDerivedConstructorContext() const {return m_isDerivedConstructorContext; }
 
 private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, GeneratorThisMode, VariableEnvironment&);
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, GeneratorThisMode, VariableEnvironment&, bool isDerivedConstructorContext);
+    
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
 
@@ -162,6 +166,7 @@ private:
     unsigned m_functionMode : 1; // FunctionMode
     unsigned m_generatorThisMode : 1;
     unsigned m_superBinding : 1;
+    unsigned m_isDerivedConstructorContext : 1;
 
 protected:
     void finishCreation(VM& vm)

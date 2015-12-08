@@ -1,3 +1,16 @@
+2015-12-08  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ES6] "super" and "this" should be lexically bound inside an arrow function and should live in a JSLexicalEnvironment
+        https://bugs.webkit.org/show_bug.cgi?id=149338
+
+        Reviewed by Saam Barati.
+
+        * js/arrowfunction-supercall-expected.txt: Added.
+        * js/arrowfunction-supercall.html: Added.
+        * js/arrowfunction-tdz-expected.txt: Added new expectation.
+        * js/script-tests/arrowfunction-supercall.js: Added.
+        * js/script-tests/arrowfunction-tdz.js: Added new cases.
+
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/index-cursor.html fails.

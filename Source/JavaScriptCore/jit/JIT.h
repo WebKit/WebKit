@@ -502,7 +502,6 @@ namespace JSC {
         void emit_op_end(Instruction*);
         void emit_op_enter(Instruction*);
         void emit_op_get_scope(Instruction*);
-        void emit_op_load_arrowfunction_this(Instruction*);
         void emit_op_eq(Instruction*);
         void emit_op_eq_null(Instruction*);
         void emit_op_get_by_id(Instruction*);

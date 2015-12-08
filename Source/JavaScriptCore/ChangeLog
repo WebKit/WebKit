@@ -1,3 +1,147 @@
+2015-12-05 Aleksandr Skachkov   <gskachkov@gmail.com>
+
+        [ES6] "super" and "this" should be lexically bound inside an arrow function and should live in a JSLexicalEnvironment
+        https://bugs.webkit.org/show_bug.cgi?id=149338
+
+        Reviewed by Saam Barati.
+
+        Implemented new version of the lexically bound 'this' in arrow function. In current version 
+        'this' is stored inside of the lexical environment of the function. To store and load we use
+        op_get_from_scope and op_put_to_scope operations. Also new implementation prevent raising TDZ
+        error for arrow functions that are declared before super() but invoke after.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::createExecutableInternal):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::getSlow):
+        * bytecode/ExecutableInfo.h:
+        (JSC::ExecutableInfo::ExecutableInfo):
+        (JSC::ExecutableInfo::isDerivedConstructorContext):
+        (JSC::ExecutableInfo::isArrowFunctionContext):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::isArrowFunction):
+        (JSC::UnlinkedCodeBlock::isDerivedConstructorContext):
+        (JSC::UnlinkedCodeBlock::isArrowFunctionContext):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitLoadThisFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitLoadNewTargetFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment):
+        (JSC::BytecodeGenerator::emitPutNewTargetToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitPutDerivedConstructorToArrowFunctionContextScope):
+        (JSC::BytecodeGenerator::emitPutThisToArrowFunctionContextScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::isDerivedConstructorContext):
+        (JSC::BytecodeGenerator::usesArrowFunction):
+        (JSC::BytecodeGenerator::needsToUpdateArrowFunctionContext):
+        (JSC::BytecodeGenerator::usesEval):
+        (JSC::BytecodeGenerator::usesThis):
+        (JSC::BytecodeGenerator::newTarget):
+        (JSC::BytecodeGenerator::makeFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThisNode::emitBytecode):
+        (JSC::SuperNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        * dfg/DFGClobberize.h:
+        * dfg/DFGDoesGC.cpp:
+        * dfg/DFGFixupPhase.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPromotedHeapLocation.cpp:
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * ftl/FTLCapabilities.cpp:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncExprCommon):
+        * jit/JITOpcodes32_64.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createArrowFunctionExpr):
+        (JSC::ASTBuilder::usesArrowFunction):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::usesArrowFunction):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/ParserModes.h:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getModuleProgramCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::create):
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::ModuleProgramExecutable::ModuleProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::isArrowFunctionContext):
+        (JSC::ScriptExecutable::isDerivedConstructorContext):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * tests/es6.yaml:
+        * tests/stress/arrowfunction-activation-sink-osrexit.js:
+        * tests/stress/arrowfunction-activation-sink.js:
+        * tests/stress/arrowfunction-lexical-bind-newtarget.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-supercall-1.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-supercall-2.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-supercall-3.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-supercall-4.js: Added.
+        * tests/stress/arrowfunction-lexical-bind-this-1.js:
+        * tests/stress/arrowfunction-lexical-bind-this-7.js: Added.
+        * tests/stress/arrowfunction-tdz-1.js: Added.
+        * tests/stress/arrowfunction-tdz-2.js: Added.
+        * tests/stress/arrowfunction-tdz-3.js: Added.
+        * tests/stress/arrowfunction-tdz-4.js: Added.
+        * tests/stress/arrowfunction-tdz.js: Removed.
+
 2015-12-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(DFG_JIT) build after r193649

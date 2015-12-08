@@ -4842,15 +4842,6 @@ void SpeculativeJIT::compileGetScope(Node* node)
     m_jit.loadPtr(JITCompiler::Address(function.gpr(), JSFunction::offsetOfScopeChain()), result.gpr());
     cellResult(result.gpr(), node);
 }
-
-    
-void SpeculativeJIT::compileLoadArrowFunctionThis(Node* node)
-{
-    SpeculateCellOperand function(this, node->child1());
-    GPRTemporary result(this, Reuse, function);
-    m_jit.loadPtr(JITCompiler::Address(function.gpr(), JSArrowFunction::offsetOfThisValue()), result.gpr());
-    cellResult(result.gpr(), node);
-}
     
 void SpeculativeJIT::compileSkipScope(Node* node)
 {

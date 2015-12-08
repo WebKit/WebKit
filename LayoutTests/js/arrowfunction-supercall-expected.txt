@@ -1,0 +1,27 @@
+Tests for ES6 arrow function, calling of the super in arrow function
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isReferenceError is true
+PASS b.id is value
+PASS isReferenceError is true
+PASS d1.id is "b"
+PASS d2.id is value
+PASS (new D()).id is value
+PASS (new E(false)).id is value
+PASS typeof (new E(true)).id is 'undefined'
+PASS (new F(false)).id is value
+PASS typeof (new F(true)).id is 'undefined'
+PASS indexOfParentClassInStackError < indexOfnestedArrowInStackError is true
+PASS indexOfnestedArrowInStackError < indexOfarrowInChildConstructorInStackError is true
+PASS indexOfarrowInChildConstructorInStackError < indexOfChildClassInStackError is true
+PASS indexOfChildClassInStackError > 0 is true
+PASS indexOfParentClassInStackError > -1 && errorStack.indexOf('ParentClass', indexOfParentClassInStackError + 1) === -1 is true
+PASS indexOfnestedArrowInStackError > -1 && errorStack.indexOf('nestedArrow', indexOfnestedArrowInStackError + 1) === -1 is true
+PASS indexOfarrowInChildConstructorInStackError > -1 && errorStack.indexOf('arrowInChildConstructor', indexOfarrowInChildConstructorInStackError + 1) === -1 is true
+PASS indexOfChildClassInStackError > -1 && errorStack.indexOf('ChildClass', indexOfChildClassInStackError + 1) === -1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

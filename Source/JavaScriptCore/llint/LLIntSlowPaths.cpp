@@ -1079,13 +1079,12 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func_exp)
 LLINT_SLOW_PATH_DECL(slow_path_new_arrow_func_exp)
 {
     LLINT_BEGIN();
-
-    JSValue thisValue = LLINT_OP_C(4).jsValue();
+    
     CodeBlock* codeBlock = exec->codeBlock();
     JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
     FunctionExecutable* executable = codeBlock->functionExpr(pc[3].u.operand);
     
-    LLINT_RETURN(JSArrowFunction::create(vm, executable, scope, thisValue));
+    LLINT_RETURN(JSFunction::create(vm, executable, scope));
 }
 
 static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc, JSValue callee, CodeSpecializationKind kind)
