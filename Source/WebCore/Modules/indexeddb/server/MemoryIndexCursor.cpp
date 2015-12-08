@@ -42,6 +42,8 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& in
     : MemoryCursor(info)
     , m_index(index)
 {
+    LOG(IndexedDB, "MemoryIndexCursor::MemoryIndexCursor %s", info.range().loggingString().utf8().data());
+
     auto* valueStore = m_index.valueStore();
     if (!valueStore)
         return;
@@ -51,11 +53,12 @@ MemoryIndexCursor::MemoryIndexCursor(MemoryIndex& index, const IDBCursorInfo& in
     else
         m_currentIterator = valueStore->reverseFind(m_info.range().upperKey, m_info.duplicity(), m_info.range().upperOpen);
 
-    if (m_currentIterator.isValid()) {
+    if (m_currentIterator.isValid() && m_info.range().containsKey(m_currentIterator.key())) {
         m_currentKey = m_currentIterator.key();
         m_currentPrimaryKey = m_currentIterator.primaryKey();
         m_index.cursorDidBecomeClean(*this);
-    }
+    } else
+        m_currentIterator.invalidate();
 }
 
 MemoryIndexCursor::~MemoryIndexCursor()

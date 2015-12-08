@@ -1,3 +1,16 @@
+2015-12-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/index-cursor.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=151973
+
+        Reviewed by Darin Adler.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        (WebCore::IDBServer::MemoryIndexCursor::MemoryIndexCursor): When the initial cursor creation
+          generates an iterator outside of the cursor's IDBKeyRange, invalidate the iterator.
+          
 2015-12-08  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [EFL] some ax tests have been failed since r186692
