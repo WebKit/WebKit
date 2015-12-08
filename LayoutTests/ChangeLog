@@ -1,3 +1,13 @@
+2015-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test font-variant-* and font-feature-settings on Yosemite and Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=149778
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2015-11-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping tests added with r191968 on win.
