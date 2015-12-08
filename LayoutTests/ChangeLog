@@ -1,3 +1,17 @@
+2015-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-variant-* properties in @font-face declarations should be honored
+        https://bugs.webkit.org/show_bug.cgi?id=149771
+
+        Reviewed by Simon Fraser.
+
+        * css3/font-variant-font-face-override-expected.html: Added
+        * css3/font-variant-font-face-override.html: Added
+        * css3/font-feature-settings-font-face-rendering-expected.html: Added.
+        * css3/font-feature-settings-font-face-rendering.html: Added.
+        * css3/font-variant-font-face-all-expected.html: Added.
+        * css3/font-variant-font-face-all.html: Added.
+
 2015-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontCascade::typesettingFeatures() is not privy to font-variant-* nor font-feature-settings

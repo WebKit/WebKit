@@ -287,7 +287,7 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 
     NSString *desiredFamily = family;
     RetainPtr<CTFontRef> foundFont = adoptCF(CTFontCreateForCSS((CFStringRef)desiredFamily, toCoreTextFontWeight(weight), requestedTraits, size));
-    foundFont = applyFontFeatureSettings(foundFont.get(), featureSettings, variantSettings);
+    foundFont = applyFontFeatureSettings(foundFont.get(), nullptr, nullptr, featureSettings, variantSettings);
     if (!foundFont)
         return nil;
     font = CFBridgingRelease(CFRetain(foundFont.get()));
@@ -513,7 +513,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     const FontPlatformData& platformData = originalFontData->platformData();
     NSFont *nsFont = platformData.nsFont();
     RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), characters, length);
-    result = applyFontFeatureSettings(result.get(), description.featureSettings(), description.variantSettings());
+    result = applyFontFeatureSettings(result.get(), nullptr, nullptr, description.featureSettings(), description.variantSettings());
     if (!result)
         return nullptr;
 

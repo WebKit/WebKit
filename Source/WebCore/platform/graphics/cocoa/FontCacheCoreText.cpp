@@ -143,202 +143,260 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
 #endif
 }
 
-typedef HashMap<FontFeatureTag, int, FontFeatureTagHash, FontFeatureTagHashTraits> FeaturesMap; 
- 
-static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings) 
-{ 
-    FeaturesMap result; 
- 
-    switch (variantSettings.commonLigatures) { 
-    case FontVariantLigatures::Yes: 
-        result.add(fontFeatureTag("liga"), 1); 
-        result.add(fontFeatureTag("clig"), 1); 
-        break; 
-    case FontVariantLigatures::No: 
-        result.add(fontFeatureTag("liga"), 0); 
-        result.add(fontFeatureTag("clig"), 0); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.discretionaryLigatures) { 
-    case FontVariantLigatures::Yes: 
-        result.add(fontFeatureTag("dlig"), 1); 
-        break; 
-    case FontVariantLigatures::No: 
-        result.add(fontFeatureTag("dlig"), 0); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.historicalLigatures) { 
-    case FontVariantLigatures::Yes: 
-        result.add(fontFeatureTag("hlig"), 1); 
-        break; 
-    case FontVariantLigatures::No: 
-        result.add(fontFeatureTag("hlig"), 0); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.contextualAlternates) { 
-    case FontVariantLigatures::Yes: 
-        result.add(fontFeatureTag("calt"), 1); 
-        break; 
-    case FontVariantLigatures::No: 
-        result.add(fontFeatureTag("calt"), 0); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.position) { 
-    case FontVariantPosition::Subscript: 
-        result.add(fontFeatureTag("subs"), 1); 
-        break; 
-    case FontVariantPosition::Superscript: 
-        result.add(fontFeatureTag("sups"), 1); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.caps) { 
-    case FontVariantCaps::AllSmall: 
-        result.add(fontFeatureTag("c2sc"), 1); 
-        FALLTHROUGH; 
-    case FontVariantCaps::Small: 
-        result.add(fontFeatureTag("smcp"), 1); 
-        break; 
-    case FontVariantCaps::AllPetite: 
-        result.add(fontFeatureTag("c2pc"), 1); 
-        FALLTHROUGH; 
-    case FontVariantCaps::Petite: 
-        result.add(fontFeatureTag("pcap"), 1); 
-        break; 
-    case FontVariantCaps::Unicase: 
-        result.add(fontFeatureTag("unic"), 1); 
-        break; 
-    case FontVariantCaps::Titling: 
-        result.add(fontFeatureTag("titl"), 1); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.numericFigure) { 
-    case FontVariantNumericFigure::LiningNumbers: 
-        result.add(fontFeatureTag("lnum"), 1); 
-        break; 
-    case FontVariantNumericFigure::OldStyleNumbers: 
-        result.add(fontFeatureTag("onum"), 1); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.numericSpacing) { 
-    case FontVariantNumericSpacing::ProportionalNumbers: 
-        result.add(fontFeatureTag("pnum"), 1); 
-        break; 
-    case FontVariantNumericSpacing::TabularNumbers: 
-        result.add(fontFeatureTag("tnum"), 1); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.numericFraction) { 
-    case FontVariantNumericFraction::DiagonalFractions: 
-        result.add(fontFeatureTag("frac"), 1); 
-        break; 
-    case FontVariantNumericFraction::StackedFractions: 
-        result.add(fontFeatureTag("afrc"), 1); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    if (variantSettings.numericOrdinal == FontVariantNumericOrdinal::Yes) 
-        result.add(fontFeatureTag("ordn"), 1); 
-    if (variantSettings.numericSlashedZero == FontVariantNumericSlashedZero::Yes) 
-        result.add(fontFeatureTag("zero"), 1); 
- 
-    switch (variantSettings.alternates) { 
-    case FontVariantAlternates::HistoricalForms: 
-        result.add(fontFeatureTag("hist"), 1); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    switch (variantSettings.eastAsianVariant) { 
-    case FontVariantEastAsianVariant::Jis78: 
-        result.add(fontFeatureTag("jp78"), 1); 
-        break; 
-    case FontVariantEastAsianVariant::Jis83: 
-        result.add(fontFeatureTag("jp83"), 1); 
-        break; 
-    case FontVariantEastAsianVariant::Jis90: 
-        result.add(fontFeatureTag("jp90"), 1); 
-        break; 
-    case FontVariantEastAsianVariant::Jis04: 
-        result.add(fontFeatureTag("jp04"), 1); 
-        break; 
-    case FontVariantEastAsianVariant::Simplified: 
-        result.add(fontFeatureTag("smpl"), 1); 
-        break; 
-    case FontVariantEastAsianVariant::Traditional: 
-        result.add(fontFeatureTag("trad"), 1); 
-        break; 
+typedef HashMap<FontFeatureTag, int, FontFeatureTagHash, FontFeatureTagHashTraits> FeaturesMap;
+
+static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings)
+{
+    FeaturesMap result;
+
+    switch (variantSettings.commonLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("liga"), 1);
+        result.add(fontFeatureTag("clig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("liga"), 0);
+        result.add(fontFeatureTag("clig"), 0);
+        break;
     default:
-        break; 
-    } 
- 
-    switch (variantSettings.eastAsianWidth) { 
-    case FontVariantEastAsianWidth::FullWidth: 
-        result.add(fontFeatureTag("fwid"), 1); 
-        break; 
-    case FontVariantEastAsianWidth::ProportionalWidth: 
-        result.add(fontFeatureTag("pwid"), 1); 
-        break; 
-    default: 
-        break; 
-    } 
- 
-    if (variantSettings.eastAsianRuby == FontVariantEastAsianRuby::Yes) 
-        result.add(fontFeatureTag("ruby"), 1); 
- 
-    return result; 
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.discretionaryLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("dlig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("dlig"), 0);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.historicalLigatures) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("hlig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("hlig"), 0);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.contextualAlternates) {
+    case FontVariantLigatures::Normal:
+        break;
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("calt"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("calt"), 0);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.position) {
+    case FontVariantPosition::Normal:
+        break;
+    case FontVariantPosition::Subscript:
+        result.add(fontFeatureTag("subs"), 1);
+        break;
+    case FontVariantPosition::Superscript:
+        result.add(fontFeatureTag("sups"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.caps) {
+    case FontVariantCaps::Normal:
+        break;
+    case FontVariantCaps::AllSmall:
+        result.add(fontFeatureTag("c2sc"), 1);
+        FALLTHROUGH;
+    case FontVariantCaps::Small:
+        result.add(fontFeatureTag("smcp"), 1);
+        break;
+    case FontVariantCaps::AllPetite:
+        result.add(fontFeatureTag("c2pc"), 1);
+        FALLTHROUGH;
+    case FontVariantCaps::Petite:
+        result.add(fontFeatureTag("pcap"), 1);
+        break;
+    case FontVariantCaps::Unicase:
+        result.add(fontFeatureTag("unic"), 1);
+        break;
+    case FontVariantCaps::Titling:
+        result.add(fontFeatureTag("titl"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.numericFigure) {
+    case FontVariantNumericFigure::Normal:
+        break;
+    case FontVariantNumericFigure::LiningNumbers:
+        result.add(fontFeatureTag("lnum"), 1);
+        break;
+    case FontVariantNumericFigure::OldStyleNumbers:
+        result.add(fontFeatureTag("onum"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.numericSpacing) {
+    case FontVariantNumericSpacing::Normal:
+        break;
+    case FontVariantNumericSpacing::ProportionalNumbers:
+        result.add(fontFeatureTag("pnum"), 1);
+        break;
+    case FontVariantNumericSpacing::TabularNumbers:
+        result.add(fontFeatureTag("tnum"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.numericFraction) {
+    case FontVariantNumericFraction::Normal:
+        break;
+    case FontVariantNumericFraction::DiagonalFractions:
+        result.add(fontFeatureTag("frac"), 1);
+        break;
+    case FontVariantNumericFraction::StackedFractions:
+        result.add(fontFeatureTag("afrc"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.numericOrdinal) {
+    case FontVariantNumericOrdinal::Normal:
+        break;
+    case FontVariantNumericOrdinal::Yes:
+        result.add(fontFeatureTag("ordn"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.numericSlashedZero) {
+    case FontVariantNumericSlashedZero::Normal:
+        break;
+    case FontVariantNumericSlashedZero::Yes:
+        result.add(fontFeatureTag("zero"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.alternates) {
+    case FontVariantAlternates::Normal:
+        break;
+    case FontVariantAlternates::HistoricalForms:
+        result.add(fontFeatureTag("hist"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.eastAsianVariant) {
+    case FontVariantEastAsianVariant::Normal:
+        break;
+    case FontVariantEastAsianVariant::Jis78:
+        result.add(fontFeatureTag("jp78"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis83:
+        result.add(fontFeatureTag("jp83"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis90:
+        result.add(fontFeatureTag("jp90"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis04:
+        result.add(fontFeatureTag("jp04"), 1);
+        break;
+    case FontVariantEastAsianVariant::Simplified:
+        result.add(fontFeatureTag("smpl"), 1);
+        break;
+    case FontVariantEastAsianVariant::Traditional:
+        result.add(fontFeatureTag("trad"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.eastAsianWidth) {
+    case FontVariantEastAsianWidth::Normal:
+        break;
+    case FontVariantEastAsianWidth::FullWidth:
+        result.add(fontFeatureTag("fwid"), 1);
+        break;
+    case FontVariantEastAsianWidth::ProportionalWidth:
+        result.add(fontFeatureTag("pwid"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    switch (variantSettings.eastAsianRuby) {
+    case FontVariantEastAsianRuby::Normal:
+        break;
+    case FontVariantEastAsianRuby::Yes:
+        result.add(fontFeatureTag("ruby"), 1);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return result;
 }
 
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef originalFont, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
 {
-    if (!originalFont || (!features.size() && variantSettings.isAllNormal()))
+    if (!originalFont || (!features.size() && variantSettings.isAllNormal()
+        && (!fontFaceFeatures || !fontFaceFeatures->size()) && (!fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal())))
         return originalFont;
 
     // This algorithm is described at http://www.w3.org/TR/css3-fonts/#feature-precedence
+    FeaturesMap featuresToBeApplied;
 
     // Step 1: CoreText handles default features (such as required ligatures).
 
-    // Steps 2-3: Consult with @font-face
-    // FIXME: This is not yet implemented.
+    // Step 2: Consult with font-variant-* inside @font-face
+    if (fontFaceVariantSettings)
+        featuresToBeApplied = computeFeatureSettingsFromVariants(*fontFaceVariantSettings);
+
+    // Step 3: Consult with font-feature-settings inside @font-face
+    if (fontFaceFeatures) {
+        for (auto& fontFaceFeature : *fontFaceFeatures)
+            featuresToBeApplied.set(fontFaceFeature.tag(), fontFaceFeature.value());
+    }
 
     // Step 4: Font-variant
-    auto fontFeatureSettingsFromVariants = computeFeatureSettingsFromVariants(variantSettings);
+    for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings))
+        featuresToBeApplied.set(newFeature.key, newFeature.value);
+
+    // Step 5: Other properties
 
     // Step 6: Font-feature-settings
     for (auto& newFeature : features)
-        fontFeatureSettingsFromVariants.set(newFeature.tag(), newFeature.value());
+        featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
-    if (!fontFeatureSettingsFromVariants.size())
+    if (!featuresToBeApplied.size())
         return originalFont;
 
     RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
-    for (auto& p : fontFeatureSettingsFromVariants) {
+    for (auto& p : featuresToBeApplied) {
         auto feature = FontFeature(p.key, p.value);
         appendTrueTypeFeature(featureArray.get(), feature);
         appendOpenTypeFeature(featureArray.get(), feature);

@@ -232,7 +232,7 @@ private:
 };
 
 #if PLATFORM(COCOA)
-RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings&, const FontVariantSettings&);
+RetainPtr<CTFontRef> applyFontFeatureSettings(CTFontRef, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings&);
 #endif
 
 #if !PLATFORM(MAC)

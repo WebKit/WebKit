@@ -1,3 +1,89 @@
+2015-11-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-variant-* properties in @font-face declarations should be honored
+        https://bugs.webkit.org/show_bug.cgi?id=149771
+
+        Reviewed by Simon Fraser.
+
+        According to the CSS Fonts Level 3 spec, web authors are allowed to put
+        font-feature-settings / font-variant-* inside @font-face blocks. These
+        properties are supposed to be applied at a specific time during the
+        font selection algorithm.
+
+        This patch gives a FontFeatureSettings object and a FontVariantSettings
+        object to CSSFontFace, and moves common parsing logic from
+        StyleBuilderCustom to a shared location. Then, once the two properties
+        are parsed from the @font-face block, the relevant data structures are
+        passed down into the font selection algorithm. This algorithm then
+        consults with these values at the correct time (inside
+        preparePlatformFont()).
+
+        Tests: css3/font-feature-settings-font-face-rendering.html
+               css3/font-variant-font-face-all.html
+               css3/font-variant-font-face-override.html
+
+        * WebCore.xcodeproj/project.pbxproj: Add a header for the common
+        location of parsing font-variant-ligatures, font-variant-numeric,
+        and font-variant-east-asian.
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font): Pass the relevant data structures
+        into the font selection algorithm.
+        * css/CSSFontFace.h: Add FontFeatureSettings and FontVariantSettings
+        member variables.
+        (WebCore::CSSFontFace::insertFeature):
+        (WebCore::CSSFontFace::setVariantCommonLigatures):
+        (WebCore::CSSFontFace::setVariantDiscretionaryLigatures):
+        (WebCore::CSSFontFace::setVariantHistoricalLigatures):
+        (WebCore::CSSFontFace::setVariantContextualAlternates):
+        (WebCore::CSSFontFace::setVariantPosition):
+        (WebCore::CSSFontFace::setVariantCaps):
+        (WebCore::CSSFontFace::setVariantNumericFigure):
+        (WebCore::CSSFontFace::setVariantNumericSpacing):
+        (WebCore::CSSFontFace::setVariantNumericFraction):
+        (WebCore::CSSFontFace::setVariantNumericOrdinal):
+        (WebCore::CSSFontFace::setVariantNumericSlashedZero):
+        (WebCore::CSSFontFace::setVariantAlternates):
+        (WebCore::CSSFontFace::setVariantEastAsianVariant):
+        (WebCore::CSSFontFace::setVariantEastAsianWidth):
+        (WebCore::CSSFontFace::setVariantEastAsianRuby):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font): Pass the relevant data
+        structures into the font selection algorithm.
+        * css/CSSFontFaceSource.h: Ditto.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Call the shared
+        parsing logic to populate the FontFeatureSettings and
+        FontVariantSettings members.
+        * css/FontVariantBuilder.h: Added. Destination for shared parsing
+        logic.
+        (WebCore::applyValueFontVariantLigatures):
+        (WebCore::applyValueFontVariantNumeric):
+        (WebCore::applyValueFontVariantEastAsian):
+        * css/StyleBuilderCustom.h: Source for shared parsing logic.
+        (WebCore::StyleBuilderCustom::applyValueFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantNumeric):
+        (WebCore::StyleBuilderCustom::applyValueFontVariantEastAsian):
+        * loader/cache/CachedFont.cpp: Pass the relevant data structures
+        into the font selection algorithm.
+        (WebCore::CachedFont::createFont):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        * loader/cache/CachedFont.h: Ditto.
+        * loader/cache/CachedSVGFont.cpp: Ditto.
+        (WebCore::CachedSVGFont::createFont):
+        (WebCore::CachedSVGFont::platformDataFromCustomData):
+        * loader/cache/CachedSVGFont.h: Ditto.
+        * platform/graphics/FontCache.h: Ditto.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::codePath): Adjust comment.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont): Consult with the newly parsed values.
+        (WebCore::fontWithFamily): Pass the relevant data structures into the
+        font selection algorithm.
+        (WebCore::FontCache::systemFallbackForCharacters): Ditto.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Ditto.
+        * platform/graphics/mac/FontCustomPlatformData.h: Ditto.
+
 2015-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontCascade::typesettingFeatures() is not privy to font-variant-* nor font-feature-settings
