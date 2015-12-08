@@ -34,8 +34,12 @@
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 
+#if USE(NETWORK_SESSION)
+OBJC_CLASS NSURLSessionDownloadTask;
+#else
 OBJC_CLASS NSURLDownload;
 OBJC_CLASS WKDownloadAsDelegate;
+#endif
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
@@ -124,7 +128,7 @@ private:
 
 #if PLATFORM(COCOA)
 #if USE(NETWORK_SESSION)
-    // FIXME: This needs member variables.
+    RetainPtr<NSURLSessionDownloadTask> m_download;
 #else
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;

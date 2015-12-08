@@ -61,10 +61,6 @@ public:
 
     NetworkLoad* networkLoad() const { return m_networkLoad.get(); }
 
-#if !USE(NETWORK_SESSION)
-    void didConvertHandleToDownload();
-#endif
-
     void start();
     void abort();
 
@@ -106,6 +102,7 @@ public:
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     virtual void didFinishLoading(double finishTime) override;
     virtual void didFailLoading(const WebCore::ResourceError&) override;
+    virtual void didConvertToDownload() override;
 
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess&, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
@@ -150,9 +147,7 @@ private:
     std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
 
-#if !USE(NETWORK_SESSION)
-    bool m_didConvertHandleToDownload { false };
-#endif
+    bool m_didConvertToDownload { false };
     bool m_didConsumeSandboxExtensions { false };
     bool m_defersLoading { false };
 

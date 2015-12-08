@@ -33,7 +33,9 @@
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
+#if !USE(NETWORK_SESSION)
 class ResourceHandle;
+#endif
 class ResourceRequest;
 class ResourceResponse;
 class SessionID;
@@ -77,13 +79,8 @@ public:
     void cancelDownload(uint64_t downloadID);
 
     void downloadFinished(Download*);
-#if USE(NETWORK_SESSION)
-    bool isDownloading() const { notImplemented(); return false; }
-    uint64_t activeDownloadCount() const { notImplemented(); return 0; }
-#else
     bool isDownloading() const { return !m_downloads.isEmpty(); }
     uint64_t activeDownloadCount() const { return m_downloads.size(); }
-#endif
 
     void didCreateDownload();
     void didDestroyDownload();
@@ -93,9 +90,7 @@ public:
 
 private:
     Client* m_client;
-#if !USE(NETWORK_SESSION)
     HashMap<uint64_t, std::unique_ptr<Download>> m_downloads;
-#endif
 };
 
 } // namespace WebKit

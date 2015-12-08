@@ -170,6 +170,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
 {
+    ASSERT_WITH_MESSAGE(!_session->dataTaskForIdentifier([downloadTask taskIdentifier]), "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
     notImplemented();
 }
 
@@ -180,7 +181,10 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
 {
-    notImplemented();
+    auto* networkDataTask = _session->dataTaskForIdentifier([dataTask taskIdentifier]);
+    ASSERT(networkDataTask);
+    if (auto* client = networkDataTask->client())
+        client->didBecomeDownload();
 }
 
 @end
@@ -215,6 +219,11 @@ NetworkSession::NetworkSession(Type type, WebCore::SessionID sessionID)
             configuration.HTTPCookieStorage = [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:storage] autorelease];
     }
     m_session = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+}
+
+NetworkSession::~NetworkSession()
+{
+    [m_session invalidateAndCancel];
 }
 
 Ref<NetworkDataTask> NetworkSession::createDataTaskWithRequest(const WebCore::ResourceRequest& request, NetworkSessionTaskClient& client)

@@ -56,6 +56,7 @@ public:
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) = 0;
     virtual void didFinishLoading(double finishTime) = 0;
     virtual void didFailLoading(const WebCore::ResourceError&) = 0;
+    virtual void didConvertToDownload() = 0;
 
 #if PLATFORM(COCOA)
     virtual void willCacheResponseAsync(CFCachedURLResponseRef) = 0;

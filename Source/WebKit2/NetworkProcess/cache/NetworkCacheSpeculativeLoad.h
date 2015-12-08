@@ -59,6 +59,7 @@ private:
     virtual void didReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;
     virtual void didFinishLoading(double finishTime) override;
     virtual void didFailLoading(const WebCore::ResourceError&) override;
+    virtual void didConvertToDownload() override { ASSERT_NOT_REACHED(); }
 #if PLATFORM(COCOA)
     virtual void willCacheResponseAsync(CFCachedURLResponseRef) override { }
 #endif

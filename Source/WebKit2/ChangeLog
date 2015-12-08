@@ -1,3 +1,47 @@
+2015-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards implementing downloads with NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=151883
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::continueDidReceiveResponse):
+        (WebKit::NetworkLoad::convertTaskToDownload):
+        (WebKit::NetworkLoad::willPerformHTTPRedirection):
+        (WebKit::NetworkLoad::didReceiveChallenge):
+        (WebKit::NetworkLoad::didReceiveResponse):
+        (WebKit::NetworkLoad::didReceiveData):
+        (WebKit::NetworkLoad::didCompleteWithError):
+        (WebKit::NetworkLoad::didBecomeDownload):
+        (WebKit::NetworkLoad::didReceiveResponseAsync):
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didConvertToDownload):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didConvertHandleToDownload): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient):
+        (WebKit::NetworkSession::~NetworkSession): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[NetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[NetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]):
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::createDataTaskWithRequest):
+        * Shared/Downloads/Download.h:
+        * Shared/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::isDownloading):
+        (WebKit::DownloadManager::activeDownloadCount):
+
 2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Create a Sandbox SPI header

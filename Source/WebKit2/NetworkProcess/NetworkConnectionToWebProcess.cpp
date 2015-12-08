@@ -197,15 +197,14 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(WebCore::S
     }
 
 #if USE(NETWORK_SESSION)
-    // FIXME: Do something here.
-    notImplemented();
+    loader->networkLoad()->convertTaskToDownload();
 #else
     networkProcess.downloadManager().convertHandleToDownload(downloadID, loader->networkLoad()->handle(), request, response);
 
     // Unblock the URL connection operation queue.
     loader->networkLoad()->handle()->continueDidReceiveResponse();
     
-    loader->didConvertHandleToDownload();
+    loader->didConvertToDownload();
 #endif
 }
 
