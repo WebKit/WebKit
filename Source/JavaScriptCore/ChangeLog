@@ -1,3 +1,15 @@
+2015-12-08  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Remove the flag to check timer state in IncrementalSweeper
+        https://bugs.webkit.org/show_bug.cgi?id=151988
+
+        Reviewed by Gyuyoung Kim.
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::cancelTimer):
+
 2015-12-08  Philippe Normand  <pnormand@igalia.com>
 
         [Mac][GTK] Fix JSC FTL build

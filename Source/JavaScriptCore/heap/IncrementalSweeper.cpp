@@ -70,16 +70,13 @@ void IncrementalSweeper::cancelTimer()
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : HeapTimer(heap->vm())
     , m_blocksToSweep(heap->m_blockSnapshot)
-    , m_isTimerFrozen(false)
 {
 }
 
 void IncrementalSweeper::scheduleTimer()
 {
-    if (m_isTimerFrozen) {
+    if (ecore_timer_freeze_get(m_timer))
         ecore_timer_thaw(m_timer);
-        m_isTimerFrozen = false;
-    }
 
     double targetTime = currentTime() + (sweepTimeSlice * sweepTimeMultiplier);
     ecore_timer_interval_set(m_timer, targetTime);
@@ -88,7 +85,6 @@ void IncrementalSweeper::scheduleTimer()
 void IncrementalSweeper::cancelTimer()
 {
     ecore_timer_freeze(m_timer);
-    m_isTimerFrozen = true;
 }
 #elif USE(GLIB)
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
