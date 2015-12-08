@@ -1,3 +1,18 @@
+2015-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Rename UserMediaClient and UserMediaController methods
+        https://bugs.webkit.org/show_bug.cgi?id=152001
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::pageDestroyed):
+        (WebKit::WebUserMediaClient::requestUserMediaAccess):
+        (WebKit::WebUserMediaClient::cancelUserMediaAccessRequest):
+        (WebKit::WebUserMediaClient::requestPermission): Deleted.
+        (WebKit::WebUserMediaClient::cancelRequest): Deleted.
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h:
+
 2015-12-08  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Remove an unused variable from WebKitWebContext

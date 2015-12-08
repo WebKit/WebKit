@@ -1,3 +1,26 @@
+2015-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Rename UserMediaClient and UserMediaController methods
+        https://bugs.webkit.org/show_bug.cgi?id=152001
+
+        Reviewed by Brady Eidson.
+
+        No new tests, no behavior change.
+
+        * Modules/mediastream/UserMediaClient.h:
+        (WebCore::UserMediaClient::~UserMediaClient):
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::client):
+        (WebCore::UserMediaController::from):
+        (WebCore::UserMediaController::requestUserMediaAccess):
+        (WebCore::UserMediaController::cancelUserMediaAccessRequest):
+        (WebCore::UserMediaController::requestPermission): Deleted.
+        (WebCore::UserMediaController::cancelRequest): Deleted.
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::constraintsValidated):
+        (WebCore::UserMediaRequest::contextDestroyed):
+        * platform/mock/UserMediaClientMock.h:
+
 2015-12-08  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Do not exit fullscreen mode during auto-PiP.

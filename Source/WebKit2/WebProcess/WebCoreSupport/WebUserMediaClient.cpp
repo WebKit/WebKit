@@ -39,13 +39,13 @@ void WebUserMediaClient::pageDestroyed()
     delete this;
 }
 
-void WebUserMediaClient::requestPermission(Ref<UserMediaRequest>&& prRequest)
+void WebUserMediaClient::requestUserMediaAccess(Ref<UserMediaRequest>&& prRequest)
 {
     UserMediaRequest& request = prRequest.leakRef();
     m_page.userMediaPermissionRequestManager().startRequest(request);
 }
 
-void WebUserMediaClient::cancelRequest(UserMediaRequest& request)
+void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
 {
     m_page.userMediaPermissionRequestManager().cancelRequest(request);
 }

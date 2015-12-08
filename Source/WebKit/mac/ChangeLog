@@ -1,3 +1,21 @@
+2015-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Rename UserMediaClient and UserMediaController methods
+        https://bugs.webkit.org/show_bug.cgi?id=152001
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebUserMediaClient.h:
+        * WebCoreSupport/WebUserMediaClient.mm:
+        (WebUserMediaClient::pageDestroyed):
+        (WebUserMediaClient::requestUserMediaAccess):
+        (WebUserMediaClient::cancelUserMediaAccessRequest):
+        (-[WebUserMediaPolicyListener initWithUserMediaRequest:]):
+        (-[WebUserMediaPolicyListener cancelUserMediaAccessRequest]):
+        (WebUserMediaClient::requestPermission): Deleted.
+        (WebUserMediaClient::cancelRequest): Deleted.
+        (-[WebUserMediaPolicyListener cancelRequest]): Deleted.
+
 2015-12-07  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r193675.

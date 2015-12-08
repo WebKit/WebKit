@@ -46,7 +46,7 @@ using namespace WebCore;
     RefPtr<UserMediaRequest> _request;
 }
 - (id)initWithUserMediaRequest:(PassRefPtr<UserMediaRequest>)request;
-- (void)cancelRequest;
+- (void)cancelUserMediaAccessRequest;
 - (void)deny;
 @end
 
@@ -81,14 +81,14 @@ void WebUserMediaClient::pageDestroyed()
 {
     UserMediaRequestsMap& requestsMap = userMediaRequestsMap();
     for (UserMediaRequestsMap::iterator it = requestsMap.begin(); it != requestsMap.end(); ++it) {
-        [it->value cancelRequest];
+        [it->value cancelUserMediaAccessRequest];
         requestsMap.remove(it);
     }
 
     delete this;
 }
 
-void WebUserMediaClient::requestPermission(Ref<UserMediaRequest>&& prpRequest)
+void WebUserMediaClient::requestUserMediaAccess(Ref<UserMediaRequest>&& prpRequest)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -111,14 +111,14 @@ void WebUserMediaClient::requestPermission(Ref<UserMediaRequest>&& prpRequest)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebUserMediaClient::cancelRequest(UserMediaRequest& request)
+void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
 {
     UserMediaRequestsMap& requestsMap = userMediaRequestsMap();
     UserMediaRequestsMap::iterator it = requestsMap.find(&request);
     if (it == requestsMap.end())
         return;
 
-    [it->value cancelRequest];
+    [it->value cancelUserMediaAccessRequest];
     requestsMap.remove(it);
 }
 
@@ -136,7 +136,7 @@ void WebUserMediaClient::cancelRequest(UserMediaRequest& request)
 #endif
 }
 
-- (void)cancelRequest
+- (void)cancelUserMediaAccessRequest
 {
 #if ENABLE(MEDIA_STREAM)
     if (!_request)

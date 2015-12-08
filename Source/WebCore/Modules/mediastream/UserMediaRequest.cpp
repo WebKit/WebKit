@@ -131,7 +131,7 @@ void UserMediaRequest::constraintsValidated(const Vector<RefPtr<RealtimeMediaSou
     callOnMainThread([protectedThis] {
         // 2 - The constraints are valid, ask the user for access to media.
         if (UserMediaController* controller = protectedThis->m_controller)
-            controller->requestPermission(*protectedThis.get());
+            controller->requestUserMediaAccess(*protectedThis.get());
     });
 }
 
@@ -203,7 +203,7 @@ void UserMediaRequest::contextDestroyed()
     Ref<UserMediaRequest> protect(*this);
 
     if (m_controller) {
-        m_controller->cancelRequest(*this);
+        m_controller->cancelUserMediaAccessRequest(*this);
         m_controller = nullptr;
     }
 

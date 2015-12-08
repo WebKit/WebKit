@@ -70,13 +70,13 @@ public:
         delete this;
     }
 
-    virtual void requestPermission(Ref<UserMediaRequest>&& request) override
+    virtual void requestUserMediaAccess(Ref<UserMediaRequest>&& request) override
     {
         RefPtr<UserMediaClientRequestNotifier> notifier = adoptRef(new UserMediaClientRequestNotifier(WTF::move(request), true));
         m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
     }
 
-    virtual void cancelRequest(UserMediaRequest& request) override
+    virtual void cancelUserMediaAccessRequest(UserMediaRequest& request) override
     {
         RefPtr<UserMediaClientRequestNotifier> notifier = adoptRef(new UserMediaClientRequestNotifier(request, false));
         m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));

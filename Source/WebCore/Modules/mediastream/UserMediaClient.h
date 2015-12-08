@@ -44,8 +44,8 @@ class UserMediaClient {
 public:
     virtual void pageDestroyed() = 0;
 
-    virtual void requestPermission(Ref<UserMediaRequest>&&) = 0;
-    virtual void cancelRequest(UserMediaRequest&) = 0;
+    virtual void requestUserMediaAccess(Ref<UserMediaRequest>&&) = 0;
+    virtual void cancelUserMediaAccessRequest(UserMediaRequest&) = 0;
 
 protected:
     virtual ~UserMediaClient() { }

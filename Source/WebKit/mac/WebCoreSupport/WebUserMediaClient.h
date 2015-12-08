@@ -44,8 +44,8 @@ public:
     ~WebUserMediaClient();
 
     // UserMediaClient
-    virtual void requestPermission(Ref<WebCore::UserMediaRequest>&&) override;
-    virtual void cancelRequest(WebCore::UserMediaRequest&) override;
+    virtual void requestUserMediaAccess(Ref<WebCore::UserMediaRequest>&&) override;
+    virtual void cancelUserMediaAccessRequest(WebCore::UserMediaRequest&) override;
     virtual void pageDestroyed() override;
 
 private:
