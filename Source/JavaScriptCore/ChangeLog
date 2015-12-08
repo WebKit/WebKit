@@ -1,3 +1,12 @@
+2015-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Small style fixes in B3MoveConstants.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=151980
+
+        Reviewed by Benjamin Poulain.
+
+        * b3/B3MoveConstants.cpp:
+
 2015-12-07  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] On x86, we should XOR registers instead of moving a zero immediate

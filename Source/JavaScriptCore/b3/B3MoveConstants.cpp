@@ -247,7 +247,7 @@ private:
                 origin);
             result = m_insertionSet.insert<MemoryValue>(
                 valueIndex, Load, key.type(), origin, tableBase,
-                sizeof(intptr_t) * m_constTable.get(key));
+                sizeof(int64_t) * m_constTable.get(key));
         } else
             result = m_insertionSet.insertValue(valueIndex, key.materialize(m_proc, origin));
         m_constants.add(key, result);
@@ -257,7 +257,7 @@ private:
     bool goesInTable(const ValueKey& key)
     {
         return (key.opcode() == ConstDouble && key != doubleZero())
-        || (key.opcode() == ConstFloat && key != floatZero());
+            || (key.opcode() == ConstFloat && key != floatZero());
     }
 
     bool needsMotion(const ValueKey& key)
