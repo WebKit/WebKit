@@ -1,3 +1,11 @@
+2015-12-07  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Build fix.
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::createFontPlatformData):
+        Pass two nullptrs to match function signature.
+
 2015-12-07  David Kilzer  <ddkilzer@apple.com>
 
         Merge r193635. rdar://problem/23785592
