@@ -447,6 +447,4 @@ messages -> WebPageProxy {
 #endif
 
     DidRestoreScrollPosition()
-
-    SetPageActivityState(unsigned activityState)
 }

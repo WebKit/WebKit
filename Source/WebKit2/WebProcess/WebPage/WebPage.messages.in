@@ -23,7 +23,6 @@
 messages -> WebPage LegacyReceiver {
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, uint64_t callbackID)
     SetViewState(unsigned viewState, bool wantsDidUpdateViewState, Vector<uint64_t> callbackIDs)
-    SetUserActivityStarted(bool started)
     SetLayerHostingMode(unsigned layerHostingMode)
 
     SetSessionID(WebCore::SessionID sessionID)

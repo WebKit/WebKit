@@ -991,7 +991,7 @@ private:
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
 
-    void setUserActivityStarted(bool);
+    void updateUserActivity();
 
     void mouseEvent(const WebMouseEvent&);
     void keyEvent(const WebKeyboardEvent&);
@@ -1394,6 +1394,7 @@ private:
     WebCore::ViewState::Flags m_viewState;
     WebCore::PageActivityState::Flags m_activityState;
 
+    bool m_processSuppressionEnabled;
     UserActivity m_userActivity;
 
     uint64_t m_pendingNavigationID;
