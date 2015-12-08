@@ -83,6 +83,11 @@ storage/indexeddb/version-change-exclusive.html [ Skip ]
 # Causes crashes downstream
 storage/indexeddb/key-generator.html [ Skip ]
 
+# IDB flaky crashes
+fast/history/page-cache-indexed-closed-db.html [ Skip ]
+storage/indexeddb/mozilla/cursor-mutation-objectstore-only.html [ Skip ]
+storage/indexeddb/mutating-cursor.html [ Skip ]
+
 # IDB tests that timeout                                                               
 storage/indexeddb/intversion-pending-version-changes-ascending.html [ Skip ]
 storage/indexeddb/odd-strings.html [ Skip ]
