@@ -1,5 +1,14 @@
 2015-12-07  Jonathan Davis  <jond@apple.com>
 
+        Implemented a workaround for sharp SVG WebKit logo.
+        https://bugs.webkit.org/show_bug.cgi?id=151971
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/images/webkit.svg:
+
+2015-12-07  Jonathan Davis  <jond@apple.com>
+
         Address UX issues with the Contribute menu.
         https://bugs.webkit.org/show_bug.cgi?id=151874
 
