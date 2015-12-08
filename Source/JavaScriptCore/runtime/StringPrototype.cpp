@@ -76,6 +76,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState*);
@@ -132,10 +133,11 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION("localeCompare", stringProtoFuncLocaleCompare, DontEnum, 1);
 #if ENABLE(INTL)
     JSC_NATIVE_FUNCTION("toLocaleLowerCase", stringProtoFuncToLocaleLowerCase, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("toLocaleUpperCase", stringProtoFuncToLocaleUpperCase, DontEnum, 0);
 #else
     JSC_NATIVE_FUNCTION("toLocaleLowerCase", stringProtoFuncToLowerCase, DontEnum, 0);
-#endif
     JSC_NATIVE_FUNCTION("toLocaleUpperCase", stringProtoFuncToUpperCase, DontEnum, 0);
+#endif
     JSC_NATIVE_FUNCTION("big", stringProtoFuncBig, DontEnum, 0);
     JSC_NATIVE_FUNCTION("small", stringProtoFuncSmall, DontEnum, 0);
     JSC_NATIVE_FUNCTION("blink", stringProtoFuncBlink, DontEnum, 0);
@@ -1446,11 +1448,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
 }
 
 #if ENABLE(INTL)
-EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState* state)
+static EncodedJSValue toLocaleCase(ExecState* state, int32_t (*convertCase)(UChar*, int32_t, const UChar*, int32_t, const char*, UErrorCode*))
 {
-    // 13.1.2 String.prototype.toLocaleLowerCase ([locales])
-    // http://ecma-international.org/publications/standards/Ecma-402.htm
-
     // 1. Let O be RequireObjectCoercible(this value).
     JSValue thisValue = state->thisValue();
     if (!checkObjectCoercible(thisValue))
@@ -1502,25 +1501,25 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState* state)
     const StringView view(s);
     const int32_t viewLength = view.length();
 
-    // Delegate the following steps to u_strToLower.
+    // Delegate the following steps to icu u_strToLower or u_strToUpper.
     // 13. Let cpList be a List containing in order the code points of S as defined in ES2015, 6.1.4, starting at the first element of S.
-    // 14. For each code point c in cpList, if the Unicode Character Database provides a lower case equivalent of c that is either language insensitive or for the language locale, then replace c in cpList with that/those equivalent code point(s).
+    // 14. For each code point c in cpList, if the Unicode Character Database provides a lower(/upper) case equivalent of c that is either language insensitive or for the language locale, then replace c in cpList with that/those equivalent code point(s).
     // 15. Let cuList be a new List.
     // 16. For each code point c in cpList, in order, append to cuList the elements of the UTF-16 Encoding (defined in ES2015, 6.1.4) of c.
     // 17. Let L be a String whose elements are, in order, the elements of cuList.
 
-    // Most strings lower case will be the same size as original, so try that first.
+    // Most strings lower/upper case will be the same size as original, so try that first.
     UErrorCode error(U_ZERO_ERROR);
     Vector<UChar> buffer(viewLength);
     String lower;
-    const int32_t resultLength = u_strToLower(buffer.data(), viewLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
+    const int32_t resultLength = convertCase(buffer.data(), viewLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
     if (U_SUCCESS(error))
         lower = String(buffer.data(), resultLength);
     else if (error == U_BUFFER_OVERFLOW_ERROR) {
-        // Lower case needs more space than original. Try again.
+        // Converted case needs more space than original. Try again.
         UErrorCode error(U_ZERO_ERROR);
         Vector<UChar> buffer(resultLength);
-        u_strToLower(buffer.data(), resultLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
+        convertCase(buffer.data(), resultLength, view.upconvertedCharacters(), viewLength, utf8LocaleBuffer.data(), &error);
         if (U_FAILURE(error))
             return throwVMTypeError(state, u_errorName(error));
         lower = String(buffer.data(), resultLength);
@@ -1529,6 +1528,21 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState* state)
 
     // 18. Return L.
     return JSValue::encode(jsString(state, lower));
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState* state)
+{
+    // 13.1.2 String.prototype.toLocaleLowerCase ([locales])
+    // http://ecma-international.org/publications/standards/Ecma-402.htm
+    return toLocaleCase(state, u_strToLower);
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState* state)
+{
+    // 13.1.3 String.prototype.toLocaleUpperCase ([locales])
+    // http://ecma-international.org/publications/standards/Ecma-402.htm
+    // This function interprets a string value as a sequence of code points, as described in ES2015, 6.1.4. This function behaves in exactly the same way as String.prototype.toLocaleLowerCase, except that characters are mapped to their uppercase equivalents as specified in the Unicode character database.
+    return toLocaleCase(state, u_strToUpper);
 }
 #endif // ENABLE(INTL)
 

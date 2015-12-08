@@ -1,3 +1,20 @@
+2015-12-07  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement String.prototype.toLocaleUpperCase in ECMA-402
+        https://bugs.webkit.org/show_bug.cgi?id=147609
+
+        Reviewed by Benjamin Poulain.
+
+        Refactor most of toLocaleLowerCase to static function used by both
+        toLocaleUpperCase and toLocaleLowerCase.
+        Add toLocaleUpperCase using icu u_strToUpper.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::toLocaleCase):
+        (JSC::stringProtoFuncToLocaleLowerCase):
+        (JSC::stringProtoFuncToLocaleUpperCase):
+
 2015-12-07  Michael Saboff  <msaboff@apple.com>
 
         CRASH: CodeBlock::setOptimizationThresholdBasedOnCompilationResult + 567
