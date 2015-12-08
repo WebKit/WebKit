@@ -1,5 +1,30 @@
 2015-12-07  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r192604.
+
+    2015-11-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WK1] Crash loading Blink layout test fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
+            https://bugs.webkit.org/show_bug.cgi?id=150198
+            <rdar://problem/23136026>
+
+            Reviewed by Brent Fulgham.
+
+            * fast/dom/Window/666869-expected.txt: Added.
+            * fast/dom/Window/666869.html: Added.
+            Test case is from Mozilla.
+            * fast/dom/Window/property-access-on-cached-window-after-frame-removed-expected.txt: Added.
+            * fast/dom/Window/property-access-on-cached-window-after-frame-removed.html: Added.
+            * fast/dom/Window/resources/window-property-collector.js: Added.
+            (collectProperties):
+            (emitExpectedResult):
+            (collectPropertiesHelper):
+            Test case is from Blink r168256:
+            https://codereview.chromium.org/131113003
+            * platform/mac-wk2/TestExpectations:
+
+2015-12-07  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r192433.
 
     2015-11-13  Jiewen Tan  <jiewen_tan@apple.com>
