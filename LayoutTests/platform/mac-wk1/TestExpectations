@@ -58,15 +58,6 @@ webkit.org/b/150564 svg/repaint/add-background-property-on-root.html [ Pass Time
 
 # Legacy IndexedDB will never be enabled in Mac WK1.
 imported/w3c/indexeddb
-fast/history/page-cache-indexed-closed-db.html
-fast/history/page-cache-indexed-opened-db.html
-http/tests/security/cross-origin-indexeddb-allowed.html
-http/tests/security/cross-origin-indexeddb.html
-http/tests/security/cross-origin-worker-indexeddb-allowed.html
-http/tests/security/cross-origin-worker-indexeddb.html
-http/tests/security/no-indexeddb-from-sandbox.html
-crypto/subtle/rsa-indexeddb.html
-crypto/subtle/rsa-indexeddb-non-exportable.html
 inspector/indexeddb
 
 # IDB tests that crash
@@ -147,6 +138,8 @@ storage/indexeddb/cursor-request-cycle.html [ Failure ]
 storage/indexeddb/request-leak.html [ Failure ]
 
 # No workers support in Modern IDB yet
+http/tests/security/cross-origin-worker-indexeddb-allowed.html
+http/tests/security/cross-origin-worker-indexeddb.html
 storage/indexeddb/basics-workers.html
 storage/indexeddb/cursor-advance-workers.html
 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html

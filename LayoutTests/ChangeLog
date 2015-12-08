@@ -1,5 +1,13 @@
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
+        More IDB TestExpectations gardening.
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
+2015-12-08  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: Fire blocked events for upgrade requests that are blocked.
         https://bugs.webkit.org/show_bug.cgi?id=152007
 
