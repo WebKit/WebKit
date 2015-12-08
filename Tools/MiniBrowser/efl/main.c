@@ -202,6 +202,7 @@ static const Ecore_Getopt options = {
 
 static Eina_Stringshare *show_file_entry_dialog(Browser_Window *window, const char *label_tag, const char *default_text);
 static Browser_Window *window_create(Ewk_View_Configuration* configuration, int width, int height);
+static Ewk_View_Configuration* configuration();
 
 static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window)
 {
@@ -597,7 +598,7 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         toggle_window_fullscreen(window, !elm_win_fullscreen_get(window->elm_window));
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         INFO("Create new window (Ctrl+n) was pressed.");
-        Browser_Window *window = window_create(NULL, 0, 0);
+        Browser_Window *window = window_create(configuration(), 0, 0);
         ewk_view_url_set(window->ewk_view, DEFAULT_URL);
         // 0 equals default width and height.
         windows = eina_list_append(windows, window);
@@ -1019,6 +1020,7 @@ quit(Eina_Bool success, const char *msg)
         success ? INFO("%s", msg) : ERROR("%s", msg);
 
     eina_log_domain_unregister(_log_domain_id);
+    ewk_object_unref(configuration());
     ewk_shutdown();
     elm_shutdown();
 
@@ -2293,17 +2295,8 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
     /* Set the zoom level to default */
     window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
 
-    Ewk_Settings *settings = ewk_page_group_settings_get(ewk_view_page_group_get(window->ewk_view));
-    ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
-    ewk_settings_encoding_detector_enabled_set(settings, encoding_detector_enabled);
-    ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
-    ewk_settings_local_storage_enabled_set(settings, local_storage_enabled);
-    INFO("HTML5 local storage is %s for this view.", local_storage_enabled ? "enabled" : "disabled");
     elm_win_fullscreen_set(window->elm_window, fullscreen_enabled);
-    ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
-    ewk_settings_preferred_minimum_contents_width_set(settings, 0);
-    ewk_text_checker_continuous_spell_checking_enabled_set(spell_checking_enabled);
-    ewk_settings_web_security_enabled_set(settings, web_security_enabled);
+
     evas_object_smart_callback_add(window->ewk_view, "authentication,request", on_authentication_request, window);
     evas_object_smart_callback_add(window->ewk_view, "file,chooser,request", on_file_chooser_request, window);
     evas_object_smart_callback_add(window->ewk_view, "load,error", on_error, window);
@@ -2345,6 +2338,29 @@ static Browser_Window *window_create(Ewk_View_Configuration* configuration, int 
     elm_button_autorepeat_initial_timeout_set(window->forward_button, LONGPRESS_INTERVAL_SECONDS);
 
     return window;
+}
+
+static Ewk_View_Configuration* configuration()
+{
+    static Ewk_View_Configuration* default_configuration = 0;
+
+    if (default_configuration)
+        return default_configuration;
+
+    default_configuration = ewk_view_configuration_new();
+
+    Ewk_Settings* settings = ewk_view_configuration_settings_get(default_configuration);
+    ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
+    ewk_settings_encoding_detector_enabled_set(settings, encoding_detector_enabled);
+    ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
+    ewk_settings_local_storage_enabled_set(settings, local_storage_enabled);
+    INFO("HTML5 local storage is %s for this view.", local_storage_enabled ? "enabled" : "disabled");
+    ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
+    ewk_settings_preferred_minimum_contents_width_set(settings, 0);
+    ewk_text_checker_continuous_spell_checking_enabled_set(spell_checking_enabled);
+    ewk_settings_web_security_enabled_set(settings, web_security_enabled);
+
+    return default_configuration;
 }
 
 static Ewk_Cookie_Accept_Policy
@@ -2469,7 +2485,7 @@ elm_main(int argc, char *argv[])
     if (window_size_string)
         parse_window_size(window_size_string, &window_width, &window_height);
 
-    window = window_create(NULL, 0, 0);
+    window = window_create(configuration(), 0, 0);
     if (!window)
         return quit(EINA_FALSE, "Could not create browser window.");
 

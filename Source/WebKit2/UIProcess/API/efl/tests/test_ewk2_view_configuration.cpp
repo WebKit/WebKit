@@ -23,33 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_view_configuration_private_h
-#define ewk_view_configuration_private_h
+#include "config.h"
 
-#include "ewk_object_private.h"
-#include <WebKit/WKBase.h>
-#include <WebKit/WKPageConfigurationRef.h>
-#include <WebKit/WKRetainPtr.h>
-#include <wtf/RefPtr.h>
+#include "UnitTestUtils/EWK2UnitTestBase.h"
 
-class EwkPageGroup;
+using namespace EWK2UnitTest;
 
-class EwkViewConfiguration : public EwkObject {
-public:
-    EWK_OBJECT_DECLARE(EwkViewConfiguration);
+extern EWK2UnitTestEnvironment* environment;
 
-    static Ref<EwkViewConfiguration> create(WKPageConfigurationRef);
+TEST_F(EWK2UnitTestBase, ewk_view_configuration_settings_get)
+{
+    Ewk_View_Configuration* configuration = ewk_view_configuration_new();
 
-    WKPageConfigurationRef wkPageConfiguration() const { return m_pageConfiguration.get(); }
+    Ewk_Settings* settings = ewk_view_configuration_settings_get(configuration);
+    ASSERT_TRUE(settings);
 
-    EwkPageGroup* pageGroup() const { return m_pageGroup.get(); }
+    Evas_Object* ewkView = ewk_view_add_with_configuration(
+        evas_object_evas_get(webView()),
+        nullptr,
+        configuration);
+    ASSERT_EQ(settings, ewk_page_group_settings_get(ewk_view_page_group_get(ewkView)));
+}
 
-private:
-    explicit EwkViewConfiguration(WKPageConfigurationRef);
-
-    WKRetainPtr<WKPageConfigurationRef> m_pageConfiguration;
-
-    RefPtr<EwkPageGroup> m_pageGroup;
-};
-
-#endif

@@ -26,6 +26,10 @@
 #include "config.h"
 #include "ewk_view_configuration.h"
 
+#include "WKAPICast.h"
+#include "WKPageGroup.h"
+#include "ewk_page_group_private.h"
+#include "ewk_settings_private.h"
 #include "ewk_view_configuration_private.h"
 
 Ref<EwkViewConfiguration> EwkViewConfiguration::create(WKPageConfigurationRef configuration)
@@ -36,9 +40,23 @@ Ref<EwkViewConfiguration> EwkViewConfiguration::create(WKPageConfigurationRef co
 EwkViewConfiguration::EwkViewConfiguration(WKPageConfigurationRef pageConfiguration)
     : m_pageConfiguration(pageConfiguration)
 {
+    WKPageGroupRef pageGroup = WKPageConfigurationGetPageGroup(pageConfiguration);
+    if (!pageGroup) {
+        pageGroup = WKPageGroupCreateWithIdentifier(nullptr);
+        WKPageConfigurationSetPageGroup(pageConfiguration, pageGroup);
+    }
+
+    m_pageGroup = EwkPageGroup::findOrCreateWrapper(pageGroup);
 }
 
 Ewk_View_Configuration* ewk_view_configuration_new()
 {
     return &EwkViewConfiguration::create(WKPageConfigurationCreate()).leakRef();
+}
+
+Ewk_Settings* ewk_view_configuration_settings_get(const Ewk_View_Configuration* ewkConfiguration)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkViewConfiguration, ewkConfiguration, impl, nullptr);
+
+    return impl->pageGroup()->settings();
 }

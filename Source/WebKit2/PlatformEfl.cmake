@@ -551,6 +551,7 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_storage_manager
     test_ewk2_text_checker
     test_ewk2_view
+    test_ewk2_view_configuration
     test_ewk2_window_features
 )
 

@@ -31,6 +31,7 @@
 #ifndef ewk_view_configuration_h
 #define ewk_view_configuration_h
 
+#include "ewk_settings.h"
 #include <Evas.h>
 
 #ifdef __cplusplus
@@ -61,6 +62,15 @@ typedef struct EwkObject Ewk_View_Configuration;
  * @see ewk_object_unref
  */
 EAPI Ewk_View_Configuration *ewk_view_configuration_new(void);
+
+/**
+ * Gets the Ewk_Settings of this @a configuration.
+ *
+ * @param configuration Ewk_View_Configuration object to get Ewk_Settings
+ *
+ * @return the Ewk_Settings instance or @c NULL on failure
+ */
+EAPI Ewk_Settings *ewk_view_configuration_settings_get(const Ewk_View_Configuration *configuration);
 
 #ifdef __cplusplus
 }

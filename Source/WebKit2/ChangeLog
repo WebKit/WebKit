@@ -1,3 +1,23 @@
+2015-12-08  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Add API to provide preferences before creating ewk_view
+        https://bugs.webkit.org/show_bug.cgi?id=151587
+
+        Reviewed by Gyuyoung Kim.
+
+        This patch adds ewk_view_configuration_settings_get to provide preferences
+        before createing ewk_view.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view_configuration.cpp:
+        (EwkViewConfiguration::EwkViewConfiguration):
+        (ewk_view_configuration_settings_get):
+        * UIProcess/API/efl/ewk_view_configuration.h:
+        * UIProcess/API/efl/ewk_view_configuration_private.h:
+        (EwkViewConfiguration::pageGroup):
+        * UIProcess/API/efl/tests/test_ewk2_view_configuration.cpp:
+        (TEST_F): Added test case for ewk_view_configuration_settings_get().
+
 2015-12-07  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Notify WebCore when notification is clicked
