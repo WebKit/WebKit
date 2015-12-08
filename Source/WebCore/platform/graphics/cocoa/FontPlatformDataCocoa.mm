@@ -118,15 +118,6 @@ void FontPlatformData::setFont(CTFontRef font)
     m_ctFont = nullptr;
 }
 
-bool FontPlatformData::allowsLigatures() const
-{
-    if (!m_font)
-        return false;
-
-    RetainPtr<CFCharacterSetRef> characterSet = adoptCF(CTFontCopyCharacterSet(ctFont()));
-    return !(characterSet.get() && CFCharacterSetIsCharacterMember(characterSet.get(), 'a'));
-}
-
 inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
 {
     switch(variant) {
