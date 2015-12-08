@@ -187,63 +187,40 @@ RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(Ref<RenderStyl
     return createRenderer<RenderSVGResourcePattern>(*this, WTF::move(style));
 }
 
-static void setPatternAttributes(const SVGPatternElement& element, PatternAttributes& attributes)
+void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const
 {
-    if (!attributes.hasX() && element.hasAttribute(SVGNames::xAttr))
-        attributes.setX(element.x());
+    if (!attributes.hasX() && hasAttribute(SVGNames::xAttr))
+        attributes.setX(x());
 
-    if (!attributes.hasY() && element.hasAttribute(SVGNames::yAttr))
-        attributes.setY(element.y());
+    if (!attributes.hasY() && hasAttribute(SVGNames::yAttr))
+        attributes.setY(y());
 
-    if (!attributes.hasWidth() && element.hasAttribute(SVGNames::widthAttr))
-        attributes.setWidth(element.width());
+    if (!attributes.hasWidth() && hasAttribute(SVGNames::widthAttr))
+        attributes.setWidth(width());
 
-    if (!attributes.hasHeight() && element.hasAttribute(SVGNames::heightAttr))
-        attributes.setHeight(element.height());
+    if (!attributes.hasHeight() && hasAttribute(SVGNames::heightAttr))
+        attributes.setHeight(height());
 
-    if (!attributes.hasViewBox() && element.hasAttribute(SVGNames::viewBoxAttr) && element.viewBoxIsValid())
-        attributes.setViewBox(element.viewBox());
+    if (!attributes.hasViewBox() && hasAttribute(SVGNames::viewBoxAttr) && viewBoxIsValid())
+        attributes.setViewBox(viewBox());
 
-    if (!attributes.hasPreserveAspectRatio() && element.hasAttribute(SVGNames::preserveAspectRatioAttr))
-        attributes.setPreserveAspectRatio(element.preserveAspectRatio());
+    if (!attributes.hasPreserveAspectRatio() && hasAttribute(SVGNames::preserveAspectRatioAttr))
+        attributes.setPreserveAspectRatio(preserveAspectRatio());
 
-    if (!attributes.hasPatternUnits() && element.hasAttribute(SVGNames::patternUnitsAttr))
-        attributes.setPatternUnits(element.patternUnits());
+    if (!attributes.hasPatternUnits() && hasAttribute(SVGNames::patternUnitsAttr))
+        attributes.setPatternUnits(patternUnits());
 
-    if (!attributes.hasPatternContentUnits() && element.hasAttribute(SVGNames::patternContentUnitsAttr))
-        attributes.setPatternContentUnits(element.patternContentUnits());
+    if (!attributes.hasPatternContentUnits() && hasAttribute(SVGNames::patternContentUnitsAttr))
+        attributes.setPatternContentUnits(patternContentUnits());
 
-    if (!attributes.hasPatternTransform() && element.hasAttribute(SVGNames::patternTransformAttr)) {
+    if (!attributes.hasPatternTransform() && hasAttribute(SVGNames::patternTransformAttr)) {
         AffineTransform transform;
-        element.patternTransform().concatenate(transform);
+        patternTransform().concatenate(transform);
         attributes.setPatternTransform(transform);
     }
 
-    if (!attributes.hasPatternContentElement() && element.childElementCount())
-        attributes.setPatternContentElement(&element);
-}
-
-void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const
-{
-    HashSet<const SVGPatternElement*> processedPatterns;
-    const SVGPatternElement* current = this;
-
-    while (true) {
-        setPatternAttributes(*current, attributes);
-        processedPatterns.add(current);
-
-        // Respect xlink:href, take attributes from referenced element
-        Element* refElement = SVGURIReference::targetElementFromIRIString(current->href(), document());
-        if (is<SVGPatternElement>(refElement)) {
-            current = downcast<SVGPatternElement>(refElement);
-
-            // Cycle detection
-            if (processedPatterns.contains(current))
-                return;
-        } else
-            return;
-    }
-    ASSERT_NOT_REACHED();
+    if (!attributes.hasPatternContentElement() && childElementCount())
+        attributes.setPatternContentElement(this);
 }
 
 AffineTransform SVGPatternElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
