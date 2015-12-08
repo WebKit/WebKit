@@ -43,10 +43,10 @@ void usage()
     fprintf(stderr, "%s\n", [helpText UTF8String]);
 }
 
-SimDevice *getTestingSimDevice(SimDeviceType *deviceType, SimRuntime *runtime)
+SimDevice *getTestingSimDevice(SimDeviceType *deviceType, SimRuntime *runtime, NSString *suffix)
 {
     NSString *deviceName = [[[[deviceType identifier] componentsSeparatedByString:@"."] lastObject] stringByReplacingOccurrencesOfString:@"-" withString:@" "];
-    deviceName = [deviceName stringByAppendingString:@" WebKit Tester"];
+    deviceName = [NSString stringWithFormat:@"%@%@%@", deviceName, @" WebKit Tester", suffix];
 
     for (SimDevice *device in [[SimDeviceSet defaultSet] devices]) {
         if ([[device name] isEqualToString:deviceName] && [[device deviceType] isEqualTo:deviceType] && [[device runtime] isEqualTo:runtime])
@@ -136,7 +136,7 @@ int main(int argc, const char * argv[])
         NSString *productDir = getRequiredStringArgument(@"productDir");
         NSArray *dumpToolArguments = getDumpToolArguments();
 
-        SimDevice *device = getTestingSimDevice(deviceType, runtime);
+        SimDevice *device = getTestingSimDevice(deviceType, runtime, suffix);
 
         relayController = [[LTRelayController alloc] initWithDevice:device productDir:productDir appPath:appPath identifierSuffix:suffix dumpToolArguments:dumpToolArguments];
         [relayController start];

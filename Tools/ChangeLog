@@ -1,3 +1,30 @@
+2015-12-08  Aakash Jain  <aakash_jain@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=151243
+        <rdar://problem/22955197>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * LayoutTestRelay/LayoutTestRelay/main.m:
+        (getTestingSimDevice): Use separate testing device for each worker.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Perform cleanup even if setup fails.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_child_processes): Calculate number of simulators to use.
+        (IOSSimulatorPort.child_processes): Gets the number of simulators from options variable.
+        (IOSSimulatorPort.setup_test_run): Handle mulitple simulators.
+        (IOSSimulatorPort._quit_ios_simulator): Same
+        (IOSSimulatorPort.clean_up_test_run): Same
+        (IOSSimulatorPort.check_sys_deps): Same
+        (IOSSimulatorPort.testing_device): Same
+        (IOSSimulatorPort.reset_preferences): Same
+        (IOSSimulatorPort.get_simulator_path): Return simulator path.
+        (IOSSimulatorPort._createSimulatorApp): Create the copy of simulator app.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.delete): Delete the simulator device.
+        (Simulator.delete_device): Same
+        (Simulator.wait_until_device_is_booted): Wait for device booting.
+
 2015-12-08  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Add API to provide preferences before creating ewk_view

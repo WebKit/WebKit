@@ -70,16 +70,14 @@ class IOSPort(ApplePort):
 
 class IOSSimulatorPort(Port):
     port_name = "ios-simulator"
-
     FUTURE_VERSION = 'future'
-
     ARCHITECTURES = ['x86_64', 'x86']
-
     DEFAULT_ARCHITECTURE = 'x86_64'
-
     SIMULATOR_BUNDLE_ID = 'com.apple.iphonesimulator'
-
     relay_name = 'LayoutTestRelay'
+    SIMULATOR_DIRECTORY = "/tmp/WebKitTestingSimulators/"
+    LSREGISTER_PATH = "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
+    PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 100
 
     def __init__(self, *args, **kwargs):
         super(IOSSimulatorPort, self).__init__(*args, **kwargs)
@@ -129,6 +127,28 @@ class IOSSimulatorPort(Port):
             mac_config = port_config.Config(self._executive, self._filesystem, 'mac')
             path = mac_config.build_directory(self.get_option('configuration'))
         return self._filesystem.join(path, self.relay_name)
+
+    @memoized
+    def child_processes(self):
+        return int(self.get_option('child_processes'))
+
+    @memoized
+    def default_child_processes(self):
+        """Return the number of Simulators instances to use for this port."""
+        best_child_process_count_for_cpu = self._executive.cpu_count() / 2
+        system_process_count_limit = int(subprocess.check_output(["launchctl", "limit", "maxproc"]).strip().split()[1])
+        current_process_count = len(subprocess.check_output(["ps", "aux"]).strip().split('\n'))
+        _log.info('Process limit: %d, current #processes: %d' % (system_process_count_limit, current_process_count))
+        maximum_simulator_count_on_this_system = (system_process_count_limit - current_process_count) // self.PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE
+        # FIXME: We should also take into account the available RAM.
+
+        if (maximum_simulator_count_on_this_system < best_child_process_count_for_cpu):
+            _log.warn("This machine could support %s child processes, but only has enough process limit for %s."
+                % (best_child_process_count_for_cpu, maximum_simulator_count_on_this_system))
+            _log.warn('Run "launchctl limit" to check these limits')
+            # FIXME: Add url for webpage explaining how to increase these limits.
+
+        return min(maximum_simulator_count_on_this_system, best_child_process_count_for_cpu)
 
     def default_timeout_ms(self):
         if self.get_option('guard_malloc'):
@@ -200,21 +220,24 @@ class IOSSimulatorPort(Port):
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path()]))
 
     def setup_test_run(self):
-        device_udid = self.testing_device.udid
-        # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
-        self._executive.run_command([
-            'open', '-b', self.SIMULATOR_BUNDLE_ID,
-            '--args', '-CurrentDeviceUDID', device_udid])
-        Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.BOOTED)
+        mac_os_version = self.host.platform.os_version
+        for i in xrange(self.child_processes()):
+            device_udid = self.testing_device(i).udid
+            # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
+            self._executive.run_command([
+                'open', '-b', self.SIMULATOR_BUNDLE_ID + str(i),
+                '--args', '-CurrentDeviceUDID', device_udid])
 
-        # FIXME: Pause here until SpringBoard finishes launching to workaround <rdar://problem/20000383>.
-        boot_delay = 30
-        _log.debug('Waiting {seconds} seconds for iOS Simulator to finish booting ...'.format(seconds=boot_delay))
-        time.sleep(boot_delay)
+            if mac_os_version in ['elcapitan', 'yosemite', 'mavericks']:
+                time.sleep(1)
+
+        _log.info('Waiting for all iOS Simulators to finish booting.')
+        for i in xrange(self.child_processes()):
+            Simulator.wait_until_device_is_booted(self.testing_device(i).udid)
 
     def _quit_ios_simulator(self):
-        # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
-        self._executive.run_command(['osascript', '-e', 'tell application id "{0}" to quit'.format(self.SIMULATOR_BUNDLE_ID)])
+        # FIXME: We should kill only the Simulators we started.
+        subprocess.call(["killall", "-9", "-v", "-m", "Simulator"])
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
@@ -226,6 +249,14 @@ class IOSSimulatorPort(Port):
             except OSError:
                 _log.warning('Unable to remove ' + fifo)
                 pass
+
+        for i in xrange(self.child_processes()):
+            try:
+                subprocess.call([self.LSREGISTER_PATH, "-v", "-u", self.get_simulator_path(i)])
+                shutil.rmtree(self.get_simulator_path(i), ignore_errors=True)
+                Simulator().delete_device(self.testing_device(i).udid)
+            except:
+                _log.warning('Unable to remove Simulator' + str(i))
 
     def setup_environ_for_server(self, server_name=None):
         env = super(IOSSimulatorPort, self).setup_environ_for_server(server_name)
@@ -245,11 +276,16 @@ class IOSSimulatorPort(Port):
         if not self.simulator_runtime.available:
             _log.error('The iOS Simulator runtime with identifier "{0}" cannot be used because it is unavailable.'.format(self.simulator_runtime.identifier))
             return False
-        testing_device = self.testing_device  # May create a new simulator device
+        for i in xrange(self.child_processes()):
+            # FIXME: This creates the devices sequentially, doing this in parallel can improve performance.
+            testing_device = self.testing_device(i)
+            _log.debug('Verifying Simulator{0} with UDID {1}.'.format(i, testing_device.udid))
 
-        if not Simulator.check_simulator_device_and_erase_if_needed(self.host, testing_device.udid):
-            _log.error('Unable to boot the simulator device with UDID {0}.'.format(testing_device.udid))
-            return False
+            # FIXME: This is very slow, especially for mulitple simulators, we probably do not need
+            # this checking as we are re-creating new simulator apps and devices in every run.
+            if not Simulator.check_simulator_device_and_erase_if_needed(self.host, testing_device.udid):
+                _log.error('Unable to boot the simulator device with UDID {0}.'.format(testing_device.udid))
+                return False
         return super(IOSSimulatorPort, self).check_sys_deps(needs_http)
 
     def check_for_leaks(self, process_name, process_pid):
@@ -323,10 +359,12 @@ class IOSSimulatorPort(Port):
             return stderr, None
         return stderr, crash_log
 
-    @property
     @memoized
-    def testing_device(self):
-        return Simulator().lookup_or_create_device(self.simulator_device_type.name + ' WebKit Tester', self.simulator_device_type, self.simulator_runtime)
+    def testing_device(self, number):
+        return Simulator().lookup_or_create_device(self.simulator_device_type.name + ' WebKit Tester' + str(number), self.simulator_device_type, self.simulator_runtime)
+
+    def get_simulator_path(self, suffix=""):
+        return os.path.join(self.SIMULATOR_DIRECTORY, "Simulator" + str(suffix) + ".app")
 
     def _merge_crash_logs(self, logs, new_logs, crashed_processes):
         for test, crash_log in new_logs.iteritems():
@@ -396,14 +434,20 @@ class IOSSimulatorPort(Port):
         return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def reset_preferences(self):
-        # We assume that if testing_device is booted that it was booted by the iOS Simulator app
-        # (as opposed to simctl). So, quit the iOS Simulator app to shutdown testing_device.
-        self._quit_ios_simulator()
-        Simulator.wait_until_device_is_in_state(self.testing_device.udid, Simulator.DeviceState.SHUTDOWN)
+        if (self.default_child_processes() < self.child_processes()):
+                _log.warn("You have specified very high value({0}) for --child-processes".format(self.child_processes()))
+                _log.warn("maximum child-processes which can be supported on this system are: {0}".format(self.default_child_processes()))
+                _log.warn("This is very likely to fail.")
 
-        data_path = os.path.join(self.testing_device.path, 'data')
-        if os.path.isdir(data_path):
-            shutil.rmtree(data_path)
+        self._quit_ios_simulator()
+        self._createSimulatorApps()
+
+        for i in xrange(self.child_processes()):
+            Simulator.wait_until_device_is_in_state(self.testing_device(i).udid, Simulator.DeviceState.SHUTDOWN)
+
+            data_path = os.path.join(self.testing_device(i).path, 'data')
+            if os.path.isdir(data_path):
+                shutil.rmtree(data_path)
 
     def make_command(self):
         return self.xcrun_find('make', '/usr/bin/make')
@@ -428,3 +472,23 @@ class IOSSimulatorPort(Port):
 
     def stderr_patterns_to_strip(self):
         return []
+
+    def _createSimulatorApps(self):
+        for i in xrange(self.child_processes()):
+            self._createSimulatorApp(i)
+
+    def _createSimulatorApp(self, suffix):
+        destination = self.get_simulator_path(suffix)
+        _log.info("Creating app:" + destination)
+        if os.path.exists(destination):
+            shutil.rmtree(destination, ignore_errors=True)
+        simulator_app_path = self.developer_dir + "/Applications/Simulator.app"
+        shutil.copytree(simulator_app_path, destination)
+
+        # Update app's package-name inside plist and re-code-sign it
+        plist_path = destination + "/Contents/Info.plist"
+        command = "Set CFBundleIdentifier com.apple.iphonesimulator" + str(suffix)
+        subprocess.check_output(["/usr/libexec/PlistBuddy", "-c", command, plist_path])
+        subprocess.check_output(["install_name_tool", "-add_rpath", self.developer_dir + "/Library/PrivateFrameworks/", destination + "/Contents/MacOS/Simulator"])
+        subprocess.check_output(["codesign", "-fs", "-", destination])
+        subprocess.check_output([self.LSREGISTER_PATH, "-v", "-f", destination])

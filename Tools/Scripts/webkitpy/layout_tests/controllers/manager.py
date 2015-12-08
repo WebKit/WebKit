@@ -187,11 +187,11 @@ class Manager(object):
             _log.critical('No tests to run.')
             return test_run_results.RunDetails(exit_code=-1)
 
-        if not self._set_up_run(tests_to_run):
-            return test_run_results.RunDetails(exit_code=-1)
-
-        enabled_pixel_tests_in_retry = False
         try:
+            if not self._set_up_run(tests_to_run):
+                return test_run_results.RunDetails(exit_code=-1)
+
+            enabled_pixel_tests_in_retry = False
             initial_results = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations,
                 int(self._options.child_processes), retrying=False)
 
