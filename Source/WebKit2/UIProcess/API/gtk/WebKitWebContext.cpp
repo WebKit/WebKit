@@ -188,7 +188,6 @@ struct _WebKitWebContextPrivate {
     GRefPtr<GVariant> webExtensionsInitializationUserData;
 
     CString localStorageDirectory;
-    CString indexedDBDirectory;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
