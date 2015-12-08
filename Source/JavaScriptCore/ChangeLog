@@ -1,3 +1,21 @@
+2015-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::UnificationPhase should merge isProfitableToUnbox, since this may have been set in ByteCodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=152011
+        rdar://problem/23777875
+
+        Reviewed by Michael Saboff.
+
+        Previously UnificationPhase did not merge this because we used to only set this in FixupPhase, which runs after unification. But now
+        ByteCodeParser may set isProfitableToUnbox as part of how it handles the ArgumentCount of an inlined varargs call, so UnificationPhase
+        needs to merge it after unifying.
+
+        Also changed the order of unification since this makes the bug more obvious and easier to test.
+
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::UnificationPhase::run):
+        * tests/stress/varargs-with-unused-count.js: Added.
+
 2015-12-08  Mark Lam  <mark.lam@apple.com>
 
         Polymorphic operand types for DFG and FTL div.
