@@ -97,6 +97,10 @@ class WebViewGroup;
 class WebSelectionServiceController;
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#import <WebKitAdditions/WebViewDataAdditionsDeclarations.h>
+#endif
+
 class WebViewLayerFlushScheduler : public WebCore::LayerFlushScheduler {
 public:
     WebViewLayerFlushScheduler(LayerFlushController*);
