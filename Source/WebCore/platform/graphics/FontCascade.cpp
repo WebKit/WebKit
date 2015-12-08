@@ -91,9 +91,6 @@ static bool useBackslashAsYenSignForFamily(const AtomicString& family)
 
 FontCascade::CodePath FontCascade::s_codePath = Auto;
 
-bool FontCascade::s_defaultKerning = false;
-bool FontCascade::s_defaultLigatures = false;
-
 // ============================================================================================
 // FontCascade Implementation (Cross-Platform Portion)
 // ============================================================================================
@@ -600,16 +597,6 @@ void FontCascade::setCodePath(CodePath p)
 FontCascade::CodePath FontCascade::codePath()
 {
     return s_codePath;
-}
-
-void FontCascade::setDefaultKerning(bool enable)
-{
-    s_defaultKerning = enable;
-}
-
-void FontCascade::setDefaultLigatures(bool enable)
-{
-    s_defaultLigatures = enable;
 }
 
 FontCascade::CodePath FontCascade::codePath(const TextRun& run) const
