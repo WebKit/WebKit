@@ -1,3 +1,16 @@
+2015-12-08  Beth Dakin  <bdakin@apple.com>
+
+        Follow-up to:
+        Add support for WebViewAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=151967
+
+        Rubber-stamped by Dan Bernstein.
+
+        We should use the Web prefix for all category names.
+        * WebView/WebView.mm:
+        (-[WebView updateWebViewAdditions]):
+        * WebView/WebViewInternal.h:
+
 2015-12-08  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Rename UserMediaClient and UserMediaController methods

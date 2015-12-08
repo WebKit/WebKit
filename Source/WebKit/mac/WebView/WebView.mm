@@ -6602,7 +6602,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewAdditions.mm>
 #else
-@implementation WebView (UpdateWebViewAdditions)
+@implementation WebView (WebUpdateWebViewAdditions)
 
 - (void)updateWebViewAdditions
 {
