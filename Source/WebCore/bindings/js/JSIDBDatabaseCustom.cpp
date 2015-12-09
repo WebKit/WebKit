@@ -36,6 +36,7 @@
 #include "IDBKeyPath.h"
 #include "IDBObjectStore.h"
 #include "JSDOMBinding.h"
+#include "JSDOMStringList.h"
 #include "JSIDBObjectStore.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>
@@ -93,11 +94,13 @@ JSValue JSIDBDatabase::transaction(ExecState& exec)
 
     Vector<String> scope;
     JSValue scopeArg(exec.argument(0));
-    if (scopeArg.isObject() && isJSArray(scopeArg)) {
-        scope = toNativeArray<String>(&exec, scopeArg);
-        if (exec.hadException())
-            return jsUndefined();
-    } else {
+    auto domStringList = JSDOMStringList::toWrapped(&exec, scopeArg);
+    if (exec.hadException())
+        return jsUndefined();
+
+    if (domStringList)
+        scope = Vector<String>(*domStringList);
+    else {
         scope.append(scopeArg.toString(&exec)->value(&exec));
         if (exec.hadException())
             return jsUndefined();
