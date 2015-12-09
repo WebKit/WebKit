@@ -28,6 +28,7 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "Logging.h"
+#include "NetworkProcessMessages.h"
 #include "WebCookieManagerProxy.h"
 #include "WebInspectorServer.h"
 #include "WebProcessCreationParameters.h"
@@ -140,6 +141,8 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;
+    if (networkProcess())
+        networkProcess()->send(Messages::NetworkProcess::SetIgnoreTLSErrors(m_ignoreTLSErrors), 0);
 }
 
 } // namespace WebKit

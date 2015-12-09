@@ -1,5 +1,19 @@
 2015-12-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [EFL] Missing to set ignoreTLSError to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=152047
+
+        Reviewed by Csaba Osztrogonác.
+
+        NetworkProcess has been enabled for all ports since r192796 though, EFL port
+        didn't send the ignoreTLSError value to NetworkProcess. This has caused failure of EFL API tests
+        related with ssl feature.
+
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+
+2015-12-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         [EFL] REGRESSION(r193616): WKPreferences test has been failed since r193616
         https://bugs.webkit.org/show_bug.cgi?id=151942
 
