@@ -1,3 +1,12 @@
+2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Baseline fast/text/text-combine-shrink-on-color-change.html for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=151218
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/text/text-combine-shrink-on-color-change-expected.txt: Added.
+
 2015-12-09  David Hyatt  <hyatt@apple.com>
 
         Picture element needs to respond to dynamic viewport changes.
