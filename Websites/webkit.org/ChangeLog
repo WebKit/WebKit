@@ -1,5 +1,23 @@
 2015-12-08  Jonathan Davis  <jond@apple.com>
 
+        Wide tables should be scrollable on narrow mobile screens.
+        https://bugs.webkit.org/show_bug.cgi?id=151941
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/scripts/global.js:
+        (inView):
+        (onMovement):
+        (updateImages):
+        (enableScrollableTables):
+        (update): Deleted.
+        * wp-content/themes/webkit/style.css:
+        (.pagination .prev-post):
+        (article .scrollable):
+        (.scrollable .scrollable-padding):
+
+2015-12-08  Jonathan Davis  <jond@apple.com>
+
         Fix Code Style Guidelines code parsing.
         https://bugs.webkit.org/show_bug.cgi?id=152024
 

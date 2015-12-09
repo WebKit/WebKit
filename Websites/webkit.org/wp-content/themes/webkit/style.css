@@ -1666,6 +1666,24 @@ header .menu-item { /* add bottom dimension to main menu items */
         margin-bottom: 1rem;
         text-align: left;
     }
+    
+    article .scrollable {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        width: 100vw;
+        left: 50%;
+        transform: translate(-50%);
+        margin: 3rem 0;
+        border: 1px solid #cccccc;
+        border-left: none;
+        border-right: none;
+    }
+
+    .scrollable .scrollable-padding {
+        display: inline-block;
+        padding: 0 3rem;
+    }
 
 }
 
