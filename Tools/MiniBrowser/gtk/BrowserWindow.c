@@ -1096,6 +1096,7 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "notify::estimated-load-progress", G_CALLBACK(webViewLoadProgressChanged), window);
     g_signal_connect(window->webView, "notify::title", G_CALLBACK(webViewTitleChanged), window);
     g_signal_connect(window->webView, "create", G_CALLBACK(webViewCreate), window);
+    g_signal_connect(window->webView, "close", G_CALLBACK(webViewClose), window);
     g_signal_connect(window->webView, "load-failed", G_CALLBACK(webViewLoadFailed), window);
     g_signal_connect(window->webView, "load-failed-with-tls-errors", G_CALLBACK(webViewLoadFailedWithTLSerrors), window);
     g_signal_connect(window->webView, "decide-policy", G_CALLBACK(webViewDecidePolicy), window);
@@ -1150,6 +1151,13 @@ static void browserWindowConstructed(GObject *gObject)
         webkit_web_view_load_html(window->webView, "<html></html>", "file:///");
 }
 
+static gboolean browserWindowDeleteEvent(GtkWidget *widget, GdkEventAny* event)
+{
+    BrowserWindow *window = BROWSER_WINDOW(widget);
+    webkit_web_view_try_close(window->webView);
+    return TRUE;
+}
+
 static void browser_window_class_init(BrowserWindowClass *klass)
 {
     GObjectClass *gobjectClass = G_OBJECT_CLASS(klass);
@@ -1158,6 +1166,9 @@ static void browser_window_class_init(BrowserWindowClass *klass)
     gobjectClass->get_property = browserWindowGetProperty;
     gobjectClass->set_property = browserWindowSetProperty;
     gobjectClass->finalize = browserWindowFinalize;
+
+    GtkWidgetClass *widgetClass = GTK_WIDGET_CLASS(klass);
+    widgetClass->delete_event = browserWindowDeleteEvent;
 
     g_object_class_install_property(gobjectClass,
                                     PROP_VIEW,

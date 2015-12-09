@@ -1,3 +1,42 @@
+2015-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to handle beforeunload events
+        https://bugs.webkit.org/show_bug.cgi?id=139090
+
+        Reviewed by Gustavo Noronha Silva.
+
+        beforeunload is fired when a page is about to be closed, to ask
+        the user for confirmation. This happens when reloading a page,
+        when navigating to another page or when the page is closed by a
+        user action (a tab or window closed). In the first two cases, the
+        event is automatically fired by WebCore, but in the case of a user
+        action we need additional API to ensure the event is fired before
+        the page is closed. A new script dialog type has been added to
+        handle beforeunload events and webkit_web_view_try_close() to
+        allow applications to try to close the page.
+
+        * UIProcess/API/gtk/WebKitScriptDialog.cpp:
+        (webkit_script_dialog_confirm_set_confirmed): BeforeUnloadConfirm
+        dialogs can also be confirmed.
+        * UIProcess/API/gtk/WebKitScriptDialog.h: Add
+        WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM script dialog type.
+        * UIProcess/API/gtk/WebKitUIClient.cpp: Implement
+        canRunBeforeUnloadConfirmPanel() and runBeforeUnloadConfirmPanel().
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreateJavaScriptDialog): Add secondaryText optional
+        parameter for BeforeUnloadConfirm dialogs. Do not set the default
+        response if the dialog was created without buttons.
+        (webkitWebViewScriptDialog): Handle
+        WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM script dialog type to
+        create a message dialog for beforeunlos events.
+        (webkit_web_view_class_init): Update documentation of
+        WebKitWebView::close and WebKitWebView::script-dialog.
+        (webkitWebViewRunJavaScriptBeforeUnloadConfirm): Emit WebKitWebView::script-dialog.
+        (webkit_web_view_try_close): Try to close the page.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+
 2015-12-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Missing to set ignoreTLSError to NetworkProcess

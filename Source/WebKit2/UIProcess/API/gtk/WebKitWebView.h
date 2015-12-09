@@ -277,6 +277,9 @@ WEBKIT_API WebKitWebContext *
 webkit_web_view_get_context                          (WebKitWebView             *web_view);
 
 WEBKIT_API void
+webkit_web_view_try_close                            (WebKitWebView             *web_view);
+
+WEBKIT_API void
 webkit_web_view_load_uri                             (WebKitWebView             *web_view,
                                                       const gchar               *uri);
 

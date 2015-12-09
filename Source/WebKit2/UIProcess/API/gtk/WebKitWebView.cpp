@@ -325,14 +325,17 @@ static GtkWidget* webkitWebViewCreate(WebKitWebView*, WebKitNavigationAction*)
     return nullptr;
 }
 
-static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, GtkMessageType type, GtkButtonsType buttons, int defaultResponse, const char* message)
+static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, GtkMessageType type, GtkButtonsType buttons, int defaultResponse, const char* primaryText, const char* secondaryText = nullptr)
 {
     GtkWidget* parent = gtk_widget_get_toplevel(GTK_WIDGET(webView));
-    GtkWidget* dialog = gtk_message_dialog_new(widgetIsOnscreenToplevelWindow(parent) ? GTK_WINDOW(parent) : 0,
-                                               GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", message);
+    GtkWidget* dialog = gtk_message_dialog_new(widgetIsOnscreenToplevelWindow(parent) ? GTK_WINDOW(parent) : nullptr,
+        GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", primaryText);
+    if (secondaryText)
+        gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", secondaryText);
     GUniquePtr<char> title(g_strdup_printf("JavaScript - %s", webkit_web_view_get_uri(webView)));
     gtk_window_set_title(GTK_WINDOW(dialog), title.get());
-    gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
+    if (buttons != GTK_BUTTONS_NONE)
+        gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
 
     return dialog;
 }
@@ -350,7 +353,7 @@ static gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDi
         dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, scriptDialog->message.data());
         scriptDialog->confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
         break;
-    case WEBKIT_SCRIPT_DIALOG_PROMPT:
+    case WEBKIT_SCRIPT_DIALOG_PROMPT: {
         dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, scriptDialog->message.data());
         GtkWidget* entry = gtk_entry_new();
         gtk_entry_set_text(GTK_ENTRY(entry), scriptDialog->defaultText.data());
@@ -359,6 +362,14 @@ static gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDi
         gtk_widget_show(entry);
         if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK)
             scriptDialog->text = gtk_entry_get_text(GTK_ENTRY(entry));
+        break;
+    }
+    case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
+        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, GTK_RESPONSE_OK,
+            _("Are you sure you want to leave this page?"), scriptDialog->message.data());
+        gtk_dialog_add_buttons(GTK_DIALOG(dialog), _("Stay on Page"), GTK_RESPONSE_CLOSE, _("Leave Page"), GTK_RESPONSE_OK, nullptr);
+        gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
+        scriptDialog->confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
         break;
     }
 
@@ -1201,10 +1212,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::close:
-     * @webView: the #WebKitWebView on which the signal is emitted
+     * @web_view: the #WebKitWebView on which the signal is emitted
      *
      * Emitted when closing a #WebKitWebView is requested. This occurs when a
-     * call is made from JavaScript's <function>window.close</function> function.
+     * call is made from JavaScript's <function>window.close</function> function or
+     * after trying to close the @web_view with webkit_web_view_try_close().
      * It is the owner's responsibility to handle this signal to hide or
      * destroy the #WebKitWebView, if necessary.
      */
@@ -1223,7 +1235,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @dialog: the #WebKitScriptDialog to show
      *
      * Emitted when JavaScript code calls <function>window.alert</function>,
-     * <function>window.confirm</function> or <function>window.prompt</function>.
+     * <function>window.confirm</function> or <function>window.prompt</function>,
+     * or when <function>onbeforeunload</function> event is fired.
      * The @dialog parameter should be used to build the dialog.
      * If the signal is not handled a different dialog will be built and shown depending
      * on the dialog type:
@@ -1237,6 +1250,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * <listitem><para>
      *  %WEBKIT_SCRIPT_DIALOG_PROMPT: message dialog with OK and Cancel buttons and
      *  a text entry with the default text.
+     * </para></listitem>
+     * <listitem><para>
+     *  %WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM: message dialog with Stay and Leave buttons.
      * </para></listitem>
      * </itemizedlist>
      *
@@ -1929,6 +1945,14 @@ CString webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& 
     return dialog.text;
 }
 
+bool webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const CString& message)
+{
+    WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message);
+    gboolean returnValue;
+    g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
+    return dialog.confirmed;
+}
+
 void webkitWebViewMakePolicyDecision(WebKitWebView* webView, WebKitPolicyDecisionType type, WebKitPolicyDecision* decision)
 {
     gboolean returnValue;
@@ -2248,6 +2272,24 @@ WebKitUserContentManager* webkit_web_view_get_user_content_manager(WebKitWebView
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     return webView->priv->userContentManager.get();
+}
+
+/**
+ * webkit_web_view_try_close:
+ * @web_view: a #WebKitWebView
+ *
+ * Tries to close the @web_view. This will fire the onbeforeunload event
+ * to ask the user for confirmation to close the page. If there isn't an
+ * onbeforeunload event handler or the user confirms to close the page,
+ * the #WebKitWebView::close signal is emitted, otherwise nothing happens.
+ *
+ * Since: 2.12
+ */
+void webkit_web_view_try_close(WebKitWebView *webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    if (getPage(webView)->tryClose())
+        webkitWebViewClosePage(webView);
 }
 
 /**

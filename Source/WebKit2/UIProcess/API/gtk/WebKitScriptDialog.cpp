@@ -72,17 +72,17 @@ const char* webkit_script_dialog_get_message(WebKitScriptDialog* dialog)
  * @dialog: a #WebKitScriptDialog
  * @confirmed: whether user confirmed the dialog
  *
- * This method is used for %WEBKIT_SCRIPT_DIALOG_CONFIRM dialogs when
+ * This method is used for %WEBKIT_SCRIPT_DIALOG_CONFIRM and %WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM dialogs when
  * #WebKitWebView::script-dialog signal is emitted to set whether the user
  * confirmed the dialog or not. The default implementation of #WebKitWebView::script-dialog
- * signal sets %TRUE when the OK button is clicked and %FALSE otherwise.
+ * signal sets %TRUE when the OK or Stay buttons are clicked and %FALSE otherwise.
  * It's an error to use this method with a #WebKitScriptDialog that is not of type
- * %WEBKIT_SCRIPT_DIALOG_CONFIRM.
+ * %WEBKIT_SCRIPT_DIALOG_CONFIRM or %WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM
  */
 void webkit_script_dialog_confirm_set_confirmed(WebKitScriptDialog* dialog, gboolean confirmed)
 {
     g_return_if_fail(dialog);
-    g_return_if_fail(dialog->type == WEBKIT_SCRIPT_DIALOG_CONFIRM);
+    g_return_if_fail(dialog->type == WEBKIT_SCRIPT_DIALOG_CONFIRM || dialog->type == WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM);
 
     dialog->confirmed = confirmed;
 }

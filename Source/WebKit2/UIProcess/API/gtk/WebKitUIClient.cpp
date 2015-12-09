@@ -84,6 +84,13 @@ private:
         completionHandler(String::fromUTF8(result.data()));
     }
 
+    virtual bool canRunBeforeUnloadConfirmPanel() const override { return true; }
+
+    virtual bool runBeforeUnloadConfirmPanel(WebPageProxy*, const String& message, WebFrameProxy*) override
+    {
+        return webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8());
+    }
+
     virtual void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object*) override
     {
         webkitWebViewMouseTargetChanged(m_webView, data, toGdkModifiers(modifiers));

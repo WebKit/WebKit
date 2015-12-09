@@ -27,6 +27,7 @@ static const char* kAlertDialogMessage = "WebKitGTK+ alert dialog message";
 static const char* kConfirmDialogMessage = "WebKitGTK+ confirm dialog message";
 static const char* kPromptDialogMessage = "WebKitGTK+ prompt dialog message";
 static const char* kPromptDialogReturnedText = "WebKitGTK+ prompt dialog returned text";
+static const char* kBeforeUnloadConfirmDialogMessage = "WebKitGTK+ beforeunload dialog message";
 
 class UIClientTest: public WebViewTest {
 public:
@@ -146,6 +147,9 @@ public:
         case WEBKIT_SCRIPT_DIALOG_PROMPT:
             g_assert_cmpstr(webkit_script_dialog_get_message(dialog), ==, kPromptDialogReturnedText);
             break;
+        case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
+            g_assert_not_reached();
+            break;
         }
 
         g_main_loop_quit(m_mainLoop);
@@ -165,6 +169,13 @@ public:
         webkit_script_dialog_prompt_set_text(dialog, kPromptDialogReturnedText);
     }
 
+    void scriptBeforeUnloadConfirm(WebKitScriptDialog* dialog)
+    {
+        g_assert_cmpstr(webkit_script_dialog_get_message(dialog), ==, kBeforeUnloadConfirmDialogMessage);
+        m_scriptDialogConfirmed = true;
+        webkit_script_dialog_confirm_set_confirmed(dialog, m_scriptDialogConfirmed);
+    }
+
     static gboolean scriptDialog(WebKitWebView*, WebKitScriptDialog* dialog, UIClientTest* test)
     {
         switch (webkit_script_dialog_get_dialog_type(dialog)) {
@@ -176,6 +187,9 @@ public:
             break;
         case WEBKIT_SCRIPT_DIALOG_PROMPT:
             test->scriptPrompt(dialog);
+            break;
+        case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
+            test->scriptBeforeUnloadConfirm(dialog);
             break;
         }
 
@@ -230,6 +244,24 @@ public:
     ~UIClientTest()
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    }
+
+    static void tryWebViewCloseCallback(UIClientTest* test)
+    {
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void tryCloseAndWaitUntilClosed()
+    {
+        gulong handler = g_signal_connect_swapped(m_webView, "close", G_CALLBACK(tryWebViewCloseCallback), this);
+        // Use an idle because webkit_web_view_try_close can emit the close signal in the
+        // current run loop iteration.
+        g_idle_add([](gpointer data) -> gboolean {
+            webkit_web_view_try_close(WEBKIT_WEB_VIEW(data));
+            return G_SOURCE_REMOVE;
+        }, m_webView);
+        g_main_loop_run(m_mainLoop);
+        g_signal_handler_disconnect(m_webView, handler);
     }
 
     void waitUntilMainLoopFinishes()
@@ -473,24 +505,71 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     static const char* jsAlertFormat = "alert('%s')";
     static const char* jsConfirmFormat = "do { confirmed = confirm('%s'); } while (!confirmed); alert('confirmed');";
     static const char* jsPromptFormat = "alert(prompt('%s', 'default'));";
+    static const char* htmlOnBeforeUnloadFormat =
+        "<html><body onbeforeunload=\"return beforeUnloadHandler();\"><script>function beforeUnloadHandler() { return \"%s\"; }</script></body></html>";
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_ALERT;
     GUniquePtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));
     GUniquePtr<char> alertHTML(g_strdup_printf(htmlOnLoadFormat, alertDialogMessage.get()));
     test->loadHtml(alertHTML.get(), 0);
     test->waitUntilMainLoopFinishes();
+    webkit_web_view_stop_loading(test->m_webView);
+    test->waitUntilLoadFinished();
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_CONFIRM;
     GUniquePtr<char> confirmDialogMessage(g_strdup_printf(jsConfirmFormat, kConfirmDialogMessage));
     GUniquePtr<char> confirmHTML(g_strdup_printf(htmlOnLoadFormat, confirmDialogMessage.get()));
     test->loadHtml(confirmHTML.get(), 0);
     test->waitUntilMainLoopFinishes();
+    webkit_web_view_stop_loading(test->m_webView);
+    test->waitUntilLoadFinished();
 
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_PROMPT;
     GUniquePtr<char> promptDialogMessage(g_strdup_printf(jsPromptFormat, kPromptDialogMessage));
     GUniquePtr<char> promptHTML(g_strdup_printf(htmlOnLoadFormat, promptDialogMessage.get()));
     test->loadHtml(promptHTML.get(), 0);
     test->waitUntilMainLoopFinishes();
+    webkit_web_view_stop_loading(test->m_webView);
+    test->waitUntilLoadFinished();
+
+    test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM;
+    GUniquePtr<char> beforeUnloadDialogHTML(g_strdup_printf(htmlOnBeforeUnloadFormat, kBeforeUnloadConfirmDialogMessage));
+    test->loadHtml(beforeUnloadDialogHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+
+    // Reload should trigger onbeforeunload.
+#if 0
+    // FIXME: reloading HTML data doesn't emit finished load event.
+    // See https://bugs.webkit.org/show_bug.cgi?id=139089.
+    test->m_scriptDialogConfirmed = false;
+    webkit_web_view_reload(test->m_webView);
+    test->waitUntilLoadFinished();
+    g_assert(test->m_scriptDialogConfirmed);
+#endif
+
+    // Navigation should trigger onbeforeunload.
+    test->m_scriptDialogConfirmed = false;
+    test->loadHtml("<html></html>", nullptr);
+    test->waitUntilLoadFinished();
+    g_assert(test->m_scriptDialogConfirmed);
+
+    // Try close should trigger onbeforeunload.
+    test->m_scriptDialogConfirmed = false;
+    test->loadHtml(beforeUnloadDialogHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+    test->tryCloseAndWaitUntilClosed();
+    g_assert(test->m_scriptDialogConfirmed);
+
+    // Try close on a page with no unload handlers should not trigger onbeforeunload,
+    // but should actually close the page.
+    test->m_scriptDialogConfirmed = false;
+    test->loadHtml("<html><body></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+    // We got a onbeforeunload of the previous page.
+    g_assert(test->m_scriptDialogConfirmed);
+    test->m_scriptDialogConfirmed = false;
+    test->tryCloseAndWaitUntilClosed();
+    g_assert(!test->m_scriptDialogConfirmed);
 }
 
 static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)

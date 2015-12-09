@@ -41,13 +41,16 @@ typedef struct _WebKitScriptDialog WebKitScriptDialog;
  * confirmation to the user.
  * @WEBKIT_SCRIPT_DIALOG_PROMPT: Prompt script dialog, used to ask
  * information to the user.
+ * @WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM: Before unload confirm dialog,
+ * used to ask confirmation to leave the current page to the user. Since 2.12
  *
  * Enum values used for determining the type of #WebKitScriptDialog
  */
 typedef enum {
     WEBKIT_SCRIPT_DIALOG_ALERT,
     WEBKIT_SCRIPT_DIALOG_CONFIRM,
-    WEBKIT_SCRIPT_DIALOG_PROMPT
+    WEBKIT_SCRIPT_DIALOG_PROMPT,
+    WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM
 } WebKitScriptDialogType;
 
 WEBKIT_API GType

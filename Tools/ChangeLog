@@ -1,3 +1,23 @@
+2015-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to handle beforeunload events
+        https://bugs.webkit.org/show_bug.cgi?id=139090
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowConstructed):
+        (browserWindowDeleteEvent):
+        (browser_window_class_init):
+        Handle delete-event to prevent the window from being closed when
+        the page has beforeunload handlers. Use
+        webkit_web_view_try_close() when the window is requested to be
+        closed.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        (testWebViewJavaScriptDialogs):
+        Add a test case for the WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM
+        script dialog type.
+
 2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
 
         Refactored initialization code in LoadTrackingTest.
