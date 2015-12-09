@@ -1,5 +1,14 @@
 2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [AX][GTK] media-emits-object-replacement.html needs new baseline
+        https://bugs.webkit.org/show_bug.cgi?id=152050
+
+        Unreviewed test gardening.
+
+        * accessibility/gtk/media-emits-object-replacement-expected.txt:
+
+2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [EFL] Consider deferring to WebCore Accessibility for table exposure
         https://bugs.webkit.org/show_bug.cgi?id=144898
 
