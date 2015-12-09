@@ -62,7 +62,7 @@ Redirect 301 /quality/reporting.html /reporting-bugs/
 Redirect 301 /quality/testing.html /testing-contributions/
 Redirect 301 /quality/testwriting.html /writing-new-tests/
 Redirect 301 /security/index.html /security-policy/
-Redirect 301 /security/security-group-members.html /security-policy/
+Redirect 301 /security/security-group-members.html /security-team/
 Redirect 301 /security/ /security-policy/
 Redirect 301 /security /security-policy/
 Redirect 301 /status.html /status/

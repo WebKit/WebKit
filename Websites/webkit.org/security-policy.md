@@ -4,7 +4,7 @@
 2. **Scope of disclosure:** If you would like to limit further dissemination of the information in the bug report, please say so in the bug. Otherwise the WebKit Security Group may share information with other vendors if we find they may be affected by the same vulnerability. The WebKit Security Group will handle the information you provide responsibly. See the other sections of this document for details.
 3. **Getting feedback:** We cannot guarantee a prompt human response to every security bug filed. If you would like immediate feedback on a security issue, or would like to discuss details with members of the WebKit Security Group, please email [security@webkit.org](mailto:security@webkit.org) and include a link to the relevant Bugzilla bug. Your message will be acknowledged within a week at most.
 
-The current member list will be published at [http://webkit.org/security/security-group-members.html](security-group-members.html).
+The current member list is published on the [Security Team](/security-team) page.
 
 ### How To Join the WebKit Security Group
 

@@ -1,5 +1,18 @@
 2015-12-09  Jonathan Davis  <jond@apple.com>
 
+        Fixed broken link: https://webkit.org/old/security/security-group-members.html
+        https://bugs.webkit.org/show_bug.cgi?id=152010
+
+        Reviewed by Timothy Hatcher.
+
+        * .htaccess:
+        * security-policy.md:
+        * wp-content/themes/webkit/style.css:
+        (article h4):
+        (article h5):
+
+2015-12-09  Jonathan Davis  <jond@apple.com>
+
         Fix function reference change.
 
         * wp-content/themes/webkit/scripts/global.js:
