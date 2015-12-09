@@ -1,5 +1,14 @@
 2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Replacing Yosemite flag with Release flag for two flaky xmlhttprequest tests.
+        https://bugs.webkit.org/show_bug.cgi?id=151729
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking inspector/debugger/command-line-api-exception.html as flaky on Mac
         https://bugs.webkit.org/show_bug.cgi?id=152029
 
