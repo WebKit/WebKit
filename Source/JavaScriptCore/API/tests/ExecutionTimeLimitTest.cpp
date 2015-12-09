@@ -171,6 +171,49 @@ int testExecutionTimeLimit()
             testResetAfterTimeout(failed);
         }
 
+        /* Test script timeout with tail calls: */
+        timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, shouldTerminateCallback, 0);
+        {
+            unsigned timeAfterWatchdogShouldHaveFired = 300 + tierAdjustmentMillis;
+
+            StringBuilder scriptBuilder;
+            scriptBuilder.append("var startTime = currentCPUTime();"
+                                 "function recurse(i) {"
+                                     "'use strict';"
+                                     "if (i % 1000 === 0) {"
+                                        "if (currentCPUTime() - startTime >");
+            scriptBuilder.appendNumber(timeAfterWatchdogShouldHaveFired / 1000.0);
+            scriptBuilder.append("       ) { return; }");
+            scriptBuilder.append("    }");
+            scriptBuilder.append("    return recurse(i + 1); }");
+            scriptBuilder.append("recurse(0);");
+
+            JSStringRef script = JSStringCreateWithUTF8CString(scriptBuilder.toString().utf8().data());
+            exception = nullptr;
+            shouldTerminateCallbackWasCalled = false;
+            auto startTime = currentCPUTime();
+            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            auto endTime = currentCPUTime();
+
+            if (((endTime - startTime) < milliseconds(timeAfterWatchdogShouldHaveFired)) && shouldTerminateCallbackWasCalled)
+                printf("PASS: %s script with infinite tail calls timed out as expected .\n", tierOptions.tier);
+            else {
+                if ((endTime - startTime) >= milliseconds(timeAfterWatchdogShouldHaveFired))
+                    printf("FAIL: %s script with infinite tail calls did not time out as expected.\n", tierOptions.tier);
+                if (!shouldTerminateCallbackWasCalled)
+                    printf("FAIL: %s script with infinite tail calls' timeout callback was not called.\n", tierOptions.tier);
+                failed = true;
+            }
+            
+            if (!exception) {
+                printf("FAIL: %s TerminatedExecutionException was not thrown.\n", tierOptions.tier);
+                failed = true;
+            }
+
+            testResetAfterTimeout(failed);
+        }
+
         /* Test the script timeout's TerminatedExecutionException should NOT be catchable: */
         timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, shouldTerminateCallback, 0);

@@ -1,3 +1,22 @@
+2015-12-09  Saam barati  <sbarati@apple.com>
+
+        we should emit op_watchdog after op_enter
+        https://bugs.webkit.org/show_bug.cgi?id=151972
+
+        Reviewed by Mark Lam.
+
+        This also solves the issue of watchdog not being
+        observed when we loop purely through tail calls.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitProfiledOpcode):
+        (JSC::BytecodeGenerator::emitEnter):
+        (JSC::BytecodeGenerator::emitLoopHint):
+        * bytecompiler/BytecodeGenerator.h:
+
 2015-12-08  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Improve how B3 lowers Add() and Sub() on x86

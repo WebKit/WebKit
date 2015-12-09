@@ -169,7 +169,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
 
-    emitOpcode(op_enter);
+    emitEnter();
 
     allocateAndEmitScope();
 
@@ -287,7 +287,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         return captures(uid) ? VarKind::Scope : VarKind::Stack;
     };
 
-    emitOpcode(op_enter);
+    emitEnter();
 
     allocateAndEmitScope();
     
@@ -603,7 +603,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     m_codeBlock->setNumParameters(1);
 
-    emitOpcode(op_enter);
+    emitEnter();
 
     allocateAndEmitScope();
 
@@ -686,7 +686,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
         return captures(uid) ? VarKind::Scope : VarKind::Stack;
     };
 
-    emitOpcode(op_enter);
+    emitEnter();
 
     allocateAndEmitScope();
 
@@ -1090,6 +1090,12 @@ UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
     UnlinkedValueProfile result = m_codeBlock->addValueProfile();
     emitOpcode(opcodeID);
     return result;
+}
+
+void BytecodeGenerator::emitEnter()
+{
+    emitOpcode(op_enter);
+    emitWatchdog();
 }
 
 void BytecodeGenerator::emitLoopHint()
