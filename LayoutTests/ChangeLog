@@ -1,5 +1,14 @@
 2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Baseline fast/dom/HTMLProgressElement/native-progress-bar.html for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=152094
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/dom/HTMLProgressElement/native-progress-bar-expected.txt: Added.
+
+2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Baseline fast/text/text-combine-shrink-on-color-change.html for iOS
         https://bugs.webkit.org/show_bug.cgi?id=151218
 
