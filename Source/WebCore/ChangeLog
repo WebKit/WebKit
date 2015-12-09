@@ -1,3 +1,20 @@
+2015-12-08  Jer Noble  <jer.noble@apple.com>
+
+        Changing <video> src during 'ended' event can leave screen sleep disabled
+        https://bugs.webkit.org/show_bug.cgi?id=152018
+
+        Reviewed by Eric Carlson.
+
+        Resetting a HTMLMediaElement's src during 'ended' introduces a race condition: whether
+        the 'mediaPlayerRateChanged()' notification will fire before createMediaPlayer() destroys
+        the old MediaPlayer firing said notification.
+
+        To break the race condition, always update the sleep disabling assertion after destroying
+        the media player (by creating a new one).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: Fire blocked events for delete requests that are blocked.
