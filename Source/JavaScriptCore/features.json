@@ -128,12 +128,12 @@
     {
         "name": "Generators",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-generator-objects",
         "specification": "ES6",
-        "description": "An iterative function object that is interruptable and resumable.",
+        "description": "An iterative function object that is interruptible and resumable. Generators are currently spec compliant, however, we're still actively working on improving their performance.",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=150290",
         "documentation-url": "https://hacks.mozilla.org/2015/05/es6-in-depth-generators/",
         "contact": {

@@ -1,5 +1,14 @@
 2015-12-09  Saam barati  <sbarati@apple.com>
 
+        Update generators' features.json to indicate that we have a spec compliant implementation
+        https://bugs.webkit.org/show_bug.cgi?id=152085
+
+        Reviewed by Joseph Pecoraro.
+
+        * features.json:
+
+2015-12-09  Saam barati  <sbarati@apple.com>
+
         Update features.json w.r.t tail calls
         https://bugs.webkit.org/show_bug.cgi?id=152072
 
