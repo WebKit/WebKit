@@ -1,5 +1,14 @@
 2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [AX][GTK] combobox-descendants-orientation-crash.html needs new baseline after r190648
+        https://bugs.webkit.org/show_bug.cgi?id=152052
+
+        Unreviewed test gardening.
+
+        * accessibility/gtk/combobox-descendants-orientation-crash-expected.txt:
+
+2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: The aria-table-content.html layout test should be more cross-platform friendly
         https://bugs.webkit.org/show_bug.cgi?id=152002
 
