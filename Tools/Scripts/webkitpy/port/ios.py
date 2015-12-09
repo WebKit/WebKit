@@ -148,6 +148,9 @@ class IOSSimulatorPort(Port):
             _log.warn('Run "launchctl limit" to check these limits')
             # FIXME: Add url for webpage explaining how to increase these limits.
 
+        if maximum_simulator_count_on_this_system == 0:
+            maximum_simulator_count_on_this_system = 1
+
         return min(maximum_simulator_count_on_this_system, best_child_process_count_for_cpu)
 
     def default_timeout_ms(self):

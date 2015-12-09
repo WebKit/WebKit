@@ -1,3 +1,11 @@
+2015-12-09  Aakash Jain  <aakash_jain@apple.com>
+
+        Run atleast one simulator even if max process limit is low
+        https://bugs.webkit.org/show_bug.cgi?id=152081
+        <rdar://problem/23819694>
+
+        Reviewed by Alexey Proskuryakov.
+
 2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] Crash in WebProcess when loading large content with custom URI schemes
