@@ -144,6 +144,13 @@ static const unsigned Layers = 7;
 static const unsigned NumberOfCategories = 8;
 }
 
+static CGColorRef createColor(float r, float g, float b, float a)
+{
+    static CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    CGFloat components[4] = { r, g, b, a };
+    return CGColorCreate(colorSpace, components);
+}
+
 struct MemoryCategoryInfo {
     MemoryCategoryInfo() { } // Needed for std::array.
 
@@ -154,7 +161,7 @@ struct MemoryCategoryInfo {
     {
         float r, g, b, a;
         Color(rgba).getRGBA(r, g, b, a);
-        color = adoptCF(CGColorCreateGenericRGB(r, g, b, a));
+        color = adoptCF(createColor(r, g, b, a));
     }
 
     String name;
@@ -217,11 +224,18 @@ void ResourceUsageOverlay::platformInitialize()
 
     m_layer = adoptNS([[WebOverlayLayer alloc] initWithResourceUsageOverlay:this]);
 
-    [overlay().layer().platformLayer() addSublayer:m_layer.get()];
+    m_containerLayer = adoptNS([[CALayer alloc] init]);
+    [m_containerLayer.get() addSublayer:m_layer.get()];
 
+    [m_containerLayer.get() setAnchorPoint:CGPointZero];
+    [m_containerLayer.get() setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
+
+    [m_layer.get() setAnchorPoint:CGPointZero];
     [m_layer.get() setContentsScale:2.0];
-    [m_layer.get() setBackgroundColor:adoptCF(CGColorCreateGenericRGB(0, 0, 0, 0.8)).get()];
-    [m_layer.get() setFrame:CGRectMake(0, 0, normalWidth, normalHeight)];
+    [m_layer.get() setBackgroundColor:adoptCF(createColor(0, 0, 0, 0.8)).get()];
+    [m_layer.get() setBounds:CGRectMake(0, 0, normalWidth, normalHeight)];
+
+    overlay().layer().setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::NoContentsLayer);
 
     data.overlayLayers.add(m_layer.get());
 }
@@ -235,17 +249,23 @@ void ResourceUsageOverlay::platformDestroy()
 
 static void showText(CGContextRef context, float x, float y, CGColorRef color, const String& text)
 {
+    CGContextSaveGState(context);
+
     CGContextSetTextDrawingMode(context, kCGTextFill);
     CGContextSetFillColorWithColor(context, color);
-
-    CGContextSaveGState(context);
 
     CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
 
     // FIXME: Don't use deprecated APIs.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+#if PLATFORM(IOS)
+    CGContextSelectFont(context, "Courier", 10, kCGEncodingMacRoman);
+#else
     CGContextSelectFont(context, "Menlo", 11, kCGEncodingMacRoman);
+#endif
+
     CString cstr = text.ascii();
     CGContextShowTextAtPoint(context, x, y, cstr.data(), cstr.length());
 #pragma clang diagnostic pop
@@ -255,15 +275,15 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
 
 static void drawGraphLabel(CGContextRef context, float x, float y, const String& text)
 {
-    static CGColorRef black = CGColorCreateGenericRGB(0, 0, 0, 1);
+    static CGColorRef black = createColor(0, 0, 0, 1);
     showText(context, x + 5, y - 3, black, text);
-    static CGColorRef white = CGColorCreateGenericRGB(1, 1, 1, 1);
+    static CGColorRef white = createColor(1, 1, 1, 1);
     showText(context, x + 4, y - 4, white, text);
 }
 
 static void drawCpuHistory(CGContextRef context, float x1, float y1, float y2, RingBuffer<float>& history)
 {
-    static CGColorRef cpuColor = CGColorCreateGenericRGB(0, 1, 0, 1);
+    static CGColorRef cpuColor = createColor(0, 1, 0, 1);
 
     CGContextSetStrokeColorWithColor(context, cpuColor);
     CGContextSetLineWidth(context, 1);
@@ -296,7 +316,7 @@ static void drawGCHistory(CGContextRef context, float x1, float y1, float y2, Ri
 
     CGContextSetLineWidth(context, 1);
 
-    static CGColorRef capacityColor = CGColorCreateGenericRGB(1, 0, 0.3, 1);
+    static CGColorRef capacityColor = createColor(1, 0, 0.3, 1);
     CGContextSetStrokeColorWithColor(context, capacityColor);
 
     size_t i = 0;
@@ -310,7 +330,7 @@ static void drawGCHistory(CGContextRef context, float x1, float y1, float y2, Ri
         i++;
     });
 
-    static CGColorRef sizeColor = CGColorCreateGenericRGB(0.6, 0.5, 0.9, 1);
+    static CGColorRef sizeColor = createColor(0.6, 0.5, 0.9, 1);
     CGContextSetStrokeColorWithColor(context, sizeColor);
 
     i = 0;
@@ -414,13 +434,18 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     auto& data = sharedData();
     LockHolder locker(data.lock);
 
+    if (![m_layer.get() contentsAreFlipped]) {
+        CGContextScaleCTM(context, 1, -1);
+        CGContextTranslateCTM(context, 0, -normalHeight);
+    }
+
     CGContextSetShouldAntialias(context, false);
     CGContextSetShouldSmoothFonts(context, false);
 
     CGRect viewBounds = m_overlay->bounds();
     CGContextClearRect(context, viewBounds);
 
-    static CGColorRef colorForLabels = CGColorCreateGenericRGB(0.9, 0.9, 0.9, 1);
+    static CGColorRef colorForLabels = createColor(0.9, 0.9, 0.9, 1);
     showText(context, 10, 20, colorForLabels, String::format("        CPU: %g", data.cpuHistory.last()));
     showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(data.totalDirty.last()));
 
@@ -587,8 +612,15 @@ NO_RETURN void runSamplerThread(void*)
         }
 
         [CATransaction begin];
-        for (CALayer *layer : layers)
+        for (CALayer *layer : layers) {
+            // FIXME: It shouldn't be necessary to update the bounds on every single thread loop iteration,
+            // but something is causing them to become 0x0.
+            CALayer *containerLayer = [layer superlayer];
+            CGRect rect = CGRectMake(0, 0, ResourceUsageOverlay::normalWidth, ResourceUsageOverlay::normalHeight);
+            [layer setBounds:rect];
+            [containerLayer setBounds:rect];
             [layer setNeedsDisplay];
+        }
         [CATransaction commit];
 
         // FIXME: Find a way to get the size of the current GC heap size safely from the sampler thread.

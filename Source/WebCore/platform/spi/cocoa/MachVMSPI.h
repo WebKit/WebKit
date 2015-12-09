@@ -42,5 +42,6 @@ EXTERN_C kern_return_t mach_vm_protect(vm_map_t targetTask, mach_vm_address_t, m
 EXTERN_C kern_return_t mach_vm_region(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t*, vm_region_flavor_t, vm_region_info_t,
                                       mach_msg_type_number_t* infoCount, mach_port_t* objectName);
 EXTERN_C kern_return_t mach_vm_region_recurse(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t*, uint32_t* depth, vm_region_recurse_info_t, mach_msg_type_number_t* infoCount);
+EXTERN_C kern_return_t mach_vm_purgable_control(vm_map_t target, mach_vm_address_t, vm_purgable_t control, int* state);
 
 #endif // MachVMSPI_h

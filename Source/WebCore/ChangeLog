@@ -1,3 +1,30 @@
+2015-12-09  Andreas Kling  <akling@apple.com>
+
+        [iOS] ResourceUsageOverlay should work on iOS.
+        <https://webkit.org/b/152021>
+
+        Reviewed by Antti Koivisto.
+
+        Make ResourceUsageOverlay work on iOS and on Mac desktops with UI-side compositing.
+
+        * page/ResourceUsageOverlay.cpp:
+        (WebCore::ResourceUsageOverlay::initialize): Move the overlay to the top of the view on iOS for now.
+        * page/ResourceUsageOverlay.h:
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::createColor): Make a custom CGColor factory since we can't use CGColorCreateGenericRGB on iOS.
+        (WebCore::MemoryCategoryInfo::MemoryCategoryInfo):
+        (WebCore::ResourceUsageOverlay::platformInitialize): Put the overlay CALayer into a container layer and
+        hook it up with GraphicsLayer::setContentsToPlatformLayer so it works with all compositing modes.
+        (WebCore::showText): Move CGContextSaveGState call to the top of the function to preserve everything.
+        (WebCore::drawGraphLabel):
+        (WebCore::drawCpuHistory):
+        (WebCore::drawGCHistory):
+        (WebCore::ResourceUsageOverlay::platformDraw): Flip the CGContext if needed.
+        (WebCore::runSamplerThread): Update the layer rects on each thread iteration. This shouldn't be
+        necessary but it papers over an issue where the containing layer would shrink down to 0x0 and
+        disappear. Added a FIXME for this.
+        * platform/spi/cocoa/MachVMSPI.h: Add purgeable VM SPI.
+
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/database-closepending-flag.html fails.

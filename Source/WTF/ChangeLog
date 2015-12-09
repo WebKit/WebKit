@@ -1,3 +1,12 @@
+2015-12-09  Andreas Kling  <akling@apple.com>
+
+        [iOS] ResourceUsageOverlay should work on iOS.
+        <https://webkit.org/b/152021>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/Platform.h: Enable RESOURCE_USAGE_OVERLAY for all COCOA platforms.
+
 2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Create a Sandbox SPI header

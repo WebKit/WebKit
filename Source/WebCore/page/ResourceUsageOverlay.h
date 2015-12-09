@@ -58,6 +58,9 @@ public:
     void platformDraw(CGContextRef);
 #endif
 
+    static const int normalWidth = 570;
+    static const int normalHeight = 130;
+
 private:
     void pageOverlayDestroyed(PageOverlay&) override { }
     void willMoveToPage(PageOverlay&, Page*) override { }
@@ -79,10 +82,8 @@ private:
 #if PLATFORM(COCOA)
     ThreadIdentifier m_threadID { 0 };
     RetainPtr<CALayer> m_layer;
+    RetainPtr<CALayer> m_containerLayer;
 #endif
-
-    static const int normalWidth = 570;
-    static const int normalHeight = 130;
 };
 
 }

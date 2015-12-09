@@ -61,7 +61,15 @@ void ResourceUsageOverlay::initialize()
         return;
 
     FrameView& frameView = *m_page.mainFrame().view();
-    m_overlay->setFrame(IntRect(frameView.width() / 2 - normalWidth / 2, frameView.height() - normalHeight - 20, normalWidth, normalHeight));
+
+    IntRect initialRect(frameView.width() / 2 - normalWidth / 2, frameView.height() - normalHeight - 20, normalWidth, normalHeight);
+
+#if PLATFORM(IOS)
+    // FIXME: The overlay should be stuck to the viewport instead of moving along with the page.
+    initialRect.setY(20);
+#endif
+
+    m_overlay->setFrame(initialRect);
     m_overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
     m_page.mainFrame().pageOverlayController().installPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
     platformInitialize();
