@@ -1,5 +1,98 @@
 2015-12-09  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: control whether to collect and dump protocol messages using a WebInspector.Setting
+        https://bugs.webkit.org/show_bug.cgi?id=151635
+
+        Reviewed by Timothy Hatcher.
+
+        When closing and reopening the inspector, the setting for whether
+        to dump protocol messages should be persisted. Otherwise, enabling
+        dumping from the debug-only UI will miss the initial flood of
+        messages that are processed when the Inspector loads initial data.
+
+        To support a persistent setting, and build some infrastructure for
+        more advanced uses of collected protocol messages, this patch adds
+        a new object to trace protocol events. It gets callbacks for each
+        and implements the console-dumping functionality previously baked in
+        to InspectorBackend.
+
+        In follow-up patches, other protocol tracers will be added to save
+        protocol data to disk, marshall it to a higher inspection level,
+        or provide more fine-grained control over what is logged.
+
+        This change moves Setting.js into the Base/ directory,
+        since it is used by Views, Models, and now Protocol classes.
+
+        * UserInterface/Base/Setting.js: Renamed from Source/WebInspectorUI/UserInterface/Models/Setting.js.
+        (WebInspector.Setting):
+        (WebInspector.Setting.prototype.get name):
+        (WebInspector.Setting.prototype.get value):
+        (WebInspector.Setting.prototype.set value):
+        * UserInterface/Main.html:
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.set dumpInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.get dumpInspectorProtocolMessages):
+
+            We still want to support the legacy way to enable dumping:
+            `InspectorBackend.dumpInspectorProtocolMessages = true`. This
+            is because some tests always use it, and it's easier to set this
+            flag in a custom Bootstrap.js file than to configure the Setting.
+
+        (InspectorBackendClass.prototype.set dumpInspectorTimeStats):
+        (InspectorBackendClass.prototype.get dumpInspectorTimeStats):
+
+            We still want to support the legacy way to enable dumping:
+            `InspectorBackend.dumpInspectorTimeStats = true`. This is
+            because MessageDispatcher checks this flag for its logging.
+
+        (InspectorBackendClass.prototype.set activeTracer):
+        (InspectorBackendClass.prototype.get activeTracer):
+
+            Set the active tracer, finalizing and removing any active tracer
+            if one exists. If removing a custom tracer (setting to null), then
+            re-sync activeTracer with the automatic tracing Setting.
+
+        (InspectorBackendClass.prototype.dispatch):
+        (InspectorBackendClass.prototype._startOrStopAutomaticTracing):
+
+            Sync the Setting with activeTracer. If an custom tracer is active,
+            don't replace it with the automatic logging tracer.
+
+        (InspectorBackendClass.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackendClass.prototype._sendCommandToBackendExpectingPromise):
+        (InspectorBackendClass.prototype._sendMessageToBackend):
+        (InspectorBackendClass.prototype._dispatchResponse):
+        (InspectorBackendClass.prototype._dispatchEvent):
+        (InspectorBackendClass.prototype._flushPendingScripts):
+        * UserInterface/Protocol/LoggingProtocolTracer.js: Added.
+        (WebInspector.LoggingProtocolTracer):
+        (WebInspector.LoggingProtocolTracer.prototype.set dumpMessagesToConsole):
+        (WebInspector.LoggingProtocolTracer.prototype.get dumpMessagesToConsole):
+        (WebInspector.LoggingProtocolTracer.prototype.set dumpTimingDataToConsole):
+        (WebInspector.LoggingProtocolTracer.prototype.get dumpTimingDataToConsole):
+        (WebInspector.LoggingProtocolTracer.prototype.logFrontendException):
+        (WebInspector.LoggingProtocolTracer.prototype.logProtocolError):
+        (WebInspector.LoggingProtocolTracer.prototype.logFrontendRequest):
+        (WebInspector.LoggingProtocolTracer.prototype.logWillHandleResponse):
+        (WebInspector.LoggingProtocolTracer.prototype.logDidHandleResponse):
+        (WebInspector.LoggingProtocolTracer.prototype.logWillHandleEvent):
+        (WebInspector.LoggingProtocolTracer.prototype.logDidHandleEvent):
+        (WebInspector.LoggingProtocolTracer.prototype._processEntry):
+        * UserInterface/Protocol/ProtocolTracer.js: Added.
+        (WebInspector.ProtocolTracer.prototype.logStarted):
+        (WebInspector.ProtocolTracer.prototype.logFrontendException):
+        (WebInspector.ProtocolTracer.prototype.logProtocolError):
+        (WebInspector.ProtocolTracer.prototype.logFrontendRequest):
+        (WebInspector.ProtocolTracer.prototype.logWillHandleResponse):
+        (WebInspector.ProtocolTracer.prototype.logDidHandleResponse):
+        (WebInspector.ProtocolTracer.prototype.logWillHandleEvent):
+        (WebInspector.ProtocolTracer.prototype.logDidHandleEvent):        (WebInspector.ProtocolTracer.prototype.logFinished):
+        (WebInspector.ProtocolTracer):
+        * UserInterface/Test.html:
+
+2015-12-09  Brian Burg  <bburg@apple.com>
+
         Web Inspector: zoom with Ctrl +/- doesn't work correctly when inspector is docked
         https://bugs.webkit.org/show_bug.cgi?id=152076
 

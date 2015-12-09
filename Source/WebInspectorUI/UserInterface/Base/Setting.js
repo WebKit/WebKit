@@ -37,7 +37,7 @@ WebInspector.Setting = class Setting extends WebInspector.Object
 
         this._name = name;
 
-        let inspectionLevel = InspectorFrontendHost.inspectionLevel();
+        let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel() : 1;
         let levelString = inspectionLevel > 1 ? "-" + inspectionLevel : "";
         this._localStorageKey = `com.apple.WebInspector${levelString}.${name}`;
         this._defaultValue = defaultValue;

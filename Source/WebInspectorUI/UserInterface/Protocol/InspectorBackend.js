@@ -38,16 +38,91 @@ InspectorBackendClass = class InspectorBackendClass
         this._pendingResponses = new Map;
         this._agents = {};
         this._deferredScripts = [];
+        this._activeTracer = null;
+        this._automaticTracer = null;
 
-        this.dumpInspectorTimeStats = false;
-        this.dumpInspectorProtocolMessages = false;
-        this.warnForLongMessageHandling = false;
-        this.longMessageHandlingThreshold = 10; // milliseconds.
+        this._dumpInspectorTimeStats = false;
 
-        this._log = window.InspectorTest ? InspectorFrontendHost.unbufferedLog.bind(InspectorFrontendHost) : console.log.bind(console);
+        let setting = WebInspector.autoLogProtocolMessagesSetting = new WebInspector.Setting("auto-collect-protocol-messages", false);
+        setting.addEventListener(WebInspector.Setting.Event.Changed, this._startOrStopAutomaticTracing.bind(this))
+        this._startOrStopAutomaticTracing();
     }
 
     // Public
+
+    // It's still possible to set this flag on InspectorBackend to just
+    // dump protocol traffic as it happens. For more complex uses of
+    // protocol data, install a subclass of WebInspector.ProtocolTracer.
+    set dumpInspectorProtocolMessages(value)
+    {
+        // Implicitly cause automatic logging to start if it's allowed.
+        let setting = WebInspector.autoLogProtocolMessagesSetting;
+        setting.value = value;
+
+        if (this.activeTracer !== this._automaticTracer)
+            return;
+
+        if (this.activeTracer)
+            this.activeTracer.dumpMessagesToConsole = value;
+    }
+
+    get dumpInspectorProtocolMessages()
+    {
+        return !!this._automaticTracer;
+    }
+
+    set dumpInspectorTimeStats(value)
+    {
+        if (!this.dumpInspectorProtocolMessages)
+            this.dumpInspectorProtocolMessages = true;
+
+        if (this.activeTracer !== this._automaticTracer)
+            return;
+
+        if (this.activeTracer)
+            this.activeTracer.dumpTimingDataToConsole = value;
+    }
+
+    get dumpInspectorTimeStats()
+    {
+        return this._dumpInspectorTimeStats;
+    }
+
+    set activeTracer(tracer)
+    {
+        console.assert(!tracer || tracer instanceof WebInspector.ProtocolTracer);
+
+        // Bail early if no state change is to be made.
+        if (!tracer && !this._activeTracer)
+            return;
+
+        if (tracer === this._activeTracer)
+            return;
+
+        // Don't allow an automatic tracer to dislodge a custom tracer.
+        if (this._activeTracer && tracer === this._automaticTracer)
+            return;
+
+        if (this.activeTracer)
+            this.activeTracer.logFinished();
+
+        if (this._activeTracer === this._automaticTracer)
+            this._automaticTracer = null;
+
+        this._activeTracer = tracer;
+        if (this.activeTracer)
+            this.activeTracer.logStarted();
+        else {
+            // If the custom tracer was removed and automatic tracing is enabled,
+            // then create a new automatic tracer and install it in its place.
+            this._startOrStopAutomaticTracing();
+        }
+    }
+
+    get activeTracer()
+    {
+        return this._activeTracer || null;
+    }
 
     registerCommand(qualifiedName, callSignature, replySignature)
     {
@@ -78,10 +153,7 @@ InspectorBackendClass = class InspectorBackendClass
 
     dispatch(message)
     {
-        if (this.dumpInspectorProtocolMessages)
-            this._log("backend: " + ((typeof message === "string") ? message : JSON.stringify(message)));
-
-        var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
+        let messageObject = (typeof message === "string") ? JSON.parse(message) : message;
 
         if ("id" in messageObject)
             this._dispatchResponse(messageObject);
@@ -113,6 +185,28 @@ InspectorBackendClass = class InspectorBackendClass
 
     // Private
 
+    _startOrStopAutomaticTracing()
+    {
+        let setting = WebInspector.autoLogProtocolMessagesSetting;
+
+        // Bail if there is no state transition to be made.
+        if (!(setting.value ^ !!this.activeTracer))
+            return;
+
+        if (!setting.value) {
+            if (this.activeTracer === this._automaticTracer)
+                this.activeTracer = null;
+
+            this._automaticTracer = null;
+        } else {
+            this._automaticTracer = new WebInspector.LoggingProtocolTracer;
+            this._automaticTracer.dumpMessagesToConsole = this.dumpInspectorProtocolMessages;
+            this._automaticTracer.dumpTimingDataToConsole = this.dumpTimingDataToConsole;
+            // This will be ignored if a custom tracer is installed.
+            this.activeTracer = this._automaticTracer;
+        }
+    }
+
     _agentForDomain(domainName)
     {
         if (this._agents[domainName])
@@ -137,7 +231,7 @@ InspectorBackendClass = class InspectorBackendClass
 
         let responseData = {command, callback};
 
-        if (this.dumpInspectorTimeStats)
+        if (this.activeTracer)
             responseData.sendRequestTimestamp = timestamp();
 
         this._pendingResponses.set(sequenceId, responseData);
@@ -158,7 +252,7 @@ InspectorBackendClass = class InspectorBackendClass
 
         let responseData = {command};
 
-        if (this.dumpInspectorTimeStats)
+        if (this.activeTracer)
             responseData.sendRequestTimestamp = timestamp();
 
         let responsePromise = new Promise(function(resolve, reject) {
@@ -174,8 +268,8 @@ InspectorBackendClass = class InspectorBackendClass
     _sendMessageToBackend(messageObject)
     {
         let stringifiedMessage = JSON.stringify(messageObject);
-        if (this.dumpInspectorProtocolMessages)
-            this._log("frontend: " + stringifiedMessage);
+        if (this.activeTracer)
+            this.activeTracer.logFrontendRequest(stringifiedMessage);
 
         InspectorFrontendHost.sendMessageToBackend(stringifiedMessage);
     }
@@ -195,9 +289,11 @@ InspectorBackendClass = class InspectorBackendClass
         let responseData = this._pendingResponses.take(sequenceId);
         let {command, callback, promise} = responseData;
 
-        var processingStartTimestamp;
-        if (this.dumpInspectorTimeStats)
+        let processingStartTimestamp;
+        if (this.activeTracer) {
             processingStartTimestamp = timestamp();
+            this.activeTracer.logWillHandleResponse(JSON.stringify(messageObject));
+        }
 
         if (typeof callback === "function")
             this._dispatchResponseToCallback(command, messageObject, callback);
@@ -206,13 +302,10 @@ InspectorBackendClass = class InspectorBackendClass
         else
             console.error("Received a command response without a corresponding callback or promise.", messageObject, command);
 
-        let processingDuration = (timestamp() - processingStartTimestamp).toFixed(3);
-        if (this.warnForLongMessageHandling && processingDuration > this.longMessageHandlingThreshold)
-            console.warn(`InspectorBackend: took ${processingDuration}ms to handle response for command: ${command.qualifiedName}`);
-
-        if (this.dumpInspectorTimeStats) {
-            let roundTripDuration = (processingStartTimestamp - responseData.sendRequestTimestamp).toFixed(3);
-            console.log(`time-stats: Handling: ${processingDuration}ms; RTT: ${roundTripDuration}ms; (command ${command.qualifiedName})`);
+        if (this.activeTracer) {
+            let processingTime = (timestamp() - processingStartTimestamp).toFixed(3);
+            let roundTripTime = (processingStartTimestamp - responseData.sendRequestTimestamp).toFixed(3);
+            this.activeTracer.logDidHandleResponse(JSON.stringify(messageObject), {rtt: roundTripTime, dispatch: processingTime});
         }
 
         if (this._deferredScripts.length && !this._pendingResponses.size)
@@ -247,48 +340,47 @@ InspectorBackendClass = class InspectorBackendClass
 
     _dispatchEvent(messageObject)
     {
-        var qualifiedName = messageObject["method"];
-        var [domainName, eventName] = qualifiedName.split(".");
+        let qualifiedName = messageObject["method"];
+        let [domainName, eventName] = qualifiedName.split(".");
         if (!(domainName in this._agents)) {
             console.error("Protocol Error: Attempted to dispatch method '" + eventName + "' for non-existing domain '" + domainName + "'");
             return;
         }
 
-        var agent = this._agentForDomain(domainName);
+        let agent = this._agentForDomain(domainName);
         if (!agent.active) {
             console.error("Protocol Error: Attempted to dispatch method for domain '" + domainName + "' which exists but is not active.");
             return;
         }
 
-        var event = agent.getEvent(eventName);
+        let event = agent.getEvent(eventName);
         if (!event) {
             console.error("Protocol Error: Attempted to dispatch an unspecified method '" + qualifiedName + "'");
             return;
         }
 
-        var eventArguments = [];
-        if (messageObject["params"]) {
-            var parameterNames = event.parameterNames;
-            for (var i = 0; i < parameterNames.length; ++i)
-                eventArguments.push(messageObject["params"][parameterNames[i]]);
-        }
+        let eventArguments = [];
+        if (messageObject["params"])
+            eventArguments = event.parameterNames.map((name) => messageObject["params"][name]);
 
-        var processingStartTimestamp;
-        if (this.dumpInspectorTimeStats)
+        let processingStartTimestamp;
+        if (this.activeTracer) {
             processingStartTimestamp = timestamp();
+            this.activeTracer.logWillHandleEvent(JSON.stringify(messageObject));
+        }
 
         try {
             agent.dispatchEvent(eventName, eventArguments);
         } catch (e) {
             console.error("Uncaught exception in inspector page while handling event " + qualifiedName, e);
+            if (this.activeTracer)
+                this.activeTracer.logFrontendException(JSON.stringify(messageObject), e);
         }
 
-        let processingDuration = (timestamp() - processingStartTimestamp).toFixed(3);
-        if (this.warnForLongMessageHandling && processingDuration > this.longMessageHandlingThreshold)
-            console.warn(`InspectorBackend: took ${processingDuration}ms to handle event: ${messageObject.method}`);
-
-        if (this.dumpInspectorTimeStats)
-            console.log(`time-stats: Handling: ${processingDuration}ms (event ${messageObject.method})`);
+        if (this.activeTracer) {
+            let processingTime = (timestamp() - processingStartTimestamp).toFixed(3);
+            this.activeTracer.logDidHandleEvent(JSON.stringify(messageObject), {dispatch: processingTime});
+        }
     }
 
     _reportProtocolError(messageObject)
@@ -300,9 +392,9 @@ InspectorBackendClass = class InspectorBackendClass
     {
         console.assert(this._pendingResponses.size === 0);
 
-        var scriptsToRun = this._deferredScripts;
+        let scriptsToRun = this._deferredScripts;
         this._deferredScripts = [];
-        for (var script of scriptsToRun)
+        for (let script of scriptsToRun)
             script.call(this);
     }
 };
