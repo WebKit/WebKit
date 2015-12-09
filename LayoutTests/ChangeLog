@@ -1,3 +1,15 @@
+2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [AX][GTK] Accessibility gardening
+        https://bugs.webkit.org/show_bug.cgi?id=152062
+
+        Unreviewed test gardening.
+
+        Skip two tests specific to AX API, mark a test which is timing out, remove passing
+        test from failures.
+
+        * platform/gtk/TestExpectations:
+
 2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Import the web-platform-tests directly from the spec
