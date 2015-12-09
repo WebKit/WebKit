@@ -1,5 +1,18 @@
 2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TextureMapper] TextureMapperShaderProgram::setMatrix() should use TransformationMatrix::FloatMatrix4
+        https://bugs.webkit.org/show_bug.cgi?id=152042
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp:
+        (WebCore::TextureMapperShaderProgram::setMatrix): Instead of manually writing out
+        the complete matrix in a C array, simply use TransformationMatrix::FloatMatrix4
+        and fill that via the TransformationMatrix::toColumnMajorFloatArray() method
+        called on the passed-in TransformationMatrix.
+
+2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
+
         [Soup] Attach the SocketStreamHandleSoup write-ready source to the thread-default context
         https://bugs.webkit.org/show_bug.cgi?id=152041
 
