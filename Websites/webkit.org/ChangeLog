@@ -1,5 +1,14 @@
 2015-12-08  Jonathan Davis  <jond@apple.com>
 
+        Fix Code Style Guidelines code parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=152024
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/plugins/table-of-contents.php:
+
+2015-12-08  Jonathan Davis  <jond@apple.com>
+
         Fix social meta for home page.
         https://bugs.webkit.org/show_bug.cgi?id=151764
 

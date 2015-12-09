@@ -92,15 +92,6 @@ class WebKitTableOfContents {
     public static function parse( $content ) {
         $markup = preg_replace_callback('{
                 ^<h([1-6])[^>]*>(.+?)<\/h[1-6]>* # HTML tags
-                |
-                ^(\#{1,6})    # $1 = string of #\'s
-                [ ]*
-                (.+?)        # $2 = Header text
-                [ ]*
-                \#*            # optional closing #\'s (not counted)
-                (?:[ ]+ ' . self::$attr_regex . ' )?     # $3 = id/class attributes
-                [ ]*
-                \n+
             }xm',
             array('WebKitTableOfContents', 'index'),
             $content
