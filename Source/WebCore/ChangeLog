@@ -1,5 +1,20 @@
 2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] TextureMapperTiledBackingStore should notify the ImageObserver of the data access
+        https://bugs.webkit.org/show_bug.cgi?id=152053
+
+        Reviewed by Martin Robinson.
+
+        TextureMapperTiledBackingStore should call ImageObserver::didDraw() on the Image's
+        observer after updating the tile with the Image's data. This way the CachedImage
+        (i.e. the observer) can mark the data access with the current timestamp, avoiding
+        removing the decoded data in the very near future during a cache purge.
+
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
+
+2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
+
         Make MainThreadSharedTimerGtk implementation GLib-specific
         https://bugs.webkit.org/show_bug.cgi?id=152044
 
