@@ -198,8 +198,8 @@ TEST_F(EWK2UnitTestBase, ewk_settings_offline_web_application_cache_enabled)
 {
     Ewk_Settings* settings = ewk_page_group_settings_get(ewk_view_page_group_get(webView()));
 
-    // The offline web application cache is enabled by default.
-    ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_get(settings));
+    // The offline web application cache is disabled by default.
+    ASSERT_FALSE(ewk_settings_offline_web_application_cache_enabled_get(settings));
 
     ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_set(settings, true));
     ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_get(settings));

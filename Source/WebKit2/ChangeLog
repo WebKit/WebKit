@@ -1,3 +1,16 @@
+2015-12-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Need to change expectation result in ewk_settings_offline_web_application_cache_enabled API test
+        https://bugs.webkit.org/show_bug.cgi?id=152063
+
+        Reviewed by Csaba Osztrogonác.
+
+        Expect false initial value of ewk_settings_offline_web_application_cache_enabled_get()
+        because r193812 didn't enable it by default.
+
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2015-12-09  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [ThreadedCompositor] Add support for HiDPI
