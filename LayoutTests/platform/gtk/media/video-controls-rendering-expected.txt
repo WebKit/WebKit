@@ -18,7 +18,6 @@ layer at (8,41) size 320x240
     RenderBlock {DIV} at (0,200) size 320x40
 layer at (13,246) size 310x30
   RenderFlexibleBox {DIV} at (5,5) size 310x30 [bgcolor=#141414CC]
-    RenderButton {BUTTON} at (9,0) size 30x30
     RenderSlider {INPUT} at (49,11) size 93x8 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 93x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 105x12
@@ -29,6 +28,8 @@ layer at (13,246) size 310x30
     RenderButton {BUTTON} at (239,0) size 30x30
     RenderFlexibleBox {DIV} at (271,0) size 30x30
       RenderButton {BUTTON} at (0,0) size 30x30
+layer at (22,246) size 30x30
+  RenderButton {BUTTON} at (9,0) size 30x30
 layer at (8,281) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
 layer at (8,281) size 320x240
@@ -36,7 +37,6 @@ layer at (8,281) size 320x240
     RenderBlock {DIV} at (0,200) size 320x40
 layer at (13,486) size 310x30
   RenderFlexibleBox {DIV} at (5,5) size 310x30 [bgcolor=#141414CC]
-    RenderButton {BUTTON} at (9,0) size 30x30
     RenderSlider {INPUT} at (49,11) size 93x8 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 93x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 105x12
@@ -47,6 +47,8 @@ layer at (13,486) size 310x30
     RenderButton {BUTTON} at (239,0) size 30x30
     RenderFlexibleBox {DIV} at (271,0) size 30x30
       RenderButton {BUTTON} at (0,0) size 30x30
+layer at (22,486) size 30x30
+  RenderButton {BUTTON} at (9,0) size 30x30
 layer at (8,521) size 320x240
   RenderVideo {VIDEO} at (8,521) size 320x240
 layer at (8,521) size 320x240
@@ -54,7 +56,6 @@ layer at (8,521) size 320x240
     RenderBlock {DIV} at (0,200) size 320x40
 layer at (13,726) size 310x30
   RenderFlexibleBox {DIV} at (5,5) size 310x30 [bgcolor=#141414CC]
-    RenderButton {BUTTON} at (9,0) size 30x30
     RenderSlider {INPUT} at (49,11) size 93x8 [color=#E6E6E659]
       RenderFlexibleBox {DIV} at (0,0) size 93x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 105x12
@@ -65,3 +66,5 @@ layer at (13,726) size 310x30
     RenderButton {BUTTON} at (239,0) size 30x30
     RenderFlexibleBox {DIV} at (271,0) size 30x30
       RenderButton {BUTTON} at (0,0) size 30x30
+layer at (22,726) size 30x30
+  RenderButton {BUTTON} at (9,0) size 30x30

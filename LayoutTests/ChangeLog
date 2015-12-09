@@ -1,3 +1,19 @@
+2015-12-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK Gardening.
+
+        Rebaseline media tests after r190054 and r190200.
+
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/media-controls-clone-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
 2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Anonymous render block flow elements should be exposed as ATK_ROLE_SECTION; not ATK_ROLE_PANEL
