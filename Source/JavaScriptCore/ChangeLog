@@ -1,5 +1,21 @@
 2015-12-08  Mark Lam  <mark.lam@apple.com>
 
+        Factoring out common DFG code for bitwise and shift operators.
+        https://bugs.webkit.org/show_bug.cgi?id=152019
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBitwiseOp):
+        (JSC::DFG::SpeculativeJIT::compileShiftOp):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2015-12-08  Mark Lam  <mark.lam@apple.com>
+
         DFG and FTL should be resilient against cases where both snippet operands are constant.
         https://bugs.webkit.org/show_bug.cgi?id=152017
 

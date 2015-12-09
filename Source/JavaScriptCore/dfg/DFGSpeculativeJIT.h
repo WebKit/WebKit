@@ -2212,6 +2212,8 @@ public:
     void compileValueToInt32(Node*);
     void compileUInt32ToNumber(Node*);
     void compileDoubleAsInt32(Node*);
+    void compileBitwiseOp(Node*);
+    void compileShiftOp(Node*);
     void compileValueAdd(Node*);
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);

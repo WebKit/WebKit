@@ -2059,55 +2059,13 @@ void SpeculativeJIT::compile(Node* node)
     case BitAnd:
     case BitOr:
     case BitXor:
-        if (node->child1()->isInt32Constant()) {
-            SpeculateInt32Operand op2(this, node->child2());
-            GPRTemporary result(this, Reuse, op2);
-
-            bitOp(op, node->child1()->asInt32(), op2.gpr(), result.gpr());
-
-            int32Result(result.gpr(), node);
-        } else if (node->child2()->isInt32Constant()) {
-            SpeculateInt32Operand op1(this, node->child1());
-            GPRTemporary result(this, Reuse, op1);
-
-            bitOp(op, node->child2()->asInt32(), op1.gpr(), result.gpr());
-
-            int32Result(result.gpr(), node);
-        } else {
-            SpeculateInt32Operand op1(this, node->child1());
-            SpeculateInt32Operand op2(this, node->child2());
-            GPRTemporary result(this, Reuse, op1, op2);
-
-            GPRReg reg1 = op1.gpr();
-            GPRReg reg2 = op2.gpr();
-            bitOp(op, reg1, reg2, result.gpr());
-
-            int32Result(result.gpr(), node);
-        }
+        compileBitwiseOp(node);
         break;
 
     case BitRShift:
     case BitLShift:
     case BitURShift:
-        if (node->child2()->isInt32Constant()) {
-            SpeculateInt32Operand op1(this, node->child1());
-            GPRTemporary result(this, Reuse, op1);
-
-            shiftOp(op, op1.gpr(), node->child2()->asInt32() & 0x1f, result.gpr());
-
-            int32Result(result.gpr(), node);
-        } else {
-            // Do not allow shift amount to be used as the result, MacroAssembler does not permit this.
-            SpeculateInt32Operand op1(this, node->child1());
-            SpeculateInt32Operand op2(this, node->child2());
-            GPRTemporary result(this, Reuse, op1);
-
-            GPRReg reg1 = op1.gpr();
-            GPRReg reg2 = op2.gpr();
-            shiftOp(op, reg1, reg2, result.gpr());
-
-            int32Result(result.gpr(), node);
-        }
+        compileShiftOp(node);
         break;
 
     case UInt32ToNumber: {

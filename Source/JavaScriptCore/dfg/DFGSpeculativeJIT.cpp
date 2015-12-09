@@ -2786,6 +2786,68 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
     blessedBooleanResult(scratchReg, node);
 }
 
+void SpeculativeJIT::compileBitwiseOp(Node* node)
+{
+    NodeType op = node->op();
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
+    if (leftChild->isInt32Constant()) {
+        SpeculateInt32Operand op2(this, rightChild);
+        GPRTemporary result(this, Reuse, op2);
+
+        bitOp(op, leftChild->asInt32(), op2.gpr(), result.gpr());
+
+        int32Result(result.gpr(), node);
+
+    } else if (rightChild->isInt32Constant()) {
+        SpeculateInt32Operand op1(this, leftChild);
+        GPRTemporary result(this, Reuse, op1);
+
+        bitOp(op, rightChild->asInt32(), op1.gpr(), result.gpr());
+
+        int32Result(result.gpr(), node);
+
+    } else {
+        SpeculateInt32Operand op1(this, leftChild);
+        SpeculateInt32Operand op2(this, rightChild);
+        GPRTemporary result(this, Reuse, op1, op2);
+        
+        GPRReg reg1 = op1.gpr();
+        GPRReg reg2 = op2.gpr();
+        bitOp(op, reg1, reg2, result.gpr());
+        
+        int32Result(result.gpr(), node);
+    }
+}
+
+void SpeculativeJIT::compileShiftOp(Node* node)
+{
+    NodeType op = node->op();
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
+    if (rightChild->isInt32Constant()) {
+        SpeculateInt32Operand op1(this, leftChild);
+        GPRTemporary result(this, Reuse, op1);
+
+        shiftOp(op, op1.gpr(), rightChild->asInt32() & 0x1f, result.gpr());
+
+        int32Result(result.gpr(), node);
+    } else {
+        // Do not allow shift amount to be used as the result, MacroAssembler does not permit this.
+        SpeculateInt32Operand op1(this, leftChild);
+        SpeculateInt32Operand op2(this, rightChild);
+        GPRTemporary result(this, Reuse, op1);
+
+        GPRReg reg1 = op1.gpr();
+        GPRReg reg2 = op2.gpr();
+        shiftOp(op, reg1, reg2, result.gpr());
+
+        int32Result(result.gpr(), node);
+    }
+}
+
 void SpeculativeJIT::compileValueAdd(Node* node)
 {
     Edge& leftChild = node->child1();
