@@ -190,7 +190,6 @@ static NSFontTraitMask toNSFontTraits(CTFontSymbolicTraits traits)
 
 #endif // PLATFORM_FONT_LOOKUP
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 static CGFloat toNSFontWeight(FontWeight fontWeight)
 {
     static const CGFloat nsFontWeights[] = {
@@ -207,18 +206,13 @@ static CGFloat toNSFontWeight(FontWeight fontWeight)
     ASSERT(fontWeight >= 0 && fontWeight <= 8);
     return nsFontWeights[fontWeight];
 }
-#endif
 
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, CTFontSymbolicTraits desiredTraits, float size)
 {
     if (equalIgnoringASCIICase(family, "-webkit-system-font")
         || equalIgnoringASCIICase(family, "-apple-system")
         || equalIgnoringASCIICase(family, "-apple-system-font")) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         RetainPtr<CTFontRef> result = toCTFont([NSFont systemFontOfSize:size weight:toNSFontWeight(weight)]);
-#else
-        RetainPtr<CTFontRef> result = toCTFont((weight >= FontWeight600) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size]);
-#endif
         if (desiredTraits & kCTFontItalicTrait) {
             if (auto italicizedFont = adoptCF(CTFontCreateCopyWithSymbolicTraits(result.get(), size, nullptr, desiredTraits, desiredTraits)))
                 result = italicizedFont;
@@ -388,23 +382,7 @@ void platformInvalidateFontCache()
 RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef font, FontWeight, const AtomicString& locale, const UChar* characters, unsigned length)
 {
     RetainPtr<CFStringRef> localeString;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1090
-    UNUSED_PARAM(locale);
-    if (!font) {
-        font = toCTFont([NSFont userFontOfSize:CTFontGetSize(font)]);
-        bool acceptable = true;
-        
-        RetainPtr<CFCharacterSetRef> characterSet = adoptCF(CTFontCopyCharacterSet(font));
-        for (auto character : StringView(characters, length).codePoints()) {
-            if (!CFCharacterSetIsLongCharacterMember(characterSet.get(), character)) {
-                acceptable = false;
-                break;
-            }
-        }
-        if (acceptable)
-            return font;
-    }
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
     if (!locale.isNull())
         localeString = locale.string().createCFString();
 #else

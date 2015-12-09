@@ -1,3 +1,18 @@
+2015-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove Mavericks-specific code from FontCacheMac
+        https://bugs.webkit.org/show_bug.cgi?id=152030
+
+        Reviewed by Simon Fraser.
+
+        Mavericks is no longer a supported platform.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformLookupFallbackFont):
+        (WebCore::platformFontWithFamilySpecialCase): Deleted.
+
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/objectstore-cursor.html fails.
