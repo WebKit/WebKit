@@ -1,3 +1,17 @@
+2015-12-09  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: reproducible debug ASSERT when inspecting the inspector (WK2)
+        https://bugs.webkit.org/show_bug.cgi?id=152080
+
+        Reviewed by Timothy Hatcher.
+
+        We hit an assert underneath ChildProcessProxy::addMessageReceiver because
+        we tried to connect the inspector page and inspected page more than once.
+        This relationship is already set up in the constructor of WebProcessProxy.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+
 2015-12-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Need to change expectation result in ewk_settings_offline_web_application_cache_enabled API test
