@@ -2613,7 +2613,8 @@ void Document::implicitClose()
 
     dispatchWindowLoadEvent();
     enqueuePageshowEvent(PageshowEventNotPersisted);
-    enqueuePopstateEvent(m_pendingStateObject ? m_pendingStateObject.release() : SerializedScriptValue::nullValue());
+    if (m_pendingStateObject)
+        enqueuePopstateEvent(m_pendingStateObject.release());
     
     if (f)
         f->loader().handledOnloadEvents();

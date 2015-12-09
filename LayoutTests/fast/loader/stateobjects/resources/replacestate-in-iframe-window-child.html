@@ -1,15 +1,16 @@
 <script>
-onunload = function() {
+window.onload = function() {
+  if (!sessionStorage.beganTest) {
+    sessionStorage.beganTest = true; 
+    top.opener.windowLoaded();
+  }
+}
+
+window.onunload = function() {
   // No page cache
 }
 
-onpopstate = function(e) {
-  if (!sessionStorage.beganTest) {
-      sessionStorage.beganTest = true; 
-      top.opener.windowLoaded();
-      return;
-  }
-  
+window.onpopstate = function(e) {
   alert("onpopstate");
   top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
 }

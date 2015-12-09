@@ -2,10 +2,10 @@ Tests that popstate events fire when navigating between pages (and history entri
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-popstate fired with state null
+load fired
 pushState with new state object for page 1
 going to page 2
-popstate fired with state null
+load fired
 going back to page 1 with new state object
 popstate fired with state newState
 going back to page 1 in initial state

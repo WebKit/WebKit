@@ -20,7 +20,31 @@ onload = function()
         testFailed('Could not open test window');
 }
 
+var testWindowLoadFireCount = 0;
 var testWindowPopstateFireCount = 0;
+
+function onTestWindowLoad(event)
+{
+    debug('load fired');
+    testWindowLoadFireCount++;
+
+    switch (testWindowLoadFireCount) {
+    case 1:
+        debug('pushState with new state object for page 1');
+        testWindow.history.pushState('newState');
+        debug('going to page 2');
+        // Set the location in a timeout to generate a history entry
+        setTimeout(function() {testWindow.location.href = 'resources/popstate-fires-with-page-cache-2.html';}, 0);            
+        break;            
+    case 2:
+        debug('going back to page 1 with new state object');
+        setTimeout(function() {testWindow.history.back();}, 0);
+        break;
+    default:
+        testFailed('unexpected load event state');
+        break;            
+    }
+}
 
 function onTestWindowPopState(event)
 {
@@ -29,21 +53,10 @@ function onTestWindowPopState(event)
     
     switch (testWindowPopstateFireCount) {
         case 1:
-            debug('pushState with new state object for page 1');
-            testWindow.history.pushState('newState');
-            debug('going to page 2');
-            // Set the location in a timeout to generate a history entry
-            setTimeout(function() {testWindow.location.href = 'resources/popstate-fires-with-page-cache-2.html';}, 0);            
-            break;            
-        case 2:
-            debug('going back to page 1 with new state object');
-            setTimeout(function() {testWindow.history.back();}, 0);
-            break;
-        case 3:
             debug('going back to page 1 in initial state');
             setTimeout(function() {testWindow.history.back();}, 0);
             break;
-        case 4:
+        case 2:
             // Close the window in a timeout to simulate popstate firing asynchronously, otherwise closing the window in a popstate handler results in a crash.
             // FIXME: remove this when http://webkit.org/b/36202 is fixed.
             setTimeout(function() {
