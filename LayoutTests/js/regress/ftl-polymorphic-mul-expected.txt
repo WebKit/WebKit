@@ -1,4 +1,4 @@
-JSRegress/ftl-object-sub
+JSRegress/ftl-polymorphic-mul
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

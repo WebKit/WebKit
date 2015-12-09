@@ -1,3 +1,32 @@
+2015-12-09  Mark Lam  <mark.lam@apple.com>
+
+        Rename ftl-object-* tests to ftl-polymorphic-*.
+        https://bugs.webkit.org/show_bug.cgi?id=152091
+
+        Reviewed by Saam Barati.
+
+        This is because those tests are actually testing the effects of polymorphic
+        operands on performance, and not the correctness of operations on objects.
+
+        * js/regress/ftl-object-div-expected.txt: Removed.
+        * js/regress/ftl-object-div.html: Removed.
+        * js/regress/ftl-object-mul-expected.txt: Removed.
+        * js/regress/ftl-object-mul.html: Removed.
+        * js/regress/ftl-object-sub-expected.txt: Removed.
+        * js/regress/ftl-object-sub.html: Removed.
+        * js/regress/ftl-polymorphic-div-expected.txt: Copied from LayoutTests/js/regress/ftl-object-div-expected.txt.
+        * js/regress/ftl-polymorphic-div.html: Copied from LayoutTests/js/regress/ftl-object-div.html.
+        * js/regress/ftl-polymorphic-mul-expected.txt: Copied from LayoutTests/js/regress/ftl-object-mul-expected.txt.
+        * js/regress/ftl-polymorphic-mul.html: Copied from LayoutTests/js/regress/ftl-object-mul.html.
+        * js/regress/ftl-polymorphic-sub-expected.txt: Copied from LayoutTests/js/regress/ftl-object-sub-expected.txt.
+        * js/regress/ftl-polymorphic-sub.html: Copied from LayoutTests/js/regress/ftl-object-sub.html.
+        * js/regress/script-tests/ftl-object-div.js: Removed.
+        * js/regress/script-tests/ftl-object-mul.js: Removed.
+        * js/regress/script-tests/ftl-object-sub.js: Removed.
+        * js/regress/script-tests/ftl-polymorphic-div.js: Copied from LayoutTests/js/regress/script-tests/ftl-object-div.js.
+        * js/regress/script-tests/ftl-polymorphic-mul.js: Copied from LayoutTests/js/regress/script-tests/ftl-object-mul.js.
+        * js/regress/script-tests/ftl-polymorphic-sub.js: Copied from LayoutTests/js/regress/script-tests/ftl-object-sub.js.
+
 2015-12-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK Gardening.
