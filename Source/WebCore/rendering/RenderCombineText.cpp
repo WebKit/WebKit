@@ -39,7 +39,11 @@ RenderCombineText::RenderCombineText(Text& textNode, const String& string)
 void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // FIXME: This is pretty hackish.
-    m_combineFontStyle = RenderStyle::clone(&style());
+    // Only cache a new font style if our old one actually changed. We do this to avoid
+    // clobbering width variants and shrink-to-fit changes, since we won't recombine when
+    // the font doesn't change.
+    if (!oldStyle || oldStyle->fontCascade() != style().fontCascade())
+        m_combineFontStyle = RenderStyle::clone(&style());
 
     RenderText::styleDidChange(diff, oldStyle);
 
