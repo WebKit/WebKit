@@ -1,3 +1,19 @@
+2015-12-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/database-closepending-flag.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152095
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+        
+        The server-side checks the closepending flag before dispatching the event to the client, 
+        but due to the inherent asynchronous race between server and client, the client needs to 
+        check its closePending flag as well.
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.cpp:
+        (WebCore::IDBClient::IDBDatabase::fireVersionChangeEvent): Don't fire if m_closePending is set.
+
 2015-12-09  David Hyatt  <hyatt@apple.com>
 
         Picture element needs to respond to dynamic viewport changes.

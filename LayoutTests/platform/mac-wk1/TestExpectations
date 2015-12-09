@@ -93,7 +93,6 @@ storage/indexeddb/unblocked-version-changes.html [ Skip ]
 
 # IDB tests with text failures                                                             
 storage/indexeddb/cursor-continue.html [ Failure ]
-storage/indexeddb/database-closepending-flag.html [ Failure ]
 storage/indexeddb/database-deletepending-flag.html [ Failure ]
 storage/indexeddb/delete-closed-database-object.html [ Failure ]
 storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html [ Failure ]

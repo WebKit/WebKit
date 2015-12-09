@@ -362,9 +362,9 @@ void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)
     uint64_t currentVersion = m_info.version();
     LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64, currentVersion, requestedVersion);
 
-    if (!scriptExecutionContext())
+    if (!scriptExecutionContext() || m_closePending)
         return;
-    
+
     Ref<Event> event = IDBVersionChangeEvent::create(currentVersion, requestedVersion, eventNames().versionchangeEvent);
     event->setTarget(this);
     scriptExecutionContext()->eventQueue().enqueueEvent(WTF::move(event));
