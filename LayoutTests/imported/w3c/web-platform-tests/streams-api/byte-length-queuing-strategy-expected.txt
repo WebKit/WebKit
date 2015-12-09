@@ -1,0 +1,18 @@
+
+PASS Can construct a ByteLengthQueuingStrategy with a valid high water mark 
+PASS Can construct a ByteLengthQueuingStrategy with any value as its high water mark 
+PASS ByteLengthQueuingStrategy constructor behaves as expected with strange arguments 
+PASS ByteLengthQueuingStrategy size behaves as expected with strange arguments 
+PASS ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments 
+PASS ByteLengthQueuingStrategy instances have the correct properties 
+PASS ByteLengthQueuingStrategy's highWaterMark property can be set to anything 
+FAIL Load byte-length-queuing-strategy.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
+FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+FAIL Can construct a ByteLengthQueuingStrategy with a valid high water mark Can't find variable: ByteLengthQueuingStrategy
+FAIL Can construct a ByteLengthQueuingStrategy with any value as its high water mark Can't find variable: ByteLengthQueuingStrategy
+FAIL ByteLengthQueuingStrategy constructor behaves as expected with strange arguments assert_throws: construction fails with undefined function "() => new ByteLengthQueuingStrategy()" threw object "ReferenceError: Can't find variable: ByteLengthQueuingStr..." ("ReferenceError") expected object "[object Object]" ("TypeError")
+FAIL ByteLengthQueuingStrategy size behaves as expected with strange arguments assert_throws: size fails with undefined function "() => ByteLengthQueuingStrategy.prototype.size()" threw object "ReferenceError: Can't find variable: ByteLengthQueuingStr..." ("ReferenceError") expected object "[object Object]" ("TypeError")
+FAIL ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments Can't find variable: ByteLengthQueuingStrategy
+FAIL ByteLengthQueuingStrategy instances have the correct properties Can't find variable: ByteLengthQueuingStrategy
+FAIL ByteLengthQueuingStrategy's highWaterMark property can be set to anything Can't find variable: ByteLengthQueuingStrategy
+

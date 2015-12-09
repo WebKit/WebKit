@@ -1,3 +1,64 @@
+2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Import the web-platform-tests directly from the spec
+        https://bugs.webkit.org/show_bug.cgi?id=152051
+
+        Reviewed by Youenn Fablet.
+
+        These are the web platform tests imported directly (or almost) from the Streams API repository. Tests work out
+        of the box (all but a small flakiness that we are forcing as failure to not disrupt the execution of the rest of
+        tests).
+
+        To make them work we are importing also the service worker test helpers that is used by the tests.
+
+        * web-platform-tests/service-workers/service-workers/resources/README.txt: Added.
+        * web-platform-tests/service-workers/service-workers/resources/test-helpers.js: Added. Imported from the web-platform-tests.
+        * web-platform-tests/streams-api/README.txt: Added.
+        * web-platform-tests/streams-api/byte-length-queuing-strategy-expected.txt: Added.
+        * web-platform-tests/streams-api/byte-length-queuing-strategy.html: Added.
+        * web-platform-tests/streams-api/byte-length-queuing-strategy.js: Added.
+        * web-platform-tests/streams-api/count-queuing-strategy-expected.txt: Added.
+        * web-platform-tests/streams-api/count-queuing-strategy.html: Added.
+        * web-platform-tests/streams-api/count-queuing-strategy.js: Added.
+        * web-platform-tests/streams-api/readable-streams/bad-strategies-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/bad-strategies.html: Added.
+        * web-platform-tests/streams-api/readable-streams/bad-strategies.js: Added.
+        * web-platform-tests/streams-api/readable-streams/bad-underlying-sources-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/bad-underlying-sources.html: Added.
+        * web-platform-tests/streams-api/readable-streams/bad-underlying-sources.js: Added.
+        * web-platform-tests/streams-api/readable-streams/brand-checks-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/brand-checks.html: Added.
+        * web-platform-tests/streams-api/readable-streams/brand-checks.js: Added.
+        * web-platform-tests/streams-api/readable-streams/cancel-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/cancel.html: Added. There's a test with a forced failure
+        because it is flaky.
+        * web-platform-tests/streams-api/readable-streams/cancel.js: Added.
+        * web-platform-tests/streams-api/readable-streams/count-queuing-strategy-integration-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/count-queuing-strategy-integration.html: Added.
+        * web-platform-tests/streams-api/readable-streams/count-queuing-strategy-integration.js: Added.
+        * web-platform-tests/streams-api/readable-streams/garbage-collection-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/garbage-collection.html: Added.
+        * web-platform-tests/streams-api/readable-streams/garbage-collection.js: Added.
+        * web-platform-tests/streams-api/readable-streams/general-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/general.html: Added.
+        * web-platform-tests/streams-api/readable-streams/general.js: Added.
+        * web-platform-tests/streams-api/readable-streams/pipe-through-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/pipe-through.html: Added.
+        * web-platform-tests/streams-api/readable-streams/pipe-through.js: Added.
+        * web-platform-tests/streams-api/readable-streams/readable-stream-reader-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/readable-stream-reader.html: Added.
+        * web-platform-tests/streams-api/readable-streams/readable-stream-reader.js: Added.
+        * web-platform-tests/streams-api/readable-streams/tee-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/tee.html: Added.
+        * web-platform-tests/streams-api/readable-streams/tee.js: Added.
+        * web-platform-tests/streams-api/readable-streams/templated-expected.txt: Added.
+        * web-platform-tests/streams-api/readable-streams/templated.html: Added.
+        * web-platform-tests/streams-api/readable-streams/templated.js: Added.
+        * web-platform-tests/streams-api/resources/rs-test-templates.js: Added.
+        * web-platform-tests/streams-api/resources/rs-utils.js: Added.
+        * web-platform-tests/streams-api/resources/test-initializer.js: Added.
+        * web-platform-tests/streams-api/resources/test-utils.js: Added.
+
 2015-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/html/dom/interfaces.html after r192953

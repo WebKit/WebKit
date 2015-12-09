@@ -1,0 +1,12 @@
+
+PASS ReadableStreamController methods should continue working properly when scripts lose their reference to the readable stream 
+PASS ReadableStream closed promise should fulfill even if the stream and reader JS references are lost 
+PASS ReadableStream closed promise should reject even if stream and reader JS references are lost 
+PASS Garbage-collecting a ReadableStreamReader should not unlock its stream 
+FAIL Load garbage-collection.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
+FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+FAIL ReadableStreamController methods should continue working properly when scripts lose their reference to the readable stream Can't find variable: ReadableStream
+FAIL ReadableStream closed promise should fulfill even if the stream and reader JS references are lost Can't find variable: ReadableStream
+FAIL ReadableStream closed promise should reject even if stream and reader JS references are lost Can't find variable: ReadableStream
+FAIL Garbage-collecting a ReadableStreamReader should not unlock its stream Can't find variable: ReadableStream
+

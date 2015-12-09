@@ -1,28 +1,8 @@
 
-PASS Can get the ReadableStreamReader constructor indirectly 
-PASS Can get the ReadableStreamController constructor indirectly 
-PASS ReadableStream.prototype.cancel enforces a brand check 
-PASS ReadableStream.prototype.getReader enforces a brand check 
-PASS ReadableStream.prototype.pipeThrough works generically on its this and its arguments 
-PASS ReadableStream.prototype.pipeTo works generically on its this and its arguments 
-PASS ReadableStream.prototype.tee enforces a brand check 
-PASS ReadableStreamReader enforces a brand check on its argument 
-PASS ReadableStreamReader.prototype.closed enforces a brand check 
-PASS ReadableStreamReader.prototype.cancel enforces a brand check 
-PASS ReadableStreamReader.prototype.read enforces a brand check 
-PASS ReadableStreamReader.prototype.read enforces a brand check 
-PASS ReadableStreamReader.prototype.releaseLock enforces a brand check 
-PASS ReadableStreamController enforces a brand check on its argument 
-PASS ReadableStreamController can't be given a fully-constructed ReadableStream 
-PASS ReadableStreamController.prototype.close enforces a brand check 
-PASS ReadableStreamController.prototype.enqueue enforces a brand check 
-PASS ReadableStreamController.prototype.error enforces a brand check 
 PASS WritableStream.prototype.closed enforces a brand check 
 PASS WritableStream.prototype.ready enforces a brand check 
 PASS WritableStream.prototype.state enforces a brand check 
 PASS WritableStream.prototype.abort enforces a brand check 
 PASS WritableStream.prototype.write enforces a brand check 
 PASS WritableStream.prototype.close enforces a brand check 
-PASS ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments 
-PASS CountQueuingStrategy.prototype.size should work generically on its this and its arguments 
 

@@ -1,3 +1,30 @@
+2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Import the web-platform-tests directly from the spec
+        https://bugs.webkit.org/show_bug.cgi?id=152051
+
+        Reviewed by Youenn Fablet.
+
+        Removed the tests that are already imported directly from the spec.
+
+        * streams/brand-checks-expected.txt: Added.
+        * streams/brand-checks.html: Added. This includes some tests that vanished from the spec.
+        * streams/reference-implementation/bad-strategies-expected.txt:
+        * streams/reference-implementation/bad-strategies.html:
+        * streams/reference-implementation/bad-underlying-sources.html: Removed.
+        * streams/reference-implementation/brand-checks-expected.txt:
+        * streams/reference-implementation/brand-checks.html:
+        * streams/reference-implementation/byte-length-queuing-strategy-expected.txt:
+        * streams/reference-implementation/byte-length-queuing-strategy.html:
+        * streams/reference-implementation/count-queuing-strategy-expected.txt:
+        * streams/reference-implementation/count-queuing-strategy.html:
+        * streams/reference-implementation/readable-stream-cancel.html: Removed.
+        * streams/reference-implementation/readable-stream-reader.html: Removed.
+        * streams/reference-implementation/readable-stream-tee.html: Removed.
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/readable-stream-templated.html:
+        * streams/reference-implementation/readable-stream.html: Removed.
+
 2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [AX][GTK] combobox-descendants-orientation-crash.html needs new baseline after r190648

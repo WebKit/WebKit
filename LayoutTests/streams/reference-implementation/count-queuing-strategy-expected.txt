@@ -1,13 +1,4 @@
 
-PASS Can construct a CountQueuingStrategy with a valid high water mark 
-PASS Can construct a CountQueuingStrategy with any value as its high water mark 
-PASS CountQueuingStrategy constructor behaves as expected with wrong arguments 
-PASS CountQueuingStrategy size behaves as expected with wrong arguments 
-PASS CountQueuingStrategy instances have the correct properties 
-PASS Can construct a readable stream with a valid CountQueuingStrategy 
-PASS Correctly governs the return value of a ReadableStream's enqueue function (HWM = 0) 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 1) 
-PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 4) 
 PASS Can construct a writable stream with a valid CountQueuingStrategy 
 PASS Correctly governs the value of a WritableStream's state property (HWM = 0) 
 PASS Correctly governs the value of a WritableStream's state property (HWM = 4) 

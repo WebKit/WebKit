@@ -1,8 +1,3 @@
 
-PASS Can construct a ByteLengthQueuingStrategy with a valid high water mark 
-PASS Can construct a ByteLengthQueuingStrategy with any value as its high water mark 
-PASS ByteLengthQueuingStrategy constructor behaves as expected with wrong arguments 
-PASS ByteLengthQueuingStrategy size behaves as expected with wrong arguments 
-PASS ByteLengthQueuingStrategy instances have the correct properties 
 PASS Closing a writable stream with in-flight writes below the high water mark delays the close call properly 
 
