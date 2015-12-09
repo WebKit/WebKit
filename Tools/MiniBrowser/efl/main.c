@@ -47,6 +47,7 @@ static char *background_color_string = NULL;
 static Eina_Bool encoding_detector_enabled = EINA_FALSE;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 static Eina_Bool local_storage_enabled = EINA_TRUE;
+static Eina_Bool offline_web_application_cache_enabled = EINA_TRUE;
 static Eina_Bool fullscreen_enabled = EINA_FALSE;
 static Eina_Bool spell_checking_enabled = EINA_FALSE;
 static Eina_Bool web_security_enabled = EINA_TRUE;
@@ -2354,6 +2355,7 @@ static Ewk_View_Configuration* configuration()
     ewk_settings_encoding_detector_enabled_set(settings, encoding_detector_enabled);
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
     ewk_settings_local_storage_enabled_set(settings, local_storage_enabled);
+    ewk_settings_offline_web_application_cache_enabled_set(settings, offline_web_application_cache_enabled);
     INFO("HTML5 local storage is %s for this view.", local_storage_enabled ? "enabled" : "disabled");
     ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
@@ -2420,6 +2422,7 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_STR(background_color_string),
         ECORE_GETOPT_VALUE_BOOL(frame_flattening_enabled),
         ECORE_GETOPT_VALUE_BOOL(local_storage_enabled),
+        ECORE_GETOPT_VALUE_BOOL(offline_web_application_cache_enabled),
         ECORE_GETOPT_VALUE_BOOL(fullscreen_enabled),
         ECORE_GETOPT_VALUE_BOOL(spell_checking_enabled),
         ECORE_GETOPT_VALUE_BOOL(touch_events_enabled),

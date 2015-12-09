@@ -35,7 +35,6 @@ void WebPreferences::platformInitializeStore()
     setWebGLEnabled(true);
     setFullScreenEnabled(true);
     setWebAudioEnabled(true);
-    setOfflineWebApplicationCacheEnabled(true);
 #if ENABLE(SPELLCHECK)
     setAsynchronousSpellCheckingEnabled(true);
 #endif

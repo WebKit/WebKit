@@ -1,3 +1,16 @@
+2015-12-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] REGRESSION(r193616): WKPreferences test has been failed since r193616
+        https://bugs.webkit.org/show_bug.cgi?id=151942
+
+        Reviewed by Darin Adler.
+
+        As wkpreference settings were moved from EwkView to WKPreferenceEfl, the offline-web-application-cache feature
+        is enabled by default when running API test. It seems this option should be enabled by MiniBrowser.
+
+        * UIProcess/efl/WebPreferencesEfl.cpp:
+        (WebKit::WebPreferences::platformInitializeStore): Remove to enable web application cache feature here.
+
 2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics] layerTreeHost always exist in CoordinatedDrawingArea
