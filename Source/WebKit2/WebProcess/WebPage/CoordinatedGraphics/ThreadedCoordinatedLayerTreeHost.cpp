@@ -152,6 +152,7 @@ void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const WebCore::IntSize& new
 void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     m_coordinator->deviceOrPageScaleFactorChanged();
+    m_compositor->setDeviceScaleFactor(m_webPage->deviceScaleFactor());
 }
 
 void ThreadedCoordinatedLayerTreeHost::pauseRendering()

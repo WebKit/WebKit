@@ -67,6 +67,7 @@ public:
     void setNeedsDisplay();
 
     void setNativeSurfaceHandleForCompositing(uint64_t);
+    void setDeviceScaleFactor(float);
 
     void updateSceneState(const WebCore::CoordinatedGraphicsState&);
 
@@ -106,6 +107,7 @@ private:
     std::unique_ptr<WebCore::GLContext> m_context;
 
     WebCore::IntSize m_viewportSize;
+    float m_deviceScaleFactor;
     uint64_t m_nativeSurfaceHandle;
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;

@@ -1,3 +1,20 @@
+2015-12-09  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [ThreadedCompositor] Add support for HiDPI
+        https://bugs.webkit.org/show_bug.cgi?id=152071
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::setDeviceScaleFactor): Added to receive the
+        device scale factor from the layer tree host.
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        Apply device scale factor before rendering the page.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        Send a updated device scale factor to the compositing thread.
+
 2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics] Remove unnecessary guards in CoordinatedDrawingArea

@@ -116,6 +116,7 @@ Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client)
 
 ThreadedCompositor::ThreadedCompositor(Client* client)
     : m_client(client)
+    , m_deviceScaleFactor(1)
     , m_threadIdentifier(0)
 {
     createCompositingThread();
@@ -143,6 +144,14 @@ void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
     });
 }
 
+void ThreadedCompositor::setDeviceScaleFactor(float scale)
+{
+    RefPtr<ThreadedCompositor> protector(this);
+    callOnCompositingThread([=] {
+        protector->m_deviceScaleFactor = scale;
+        protector->scheduleDisplayImmediately();
+    });
+}
 
 void ThreadedCompositor::didChangeViewportSize(const IntSize& newSize)
 {
@@ -262,7 +271,7 @@ void ThreadedCompositor::renderLayerTree()
 
     TransformationMatrix viewportTransform;
     FloatPoint scrollPostion = viewportController()->visibleContentsRect().location();
-    viewportTransform.scale(viewportController()->pageScaleFactor());
+    viewportTransform.scale(viewportController()->pageScaleFactor() * m_deviceScaleFactor);
     viewportTransform.translate(-scrollPostion.x(), -scrollPostion.y());
 
     m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::white, false, scrollPostion);
