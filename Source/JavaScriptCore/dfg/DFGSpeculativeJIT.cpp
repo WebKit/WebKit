@@ -2788,9 +2788,12 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
 
 void SpeculativeJIT::compileValueAdd(Node* node)
 {
-    if (isKnownNotNumber(node->child1().node()) || isKnownNotNumber(node->child2().node())) {
-        JSValueOperand left(this, node->child1());
-        JSValueOperand right(this, node->child2());
+    Edge& leftChild = node->child1();
+    Edge& rightChild = node->child2();
+
+    if (isKnownNotNumber(leftChild.node()) || isKnownNotNumber(rightChild.node())) {
+        JSValueOperand left(this, leftChild);
+        JSValueOperand right(this, rightChild);
         JSValueRegs leftRegs = left.jsValueRegs();
         JSValueRegs rightRegs = right.jsValueRegs();
 #if USE(JSVALUE64)
@@ -2805,27 +2808,6 @@ void SpeculativeJIT::compileValueAdd(Node* node)
         callOperation(operationValueAddNotNumber, resultRegs, leftRegs, rightRegs);
         m_jit.exceptionCheck();
     
-        jsValueResult(resultRegs, node);
-        return;
-    }
-
-    bool leftIsConstInt32 = node->child1()->isInt32Constant();
-    bool rightIsConstInt32 = node->child2()->isInt32Constant();
-
-    // The DFG does not always fold the sum of 2 constant int operands together.
-    if (leftIsConstInt32 && rightIsConstInt32) {
-#if USE(JSVALUE64)
-        GPRTemporary result(this);
-        JSValueRegs resultRegs = JSValueRegs(result.gpr());
-#else
-        GPRTemporary resultTag(this);
-        GPRTemporary resultPayload(this);
-        JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
-#endif
-        int64_t leftConst = node->child1()->asInt32();
-        int64_t rightConst = node->child2()->asInt32();
-        int64_t resultConst = leftConst + rightConst;
-        m_jit.moveValue(JSValue(resultConst), resultRegs);
         jsValueResult(resultRegs, node);
         return;
     }
@@ -2856,22 +2838,24 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     FPRReg scratchFPR = fprScratch.fpr();
 #endif
 
-    SnippetOperand leftOperand(m_state.forNode(node->child1()).resultType());
-    SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
+    SnippetOperand leftOperand(m_state.forNode(leftChild).resultType());
+    SnippetOperand rightOperand(m_state.forNode(rightChild).resultType());
 
-    if (leftIsConstInt32)
-        leftOperand.setConstInt32(node->child1()->asInt32());
-    if (rightIsConstInt32)
-        rightOperand.setConstInt32(node->child2()->asInt32());
+    // The snippet generator does not support both operands being constant. If the left
+    // operand is already const, we'll ignore the right operand's constness.
+    if (leftChild->isInt32Constant())
+        leftOperand.setConstInt32(leftChild->asInt32());
+    else if (rightChild->isInt32Constant())
+        rightOperand.setConstInt32(rightChild->asInt32());
 
     ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
     if (!leftOperand.isConst()) {
-        left = JSValueOperand(this, node->child1());
+        left = JSValueOperand(this, leftChild);
         leftRegs = left->jsValueRegs();
     }
     if (!rightOperand.isConst()) {
-        right = JSValueOperand(this, node->child2());
+        right = JSValueOperand(this, rightChild);
         rightRegs = right->jsValueRegs();
     }
 
@@ -2886,14 +2870,12 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 
     silentSpillAllRegisters(resultRegs);
 
-    if (leftIsConstInt32) {
+    if (leftOperand.isConst()) {
         leftRegs = resultRegs;
-        int64_t leftConst = node->child1()->asInt32();
-        m_jit.moveValue(JSValue(leftConst), leftRegs);
-    } else if (rightIsConstInt32) {
+        m_jit.moveValue(leftChild->asJSValue(), leftRegs);
+    } else if (rightOperand.isConst()) {
         rightRegs = resultRegs;
-        int64_t rightConst = node->child2()->asInt32();
-        m_jit.moveValue(JSValue(rightConst), rightRegs);
+        m_jit.moveValue(rightChild->asJSValue(), rightRegs);
     }
 
     callOperation(operationValueAdd, resultRegs, leftRegs, rightRegs);
@@ -3209,8 +3191,11 @@ void SpeculativeJIT::compileArithSub(Node* node)
     }
 
     case UntypedUse: {
-        JSValueOperand left(this, node->child1());
-        JSValueOperand right(this, node->child2());
+        Edge& leftChild = node->child1();
+        Edge& rightChild = node->child2();
+
+        JSValueOperand left(this, leftChild);
+        JSValueOperand right(this, rightChild);
 
         JSValueRegs leftRegs = left.jsValueRegs();
         JSValueRegs rightRegs = right.jsValueRegs();
@@ -3235,8 +3220,8 @@ void SpeculativeJIT::compileArithSub(Node* node)
         FPRReg scratchFPR = fprScratch.fpr();
 #endif
 
-        SnippetOperand leftOperand(m_state.forNode(node->child1()).resultType());
-        SnippetOperand rightOperand(m_state.forNode(node->child2()).resultType());
+        SnippetOperand leftOperand(m_state.forNode(leftChild).resultType());
+        SnippetOperand rightOperand(m_state.forNode(rightChild).resultType());
 
         JITSubGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
             leftFPR, rightFPR, scratchGPR, scratchFPR);
@@ -3501,12 +3486,14 @@ void SpeculativeJIT::compileArithMul(Node* node)
         SnippetOperand leftOperand(m_state.forNode(leftChild).resultType());
         SnippetOperand rightOperand(m_state.forNode(rightChild).resultType());
 
+        // The snippet generator does not support both operands being constant. If the left
+        // operand is already const, we'll ignore the right operand's constness.
         if (leftChild->isInt32Constant())
             leftOperand.setConstInt32(leftChild->asInt32());
-        if (rightChild->isInt32Constant())
+        else if (rightChild->isInt32Constant())
             rightOperand.setConstInt32(rightChild->asInt32());
 
-        RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+        ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
         if (!leftOperand.isPositiveConstInt32()) {
             left = JSValueOperand(this, leftChild);
@@ -3531,8 +3518,7 @@ void SpeculativeJIT::compileArithMul(Node* node)
             leftRegs = resultRegs;
             int64_t leftConst = leftOperand.asConstInt32();
             m_jit.moveValue(JSValue(leftConst), leftRegs);
-        }
-        if (rightOperand.isPositiveConstInt32()) {
+        } else if (rightOperand.isPositiveConstInt32()) {
             rightRegs = resultRegs;
             int64_t rightConst = rightOperand.asConstInt32();
             m_jit.moveValue(JSValue(rightConst), rightRegs);

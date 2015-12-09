@@ -1527,12 +1527,11 @@ private:
         SnippetOperand leftOperand(abstractValue(leftChild).resultType());
         SnippetOperand rightOperand(abstractValue(rightChild).resultType());
 
-        // The DFG does not always fold the sum of 2 constant int operands together.
         // Because the snippet does not support both operands being constant, if the left
         // operand is already a constant, we'll just pretend the right operand is not.
         if (leftChild->isInt32Constant())
             leftOperand.setConstInt32(leftChild->asInt32());
-        if (!leftOperand.isConst() && rightChild->isInt32Constant())
+        else if (rightChild->isInt32Constant())
             rightOperand.setConstInt32(rightChild->asInt32());
 
         // Arguments: id, bytes, target, numArgs, args...
@@ -1852,9 +1851,11 @@ private:
             SnippetOperand leftOperand(abstractValue(leftChild).resultType());
             SnippetOperand rightOperand(abstractValue(rightChild).resultType());
 
+            // Because the snippet does not support both operands being constant, if the left
+            // operand is already a constant, we'll just pretend the right operand is not.
             if (leftChild->isInt32Constant())
                 leftOperand.setConstInt32(leftChild->asInt32());
-            if (rightChild->isInt32Constant())
+            else if (rightChild->isInt32Constant())
                 rightOperand.setConstInt32(rightChild->asInt32());
 
             RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());

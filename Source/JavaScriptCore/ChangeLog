@@ -1,5 +1,29 @@
 2015-12-08  Mark Lam  <mark.lam@apple.com>
 
+        DFG and FTL should be resilient against cases where both snippet operands are constant.
+        https://bugs.webkit.org/show_bug.cgi?id=152017
+
+        Reviewed by Michael Saboff.
+
+        The DFG front end may not always constant fold cases where both operands are
+        constant.  As a result, the DFG and FTL back ends needs to be resilient against
+        this when using snippet generators since the generators do not support the case
+        where both operands are constant.  The strategy for handling this 2 const operands
+        case is to treat at least one of them as a variable if both are constant. 
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        - Also remove the case for folding 2 constant operands.  It is the front end's
+          job to do so, not the back end here.
+
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+
+2015-12-08  Mark Lam  <mark.lam@apple.com>
+
         Snippefy shift operators for the baseline JIT.
         https://bugs.webkit.org/show_bug.cgi?id=151875
 
