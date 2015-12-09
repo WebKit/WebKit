@@ -1292,4 +1292,4 @@ webkit.org/b/149774 css3/font-variant-all.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/149774 css3/font-variant-font-face-all.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/149774 css3/font-variant-font-face-override.html [ Pass Failure ImageOnlyFailure ]
 
-webkit.org/b/152009 [ Debug ElCapitan ] fast/canvas/canvas-too-large-to-draw.html [ Pass Failure ]
+webkit.org/b/152009 [ Debug ElCapitan ] fast/canvas/canvas-too-large-to-draw.html [ Skip ]
