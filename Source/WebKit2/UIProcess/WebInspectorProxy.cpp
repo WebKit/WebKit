@@ -510,6 +510,7 @@ void WebInspectorProxy::eagerlyCreateInspectorPage()
     WKPageSetPageLoaderClient(toAPI(m_inspectorPage), &loaderClient.base);
     WKPageSetPageContextMenuClient(toAPI(m_inspectorPage), &contextMenuClient.base);
 
+    m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
 }
 
