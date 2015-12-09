@@ -1,3 +1,21 @@
+2015-12-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Adjust layer backing store format
+        https://bugs.webkit.org/show_bug.cgi?id=152097
+        rdar://problem/23305376
+
+        Reviewed by Tim Horton.
+        
+        Call setBackingStoreFormat() on UIWebView tile grid layers, and on compositing
+        layers which can allocate backing store.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::setBackingStoreFormat):
+        (PlatformCALayerCocoa::commonInit):
+        * platform/ios/LegacyTileGridTile.mm:
+        (WebCore::setBackingStoreFormat):
+        (WebCore::LegacyTileGridTile::LegacyTileGridTile):
+
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/intversion-close-between-events.html fails.

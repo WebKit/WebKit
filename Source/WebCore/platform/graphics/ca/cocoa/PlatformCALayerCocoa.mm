@@ -65,6 +65,16 @@
 @end
 #endif
 
+#if __has_include(<WebKitAdditions/LayerBackingStoreAdditions.mm>)
+#import <WebKitAdditions/LayerBackingStoreAdditions.mm>
+#else
+namespace WebCore {
+static void setBackingStoreFormat(CALayer *)
+{
+}
+} // namespace WebCore
+#endif
+
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
@@ -296,6 +306,9 @@ void PlatformCALayerCocoa::commonInit()
         [m_layer web_disableAllActions];
     else
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+
+    if (m_layerType == LayerTypeWebLayer || m_layerType == LayerTypeTiledBackingTileLayer)
+        setBackingStoreFormat(m_layer.get());
 
     // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
     if (m_layerType == LayerTypeTiledBackingTileLayer)
