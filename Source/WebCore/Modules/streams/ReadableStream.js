@@ -94,8 +94,10 @@ function pipeThrough(streams, options)
 {
     "use strict";
 
-    this.pipeTo(streams.writable, options);
-    return streams.readable;
+    const writable = streams.writable;
+    const readable = streams.readable;
+    this.pipeTo(writable, options);
+    return readable;
 }
 
 function pipeTo(destination, options)

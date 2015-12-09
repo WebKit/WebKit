@@ -1,5 +1,14 @@
 2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [Streams API] pipeThrough test failing
+        https://bugs.webkit.org/show_bug.cgi?id=152061
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/streams-api/readable-streams/pipe-through-expected.txt: Expectations.
+
+2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [Streams API] Import the web-platform-tests directly from the spec
         https://bugs.webkit.org/show_bug.cgi?id=152051
 

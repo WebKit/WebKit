@@ -2,7 +2,7 @@
 PASS ReadableStream.prototype.pipeThrough should work generically on its this and its arguments 
 PASS ReadableStream.prototype.pipeThrough should throw when its first argument is not convertible to an object 
 PASS ReadableStream.prototype.pipeThrough should throw when "this" has no pipeTo method 
-FAIL ReadableStream.prototype.pipeThrough should rethrow errors from accessing pipeTo, readable, or writable assert_unreached: pipeTo should not be called Reached unreachable code
+PASS ReadableStream.prototype.pipeThrough should rethrow errors from accessing pipeTo, readable, or writable 
 PASS ReadableStream.prototype.pipeThrough should work with missing readable, writable, or options 
 FAIL Load pipe-through.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')

@@ -1,3 +1,15 @@
+2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] pipeThrough test failing
+        https://bugs.webkit.org/show_bug.cgi?id=152061
+
+        Reviewed by Youenn Fablet.
+
+        Test: imported/w3c/web-platform-tests/streams-api/readable-streams/pipe-through.html
+
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough): Mimic destructuring for the streams parameter.
+
 2015-12-09  Frederic Wang  <fred.wang@free.fr>
 
         Bad position of large operators inside an munderover element
