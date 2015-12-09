@@ -1,3 +1,25 @@
+2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
+
+        Refactored initialization code in LoadTrackingTest.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        Small refactoring to make sure that the state of a LoadTrackingTest
+        gets properly reset before loading new web content.
+
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp:
+        (LoadTrackingTest::reset): New, refactored code from *load*() and go*()
+        functions and reset the remaining local variables.
+        (LoadTrackingTest::loadURI): Call reset();
+        (LoadTrackingTest::loadHtml): Ditto.
+        (LoadTrackingTest::loadPlainText): Ditto.
+        (LoadTrackingTest::loadBytes): Ditto.
+        (LoadTrackingTest::loadRequest): Ditto.
+        (LoadTrackingTest::reload): Ditto.
+        (LoadTrackingTest::goBack): Ditto.
+        (LoadTrackingTest::goForward): Ditto.
+
 2015-12-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] REGRESSION(r193616): WKPreferences test has been failed since r193616

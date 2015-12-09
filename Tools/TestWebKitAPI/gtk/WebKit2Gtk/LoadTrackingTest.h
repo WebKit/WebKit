@@ -48,6 +48,7 @@ public:
     void reload();
     void goBack();
     void goForward();
+    void reset();
 
     void setRedirectURI(const char* uri) { m_redirectURI = uri; }
 

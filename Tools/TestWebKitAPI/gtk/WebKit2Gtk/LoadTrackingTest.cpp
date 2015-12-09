@@ -180,64 +180,57 @@ void LoadTrackingTest::estimatedProgressChanged()
 
 void LoadTrackingTest::loadURI(const char* uri)
 {
-    m_loadEvents.clear();
-    m_estimatedProgress = 0;
-    m_error.reset();
+    reset();
     WebViewTest::loadURI(uri);
 }
 
 void LoadTrackingTest::loadHtml(const char* html, const char* baseURI)
 {
-    m_loadEvents.clear();
-    m_estimatedProgress = 0;
-    m_error.reset();
+    reset();
     WebViewTest::loadHtml(html, baseURI);
 }
 
 void LoadTrackingTest::loadPlainText(const char* plainText)
 {
-    m_loadEvents.clear();
-    m_estimatedProgress = 0;
-    m_error.reset();
+    reset();
     WebViewTest::loadPlainText(plainText);
 }
 
 void LoadTrackingTest::loadBytes(GBytes* bytes, const char* mimeType, const char* encoding, const char* baseURI)
 {
-    m_loadEvents.clear();
-    m_estimatedProgress = 0;
-    m_error.reset();
+    reset();
     WebViewTest::loadBytes(bytes, mimeType, encoding, baseURI);
 }
 
 void LoadTrackingTest::loadRequest(WebKitURIRequest* request)
 {
-    m_loadEvents.clear();
-    m_estimatedProgress = 0;
-    m_error.reset();
+    reset();
     WebViewTest::loadRequest(request);
 }
 
 void LoadTrackingTest::reload()
 {
-    m_loadEvents.clear();
-    m_estimatedProgress = 0;
-    m_error.reset();
+    reset();
     webkit_web_view_reload(m_webView);
 }
 
 void LoadTrackingTest::goBack()
 {
-    m_loadEvents.clear();
-    m_estimatedProgress = 0;
-    m_error.reset();
+    reset();
     WebViewTest::goBack();
 }
 
 void LoadTrackingTest::goForward()
 {
+    reset();
+    WebViewTest::goForward();
+}
+
+void LoadTrackingTest::reset()
+{
+    m_runLoadUntilCompletion = false;
+    m_loadFailed = false;
     m_loadEvents.clear();
     m_estimatedProgress = 0;
     m_error.reset();
-    WebViewTest::goForward();
 }
