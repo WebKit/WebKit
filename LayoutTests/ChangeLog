@@ -1,3 +1,15 @@
+2015-12-09  Frederic Wang  <fred.wang@free.fr>
+
+        Bad position of large operators inside an munderover element
+        https://bugs.webkit.org/show_bug.cgi?id=151916
+
+        Reviewed by Alejandro G. Castro.
+
+        * mathml/opentype/large-operators-munderover-expected.txt: Added.
+        * mathml/opentype/large-operators-munderover.html: Added.
+
+        Add a test to verify the position and size of a large operator used as an munderover base.
+
 2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [AX][GTK] Accessibility gardening

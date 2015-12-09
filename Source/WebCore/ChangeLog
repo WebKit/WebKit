@@ -1,3 +1,17 @@
+2015-12-09  Frederic Wang  <fred.wang@free.fr>
+
+        Bad position of large operators inside an munderover element
+        https://bugs.webkit.org/show_bug.cgi?id=151916
+
+        Reviewed by Alejandro G. Castro.
+
+        Test: mathml/opentype/large-operators-munderover.html
+
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::isVertical): Expose the direction of the operator.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layout): Remove call to horizontal stretching for vertical operators.
+
 2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] TextureMapperTiledBackingStore should notify the ImageObserver of the data access

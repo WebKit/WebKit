@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Large Operator Munderover</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      /* This font is taken from Mozilla's test suite. */
+      @font-face {
+      font-family: stretchy;
+        src: url("stretchy.woff");
+      }
+      math {
+        font-family: stretchy;
+      }
+    </style>
+    <script>
+      var result;
+      var epsilon = 1;
+      function almostEqual(x, y) {
+        return Math.abs(x - y) < epsilon;
+      }
+      function assert(text, condition) {
+        result += text + ": " + (condition ? "PASS" : "FAIL") + "\n";
+      }
+      function test() {
+        result = "";
+        // font em is 1024, size of glyph L8 is 8389 and font-size is 16px
+        var largeop = document.getElementById("largeop").getBoundingClientRect();
+        var green = document.getElementById("green").getBoundingClientRect();
+        var red = document.getElementById("red").getBoundingClientRect();
+        var size = (8389/1024)*16;
+
+        assert("largeop width", almostEqual(largeop.width, size));
+        assert("largeop height", almostEqual(largeop.height, size));
+        assert("green bar is above", green.bottom <= largeop.top);
+        assert("red bar is below", red.top >= largeop.bottom);
+        document.getElementById("result").innerText = result;
+        if (window.testRunner)
+          testRunner.dumpAsText();
+      }
+    </script>
+  </head>
+  <body onload="test()">
+    <p>This test passes if you see a large black square with a green bar overscript and a red bar underscript.</p>
+    <math display="block">
+      <munderover>
+        <mo id="largeop" lspace="0px" rspace="0px" style="font-size: 16px;" >&#x2A1C;</mo>
+        <mspace id="red" width="200px" height="10px" depth="10px" mathbackground="red"/>
+        <mspace id="green" width="250px" height="10px" depth="10px" mathbackground="green"/>
+      </munderover>
+    </math>
+    <div id="result"></div>
+  </body>
+</html>
