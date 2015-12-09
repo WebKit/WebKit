@@ -50,13 +50,14 @@ function step()
     }
     
     currentStep++;
+    
+    setTimeout(step, 0);
 }
 
 onpopstate = function(event)
 {
     debug('popstate fired with state ' + event.state);
     popstateFireCount++;
-    setTimeout(step, 0);
 }
 var jsTestIsAsync = true;
 </script>
