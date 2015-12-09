@@ -3136,6 +3136,8 @@ webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame-removed.html [ Failure ]
 
+webkit.org/b/152009 fast/canvas/canvas-too-large-to-draw.html [ Skip ]
+
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################
