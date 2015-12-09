@@ -24,9 +24,9 @@ description("This tests that in an aria table with CSS that makes a row anonymou
 if (window.accessibilityController) {
     var table = accessibilityController.accessibleElementById("table");
     var cell00 = table.cellForColumnAndRow(0,0);
-    shouldBe("cell00.role", "'AXRole: AXCell'");
+    debug("cell00.role is " + cell00.role);
     var cell01 = table.cellForColumnAndRow(0,1);
-    shouldBe("cell01.role", "'AXRole: AXCell'");
+    debug("cell01.role is " + cell01.role);
     shouldBeTrue("cell00.isEqual(table.rowAtIndex(0).childAtIndex(0))");
     shouldBeTrue("cell01.isEqual(table.rowAtIndex(1).childAtIndex(0))");
 }
