@@ -331,7 +331,9 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     }
 
     m_pendingSurfaceResize = m_isAccelerated;
-    WKViewInitialize(wkView());
+
+    // FIXME: It should be moved to some better place to create an inactive ewk_view.
+    WKViewSetIsActive(wkView(), true);
 
     m_pageUIClient = std::make_unique<PageUIClientEfl>(this);
 

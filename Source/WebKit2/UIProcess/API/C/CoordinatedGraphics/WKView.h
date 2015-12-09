@@ -66,8 +66,6 @@ typedef struct WKViewClientV0 {
 
 WK_EXPORT WKViewRef WKViewCreate(WKContextRef context, WKPageConfigurationRef pageConfiguration);
 
-WK_EXPORT void WKViewInitialize(WKViewRef);
-
 WK_EXPORT WKSize WKViewGetSize(WKViewRef);
 WK_EXPORT void WKViewSetSize(WKViewRef, WKSize size);
 

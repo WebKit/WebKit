@@ -1,3 +1,26 @@
+2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics][EFL] Fix unhandled web process message when launching MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=152048
+
+        Reviewed by Gyuyoung Kim.
+
+        WebPage should be initialized before updating preferences.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewInitialize): Deleted.
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        Calls WKViewSetIsActive instead of WKViewInitialize not to change the behavior
+        of EFL port.
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+        Initialize just before creating WebPage because there is not use case to separate
+        initializing WebPage from creating in CoordinatedGraphics.
+        (WebKit::WebView::initialize): Deleted.
+        * UIProcess/CoordinatedGraphics/WebView.h:
+
 2015-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to handle beforeunload events

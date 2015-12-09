@@ -56,8 +56,6 @@ public:
 
     static Ref<WebView> create(WebProcessPool*, API::PageConfiguration&);
 
-    void initialize();
-
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_size; }
 

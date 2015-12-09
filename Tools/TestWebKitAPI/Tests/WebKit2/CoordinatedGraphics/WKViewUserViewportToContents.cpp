@@ -43,7 +43,7 @@ TEST(WebKit2, DISABLED_WKViewUserViewportToContents)
 
     WKRetainPtr<WKViewRef> webView(AdoptWK, WKViewCreate(context.get(), configuration.get()));
 
-    WKViewInitialize(webView.get());
+    WKViewSetIsActive(webView.get(), true);
     WKPageSetUseFixedLayout(WKViewGetPage(webView.get()), false);
 
     WKPoint out;

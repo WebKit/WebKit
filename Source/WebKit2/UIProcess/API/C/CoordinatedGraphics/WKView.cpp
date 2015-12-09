@@ -36,11 +36,6 @@ WKViewRef WKViewCreate(WKContextRef context, WKPageConfigurationRef pageConfigur
     return toAPI(webView.release().leakRef());
 }
 
-void WKViewInitialize(WKViewRef viewRef)
-{
-    toImpl(viewRef)->initialize();
-}
-
 WKSize WKViewGetSize(WKViewRef viewRef)
 {
     return toAPI(toImpl(viewRef)->size());

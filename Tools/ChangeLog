@@ -1,3 +1,13 @@
+2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Fix unhandled web process message when launching MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=152048
+
+        Reviewed by Gyuyoung Kim.
+
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewUserViewportToContents.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to handle beforeunload events
