@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function onMovement() {
         if (!updating)
-            requestAnimationFrame(update);
+            requestAnimationFrame(updateImages);
         updating = true;
     }
 

@@ -1,3 +1,9 @@
+2015-12-09  Jonathan Davis  <jond@apple.com>
+
+        Fix function reference change.
+
+        * wp-content/themes/webkit/scripts/global.js:
+
 2015-12-08  Jonathan Davis  <jond@apple.com>
 
         Wide tables should be scrollable on narrow mobile screens.
