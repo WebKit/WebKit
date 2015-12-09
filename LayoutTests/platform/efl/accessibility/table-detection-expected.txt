@@ -46,13 +46,14 @@ asdf	asdf
 
 This should not be a table because its cells do not have borders.
 
-AXRole: AXTable
+AXRole: AXSection
 AXParent: AXWebArea
-AXChildren: 1
+AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 64.000000, 27.000000 }
+AXSize: { 28.000000, 21.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -62,7 +63,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
+AXPlatformAttributes: tag:td, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -157,13 +158,14 @@ asdf	asdf
 
 This should not be a table because cells have different but no spacing.
 
-AXRole: AXTable
+AXRole: AXSection
 AXParent: AXWebArea
-AXChildren: 1
+AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 52.000000, 19.000000 }
+AXSize: { 26.000000, 19.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -173,19 +175,20 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
+AXPlatformAttributes: tag:td, toolkit:WebKitEfl
 
 asdf	asdf
 
 This should not be a table because cells have the same colors even though there is spacing.
 
-AXRole: AXTable
+AXRole: AXSection
 AXParent: AXWebArea
-AXChildren: 1
+AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 61.000000, 25.000000 }
+AXSize: { 26.000000, 19.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -195,7 +198,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
+AXPlatformAttributes: tag:td, toolkit:WebKitEfl
 
 asdf	asdf
 
@@ -223,13 +226,14 @@ asdf	asdf
 
 This should not be a table because it only has one valid cell (need more than one).
 
-AXRole: AXTable
+AXRole: AXSection
 AXParent: AXWebArea
-AXChildren: 1
+AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 769.000000, 27.000000 }
+AXSize: { 770.000000, 27.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: Contributions
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -239,19 +243,20 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
+AXPlatformAttributes: tag:td, toolkit:WebKitEfl
 
 Contributions
 
 This should not be a table because it does not have enough cell borders or background colors
 
-AXRole: AXTable
+AXRole: AXSection
 AXParent: AXWebArea
-AXChildren: 7
+AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 130.000000, 128.000000 }
+AXSize: { 130.000000, 19.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: Politics
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -261,7 +266,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
+AXPlatformAttributes: html-id:nmb, tag:td, toolkit:WebKitEfl
 
 Politics
 Decision '08
@@ -318,13 +323,14 @@ asdf	asdf
 
 This should not be a table because cells have different borders.
 
-AXRole: AXTable
+AXRole: AXSection
 AXParent: AXWebArea
-AXChildren: 2
+AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 62.000000, 47.000000 }
+AXSize: { 28.000000, 21.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -334,7 +340,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
+AXPlatformAttributes: tag:td, toolkit:WebKitEfl
 
 asdf	asdf
 asdf	asdf

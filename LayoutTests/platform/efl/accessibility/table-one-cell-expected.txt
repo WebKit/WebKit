@@ -1,14 +1,15 @@
 Pick Your Location!
 Get specific content for your area. 
 http://web.apple.com
-AXRole: AXTable
+AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 138.000000, 96.000000 }
+AXSize: { 132.000000, 90.000000 }
 AXTitle: 
 AXDescription: 
-AXFocusable: 0
+AXValue: Pick Your Location!<\n>Get specific content for your area. <\n>http://web.apple.com<\n>
+AXFocusable: 1
 AXFocused: 0
 AXSelectable: 0
 AXSelected: 0
@@ -17,4 +18,4 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:table, layout-guess:true, tag:table, toolkit:WebKitEfl
+AXPlatformAttributes: tag:p, toolkit:WebKitEfl

@@ -1,3 +1,15 @@
+2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [EFL] Consider deferring to WebCore Accessibility for table exposure
+        https://bugs.webkit.org/show_bug.cgi?id=144898
+
+        Reviewed by Darin Adler.
+
+        * platform/efl/accessibility/table-detection-expected.txt: Updated to reflect new behavior.
+        * platform/efl/accessibility/table-hierarchy-expected.txt: Updated to reflect new behavior.
+        * platform/efl/accessibility/table-one-cell-expected.txt: Updated to reflect new behavior.
+        * platform/efl/accessibility/table-with-rules-expected.txt: Updated to reflect new behavior.
+
 2015-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Skip storage/indexeddb/index-multientry.html once again

@@ -1,3 +1,19 @@
+2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [EFL] Consider deferring to WebCore Accessibility for table exposure
+        https://bugs.webkit.org/show_bug.cgi?id=144898
+
+        Reviewed by Darin Adler.
+
+        Stop unconditionally exposing all HTMLTableElement nodes as AccessibilityTables
+        for WebKitEfl.
+
+        No new tests. Several existing tests already cover table exposure. They have
+        been updated accordingly.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::computeIsTableExposableThroughAccessibility):
+
 2015-12-08  Simon Fraser  <simon.fraser@apple.com>
 
         Convert resetAnimValToBaseVal take a reference to a SVGAnimatedType
