@@ -54,4 +54,4 @@ void MainThreadSharedTimer::invalidate()
 {
 }
 
-}
+} // namespace WebCore

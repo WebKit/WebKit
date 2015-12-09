@@ -1,5 +1,28 @@
 2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        Make MainThreadSharedTimerGtk implementation GLib-specific
+        https://bugs.webkit.org/show_bug.cgi?id=152044
+
+        Reviewed by Carlos Garcia Campos.
+
+        MainThreadSharedTimerGtk has implementation that only directly depends
+        on GLib, and not GTK+. Because of that it can be moved under
+        Source/WebCore/platform/glib and slightly renamed.
+
+        * PlatformGTK.cmake:
+        * platform/glib/MainThreadSharedTimerGLib.cpp: Renamed from Source/WebCore/platform/gtk/MainThreadSharedTimerGtk.cpp.
+        (WebCore::MainThreadSharedTimer::MainThreadSharedTimer):
+        (WebCore::MainThreadSharedTimer::setFireInterval):
+        (WebCore::MainThreadSharedTimer::stop):
+        (WebCore::MainThreadSharedTimer::invalidate):
+        * platform/gtk/MainThreadSharedTimerGtk.cpp:
+        (WebCore::MainThreadSharedTimer::MainThreadSharedTimer): Deleted.
+        (WebCore::MainThreadSharedTimer::setFireInterval): Deleted.
+        (WebCore::MainThreadSharedTimer::stop): Deleted.
+        (WebCore::MainThreadSharedTimer::invalidate): Deleted.
+
+2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
+
         [TextureMapper] TextureMapperShaderProgram::setMatrix() should use TransformationMatrix::FloatMatrix4
         https://bugs.webkit.org/show_bug.cgi?id=152042
 
