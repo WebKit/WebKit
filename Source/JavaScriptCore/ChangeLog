@@ -1,3 +1,76 @@
+2015-12-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Improve how B3 lowers Add() and Sub() on x86
+        https://bugs.webkit.org/show_bug.cgi?id=152026
+
+        Reviewed by Geoffrey Garen.
+
+        The assembler was missing some important x86 forms of
+        ADD and SUB that were making our lowering
+        unfriendly with register allocation.
+
+        First, we were missing a 3 operand version of Add
+        implement with LEA. As a result, an Add would
+        be lowered as:
+            Move op1->srcDest
+            Add op2, srcDest
+        The problem with such code is that op2 and srcDest
+        interferes. It is impossible to assign them the same
+        machine register.
+
+        With the new Add form, we have:
+            Add op1, op2, dest
+        without interferences between any of those values.
+        The add is implement by a LEA without scaling or displacement.
+
+        This patch also adds missing forms of Add and Sub with
+        direct addressing for arguments. This avoids dealing with Tmps
+        that only exist for those operations.
+
+        Finally, the lowering of adding something to itself was updated accordingly.
+        Such operation is transformed in Shl by 2. The lowering of Shl
+        was adding an explicit Move, preventing the use of LEA when it
+        is useful.
+        Instead of having an explicit move, I changed the direct addressing
+        forms to only be selected if the two operands are different.
+        A Move is then added by appendBinOp() if needed.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::x86Lea32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::x86Lea64):
+        (JSC::MacroAssemblerX86_64::sub64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::addq_rm):
+        (JSC::X86Assembler::subq_mr):
+        (JSC::X86Assembler::subq_rm):
+        (JSC::X86Assembler::subq_im):
+        (JSC::X86Assembler::leal_mr):
+        (JSC::X86Assembler::leaq_mr):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testAddArgMem):
+        (JSC::B3::testAddMemArg):
+        (JSC::B3::testAddImmMem):
+        (JSC::B3::testAddArg32):
+        (JSC::B3::testAddArgMem32):
+        (JSC::B3::testAddMemArg32):
+        (JSC::B3::testAddImmMem32):
+        (JSC::B3::testSubArgMem):
+        (JSC::B3::testSubMemArg):
+        (JSC::B3::testSubImmMem):
+        (JSC::B3::testSubMemImm):
+        (JSC::B3::testSubMemArg32):
+        (JSC::B3::testSubArgMem32):
+        (JSC::B3::testSubImmMem32):
+        (JSC::B3::testSubMemImm32):
+        (JSC::B3::run):
+
 2015-12-08  Mark Lam  <mark.lam@apple.com>
 
         Factoring out common DFG code for bitwise and shift operators.

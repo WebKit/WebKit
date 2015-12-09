@@ -464,6 +464,11 @@ public:
         m_formatter.oneByteOp64(OP_ADD_GvEv, dst, base, offset);
     }
 
+    void addq_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_ADD_EvGv, src, base, offset);
+    }
+
     void addq_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -758,6 +763,16 @@ public:
         m_formatter.oneByteOp64(OP_SUB_EvGv, src, dst);
     }
 
+    void subq_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_SUB_GvEv, dst, base, offset);
+    }
+
+    void subq_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_SUB_EvGv, src, base, offset);
+    }
+
     void subq_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -768,6 +783,17 @@ public:
                 m_formatter.oneByteOp64(OP_SUB_EAXIv);
             else
                 m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_SUB, dst);
+            m_formatter.immediate32(imm);
+        }
+    }
+
+    void subq_im(int imm, int offset, RegisterID base)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIb, GROUP1_OP_SUB, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp64(OP_GROUP1_EvIz, GROUP1_OP_SUB, base, offset);
             m_formatter.immediate32(imm);
         }
     }
@@ -1773,10 +1799,21 @@ public:
     {
         m_formatter.oneByteOp(OP_LEA, dst, base, offset);
     }
+
+    void leal_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_LEA, dst, base, index, scale, offset);
+    }
+
 #if CPU(X86_64)
     void leaq_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_LEA, dst, base, offset);
+    }
+
+    void leaq_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_LEA, dst, base, index, scale, offset);
     }
 #endif
 

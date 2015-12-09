@@ -263,6 +263,11 @@ public:
         m_assembler.addq_mr(src.offset, src.base, dest);
     }
 
+    void add64(RegisterID src, Address dest)
+    {
+        m_assembler.addq_rm(src, dest.offset, dest.base);
+    }
+
     void add64(AbsoluteAddress src, RegisterID dest)
     {
         move(TrustedImmPtr(src.m_ptr), scratchRegister());
@@ -311,6 +316,26 @@ public:
 
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
         add64(imm, Address(scratchRegister()));
+    }
+
+    void add64(RegisterID a, RegisterID b, RegisterID dest)
+    {
+        x86Lea64(BaseIndex(a, b, TimesOne), dest);
+    }
+
+    void x86Lea64(BaseIndex index, RegisterID dest)
+    {
+        if (!index.scale && !index.offset) {
+            if (index.base == dest) {
+                add64(index.index, dest);
+                return;
+            }
+            if (index.index == dest) {
+                add64(index.base, dest);
+                return;
+            }
+        }
+        m_assembler.leaq_mr(index.offset, index.base, index.index, index.scale, dest);
     }
 
     void addPtrNoFlags(TrustedImm32 imm, RegisterID srcDest)
@@ -505,6 +530,21 @@ public:
             move(imm, scratchRegister());
             sub64(scratchRegister(), dest);
         }
+    }
+
+    void sub64(TrustedImm32 imm, Address address)
+    {
+        m_assembler.subq_im(imm.m_value, address.offset, address.base);
+    }
+
+    void sub64(Address src, RegisterID dest)
+    {
+        m_assembler.subq_mr(src.offset, src.base, dest);
+    }
+
+    void sub64(RegisterID src, Address dest)
+    {
+        m_assembler.subq_rm(src, dest.offset, dest.base);
     }
 
     void xor64(RegisterID src, RegisterID dest)

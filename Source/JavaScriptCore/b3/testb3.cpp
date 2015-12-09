@@ -203,6 +203,67 @@ void testAddImmArg(int a, int b)
     CHECK(compileAndRun<int>(proc, b) == a + b);
 }
 
+void testAddArgMem(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int64_t inputOutput = b;
+    CHECK(!compileAndRun<int64_t>(proc, a, &inputOutput));
+    CHECK(inputOutput == a + b);
+}
+
+void testAddMemArg(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Add, Origin(),
+        load,
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int64_t>(proc, &a, b) == a + b);
+}
+
+void testAddImmMem(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Add, Origin(),
+        root->appendNew<Const64Value>(proc, Origin(), a),
+        load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int64_t inputOutput = b;
+    CHECK(!compileAndRun<int>(proc, &inputOutput));
+    CHECK(inputOutput == a + b);
+}
+
+void testAddArg32(int a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), value, value));
+
+    CHECK(compileAndRun<int>(proc, a) == a + a);
+}
+
 void testAddArgs32(int a, int b)
 {
     Procedure proc;
@@ -219,6 +280,54 @@ void testAddArgs32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
 
     CHECK(compileAndRun<int>(proc, a, b) == a + b);
+}
+
+void testAddArgMem32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), argument, load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t inputOutput = b;
+    CHECK(!compileAndRun<int32_t>(proc, a, &inputOutput));
+    CHECK(inputOutput == a + b);
+}
+
+void testAddMemArg32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), load, argument);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int32_t>(proc, &a, b) == a + b);
+}
+
+void testAddImmMem32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Add, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), a),
+        load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t inputOutput = b;
+    CHECK(!compileAndRun<int>(proc, &inputOutput));
+    CHECK(inputOutput == a + b);
 }
 
 void testAddLoadTwice()
@@ -1047,6 +1156,72 @@ void testSubImmArg(int a, int b)
     CHECK(compileAndRun<int>(proc, b) == a - b);
 }
 
+void testSubArgMem(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        load);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int64_t>(proc, a, &b) == a - b);
+}
+
+void testSubMemArg(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(),
+        load,
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int64_t inputOutput = a;
+    CHECK(!compileAndRun<int64_t>(proc, &inputOutput, b));
+    CHECK(inputOutput == a - b);
+}
+
+void testSubImmMem(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(),
+        root->appendNew<Const64Value>(proc, Origin(), a),
+        load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int64_t inputOutput = b;
+    CHECK(!compileAndRun<int>(proc, &inputOutput));
+    CHECK(inputOutput == a - b);
+}
+
+void testSubMemImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(),
+        load,
+        root->appendNew<Const64Value>(proc, Origin(), b));
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int64_t inputOutput = a;
+    CHECK(!compileAndRun<int>(proc, &inputOutput));
+    CHECK(inputOutput == a - b);
+}
+
+
 void testSubArgs32(int a, int b)
 {
     Procedure proc;
@@ -1095,6 +1270,71 @@ void testSubImmArg32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
 
     CHECK(compileAndRun<int>(proc, b) == a - b);
+}
+
+void testSubMemArg32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(), load, argument);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t inputOutput = a;
+    CHECK(!compileAndRun<int32_t>(proc, &inputOutput, b));
+    CHECK(inputOutput == a - b);
+}
+
+void testSubArgMem32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(), argument, load);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int32_t>(proc, a, &b) == a - b);
+}
+
+void testSubImmMem32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), a),
+        load);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t inputOutput = b;
+    CHECK(!compileAndRun<int>(proc, &inputOutput));
+    CHECK(inputOutput == a - b);
+}
+
+void testSubMemImm32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Sub, Origin(),
+        load,
+        root->appendNew<Const32Value>(proc, Origin(), b));
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNew<ControlValue>(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t inputOutput = a;
+    CHECK(!compileAndRun<int>(proc, &inputOutput));
+    CHECK(inputOutput == a - b);
 }
 
 void testNegValueSubOne32(int a)
@@ -6690,8 +6930,15 @@ void run(const char* filter)
     RUN(testAddImmArg(1, 2));
     RUN(testAddImmArg(0, 2));
     RUN(testAddImmArg(1, 0));
+    RUN_BINARY(testAddArgMem, int64Operands(), int64Operands());
+    RUN_BINARY(testAddMemArg, int64Operands(), int64Operands());
+    RUN_BINARY(testAddImmMem, int64Operands(), int64Operands());
+    RUN_UNARY(testAddArg32, int32Operands());
     RUN(testAddArgs32(1, 1));
     RUN(testAddArgs32(1, 2));
+    RUN_BINARY(testAddArgMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testAddMemArg32, int32Operands(), int32Operands());
+    RUN_BINARY(testAddImmMem32, int32Operands(), int32Operands());
     RUN(testAddLoadTwice());
 
     RUN(testAddArgDouble(M_PI));
@@ -6826,6 +7073,10 @@ void run(const char* filter)
     RUN(testSubImmArg(1, 2));
     RUN(testSubImmArg(13, -42));
     RUN(testSubImmArg(-13, 42));
+    RUN_BINARY(testSubArgMem, int64Operands(), int64Operands());
+    RUN_BINARY(testSubMemArg, int64Operands(), int64Operands());
+    RUN_BINARY(testSubImmMem, int32Operands(), int32Operands());
+    RUN_BINARY(testSubMemImm, int32Operands(), int32Operands());
     RUN_UNARY(testNegValueSubOne, int32Operands());
 
     RUN(testSubArgs32(1, 1));
@@ -6840,6 +7091,10 @@ void run(const char* filter)
     RUN(testSubImmArg32(1, 2));
     RUN(testSubImmArg32(13, -42));
     RUN(testSubImmArg32(-13, 42));
+    RUN_BINARY(testSubArgMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testSubMemArg32, int32Operands(), int32Operands());
+    RUN_BINARY(testSubImmMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testSubMemImm32, int32Operands(), int32Operands());
     RUN_UNARY(testNegValueSubOne32, int64Operands());
 
     RUN_UNARY(testSubArgDouble, floatingPointOperands<double>());

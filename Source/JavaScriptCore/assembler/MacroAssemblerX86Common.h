@@ -160,6 +160,26 @@ public:
 
         m_assembler.leal_mr(imm.m_value, src, dest);
     }
+
+    void add32(RegisterID a, RegisterID b, RegisterID dest)
+    {
+        x86Lea32(BaseIndex(a, b, TimesOne), dest);
+    }
+
+    void x86Lea32(BaseIndex index, RegisterID dest)
+    {
+        if (!index.scale && !index.offset) {
+            if (index.base == dest) {
+                add32(index.index, dest);
+                return;
+            }
+            if (index.index == dest) {
+                add32(index.base, dest);
+                return;
+            }
+        }
+        m_assembler.leal_mr(index.offset, index.base, index.index, index.scale, dest);
+    }
     
     void and32(RegisterID src, RegisterID dest)
     {

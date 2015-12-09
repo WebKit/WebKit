@@ -621,21 +621,23 @@ private:
 
         // At this point, we prefer versions of the operation that have a fused load or an immediate
         // over three operand forms.
-        
-        if (commutativity == Commutative) {
-            ArgPromise leftAddr = loadPromise(left);
-            if (isValidForm(opcode, leftAddr.kind(), Arg::Tmp)) {
-                append(relaxedMoveForType(m_value->type()), tmp(right), result);
-                append(opcode, leftAddr.consume(*this), result);
+
+        if (left != right) {
+            if (commutativity == Commutative) {
+                ArgPromise leftAddr = loadPromise(left);
+                if (isValidForm(opcode, leftAddr.kind(), Arg::Tmp)) {
+                    append(relaxedMoveForType(m_value->type()), tmp(right), result);
+                    append(opcode, leftAddr.consume(*this), result);
+                    return;
+                }
+            }
+
+            ArgPromise rightAddr = loadPromise(right);
+            if (isValidForm(opcode, rightAddr.kind(), Arg::Tmp)) {
+                append(relaxedMoveForType(m_value->type()), tmp(left), result);
+                append(opcode, rightAddr.consume(*this), result);
                 return;
             }
-        }
-
-        ArgPromise rightAddr = loadPromise(right);
-        if (isValidForm(opcode, rightAddr.kind(), Arg::Tmp)) {
-            append(relaxedMoveForType(m_value->type()), tmp(left), result);
-            append(opcode, rightAddr.consume(*this), result);
-            return;
         }
 
         if (imm(right) && isValidForm(opcode, Arg::Imm, Arg::Tmp)) {
@@ -1494,11 +1496,7 @@ private:
 
         case Shl: {
             if (m_value->child(1)->isInt32(1)) {
-                // This optimization makes sense on X86. I don't know if it makes sense anywhere else.
-                append(Move, tmp(m_value->child(0)), tmp(m_value));
-                append(
-                    opcodeForType(Add32, Add64, m_value->child(0)->type()),
-                    tmp(m_value), tmp(m_value));
+                appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(m_value->child(0), m_value->child(0));
                 return;
             }
             

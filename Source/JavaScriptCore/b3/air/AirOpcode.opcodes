@@ -68,15 +68,18 @@ Add32 U:G, UD:G
 
 Add32 U:G, U:G, D:G
     Imm, Tmp, Tmp
+    Tmp, Tmp, Tmp
 
 Add64 U:G, UD:G
     Tmp, Tmp
     Imm, Addr
     Imm, Tmp
     Addr, Tmp
+    Tmp, Addr
 
 Add64 U:G, U:G, D:G
     Imm, Tmp, Tmp
+    Tmp, Tmp, Tmp
 
 AddDouble U:F, UD:F
     Tmp, Tmp
@@ -95,7 +98,10 @@ Sub32 U:G, UD:G
 
 Sub64 U:G, UD:G
     Tmp, Tmp
+    Imm, Addr
     Imm, Tmp
+    Addr, Tmp
+    Tmp, Addr
 
 SubDouble U:F, UD:F
     Tmp, Tmp
