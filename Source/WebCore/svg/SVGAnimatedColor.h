@@ -32,7 +32,7 @@ private:
     std::unique_ptr<SVGAnimatedType> constructFromString(const String&) override;
     std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) override { return nullptr; }
     void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) override { }
-    void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) override { }
+    void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType&) override { }
     void animValWillChange(const SVGElementAnimatedPropertyList&) override { }
     void animValDidChange(const SVGElementAnimatedPropertyList&) override { }
     void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) override;

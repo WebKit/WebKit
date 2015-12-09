@@ -124,7 +124,7 @@ void SVGAnimatedEnumerationAnimator::stopAnimValAnimation(const SVGElementAnimat
     stopAnimValAnimationForType<SVGAnimatedEnumeration>(animatedTypes);
 }
 
-void SVGAnimatedEnumerationAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedEnumerationAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedEnumeration>(animatedTypes, type, &SVGAnimatedType::enumeration);
 }

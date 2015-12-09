@@ -46,7 +46,7 @@ void SVGAnimatedBooleanAnimator::stopAnimValAnimation(const SVGElementAnimatedPr
     stopAnimValAnimationForType<SVGAnimatedBoolean>(animatedTypes);
 }
 
-void SVGAnimatedBooleanAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedBooleanAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedBoolean>(animatedTypes, type, &SVGAnimatedType::boolean);
 }

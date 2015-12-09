@@ -47,7 +47,7 @@ void SVGAnimatedRectAnimator::stopAnimValAnimation(const SVGElementAnimatedPrope
     stopAnimValAnimationForType<SVGAnimatedRect>(animatedTypes);
 }
 
-void SVGAnimatedRectAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedRectAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedRect>(animatedTypes, type, &SVGAnimatedType::rect);
 }

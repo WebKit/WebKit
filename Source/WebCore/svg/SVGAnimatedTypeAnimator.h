@@ -43,7 +43,7 @@ public:
 
     virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
     virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
-    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) = 0;
+    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType&) = 0;
     virtual void animValWillChange(const SVGElementAnimatedPropertyList&) = 0;
     virtual void animValDidChange(const SVGElementAnimatedPropertyList&) = 0;
     virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) = 0;
@@ -75,12 +75,11 @@ protected:
     }
 
     template<typename AnimValType>
-    void resetFromBaseValue(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type, typename AnimValType::ContentType& (SVGAnimatedType::*getter)())
+    void resetFromBaseValue(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type, typename AnimValType::ContentType& (SVGAnimatedType::*getter)())
     {
         ASSERT(animatedTypes[0].properties.size() == 1);
-        ASSERT(type);
-        ASSERT(type->type() == m_type);
-        typename AnimValType::ContentType& animatedTypeValue = (type->*getter)();
+        ASSERT(type.type() == m_type);
+        typename AnimValType::ContentType& animatedTypeValue = (type.*getter)();
         animatedTypeValue = castAnimatedPropertyToActualType<AnimValType>(animatedTypes[0].properties[0].get())->currentBaseValue();
 
         executeAction<AnimValType>(StartAnimationAction, animatedTypes, 0, &animatedTypeValue);
@@ -122,13 +121,12 @@ protected:
     }
 
     template<typename AnimValType1, typename AnimValType2>
-    void resetFromBaseValues(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type, std::pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& (SVGAnimatedType::*getter)())
+    void resetFromBaseValues(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type, std::pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& (SVGAnimatedType::*getter)())
     {
         ASSERT(animatedTypes[0].properties.size() == 2);
-        ASSERT(type);
-        ASSERT(type->type() == m_type);
+        ASSERT(type.type() == m_type);
 
-        std::pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& animatedTypeValue = (type->*getter)();
+        std::pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& animatedTypeValue = (type.*getter)();
         animatedTypeValue.first = castAnimatedPropertyToActualType<AnimValType1>(animatedTypes[0].properties[0].get())->currentBaseValue();
         animatedTypeValue.second = castAnimatedPropertyToActualType<AnimValType2>(animatedTypes[0].properties[1].get())->currentBaseValue();
 

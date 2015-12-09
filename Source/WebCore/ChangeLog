@@ -1,3 +1,67 @@
+2015-12-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert resetAnimValToBaseVal take a reference to a SVGAnimatedType
+        https://bugs.webkit.org/show_bug.cgi?id=152036
+
+        Reviewed by Zalan Bujtas.
+        
+        Change resetAnimValToBaseVal() to take a reference at the last argument.
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::resetAnimatedType):
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedAngle.h:
+        * svg/SVGAnimatedBoolean.cpp:
+        (WebCore::SVGAnimatedBooleanAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedBoolean.h:
+        * svg/SVGAnimatedColor.h:
+        * svg/SVGAnimatedEnumeration.cpp:
+        (WebCore::SVGAnimatedEnumerationAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedEnumeration.h:
+        * svg/SVGAnimatedInteger.cpp:
+        (WebCore::SVGAnimatedIntegerAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedInteger.h:
+        * svg/SVGAnimatedIntegerOptionalInteger.cpp:
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedIntegerOptionalInteger.h:
+        * svg/SVGAnimatedLength.cpp:
+        (WebCore::SVGAnimatedLengthAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedLength.h:
+        * svg/SVGAnimatedLengthList.cpp:
+        (WebCore::SVGAnimatedLengthListAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedLengthList.h:
+        * svg/SVGAnimatedNumber.cpp:
+        (WebCore::SVGAnimatedNumberAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimatedNumberList.cpp:
+        (WebCore::SVGAnimatedNumberListAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedNumberList.h:
+        * svg/SVGAnimatedNumberOptionalNumber.cpp:
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedNumberOptionalNumber.h:
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedPath.h:
+        * svg/SVGAnimatedPointList.cpp:
+        (WebCore::SVGAnimatedPointListAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedPointList.h:
+        * svg/SVGAnimatedPreserveAspectRatio.cpp:
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        * svg/SVGAnimatedRect.cpp:
+        (WebCore::SVGAnimatedRectAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedRect.h:
+        * svg/SVGAnimatedString.cpp:
+        (WebCore::SVGAnimatedStringAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedString.h:
+        * svg/SVGAnimatedTransformList.cpp:
+        (WebCore::SVGAnimatedTransformListAnimator::resetAnimValToBaseVal):
+        * svg/SVGAnimatedTransformList.h:
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValue):
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValues):
+
 2015-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove Mavericks-specific code from FontCacheMac

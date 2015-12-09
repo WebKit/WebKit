@@ -54,7 +54,7 @@ void SVGAnimatedLengthAnimator::stopAnimValAnimation(const SVGElementAnimatedPro
     stopAnimValAnimationForType<SVGAnimatedLength>(animatedTypes);
 }
 
-void SVGAnimatedLengthAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedLengthAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedLength>(animatedTypes, type, &SVGAnimatedType::length);
 }

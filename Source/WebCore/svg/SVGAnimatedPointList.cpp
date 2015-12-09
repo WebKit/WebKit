@@ -48,7 +48,7 @@ void SVGAnimatedPointListAnimator::stopAnimValAnimation(const SVGElementAnimated
     stopAnimValAnimationForType<SVGAnimatedPointList>(animatedTypes);
 }
 
-void SVGAnimatedPointListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedPointListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedPointList>(animatedTypes, type, &SVGAnimatedType::pointList);
 }

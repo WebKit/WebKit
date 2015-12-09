@@ -57,7 +57,7 @@ void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const SVGElementAnim
     stopAnimValAnimationForType<SVGAnimatedTransformList>(animatedTypes);
 }
 
-void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedTransformList>(animatedTypes, type, &SVGAnimatedType::transformList);
 }

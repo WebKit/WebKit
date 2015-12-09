@@ -211,7 +211,7 @@ void SVGAnimateElementBase::resetAnimatedType()
         if (!m_animatedType)
             m_animatedType = animator->startAnimValAnimation(m_animatedProperties);
         else {
-            animator->resetAnimValToBaseVal(m_animatedProperties, m_animatedType.get());
+            animator->resetAnimValToBaseVal(m_animatedProperties, *m_animatedType);
             animator->animValDidChange(m_animatedProperties);
         }
         return;

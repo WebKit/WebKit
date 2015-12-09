@@ -45,7 +45,7 @@ public:
     virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&) override;
     virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) override;
     virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) override;
-    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) override;
+    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType&) override;
     virtual void animValWillChange(const SVGElementAnimatedPropertyList&) override;
     virtual void animValDidChange(const SVGElementAnimatedPropertyList&) override;
 

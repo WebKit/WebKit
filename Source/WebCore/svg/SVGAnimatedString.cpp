@@ -46,7 +46,7 @@ void SVGAnimatedStringAnimator::stopAnimValAnimation(const SVGElementAnimatedPro
     stopAnimValAnimationForType<SVGAnimatedString>(animatedTypes);
 }
 
-void SVGAnimatedStringAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedStringAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedString>(animatedTypes, type, &SVGAnimatedType::string);
 }

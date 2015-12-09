@@ -76,12 +76,11 @@ void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedProp
     }
 }
 
-void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     ASSERT(animatedTypes.size() >= 1);
-    ASSERT(type);
-    ASSERT(type->type() == m_type);
-    resetAnimValToBaseVal(animatedTypes, type->path());
+    ASSERT(type.type() == m_type);
+    resetAnimValToBaseVal(animatedTypes, type.path());
 }
 
 void SVGAnimatedPathAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)

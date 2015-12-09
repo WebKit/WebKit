@@ -46,7 +46,7 @@ void SVGAnimatedPreserveAspectRatioAnimator::stopAnimValAnimation(const SVGEleme
     stopAnimValAnimationForType<SVGAnimatedPreserveAspectRatio>(animatedTypes);
 }
 
-void SVGAnimatedPreserveAspectRatioAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedPreserveAspectRatioAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedPreserveAspectRatio>(animatedTypes, type, &SVGAnimatedType::preserveAspectRatio);
 }

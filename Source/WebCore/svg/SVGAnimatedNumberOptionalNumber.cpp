@@ -52,7 +52,7 @@ void SVGAnimatedNumberOptionalNumberAnimator::stopAnimValAnimation(const SVGElem
     stopAnimValAnimationForTypes<SVGAnimatedNumber, SVGAnimatedNumber>(animatedTypes);
 }
 
-void SVGAnimatedNumberOptionalNumberAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedNumberOptionalNumberAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValues<SVGAnimatedNumber, SVGAnimatedNumber>(animatedTypes, type, &SVGAnimatedType::numberOptionalNumber);
 }

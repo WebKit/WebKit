@@ -48,7 +48,7 @@ void SVGAnimatedIntegerAnimator::stopAnimValAnimation(const SVGElementAnimatedPr
     stopAnimValAnimationForType<SVGAnimatedInteger>(animatedTypes);
 }
 
-void SVGAnimatedIntegerAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
+void SVGAnimatedIntegerAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType& type)
 {
     resetFromBaseValue<SVGAnimatedInteger>(animatedTypes, type, &SVGAnimatedType::integer);
 }
