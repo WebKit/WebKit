@@ -1,3 +1,14 @@
+2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Workaround arrow function issue in TimelineOverviewGraph.js
+        https://bugs.webkit.org/show_bug.cgi?id=152031
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph.prototype._needsSelectedRecordLayout):
+        Workaround an existing arrow function issue by moving off of arrow functions here.
+
 2015-12-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add a hidden property to TreeOutline

@@ -219,10 +219,10 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
         if (this._scheduledSelectedRecordLayoutUpdateIdentifier)
             return;
 
-        this._scheduledSelectedRecordLayoutUpdateIdentifier = requestAnimationFrame(() => {
+        this._scheduledSelectedRecordLayoutUpdateIdentifier = requestAnimationFrame(function() {
             this._scheduledSelectedRecordLayoutUpdateIdentifier = undefined;
             this.updateSelectedRecord();
-        });
+        }.bind(this));
     }
 };
 
