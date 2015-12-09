@@ -68,6 +68,9 @@ storage/indexeddb/keypath-fetch-key.html [ Skip ]
 storage/indexeddb/lazy-index-population.html [ Skip ]
 storage/indexeddb/structured-clone.html [ Skip ]
 
+# IDB tests that crash with GuardMalloc or ASan
+storage/indexeddb/index-multientry.html [ Skip ]
+
 # Causes crashes downstream
 storage/indexeddb/key-generator.html [ Skip ]
 storage/indexeddb/keypath-basics.html [ Skip ]

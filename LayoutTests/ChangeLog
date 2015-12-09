@@ -1,3 +1,10 @@
+2015-12-08  David Kilzer  <ddkilzer@apple.com>
+
+        Skip storage/indexeddb/index-multientry.html once again
+
+        * platform/mac-wk1/TestExpectations: Skip:
+        - storage/indexeddb/index-multientry.html
+
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/objectstore-cursor.html fails.
