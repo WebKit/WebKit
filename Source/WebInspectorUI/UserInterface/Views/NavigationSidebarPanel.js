@@ -113,13 +113,14 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         if (!newTreeOutline)
             return;
 
-        if (this._contentTreeOutline)
-            this._contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+        if (this._contentTreeOutline) {
+            this._contentTreeOutline.hidden = true;
+            this._visibleContentTreeOutlines.delete(this._contentTreeOutline);
+        }
 
         this._contentTreeOutline = newTreeOutline;
-        this._contentTreeOutline.element.classList.remove(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+        this._contentTreeOutline.hidden = false;
 
-        this._visibleContentTreeOutlines.delete(this._contentTreeOutline);
         this._visibleContentTreeOutlines.add(newTreeOutline);
 
         this._updateFilter();
@@ -156,14 +157,12 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     createContentTreeOutline(dontHideByDefault, suppressFiltering)
     {
-        var contentTreeOutlineElement = document.createElement("ol");
-        contentTreeOutlineElement.className = WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName;
-        if (!dontHideByDefault)
-            contentTreeOutlineElement.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
-        this.contentElement.appendChild(contentTreeOutlineElement);
-
-        var contentTreeOutline = new WebInspector.TreeOutline(contentTreeOutlineElement);
+        let contentTreeOutline = new WebInspector.TreeOutline(document.createElement("ol"));
         contentTreeOutline.allowsRepeatSelection = true;
+        contentTreeOutline.hidden = !dontHideByDefault;
+        contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName);
+
+        this.contentElement.appendChild(contentTreeOutline.element);
 
         if (!suppressFiltering) {
             contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAddedOrChanged, this);
@@ -734,7 +733,6 @@ WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol = Symbol("w
 
 WebInspector.NavigationSidebarPanel.OverflowShadowElementStyleClassName = "overflow-shadow";
 WebInspector.NavigationSidebarPanel.TopOverflowShadowElementStyleClassName = "top";
-WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName = "hidden";
 WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName = "navigation-sidebar-panel-content-tree-outline";
 WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName = "hide-disclosure-buttons";
 WebInspector.NavigationSidebarPanel.EmptyContentPlaceholderElementStyleClassName = "empty-content-placeholder";

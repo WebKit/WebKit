@@ -61,7 +61,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._recordingTreeElementMap = new Map;
         this._recordingsTreeOutline = this.createContentTreeOutline(true, true);
         this._recordingsTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
-        this._recordingsTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+        this._recordingsTreeOutline.hidden = true;
         this._recordingsTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._recordingsTreeSelectionDidChange, this);
         this._timelinesContentContainerElement.appendChild(this._recordingsTreeOutline.element);
 
@@ -930,10 +930,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._viewModeNavigationBar.selectedNavigationItem = this._viewMode;
 
         if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.Timelines) {
-            this._timelinesTreeOutline.element.classList.remove(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+            this._timelinesTreeOutline.hidden = false;
             this._frameSelectionChartSection.collapsed = true;
         } else {
-            this._timelinesTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+            this._timelinesTreeOutline.hidden = true;
             this._frameSelectionChartSection.collapsed = false;
         }
 

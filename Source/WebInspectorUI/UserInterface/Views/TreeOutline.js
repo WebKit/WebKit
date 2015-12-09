@@ -46,12 +46,27 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         this.expanded = true;
         this.selected = false;
         this.treeOutline = this;
+        this._hidden = false;
 
         this._childrenListNode.tabIndex = 0;
         this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
     }
 
-    // Methods
+    // Public
+
+    get hidden()
+    {
+        return this._hidden;
+    }
+
+    set hidden(x)
+    {
+        if (this._hidden === x)
+            return;
+
+        this._hidden = x;
+        this.element.hidden = this._hidden;
+    }
 
     appendChild(child)
     {
@@ -659,17 +674,10 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
 
         this._hidden = x;
 
-        if (x) {
-            if (this._listItemNode)
-                this._listItemNode.classList.add("hidden");
-            if (this._childrenListNode)
-                this._childrenListNode.classList.add("hidden");
-        } else {
-            if (this._listItemNode)
-                this._listItemNode.classList.remove("hidden");
-            if (this._childrenListNode)
-                this._childrenListNode.classList.remove("hidden");
-        }
+        if (this._listItemNode)
+            this._listItemNode.hidden = this._hidden;
+        if (this._childrenListNode)
+            this._childrenListNode.hidden = this._hidden;
 
         if (this.treeOutline)
             this.treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementVisibilityDidChange, {element: this});
@@ -734,9 +742,8 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
             this._listItemNode.treeElement = this;
             this._setListItemNodeContent();
             this._listItemNode.title = this._tooltip ? this._tooltip : "";
+            this._listItemNode.hidden = this.hidden;
 
-            if (this.hidden)
-                this._listItemNode.classList.add("hidden");
             if (this.hasChildren)
                 this._listItemNode.classList.add("parent");
             if (this.expanded)
@@ -880,9 +887,7 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
             this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
             this._childrenListNode.parentTreeElement = this;
             this._childrenListNode.classList.add("children");
-
-            if (this.hidden)
-                this._childrenListNode.classList.add("hidden");
+            this._childrenListNode.hidden = this.hidden;
 
             this.onpopulate();
 
