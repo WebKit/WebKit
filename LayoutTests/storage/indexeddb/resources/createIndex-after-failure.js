@@ -3,12 +3,13 @@ if (this.importScripts) {
     importScripts('shared.js');
 }
 
-description("Test IndexedDB's basics.");
+description("Test createIndex failing due to a ConstraintError");
 
 indexedDBTest(prepareDatabase);
 function prepareDatabase(event)
 {
     trans = event.target.transaction;
+    trans.onabort = abortCallback;
     db = event.target.result;
 
     db.createObjectStore("objectStore");
@@ -29,18 +30,20 @@ function createIndex() {
     // confused and crash, or think the index still exists.
     evalAndExpectException("objectStore.deleteIndex('index')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
     debug("Now requesting object2");
+    
+    // None of the following 3 lines will actually do anything because the call to createIndex will forcefully abort the transaction.
     var req3 = objectStore.get("object2");
-    req3.onsuccess = deleteIndexAfterGet;
-    req3.onerror = unexpectedErrorCallback;
+    req3.onsuccess = unexpectedSuccessCallback;
+    req3.onerror = errorCallback;
+    
     debug("now we wait.");
 }
 
-function deleteIndexAfterGet() {
-    // so we will delete it next, but it should already be gone... right?
-    debug("deleteIndexAfterGet()");
-    // the index should still be gone, and this should not crash.
-    evalAndExpectException("objectStore.deleteIndex('index')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
-    evalAndExpectException("objectStore.deleteIndex('index')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
+function errorCallback() {
+    debug("Error function called: (" + event.target.error.name + ") " + event.target.error.message);
+}
 
+function abortCallback() {
+    testPassed("Abort function called: (" + event.target.error.name + ") " + event.target.error.message);
     finishJSTest();
 }

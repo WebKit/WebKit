@@ -92,7 +92,6 @@ storage/indexeddb/transaction-starvation.html [ Skip ]
 storage/indexeddb/unblocked-version-changes.html [ Skip ]
 
 # IDB tests with text failures                                                             
-storage/indexeddb/createIndex-after-failure.html [ Failure ]
 storage/indexeddb/cursor-continue.html [ Failure ]
 storage/indexeddb/database-closepending-flag.html [ Failure ]
 storage/indexeddb/database-deletepending-flag.html [ Failure ]

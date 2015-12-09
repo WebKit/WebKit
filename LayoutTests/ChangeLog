@@ -1,3 +1,14 @@
+2015-12-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/createIndex-after-failure.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152078
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/createIndex-after-failure-expected.txt:
+        * storage/indexeddb/resources/createIndex-after-failure.js:
+
 2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Baseline fast/dom/HTMLProgressElement/native-progress-bar.html for iOS
