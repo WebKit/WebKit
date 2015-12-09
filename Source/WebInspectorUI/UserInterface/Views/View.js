@@ -35,6 +35,18 @@ WebInspector.View = class View extends WebInspector.Object
         this._subviews = [];
         this._dirty = false;
         this._dirtyDescendantsCount = 0;
+        this._needsLayoutWhenAttachedToRoot = false;
+        this._isAttachedToRoot = false;
+    }
+
+    // Static
+
+    static rootView()
+    {
+        if (!WebInspector.View._rootView)
+            WebInspector.View._rootView = new WebInspector.View(document.body);
+
+        return WebInspector.View._rootView;
     }
 
     // Public
@@ -59,14 +71,16 @@ WebInspector.View = class View extends WebInspector.Object
         return this._subviews;
     }
 
-    makeRootView()
+    isDescendantOf(view)
     {
-        console.assert(!WebInspector.View._rootView, "Root view already exists.");
-        console.assert(!this._parentView, "Root view cannot be a subview.");
-        if (WebInspector.View._rootView)
-            return;
+        let parentView = this._parentView;
+        while (parentView) {
+            if (parentView === view)
+                return true;
+            parentView = parentView.parentView;
+        }
 
-        WebInspector.View._rootView = this;
+        return false;
     }
 
     addSubview(view)
@@ -96,7 +110,7 @@ WebInspector.View = class View extends WebInspector.Object
         if (!view.element.parentNode)
             this._element.insertBefore(view.element, referenceView ? referenceView.element : null);
 
-        view.didAttach(this);
+        view.didMoveToParent(this);
     }
 
     removeSubview(view)
@@ -111,7 +125,8 @@ WebInspector.View = class View extends WebInspector.Object
 
         this._subviews.remove(view, true);
         this._element.removeChild(view.element);
-        view.didDetach();
+
+        view.didMoveToParent(null);
     }
 
     replaceSubview(oldView, newView)
@@ -146,16 +161,38 @@ WebInspector.View = class View extends WebInspector.Object
 
     // Protected
 
-    didAttach(parentView)
+    didMoveToWindow(isAttachedToRoot)
     {
-        console.assert(!this._parentView, "Attached view already has a parent.", this._parentView);
-        this._parentView = parentView;
+        this._isAttachedToRoot = isAttachedToRoot;
+
+        if (this._isAttachedToRoot && this._needsLayoutWhenAttachedToRoot) {
+            WebInspector.View._scheduleLayoutForView(this);
+            this._needsLayoutWhenAttachedToRoot = false;
+        }
+
+        for (let view of this._subviews)
+            view.didMoveToWindow(isAttachedToRoot);
     }
 
-    didDetach()
+    didMoveToParent(parentView)
     {
-        console.assert(this._parentView, "Detached view has no parent.");
-        this._parentView = null;
+        this._parentView = parentView;
+
+        let isAttachedToRoot = this.isDescendantOf(WebInspector.View._rootView);
+        this.didMoveToWindow(isAttachedToRoot);
+
+        if (!this._parentView)
+            return;
+
+        let pendingLayoutsCount = this._dirtyDescendantsCount;
+        if (this._dirty)
+            pendingLayoutsCount++;
+
+        let view = this._parentView;
+        while (view) {
+            view._dirtyDescendantsCount += pendingLayoutsCount;
+            view = view.parentView;
+        }
     }
 
     layout()
@@ -178,23 +215,23 @@ WebInspector.View = class View extends WebInspector.Object
             view._layoutSubtree();
     }
 
-    // Private layout controller logic
+    // Layout controller logic
 
     static _scheduleLayoutForView(view)
     {
-        // Asynchronous layouts aren't scheduled until the root view has been set.
-        // If the root view hasn't been set, switch to a synchronous layout.
-        if (!WebInspector.View._rootView) {
-            view._layoutSubtree();
-            return;
-        }
-
         view._dirty = true;
 
         let parentView = view.parentView;
         while (parentView) {
             parentView._dirtyDescendantsCount++;
             parentView = parentView.parentView;
+        }
+
+        if (!view._isAttachedToRoot) {
+            // Don't schedule layout of the view unless it is a descendant of the root view.
+            // When it moves to a rooted view tree, schedule an initial layout.
+            view._needsLayoutWhenAttachedToRoot = true;
+            return;
         }
 
         if (WebInspector.View._scheduledLayoutUpdateIdentifier)
@@ -205,21 +242,21 @@ WebInspector.View = class View extends WebInspector.Object
 
     static _cancelScheduledLayoutForView(view)
     {
-        // Asynchronous layouts aren't scheduled until the root view has been set.
-        if (!WebInspector.View._rootView)
-            return;
-
-        let cancelledLayouts = view._dirtyDescendantsCount;
-        if (this._dirty)
-            cancelledLayouts++;
+        let cancelledLayoutsCount = view._dirtyDescendantsCount;
+        if (view.layoutPending)
+            cancelledLayoutsCount++;
 
         let parentView = view.parentView;
         while (parentView) {
-            parentView._dirtyDescendantsCount = Math.max(0, parentView._dirtyDescendantsCount - cancelledLayouts);
+            parentView._dirtyDescendantsCount = Math.max(0, parentView._dirtyDescendantsCount - cancelledLayoutsCount);
             parentView = parentView.parentView;
         }
 
-        if (WebInspector.View._rootView._dirtyDescendantsCount || !WebInspector.View._scheduledLayoutUpdateIdentifier)
+        if (!WebInspector.View._scheduledLayoutUpdateIdentifier)
+            return;
+
+        let rootView = WebInspector.View._rootView;
+        if (!rootView || rootView._dirtyDescendantsCount)
             return;
 
         // No views need layout, so cancel the pending requestAnimationFrame.

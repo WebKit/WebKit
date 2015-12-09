@@ -1438,7 +1438,7 @@ WebInspector._updateToolbarHeight = function()
 
 WebInspector._setupViewHierarchy = function()
 {
-    let rootView = new WebInspector.View(document.body);
+    let rootView = WebInspector.View.rootView();
     rootView.addSubview(this.toolbar);
     rootView.addSubview(this.tabBar);
     rootView.addSubview(this.navigationSidebar);
@@ -1446,8 +1446,6 @@ WebInspector._setupViewHierarchy = function()
     rootView.addSubview(this.splitContentBrowser);
     rootView.addSubview(this.quickConsole);
     rootView.addSubview(this.detailsSidebar);
-
-    rootView.makeRootView();
 };
 
 WebInspector._tabBrowserSelectedTabContentViewDidChange = function(event)

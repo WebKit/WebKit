@@ -1,3 +1,33 @@
+2015-12-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: when a marked-dirty subview is attached to a parent View, dirtyDescendantsCount gets out of sync
+        https://bugs.webkit.org/show_bug.cgi?id=151876
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        Use root view singleton instead of creating it explicitly.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View):
+        (WebInspector.View.rootView):
+        Singleton root view access. Lazily create and return a view backed
+        by the document's body element.
+        (WebInspector.View.prototype.isDescendantOf):
+        (WebInspector.View.prototype.insertSubviewBefore):
+        (WebInspector.View.prototype.removeSubview):
+        (WebInspector.View.prototype.didMoveToWindow):
+        Notify the view when it becomes, or is no longer, descended from the root view.
+        (WebInspector.View.prototype.didMoveToParent):
+        Notify the view when it's added to, or removed from, a parent view.
+        (WebInspector.View._scheduleLayoutForView):
+        (WebInspector.View._cancelScheduledLayoutForView):
+        (WebInspector.View.prototype.makeRootView): Deleted.
+        No longer needed.
+        (WebInspector.View.prototype.didAttach): Deleted.
+        (WebInspector.View.prototype.didDetach): Deleted.
+        Replaced by didMoveToParent.
+
 2015-12-09  Brian Burg  <bburg@apple.com>
 
         Web Inspector: control whether to collect and dump protocol messages using a WebInspector.Setting
