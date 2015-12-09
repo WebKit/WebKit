@@ -1,3 +1,15 @@
+2015-12-09  Keith Rollin  <krollin@apple.com>
+
+        form.elements should reflect the element ordering after the HTML tree builder algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=148870
+        rdar://problem/22589879
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing test.
+
+        * web-platform-tests/html/semantics/forms/the-form-element/form-elements-nameditem-02-expected.txt:
+
 2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] pipeThrough test failing

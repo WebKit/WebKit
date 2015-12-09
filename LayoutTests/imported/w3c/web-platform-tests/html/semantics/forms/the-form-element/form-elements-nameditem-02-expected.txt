@@ -1,5 +1,5 @@
 
 	
 
-FAIL form.elements should work correctly in the face of table syntax errors assert_array_equals: property 0, expected Element node <input type="radio" name="radio0" id="r0" value="0"></input> but got Element node <input type="radio" name="radio1" id="r1" value="1"></input>
+PASS form.elements should work correctly in the face of table syntax errors 
 

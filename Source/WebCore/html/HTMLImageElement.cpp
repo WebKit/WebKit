@@ -55,7 +55,8 @@ using namespace HTMLNames;
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
     , m_imageLoader(*this)
-    , m_form(form)
+    , m_form(nullptr)
+    , m_formSetByParser(form)
     , m_compositeOperator(CompositeSourceOver)
     , m_imageDevicePixelRatio(1.0f)
 #if ENABLE(SERVICE_CONTROLS)
@@ -64,8 +65,6 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
 {
     ASSERT(hasTagName(imgTag));
     setHasCustomStyleResolveCallbacks();
-    if (form)
-        form->registerImgElement(this);
 }
 
 Ref<HTMLImageElement> HTMLImageElement::create(Document& document)
@@ -163,7 +162,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), computedStyle());
         if (!evaluator.eval(MediaQuerySet::createAllowingDescriptionSyntax(source.media()).ptr()))
             continue;
-        
+
         float sourceSize = parseSizesAttribute(source.fastGetAttribute(sizesAttr).string(), document().renderView(), document().frame());
         ImageCandidate candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom, source.fastGetAttribute(srcsetAttr), sourceSize);
         if (!candidate.isEmpty())
@@ -289,11 +288,16 @@ void HTMLImageElement::didAttachRenderers()
 
 Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode& insertionPoint)
 {
-    if (!m_form) { // m_form can be non-null if it was set in constructor.
-        m_form = HTMLFormElement::findClosestFormAncestor(*this);
-        if (m_form)
-            m_form->registerImgElement(this);
+    if (m_formSetByParser) {
+        m_form = m_formSetByParser;
+        m_formSetByParser = nullptr;
     }
+
+    if (!m_form)
+        m_form = HTMLFormElement::findClosestFormAncestor(*this);
+
+    if (m_form)
+        m_form->registerImgElement(this);
 
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
@@ -301,10 +305,10 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
 
     if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
         document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
-    
+
     if (is<HTMLPictureElement>(parentNode()))
         selectImageSource();
-    
+
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
     if (insertionPoint.inDocument() && !m_imageLoader.image())
@@ -321,7 +325,7 @@ void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
     if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
         document().removeImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
-    m_form = 0;
+    m_form = nullptr;
     HTMLElement::removedFrom(insertionPoint);
 }
 
@@ -518,7 +522,7 @@ bool HTMLImageElement::isServerMap() const
         return false;
 
     const AtomicString& usemap = fastGetAttribute(usemapAttr);
-    
+
     // If the usemap attribute starts with '#', it refers to a map element in the document.
     if (usemap.string()[0] == '#')
         return false;

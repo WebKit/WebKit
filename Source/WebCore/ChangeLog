@@ -1,3 +1,66 @@
+2015-12-09  Keith Rollin  <krollin@apple.com>
+
+        form.elements should reflect the element ordering after the HTML tree builder algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=148870
+        rdar://problem/22589879
+
+        Reviewed by Ryosuke Niwa.
+
+        form.elements should return form-associated elements in tree order.
+        However, when presented with an HTML fragment like the following,
+        forms.elements is not built in tree order. Instead, the elements
+        appear in forms.element in the same order they appear in the HTML --
+        that is in the same order as they are parsed.
+
+        <form id=form>
+            <table>
+                <tr>
+                    <td><input type="radio" name="radio1" id="r1" value=1></td>
+                    <td><input type="radio" name="radio2" id="r2" value=2></td>
+                    <input type="radio" name="radio0" id="r0" value=0>
+                </tr>
+            </table>
+        </form>
+
+        The reason why elements appear in forms.elements in parse order is
+        because they register themselves with the designated form when they
+        are created. At this time, they are not in the DOM tree, so the form
+        can only assume that the element will be appended to the DOM tree,
+        with the result that it records the elements in the HTML fragment
+        above as [r1, r2, r0].
+
+        However, it's not always the case that the newly-created element will
+        be appended to the current tree. In the HTML fragment above, the r0
+        input element is hoised out of the table element. It ends up being the
+        preceding sibling of the table element, with the result that the
+        actual tree-order of the input elements is [r0, r1, r2].
+
+        Because the problem is due to registering form-associated elements
+        with the form *before* the elements are added to the DOM tree, the
+        solution is to defer that registration until afterwards. With the new
+        element in the tree, the form can now use its current location in the
+        tree to correctly place the element in form.elements.
+
+        Existing tests now pass:
+        - imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-nameditem-02-html
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::FormAssociatedElement):
+        (WebCore::FormAssociatedElement::insertedInto):
+        (WebCore::FormAssociatedElement::removedFrom):
+        (WebCore::FormAssociatedElement::formRemovedFromTree):
+        (WebCore::FormAssociatedElement::formWillBeDestroyed):
+        * html/FormAssociatedElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::insertedInto):
+        (WebCore::HTMLImageElement::removedFrom):
+        * html/HTMLImageElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+
 2015-12-09  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [ThreadedCompositor] Support HTML5 Video

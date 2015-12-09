@@ -49,8 +49,9 @@ private:
     FormAssociatedElement& m_element;
 };
 
-FormAssociatedElement::FormAssociatedElement()
+FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
     : m_form(nullptr)
+    , m_formSetByParser(form)
 {
 }
 
@@ -68,10 +69,15 @@ void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
 
 void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
 {
+    HTMLElement& element = asHTMLElement();
+    if (m_formSetByParser) {
+        setForm(m_formSetByParser);
+        m_formSetByParser = nullptr;
+    }
+
     if (!insertionPoint.inDocument())
         return;
 
-    HTMLElement& element = asHTMLElement();
     if (element.fastHasAttribute(formAttr))
         resetFormAttributeTargetObserver();
 }
@@ -84,7 +90,7 @@ void FormAssociatedElement::removedFrom(ContainerNode& insertionPoint)
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.
     if (m_form && element.highestAncestor() != m_form->highestAncestor())
-        setForm(0);
+        setForm(nullptr);
 }
 
 HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
@@ -112,7 +118,7 @@ void FormAssociatedElement::formRemovedFromTree(const Node* formRoot)
 {
     ASSERT(m_form);
     if (asHTMLElement().highestAncestor() != formRoot)
-        setForm(0);
+        setForm(nullptr);
 }
 
 void FormAssociatedElement::setForm(HTMLFormElement* newForm)
@@ -142,7 +148,7 @@ void FormAssociatedElement::formWillBeDestroyed()
     if (!m_form)
         return;
     willChangeForm();
-    m_form = 0;
+    m_form = nullptr;
     didChangeForm();
 }
 

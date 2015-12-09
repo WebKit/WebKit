@@ -65,11 +65,11 @@ using namespace HTMLNames;
 
 inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
     : HTMLPlugInImageElement(tagName, document, createdByParser)
+    , FormAssociatedElement(form)
     , m_docNamedItem(true)
     , m_useFallbackContent(false)
 {
     ASSERT(hasTagName(objectTag));
-    setForm(form);
 }
 
 inline HTMLObjectElement::~HTMLObjectElement()
