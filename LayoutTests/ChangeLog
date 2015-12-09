@@ -1,3 +1,12 @@
+2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking inspector/debugger/command-line-api-exception.html as flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=152029
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Remove duplicate/platform media-emits-object-replacement.html and move expectations where they belong
