@@ -1,3 +1,13 @@
+2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [GTK] Remove duplicate/platform media-emits-object-replacement.html and move expectations where they belong
+        https://bugs.webkit.org/show_bug.cgi?id=152064
+
+        Unreviewed test gardening.
+
+        * accessibility/gtk/media-emits-object-replacement.html: Removed.
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt: Renamed from LayoutTests/accessibility/gtk/media-emits-object-replacement-expected.txt.
+
 2015-12-09  Frederic Wang  <fred.wang@free.fr>
 
         Bad position of large operators inside an munderover element
