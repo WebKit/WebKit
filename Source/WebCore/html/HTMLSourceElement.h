@@ -27,6 +27,7 @@
 #define HTMLSourceElement_h
 
 #include "HTMLElement.h"
+#include "MediaList.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -43,6 +44,8 @@ public:
     
     void scheduleErrorEvent();
     void cancelPendingErrorEvent();
+
+    MediaQuerySet* mediaQuerySet() const { return m_mediaQuerySet.get(); }
 
 private:
     HTMLSourceElement(const QualifiedName&, Document&);
@@ -64,6 +67,7 @@ private:
 
     Timer m_errorEventTimer;
     bool m_shouldRescheduleErrorEventOnResume { false };
+    RefPtr<MediaQuerySet> m_mediaQuerySet;
 };
 
 } //namespace

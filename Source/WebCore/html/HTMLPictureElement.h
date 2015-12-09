@@ -27,17 +27,30 @@
 #define HTMLPictureElement_h
 
 #include "HTMLElement.h"
+#include "MediaQueryEvaluator.h"
 
 namespace WebCore {
 
 class HTMLPictureElement final : public HTMLElement {
 public:
     static Ref<HTMLPictureElement> create(const QualifiedName&, Document&);
+    ~HTMLPictureElement();
 
     void sourcesChanged();
 
+    void clearViewportDependentResults() { m_viewportDependentMediaQueryResults.clear(); }
+    bool hasViewportDependentResults() const { return m_viewportDependentMediaQueryResults.size(); }
+    Vector<std::unique_ptr<MediaQueryResult>>& viewportDependentResults() { return m_viewportDependentMediaQueryResults; }
+
+    void didMoveToNewDocument(Document* oldDocument);
+    
+    bool viewportChangeAffectedPicture();
+
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
+    
+    Vector<std::unique_ptr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
+
 };
 
 } // namespace WebCore

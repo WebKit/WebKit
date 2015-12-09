@@ -1,3 +1,61 @@
+2015-12-09  David Hyatt  <hyatt@apple.com>
+
+        Picture element needs to respond to dynamic viewport changes.
+        https://bugs.webkit.org/show_bug.cgi?id=152013
+        <rdar://problem/23766375>
+
+        Reviewed by Dean Jackson.
+
+        Added new tests in fast/picture.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::evalCheckingViewportDependentResults):
+        Add new evaluation method that adds viewport dependent results to a vector. A follow-up patch
+        will refactor the style resolver code to use this function instead of the special style resolver one, in order to
+        get rid of the code duplication. Tracked by https://bugs.webkit.org/show_bug.cgi?id=152089.
+
+        * css/MediaQueryEvaluator.h:
+        (WebCore::MediaQueryResult::MediaQueryResult):
+        * css/StyleResolver.h:
+        (WebCore::MediaQueryResult::MediaQueryResult): Deleted.
+        Move MediaQueryResult into a header since it is used in multiple places now and not just by the style
+        resolver.
+
+        * dom/Document.cpp:
+        (WebCore::Document::evaluateMediaQueryList):
+        (WebCore::Document::checkViewportDependentPictures):
+        (WebCore::Document::optimizedStyleSheetUpdateTimerFired):
+        (WebCore::Document::applyContentDispositionAttachmentSandbox):
+        (WebCore::Document::addViewportDependentPicture):
+        (WebCore::Document::removeViewportDependentPicture):
+        * dom/Document.h:
+        The document now maintains a HashSet of viewport-dependent pictures, and it checks them whenever the
+        viewport changes. If their media queries stay the same, then nothing happens. If they change, then
+        the <picture> will go back and re-check all its <source> elements to see what the new best candidate is.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        Revised to check for viewport dependencies and to cache viewport-dependent results on the <picture> elements.
+        When a <picture> is found to be viewport-dependent (or not) it is also added to or removed from the document's
+        set of tracked pictures.
+
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::HTMLPictureElement):
+        (WebCore::HTMLPictureElement::~HTMLPictureElement):
+        (WebCore::HTMLPictureElement::didMoveToNewDocument):
+        (WebCore::HTMLPictureElement::create):
+        (WebCore::HTMLPictureElement::sourcesChanged):
+        (WebCore::HTMLPictureElement::viewportChangeAffectedPicture):
+        * html/HTMLPictureElement.h:
+        New caching of results and updating of the document HashSet when the picture gets destroyed or moves to
+        a different document.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::parseAttribute):
+        * html/HTMLSourceElement.h:
+        Cache the media attribute in a parsed form. A follow-up patch will improve the <video>/<audio>
+        code to make use of this parsed result. Tracked by https://bugs.webkit.org/show_bug.cgi?id=152090.
+
 2015-12-09  Zalan Bujtas  <zalan@apple.com>
 
         TextPainter: Rename start and end position to selectionStart and selectionEnd.

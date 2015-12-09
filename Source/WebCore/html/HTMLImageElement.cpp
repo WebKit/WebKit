@@ -32,6 +32,7 @@
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
 #include "MIMETypeRegistry.h"
@@ -142,6 +143,9 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
     auto* parent = parentNode();
     if (!is<HTMLPictureElement>(parent))
         return { };
+    auto* picture = downcast<HTMLPictureElement>(parent);
+    picture->clearViewportDependentResults();
+    document().removeViewportDependentPicture(*picture);
     for (Node* child = parent->firstChild(); child && child != this; child = child->nextSibling()) {
         if (!is<HTMLSourceElement>(*child))
             continue;
@@ -160,7 +164,10 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
                 continue;
         }
         MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), computedStyle());
-        if (!evaluator.eval(MediaQuerySet::createAllowingDescriptionSyntax(source.media()).ptr()))
+        bool evaluation = evaluator.evalCheckingViewportDependentResults(source.mediaQuerySet(), picture->viewportDependentResults());
+        if (picture->hasViewportDependentResults())
+            document().addViewportDependentPicture(*picture);
+        if (!evaluation)
             continue;
 
         float sourceSize = parseSizesAttribute(source.fastGetAttribute(sizesAttr).string(), document().renderView(), document().frame());

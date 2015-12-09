@@ -1,3 +1,15 @@
+2015-12-09  David Hyatt  <hyatt@apple.com>
+
+        Picture element needs to respond to dynamic viewport changes.
+        https://bugs.webkit.org/show_bug.cgi?id=152013
+        <rdar://problem/23766375>
+
+        Reviewed by Dean Jackson.
+
+        * fast/picture/resources/resize-test.js: Added.
+        * fast/picture/viewport-resize-expected.txt: Added.
+        * fast/picture/viewport-resize.html: Added.
+
 2015-12-09  Mark Lam  <mark.lam@apple.com>
 
         Rename ftl-object-* tests to ftl-polymorphic-*.

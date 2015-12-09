@@ -166,6 +166,40 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
     return result;
 }
 
+bool MediaQueryEvaluator::evalCheckingViewportDependentResults(const MediaQuerySet* querySet, Vector<std::unique_ptr<MediaQueryResult>>& results)
+{
+    if (!querySet)
+        return true;
+
+    auto& queries = querySet->queryVector();
+    if (!queries.size())
+        return true;
+
+    bool result = false;
+    for (size_t i = 0; i < queries.size() && !result; ++i) {
+        MediaQuery* query = queries[i].get();
+
+        if (query->ignored())
+            continue;
+
+        if (mediaTypeMatch(query->mediaType())) {
+            auto& expressions = query->expressions();
+            size_t j = 0;
+            for (; j < expressions.size(); ++j) {
+                bool exprResult = eval(expressions.at(j).get());
+                if (expressions.at(j)->isViewportDependent())
+                    results.append(std::make_unique<MediaQueryResult>(*expressions.at(j), exprResult));
+                if (!exprResult)
+                    break;
+            }
+            result = applyRestrictor(query->restrictor(), expressions.size() == j);
+        } else
+            result = applyRestrictor(query->restrictor(), false);
+    }
+
+    return result;
+}
+
 template<typename T>
 bool compareValue(T a, T b, MediaFeaturePrefix op)
 {
