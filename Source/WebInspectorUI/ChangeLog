@@ -1,3 +1,16 @@
+2015-12-09  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: zoom with Ctrl +/- doesn't work correctly when inspector is docked
+        https://bugs.webkit.org/show_bug.cgi?id=152076
+
+        Reviewed by Timothy Hatcher.
+
+        When computing the new width or height of the inspector, take the zoom level into
+        account. window.inner{Width,Height} are in document pixels, but we need to specify
+        device pixels to InspectorFrontendHost.
+
+        * UserInterface/Base/Main.js:
+
 2015-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Workaround arrow function issue in TimelineOverviewGraph.js
