@@ -288,7 +288,7 @@
     {
         "name": "Tail Calls",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": true
         },
         "url": "http://www.ecma-international.org/ecma-262/6.0/index.html#sec-tail-position-calls",
