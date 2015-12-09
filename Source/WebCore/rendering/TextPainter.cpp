@@ -79,8 +79,8 @@ ShadowApplier::~ShadowApplier()
         m_context.clearShadow();
 }
 
-TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const FontCascade& font, int startPositionInTextRun,
-    int endPositionInTextBoxString, int length, const AtomicString& emphasisMark, RenderCombineText* combinedText, TextRun& textRun, FloatRect& boxRect,
+TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const FontCascade& font, int selectionStart,
+    int selectionEnd, int length, const AtomicString& emphasisMark, RenderCombineText* combinedText, TextRun& textRun, FloatRect& boxRect,
     FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow, bool textBoxIsHorizontal,
     TextPaintStyle& textPaintStyle, TextPaintStyle& selectionPaintStyle)
     : m_context(context)
@@ -91,8 +91,8 @@ TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, b
     , m_paintSelectedTextOnly(paintSelectedTextOnly)
     , m_paintSelectedTextSeparately(paintSelectedTextSeparately)
     , m_font(font)
-    , m_startPositionInTextRun(startPositionInTextRun)
-    , m_endPositionInTextRun(endPositionInTextBoxString)
+    , m_selectionStart(selectionStart)
+    , m_selectionEnd(selectionEnd)
     , m_length(length)
     , m_emphasisMark(emphasisMark)
     , m_combinedText(combinedText)
@@ -187,15 +187,14 @@ void TextPainter::paintText()
     if (!m_paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode. It's probably dangerous to leave that mutated as a side
         // effect, so only when we know we're stroking, do a save/restore.
-        bool fullLengthPaint = !m_paintSelectedTextSeparately || m_endPositionInTextRun <= m_startPositionInTextRun;
-        int startOffset = fullLengthPaint ? 0 : m_endPositionInTextRun;
-        int endOffset = fullLengthPaint ? m_length : m_startPositionInTextRun;
-        paintTextWithStyle(m_textPaintStyle, startOffset, endOffset, m_textShadow);
+        int startPosition = m_paintSelectedTextSeparately ? m_selectionEnd : 0;
+        int endPosition = m_paintSelectedTextSeparately ? m_selectionStart : m_length;
+        paintTextWithStyle(m_textPaintStyle, startPosition, endPosition, m_textShadow);
     }
 
     // paint only the text that is selected
-    if ((m_paintSelectedTextOnly || m_paintSelectedTextSeparately) && m_startPositionInTextRun < m_endPositionInTextRun)
-        paintTextWithStyle(m_selectionPaintStyle, m_startPositionInTextRun, m_endPositionInTextRun, m_selectionShadow);
+    if ((m_paintSelectedTextOnly || m_paintSelectedTextSeparately) && m_selectionStart < m_selectionEnd)
+        paintTextWithStyle(m_selectionPaintStyle, m_selectionStart, m_selectionEnd, m_selectionShadow);
 }
 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)

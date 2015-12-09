@@ -581,14 +581,14 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (hasHyphen())
         length = textRun.length();
 
-    int sPos = 0;
-    int ePos = 0;
+    int selectionStart = 0;
+    int selectionEnd = 0;
     if (haveSelection && (paintSelectedTextOnly || paintSelectedTextSeparately))
-        selectionStartEnd(sPos, ePos);
+        selectionStartEnd(selectionStart, selectionEnd);
 
     if (m_truncation != cNoTruncation) {
-        sPos = std::min<int>(sPos, m_truncation);
-        ePos = std::min<int>(ePos, m_truncation);
+        selectionStart = std::min<int>(selectionStart, m_truncation);
+        selectionEnd = std::min<int>(selectionEnd, m_truncation);
         length = m_truncation;
     }
 
@@ -612,7 +612,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     else
         textOrigin.setX(roundToDevicePixel(LayoutUnit(textOrigin.x()), renderer().document().deviceScaleFactor()));
 
-    TextPainter textPainter(context, paintSelectedTextOnly, paintSelectedTextSeparately, font, sPos, ePos, length, emphasisMark, combinedText, textRun, boxRect, textOrigin, emphasisMarkOffset, textShadow, selectionShadow, isHorizontal(), textPaintStyle, selectionPaintStyle);
+    TextPainter textPainter(context, paintSelectedTextOnly, paintSelectedTextSeparately, font, selectionStart, selectionEnd, length, emphasisMark, combinedText, textRun, boxRect, textOrigin, emphasisMarkOffset, textShadow, selectionShadow, isHorizontal(), textPaintStyle, selectionPaintStyle);
     textPainter.paintText();
 
     // Paint decorations

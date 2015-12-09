@@ -1,3 +1,21 @@
+2015-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        TextPainter: Rename start and end position to selectionStart and selectionEnd.
+        https://bugs.webkit.org/show_bug.cgi?id=152088
+
+        Reviewed by Myles C. Maxfield.
+
+        They actually mean selection start/end.
+
+        No change in functionality.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::TextPainter):
+        (WebCore::TextPainter::paintText):
+        * rendering/TextPainter.h:
+
 2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Anonymous render block flow elements should be exposed as ATK_ROLE_SECTION; not ATK_ROLE_PANEL

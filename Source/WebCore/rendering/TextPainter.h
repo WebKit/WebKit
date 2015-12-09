@@ -45,9 +45,9 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 class TextPainter {
 public:
     TextPainter(GraphicsContext&, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const FontCascade&,
-    int startPositionInTextRun, int endPositionInTextBoxString, int length, const AtomicString& emphasisMark, RenderCombineText*,
-    TextRun&, FloatRect& boxRect, FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow,
-    bool textBoxIsHorizontal, TextPaintStyle& nonSelectionPaintStyle, TextPaintStyle& selectionPaintStyle);
+        int selectionStart, int selectionEnd, int length, const AtomicString& emphasisMark, RenderCombineText*,
+        TextRun&, FloatRect& boxRect, FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow,
+        bool textBoxIsHorizontal, TextPaintStyle& nonSelectionPaintStyle, TextPaintStyle& selectionPaintStyle);
     
     void paintText();
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
@@ -70,8 +70,8 @@ private:
     bool m_paintSelectedTextOnly;
     bool m_paintSelectedTextSeparately;
     const FontCascade& m_font;
-    int m_startPositionInTextRun;
-    int m_endPositionInTextRun;
+    int m_selectionStart;
+    int m_selectionEnd;
     int m_length;
     const AtomicString& m_emphasisMark;
     RenderCombineText* m_combinedText;
