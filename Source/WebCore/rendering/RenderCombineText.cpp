@@ -117,19 +117,21 @@ void RenderCombineText::combineText()
     float emWidth = description.computedSize() * textCombineMargin;
     bool shouldUpdateFont = false;
 
+    FontSelector* fontSelector = style().fontCascade().fontSelector();
+
     description.setOrientation(Horizontal); // We are going to draw combined text horizontally.
+
+    FontCascade horizontalFont(description, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+    horizontalFont.update(fontSelector);
     
     GlyphOverflow glyphOverflow;
     glyphOverflow.computeBounds = true;
-    
-    float combinedTextWidth = width(0, textLength(), originalFont(), 0, nullptr, &glyphOverflow);
+    float combinedTextWidth = width(0, textLength(), horizontalFont, 0, nullptr, &glyphOverflow);
 
     float bestFitDelta = combinedTextWidth - emWidth;
     auto bestFitDescription = description;
 
     m_isCombined = combinedTextWidth <= emWidth;
-    
-    FontSelector* fontSelector = style().fontCascade().fontSelector();
     
     if (m_isCombined)
         shouldUpdateFont = m_combineFontStyle->setFontDescription(description); // Need to change font orientation to horizontal.

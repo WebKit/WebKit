@@ -1,5 +1,32 @@
 2015-12-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r192639. rdar://problem/23814338
+
+    2015-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Tatechuyoko in ruby sits too high
+            https://bugs.webkit.org/show_bug.cgi?id=151309
+            <rdar://problem/23536621>
+
+            Reviewed by Darin Adler.
+
+            When combining text, we ask what the text's width is in order to determine if it fits in the
+            column. However, when we do that, we were not setting the font's orientation to horizontal.
+            This means that, for CJK text, the "width" which was returned was actually the height of the
+            glyph, and the GlyphOverflow data was similarly garbled.
+
+            We actually already were creating a corrected FontDescription, and using it in two places.
+            However, we weren't using it in the last place, which was causing this bug.
+
+            Test: fast/text/text-combine-placement.html
+
+            * platform/graphics/FontCascade.cpp:
+            (WebCore::FontCascade::width):
+            * rendering/RenderCombineText.cpp:
+            (WebCore::RenderCombineText::combineText):
+
+2015-12-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r192388. rdar://problem/23814336
 
     2015-11-12  David Hyatt  <hyatt@apple.com>
