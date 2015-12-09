@@ -9,7 +9,7 @@ setTimeout(function() {
         document.getElementById("target").src = "javascript:alert('FAIL')";
     }, 0);
 
-window.addEventListener("popstate", function() {
+window.addEventListener("load", function() {
         document.write("PASS - Javascript URL blocked without crashing.");
         if (window.testRunner)
             testRunner.notifyDone();
