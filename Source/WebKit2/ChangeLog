@@ -1,3 +1,38 @@
+2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics] layerTreeHost always exist in CoordinatedDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=151987
+
+        Reviewed by Darin Adler.
+
+        CoordinatedGraphics using UI side compositor always forces accelerated compositing.
+        This patch cleans up dead code for layerTreeHost which always exists.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::paint): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::setBackingStoreIsDiscardable): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::update): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::didUpdateBackingStoreState): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::incorporateUpdate): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::discardBackingStoreSoon): Deleted.
+        (WebKit::CoordinatedDrawingAreaProxy::discardBackingStore): Deleted.
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h:
+        (WebKit::CoordinatedDrawingAreaProxy::setBackingStoreIsDiscardable):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::CoordinatedDrawingArea): Deleted.
+        (WebKit::CoordinatedDrawingArea::layerHostDidFlushLayers): Deleted.
+        (WebKit::CoordinatedDrawingArea::scheduleCompositingLayerFlush): Deleted.
+        (WebKit::CoordinatedDrawingArea::didUpdate): Deleted.
+        (WebKit::CoordinatedDrawingArea::enterAcceleratedCompositingMode): Deleted.
+        (WebKit::CoordinatedDrawingArea::scheduleDisplay): Deleted.
+        (WebKit::CoordinatedDrawingArea::displayTimerFired): Deleted.
+        (WebKit::CoordinatedDrawingArea::display): Deleted.
+        (WebKit::shouldPaintBoundsRect): Deleted.
+        (WebKit::CoordinatedDrawingArea::attachViewOverlayGraphicsLayer): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+
 2015-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards implementing downloads with NetworkSession

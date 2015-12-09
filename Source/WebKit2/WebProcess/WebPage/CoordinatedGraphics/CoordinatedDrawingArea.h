@@ -77,7 +77,6 @@ private:
 
     // IPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
-    virtual void didUpdate() override;
     virtual void suspendPainting();
     virtual void resumePainting();
 
@@ -88,16 +87,7 @@ private:
     bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
     void exitAcceleratedCompositingMode() { }
 
-    void scheduleDisplay();
-    void displayTimerFired();
-    void display();
-    void display(UpdateInfo&);
-
     uint64_t m_backingStoreStateID;
-
-    WebCore::Region m_dirtyRegion;
-    WebCore::IntRect m_scrollRect;
-    WebCore::IntSize m_scrollOffset;
 
     // Whether painting is enabled. If painting is disabled, any calls to setNeedsDisplay and scroll are ignored.
     bool m_isPaintingEnabled;
@@ -108,10 +98,6 @@ private:
     // When true, we should send an UpdateBackingStoreState message instead of any other messages
     // we normally send to the UI process.
     bool m_shouldSendDidUpdateBackingStoreState;
-
-    // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the
-    // web process won't paint more frequent than the UI process can handle.
-    bool m_isWaitingForDidUpdate;
 
     // True between sending the 'enter compositing' messages, and the 'exit compositing' message.
     bool m_compositingAccordingToProxyMessages;
@@ -128,7 +114,6 @@ private:
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended;
 
-    RunLoop::Timer<CoordinatedDrawingArea> m_displayTimer;
     RunLoop::Timer<CoordinatedDrawingArea> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.

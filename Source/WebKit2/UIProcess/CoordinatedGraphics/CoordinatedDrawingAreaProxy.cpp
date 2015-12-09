@@ -54,12 +54,9 @@ CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy(WebPageProxy& webPagePr
     , m_nextBackingStoreStateID(0)
     , m_isWaitingForDidUpdateBackingStoreState(false)
     , m_hasReceivedFirstUpdate(false)
-    , m_isBackingStoreDiscardable(true)
-    , m_discardBackingStoreTimer(RunLoop::current(), this, &CoordinatedDrawingAreaProxy::discardBackingStore)
 {
     // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
-    if (webPageProxy.pageGroup().preferences().forceCompositingMode())
-        m_coordinatedLayerTreeHostProxy = std::make_unique<CoordinatedLayerTreeHostProxy>(this);
+    m_coordinatedLayerTreeHostProxy = std::make_unique<CoordinatedLayerTreeHostProxy>(this);
 }
 
 CoordinatedDrawingAreaProxy::~CoordinatedDrawingAreaProxy()
@@ -67,49 +64,6 @@ CoordinatedDrawingAreaProxy::~CoordinatedDrawingAreaProxy()
     // Make sure to exit accelerated compositing mode.
     if (isInAcceleratedCompositingMode())
         exitAcceleratedCompositingMode();
-}
-
-void CoordinatedDrawingAreaProxy::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)
-{
-    unpaintedRegion = rect;
-
-    if (isInAcceleratedCompositingMode())
-        return;
-
-    ASSERT(m_currentBackingStoreStateID <= m_nextBackingStoreStateID);
-    if (m_currentBackingStoreStateID < m_nextBackingStoreStateID) {
-        // Tell the web process to do a full backing store update now, in case we previously told
-        // it about our next state but didn't request an immediate update.
-        sendUpdateBackingStoreState(RespondImmediately);
-
-        // If we haven't yet received our first bits from the WebProcess then don't paint anything.
-        if (!m_hasReceivedFirstUpdate)
-            return;
-
-        if (m_isWaitingForDidUpdateBackingStoreState) {
-            // Wait for a DidUpdateBackingStoreState message that contains the new bits before we paint
-            // what's currently in the backing store.
-            waitForAndDispatchDidUpdateBackingStoreState();
-        }
-
-        // Dispatching DidUpdateBackingStoreState (either beneath sendUpdateBackingStoreState or
-        // beneath waitForAndDispatchDidUpdateBackingStoreState) could destroy our backing store or
-        // change the compositing mode.
-        if (!m_backingStore || isInAcceleratedCompositingMode())
-            return;
-    } else {
-        ASSERT(!m_isWaitingForDidUpdateBackingStoreState);
-        if (!m_backingStore) {
-            // The view has asked us to paint before the web process has painted anything. There's
-            // nothing we can do.
-            return;
-        }
-    }
-
-    m_backingStore->paint(context, rect);
-    unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
-
-    discardBackingStoreSoon();
 }
 
 void CoordinatedDrawingAreaProxy::updateViewport()
@@ -136,37 +90,13 @@ void CoordinatedDrawingAreaProxy::visibilityDidChange()
 {
     // If we don't have a backing store, go ahead and mark the backing store as being changed so
     // that when paint we'll actually wait for something to paint and not flash white.
-    if (!m_backingStore && m_layerTreeContext.isEmpty())
+    if (m_layerTreeContext.isEmpty())
         backingStoreStateDidChange(DoNotRespondImmediately);
-}
-
-void CoordinatedDrawingAreaProxy::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
-{
-    if (m_isBackingStoreDiscardable == isBackingStoreDiscardable)
-        return;
-
-    m_isBackingStoreDiscardable = isBackingStoreDiscardable;
-    if (m_isBackingStoreDiscardable)
-        discardBackingStoreSoon();
-    else
-        m_discardBackingStoreTimer.stop();
 }
 
 void CoordinatedDrawingAreaProxy::waitForBackingStoreUpdateOnNextPaint()
 {
     m_hasReceivedFirstUpdate = true;
-}
-
-void CoordinatedDrawingAreaProxy::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
-{
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
-    if (backingStoreStateID < m_currentBackingStoreStateID)
-        return;
-
-    // FIXME: Handle the case where the view is hidden.
-
-    incorporateUpdate(updateInfo);
-    m_webPageProxy.process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy.pageID());
 }
 
 void CoordinatedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
@@ -196,16 +126,6 @@ void CoordinatedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingSto
         sendUpdateBackingStoreState(RespondImmediately);
     else
         m_hasReceivedFirstUpdate = true;
-
-    if (isInAcceleratedCompositingMode()) {
-        ASSERT(!m_backingStore);
-        return;
-    }
-
-    // If we have a backing store the right size, reuse it.
-    if (m_backingStore && (m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor))
-        m_backingStore = nullptr;
-    incorporateUpdate(updateInfo);
 }
 
 void CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
@@ -224,8 +144,6 @@ void CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode(uint64_t backin
         return;
 
     exitAcceleratedCompositingMode();
-
-    incorporateUpdate(updateInfo);
 }
 
 void CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
@@ -235,34 +153,6 @@ void CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode(uint64_t back
         return;
 
     updateAcceleratedCompositingMode(layerTreeContext);
-}
-
-void CoordinatedDrawingAreaProxy::incorporateUpdate(const UpdateInfo& updateInfo)
-{
-    ASSERT(!isInAcceleratedCompositingMode());
-
-    if (updateInfo.updateRectBounds.isEmpty())
-        return;
-
-    if (!m_backingStore)
-        m_backingStore = std::make_unique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
-
-    m_backingStore->incorporateUpdate(updateInfo);
-
-    bool shouldScroll = !updateInfo.scrollRect.isEmpty();
-
-    if (shouldScroll)
-        m_webPageProxy.scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
-
-    if (shouldScroll && !m_webPageProxy.canScrollView())
-        m_webPageProxy.setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy.viewSize()));
-    else {
-        for (auto& updateRect : updateInfo.updateRects)
-            m_webPageProxy.setViewNeedsDisplay(updateRect);
-    }
-
-    if (shouldScroll)
-        m_webPageProxy.displayView();
 }
 
 void CoordinatedDrawingAreaProxy::backingStoreStateDidChange(RespondImmediatelyOrNot respondImmediatelyOrNot)
@@ -324,17 +214,13 @@ void CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode(const LayerTre
 {
     ASSERT(!isInAcceleratedCompositingMode());
 
-    m_backingStore = nullptr;
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
-    if (!m_coordinatedLayerTreeHostProxy)
-        m_coordinatedLayerTreeHostProxy = std::make_unique<CoordinatedLayerTreeHostProxy>(this);
 }
 
 void CoordinatedDrawingAreaProxy::setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)
 {
-    if (m_coordinatedLayerTreeHostProxy)
-        m_coordinatedLayerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
+    m_coordinatedLayerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
 }
 
 void CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode()
@@ -351,24 +237,6 @@ void CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode(const LayerTr
 
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy.updateAcceleratedCompositingMode(layerTreeContext);
-}
-
-void CoordinatedDrawingAreaProxy::discardBackingStoreSoon()
-{
-    if (!m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())
-        return;
-
-    // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.
-    // FIXME: It would be smarter to make this delay based on how expensive painting is. See <http://webkit.org/b/55733>.
-    static const double discardBackingStoreDelay = 2;
-
-    m_discardBackingStoreTimer.startOneShot(discardBackingStoreDelay);
-}
-
-void CoordinatedDrawingAreaProxy::discardBackingStore()
-{
-    m_backingStore = nullptr;
-    backingStoreStateDidChange(DoNotRespondImmediately);
 }
 
 } // namespace WebKit

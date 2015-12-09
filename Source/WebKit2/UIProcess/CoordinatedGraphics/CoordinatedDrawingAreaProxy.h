@@ -47,8 +47,6 @@ public:
     explicit CoordinatedDrawingAreaProxy(WebPageProxy&);
     virtual ~CoordinatedDrawingAreaProxy();
 
-    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
-
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
     void visibilityDidChange();
 
@@ -68,17 +66,13 @@ private:
     virtual void sizeDidChange();
     virtual void deviceScaleFactorDidChange();
 
-    virtual void setBackingStoreIsDiscardable(bool);
     virtual void waitForBackingStoreUpdateOnNextPaint();
 
     // IPC message handlers
-    virtual void update(uint64_t backingStoreStateID, const UpdateInfo&);
     virtual void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&);
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&);
     virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);
-
-    void incorporateUpdate(const UpdateInfo&);
 
     enum RespondImmediatelyOrNot { DoNotRespondImmediately, RespondImmediately };
     void backingStoreStateDidChange(RespondImmediatelyOrNot);
@@ -88,9 +82,6 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
-
-    void discardBackingStoreSoon();
-    void discardBackingStore();
 
     std::unique_ptr<CoordinatedLayerTreeHostProxy> m_coordinatedLayerTreeHostProxy;
 
@@ -112,11 +103,6 @@ private:
 
     // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
     bool m_hasReceivedFirstUpdate;
-
-    bool m_isBackingStoreDiscardable;
-    std::unique_ptr<BackingStore> m_backingStore;
-
-    RunLoop::Timer<CoordinatedDrawingAreaProxy> m_discardBackingStoreTimer;
 };
 
 } // namespace WebKit
