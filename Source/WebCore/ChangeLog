@@ -1,5 +1,18 @@
 2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Soup] SocketStreamHandle should call g_source_destroy() on the write-ready source
+        https://bugs.webkit.org/show_bug.cgi?id=152040
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::SocketStreamHandle::stopWaitingForSocketWritability): Instead of
+        calling the g_source_get_id()-g_source_remove() pair, destroy the source via
+        the g_source_destroy() call. Also use nullptr to clear out the pointer
+        variable.
+
+2015-12-09  Zan Dobersek  <zdobersek@igalia.com>
+
         Make AudioBusGtk implementation GLib-specific
         https://bugs.webkit.org/show_bug.cgi?id=152049
 

@@ -253,8 +253,8 @@ void SocketStreamHandle::stopWaitingForSocketWritability()
     if (!m_writeReadySource) // Not waiting.
         return;
 
-    g_source_remove(g_source_get_id(m_writeReadySource.get()));
-    m_writeReadySource = 0;
+    g_source_destroy(m_writeReadySource.get());
+    m_writeReadySource = nullptr;
 }
 
 static void connectedCallback(GSocketClient* client, GAsyncResult* result, void* id)
