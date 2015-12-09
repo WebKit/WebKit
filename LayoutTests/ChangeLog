@@ -1,5 +1,18 @@
 2015-12-08  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: IDBTransaction::hasPendingActivity() was wrong, leading to premature GC of the wrapper.
+        https://bugs.webkit.org/show_bug.cgi?id=151507
+
+        Reviewed by Beth Dakin.
+
+        A handful of tests were marked flaky and tracked back to this bug.
+        
+        Ever since the presumed fix for this bug (r192687) the flakiness dashboard says they pass.
+        
+        * platform/mac-wk1/TestExpectations: Re-enable the no-longer-flaky tests.
+
+2015-12-08  Brady Eidson  <beidson@apple.com>
+
         More IDB TestExpectations gardening.
 
         Reviewed by Alex Christensen.

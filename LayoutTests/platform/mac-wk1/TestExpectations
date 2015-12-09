@@ -225,16 +225,6 @@ webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/oes-texture-half-float.html 
 # This test gives a different output on ElCapitan-wk1 only.
 [ ElCapitan+ ] fast/replaced/replaced-breaking.html [ Failure ]
 
-webkit.org/b/151219 storage/indexeddb/modern/idbindex-properties-basic.html [ Pass Timeout ]
-
-webkit.org/b/151364 storage/indexeddb/modern/get-index-failures.html [ Pass Timeout ]
-
-webkit.org/b/151389 storage/indexeddb/modern/aborted-put.html [ Pass Timeout ]
-
-webkit.org/b/151448 storage/indexeddb/modern/cursor-2.html [ Pass Timeout ]
-webkit.org/b/151448 storage/indexeddb/modern/cursor-3.html [ Pass Timeout ]
-webkit.org/b/151448 storage/indexeddb/modern/cursor-4.html [ Pass Timeout ]
-
 ### END OF (2) Failures without bug reports
 ########################################
 
