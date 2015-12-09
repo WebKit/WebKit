@@ -37,8 +37,9 @@ namespace IDBServer {
 MemoryObjectStoreCursor::MemoryObjectStoreCursor(MemoryObjectStore& objectStore, const IDBCursorInfo& info)
     : MemoryCursor(info)
     , m_objectStore(objectStore)
+    , m_remainingRange(info.range())
 {
-    m_remainingRange = m_info.range();
+    LOG(IndexedDB, "MemoryObjectStoreCursor::MemoryObjectStoreCursor %s", info.range().loggingString().utf8().data());
 
     auto* orderedKeys = objectStore.orderedKeys();
     if (!orderedKeys)
@@ -145,6 +146,9 @@ void MemoryObjectStoreCursor::setReverseIteratorFromRemainingRange(std::set<IDBK
 
     if (!m_remainingRange.upperKey.isValid()) {
         m_iterator = --set.end();
+        if (!m_remainingRange.containsKey(**m_iterator))
+            m_iterator = Nullopt;
+
         return;
     }
 

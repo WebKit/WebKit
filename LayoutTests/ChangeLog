@@ -1,3 +1,12 @@
+2015-12-08  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/objectstore-cursor.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152023
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+
 2015-12-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skipping fast/canvas/canvas-too-large-to-draw.html on win
