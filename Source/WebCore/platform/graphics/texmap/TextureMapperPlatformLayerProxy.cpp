@@ -63,6 +63,7 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
     LockHolder locker(m_lock);
     m_compositor = compositor;
     m_targetLayer = targetLayer;
+    m_compositorThreadUpdateTimer = std::make_unique<RunLoop::Timer<TextureMapperPlatformLayerProxy>>(RunLoop::current(), this, &TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired);
 }
 
 void TextureMapperPlatformLayerProxy::invalidate()
@@ -150,6 +151,30 @@ void TextureMapperPlatformLayerProxy::swapBuffer()
 
     if (prevBuffer && prevBuffer->hasManagedTexture())
         m_usedBuffers.append(WTF::move(prevBuffer));
+}
+
+bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(std::function<void()>&& updateFunction)
+{
+    LockHolder locker(m_lock);
+    if (!m_compositorThreadUpdateTimer)
+        return false;
+
+    m_compositorThreadUpdateFunction = WTF::move(updateFunction);
+    m_compositorThreadUpdateTimer->startOneShot(0);
+    return true;
+}
+
+void TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired()
+{
+    std::function<void()> updateFunction;
+    {
+        LockHolder locker(m_lock);
+        if (!m_compositorThreadUpdateFunction)
+            return;
+        updateFunction = WTF::move(m_compositorThreadUpdateFunction);
+    }
+
+    updateFunction();
 }
 
 } // namespace WebCore

@@ -1,3 +1,38 @@
+2015-12-09  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [ThreadedCompositor] Support HTML5 Video
+        https://bugs.webkit.org/show_bug.cgi?id=143301
+
+        Reviewed by Žan Doberšek.
+
+        This patch implements HTML5 Video supports in Threaded Compositor.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        Added to support GStreamer GL by ensuring unmapping of the swapped
+        GstVideoFrame performed at GStreamer GL's gl thread.
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture):
+        Modified to upload decoded frame to the given texture instead of
+        creating a texture itself because we should use a texture from the
+        proxy when we are using the threaded compositor.
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        Implements two ways to send a texture from GStreamer to the compositor.
+        1. If we are not using GStreamer GL, we are going to acquire a free texture
+        from a TextureMapperPlatformLayerProxy and upload the decoded frame to the
+        texture. This should be done at the compositing thread because we
+        don't have a Gst's GL thread.
+        2. If we are using GStreamer GL, we map a texture for the given frame
+        and passes it to the compositing thread. The mapped frame will be
+        freed if it is swapped out or the layer is removed.
+
+        (WebCore::MediaPlayerPrivateGStreamerBase::paintToTextureMapper):
+        Modified to aquire a new texture itself.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        Adds a way to pass a function to the compositing thread to allocate /
+        upload textures at the compositing thread.
+
+
 2015-12-09  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] pipeThrough test failing

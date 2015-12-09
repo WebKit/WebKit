@@ -75,6 +75,8 @@ public:
 
     void swapBuffer();
 
+    bool scheduleUpdateOnCompositorThread(std::function<void()>&&);
+
 private:
     void scheduleReleaseUnusedBuffers();
     void releaseUnusedBuffersTimerFired();
@@ -93,6 +95,10 @@ private:
 #ifndef NDEBUG
     ThreadIdentifier m_compositorThreadID { 0 };
 #endif
+
+    void compositorThreadUpdateTimerFired();
+    std::unique_ptr<RunLoop::Timer<TextureMapperPlatformLayerProxy>> m_compositorThreadUpdateTimer;
+    std::function<void()> m_compositorThreadUpdateFunction;
 };
 
 } // namespace WebCore
