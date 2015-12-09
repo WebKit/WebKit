@@ -11,59 +11,59 @@ indexedDB.open(dbname)
 db.createObjectStore('store');
 
 
-testValidBinaryKeys():
+testInvalidBinaryKeys1():
 trans = db.transaction('store', 'readwrite')
 store = trans.objectStore('store')
 
-store.put(0, new Uint8Array([]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [].toString()
-store.get(new Uint8Array([]));
-PASS request.result is 0
+Expecting exception from store.put(0, new Uint8Array([]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-store.put(1, new Uint8Array([0]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [0].toString()
-store.get(new Uint8Array([0]));
-PASS request.result is 1
+Expecting exception from store.put(1, new Uint8Array([0]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-store.put(2, new Uint8Array([0, 0]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [0, 0].toString()
-store.get(new Uint8Array([0, 0]));
-PASS request.result is 2
+Expecting exception from store.put(2, new Uint8Array([0, 0]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-store.put(3, new Uint8Array([0, 1]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [0, 1].toString()
-store.get(new Uint8Array([0, 1]));
-PASS request.result is 3
+Expecting exception from store.put(3, new Uint8Array([0, 1]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-store.put(4, new Uint8Array([1]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [1].toString()
-store.get(new Uint8Array([1]));
-PASS request.result is 4
+Expecting exception from store.put(4, new Uint8Array([1]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-store.put(5, new Uint8Array([1, 0]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [1, 0].toString()
-store.get(new Uint8Array([1, 0]));
-PASS request.result is 5
+Expecting exception from store.put(5, new Uint8Array([1, 0]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-store.put(6, new Uint8Array([1, 1]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [1, 1].toString()
-store.get(new Uint8Array([1, 1]));
-PASS request.result is 6
+Expecting exception from store.put(6, new Uint8Array([1, 1]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-store.put(7, new Uint8Array([255]));
-PASS request.result.toString() is "[object Uint8Array]"
-PASS [].slice.call(request.result).toString() is [255].toString()
-store.get(new Uint8Array([255]));
-PASS request.result is 7
+Expecting exception from store.put(7, new Uint8Array([255]));
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: The data provided does not meet requirements.
 
-testInvalidBinaryKeys():
+testInvalidBinaryKeys2():
 trans = db.transaction('store', 'readwrite')
 store = trans.objectStore('store')
 
@@ -71,61 +71,61 @@ Expecting exception from store.put('value', new Uint8ClampedArray([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Uint16Array([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Uint32Array([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Int8Array([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Int16Array([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Int32Array([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Float32Array([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Float64Array([1,2,3]))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new Uint8Array([1,2,3]).buffer)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 
 Expecting exception from store.put('value', new DataView(new Uint8Array([1,2,3]).buffer))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to execute 'put' on 'IDBObjectStore': The parameter is not a valid key.
+Exception message: The data provided does not meet requirements.
 PASS successfullyParsed is true
 
 TEST COMPLETE

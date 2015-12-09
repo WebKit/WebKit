@@ -1,5 +1,20 @@
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Some tests expect UInt8Array to be a valid key.
+        https://bugs.webkit.org/show_bug.cgi?id=152092
+
+        Reviewed by Alex Christensen.
+
+        Everything that expected UInt8Array to be a valid key needs to be updated to expect it to be invalid.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/factory-cmp-expected.txt:
+        * storage/indexeddb/key-type-binary-expected.txt:
+        * storage/indexeddb/resources/factory-cmp.js:
+        * storage/indexeddb/resources/key-type-binary.js:
+
+2015-12-09  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/createIndex-after-failure.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152078
 

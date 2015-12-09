@@ -5,7 +5,7 @@ if (this.importScripts) {
 
 description("Test IndexedDB binary keys");
 
-indexedDBTest(prepareDatabase, testValidBinaryKeys);
+indexedDBTest(prepareDatabase, testInvalidBinaryKeys1);
 function prepareDatabase()
 {
     db = event.target.result;
@@ -14,7 +14,7 @@ function prepareDatabase()
     debug("");
 }
 
-function testValidBinaryKeys()
+function testInvalidBinaryKeys1()
 {
     preamble();
     evalAndLog("trans = db.transaction('store', 'readwrite')");
@@ -35,29 +35,18 @@ function testValidBinaryKeys()
         if (!cases.length)
             return;
 
-        key = cases.shift();
-        value = n++;
-
-        debug("");
-        request = evalAndLog("store.put(" + JSON.stringify(value) + ", new Uint8Array(" + key + "));");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            shouldBeEqualToString("request.result.toString()", "[object Uint8Array]");
-            shouldBe("[].slice.call(request.result).toString()", key + ".toString()");
-
-            request = evalAndLog("store.get(new Uint8Array(" + key + "));");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function() {
-                shouldBe("request.result", JSON.stringify(value));
-                testCase();
-            };
-        };
+        while (cases.length) {
+            key = cases.shift();
+            value = n++;
+            debug("");
+            evalAndExpectException("store.put(" + JSON.stringify(value) + ", new Uint8Array(" + key + "));", "0", "'DataError'");
+        }
     }());
 
-    trans.oncomplete = testInvalidBinaryKeys;
+    trans.oncomplete = testInvalidBinaryKeys2;
 }
 
-function testInvalidBinaryKeys()
+function testInvalidBinaryKeys2()
 {
     preamble();
     evalAndLog("trans = db.transaction('store', 'readwrite')");
