@@ -1,0 +1,37 @@
+Paragraph
+
+button
+
+
+Div
+button
+Heading
+button
+
+
+End of test
+AXRole: AXWebArea 
+    AXRole: AXParagraph AXValue: Paragraph
+    AXRole: AXSection AXValue: <obj>
+        AXRole: AXButton 
+    AXRole: AXSection AXValue: <obj>
+        AXRole: AXGroup 
+            AXRole: AXScrollArea 
+                AXRole: AXWebArea 
+    AXRole: AXSection AXValue: <obj>
+        AXRole: AXTextField AXValue: text area
+    AXRole: AXSection AXValue: Div<\n><obj>
+        AXRole: AXButton 
+    AXRole: AXHeading AXValue: Heading<\n><obj><\n><obj>
+        AXRole: AXButton 
+        AXRole: AXImage 
+    AXRole: AXSection AXValue: End of test
+This tests that the text associated with replaced objects in an anonymous block is correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

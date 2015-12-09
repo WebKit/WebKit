@@ -1,0 +1,20 @@
+ 
+This tests that the media controls panel has the correct name and role
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL mainBlock.role should be AXRole: AXGroup. Was AXRole: AXSection.
+PASS mainBlock.title is 'AXTitle: '
+PASS element.role is 'AXRole: AXVideo'
+PASS element.title is 'AXTitle: '
+PASS element.role is 'AXRole: AXToolbar'
+PASS element.title is 'AXTitle: Video Playback'
+PASS element.role is 'AXRole: AXAudio'
+PASS element.title is 'AXTitle: '
+PASS element.role is 'AXRole: AXToolbar'
+PASS element.title is 'AXTitle: Audio Playback'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -2698,13 +2698,20 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return LandmarkBannerRole;
     if (node && node->hasTagName(footerTag) && !isDescendantOfElementType(articleTag) && !isDescendantOfElementType(sectionTag))
         return FooterRole;
-
-    if (m_renderer->isRenderBlockFlow())
-        return GroupRole;
     
     // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
     if (supportsARIAAttributes() || canSetFocusAttribute())
         return GroupRole;
+
+    if (m_renderer->isRenderBlockFlow()) {
+#if PLATFORM(GTK)
+        // For ATK, GroupRole maps to ATK_ROLE_PANEL. Panels are most commonly found (and hence
+        // expected) in UI elements; not text blocks.
+        return m_renderer->isAnonymousBlock() ? DivRole : GroupRole;
+#else
+        return GroupRole;
+#endif
+    }
     
     // InlineRole is the final fallback before assigning UnknownRole to an object. It makes it
     // possible to distinguish truly unknown objects from non-focusable inline text elements

@@ -1,3 +1,18 @@
+2015-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [GTK] Anonymous render block flow elements should be exposed as ATK_ROLE_SECTION; not ATK_ROLE_PANEL
+        https://bugs.webkit.org/show_bug.cgi?id=152070
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt: Added.
+        * platform/gtk/accessibility/gtk/media-controls-panel-title-expected.txt: Added.
+        * platform/gtk/accessibility/gtk/replaced-objects-in-anonymous-blocks-expected.txt: Added.
+        * platform/gtk/accessibility/image-link-expected.txt: Updated
+        * platform/gtk/accessibility/image-with-alt-and-map-expected.txt: Updated.
+        * platform/gtk/accessibility/lists-expected.txt: Updated.
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt: Updated.
+
 2015-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Replacing Yosemite flag with Release flag for two flaky xmlhttprequest tests.

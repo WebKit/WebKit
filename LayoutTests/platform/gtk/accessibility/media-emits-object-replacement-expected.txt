@@ -9,7 +9,7 @@ AXRole: AXWebArea
                 AXRole: AXButton 
                 AXRole: AXSlider 
                 AXRole: AXTimer AXValue: 00:00
-    AXRole: AXGroup AXValue: <\n>
+    AXRole: AXSection AXValue: <\n>
     AXRole: AXSection AXValue: a <obj> b
         AXRole: AXAudio 
             AXRole: AXToolbar 
