@@ -1,3 +1,22 @@
+2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics] Remove unnecessary guards in CoordinatedDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=152068
+
+        Reviewed by Gyuyoung Kim.
+
+        CoordinatedDrawingArea is only for UI side compositor of CoordinatedGraphics.
+        So, COORDINATED_GRAPHICS_MULTIPROCESS guards are not necessary.
+        This patch also removes COORDINATED_GRAPHICS_MULTIPROCESS guards from DrawingAreaImpl
+        because of same reason.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::CoordinatedDrawingArea): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+
 2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] Crash in WebProcess when loading large content with custom URI schemes

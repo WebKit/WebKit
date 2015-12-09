@@ -64,13 +64,7 @@ private:
     virtual void scheduleCompositingLayerFlush() override;
     virtual void scheduleCompositingLayerFlushImmediately() override;
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) override;
-#endif
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
-    virtual void setNativeSurfaceHandleForCompositing(uint64_t) override { };
-#endif
 
     virtual void viewStateDidChange(WebCore::ViewState::Flags, bool /* wantsDidUpdateViewState */, const Vector<uint64_t>& /* callbackIDs */) override;
     virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;

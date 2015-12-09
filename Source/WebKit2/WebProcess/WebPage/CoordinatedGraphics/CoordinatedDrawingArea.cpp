@@ -55,11 +55,7 @@ CoordinatedDrawingArea::~CoordinatedDrawingArea()
 }
 
 CoordinatedDrawingArea::CoordinatedDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     : DrawingArea(DrawingAreaTypeCoordinated, webPage)
-#else
-    : DrawingArea(DrawingAreaTypeImpl, webPage)
-#endif
     , m_backingStoreStateID(0)
     , m_isPaintingEnabled(true)
     , m_inUpdateBackingStoreState(false)
@@ -330,12 +326,10 @@ void CoordinatedDrawingArea::exitAcceleratedCompositingModeSoon()
     m_exitCompositingTimer.startOneShot(0);
 }
 
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
 }
-#endif
 
 void CoordinatedDrawingArea::viewStateDidChange(ViewState::Flags changed, bool, const Vector<uint64_t>&)
 {

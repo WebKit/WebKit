@@ -45,11 +45,7 @@ using namespace WebCore;
 namespace WebKit {
 
 CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy(WebPageProxy& webPageProxy)
-#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     : DrawingAreaProxy(DrawingAreaTypeCoordinated, webPageProxy)
-#else
-    : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
-#endif
     , m_currentBackingStoreStateID(0)
     , m_nextBackingStoreStateID(0)
     , m_isWaitingForDidUpdateBackingStoreState(false)
