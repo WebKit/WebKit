@@ -26,6 +26,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 static WebKitTestServer* kServer;
@@ -197,7 +198,10 @@ static const char* kBarHTML = "<html><body>Bar</body></html>";
 static const char* kEchoHTMLFormat = "<html><body>%s</body></html>";
 static const char* errorDomain = "test";
 static const int errorCode = 10;
-static const char* errorMessage = "Error message.";
+
+static const char* genericErrorMessage = "Error message.";
+static const char* beforeReceiveResponseErrorMessage = "Error before didReceiveResponse.";
+static const char* afterInitialChunkErrorMessage = "Error after reading the initial chunk.";
 
 class URISchemeTest: public LoadTrackingTest {
 public:
@@ -229,23 +233,38 @@ public:
 
         g_assert(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
 
-        GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
-        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(inputStream.get()));
-
         const char* scheme = webkit_uri_scheme_request_get_scheme(request);
         g_assert(scheme);
         g_assert(test->m_handlersMap.contains(String::fromUTF8(scheme)));
 
+        const URISchemeHandler& handler = test->m_handlersMap.get(String::fromUTF8(scheme));
+
+        GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(inputStream.get()));
+
+        const gchar* requestPath = webkit_uri_scheme_request_get_path(request);
+
         if (!g_strcmp0(scheme, "error")) {
-            GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, errorMessage));
-            webkit_uri_scheme_request_finish_error(request, error.get());
+            if (!g_strcmp0(requestPath, "before-response")) {
+                GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, beforeReceiveResponseErrorMessage));
+                // We call finish() and then finish_error() to make sure that not even
+                // the didReceiveResponse message is processed at the time of failing.
+                webkit_uri_scheme_request_finish(request, G_INPUT_STREAM(inputStream.get()), handler.replyLength, handler.mimeType.data());
+                webkit_uri_scheme_request_finish_error(request, error.get());
+            } else if (!g_strcmp0(requestPath, "after-first-chunk")) {
+                g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.data(), handler.reply.length(), 0);
+                webkit_uri_scheme_request_finish(request, inputStream.get(), handler.replyLength, handler.mimeType.data());
+                // We need to wait until we reach the load-committed state before calling webkit_uri_scheme_request_finish_error(),
+                // so we rely on the test using finishOnCommittedAndWaitUntilLoadFinished() to actually call it from loadCommitted().
+            } else {
+                GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, genericErrorMessage));
+                webkit_uri_scheme_request_finish_error(request, error.get());
+            }
             return;
         }
 
-        const URISchemeHandler& handler = test->m_handlersMap.get(String::fromUTF8(scheme));
-
         if (!g_strcmp0(scheme, "echo")) {
-            char* replyHTML = g_strdup_printf(handler.reply.data(), webkit_uri_scheme_request_get_path(request));
+            char* replyHTML = g_strdup_printf(handler.reply.data(), requestPath);
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), replyHTML, strlen(replyHTML), g_free);
         } else if (!g_strcmp0(scheme, "closed"))
             g_input_stream_close(inputStream.get(), 0, 0);
@@ -261,9 +280,54 @@ public:
         webkit_web_context_register_uri_scheme(m_webContext.get(), scheme, uriSchemeRequestCallback, this, 0);
     }
 
+    virtual void loadCommitted() override
+    {
+        if (m_finishOnCommitted) {
+            GUniquePtr<GError> error(g_error_new_literal(g_quark_from_string(errorDomain), errorCode, afterInitialChunkErrorMessage));
+            webkit_uri_scheme_request_finish_error(m_uriSchemeRequest.get(), error.get());
+        }
+
+        LoadTrackingTest::loadCommitted();
+    }
+
+    void finishOnCommittedAndWaitUntilLoadFinished()
+    {
+        m_finishOnCommitted = true;
+        waitUntilLoadFinished();
+        m_finishOnCommitted = false;
+    }
+
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
     HashMap<String, URISchemeHandler> m_handlersMap;
+    bool m_finishOnCommitted { false };
 };
+
+String generateHTMLContent(unsigned contentLength)
+{
+    String baseString("abcdefghijklmnopqrstuvwxyz0123457890");
+    unsigned baseLength = baseString.length();
+
+    StringBuilder builder;
+    builder.append("<html><body>");
+
+    if (contentLength <= baseLength)
+        builder.append(baseString, 0, contentLength);
+    else {
+        unsigned currentLength = 0;
+        while (currentLength < contentLength) {
+            if ((currentLength + baseLength) <= contentLength)
+                builder.append(baseString);
+            else
+                builder.append(baseString, 0, contentLength - currentLength);
+
+            // Account for the 12 characters of the '<html><body>' prefix.
+            currentLength = builder.length() - 12;
+        }
+    }
+    builder.append("</body></html>");
+
+    return builder.toString();
+}
 
 static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
 {
@@ -307,14 +371,35 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 
-    test->registerURISchemeHandler("error", 0, 0, 0);
+    // Anything over 8192 bytes will get multiple calls to g_input_stream_read_async in
+    // WebKitURISchemeRequest when reading data, but we still need way more than that to
+    // ensure that we reach the load-committed state before failing, so we use an 8MB HTML.
+    String longHTMLContent = generateHTMLContent(8 * 1024 * 1024);
+    test->registerURISchemeHandler("error", longHTMLContent.utf8().data(), -1, "text/html");
     test->m_loadEvents.clear();
     test->loadURI("error:error");
     test->waitUntilLoadFinished();
     g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert(test->m_loadFailed);
     g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
-    g_assert_cmpstr(test->m_error->message, ==, errorMessage);
+    g_assert_cmpstr(test->m_error->message, ==, genericErrorMessage);
+
+    test->m_loadEvents.clear();
+    test->loadURI("error:before-response");
+    test->waitUntilLoadFinished();
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(test->m_loadFailed);
+    g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
+    g_assert_cmpstr(test->m_error->message, ==, beforeReceiveResponseErrorMessage);
+
+    test->m_loadEvents.clear();
+    test->loadURI("error:after-first-chunk");
+    test->finishOnCommittedAndWaitUntilLoadFinished();
+    g_assert(!test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
+    g_assert(test->m_loadFailed);
+    g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
+    g_assert_cmpstr(test->m_error->message, ==, afterInitialChunkErrorMessage);
 
     test->registerURISchemeHandler("closed", 0, 0, 0);
     test->m_loadEvents.clear();

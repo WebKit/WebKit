@@ -1,3 +1,35 @@
+2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] Crash in WebProcess when loading large content with custom URI schemes
+        https://bugs.webkit.org/show_bug.cgi?id=144262
+
+        Reviewed by Carlos Garcia Campos.
+
+        Properly handle scenarios where errors happen after reading the first
+        chunk of data coming from the GInputStream provided by the application.
+
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextIsLoadingCustomProtocol): New, checks whether a load
+        is still in progress, after the startLoading method has been called.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback): Early return if the stream has been
+        cancelled on finish_error, so that we make sure we don't keep on reading
+        the GInputStream after that point.
+        (webkit_uri_scheme_request_finish_error): Don't send a didFailWithError
+        message to the Network process if the load is not longer in progress.
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp:
+        (WebKit::CustomProtocolManagerImpl::didFailWithError): Handle the case where
+        an error is notified from the UI process after the first chunk has been read.
+        (WebKit::CustomProtocolManagerImpl::didReceiveResponse): Handle the case where
+        data might no longer be available if an error happened even before this point.
+        * WebProcess/soup/WebKitSoupRequestInputStream.h:
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (webkitSoupRequestInputStreamDidFailWithError): Notify the custom GInputStream
+        that we no longer want to keep reading data in chunks due to a specific error.
+        (webkitSoupRequestInputStreamReadAsync): Early finish the GTask with a specific
+        error whenever webkitSoupRequestInputStreamDidFailWithError() has been called.
+
 2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics][EFL] Fix unhandled web process message when launching MiniBrowser

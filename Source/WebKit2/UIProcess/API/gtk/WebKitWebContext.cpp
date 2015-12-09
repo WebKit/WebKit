@@ -1294,6 +1294,11 @@ void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext* context, u
     context->priv->uriSchemeRequests.remove(customProtocolID);
 }
 
+bool webkitWebContextIsLoadingCustomProtocol(WebKitWebContext* context, uint64_t customProtocolID)
+{
+    return context->priv->uriSchemeRequests.get(customProtocolID);
+}
+
 void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);

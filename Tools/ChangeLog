@@ -1,3 +1,17 @@
+2015-12-09  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] Crash in WebProcess when loading large content with custom URI schemes
+        https://bugs.webkit.org/show_bug.cgi?id=144262
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added new unit test to check the additional scenarios we now
+        handle for custom URI schemes.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (generateHTMLContent): New helper function to generate big enough content.
+        (testWebContextURIScheme): New unit test.
+
 2015-12-09  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Fix unhandled web process message when launching MiniBrowser
