@@ -228,6 +228,8 @@ public:
     virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;
 
     virtual TiledBacking* tiledBacking() = 0;
+    
+    virtual unsigned backingStoreBytesPerPixel() const { return 4; }
 
 #if PLATFORM(WIN)
     virtual PlatformCALayer* rootLayer() const = 0;
