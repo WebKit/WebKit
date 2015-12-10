@@ -1,3 +1,14 @@
+2015-12-10  Brady Eidson  <beidson@apple.com>
+
+        Followup for:
+        Modern IDB: storage/indexeddb/intversion-close-between-events.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152096
+
+        Implementing Darin Adler's review feedback that came after the patch landed.
+
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        (WebCore::JSIDBDatabase::transaction): No need to explicitly cast to Vector<String>.
+
 2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         JSC Builtins should use safe array methods

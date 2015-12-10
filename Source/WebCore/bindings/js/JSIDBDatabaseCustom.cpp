@@ -99,7 +99,7 @@ JSValue JSIDBDatabase::transaction(ExecState& exec)
         return jsUndefined();
 
     if (domStringList)
-        scope = Vector<String>(*domStringList);
+        scope = *domStringList;
     else {
         scope.append(scopeArg.toString(&exec)->value(&exec));
         if (exec.hadException())
