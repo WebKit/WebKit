@@ -1,3 +1,23 @@
+2015-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        TextPainter: Make before and after selection painting more explicit.
+        https://bugs.webkit.org/show_bug.cgi?id=152104
+
+        Reviewed by Myles C. Maxfield.
+
+        Instead of swapping start end end positions and expecting TextPainter::drawTextOrEmphasisMarks()
+        to recognize it, we call painting with 0 - startPosition and endPosition - length.
+
+        No change in functionality.
+
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::drawTextOrEmphasisMarks):
+        (WebCore::TextPainter::paintTextAndEmphasisMarksIfNeeded):
+        (WebCore::TextPainter::paintText):
+        (WebCore::TextPainter::paintEmphasisMarksIfNeeded): Deleted.
+        (WebCore::TextPainter::paintTextWithStyle): Deleted.
+        * rendering/TextPainter.h:
+
 2015-12-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Suspend and resume device motion and device orientation updates when page is hidden and visible, respectively

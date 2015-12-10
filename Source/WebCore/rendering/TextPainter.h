@@ -59,8 +59,7 @@ private:
         const FloatPoint& textOrigin, int startOffset, int endOffset);
     void paintTextWithShadows(const ShadowData*, const FontCascade&, const TextRun&, const AtomicString& emphasisMark, int emphasisMarkOffset,
         int startOffset, int endOffset, const FloatPoint& textOrigin, bool stroked);
-    void paintTextWithStyle(const TextPaintStyle&, int startOffset, int endOffset, const ShadowData*);
-    void paintEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle&, const ShadowData*);
+    void paintTextAndEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle&, const ShadowData*);
 
     GraphicsContext& m_context;
     TextPaintStyle& m_textPaintStyle;

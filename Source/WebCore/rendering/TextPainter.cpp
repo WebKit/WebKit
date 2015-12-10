@@ -107,23 +107,11 @@ TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, b
 void TextPainter::drawTextOrEmphasisMarks(const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
     int emphasisMarkOffset, const FloatPoint& textOrigin, int startOffset, int endOffset)
 {
-    auto drawText = [&](int from, int to)
-    {
-        if (emphasisMark.isEmpty())
-            m_context.drawText(font, textRun, textOrigin, from, to);
-        else
-            m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + IntSize(0, emphasisMarkOffset), from, to);
-    };
-
-    if (startOffset <= endOffset) {
-        drawText(startOffset, endOffset);
-        return;
-    }
-    
-    if (endOffset > 0)
-        drawText(0, endOffset);
-    if (startOffset < m_length)
-        drawText(startOffset, m_length);
+    ASSERT(startOffset < endOffset);
+    if (emphasisMark.isEmpty())
+        m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
+    else
+        m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + IntSize(0, emphasisMarkOffset), startOffset, endOffset);
 }
 
 void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
@@ -153,8 +141,11 @@ void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FontCasca
     }
 }
 
-void TextPainter::paintEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle& paintStyle, const ShadowData* shadow)
+void TextPainter::paintTextAndEmphasisMarksIfNeeded(int startOffset, int endOffset, const TextPaintStyle& paintStyle, const ShadowData* shadow)
 {
+    // FIXME: Truncate right-to-left text correctly.
+    paintTextWithShadows(shadow, m_font, m_textRun, nullAtom, 0, startOffset, endOffset, m_textOrigin, paintStyle.strokeWidth > 0);
+
     if (m_emphasisMark.isEmpty())
         return;
 
@@ -172,29 +163,30 @@ void TextPainter::paintEmphasisMarksIfNeeded(int startOffset, int endOffset, con
     if (m_combinedText)
         m_context.concatCTM(rotation(m_boxRect, Counterclockwise));
 }
-
-void TextPainter::paintTextWithStyle(const TextPaintStyle& paintStyle, int startOffset, int endOffset, const ShadowData* shadow)
-{
-    GraphicsContextStateSaver stateSaver(m_context, paintStyle.strokeWidth > 0);
-    updateGraphicsContext(m_context, paintStyle);
-    // FIXME: Truncate right-to-left text correctly.
-    paintTextWithShadows(shadow, m_font, m_textRun, nullAtom, 0, startOffset, endOffset, m_textOrigin, paintStyle.strokeWidth > 0);
-    paintEmphasisMarksIfNeeded(startOffset, endOffset, paintStyle, shadow);
-}
     
 void TextPainter::paintText()
 {
     if (!m_paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode. It's probably dangerous to leave that mutated as a side
         // effect, so only when we know we're stroking, do a save/restore.
-        int startPosition = m_paintSelectedTextSeparately ? m_selectionEnd : 0;
-        int endPosition = m_paintSelectedTextSeparately ? m_selectionStart : m_length;
-        paintTextWithStyle(m_textPaintStyle, startPosition, endPosition, m_textShadow);
+        GraphicsContextStateSaver stateSaver(m_context, m_textPaintStyle.strokeWidth > 0);
+        updateGraphicsContext(m_context, m_textPaintStyle);
+        if (m_paintSelectedTextSeparately) {
+            // Paint the before and after selection parts.
+            if (m_selectionStart > 0)
+                paintTextAndEmphasisMarksIfNeeded(0, m_selectionStart, m_textPaintStyle, m_textShadow);
+            if (m_selectionEnd < m_length)
+                paintTextAndEmphasisMarksIfNeeded(m_selectionEnd, m_length, m_textPaintStyle, m_textShadow);
+        } else
+            paintTextAndEmphasisMarksIfNeeded(0, m_length, m_textPaintStyle, m_textShadow);
     }
 
-    // paint only the text that is selected
-    if ((m_paintSelectedTextOnly || m_paintSelectedTextSeparately) && m_selectionStart < m_selectionEnd)
-        paintTextWithStyle(m_selectionPaintStyle, m_selectionStart, m_selectionEnd, m_selectionShadow);
+    // Paint only the text that is selected.
+    if ((m_paintSelectedTextOnly || m_paintSelectedTextSeparately) && m_selectionStart < m_selectionEnd) {
+        GraphicsContextStateSaver stateSaver(m_context, m_selectionPaintStyle.strokeWidth > 0);
+        updateGraphicsContext(m_context, m_selectionPaintStyle);
+        paintTextAndEmphasisMarksIfNeeded(m_selectionStart, m_selectionEnd, m_selectionPaintStyle, m_selectionShadow);
+    }
 }
 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
