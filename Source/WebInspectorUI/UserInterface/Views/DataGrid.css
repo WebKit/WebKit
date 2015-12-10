@@ -301,5 +301,5 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 }
 
 .data-grid .resizer {
-    z-index: 500;
+    z-index: var(--z-index-resizer);
 }

@@ -130,7 +130,7 @@ body.javascript .toolbar .dashboard-container {
     padding: 4px 0;
     opacity: 0.6;
 
-    z-index: 1000;
+    z-index: 2;
     background-repeat: no-repeat;
     background-size: 8px;
     background-image: url(../Images/UpDownArrows.svg);

@@ -34,7 +34,7 @@
     opacity: 0;
 
  /* Allows the horizontal scroll bar to be interacted with. */
-    z-index: 1000;
+    z-index: calc(var(--z-index-resizer) + 1);
 }
 
 .timeline-overview:hover > .scroll-container {

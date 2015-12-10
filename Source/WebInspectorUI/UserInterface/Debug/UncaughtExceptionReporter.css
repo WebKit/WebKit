@@ -29,7 +29,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    z-index: 10000;
+    z-index: var(--z-index-uncaught-exception-sheet);
     background-color: hsl(0, 0%, 96%);
 }
 

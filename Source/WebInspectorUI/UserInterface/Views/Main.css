@@ -78,7 +78,7 @@ body.window-inactive.docked.right {
 #docked-resizer {
     display: none;
 
-    z-index: 100;
+    z-index: var(--z-index-resizer);
 }
 
 body.docked #docked-resizer {
@@ -201,7 +201,7 @@ body.window-inactive #split-content-browser {
 
 .message-text-view {
     display: flex;
-    z-index: 1000;
+    z-index: var(--z-index-popover);
 
     position: absolute;
     top: 0;
@@ -322,7 +322,7 @@ body.window-inactive #split-content-browser {
 
 .bouncy-highlight {
     position: absolute;
-    z-index: 100;
+    z-index: var(--z-index-highlight);
 
     box-shadow: inset hsl(50, 91%, 76%) 0 -1px 0, hsl(52, 56%, 60%) 0 1px 1px, hsla(0, 0%, 0%, 0.33) 0 1px 2px 1px;
     text-shadow: white 0 0 2px;

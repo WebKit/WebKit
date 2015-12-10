@@ -41,7 +41,7 @@
     transition-duration: 200ms;
     transition-timing-function: ease-in;
 
-    z-index: 500;
+    z-index: var(--z-index-header);
 }
 
 body.window-inactive .find-banner {
@@ -180,7 +180,7 @@ body.window-inactive .find-banner {
 }
 
 .find-banner > button.segmented:active {
-    z-index: 100;
+    z-index: var(--z-index-header);
     position: relative;
 }
 

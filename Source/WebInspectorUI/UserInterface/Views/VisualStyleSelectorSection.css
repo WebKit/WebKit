@@ -108,7 +108,7 @@
     border-color: hsl(0, 0%, 70%);
     border-style: solid;
     border-width: 1px 0;
-    z-index: 100;
+    z-index: var(--z-index-header);
 }
 
 .details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider > :matches(.disclosure-button, .icon) {

@@ -29,7 +29,7 @@
     min-height: 20px;
     box-sizing: border-box;
     pointer-events: none;
-    z-index: 100;
+    z-index: var(--z-index-popover);
 }
 
 .popover.arrow-up {

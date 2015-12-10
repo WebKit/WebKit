@@ -92,7 +92,7 @@
 
 .details-section .row.box-model .editing {
     position: relative;
-    z-index: 100;
+    z-index: 2;
 }
 
 .details-section .row.box-model :matches(.content span, .top, .right, .bottom, .left) {

@@ -60,7 +60,7 @@
     padding: 4px 5px 4px 0;
 
     /* Ensure the headers are displayed above scrollbars. */
-    z-index: 200;
+    z-index: var(--z-index-header);
 }
 
 .details-section > .header > .options > .navigation-bar {
@@ -80,7 +80,7 @@
     background-color: hsl(0, 0%, 100%);
 
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
-    z-index: 100;
+    z-index: var(--z-index-header);
 }
 
 .details-section .details-section:not(.collapsed) > .header {

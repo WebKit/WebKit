@@ -1,3 +1,49 @@
+2015-12-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: [Meta] Unify z-index values in Inspector's CSS
+        https://bugs.webkit.org/show_bug.cgi?id=151978
+
+        Introduce CSS variables for z-index due to recurring issues with incorrectly overlapping elements.
+
+        From now on, all z-index values >= 64 must be defined as variables.
+        Values below 64 must not.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Introduce z-index variables.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        (.sheet-container):
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        (.details-section .row.box-model .editing):
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (.completion-suggestions):
+        * UserInterface/Views/DashboardContainerView.css:
+        (.dashboard-container .advance-arrow):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .resizer):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .header):
+        (.details-section .details-section > .header):
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner):
+        (.find-banner > button.segmented:active):
+        * UserInterface/Views/Main.css:
+        (#docked-resizer):
+        (.message-text-view):
+        (.bouncy-highlight):
+        * UserInterface/Views/Popover.css:
+        (.popover):
+        * UserInterface/Views/Resizer.css:
+        (.resizer):
+        (.glass-pane-for-drag):
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .scroll-container):
+        * UserInterface/Views/VisualStyleSelectorSection.css:
+        (.details-section.visual-style-selector-section > .content > .selectors > .selector-list > .section-divider):
+
 2015-12-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: when a marked-dirty subview is attached to a parent View, dirtyDescendantsCount gets out of sync

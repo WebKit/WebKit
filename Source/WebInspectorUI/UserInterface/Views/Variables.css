@@ -24,6 +24,14 @@
  */
 
 :root {
+    --z-index-highlight: 64;
+    --z-index-header: 128;
+    --z-index-resizer: 256;
+    --z-index-tooltip: 512;
+    --z-index-popover: 1024;
+    --z-index-glass-pane-for-drag: 2048;
+    --z-index-uncaught-exception-sheet: 4096;
+
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
 
     --syntax-highlight-number-color: hsl(248, 100%, 40%);

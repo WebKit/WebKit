@@ -30,7 +30,7 @@
     background-color: hsla(0, 0%, 100%, 0.9);
     border-radius: 5px;
 
-    z-index: 100;
+    z-index: var(--z-index-tooltip);
 
     margin-top: -1px;
     margin-left: -10px;
