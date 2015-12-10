@@ -1,3 +1,31 @@
+2015-12-09  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION: code-review-tests.html fails with error "Received an error at line 214"
+        https://bugs.webkit.org/show_bug.cgi?id=152103
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where opening the file code-review-test.html in Safari shows the error message
+        "FAIL: Received an error at line 214" and in the console there is a JavaScript TypeError:
+            undefined is not an object (evaluating '$('.overallComments textarea').val().trim')
+
+        Notice that test testReaddDiscardedCommentWithPreviousComment() is the only test that appends
+        the toolbar, which inserts the overall comments textarea. The test testSaveCommentsWithMissingLineIds()
+        assumes that the own properties of the window object are enumerated in the same order as they
+        were defined in the file code-review-test.html such that the test testReaddDiscardedCommentWithPreviousComment()
+        is executed before test testSaveCommentsWithMissingLineIds(). The behavior of JavaScriptCore with
+        respect to the enumeration order of properties on the window object have changed since the
+        test testSaveCommentsWithMissingLineIds() was written such that the order of the own properties
+        on the window object do not reflect the order in which they were defined in the file. We should
+        append the toolbar before running the tests and explicitly execute the tests in chosen order so
+        as to be able to reason of the test results regardless of the enumeration ordering of the
+        properties in the DOM window object.
+
+        Also, removed duplicate 'd' in the name of function "testReaddDiscardedCommentWithPreviousComment"
+        such that it reads "testReadDiscardedCommentWithPreviousComment".
+
+        * code-review-test.html:
+
 2015-11-17  Lucas Forschler  <lforschler@apple.com>
 
         bugs.webkit.org is running with changes that are not checked in.

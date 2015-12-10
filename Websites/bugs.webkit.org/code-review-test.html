@@ -218,7 +218,7 @@ function syncSlideUp(type, handler) {
   handler.call(this);
 }
 
-function testReaddDiscardedCommentWithPreviousComment() {
+function testReadDiscardedCommentWithPreviousComment() {
   document.getElementById('diff-content').innerHTML =
       '<div class="FileDiff">' +
         '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
@@ -247,7 +247,6 @@ function testReaddDiscardedCommentWithPreviousComment() {
 
   eraseDraftComments();
   crawlDiff();
-  appendToolbar();
 
   var line = document.getElementById('line0');
   var author = "ojan@chromium.org";
@@ -456,9 +455,17 @@ function testSaveCommentsWithMissingLineIds() {
 }
 
 
-for (var property in window) {
-  if (property.indexOf('test') == 0) {
-    window[property]();
-  }
-}
+var tests_to_run = [
+    window.testTracLinks,
+    window.testDraftCommentSaver,
+    window.testReadDiscardedCommentWithPreviousComment,
+    window.testSideBySideDiffWithPreviousCommentsOnSharedLine,
+    window.testSanitizeFragmentForCopy,
+    window.testIsChangeLog,
+    window.testSaveCommentsWithMissingLineIds,
+];
+
+appendToolbar();
+for (var i = 0; i < tests_to_run.length; ++i)
+    tests_to_run[i]();
 </script>
