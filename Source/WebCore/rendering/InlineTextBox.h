@@ -159,7 +159,7 @@ protected:
     void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
 
 private:
-    void paintDecoration(GraphicsContext&, const FloatPoint& boxOrigin, TextDecoration, const ShadowData*, TextPainter&);
+    void paintDecoration(GraphicsContext&, const FontCascade&, const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin, TextDecoration, const ShadowData*);
     void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, Color textColor);
     void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&, bool grammar);
     void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);

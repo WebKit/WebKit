@@ -1,3 +1,33 @@
+2015-12-10  Zalan Bujtas  <zalan@apple.com>
+
+        TextPainter: Add support for painting multiple text runs.
+        https://bugs.webkit.org/show_bug.cgi?id=152148
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation for adding simple line layout as a client.
+
+        No change in functionality.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::drawSkipInkUnderline): Decouple underline skipping intersection calculation and text painter.
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/InlineTextBox.h:
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::TextPainter):
+        (WebCore::TextPainter::paintTextWithShadows):
+        (WebCore::TextPainter::paintTextAndEmphasisMarksIfNeeded):
+        (WebCore::TextPainter::paintText):
+        (WebCore::TextPainter::dashesForIntersectionsWithRect): Deleted.
+        * rendering/TextPainter.h:
+        (WebCore::TextPainter::setTextPaintStyle):
+        (WebCore::TextPainter::setSelectionPaintStyle):
+        (WebCore::TextPainter::setIsHorizontal):
+        (WebCore::TextPainter::setFont):
+        (WebCore::TextPainter::addEmphasis):
+        (WebCore::TextPainter::addTextShadow):
+
 2015-12-10  Enrica Casucci  <enrica@apple.com>
 
         Change skin tone support for two emoji.

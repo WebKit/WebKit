@@ -119,14 +119,14 @@ static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray&
     return result;
 }
 
-static void drawSkipInkUnderline(TextPainter& textPainter, GraphicsContext& context, FloatPoint localOrigin, float underlineOffset, float width, bool isPrinting, bool doubleLines)
+static void drawSkipInkUnderline(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& localOrigin,
+    float underlineOffset, float width, bool isPrinting, bool doubleLines)
 {
     FloatPoint adjustedLocalOrigin = localOrigin;
     adjustedLocalOrigin.move(0, underlineOffset);
     FloatRect underlineBoundingBox = context.computeLineBoundsForText(adjustedLocalOrigin, width, isPrinting);
-    DashArray intersections = textPainter.dashesForIntersectionsWithRect(underlineBoundingBox);
+    DashArray intersections = font.dashesForIntersectionsWithRect(textRun, textOrigin, underlineBoundingBox);
     DashArray a = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), width);
-
     ASSERT(!(a.size() % 2));
     context.drawLinesForText(adjustedLocalOrigin, a, isPrinting, doubleLines);
 }
@@ -612,8 +612,15 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     else
         textOrigin.setX(roundToDevicePixel(LayoutUnit(textOrigin.x()), renderer().document().deviceScaleFactor()));
 
-    TextPainter textPainter(context, paintSelectedTextOnly, paintSelectedTextSeparately, font, selectionStart, selectionEnd, length, emphasisMark, combinedText, textRun, boxRect, textOrigin, emphasisMarkOffset, textShadow, selectionShadow, isHorizontal(), textPaintStyle, selectionPaintStyle);
-    textPainter.paintText();
+    TextPainter textPainter(context);
+    textPainter.setFont(font);
+    textPainter.setTextPaintStyle(textPaintStyle);
+    textPainter.setSelectionPaintStyle(selectionPaintStyle);
+    textPainter.setIsHorizontal(isHorizontal());
+    textPainter.addTextShadow(textShadow, selectionShadow);
+    textPainter.addEmphasis(emphasisMark, emphasisMarkOffset, combinedText);
+
+    textPainter.paintText(textRun, length, boxRect, textOrigin, selectionStart, selectionEnd, paintSelectedTextOnly, paintSelectedTextSeparately);
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
@@ -621,7 +628,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         updateGraphicsContext(context, textPaintStyle);
         if (combinedText)
             context.concatCTM(rotation(boxRect, Clockwise));
-        paintDecoration(context, boxOrigin, textDecorations, textShadow, textPainter);
+        paintDecoration(context, font, textRun, textOrigin, boxOrigin, textDecorations, textShadow);
         if (combinedText)
             context.concatCTM(rotation(boxRect, Counterclockwise));
     }
@@ -894,12 +901,14 @@ static void strokeWavyTextDecoration(GraphicsContext& context, FloatPoint& p1, F
     context.strokePath(path);
 }
 
-void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& boxOrigin, TextDecoration decoration, const ShadowData* shadow, TextPainter& textPainter)
+void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin,
+    TextDecoration decoration, const ShadowData* shadow)
 {
 #if !ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-    UNUSED_PARAM(textPainter);
+    UNUSED_PARAM(font);
+    UNUSED_PARAM(textRun);
+    UNUSED_PARAM(textOrigin);
 #endif
-
     if (m_truncation == cFullTruncation)
         return;
 
@@ -985,9 +994,8 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             default:
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
                 if ((lineStyle.textDecorationSkip() == TextDecorationSkipInk || lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && isHorizontal()) {
-                    if (!context.paintingDisabled()) {
-                        drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset, width, isPrinting, underlineStyle == TextDecorationStyleDouble);
-                    }
+                    if (!context.paintingDisabled())
+                        drawSkipInkUnderline(context, font, textRun, textOrigin, localOrigin, underlineOffset, width, isPrinting, underlineStyle == TextDecorationStyleDouble);
                 } else
                     // FIXME: Need to support text-decoration-skip: none.
 #endif // CSS3_TEXT_DECORATION_SKIP_INK
@@ -1008,7 +1016,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
                 if ((lineStyle.textDecorationSkip() == TextDecorationSkipInk || lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && isHorizontal()) {
                     if (!context.paintingDisabled())
-                        drawSkipInkUnderline(textPainter, context, localOrigin, 0, width, isPrinting, overlineStyle == TextDecorationStyleDouble);
+                        drawSkipInkUnderline(context, font, textRun, textOrigin, localOrigin, 0, width, isPrinting, overlineStyle == TextDecorationStyleDouble);
                 } else
                     // FIXME: Need to support text-decoration-skip: none.
 #endif // CSS3_TEXT_DECORATION_SKIP_INK
