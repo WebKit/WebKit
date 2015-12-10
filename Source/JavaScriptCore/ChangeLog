@@ -1,3 +1,12 @@
+2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Source/JavaScriptCore/create_hash_table shouldn't be too verbose
+        https://bugs.webkit.org/show_bug.cgi?id=151861
+
+        Reviewed by Darin Adler.
+
+        * create_hash_table:
+
 2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         JSC Builtins should use safe array methods
