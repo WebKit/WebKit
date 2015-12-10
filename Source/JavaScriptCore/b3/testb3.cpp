@@ -6812,10 +6812,10 @@ void populateWithInterestingValues(Vector<Operand<FloatType>>& operands)
 {
     operands.append({ "0.", static_cast<FloatType>(0.) });
     operands.append({ "-0.", static_cast<FloatType>(-0.) });
-    operands.append({ "1.", static_cast<FloatType>(0.) });
-    operands.append({ "-1.", static_cast<FloatType>(-0.) });
+    operands.append({ "1.", static_cast<FloatType>(1.) });
+    operands.append({ "-1.", static_cast<FloatType>(-1.) });
     operands.append({ "2.", static_cast<FloatType>(2.) });
-    operands.append({ "-2.", static_cast<FloatType>(2.) });
+    operands.append({ "-2.", static_cast<FloatType>(-2.) });
     operands.append({ "M_PI", static_cast<FloatType>(M_PI) });
     operands.append({ "-M_PI", static_cast<FloatType>(-M_PI) });
     operands.append({ "min", std::numeric_limits<FloatType>::min() });

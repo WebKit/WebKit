@@ -1,5 +1,15 @@
 2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [B3] Typo fix in testb3.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=152126
+
+        Reviewed by Mark Lam.
+
+        * b3/testb3.cpp:
+        (JSC::B3::populateWithInterestingValues):
+
+2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         [B3] Fix unused-but-set-variable warning
         https://bugs.webkit.org/show_bug.cgi?id=152122
 
