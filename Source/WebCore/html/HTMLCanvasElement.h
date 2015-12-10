@@ -152,8 +152,6 @@ private:
     void clearImageBuffer() const;
 
     void setSurfaceSize(const IntSize&);
-    void setImageBuffer(std::unique_ptr<ImageBuffer>) const;
-    void releaseImageBufferAndContext();
 
     bool paintsIntoCanvasBuffer() const;
 
