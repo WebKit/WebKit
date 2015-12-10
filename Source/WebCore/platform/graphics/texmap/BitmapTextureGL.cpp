@@ -44,12 +44,8 @@
 #include <wtf/text/CString.h>
 #endif
 
-#if !USE(TEXMAP_OPENGL_ES_2)
-// FIXME: Move to Extensions3D.h.
+#if OS(DARWIN)
 #define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
-#define GL_UNPACK_ROW_LENGTH 0x0CF2
-#define GL_UNPACK_SKIP_PIXELS 0x0CF4
-#define GL_UNPACK_SKIP_ROWS 0x0CF3
 #endif
 
 namespace WebCore {
@@ -132,18 +128,18 @@ void BitmapTextureGL::updateContentsNoSwizzle(const void* srcData, const IntRect
     // For ES drivers that don't support sub-images.
     if (driverSupportsSubImage(m_context3D.get())) {
         // Use the OpenGL sub-image extension, now that we know it's available.
-        m_context3D->pixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
-        m_context3D->pixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y());
-        m_context3D->pixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x());
+        m_context3D->pixelStorei(GraphicsContext3D::UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
+        m_context3D->pixelStorei(GraphicsContext3D::UNPACK_SKIP_ROWS, sourceOffset.y());
+        m_context3D->pixelStorei(GraphicsContext3D::UNPACK_SKIP_PIXELS, sourceOffset.x());
     }
 
     m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, m_type, srcData);
 
     // For ES drivers that don't support sub-images.
     if (driverSupportsSubImage(m_context3D.get())) {
-        m_context3D->pixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-        m_context3D->pixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-        m_context3D->pixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+        m_context3D->pixelStorei(GraphicsContext3D::UNPACK_ROW_LENGTH, 0);
+        m_context3D->pixelStorei(GraphicsContext3D::UNPACK_SKIP_ROWS, 0);
+        m_context3D->pixelStorei(GraphicsContext3D::UNPACK_SKIP_PIXELS, 0);
     }
 }
 
@@ -276,11 +272,7 @@ void BitmapTextureGL::initializeStencil()
 
     m_rbo = m_context3D->createRenderbuffer();
     m_context3D->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_rbo);
-#ifdef TEXMAP_OPENGL_ES_2
     m_context3D->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height());
-#else
-    m_context3D->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_STENCIL, m_textureSize.width(), m_textureSize.height());
-#endif
     m_context3D->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
     m_context3D->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_rbo);
     m_context3D->clearStencil(0);

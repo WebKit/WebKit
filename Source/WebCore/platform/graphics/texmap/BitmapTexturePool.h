@@ -27,10 +27,6 @@
 #ifndef BitmapTexturePool_h
 #define BitmapTexturePool_h
 
-#if USE(OPENGL_ES_2)
-#define TEXMAP_OPENGL_ES_2
-#endif
-
 #include "BitmapTexture.h"
 #include "IntRect.h"
 #include "IntSize.h"

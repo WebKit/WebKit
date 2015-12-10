@@ -27,10 +27,6 @@
 #ifndef BitmapTexture_h
 #define BitmapTexture_h
 
-#if USE(OPENGL_ES_2)
-#define TEXMAP_OPENGL_ES_2
-#endif
-
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"

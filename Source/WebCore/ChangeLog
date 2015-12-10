@@ -1,3 +1,28 @@
+2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Remove the TEXMAP_OPENGL_ES_2 define
+        https://bugs.webkit.org/show_bug.cgi?id=152069
+
+        Reviewed by Alex Christensen.
+
+        Remove the TEXMAP_OPENGL_ES_2 macro define and clean up the code
+        that it was (not) guarding.
+
+        * platform/graphics/texmap/BitmapTexture.h:
+        * platform/graphics/texmap/BitmapTextureGL.cpp: Remove the TEXMAP_OPENGL_ES_2
+        guard. Keep the GL_UNSIGNED_INT_8_8_8_8_REV define for OS(DARWIN), but use
+        the GraphicsContext3D constants for other values.
+        (WebCore::BitmapTextureGL::updateContentsNoSwizzle):
+        (WebCore::BitmapTextureGL::initializeStencil): Remove the TEXMAP_OPENGL_ES_2
+        guard and default to calling the renderbufferStorage() function with the
+        GraphicsContext3D::STENCIL_INDEX8 argument.
+        * platform/graphics/texmap/BitmapTexturePool.h:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp: Remove both the TEXMAP_OPENGL_ES_2
+        guard and the code it guarded. Because we were defining TEXMAP_OPENGL_ES_2 and not
+        USE_TEXMAP_OPENGL_ES_2, the guarded defines were always enforced, but they're never
+        actually used in this file anyway.
+
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/objectstore-basics.html fails.
