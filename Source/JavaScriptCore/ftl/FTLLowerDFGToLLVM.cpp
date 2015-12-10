@@ -268,6 +268,7 @@ public:
         }
 
 #if FTL_USES_B3
+        UNUSED_PARAM(hasVarargs);
         // FIXME
 #else
         if (hasVarargs) {
