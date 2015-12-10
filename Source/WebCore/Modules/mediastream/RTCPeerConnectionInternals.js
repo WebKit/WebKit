@@ -42,13 +42,13 @@ function enqueueOperation(peerConnection, operation)
     var operations = peerConnection.@operations;
 
     function runNext() {
-        operations.shift();
+        operations.@shift();
         if (operations.length)
             operations[0]();
     };
 
     return new @Promise(function (resolve, reject) {
-        operations.push(function() {
+        operations.@push(function() {
             operation().then(resolve, reject).then(runNext, runNext);
         });
 

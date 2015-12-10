@@ -315,7 +315,7 @@ function enqueueInReadableStream(stream, chunk)
     if (stream.@state === @streamClosed)
         return;
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
-        stream.@reader.@readRequests.shift().@resolve.@call(undefined, {value: chunk, done: false});
+        stream.@reader.@readRequests.@shift().@resolve.@call(undefined, {value: chunk, done: false});
         @requestReadableStreamPull(stream);
         return;
     }
@@ -356,7 +356,7 @@ function readFromReadableStreamReader(reader)
         return @Promise.@resolve({value: chunk, done: false});
     }
     const readPromiseCapability = @newPromiseCapability(@Promise);
-    reader.@readRequests.push(readPromiseCapability);
+    reader.@readRequests.@push(readPromiseCapability);
     @requestReadableStreamPull(stream);
     return readPromiseCapability.@promise;
 }

@@ -1,3 +1,25 @@
+2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        JSC Builtins should use safe array methods
+        https://bugs.webkit.org/show_bug.cgi?id=151501
+
+        Reviewed by Darin Adler.
+
+        Using @push and @shift in internal arrays in lieu of push and shift.
+        This cannot be disrupted by user scripts except if arrays are also made accessible to user scripts.
+
+        Covered by added tests for ReadableStream constructs.
+
+        * Modules/mediastream/RTCPeerConnectionInternals.js:
+        (runNext):
+        (enqueueOperation):
+        * Modules/streams/ReadableStreamInternals.js:
+        (enqueueInReadableStream):
+        (readFromReadableStreamReader):
+        * Modules/streams/StreamInternals.js:
+        (dequeueValue):
+        (enqueueValueWithSize):
+
 2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] pixel coverage multiplication in TiledBackingStore can overflow

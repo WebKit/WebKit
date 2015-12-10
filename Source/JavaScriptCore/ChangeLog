@@ -1,3 +1,21 @@
+2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        JSC Builtins should use safe array methods
+        https://bugs.webkit.org/show_bug.cgi?id=151501
+
+        Reviewed by Darin Adler.
+
+        Adding @push and @shift to Array prototype.
+        Using @push in TypedArray built-in.
+
+        Covered by added test in LayoutTests/js/builtins
+
+        * builtins/TypedArray.prototype.js:
+        (filter):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/CommonIdentifiers.h:
+
 2015-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should have basic GetById support

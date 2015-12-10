@@ -258,7 +258,7 @@ function filter(callback /*, thisArg */)
     for (var i = 0; i < length; i++) {
         var value = this[i];
         if (callback.@call(thisArg, value, i, this))
-            kept.push(value);
+            kept.@push(value);
     }
 
     // FIXME: This should be a species constructor.

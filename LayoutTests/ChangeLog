@@ -1,3 +1,20 @@
+2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        JSC Builtins should use safe array methods
+        https://bugs.webkit.org/show_bug.cgi?id=151501
+
+        Reviewed by Darin Adler.
+
+        Adding shielding test for TypedArray.prototype.filter and stream enqueuing of values and read promises.
+
+        * js/builtins/resources/shielding-typedarray.js: Added.
+        (Array.prototype.push):
+        (try.array.Int8Array.from.string_appeared_here.filter):
+        * js/builtins/shielding-typedarray-expected.txt: Added.
+        * js/builtins/shielding-typedarray.html: Added.
+        * streams/streams-promises-expected.txt:
+        * streams/streams-promises.html:
+
 2015-12-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. GTK+ gardening: skip HLS tests crashing in debug after r192102.

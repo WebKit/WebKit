@@ -149,4 +149,58 @@ promise_test(function() {
         assert_unreached("test should not throw");
     }
 }, 'Streams should not directly use ReadableStreamReader read public API');
+
+promise_test(function() {
+    const ArrayPushBackup = Array.prototype.push;
+    const ArrayShiftBackup = Array.prototype.shift;
+
+    // Use of testing variable to try not messing up testharness.js code.
+    // FIXME: this approach is far from perfect: push is used in case an assert fails.
+    // But cleanTest will not be called and we may end-up mask the real assertion failure by below assert_unreached messages.
+    // We might want to either improve testharness.js or  move these tests out of testharness.js.
+    let testing = true;
+    Array.prototype.push = function() {
+        if (testing) {
+            testing = false;
+            assert_unreached("Array.prototype.push called");
+        }
+        return ArrayPushBackup.apply(this, arguments);
+    }
+
+    Array.prototype.shift = function() {
+        if (testing) {
+            testing = false;
+            assert_unreached("Array.prototype.shift called");
+        }
+        return ArrayShiftBackup.call(this, arguments);
+    }
+
+    function cleanTest() {
+        Array.prototype.push = ArrayPushBackup;
+        Array.prototype.shift = ArrayShiftBackup;
+    }
+    try {
+        let _controller;
+        const reader = new ReadableStream({
+            start: function(controller) {
+                _controller = controller;
+            }
+        }).getReader();
+        // checking whether pushing/shifting pending read promises is shielded.
+        const readPromise = reader.read().then(function(result) {
+            assert_equals(result.value, "half baked potato");
+            // checking whether pushing/shifting enqueued values is shielded.
+            _controller.enqueue("fully baked potato");
+            return reader.read().then(function(result) {
+                assert_equals(result.value, "fully baked potato");
+                cleanTest();
+            }, cleanTest);
+        }, cleanTest);
+        _controller.enqueue("half baked potato");
+        return readPromise;
+    } catch (error) {
+        cleanTest();
+        return Promise.reject(error);
+    }
+}, 'Streams should not directly use array public APIs');
 </script>

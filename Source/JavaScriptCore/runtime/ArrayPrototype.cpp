@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ArrayPrototype.h"
 
+#include "BuiltinNames.h"
 #include "ButterflyInlines.h"
 #include "CachedCall.h"
 #include "CodeBlock.h"
@@ -95,9 +96,11 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_BUILTIN_FUNCTION("fill", arrayPrototypeFillCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION(vm.propertyNames->join, arrayProtoFuncJoin, DontEnum, 1);
     JSC_NATIVE_INTRINSIC_FUNCTION("pop", arrayProtoFuncPop, DontEnum, 0, ArrayPopIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION("push", arrayProtoFuncPush, DontEnum, 1, ArrayPushIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->builtinNames().pushPublicName(), arrayProtoFuncPush, DontEnum, 1, ArrayPushIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->builtinNames().pushPrivateName(), arrayProtoFuncPush, DontEnum | DontDelete | ReadOnly, 1, ArrayPushIntrinsic);
     JSC_NATIVE_FUNCTION("reverse", arrayProtoFuncReverse, DontEnum, 0);
-    JSC_NATIVE_FUNCTION("shift", arrayProtoFuncShift, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->builtinNames().shiftPublicName(), arrayProtoFuncShift, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->builtinNames().shiftPrivateName(), arrayProtoFuncShift, DontEnum | DontDelete | ReadOnly, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->slice, arrayProtoFuncSlice, DontEnum, 2);
     JSC_BUILTIN_FUNCTION("sort", arrayPrototypeSortCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION("splice", arrayProtoFuncSplice, DontEnum, 2);

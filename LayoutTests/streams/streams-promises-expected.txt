@@ -9,4 +9,5 @@ PASS Streams and promises: replace then method in promise object
 PASS Streams should not directly use Number and related methods 
 PASS Streams should not directly use ReadableStream public APIs 
 PASS Streams should not directly use ReadableStreamReader read public API 
+PASS Streams should not directly use array public APIs 
 

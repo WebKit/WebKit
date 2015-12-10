@@ -99,7 +99,7 @@ function dequeueValue(queue)
 {
     "use strict";
 
-    const record = queue.content.shift();
+    const record = queue.content.@shift();
     queue.size -= record.size;
     return record.value;
 }
@@ -111,7 +111,7 @@ function enqueueValueWithSize(queue, value, size)
     size = @Number(size);
     if (!@isFinite(size) || size < 0)
         throw new @RangeError("size has an incorrect value");
-    queue.content.push({ value: value, size: size });
+    queue.content.@push({ value: value, size: size });
     queue.size += size;
 }
 
