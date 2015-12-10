@@ -28,8 +28,6 @@
 #define BitmapTexturePool_h
 
 #include "BitmapTexture.h"
-#include "IntRect.h"
-#include "IntSize.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
 
@@ -39,46 +37,43 @@
 
 namespace WebCore {
 
-class TextureMapper;
-
-struct BitmapTexturePoolEntry {
-    explicit BitmapTexturePoolEntry(PassRefPtr<BitmapTexture> texture)
-        : m_texture(texture)
-    { }
-    inline void markUsed() { m_timeLastUsed = monotonicallyIncreasingTime(); }
-    static bool compareTimeLastUsed(const BitmapTexturePoolEntry& a, const BitmapTexturePoolEntry& b)
-    {
-        return a.m_timeLastUsed - b.m_timeLastUsed > 0;
-    }
-
-    RefPtr<BitmapTexture> m_texture;
-    double m_timeLastUsed;
-};
+class GraphicsContext3D;
+class IntSize;
 
 class BitmapTexturePool {
     WTF_MAKE_NONCOPYABLE(BitmapTexturePool);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BitmapTexturePool();
 #if USE(TEXTURE_MAPPER_GL)
-    explicit BitmapTexturePool(PassRefPtr<GraphicsContext3D>);
+    explicit BitmapTexturePool(RefPtr<GraphicsContext3D>&&);
 #endif
 
-    PassRefPtr<BitmapTexture> acquireTexture(const IntSize&);
+    RefPtr<BitmapTexture> acquireTexture(const IntSize&);
 
 private:
+    struct Entry {
+        explicit Entry(RefPtr<BitmapTexture>&& texture)
+            : m_texture(WTF::move(texture))
+        { }
+
+        void markIsInUse() { m_lastUsedTime = monotonicallyIncreasingTime(); }
+
+        RefPtr<BitmapTexture> m_texture;
+        double m_lastUsedTime;
+    };
+
     void scheduleReleaseUnusedTextures();
     void releaseUnusedTexturesTimerFired();
-    PassRefPtr<BitmapTexture> createTexture();
+    RefPtr<BitmapTexture> createTexture();
 
 #if USE(TEXTURE_MAPPER_GL)
     RefPtr<GraphicsContext3D> m_context3D;
 #endif
 
-    Vector<BitmapTexturePoolEntry> m_textures;
+    Vector<Entry> m_textures;
     Timer m_releaseUnusedTexturesTimer;
 };
 
-}
+} // namespace WebCore
 
 #endif // BitmapTexturePool_h

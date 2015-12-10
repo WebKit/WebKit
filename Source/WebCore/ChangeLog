@@ -1,3 +1,44 @@
+2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Clean up BitmapTexturePool
+        https://bugs.webkit.org/show_bug.cgi?id=152073
+
+        Reviewed by Daniel Bates.
+
+        Move BitmapTexturePoolEntry class under the BitmapTexturePool class, renaming
+        it to simply Entry and keeping it private. Have the constructor take in an
+        rvalue reference to the RefPtr<BitmapTexture> object. Remove the static
+        compareTimeLastUsed() function and use a lambda directly in its place.
+
+        Remove the default BitmapTexturePool constructor, which isn't used anywhere.
+        Have the constructor and some methods accept or return RefPtr objects, possibly
+        via rvalue references. Clean up the header file by removing a few unnecessary
+        header includes and using forward declarations where possible.
+
+        In the BitmapTexturePool implementation file, mark the two const variables as
+        static. The ::acquireTexture() method now uses the std::find_if() algorithm
+        to find a fitting Entry object in the Vector. The same method is also moved
+        upwards so we follow the order of declaration in the header. ::createTexture()
+        inlines the return of the new expression into the adoptRef() call in the return
+        statement.
+
+        TextureMapperGL constructor is updated to pass a copied RefPtr object into the
+        BitmapTexturePool constructor.
+
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::BitmapTexturePool):
+        (WebCore::BitmapTexturePool::acquireTexture):
+        (WebCore::BitmapTexturePool::releaseUnusedTexturesTimerFired):
+        (WebCore::BitmapTexturePool::createTexture):
+        * platform/graphics/texmap/BitmapTexturePool.h:
+        (WebCore::BitmapTexturePool::Entry::Entry):
+        (WebCore::BitmapTexturePool::Entry::markUsed):
+        (WebCore::BitmapTexturePoolEntry::BitmapTexturePoolEntry): Deleted.
+        (WebCore::BitmapTexturePoolEntry::markUsed): Deleted.
+        (WebCore::BitmapTexturePoolEntry::compareTimeLastUsed): Deleted.
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::TextureMapperGL):
+
 2015-12-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] RenderThemeGtk::platformActiveSelectionBackgroundColor, et. al. should not clobber state of cached GtkStyleContexts
