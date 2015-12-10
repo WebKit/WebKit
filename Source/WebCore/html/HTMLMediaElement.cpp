@@ -5049,7 +5049,6 @@ void HTMLMediaElement::suspend(ReasonForSuspension why)
             setShouldBufferData(false);
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
             break;
-        case DocumentWillBePaused:
         case JavaScriptDebuggerPaused:
         case PageWillBeSuspended:
         case WillDeferLoading:

@@ -2207,21 +2207,15 @@ void Document::didBecomeCurrentDocumentInFrame()
         page()->chrome().client().needTouchEvents(true);
 #endif
 
-#if PLATFORM(IOS)
-    // Ensure that document scheduled task state matches frame timer state. It can be out of sync
-    // if timers state changed while the document was not in the frame (possibly in page cache,
-    // or simply newly created).
-    // FIXME: How does this interact with cross-platform code below?
-    if (m_frame->timersPaused())
-        suspendScheduledTasks(ActiveDOMObject::DocumentWillBePaused);
-    else
-        resumeScheduledTasks(ActiveDOMObject::DocumentWillBePaused);
-#endif
-
+    // Ensure that the scheduled task state of the document matches the DOM suspension state of the frame. It can
+    // be out of sync if the DOM suspension state changed while the document was not in the frame (possibly in the
+    // page cache, or simply newly created).
     if (m_frame->activeDOMObjectsAndAnimationsSuspended()) {
-        suspendScriptedAnimationControllerCallbacks();
         m_frame->animation().suspendAnimationsForDocument(this);
-        suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
+        suspendScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
+    } else {
+        resumeScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
+        m_frame->animation().resumeAnimationsForDocument(this);
     }
 }
 
@@ -5267,14 +5261,13 @@ void Document::pendingTasksTimerFired()
 
 void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
 {
-#if PLATFORM(IOS)
     if (m_scheduledTasksAreSuspended) {
-        ASSERT(reasonForSuspendingActiveDOMObjects() == ActiveDOMObject::DocumentWillBePaused);
+        // A page may subsequently suspend DOM objects, say as part of handling a scroll or zoom gesture, after the
+        // embedding client requested the page be suspended. We ignore such requests so long as the embedding client
+        // requested the suspension first. See <rdar://problem/13754896> for more details.
+        ASSERT(reasonForSuspendingActiveDOMObjects() == ActiveDOMObject::PageWillBeSuspended);
         return;
     }
-#endif
-
-    ASSERT(!m_scheduledTasksAreSuspended);
 
     suspendScriptedAnimationControllerCallbacks();
     suspendActiveDOMObjects(reason);

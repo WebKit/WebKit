@@ -1,3 +1,60 @@
+2015-12-09  Daniel Bates  <dabates@apple.com>
+
+        Unify iOS Frame::setTimersPaused() logic and Frame::{suspend, resume}ActiveDOMObjectsAndAnimations()
+        https://bugs.webkit.org/show_bug.cgi?id=152006
+
+        Reviewed by Simon Fraser.
+
+        Currently we have almost identical logic to suspend and resume a web page for iOS and non-iOS ports.
+        We should unify this logic instead of duplicating it.
+
+        * dom/ActiveDOMObject.h: Remove iOS-specific enumeration DocumentWillBePaused and standardize on
+        enumerator PageWillBeSuspended.
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame): Unify iOS and non-iOS-specific code.
+        (WebCore::Document::suspendScheduledTasks): Ignore subsequent calls to this function so long as the reason for
+        the first invocation was ActiveDOMObject::PageWillBeSuspended. Such a subsequent call may occur as part of
+        handling a scroll or zoom gesture.
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects): Ignore subsequent calls to this function
+        so long as the reason for the first invocation was ActiveDOMObject::PageWillBeSuspended. Such a subsequent
+        call may occur as part of the process of a page being added to the page cache.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::suspend): Remove case for ActiveDOMObject::DocumentWillBePaused as this
+        enumerator is being removed.
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install): Write logic that used Frame::timersPaused() terms of
+        ScriptExecutionContext::activeDOMObjectsAreSuspended() as we are removing Frame::timersPaused().
+        (WebCore::DOMTimer::fired): Remove iOS-specific assertion with respect to Frame::timersPaused().
+        This function already asserts the equivalent condition that ScriptExecutionContext::activeDOMObjectsAreSuspended()
+        evaluates to false. Clean up iOS-specific code that depends on the ScriptExecutionContext being a
+        Document object by taking advantage of the fact that this assumption is true when shouldBeginObservingChanges
+        evaluates to true.
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Remove instance variable m_timersPausedCount and unify the iOS and non-iOS logic.
+        (WebCore::Frame::suspendActiveDOMObjectsAndAnimations): Standardize on the iOS logic for suspending
+        DOM objects and animations because it is more comprehensive on what it suspends and works with the deferred
+        loading machinery (Page::setDefersLoading() - see remarks in Frame::resumeActiveDOMObjectsAndAnimations() for
+        more details). Specifically, make use of Frame::clearTimers() to suspend non-scripted animations (i.e. non-requestAnimationFrame()
+        animations), auto-scroll timer, and pending relayouts. And use Document::suspendScheduledTasks() to suspend
+        all other tasks, including WebSQL database callbacks, active DOM objects, scripted animations and execution of
+        <script async>/<script defer> JavaScript scripts.
+        (WebCore::Frame::resumeActiveDOMObjectsAndAnimations): Standardize on the iOS logic for resuming
+        DOM objects and animations for symmetry and because it works with the deferred loading machinery. We call
+        Document::resumeScheduledTasks() (which calls Document::resumeActiveDOMObjects()) instead of calling
+        Document::resumeActiveDOMObjects() directly because the former will ultimately process the queue of pending
+        tasks (Document::m_pendingTasks).
+        * page/Frame.h: Remove instance variable m_timersPausedCount.
+        (WebCore::Frame::timersPaused): Deleted.
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::setTimersPaused): Write this function in terms of Page::{suspend, resume}ActiveDOMObjectsAndAnimations().
+        We need to keep this function for Legacy WebKit on iOS.
+        (WebCore::Frame::setTimersPausedInternal): Deleted.
+        * rendering/RenderElement.cpp:
+        (WebCore::shouldRepaintForImageAnimation): Remove iOS-specific code to early return when Frame::timersPaused()
+        evaluates to true. This function already has the equivalent code to early return when Document::activeDOMObjectsAreSuspended()
+        evaluates to true.
+
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/metadata.html fails

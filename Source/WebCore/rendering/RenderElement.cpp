@@ -1435,10 +1435,6 @@ static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const 
     const Document& document = renderer.document();
     if (document.inPageCache())
         return false;
-#if PLATFORM(IOS)
-    if (document.frame()->timersPaused())
-        return false;
-#endif
     if (document.activeDOMObjectsAreSuspended())
         return false;
     if (renderer.style().visibility() != VISIBLE)

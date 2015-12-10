@@ -214,12 +214,13 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
 {
     checkConsistency();
 
-#if PLATFORM(IOS)
     if (m_activeDOMObjectsAreSuspended) {
-        ASSERT(m_reasonForSuspendingActiveDOMObjects == ActiveDOMObject::DocumentWillBePaused);
+        // A page may subsequently suspend DOM objects, say as part of entering the page cache, after the embedding
+        // client requested the page be suspended. We ignore such requests so long as the embedding client requested
+        // the suspension first. See <rdar://problem/13754896> for more details.
+        ASSERT(m_reasonForSuspendingActiveDOMObjects == ActiveDOMObject::PageWillBeSuspended);
         return;
     }
-#endif
 
     m_activeDOMObjectAdditionForbidden = true;
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)

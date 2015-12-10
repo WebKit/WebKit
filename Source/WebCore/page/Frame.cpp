@@ -165,7 +165,6 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
 #if PLATFORM(IOS)
     , m_overflowAutoScrollTimer(*this, &Frame::overflowAutoScrollTimerFired)
     , m_selectionChangeCallbacksDisabled(false)
-    , m_timersPausedCount(0)
 #endif
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
@@ -192,17 +191,10 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     frameCounter.increment();
 #endif
 
-    // FIXME: We should reconcile the iOS and OpenSource code below.
-    Frame* parent = parentFromOwnerElement(ownerElement);
-#if PLATFORM(IOS)
-    // Pause future timers if this frame is created when page is in pending state.
-    if (parent && parent->timersPaused())
-        setTimersPaused(true);
-#else
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
+    Frame* parent = parentFromOwnerElement(ownerElement);
     if (parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
-#endif
 }
 
 Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
@@ -1012,27 +1004,31 @@ void Frame::suspendActiveDOMObjectsAndAnimations()
         return;
 
     // FIXME: Suspend/resume calls will not match if the frame is navigated, and gets a new document.
-    if (document()) {
-        document()->suspendScriptedAnimationControllerCallbacks();
-        animation().suspendAnimationsForDocument(document());
-        document()->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
-    }
+    clearTimers(); // Suspends animations and pending relayouts.
+    if (m_doc)
+        m_doc->suspendScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
 }
 
 void Frame::resumeActiveDOMObjectsAndAnimations()
 {
-    ASSERT(activeDOMObjectsAndAnimationsSuspended());
+    if (!activeDOMObjectsAndAnimationsSuspended())
+        return;
 
     m_activeDOMObjectsAndAnimationsSuspendedCount--;
 
     if (activeDOMObjectsAndAnimationsSuspended())
         return;
 
-    if (document()) {
-        document()->resumeActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
-        animation().resumeAnimationsForDocument(document());
-        document()->resumeScriptedAnimationControllerCallbacks();
-    }
+    if (!m_doc)
+        return;
+
+    // FIXME: Suspend/resume calls will not match if the frame is navigated, and gets a new document.
+    m_doc->resumeScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
+
+    // Frame::clearTimers() suspended animations and pending relayouts.
+    animation().resumeAnimationsForDocument(m_doc.get());
+    if (m_view)
+        m_view->scheduleRelayout();
 }
 
 void Frame::deviceOrPageScaleFactorChanged()

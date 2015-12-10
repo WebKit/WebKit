@@ -55,7 +55,6 @@ public:
         WillDeferLoading,
         PageCache,
         PageWillBeSuspended,
-        DocumentWillBePaused
     };
 
     virtual const char* activeDOMObjectName() const = 0;
