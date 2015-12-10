@@ -1,3 +1,49 @@
+2015-12-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] RenderThemeGtk::platformActiveSelectionBackgroundColor, et. al. should not clobber state of cached GtkStyleContexts
+        https://bugs.webkit.org/show_bug.cgi?id=151533
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the style context cache to simplify the code, drastically reduce the number of
+        expensive save/restore operations performed on style contexts, and avoid unwanted
+        side-effects in RenderThemeGtk::styleColor. This is also a speculative fix for improper
+        button rendering with certain custom themes, and a simplification that will make it easier
+        to fix bug #150550.
+
+        This change does have performance implications, which I intend to check on the perf bot
+        after landing to ensure that removing the cache does not have a significant negative impact
+        on performance; I have no clue whether this will be a net performance win or loss. However,
+        this is a bit tricky, because the bot is running GTK+ 3.16, whereas I expect save/restore
+        might be much more expensive in GTK+ 3.20, and I do not want to make performance decisions
+        except based on the latest GTK+ due to large changes in the implementation of
+        GtkStyleContext.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::createStyleContext):
+        (WebCore::getStockIconForWidgetType):
+        (WebCore::getStockSymbolicIconForWidgetType):
+        (WebCore::RenderThemeGtk::initMediaColors):
+        (WebCore::RenderThemeGtk::adjustRepaintRect):
+        (WebCore::setToggleSize):
+        (WebCore::paintToggle):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::getComboBoxMetrics):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeGtk::paintInnerSpinButton):
+        (WebCore::styleColor):
+        (WebCore::gtkStyleChangedCallback): Deleted.
+        (WebCore::styleContextMap): Deleted.
+        (WebCore::getStyleContext): Deleted.
+
 2015-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-variant-caps does not work if the font does not support font features
