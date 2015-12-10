@@ -34,6 +34,8 @@ using namespace WebKit;
 
 WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
 {
+    if ([urlRequest HTTPBodyStream])
+        return nullptr;
     RetainPtr<NSURLRequest> copiedURLRequest = adoptNS([urlRequest copy]);
     return toAPI(&API::URLRequest::create(copiedURLRequest.get()).leakRef());
 }

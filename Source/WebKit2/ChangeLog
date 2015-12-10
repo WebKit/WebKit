@@ -1,3 +1,25 @@
+2015-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r192796) WKBundlePageResourceLoadClient should be able to setHTTPBody in willSendRequestForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=152022
+        rdar://problem/23763584
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/c/WKURLRequest.cpp:
+        (WKURLRequestCopyHTTPMethod):
+        (WKURLRequestCopyWithHTTPBody):
+        (WKURLRequestSetDefaultTimeoutInterval):
+        * Shared/API/c/WKURLRequest.h:
+        Make WKURLRequestCopyWithHTTPBody SPI for testing.
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCreateWithNSURLRequest):
+        Crash if someone tries to use an NSURLRequest with HTTPBodyStream, which will not work with the network process.
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+        Use an HTTP body if the client's willSendRequestForFrame returned one.
+        This is the functional change of this patch.
+
 2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Reserve capacity for the children vector in CoordinatedGraphicsScene::setLayerChildrenIfNeeded()

@@ -1166,6 +1166,14 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
             return nullptr;
         }
     }
+    
+    if (injectedBundle.isTestRunning()) {
+        String body = injectedBundle.testRunner()->willSendRequestHTTPBody();
+        if (!body.isEmpty()) {
+            CString cBody = body.utf8();
+            return WKURLRequestCopySettingHTTPBody(request, WKDataCreate(reinterpret_cast<const unsigned char*>(cBody.data()), cBody.length()));
+        }
+    }
 
     WKRetain(request);
     return request;

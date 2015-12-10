@@ -28,6 +28,7 @@
 
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
+#include "WKData.h"
 #include <WebCore/URL.h>
 
 using namespace WebCore;
@@ -56,6 +57,13 @@ WKURLRef WKURLRequestCopyFirstPartyForCookies(WKURLRequestRef requestRef)
 WKStringRef WKURLRequestCopyHTTPMethod(WKURLRequestRef requestRef)
 {
     return toCopiedAPI(toImpl(requestRef)->resourceRequest().httpMethod());
+}
+
+WKURLRequestRef WKURLRequestCopySettingHTTPBody(WKURLRequestRef requestRef, WKDataRef body)
+{
+    WebCore::ResourceRequest requestCopy(toImpl(requestRef)->resourceRequest());
+    requestCopy.setHTTPBody(FormData::create(WKDataGetBytes(body), WKDataGetSize(body)));
+    return toAPI(&API::URLRequest::create(requestCopy).leakRef());
 }
 
 void WKURLRequestSetDefaultTimeoutInterval(double timeoutInterval)

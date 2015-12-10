@@ -42,6 +42,8 @@ WK_EXPORT WKURLRef WKURLRequestCopyFirstPartyForCookies(WKURLRequestRef);
 
 WK_EXPORT WKStringRef WKURLRequestCopyHTTPMethod(WKURLRequestRef);
 
+WK_EXPORT WKURLRequestRef WKURLRequestCopySettingHTTPBody(WKURLRequestRef, WKDataRef);
+
 WK_EXPORT void WKURLRequestSetDefaultTimeoutInterval(double);
 
 #ifdef __cplusplus

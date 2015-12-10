@@ -1,3 +1,18 @@
+2015-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r192796) WKBundlePageResourceLoadClient should be able to setHTTPBody in willSendRequestForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=152022
+        rdar://problem/23763584
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        * http/tests/misc/resources/post-echo.cgi: Copied from LayoutTests/http/tests/xmlhttprequest/resources/post-echo.cgi.
+        * http/tests/misc/will-send-request-with-client-provided-http-body-expected.txt: Added.
+        * http/tests/misc/will-send-request-with-client-provided-http-body.html: Added.
+        * platform/wk2/TestExpectations:
+        New test for WK2 only.
+
 2015-12-10  Enrica Casucci  <enrica@apple.com>
 
         Change skin tone support for two emoji.

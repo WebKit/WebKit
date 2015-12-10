@@ -729,6 +729,9 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 fast/images/animated-gif-no-layout.html [ Pass ]
 fast/images/gif-loop-count.html [ Pass ]
 
+# DumpRenderTree does not implement setWillSendRequestHTTPBody
+http/tests/misc/will-send-request-with-client-provided-http-body.html [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

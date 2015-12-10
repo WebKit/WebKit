@@ -49,10 +49,15 @@ void InjectedBundlePageResourceLoadClient::willSendRequestForFrame(WebPage* page
         return;
 
     RefPtr<API::URLRequest> returnedRequest = adoptRef(toImpl(m_client.willSendRequestForFrame(toAPI(page), toAPI(frame), identifier, toAPI(request), toAPI(redirectResponse), m_client.base.clientInfo)));
-    if (returnedRequest)
-        request.updateFromDelegatePreservingOldProperties(returnedRequest->resourceRequest());
-    else
-        request = ResourceRequest();
+    if (returnedRequest) {
+        // If the client returned an HTTP body, we want to use that http body. This is needed to fix <rdar://problem/23763584>
+        auto& returnedResourceRequest = returnedRequest->resourceRequest();
+        RefPtr<FormData> returnedHTTPBody = returnedResourceRequest.httpBody();
+        request.updateFromDelegatePreservingOldProperties(returnedResourceRequest);
+        if (returnedHTTPBody)
+            request.setHTTPBody(WTF::move(returnedHTTPBody));
+    } else
+        request = { };
 }
 
 void InjectedBundlePageResourceLoadClient::didReceiveResponseForResource(WebPage* page, WebFrame* frame, uint64_t identifier, const WebCore::ResourceResponse& response)

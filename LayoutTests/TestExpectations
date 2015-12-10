@@ -42,8 +42,9 @@ fast/events/mouse-force-up.html [ Skip ]
 quicklook [ Skip ]
 http/tests/quicklook [ Skip ]
 
-# This test is WebKit2-only
+# These tests are WebKit2-only
 http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
+http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/ui-side-scripts.html [ Skip ]

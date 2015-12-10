@@ -135,6 +135,7 @@ interface TestRunner {
 
     void setWillSendRequestReturnsNull(boolean flag);
     void setWillSendRequestReturnsNullOnRedirect(boolean flag);
+    void setWillSendRequestAddsHTTPBody(DOMString body);
     
     void setShouldStayOnPageAfterHandlingBeforeUnload(boolean flag);
 
