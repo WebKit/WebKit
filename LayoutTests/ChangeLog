@@ -1,5 +1,19 @@
 2015-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r193641. rdar://problem/23814343
+
+    2015-12-07  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+            Unreviewed.
+
+            http://webkit.org/b/147933 and though count queuing strategy and writable stream abort tests are fixed, there
+            are still issues with pipeTo. For that I created http://webkit.org/b/151949.
+
+            * platform/mac/TestExpectations:
+            * platform/win/TestExpectations:
+
+2015-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r193286. rdar://problem/23814343
 
     2015-12-02  Sam Weinig  <sam@webkit.org>

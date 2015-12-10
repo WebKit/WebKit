@@ -3140,3 +3140,5 @@ fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
 
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
+
+webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]

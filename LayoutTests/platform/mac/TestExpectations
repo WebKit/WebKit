@@ -1329,6 +1329,8 @@ fast/events/key-events-in-editable-gridbox.html [ Skip ]
 # ENABLE_INPUT_TYPE_COLOR
 accessibility/color-well.html [ Skip ]
 fast/forms/color [ Skip ]
+# Promises callbacks issues create problems in the writable stream tests
+webkit.org/b/151949 streams/reference-implementation/pipe-to.html [ Failure ]
 
 # No support for Filters Level 2
 [ Mavericks ] fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
