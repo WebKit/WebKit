@@ -1,3 +1,18 @@
+2015-12-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Bail out if the page proxy is invalid when WebPageProxy::processWillBecome{Foreground, Suspended}() are called
+        https://bugs.webkit.org/show_bug.cgi?id=151877
+
+        Reviewed by Darin Adler.
+
+        We cannot assume that a WebPageProxy is in a valid state when WebPageProxy::processWillBecome{Foreground, Suspended}()
+        are called because these callbacks may occur after the web process crashed and before a
+        WebPageProxy attaches to a new web process (and hence is considered in a valid state).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processWillBecomeSuspended): Early return if the page proxy is invalid.
+        (WebKit::WebPageProxy::processWillBecomeForeground): Ditto.
+
 2015-12-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r193864.

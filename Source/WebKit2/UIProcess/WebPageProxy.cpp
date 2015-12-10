@@ -4902,7 +4902,8 @@ void WebPageProxy::processDidCrash()
 #if PLATFORM(IOS)
 void WebPageProxy::processWillBecomeSuspended()
 {
-    ASSERT(m_isValid);
+    if (!isValid())
+        return;
 
     m_hasNetworkRequestsOnSuspended = m_pageLoadState.networkRequestsInProgress();
     if (m_hasNetworkRequestsOnSuspended)
@@ -4911,7 +4912,8 @@ void WebPageProxy::processWillBecomeSuspended()
 
 void WebPageProxy::processWillBecomeForeground()
 {
-    ASSERT(m_isValid);
+    if (!isValid())
+        return;
 
     if (m_hasNetworkRequestsOnSuspended) {
         setNetworkRequestsInProgress(true);
