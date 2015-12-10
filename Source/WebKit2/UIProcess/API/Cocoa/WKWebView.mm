@@ -699,6 +699,15 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
+
+- (BOOL)_isBackground
+{
+    if ([self _isDisplayingPDF])
+        return [(WKPDFView *)_customContentView isBackground];
+
+    return [_contentView isBackground];
+}
+
 - (void)setFrame:(CGRect)frame
 {
     CGRect oldFrame = self.frame;

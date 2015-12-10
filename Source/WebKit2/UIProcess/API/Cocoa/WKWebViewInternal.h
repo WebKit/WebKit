@@ -109,6 +109,7 @@ struct PrintInfo;
 - (void)_navigationGestureDidBegin;
 - (void)_navigationGestureDidEnd;
 
+@property (nonatomic, readonly) BOOL _isBackground;
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
 #else

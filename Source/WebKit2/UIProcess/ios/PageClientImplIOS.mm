@@ -182,7 +182,7 @@ bool PageClientImpl::isViewFocused()
 
 bool PageClientImpl::isViewVisible()
 {
-    if (isViewInWindow() && !m_contentView.isBackground)
+    if (isViewInWindow() && !m_webView._isBackground)
         return true;
     
     if ([m_webView _isShowingVideoPictureInPicture])
