@@ -1292,3 +1292,7 @@ webkit.org/b/152009 [ Debug ElCapitan ] fast/canvas/canvas-too-large-to-draw.htm
 # Yosemite and El Capitan do not support font feature coverage queries.
 [ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
 [ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+
+# Temporarily disable font feature synthesis tests.
+[ Yosemite ElCapitan ] css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
+[ Yosemite ElCapitan ] css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]

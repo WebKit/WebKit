@@ -1,3 +1,12 @@
+2015-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Build fix
+
+        Unreviewed.
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::variantCapsSupportsCharacterForSynthesis):
+
 2015-12-10  Zalan Bujtas  <zalan@apple.com>
 
         TextPainter: Add support for painting multiple text runs.

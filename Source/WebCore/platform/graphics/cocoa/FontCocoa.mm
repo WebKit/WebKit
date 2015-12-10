@@ -284,7 +284,7 @@ void Font::platformDestroy()
 
 bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32 character) const
 {
-#if (PLATFORM(IOS) && TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101104)
+#if (PLATFORM(IOS) && TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
     Glyph glyph = glyphForCharacter(character);
     if (!glyph)
         return false;
@@ -326,7 +326,7 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
 #endif
 }
 
-#if (PLATFORM(IOS) && TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90300) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101104)
+#if (PLATFORM(IOS) && TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
 static RetainPtr<CFDictionaryRef> smallCapsOpenTypeDictionary(CFStringRef key, int rawValue)
 {
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
