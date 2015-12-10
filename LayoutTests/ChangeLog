@@ -1,3 +1,95 @@
+2015-12-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] Update expected results for editing tests
+
+        * platform/ios-simulator-wk2/editing/deleting/delete-3608462-fix-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/4278698-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/before-after-input-element-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/editable-html-element-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/editing-empty-divs-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-3778059-fix-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-3851164-fix-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-at-end-01-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-009-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-at-tabspan-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-at-tabspan-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-at-tabspan-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-quoted-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-quoted-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-quoted-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-quoted-005-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-009-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-010-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-011-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-012-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-013-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-014-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-015-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-016-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-017-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-018-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-019-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-020-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-022-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-023-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-024-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-025-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-026-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-div-027-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-paragraph-01-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-paragraph-02-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-paragraph-03-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-paragraph-04-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-paragraph-05-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-tab-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-text-at-tabspan-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-text-at-tabspan-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-text-at-tabspan-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/insert-text-with-newlines-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/line-break-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/multiple-lines-selected-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/paragraph-separator-01-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/paragraph-separator-02-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/paragraph-separator-03-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/paragraph-separator-in-table-1-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/paragraph-separator-in-table-2-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/redo-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/return-key-with-selection-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/return-key-with-selection-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/return-key-with-selection-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/inserting/typing-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/apple-style-editable-mix-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/block-style-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/block-style-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/block-style-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/block-styles-007-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-004-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-005-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-006-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-007-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-008-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-009-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-010-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-011-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-012-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/create-block-for-style-013-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/designmode-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/relative-font-size-change-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/relative-font-size-change-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/relative-font-size-change-003-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/relative-font-size-change-004-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/style-3681552-fix-002-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/style-3998892-fix-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/style-boundary-001-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/style-boundary-004-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/table-selection-expected.txt:
+        * platform/ios-simulator-wk2/editing/style/unbold-in-bold-expected.txt:
+
 2015-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Add several generator related JSRegress tests to measure performance change after optimization
