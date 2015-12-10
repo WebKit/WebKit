@@ -1,3 +1,16 @@
+2015-12-10  Aakash Jain  <aakash_jain@apple.com>
+
+        Remove additional simulator checks before running layout-tests
+        https://bugs.webkit.org/show_bug.cgi?id=152146
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.check_sys_deps): Removed additional simulators verifications.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator._boot_and_shutdown_simulator_device): Deleted.
+        (Simulator.check_simulator_device_and_erase_if_needed): Deleted.
+
 2015-12-09  Aakash Jain  <aakash_jain@apple.com>
 
         Run atleast one simulator even if max process limit is low

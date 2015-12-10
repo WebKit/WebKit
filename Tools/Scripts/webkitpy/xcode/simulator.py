@@ -299,24 +299,6 @@ class Simulator(object):
     def device_directory(udid):
         return os.path.realpath(os.path.expanduser(os.path.join('~/Library/Developer/CoreSimulator/Devices', udid)))
 
-    @staticmethod
-    def _boot_and_shutdown_simulator_device(host, udid):
-        exit_code = host.executive.run_command(['xcrun', 'simctl', 'boot', udid], return_exit_code=True)
-        if exit_code:
-            return exit_code
-        exit_code = host.executive.run_command(['xcrun', 'simctl', 'shutdown', udid], return_exit_code=True)
-        return exit_code
-
-    @staticmethod
-    def check_simulator_device_and_erase_if_needed(host, udid):
-        exit_code = Simulator._boot_and_shutdown_simulator_device(host, udid)
-        if not exit_code:
-            return True  # Can boot device
-        # Try erasing the simulator device to restore it to a known good state.
-        if not host.executive.run_command(['xcrun', 'simctl', 'erase', udid], return_exit_code=True):
-            return Simulator._boot_and_shutdown_simulator_device(host, udid) == 0  # Can boot device
-        return False  # Cannot boot or erase device
-
     def delete_device(self, udid):
         Device.delete(udid)
 

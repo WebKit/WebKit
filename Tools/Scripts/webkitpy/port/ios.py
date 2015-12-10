@@ -282,13 +282,6 @@ class IOSSimulatorPort(Port):
         for i in xrange(self.child_processes()):
             # FIXME: This creates the devices sequentially, doing this in parallel can improve performance.
             testing_device = self.testing_device(i)
-            _log.debug('Verifying Simulator{0} with UDID {1}.'.format(i, testing_device.udid))
-
-            # FIXME: This is very slow, especially for mulitple simulators, we probably do not need
-            # this checking as we are re-creating new simulator apps and devices in every run.
-            if not Simulator.check_simulator_device_and_erase_if_needed(self.host, testing_device.udid):
-                _log.error('Unable to boot the simulator device with UDID {0}.'.format(testing_device.udid))
-                return False
         return super(IOSSimulatorPort, self).check_sys_deps(needs_http)
 
     def check_for_leaks(self, process_name, process_pid):
