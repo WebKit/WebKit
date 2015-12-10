@@ -1,5 +1,25 @@
 2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] pixel coverage multiplication in TiledBackingStore can overflow
+        https://bugs.webkit.org/show_bug.cgi?id=152055
+
+        Reviewed by Carlos Garcia Campos.
+
+        The computation of the pixel coverage in TiledBackingStore can easily overflow
+        when the candidate size is relatively large (for instance when the backed
+        layer is transformed in a way that increases its perceived size). This can result
+        in missing tiles for this specific backing store, at least until the layer in
+        question is transformed again into a shape that produces a smaller candidate size.
+
+        To avoid the integer overflow, the multiplication is done in a safe manner,
+        defaulting to the max positive value an integer can hold in case the overflow
+        is detected.
+
+        * platform/graphics/texmap/coordinated/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::adjustForContentsRect):
+
+2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Clean up BitmapTexturePool
         https://bugs.webkit.org/show_bug.cgi?id=152073
 

@@ -23,6 +23,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "GraphicsContext.h"
 #include "TiledBackingStoreClient.h"
+#include <wtf/CheckedArithmetic.h>
 
 namespace WebCore {
 
@@ -269,7 +270,9 @@ void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
         return;
 
     // Try to create a cover rect of the same size as the candidate, but within content bounds.
-    int pixelsCovered = candidateSize.width() * candidateSize.height();
+    int pixelsCovered = 0;
+    if (!WTF::safeMultiply(candidateSize.width(), candidateSize.height(), pixelsCovered))
+        pixelsCovered = std::numeric_limits<int>::max();
 
     if (rect.width() < candidateSize.width())
         rect.inflateY(((pixelsCovered / rect.width()) - rect.height()) / 2);
