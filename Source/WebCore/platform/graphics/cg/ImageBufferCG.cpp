@@ -196,10 +196,7 @@ RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavio
     if (!image)
         return nullptr;
 
-    auto bitmapImage = BitmapImage::create(image.get());
-    bitmapImage->setSpaceSize(spaceSize());
-
-    return WTF::move(bitmapImage);
+    return BitmapImage::create(image.get());
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
@@ -247,7 +244,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
     destContext->drawNativeImage(image.get(), m_data.backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
 }
 
-void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
@@ -255,14 +252,14 @@ void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& src
     if (!context()->isAcceleratedContext()) {
         if (destContext == context() || destContext->isAcceleratedContext()) {
             if (RefPtr<Image> copy = copyImage(CopyBackingStore)) // Drawing into our own buffer, need to deep copy.
-                copy->drawPattern(destContext, adjustedSrcRect, patternTransform, phase, styleColorSpace, op, destRect, blendMode);
+                copy->drawPattern(destContext, adjustedSrcRect, patternTransform, phase, spacing, styleColorSpace, op, destRect, blendMode);
         } else {
             if (RefPtr<Image> imageForRendering = copyImage(DontCopyBackingStore))
-                imageForRendering->drawPattern(destContext, adjustedSrcRect, patternTransform, phase, styleColorSpace, op, destRect, blendMode);
+                imageForRendering->drawPattern(destContext, adjustedSrcRect, patternTransform, phase, spacing, styleColorSpace, op, destRect, blendMode);
         }
     } else {
         if (RefPtr<Image> copy = copyImage(CopyBackingStore))
-            copy->drawPattern(destContext, adjustedSrcRect, patternTransform, phase, styleColorSpace, op, destRect, blendMode);
+            copy->drawPattern(destContext, adjustedSrcRect, patternTransform, phase, spacing, styleColorSpace, op, destRect, blendMode);
     }
 }
 

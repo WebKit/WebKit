@@ -56,7 +56,7 @@ void GradientImage::draw(GraphicsContext* destContext, const FloatRect& destRect
 }
 
 void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect, BlendMode blendMode)
+    const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect, BlendMode blendMode)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
     FloatSize adjustedSize = size();
@@ -88,11 +88,10 @@ void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& s
             m_cachedImageBuffer->convertToLuminanceMask();
     }
 
-    m_cachedImageBuffer->setSpaceSize(spaceSize());
     destContext->setDrawLuminanceMask(false);
 
     // Tile the image buffer into the context.
-    m_cachedImageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect, blendMode);
+    m_cachedImageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, spacing, styleColorSpace, compositeOp, destRect, blendMode);
 }
 
 }

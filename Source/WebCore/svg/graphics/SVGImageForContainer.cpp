@@ -41,10 +41,9 @@ void SVGImageForContainer::draw(GraphicsContext* context, const FloatRect& dstRe
 }
 
 void SVGImageForContainer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+    const FloatPoint& phase, const FloatSize& spacing, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
-    m_image->setSpaceSize(spaceSize());
-    m_image->drawPatternForContainer(context, m_containerSize, m_zoom, srcRect, patternTransform, phase, colorSpace, compositeOp, dstRect, blendMode);
+    m_image->drawPatternForContainer(context, m_containerSize, m_zoom, srcRect, patternTransform, phase, spacing, colorSpace, compositeOp, dstRect, blendMode);
 }
 
 PassNativeImagePtr SVGImageForContainer::nativeImageForCurrentFrame()
