@@ -1,3 +1,37 @@
+2015-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Add several generator related JSRegress tests to measure performance change after optimization
+        https://bugs.webkit.org/show_bug.cgi?id=151785
+
+        Reviewed by Saam Barati.
+
+        Before starting optimization for ES6 Generators, add several JSRegress tests to measure that.
+
+        * js/regress/generator-create-expected.txt: Added.
+        * js/regress/generator-create.html: Added.
+        * js/regress/generator-fib-expected.txt: Added.
+        * js/regress/generator-fib.html: Added.
+        * js/regress/generator-function-create-expected.txt: Added.
+        * js/regress/generator-function-create.html: Added.
+        * js/regress/generator-sunspider-access-nsieve-expected.txt: Added.
+        * js/regress/generator-sunspider-access-nsieve.html: Added.
+        * js/regress/generator-with-several-types-expected.txt: Added.
+        * js/regress/generator-with-several-types.html: Added.
+        * js/regress/script-tests/generator-create.js: Added.
+        (gen):
+        * js/regress/script-tests/generator-fib.js: Added.
+        (result):
+        * js/regress/script-tests/generator-function-create.js: Added.
+        (createGeneratorFunction.gen):
+        (createGeneratorFunction):
+        * js/regress/script-tests/generator-sunspider-access-nsieve.js: Added.
+        (prime):
+        (sieve):
+        * js/regress/script-tests/generator-with-several-types.js: Added.
+        (g1):
+        (g2):
+        (g3):
+
 2015-12-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix ambiguous expectations added in r193895.
