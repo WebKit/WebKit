@@ -246,11 +246,10 @@ void CoordinatedGraphicsScene::setLayerChildrenIfNeeded(TextureMapperLayer* laye
         return;
 
     Vector<TextureMapperLayer*> children;
+    children.reserveCapacity(state.children.size());
+    for (auto& child : state.children)
+        children.append(layerByID(child));
 
-    for (auto& child : state.children) {
-        TextureMapperLayer* childLayer = layerByID(child);
-        children.append(childLayer);
-    }
     layer->setChildren(children);
 }
 

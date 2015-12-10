@@ -1,3 +1,15 @@
+2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Reserve capacity for the children vector in CoordinatedGraphicsScene::setLayerChildrenIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=152117
+
+        Reviewed by Martin Robinson.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::setLayerChildrenIfNeeded): Reserve the capacity
+        for the new Vector that will contain the same number of items as the Vector
+        on the CoordinatedGraphicsLayerState object.
+
 2015-12-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Bail out if the page proxy is invalid when WebPageProxy::processWillBecome{Foreground, Suspended}() are called
