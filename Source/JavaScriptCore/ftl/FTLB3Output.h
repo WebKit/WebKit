@@ -422,7 +422,9 @@ public:
         return ValueFromBlock(upsilon, m_block);
     }
 
+#if PLATFORM(COCOA)
 #pragma mark - States
+#endif
     B3::Procedure& m_proc;
 
     DFG::Node* m_origin { nullptr };
