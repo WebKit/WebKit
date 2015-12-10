@@ -34,18 +34,18 @@ StackmapValue::~StackmapValue()
 {
 }
 
-void StackmapValue::append(const ConstrainedValue& constrainedValue)
+void StackmapValue::append(Value* value, const ValueRep& rep)
 {
-    if (constrainedValue.rep() == ValueRep::ColdAny) {
-        children().append(constrainedValue.value());
+    if (rep == ValueRep::ColdAny) {
+        children().append(value);
         return;
     }
 
     while (m_reps.size() < numChildren())
         m_reps.append(ValueRep::ColdAny);
 
-    children().append(constrainedValue.value());
-    m_reps.append(constrainedValue.rep());
+    children().append(value);
+    m_reps.append(rep);
 }
 
 void StackmapValue::appendSomeRegister(Value* value)

@@ -63,6 +63,7 @@
 #include <dlfcn.h>
 #include <llvm/InitializeLLVM.h>
 #include <unordered_set>
+#include <wtf/Box.h>
 #include <wtf/ProcessID.h>
 
 namespace JSC { namespace FTL {
@@ -6720,15 +6721,57 @@ private:
     
     LValue getById(LValue base)
     {
+        Node* node = m_node;
+        UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
+
 #if FTL_USES_B3
-        UNUSED_PARAM(base);
+        // FIXME: Make this do exceptions.
+        // https://bugs.webkit.org/show_bug.cgi?id=151686
+        
+        B3::PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->append(base, ValueRep::SomeRegister);
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
-        return nullptr;
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                auto generator = Box<JITGetByIdGenerator>::create(
+                    jit.codeBlock(), node->origin.semantic,
+                    state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic),
+                    params.usedRegisters(), JSValueRegs(params[1].gpr()), JSValueRegs(params[0].gpr()));
+
+                generator->generateFastPath(jit);
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath(
+                    [=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                        
+                        // FIXME: Make this do something.
+                        CCallHelpers::JumpList exceptions;
+
+                        generator->slowPathJump().link(&jit);
+                        CCallHelpers::Label slowPathBegin = jit.label();
+                        CCallHelpers::Call slowPathCall = callOperation(
+                            *state, params.usedRegisters(), jit, node->origin.semantic, &exceptions,
+                            operationGetByIdOptimize, params[0].gpr(),
+                            CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
+                            CCallHelpers::TrustedImmPtr(uid)).call();
+                        jit.jump().linkTo(done, &jit);
+
+                        generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                        jit.addLinkTask(
+                            [=] (LinkBuffer& linkBuffer) {
+                                generator->finalize(linkBuffer);
+                            });
+                    });
+            });
+
+        return patchpoint;
 #else
-        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
-
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
         
@@ -6748,7 +6791,7 @@ private:
         LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
-        m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->origin.semantic, uid));
+        m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, node->origin.semantic, uid));
         
         return call;
 #endif

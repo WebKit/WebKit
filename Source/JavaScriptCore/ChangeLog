@@ -1,3 +1,31 @@
+2015-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should have basic GetById support
+        https://bugs.webkit.org/show_bug.cgi?id=152035
+
+        Reviewed by Saam Barati.
+
+        Adds basic GetById support. This was so easy to do. Unlike the LLVM code for this, the B3 code is
+        entirely self-contained within the getById() method in LowerDFG.
+
+        I discovered that we weren't folding Check(NotEqual(x, 0)) to Check(x). This was preventing us
+        from generating good code for Check(NotEqual(BitAnd(x, tagMask), 0)), since the BitAnd was
+        concealed. This was an easy strength reduction rule to add.
+
+        Finally, I found it easier to say append(value, rep) than append(ConstrainedValue(value, rep)), so
+        I added that API. The old ConstrainedValue form is still super useful in other places, like
+        compileCallOrConstruct(), where the two-argument form would be awkward. It's great to have both
+        APIs to pick from.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::~StackmapValue):
+        (JSC::B3::StackmapValue::append):
+        * b3/B3StackmapValue.h:
+        * dfg/DFGCommon.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+
 2015-12-09  Saam barati  <sbarati@apple.com>
 
         Update generators' features.json to indicate that we have a spec compliant implementation

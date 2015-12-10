@@ -861,6 +861,12 @@ private:
                 m_changed = true;
                 break;
             }
+
+            if (m_value->child(0)->opcode() == NotEqual && m_value->child(0)->child(1)->isInt(0)) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+                break;
+            }
             break;
 
         case Branch: {

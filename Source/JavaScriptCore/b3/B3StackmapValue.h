@@ -63,7 +63,12 @@ public:
 
     // Use this to add children. Note that you could also add children by doing
     // children().append(). That will work fine, but it's not recommended.
-    void append(const ConstrainedValue&);
+    void append(const ConstrainedValue& value)
+    {
+        append(value.value(), value.rep());
+    }
+
+    void append(Value*, const ValueRep&);
 
     template<typename VectorType>
     void appendVector(const VectorType& vector)

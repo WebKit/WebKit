@@ -1,3 +1,28 @@
+2015-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should have basic GetById support
+        https://bugs.webkit.org/show_bug.cgi?id=152035
+
+        Reviewed by Saam Barati.
+
+        When dealing with shared task lambdas, you often want to force a value to be allocated so that it
+        has reference semantics, but you still want the lambda to execute OK when we pop stack. In PL we
+        usually call this a "box". This is easy to do if the value that happened to be stack-allocated
+        is also RefCounted, but that's rare, since stack-allocated values often have copy semantics. So,
+        I've added a Box type to WTF. Behind the scenes, it allocates your object with fast malloc inside
+        a ThreadSAfeRefCounted. When you pass Box<T>, you're passing the reference. This makes it a lot
+        easier to work with by-reference capture.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Box.h: Added.
+        (WTF::Box::Box):
+        (WTF::Box::create):
+        (WTF::Box::get):
+        (WTF::Box::operator*):
+        (WTF::Box::operator->):
+        (WTF::Box::operator bool):
+        (WTF::Box::Data::Data):
+
 2015-12-09  Andreas Kling  <akling@apple.com>
 
         [iOS] ResourceUsageOverlay should work on iOS.
