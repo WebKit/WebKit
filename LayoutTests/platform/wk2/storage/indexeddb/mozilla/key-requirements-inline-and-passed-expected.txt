@@ -13,7 +13,7 @@ Expecting exception from objectStore.add({id: 5}, 5);
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided.
+Exception message: The data provided does not meet requirements.
 PASS successfullyParsed is true
 
 TEST COMPLETE

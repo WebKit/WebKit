@@ -1,3 +1,15 @@
+2015-12-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/objectstore-basics.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152101
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Multiple tests updated to the new error messaging cover it).
+
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd): Add plenty of detailed error messaging.
+
 2015-12-09  Zalan Bujtas  <zalan@apple.com>
 
         TextPainter: Make before and after selection painting more explicit.

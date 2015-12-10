@@ -1,5 +1,26 @@
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/objectstore-basics.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152101
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/storage/indexeddb/mozilla/bad-keypath-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/bad-keypath-expected.txt.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt.
+        * platform/wk2/storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt: Copied from LayoutTests/storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt.
+        * storage/indexeddb/invalid-keys-expected.txt:
+        * storage/indexeddb/key-type-binary-expected.txt:
+        * storage/indexeddb/keypath-edges-expected.txt:
+        * storage/indexeddb/mozilla/bad-keypath-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+
+2015-12-09  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/metadata.html fails
         https://bugs.webkit.org/show_bug.cgi?id=152099
 

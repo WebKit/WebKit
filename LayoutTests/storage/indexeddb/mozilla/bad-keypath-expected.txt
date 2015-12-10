@@ -14,7 +14,7 @@ Expecting exception from request = objectStore.add({});
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: The data provided does not meet requirements.
+Exception message: Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value.
 PASS successfullyParsed is true
 
 TEST COMPLETE

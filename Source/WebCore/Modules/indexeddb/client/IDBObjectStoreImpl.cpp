@@ -271,6 +271,7 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
 
     if (key && key->type() == KeyType::Invalid) {
         ec.code = IDBDatabaseException::DataError;
+        ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: The parameter is not a valid key.");
         return nullptr;
     }
 
@@ -279,12 +280,14 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
     if (usesInlineKeys && inlineKeyCheck == InlineKeyCheck::Perform) {
         if (key) {
             ec.code = IDBDatabaseException::DataError;
+            ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided.");
             return nullptr;
         }
 
         RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, value, m_info.keyPath());
         if (keyPathKey && !keyPathKey->isValid()) {
             ec.code = IDBDatabaseException::DataError;
+            ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: Evaluating the object store's key path yielded a value that is not a valid key.");
             return nullptr;
         }
 
@@ -296,6 +299,7 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
                 }
             } else {
                 ec.code = IDBDatabaseException::DataError;
+                ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value.");
                 return nullptr;
             }
         }
@@ -306,6 +310,7 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
         }
     } else if (!usesKeyGenerator && !key) {
         ec.code = IDBDatabaseException::DataError;
+        ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: The object store uses out-of-line keys and has no key generator and the key parameter was not provided.");
         return nullptr;
     }
 
