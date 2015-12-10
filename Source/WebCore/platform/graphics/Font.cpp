@@ -295,6 +295,18 @@ const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
     return m_derivedFontData->smallCaps.get();
 }
 
+#if PLATFORM(COCOA)
+const Font& Font::noSynthesizableFeaturesFont() const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
+    if (!m_derivedFontData->noSynthesizableFeatures)
+        m_derivedFontData->noSynthesizableFeatures = createFontWithoutSynthesizableFeatures();
+    ASSERT(m_derivedFontData->noSynthesizableFeatures != this);
+    return *m_derivedFontData->noSynthesizableFeatures;
+}
+#endif
+
 const Font* Font::emphasisMarkFont(const FontDescription& fontDescription) const
 {
     if (!m_derivedFontData)

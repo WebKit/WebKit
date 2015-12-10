@@ -187,7 +187,7 @@ public:
     GlyphData glyphDataForCharacter(UChar32, bool mirror, FontVariant = AutoVariant) const;
     
 #if PLATFORM(COCOA)
-    const Font* fontForCombiningCharacterSequence(const UChar*, size_t length, FontVariant) const;
+    const Font* fontForCombiningCharacterSequence(const UChar*, size_t length) const;
 #endif
 
     static bool isCJKIdeograph(UChar32);

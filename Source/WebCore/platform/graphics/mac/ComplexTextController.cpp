@@ -32,6 +32,7 @@
 #include "RenderText.h"
 #include "TextBreakIterator.h"
 #include "TextRun.h"
+#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -290,6 +291,19 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
     return true;
 }
 
+// FIXME: Capitalization is language-dependent and context-dependent and should operate on grapheme clusters instead of codepoints.
+static inline Optional<UChar32> capitalized(UChar32 baseCharacter)
+{
+    if (U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK)
+        return Nullopt;
+
+    UChar32 uppercaseCharacter = u_toupper(baseCharacter);
+    ASSERT(uppercaseCharacter == baseCharacter || uppercaseCharacter <= 0xFFFF);
+    if (uppercaseCharacter != baseCharacter)
+        return uppercaseCharacter;
+    return Nullopt;
+}
+
 void ComplexTextController::collectComplexTextRuns()
 {
     if (!m_end)
@@ -305,7 +319,11 @@ void ComplexTextController::collectComplexTextRuns()
     } else
         cp = m_run.characters16();
 
-    if (m_font.isSmallCaps())
+    auto fontVariantCaps = m_font.fontDescription().variantCaps();
+    bool engageAllSmallCapsProcessing = fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite;
+    bool engageSmallCapsProcessing = engageAllSmallCapsProcessing || fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::Petite;
+
+    if (engageAllSmallCapsProcessing || engageSmallCapsProcessing)
         m_smallCapsBuffer.resize(m_end);
 
     unsigned indexOfFontTransition = 0;
@@ -314,63 +332,100 @@ void ComplexTextController::collectComplexTextRuns()
 
     const Font* font;
     const Font* nextFont;
+    const Font* synthesizedFont = nullptr;
+    const Font* smallSynthesizedFont = nullptr;
 
     unsigned markCount;
-    const UChar* sequenceStart = curr;
     UChar32 baseCharacter;
     if (!advanceByCombiningCharacterSequence(curr, end, baseCharacter, markCount))
         return;
 
-    UChar uppercaseCharacter = 0;
+    nextFont = m_font.fontForCombiningCharacterSequence(cp, curr - cp);
 
-    bool isSmallCaps;
-    bool nextIsSmallCaps = m_font.isSmallCaps() && !(U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK) && (uppercaseCharacter = u_toupper(baseCharacter)) != baseCharacter;
-    ASSERT(uppercaseCharacter == 0 || u_toupper(baseCharacter) <= 0xFFFF);
+    bool isSmallCaps = false;
+    bool nextIsSmallCaps = false;
 
-    if (nextIsSmallCaps) {
-        m_smallCapsBuffer[sequenceStart - cp] = uppercaseCharacter;
-        for (unsigned i = 0; i < markCount; ++i)
-            m_smallCapsBuffer[sequenceStart - cp + i + 1] = sequenceStart[i + 1];
+    auto capitalizedBase = capitalized(baseCharacter);
+    if (nextFont && nextFont != Font::systemFallback() && (capitalizedBase || engageAllSmallCapsProcessing)
+        && !nextFont->variantCapsSupportsCharacterForSynthesis(fontVariantCaps, baseCharacter)) {
+        synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
+        smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
+        m_smallCapsBuffer[0] = capitalizedBase ? capitalizedBase.value() : cp[0];
+        for (unsigned i = 1; cp + i < curr; ++i)
+            m_smallCapsBuffer[i] = cp[i];
+        nextIsSmallCaps = true;
     }
-
-    nextFont = m_font.fontForCombiningCharacterSequence(sequenceStart, curr - sequenceStart, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
 
     while (curr < end) {
         font = nextFont;
         isSmallCaps = nextIsSmallCaps;
-        int index = curr - cp;
+        unsigned index = curr - cp;
 
         if (!advanceByCombiningCharacterSequence(curr, end, baseCharacter, markCount))
             return;
 
-        if (m_font.isSmallCaps()) {
-            ASSERT(u_toupper(baseCharacter) <= 0xFFFF);
-            uppercaseCharacter = u_toupper(baseCharacter);
-            nextIsSmallCaps = uppercaseCharacter != baseCharacter;
-            if (nextIsSmallCaps) {
-                m_smallCapsBuffer[index] = uppercaseCharacter;
+        if (synthesizedFont) {
+            if (auto capitalizedBase = capitalized(baseCharacter)) {
+                m_smallCapsBuffer[index] = capitalizedBase.value();
                 for (unsigned i = 0; i < markCount; ++i)
                     m_smallCapsBuffer[index + i + 1] = cp[index + i + 1];
+                nextIsSmallCaps = true;
+            } else {
+                if (engageAllSmallCapsProcessing) {
+                    for (unsigned i = 0; i < curr - cp - index; ++i)
+                        m_smallCapsBuffer[index + i] = cp[index + i];
+                }
+                nextIsSmallCaps = engageAllSmallCapsProcessing;
             }
         }
 
         if (baseCharacter == zeroWidthJoiner)
             nextFont = font;
         else
-            nextFont = m_font.fontForCombiningCharacterSequence(cp + index, curr - cp - index, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
+            nextFont = m_font.fontForCombiningCharacterSequence(cp + index, curr - cp - index);
 
-        if (nextFont != font) {
-            int itemStart = static_cast<int>(indexOfFontTransition);
-            int itemLength = index - indexOfFontTransition;
-            collectComplexTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, font);
+        capitalizedBase = capitalized(baseCharacter);
+        if (!synthesizedFont && nextFont && nextFont != Font::systemFallback() && (capitalizedBase || engageAllSmallCapsProcessing)
+            && !nextFont->variantCapsSupportsCharacterForSynthesis(fontVariantCaps, baseCharacter)) {
+            // Rather than synthesize each character individually, we should synthesize the entire "run" if any character requires synthesis.
+            synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
+            smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
+            nextIsSmallCaps = true;
+            curr = cp + indexOfFontTransition;
+            continue;
+        }
+
+        if (nextFont != font || nextIsSmallCaps != isSmallCaps) {
+            unsigned itemLength = index - indexOfFontTransition;
+            if (itemLength) {
+                unsigned itemStart = indexOfFontTransition;
+                if (synthesizedFont) {
+                    if (isSmallCaps)
+                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.data() + itemStart, itemLength, itemStart, smallSynthesizedFont);
+                    else
+                        collectComplexTextRunsForCharacters(cp + itemStart, itemLength, itemStart, synthesizedFont);
+                } else
+                    collectComplexTextRunsForCharacters(cp + itemStart, itemLength, itemStart, font);
+                if (nextFont != font) {
+                    synthesizedFont = nullptr;
+                    smallSynthesizedFont = nullptr;
+                    nextIsSmallCaps = false;
+                }
+            }
             indexOfFontTransition = index;
         }
     }
 
-    int itemLength = m_end - indexOfFontTransition;
+    unsigned itemLength = m_end - indexOfFontTransition;
     if (itemLength) {
-        int itemStart = indexOfFontTransition;
-        collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, nextFont);
+        unsigned itemStart = indexOfFontTransition;
+        if (synthesizedFont) {
+            if (nextIsSmallCaps)
+                collectComplexTextRunsForCharacters(m_smallCapsBuffer.data() + itemStart, itemLength, itemStart, smallSynthesizedFont);
+            else
+                collectComplexTextRunsForCharacters(cp + itemStart, itemLength, itemStart, synthesizedFont);
+        } else
+            collectComplexTextRunsForCharacters(cp + itemStart, itemLength, itemStart, nextFont);
     }
 
     if (!m_run.ltr())

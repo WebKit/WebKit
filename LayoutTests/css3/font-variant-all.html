@@ -23,10 +23,10 @@
 <li>-webkit-font-variant-east-asian</li>
 </ul>
 The test passes if there is a particular sequence of checks and x characters below. Note that some x characters are expected.
-<div id="insertionPoint"></div>
-<div id="insertionPoint2"></div>
-<div id="insertionPoint3"></div>
-<div id="insertionPoint4"></div>
+<div id="insertionPoint" style="font-size: 20px;"></div>
+<div id="insertionPoint2" style="font-size: 20px;"></div>
+<div id="insertionPoint3" style="font-size: 20px;"></div>
+<div id="insertionPoint4" style="font-size: 20px;"></div>
 <script>
 var insertionPoint = document.getElementById("insertionPoint");
 var insertionPoint2 = document.getElementById("insertionPoint2");
@@ -52,12 +52,6 @@ addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "con
 addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "no-contextual", "G");
 addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-position", "sub", "H");
 addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-position", "super", "I");
-addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "small-caps", "J");
-addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "all-small-caps", "J");
-addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "all-small-caps", "K");
-addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "petite-caps", "L");
-addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "all-petite-caps", "L");
-addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "all-petite-caps", "M");
 addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "unicase", "N");
 addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "titling-caps", "O");
 addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "lining-nums", "P");
@@ -91,12 +85,6 @@ addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "co
 addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "no-contextual", "L");
 addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-position", "sub", "O");
 addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-position", "super", "P");
-addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "small-caps", "S");
-addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "all-small-caps", "S");
-addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "all-small-caps", "V");
-addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "petite-caps", "T");
-addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "all-petite-caps", "T");
-addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "all-petite-caps", "W");
 addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "unicase", "Y");
 addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "titling-caps", "a");
 addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "lining-nums", "c");
@@ -130,12 +118,6 @@ addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "co
 addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "no-contextual", "G");
 addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-position", "sub", "H");
 addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-position", "super", "I");
-addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "small-caps", "J");
-addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "all-small-caps", "J");
-addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "all-small-caps", "K");
-addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "petite-caps", "L");
-addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "all-petite-caps", "L");
-addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "all-petite-caps", "M");
 addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "unicase", "N");
 addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "titling-caps", "O");
 addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "lining-nums", "P");
@@ -169,12 +151,6 @@ addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "co
 addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "no-contextual", "L");
 addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-position", "sub", "O");
 addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-position", "super", "P");
-addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "small-caps", "S");
-addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "all-small-caps", "S");
-addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "all-small-caps", "V");
-addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "petite-caps", "T");
-addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "all-petite-caps", "T");
-addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "all-petite-caps", "W");
 addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "unicase", "Y");
 addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "titling-caps", "a");
 addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "lining-nums", "c");

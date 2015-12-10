@@ -1,3 +1,33 @@
+2015-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-variant-caps does not work if the font does not support font features
+        https://bugs.webkit.org/show_bug.cgi?id=149774
+
+        Reviewed by Antti Koivisto.
+
+        Adding two new font which include lowercase characters which respond to 'smcp' and 'c2sc'. 
+
+        The character mappings are:
+
+        OpenType:
+        'smcp': f
+        'c2sc': g
+
+        TrueType:
+        kLowerCaseType / kLowerCaseSmallCapsSelector: r
+        kUpperCaseType / kUpperCaseSmallCapsSelector: u
+
+        * css3/font-variant-all-expected.html:
+        * css3/font-variant-all.html:
+        * css3/font-variant-small-caps-synthesis-expected.html: Added.
+        * css3/font-variant-small-caps-synthesis.html: Added.
+        * css3/font-variant-petite-caps-synthesis-expected.html: Added.
+        * css3/font-variant-petite-caps-synthesis.html: Added.
+        * css3/resources/FontWithFeaturesLowercaseSmallCaps.otf: Added.
+        * css3/resources/FontWithFeaturesLowercaseSmallCaps.ttf: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/writing-mode/broken-ideograph-small-caps-expected.txt:
+
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/objectstore-basics.html fails.

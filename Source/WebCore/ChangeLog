@@ -1,3 +1,60 @@
+2015-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-variant-caps does not work if the font does not support font features
+        https://bugs.webkit.org/show_bug.cgi?id=149774
+
+        Reviewed by Antti Koivisto.
+
+        This test implements synthesis for small-caps and all-small-caps. It does so by
+        moving font variant selection into a higher level (ComplexTextController).
+        In general, the approach is to use the pure font feature until we encounter
+        a character which needs to be uppercased, and which the font feature does not
+        support uppercasing. In this situation, we try again with synthesis. In this
+        case, synthesis means artificially uppercasing letters and rendering them with
+        a smaller font.
+
+        We require system support to know which glyphs a particular font feature supports.
+        Therefore, on operating systems which do not include this support, we will simply
+        say that the font feature does not support any glyphs.
+
+        Test: css3/font-variant-small-caps-synthesis.html
+              css3/font-variant-petite-caps-synthesis.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::noSmallCapsFont): Return the same font, but without smcp or c2sc.
+        This function utilizes a cache.
+        * platform/graphics/Font.h:
+        (WebCore::Font::variantFont): Small caps should never go through this function
+        anymore.
+        * platform/graphics/FontCascade.h: Because we're moving variant selection into
+        a higher level, we remove the FontVariant argument from the lower-level call.
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForVariant): Use early-return style.
+        (WebCore::FontCascadeFonts::glyphDataForNormalVariant): Ditto.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence): Because we're moving
+        variant selection into a higher level, we remove the FontVariant argument from
+        the lower-level call.
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::smallCapsSupportsCharacter):
+        (WebCore::Font::allSmallCapsSupportsCharacter):
+        (WebCore::smallCapsOpenTypeDictionary): Helper function for
+        smallCapsSupportsCharacter().
+        (WebCore::smallCapsTrueTypeDictionary): Ditto.
+        (WebCore::unionBitVectors):
+        (WebCore::Font::glyphsSupportedBySmallCaps): Compute a bit vector of supported
+        glyphs.
+        (WebCore::Font::glyphsSupportedByAllSmallCaps): Ditto.
+        (WebCore::createDerivativeFont): Moving common code into its own helper function.
+        (WebCore::Font::createFontWithoutSmallCaps):
+        (WebCore::Font::platformCreateScaledFont): Use the common code.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::capitalized): What is the capitalized form of a character?
+        (WebCore::ComplexTextController::collectComplexTextRuns): Implement the core
+        logic of this patch. This includes the retry when we encounter a character which
+        is not supported by the font feature.
+        * platform/spi/cocoa/CoreTextSPI.h:
+
 2015-12-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Remove the TEXMAP_OPENGL_ES_2 define
