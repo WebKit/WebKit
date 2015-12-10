@@ -56,11 +56,11 @@
 #include <wtf/StringPrintStream.h>
 
 // FIXME: remove this once everything can be generated through B3.
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif // COMPILER(CLANG)
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-noreturn"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif // COMPILER(GCC_OR_CLANG)
 
 namespace JSC {
 
@@ -492,9 +492,9 @@ inline LValue Output::fround(LValue doubleValue)
     return m_block->appendNew<B3::Value>(m_proc, B3::FloatToDouble, origin(), asFloat);
 }
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif // COMPILER(CLANG)
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC_OR_CLANG)
 
 #define FTL_NEW_BLOCK(output, nameArguments) \
     (LIKELY(!verboseCompilationEnabled()) \
