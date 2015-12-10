@@ -1,3 +1,15 @@
+2015-12-10  Enrica Casucci  <enrica@apple.com>
+
+        Change skin tone support for two emoji.
+        https://bugs.webkit.org/show_bug.cgi?id=152147
+        rdar://problem/23716993
+        rdar://problem/23716344
+
+        Reviewed by Darin Adler.
+
+        * fast/text/emoji.html:
+        * platform/mac/fast/text/emoji-expected.txt:
+
 2015-12-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip unsupported css3/font-variant-* tests on Win
