@@ -35,7 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLScriptRunnerHost.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
-#include "MicroTask.h"
+#include "Microtasks.h"
 #include "MutationObserver.h"
 #include "NestingLevelIncrementer.h"
 #include "NotImplemented.h"
@@ -129,10 +129,8 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
     if (pendingScript.cachedScript() && pendingScript.watchingForLoad())
         stopWatchingForLoad(pendingScript);
 
-    if (!isExecutingScript()) {
-        MutationObserver::deliverAllMutations();
-        MicroTaskQueue::singleton().runMicroTasks();
-    }
+    if (!isExecutingScript())
+        MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
 
     // Clear the pending script before possible rentrancy from executeScript()
     RefPtr<Element> element = pendingScript.releaseElementAndClear();
@@ -233,8 +231,6 @@ bool HTMLScriptRunner::executeScriptsWaitingForParsing()
         if (!m_document)
             return false;
     }
-    if (!isExecutingScript())
-        MicroTaskQueue::singleton().runMicroTasks();
     return true;
 }
 
@@ -297,10 +293,8 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStar
         // every script element, even if it's not ready to execute yet. There's
         // unfortuantely no obvious way to tell if prepareScript is going to
         // execute the script from out here.
-        if (!isExecutingScript()) {
-            MutationObserver::deliverAllMutations();
-            MicroTaskQueue::singleton().runMicroTasks();
-        }
+        if (!isExecutingScript())
+            MicrotaskQueue::mainThreadQueue().performMicrotaskCheckpoint();
 
         InsertionPointRecord insertionPointRecord(m_host.inputStream());
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);

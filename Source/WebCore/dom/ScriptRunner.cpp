@@ -28,7 +28,6 @@
 
 #include "CachedScript.h"
 #include "Element.h"
-#include "MicroTask.h"
 #include "PendingScript.h"
 #include "ScriptElement.h"
 
@@ -121,7 +120,6 @@ void ScriptRunner::timerFired()
         toScriptElementIfPossible(element.get())->execute(cachedScript);
         m_document.decrementLoadEventDelayCount();
     }
-    MicroTaskQueue::singleton().runMicroTasks();
 }
 
 }

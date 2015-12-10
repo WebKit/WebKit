@@ -1364,6 +1364,7 @@ set(WebCore_SOURCES
 
     cssjit/SelectorCompiler.cpp
 
+    dom/ActiveDOMCallbackMicrotask.cpp
     dom/ActiveDOMObject.cpp
     dom/AnimationEvent.cpp
     dom/Attr.cpp
@@ -1435,7 +1436,7 @@ set(WebCore_SOURCES
     dom/MessageEvent.cpp
     dom/MessagePort.cpp
     dom/MessagePortChannel.cpp
-    dom/MicroTask.cpp
+    dom/Microtasks.cpp
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
     dom/MutationEvent.cpp
@@ -3247,7 +3248,6 @@ set(WebCoreTestSupport_SOURCES
 
     testing/InternalSettings.cpp
     testing/Internals.cpp
-    testing/MicroTaskTest.cpp
     testing/MockPageOverlayClient.cpp
 
     testing/js/WebCoreTestSupport.cpp
