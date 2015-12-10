@@ -56,9 +56,6 @@ private:
     void cancelTimer();
     
     Vector<MarkedBlock*>& m_blocksToSweep;
-#if PLATFORM(EFL)
-    bool m_isTimerFrozen;
-#endif
 #endif
 };
 

@@ -1,5 +1,14 @@
 2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Remove the unused IncrementalSweeper::m_isTimerFrozen member after r193749
+        https://bugs.webkit.org/show_bug.cgi?id=152127
+
+        Reviewed by Mark Lam.
+
+        * heap/IncrementalSweeper.h:
+
+2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         Source/JavaScriptCore/create_hash_table shouldn't be too verbose
         https://bugs.webkit.org/show_bug.cgi?id=151861
 
