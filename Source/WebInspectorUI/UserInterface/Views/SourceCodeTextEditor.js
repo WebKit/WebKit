@@ -1444,7 +1444,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
     _showPopoverForFunction(data)
     {
-        var candidate = this.tokenTrackingController.candidate;
+        let candidate = this.tokenTrackingController.candidate;
 
         function didGetDetails(error, response)
         {
@@ -1459,16 +1459,22 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             if (candidate !== this.tokenTrackingController.candidate)
                 return;
 
-            var wrapper = document.createElement("div");
-            wrapper.className = "body formatted-function";
+            let wrapper = document.createElement("div");
+            wrapper.classList.add("body", "formatted-function");
             wrapper.textContent = data.description;
 
-            var content = document.createElement("div");
-            content.className = "function";
+            let content = document.createElement("div");
+            content.classList.add("function");
 
-            var title = content.appendChild(document.createElement("div"));
-            title.className = "title";
+            let location = response.location;
+            let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+            let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
+            let functionSourceCodeLink = WebInspector.createSourceCodeLocationLink(sourceCodeLocation);
+
+            let title = content.appendChild(document.createElement("div"));
+            title.classList.add("title");
             title.textContent = response.name || response.inferredName || response.displayName || WebInspector.UIString("(anonymous function)");
+            title.appendChild(functionSourceCodeLink);
 
             content.appendChild(wrapper);
 

@@ -1,3 +1,17 @@
+2015-12-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: debugger popover should have source location link when showing function source
+        https://bugs.webkit.org/show_bug.cgi?id=151866
+
+        Reviewed by Brian Burg.
+
+        Added source code location link to function popover header.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction.didGetDetails):
+        Create source code location link from response payload.
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForFunction):
+
 2015-12-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [Meta] Unify z-index values in Inspector's CSS
