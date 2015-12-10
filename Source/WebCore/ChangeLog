@@ -1,5 +1,18 @@
 2015-12-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Merge r190914. rdar://problem/23432368
+
+    2015-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+            Speculative Cairo build fixes after r190910.
+
+            * platform/graphics/cairo/ImageBufferCairo.cpp:
+            (WebCore::ImageBuffer::drawPattern):
+            * platform/graphics/cairo/ImageCairo.cpp:
+            (WebCore::Image::drawPattern):
+
+2015-12-09  Simon Fraser  <simon.fraser@apple.com>
+
         Merge r190910. rdar://problem/23432368
 
     2015-10-12  Simon Fraser  <simon.fraser@apple.com>
