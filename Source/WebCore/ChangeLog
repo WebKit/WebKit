@@ -1,5 +1,16 @@
 2015-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190911. rdar://problem/23432368
+
+    2015-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix iOS and Efl builds.
+
+            * platform/graphics/NamedImageGeneratedImage.cpp:
+            (WebCore::NamedImageGeneratedImage::drawPattern):
+
+2015-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r193382. rdar://problem/23814344
 
     2015-12-03  Simon Fraser  <simon.fraser@apple.com>
