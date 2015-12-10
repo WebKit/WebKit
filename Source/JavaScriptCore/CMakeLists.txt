@@ -1012,6 +1012,8 @@ if (ENABLE_FTL_JIT)
         ftl/FTLAbstractHeap.cpp
         ftl/FTLAbstractHeapRepository.cpp
         ftl/FTLAvailableRecovery.cpp
+        ftl/FTLB3Compile.cpp
+        ftl/FTLB3Output.cpp
         ftl/FTLCapabilities.cpp
         ftl/FTLCommonValues.cpp
         ftl/FTLCompile.cpp

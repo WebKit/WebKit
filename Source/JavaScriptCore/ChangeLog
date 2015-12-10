@@ -1,5 +1,14 @@
 2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [B3] Add new files to the cmake build system
+        https://bugs.webkit.org/show_bug.cgi?id=152120
+
+        Reviewed by Filip Pizlo.
+
+        * CMakeLists.txt:
+
+2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         [B3] Use mark pragmas only if it is supported
         https://bugs.webkit.org/show_bug.cgi?id=152123
 
