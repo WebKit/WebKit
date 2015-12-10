@@ -1312,6 +1312,9 @@ void Page::setIsVisibleInternal(bool isVisible)
         m_isPrerender = false;
 
         resumeScriptedAnimations();
+#if PLATFORM(IOS)
+        resumeDeviceMotionAndOrientationUpdates();
+#endif
 
         if (FrameView* view = mainFrame().view())
             view->show();
@@ -1333,6 +1336,9 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().suspendAnimations();
 
+#if PLATFORM(IOS)
+        suspendDeviceMotionAndOrientationUpdates();
+#endif
         suspendScriptedAnimations();
 
         if (FrameView* view = mainFrame().view())
@@ -1554,6 +1560,22 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& ob
 
     m_relevantUnpaintedRenderObjects.add(object);
     m_relevantUnpaintedRegion.unite(snappedIntRect(objectPaintRect));
+}
+
+void Page::suspendDeviceMotionAndOrientationUpdates()
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document())
+            document->suspendDeviceMotionAndOrientationUpdates();
+    }
+}
+
+void Page::resumeDeviceMotionAndOrientationUpdates()
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document())
+            document->resumeDeviceMotionAndOrientationUpdates();
+    }
 }
 
 void Page::suspendActiveDOMObjectsAndAnimations()

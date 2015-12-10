@@ -1,5 +1,28 @@
 2015-12-09  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Suspend and resume device motion and device orientation updates when page is hidden and visible, respectively
+        https://bugs.webkit.org/show_bug.cgi?id=151840
+        <rdar://problem/23753931>
+
+        Reviewed by Simon Fraser.
+
+        * dom/Document.cpp:
+        (WebCore::Document::suspendDeviceMotionAndOrientationUpdates): Added.
+        (WebCore::Document::resumeDeviceMotionAndOrientationUpdates): Added.
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects): Moved logic to suspend device motion and
+        orientation updates from here to Document::suspendDeviceMotionAndOrientationUpdates().
+        (WebCore::Document::suspendActiveDOMObjects): Modified to call Document::suspendDeviceMotionAndOrientationUpdates().
+        (WebCore::Document::resumeActiveDOMObjects): Modified to call Document::resumeDeviceMotionAndOrientationUpdates().
+        * dom/Document.h:
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal): Suspend device motion and orientation updates when the page is hidden and
+        resume updates when the page is visible.
+        (WebCore::Page::suspendDeviceMotionAndOrientationUpdates): Added.
+        (WebCore::Page::resumeDeviceMotionAndOrientationUpdates): Added.
+        * page/Page.h:
+
+2015-12-09  Daniel Bates  <dabates@apple.com>
+
         Unify iOS Frame::setTimersPaused() logic and Frame::{suspend, resume}ActiveDOMObjectsAndAnimations()
         https://bugs.webkit.org/show_bug.cgi?id=152006
 

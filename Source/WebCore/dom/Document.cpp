@@ -2345,16 +2345,35 @@ void Document::removeAllEventListeners()
         node->removeAllEventListeners();
 }
 
-void Document::platformSuspendOrStopActiveDOMObjects()
+void Document::suspendDeviceMotionAndOrientationUpdates()
 {
-#if PLATFORM(IOS)
-#if ENABLE(DEVICE_ORIENTATION)
+    if (m_areDeviceMotionAndOrientationUpdatesSuspended)
+        return;
+    m_areDeviceMotionAndOrientationUpdatesSuspended = true;
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
     if (m_deviceMotionController)
         m_deviceMotionController->suspendUpdates();
     if (m_deviceOrientationController)
         m_deviceOrientationController->suspendUpdates();
 #endif
+}
 
+void Document::resumeDeviceMotionAndOrientationUpdates()
+{
+    if (!m_areDeviceMotionAndOrientationUpdatesSuspended)
+        return;
+    m_areDeviceMotionAndOrientationUpdatesSuspended = false;
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
+    if (m_deviceMotionController)
+        m_deviceMotionController->resumeUpdates();
+    if (m_deviceOrientationController)
+        m_deviceOrientationController->resumeUpdates();
+#endif
+}
+
+void Document::platformSuspendOrStopActiveDOMObjects()
+{
+#if PLATFORM(IOS)
     if (WebThreadCountOfObservedContentModifiers() > 0) {
         Frame* frame = this->frame();
         if (Page* page = frame ? frame->page() : nullptr)
@@ -2366,19 +2385,14 @@ void Document::platformSuspendOrStopActiveDOMObjects()
 void Document::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
     ScriptExecutionContext::suspendActiveDOMObjects(why);
+    suspendDeviceMotionAndOrientationUpdates();
     platformSuspendOrStopActiveDOMObjects();
 }
 
 void Document::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
     ScriptExecutionContext::resumeActiveDOMObjects(why);
-
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
-    if (m_deviceMotionController)
-        m_deviceMotionController->resumeUpdates();
-    if (m_deviceOrientationController)
-        m_deviceOrientationController->resumeUpdates();
-#endif
+    resumeDeviceMotionAndOrientationUpdates();
     // FIXME: For iOS, do we need to add content change observers that were removed in Document::suspendActiveDOMObjects()?
 }
 

@@ -394,6 +394,9 @@ public:
 
     WEBCORE_EXPORT void suspendActiveDOMObjectsAndAnimations();
     WEBCORE_EXPORT void resumeActiveDOMObjectsAndAnimations();
+    void suspendDeviceMotionAndOrientationUpdates();
+    void resumeDeviceMotionAndOrientationUpdates();
+
 #ifndef NDEBUG
     void setIsPainting(bool painting) { m_isPainting = painting; }
     bool isPainting() const { return m_isPainting; }

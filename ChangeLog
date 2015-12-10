@@ -1,3 +1,20 @@
+2015-12-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Suspend and resume device motion and device orientation updates when page is hidden and visible, respectively
+        https://bugs.webkit.org/show_bug.cgi?id=151840
+        <rdar://problem/23753931>
+
+        Reviewed by Simon Fraser.
+
+        Add a manual test that can be used to verify that we suspend dispatching device motion and
+        device orientation events when the page is hidden.
+
+        * ManualTests/ios/resources/suspend-orientation-and-motion-events-when-page-becomes-hidden.js: Added.
+        (resetTest):
+        (checkEvent):
+        (handleVisibilityChange):
+        * ManualTests/ios/suspend-orientation-and-motion-events-when-page-becomes-hidden.html: Added.
+
 2015-12-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal Windows build
