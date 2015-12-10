@@ -1,3 +1,12 @@
+2015-12-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Adding iOS-simulator expectations for compositing/layers-inside-overflow-scroll.html
+        https://bugs.webkit.org/show_bug.cgi?id=152132
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/compositing/layers-inside-overflow-scroll-expected.txt: Added.
+
 2015-12-10  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r192796) WKBundlePageResourceLoadClient should be able to setHTTPBody in willSendRequestForFrame
