@@ -52,6 +52,7 @@ Ref<IDBObjectStore> IDBObjectStore::create(const IDBObjectStoreInfo& info, IDBTr
 
 IDBObjectStore::IDBObjectStore(const IDBObjectStoreInfo& info, IDBTransaction& transaction)
     : m_info(info)
+    , m_originalInfo(info)
     , m_transaction(transaction)
 {
 }
@@ -594,6 +595,11 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::doCount(ScriptExecutionContext& cont
 void IDBObjectStore::markAsDeleted()
 {
     m_deleted = true;
+}
+
+void IDBObjectStore::rollbackInfoForVersionChangeAbort()
+{
+    m_info = m_originalInfo;
 }
 
 } // namespace IDBClient

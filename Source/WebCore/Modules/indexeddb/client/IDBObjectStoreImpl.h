@@ -92,6 +92,8 @@ public:
     // this will no longer be necessary.
     IDBTransaction& modernTransaction() { return m_transaction.get(); }
 
+    void rollbackInfoForVersionChangeAbort();
+
 private:
     IDBObjectStore(const IDBObjectStoreInfo&, IDBTransaction&);
 
@@ -104,6 +106,7 @@ private:
     RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
 
     IDBObjectStoreInfo m_info;
+    IDBObjectStoreInfo m_originalInfo;
     Ref<IDBTransaction> m_transaction;
 
     bool m_deleted { false };

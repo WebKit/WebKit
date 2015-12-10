@@ -1,5 +1,17 @@
 2015-12-09  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/metadata.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=152099
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/modern/abort-objectstore-info-expected.txt: Added.
+        * storage/indexeddb/modern/abort-objectstore-info.html: Added.
+        * storage/indexeddb/modern/resources/abort-objectstore-info.js: Added.
+
+2015-12-09  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/intversion-close-between-events.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152096
 

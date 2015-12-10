@@ -1,3 +1,23 @@
+2015-12-09  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/metadata.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=152099
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/indexeddb/modern/abort-objectstore-info.html
+              And at least one existing failure now passes.
+
+        We did not properly reset object store info when version change transactions aborted.
+
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::IDBObjectStore):
+        (WebCore::IDBClient::IDBObjectStore::rollbackInfoForVersionChangeAbort):
+        * Modules/indexeddb/client/IDBObjectStoreImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::abort):
+
 2015-12-09  Simon Fraser  <simon.fraser@apple.com>
 
         Adjust layer backing store format

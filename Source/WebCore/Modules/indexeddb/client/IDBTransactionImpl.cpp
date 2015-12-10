@@ -188,6 +188,9 @@ void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
     m_database->willAbortTransaction(*this);
 
     if (isVersionChange()) {
+        for (auto& objectStore : m_referencedObjectStores.values())
+            objectStore->rollbackInfoForVersionChangeAbort();
+
         ASSERT(m_openDBRequest);
         m_openDBRequest->versionChangeTransactionWillFinish();
     }
