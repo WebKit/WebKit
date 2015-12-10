@@ -507,9 +507,9 @@ webkit.org/b/141466 fast/media/mq-pointer-matchMedia.html [ Failure ]
 webkit.org/b/141466 fast/media/mq-pointer-styling.html [ Failure ]
 webkit.org/b/141466 fast/media/mq-pointer.html [ Failure ]
 
-webkit.org/b/141468 http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
+webkit.org/b/141468 [ Release ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Failure ]
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
-webkit.org/b/141469 http/tests/media/hls/hls-progress.html [ Failure ]
+webkit.org/b/141469 [ Release ] http/tests/media/hls/hls-progress.html [ Failure ]
 webkit.org/b/141423 svg/css/getComputedStyle-basic.xhtml [ Failure ]
 
 webkit.org/b/141467 fast/multicol/pagination/LeftToRight-tb-hittest.html [ Failure ]
@@ -596,8 +596,8 @@ webkit.org/b/146718 accessibility/aria-hidden-false-works-in-subtrees.html [ Fai
 
 webkit.org/b/146719 accessibility/aria-roledescription.html [ Failure ]
 
-webkit.org/b/146720 http/tests/media/hls/hls-accessiblity-describes-video.html [ Failure ]
-webkit.org/b/146720 http/tests/media/hls/video-controller-getStartDate.html [ Failure ]
+webkit.org/b/146720 [ Release ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Failure ]
+webkit.org/b/146720 [ Release ] http/tests/media/hls/video-controller-getStartDate.html [ Failure ]
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
 
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
@@ -1210,14 +1210,14 @@ Bug(GTK) sputnik/ [ Pass Slow ]
 Bug(GTK) tables/mozilla/other/slashlogo.html [ Pass Slow ]
 
 Bug(GTK) http/tests/media/video-preload.html [ Pass Slow ]
-webkit.org/b/143989  http/tests/media/hls/video-controls-live-stream.html [ Pass Slow Failure ]
+webkit.org/b/143989 [ Release ] http/tests/media/hls/video-controls-live-stream.html [ Pass Slow Failure ]
 
 webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Pass Slow ]
 webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
 
 webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 
-Bug(GTK) http/tests/media/hls/video-cookie.html [ Pass Slow ]
+Bug(GTK) [ Release ] http/tests/media/hls/video-cookie.html [ Pass Slow ]
 
 webkit.org/b/149916 inspector/codemirror/prettyprinting-css-rules.html [ Pass Slow ]
 webkit.org/b/149916 inspector/codemirror/prettyprinting-css.html [ Pass Slow ]
@@ -1346,7 +1346,7 @@ webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 webkit.org/b/142292 fast/images/animated-gif-zooming.html [ Timeout ]
 
 webkit.org/b/142488 http/tests/appcache/404-resource-with-slow-main-resource.php [ Timeout ]
-webkit.org/b/141959 http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
+webkit.org/b/141959 [ Release ] http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
 webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]
 webkit.org/b/142490 inspector/css/selector-dynamic-specificity.html [ Timeout ]
 webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
@@ -2296,7 +2296,7 @@ webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 webkit.org/b/137695 media/video-controls-audiotracks-trackmenu.html [ Failure ]
 webkit.org/b/138074 media/video-volume-slider-drag.html [ Failure ]
 
-webkit.org/b/138073 http/tests/media/hls/hls-audio-tracks.html [ Failure ]
+webkit.org/b/138073 [ Release ] http/tests/media/hls/hls-audio-tracks.html [ Failure ]
 
 # Font is clipped incorrectly
 webkit.org/b/138077 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
