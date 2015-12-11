@@ -369,9 +369,10 @@ private:
     // This turns the given operand into an address.
     Arg effectiveAddr(Value* address)
     {
-        // FIXME: Consider matching an address expression even if we've already assigned a
-        // Tmp to it. https://bugs.webkit.org/show_bug.cgi?id=150777
-        if (m_valueToTmp[address])
+        static const unsigned lotsOfUses = 10; // This is arbitrary and we should tune it eventually.
+        
+        // Only match if the address value isn't used in some large number of places.
+        if (m_useCounts.numUses(address) > lotsOfUses)
             return Arg::addr(tmp(address));
         
         switch (address->opcode()) {
