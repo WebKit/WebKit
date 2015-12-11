@@ -53,7 +53,7 @@ public:
     void requestCompleted(const IDBResultData&);
     void requestBlocked(uint64_t oldVersion, uint64_t newVersion);
 
-    void versionChangeTransactionWillFinish();
+    void versionChangeTransactionDidFinish();
     void fireSuccessAfterVersionChangeCommit();
     void fireErrorAfterVersionChangeCompletion();
 

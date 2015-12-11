@@ -71,6 +71,7 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
 
     if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
         ASSERT(m_openDBRequest);
+        m_openDBRequest->setVersionChangeTransaction(*this);
         m_startedOnServer = true;
     } else {
         activate();
@@ -190,9 +191,6 @@ void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
     if (isVersionChange()) {
         for (auto& objectStore : m_referencedObjectStores.values())
             objectStore->rollbackInfoForVersionChangeAbort();
-
-        ASSERT(m_openDBRequest);
-        m_openDBRequest->versionChangeTransactionWillFinish();
     }
     
     m_abortQueue.swap(m_transactionOperationQueue);
@@ -309,11 +307,6 @@ void IDBTransaction::commit()
     m_state = IndexedDB::TransactionState::Committing;
     m_database->willCommitTransaction(*this);
 
-    if (isVersionChange()) {
-        ASSERT(m_openDBRequest);
-        m_openDBRequest->versionChangeTransactionWillFinish();
-    }
-
     auto operation = createTransactionOperation(*this, nullptr, &IDBTransaction::commitOnServer);
     scheduleOperation(WTF::move(operation));
 }
@@ -425,13 +418,16 @@ bool IDBTransaction::dispatchEvent(Event& event)
 
     bool result = IDBEventDispatcher::dispatch(event, targets);
 
-    if (isVersionChange() && event.type() == eventNames().completeEvent) {
+    if (isVersionChange()) {
         ASSERT(m_openDBRequest);
+        m_openDBRequest->versionChangeTransactionDidFinish();
 
-        if (m_database->isClosingOrClosed())
-            m_openDBRequest->fireErrorAfterVersionChangeCompletion();
-        else
-            m_openDBRequest->fireSuccessAfterVersionChangeCommit();
+        if (event.type() == eventNames().completeEvent) {
+            if (m_database->isClosingOrClosed())
+                m_openDBRequest->fireErrorAfterVersionChangeCompletion();
+            else
+                m_openDBRequest->fireSuccessAfterVersionChangeCommit();
+        }
     }
 
     return result;

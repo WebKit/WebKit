@@ -155,6 +155,15 @@ void IDBRequest::setSource(IDBCursor& cursor)
     m_source = IDBAny::create(cursor);
 }
 
+void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
+{
+    ASSERT(!m_transaction);
+    ASSERT(transaction.isVersionChange());
+    ASSERT(!transaction.isFinishedOrFinishing());
+
+    m_transaction = &transaction;
+}
+
 RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
 {
     return m_shouldExposeTransactionToDOM ? m_transaction : nullptr;

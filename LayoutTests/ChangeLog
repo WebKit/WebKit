@@ -1,3 +1,15 @@
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152177
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt: Copied from LayoutTests/storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt.
+        * storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt:
+        * storage/indexeddb/resources/intversion-abort-in-initial-upgradeneeded.js:
+
 2015-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Do not fire load events from frames with scripting disabled

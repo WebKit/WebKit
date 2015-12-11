@@ -1,5 +1,31 @@
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152177
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::versionChangeTransactionDidFinish): Renamed from below.
+        (WebCore::IDBClient::IDBOpenDBRequest::versionChangeTransactionWillFinish): Deleted.
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::setVersionChangeTransaction): OpenDBRequests usually don't have transactions, 
+          unless they end up being upgrade requests.
+        * Modules/indexeddb/client/IDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::IDBTransaction): Call setVersionChangeTransaction on the request if appropriate.
+        (WebCore::IDBClient::IDBTransaction::dispatchEvent): Call versionChangeTransactionDidFinish after the 
+          abort/complete events fire.
+        (WebCore::IDBClient::IDBTransaction::abort): Deleted.
+        (WebCore::IDBClient::IDBTransaction::commit): Deleted.
+
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/index-count.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152175
 

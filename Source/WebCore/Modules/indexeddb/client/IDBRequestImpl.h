@@ -98,6 +98,7 @@ public:
     const IDBCursor* pendingCursor() const { return m_pendingCursor.get(); }
 
     void setSource(IDBCursor&);
+    void setVersionChangeTransaction(IDBTransaction&);
 
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);

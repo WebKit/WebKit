@@ -67,10 +67,10 @@ void IDBOpenDBRequest::onError(const IDBResultData& data)
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 
-void IDBOpenDBRequest::versionChangeTransactionWillFinish()
+void IDBOpenDBRequest::versionChangeTransactionDidFinish()
 {
     // 3.3.7 "versionchange" transaction steps
-    // When the transaction is finished, immediately set request's transaction property to null.
+    // When the transaction is finished, after firing complete/abort on the transaction, immediately set request's transaction property to null.
     m_shouldExposeTransactionToDOM = false;
 }
 
