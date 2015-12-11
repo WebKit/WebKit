@@ -1,5 +1,19 @@
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/cursor-continue.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152192
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::continueFunction): Check against the current key, not the current primary key.
+        (WebCore::IDBClient::IDBCursor::setGetResult): Also save off the current IDBKeyData.
+        * Modules/indexeddb/client/IDBCursorImpl.h:
+
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/index-basics.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152190
 

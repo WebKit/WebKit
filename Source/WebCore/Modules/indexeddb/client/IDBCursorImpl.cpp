@@ -226,7 +226,7 @@ void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecat
 
 void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage& ec)
 {
-    LOG(IndexedDB, "IDBCursor::continueFunction");
+    LOG(IndexedDB, "IDBCursor::continueFunction (to key %s)", key.loggingString().utf8().data());
 
     if (!m_request) {
         ec.code = IDBDatabaseException::InvalidStateError;
@@ -257,12 +257,12 @@ void IDBCursor::continueFunction(const IDBKeyData& key, ExceptionCodeWithMessage
     }
 
     if (m_info.isDirectionForward()) {
-        if (!key.isNull() && key.compare(m_currentPrimaryKeyData) <= 0) {
+        if (!key.isNull() && key.compare(m_currentKeyData) <= 0) {
             ec.code = IDBDatabaseException::DataError;
             ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The parameter is less than or equal to this cursor's position.");
             return;
         }
-    } else if (!key.isNull() && key.compare(m_currentPrimaryKeyData) >= 0) {
+    } else if (!key.isNull() && key.compare(m_currentKeyData) >= 0) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to execute 'continue' on 'IDBCursor': The parameter is greater than or equal to this cursor's position.");
         return;
@@ -330,6 +330,7 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 
     if (!getResult.isDefined()) {
         m_deprecatedCurrentKey = { };
+        m_currentKeyData = { };
         m_deprecatedCurrentPrimaryKey = { };
         m_currentPrimaryKeyData = { };
         m_deprecatedCurrentValue = { };
@@ -339,6 +340,7 @@ void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
     }
 
     m_deprecatedCurrentKey = idbKeyDataToScriptValue(context, getResult.keyData());
+    m_currentKeyData = getResult.keyData();
     m_deprecatedCurrentPrimaryKey = idbKeyDataToScriptValue(context, getResult.primaryKeyData());
     m_currentPrimaryKeyData = getResult.primaryKeyData();
 

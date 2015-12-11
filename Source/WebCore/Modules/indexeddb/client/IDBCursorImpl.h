@@ -92,6 +92,7 @@ private:
 
     bool m_gotValue { false };
 
+    IDBKeyData m_currentKeyData;
     IDBKeyData m_currentPrimaryKeyData;
 
     // FIXME: When ditching Legacy IDB and combining this implementation with the abstract IDBCursor,

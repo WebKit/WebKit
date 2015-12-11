@@ -1,5 +1,15 @@
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/cursor-continue.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152192
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/cursor-continue-expected.txt:
+
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/index-basics.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152190
 
