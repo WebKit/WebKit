@@ -27,6 +27,7 @@
 #import "WebsiteDataStore.h"
 
 #import "StorageManager.h"
+#import <WebCore/SearchPopupMenuCocoa.h>
 #import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)
@@ -82,6 +83,11 @@ void WebsiteDataStore::platformDestroy()
         [[NSNotificationCenter defaultCenter] removeObserver:terminationObserver];
         terminationObserver = nil;
     }
+}
+
+void WebsiteDataStore::platformRemoveRecentSearches(std::chrono::system_clock::time_point oldestTimeToRemove)
+{
+    WebCore::removeRecentlyModifiedRecentSearches(oldestTimeToRemove);
 }
 
 }

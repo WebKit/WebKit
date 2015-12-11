@@ -1,5 +1,40 @@
 2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191628. rdar://problem/23715623
+
+    2015-10-27  Zhuo Li  <zachli@apple.com>
+
+            Add WebKit API to clear data type Search Field Recent Searches.
+            https://bugs.webkit.org/show_bug.cgi?id=150019.
+
+            Reviewed by Anders Carlsson.
+
+            * platform/cocoa/SearchPopupMenuCocoa.h: Add a function to remove recent searches based on
+            time.
+            * platform/cocoa/SearchPopupMenuCocoa.mm:
+            (WebCore::typeCheckedRecentSearchesArray): Return nil if the recent searches array is
+            corrupted, otherwise return the array.
+            (WebCore::typeCheckedDateInRecentSearch): Return nil if the date in recent search is
+            corrupted, otherwise return the date.
+            (WebCore::typeCheckedRecentSearchesRemovingRecentSearchesAddedAfterDate): Return nil if the recent searches plist is
+            corrupted, otherwise return the recent searches plist.
+            (WebCore::writeEmptyRecentSearchesPlist): Replace the existing recent searches plist if there is
+            any with a clean one.
+            (WebCore::loadRecentSearches): Use -typeCheckedRecentSearchesArray and -typeCheckedDateInRecentSearch.
+            (WebCore::removeRecentlyModifiedRecentSearches):
+            When the time passed in is equivalent to [NSDate distantPast], clear all recent searches in
+            the Recent Searches plist. Otherwise, we only clear the recent searches that were created
+            after or at the time that is passed in as the parameter. If all recent searches associated
+            with an autosave name were created after or at the time that is passed in as the parameter,
+            remove this autosave name key and all of its values in the plist. If all recent searches
+            associated with every autosave name in the plist were created after or at the time that is
+            passed in as the parameter, clear all recent searches in the Recent Searches plist.
+
+            Also, we clear all recent searches in the Recent Searches plist when we find the plist is
+            corrupted.
+
+2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191084. rdar://problem/23715623
 
     2015-10-14  Zhuo Li  <zachli@apple.com>

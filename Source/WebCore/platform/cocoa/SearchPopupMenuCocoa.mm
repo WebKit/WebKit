@@ -66,6 +66,79 @@ static NSDate *toNSDateFromSystemClock(system_clock::time_point time)
     return [NSDate dateWithTimeIntervalSince1970:duration_cast<duration<double>>(time.time_since_epoch()).count()];
 }
 
+static NSMutableArray *typeCheckedRecentSearchesArray(NSMutableDictionary *itemsDictionary, NSString *name)
+{
+    NSMutableDictionary *nameDictionary = [itemsDictionary objectForKey:name];
+    if (![nameDictionary isKindOfClass:[NSDictionary class]])
+        return nil;
+
+    NSMutableArray *recentSearches = [nameDictionary objectForKey:searchesKey];
+    if (![recentSearches isKindOfClass:[NSArray class]])
+        return nil;
+
+    return recentSearches;
+}
+
+static NSDate *typeCheckedDateInRecentSearch(NSDictionary *recentSearch)
+{
+    if (![recentSearch isKindOfClass:[NSDictionary class]])
+        return nil;
+
+    NSDate *date = [recentSearch objectForKey:dateKey];
+    if (![date isKindOfClass:[NSDate class]])
+        return nil;
+
+    return date;
+}
+
+static RetainPtr<NSDictionary> typeCheckedRecentSearchesRemovingRecentSearchesAddedAfterDate(NSDate *date)
+{
+    if ([date isEqualToDate:[NSDate distantPast]])
+        return nil;
+
+    RetainPtr<NSMutableDictionary> recentSearchesPlist = readSearchFieldRecentSearchesPlist();
+    NSMutableDictionary *itemsDictionary = [recentSearchesPlist objectForKey:itemsKey];
+    if (![itemsDictionary isKindOfClass:[NSDictionary class]])
+        return nil;
+
+    RetainPtr<NSMutableArray> keysToRemove = adoptNS([[NSMutableArray alloc] init]);
+    for (NSString *key in itemsDictionary) {
+        if (![key isKindOfClass:[NSString class]])
+            return nil;
+
+        NSMutableArray *recentSearches = typeCheckedRecentSearchesArray(itemsDictionary, key);
+        if (!recentSearches)
+            return nil;
+
+        RetainPtr<NSMutableArray> entriesToRemove = adoptNS([[NSMutableArray alloc] init]);
+        for (NSDictionary *recentSearch in recentSearches) {
+            NSDate *date = typeCheckedDateInRecentSearch(recentSearch);
+            if (!date)
+                return nil;
+
+            if ([date compare:date] == NSOrderedDescending)
+                [entriesToRemove addObject:recentSearch];
+        }
+
+        [recentSearches removeObjectsInArray:entriesToRemove.get()];
+        if (!recentSearches.count)
+            [keysToRemove addObject:key];
+    }
+
+    [itemsDictionary removeObjectsForKeys:keysToRemove.get()];
+    if (!itemsDictionary.count)
+        return nil;
+
+    return recentSearchesPlist;
+}
+
+static void writeEmptyRecentSearchesPlist()
+{
+    auto emptyItemsDictionary = adoptNS([[NSDictionary alloc] init]);
+    auto emptyRecentSearchesDictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:emptyItemsDictionary.get(), itemsKey, nil]);
+    [emptyRecentSearchesDictionary writeToFile:searchFieldRecentSearchesPlistPath() atomically:YES];
+}
+
 void saveRecentSearches(const String& name, const Vector<RecentSearch>& searchItems)
 {
     if (name.isEmpty())
@@ -90,7 +163,7 @@ void saveRecentSearches(const String& name, const Vector<RecentSearch>& searchIt
         [itemsDictionary setObject:adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:items.get(), searchesKey, nil]).get() forKey:name];
     }
 
-    [recentSearchesPlist writeToFile:searchFieldRecentSearchesPlistPath() atomically:NO];
+    [recentSearchesPlist writeToFile:searchFieldRecentSearchesPlistPath() atomically:YES];
 }
 
 Vector<RecentSearch> loadRecentSearches(const String& name)
@@ -104,34 +177,37 @@ Vector<RecentSearch> loadRecentSearches(const String& name)
     if (!recentSearchesPlist)
         return searchItems;
 
-    NSDictionary *items = [recentSearchesPlist objectForKey:itemsKey];
+    NSMutableDictionary *items = [recentSearchesPlist objectForKey:itemsKey];
     if (![items isKindOfClass:[NSDictionary class]])
         return searchItems;
 
-    NSDictionary *nameItems = [items objectForKey:name];
-    if (![nameItems isKindOfClass:[NSDictionary class]])
-        return searchItems;
-
-    NSArray *recentSearches = [nameItems objectForKey:searchesKey];
-    if (![recentSearches isKindOfClass:[NSArray class]])
+    NSArray *recentSearches = typeCheckedRecentSearchesArray(items, name);
+    if (!recentSearches)
         return searchItems;
     
     for (NSDictionary *item in recentSearches) {
-        if (![item isKindOfClass:[NSDictionary class]])
+        NSDate *date = typeCheckedDateInRecentSearch(item);
+        if (!date)
             continue;
-        
+
         NSString *searchString = [item objectForKey:searchStringKey];
         if (![searchString isKindOfClass:[NSString class]])
-            continue;
-        
-        NSDate *date = [item objectForKey:dateKey];
-        if (![date isKindOfClass:[NSDate class]])
             continue;
         
         searchItems.append({ String{ searchString }, toSystemClockTime(date) });
     }
 
     return searchItems;
+}
+
+void removeRecentlyModifiedRecentSearches(std::chrono::system_clock::time_point oldestTimeToRemove)
+{
+    NSDate *date = toNSDateFromSystemClock(oldestTimeToRemove);
+    auto recentSearchesPlist = typeCheckedRecentSearchesRemovingRecentSearchesAddedAfterDate(date);
+    if (recentSearchesPlist)
+        [recentSearchesPlist writeToFile:searchFieldRecentSearchesPlistPath() atomically:YES];
+    else
+        writeEmptyRecentSearchesPlist();
 }
 
 }

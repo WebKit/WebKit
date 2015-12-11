@@ -632,6 +632,18 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
+    if (dataTypes & WebsiteDataTypeSearchFieldRecentSearches && isPersistent()) {
+        callbackAggregator->addPendingCallback();
+
+        m_queue->dispatch([modifiedSince, callbackAggregator] {
+            platformRemoveRecentSearches(modifiedSince);
+
+            RunLoop::main().dispatch([callbackAggregator] {
+                callbackAggregator->removePendingCallback();
+            });
+        });
+    }
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (dataTypes & WebsiteDataTypePlugInData && isPersistent()) {
         class State {
