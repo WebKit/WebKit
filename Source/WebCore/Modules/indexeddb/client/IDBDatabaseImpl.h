@@ -87,6 +87,8 @@ public:
     void didCreateIndexInfo(const IDBIndexInfo&);
     void didDeleteIndexInfo(const IDBIndexInfo&);
 
+    bool isClosingOrClosed() const { return m_closePending || m_closedInServer; }
+
 private:
     IDBDatabase(ScriptExecutionContext&, IDBConnectionToServer&, const IDBResultData&);
 

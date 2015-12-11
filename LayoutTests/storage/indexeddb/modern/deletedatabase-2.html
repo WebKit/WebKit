@@ -29,8 +29,7 @@ request.onsuccess = function()
 }
 request.onerror = function(e)
 {
-    log("Unexpected error");
-	done();
+    log("Open request error: " + request.error.name);
 }
 
 request.onupgradeneeded = function(e)

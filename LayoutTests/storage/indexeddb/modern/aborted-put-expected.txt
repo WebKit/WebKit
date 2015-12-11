@@ -11,7 +11,6 @@ ALERT: [object IDBDatabase]
 ALERT: get1 'foo' succeeded - value was 'baz'
 ALERT: get2 'far' succeeded - value was 'boo'
 ALERT: Second version change transaction abort
-ALERT: Second version change transaction error - [object Event]
 ALERT: Third upgrade needed: Old version - 1 New version - 2
 ALERT: [object IDBTransaction] - versionchange
 ALERT: [object IDBDatabase]

@@ -356,7 +356,7 @@ void IDBTransaction::notifyDidAbort(const IDBError& error)
 
     if (isVersionChange()) {
         ASSERT(m_openDBRequest);
-        m_openDBRequest->fireErrorAfterVersionChangeAbort();
+        m_openDBRequest->fireErrorAfterVersionChangeCompletion();
     }
 }
 
@@ -427,7 +427,11 @@ bool IDBTransaction::dispatchEvent(Event& event)
 
     if (isVersionChange() && event.type() == eventNames().completeEvent) {
         ASSERT(m_openDBRequest);
-        m_openDBRequest->fireSuccessAfterVersionChangeCommit();
+
+        if (m_database->isClosingOrClosed())
+            m_openDBRequest->fireErrorAfterVersionChangeCompletion();
+        else
+            m_openDBRequest->fireSuccessAfterVersionChangeCommit();
     }
 
     return result;

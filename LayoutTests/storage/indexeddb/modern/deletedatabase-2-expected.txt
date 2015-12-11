@@ -4,7 +4,7 @@ Initial upgrade old version - 0 new version - 1
 Requesting deleteDatabase
 First connection received versionchange event: oldVersion 1, newVersion null
 First version change complete
-open db success
+Open request error: AbortError
 Delete database success: oldVersion 1, newVersion null
 Recreating database to make sure it's new and empty
 Second upgrade old version - 0 new version - 1

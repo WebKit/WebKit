@@ -1,5 +1,11 @@
 This test creates a new database with the default version, commits that versionchange transaction, and then reopens it at different versions to make sure the IDBOpenDBRequests behave appropriately.<br>
+<div id="logger"></div><br>
 <script>
+
+function log(msg)
+{
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
 
 if (window.testRunner) {
     testRunner.waitUntilDone();
@@ -8,44 +14,43 @@ if (window.testRunner) {
 
 function done()
 {
-    alert("Done");
+    log("Done");
     if (window.testRunner)
         testRunner.notifyDone();
 }
 
 var request = window.indexedDB.open("VersionTestDatabase");
-alert(request + " (firstPhase)");
+log(request + " (firstPhase)");
 
 request.onsuccess = function()
 {
-    alert("First version change successful");
+    log("First version change successful");
 }
 request.onerror = function(e)
 {
-    alert("Unexpected error (firstPhase)");
-	done();
+    log("Open request error (firstPhase) " + request.error.name);
 }
 
 request.onupgradeneeded = function(e)
 {
     var database = event.target.result;
 
-    alert("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
-    alert(request.transaction);
+    log("upgradeneeded (firstPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
+    log(request.transaction);
     request.transaction.oncomplete = function()
     {
-        alert("Version change complete (firstPhase). Database version is now - " + database.version);
+        log("Version change complete (firstPhase). Database version is now - " + database.version);
         database.close();
         secondPhase();
     }
     request.transaction.onabort = function()
     {
-        alert("Version change transaction unexpected abort! (firstPhase)");
+        log("Version change transaction unexpected abort! (firstPhase)");
         done();
     }
     request.transaction.onerror = function()
     {
-        alert("Version change transaction unexpected error! (firstPhase)");
+        log("Version change transaction unexpected error! (firstPhase)");
         done();
     }
 }
@@ -53,22 +58,22 @@ request.onupgradeneeded = function(e)
 function secondPhase()
 {
     var request = window.indexedDB.open("VersionTestDatabase", 1);
-    alert(request + " (secondPhase)");
+    log(request + " (secondPhase)");
     request.onsuccess = function()
     {
-        alert("Successfully opened database at version 1 (secondPhase)");
+        log("Successfully opened database at version 1 (secondPhase)");
         request.result.close();
         request.result.close(); // Close it twice just for the heck of it
         thirdPhase();
     }
     request.onerror = function(e)
     {
-        alert("Unexpected error (secondPhase)" + e);
+        log("Unexpected error (secondPhase)" + e);
         done();
     }
     request.onupgradeneeded = function(e)
     {
-    	alert("Unexpected upgrade needed (secondPhase)" + e);
+    	log("Unexpected upgrade needed (secondPhase)" + e);
     	done();
     }
 }
@@ -76,36 +81,35 @@ function secondPhase()
 function thirdPhase()
 {
     var request = window.indexedDB.open("VersionTestDatabase", 2);
-    alert(request + " (thirdPhase)");
+    log(request + " (thirdPhase)");
     request.onsuccess = function()
     {
-        alert("Version change to version 2 successful");
+        log("Version change to version 2 successful");
     }
     request.onerror = function(e)
     {
-        alert("Unexpected error (thirdPhase)");
-        done();
+        log("Open request error (thirdPhase) " + request.error.name);
     }
     request.onupgradeneeded = function(e)
     {
         var database = event.target.result;
 
-        alert("upgradeneeded (thirdPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
-        alert(request.transaction);
+        log("upgradeneeded (thirdPhase): old version - " + e.oldVersion + " new version - " + e.newVersion);
+        log(request.transaction);
         request.transaction.oncomplete = function()
         {
-            alert("Version change complete (thirdPhase). Database version is now - " + database.version);
+            log("Version change complete (thirdPhase). Database version is now - " + database.version);
             database.close();
             fourthPhase();
         }
         request.transaction.onabort = function()
         {
-            alert("Version change transaction unexpected abort! (thirdPhase)");
+            log("Version change transaction unexpected abort! (thirdPhase)");
             done();
         }
         request.transaction.onerror = function()
         {
-            alert("Version change transaction unexpected error! (thirdPhase)");
+            log("Version change transaction unexpected error! (thirdPhase)");
             done();
         }
     } 
@@ -115,20 +119,20 @@ function fourthPhase()
 {
     // We've upgraded to version 2, so version 1 should not be openable.
     var request = window.indexedDB.open("VersionTestDatabase", 1);
-    alert(request + " (fourthPhase)");
+    log(request + " (fourthPhase)");
     request.onsuccess = function()
     {
-        alert("Unexpected success (fourthPhase)");
+        log("Unexpected success (fourthPhase)");
         done();
     }
     request.onerror = function(e)
     {
-        alert("Expected error (fourthPhase) - " + request.error.name);
+        log("Expected error (fourthPhase) - " + request.error.name);
         done();
     }
     request.onupgradeneeded = function(e)
     {
-        alert("Unexpected upgradeneeded (fourthPhase)");
+        log("Unexpected upgradeneeded (fourthPhase)");
         done();
     } 
 }

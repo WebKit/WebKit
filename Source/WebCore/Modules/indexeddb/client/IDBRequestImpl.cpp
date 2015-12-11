@@ -266,8 +266,10 @@ bool IDBRequest::dispatchEvent(Event& event)
     targets.append(this);
 
     if (m_transaction) {
-        targets.append(m_transaction);
-        targets.append(m_transaction->db());
+        if (!m_transaction->isFinished())
+            targets.append(m_transaction);
+        if (!m_transaction->database().isClosingOrClosed())
+            targets.append(m_transaction->db());
     }
 
     m_hasPendingActivity = false;

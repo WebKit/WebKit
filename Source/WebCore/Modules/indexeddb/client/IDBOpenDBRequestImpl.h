@@ -55,7 +55,7 @@ public:
 
     void versionChangeTransactionWillFinish();
     void fireSuccessAfterVersionChangeCommit();
-    void fireErrorAfterVersionChangeAbort();
+    void fireErrorAfterVersionChangeCompletion();
 
 private:
     IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);

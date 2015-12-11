@@ -8,7 +8,6 @@ Second upgrade needed: Old version - 1 New version - 2
 Deleted the index
 Aborted the transaction
 Second upgrade versionchange transaction abort
-Second upgrade versionchange transaction error [object Event]
 Third upgrade needed: Old version - 1 New version - 3
 Count is: 2
 Cursor at record: A / 1

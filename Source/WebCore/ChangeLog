@@ -1,3 +1,37 @@
+2015-12-10  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=152144
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least two failing tests now pass, and other incorrect tests updated to be more correct).
+
+        - An IDBOpenDBRequest resulting in a versionchange transaction should not have the onsuccess event fire if 
+          the database connection was closed during the versionchange transaction. onerror should fire instead.
+        - When firing an event at an IDBRequest, it should not have the transaction as an additional target if the
+          transaction has finished.
+        - When firing an event at an IDBRequest, it should not have the database as an additional target if the
+          database is closed or is closing.
+
+        * Modules/indexeddb/client/IDBDatabaseImpl.h:
+        (WebCore::IDBClient::IDBDatabase::isClosingOrClosed):
+        
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+        (WebCore::IDBClient::IDBOpenDBRequest::fireErrorAfterVersionChangeAbort): Deleted.
+        * Modules/indexeddb/client/IDBOpenDBRequestImpl.h:
+        
+        * Modules/indexeddb/client/IDBRequestImpl.cpp:
+        (WebCore::IDBClient::IDBRequest::dispatchEvent): Don't add finished transactions or closed databases as event targets.
+        
+        * Modules/indexeddb/client/IDBTransactionImpl.cpp:
+        (WebCore::IDBClient::IDBTransaction::notifyDidAbort):
+        (WebCore::IDBClient::IDBTransaction::dispatchEvent): If this was a versionchange transaction completing, possibly fire
+          the error event on the OpenDBRequest instead of the success event.
+        * Modules/indexeddb/client/IDBTransactionImpl.h:
+        (WebCore::IDBClient::IDBTransaction::isFinished):
+
 2015-12-10  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Use TextPainter to draw simple line text.

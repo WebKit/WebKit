@@ -86,14 +86,15 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
     enqueueEvent(Event::create(eventNames().successEvent, false, false));
 }
 
-void IDBOpenDBRequest::fireErrorAfterVersionChangeAbort()
+void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
 {
-    LOG(IndexedDB, "IDBOpenDBRequest::fireErrorAfterVersionChangeAbort()");
+    LOG(IndexedDB, "IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()");
 
     ASSERT(hasPendingActivity());
 
     IDBError idbError(IDBDatabaseException::AbortError);
     m_domError = DOMError::create(idbError.name());
+    m_result = IDBAny::createUndefined();
 
     m_transaction->addRequest(*this);
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));

@@ -127,6 +127,7 @@ public:
     void operationDidComplete(TransactionOperation&);
 
     bool isFinishedOrFinishing() const;
+    bool isFinished() const { return m_state == IndexedDB::TransactionState::Finished; }
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);

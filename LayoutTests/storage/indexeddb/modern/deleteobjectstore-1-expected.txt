@@ -4,7 +4,6 @@ ALERT: Second upgrade needed: Old version - 1 New version - 2
 ALERT: Deleting object store
 ALERT: Second version change transaction abort
 ALERT: Request error - [object Event]
-ALERT: Second version change transaction error - [object Event]
 ALERT: Success opening database connection - Starting final transaction
 ALERT: Value gotten was AH AH AH AH AH
 ALERT: Value gotten was AH AH AH AH AH

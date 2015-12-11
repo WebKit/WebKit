@@ -1,17 +1,18 @@
-ALERT: [object IDBOpenDBRequest] (firstPhase)
-ALERT: upgradeneeded (firstPhase): old version - 0 new version - 1
-ALERT: [object IDBTransaction]
-ALERT: Version change complete (firstPhase). Database version is now - 1
-ALERT: [object IDBOpenDBRequest] (secondPhase)
-ALERT: First version change successful
-ALERT: Successfully opened database at version 1 (secondPhase)
-ALERT: [object IDBOpenDBRequest] (thirdPhase)
-ALERT: upgradeneeded (thirdPhase): old version - 1 new version - 2
-ALERT: [object IDBTransaction]
-ALERT: Version change complete (thirdPhase). Database version is now - 2
-ALERT: [object IDBOpenDBRequest] (fourthPhase)
-ALERT: Version change to version 2 successful
-ALERT: Expected error (fourthPhase) - VersionError
-ALERT: Done
 This test creates a new database with the default version, commits that versionchange transaction, and then reopens it at different versions to make sure the IDBOpenDBRequests behave appropriately.
+[object IDBOpenDBRequest] (firstPhase)
+upgradeneeded (firstPhase): old version - 0 new version - 1
+[object IDBTransaction]
+Version change complete (firstPhase). Database version is now - 1
+[object IDBOpenDBRequest] (secondPhase)
+Open request error (firstPhase) AbortError
+Successfully opened database at version 1 (secondPhase)
+[object IDBOpenDBRequest] (thirdPhase)
+upgradeneeded (thirdPhase): old version - 1 new version - 2
+[object IDBTransaction]
+Version change complete (thirdPhase). Database version is now - 2
+[object IDBOpenDBRequest] (fourthPhase)
+Open request error (thirdPhase) AbortError
+Expected error (fourthPhase) - VersionError
+Done
+
 
