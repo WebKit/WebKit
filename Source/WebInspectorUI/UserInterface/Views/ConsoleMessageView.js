@@ -419,6 +419,9 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
         console.assert(this._message.type !== WebInspector.ConsoleMessage.MessageType.Result);
 
+        if (shouldFormatWithStringSubstitution && this._isStackTrace(parameters[0]))
+            shouldFormatWithStringSubstitution = false;
+
         // Format string / message / default message.
         if (shouldFormatWithStringSubstitution) {
             var result = this._formatWithSubstitutionString(parameters, builderElement);
@@ -431,16 +434,19 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
         // Trailing parameters.
         if (parameters.length) {
-            if (parameters.length === 1) {
+            let enclosedElement = document.createElement("span");
+
+            if (parameters.length === 1 && !this._isStackTrace(parameters[0])) {
+                let parameter = parameters[0];
+
                 // Single object. Show a preview.
-                var enclosedElement = builderElement.appendChild(document.createElement("span"));
+                builderElement.append(enclosedElement);
                 enclosedElement.classList.add("console-message-preview-divider");
                 enclosedElement.textContent = " \u2013 ";
 
                 var previewContainer = builderElement.appendChild(document.createElement("span"));
                 previewContainer.classList.add("console-message-preview");
 
-                var parameter = parameters[0];
                 var preview = WebInspector.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject(parameter, WebInspector.ObjectPreviewView.Mode.Brief);
                 var isPreviewView = preview instanceof WebInspector.ObjectPreviewView;
 
@@ -455,12 +461,21 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                     this._extraParameters = null;
             } else {
                 // Multiple objects. Show an indicator.
-                builderElement.append(" ");
-                var enclosedElement = builderElement.appendChild(document.createElement("span"));
+                builderElement.append(" ", enclosedElement);
                 enclosedElement.classList.add("console-message-enclosed");
                 enclosedElement.textContent = "(" + parameters.length + ")";
             }
         }
+    }
+
+    _isStackTrace(parameter)
+    {
+        console.assert(parameter instanceof WebInspector.RemoteObject);
+
+        if (WebInspector.RemoteObject.type(parameter) !== "string")
+            return false;
+
+        return WebInspector.StackTrace.isLikelyStackTrace(parameter.description);
     }
 
     _shouldConsiderObjectLossless(object)
@@ -515,6 +530,15 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     _formatParameterAsString(object, fragment)
     {
+        if (this._isStackTrace(object)) {
+            let stackTrace = WebInspector.StackTrace.fromString(object.description);
+            if (stackTrace.callFrames.length) {
+                let stackView = new WebInspector.StackTraceView(stackTrace);
+                fragment.appendChild(stackView.element);
+                return;
+            }
+        }
+
         fragment.appendChild(WebInspector.FormattedValue.createLinkifiedElementString(object.description));
     }
 

@@ -1,0 +1,106 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function typeErrorWrap()
+{
+    return typeError();
+}
+
+function typeError()
+{
+    var object = {};
+    try {
+        object.propertyDoesnt.exist;
+    } catch(e) {
+        console.trace();
+        return e.stack;
+    }
+}
+
+function testWithNativeCallInBetween()
+{
+    return [42].map(typeError)[0];
+}
+
+var _anonymousFunctionError = null;
+
+(function() {
+    var object = {};
+    try {
+        object.methodDoesntExist();
+    } catch(e) {
+        _anonymousFunctionError = e.stack;
+    }
+})();
+
+function getAnonymousFunctionError()
+{
+    return _anonymousFunctionError;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebInspector.StackTrace.isLikelyStackTrace");
+
+    suite.addTestCase({
+        name: "notStacktrace",
+        test: function(resolve, reject) {
+            var result = WebInspector.StackTrace.isLikelyStackTrace("Messages:42\nUnread:16");
+            InspectorTest.assert(result, "Should NOT be a stacktrace.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "typeErrorWrap",
+        test: function(resolve, reject) {
+            InspectorTest.evaluateInPage("typeErrorWrap()", function(error, result) {
+                if (error)
+                    reject(error);
+
+                InspectorTest.assert(WebInspector.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "getAnonymousFunctionError",
+        test: function(resolve, reject) {
+            InspectorTest.evaluateInPage("getAnonymousFunctionError()", function(error, result) {
+                if (error)
+                    reject(error);
+
+                InspectorTest.assert(WebInspector.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "testWithNativeCallInBetween",
+        test: function(resolve, reject) {
+            InspectorTest.evaluateInPage("testWithNativeCallInBetween()", function(error, result) {
+                if (error)
+                    reject(error);
+
+                InspectorTest.assert(WebInspector.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Test stack trace detection heuristic.<br>
+</p>
+</body>
+</html>

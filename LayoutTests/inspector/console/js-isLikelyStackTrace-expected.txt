@@ -1,0 +1,15 @@
+Test stack trace detection heuristic.
+
+== Running test suite: WebInspector.StackTrace.isLikelyStackTrace
+-- Running test case: notStacktrace
+ASSERT: Should NOT be a stacktrace.
+
+-- Running test case: typeErrorWrap
+ASSERT: Should be a stacktrace.
+
+-- Running test case: getAnonymousFunctionError
+ASSERT: Should be a stacktrace.
+
+-- Running test case: testWithNativeCallInBetween
+ASSERT: Should be a stacktrace.
+

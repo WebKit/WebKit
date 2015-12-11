@@ -48,6 +48,31 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
         return WebInspector.StackTrace.fromPayload(payload);
     }
 
+    // May produce false negatives; must not produce any false positives.
+    // It may return false on a valid stack trace, but it will never return true on an invalid stack trace.
+    static isLikelyStackTrace(stack)
+    {
+        // This function runs for every logged string. It penalizes the performance.
+        // As most logged strings are not stack traces, exit as early as possible.
+        const smallestPossibleStackTraceLength = "http://a.bc/:9:1".length;
+        if (stack.length < smallestPossibleStackTraceLength.length * 2)
+            return false;
+
+        const approximateStackLengthOf50Items = 5000;
+        if (stack.length > approximateStackLengthOf50Items)
+            return false;
+
+        if (/^[^a-z$_]/i.test(stack[0]))
+            return false;
+
+        const reasonablyLongLineLength = 500;
+        const reasonablyLongNativeMethodLength = 120;
+        const stackTraceLine = `(.{1,${reasonablyLongLineLength}}:\\d+:\\d+|eval code|.{1,${reasonablyLongNativeMethodLength}}@\\[native code\\])`;
+        const stackTrace = new RegExp(`^${stackTraceLine}(\\n${stackTraceLine})*$`, "g");
+
+        return stackTrace.test(stack);
+    }
+
     static _parseStackTrace(stack)
     {
         var lines = stack.split(/\n/g);

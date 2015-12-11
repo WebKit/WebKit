@@ -237,6 +237,10 @@
     -webkit-user-select: text;
 }
 
+.console-message-extra-parameter .stack-trace {
+    display: inline-block;
+}
+
 .console-message-location.call-frame {
     display: inline-block;
     -webkit-user-select: text;

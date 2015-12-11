@@ -1,3 +1,27 @@
+2015-12-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: When logging strings, detect stack traces and show them as StackTraceView
+        https://bugs.webkit.org/show_bug.cgi?id=149790
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/StackTrace.js:
+        (WebInspector.StackTrace.isLikelyStackTrace): Added.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message-extra-parameter .stack-trace):
+        Display stack trace view on the same line as a list bullet point from
+        console message extra parameter.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendFormattedArguments):
+        Don't format with string substitutions for stack traces. E.g. there is
+        no need to replace %s with the next argument.
+
+        (WebInspector.ConsoleMessageView.prototype._isStackTrace): Added.
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsString):
+        Detect stack traces and format them appropriately.
+
 2015-12-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: debugger dashboard's switching arrows are positioned too close to the dashboard border
