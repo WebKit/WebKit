@@ -3011,7 +3011,7 @@ private:
                         return;
                     }
                     
-                    setDouble(m_out.unsignedToFP(result, m_out.doubleType));
+                    setDouble(m_out.unsignedToDouble(result));
                     return;
                 }
             
@@ -3020,7 +3020,7 @@ private:
                 LValue result;
                 switch (type) {
                 case TypeFloat32:
-                    result = m_out.fpCast(m_out.loadFloat(pointer), m_out.doubleType);
+                    result = m_out.floatToDouble(m_out.loadFloat(pointer));
                     break;
                 case TypeFloat64:
                     result = m_out.loadDouble(pointer);
@@ -3291,7 +3291,7 @@ private:
                     LValue value = lowDouble(child3);
                     switch (type) {
                     case TypeFloat32:
-                        valueToStore = m_out.fpCast(value, m_out.floatType);
+                        valueToStore = m_out.doubleToFloat(value);
                         storeType = Output::StoreFloat;
                         break;
                     case TypeFloat64:

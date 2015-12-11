@@ -181,23 +181,17 @@ public:
     LValue signExt32To64(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::SExt32, origin(), value); }
     LValue zeroExt(LValue value, LType type) { return m_block->appendNew<B3::Value>(m_proc, B3::ZExt32, type, origin(), value); }
     LValue zeroExtPtr(LValue value) { return zeroExt(value, B3::Int64); }
-    LValue fpToInt(LValue value, LType type) { CRASH(); }
-    LValue fpToUInt(LValue value, LType type) { CRASH(); }
     LValue fpToInt32(LValue value) { CRASH(); }
     LValue fpToUInt32(LValue value) { CRASH(); }
-    LValue intToFP(LValue value, LType type) { CRASH(); }
     LValue intToDouble(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::IToD, origin(), value); }
-    LValue unsignedToFP(LValue value, LType type) { CRASH(); }
     LValue unsignedToDouble(LValue value) { CRASH(); }
-    LValue intCast(LValue value, LType type) { CRASH(); }
     LValue castToInt32(LValue value)
     {
         return value->type() == B3::Int32 ? value :
             m_block->appendNew<B3::Value>(m_proc, B3::Trunc, origin(), value);
     }
-    LValue fpCast(LValue value, LType type) { CRASH(); }
-    LValue intToPtr(LValue value, LType type) { CRASH(); }
-    LValue ptrToInt(LValue value, LType type) { CRASH(); }
+    LValue doubleToFloat(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::DoubleToFloat, origin(), value); }
+    LValue floatToDouble(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::FloatToDouble, origin(), value); }
     LValue bitCast(LValue, LType);
     LValue fround(LValue doubleValue);
 
@@ -545,8 +539,7 @@ inline LValue Output::bitCast(LValue value, LType type)
 
 inline LValue Output::fround(LValue doubleValue)
 {
-    LValue asFloat = m_block->appendNew<B3::Value>(m_proc, B3::DoubleToFloat, origin(), doubleValue);
-    return m_block->appendNew<B3::Value>(m_proc, B3::FloatToDouble, origin(), asFloat);
+    return floatToDouble(doubleToFloat(doubleValue));
 }
 
 #if COMPILER(GCC_OR_CLANG)

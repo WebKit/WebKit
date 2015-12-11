@@ -1,3 +1,43 @@
+2015-12-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Little cleanup of FTLOutput type casts and conversions
+        https://bugs.webkit.org/show_bug.cgi?id=152166
+
+        Reviewed by Geoffrey Garen.
+
+        Clean up:
+        -Change fpCast() to explicit conversion doubleToFloat() and floatToDouble()
+         to match B3's opcodes.
+        -Remove unused conversion functions.
+        -Use the most specific cast function when possible.
+        -Functions that are only used inside FTLOutput are made private.
+         In FTLB3Output, those functions were removed.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleToFloat):
+        (JSC::FTL::Output::floatToDouble):
+        (JSC::FTL::Output::fround):
+        (JSC::FTL::Output::fpToInt): Deleted.
+        (JSC::FTL::Output::fpToUInt): Deleted.
+        (JSC::FTL::Output::intToFP): Deleted.
+        (JSC::FTL::Output::unsignedToFP): Deleted.
+        (JSC::FTL::Output::intCast): Deleted.
+        (JSC::FTL::Output::fpCast): Deleted.
+        (JSC::FTL::Output::intToPtr): Deleted.
+        (JSC::FTL::Output::ptrToInt): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutByVal):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleToFloat):
+        (JSC::FTL::Output::floatToDouble):
+        (JSC::FTL::Output::intCast):
+        (JSC::FTL::Output::fpToInt):
+        (JSC::FTL::Output::fpToUInt):
+        (JSC::FTL::Output::fpCast):
+        (JSC::FTL::Output::intToFP):
+        (JSC::FTL::Output::unsignedToFP):
+
 2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Binding and builtin generators should lowercase RTCXX as rtcXX and not rTCXX

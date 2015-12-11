@@ -219,17 +219,13 @@ public:
     LValue signExt32To64(LValue value) { return signExt(value, int64); }
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }
     LValue zeroExtPtr(LValue value) { return zeroExt(value, intPtr); }
-    LValue fpToInt(LValue value, LType type) { return buildFPToSI(m_builder, value, type); }
-    LValue fpToUInt(LValue value, LType type) { return buildFPToUI(m_builder, value, type); }
     LValue fpToInt32(LValue value) { return fpToInt(value, int32); }
     LValue fpToUInt32(LValue value) { return fpToUInt(value, int32); }
-    LValue intToFP(LValue value, LType type) { return buildSIToFP(m_builder, value, type); }
     LValue intToDouble(LValue value) { return intToFP(value, doubleType); }
-    LValue unsignedToFP(LValue value, LType type) { return buildUIToFP(m_builder, value, type); }
     LValue unsignedToDouble(LValue value) { return unsignedToFP(value, doubleType); }
-    LValue intCast(LValue value, LType type) { return buildIntCast(m_builder, value, type); }
     LValue castToInt32(LValue value) { return intCast(value, int32); }
-    LValue fpCast(LValue value, LType type) { return buildFPCast(m_builder, value, type); }
+    LValue doubleToFloat(LValue value) { return fpCast(value, floatType); }
+    LValue floatToDouble(LValue value) { return fpCast(value, doubleType); }
     LValue intToPtr(LValue value, LType type) { return buildIntToPtr(m_builder, value, type); }
     LValue ptrToInt(LValue value, LType type) { return buildPtrToInt(m_builder, value, type); }
     LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
@@ -476,6 +472,12 @@ public:
     LBasicBlock m_nextBlock;
 
 private:
+    LValue intCast(LValue value, LType type) { return buildIntCast(m_builder, value, type); }
+    LValue fpToInt(LValue value, LType type) { return buildFPToSI(m_builder, value, type); }
+    LValue fpToUInt(LValue value, LType type) { return buildFPToUI(m_builder, value, type); }
+    LValue fpCast(LValue value, LType type) { return buildFPCast(m_builder, value, type); }
+    LValue intToFP(LValue value, LType type) { return buildSIToFP(m_builder, value, type); }
+    LValue unsignedToFP(LValue value, LType type) { return buildUIToFP(m_builder, value, type); }
     LValue signExt(LValue value, LType type) { return buildSExt(m_builder, value, type); }
 };
 
