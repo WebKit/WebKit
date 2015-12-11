@@ -38,6 +38,16 @@
 #include <algorithm>
 #include <functional>
 
+#if __has_include(<WebKitAdditions/LayerBackingStoreAdditions.mm>)
+#import <WebKitAdditions/LayerBackingStoreAdditions.mm>
+#else
+namespace WebCore {
+static void setBackingStoreFormat(CALayer *)
+{
+}
+} // namespace WebCore
+#endif
+
 namespace WebCore {
 
 #if LOG_TILING
@@ -60,6 +70,7 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
         m_tileLayer = adoptNS([[LegacyTileLayer alloc] init]);
     }
     LegacyTileLayer* layer = m_tileLayer.get();
+    setBackingStoreFormat(layer);
     [layer setTileGrid:tileGrid];
     [layer setOpaque:m_tileGrid->tileCache().tilesOpaque()];
     [layer setEdgeAntialiasingMask:0];
