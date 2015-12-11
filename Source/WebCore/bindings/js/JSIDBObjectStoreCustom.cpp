@@ -120,7 +120,7 @@ JSValue JSIDBObjectStore::createIndex(ExecState& state)
 
     JSValue optionsValue = state.argument(2);
     if (!optionsValue.isUndefinedOrNull() && !optionsValue.isObject())
-        return throwTypeError(&state, "Not an object.");
+        return throwTypeError(&state, "Failed to execute 'createIndex' on 'IDBObjectStore': No function was found that matched the signature provided.");
 
     bool unique = false;
     bool multiEntry = false;

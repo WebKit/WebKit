@@ -1,3 +1,15 @@
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/index-basics.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152190
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * bindings/js/JSIDBObjectStoreCustom.cpp:
+        (WebCore::JSIDBObjectStore::createIndex): Custom error message for the TypeError
+
 2015-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Strip out Referer header when requesting subresources or following links for documents with "Content-Disposition: attachment"
