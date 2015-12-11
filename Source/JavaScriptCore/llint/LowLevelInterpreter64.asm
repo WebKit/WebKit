@@ -1088,8 +1088,7 @@ _llint_op_overrides_has_instance:
     dispatch(4)
 
 .opOverridesHasInstanceNotDefaultSymbol:
-    storeq ValueTrue, t1
-    storeq t1, [cfr, t3, 8]
+    storeq ValueTrue, [cfr, t3, 8]
     dispatch(4)
 
 

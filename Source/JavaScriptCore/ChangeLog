@@ -1,5 +1,17 @@
 2015-12-11  Keith Miller  <keith_miller@apple.com>
 
+        Overrides has instance should not move ValueFalse to a register then immediately to the stack in the LLInt.
+        https://bugs.webkit.org/show_bug.cgi?id=152188
+
+        Reviewed by Mark Lam.
+
+        This fixes a minor issue with the code for the overrides_has_instance in the LLInt. Old code had an extra move,
+        which is both slow and breaks the build on cloop.
+
+        * llint/LowLevelInterpreter64.asm:
+
+2015-12-11  Keith Miller  <keith_miller@apple.com>
+
         [ES6] Add support for Symbol.hasInstance
         https://bugs.webkit.org/show_bug.cgi?id=151839
 
