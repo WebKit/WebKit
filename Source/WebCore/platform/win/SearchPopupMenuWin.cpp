@@ -55,7 +55,7 @@ static RetainPtr<CFStringRef> autosaveKey(const String& name)
 }
 #endif
 
-void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vector<RecentSearch>& searchItems)
 {
     if (name.isEmpty())
         return;
@@ -67,7 +67,7 @@ void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vect
     if (size) {
         items = adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
         for (size_t i = 0; i < size; ++i)
-            CFArrayAppendValue(items.get(), searchItems[i].createCFString().get());
+            CFArrayAppendValue(items.get(), searchItems[i].string.createCFString().get());
     }
 
     CFPreferencesSetAppValue(autosaveKey(name).get(), items.get(), kCFPreferencesCurrentApplication);
@@ -75,7 +75,7 @@ void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vect
 #endif
 }
 
-void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<RecentSearch>& searchItems)
 {
     if (name.isEmpty())
         return;
@@ -90,8 +90,10 @@ void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<Str
     size_t size = CFArrayGetCount(items.get());
     for (size_t i = 0; i < size; ++i) {
         CFStringRef item = (CFStringRef)CFArrayGetValueAtIndex(items.get(), i);
-        if (CFGetTypeID(item) == CFStringGetTypeID())
-            searchItems.append(item);
+        if (CFGetTypeID(item) == CFStringGetTypeID()) {
+            // We are choosing not to use or store search times on Windows at this time, so for now it's OK to use a "distant past" time as a placeholder.
+            searchItems.append({ String{ item }, std::chrono::system_clock::time_point::min() });
+        }
     }
 #endif
 }

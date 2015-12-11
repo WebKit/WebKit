@@ -1,3 +1,53 @@
+2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r191084. rdar://problem/23715623
+
+    2015-10-14  Zhuo Li  <zachli@apple.com>
+
+            Augment <input type=search>’s recent search history with the time each entry was added,
+            in order to allow time-based clearing of search history.
+            https://bugs.webkit.org/show_bug.cgi?id=148388.
+
+            Reviewed by Darin Adler.
+
+            Replace Vector<String> with Vector<RecentSearch>, where RecentSearch is a struct
+            that consists search string and time, for recent searches in order to store additional time
+            information.
+
+            * WebCore.xcodeproj/project.pbxproj: Added SearchPopupMenuCocoa.h and SearchPopupMenuCocoa.mm
+            and sort the project file.
+            * loader/EmptyClients.cpp:
+            (WebCore::EmptySearchPopupMenu::saveRecentSearches):
+            (WebCore::EmptySearchPopupMenu::loadRecentSearches):
+            * platform/SearchPopupMenu.h:
+            * platform/cocoa/SearchPopupMenuCocoa.h: Added methods for SeachPopupMenuMac in WebKit
+            and WebPageProxyCocoa in WebKit2 to call.
+            * platform/cocoa/SearchPopupMenuCocoa.mm: Added.
+            (WebCore::searchFieldRecentSearchesStorageDirectory): Recent searches with the new structure
+            are stored in a new location.
+            (WebCore::searchFieldRecentSearchesPlistPath): Get the path for the plist of the recent
+            searches entries.
+            (WebCore::RetainPtr<NSMutableDictionary> readSearchFieldRecentSearchesPlist): Return the
+            recent searches plist as NSMutableDictionary.
+            (WebCore::fromNSDatetoSystemClockTime): Convert from NSDate to system_clock::time_point.
+            (WebCore::fromSystemClockTimetoNSDate): Convert from system_clock::time_point to NSDate.
+            (WebCore::SearchPopupMenuCocoa::saveRecentSearches): Add a dictionary where it has two pairs
+            that the first one is the search string and the second one is the time.
+            (WebCore::SearchPopupMenuCocoa::loadRecentSearches): We expect the recent search item in the
+            plist to be a two-pair dictionary, and convert the dictionary to the struct RecentSearch.
+            * platform/win/SearchPopupMenuWin.cpp:
+            (WebCore::SearchPopupMenuWin::saveRecentSearches): Only save the RecentSearch's search
+            string on Windows platform, which is what we used to do.
+            (WebCore::SearchPopupMenuWin::loadRecentSearches): Since we need to construct a
+            RecentSearch, we get the string from the app's preferences, and set the time to be
+            std::chrono::system_clock::time_point::min().
+            * platform/win/SearchPopupMenuWin.h:
+            * rendering/RenderSearchField.cpp: Now that m_recentSearches are Vector<RecentSearch>,
+            we cannot use -removeAll with a search string. Use -removeAllMatching instead to remove the
+            item that has its member search string equal to the search string user inputs.
+            (WebCore::RenderSearchField::addSearchResult):
+            (WebCore::RenderSearchField::itemText):
+
 2015-12-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r190505.

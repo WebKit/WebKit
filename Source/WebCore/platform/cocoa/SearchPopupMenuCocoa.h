@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebProcessProxy.h"
+#ifndef SearchPopupMenuCocoa_h
+#define SearchPopupMenuCocoa_h
 
-#import <WebCore/SearchPopupMenuCocoa.h>
-#import <wtf/cf/TypeCastsCF.h>
+#import "SearchPopupMenu.h"
 
-namespace WebKit {
+namespace WebCore {
 
-void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
-{
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
-
-    WebCore::saveRecentSearches(name, searchItems);
-}
-
-void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::RecentSearch>& searchItems)
-{
-    if (!name) {
-        // FIXME: This should be a message check.
-        return;
-    }
-
-    searchItems = WebCore::loadRecentSearches(name);
-}
-
-#if ENABLE(CONTENT_FILTERING)
-void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, uint64_t frameID)
-{
-    if (WebFrameProxy* frame = m_process->webFrame(frameID))
-        frame->contentFilterDidBlockLoad(unblockHandler);
-}
-#endif
+WEBCORE_EXPORT void saveRecentSearches(const String& name, const Vector<RecentSearch>&);
+WEBCORE_EXPORT Vector<RecentSearch> loadRecentSearches(const String& name);
 
 }
+
+#endif // SearchPopupMenuCocoa_h

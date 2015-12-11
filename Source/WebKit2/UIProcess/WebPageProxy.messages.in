@@ -379,8 +379,8 @@ messages -> WebPageProxy {
 #endif
 
     # Search popup menus
-    SaveRecentSearches(String name, Vector<String> searchItems)
-    LoadRecentSearches(String name) -> (Vector<String> result)
+    SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
+    LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result)
 
     SavePDFToFileInDownloadsFolder(String suggestedFilename, String originatingURLString, IPC::DataReference data)
 

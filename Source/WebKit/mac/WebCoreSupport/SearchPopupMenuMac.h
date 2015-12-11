@@ -21,7 +21,7 @@
 #ifndef SearchPopupMenuMac_h
 #define SearchPopupMenuMac_h
 
-#include <WebCore/SearchPopupMenu.h>
+#include <WebCore/SearchPopupMenuCocoa.h>
 
 namespace WebCore {
 class PopupMenuClient;
@@ -35,8 +35,8 @@ public:
     ~SearchPopupMenuMac();
 
     virtual WebCore::PopupMenu* popupMenu() override;
-    virtual void saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems) override;
-    virtual void loadRecentSearches(const AtomicString& name, Vector<String>& searchItems) override;
+    virtual void saveRecentSearches(const AtomicString& name, const Vector<WebCore::RecentSearch>&) override;
+    virtual void loadRecentSearches(const AtomicString& name, Vector<WebCore::RecentSearch>&) override;
     virtual bool enabled() override;
 
 private:

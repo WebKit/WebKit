@@ -25,11 +25,11 @@
 
 #include "PopupMenuClient.h"
 #include "RenderTextControlSingleLine.h"
+#include "SearchPopupMenu.h"
 
 namespace WebCore {
 
 class HTMLInputElement;
-class SearchPopupMenu;
 
 class RenderSearchField final : public RenderTextControlSingleLine, private PopupMenuClient {
 public:
@@ -87,7 +87,7 @@ private:
 
     bool m_searchPopupIsVisible;
     RefPtr<SearchPopupMenu> m_searchPopup;
-    Vector<String> m_recentSearches;
+    Vector<RecentSearch> m_recentSearches;
 };
 
 } // namespace WebCore

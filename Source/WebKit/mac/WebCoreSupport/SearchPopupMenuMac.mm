@@ -23,9 +23,7 @@
 #include "PopupMenuMac.h"
 #include <wtf/text/AtomicString.h>
 
-using namespace WebCore;
-
-SearchPopupMenuMac::SearchPopupMenuMac(PopupMenuClient* client)
+SearchPopupMenuMac::SearchPopupMenuMac(WebCore::PopupMenuClient* client)
     : m_popup(adoptRef(new PopupMenuMac(client)))
 {
 }
@@ -34,12 +32,7 @@ SearchPopupMenuMac::~SearchPopupMenuMac()
 {
 }
 
-static NSString *autosaveKey(const String& name)
-{
-    return [@"com.apple.WebKit.searchField:" stringByAppendingString:name];
-}
-
-PopupMenu* SearchPopupMenuMac::popupMenu()
+WebCore::PopupMenu* SearchPopupMenuMac::popupMenu()
 {
     return m_popup.get();
 }
@@ -49,31 +42,12 @@ bool SearchPopupMenuMac::enabled()
     return true;
 }
 
-void SearchPopupMenuMac::saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems)
+void SearchPopupMenuMac::saveRecentSearches(const AtomicString& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    if (name.isEmpty())
-        return;
-
-    if (searchItems.isEmpty()) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:autosaveKey(name)];
-        return;
-    }
-
-    RetainPtr<NSMutableArray> items = adoptNS([[NSMutableArray alloc] initWithCapacity:searchItems.size()]);
-    for (const auto& searchItem: searchItems)
-        [items addObject:searchItem];
-
-    [[NSUserDefaults standardUserDefaults] setObject:items.get() forKey:autosaveKey(name)];
+    WebCore::saveRecentSearches(name, searchItems);
 }
 
-void SearchPopupMenuMac::loadRecentSearches(const AtomicString& name, Vector<String>& searchItems)
+void SearchPopupMenuMac::loadRecentSearches(const AtomicString& name, Vector<WebCore::RecentSearch>& searchItems)
 {
-    if (name.isEmpty())
-        return;
-
-    searchItems.clear();
-    for (NSString *item in [[NSUserDefaults standardUserDefaults] arrayForKey:autosaveKey(name)]) {
-        if ([item isKindOfClass:[NSString class]])
-            searchItems.append(item);
-    }
+    searchItems = WebCore::loadRecentSearches(name);
 }

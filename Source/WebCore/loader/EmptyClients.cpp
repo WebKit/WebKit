@@ -138,8 +138,8 @@ public:
 class EmptySearchPopupMenu : public SearchPopupMenu {
 public:
     virtual PopupMenu* popupMenu() { return m_popup.get(); }
-    virtual void saveRecentSearches(const AtomicString&, const Vector<String>&) { }
-    virtual void loadRecentSearches(const AtomicString&, Vector<String>&) { }
+    virtual void saveRecentSearches(const AtomicString&, const Vector<RecentSearch>&) { }
+    virtual void loadRecentSearches(const AtomicString&, Vector<RecentSearch>&) { }
     virtual bool enabled() { return false; }
 
 private:
