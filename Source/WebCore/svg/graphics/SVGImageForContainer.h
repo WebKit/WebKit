@@ -58,7 +58,7 @@ public:
 
     virtual void draw(GraphicsContext*, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
 
-    virtual void drawPattern(GraphicsContext*, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace, CompositeOperator, const FloatRect&, BlendMode) override;
+    virtual void drawPattern(GraphicsContext*, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, ColorSpace, CompositeOperator, const FloatRect&, BlendMode) override;
 
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() override { return false; }

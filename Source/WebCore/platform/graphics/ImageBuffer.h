@@ -124,9 +124,6 @@ public:
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.
     bool copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC3Denum, bool, bool);
 
-    FloatSize spaceSize() const { return m_space; }
-    void setSpaceSize(const FloatSize& space) { m_space = space; }
-
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
     static bool sizeNeedsClamping(const FloatSize&, FloatSize& scale);
@@ -144,7 +141,7 @@ private:
     void clip(GraphicsContext*, const FloatRect&) const;
 
     void draw(GraphicsContext*, ColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
-    void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
+    void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
 
     inline void genericConvertToLuminanceMask();
 
@@ -159,7 +156,6 @@ private:
     IntSize m_size;
     IntSize m_logicalSize;
     float m_resolutionScale;
-    FloatSize m_space;
 
     // This constructor will place its success into the given out-variable
     // so that create() knows when it should return failure.

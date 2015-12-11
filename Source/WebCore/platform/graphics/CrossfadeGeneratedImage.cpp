@@ -95,7 +95,7 @@ void CrossfadeGeneratedImage::draw(GraphicsContext* context, const FloatRect& ds
     drawCrossfade(context);
 }
 
-void CrossfadeGeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+void CrossfadeGeneratedImage::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
     std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(size(), 1, ColorSpaceDeviceRGB, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
     if (!imageBuffer)
@@ -106,7 +106,7 @@ void CrossfadeGeneratedImage::drawPattern(GraphicsContext* context, const FloatR
     drawCrossfade(graphicsContext);
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, compositeOp, dstRect, blendMode);
+    imageBuffer->drawPattern(context, srcRect, patternTransform, phase, spacing, styleColorSpace, compositeOp, dstRect, blendMode);
 }
 
 }

@@ -184,8 +184,8 @@ PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()
 }
 #endif
 
-void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize containerSize, float zoom, const FloatRect& srcRect,
-    const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize& containerSize, float zoom, const FloatRect& srcRect,
+    const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerSize);
     zoomedContainerRect.scale(zoom);
@@ -209,7 +209,6 @@ void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize
     RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore, Unscaled);
     if (!image)
         return;
-    image->setSpaceSize(spaceSize());
 
     // Adjust the source rect and transform due to the image buffer's scaling.
     FloatRect scaledSrcRect = srcRect;
@@ -218,7 +217,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     context->setDrawLuminanceMask(false);
-    image->drawPattern(context, scaledSrcRect, unscaledPatternTransform, phase, colorSpace, compositeOp, dstRect, blendMode);
+    image->drawPattern(context, scaledSrcRect, unscaledPatternTransform, phase, spacing, colorSpace, compositeOp, dstRect, blendMode);
 }
 
 void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
