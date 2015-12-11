@@ -34,7 +34,13 @@ sub splitVersion($);
 
 die "You must supply an output path as the argument.\n" if ($#ARGV < 0);
 
-my $thisDirectory = dirname(abs_path($0));
+my $rawPath = $0;
+
+if ($^O eq "cygwin") {
+    chomp($rawPath = `/usr/bin/cygpath -u "$0"`);
+}
+
+my $thisDirectory = dirname(abs_path($rawPath));
 
 my $FALLBACK_VERSION_PATH = File::Spec->catfile($thisDirectory, 'VERSION');
 open(FALLBACK_VERSION_FILE, '<', $FALLBACK_VERSION_PATH) or die "Unable to open $FALLBACK_VERSION_PATH: $!";

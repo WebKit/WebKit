@@ -1,3 +1,15 @@
+2015-12-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Support building under Cygwin or native Perl
+        https://bugs.webkit.org/show_bug.cgi?id=152145
+        <rdar://problem/23839868>
+
+        Reviewed by David Kilzer.
+
+        * Source/cmake/tools/scripts/auto-version.pl: Correct handling of mixed DOS filenames when used in a
+        Cygwin context.
+        
+
 2015-12-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Suspend and resume device motion and device orientation updates when page is hidden and visible, respectively
