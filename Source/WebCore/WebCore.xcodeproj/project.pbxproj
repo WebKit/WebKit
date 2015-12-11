@@ -3772,8 +3772,6 @@
 		97627B8D14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */; };
 		97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97627B9814FB5424002CDCA1 /* Supplementable.h in Headers */ = {isa = PBXBuildFile; fileRef = 97627B9714FB5424002CDCA1 /* Supplementable.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97665013144FAA4200F6BB51 /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 97665011144FAA4200F6BB51 /* EventFactory.h */; };
-		9766504F144FBFFE00F6BB51 /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9766504E144FBFFE00F6BB51 /* EventFactory.cpp */; };
 		9767CE0B145ABC13005E64DB /* ExceptionHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 9767CE09145ABC12005E64DB /* ExceptionHeaders.h */; };
 		9767CE0C145ABC13005E64DB /* ExceptionInterfaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 9767CE0A145ABC13005E64DB /* ExceptionInterfaces.h */; };
 		976D6C78122B8A3D001FD1F7 /* Blob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C59122B8A3D001FD1F7 /* Blob.cpp */; };
@@ -11269,8 +11267,6 @@
 		97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextDestructionObserver.cpp; sourceTree = "<group>"; };
 		97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextDestructionObserver.h; sourceTree = "<group>"; };
 		97627B9714FB5424002CDCA1 /* Supplementable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Supplementable.h; sourceTree = "<group>"; };
-		97665011144FAA4200F6BB51 /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
-		9766504E144FBFFE00F6BB51 /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
 		9767CE09145ABC12005E64DB /* ExceptionHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHeaders.h; sourceTree = "<group>"; };
 		9767CE0A145ABC13005E64DB /* ExceptionInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionInterfaces.h; sourceTree = "<group>"; };
 		976D6C59122B8A3D001FD1F7 /* Blob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Blob.cpp; sourceTree = "<group>"; };
@@ -17279,7 +17275,6 @@
 				6565814809D13043000E61D7 /* CSSValueKeywords.h */,
 				9B3A8871145632F9003AE8F5 /* DOMDOMSettableTokenList.h */,
 				E1C6CFC21746D293007B87A1 /* DOMWindowConstructors.idl */,
-				9766504E144FBFFE00F6BB51 /* EventFactory.cpp */,
 				970B72A5145008EB00F00A37 /* EventHeaders.h */,
 				970B7289144FFAC600F00A37 /* EventInterfaces.h */,
 				97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */,
@@ -23859,7 +23854,6 @@
 				418A06CE133C04D500CD379C /* EventDispatcher.h */,
 				BC60D9090D2A17CE00B9918F /* EventException.h */,
 				BC60D90A0D2A17CE00B9918F /* EventException.idl */,
-				97665011144FAA4200F6BB51 /* EventFactory.h */,
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
 				85AFA7410AAF298400E84305 /* EventListener.idl */,
 				AD4495F1141FC08900541EDF /* EventListenerMap.cpp */,
@@ -25451,7 +25445,6 @@
 				4138D3351244054800323D33 /* EventContext.h in Headers */,
 				418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */,
 				BC60D90C0D2A17CE00B9918F /* EventException.h in Headers */,
-				97665013144FAA4200F6BB51 /* EventFactory.h in Headers */,
 				93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */,
 				970B72A6145008EB00F00A37 /* EventHeaders.h in Headers */,
 				970B728A144FFAC600F00A37 /* EventInterfaces.h in Headers */,
@@ -29111,7 +29104,6 @@
 				85031B410A44EFC700F992E0 /* Event.cpp in Sources */,
 				4138D3361244054800323D33 /* EventContext.cpp in Sources */,
 				418A06D1133C04D500CD379C /* EventDispatcher.cpp in Sources */,
-				9766504F144FBFFE00F6BB51 /* EventFactory.cpp in Sources */,
 				93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */,
 				FE6938B61045D67E008EABB6 /* EventHandlerIOS.mm in Sources */,
 				93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */,

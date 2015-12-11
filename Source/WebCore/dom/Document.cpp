@@ -41,8 +41,10 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Comment.h"
+#include "CompositionEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
+#include "CustomEvent.h"
 #include "DOMImplementation.h"
 #include "DOMNamedFlowCollection.h"
 #include "DOMWindow.h"
@@ -56,7 +58,6 @@
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "EntityReference.h"
-#include "EventFactory.h"
 #include "EventHandler.h"
 #include "ExtensionStyleSheets.h"
 #include "FocusController.h"
@@ -98,6 +99,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSLazyEventListener.h"
 #include "JSModuleLoader.h"
+#include "KeyboardEvent.h"
 #include "Language.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
@@ -106,12 +108,15 @@
 #include "MediaProducer.h"
 #include "MediaQueryList.h"
 #include "MediaQueryMatcher.h"
+#include "MessageEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NestingLevelIncrementer.h"
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
+#include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
@@ -133,6 +138,7 @@
 #include "SVGElementFactory.h"
 #include "SVGNames.h"
 #include "SVGTitleElement.h"
+#include "SVGZoomEvent.h"
 #include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
@@ -146,15 +152,18 @@
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StorageEvent.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "SubresourceLoader.h"
+#include "TextEvent.h"
 #include "TextNodeTraversal.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
 #include "VisitedLinkState.h"
+#include "WheelEvent.h"
 #include "XMLDocumentParser.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -171,13 +180,17 @@
 #include <wtf/text/StringBuffer.h>
 #include <yarr/RegularExpression.h>
 
-#if ENABLE(XSLT)
-#include "XSLTProcessor.h"
+#if ENABLE(CSP_NEXT)
+#include "DOMSecurityPolicy.h"
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+#include "DeviceMotionEvent.h"
+#include "DeviceOrientationEvent.h"
+#endif
 
-#if ENABLE(TOUCH_EVENTS)
-#include "TouchList.h"
+#if ENABLE(FULLSCREEN_API)
+#include "RenderFullScreen.h"
 #endif
 
 #if PLATFORM(IOS)
@@ -197,14 +210,18 @@
 #include "GestureEvent.h"
 #endif
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+#include "TextAutoSizing.h"
+#endif
+
 #if ENABLE(MATHML)
 #include "MathMLElement.h"
 #include "MathMLElementFactory.h"
 #include "MathMLNames.h"
 #endif
 
-#if ENABLE(FULLSCREEN_API)
-#include "RenderFullScreen.h"
+#if ENABLE(MEDIA_SESSION)
+#include "MediaSession.h"
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -212,16 +229,13 @@
 #include "ScriptedAnimationController.h"
 #endif
 
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-#include "TextAutoSizing.h"
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextAutosizer.h"
 #endif
 
-#if ENABLE(CSP_NEXT)
-#include "DOMSecurityPolicy.h"
+#if ENABLE(TOUCH_EVENTS)
+#include "TouchEvent.h"
+#include "TouchList.h"
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -238,8 +252,8 @@
 #include "MediaPlaybackTargetClient.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION)
-#include "MediaSession.h"
+#if ENABLE(XSLT)
+#include "XSLTProcessor.h"
 #endif
 
 using namespace WTF;
@@ -4107,11 +4121,72 @@ void Document::enqueueOverflowEvent(Ref<Event>&& event)
     m_eventQueue.enqueueEvent(WTF::move(event));
 }
 
-RefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)
+RefPtr<Event> Document::createEvent(const String& type, ExceptionCode& ec)
 {
-    RefPtr<Event> event = EventFactory::create(eventType);
-    if (event)
-        return event.release();
+    // Please do *not* add new event classes to this function unless they are
+    // required for compatibility of some actual legacy web content.
+
+    // This mechanism is superceded by use of event constructors.
+    // That is what we should use for any new event classes.
+
+    // The following strings are the ones from the DOM specification
+    // <https://dom.spec.whatwg.org/#dom-document-createevent>.
+
+    if (equalIgnoringASCIICase(type, "customevent"))
+        return CustomEvent::create();
+    if (equalIgnoringASCIICase(type, "event") || equalIgnoringASCIICase(type, "events") || equalIgnoringASCIICase(type, "htmlevents"))
+        return Event::create();
+    if (equalIgnoringASCIICase(type, "keyboardevent") || equalIgnoringASCIICase(type, "keyboardevents"))
+        return KeyboardEvent::create();
+    if (equalIgnoringASCIICase(type, "messageevent"))
+        return MessageEvent::create();
+    if (equalIgnoringASCIICase(type, "mouseevent") || equalIgnoringASCIICase(type, "mouseevents"))
+        return MouseEvent::create();
+    if (equalIgnoringASCIICase(type, "uievent") || equalIgnoringASCIICase(type, "uievents"))
+        return UIEvent::create();
+
+#if ENABLE(TOUCH_EVENTS)
+    if (equalIgnoringASCIICase(type, "touchevent"))
+        return TouchEvent::create();
+#endif
+
+    // The following string comes from the SVG specifications
+    // <http://www.w3.org/TR/SVG/script.html#InterfaceSVGZoomEvent>
+    // <http://www.w3.org/TR/SVG2/interact.html#InterfaceSVGZoomEvent>.
+    // However, since there is no provision for initializing the event once it is created,
+    // there is no practical value in this feature.
+
+    if (equalIgnoringASCIICase(type, "svgzoomevents"))
+        return SVGZoomEvent::create();
+
+    // The following strings are for event classes where WebKit supplies an init function.
+    // These strings are not part of the DOM specification and we would like to eliminate them.
+    // However, we currently include these because we have concerns about backward compatibility.
+
+    // FIXME: For each of the strings below, prove there is no content depending on it and remove
+    // both the string and the corresponding init function for that class.
+
+    if (equalIgnoringASCIICase(type, "compositionevent"))
+        return CompositionEvent::create();
+    if (equalIgnoringASCIICase(type, "hashchangeevent"))
+        return HashChangeEvent::create();
+    if (equalIgnoringASCIICase(type, "mutationevent") || equalIgnoringASCIICase(type, "mutationevents"))
+        return MutationEvent::create();
+    if (equalIgnoringASCIICase(type, "overflowevent"))
+        return OverflowEvent::create();
+    if (equalIgnoringASCIICase(type, "storageevent"))
+        return StorageEvent::create();
+    if (equalIgnoringASCIICase(type, "textevent"))
+        return TextEvent::create();
+    if (equalIgnoringASCIICase(type, "wheelevent"))
+        return WheelEvent::create();
+
+#if ENABLE(DEVICE_ORIENTATION)
+    if (equalIgnoringASCIICase(type, "devicemotionevent"))
+        return DeviceMotionEvent::create();
+    if (equalIgnoringASCIICase(type, "deviceorientationevent"))
+        return DeviceOrientationEvent::create();
+#endif
 
     ec = NOT_SUPPORTED_ERR;
     return nullptr;

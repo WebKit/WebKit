@@ -1,6 +1,4 @@
 
 FAIL Default event values. assert_equals: expected (boolean) false but got (undefined) undefined
-FAIL document.createEvent() should not work with ProgressEvent. assert_throws: function "function () {
-    document.createEvent("ProgressEvent")
-  }" did not throw
+PASS document.createEvent() should not work with ProgressEvent. 
 

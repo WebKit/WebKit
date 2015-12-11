@@ -17,16 +17,6 @@
     shouldBeTrue("document.createEvent('HTMLEvents') instanceof window.Event");
     shouldBeTrue("document.createEvent('HTMLEvents').constructor === window.Event");
 
-    // AnimationEvent
-    shouldBeTrue("document.createEvent('AnimationEvent') instanceof window.AnimationEvent");
-    shouldBeTrue("document.createEvent('AnimationEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('AnimationEvent').constructor === window.AnimationEvent");
-
-    // BeforeLoadEvent
-    shouldBeTrue("document.createEvent('BeforeLoadEvent') instanceof window.BeforeLoadEvent");
-    shouldBeTrue("document.createEvent('BeforeLoadEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('BeforeLoadEvent').constructor === window.BeforeLoadEvent");
-
     // CompositionEvent
     shouldBeTrue("document.createEvent('CompositionEvent') instanceof window.CompositionEvent");
     shouldBeTrue("document.createEvent('CompositionEvent') instanceof window.Event");
@@ -36,11 +26,6 @@
     shouldBeTrue("document.createEvent('CustomEvent') instanceof window.CustomEvent");
     shouldBeTrue("document.createEvent('CustomEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('CustomEvent').constructor === window.CustomEvent");
-
-    // ErrorEvent
-    shouldBeTrue("document.createEvent('ErrorEvent') instanceof window.ErrorEvent");
-    shouldBeTrue("document.createEvent('ErrorEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('ErrorEvent').constructor === window.ErrorEvent");
 
     // HashChangeEvent
     shouldBeTrue("document.createEvent('HashChangeEvent') instanceof window.HashChangeEvent");
@@ -91,21 +76,6 @@
     shouldBeTrue("document.createEvent('OverflowEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('OverflowEvent').constructor === window.OverflowEvent");
 
-    // PageTransitionEvent
-    shouldBeTrue("document.createEvent('PageTransitionEvent') instanceof window.PageTransitionEvent");
-    shouldBeTrue("document.createEvent('PageTransitionEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('PageTransitionEvent').constructor === window.PageTransitionEvent");
-
-    // PopStateEvent
-    shouldBeTrue("document.createEvent('PopStateEvent') instanceof window.PopStateEvent");
-    shouldBeTrue("document.createEvent('PopStateEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('PopStateEvent').constructor === window.PopStateEvent");
-
-    // ProgressEvent
-    shouldBeTrue("document.createEvent('ProgressEvent') instanceof window.ProgressEvent");
-    shouldBeTrue("document.createEvent('ProgressEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('ProgressEvent').constructor === window.ProgressEvent");
-
     // TextEvent
     shouldBeTrue("document.createEvent('TextEvent') instanceof window.TextEvent");
     shouldBeTrue("document.createEvent('TextEvent') instanceof window.UIEvent");
@@ -122,21 +92,6 @@
     shouldBeTrue("document.createEvent('UIEvents') instanceof window.Event");
     shouldBeTrue("document.createEvent('UIEvents').constructor === window.UIEvent");
 
-    // TransitionEvent
-    shouldBeTrue("document.createEvent('TransitionEvent') instanceof window.TransitionEvent");
-    shouldBeTrue("document.createEvent('TransitionEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('TransitionEvent').constructor === window.TransitionEvent");
-
-    // WebKitAnimationEvent
-    shouldBeTrue("document.createEvent('WebKitAnimationEvent') instanceof window.WebKitAnimationEvent");
-    shouldBeTrue("document.createEvent('WebKitAnimationEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('WebKitAnimationEvent').constructor === window.WebKitAnimationEvent");
-
-    // WebKitTransitionEvent
-    shouldBeTrue("document.createEvent('WebKitTransitionEvent') instanceof window.WebKitTransitionEvent");
-    shouldBeTrue("document.createEvent('WebKitTransitionEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('WebKitTransitionEvent').constructor === window.WebKitTransitionEvent");
-
     // WheelEvent
     shouldBeTrue("document.createEvent('WheelEvent') instanceof window.WheelEvent");
     shouldBeTrue("document.createEvent('WheelEvent') instanceof window.MouseEvent");
@@ -144,71 +99,17 @@
     shouldBeTrue("document.createEvent('WheelEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('WheelEvent').constructor === window.WheelEvent");
 
-    // XMLHttpRequestProgressEvent
-    shouldBeTrue("document.createEvent('XMLHttpRequestProgressEvent') instanceof window.XMLHttpRequestProgressEvent");
-    shouldBeTrue("document.createEvent('XMLHttpRequestProgressEvent') instanceof window.ProgressEvent");
-    shouldBeTrue("document.createEvent('XMLHttpRequestProgressEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('XMLHttpRequestProgressEvent').constructor === window.XMLHttpRequestProgressEvent");
-
     // StorageEvent
     shouldBeTrue("document.createEvent('StorageEvent') instanceof window.StorageEvent");
     shouldBeTrue("document.createEvent('StorageEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('StorageEvent').constructor === window.StorageEvent");
 
-    // #if ENABLE(SVG)
-    // SVGEvents (Event alternative)
-    shouldBeTrue("document.createEvent('SVGEvents') instanceof window.Event");
-    shouldBeTrue("document.createEvent('SVGEvents').constructor === window.Event");
-
-    // #if ENABLE(SVG)
-    // SVGZoomEvent
-    shouldBeTrue("document.createEvent('SVGZoomEvent') instanceof window.SVGZoomEvent");
-    shouldBeTrue("document.createEvent('SVGZoomEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('SVGZoomEvent').constructor === window.SVGZoomEvent");
-
-    // #if ENABLE(SVG)
-    // SVGZoomEvents (SVGZoomEvent alternative)
+    // SVGZoomEvents
     shouldBeTrue("document.createEvent('SVGZoomEvents') instanceof window.SVGZoomEvent");
     shouldBeTrue("document.createEvent('SVGZoomEvents') instanceof window.Event");
     shouldBeTrue("document.createEvent('SVGZoomEvents').constructor === window.SVGZoomEvent");
 
-    // #if ENABLE(WEB_SOCKETS)
-    // CloseEvent
-    shouldBeTrue("document.createEvent('CloseEvent') instanceof window.CloseEvent");
-    shouldBeTrue("document.createEvent('CloseEvent') instanceof window.Event");
-    shouldBeTrue("document.createEvent('CloseEvent').constructor === window.CloseEvent");
-
-    // The following are here for completeness, but won't until there is more widespread support for them.
-
-    // #if ENABLE(WEB_AUDIO)
-    // AudioProcessingEvent
-    // shouldBeTrue("document.createEvent('AudioProcessingEvent') instanceof window.AudioProcessingEvent");
-    // shouldBeTrue("document.createEvent('AudioProcessingEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('AudioProcessingEvent').constructor === window.AudioProcessingEvent");
-
-    // #if ENABLE(WEB_AUDIO)
-    // OfflineAudioCompletionEvent
-    // shouldBeTrue("document.createEvent('OfflineAudioCompletionEvent') instanceof window.OfflineAudioCompletionEvent");
-    // shouldBeTrue("document.createEvent('OfflineAudioCompletionEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('OfflineAudioCompletionEvent').constructor === window.OfflineAudioCompletionEvent");
-
-    // #if ENABLE(INPUT_SPEECH)
-    // MediaStreamEvent
-    // shouldBeTrue("document.createEvent('MediaStreamEvent') instanceof window.MediaStreamEvent");
-    // shouldBeTrue("document.createEvent('MediaStreamEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('MediaStreamEvent').constructor === window.MediaStreamEvent");
-
-    // #if ENABLE(INPUT_SPEECH)
-    // SpeechInputEvent
-    // shouldBeTrue("document.createEvent('SpeechInputEvent') instanceof window.SpeechInputEvent");
-    // shouldBeTrue("document.createEvent('SpeechInputEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('SpeechInputEvent').constructor === window.SpeechInputEvent");
-
-    // #if ENABLE(WEBGL)
-    // WebGLContextEvent
-    // shouldBeTrue("document.createEvent('WebGLContextEvent') instanceof window.WebGLContextEvent");
-    // shouldBeTrue("document.createEvent('WebGLContextEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('WebGLContextEvent').constructor === window.WebGLContextEvent");
+    // The following are here for completeness, but we won't run these tests until they are supported in more ports.
 
     // #if ENABLE(TOUCH_EVENTS)
     // TouchEvent
@@ -227,17 +128,6 @@
     // shouldBeTrue("document.createEvent('DeviceOrientationEvent') instanceof window.DeviceOrientationEvent");
     // shouldBeTrue("document.createEvent('DeviceOrientationEvent') instanceof window.Event");
     // shouldBeTrue("document.createEvent('DeviceOrientationEvent').constructor === window.DeviceOrientationEvent");
-
-    // #if ENABLE(ORIENTATION_EVENTS)
-    // OrientationEvent (Event alternative)
-    // shouldBeTrue("document.createEvent('OrientationEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('OrientationEvent').constructor === window.Event");
-
-    // #if ENABLE(REQUEST_AUTOCOMPLETE)
-    // AutocompleteErrorEvent
-    // shouldBeTrue("document.createEvent('AutocompleteErrorEvent') instanceof window.AutocompleteErrorEvent");
-    // shouldBeTrue("document.createEvent('AutocompleteErrorEvent') instanceof window.Event");
-    // shouldBeTrue("document.createEvent('AutocompleteErrorEvent').constructor === window.AutocompleteErrorEvent");
 
     // We test both a hard coded set and the automated set below (using enumeration) to ensure that a constructor being removed
     // from the window is caught a regression.
@@ -278,8 +168,5 @@
     }
     shouldBeTrue('allEventInterfacesCreateEvents');
 </script>
-
-
-
 <script src="../../resources/js-test-post.js"></script>
 </body>

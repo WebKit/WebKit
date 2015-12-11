@@ -799,7 +799,7 @@ all : \
     CSSValueKeywords.cpp \
     CSSValueKeywords.h \
     ColorData.cpp \
-    EventFactory.cpp \
+    EventInterfaces.h \
     EventTargetInterfaces.h \
     ExceptionCodeDescription.cpp \
     HTMLElementFactory.cpp \

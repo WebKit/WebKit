@@ -649,6 +649,11 @@ webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]
 
 webkit.org/b/144258 [ Debug ] js/class-syntax-semicolon.html [ Skip ]
 
+# IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
+# after we implement the IDBVersionChangeEvent constructor.
+webkit.org/b/145390 storage/indexeddb/events.html [ Failure ]
+webkit.org/b/145390 storage/indexeddb/removed.html [ Failure ]
+
 webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure ]
 
 # DumpRenderTree does not allow GIFs to animate, thus animated GIF tests don't work in WebKit1.

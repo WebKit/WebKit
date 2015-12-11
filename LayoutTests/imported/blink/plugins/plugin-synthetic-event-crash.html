@@ -24,17 +24,9 @@ eventTypes.forEach(function(eventType) {
     });
 });
 
-var event = document.createEvent("PopStateEvent");
-event.initEvent("touchmove", true, true);
-plugin.dispatchEvent(event);
-
-event = document.createEvent("PopStateEvent");
-event.initEvent("gesturescrollstart", true, true);
-plugin.dispatchEvent(event);
-
-event = document.createEvent("PopStateEvent");
-event.initEvent("mousewheel", true, true);
-plugin.dispatchEvent(event);
+plugin.dispatchEvent(new PopStateEvent("touchmove", { bubbles: true, cancelable: true }));
+plugin.dispatchEvent(new PopStateEvent("gesturescrollstart", { bubbles: true, cancelable: true }));
+plugin.dispatchEvent(new PopStateEvent("mousewheel", { bubbles: true, cancelable: true }));
 </script>
 </body>
 </html>

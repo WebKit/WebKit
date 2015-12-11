@@ -17,7 +17,7 @@ else
 debug("");
 debug("Test creation of WebKitAnimationEvent");
 
-var ev = document.createEvent("WebKitAnimationEvent");
+var ev = new WebKitAnimationEvent("");
 
 shouldBe("typeof(ev)", "'object'");
 shouldBe("ev.animationName", "''");

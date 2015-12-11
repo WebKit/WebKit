@@ -1,3 +1,35 @@
+2015-12-11  Darin Adler  <darin@apple.com>
+
+        Reduce the number of events that can be created by Document.createEvent
+        https://bugs.webkit.org/show_bug.cgi?id=151931
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations: Added expected failures for the two tests that depend
+        on createEvent("IDBVersionChangeEvent").
+
+        * animations/animation-events-create.html: Updated to use
+        "new WebKitAnimationEvent" instead of document.createEvent.
+
+        * fast/events/event-creation-expected.txt: Removed expected results for
+        various events that can no longer be created with createEvent.
+        * fast/events/event-creation.html: Removed tests for various events
+        that can no longer be created with createEvent.
+
+        * imported/blink/plugins/plugin-synthetic-event-crash.html: Updated to use
+        "new PopStateEvent" instead of document.createEvent.
+
+        * indieui/create-uirequestevent-expected.txt: Removed.
+        * indieui/create-uirequestevent.html: Removed.
+
+        * platform/mac-wk2/TestExpecations: Removed expectations for some deleted tests.
+
+        * platform/wk2/storage/indexeddb/removed-expected.txt: Removed, since this is
+        no different from the platform-independent expected result.
+
+        * transitions/transition-end-event-create.html: Updated to use
+        "new WebKitTransitionEvent" instead of document.createEvent.
+
 2015-12-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: When logging strings, detect stack traces and show them as StackTraceView

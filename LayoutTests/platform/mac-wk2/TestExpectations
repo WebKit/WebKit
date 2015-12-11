@@ -387,7 +387,6 @@ storage/indexeddb/create-object-store-options.html [ Skip ]
 storage/indexeddb/cursor-advance.html [ Skip ]
 storage/indexeddb/cursor-basics.html [ Skip ]
 storage/indexeddb/cursor-continue-validity.html [ Skip ]
-storage/indexeddb/cursor-continueprimarykey.html [ Skip ]
 storage/indexeddb/cursor-index-delete.html [ Skip ]
 storage/indexeddb/cursor-key-order.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Skip ] # Missing needed WKTR feature?
@@ -395,12 +394,10 @@ storage/indexeddb/cursor-overloads.html [ Skip ]
 storage/indexeddb/cursor-primary-key-order.html [ Skip ]
 storage/indexeddb/cursor-request-cycle.html [ Skip ] # Missing needed WKTR feature?
 storage/indexeddb/cursor-update.html [ Skip ]
-storage/indexeddb/data-corruption.html [ Skip ]
 storage/indexeddb/database-close.html [ Skip ]
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/duplicates.html [ Skip ] # Difference between null + undefined
 storage/indexeddb/events.html [ Skip ]
-storage/indexeddb/factory-basics.html [ Skip ] # indexedDB.webkitGetDatabaseNames is missing)
 storage/indexeddb/factory-cmp.html [ Skip ]
 storage/indexeddb/get-keyrange.html [ Skip ]
 storage/indexeddb/index-basics.html [ Skip ] # Difference between null + undefined

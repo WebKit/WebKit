@@ -192,6 +192,10 @@ bool DOMImplementation::hasFeature(const String& feature, const String& version)
         return isSupportedSVG10Feature(feature, version) || isSupportedSVG11Feature(feature, version);
     }
 
+    // FIXME: SVG specifications <http://www.w3.org/TR/SVG/script.html#InterfaceSVGZoomEvent>
+    // and <http://www.w3.org/TR/SVG2/interact.html#InterfaceSVGZoomEvent>
+    // say that we should return true for the feature "SVGZoomEvents".
+
     return true;
 }
 

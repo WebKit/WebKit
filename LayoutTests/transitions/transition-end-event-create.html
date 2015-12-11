@@ -17,7 +17,7 @@ else
 debug("");
 debug("Test creation of WebKitTransitionEvent");
 
-var ev = document.createEvent("WebKitTransitionEvent");
+var ev = new WebKitTransitionEvent("");
 
 shouldBe("typeof(ev)", "'object'");
 shouldBe("ev.propertyName", "''");
