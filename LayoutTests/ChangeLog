@@ -1,3 +1,16 @@
+2015-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Strip out Referer header when requesting subresources or following links for documents with "Content-Disposition: attachment"
+        https://bugs.webkit.org/show_bug.cgi?id=152102
+        <rdar://problem/22124230>
+
+        Reviewed by Andy Estes.
+
+        * http/tests/contentdispositionattachmentsandbox/resources/echo-http-referer.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/subresource-request-not-include-referer-header-frame.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/subresource-request-not-include-referer-header-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/subresource-request-not-include-referer-header.html: Added.
+
 2015-12-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/events/ios tests as flaky on ios-simulator due to timeouts

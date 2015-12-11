@@ -1,0 +1,8 @@
+This test verifies that a subresource loaded by a document which is loaded with Content-Disposition:attachment will not have http referer. Tess passes if no referer is printed.
+
+
+
+--------
+Frame: 'iframe'
+--------
+

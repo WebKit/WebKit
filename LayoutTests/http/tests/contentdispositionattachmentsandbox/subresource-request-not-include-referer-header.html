@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script>
+if (window.internals)
+    internals.settings.setContentDispositionAttachmentSandboxEnabled(true);
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function navigation() {
+    // Due to the sandbox, it's not possible to run script in the iframe or even access its contentDocument.
+    var element = document.getElementById('iframe');
+    var x = element.offsetLeft + 10;
+    var y = element.offsetTop + 10;
+
+    if (window.testRunner) {
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+
+        if (testRunner.runUIScript)
+            testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + "); })()");
+    }
+}
+</script>
+<p>This test verifies that a subresource loaded by a document which is loaded with Content-Disposition:attachment will not have http referer. Tess passes if no referer is printed.</p>
+<iframe id='iframe' src="resources/first-w-content-diposition-attachment.php" onload="navigation()"></iframe>
