@@ -1,3 +1,15 @@
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/key-type-array.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152187
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::putOrAdd): Perform the correct validity check on array keys.
+
 2015-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         check-for-inappropriate-objc-class-names should check all class names, not just externally visible ones

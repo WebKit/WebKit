@@ -269,7 +269,7 @@ RefPtr<IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue 
         return nullptr;
     }
 
-    if (key && key->type() == KeyType::Invalid) {
+    if (key && !key->isValid()) {
         ec.code = IDBDatabaseException::DataError;
         ec.message = ASCIILiteral("Failed to store record in an IDBObjectStore: The parameter is not a valid key.");
         return nullptr;
