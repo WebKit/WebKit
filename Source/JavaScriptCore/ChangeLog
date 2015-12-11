@@ -1,5 +1,16 @@
 2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix jsc symlink creation on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=152155
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Switch from INSTALL_PATH_ACTUAL to just INSTALL_PATH.
+        Remove now unnecessary INSTALL_PATH_PREFIX use as well.
+
+2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remote Inspector: Verify the identity of the other side of XPC connections
         https://bugs.webkit.org/show_bug.cgi?id=152153
 
