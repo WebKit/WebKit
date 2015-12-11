@@ -94,22 +94,24 @@ inline bool isRepresentableAs(double value)
     return isRepresentableAsImpl<ResultType, double, int64_t>(value);
 }
 
-inline int32_t chillDiv(int32_t num, int32_t den)
+template<typename IntType>
+static IntType chillDiv(IntType numerator, IntType denominator)
 {
-    if (!den)
+    if (!denominator)
         return 0;
-    if (den == -1 && num == std::numeric_limits<int32_t>::min())
-        return num;
-    return num / den;
+    if (denominator == -1 && numerator == std::numeric_limits<IntType>::min())
+        return std::numeric_limits<IntType>::min();
+    return numerator / denominator;
 }
 
-inline int64_t chillDiv(int64_t num, int64_t den)
+template<typename IntType>
+static IntType chillMod(IntType numerator, IntType denominator)
 {
-    if (!den)
+    if (!denominator)
         return 0;
-    if (den == -1 && num == std::numeric_limits<int64_t>::min())
-        return num;
-    return num / den;
+    if (denominator == -1 && numerator == std::numeric_limits<IntType>::min())
+        return 0;
+    return numerator % denominator;
 }
 
 } } // namespace JSC::B3

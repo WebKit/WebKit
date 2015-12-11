@@ -153,13 +153,14 @@ public:
             case Sub:
             case Mul:
             case Div:
+            case Mod:
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
                 VALIDATE(value->type() == value->child(1)->type(), ("At ", *value));
                 VALIDATE(value->type() != Void, ("At ", *value));
                 break;
             case ChillDiv:
-            case Mod:
+            case ChillMod:
             case BitAnd:
             case BitOr:
             case BitXor:

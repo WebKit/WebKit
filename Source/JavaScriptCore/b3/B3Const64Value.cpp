@@ -112,6 +112,13 @@ Value* Const64Value::divConstant(Procedure& proc, const Value* other) const
     return proc.add<Const64Value>(origin(), chillDiv(m_value, other->asInt64()));
 }
 
+Value* Const64Value::modConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt64())
+        return nullptr;
+    return proc.add<Const64Value>(origin(), chillMod(m_value, other->asInt64()));
+}
+
 Value* Const64Value::bitAndConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasInt64())

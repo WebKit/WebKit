@@ -1441,34 +1441,19 @@ private:
 
         case Div: {
             if (isInt(m_value->type())) {
-                Tmp eax = Tmp(X86Registers::eax);
-                Tmp edx = Tmp(X86Registers::edx);
-
-                Air::Opcode convertToDoubleWord;
-                Air::Opcode div;
-                switch (m_value->type()) {
-                case Int32:
-                    convertToDoubleWord = X86ConvertToDoubleWord32;
-                    div = X86Div32;
-                    break;
-                case Int64:
-                    convertToDoubleWord = X86ConvertToQuadWord64;
-                    div = X86Div64;
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                    return;
-                }
-                
-                append(Move, tmp(m_value->child(0)), eax);
-                append(convertToDoubleWord, eax, edx);
-                append(div, eax, edx, tmp(m_value->child(1)));
-                append(Move, eax, tmp(m_value));
+                lowerX86Div();
+                append(Move, Tmp(X86Registers::eax), tmp(m_value));
                 return;
             }
             ASSERT(isFloat(m_value->type()));
 
             appendBinOp<Air::Oops, Air::Oops, DivDouble, DivFloat>(m_value->child(0), m_value->child(1));
+            return;
+        }
+
+        case Mod: {
+            lowerX86Div();
+            append(Move, Tmp(X86Registers::edx), tmp(m_value));
             return;
         }
 
@@ -1976,6 +1961,32 @@ private:
 
         dataLog("FATAL: could not lower ", deepDump(m_value), "\n");
         RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void lowerX86Div()
+    {
+        Tmp eax = Tmp(X86Registers::eax);
+        Tmp edx = Tmp(X86Registers::edx);
+
+        Air::Opcode convertToDoubleWord;
+        Air::Opcode div;
+        switch (m_value->type()) {
+        case Int32:
+            convertToDoubleWord = X86ConvertToDoubleWord32;
+            div = X86Div32;
+            break;
+        case Int64:
+            convertToDoubleWord = X86ConvertToQuadWord64;
+            div = X86Div64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+        
+        append(Move, tmp(m_value->child(0)), eax);
+        append(convertToDoubleWord, eax, edx);
+        append(div, eax, edx, tmp(m_value->child(1)));
     }
     
     IndexSet<Value> m_locked; // These are values that will have no Tmp in Air.

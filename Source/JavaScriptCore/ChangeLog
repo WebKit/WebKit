@@ -1,3 +1,80 @@
+2015-12-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add a Modulo operator to B3, and a chill variant
+        https://bugs.webkit.org/show_bug.cgi?id=152110
+
+        Reviewed by Geoffrey Garen.
+
+        It is basically refactoring the Div and ChillDiv
+        code to be used by both opcodes.
+
+        * b3/B3Common.h:
+        (JSC::B3::chillDiv):
+        (JSC::B3::chillMod):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::modConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::modConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::modConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        (JSC::B3::Air::LowerToAir::lowerX86Div):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::modConstant):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testModArgDouble):
+        (JSC::B3::testModArgsDouble):
+        (JSC::B3::testModArgImmDouble):
+        (JSC::B3::testModImmArgDouble):
+        (JSC::B3::testModImmsDouble):
+        (JSC::B3::testModArgFloat):
+        (JSC::B3::testModArgsFloat):
+        (JSC::B3::testModArgImmFloat):
+        (JSC::B3::testModImmArgFloat):
+        (JSC::B3::testModImmsFloat):
+        (JSC::B3::testModArg):
+        (JSC::B3::testModArgs):
+        (JSC::B3::testModImms):
+        (JSC::B3::testModArg32):
+        (JSC::B3::testModArgs32):
+        (JSC::B3::testModImms32):
+        (JSC::B3::testChillModArg):
+        (JSC::B3::testChillModArgs):
+        (JSC::B3::testChillModImms):
+        (JSC::B3::testChillModArg32):
+        (JSC::B3::testChillModArgs32):
+        (JSC::B3::testChillModImms32):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::mod):
+        (JSC::FTL::Output::chillMod):
+        (JSC::FTL::Output::doubleMod):
+        (JSC::FTL::Output::rem): Deleted.
+        (JSC::FTL::Output::doubleRem): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMod):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::chillMod):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::mod):
+        (JSC::FTL::Output::doubleMod):
+        (JSC::FTL::Output::rem): Deleted.
+        (JSC::FTL::Output::doubleRem): Deleted.
+
 2015-12-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [B3] Add new files to the cmake build system

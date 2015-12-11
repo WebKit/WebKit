@@ -121,6 +121,7 @@ public:
     virtual Value* checkMulConstant(Procedure&, const Value* other) const;
     virtual Value* checkNegConstant(Procedure&) const;
     virtual Value* divConstant(Procedure&, const Value* other) const; // This chooses ChillDiv semantics for integers.
+    virtual Value* modConstant(Procedure&, const Value* other) const; // This chooses ChillMod semantics for integers.
     virtual Value* bitAndConstant(Procedure&, const Value* other) const;
     virtual Value* bitOrConstant(Procedure&, const Value* other) const;
     virtual Value* bitXorConstant(Procedure&, const Value* other) const;

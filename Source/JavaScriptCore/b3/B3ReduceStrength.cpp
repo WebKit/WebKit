@@ -291,6 +291,11 @@ private:
             replaceWithNewValue(m_value->child(0)->divConstant(m_proc, m_value->child(1)));
             break;
 
+        case Mod:
+        case ChillMod:
+            replaceWithNewValue(m_value->child(0)->modConstant(m_proc, m_value->child(1)));
+            break;
+
         case BitAnd:
             handleCommutativity();
 
@@ -658,7 +663,7 @@ private:
             }
 
             // Turn this: Load(constant1, offset = constant2)
-            // Into this: Laod(constant1 + constant2)
+            // Into this: Load(constant1 + constant2)
             //
             // This is a fun canonicalization. It purely regresses naively generated code. We rely
             // on constant materialization to be smart enough to materialize this constant the smart
@@ -676,6 +681,18 @@ private:
             
             break;
         }
+
+        case CCall:
+            // Turn this: Call(fmod, constant1, constant2)
+            // Into this: fcall-constant(constant1, constant2)
+            if (m_value->type() == Double
+                && m_value->numChildren() == 3
+                && m_value->child(0)->isIntPtr(reinterpret_cast<intptr_t>(fmod))
+                && m_value->child(1)->type() == Double
+                && m_value->child(2)->type() == Double) {
+                replaceWithNewValue(m_value->child(1)->modConstant(m_proc, m_value->child(2)));
+            }
+            break;
 
         case Equal:
             handleCommutativity();

@@ -116,11 +116,14 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Div:
         out.print("Div");
         return;
+    case Mod:
+        out.print("Mod");
+        return;
     case ChillDiv:
         out.print("ChillDiv");
         return;
-    case Mod:
-        out.print("Mod");
+    case ChillMod:
+        out.print("ChillMod");
         return;
     case BitAnd:
         out.print("BitAnd");

@@ -112,6 +112,13 @@ Value* Const32Value::divConstant(Procedure& proc, const Value* other) const
     return proc.add<Const32Value>(origin(), chillDiv(m_value, other->asInt32()));
 }
 
+Value* Const32Value::modConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasInt32())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), chillMod(m_value, other->asInt32()));
+}
+
 Value* Const32Value::bitAndConstant(Procedure& proc, const Value* other) const
 {
     if (!other->hasInt32())

@@ -1027,6 +1027,145 @@ void testDivImmsFloat(float a, float b)
     CHECK(isIdentical(compileAndRun<int32_t>(proc), bitwise_cast<int32_t>(a / b)));
 }
 
+void testModArgDouble(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mod, Origin(), value, value));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), fmod(a, a)));
+}
+
+void testModArgsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mod, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a, b), fmod(a, b)));
+}
+
+void testModArgImmDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mod, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), fmod(a, b)));
+}
+
+void testModImmArgDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mod, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, b), fmod(a, b)));
+}
+
+void testModImmsDouble(double a, double b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Mod, Origin(), valueA, valueB));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), fmod(a, b)));
+}
+
+void testModArgFloat(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), floatValue, floatValue);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(fmod(a, a)))));
+}
+
+void testModArgsFloat(float a, float b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument1int32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument2int32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* floatValue1 = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument1int32);
+    Value* floatValue2 = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument2int32);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), floatValue1, floatValue2);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), bitwise_cast<int32_t>(static_cast<float>(fmod(a, b)))));
+}
+
+void testModArgImmFloat(float a, float b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* constValue = root->appendNew<ConstFloatValue>(proc, Origin(), b);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), floatValue, constValue);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(fmod(a, b)))));
+}
+
+void testModImmArgFloat(float a, float b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* constValue = root->appendNew<ConstFloatValue>(proc, Origin(), a);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), constValue, floatValue);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(b)), bitwise_cast<int32_t>(static_cast<float>(fmod(a, b)))));
+}
+
+void testModImmsFloat(float a, float b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* constValue1 = root->appendNew<ConstFloatValue>(proc, Origin(), a);
+    Value* constValue2 = root->appendNew<ConstFloatValue>(proc, Origin(), b);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), constValue1, constValue2);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc), bitwise_cast<int32_t>(static_cast<float>(fmod(a, b)))));
+}
+
 void testDivArgFloatWithUselessDoubleConversion(float a)
 {
     Procedure proc;
@@ -6300,6 +6439,190 @@ void testChillDiv64(int64_t num, int64_t den, int64_t res)
     }
 }
 
+void testModArg(int64_t value)
+{
+    if (!value)
+        return;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument, argument);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(!compileAndRun<int64_t>(proc, value));
+}
+
+void testModArgs(int64_t numerator, int64_t denominator)
+{
+    if (!denominator)
+        return;
+    if (numerator == std::numeric_limits<int64_t>::min() && denominator == -1)
+        return;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argument2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == numerator % denominator);
+}
+
+void testModImms(int64_t numerator, int64_t denominator)
+{
+    if (!denominator)
+        return;
+    if (numerator == std::numeric_limits<int64_t>::min() && denominator == -1)
+        return;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<Const64Value>(proc, Origin(), numerator);
+    Value* argument2 = root->appendNew<Const64Value>(proc, Origin(), denominator);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == numerator % denominator);
+}
+
+void testModArg32(int32_t value)
+{
+    if (!value)
+        return;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument, argument);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(!compileAndRun<int32_t>(proc, value));
+}
+
+void testModArgs32(int32_t numerator, int32_t denominator)
+{
+    if (!denominator)
+        return;
+    if (numerator == std::numeric_limits<int32_t>::min() && denominator == -1)
+        return;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == numerator % denominator);
+}
+
+void testModImms32(int32_t numerator, int32_t denominator)
+{
+    if (!denominator)
+        return;
+    if (numerator == std::numeric_limits<int32_t>::min() && denominator == -1)
+        return;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<Const32Value>(proc, Origin(), numerator);
+    Value* argument2 = root->appendNew<Const32Value>(proc, Origin(), denominator);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == numerator % denominator);
+}
+
+void testChillModArg(int64_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument, argument);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(!compileAndRun<int64_t>(proc, value));
+}
+
+void testChillModArgs(int64_t numerator, int64_t denominator)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argument2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+}
+
+void testChillModImms(int64_t numerator, int64_t denominator)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<Const64Value>(proc, Origin(), numerator);
+    Value* argument2 = root->appendNew<Const64Value>(proc, Origin(), denominator);
+    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int64_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+}
+
+void testChillModArg32(int32_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument, argument);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(!compileAndRun<int32_t>(proc, value));
+}
+
+void testChillModArgs32(int32_t numerator, int32_t denominator)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+}
+
+void testChillModImms32(int32_t numerator, int32_t denominator)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* argument1 = root->appendNew<Const32Value>(proc, Origin(), numerator);
+    Value* argument2 = root->appendNew<Const32Value>(proc, Origin(), denominator);
+    Value* result = root->appendNew<Value>(proc, ChillMod, Origin(), argument1, argument2);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int32_t>(proc, numerator, denominator) == chillMod(numerator, denominator));
+}
+
 void testSwitch(unsigned degree, unsigned gap = 1)
 {
     Procedure proc;
@@ -7059,6 +7382,17 @@ void run(const char* filter)
     RUN_BINARY(testDivArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testDivArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
 
+    RUN_UNARY(testModArgDouble, floatingPointOperands<double>());
+    RUN_BINARY(testModArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testModArgImmDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testModImmArgDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_BINARY(testModImmsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
+    RUN_UNARY(testModArgFloat, floatingPointOperands<float>());
+    RUN_BINARY(testModArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testModArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testModImmArgFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testModImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+
     RUN(testSubArg(24));
     RUN(testSubArgs(1, 1));
     RUN(testSubArgs(1, 2));
@@ -7632,6 +7966,19 @@ void run(const char* filter)
     RUN(testChillDivTwice(4, 2, 6, 2, 5));
     RUN(testChillDivTwice(4, 0, 6, 2, 3));
     RUN(testChillDivTwice(4, 2, 6, 0, 2));
+
+    RUN_UNARY(testModArg, int64Operands());
+    RUN_BINARY(testModArgs, int64Operands(), int64Operands());
+    RUN_BINARY(testModImms, int64Operands(), int64Operands());
+    RUN_UNARY(testModArg32, int32Operands());
+    RUN_BINARY(testModArgs32, int32Operands(), int32Operands());
+    RUN_BINARY(testModImms32, int32Operands(), int32Operands());
+    RUN_UNARY(testChillModArg, int64Operands());
+    RUN_BINARY(testChillModArgs, int64Operands(), int64Operands());
+    RUN_BINARY(testChillModImms, int64Operands(), int64Operands());
+    RUN_UNARY(testChillModArg32, int32Operands());
+    RUN_BINARY(testChillModArgs32, int32Operands(), int32Operands());
+    RUN_BINARY(testChillModImms32, int32Operands(), int32Operands());
 
     RUN(testSwitch(0, 1));
     RUN(testSwitch(1, 1));

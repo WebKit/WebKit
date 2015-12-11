@@ -71,10 +71,11 @@ enum Opcode : int16_t {
     Sub,
     Mul,
     Div, // All bets are off as to what will happen when you execute this for -2^31/-1 and x/0.
+    Mod, // All bets are off as to what will happen when you execute this for -2^31%-1 and x%0.
 
     // Integer math.
     ChillDiv, // doesn't trap ever, behaves like JS (x/y)|0.
-    Mod,
+    ChillMod, // doesn't trap ever, behaves like JS (x%y)|0.
     BitAnd,
     BitOr,
     BitXor,

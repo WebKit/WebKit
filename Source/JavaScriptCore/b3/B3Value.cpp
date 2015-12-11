@@ -164,6 +164,11 @@ Value* Value::divConstant(Procedure&, const Value*) const
     return nullptr;
 }
 
+Value* Value::modConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
 Value* Value::bitAndConstant(Procedure&, const Value*) const
 {
     return nullptr;
@@ -337,7 +342,7 @@ Effects Value::effects() const
     case Sub:
     case Mul:
     case ChillDiv:
-    case Mod:
+    case ChillMod:
     case BitAnd:
     case BitOr:
     case BitXor:
@@ -369,6 +374,7 @@ Effects Value::effects() const
     case Select:
         break;
     case Div:
+    case Mod:
         result.controlDependent = true;
         break;
     case Load8Z:
@@ -436,8 +442,10 @@ ValueKey Value::key() const
     case Add:
     case Sub:
     case Mul:
-    case ChillDiv:
+    case Div:
     case Mod:
+    case ChillDiv:
+    case ChillMod:
     case BitAnd:
     case BitOr:
     case BitXor:
@@ -452,7 +460,6 @@ ValueKey Value::key() const
     case Below:
     case AboveEqual:
     case BelowEqual:
-    case Div:
     case CheckAdd:
     case CheckSub:
     case CheckMul:
@@ -514,8 +521,9 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case Sub:
     case Mul:
     case Div:
-    case ChillDiv:
     case Mod:
+    case ChillDiv:
+    case ChillMod:
     case BitAnd:
     case BitOr:
     case BitXor:
