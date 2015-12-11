@@ -1,3 +1,16 @@
+2015-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Mordernize viewport dumping
+        https://bugs.webkit.org/show_bug.cgi?id=152159
+
+        Reviewed by Zalan Bujtas.
+
+        Use groupings to simplify the viewport configuration dumping code.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::operator<<):
+        (WebCore::ViewportConfiguration::description):
+
 2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Inspector: Verify the identity of the other side of XPC connections
