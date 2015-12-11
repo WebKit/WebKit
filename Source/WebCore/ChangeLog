@@ -1,5 +1,24 @@
 2015-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r193760. rdar://problem/23727535
+
+    2015-12-08  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Adopt WebFullScreenVideoRootViewController.
+            https://bugs.webkit.org/show_bug.cgi?id=151996
+
+            Reviewed by Dan Bernstein.
+
+            Adopt WebFullScreenVideoRootViewController from WebKitAdditions. If it is not available, create and use
+            a generic UIViewController subclass.
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (createFullScreenVideoRootViewControllerClass):
+            (allocWebFullScreenVideoRootViewControllerInstance):
+            (WebVideoFullscreenInterfaceAVKit::setupFullscreen):
+
+2015-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190911. rdar://problem/23432368
 
     2015-10-12  Simon Fraser  <simon.fraser@apple.com>
