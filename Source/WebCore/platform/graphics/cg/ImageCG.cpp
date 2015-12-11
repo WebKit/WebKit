@@ -137,9 +137,11 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     // fall back to the less efficient CGPattern-based mechanism.
     float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
     float w = CGImageGetWidth(tileImage);
-    if (w == size().width() && h == size().height() && !spacing.width() && !spacing.height())
+    if (w == size().width() && h == size().height() && !spacing.width() && !spacing.height()) {
+        // FIXME: CG seems to snap the images to integral sizes. When we care (e.g. with border-image-repeat: round),
+        // we should tile all but the last, and stetch the last image to fit.
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage.get());
-    else {
+    } else {
         static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, patternReleaseCallback };
         CGAffineTransform matrix = CGAffineTransformMake(narrowPrecisionToCGFloat(patternTransform.a()), 0, 0, narrowPrecisionToCGFloat(patternTransform.d()), adjustedX, adjustedY);
         matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
