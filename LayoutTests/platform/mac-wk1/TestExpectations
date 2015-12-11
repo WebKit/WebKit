@@ -212,7 +212,7 @@ webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/oes-texture-half-float.html 
 [ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
 # This test gives a different output on ElCapitan-wk1 only.
-[ ElCapitan+ ] fast/replaced/replaced-breaking.html [ Failure ]
+webkit.org/b/152178 [ Yosemite+ ] fast/replaced/replaced-breaking.html [ Failure ]
 
 ### END OF (2) Failures without bug reports
 ########################################

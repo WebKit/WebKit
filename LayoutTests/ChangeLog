@@ -1,3 +1,12 @@
+2015-12-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Updating mac-wk1 TestExpectations for fast/replaced/replaced-breaking.html to Yosemite+ to fix EWS bot results.
+        https://bugs.webkit.org/show_bug.cgi?id=152178
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html fails.
