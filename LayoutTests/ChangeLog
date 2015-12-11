@@ -1,3 +1,13 @@
+2015-12-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] Update expected results for tests imported/w3c/web-platform-tests
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt: Renamed from LayoutTests/platform/ios-simulator/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/semantics/interfaces-expected.txt: Added.
+
 2015-12-11  Darin Adler  <darin@apple.com>
 
         Reduce the number of events that can be created by Document.createEvent
