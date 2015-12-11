@@ -2448,12 +2448,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case NotifyWrite:
         break;
             
-    case CheckHasInstance:
-        // Sadly, we don't propagate the fact that we've done CheckHasInstance
+    case OverridesHasInstance:
+        forNode(node).setType(SpecBoolean);
         break;
             
     case InstanceOf:
-        // Again, sadly, we don't propagate the fact that we've done InstanceOf
+        // Sadly, we don't propagate the fact that we've done InstanceOf
+        forNode(node).setType(SpecBoolean);
+        break;
+
+    case InstanceOfCustom:
+        clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBoolean);
         break;
             
@@ -2510,6 +2515,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CountExecution:
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
+    case CheckTypeInfoFlags:
         break;
 
     case CopyRest:

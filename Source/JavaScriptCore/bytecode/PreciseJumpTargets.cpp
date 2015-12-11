@@ -74,9 +74,6 @@ static void getJumpTargetsForBytecodeOffset(CodeBlock* codeBlock, Interpreter* i
         out.append(bytecodeOffset + current[2].u.operand);
         break;
     }
-    case op_check_has_instance:
-        out.append(bytecodeOffset + current[4].u.operand);
-        break;
     case op_loop_hint:
         out.append(bytecodeOffset);
         break;

@@ -209,7 +209,7 @@ static String invalidParameterInSourceAppender(const String& originalMessage, co
     return makeString(rightHandSide, " is not an Object. (evaluating '", sourceText, "')");
 }
 
-static String invalidParameterInstanceofSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+inline String invalidParameterInstanceofSourceAppender(const String& content, const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
@@ -222,7 +222,17 @@ static String invalidParameterInstanceofSourceAppender(const String& originalMes
 
     static const unsigned instanceofLength = 10;
     String rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).simplifyWhiteSpace();
-    return makeString(rightHandSide, " is not a function. (evaluating '", sourceText, "')");
+    return makeString(rightHandSide, content, ". (evaluating '", sourceText, "')");
+}
+
+static String invalidParameterInstanceofNotFunctionSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+{
+    return invalidParameterInstanceofSourceAppender(WTF::makeString(" is not a function"), originalMessage, sourceText, runtimeType, occurrence);
+}
+
+static String invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+{
+    return invalidParameterInstanceofSourceAppender(WTF::makeString("[Symbol.hasInstance] is not a function, undefined, or null"), originalMessage, sourceText, runtimeType, occurrence);
 }
 
 JSObject* createError(ExecState* exec, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
@@ -245,9 +255,14 @@ JSObject* createInvalidInParameterError(ExecState* exec, JSValue value)
     return createError(exec, value, makeString("is not an Object."), invalidParameterInSourceAppender);
 }
 
-JSObject* createInvalidInstanceofParameterError(ExecState* exec, JSValue value)
+JSObject* createInvalidInstanceofParameterErrorNotFunction(ExecState* exec, JSValue value)
 {
-    return createError(exec, value, makeString("is not a function."), invalidParameterInstanceofSourceAppender);
+    return createError(exec, value, makeString(" is not a function"), invalidParameterInstanceofNotFunctionSourceAppender);
+}
+
+JSObject* createInvalidInstanceofParameterErrorhasInstanceValueNotFunction(ExecState* exec, JSValue value)
+{
+    return createError(exec, value, makeString("[Symbol.hasInstance] is not a function, undefined, or null"), invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender);
 }
 
 JSObject* createNotAConstructorError(ExecState* exec, JSValue value)

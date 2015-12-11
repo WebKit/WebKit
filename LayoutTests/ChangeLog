@@ -1,3 +1,27 @@
+2015-12-11  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add support for Symbol.hasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=151839
+
+        Reviewed by Saam Barati.
+
+        Fix tests to reflect the changes to instanceof in ES6.
+
+        Added a new regression test for bound functions in instanceof
+        as the perfomance on bound functions should, to some degree,
+        reflect the performance on C-API users.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/exception-for-nonobject-expected.txt:
+        * js/exception-instanceof-expected.txt:
+        * js/instance-of-immediates-expected.txt:
+        * js/regress/instanceof-bound-expected.txt: Added.
+        * js/regress/instanceof-bound.html: Added.
+        * js/regress/script-tests/instanceof-bound.js: Added.
+        (Constructor):
+        (test):
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-12-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Updating mac-wk1 TestExpectations for fast/replaced/replaced-breaking.html to Yosemite+ to fix EWS bot results.

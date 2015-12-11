@@ -169,7 +169,6 @@ void computeUsesForBytecodeOffset(
     case op_get_by_val:
     case op_in:
     case op_instanceof:
-    case op_check_has_instance:
     case op_add:
     case op_mul:
     case op_div:
@@ -195,6 +194,8 @@ void computeUsesForBytecodeOffset(
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
+    case op_overrides_has_instance:
+    case op_instanceof_custom:
     case op_has_structure_property:
     case op_construct_varargs:
     case op_call_varargs:
@@ -350,8 +351,9 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* bloc
     case op_construct:
     case op_get_by_id:
     case op_get_array_length:
-    case op_check_has_instance:
+    case op_overrides_has_instance:
     case op_instanceof:
+    case op_instanceof_custom:
     case op_get_by_val:
     case op_typeof:
     case op_is_undefined:

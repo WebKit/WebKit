@@ -1354,6 +1354,7 @@ struct Node {
     {
         switch (op()) {
         case CheckCell:
+        case OverridesHasInstance:
         case NewFunction:
         case NewArrowFunction:
         case CreateActivation:
@@ -1413,6 +1414,17 @@ struct Node {
     {
         ASSERT(hasUidOperand());
         return reinterpret_cast<UniquedStringImpl*>(m_opInfo);
+    }
+
+    bool hasTypeInfoOperand()
+    {
+        return op() == CheckTypeInfoFlags;
+    }
+
+    unsigned typeInfoOperand()
+    {
+        ASSERT(hasTypeInfoOperand() && m_opInfo <= UCHAR_MAX);
+        return static_cast<unsigned>(m_opInfo);
     }
 
     bool hasTransition()

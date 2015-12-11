@@ -241,8 +241,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ProfileDidCall:
     case ProfileType:
     case ProfileControlFlow:
-    case CheckHasInstance:
+    case CheckTypeInfoFlags:
+    case OverridesHasInstance:
     case InstanceOf:
+    case InstanceOfCustom:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:

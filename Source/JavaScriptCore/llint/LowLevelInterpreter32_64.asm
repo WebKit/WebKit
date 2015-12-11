@@ -1175,17 +1175,35 @@ _llint_op_bitor:
         5)
 
 
-_llint_op_check_has_instance:
+_llint_op_overrides_has_instance:
     traceExecution()
-    loadi 12[PC], t1
-    loadConstantOrVariablePayload(t1, CellTag, t0, .opCheckHasInstanceSlow)
-    btbz JSCell::m_flags[t0], ImplementsDefaultHasInstance, .opCheckHasInstanceSlow
-    dispatch(5)
 
-.opCheckHasInstanceSlow:
-    callSlowPath(_llint_slow_path_check_has_instance)
-    dispatch(0)
+    loadisFromInstruction(1, t3)
+    storei BooleanTag, TagOffset[cfr, t3, 8]
 
+    # First check if hasInstanceValue is the one on Function.prototype[Symbol.hasInstance]
+    loadisFromInstruction(3, t0)
+    loadConstantOrVariablePayload(t0, CellTag, t2, .opOverrideshasInstanceValueNotCell)
+    loadConstantOrVariable(t0, t1, t2)
+    bineq t1, CellTag, .opOverrideshasInstanceValueNotCell
+
+    # We don't need hasInstanceValue's tag register anymore.
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_globalObject[t1], t1
+    loadp JSGlobalObject::m_functionProtoHasInstanceSymbolFunction[t1], t1
+    bineq t1, t2, .opOverrideshasInstanceValueNotDefault
+
+    # We know the constructor is a cell.
+    loadisFromInstruction(2, t0)
+    loadConstantOrVariablePayloadUnchecked(t0, t1)
+    tbz JSCell::m_flags[t1], ImplementsDefaultHasInstance, t0
+    storei t0, PayloadOffset[cfr, t3, 8]
+    dispatch(4)
+
+.opOverrideshasInstanceValueNotCell:
+.opOverrideshasInstanceValueNotDefault:
+    storei 1, PayloadOffset[cfr, t3, 8]
+    dispatch(4)
 
 _llint_op_instanceof:
     traceExecution()
@@ -1214,6 +1232,11 @@ _llint_op_instanceof:
 .opInstanceofSlow:
     callSlowPath(_llint_slow_path_instanceof)
     dispatch(4)
+
+_llint_op_instanceof_custom:
+    traceExecution()
+    callSlowPath(_llint_slow_path_instanceof_custom)
+    dispatch(5)
 
 
 _llint_op_is_undefined:

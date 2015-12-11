@@ -152,14 +152,9 @@ public:
     bool isGetterSetter() const { return get().isGetterSetter(); }
     bool isCustomGetterSetter() const { return get().isCustomGetterSetter(); }
     
-    JSValue* slot()
+    JSValue* slot() const
     { 
-        union {
-            EncodedJSValue* v;
-            JSValue* slot;
-        } u;
-        u.v = &m_value;
-        return u.slot;
+        return bitwise_cast<JSValue*>(&m_value);
     }
     
     int32_t* tagPointer() { return &bitwise_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }

@@ -727,14 +727,24 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSCell_structureID);
         return;
 
-    case CheckHasInstance:
+    case CheckTypeInfoFlags:
         read(JSCell_typeInfoFlags);
-        def(HeapLocation(CheckHasInstanceLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));
+        def(HeapLocation(CheckTypeInfoFlagsLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));
+        return;
+
+    case OverridesHasInstance:
+        read(JSCell_typeInfoFlags);
+        def(HeapLocation(OverridesHasInstanceLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));
         return;
 
     case InstanceOf:
         read(JSCell_structureID);
         def(HeapLocation(InstanceOfLoc, JSCell_structureID, node->child1(), node->child2()), LazyNode(node));
+        return;
+
+    case InstanceOfCustom:
+        read(World);
+        write(Heap);
         return;
 
     case PutStructure:

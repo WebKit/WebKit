@@ -74,6 +74,20 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
     return JSValue::encode(construct(exec, targetFunction, constructType, constructData, args));
 }
 
+EncodedJSValue JSC_HOST_CALL isBoundFunction(ExecState* exec)
+{
+    return JSValue::encode(JSValue(static_cast<bool>(jsDynamicCast<JSBoundFunction*>(exec->uncheckedArgument(0)))));
+}
+
+EncodedJSValue JSC_HOST_CALL hasInstanceBoundFunction(ExecState* exec)
+{
+    JSBoundFunction* boundObject = jsCast<JSBoundFunction*>(exec->uncheckedArgument(0));
+    JSValue value = exec->uncheckedArgument(1);
+
+    return JSValue::encode(jsBoolean(boundObject->targetFunction()->hasInstance(exec, value)));
+}
+
+
 JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int length, const String& name)
 {
     ConstructData constructData;
