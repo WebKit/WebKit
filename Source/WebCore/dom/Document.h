@@ -114,6 +114,7 @@ class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLNameCollection;
+class HTMLPictureElement;
 class HTMLScriptElement;
 class HitTestRequest;
 class HitTestResult;
@@ -1280,6 +1281,9 @@ public:
     bool shouldEnforceContentDispositionAttachmentSandbox() const;
     void applyContentDispositionAttachmentSandbox();
 
+    void addViewportDependentPicture(HTMLPictureElement&);
+    void removeViewportDependentPicture(HTMLPictureElement&);
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1373,6 +1377,8 @@ private:
     void invalidateDOMCookieCache();
     void domCookieCacheExpiryTimerFired();
     virtual void didLoadResourceSynchronously(const ResourceRequest&) override final;
+
+    void checkViewportDependentPictures();
 
     unsigned m_referencingNodeCount;
 
@@ -1595,6 +1601,8 @@ private:
     LayoutRect m_savedPlaceholderFrameRect;
     RefPtr<RenderStyle> m_savedPlaceholderRenderStyle;
 #endif
+
+    HashSet<HTMLPictureElement*> m_viewportDependentPictures;
 
     int m_loadEventDelayCount;
     Timer m_loadEventDelayTimer;
