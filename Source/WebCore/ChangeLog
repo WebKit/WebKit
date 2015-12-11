@@ -1,3 +1,16 @@
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/index-count.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152175
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::count): If the passed in IDBKeyRange* is nullptr, use IDBKeyRangeData::allKeys.
+        (WebCore::IDBClient::IDBIndex::doCount): Change an isNull check to a more correct !isValid() check.
+
 2015-12-11  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Setting playback rate does not work.

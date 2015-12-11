@@ -1,3 +1,14 @@
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/index-count.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152175
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/index-count-expected.txt:
+        * storage/indexeddb/modern/index-get-count-failures-expected.txt:
+
 2015-12-11  Daniel Bates  <dabates@apple.com>
 
         [iOS][WK2] Update expected results for tests imported/w3c/web-platform-tests

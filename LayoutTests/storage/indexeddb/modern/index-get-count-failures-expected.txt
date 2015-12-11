@@ -2,7 +2,6 @@ This tests some obvious failures that can happen while calling the IDBIndex meth
 Initial upgrade needed: Old version - 0 New version - 1
 Failed to get with a null key
 Failed to getKey with a null key
-Failed to count with a null range
 Failed to get with deleted IDBIndex
 Failed to getKey with deleted IDBIndex
 Failed to count with deleted IDBIndex
