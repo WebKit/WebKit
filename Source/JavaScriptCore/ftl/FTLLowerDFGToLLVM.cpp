@@ -3278,9 +3278,7 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(
             m_node->indexingType());
-        
-        DFG_ASSERT(m_graph, m_node, structure->indexingType() == m_node->indexingType());
-        
+
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(m_node->indexingType())) {
             unsigned numElements = m_node->numChildren();
             
@@ -3356,8 +3354,6 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(
             m_node->indexingType());
-        
-        DFG_ASSERT(m_graph, m_node, structure->indexingType() == m_node->indexingType());
         
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(m_node->indexingType())) {
             unsigned numElements = m_node->numConstants();
