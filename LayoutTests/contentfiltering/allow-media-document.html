@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals) {
+        var settings = window.internals.mockContentFilterSettings;
+        settings.enabled = true;
+        settings.decisionPoint = settings.DECISION_POINT_AFTER_FINISHED_ADDING_DATA;
+        settings.decision = settings.DECISION_ALLOW;
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<iframe src="resources/test.mp4"></iframe>
+<p>This test passes if it does not crash.</p>
