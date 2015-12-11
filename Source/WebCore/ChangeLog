@@ -1,5 +1,20 @@
 2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r192066. rdar://problem/23715623
+
+    2015-11-05  Zhuo Li  <zachli@apple.com>
+
+            Rename the variable to avoid conflict between the variable and the parameter.
+            https://bugs.webkit.org/show_bug.cgi?id=150019.
+
+            Reviewed by Dan Bernstein.
+
+            * platform/cocoa/SearchPopupMenuCocoa.mm:
+            (WebCore::typeCheckedRecentSearchesRemovingRecentSearchesAddedAfterDate): Rename `date`
+            to `dateAdded` so that it does not have the same name as the parameter passed in.
+
+2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191628. rdar://problem/23715623
 
     2015-10-27  Zhuo Li  <zachli@apple.com>
