@@ -54,6 +54,13 @@ void Value::replaceWithIdentity(Value* value)
     // a plain Identity Value. We first collect all of the information we need, then we destruct the
     // previous value in place, and then we construct the Identity Value in place.
 
+    ASSERT(m_type == value->m_type);
+
+    if (m_type == Void) {
+        replaceWithNop();
+        return;
+    }
+
     unsigned index = m_index;
     Type type = m_type;
     Origin origin = m_origin;
@@ -438,6 +445,7 @@ ValueKey Value::key() const
     case FloatToDouble:
     case DoubleToFloat:
     case Check:
+    case BitwiseCast:
         return ValueKey(opcode(), type(), child(0));
     case Add:
     case Sub:

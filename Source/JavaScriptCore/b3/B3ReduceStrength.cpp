@@ -30,6 +30,7 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3ControlValue.h"
+#include "B3Dominators.h"
 #include "B3IndexSet.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValue.h"
@@ -37,8 +38,10 @@
 #include "B3ProcedureInlines.h"
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
+#include "B3ValueKey.h"
 #include "B3ValueInlines.h"
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/HashMap.h>
 
 namespace JSC { namespace B3 {
 
@@ -105,11 +108,20 @@ public:
                 dataLog(m_proc);
             }
 
+            m_proc.resetValueOwners();
+            m_dominators = &m_proc.dominators(); // Recompute if necessary.
+            m_pureValues.clear();
+
             for (BasicBlock* block : m_proc.blocksInPreOrder()) {
                 m_block = block;
                 
-                for (m_index = 0; m_index < block->size(); ++m_index)
-                    process();
+                for (m_index = 0; m_index < block->size(); ++m_index) {
+                    m_value = m_block->at(m_index);
+                    m_value->performSubstitution();
+                    
+                    reduceValueStrength();
+                    replaceIfRedundant();
+                }
                 m_insertionSet.execute(m_block);
             }
 
@@ -129,11 +141,8 @@ public:
     }
     
 private:
-    void process()
+    void reduceValueStrength()
     {
-        m_value = m_block->at(m_index);
-        m_value->performSubstitution();
-        
         switch (m_value->opcode()) {
         case Add:
             handleCommutativity();
@@ -1014,6 +1023,35 @@ private:
         return false;
     }
 
+    void replaceIfRedundant()
+    {
+        // This does a very simple pure dominator-based CSE. In the future we could add load elimination.
+        // Note that if we add load elimination, we should do it by directly matching load and store
+        // instructions instead of using the ValueKey functionality or doing DFG HeapLocation-like
+        // things.
+
+        // Don't bother with identities. We kill those anyway.
+        if (m_value->opcode() == Identity)
+            return;
+
+        ValueKey key = m_value->key();
+        if (!key)
+            return;
+        
+        Vector<Value*, 1>& matches = m_pureValues.add(key, Vector<Value*, 1>()).iterator->value;
+
+        // Replace this value with whichever value dominates us.
+        for (Value* match : matches) {
+            if (m_dominators->dominates(match->owner, m_value->owner)) {
+                m_value->replaceWithIdentity(match);
+                m_changed = true;
+                return;
+            }
+        }
+
+        matches.append(m_value);
+    }
+
     void simplifyCFG()
     {
         if (verbose) {
@@ -1212,11 +1250,13 @@ private:
 
     Procedure& m_proc;
     InsertionSet m_insertionSet;
-    BasicBlock* m_block;
-    unsigned m_index;
-    Value* m_value;
-    bool m_changed;
-    bool m_changedCFG;
+    BasicBlock* m_block { nullptr };
+    unsigned m_index { 0 };
+    Value* m_value { nullptr };
+    Dominators* m_dominators { nullptr };
+    HashMap<ValueKey, Vector<Value*, 1>> m_pureValues;
+    bool m_changed { false };
+    bool m_changedCFG { false };
 };
 
 } // anonymous namespace

@@ -32,8 +32,11 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Does strength reduction, constant folding, canonicalization, CFG simplification, and DCE. In the
-// future we may also have it do CSE.
+// Does strength reduction, constant folding, canonicalization, CFG simplification, DCE, and CSE. This
+// phase runs those optimizations to fixpoint. The goal of the phase is to dramatically reduce the
+// complexity of the code. In the future, it's preferable to add optimizations to this phase rather than
+// creating new optimizations because then the optimizations can participate in the fixpoint. However,
+// this phase shouldn't become too expensive, so expensive optimizations should be separate.
 
 bool reduceStrength(Procedure&);
 

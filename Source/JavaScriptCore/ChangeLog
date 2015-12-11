@@ -1,3 +1,22 @@
+2015-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should have CSE
+        https://bugs.webkit.org/show_bug.cgi?id=150961
+
+        Reviewed by Benjamin Poulain.
+
+        This implements a very simple CSE for pure values. I need this as a prerequisite for other
+        optimizations that I'm implementing. For now, this is neutral on imaging-gaussian-blur but a
+        slow-down on asm.js code. I suspect that the asm.js slow-down is because of other things that are
+        still going wrong, and anyway, I need CSE to be able to do even the most basic asm.js strength
+        reductions.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3ReduceStrength.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::replaceWithIdentity):
+        (JSC::B3::Value::key):
+
 2015-12-11  Mark Lam  <mark.lam@apple.com>
 
         Refactoring to reduce potential cut-paste errors with the FTL ICs.
