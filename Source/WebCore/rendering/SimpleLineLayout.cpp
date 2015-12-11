@@ -110,7 +110,8 @@ enum AvoidanceReason_ : uint64_t {
     FeatureIsDisabled                   = 1LLU  << 46,
     FlowHasNoParent                     = 1LLU  << 47,
     FlowHasNoChild                      = 1LLU  << 48,
-    EndOfReasons                        = 1LLU  << 49
+    FlowChildIsSelected                 = 1LLU  << 49,
+    EndOfReasons                        = 1LLU  << 50
 };
 const unsigned NoReason = 0;
 
@@ -301,6 +302,8 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Inc
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (const auto* child = flow.firstChild(); child;) {
+        if (child->selectionState() != RenderObject::SelectionNone)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowChildIsSelected, reasons, includeReasons);
         if (is<RenderText>(*child)) {
             child = child->nextSibling();
             continue;
@@ -916,6 +919,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case FlowHasTextShadow:
         stream << "text-shadow";
+        break;
+    case FlowChildIsSelected:
+        stream << "selected content";
         break;
     case FlowTextIsEmpty:
     case FlowHasNoChild:

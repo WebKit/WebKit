@@ -1,3 +1,21 @@
+2015-12-10  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !simpleLineLayout() in WebCore::RenderText::collectSelectionRectsForLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=152115
+
+        Reviewed by Simon Fraser.
+
+        document.execCommand("indent") generates a blockquote wrapper and moves the indented content inside.
+        If the indented content is already inside a selection, we need to make sure that newly created flow uses
+        normal line layout.
+        This patch fixes the generic case as re-parenting an already selected renderer is not specific to document.execCommand("indent").
+
+        Test: fast/block/selection-inside-simple-line-layout.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        (WebCore::SimpleLineLayout::printReason):
+
 2015-12-10  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Expose media capture devices persistent permissions to WebCore
