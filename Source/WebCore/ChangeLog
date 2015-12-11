@@ -1,3 +1,52 @@
+2015-12-09  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r192712. rdar://problem/23814340
+
+    2015-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+            More deviceRGB color cleanup
+            https://bugs.webkit.org/show_bug.cgi?id=151523
+            <rdar://problem/23638597>
+
+            Reviewed by Tim Horton.
+
+            Replace calls to deviceRGBColorSpaceRef() with sRGBColorSpaceRef(), and use
+            sRGBColorSpaceRef() in a few places that were manually creating the colorspace.
+
+            Also use cachedCGColor() in a more places that were manually constructing CGColorRefs
+            from Colors.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect):
+            (WebCore::createImageFromPixelBuffer):
+            * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+            * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+            (PlatformCALayerCocoa::setBackgroundColor):
+            (PlatformCALayerCocoa::setBorderColor):
+            * platform/graphics/ca/cocoa/WebSystemBackdropLayer.mm:
+            (-[WebLightSystemBackdropLayer init]):
+            (-[WebDarkSystemBackdropLayer init]):
+            * platform/graphics/cg/GradientCG.cpp:
+            (WebCore::Gradient::platformGradient):
+            * platform/graphics/cg/GraphicsContext3DCG.cpp:
+            (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+            (WebCore::GraphicsContext3D::paintToCanvas):
+            * platform/graphics/cg/ImageBufferCG.cpp:
+            (WebCore::ImageBuffer::copyImage):
+            (WebCore::ImageBuffer::toDataURL):
+            (WebCore::ImageDataToDataURL):
+            * platform/graphics/mac/GraphicsContextMac.mm:
+            (WebCore::linearRGBColorSpaceRef):
+            * platform/graphics/mac/WebGLLayer.mm:
+            (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+            * platform/mediastream/mac/AVVideoCaptureSource.mm:
+            (WebCore::AVVideoCaptureSource::currentFrameCGImage):
+            * rendering/RenderThemeIOS.mm:
+            (WebCore::drawRadialGradient):
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+            (WebCore::RenderThemeMac::paintSliderTrack):
+
 2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r193859. rdar://problem/23814345

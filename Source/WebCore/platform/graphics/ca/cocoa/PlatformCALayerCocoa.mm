@@ -702,14 +702,8 @@ Color PlatformCALayerCocoa::backgroundColor() const
 
 void PlatformCALayerCocoa::setBackgroundColor(const Color& value)
 {
-    CGFloat components[4];
-    value.getRGBA(components[0], components[1], components[2], components[3]);
-
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer setBackgroundColor:color.get()];
+    [m_layer setBackgroundColor:cachedCGColor(value, ColorSpaceDeviceRGB)];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -723,14 +717,8 @@ void PlatformCALayerCocoa::setBorderWidth(float value)
 void PlatformCALayerCocoa::setBorderColor(const Color& value)
 {
     if (value.isValid()) {
-        CGFloat components[4];
-        value.getRGBA(components[0], components[1], components[2], components[3]);
-
-        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
-
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [m_layer setBorderColor:color.get()];
+        [m_layer setBorderColor:cachedCGColor(value, ColorSpaceDeviceRGB)];
         END_BLOCK_OBJC_EXCEPTIONS
     } else {
         BEGIN_BLOCK_OBJC_EXCEPTIONS

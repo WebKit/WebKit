@@ -27,7 +27,7 @@
 #include "ShareableBitmap.h"
 
 #include <WebCore/BitmapImage.h>
-#include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextCG.h>
 #include <wtf/RetainPtr.h>
 #include "CGUtilities.h"
 
@@ -48,11 +48,9 @@ static CGBitmapInfo bitmapInfo(ShareableBitmap::Flags flags)
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-
     ref(); // Balanced by deref in releaseBitmapContextData.
     RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(),
-        m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(),
+        m_size.width(), m_size.height(), 8, m_size.width() * 4, sRGBColorSpaceRef(),
         bitmapInfo(m_flags), releaseBitmapContextData, this));
 
     // We want the origin to be in the top left corner so we flip the backing store context.
@@ -90,8 +88,7 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
 {
     ASSERT_ARG(dataProvider, dataProvider);
 
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), bitmapInfo(m_flags), dataProvider, 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, sRGBColorSpaceRef(), bitmapInfo(m_flags), dataProvider, 0, false, kCGRenderingIntentDefault));
     return image;
 }
 

@@ -51,7 +51,7 @@ using namespace WebCore;
 #endif
 
     CGFloat components[4] = { 0.8, 0.8, 0.8, 0.8 };
-    [super setBackgroundColor:CGColorCreate(cachedCGColorSpace(ColorSpaceSRGB), components)];
+    [super setBackgroundColor:CGColorCreate(sRGBColorSpaceRef(), components)];
 
     return self;
 }
@@ -77,7 +77,7 @@ using namespace WebCore;
 #endif
 
     CGFloat components[4] = { 0.2, 0.2, 0.2, 0.8 };
-    [super setBackgroundColor:CGColorCreate(cachedCGColorSpace(ColorSpaceSRGB), components)];
+    [super setBackgroundColor:CGColorCreate(sRGBColorSpaceRef(), components)];
 
     return self;
 }

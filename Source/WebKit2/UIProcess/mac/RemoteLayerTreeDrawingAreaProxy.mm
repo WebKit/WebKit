@@ -34,6 +34,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/MachSendRight.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
@@ -355,14 +356,14 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
     [m_tileMapHostLayer setMasksToBounds:YES];
     [m_tileMapHostLayer setBorderWidth:2];
 
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    CGColorSpaceRef colorSpace = sRGBColorSpaceRef();
     {
         const CGFloat components[] = { 1, 1, 1, 0.6 };
-        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace, components));
         [m_tileMapHostLayer setBackgroundColor:color.get()];
 
         const CGFloat borderComponents[] = { 0, 0, 0, 1 };
-        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace.get(), borderComponents));
+        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace, borderComponents));
         [m_tileMapHostLayer setBorderColor:borderColor.get()];
     }
     
@@ -372,7 +373,7 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 
     {
         const CGFloat components[] = { 0, 1, 0, 1 };
-        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace, components));
         [m_exposedRectIndicatorLayer setBorderColor:color.get()];
     }
 }
