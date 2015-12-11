@@ -38,14 +38,18 @@
 namespace WebCore {
 
 class Page;
+class UserMediaPermissionCheck;
 class UserMediaRequest;
 
 class UserMediaClient {
 public:
     virtual void pageDestroyed() = 0;
 
-    virtual void requestUserMediaAccess(Ref<UserMediaRequest>&&) = 0;
+    virtual void requestUserMediaAccess(UserMediaRequest&) = 0;
     virtual void cancelUserMediaAccessRequest(UserMediaRequest&) = 0;
+
+    virtual void checkUserMediaPermission(UserMediaPermissionCheck&) = 0;
+    virtual void cancelUserMediaPermissionCheck(UserMediaPermissionCheck&) = 0;
 
 protected:
     virtual ~UserMediaClient() { }

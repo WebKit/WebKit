@@ -6,16 +6,38 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS navigator.mediaDevices is an instance of Object
 PASS navigator.mediaDevices.enumerateDevices is an instance of Function
 
+
+*** Calling mediaDevices.enumerateDevices when persistent access HAS NOT been granted
+
 PASS captureDevices.length is non-zero.
 
 PASS captureDevice.kind is non-null.
 PASS captureDevice.deviceId is non-null.
 PASS captureDevice.label is non-null.
+PASS captureDevice.label is ""
 PASS captureDevice.groupId is non-null.
 
 PASS captureDevice.kind is non-null.
 PASS captureDevice.deviceId is non-null.
 PASS captureDevice.label is non-null.
+PASS captureDevice.label is ""
+PASS captureDevice.groupId is non-null.
+
+
+*** Calling mediaDevices.enumerateDevices when persistent access HAS been granted
+
+PASS captureDevices.length is non-zero.
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
+PASS captureDevice.groupId is non-null.
+
+PASS captureDevice.kind is non-null.
+PASS captureDevice.deviceId is non-null.
+PASS captureDevice.label is non-null.
+PASS captureDevice.label is not ""
 PASS captureDevice.groupId is non-null.
 
 PASS successfullyParsed is true

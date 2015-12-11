@@ -3365,6 +3365,11 @@ void WebPage::didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool a
 {
     m_userMediaPermissionRequestManager.didReceiveUserMediaPermissionDecision(userMediaID, allowed, audioDeviceUID, videoDeviceUID);
 }
+
+void WebPage::didCompleteUserMediaPermissionCheck(uint64_t userMediaID, bool allowed)
+{
+    m_userMediaPermissionRequestManager.didCompleteUserMediaPermissionCheck(userMediaID, allowed);
+}
 #endif
 
 #if !PLATFORM(IOS)

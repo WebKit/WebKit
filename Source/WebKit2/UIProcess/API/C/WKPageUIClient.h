@@ -97,6 +97,7 @@ typedef void (*WKPageUnavailablePluginButtonClickedCallback)(WKPageRef page, WKP
 typedef void (*WKPagePinnedStateDidChangeCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageIsPlayingAudioDidChangeCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForUserMediaPermissionRequestCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo);
+typedef void (*WKCheckUserMediaPermissionCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKUserMediaPermissionCheckRef devicesRequest, const void *clientInfo);
 typedef void (*WKPageDidClickAutoFillButtonCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageMediaSessionMetadataDidChangeCallback)(WKPageRef page, WKMediaSessionMetadataRef metadata, const void* clientInfo);
 
@@ -545,6 +546,7 @@ typedef struct WKPageUIClientV6 {
     WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
     WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
+    WKCheckUserMediaPermissionCallback                                  checkUserMediaPermissionForOrigin;
 } WKPageUIClientV6;
 
 #ifdef __cplusplus

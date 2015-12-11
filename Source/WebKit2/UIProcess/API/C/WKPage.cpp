@@ -2017,6 +2017,15 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return true;
         }
 
+        virtual bool checkUserMediaPermissionForOrigin(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& origin, UserMediaPermissionCheckProxy& request) override
+        {
+            if (!m_client.checkUserMediaPermissionForOrigin)
+                return false;
+
+            m_client.checkUserMediaPermissionForOrigin(toAPI(&page), toAPI(&frame), toAPI(&origin), toAPI(&request), m_client.base.clientInfo);
+            return true;
+        }
+        
         virtual bool decidePolicyForNotificationPermissionRequest(WebPageProxy* page, API::SecurityOrigin* origin, NotificationPermissionRequest* permissionRequest) override
         {
             if (!m_client.decidePolicyForNotificationPermissionRequest)

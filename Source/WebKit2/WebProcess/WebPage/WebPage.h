@@ -1105,6 +1105,7 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     WK_EXPORT void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID);
+    WK_EXPORT void didCompleteUserMediaPermissionCheck(uint64_t userMediaID, bool allowed);
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection);

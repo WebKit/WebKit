@@ -34,8 +34,10 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptExecutionContext.h>
+#import <WebCore/UserMediaPermissionCheck.h>
 #import <WebCore/UserMediaRequest.h>
 #import <wtf/HashMap.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -50,23 +52,50 @@ using namespace WebCore;
 - (void)deny;
 @end
 
+@interface WebUserMediaPolicyCheckerListener : NSObject <WebAllowDenyPolicyListener> {
+    RefPtr<UserMediaPermissionCheck> _request;
+}
+- (id)initWithUserMediaPermissionCheck:(PassRefPtr<UserMediaPermissionCheck>)request;
+- (void)cancelUserMediaPermissionCheck;
+- (void)deny;
+@end
+
 typedef HashMap<RefPtr<UserMediaRequest>, RetainPtr<WebUserMediaPolicyListener>> UserMediaRequestsMap;
 
 static UserMediaRequestsMap& userMediaRequestsMap()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(UserMediaRequestsMap, requests, ());
+    static NeverDestroyed<UserMediaRequestsMap> requests;
     return requests;
 }
 
-static void AddRequestToMap(UserMediaRequest* request, RetainPtr<WebUserMediaPolicyListener> listener)
+static void AddRequestToRequestMap(UserMediaRequest* request, RetainPtr<WebUserMediaPolicyListener> listener)
 {
     userMediaRequestsMap().set(request, listener);
 }
 
-static void RemoveRequestFromMap(UserMediaRequest* request)
+static void RemoveRequestFromRequestMap(UserMediaRequest* request)
 {
     userMediaRequestsMap().remove(request);
 }
+
+typedef HashMap<RefPtr<UserMediaPermissionCheck>, RetainPtr<WebUserMediaPolicyCheckerListener>> UserMediaCheckMap;
+
+static UserMediaCheckMap& userMediaCheckMap()
+{
+    DEPRECATED_DEFINE_STATIC_LOCAL(UserMediaCheckMap, requests, ());
+    return requests;
+}
+
+static void AddPermissionCheckToMap(UserMediaPermissionCheck* request, RetainPtr<WebUserMediaPolicyCheckerListener> listener)
+{
+    userMediaCheckMap().set(request, listener);
+}
+
+static void RemovePermissionCheckFromMap(UserMediaPermissionCheck* request)
+{
+    userMediaCheckMap().remove(request);
+}
+
 
 WebUserMediaClient::WebUserMediaClient(WebView* webView)
     : m_webView(webView)
@@ -88,22 +117,21 @@ void WebUserMediaClient::pageDestroyed()
     delete this;
 }
 
-void WebUserMediaClient::requestUserMediaAccess(Ref<UserMediaRequest>&& prpRequest)
+void WebUserMediaClient::requestUserMediaAccess(UserMediaRequest& request)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    UserMediaRequest* request = &prpRequest.get();
     SEL selector = @selector(webView:decidePolicyForUserMediaRequestFromOrigin:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector]) {
-        request->userMediaAccessDenied();
+        request.userMediaAccessDenied();
         return;
     }
 
-    WebUserMediaPolicyListener *listener = [[WebUserMediaPolicyListener alloc] initWithUserMediaRequest:request];
-    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request->securityOrigin()];
+    WebUserMediaPolicyListener *listener = [[WebUserMediaPolicyListener alloc] initWithUserMediaRequest:&request];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.securityOrigin()];
 
     CallUIDelegate(m_webView, selector, webOrigin, listener);
-    AddRequestToMap(request, listener);
+    AddRequestToRequestMap(&request, listener);
 
     [webOrigin release];
     [listener release];
@@ -122,6 +150,39 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
     requestsMap.remove(it);
 }
 
+void WebUserMediaClient::checkUserMediaPermission(UserMediaPermissionCheck& request)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    SEL selector = @selector(webView:checkPolicyForUserMediaRequestFromOrigin:listener:);
+    if (![[m_webView UIDelegate] respondsToSelector:selector]) {
+        request.setHasPersistentPermission(false);
+        return;
+    }
+
+    WebUserMediaPolicyCheckerListener *listener = [[WebUserMediaPolicyCheckerListener alloc] initWithUserMediaPermissionCheck:&request];
+    WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:request.securityOrigin()];
+
+    CallUIDelegate(m_webView, selector, webOrigin, listener);
+    AddPermissionCheckToMap(&request, listener);
+
+    [webOrigin release];
+    [listener release];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+
+void WebUserMediaClient::cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck& request)
+{
+    UserMediaCheckMap& requestsMap = userMediaCheckMap();
+    UserMediaCheckMap::iterator it = requestsMap.find(&request);
+    if (it == requestsMap.end())
+        return;
+
+    [it->value cancelUserMediaPermissionCheck];
+    requestsMap.remove(it);
+}
 
 @implementation WebUserMediaPolicyListener
 
@@ -155,7 +216,7 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
     
     _request->userMediaAccessGranted(_request->allowedAudioDeviceUID(), _request->allowedVideoDeviceUID());
 
-    RemoveRequestFromMap(_request.get());
+    RemoveRequestFromRequestMap(_request.get());
 #endif
 }
 
@@ -166,7 +227,7 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
         return;
     
     _request->userMediaAccessDenied();
-    RemoveRequestFromMap(_request.get());
+    RemoveRequestFromRequestMap(_request.get());
 #endif
 }
 
@@ -184,4 +245,67 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
 #endif
 
 @end
+
+
+@implementation WebUserMediaPolicyCheckerListener
+
+- (id)initWithUserMediaPermissionCheck:(PassRefPtr<UserMediaPermissionCheck>)request
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!(self = [super init]))
+        return nil;
+
+    _request = request;
+    return self;
 #endif
+}
+
+- (void)cancelUserMediaPermissionCheck
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_request)
+        return;
+
+    _request = nullptr;
+#endif
+
+}
+
+- (void)allow
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_request)
+        return;
+
+    _request->setHasPersistentPermission(true);
+    RemovePermissionCheckFromMap(_request.get());
+#endif
+}
+
+- (void)deny
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_request)
+        return;
+
+    _request->setHasPersistentPermission(true);
+    RemovePermissionCheckFromMap(_request.get());
+#endif
+}
+
+#if PLATFORM(IOS)
+- (void)denyOnlyThisRequest
+{
+}
+
+- (BOOL)shouldClearCache
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=146245
+    ASSERT_NOT_REACHED();
+    return true;
+}
+#endif
+
+@end
+
+#endif // ENABLE(MEDIA_STREAM)

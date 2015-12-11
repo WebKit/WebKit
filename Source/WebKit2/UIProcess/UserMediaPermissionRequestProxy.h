@@ -21,7 +21,6 @@
 
 #include "APIObject.h"
 #include <WebCore/RealtimeMediaSource.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -31,9 +30,9 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static PassRefPtr<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs)
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs)
     {
-        return adoptRef(new UserMediaPermissionRequestProxy(manager, userMediaID, videoDeviceUIDs, audioDeviceUIDs));
+        return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, videoDeviceUIDs, audioDeviceUIDs));
     }
 
     void allow(const String& videoDeviceUID, const String& audioDeviceUID);

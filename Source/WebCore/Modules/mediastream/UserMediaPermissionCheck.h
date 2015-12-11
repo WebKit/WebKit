@@ -24,60 +24,53 @@
  *
  */
 
-#ifndef MediaDevicesRequest_h
-#define MediaDevicesRequest_h
+#ifndef UserMediaPermissionCheck_h
+#define UserMediaPermissionCheck_h
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
 #include "MediaDevices.h"
-#include "MediaStreamCreationClient.h"
-#include "MediaStreamTrackSourcesRequestClient.h"
-#include "UserMediaPermissionCheck.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Document;
-class Frame;
 class SecurityOrigin;
 
-typedef int ExceptionCode;
-
-class MediaDevicesRequest : public MediaStreamTrackSourcesRequestClient, public UserMediaPermissionCheckClient, public ContextDestructionObserver {
+class UserMediaPermissionCheckClient {
 public:
-    static RefPtr<MediaDevicesRequest> create(Document*, MediaDevices::EnumerateDevicesPromise&&, ExceptionCode&);
+    virtual ~UserMediaPermissionCheckClient() { }
 
-    virtual ~MediaDevicesRequest();
+    virtual void didCompleteCheck(bool) = 0;
+};
+
+class UserMediaPermissionCheck final : public ContextDestructionObserver, public RefCounted<UserMediaPermissionCheck> {
+public:
+    static Ref<UserMediaPermissionCheck> create(Document&, UserMediaPermissionCheckClient&);
+
+    virtual ~UserMediaPermissionCheck();
 
     void start();
+    void setClient(UserMediaPermissionCheckClient* client) { m_client = client; }
 
-    SecurityOrigin* securityOrigin() const;
+    WEBCORE_EXPORT void setHasPersistentPermission(bool);
+
+    WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
 private:
-    MediaDevicesRequest(ScriptExecutionContext*, MediaDevices::EnumerateDevicesPromise&&);
-
-    // MediaStreamTrackSourcesRequestClient
-    const String& requestOrigin() const final;
-    void didCompleteRequest(const TrackSourceInfoVector&) final;
+    UserMediaPermissionCheck(ScriptExecutionContext&, UserMediaPermissionCheckClient&);
 
     // ContextDestructionObserver
-    void contextDestroyed() override final;
+    virtual void contextDestroyed() override final;
 
-    // UserMediaPermissionCheckClient
-    void didCompleteCheck(bool) override final;
-
-    MediaDevices::EnumerateDevicesPromise m_promise;
-    RefPtr<MediaDevicesRequest> m_protector;
-    RefPtr<UserMediaPermissionCheck> m_permissionCheck;
-
-    bool m_hasUserMediaPermission { false };
+    UserMediaPermissionCheckClient* m_client;
+    bool m_hasPersistentPermission { false };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MediaDevicesRequest_h
+#endif // UserMediaPermissionCheck_h

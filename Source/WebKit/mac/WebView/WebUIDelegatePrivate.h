@@ -258,6 +258,7 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)webView decidePolicyForNotificationRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener;
 
 - (void)webView:(WebView *)webView decidePolicyForUserMediaRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener;
+- (void)webView:(WebView *)webView checkPolicyForUserMediaRequestFromOrigin:(WebSecurityOrigin *)origin listener:(id<WebAllowDenyPolicyListener>)listener;
 
 - (void)webView:(WebView *)sender elementDidFocusNode:(DOMNode *)node;
 - (void)webView:(WebView *)sender elementDidBlurNode:(DOMNode *)node;

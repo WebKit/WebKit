@@ -952,7 +952,6 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaStreamRegistry.cpp
     Modules/mediastream/MediaStreamTrack.cpp
     Modules/mediastream/MediaStreamTrackEvent.cpp
-    Modules/mediastream/MediaStreamTrackSourcesRequest.cpp
     Modules/mediastream/MediaTrackConstraint.cpp
     Modules/mediastream/MediaTrackConstraintSet.cpp
     Modules/mediastream/MediaTrackConstraints.cpp
@@ -975,6 +974,7 @@ set(WebCore_SOURCES
     Modules/mediastream/RTCTrackEvent.cpp
     Modules/mediastream/SourceInfo.cpp
     Modules/mediastream/UserMediaController.cpp
+    Modules/mediastream/UserMediaPermissionCheck.cpp
     Modules/mediastream/UserMediaRequest.cpp
 
     Modules/navigatorcontentutils/NavigatorContentUtils.cpp

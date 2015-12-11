@@ -74,6 +74,7 @@ class AuthenticationDecisionListener;
 class DownloadProxy;
 class GeolocationPermissionRequestProxy;
 class NotificationPermissionRequest;
+class UserMediaPermissionCheckProxy;
 class UserMediaPermissionRequestProxy;
 class WebBackForwardList;
 class WebBackForwardListItem;
@@ -161,6 +162,7 @@ WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKUserContentControllerRef, WebUserContentControllerProxy)
 WK_ADD_API_MAPPING(WKUserContentExtensionStoreRef, API::UserContentExtensionStore)
 WK_ADD_API_MAPPING(WKUserContentFilterRef, API::UserContentExtension)
+WK_ADD_API_MAPPING(WKUserMediaPermissionCheckRef, UserMediaPermissionCheckProxy)
 WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
 WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)

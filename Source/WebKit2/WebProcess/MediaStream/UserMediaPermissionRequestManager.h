@@ -21,6 +21,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include <WebCore/UserMediaPermissionCheck.h>
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -34,16 +35,22 @@ class UserMediaPermissionRequestManager {
 public:
     explicit UserMediaPermissionRequestManager(WebPage&);
 
-    void startRequest(WebCore::UserMediaRequest&);
-    void cancelRequest(WebCore::UserMediaRequest&);
+    void startUserMediaRequest(WebCore::UserMediaRequest&);
+    void cancelUserMediaRequest(WebCore::UserMediaRequest&);
+    void didReceiveUserMediaPermissionDecision(uint64_t requestID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID);
 
-    void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID);
+    void startUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck&);
+    void cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck&);
+    void didCompleteUserMediaPermissionCheck(uint64_t requestID, bool allowed);
 
 private:
     WebPage& m_page;
 
-    HashMap<uint64_t, RefPtr<WebCore::UserMediaRequest>> m_idToRequestMap;
-    HashMap<RefPtr<WebCore::UserMediaRequest>, uint64_t> m_requestToIDMap;
+    HashMap<uint64_t, RefPtr<WebCore::UserMediaRequest>> m_idToUserMediaRequestMap;
+    HashMap<RefPtr<WebCore::UserMediaRequest>, uint64_t> m_userMediaRequestToIDMap;
+
+    HashMap<uint64_t, RefPtr<WebCore::UserMediaPermissionCheck>> m_idToUserMediaPermissionCheckMap;
+    HashMap<RefPtr<WebCore::UserMediaPermissionCheck>, uint64_t> m_userMediaPermissionCheckToIDMap;
 };
 
 } // namespace WebKit

@@ -29,6 +29,7 @@
 
 #include "Page.h"
 #include "UserMediaClient.h"
+#include "UserMediaPermissionCheck.h"
 #include "UserMediaRequest.h"
 
 namespace WebCore {
@@ -40,8 +41,11 @@ public:
 
     UserMediaClient* client() const { return m_client; }
 
-    void requestUserMediaAccess(Ref<UserMediaRequest>&&);
+    void requestUserMediaAccess(UserMediaRequest&);
     void cancelUserMediaAccessRequest(UserMediaRequest&);
+
+    void checkUserMediaPermission(UserMediaPermissionCheck&);
+    void cancelUserMediaPermissionCheck(UserMediaPermissionCheck&);
 
     WEBCORE_EXPORT static const char* supplementName();
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
@@ -50,14 +54,24 @@ private:
     UserMediaClient* m_client;
 };
 
-inline void UserMediaController::requestUserMediaAccess(Ref<UserMediaRequest>&& request)
+inline void UserMediaController::requestUserMediaAccess(UserMediaRequest& request)
 {
-    m_client->requestUserMediaAccess(WTF::move(request));
+    m_client->requestUserMediaAccess(request);
 }
 
 inline void UserMediaController::cancelUserMediaAccessRequest(UserMediaRequest& request)
 {
     m_client->cancelUserMediaAccessRequest(request);
+}
+
+inline void UserMediaController::checkUserMediaPermission(UserMediaPermissionCheck& request)
+{
+    m_client->checkUserMediaPermission(request);
+}
+
+inline void UserMediaController::cancelUserMediaPermissionCheck(UserMediaPermissionCheck& request)
+{
+    m_client->cancelUserMediaPermissionCheck(request);
 }
 
 } // namespace WebCore

@@ -171,7 +171,6 @@
 #include "MockRealtimeMediaSourceCenter.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionHandlerMock.h"
-#include "UserMediaClientMock.h"
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

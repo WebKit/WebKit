@@ -1,3 +1,81 @@
+2015-12-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Expose media capture devices persistent permissions to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=152087
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt: Add UserMediaPermissionCheckProxy.cpp and WKUserMediaPermissionCheck.cpp.
+
+        * Shared/API/APIObject.h: Define UserMediaPermissionCheck.
+
+        * Shared/API/c/WKBase.h: Add WKUserMediaPermissionCheckRef typedef.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::checkUserMediaPermissionForOrigin): New.
+
+        * UIProcess/API/C/WKAPICast.h: Add WKUserMediaPermissionCheckRef/UserMediaPermissionCheckProxy mapping.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient): Implement checkUserMediaPermissionForOrigin.
+
+        * UIProcess/API/C/WKPageUIClient.h: Add WKCheckUserMediaPermissionCallback typedef and add
+          checkUserMediaPermissionForOrigin to WKPageUIClientV6.
+
+        * UIProcess/API/C/WKUserMediaPermissionCheck.cpp: Added.
+        (WKUserMediaPermissionCheckGetTypeID):
+        (WKUserMediaPermissionCheckSetHasPermission):
+
+        * UIProcess/API/C/WKUserMediaPermissionCheck.h: Added.
+
+        * UIProcess/UserMediaPermissionCheckProxy.cpp: Added.
+        (WebKit::UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy):
+        (WebKit::UserMediaPermissionCheckProxy::setHasPermission):
+        (WebKit::UserMediaPermissionCheckProxy::invalidate):
+        * UIProcess/UserMediaPermissionCheckProxy.h: Added.
+        (WebKit::UserMediaPermissionCheckProxy::create):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::invalidateRequests):
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecision):
+        (WebKit::UserMediaPermissionRequestManagerProxy::createUserMediaPermissionCheck):
+        (WebKit::UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::checkUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::requestNotificationPermission):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebKit2.xcodeproj/project.pbxproj: Add UserMediaPermissionCheckProxy.*, and WKUserMediaPermissionCheck.*.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaRequest): Renamed from startRequest.
+        (WebKit::UserMediaPermissionRequestManager::cancelUserMediaRequest): Renamed from cancelRequest.
+        (WebKit::UserMediaPermissionRequestManager::didReceiveUserMediaPermissionDecision): m_requestToIDMap ->
+          m_userMediaRequestToIDMap.remove.
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaPermissionCheck): New, start the request.
+        (WebKit::UserMediaPermissionRequestManager::cancelUserMediaPermissionCheck): New, cancel
+          the request.
+        (WebKit::UserMediaPermissionRequestManager::didCompleteUserMediaPermissionCheck): New, 
+          all the request completion method.
+        (WebKit::UserMediaPermissionRequestManager::startRequest): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::cancelRequest): Deleted.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::requestUserMediaAccess): startRequest -> startUserMediaRequest.
+        (WebKit::WebUserMediaClient::cancelUserMediaAccessRequest): cancelRequest -> cancelUserMediaRequest.
+        (WebKit::WebUserMediaClient::checkUserMediaPermission): New.
+        (WebKit::WebUserMediaClient::cancelUserMediaPermissionCheck): New.
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompleteUserMediaPermissionCheck): New.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add DidCompleteUserMediaPermissionCheck.
+
 2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Inspector: Verify the identity of the other side of XPC connections

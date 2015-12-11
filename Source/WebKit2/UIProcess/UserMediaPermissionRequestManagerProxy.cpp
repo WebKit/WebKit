@@ -32,17 +32,17 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 
 void UserMediaPermissionRequestManagerProxy::invalidateRequests()
 {
-    for (auto& request : m_pendingRequests.values())
+    for (auto& request : m_pendingUserMediaRequests.values())
         request->invalidate();
 
-    m_pendingRequests.clear();
+    m_pendingUserMediaRequests.clear();
 }
 
-PassRefPtr<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
 {
-    RefPtr<UserMediaPermissionRequestProxy> request = UserMediaPermissionRequestProxy::create(*this, userMediaID, audioDeviceUIDs, videoDeviceUIDs);
-    m_pendingRequests.add(userMediaID, request.get());
-    return request.release();
+    Ref<UserMediaPermissionRequestProxy> request = UserMediaPermissionRequestProxy::create(*this, userMediaID, audioDeviceUIDs, videoDeviceUIDs);
+    m_pendingUserMediaRequests.add(userMediaID, request.ptr());
+    return request;
 }
 
 void UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID)
@@ -50,11 +50,33 @@ void UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecisi
     if (!m_page.isValid())
         return;
 
-    if (!m_pendingRequests.take(userMediaID))
+    if (!m_pendingUserMediaRequests.take(userMediaID))
         return;
 
 #if ENABLE(MEDIA_STREAM)
     m_page.process().send(Messages::WebPage::DidReceiveUserMediaPermissionDecision(userMediaID, allowed, audioDeviceUID, videoDeviceUID), m_page.pageID());
+#else
+    UNUSED_PARAM(allowed);
+#endif
+}
+
+Ref<UserMediaPermissionCheckProxy> UserMediaPermissionRequestManagerProxy::createUserMediaPermissionCheck(uint64_t userMediaID)
+{
+    Ref<UserMediaPermissionCheckProxy> request = UserMediaPermissionCheckProxy::create(*this, userMediaID);
+    m_pendingDeviceRequests.add(userMediaID, request.ptr());
+    return request;
+}
+
+void UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck(uint64_t userMediaID, bool allowed)
+{
+    if (!m_page.isValid())
+        return;
+
+    if (!m_pendingDeviceRequests.take(userMediaID))
+        return;
+
+#if ENABLE(MEDIA_STREAM)
+    m_page.process().send(Messages::WebPage::DidCompleteUserMediaPermissionCheck(userMediaID, allowed), m_page.pageID());
 #else
     UNUSED_PARAM(allowed);
 #endif

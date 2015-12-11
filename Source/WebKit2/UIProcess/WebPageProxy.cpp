@@ -5261,6 +5261,18 @@ void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint
         request->deny();
 }
 
+void WebPageProxy::checkUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String originIdentifier)
+{
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    RefPtr<UserMediaPermissionCheckProxy> request = m_userMediaPermissionRequestManager.createUserMediaPermissionCheck(userMediaID);
+
+    if (!m_uiClient->checkUserMediaPermissionForOrigin(*this, *frame, *origin.get(), *request.get()))
+        request->setHasPersistentPermission(false);
+}
+
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
 {
     if (!isRequestIDValid(requestID))

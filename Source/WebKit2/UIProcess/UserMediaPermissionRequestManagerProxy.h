@@ -19,6 +19,7 @@
 #ifndef UserMediaPermissionRequestManagerProxy_h
 #define UserMediaPermissionRequestManagerProxy_h
 
+#include "UserMediaPermissionCheckProxy.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include <wtf/HashMap.h>
 
@@ -32,14 +33,16 @@ public:
 
     void invalidateRequests();
 
-    // Create a request to be presented to the user.
-    PassRefPtr<UserMediaPermissionRequestProxy> createRequest(uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs);
-
-    // Called by UserMediaPermissionRequestProxy when a decision is made by the user.
+    Ref<UserMediaPermissionRequestProxy> createRequest(uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs);
     void didReceiveUserMediaPermissionDecision(uint64_t, bool allow, const String& audioDeviceUID, const String& videoDeviceUID);
 
+
+    Ref<UserMediaPermissionCheckProxy> createUserMediaPermissionCheck(uint64_t userMediaID);
+    void didCompleteUserMediaPermissionCheck(uint64_t, bool allow);
+
 private:
-    HashMap<uint64_t, RefPtr<UserMediaPermissionRequestProxy>> m_pendingRequests;
+    HashMap<uint64_t, RefPtr<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;
+    HashMap<uint64_t, RefPtr<UserMediaPermissionCheckProxy>> m_pendingDeviceRequests;
     WebPageProxy& m_page;
 };
 

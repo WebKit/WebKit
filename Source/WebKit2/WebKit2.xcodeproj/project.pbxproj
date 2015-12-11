@@ -64,6 +64,10 @@
 		00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661518E24CBA00CE1F88 /* APIFindClient.h */; };
 		00B9661918E25AE100CE1F88 /* FindClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00B9661718E25AE100CE1F88 /* FindClient.mm */; };
 		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
+		07297F9E1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297F9C1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp */; settings = {ASSET_TAGS = (); }; };
+		07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */; settings = {ASSET_TAGS = (); }; };
+		07297FA21C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA01C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp */; settings = {ASSET_TAGS = (); }; };
+		07297FA31C186ADB003F0735 /* WKUserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		076E884E1A13CADF005E90FC /* APIContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 076E884D1A13CADF005E90FC /* APIContextMenuClient.h */; };
 		0F0C365818C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C365718C051BA00F607D7 /* RemoteLayerTreeHostIOS.mm */; };
 		0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0C365918C0555800F607D7 /* LayerRepresentation.h */; };
@@ -2167,6 +2171,10 @@
 		00B9661518E24CBA00CE1F88 /* APIFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFindClient.h; sourceTree = "<group>"; };
 		00B9661718E25AE100CE1F88 /* FindClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindClient.mm; sourceTree = "<group>"; };
 		00B9661818E25AE100CE1F88 /* FindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindClient.h; sourceTree = "<group>"; };
+		07297F9C1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaPermissionCheckProxy.cpp; sourceTree = "<group>"; };
+		07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionCheckProxy.h; sourceTree = "<group>"; };
+		07297FA01C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionCheck.cpp; sourceTree = "<group>"; };
+		07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserMediaPermissionCheck.h; sourceTree = "<group>"; };
 		076E884D1A13CADF005E90FC /* APIContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContextMenuClient.h; sourceTree = "<group>"; };
 		076E884F1A13CBC6005E90FC /* APIInjectedBundlePageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageContextMenuClient.h; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -6185,6 +6193,8 @@
 				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
 				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
+				07297F9C1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp */,
+				07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,
@@ -6481,6 +6491,8 @@
 				7C89D29E1A678554003A5FDE /* WKUserContentControllerRef.h */,
 				7C2413061AACFCB400A58C15 /* WKUserContentExtensionStoreRef.cpp */,
 				7C2413071AACFCB400A58C15 /* WKUserContentExtensionStoreRef.h */,
+				07297FA01C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp */,
+				07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */,
 				4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */,
 				4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */,
 				7C89D2A11A678875003A5FDE /* WKUserScriptRef.cpp */,
@@ -7774,6 +7786,7 @@
 				BC06F43A12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h in Headers */,
 				2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */,
 				2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */,
+				07297FA31C186ADB003F0735 /* WKUserMediaPermissionCheck.h in Headers */,
 				C0CE72AD1247E78D00BC0EC4 /* HandleMessage.h in Headers */,
 				1AC75A1B1B3368270056745B /* HangDetectionDisabler.h in Headers */,
 				37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */,
@@ -8266,6 +8279,7 @@
 				1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */,
 				51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */,
 				51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */,
+				07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */,
 				BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */,
 				9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */,
 				3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */,
@@ -10084,6 +10098,7 @@
 				BC54CC1312D674EE005C67B0 /* WKGeolocationManager.cpp in Sources */,
 				BC06F44F12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp in Sources */,
 				BC0E619912D6CD120012A72A /* WKGeolocationPosition.cpp in Sources */,
+				07297FA21C186ADB003F0735 /* WKUserMediaPermissionCheck.cpp in Sources */,
 				0FCB4E5018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm in Sources */,
 				0FCB4E5118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm in Sources */,
 				0F174AA7142AAC610039250F /* WKGeometry.cpp in Sources */,
@@ -10098,6 +10113,7 @@
 				0F3C725C196F605200AEDD0C /* WKInspectorHighlightView.mm in Sources */,
 				A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,
+				07297F9E1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp in Sources */,
 				33D3A3B51339600B00709BE4 /* WKMediaCacheManager.cpp in Sources */,
 				C98C48A91B6FD5B500145103 /* WKMediaSessionFocusManager.cpp in Sources */,
 				C9CD439E1B4B025300239E33 /* WKMediaSessionMetadata.cpp in Sources */,

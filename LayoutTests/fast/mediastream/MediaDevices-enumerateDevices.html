@@ -9,6 +9,7 @@
         <script>
             var captureDevices;
             var captureDevice;
+            var havePermission;
 
             description("Tests MediaDevices.enumerateDevices()");
             window.jsTestIsAsync = true;
@@ -17,25 +18,54 @@
             shouldBeType("navigator.mediaDevices.enumerateDevices", "Function");
             debug("");
 
-            navigator.mediaDevices.enumerateDevices()
-                .then(function(devices) {
-                    captureDevices = devices;
-                    shouldBeNonZero("captureDevices.length");
-                    debug("");
-                    devices.forEach(function(device) {
-                        captureDevice = device;
-                        shouldBeNonNull("captureDevice.kind");
-                        shouldBeNonNull("captureDevice.deviceId");
-                        shouldBeNonNull("captureDevice.label");
-                        shouldBeNonNull("captureDevice.groupId");
+            function enumerate(next)
+            {
+                debug(`<br>*** Calling mediaDevices.enumerateDevices when persistent access HAS ${havePermission ? "" : "NOT "}been granted<br>`);
+                navigator.mediaDevices.enumerateDevices()
+                    .then(function(devices) {
+                        captureDevices = devices;
+                        shouldBeNonZero("captureDevices.length");
                         debug("");
+                        devices.forEach(function(device) {
+                            captureDevice = device;
+                            shouldBeNonNull("captureDevice.kind");
+                            shouldBeNonNull("captureDevice.deviceId");
+                            shouldBeNonNull("captureDevice.label");
+                            if (havePermission)
+                                shouldNotBeEqualToString("captureDevice.label", "");
+                            else
+                                shouldBeEmptyString("captureDevice.label");
+                            shouldBeNonNull("captureDevice.groupId");
+                            debug("");
+                        });
+                        if (next)
+                            next();
+                        else
+                            finishJSTest();
+                    })
+                    .catch(function(err) {
+                        testFailed(err.name + ": " + err.message);
                     });
+            }
+            
+            function grantPermission()
+            {
+                if (window.testRunner) {
+                    testRunner.setUserMediaPermission(true);
+                    navigator.mediaDevices
+                        .getUserMedia({audio:{}, video:{}})
+                        .then(function(stream) {
+                            havePermission = true;
+                            enumerate(null);                        
+                        })
+                        .catch(function(err) {
+                            testFailed(`mediaDevices.getUserMedia() failed with ${err.name}: ${err.message}`);
+                        });
+                }
+            }
 
-                    finishJSTest();
-                })
-                .catch(function(err) {
-                    testFailed(err.name + ": " + err.message);
-                });
+            havePermission = false;
+            enumerate(grantPermission);
 
             window.successfullyParsed = true;
         </script>

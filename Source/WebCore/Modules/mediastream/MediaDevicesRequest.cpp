@@ -52,6 +52,8 @@ MediaDevicesRequest::MediaDevicesRequest(ScriptExecutionContext* context, MediaD
 
 MediaDevicesRequest::~MediaDevicesRequest()
 {
+    if (m_permissionCheck)
+        m_permissionCheck->setClient(nullptr);
 }
 
 SecurityOrigin* MediaDevicesRequest::securityOrigin() const
@@ -65,28 +67,46 @@ SecurityOrigin* MediaDevicesRequest::securityOrigin() const
 void MediaDevicesRequest::contextDestroyed()
 {
     ContextDestructionObserver::contextDestroyed();
+    if (m_permissionCheck) {
+        m_permissionCheck->setClient(nullptr);
+        m_permissionCheck = nullptr;
+    }
     m_protector = nullptr;
 }
 
 void MediaDevicesRequest::start()
 {
     m_protector = this;
-    RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(this);
+    m_permissionCheck = UserMediaPermissionCheck::create(*downcast<Document>(scriptExecutionContext()), *this);
+    m_permissionCheck->start();
+}
+
+void MediaDevicesRequest::didCompleteCheck(bool canAccess)
+{
+    m_permissionCheck->setClient(nullptr);
+    m_permissionCheck = nullptr;
+
+    m_hasUserMediaPermission = canAccess;
+
+    callOnMainThread([this] {
+        RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(this);
+    });
 }
 
 void MediaDevicesRequest::didCompleteRequest(const TrackSourceInfoVector& capturedDevices)
 {
-    if (!m_scriptExecutionContext)
+    if (!m_scriptExecutionContext) {
+        m_protector = nullptr;
         return;
+    }
 
     Vector<RefPtr<MediaDeviceInfo>> deviceInfo;
     for (auto device : capturedDevices) {
         TrackSourceInfo* trackInfo = device.get();
         String deviceType = trackInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::audioInputType() : MediaDeviceInfo::videoInputType();
 
-        // FIXME: label is supposed to be empty unless a device is attached to an active MediaStreamTrack in the current browsing context, or
-        // persistent permission to access these local devices has been granted to the page's origin.
-        deviceInfo.append(MediaDeviceInfo::create(m_scriptExecutionContext, trackInfo->label(), trackInfo->id(), trackInfo->groupId(), deviceType));
+        AtomicString label = m_hasUserMediaPermission ? trackInfo->label() : emptyAtom;
+        deviceInfo.append(MediaDeviceInfo::create(m_scriptExecutionContext, label, trackInfo->id(), trackInfo->groupId(), deviceType));
     }
 
     RefPtr<MediaDevicesRequest> protectedThis(this);

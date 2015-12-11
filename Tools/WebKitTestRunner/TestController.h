@@ -32,6 +32,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <string>
 #include <vector>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 OBJC_CLASS WKWebViewConfiguration;
@@ -95,7 +96,8 @@ public:
 
     // MediaStream.
     void setUserMediaPermission(bool);
-    void handleUserMediaPermissionRequest(WKUserMediaPermissionRequestRef);
+    void handleUserMediaPermissionRequest(WKSecurityOriginRef, WKUserMediaPermissionRequestRef);
+    void handleCheckOfUserMediaPermissionForOrigin(WKSecurityOriginRef, const WKUserMediaPermissionCheckRef&);
 
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
@@ -282,7 +284,11 @@ private:
     bool m_isGeolocationPermissionSet;
     bool m_isGeolocationPermissionAllowed;
 
-    Vector<WKRetainPtr<WKUserMediaPermissionRequestRef>> m_userMediaPermissionRequests;
+    WKRetainPtr<WKMutableDictionaryRef> m_userMediaOriginPermissions;
+
+    typedef Vector<std::pair<WKRetainPtr<WKSecurityOriginRef>, WKRetainPtr<WKUserMediaPermissionRequestRef>>> PermissionRequestList;
+    PermissionRequestList m_userMediaPermissionRequests;
+
     bool m_isUserMediaPermissionSet;
     bool m_isUserMediaPermissionAllowed;
 

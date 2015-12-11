@@ -50,6 +50,7 @@ class GeolocationPermissionRequestProxy;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class NotificationPermissionRequest;
+class UserMediaPermissionCheckProxy;
 class UserMediaPermissionRequestProxy;
 class WebColorPickerResultListenerProxy;
 class WebFrameProxy;
@@ -131,6 +132,7 @@ public:
     virtual bool runOpenPanel(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebOpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool decidePolicyForGeolocationPermissionRequest(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, WebKit::GeolocationPermissionRequestProxy*) { return false; }
     virtual bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) { return false; }
+    virtual bool checkUserMediaPermissionForOrigin(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, WebKit::UserMediaPermissionCheckProxy&) { return false; }
     virtual bool decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy*, SecurityOrigin*, WebKit::NotificationPermissionRequest*) { return false; }
 
     // Printing.

@@ -146,6 +146,7 @@ public:
         UserContentController,
         UserContentExtension,
         UserContentExtensionStore,
+        UserMediaPermissionCheck,
         UserMediaPermissionRequest,
         Vibration,
         ViewportAttributes,

@@ -130,6 +130,8 @@
 		07277E5317D018CC0015534D /* JSMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4717D018CC0015534D /* JSMediaStreamTrack.h */; };
 		07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */; };
 		07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */; };
+		07297FA71C1881C5003F0735 /* UserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */; settings = {ASSET_TAGS = (); }; };
+		07297FA81C1881C5003F0735 /* UserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072AE1E5183C0741000A5988 /* PluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1DF183C0741000A5988 /* PluginReplacement.h */; };
 		072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */; };
 		072AE1E8183C0741000A5988 /* QuickTimePluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1E2183C0741000A5988 /* QuickTimePluginReplacement.h */; };
@@ -154,7 +156,7 @@
 		073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */; };
 		073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F819F5864E00E5A045 /* RTCNotifiersMock.h */; };
 		07394EC81BAB2CCD00BE99CD /* MediaDevicesRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */; };
-		07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */; };
+		07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */; };
 		073BE34117D17E01002BD431 /* JSNavigatorUserMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073BE34817D17E7A002BD431 /* JSNavigatorUserMediaError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073BE34217D17E7A002BD431 /* JSNavigatorUserMediaError.cpp */; };
@@ -167,8 +169,6 @@
 		0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedTextTrack.cpp */; };
 		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
 		076306D017E1478D005A7C4E /* MediaStreamTrackSourcesCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 076306CC17E1478D005A7C4E /* MediaStreamTrackSourcesCallback.h */; };
-		076306D217E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076306CE17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp */; };
-		076306D317E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 076306CF17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h */; };
 		076306D717E149CF005A7C4E /* SourceInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076306D417E149CF005A7C4E /* SourceInfo.cpp */; };
 		076306D817E149D0005A7C4E /* SourceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 076306D517E149CF005A7C4E /* SourceInfo.h */; };
 		076306DC17E15FB0005A7C4E /* JSMediaStreamTrackSourcesCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076306DA17E15FB0005A7C4E /* JSMediaStreamTrackSourcesCallback.cpp */; };
@@ -1148,7 +1148,6 @@
 		2D77AC2B1BF2B9870072470A /* NSTextFinderSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D77AC281BF2B9860072470A /* NSTextFinderSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D77AC2D1BF2B9A00072470A /* NSViewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D77AC2C1BF2B9A00072470A /* NSViewSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */; };
-		2D7ED0AC1BAE99170043B3E5 /* UserMediaClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7ED0AA1BAE99170043B3E5 /* UserMediaClientMock.h */; };
 		2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */; };
 		2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8287F516E4A0380086BD00 /* HitTestLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D8FEBDC143E3EF70072502B /* CSSCrossfadeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8FEBDA143E3EF70072502B /* CSSCrossfadeValue.cpp */; };
@@ -7438,6 +7437,8 @@
 		07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackEvent.cpp; sourceTree = "<group>"; };
 		07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrackEvent.h; sourceTree = "<group>"; };
 		072847E216EBC5B00043CFA4 /* PlatformTextTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformTextTrack.h; sourceTree = "<group>"; };
+		07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaPermissionCheck.cpp; sourceTree = "<group>"; };
+		07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionCheck.h; sourceTree = "<group>"; };
 		072AE1DF183C0741000A5988 /* PluginReplacement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginReplacement.h; sourceTree = "<group>"; };
 		072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickTimePluginReplacement.mm; sourceTree = "<group>"; };
 		072AE1E1183C0741000A5988 /* QuickTimePluginReplacement.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = QuickTimePluginReplacement.css; sourceTree = "<group>"; };
@@ -7477,8 +7478,6 @@
 		0753860114489E9800B78452 /* CachedTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTextTrack.h; sourceTree = "<group>"; };
 		076306CC17E1478D005A7C4E /* MediaStreamTrackSourcesCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackSourcesCallback.h; sourceTree = "<group>"; };
 		076306CD17E1478D005A7C4E /* MediaStreamTrackSourcesCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamTrackSourcesCallback.idl; sourceTree = "<group>"; };
-		076306CE17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrackSourcesRequest.cpp; sourceTree = "<group>"; };
-		076306CF17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackSourcesRequest.h; sourceTree = "<group>"; };
 		076306D417E149CF005A7C4E /* SourceInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceInfo.cpp; sourceTree = "<group>"; };
 		076306D517E149CF005A7C4E /* SourceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceInfo.h; sourceTree = "<group>"; };
 		076306D617E149CF005A7C4E /* SourceInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourceInfo.idl; sourceTree = "<group>"; };
@@ -8499,7 +8498,6 @@
 		2D77AC281BF2B9860072470A /* NSTextFinderSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTextFinderSPI.h; sourceTree = "<group>"; };
 		2D77AC2C1BF2B9A00072470A /* NSViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewSPI.h; sourceTree = "<group>"; };
 		2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerEventBasedMock.h; sourceTree = "<group>"; };
-		2D7ED0AA1BAE99170043B3E5 /* UserMediaClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaClientMock.h; sourceTree = "<group>"; };
 		2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestLocation.cpp; sourceTree = "<group>"; };
 		2D8287F516E4A0380086BD00 /* HitTestLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitTestLocation.h; sourceTree = "<group>"; };
 		2D8FEBDA143E3EF70072502B /* CSSCrossfadeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCrossfadeValue.cpp; sourceTree = "<group>"; };
@@ -15126,8 +15124,6 @@
 				07221B5917CEC32700848E51 /* MediaStreamTrackEvent.idl */,
 				076306CC17E1478D005A7C4E /* MediaStreamTrackSourcesCallback.h */,
 				076306CD17E1478D005A7C4E /* MediaStreamTrackSourcesCallback.idl */,
-				076306CE17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp */,
-				076306CF17E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h */,
 				0705853917FE0770005F2BCB /* MediaTrackConstraint.cpp */,
 				0705851D17FDC140005F2BCB /* MediaTrackConstraint.h */,
 				0705851E17FDC140005F2BCB /* MediaTrackConstraint.idl */,
@@ -15204,6 +15200,8 @@
 				07221B8D17CEC32700848E51 /* UserMediaClient.h */,
 				07221B8E17CEC32700848E51 /* UserMediaController.cpp */,
 				07221B8F17CEC32700848E51 /* UserMediaController.h */,
+				07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */,
+				07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */,
 				07221B9017CEC32700848E51 /* UserMediaRequest.cpp */,
 				07221B9117CEC32700848E51 /* UserMediaRequest.h */,
 			);
@@ -17151,7 +17149,6 @@
 				0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */,
 				0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */,
 				2D7ED0A91BAE99170043B3E5 /* TimerEventBasedMock.h */,
-				2D7ED0AA1BAE99170043B3E5 /* UserMediaClientMock.h */,
 			);
 			path = mock;
 			sourceTree = "<group>";
@@ -26195,6 +26192,7 @@
 				CDAB6D2E17C814EE00C60B34 /* JSMediaControlsHost.h in Headers */,
 				159741DB1B7D140100201C92 /* JSMediaDeviceInfo.h in Headers */,
 				15739BBB1B42012D00D258C1 /* JSMediaDevices.h in Headers */,
+				07297FA81C1881C5003F0735 /* UserMediaPermissionCheck.h in Headers */,
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
@@ -26704,7 +26702,6 @@
 				078E091917D14D1C00420AA1 /* MediaStreamTrackEvent.h in Headers */,
 				07FFDE69181AED420072D409 /* MediaStreamTrackPrivate.h in Headers */,
 				076306D017E1478D005A7C4E /* MediaStreamTrackSourcesCallback.h in Headers */,
-				076306D317E1478D005A7C4E /* MediaStreamTrackSourcesRequest.h in Headers */,
 				076306E317E22A43005A7C4E /* MediaStreamTrackSourcesRequestClient.h in Headers */,
 				CD641EC01819B36000EE4C41 /* MediaTimeAVFoundation.h in Headers */,
 				CD60C0C7193E87C7003C656B /* MediaTimeQTKit.h in Headers */,
@@ -27893,7 +27890,6 @@
 				2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */,
 				9920398318B95BC600B39AF9 /* UserInputBridge.h in Headers */,
 				078E092E17D14D1C00420AA1 /* UserMediaClient.h in Headers */,
-				2D7ED0AC1BAE99170043B3E5 /* UserMediaClientMock.h in Headers */,
 				078E092F17D14D1C00420AA1 /* UserMediaController.h in Headers */,
 				078E093017D14D1C00420AA1 /* UserMediaRequest.h in Headers */,
 				7C3B79721908757B00B47A2D /* UserMessageHandler.h in Headers */,
@@ -29687,6 +29683,7 @@
 				517139051BF64DEC000D5F01 /* MemoryObjectStoreCursor.cpp in Sources */,
 				4ACBC0CA12713D0A0094F9B2 /* JSDOMSettableTokenList.cpp in Sources */,
 				C5137CF211A58378004ADB99 /* JSDOMStringList.cpp in Sources */,
+				07297FA71C1881C5003F0735 /* UserMediaPermissionCheck.cpp in Sources */,
 				9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */,
 				BC64649711D82349006455B0 /* JSDOMStringMap.cpp in Sources */,
 				BC64649C11D8238C006455B0 /* JSDOMStringMapCustom.cpp in Sources */,
@@ -30399,7 +30396,6 @@
 				078E090217D14CEE00420AA1 /* MediaStreamTrack.cpp in Sources */,
 				078E090317D14CEE00420AA1 /* MediaStreamTrackEvent.cpp in Sources */,
 				07FFDE68181AED420072D409 /* MediaStreamTrackPrivate.cpp in Sources */,
-				076306D217E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp in Sources */,
 				CD641EBF1819B36000EE4C41 /* MediaTimeAVFoundation.cpp in Sources */,
 				CD60C0C6193E87C7003C656B /* MediaTimeQTKit.mm in Sources */,
 				0705853A17FE0770005F2BCB /* MediaTrackConstraint.cpp in Sources */,

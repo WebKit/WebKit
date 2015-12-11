@@ -1,3 +1,27 @@
+2015-12-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Expose media capture devices persistent permissions to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=152087
+
+        Add support for the new user media permission checker page UI client method.
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::decidePolicyForUserMediaPermissionRequest):
+        (WTR::checkUserMediaPermissionForOrigin):
+        (WTR::TestController::createOtherPage): Add checkUserMediaPermissionForOrigin.
+        (WTR::TestController::createWebViewWithOptions): Ditto.
+        (WTR::TestController::resetStateToConsistentValues): Clear m_userMediaOriginPermissions.
+        (WTR::originUserVisibleName): New, create a string for the origin.
+        (WTR::TestController::handleCheckOfUserMediaPermissionForOrigin): Set the WKUserMediaPermissionCheckRef
+          according to the state of the origin permission map.
+        (WTR::TestController::handleUserMediaPermissionRequest): Remember both the origin and the
+          request so we can update the origin permission map in decidePolicyForUserMediaPermissionRequestIfPossible.
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible): Update the
+          origin permission map.
+        * WebKitTestRunner/TestController.h:
+
 2015-12-10  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r192796) WKBundlePageResourceLoadClient should be able to setHTTPBody in willSendRequestForFrame

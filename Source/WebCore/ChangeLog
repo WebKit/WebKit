@@ -1,3 +1,51 @@
+2015-12-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Expose media capture devices persistent permissions to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=152087
+
+        Reviewed by Chris Dumez.
+
+        No new tests, an existing test was updated to test the change.
+
+        * CMakeLists.txt: Add UserMediaPermissionCheck.cpp.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::~MediaDevicesRequest): Clear the permission checker client.
+        (WebCore::MediaDevicesRequest::contextDestroyed): Ditto.
+        (WebCore::MediaDevicesRequest::start): Create a permission checker and start it running.
+        (WebCore::MediaDevicesRequest::didCompleteCheck): Start the media source checker.
+        (WebCore::MediaDevicesRequest::didCompleteRequest): Only include a track's label if the
+          page has permission to use a capture device.
+        * Modules/mediastream/MediaDevicesRequest.h:
+
+        * Modules/mediastream/UserMediaClient.h: Include prototypes for permission checker.
+        (WebCore::UserMediaClient::~UserMediaClient):
+        
+        * Modules/mediastream/MediaStreamTrackSourcesRequest.cpp: Removed, not longer used.
+        * Modules/mediastream/MediaStreamTrackSourcesRequest.h:
+
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::checkUserMediaPermission): New.
+        (WebCore::UserMediaController::cancelUserMediaPermissionCheck): Ditto.
+
+        * Modules/mediastream/UserMediaPermissionCheck.cpp: Added.
+        (WebCore::UserMediaPermissionCheck::create):
+        (WebCore::UserMediaPermissionCheck::UserMediaPermissionCheck):
+        (WebCore::UserMediaPermissionCheck::~UserMediaPermissionCheck):
+        (WebCore::UserMediaPermissionCheck::securityOrigin):
+        (WebCore::UserMediaPermissionCheck::contextDestroyed):
+        (WebCore::UserMediaPermissionCheck::start):
+        (WebCore::UserMediaPermissionCheck::setDeviceAccessMode):
+        * Modules/mediastream/UserMediaPermissionCheck.h: Added.
+        (WebCore::UserMediaPermissionCheckClient::~UserMediaPermissionCheckClient):
+        (WebCore::UserMediaPermissionCheck::setClient):
+
+        * WebCore.xcodeproj/project.pbxproj: Add UserMediaPermissionCheck.cpp|.h
+
+        * platform/mock/UserMediaClientMock.h: Removed, it is no longer used.
+
+        * testing/Internals.cpp: Remove UserMediaClientMock.h include, it is gone.
+
 2015-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Build fix

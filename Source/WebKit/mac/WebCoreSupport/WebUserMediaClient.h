@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class UserMediaClient;
+class UserMediaPermissionCheck;
 class UserMediaRequest;
 }
 
@@ -44,9 +45,13 @@ public:
     ~WebUserMediaClient();
 
     // UserMediaClient
-    virtual void requestUserMediaAccess(Ref<WebCore::UserMediaRequest>&&) override;
-    virtual void cancelUserMediaAccessRequest(WebCore::UserMediaRequest&) override;
-    virtual void pageDestroyed() override;
+    void requestUserMediaAccess(WebCore::UserMediaRequest&) override;
+    void cancelUserMediaAccessRequest(WebCore::UserMediaRequest&) override;
+
+    void checkUserMediaPermission(WebCore::UserMediaPermissionCheck&) override;
+    void cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck&) override;
+
+    void pageDestroyed() override;
 
 private:
     WebView* m_webView;
