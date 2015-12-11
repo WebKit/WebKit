@@ -1,5 +1,14 @@
 2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Speculative build fix.
+
+        Reviewed by Dana Burkart and Babak Shafiei.
+
+        * dom/Document.h:
+        Resolve a conflict that was missed during the merge of r193966
+
+2015-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r193922. rdar://problem/23727472
 
     2015-12-10  Enrica Casucci  <enrica@apple.com>

@@ -113,11 +113,8 @@ class HTMLIFrameElement;
 class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
-<<<<<<< HEAD
 class HTMLNameCollection;
-=======
 class HTMLPictureElement;
->>>>>>> 58f8aa0... Picture element needs to respond to dynamic viewport changes.
 class HTMLScriptElement;
 class HitTestRequest;
 class HitTestResult;
