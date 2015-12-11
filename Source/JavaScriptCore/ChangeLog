@@ -1,3 +1,20 @@
+2015-12-10  Daniel Bates  <dabates@apple.com>
+
+        [CSP] eval() is not blocked for stringified literals
+        https://bugs.webkit.org/show_bug.cgi?id=152158
+        <rdar://problem/15775625>
+
+        Reviewed by Saam Barati.
+
+        Fixes an issue where stringified literals can be eval()ed despite being disallowed by
+        Content Security Policy of the page.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval): Throw a JavaScript EvalError exception if eval() is disallowed for the page
+        and return undefined.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval): Ditto.
+
 2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix jsc symlink creation on iOS

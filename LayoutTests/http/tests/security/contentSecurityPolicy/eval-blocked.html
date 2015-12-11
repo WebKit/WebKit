@@ -5,14 +5,45 @@
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
+
+var dummy = 79;
 </script>
 </head>
 <body>
-<script>
-eval("alert('FAIL (1 of 2)')");
-</script>
-<script>
-window.eval("alert('FAIL (2 of 2)')");
-</script>
+<!-- eval() string literal "alert()" -->
+<script>eval("alert('FAIL')")</script>
+<script>window.eval("alert('FAIL')")</script>
+<!-- eval() non-string literal (should be allowed) -->
+<script>eval(0)</script>
+<script>window.eval(0)</script>
+<script>eval(1)</script>
+<script>window.eval(1)</script>
+<script>eval(7)</script>
+<script>window.eval(7)</script>
+<script>eval(3.14)</script>
+<script>window.eval(3.14)</script>
+<script>eval(true)</script>
+<script>window.eval(true)</script>
+<script>eval(false)</script>
+<script>window.eval(false)</script>
+<script>eval(Function)</script>
+<script>window.eval(Function)</script>
+<!-- eval() string literal -->
+<script>eval("")</script>
+<script>window.eval("")</script>
+<script>eval("0")</script>
+<script>window.eval("0")</script>
+<script>eval("1")</script>
+<script>window.eval("1")</script>
+<script>eval("2.73")</script>
+<script>window.eval("2.73")</script>
+<script>eval("true")</script>
+<script>window.eval("true")</script>
+<script>eval("false")</script>
+<script>window.eval("false")</script>
+<script>eval("Object")</script>
+<script>window.eval("Object")</script>
+<script>eval("dummy")</script>
+<script>window.eval("dummy")</script>
 </body>
 </html>

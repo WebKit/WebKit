@@ -144,8 +144,13 @@ JSValue eval(CallFrame* callFrame)
     JSValue program = callFrame->argument(0);
     if (!program.isString())
         return program;
-    
+
     TopCallFrameSetter topCallFrame(callFrame->vm(), callFrame);
+    JSGlobalObject* globalObject = callFrame->lexicalGlobalObject();
+    if (!globalObject->evalEnabled()) {
+        callFrame->vm().throwException(callFrame, createEvalError(callFrame, globalObject->evalDisabledErrorMessage()));
+        return jsUndefined();
+    }
     String programSource = asString(program)->value(callFrame);
     if (callFrame->hadException())
         return JSValue();

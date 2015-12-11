@@ -1,3 +1,26 @@
+2015-12-10  Daniel Bates  <dabates@apple.com>
+
+        [CSP] eval() is not blocked for stringified literals
+        https://bugs.webkit.org/show_bug.cgi?id=152158
+        <rdar://problem/15775625>
+
+        Reviewed by Saam Barati.
+
+        Update test LayoutTests/http/tests/security/contentSecurityPolicy/eval-blocked.html to be
+        more comprehensive.
+
+        Add tests to ensure that we block eval() from within an external JavaScript script when the
+        policy of the page disallows eval() and that we block eval() inside a subframe that disallows
+        eval() when the page in the main frame allows eval().
+
+        * http/tests/security/contentSecurityPolicy/eval-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/eval-blocked-in-external-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-blocked-in-external-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-blocked-in-subframe-expected.txt: Copied from LayoutTests/http/tests/security/contentSecurityPolicy/eval-blocked-expected.txt.
+        * http/tests/security/contentSecurityPolicy/eval-blocked-in-subframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-blocked.html:
+        * http/tests/security/contentSecurityPolicy/resources/eval-blocked-in-external-script.js: Added.
+
 2015-12-10  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html fails
