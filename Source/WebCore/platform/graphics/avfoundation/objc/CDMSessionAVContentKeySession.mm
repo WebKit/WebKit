@@ -80,13 +80,13 @@ typedef NS_ENUM(NSInteger, AVContentKeyRequestStatus) {
 - (void)renewExpiringContentKeyResponseData;
 @end
 
-@interface CDMSessionAVContentKeySessionDelegate : NSObject {
+@interface WebCDMSessionAVContentKeySessionDelegate : NSObject {
     WebCore::CDMSessionAVContentKeySession *m_parent;
 }
 - (void)invalidate;
 @end
 
-@implementation CDMSessionAVContentKeySessionDelegate
+@implementation WebCDMSessionAVContentKeySessionDelegate
 - (id)initWithParent:(WebCore::CDMSessionAVContentKeySession *)parent
 {
     if ((self = [super init]))
@@ -125,7 +125,7 @@ namespace WebCore {
 
 CDMSessionAVContentKeySession::CDMSessionAVContentKeySession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, CDMSessionClient* client)
     : CDMSessionMediaSourceAVFObjC(cdm, client)
-    , m_contentKeySessionDelegate(adoptNS([[CDMSessionAVContentKeySessionDelegate alloc] initWithParent:this]))
+    , m_contentKeySessionDelegate(adoptNS([[WebCDMSessionAVContentKeySessionDelegate alloc] initWithParent:this]))
     , m_protocolVersions(protocolVersions)
     , m_mode(Normal)
 {

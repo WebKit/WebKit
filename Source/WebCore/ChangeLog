@@ -1,3 +1,18 @@
+2015-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        check-for-inappropriate-objc-class-names should check all class names, not just externally visible ones
+        https://bugs.webkit.org/show_bug.cgi?id=152156
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::CDMSessionAVContentKeySession):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::CDMSessionAVStreamSession):
+        Rename classes with a "Web" prefix.
+
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html fails.

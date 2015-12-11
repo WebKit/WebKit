@@ -1,3 +1,16 @@
+2015-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        check-for-inappropriate-objc-class-names should check all class names, not just externally visible ones
+        https://bugs.webkit.org/show_bug.cgi?id=152156
+
+        Reviewed by Dan Bernstein.
+
+        Our frameworks should appropriately prefix all ObjC classes,
+        not just external symbols.
+
+        * Scripts/check-for-inappropriate-objc-class-names:
+        Remove the -g switch to check all ObjC class names.
+
 2015-12-10  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Expose media capture devices persistent permissions to WebCore

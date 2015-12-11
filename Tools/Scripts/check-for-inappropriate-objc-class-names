@@ -60,7 +60,7 @@ my $pattern = "^(" . join('|', @allowedPrefixes) . ")";
 my $sawError = 0;
 
 if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePathAge < $buildTimestampAge || $scriptAge < $buildTimestampAge) {
-    if (!open NM, "(nm -Ugjp '$executablePath' | sed 's/^/STDOUT:/') 2>&1 |") {
+    if (!open NM, "(nm -Ujp '$executablePath' | sed 's/^/STDOUT:/') 2>&1 |") {
         print "ERROR: Could not open $executablePath\n";
         $sawError = 1;
         next;

@@ -1,3 +1,14 @@
+2015-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        check-for-inappropriate-objc-class-names should check all class names, not just externally visible ones
+        https://bugs.webkit.org/show_bug.cgi?id=152156
+
+        Reviewed by Dan Bernstein.
+
+        * llvm/InitializeLLVMMac.cpp:
+        Remove stale comment. The ObjC class this comment referenced
+        has already been removed.
+
 2015-12-11  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Little cleanup of FTLOutput type casts and conversions

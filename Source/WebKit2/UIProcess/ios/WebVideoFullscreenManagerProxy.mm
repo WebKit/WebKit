@@ -39,11 +39,11 @@
 #import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
 
-@interface WebLayerHostView : UIView
+@interface WKLayerHostView : UIView
 @property (nonatomic, assign) uint32_t contextID;
 @end
 
-@implementation WebLayerHostView
+@implementation WKLayerHostView
 
 + (Class)layerClass {
     return [CALayerHost class];
@@ -339,9 +339,9 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
 
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-    RetainPtr<WebLayerHostView> view = static_cast<WebLayerHostView*>(model->layerHostView());
+    RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
     if (!view) {
-        view = adoptNS([[WebLayerHostView alloc] init]);
+        view = adoptNS([[WKLayerHostView alloc] init]);
         model->setLayerHostView(view);
     }
     [view setContextID:videoLayerID];

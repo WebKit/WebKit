@@ -34,7 +34,7 @@
 
 OBJC_CLASS AVContentKeyRequest;
 OBJC_CLASS AVContentKeySession;
-OBJC_CLASS CDMSessionAVContentKeySessionDelegate;
+OBJC_CLASS WebCDMSessionAVContentKeySessionDelegate;
 
 namespace WebCore {
 
@@ -66,7 +66,7 @@ protected:
     AVContentKeySession* contentKeySession();
 
     RetainPtr<AVContentKeySession> m_contentKeySession;
-    RetainPtr<CDMSessionAVContentKeySessionDelegate> m_contentKeySessionDelegate;
+    RetainPtr<WebCDMSessionAVContentKeySessionDelegate> m_contentKeySessionDelegate;
     RetainPtr<AVContentKeyRequest> m_keyRequest;
     RefPtr<Uint8Array> m_initData;
     RetainPtr<NSData> m_expiredSession;

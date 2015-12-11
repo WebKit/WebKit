@@ -32,7 +32,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 
-OBJC_CLASS OneShotDisplayLinkHandler;
+OBJC_CLASS WKOneShotDisplayLinkHandler;
 
 namespace WebKit {
 
@@ -107,7 +107,7 @@ private:
 
     CallbackMap m_callbacks;
 
-    RetainPtr<OneShotDisplayLinkHandler> m_displayLinkHandler;
+    RetainPtr<WKOneShotDisplayLinkHandler> m_displayLinkHandler;
 };
 
 } // namespace WebKit

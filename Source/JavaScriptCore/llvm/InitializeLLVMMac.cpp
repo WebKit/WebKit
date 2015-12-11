@@ -32,9 +32,6 @@
 #include "InitializeLLVMPOSIX.h"
 #include <wtf/StringPrintStream.h>
 
-// Use the "JS" prefix to make check-for-inappropriate-objc-class-names happy. I
-// think this is better than hacking that script.
-
 namespace JSC {
 
 LLVMInitializerFunction getLLVMInitializerFunction(bool verbose)

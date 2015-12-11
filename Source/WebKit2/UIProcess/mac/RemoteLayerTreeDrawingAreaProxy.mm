@@ -45,7 +45,7 @@ using namespace WebCore;
 // FIXME: Mac will need something similar; we should figure out how to share this with DisplayRefreshMonitor without
 // breaking WebKit1 behavior or WebKit2-WebKit1 coexistence.
 #if PLATFORM(IOS)
-@interface OneShotDisplayLinkHandler : NSObject {
+@interface WKOneShotDisplayLinkHandler : NSObject {
     WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;
     CADisplayLink *_displayLink;
 }
@@ -57,7 +57,7 @@ using namespace WebCore;
 
 @end
 
-@implementation OneShotDisplayLinkHandler
+@implementation WKOneShotDisplayLinkHandler
 
 - (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy
 {
@@ -104,7 +104,7 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& w
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
     , m_remoteLayerTreeHost(*this)
 #if PLATFORM(IOS)
-    , m_displayLinkHandler(adoptNS([[OneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]))
+    , m_displayLinkHandler(adoptNS([[WKOneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]))
 #endif
 {
 #if USE(IOSURFACE)

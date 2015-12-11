@@ -34,7 +34,7 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
 OBJC_CLASS AVStreamSession;
-OBJC_CLASS CDMSessionAVStreamSessionObserver;
+OBJC_CLASS WebCDMSessionAVStreamSessionObserver;
 
 namespace WebCore {
 
@@ -65,7 +65,7 @@ protected:
     RefPtr<Uint8Array> m_initData;
     RefPtr<Uint8Array> m_certificate;
     RetainPtr<NSData> m_expiredSession;
-    RetainPtr<CDMSessionAVStreamSessionObserver> m_dataParserObserver;
+    RetainPtr<WebCDMSessionAVStreamSessionObserver> m_dataParserObserver;
     Vector<int> m_protocolVersions;
     enum { Normal, KeyRelease } m_mode;
 };

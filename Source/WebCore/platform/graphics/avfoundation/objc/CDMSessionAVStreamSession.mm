@@ -66,12 +66,12 @@ SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVStreamSessionContentProtectionSessio
 + (void)removePendingExpiredSessionReports:(NSArray *)expiredSessionReports withAppIdentifier:(NSData *)appIdentifier storageDirectoryAtURL:(NSURL *)storageURL;
 @end
 
-@interface CDMSessionAVStreamSessionObserver : NSObject {
+@interface WebCDMSessionAVStreamSessionObserver : NSObject {
     WebCore::CDMSessionAVStreamSession *m_parent;
 }
 @end
 
-@implementation CDMSessionAVStreamSessionObserver
+@implementation WebCDMSessionAVStreamSessionObserver
 - (id)initWithParent:(WebCore::CDMSessionAVStreamSession *)parent
 {
     if ((self = [super init]))
@@ -98,7 +98,7 @@ namespace WebCore {
 CDMSessionAVStreamSession::CDMSessionAVStreamSession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, CDMSessionClient* client)
     : CDMSessionMediaSourceAVFObjC(cdm, client)
     , m_weakPtrFactory(this)
-    , m_dataParserObserver(adoptNS([[CDMSessionAVStreamSessionObserver alloc] initWithParent:this]))
+    , m_dataParserObserver(adoptNS([[WebCDMSessionAVStreamSessionObserver alloc] initWithParent:this]))
     , m_protocolVersions(protocolVersions)
     , m_mode(Normal)
 {
