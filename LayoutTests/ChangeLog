@@ -1,3 +1,13 @@
+2015-12-10  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/objectstore-count.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152167
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/objectstore-count-expected.txt:
+
 2015-12-10  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !simpleLineLayout() in WebCore::RenderText::collectSelectionRectsForLineBoxes

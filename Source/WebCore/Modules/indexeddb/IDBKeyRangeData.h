@@ -43,6 +43,15 @@ struct IDBKeyRangeData {
     {
     }
 
+    static IDBKeyRangeData allKeys()
+    {
+        IDBKeyRangeData result;
+        result.isNull = false;
+        result.lowerKey = IDBKeyData::minimum();
+        result.upperKey = IDBKeyData::maximum();
+        return result;
+    }
+
     IDBKeyRangeData(IDBKey*);
     IDBKeyRangeData(const IDBKeyData&);
 

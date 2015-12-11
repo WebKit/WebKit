@@ -1,3 +1,19 @@
+2015-12-10  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: storage/indexeddb/objectstore-count.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152167
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        (WebCore::IDBKeyRangeData::allKeys):
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::count): If the passed in IDBKeyRange* is nullptr, use IDBKeyRangeData::allKeys.
+        (WebCore::IDBClient::IDBObjectStore::doCount): Change an isNull check to a more correct !isValid() check.
+
 2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Binding and builtin generators should lowercase RTCXX as rtcXX and not rTCXX

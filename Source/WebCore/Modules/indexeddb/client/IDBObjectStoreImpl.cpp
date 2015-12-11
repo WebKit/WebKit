@@ -539,9 +539,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* contex
         return nullptr;
     }
 
-    IDBKeyRangeData range;
-    range.isNull = false;
-    return doCount(*context, range, ec);
+    return doCount(*context, IDBKeyRangeData::allKeys(), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCodeWithMessage& ec)
@@ -573,7 +571,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* contex
         return nullptr;
     }
 
-    return doCount(*context, IDBKeyRangeData(range), ec);
+    return doCount(*context, range ? IDBKeyRangeData(range) : IDBKeyRangeData::allKeys(), ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCodeWithMessage& ec)
@@ -589,7 +587,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::doCount(ScriptExecutionContext& cont
         return nullptr;
     }
 
-    if (range.isNull) {
+    if (!range.isValid()) {
         ec.code = IDBDatabaseException::DataError;
         return nullptr;
     }
