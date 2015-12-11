@@ -1,5 +1,16 @@
 2015-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Font Features] r193894 introduces leaks
+        https://bugs.webkit.org/show_bug.cgi?id=152154
+
+        Reviewed by Joe Pecoraro.
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::smallCapsTrueTypeDictionary):
+        (WebCore::createCTFontWithoutSynthesizableFeatures):
+
+2015-12-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Build fix
 
         Unreviewed.
