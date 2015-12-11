@@ -42,7 +42,7 @@
 namespace WebCore {
 
 void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, ColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
+    const FloatPoint& phase, const FloatSize&, ColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
 {
     RefPtr<cairo_surface_t> surface = nativeImageForCurrentFrame();
     if (!surface) // If it's too early we won't have an image yet.
