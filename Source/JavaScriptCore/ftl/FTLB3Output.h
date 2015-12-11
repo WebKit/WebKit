@@ -128,8 +128,8 @@ public:
     LValue mul(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Mul, origin(), left, right); }
     LValue div(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Div, origin(), left, right); }
     LValue chillDiv(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ChillDiv, origin(), left, right); }
-    LValue mod(LValue left, LValue right) { m_block->appendNew<B3::Value>(m_proc, B3::Mod, origin(), left, right); }
-    LValue chillMod(LValue left, LValue right) { m_block->appendNew<B3::Value>(m_proc, B3::ChillMod, origin(), left, right); }
+    LValue mod(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::Mod, origin(), left, right); }
+    LValue chillMod(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ChillMod, origin(), left, right); }
     LValue neg(LValue value)
     {
         LValue zero = m_block->appendIntConstant(m_proc, origin(), value->type(), 0);
@@ -211,12 +211,61 @@ public:
     LValue load32(TypedPointer pointer) { return load(pointer, B3::Int32); }
     LValue load64(TypedPointer pointer) { return load(pointer, B3::Int64); }
     LValue loadPtr(TypedPointer pointer) { return load(pointer, B3::pointerType()); }
-    LValue loadFloatToDouble(TypedPointer);
+    LValue loadFloat(TypedPointer pointer) { return load(pointer, B3::Float); }
     LValue loadDouble(TypedPointer pointer) { return load(pointer, B3::Double); }
-    void store32(LValue value, TypedPointer pointer) { store(value, pointer); }
-    void store64(LValue value, TypedPointer pointer) { store(value, pointer); }
-    void storePtr(LValue value, TypedPointer pointer) { store(value, pointer); }
-    void storeDouble(LValue value, TypedPointer pointer) { store(value, pointer); }
+    void store32As8(LValue value, TypedPointer pointer);
+    void store32As16(LValue value, TypedPointer pointer);
+    void store32(LValue value, TypedPointer pointer)
+    {
+        ASSERT(value->type() == B3::Int32);
+        store(value, pointer);
+    }
+    void store64(LValue value, TypedPointer pointer)
+    {
+        ASSERT(value->type() == B3::Int64);
+        store(value, pointer);
+    }
+    void storePtr(LValue value, TypedPointer pointer)
+    {
+        ASSERT(value->type() == B3::pointerType());
+        store(value, pointer);
+    }
+    void storeFloat(LValue value, TypedPointer pointer)
+    {
+        ASSERT(value->type() == B3::Float);
+        store(value, pointer);
+    }
+    void storeDouble(LValue value, TypedPointer pointer)
+    {
+        ASSERT(value->type() == B3::Double);
+        store(value, pointer);
+    }
+
+    enum LoadType {
+        Load8SignExt32,
+        Load8ZeroExt32,
+        Load16SignExt32,
+        Load16ZeroExt32,
+        Load32,
+        Load64,
+        LoadPtr,
+        LoadFloat,
+        LoadDouble
+    };
+
+    LValue load(TypedPointer, LoadType);
+    
+    enum StoreType {
+        Store32As8,
+        Store32As16,
+        Store32,
+        Store64,
+        StorePtr,
+        StoreFloat,
+        StoreDouble
+    };
+
+    void store(LValue, TypedPointer, StoreType);
 
     LValue addPtr(LValue value, ptrdiff_t immediate = 0)
     {
@@ -342,11 +391,16 @@ public:
     LValue extractValue(LValue aggVal, unsigned index) { CRASH(); }
 
     template<typename VectorType>
-    LValue call(LType type, LValue function, const VectorType& vector) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), B3::Value::AdjacencyList(vector)); }
-    LValue call(LType type, LValue function) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin()); }
-    LValue call(LType type, LValue function, LValue arg1) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), arg1); }
+    LValue call(LType type, LValue function, const VectorType& vector)
+    {
+        B3::CCallValue* result = m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), function);
+        result->children().appendVector(vector);
+        return result;
+    }
+    LValue call(LType type, LValue function) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), function); }
+    LValue call(LType type, LValue function, LValue arg1) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), function, arg1); }
     template<typename... Args>
-    LValue call(LType type, LValue function, LValue arg1, Args... args) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), arg1, args...); }
+    LValue call(LType type, LValue function, LValue arg1, Args... args) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), function, arg1, args...); }
 
     template<typename FunctionType>
     LValue operation(FunctionType function) { return constIntPtr(bitwise_cast<void*>(function)); }

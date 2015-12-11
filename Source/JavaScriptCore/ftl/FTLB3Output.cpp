@@ -97,15 +97,21 @@ LValue Output::load16ZeroExt32(TypedPointer pointer)
     return load;
 }
 
-LValue Output::loadFloatToDouble(TypedPointer pointer)
-{
-    LValue loadedFloat = load(pointer, floatType);
-    return m_block->appendNew<B3::Value>(m_proc, B3::FloatToDouble, origin(), loadedFloat);
-}
-
 void Output::store(LValue value, TypedPointer pointer)
 {
     LValue store = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Store, origin(), value, pointer.value());
+    pointer.heap().decorateInstruction(store, *m_heaps);
+}
+
+void Output::store32As8(LValue value, TypedPointer pointer)
+{
+    LValue store = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Store8, origin(), value, pointer.value());
+    pointer.heap().decorateInstruction(store, *m_heaps);
+}
+
+void Output::store32As16(LValue value, TypedPointer pointer)
+{
+    LValue store = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Store16, origin(), value, pointer.value());
     pointer.heap().decorateInstruction(store, *m_heaps);
 }
 

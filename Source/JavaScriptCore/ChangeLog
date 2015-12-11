@@ -1,3 +1,106 @@
+2015-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be able to run quicksort asm.js test
+        https://bugs.webkit.org/show_bug.cgi?id=152105
+
+        Reviewed by Geoffrey Garen.
+
+        This covers making all of the changes needed to run quicksort.js from AsmBench.
+
+        - Reintroduced float types to FTLLower since we now have B3::Float.
+
+        - Gave FTL::Output the ability to speak of load types and store types separately from LValue
+          types. This dodges the problem that B3 doesn't have types for Int8 and Int16 but supports loads
+          and stores of that type.
+
+        - Implemented Mod in B3 and wrote tests.
+
+        I also fixed a pre-existing bug in a test that appeared to only manifest in release builds.
+
+        Currently, B3's performance on asm.js tests is not good. It should be easy to fix:
+
+        - B3 should strength-reduce the shifting madness that happens in asm.js memory accesses
+          https://bugs.webkit.org/show_bug.cgi?id=152106
+
+        - B3 constant hoisting should have a story for the asm.js heap constant
+          https://bugs.webkit.org/show_bug.cgi?id=152107
+
+        * b3/B3CCallValue.h:
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::divConstant):
+        (JSC::B3::Const32Value::modConstant):
+        (JSC::B3::Const32Value::bitAndConstant):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::divConstant):
+        (JSC::B3::Const64Value::modConstant):
+        (JSC::B3::Const64Value::bitAndConstant):
+        * b3/B3Const64Value.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::divConstant):
+        (JSC::B3::Value::modConstant):
+        (JSC::B3::Value::bitAndConstant):
+        * b3/B3Value.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testChillDiv64):
+        (JSC::B3::testMod):
+        (JSC::B3::testSwitch):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::load16ZeroExt32):
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::store32As8):
+        (JSC::FTL::Output::store32As16):
+        (JSC::FTL::Output::loadFloatToDouble): Deleted.
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::mul):
+        (JSC::FTL::Output::div):
+        (JSC::FTL::Output::chillDiv):
+        (JSC::FTL::Output::rem):
+        (JSC::FTL::Output::neg):
+        (JSC::FTL::Output::load32):
+        (JSC::FTL::Output::load64):
+        (JSC::FTL::Output::loadPtr):
+        (JSC::FTL::Output::loadFloat):
+        (JSC::FTL::Output::loadDouble):
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::storeFloat):
+        (JSC::FTL::Output::storeDouble):
+        (JSC::FTL::Output::addPtr):
+        (JSC::FTL::Output::extractValue):
+        (JSC::FTL::Output::call):
+        (JSC::FTL::Output::operation):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArrayPop):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::check):
+        (JSC::FTL::Output::load):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::load32):
+        (JSC::FTL::Output::load64):
+        (JSC::FTL::Output::loadPtr):
+        (JSC::FTL::Output::loadFloat):
+        (JSC::FTL::Output::loadDouble):
+        (JSC::FTL::Output::store32As8):
+        (JSC::FTL::Output::store32As16):
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::storeFloat):
+        (JSC::FTL::Output::storeDouble):
+        (JSC::FTL::Output::addPtr):
+        (JSC::FTL::Output::loadFloatToDouble): Deleted.
+        (JSC::FTL::Output::store16): Deleted.
+
 2015-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         Consider still matching an address expression even if B3 has already assigned a Tmp to it
@@ -227,6 +330,7 @@
         (JSC::ArrayPrototype::finishCreation):
         * runtime/CommonIdentifiers.h:
 
+>>>>>>> .r193940
 2015-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should have basic GetById support

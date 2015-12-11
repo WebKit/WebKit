@@ -3020,7 +3020,7 @@ private:
                 LValue result;
                 switch (type) {
                 case TypeFloat32:
-                    result = m_out.loadFloatToDouble(pointer);
+                    result = m_out.fpCast(m_out.loadFloat(pointer), m_out.doubleType);
                     break;
                 case TypeFloat64:
                     result = m_out.loadDouble(pointer);
@@ -3186,10 +3186,6 @@ private:
         }
             
         default:
-#if FTL_USES_B3
-            UNUSED_PARAM(child5);
-            CRASH();
-#else
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
@@ -3201,7 +3197,7 @@ private:
                             m_out.zeroExt(index, m_out.intPtr),
                             m_out.constIntPtr(logElementSize(type)))));
                 
-                LType refType;
+                Output::StoreType storeType;
                 LValue valueToStore;
                 
                 if (isInt(type)) {
@@ -3276,19 +3272,17 @@ private:
                     default:
                         DFG_CRASH(m_graph, m_node, "Bad use kind");
                     }
-                    
+
+                    valueToStore = intValue;
                     switch (elementSize(type)) {
                     case 1:
-                        valueToStore = m_out.intCast(intValue, m_out.int8);
-                        refType = m_out.ref8;
+                        storeType = Output::Store32As8;
                         break;
                     case 2:
-                        valueToStore = m_out.intCast(intValue, m_out.int16);
-                        refType = m_out.ref16;
+                        storeType = Output::Store32As16;
                         break;
                     case 4:
-                        valueToStore = intValue;
-                        refType = m_out.ref32;
+                        storeType = Output::Store32;
                         break;
                     default:
                         DFG_CRASH(m_graph, m_node, "Bad element size");
@@ -3297,12 +3291,12 @@ private:
                     LValue value = lowDouble(child3);
                     switch (type) {
                     case TypeFloat32:
-                        valueToStore = value;
-                        refType = m_out.refFloat;
+                        valueToStore = m_out.fpCast(value, m_out.floatType);
+                        storeType = Output::StoreFloat;
                         break;
                     case TypeFloat64:
                         valueToStore = value;
-                        refType = m_out.refDouble;
+                        storeType = Output::StoreDouble;
                         break;
                     default:
                         DFG_CRASH(m_graph, m_node, "Bad typed array type");
@@ -3310,7 +3304,7 @@ private:
                 }
                 
                 if (m_node->arrayMode().isInBounds() || m_node->op() == PutByValAlias)
-                    m_out.store(valueToStore, pointer, refType);
+                    m_out.store(valueToStore, pointer, storeType);
                 else {
                     LBasicBlock isInBounds = FTL_NEW_BLOCK(m_out, ("PutByVal typed array in bounds case"));
                     LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("PutByVal typed array continuation"));
@@ -3320,7 +3314,7 @@ private:
                         unsure(continuation), unsure(isInBounds));
                     
                     LBasicBlock lastNext = m_out.appendTo(isInBounds, continuation);
-                    m_out.store(valueToStore, pointer, refType);
+                    m_out.store(valueToStore, pointer, storeType);
                     m_out.jump(continuation);
                     
                     m_out.appendTo(continuation, lastNext);
@@ -3330,7 +3324,6 @@ private:
             }
             
             DFG_CRASH(m_graph, m_node, "Bad array type");
-#endif // FTL_USES_B3
             break;
         }
     }
@@ -3371,10 +3364,6 @@ private:
     
     void compileArrayPush()
     {
-#if FTL_USES_B3
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
-#else
         LValue base = lowCell(m_node->child1());
         LValue storage = lowStorage(m_node->child3());
         
@@ -3383,7 +3372,7 @@ private:
         case Array::Contiguous:
         case Array::Double: {
             LValue value;
-            LType refType;
+            Output::StoreType storeType;
             
             if (m_node->arrayMode().type() != Array::Double) {
                 value = lowJSValue(m_node->child2(), ManualOperandSpeculation);
@@ -3391,13 +3380,13 @@ private:
                     FTL_TYPE_CHECK(
                         jsValueValue(value), m_node->child2(), SpecInt32, isNotInt32(value));
                 }
-                refType = m_out.ref64;
+                storeType = Output::Store64;
             } else {
                 value = lowDouble(m_node->child2());
                 FTL_TYPE_CHECK(
                     doubleValue(value), m_node->child2(), SpecDoubleReal,
                     m_out.doubleNotEqualOrUnordered(value, value));
-                refType = m_out.refDouble;
+                storeType = Output::StoreDouble;
             }
             
             IndexedAbstractHeap& heap = m_heaps.forArrayType(m_node->arrayMode().type());
@@ -3415,7 +3404,7 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
             m_out.store(
-                value, m_out.baseIndex(heap, storage, m_out.zeroExtPtr(prevLength)), refType);
+                value, m_out.baseIndex(heap, storage, m_out.zeroExtPtr(prevLength)), storeType);
             LValue newLength = m_out.add(prevLength, m_out.int32One);
             m_out.store32(newLength, storage, m_heaps.Butterfly_publicLength);
             
@@ -3441,7 +3430,6 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return;
         }
-#endif
     }
     
     void compileArrayPop()

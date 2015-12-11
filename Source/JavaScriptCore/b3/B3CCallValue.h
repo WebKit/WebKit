@@ -49,6 +49,7 @@ private:
         : Value(index, CheckedOpcode, CCall, type, origin, arguments...)
         , effects(Effects::forCall())
     {
+        RELEASE_ASSERT(numChildren() >= 1);
     }
 
     template<typename... Arguments>
@@ -56,6 +57,7 @@ private:
         : Value(index, CheckedOpcode, CCall, type, origin, arguments...)
         , effects(effects)
     {
+        RELEASE_ASSERT(numChildren() >= 1);
     }
 };
 

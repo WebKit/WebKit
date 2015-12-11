@@ -3000,12 +3000,13 @@ void testSqrtArgWithEffectfulDoubleConversion(float a)
     Value* result = root->appendNew<Value>(proc, Sqrt, Origin(), asDouble);
     Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), result);
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
-    Value* doubleAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    Value* doubleAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
     root->appendNew<MemoryValue>(proc, Store, Origin(), result, doubleAddress);
     root->appendNew<ControlValue>(proc, Return, Origin(), result32);
 
     double effect = 0;
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect), bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
+    int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
+    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
     CHECK(isIdentical(effect, sqrt(a)));
 }
 
@@ -7206,9 +7207,9 @@ static Vector<Int32Operand> int32Operands()
             continue;                                   \
         tasks.append(createSharedTask<void()>(          \
             [=] () {                                    \
-                dataLog(testStr, "...\n");              \
+                dataLog(toCString(testStr, "...\n"));   \
                 test(a.value);                          \
-                dataLog(testStr, ": OK!\n");            \
+                dataLog(toCString(testStr, ": OK!\n")); \
             }));                                        \
     }
 
@@ -7220,9 +7221,9 @@ static Vector<Int32Operand> int32Operands()
                 continue;                                   \
             tasks.append(createSharedTask<void()>(          \
                 [=] () {                                    \
-                    dataLog(testStr, "...\n");              \
+                    dataLog(toCString(testStr, "...\n"));   \
                     test(a.value, b.value);                 \
-                    dataLog(testStr, ": OK!\n");            \
+                    dataLog(toCString(testStr, ": OK!\n")); \
                 }));                                        \
         }                                                   \
     }

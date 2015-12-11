@@ -289,8 +289,8 @@ public:
                 validateStackAccess(value);
                 break;
             case CCall:
-                // This is a wildcard. You can pass any non-void arguments and you can select any
-                // return type.
+                VALIDATE(value->numChildren() >= 1, ("At ", *value));
+                VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
                 break;
             case Patchpoint:
                 if (value->type() == Void)
