@@ -68,8 +68,8 @@ public:
 #if ENABLE(MEDIA_STREAM)
         , m_mediaDevicesBuiltins(&vm)
         , m_navigatorUserMediaBuiltins(&vm)
-        , m_rTCPeerConnectionBuiltins(&vm)
-        , m_rTCPeerConnectionInternalsBuiltins(&vm)
+        , m_rtcPeerConnectionBuiltins(&vm)
+        , m_rtcPeerConnectionInternalsBuiltins(&vm)
 #endif
     {
 #if ENABLE(STREAMS_API)
@@ -78,7 +78,7 @@ public:
         m_writableStreamInternalsBuiltins.exportNames();
 #endif
 #if ENABLE(MEDIA_STREAM)
-        m_rTCPeerConnectionInternalsBuiltins.exportNames();
+        m_rtcPeerConnectionInternalsBuiltins.exportNames();
 #endif
     }
 #if ENABLE(STREAMS_API)
@@ -95,8 +95,8 @@ public:
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper& mediaDevicesBuiltins() { return m_mediaDevicesBuiltins; }
     NavigatorUserMediaBuiltinsWrapper& navigatorUserMediaBuiltins() { return m_navigatorUserMediaBuiltins;}
-    RTCPeerConnectionBuiltinsWrapper& rTCPeerConnectionBuiltins() { return m_rTCPeerConnectionBuiltins; }
-    RTCPeerConnectionInternalsBuiltinsWrapper& rTCPeerConnectionInternalsBuiltins() { return m_rTCPeerConnectionInternalsBuiltins; }
+    RTCPeerConnectionBuiltinsWrapper& rtcPeerConnectionBuiltins() { return m_rtcPeerConnectionBuiltins; }
+    RTCPeerConnectionInternalsBuiltinsWrapper& rtcPeerConnectionInternalsBuiltins() { return m_rtcPeerConnectionInternalsBuiltins; }
 #endif
 
 private:
@@ -115,8 +115,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper m_mediaDevicesBuiltins;
     NavigatorUserMediaBuiltinsWrapper m_navigatorUserMediaBuiltins;
-    RTCPeerConnectionBuiltinsWrapper m_rTCPeerConnectionBuiltins;
-    RTCPeerConnectionInternalsBuiltinsWrapper m_rTCPeerConnectionInternalsBuiltins;
+    RTCPeerConnectionBuiltinsWrapper m_rtcPeerConnectionBuiltins;
+    RTCPeerConnectionInternalsBuiltinsWrapper m_rtcPeerConnectionInternalsBuiltins;
 #endif
 
 };

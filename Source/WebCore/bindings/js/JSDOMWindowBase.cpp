@@ -127,7 +127,7 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
 #if ENABLE(MEDIA_STREAM)
 #define DECLARE_GLOBAL_STATIC(name)\
         GlobalPropertyInfo(\
-            clientData.builtinFunctions().rTCPeerConnectionInternalsBuiltins().name##PrivateName(), m_privateFunctions.rTCPeerConnectionInternals().m_##name##Function.get() , DontDelete | ReadOnly),
+            clientData.builtinFunctions().rtcPeerConnectionInternalsBuiltins().name##PrivateName(), m_privateFunctions.rtcPeerConnectionInternals().m_##name##Function.get() , DontDelete | ReadOnly),
         WEBCORE_FOREACH_RTCPEERCONNECTIONINTERNALS_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef DECLARE_GLOBAL_STATIC
 #endif

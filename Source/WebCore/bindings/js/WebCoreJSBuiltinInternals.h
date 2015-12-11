@@ -53,7 +53,7 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
         , m_writableStreamInternalsFunctions(vm)
 #endif
 #if ENABLE(MEDIA_STREAM)
-        , m_rTCPeerConnectionInternalsFunctions(vm)
+        , m_rtcPeerConnectionInternalsFunctions(vm)
 #endif
     { }
 
@@ -63,7 +63,7 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
     WritableStreamInternalsBuiltinFunctions writableStreamInternals() { return m_writableStreamInternalsFunctions; }
 #endif
 #if ENABLE(MEDIA_STREAM)
-    RTCPeerConnectionInternalsBuiltinFunctions rTCPeerConnectionInternals() { return m_rTCPeerConnectionInternalsFunctions; }
+    RTCPeerConnectionInternalsBuiltinFunctions rtcPeerConnectionInternals() { return m_rtcPeerConnectionInternalsFunctions; }
 #endif
     void visit(JSC::SlotVisitor& visitor) {
 #if ENABLE(STREAMS_API)
@@ -72,7 +72,7 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
         m_writableStreamInternalsFunctions.visit(visitor);
 #endif
 #if ENABLE(MEDIA_STREAM)
-        m_rTCPeerConnectionInternalsFunctions.visit(visitor);
+        m_rtcPeerConnectionInternalsFunctions.visit(visitor);
 #endif
 #ifndef SKIP_UNUSED_PARAM
         UNUSED_PARAM(visitor);
@@ -85,7 +85,7 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
         m_writableStreamInternalsFunctions.init(globalObject);
 #endif
 #if ENABLE(MEDIA_STREAM)
-        m_rTCPeerConnectionInternalsFunctions.init(globalObject);
+        m_rtcPeerConnectionInternalsFunctions.init(globalObject);
 #endif
 #ifndef SKIP_UNUSED_PARAM
         UNUSED_PARAM(globalObject);
@@ -100,7 +100,7 @@ private:
     WritableStreamInternalsBuiltinFunctions m_writableStreamInternalsFunctions;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    RTCPeerConnectionInternalsBuiltinFunctions m_rTCPeerConnectionInternalsFunctions;
+    RTCPeerConnectionInternalsBuiltinFunctions m_rtcPeerConnectionInternalsFunctions;
 #endif
 
 };

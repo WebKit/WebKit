@@ -1,3 +1,13 @@
+2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Binding and builtin generators should lowercase RTCXX as rtcXX and not rTCXX
+        https://bugs.webkit.org/show_bug.cgi?id=152121
+
+        Reviewed by Darin Adler.
+
+        * Scripts/builtins/builtins_generator.py:
+        (WK_lcfirst): Added RTC special rule.
+
 2015-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be able to run quicksort asm.js test

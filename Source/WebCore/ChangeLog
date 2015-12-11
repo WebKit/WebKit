@@ -1,3 +1,29 @@
+2015-12-10  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Binding and builtin generators should lowercase RTCXX as rtcXX and not rTCXX
+        https://bugs.webkit.org/show_bug.cgi?id=152121
+
+        Reviewed by Darin Adler.
+
+        No change in behavior.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::finishCreation): Using rtcXX in lieu of rTCXX.
+        * bindings/js/WebCoreJSBuiltinInternals.h:
+        (WebCore::JSBuiltinInternalFunctions::JSBuiltinInternalFunctions): Ditto.
+        (WebCore::JSBuiltinInternalFunctions::rtcPeerConnectionInternals): Added.
+        (WebCore::JSBuiltinInternalFunctions::visit): Ditto.
+        (WebCore::JSBuiltinInternalFunctions::init): Ditto.
+        (WebCore::JSBuiltinInternalFunctions::rTCPeerConnectionInternals): Deleted.
+        * bindings/js/WebCoreJSBuiltins.h:
+        (WebCore::JSBuiltinFunctions::JSBuiltinFunctions): Using rtcXX in lieu of rTCXX.
+        (WebCore::JSBuiltinFunctions::rtcPeerConnectionBuiltins): Added.
+        (WebCore::JSBuiltinFunctions::rtcPeerConnectionInternalsBuiltins): Added.
+        (WebCore::JSBuiltinFunctions::rTCPeerConnectionBuiltins): Deleted.
+        (WebCore::JSBuiltinFunctions::rTCPeerConnectionInternalsBuiltins): Deleted.
+        * bindings/scripts/CodeGenerator.pm:
+        (WK_lcfirst): Added RTC special rule.
+
 2015-12-10  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !simpleLineLayout() in WebCore::RenderText::collectSelectionRectsForLineBoxes

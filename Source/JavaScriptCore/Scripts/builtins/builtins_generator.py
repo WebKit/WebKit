@@ -44,6 +44,7 @@ def WK_lcfirst(str):
     str = str.replace('xML', 'xml')
     str = str.replace('xSLT', 'xslt')
     str = str.replace('cSS', 'css')
+    str = str.replace('rTC', 'rtc')
     return str
 
 def WK_ucfirst(str):

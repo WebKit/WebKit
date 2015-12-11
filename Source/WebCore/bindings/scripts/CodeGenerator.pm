@@ -476,6 +476,7 @@ sub AssertNotSequenceType
     die "Sequences must not be used as the type of an attribute, constant or exception field." if $object->GetSequenceType($type);
 }
 
+# These match WK_lcfirst and WK_ucfirst defined in builtins_generator.py.
 # Uppercase the first letter while respecting WebKit style guidelines.
 # E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
 sub WK_ucfirst
@@ -500,6 +501,7 @@ sub WK_lcfirst
     $ret =~ s/xML/xml/ if $ret =~ /^xML/;
     $ret =~ s/xSLT/xslt/ if $ret =~ /^xSLT/;
     $ret =~ s/cSS/css/ if $ret =~ /^cSS/;
+    $ret =~ s/rTC/rtc/ if $ret =~ /^rTC/;
 
     # For HTML5 FileSystem API Flags attributes.
     # (create is widely used to instantiate an object and must be avoided.)
