@@ -46,7 +46,7 @@ function openError(evt)
 {
     preamble(evt);
     shouldBeTrue("sawTransactionComplete");
-    shouldBeNull("event.target.result");
+    shouldBeUndefined("event.target.result");
     shouldBeEqualToString("event.target.error.name", "AbortError");
     evalAndExpectException("transaction = db.transaction('os', 'readwrite')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     finishJSTest();

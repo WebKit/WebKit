@@ -21,7 +21,7 @@ db.close()
 
 openError():
 PASS sawTransactionComplete is true
-PASS event.target.result is null
+FAIL event.target.result should be undefined. Was null
 PASS event.target.error.name is "AbortError"
 Expecting exception from transaction = db.transaction('os', 'readwrite')
 PASS Exception was thrown.

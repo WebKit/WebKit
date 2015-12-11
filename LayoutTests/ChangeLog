@@ -1,3 +1,18 @@
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
+        Modern IDB: Updates to 3 intversion tests, and/or their results.
+        https://bugs.webkit.org/show_bug.cgi?id=152179
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/storage/indexeddb/intversion-close-in-oncomplete-expected.txt:
+
+        * storage/indexeddb/intversion-close-in-oncomplete-expected.txt:
+        * storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt:
+        * storage/indexeddb/intversion-upgrades-expected.txt:
+        * storage/indexeddb/resources/intversion-close-in-oncomplete.js:
+
 2015-12-11  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for Symbol.hasInstance
