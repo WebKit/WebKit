@@ -1,3 +1,37 @@
+2015-12-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Add an implementation of pow() taking an integer exponent to B3
+        https://bugs.webkit.org/show_bug.cgi?id=152165
+
+        Reviewed by Mark Lam.
+
+        LLVM has this really neat optimized opcode for
+        raising the power of something by an integer exponent.
+
+        There is no such native instruction so we need to extend
+        the existing FTLOutput API to something efficient.
+
+        DFG has a pretty competitive implementation. In this patch,
+        I added a version of it to B3.
+        I created powDoubleInt32() instead of putting the code directly
+        in FTL for easier testing and optimization.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3MathExtras.cpp: Added.
+        (JSC::B3::powDoubleInt32):
+        * b3/B3MathExtras.h: Added.
+        * b3/B3MemoryValue.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testPowDoubleByIntegerLoop):
+        (JSC::B3::run):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::compileArithPowIntegerFastPath):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::doublePowi):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doublePowi): Deleted.
+
 2015-12-11  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should have CSE

@@ -29,6 +29,8 @@
 #if ENABLE(FTL_JIT)
 #if FTL_USES_B3
 
+#include "B3MathExtras.h"
+
 namespace JSC { namespace FTL {
 
 Output::Output(State& state)
@@ -67,6 +69,13 @@ LValue Output::load(TypedPointer pointer, LType type)
     LValue load = m_block->appendNew<B3::MemoryValue>(m_proc, B3::Load, type, origin(), pointer.value());
     pointer.heap().decorateInstruction(load, *m_heaps);
     return load;
+}
+
+LValue Output::doublePowi(LValue x, LValue y)
+{
+    auto result = powDoubleInt32(m_proc, m_block, origin(), x, y);
+    m_block = result.first;
+    return result.second;
 }
 
 LValue Output::load8SignExt32(TypedPointer pointer)

@@ -34,6 +34,7 @@
 #include "B3ConstPtrValue.h"
 #include "B3ControlValue.h"
 #include "B3Effects.h"
+#include "B3MathExtras.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
@@ -7111,6 +7112,21 @@ void testSelectInvert()
     CHECK(invoke<intptr_t>(*code, 43, 642462, 32533) == 32533);
 }
 
+void testPowDoubleByIntegerLoop(double xOperand, int32_t yOperand)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* x = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* y = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto result = powDoubleInt32(proc, root, Origin(), x, y);
+    BasicBlock* continuation = result.first;
+    continuation->appendNew<ControlValue>(proc, Return, Origin(), result.second);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, xOperand, yOperand), pow(xOperand, yOperand)));
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -8056,6 +8072,7 @@ void run(const char* filter)
     RUN(testSelectFold(42));
     RUN(testSelectFold(43));
     RUN(testSelectInvert());
+    RUN_BINARY(testPowDoubleByIntegerLoop, floatingPointOperands<double>(), int64Operands());
 
     if (tasks.isEmpty())
         usage();

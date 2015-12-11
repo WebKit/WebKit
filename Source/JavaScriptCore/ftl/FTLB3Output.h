@@ -169,7 +169,7 @@ public:
 
     LValue doublePow(LValue xOperand, LValue yOperand) { return callWithoutSideEffects(B3::Double, pow, xOperand, yOperand); }
 
-    LValue doublePowi(LValue xOperand, LValue yOperand) { CRASH(); }
+    LValue doublePowi(LValue xOperand, LValue yOperand);
 
     LValue doubleSqrt(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Sqrt, origin(), value); }
 

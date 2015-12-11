@@ -1135,6 +1135,8 @@
 		43422A631C158E6D00E2EB98 /* B3ConstFloatValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43422A611C15871B00E2EB98 /* B3ConstFloatValue.h */; };
 		43422A661C16267500E2EB98 /* B3ReduceDoubleToFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */; };
 		43422A671C16267800E2EB98 /* B3ReduceDoubleToFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 43422A651C16221E00E2EB98 /* B3ReduceDoubleToFloat.h */; };
+		43AB26C61C1A535900D82AE6 /* B3MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */; };
+		43AB26C71C1A535C00D82AE6 /* B3MathExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43AB26C41C1A52F700D82AE6 /* B3MathExtras.cpp */; };
 		4443AE3316E188D90076F110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52678F8C1A031009006A306D /* BasicBlockLocation.cpp */; };
@@ -2015,17 +2017,17 @@
 		FE3913541B794F6E00EDAF71 /* LiveObjectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */; };
 		FE3913551B794F8A00EDAF71 /* LiveObjectData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913511B794AC900EDAF71 /* LiveObjectData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913531B794AC900EDAF71 /* LiveObjectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; settings = {ASSET_TAGS = (); }; };
-		FE3A06A81C10BC8100390FDD /* JITBitBinaryOpGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */; settings = {ASSET_TAGS = (); }; };
-		FE3A06AC1C10C39E00390FDD /* JITBitOrGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
-		FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
-		FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */; settings = {ASSET_TAGS = (); }; };
-		FE3A06B31C10CB8E00390FDD /* JITBitXorGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
-		FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */; settings = {ASSET_TAGS = (); }; };
-		FE3A06BD1C11040D00390FDD /* JITLeftShiftGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06B61C1103D900390FDD /* JITLeftShiftGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
-		FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */; settings = {ASSET_TAGS = (); }; };
-		FE3A06BF1C11041600390FDD /* JITRightShiftGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
-		FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; };
+		FE3A06A81C10BC8100390FDD /* JITBitBinaryOpGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */; };
+		FE3A06AC1C10C39E00390FDD /* JITBitOrGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */; };
+		FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */; };
+		FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */; };
+		FE3A06B31C10CB8E00390FDD /* JITBitXorGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */; };
+		FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */; };
+		FE3A06BD1C11040D00390FDD /* JITLeftShiftGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06B61C1103D900390FDD /* JITLeftShiftGenerator.cpp */; };
+		FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */; };
+		FE3A06BF1C11041600390FDD /* JITRightShiftGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */; };
+		FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */; };
 		FE4238901BE18C3C00514737 /* JITSubGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */; };
 		FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
@@ -3211,6 +3213,8 @@
 		43422A611C15871B00E2EB98 /* B3ConstFloatValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ConstFloatValue.h; path = b3/B3ConstFloatValue.h; sourceTree = "<group>"; };
 		43422A641C16221E00E2EB98 /* B3ReduceDoubleToFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ReduceDoubleToFloat.cpp; path = b3/B3ReduceDoubleToFloat.cpp; sourceTree = "<group>"; };
 		43422A651C16221E00E2EB98 /* B3ReduceDoubleToFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ReduceDoubleToFloat.h; path = b3/B3ReduceDoubleToFloat.h; sourceTree = "<group>"; };
+		43AB26C41C1A52F700D82AE6 /* B3MathExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3MathExtras.cpp; path = b3/B3MathExtras.cpp; sourceTree = "<group>"; };
+		43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3MathExtras.h; path = b3/B3MathExtras.h; sourceTree = "<group>"; };
 		449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
@@ -4636,6 +4640,8 @@
 				0F338E1A1BF286EA0013C88F /* B3LowerMacros.h */,
 				0FEC84D31BDACDAC0080FF74 /* B3LowerToAir.cpp */,
 				0FEC84D41BDACDAC0080FF74 /* B3LowerToAir.h */,
+				43AB26C41C1A52F700D82AE6 /* B3MathExtras.cpp */,
+				43AB26C51C1A52F700D82AE6 /* B3MathExtras.h */,
 				0FEC84D51BDACDAC0080FF74 /* B3MemoryValue.cpp */,
 				0FEC84D61BDACDAC0080FF74 /* B3MemoryValue.h */,
 				0F338E031BF0276C0013C88F /* B3MoveConstants.cpp */,
@@ -7564,6 +7570,7 @@
 				70EC0EC31AA0D7DA00B6AAFA /* JSStringIterator.h in Headers */,
 				2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */,
 				BC18C4280E16F5CD00B34460 /* JSStringRef.h in Headers */,
+				43AB26C61C1A535900D82AE6 /* B3MathExtras.h in Headers */,
 				BC18C4290E16F5CD00B34460 /* JSStringRefCF.h in Headers */,
 				1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */,
 				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
@@ -8437,6 +8444,7 @@
 				0FEC85731BDACDC70080FF74 /* AirCCallSpecial.cpp in Sources */,
 				0FEC85751BDACDC70080FF74 /* AirCode.cpp in Sources */,
 				0F4570381BE44C910062A629 /* AirEliminateDeadCode.cpp in Sources */,
+				43AB26C71C1A535C00D82AE6 /* B3MathExtras.cpp in Sources */,
 				0FEC85781BDACDC70080FF74 /* AirGenerate.cpp in Sources */,
 				0FEC85931BDB1E100080FF74 /* AirGenerated.cpp in Sources */,
 				0FEC857B1BDACDC70080FF74 /* AirHandleCalleeSaves.cpp in Sources */,
