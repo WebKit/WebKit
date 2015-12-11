@@ -139,7 +139,8 @@ RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, Exc
         return nullptr;
     }
 
-    return doCount(*context, IDBKeyRangeData::allKeys(), ec);}
+    return doCount(*context, IDBKeyRangeData::allKeys(), ec);
+}
 
 RefPtr<WebCore::IDBRequest> IDBIndex::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCodeWithMessage& ec)
 {

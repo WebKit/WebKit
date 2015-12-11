@@ -1,5 +1,16 @@
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
+        Followup to:
+        Modern IDB: storage/indexeddb/index-count.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152175
+
+        Noticed by Darin Adler.
+
+        * Modules/indexeddb/client/IDBIndexImpl.cpp:
+        (WebCore::IDBClient::IDBIndex::count): Replace a curly brace to its proper place.
+
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/cursor-continue.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152192
 
