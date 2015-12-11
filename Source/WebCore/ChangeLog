@@ -1,3 +1,18 @@
+2015-12-11  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Setting playback rate does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=152172
+
+        Reviewed by Brent Fulgham.
+
+        Implement method to set playback rate.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::seekDouble):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setRateDouble):
+        (WebCore::MediaPlayerPrivateMediaFoundation::durationDouble):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2015-12-11  Darin Adler  <darin@apple.com>
 
         Reduce the number of events that can be created by Document.createEvent

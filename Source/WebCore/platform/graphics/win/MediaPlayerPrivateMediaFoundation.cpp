@@ -216,6 +216,20 @@ void MediaPlayerPrivateMediaFoundation::seekDouble(double time)
     m_player->timeChanged();
 }
 
+void MediaPlayerPrivateMediaFoundation::setRateDouble(double rate)
+{
+    COMPtr<IMFRateControl> rateControl;
+
+    HRESULT hr = MFGetServicePtr()(m_mediaSession.get(), MF_RATE_CONTROL_SERVICE, IID_IMFRateControl, (void**)&rateControl);
+
+    if (!SUCCEEDED(hr))
+        return;
+
+    BOOL reduceSamplesInStream = rate > 2.0;
+
+    rateControl->SetRate(reduceSamplesInStream, rate);
+}
+
 double MediaPlayerPrivateMediaFoundation::durationDouble() const
 {
     if (!m_mediaSource)

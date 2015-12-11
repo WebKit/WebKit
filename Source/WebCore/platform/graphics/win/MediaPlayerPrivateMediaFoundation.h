@@ -72,6 +72,9 @@ public:
 
     virtual bool seeking() const;
     virtual void seekDouble(double) override;
+
+    virtual void setRateDouble(double) override;
+
     virtual double durationDouble() const override;
 
     virtual float currentTime() const override;
