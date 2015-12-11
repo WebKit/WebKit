@@ -54,7 +54,7 @@ public:
     void addTextShadow(const ShadowData* textShadow, const ShadowData* selectionShadow);
 
     void paintText(const TextRun&, int length, const FloatRect& boxRect, const FloatPoint& textOrigin,
-        int selectionStart, int selectionEnd, bool paintSelectedTextOnly, bool paintSelectedTextSeparately);
+        int selectionStart = 0, int selectionEnd = 0, bool paintSelectedTextOnly = false, bool paintSelectedTextSeparately = false);
 
 private:
     void drawTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& emphasisMark, int emphasisMarkOffset,

@@ -42,6 +42,7 @@
 #include "SimpleLineLayoutResolver.h"
 #include "Text.h"
 #include "TextPaintStyle.h"
+#include "TextPainter.h"
 
 #if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>
@@ -73,12 +74,10 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
 
     bool debugBordersEnabled = flow.frame().settings().simpleLineLayoutDebugBordersEnabled();
 
-    GraphicsContext& context = paintInfo.context();
-    const FontCascade& font = style.fontCascade();
-    TextPaintStyle textPaintStyle = computeTextPaintStyle(flow.frame(), style, paintInfo);
-    GraphicsContextStateSaver stateSaver(context, textPaintStyle.strokeWidth > 0);
+    TextPainter textPainter(paintInfo.context());
+    textPainter.setFont(style.fontCascade());
+    textPainter.setTextPaintStyle(computeTextPaintStyle(flow.frame(), style, paintInfo));
 
-    updateGraphicsContext(context, textPaintStyle);
     LayoutRect paintRect = paintInfo.rect;
     paintRect.moveBy(-paintOffset);
 
@@ -99,9 +98,9 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         // x position indicates the line offset from the rootbox. It's always 0 in case of simple line layout.
         textRun.setXPos(0);
         FloatPoint textOrigin = FloatPoint(rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor));
-        context.drawText(font, textRun, textOrigin);
+        textPainter.paintText(textRun, textRun.length(), rect, textOrigin);
         if (debugBordersEnabled)
-            paintDebugBorders(context, LayoutRect(run.rect()), paintOffset);
+            paintDebugBorders(paintInfo.context(), LayoutRect(run.rect()), paintOffset);
     }
 }
 
