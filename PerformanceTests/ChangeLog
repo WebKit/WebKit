@@ -1,3 +1,21 @@
+2015-12-11  Jon Lee  <jonlee@apple.com>
+
+        Improve Animometer on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=152180
+
+        Reviewed by Simon Fraser.
+
+        Improve experience on phones. Make the canvas take
+        up the whole screen.
+
+        * Animometer/runner/animometer.html: Add meta viewport.
+        Remove the container div.
+        * Animometer/runner/resources/animometer.css: Have buttons lay
+        out vertically. Update detail arrow glyph. Make the suites and
+        options section lay out vertically. Remove the top spacers since
+        we want the canvas to take over the whole screen. Minimal display
+        is recommended for use.
+
 2015-12-07  Jon Lee  <jonlee@apple.com>
 
         Update suites for benchmark

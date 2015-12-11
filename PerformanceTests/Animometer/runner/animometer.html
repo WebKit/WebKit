@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="stylesheet" href="resources/animometer.css">
     <script src="../resources/strings.js"></script>
     <script src="../resources/sampler.js"></script>
@@ -14,110 +15,110 @@
 <body>
     <main>
     <div class="spacer"></div>
-    <div id="section-container">
-        <section id="home" class="selected">
-            <header>
-                <h1>Animometer</h1>
-            </header>
-            <div id="suites">
-                <h2>Suites:</h2>
-                <ul class="tree"></ul>
-            </div>
-            <div id="options">
-                <h2>Options:</h2>
-                <form name="benchmark-options">
+
+    <section id="home" class="selected">
+        <header>
+            <h1>Animometer</h1>
+        </header>
+        <div id="suites">
+            <h2>Suites:</h2>
+            <ul class="tree"></ul>
+        </div>
+        <div id="options">
+            <h2>Options:</h2>
+            <form name="benchmark-options">
+            <ul>
+            <li>
+                <label>Test length: <input type="number" id="test-interval" value="10"> seconds each</label>
+            </li>
+            <li>
+                <h3>Display:</h3>
                 <ul>
-                <li>
-                    <label>Test length: <input type="number" id="test-interval" value="10"> seconds each</label>
-                </li>
-                <li>
-                    <h3>Display:</h3>
-                    <ul>
-                        <li><label><input name="display" type="radio" value="minimal" checked> Minimal</label></li>
-                        <li><label><input name="display" type="radio" value="progress-bar" checked> Progress bar</label></li>
-                        <li><label><input name="display" type="radio" value="statistics-table"> Statistics table</label></li>
-                    </ul>
-                </li>
-                <li>
-                    <h3>Adjusting the test complexity:</h3>
-                    <ul>
-                        <li><label><input name="adjustment" type="radio" value="fixed"> Keep constant</label></li>
-                        <li><label><input name="adjustment" type="radio" value="fixed-after-warmup"> Keep constant after warmup to target FPS</label></li>
-                        <li><label><input name="adjustment" type="radio" value="adaptive" checked> Maintain target FPS</label></li>
-                    </ul>
-                </li>
-                <li>
-                    <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id="estimated-frame-rate" checked> Filter frame rate calculation</label>
-                </li>
+                    <li><label><input name="display" type="radio" value="minimal" checked> Minimal</label></li>
+                    <li><label><input name="display" type="radio" value="progress-bar" checked> Progress bar</label></li>
+                    <li><label><input name="display" type="radio" value="statistics-table"> Statistics table</label></li>
                 </ul>
-                </form>
-            </div>
-            <footer>
-                <button class="large-button" onclick="benchmarkController.startTest()">Start Test</button>
-            </footer>
-        </section>
-        <section id="running">
-            <div id="running-test"></div>
-            <div id="progress">
-                <div id="progress-completed"></div>
-            </div>
-            <div id="record">
-                <table class="results-table"></table>
-            </div>
-        </section>
-        <section id="results">
-            <header>
-                <h1>Results:</h1>
-            </header>
-            <data>
-                <table class="results-table"></table>
-            </data>
-            <footer>
-                <button class="large-button" onclick="benchmarkController.selectResults()">Select</button>
-                <button class="large-button" onclick="benchmarkController.showJSON()">JSON</button>
-                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
-            </footer>
-        </section>  
-        <section id="json">
-            <header>
-                <h1>JSON:</h1>
-            </header>
-            <data>
-                <div class="results-json" contentEditable="true"></div>
-            </data>
-            <footer>
-                <button class="large-button" onclick="benchmarkController.selectJSON('json')">Select</button>
-                <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
-                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
-            </footer>
-        </section>  
-        <section id="test-json">
-            <header>
-                <h1>JSON:</h1>
-            </header>
-            <data>
-                <div class="results-json" contentEditable="true"></div>
-            </data>
-            <footer>
-                <button class="large-button" onclick="benchmarkController.selectJSON('test-json')">Select</button>
-                <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
-                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>        
-            </footer>
-        </section>
-        <section id="test-graph">
-            <header>
-                <h1>Graph:</h1>
-            </header>
-            <data></data>
-            <footer>
-                <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
-                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>        
-            </footer>
-        </section>  
-    </div>
+            </li>
+            <li>
+                <h3>Adjusting the test complexity:</h3>
+                <ul>
+                    <li><label><input name="adjustment" type="radio" value="fixed"> Keep constant</label></li>
+                    <li><label><input name="adjustment" type="radio" value="fixed-after-warmup"> Keep constant after warmup to target FPS</label></li>
+                    <li><label><input name="adjustment" type="radio" value="adaptive" checked> Maintain target FPS</label></li>
+                </ul>
+            </li>
+            <li>
+                <label>Target frame rate: <input type="number" id="frame-rate" value="50"> FPS</label>
+            </li>
+            <li>
+                <label><input type="checkbox" id="estimated-frame-rate" checked> Filter frame rate calculation</label>
+            </li>
+            </ul>
+            </form>
+        </div>
+        <footer>
+            <button class="large-button" onclick="benchmarkController.startTest()">Start Test</button>
+        </footer>
+    </section>
+    <section id="running">
+        <div id="running-test"></div>
+        <div id="progress">
+            <div id="progress-completed"></div>
+        </div>
+        <div id="record">
+            <table class="results-table"></table>
+        </div>
+    </section>
+    <section id="results">
+        <header>
+            <h1>Results:</h1>
+        </header>
+        <data>
+            <table class="results-table"></table>
+        </data>
+        <footer>
+            <button class="large-button" onclick="benchmarkController.selectResults()">Select</button>
+            <button class="large-button" onclick="benchmarkController.showJSON()">JSON</button>
+            <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
+        </footer>
+    </section>
+    <section id="json">
+        <header>
+            <h1>JSON:</h1>
+        </header>
+        <data>
+            <div class="results-json" contentEditable="true"></div>
+        </data>
+        <footer>
+            <button class="large-button" onclick="benchmarkController.selectJSON('json')">Select</button>
+            <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
+            <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
+        </footer>
+    </section>
+    <section id="test-json">
+        <header>
+            <h1>JSON:</h1>
+        </header>
+        <data>
+            <div class="results-json" contentEditable="true"></div>
+        </data>
+        <footer>
+            <button class="large-button" onclick="benchmarkController.selectJSON('test-json')">Select</button>
+            <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
+            <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
+        </footer>
+    </section>
+    <section id="test-graph">
+        <header>
+            <h1>Graph:</h1>
+        </header>
+        <data></data>
+        <footer>
+            <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
+            <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
+        </footer>
+    </section>
+
     <div class="spacer"></div>
     </main>
 </body>
