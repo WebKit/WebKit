@@ -1,3 +1,9 @@
+2015-12-11  Keith Miller  <keith_miller@apple.com>
+
+        Rebaseline a failing inspector test for a new property on Function.prototype.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+
 2015-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Strip out Referer header when requesting subresources or following links for documents with "Content-Disposition: attachment"
