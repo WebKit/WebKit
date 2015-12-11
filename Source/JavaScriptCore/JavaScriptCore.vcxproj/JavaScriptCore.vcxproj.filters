@@ -4252,9 +4252,6 @@
     <ClInclude Include="..\ftl\FTLInlineCacheDescriptor.h">
       <Filter>ftl</Filter>
     </ClInclude>
-    <ClInclude Include="..\ftl\FTLInlineCacheDescriptorInlines.h">
-      <Filter>ftl</Filter>
-    </ClInclude>
     <ClInclude Include="..\ftl\FTLInlineCacheSize.h">
       <Filter>ftl</Filter>
     </ClInclude>

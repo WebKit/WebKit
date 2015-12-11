@@ -1,3 +1,81 @@
+2015-12-11  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring to reduce potential cut-paste errors with the FTL ICs.
+        https://bugs.webkit.org/show_bug.cgi?id=152185
+
+        Reviewed by Saam Barati.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * ftl/FTLCompile.cpp:
+        - ICs now have their own names.  GetById and PutByID fast path ICs no longer just
+          say "inline cache fast path".
+
+        * ftl/FTLCompileBinaryOp.cpp:
+        (JSC::FTL::generateBinaryArithOpFastPath):
+        - Fixed an indentation.
+
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::InlineCacheDescriptor::InlineCacheDescriptor):
+        (JSC::FTL::InlineCacheDescriptor::name):
+        (JSC::FTL::GetByIdDescriptor::GetByIdDescriptor):
+        (JSC::FTL::PutByIdDescriptor::PutByIdDescriptor):
+        (JSC::FTL::CheckInDescriptor::CheckInDescriptor):
+        (JSC::FTL::BinaryOpDescriptor::nodeType):
+        (JSC::FTL::BinaryOpDescriptor::size):
+        (JSC::FTL::BinaryOpDescriptor::slowPathFunction):
+        (JSC::FTL::BinaryOpDescriptor::leftOperand):
+        (JSC::FTL::BinaryOpDescriptor::BinaryOpDescriptor):
+        (JSC::FTL::ArithDivDescriptor::ArithDivDescriptor):
+        (JSC::FTL::ArithDivDescriptor::icSize):
+        (JSC::FTL::ArithDivDescriptor::nodeType):
+        (JSC::FTL::ArithDivDescriptor::opName):
+        (JSC::FTL::ArithDivDescriptor::slowPathFunction):
+        (JSC::FTL::ArithDivDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::ArithMulDescriptor::ArithMulDescriptor):
+        (JSC::FTL::ArithMulDescriptor::icSize):
+        (JSC::FTL::ArithMulDescriptor::nodeType):
+        (JSC::FTL::ArithMulDescriptor::opName):
+        (JSC::FTL::ArithMulDescriptor::slowPathFunction):
+        (JSC::FTL::ArithMulDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::ArithSubDescriptor::ArithSubDescriptor):
+        (JSC::FTL::ArithSubDescriptor::icSize):
+        (JSC::FTL::ArithSubDescriptor::nodeType):
+        (JSC::FTL::ArithSubDescriptor::opName):
+        (JSC::FTL::ArithSubDescriptor::slowPathFunction):
+        (JSC::FTL::ArithSubDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::ValueAddDescriptor::ValueAddDescriptor):
+        (JSC::FTL::ValueAddDescriptor::icSize):
+        (JSC::FTL::ValueAddDescriptor::nodeType):
+        (JSC::FTL::ValueAddDescriptor::opName):
+        (JSC::FTL::ValueAddDescriptor::slowPathFunction):
+        (JSC::FTL::ValueAddDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::LazySlowPathDescriptor::LazySlowPathDescriptor):
+        (JSC::FTL::ProbeDescriptor::ProbeDescriptor):
+        (JSC::FTL::BinaryOpDescriptor::name): Deleted.
+        (JSC::FTL::BinaryOpDescriptor::fastPathICName): Deleted.
+        * ftl/FTLInlineCacheDescriptorInlines.h: Removed.
+        - Consolidate the number of places where we have to fill in a data about new
+          snippet ICs.  It is all done in FTLInlineCacheDescriptor.h now.   
+
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileUntypedBinaryOp):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithDiv):
+        - Introduced a compileUntypedBinaryOp() template and use that at all the FTL
+          places that need to use a snippet.  This reduces the amount of cut and paste
+          code.
+
+        * ftl/FTLState.h:
+        - Removed a bad #include.
+
 2015-12-11  Keith Miller  <keith_miller@apple.com>
 
         Overrides has instance should not move ValueFalse to a register then immediately to the stack in the LLInt.

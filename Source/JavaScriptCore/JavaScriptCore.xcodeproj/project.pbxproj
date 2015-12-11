@@ -2002,7 +2002,6 @@
 		FE187A0D1C030D5C0038BBCA /* JITDivGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A0B1C0229230038BBCA /* JITDivGenerator.h */; };
 		FE187A0E1C030D640038BBCA /* JITDivGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE187A0A1C0229230038BBCA /* JITDivGenerator.cpp */; };
 		FE187A0F1C030D6C0038BBCA /* SnippetOperand.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A0C1C02EBA70038BBCA /* SnippetOperand.h */; };
-		FE187A181C0E13DD0038BBCA /* FTLInlineCacheDescriptorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A171C0E13C60038BBCA /* FTLInlineCacheDescriptorInlines.h */; };
 		FE187A191C0E13E30038BBCA /* FTLCompileBinaryOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE187A151C0E13C60038BBCA /* FTLCompileBinaryOp.cpp */; };
 		FE187A1A1C0E13E60038BBCA /* FTLCompileBinaryOp.h in Headers */ = {isa = PBXBuildFile; fileRef = FE187A161C0E13C60038BBCA /* FTLCompileBinaryOp.h */; };
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4190,7 +4189,6 @@
 		FE187A0C1C02EBA70038BBCA /* SnippetOperand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetOperand.h; sourceTree = "<group>"; };
 		FE187A151C0E13C60038BBCA /* FTLCompileBinaryOp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCompileBinaryOp.cpp; path = ftl/FTLCompileBinaryOp.cpp; sourceTree = "<group>"; };
 		FE187A161C0E13C60038BBCA /* FTLCompileBinaryOp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCompileBinaryOp.h; path = ftl/FTLCompileBinaryOp.h; sourceTree = "<group>"; };
-		FE187A171C0E13C60038BBCA /* FTLInlineCacheDescriptorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLInlineCacheDescriptorInlines.h; path = ftl/FTLInlineCacheDescriptorInlines.h; sourceTree = "<group>"; };
 		FE1C0FFC1B193E9800B53FCA /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		FE1C0FFE1B194FD100B53FCA /* Exception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cpp; sourceTree = "<group>"; };
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
@@ -4508,7 +4506,6 @@
 				0FD8A31617D51F2200CA2C40 /* FTLForOSREntryJITCode.h */,
 				A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */,
 				0F25F1A7181635F300522F39 /* FTLInlineCacheDescriptor.h */,
-				FE187A171C0E13C60038BBCA /* FTLInlineCacheDescriptorInlines.h */,
 				0F25F1A8181635F300522F39 /* FTLInlineCacheSize.cpp */,
 				0F25F1A9181635F300522F39 /* FTLInlineCacheSize.h */,
 				0FEA0A261709623B00BB722C /* FTLIntrinsicRepository.cpp */,
@@ -6983,7 +6980,6 @@
 				C2C8D02D14A3C6E000578E65 /* CopiedSpaceInlines.h in Headers */,
 				0F7C11AD1BC3862C00C74CDB /* CopyBarrier.h in Headers */,
 				0F5A52D017ADD717008ECB2D /* CopyToken.h in Headers */,
-				FE187A181C0E13DD0038BBCA /* FTLInlineCacheDescriptorInlines.h in Headers */,
 				C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */,
 				C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */,
 				C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */,

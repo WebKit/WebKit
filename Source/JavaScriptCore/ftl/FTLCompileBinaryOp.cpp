@@ -179,7 +179,7 @@ void generateBinaryArithOpFastPath(BinaryOpDescriptor& ic, CCallHelpers& jit,
         JSValueRegs(left), JSValueRegs(right), leftFPR, rightFPR, scratchGPR, scratchFPR);
 
     auto numberOfBytesUsedToPreserveReusedRegisters =
-    allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
     context.initializeRegisters(jit);
     gen.generateFastPath(jit);

@@ -40,7 +40,7 @@
 #include "FTLCompileBinaryOp.h"
 #include "FTLExceptionHandlerManager.h"
 #include "FTLExitThunkGenerator.h"
-#include "FTLInlineCacheDescriptorInlines.h"
+#include "FTLInlineCacheDescriptor.h"
 #include "FTLInlineCacheSize.h"
 #include "FTLJITCode.h"
 #include "FTLThunks.h"
@@ -215,7 +215,7 @@ static void generateInlineIfPossibleOutOfLineIfNot(State& state, VM& vm, CodeBlo
 template<typename DescriptorType>
 void generateICFastPath(
     State& state, CodeBlock* codeBlock, GeneratedFunction generatedFunction,
-    StackMaps::RecordMap& recordMap, DescriptorType& ic, size_t sizeOfIC)
+    StackMaps::RecordMap& recordMap, DescriptorType& ic, size_t sizeOfIC, const char* icName)
 {
     VM& vm = state.graph.m_vm;
 
@@ -239,7 +239,7 @@ void generateICFastPath(
         char* startOfIC =
             bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
 
-        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "inline cache fast path", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, icName, [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
             state.finalizer->sideCodeLinkBuffer->link(ic.m_slowPathDone[i],
                 CodeLocationLabel(startOfIC + sizeOfIC));
 
@@ -304,7 +304,7 @@ static void generateCheckInICFastPath(
                 callReturnLocation, slowPathBeginLoc);
         };
 
-        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "CheckIn inline cache", postLink);
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "CheckIn", postLink);
     }
 }
 
@@ -339,8 +339,7 @@ static void generateBinaryOpICFastPath(
         generateBinaryOpFastPath(ic, fastPathJIT, result, left, right, usedRegisters, done, slowPathStart);
 
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
-        const char* fastPathICName = ic.fastPathICName();
-        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, fastPathICName, [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, ic.name(), [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
             linkBuffer.link(done, CodeLocationLabel(startOfIC + sizeOfIC));
             state.finalizer->sideCodeLinkBuffer->link(ic.m_slowPathDone[i], CodeLocationLabel(startOfIC + sizeOfIC));
             
@@ -877,12 +876,12 @@ static void fixFunctionBasedOnStackMaps(
         for (unsigned i = state.getByIds.size(); i--;) {
             generateICFastPath(
                 state, codeBlock, generatedFunction, recordMap, state.getByIds[i],
-                sizeOfGetById());
+                sizeOfGetById(), "GetById");
         }
         for (unsigned i = state.putByIds.size(); i--;) {
             generateICFastPath(
                 state, codeBlock, generatedFunction, recordMap, state.putByIds[i],
-                sizeOfPutById());
+                sizeOfPutById(), "PutById");
         }
         for (unsigned i = state.checkIns.size(); i--;) {
             generateCheckInICFastPath(
@@ -921,7 +920,7 @@ static void fixFunctionBasedOnStackMaps(
 
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
 
-        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfCall(), "JSCall inline cache", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfCall(), "JSCall", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
             call.link(vm, linkBuffer);
         });
     }
@@ -937,7 +936,7 @@ static void fixFunctionBasedOnStackMaps(
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
         size_t sizeOfIC = sizeOfICFor(call.node());
 
-        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "varargs call inline cache", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "varargs call", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
             call.link(vm, linkBuffer, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
         });
     }
@@ -953,7 +952,7 @@ static void fixFunctionBasedOnStackMaps(
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
         size_t sizeOfIC = call.estimatedSize();
 
-        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "tail call inline cache", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "tail call", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
             call.link(vm, linkBuffer);
         });
     }

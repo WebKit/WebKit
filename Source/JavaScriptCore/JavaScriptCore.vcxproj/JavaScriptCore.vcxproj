@@ -1319,7 +1319,6 @@
     <ClInclude Include="..\ftl\FTLForOSREntryJITCode.h" />
     <ClInclude Include="..\ftl\FTLGeneratedFunction.h" />
     <ClInclude Include="..\ftl\FTLInlineCacheDescriptor.h" />
-    <ClInclude Include="..\ftl\FTLInlineCacheDescriptorInlines.h" />
     <ClInclude Include="..\ftl\FTLInlineCacheSize.h" />
     <ClInclude Include="..\ftl\FTLIntrinsicRepository.h" />
     <ClInclude Include="..\ftl\FTLJITCode.h" />

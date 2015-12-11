@@ -137,7 +137,7 @@ bool JITFinalizer::finalizeFunction()
     for (unsigned i = 0; i < outOfLineCodeInfos.size(); ++i) {
         jitCode->addHandle(FINALIZE_CODE_IF(
             dumpDisassembly, *outOfLineCodeInfos[i].m_linkBuffer,
-            ("FTL out of line code for %s", outOfLineCodeInfos[i].m_codeDescription)).executableMemory());
+            ("FTL out of line code for %s inline cache", outOfLineCodeInfos[i].m_codeDescription)).executableMemory());
     }
 #endif // FTL_USES_B3
 

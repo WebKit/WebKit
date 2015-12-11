@@ -1038,6 +1038,84 @@ private:
         return true;
     }
 
+    enum ConstInt32OperandOptimizationSupport {
+        HasConstInt32OperandOptimization,
+        DoesNotHaveConstInt32OperandOptimization,
+    };
+
+    enum ConstDoubleOperandOptimizationSupport {
+        HasConstDoubleOperandOptimization,
+        DoesNotHaveConstDoubleOperandOptimization,
+    };
+
+    template <typename SnippetICDescriptor,
+        ConstInt32OperandOptimizationSupport constInt32Opt = HasConstInt32OperandOptimization,
+        ConstDoubleOperandOptimizationSupport constDoubleOpt = DoesNotHaveConstDoubleOperandOptimization>
+    void compileUntypedBinaryOp()
+    {
+        Edge& leftChild = m_node->child1();
+        Edge& rightChild = m_node->child2();
+
+        if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
+            setJSValue(vmCall(m_out.int64, m_out.operation(SnippetICDescriptor::nonNumberSlowPathFunction()), m_callFrame,
+                lowJSValue(leftChild), lowJSValue(rightChild)));
+            return;
+        }
+
+        unsigned stackmapID = m_stackmapIDs++;
+
+        if (Options::verboseCompilation())
+            dataLog("    Emitting ", SnippetICDescriptor::opName(), " patchpoint with stackmap #", stackmapID, "\n");
+
+#if FTL_USES_B3
+        CRASH();
+#else
+        LValue left = lowJSValue(leftChild);
+        LValue right = lowJSValue(rightChild);
+
+        SnippetOperand leftOperand(abstractValue(leftChild).resultType());
+        SnippetOperand rightOperand(abstractValue(rightChild).resultType());
+
+        if (constInt32Opt == HasConstInt32OperandOptimization && leftChild->isInt32Constant())
+            leftOperand.setConstInt32(leftChild->asInt32());
+#if USE(JSVALUE64)
+        else if (constDoubleOpt == HasConstDoubleOperandOptimization && leftChild->isDoubleConstant())
+            leftOperand.setConstDouble(leftChild->asNumber());
+#endif
+
+        if (leftOperand.isConst()) {
+            // Because the snippet does not support both operands being constant, if the left
+            // operand is already a constant, we'll just pretend the right operand is not.
+        } else if (constInt32Opt == HasConstInt32OperandOptimization && rightChild->isInt32Constant())
+            rightOperand.setConstInt32(rightChild->asInt32());
+#if USE(JSVALUE64)
+        else if (constDoubleOpt == HasConstDoubleOperandOptimization && rightChild->isDoubleConstant())
+            rightOperand.setConstDouble(rightChild->asNumber());
+#endif
+
+        RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+        // Arguments: id, bytes, target, numArgs, args...
+        StackmapArgumentList arguments;
+        arguments.append(m_out.constInt64(stackmapID));
+        arguments.append(m_out.constInt32(SnippetICDescriptor::icSize()));
+        arguments.append(constNull(m_out.ref8));
+        arguments.append(m_out.constInt32(2));
+        arguments.append(left);
+        arguments.append(right);
+
+        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
+            ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
+
+        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
+        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
+
+        m_ftlState.binaryOps.append(SnippetICDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
+
+        setJSValue(call);
+#endif
+    }
+
     void compileUpsilon()
     {
         LValue upsilonValue = nullptr;
@@ -1512,55 +1590,7 @@ private:
     
     void compileValueAdd()
     {
-        Edge& leftChild = m_node->child1();
-        Edge& rightChild = m_node->child2();
-
-        if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
-            setJSValue(vmCall(m_out.int64, m_out.operation(operationValueAddNotNumber), m_callFrame,
-                lowJSValue(leftChild), lowJSValue(rightChild)));
-            return;
-        }
-
-        unsigned stackmapID = m_stackmapIDs++;
-
-        if (Options::verboseCompilation())
-            dataLog("    Emitting ValueAdd patchpoint with stackmap #", stackmapID, "\n");
-
-#if FTL_USES_B3
-        CRASH();
-#else
-        LValue left = lowJSValue(leftChild);
-        LValue right = lowJSValue(rightChild);
-
-        SnippetOperand leftOperand(abstractValue(leftChild).resultType());
-        SnippetOperand rightOperand(abstractValue(rightChild).resultType());
-
-        // Because the snippet does not support both operands being constant, if the left
-        // operand is already a constant, we'll just pretend the right operand is not.
-        if (leftChild->isInt32Constant())
-            leftOperand.setConstInt32(leftChild->asInt32());
-        else if (rightChild->isInt32Constant())
-            rightOperand.setConstInt32(rightChild->asInt32());
-
-        // Arguments: id, bytes, target, numArgs, args...
-        StackmapArgumentList arguments;
-        arguments.append(m_out.constInt64(stackmapID));
-        arguments.append(m_out.constInt32(ValueAddDescriptor::icSize()));
-        arguments.append(constNull(m_out.ref8));
-        arguments.append(m_out.constInt32(2));
-        arguments.append(left);
-        arguments.append(right);
-
-        appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
-            ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
-
-        LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-
-        m_ftlState.binaryOps.append(ValueAddDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
-
-        setJSValue(call);
-#endif
+        compileUntypedBinaryOp<ValueAddDescriptor>();
     }
     
     void compileStrCat()
@@ -1709,38 +1739,7 @@ private:
                 break;
             }
             
-            unsigned stackmapID = m_stackmapIDs++;
-
-            if (Options::verboseCompilation())
-                dataLog("    Emitting ArithSub patchpoint with stackmap #", stackmapID, "\n");
-
-#if FTL_USES_B3
-            CRASH();
-#else
-            LValue left = lowJSValue(m_node->child1());
-            LValue right = lowJSValue(m_node->child2());
-
-            // Arguments: id, bytes, target, numArgs, args...
-            StackmapArgumentList arguments;
-            arguments.append(m_out.constInt64(stackmapID));
-            arguments.append(m_out.constInt32(ArithSubDescriptor::icSize()));
-            arguments.append(constNull(m_out.ref8));
-            arguments.append(m_out.constInt32(2));
-            arguments.append(left);
-            arguments.append(right);
-
-            appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
-                ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
-
-            LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-            setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-
-            SnippetOperand leftOperand(abstractValue(m_node->child1()).resultType());
-            SnippetOperand rightOperand(abstractValue(m_node->child2()).resultType());
-            m_ftlState.binaryOps.append(ArithSubDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
-
-            setJSValue(call);
-#endif
+            compileUntypedBinaryOp<ArithSubDescriptor, DoesNotHaveConstInt32OperandOptimization, DoesNotHaveConstDoubleOperandOptimization>();
             break;
         }
 
@@ -1836,57 +1835,7 @@ private:
         }
 
         case UntypedUse: {
-            Edge& leftChild = m_node->child1();
-            Edge& rightChild = m_node->child2();
-
-            if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
-                setJSValue(vmCall(m_out.int64, m_out.operation(operationValueMul), m_callFrame,
-                    lowJSValue(leftChild), lowJSValue(rightChild)));
-                return;
-            }
-
-            unsigned stackmapID = m_stackmapIDs++;
-
-            if (Options::verboseCompilation())
-                dataLog("    Emitting ArithMul patchpoint with stackmap #", stackmapID, "\n");
-
-#if FTL_USES_B3
-            CRASH();
-#else
-            LValue left = lowJSValue(leftChild);
-            LValue right = lowJSValue(rightChild);
-
-            SnippetOperand leftOperand(abstractValue(leftChild).resultType());
-            SnippetOperand rightOperand(abstractValue(rightChild).resultType());
-
-            // Because the snippet does not support both operands being constant, if the left
-            // operand is already a constant, we'll just pretend the right operand is not.
-            if (leftChild->isInt32Constant())
-                leftOperand.setConstInt32(leftChild->asInt32());
-            else if (rightChild->isInt32Constant())
-                rightOperand.setConstInt32(rightChild->asInt32());
-
-            RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
-
-            // Arguments: id, bytes, target, numArgs, args...
-            StackmapArgumentList arguments;
-            arguments.append(m_out.constInt64(stackmapID));
-            arguments.append(m_out.constInt32(ArithMulDescriptor::icSize()));
-            arguments.append(constNull(m_out.ref8));
-            arguments.append(m_out.constInt32(2));
-            arguments.append(left);
-            arguments.append(right);
-
-            appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
-                ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
-
-            LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-            setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-
-            m_ftlState.binaryOps.append(ArithMulDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
-
-            setJSValue(call);
-#endif
+            compileUntypedBinaryOp<ArithMulDescriptor>();
             break;
         }
 
@@ -1955,67 +1904,7 @@ private:
         }
 
         case UntypedUse: {
-            Edge& leftChild = m_node->child1();
-            Edge& rightChild = m_node->child2();
-
-            if (!(provenType(leftChild) & SpecFullNumber) || !(provenType(rightChild) & SpecFullNumber)) {
-                setJSValue(vmCall(m_out.int64, m_out.operation(operationValueDiv), m_callFrame,
-                    lowJSValue(leftChild), lowJSValue(rightChild)));
-                return;
-            }
-
-            unsigned stackmapID = m_stackmapIDs++;
-
-            if (Options::verboseCompilation())
-                dataLog("    Emitting ArithDiv patchpoint with stackmap #", stackmapID, "\n");
-
-#if FTL_USES_B3
-            CRASH();
-#else
-            LValue left = lowJSValue(leftChild);
-            LValue right = lowJSValue(rightChild);
-
-            SnippetOperand leftOperand(abstractValue(leftChild).resultType());
-            SnippetOperand rightOperand(abstractValue(rightChild).resultType());
-
-            if (leftChild->isInt32Constant())
-                leftOperand.setConstInt32(leftChild->asInt32());
-#if USE(JSVALUE64)
-            else if (leftChild->isDoubleConstant())
-                leftOperand.setConstDouble(leftChild->asNumber());
-#endif
-
-            if (leftOperand.isConst()) {
-                // The snippet generator only supports 1 argument as a constant.
-                // Ignore the rightChild's const-ness.
-            } else if (rightChild->isInt32Constant())
-                rightOperand.setConstInt32(rightChild->asInt32());
-#if USE(JSVALUE64)
-            else if (rightChild->isDoubleConstant())
-                rightOperand.setConstDouble(rightChild->asNumber());
-#endif
-
-            RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
-
-            // Arguments: id, bytes, target, numArgs, args...
-            StackmapArgumentList arguments;
-            arguments.append(m_out.constInt64(stackmapID));
-            arguments.append(m_out.constInt32(ArithDivDescriptor::icSize()));
-            arguments.append(constNull(m_out.ref8));
-            arguments.append(m_out.constInt32(2));
-            arguments.append(left);
-            arguments.append(right);
-
-            appendOSRExitArgumentsForPatchpointIfWillCatchException(arguments,
-                ExceptionType::BinaryOpGenerator, 3); // left, right, and result show up in the stackmap locations.
-
-            LValue call = m_out.call(m_out.int64, m_out.patchpointInt64Intrinsic(), arguments);
-            setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-
-            m_ftlState.binaryOps.append(ArithDivDescriptor(stackmapID, m_node->origin.semantic, leftOperand, rightOperand));
-
-            setJSValue(call);
-#endif // FTL_USES_B3
+            compileUntypedBinaryOp<ArithDivDescriptor, HasConstInt32OperandOptimization, HasConstDoubleOperandOptimization>();
             break;
         }
 

@@ -40,7 +40,6 @@
 #include "FTLJSCallVarargs.h"
 #include "FTLJSTailCall.h"
 #include "FTLStackMaps.h"
-#include "FTLState.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC { namespace FTL {
