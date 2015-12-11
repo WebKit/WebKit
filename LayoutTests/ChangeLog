@@ -1,3 +1,9 @@
+2015-12-10  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed TestExpectations gardening.
+
+        * platform/mac-wk1/TestExpectations: Move 3 failing IDB tests to the "Skipped because of Workers" section.
+
 2015-12-10  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Expose media capture devices persistent permissions to WebCore

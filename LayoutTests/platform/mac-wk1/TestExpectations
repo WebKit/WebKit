@@ -114,9 +114,6 @@ storage/indexeddb/open-cursor.html [ Failure ]
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 storage/indexeddb/open-ordering.html [ Failure ]
 storage/indexeddb/optional-arguments.html [ Failure ]
-storage/indexeddb/pending-version-change-on-exit.html [ Failure ]
-storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
-storage/indexeddb/pending-version-change-stuck.html [ Failure ]
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
 storage/indexeddb/transaction-scope-sequencing.html [ Failure ]
@@ -138,6 +135,9 @@ storage/indexeddb/index-basics-workers.html
 storage/indexeddb/objectstore-basics-workers.html
 storage/indexeddb/open-twice-workers.html
 storage/indexeddb/pending-activity-workers.html
+storage/indexeddb/pending-version-change-on-exit.html
+storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
+storage/indexeddb/pending-version-change-stuck.html
 storage/indexeddb/transaction-complete-workers.html
 storage/indexeddb/unprefix-workers.html
 
