@@ -28,7 +28,7 @@
 #include "DocumentRuleSets.h"
 #include "InspectorCSSOMWrappers.h"
 #include "LinkHash.h"
-#include "MediaQueryExp.h"
+#include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
 #include "RuleFeature.h"
 #include "RuleSet.h"
@@ -92,19 +92,6 @@ class SVGSVGElement;
 class ViewportStyleResolver;
 class WebKitCSSFilterValue;
 struct ResourceLoaderOptions;
-
-class MediaQueryResult {
-    WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;
-public:
-    MediaQueryResult(const MediaQueryExp& expr, bool result)
-        : m_expression(expr)
-        , m_result(result)
-    {
-    }
-
-    MediaQueryExp m_expression;
-    bool m_result;
-};
 
 enum StyleSharingBehavior {
     AllowStyleSharing,

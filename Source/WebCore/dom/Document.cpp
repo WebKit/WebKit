@@ -81,6 +81,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLPictureElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
@@ -3469,6 +3470,20 @@ void Document::evaluateMediaQueryList()
 {
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->styleResolverChanged();
+    
+    checkViewportDependentPictures();
+}
+
+void Document::checkViewportDependentPictures()
+{
+    Vector<HTMLPictureElement*, 16> changedPictures;
+    HashSet<HTMLPictureElement*>::iterator end = m_viewportDependentPictures.end();
+    for (HashSet<HTMLPictureElement*>::iterator it = m_viewportDependentPictures.begin(); it != end; ++it) {
+        if ((*it)->viewportChangeAffectedPicture())
+            changedPictures.append(*it);
+    }
+    for (auto* picture : changedPictures)
+        picture->sourcesChanged();
 }
 
 void Document::optimizedStyleSheetUpdateTimerFired()
@@ -6730,6 +6745,16 @@ bool Document::shouldEnforceContentDispositionAttachmentSandbox() const
         responseIsAttachment = documentLoader->response().isAttachment();
 
     return contentDispositionAttachmentSandboxEnabled && responseIsAttachment;
+}
+
+void Document::addViewportDependentPicture(HTMLPictureElement& picture)
+{
+    m_viewportDependentPictures.add(&picture);
+}
+
+void Document::removeViewportDependentPicture(HTMLPictureElement& picture)
+{
+    m_viewportDependentPictures.remove(&picture);
 }
 
 } // namespace WebCore

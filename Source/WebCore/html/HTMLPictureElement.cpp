@@ -37,6 +37,20 @@ HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& d
 {
 }
 
+HTMLPictureElement::~HTMLPictureElement()
+{
+    if (hasViewportDependentResults())
+        document().removeViewportDependentPicture(*this);
+}
+
+void HTMLPictureElement::didMoveToNewDocument(Document* oldDocument)
+{
+    if (hasViewportDependentResults() && oldDocument)
+        oldDocument->removeViewportDependentPicture(*this);
+    HTMLElement::didMoveToNewDocument(oldDocument);
+    sourcesChanged();
+}
+
 Ref<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLPictureElement(tagName, document));
@@ -46,6 +60,17 @@ void HTMLPictureElement::sourcesChanged()
 {
     for (auto& imageElement : childrenOfType<HTMLImageElement>(*this))
         imageElement.selectImageSource();
+}
+
+bool HTMLPictureElement::viewportChangeAffectedPicture()
+{
+    MediaQueryEvaluator evaluator(document().printing() ? "print" : "screen", document().frame(), computedStyle());
+    unsigned numResults = m_viewportDependentMediaQueryResults.size();
+    for (unsigned i = 0; i < numResults; i++) {
+        if (evaluator.eval(&m_viewportDependentMediaQueryResults[i]->m_expression) != m_viewportDependentMediaQueryResults[i]->m_result)
+            return true;
+    }
+    return false;
 }
 
 }
