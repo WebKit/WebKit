@@ -26,9 +26,9 @@
 #import "config.h"
 #import "SandboxUtilities.h"
 
-#import <WebCore/SecuritySPI.h>
 #import <array>
 #import <sys/param.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/WTFString.h>
 

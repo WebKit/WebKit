@@ -1377,7 +1377,6 @@
 		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3571883EEF618793751E4089 /* RenderMathMLMenclose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */; };
-		3717833A1AACDCF7000910E3 /* SecuritySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 371783391AACDCF7000910E3 /* SecuritySPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3717D7E817ECC591003C276D /* extract-localizable-strings.pl in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */; };
 		371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */; };
 		371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 371E65CB13661EDC00BEEDB0 /* PageSerializer.h */; };
@@ -8745,7 +8744,6 @@
 		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NotificationCenter.idl; sourceTree = "<group>"; };
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLMenclose.cpp; sourceTree = "<group>"; };
-		371783391AACDCF7000910E3 /* SecuritySPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecuritySPI.h; sourceTree = "<group>"; };
 		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "extract-localizable-strings.pl"; sourceTree = "<group>"; };
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
 		371E65CB13661EDC00BEEDB0 /* PageSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageSerializer.h; sourceTree = "<group>"; };
@@ -17259,7 +17257,6 @@
 				31B313DC1B6987DB00F2AABC /* NSURLRequestSPI.h */,
 				CEE27ACA1BBB53A20072400A /* pthreadSPI.h */,
 				CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */,
-				371783391AACDCF7000910E3 /* SecuritySPI.h */,
 				CEC337AC1A46071F009B8523 /* ServersSPI.h */,
 				A19D93451A9FEC7200B46C24 /* WebFilterEvaluatorSPI.h */,
 			);
@@ -27331,7 +27328,6 @@
 				1AF7AFC81A48A8BC00C8E4E7 /* SecurityOriginPolicy.h in Headers */,
 				974D2DA5146A535D00D51F8B /* SecurityPolicy.h in Headers */,
 				2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */,
-				3717833A1AACDCF7000910E3 /* SecuritySPI.h in Headers */,
 				99CC0B5E18BE984A006CEBCC /* SegmentedInputStorage.h in Headers */,
 				B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */,
 				BEA807C90F714A0300524199 /* SelectionRect.h in Headers */,

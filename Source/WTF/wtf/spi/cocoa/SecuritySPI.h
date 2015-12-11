@@ -27,19 +27,11 @@
 #define SecuritySPI_h
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <Security/SecCertificatePriv.h>
 
-#if PLATFORM(IOS)
+#include <Security/SecCertificatePriv.h>
 #include <Security/SecTask.h>
-#endif
 
 #else
-
-#if PLATFORM(IOS)
-typedef struct __SecTask *SecTaskRef;
-EXTERN_C SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
-EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
-#endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
 typedef uint32_t SecSignatureHashAlgorithm;
@@ -56,9 +48,13 @@ enum {
 };
 
 EXTERN_C SecSignatureHashAlgorithm SecCertificateGetSignatureHashAlgorithm(SecCertificateRef);
-
 #endif
 
 #endif
+
+typedef struct __SecTask *SecTaskRef;
+EXTERN_C SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef, audit_token_t);
+EXTERN_C SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
+EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
 
 #endif // SecuritySPI_h

@@ -31,9 +31,9 @@
 #import "AssertionServicesSPI.h"
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
-#import <WebCore/SecuritySPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 
 @interface UIWindow (WKDetails)
 - (BOOL)_isHostedInAnotherProcess;

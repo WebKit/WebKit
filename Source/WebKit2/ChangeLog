@@ -1,3 +1,14 @@
+2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remote Inspector: Verify the identity of the other side of XPC connections
+        https://bugs.webkit.org/show_bug.cgi?id=152153
+
+        Reviewed by Brian Burg.
+
+        * Shared/mac/SandboxUtilities.mm:
+        * UIProcess/ApplicationStateTracker.mm:
+        Use new header.
+
 2015-12-10  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r192796) WKBundlePageResourceLoadClient should be able to setHTTPBody in willSendRequestForFrame

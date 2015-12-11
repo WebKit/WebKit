@@ -34,6 +34,7 @@
 #import <wtf/Lock.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 #if __has_include(<CoreFoundation/CFXPCBridge.h>)
@@ -42,6 +43,24 @@
 extern "C" {
     xpc_object_t _CFXPCCreateXPCMessageWithCFObject(CFTypeRef);
     CFTypeRef _CFXPCCreateCFObjectFromXPCMessage(xpc_object_t);
+}
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+static bool auditTokenHasEntitlement(audit_token_t token, NSString *entitlement)
+{
+    auto task = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
+    if (!task)
+        return false;
+
+    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), (CFStringRef)entitlement, nullptr));
+    if (!value)
+        return false;
+
+    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
+        return false;
+
+    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
 }
 #endif
 
@@ -56,7 +75,6 @@ RemoteInspectorXPCConnection::RemoteInspectorXPCConnection(xpc_connection_t conn
     : m_connection(connection)
     , m_queue(queue)
     , m_client(client)
-    , m_closed(false)
 {
     dispatch_retain(m_queue);
 
@@ -149,6 +167,27 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
         }
         return;
     }
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+    if (!m_validated) {
+        audit_token_t token;
+        xpc_connection_get_audit_token(m_connection, &token);
+        if (!auditTokenHasEntitlement(token, @"com.apple.private.webinspector.webinspectord")) {
+            {
+                std::lock_guard<Lock> lock(m_mutex);
+                if (m_client)
+                    m_client->xpcConnectionFailed(this);
+
+                m_closed = true;
+                m_client = nullptr;
+                closeOnQueue();
+            }
+            deref();
+            return;
+        }
+        m_validated = true;
+    }
+#endif
 
     NSDictionary *dataDictionary = deserializeMessage(object);
     if (!dataDictionary)

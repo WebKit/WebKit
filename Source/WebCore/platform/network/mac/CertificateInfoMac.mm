@@ -27,7 +27,7 @@
 #import "CertificateInfo.h"
 
 #import "NotImplemented.h"
-#import "SecuritySPI.h"
+#import <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace WebCore {
 

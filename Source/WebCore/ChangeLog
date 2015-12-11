@@ -1,3 +1,14 @@
+2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remote Inspector: Verify the identity of the other side of XPC connections
+        https://bugs.webkit.org/show_bug.cgi?id=152153
+
+        Reviewed by Brian Burg.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/mac/CertificateInfoMac.mm:
+        Use the new header.
+
 2015-12-10  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange.html fails

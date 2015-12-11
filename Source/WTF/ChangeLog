@@ -1,3 +1,14 @@
+2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remote Inspector: Verify the identity of the other side of XPC connections
+        https://bugs.webkit.org/show_bug.cgi?id=152153
+
+        Reviewed by Brian Burg.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/cocoa/SecuritySPI.h: Renamed from Source/WebCore/platform/spi/cocoa/SecuritySPI.h.
+        Push this down into WTF from WebCore and add a new method.
+
 2015-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should have basic GetById support
