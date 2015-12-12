@@ -84,7 +84,8 @@ enum Opcode : int16_t {
     ZShr, // Logical Shift.
     Clz, // Count leading zeros.
 
-    // Double math.
+    // Floating point math.
+    Abs,
     Sqrt,
 
     // Casts and such.

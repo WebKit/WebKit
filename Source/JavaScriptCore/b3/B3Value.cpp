@@ -221,6 +221,11 @@ Value* Value::floatToDoubleConstant(Procedure&) const
     return nullptr;
 }
 
+Value* Value::absConstant(Procedure&) const
+{
+    return nullptr;
+}
+
 Value* Value::sqrtConstant(Procedure&) const
 {
     return nullptr;
@@ -357,6 +362,7 @@ Effects Value::effects() const
     case SShr:
     case ZShr:
     case Clz:
+    case Abs:
     case Sqrt:
     case BitwiseCast:
     case SExt8:
@@ -433,6 +439,7 @@ ValueKey Value::key() const
     case FramePointer:
         return ValueKey(opcode(), type());
     case Identity:
+    case Abs:
     case Sqrt:
     case SExt8:
     case SExt16:
@@ -539,6 +546,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case SShr:
     case ZShr:
     case Clz:
+    case Abs:
     case Sqrt:
     case CheckAdd:
     case CheckSub:

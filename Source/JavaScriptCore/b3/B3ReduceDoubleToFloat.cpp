@@ -48,6 +48,7 @@ void attemptSimplification(Value* candidate)
             candidate->setType(Float);
         }
         break;
+    case Abs:
     case Sqrt:
         if (candidate->child(0)->opcode() == FloatToDouble) {
             candidate->child(0) = candidate->child(0)->child(0);

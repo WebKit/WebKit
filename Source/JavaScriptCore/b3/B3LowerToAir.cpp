@@ -1459,7 +1459,7 @@ private:
         }
 
         case BitAnd: {
-            appendBinOp<And32, And64, Commutative>(
+            appendBinOp<And32, And64, AndDouble, AndFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }

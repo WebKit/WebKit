@@ -69,6 +69,14 @@ Value* ConstDoubleValue::mulConstant(Procedure& proc, const Value* other) const
     return proc.add<ConstDoubleValue>(origin(), m_value * other->asDouble());
 }
 
+Value* ConstDoubleValue::bitAndConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasDouble())
+        return nullptr;
+    double result = bitwise_cast<double>(bitwise_cast<uint64_t>(m_value) & bitwise_cast<uint64_t>(other->asDouble()));
+    return proc.add<ConstDoubleValue>(origin(), result);
+}
+
 Value* ConstDoubleValue::bitwiseCastConstant(Procedure& proc) const
 {
     return proc.add<Const64Value>(origin(), bitwise_cast<int64_t>(m_value));
@@ -77,6 +85,11 @@ Value* ConstDoubleValue::bitwiseCastConstant(Procedure& proc) const
 Value* ConstDoubleValue::doubleToFloatConstant(Procedure& proc) const
 {
     return proc.add<ConstFloatValue>(origin(), static_cast<float>(m_value));
+}
+
+Value* ConstDoubleValue::absConstant(Procedure& proc) const
+{
+    return proc.add<ConstDoubleValue>(origin(), fabs(m_value));
 }
 
 Value* ConstDoubleValue::sqrtConstant(Procedure& proc) const

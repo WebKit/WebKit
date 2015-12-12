@@ -505,6 +505,39 @@ private:
 
             break;
 
+        case Abs:
+            // Turn this: Abs(constant)
+            // Into this: fabs<value->type()>(constant)
+            if (Value* constant = m_value->child(0)->absConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            // Turn this: Abs(Abs(value))
+            // Into this: Abs(value)
+            if (m_value->child(0)->opcode() == Abs) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                break;
+            }
+
+            // Turn this: Abs(BitwiseCast(value))
+            // Into this: BitwiseCast(And(value, mask-top-bit))
+            if (m_value->child(0)->opcode() == BitwiseCast) {
+                Value* mask;
+                if (m_value->type() == Double)
+                    mask = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), ~(1l << 63));
+                else
+                    mask = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), ~(1l << 31));
+
+                Value* bitAnd = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(),
+                    m_value->child(0)->child(0),
+                    mask);
+                Value* cast = m_insertionSet.insert<Value>(m_index, BitwiseCast, m_value->origin(), bitAnd);
+                m_value->replaceWithIdentity(cast);
+                break;
+            }
+            break;
+
         case Sqrt:
             // Turn this: Sqrt(constant)
             // Into this: sqrt<value->type()>(constant)

@@ -1013,6 +1013,17 @@ public:
         m_assembler.mulss_mr(src.offset, src.base, dest);
     }
 
+    void andDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        // ANDPS is defined on 128bits and is shorter than ANDPD.
+        m_assembler.andps_rr(src, dst);
+    }
+
+    void andFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.andps_rr(src, dst);
+    }
+
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
         ASSERT(isSSE2Present());

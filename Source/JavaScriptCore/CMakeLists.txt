@@ -114,6 +114,7 @@ set(JavaScriptCore_SOURCES
     b3/B3HeapRange.cpp
     b3/B3InsertionSet.cpp
     b3/B3LowerMacros.cpp
+    b3/B3LowerMacrosAfterOptimizations.cpp
     b3/B3LowerToAir.cpp
     b3/B3MathExtras.cpp
     b3/B3MemoryValue.cpp

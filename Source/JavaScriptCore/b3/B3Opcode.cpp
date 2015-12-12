@@ -146,6 +146,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Clz:
         out.print("Clz");
         return;
+    case Abs:
+        out.print("Abs");
+        return;
     case Sqrt:
         out.print("Sqrt");
         return;

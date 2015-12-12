@@ -170,6 +170,12 @@ And64 U:G, UD:G
     Tmp, Tmp
     Imm, Tmp
 
+AndDouble U:F, UD:F
+    Tmp, Tmp
+
+AndFloat U:F, UD:F
+    Tmp, Tmp
+
 Lshift32 U:G, UD:G
     Tmp*, Tmp
     Imm, Tmp

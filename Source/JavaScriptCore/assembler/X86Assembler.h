@@ -273,6 +273,7 @@ private:
         OP2_DIVSD_VsdWsd    = 0x5E,
         OP2_MOVMSKPD_VdEd   = 0x50,
         OP2_SQRTSD_VsdWsd   = 0x51,
+        OP2_ANDPS_VpdWpd    = 0x54,
         OP2_ANDNPD_VpdWpd   = 0x55,
         OP2_XORPD_VpdWpd    = 0x57,
         OP2_MOVD_VdEd       = 0x6E,
@@ -2281,6 +2282,11 @@ public:
     {
         m_formatter.prefix(PRE_SSE_F3);
         m_formatter.twoByteOp(OP2_DIVSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void andps_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_ANDPS_VpdWpd, (RegisterID)dst, (RegisterID)src);
     }
 
     void xorps_rr(XMMRegisterID src, XMMRegisterID dst)

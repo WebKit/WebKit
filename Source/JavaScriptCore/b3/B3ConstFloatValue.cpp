@@ -69,6 +69,14 @@ Value* ConstFloatValue::mulConstant(Procedure& proc, const Value* other) const
     return proc.add<ConstFloatValue>(origin(), m_value * other->asFloat());
 }
 
+Value* ConstFloatValue::bitAndConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasFloat())
+        return nullptr;
+    float result = bitwise_cast<float>(bitwise_cast<uint32_t>(m_value) & bitwise_cast<uint32_t>(other->asFloat()));
+    return proc.add<ConstFloatValue>(origin(), result);
+}
+
 Value* ConstFloatValue::bitwiseCastConstant(Procedure& proc) const
 {
     return proc.add<Const32Value>(origin(), bitwise_cast<int32_t>(m_value));
@@ -77,6 +85,11 @@ Value* ConstFloatValue::bitwiseCastConstant(Procedure& proc) const
 Value* ConstFloatValue::floatToDoubleConstant(Procedure& proc) const
 {
     return proc.add<ConstDoubleValue>(origin(), static_cast<double>(m_value));
+}
+
+Value* ConstFloatValue::absConstant(Procedure& proc) const
+{
+    return proc.add<ConstFloatValue>(origin(), static_cast<float>(fabs(m_value)));
 }
 
 Value* ConstFloatValue::sqrtConstant(Procedure& proc) const
