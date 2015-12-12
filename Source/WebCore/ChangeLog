@@ -1,3 +1,15 @@
+2015-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Roll out http://trac.webkit.org/r193984, because the new test is timing out.
+
+        Was: Strip out Referer header when requesting subresources or following links for documents with "Content-Disposition: attachment"
+        https://bugs.webkit.org/show_bug.cgi?id=152102
+        <rdar://problem/22124230>
+
+        * dom/Document.cpp:
+        (WebCore::Document::processReferrerPolicy):
+        (WebCore::Document::applyContentDispositionAttachmentSandbox):
+
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/optional-arguments.html fails.
