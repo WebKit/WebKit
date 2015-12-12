@@ -1,3 +1,16 @@
+2015-12-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard's buildbot sync config JSON duplicates too much information
+        https://bugs.webkit.org/show_bug.cgi?id=152196
+
+        Reviewed by Stephanie Lewis.
+
+        Added shared, per-builder, and per-test (called type) configurations.
+
+        * tools/sync-with-buildbot.py:
+        (load_config):
+        (load_config.merge):
+
 2015-12-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should avoid overflow during geometric mean computation

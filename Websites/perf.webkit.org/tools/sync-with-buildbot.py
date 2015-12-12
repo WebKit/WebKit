@@ -65,9 +65,27 @@ def main():
 
 def load_config(config_json_path, buildbot_url):
     with open(config_json_path) as config_json:
-        configurations = json.load(config_json)
+        options = json.load(config_json)
 
+    shared_config = options['shared']
+    type_config = options['types']
+    builder_config = options['builders']
+
+    def merge(config, config_to_merge):
+        for key, value in config_to_merge.iteritems():
+            if isinstance(value, dict):
+                config.setdefault(key, {})
+                config[key].update(value)
+            else:
+                config[key] = value
+
+    configurations = options['configurations']
     for config in configurations:
+
+        merge(config, shared_config)
+        merge(config, type_config[config.pop('type')])
+        merge(config, builder_config[config.pop('builder')])
+
         escaped_builder_name = urllib.quote(config['builder'])
         config['url'] = '%s/builders/%s/' % (buildbot_url, escaped_builder_name)
         config['jsonURL'] = '%s/json/builders/%s/' % (buildbot_url, escaped_builder_name)
