@@ -1,3 +1,15 @@
+2015-12-11  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !rect.isEmpty() in WebCore::GraphicsContext::drawRect
+        https://bugs.webkit.org/show_bug.cgi?id=151201
+
+        Reviewed by Simon Fraser.
+
+        Drawing empty rect is a waste.
+
+        * fast/borders/empty-drawrect-assert-after-pixelsnap-expected.txt: Added.
+        * fast/borders/empty-drawrect-assert-after-pixelsnap.html: Added.
+
 2015-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Strip out Referer header when requesting subresources or following links for documents with "Content-Disposition: attachment"
