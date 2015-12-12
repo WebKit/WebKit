@@ -1,5 +1,16 @@
 2015-12-12  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: Update a couple of tests that fail only because of error message differences.
+        https://bugs.webkit.org/show_bug.cgi?id=152205
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/open-cursor-expected.txt:
+
+2015-12-12  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/index-duplicate-keypaths.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152201
 
