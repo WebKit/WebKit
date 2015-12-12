@@ -746,14 +746,18 @@ private:
         return true;
     }
 
-    Inst createStore(Value* value, const Arg& dest)
+    Inst createStore(Air::Opcode move, Value* value, const Arg& dest)
     {
-        Air::Opcode move = moveForType(value->type());
-
         if (imm(value) && isValidForm(move, Arg::Imm, dest.kind()))
             return Inst(move, m_value, imm(value), dest);
 
         return Inst(move, m_value, tmp(value), dest);
+    }
+
+    Inst createStore(Value* value, const Arg& dest)
+    {
+        Air::Opcode moveOpcode = moveForType(value->type());
+        return createStore(moveOpcode, value, dest);
     }
 
     void appendStore(Value* value, const Arg& dest)
@@ -1554,6 +1558,12 @@ private:
             }
 
             appendStore(valueToStore, addr(m_value));
+            return;
+        }
+
+        case B3::Store8: {
+            Value* valueToStore = m_value->child(0);
+            m_insts.last().append(createStore(Air::Store8, valueToStore, addr(m_value)));
             return;
         }
 

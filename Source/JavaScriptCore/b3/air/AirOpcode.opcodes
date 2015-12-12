@@ -325,6 +325,12 @@ Load8 U:G, D:G
     Addr, Tmp
     Index, Tmp
 
+Store8 U:G, D:G
+    Tmp, Index
+    Tmp, Addr
+    Imm, Index
+    Imm, Addr
+
 Load8SignedExtendTo32 U:G, D:G
     Addr, Tmp
     Index, Tmp

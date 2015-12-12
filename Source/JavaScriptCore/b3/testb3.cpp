@@ -3704,6 +3704,135 @@ void testStoreConstantPtr(intptr_t value)
     CHECK(slot == value);
 }
 
+void testStore8Arg()
+{
+    { // Direct addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Value>(proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+
+        root->appendNew<MemoryValue>(proc, Store8, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int8_t storage = 0;
+        CHECK(compileAndRun<int64_t>(proc, 42, &storage) == 42);
+        CHECK(storage == 42);
+    }
+
+    { // Indexed addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Value>(proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* displacement = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* baseDisplacement = root->appendNew<Value>(proc, Add, Origin(), displacement, base);
+        Value* address = root->appendNew<Value>(proc, Add, Origin(), baseDisplacement, offset);
+
+        root->appendNew<MemoryValue>(proc, Store8, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int8_t storage = 0;
+        CHECK(compileAndRun<int64_t>(proc, 42, &storage, 1) == 42);
+        CHECK(storage == 42);
+    }
+}
+
+void testStore8Imm()
+{
+    { // Direct addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), 42);
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+
+        root->appendNew<MemoryValue>(proc, Store8, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int8_t storage = 0;
+        CHECK(compileAndRun<int64_t>(proc, &storage) == 42);
+        CHECK(storage == 42);
+    }
+
+    { // Indexed addressing.
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* value = root->appendNew<Const32Value>(proc, Origin(), 42);
+        Value* base = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* offset = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* displacement = root->appendNew<Const64Value>(proc, Origin(), -1);
+
+        Value* baseDisplacement = root->appendNew<Value>(proc, Add, Origin(), displacement, base);
+        Value* address = root->appendNew<Value>(proc, Add, Origin(), baseDisplacement, offset);
+
+        root->appendNew<MemoryValue>(proc, Store8, Origin(), value, address);
+        root->appendNew<ControlValue>(proc, Return, Origin(), value);
+
+        int8_t storage = 0;
+        CHECK(compileAndRun<int64_t>(proc, &storage, 1) == 42);
+        CHECK(storage == 42);
+    }
+}
+
+void testStorePartial8BitRegisterOnX86()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // We want to have this in ECX.
+    Value* returnValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+
+    // We want this suck in EDX.
+    Value* whereToStore = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+
+    // The patch point is there to help us force the hand of the compiler.
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+
+    // For the value above to be materialized and give the allocator
+    // a stronger insentive to name those register the way we need.
+    patchpoint->append(ConstrainedValue(returnValue, ValueRep(GPRInfo::regT3)));
+    patchpoint->append(ConstrainedValue(whereToStore, ValueRep(GPRInfo::regT2)));
+
+    // We'll produce EDI.
+    patchpoint->resultConstraint = ValueRep::reg(GPRInfo::regT6);
+
+    // Give the allocator a good reason not to use any other register.
+    RegisterSet clobberSet = RegisterSet::allGPRs();
+    clobberSet.exclude(RegisterSet::stackRegisters());
+    clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
+    clobberSet.clear(GPRInfo::regT3);
+    clobberSet.clear(GPRInfo::regT2);
+    clobberSet.clear(GPRInfo::regT6);
+    patchpoint->clobberLate(clobberSet);
+
+    // Set EDI.
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.xor64(params[0].gpr(), params[0].gpr());
+        });
+
+    // If everything went well, we should have the big number in eax,
+    // patchpoint == EDI and whereToStore = EDX.
+    // Since EDI == 5, and AH = 5 on 8 bit store, this would go wrong
+    // if we use X86 partial registers.
+    root->appendNew<MemoryValue>(proc, Store8, Origin(), patchpoint, whereToStore);
+
+    root->appendNew<ControlValue>(proc, Return, Origin(), returnValue);
+
+    int8_t storage = 0xff;
+    CHECK(compileAndRun<int64_t>(proc, 0x12345678abcdef12, &storage) == 0x12345678abcdef12);
+    CHECK(!storage);
+}
+
 void testTrunc(int64_t value)
 {
     Procedure proc;
@@ -8139,6 +8268,9 @@ void run(const char* filter)
     RUN(testStore32(44));
     RUN(testStoreConstant(49));
     RUN(testStoreConstantPtr(49));
+    RUN(testStore8Arg());
+    RUN(testStore8Imm());
+    RUN(testStorePartial8BitRegisterOnX86());
     RUN(testTrunc((static_cast<int64_t>(1) << 40) + 42));
     RUN(testAdd1(45));
     RUN(testAdd1Ptr(51));

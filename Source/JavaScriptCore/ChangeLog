@@ -1,3 +1,23 @@
+2015-12-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Add lowering for B3's Store8 opcode
+        https://bugs.webkit.org/show_bug.cgi?id=152208
+
+        Reviewed by Geoffrey Garen.
+
+        B3 has an opcode to store 8bit values but it had
+        no lowering.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createStore):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testStore8Arg):
+        (JSC::B3::testStore8Imm):
+        (JSC::B3::testStorePartial8BitRegisterOnX86):
+        (JSC::B3::run):
+
 2015-12-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Add the missing setupArgumentsWithExecState functions after r193974
