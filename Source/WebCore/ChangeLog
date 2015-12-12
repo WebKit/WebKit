@@ -1,3 +1,17 @@
+2015-12-11  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Do not pass in the initialization data to AVContentKeyRequest as the contentIdentifier.
+        https://bugs.webkit.org/show_bug.cgi?id=152204
+        rdar://problem/23867877
+
+        Reviewed by Eric Carlson.
+
+        The AVContentKeyRequest API has been updated to no longer require a contentId parameter if the
+        ID can be derived from the initialization data.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::update):
+
 2015-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out http://trac.webkit.org/r193984, because the new test is timing out.
