@@ -35,9 +35,10 @@ namespace WebCore {
 
 class MockRealtimeMediaSourceCenter final : public RealtimeMediaSourceCenter {
 public:
-    WEBCORE_EXPORT static void registerMockRealtimeMediaSourceCenter();
+    WEBCORE_EXPORT static void setMockRealtimeMediaSourceCenterEnabled(bool);
 
 private:
+    friend NeverDestroyed<MockRealtimeMediaSourceCenter>;
     MockRealtimeMediaSourceCenter();
 
     void validateRequestConstraints(MediaStreamCreationClient*, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints) override;

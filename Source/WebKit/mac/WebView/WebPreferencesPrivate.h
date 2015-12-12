@@ -458,6 +458,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setHTTPEquivEnabled:(BOOL)flag;
 - (BOOL)httpEquivEnabled;
 
+- (void)setMockCaptureDevicesEnabled:(BOOL)flag;
+- (BOOL)mockCaptureDevicesEnabled;
+
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 @property (nonatomic) BOOL mediaDataLoadsAutomatically;
 

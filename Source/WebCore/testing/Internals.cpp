@@ -407,7 +407,7 @@ Internals::Internals(Document* document)
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter();
+    setMockMediaCaptureDevicesEnabled(true);
     enableMockRTCPeerConnectionHandler();
 #endif
 
@@ -958,6 +958,11 @@ void Internals::enableMockSpeechSynthesizer()
 void Internals::enableMockRTCPeerConnectionHandler()
 {
     RTCPeerConnectionHandler::create = RTCPeerConnectionHandlerMock::create;
+}
+
+void Internals::setMockMediaCaptureDevicesEnabled(bool enabled)
+{
+    WebCore::Settings::setMockCaptureDevicesEnabled(enabled);
 }
 #endif
 

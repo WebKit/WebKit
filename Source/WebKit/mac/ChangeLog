@@ -1,3 +1,19 @@
+2015-12-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Add a setting to allow the mock media capture devices to be enabled and disabled
+        https://bugs.webkit.org/show_bug.cgi?id=152197
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences mockCaptureDevicesEnabled]):
+        (-[WebPreferences setMockCaptureDevicesEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2015-12-11  Beth Dakin  <bdakin@apple.com>
 
         _touchEventRegions should return regions in the view's coordinates

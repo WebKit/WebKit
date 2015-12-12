@@ -281,6 +281,9 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setMediaDeviceIdentifierStorageDirectory(const String& directory) { m_mediaDeviceIdentifierStorageDirectory = directory; }
     const String& mediaDeviceIdentifierStorageDirectory() const { return m_mediaDeviceIdentifierStorageDirectory; }
+
+    static bool mockCaptureDevicesEnabled();
+    WEBCORE_EXPORT static void setMockCaptureDevicesEnabled(bool);
 #endif
 
     WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
@@ -356,7 +359,7 @@ private:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static bool gQTKitEnabled;
 #endif
-        
+
     static bool gMockScrollbarsEnabled;
     static bool gUsesOverlayScrollbars;
 
@@ -378,6 +381,7 @@ private:
     
 #if ENABLE(MEDIA_STREAM)
     String m_mediaDeviceIdentifierStorageDirectory;
+    static bool gMockCaptureDevicesEnabled;
 #endif
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;

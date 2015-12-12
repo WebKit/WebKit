@@ -1,0 +1,22 @@
+Test enabling/disabling mock media capture devices
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+*** Mock capture devices should be enabled by default
+PASS mediaStream is an instance of Object
+PASS mediaStream.getTracks().length is 2
+
+*** Disable mock capture devices
+internals.setMockMediaCaptureDevicesEnabled(false)
+PASS mediaDevices.getUserMedia() failed with PermissionDeniedError
+
+*** Enable mock capture devices
+internals.setMockMediaCaptureDevicesEnabled(true)
+PASS mediaStream is an instance of Object
+PASS mediaStream.getTracks().length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -349,6 +349,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void enableMockRTCPeerConnectionHandler();
+    void setMockMediaCaptureDevicesEnabled(bool);
 #endif
 
     String getImageSourceURL(Element*, ExceptionCode&);

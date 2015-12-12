@@ -2427,6 +2427,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAVFoundationEnabled([preferences isAVFoundationEnabled]);
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    settings.setMockCaptureDevicesEnabled([preferences mockCaptureDevicesEnabled]);
+#endif
+
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled([preferences webAudioEnabled]);
 #endif

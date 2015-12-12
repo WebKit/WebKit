@@ -53,7 +53,7 @@ RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
     return RealtimeMediaSourceCenter::platformCenter();
 }
 
-void RealtimeMediaSourceCenter::setSharedStreamCenter(RealtimeMediaSourceCenter* center)
+void RealtimeMediaSourceCenter::setSharedStreamCenterOverride(RealtimeMediaSourceCenter* center)
 {
     mediaStreamCenterOverride() = center;
 }

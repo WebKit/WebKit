@@ -1,3 +1,21 @@
+2015-12-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Add a setting to allow the mock media capture devices to be enabled and disabled
+        https://bugs.webkit.org/show_bug.cgi?id=152197
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMockCaptureDevicesEnabled):
+        (WKPreferencesGetMockCaptureDevicesEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _mockCaptureDevicesEnabled]):
+        (-[WKPreferences _setMockCaptureDevicesEnabled:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2015-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         check-for-inappropriate-objc-class-names should check all class names, not just externally visible ones

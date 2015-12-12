@@ -377,6 +377,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setFixedFontFamily(fixedPitchFontFamily);
 }
 
+- (BOOL)_mockCaptureDevicesEnabled
+{
+    return _preferences->mockCaptureDevicesEnabled();
+}
+
+- (void)_setMockCaptureDevicesEnabled:(BOOL)mockCaptureDevicesEnabled
+{
+    _preferences->setMockCaptureDevicesEnabled(mockCaptureDevicesEnabled);
+}
+
 @end
 
 #endif // WK_API_ENABLED

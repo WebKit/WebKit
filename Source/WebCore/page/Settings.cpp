@@ -49,6 +49,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "MockRealtimeMediaSourceCenter.h"
+#endif
+
 namespace WebCore {
 
 static void setImageLoadingSettings(Page* page)
@@ -79,6 +83,10 @@ bool Settings::gQTKitEnabled = false;
 
 bool Settings::gMockScrollbarsEnabled = false;
 bool Settings::gUsesOverlayScrollbars = false;
+
+#if ENABLE(MEDIA_STREAM)
+bool Settings::gMockCaptureDevicesEnabled = false;
+#endif
 
 #if PLATFORM(WIN)
 bool Settings::gShouldUseHighResolutionTimers = true;
@@ -591,6 +599,19 @@ void Settings::setQTKitEnabled(bool enabled)
 
     gQTKitEnabled = enabled;
     HTMLMediaElement::resetMediaEngines();
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+bool Settings::mockCaptureDevicesEnabled()
+{
+    return gMockCaptureDevicesEnabled;
+}
+
+void Settings::setMockCaptureDevicesEnabled(bool enabled)
+{
+    gMockCaptureDevicesEnabled = enabled;
+    MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(enabled);
 }
 #endif
 

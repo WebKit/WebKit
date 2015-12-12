@@ -46,13 +46,13 @@
 
 namespace WebCore {
 
-void MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter()
+void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool enabled)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(MockRealtimeMediaSourceCenter, center, ());
-    static bool registered = false;
-    if (!registered) {
-        registered = true;
-        RealtimeMediaSourceCenter::setSharedStreamCenter(&center);
+    static NeverDestroyed<MockRealtimeMediaSourceCenter> center;
+    static bool active = false;
+    if (active != enabled) {
+        active = enabled;
+        RealtimeMediaSourceCenter::setSharedStreamCenterOverride(enabled ? &center.get() : nullptr);
     }
 }
 

@@ -1427,9 +1427,9 @@ bool WKPreferencesGetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->allowsAirPlayForMediaPlayback();
 }
 
-void WKPreferencesSetResourceUsageOverlayVisible(WKPreferencesRef preferencesRef, bool javaEnabled)
+void WKPreferencesSetResourceUsageOverlayVisible(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setResourceUsageOverlayVisible(javaEnabled);
+    toImpl(preferencesRef)->setResourceUsageOverlayVisible(enabled);
 }
 
 bool WKPreferencesGetResourceUsageOverlayVisible(WKPreferencesRef preferencesRef)
@@ -1437,3 +1437,12 @@ bool WKPreferencesGetResourceUsageOverlayVisible(WKPreferencesRef preferencesRef
     return toImpl(preferencesRef)->resourceUsageOverlayVisible();
 }
 
+void WKPreferencesSetMockCaptureDevicesEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setMockCaptureDevicesEnabled(enabled);
+}
+
+bool WKPreferencesGetMockCaptureDevicesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mockCaptureDevicesEnabled();
+}
