@@ -3733,26 +3733,27 @@ static inline IMP getMethod(id o, SEL s)
 
     NSMutableArray *eventRegionArray = [[[NSMutableArray alloc] initWithCapacity:rects.size()] autorelease];
 
+    NSView <WebDocumentView> *documentView = [[[self mainFrame] frameView] documentView];
     Vector<IntRect>::const_iterator end = rects.end();
     for (Vector<IntRect>::const_iterator it = rects.begin(); it != end; ++it) {
         const IntRect& rect = *it;
         if (rect.isEmpty())
             continue;
 
-        // Note that these rectangles are in the coordinate system of the document (inside the WebHTMLView), which is not
-        // the same as the coordinate system of the WebView. If you want to do comparisons with locations in the WebView,
-        // you must convert between the two using WAKView's convertRect:toView: selector. This will take care of scaling
-        // and translations (which are relevant for right-to-left column layout).
+        // The touch rectangles are in the coordinate system of the document (inside the WebHTMLView), which is not
+        // the same as the coordinate system of the WebView. UIWebView currently expects view coordinates, so we'll
+        // convert them here now.
+        IntRect viewRect = IntRect([documentView convertRect:rect toView:self]);
 
         // The event region wants this points in this order:
         //  p2------p3
         //  |       |
         //  p1------p4
         //
-        WebEventRegion *eventRegion = [[WebEventRegion alloc] initWithPoints:FloatPoint(rect.x(), rect.maxY())
-                                                                            :FloatPoint(rect.x(), rect.y())
-                                                                            :FloatPoint(rect.maxX(), rect.y())
-                                                                            :FloatPoint(rect.maxX(), rect.maxY())];
+        WebEventRegion *eventRegion = [[WebEventRegion alloc] initWithPoints:FloatPoint(viewRect.x(), viewRect.maxY())
+                                                                            :FloatPoint(viewRect.x(), viewRect.y())
+                                                                            :FloatPoint(viewRect.maxX(), viewRect.y())
+                                                                            :FloatPoint(viewRect.maxX(), viewRect.maxY())];
         if (eventRegion) {
             [eventRegionArray addObject:eventRegion];
             [eventRegion release];

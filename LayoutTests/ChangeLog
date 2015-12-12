@@ -1,3 +1,15 @@
+2015-12-11  Beth Dakin  <bdakin@apple.com>
+
+        _touchEventRegions should return regions in the view's coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=152189
+        -and corresponding-
+        rdar://problem/23188605
+
+        Reviewed by Dan Bernstein.
+
+        * fast/events/touch/ios/touch-event-rtl-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-rtl.html: Added.
+
 2015-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out http://trac.webkit.org/r193984, because the new test is timing out.

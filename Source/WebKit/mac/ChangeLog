@@ -1,3 +1,22 @@
+2015-12-11  Beth Dakin  <bdakin@apple.com>
+
+        _touchEventRegions should return regions in the view's coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=152189
+        -and corresponding-
+        rdar://problem/23188605
+
+        Reviewed by Dan Bernstein.
+
+        The comment here was actually out of date. It claimed that touch rectangles 
+        are in the coordinate system of the document, but we had actually changed 
+        them to be in the view’s coordinate system in order to fix issues with 
+        handling touch events in UIWebView. But now we are going back to having the 
+        touch rectangles be in the document’s coordinate system, so we should fix the 
+        rtl bugs here by converting to view coordinates before handing the rects off 
+        to iOS WK1 clients.
+        * WebView/WebView.mm:
+        (-[WebView _touchEventRegions]):
+
 2015-12-10  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Expose media capture devices persistent permissions to WebCore
