@@ -1,3 +1,21 @@
+2015-12-11  Mark Lam  <mark.lam@apple.com>
+
+        Removed some dead code, and simplified some code in the baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=152199
+
+        Reviewed by Benjamin Poulain.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBitBinaryOpFastPath):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitRightShiftFastPath):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+
 2015-12-11  Filip Pizlo  <fpizlo@apple.com>
 
         B3::reduceStrength should remove redundant Phi's

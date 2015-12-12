@@ -833,11 +833,7 @@ namespace JSC {
         template<typename SnippetGenerator>
         void emitBitBinaryOpFastPath(Instruction* currentInstruction);
 
-        enum RightShiftType {
-            SignedShift,
-            UnsignedShift
-        };
-        void emitRightShiftFastPath(Instruction* currentInstruction, RightShiftType);
+        void emitRightShiftFastPath(Instruction* currentInstruction, OpcodeID);
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 

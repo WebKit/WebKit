@@ -536,17 +536,11 @@ void JIT::emitBitBinaryOpFastPath(Instruction* currentInstruction)
 
     gen.generateFastPath(*this);
 
-    if (gen.didEmitFastPath()) {
-        gen.endJumpList().link(this);
-        emitPutVirtualRegister(result, resultRegs);
+    ASSERT(gen.didEmitFastPath());
+    gen.endJumpList().link(this);
+    emitPutVirtualRegister(result, resultRegs);
 
-        addSlowCase(gen.slowPathJumpList());
-    } else {
-        ASSERT(gen.endJumpList().empty());
-        ASSERT(gen.slowPathJumpList().empty());
-        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-        slowPathCall.call();
-    }
+    addSlowCase(gen.slowPathJumpList());
 }
 
 void JIT::emit_op_bitand(Instruction* currentInstruction)
@@ -601,8 +595,13 @@ void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEnt
     slowPathCall.call();
 }
 
-void JIT::emitRightShiftFastPath(Instruction* currentInstruction, RightShiftType rightShiftType)
+void JIT::emitRightShiftFastPath(Instruction* currentInstruction, OpcodeID opcodeID)
 {
+    ASSERT(opcodeID == op_rshift || opcodeID == op_urshift);
+
+    JITRightShiftGenerator::ShiftType snippetShiftType = opcodeID == op_rshift ?
+        JITRightShiftGenerator::SignedShift : JITRightShiftGenerator::UnsignedShift;
+
     int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
@@ -636,30 +635,21 @@ void JIT::emitRightShiftFastPath(Instruction* currentInstruction, RightShiftType
     if (!rightOperand.isConst())
         emitGetVirtualRegister(op2, rightRegs);
 
-    JITRightShiftGenerator::ShiftType snippetShiftType =
-        (rightShiftType == SignedShift) ? JITRightShiftGenerator::SignedShift : JITRightShiftGenerator::UnsignedShift;
-
     JITRightShiftGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
         fpRegT0, scratchGPR, scratchFPR, snippetShiftType);
 
     gen.generateFastPath(*this);
 
-    if (gen.didEmitFastPath()) {
-        gen.endJumpList().link(this);
-        emitPutVirtualRegister(result, resultRegs);
+    ASSERT(gen.didEmitFastPath());
+    gen.endJumpList().link(this);
+    emitPutVirtualRegister(result, resultRegs);
 
-        addSlowCase(gen.slowPathJumpList());
-    } else {
-        ASSERT(gen.endJumpList().empty());
-        ASSERT(gen.slowPathJumpList().empty());
-        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-        slowPathCall.call();
-    }
+    addSlowCase(gen.slowPathJumpList());
 }
 
 void JIT::emit_op_rshift(Instruction* currentInstruction)
 {
-    emitRightShiftFastPath(currentInstruction, RightShiftType::SignedShift);
+    emitRightShiftFastPath(currentInstruction, op_rshift);
 }
 
 void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -672,7 +662,7 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
 
 void JIT::emit_op_urshift(Instruction* currentInstruction)
 {
-    emitRightShiftFastPath(currentInstruction, RightShiftType::UnsignedShift);
+    emitRightShiftFastPath(currentInstruction, op_urshift);
 }
 
 void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
