@@ -36,8 +36,13 @@ PhiChildren::PhiChildren(Procedure& proc)
     : m_upsilons(proc.values().size())
 {
     for (Value* value : proc.values()) {
-        if (UpsilonValue* upsilon = value->as<UpsilonValue>())
-            m_upsilons[upsilon->phi()].append(upsilon);
+        if (UpsilonValue* upsilon = value->as<UpsilonValue>()) {
+            Value* phi = upsilon->phi();
+            Vector<UpsilonValue*>& vector = m_upsilons[phi];
+            if (vector.isEmpty())
+                m_phis.append(phi);
+            vector.append(upsilon);
+        }
     }
 }
 

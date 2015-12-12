@@ -35,6 +35,7 @@
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
+#include "B3PhiChildren.h"
 #include "B3ProcedureInlines.h"
 #include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
@@ -134,6 +135,7 @@ public:
             }
 
             killDeadCode();
+            simplifySSA();
             
             result |= m_changed;
         } while (m_changed);
@@ -1245,6 +1247,67 @@ private:
                 }
             }
             block->values().resize(targetIndex);
+        }
+    }
+
+    void simplifySSA()
+    {
+        // This runs Aycock and Horspool's algorithm on our Phi functions [1]. For most CFG patterns,
+        // this can take a suboptimal arrangement of Phi functions and make it optimal, as if you had
+        // run Cytron, Ferrante, Rosen, Wegman, and Zadeck. It's only suboptimal for irreducible
+        // CFGs. In practice, that doesn't matter, since we expect clients of B3 to run their own SSA
+        // conversion before lowering to B3, and in the case of the DFG, that conversion uses Cytron
+        // et al. In that context, this algorithm is intended to simplify Phi functions that were
+        // made redundant by prior CFG simplification. But according to Aycock and Horspool's paper,
+        // this algorithm is good enough that a B3 client could just give us maximal Phi's (i.e. Phi
+        // for each variable at each basic block) and we will make them optimal.
+        // [1] http://pages.cpsc.ucalgary.ca/~aycock/papers/ssa.ps
+
+        // Aycock and Horspool prescribe two rules that are to be run to fixpoint:
+        //
+        // 1) If all of the Phi's children are the same (i.e. it's one child referenced from one or
+        //    more Upsilons), then replace all uses of the Phi with the one child.
+        //
+        // 2) If all of the Phi's children are either the Phi itself or exactly one other child, then
+        //    replace all uses of the Phi with the one other child.
+        //
+        // Rule (2) subsumes rule (1), so we can just run (2). We only run one fixpoint iteration
+        // here. This premise is that in common cases, this will only find optimization opportunities
+        // as a result of CFG simplification and usually CFG simplification will only do one round
+        // of block merging per ReduceStrength fixpoint iteration, so it's OK for this to only do one
+        // round of Phi merging - since Phis are the value analogue of blocks.
+
+        PhiChildren phiChildren(m_proc);
+
+        for (Value* phi : phiChildren.phis()) {
+            Value* otherChild = nullptr;
+            bool ok = true;
+            for (Value* child : phiChildren[phi].values()) {
+                if (child == phi)
+                    continue;
+                if (child == otherChild)
+                    continue;
+                if (!otherChild) {
+                    otherChild = child;
+                    continue;
+                }
+                ok = false;
+                break;
+            }
+            if (!ok)
+                continue;
+            if (!otherChild) {
+                // Wow, this would be super weird. It probably won't happen, except that things could
+                // get weird as a consequence of stepwise simplifications in the strength reduction
+                // fixpoint.
+                continue;
+            }
+            
+            // Turn the Phi into an Identity and turn the Upsilons into Nops.
+            m_changed = true;
+            for (Value* upsilon : phiChildren[phi])
+                upsilon->replaceWithNop();
+            phi->replaceWithIdentity(otherChild);
         }
     }
 
