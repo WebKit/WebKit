@@ -173,16 +173,9 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
         audit_token_t token;
         xpc_connection_get_audit_token(m_connection, &token);
         if (!auditTokenHasEntitlement(token, @"com.apple.private.webinspector.webinspectord")) {
-            {
-                std::lock_guard<Lock> lock(m_mutex);
-                if (m_client)
-                    m_client->xpcConnectionFailed(this);
-
-                m_closed = true;
-                m_client = nullptr;
-                closeOnQueue();
-            }
-            deref();
+            std::lock_guard<Lock> lock(m_mutex);
+            // This will trigger one last XPC_ERROR_CONNECTION_INVALID event on the queue and deref us.
+            closeOnQueue();
             return;
         }
         m_validated = true;

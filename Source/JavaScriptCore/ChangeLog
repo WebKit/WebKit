@@ -1,3 +1,15 @@
+2015-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Too many derefs when RemoteInspectorXPCConnection fails to validate connection
+        https://bugs.webkit.org/show_bug.cgi?id=152213
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * inspector/remote/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        We should just close the XPC connection triggering XPC_ERROR_CONNECTION_INVALID
+        which will then graceful teardown the connection as expected.
+
 2015-12-11  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add Floating Point Abs() to B3
