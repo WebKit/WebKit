@@ -1,3 +1,20 @@
+2015-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Strip out Referer header when requesting subresources or following links for documents with "Content-Disposition: attachment"
+        https://bugs.webkit.org/show_bug.cgi?id=152102
+        <rdar://problem/22124230>
+
+        Reviewed by Andy Estes.
+
+        Keep the ReferrerPolicy for a document as ReferrerPolicyNever if the document is loaded with
+        "Content-Disposition: attachment".
+
+        Test: http/tests/contentdispositionattachmentsandbox/subresource-request-not-include-referer-header.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processReferrerPolicy):
+        (WebCore::Document::applyContentDispositionAttachmentSandbox):
+
 2015-12-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add a setting to allow the mock media capture devices to be enabled and disabled
