@@ -175,9 +175,11 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._toggleRecordingShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Space, this._toggleRecordingOnSpacebar.bind(this));
         this._toggleRecordingShortcut.implicitlyPreventsDefault = false;
+        this._toggleRecordingShortcut.disabled = true;
 
         this._toggleNewRecordingShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Space, this._toggleNewRecordingOnSpacebar.bind(this));
         this._toggleNewRecordingShortcut.implicitlyPreventsDefault = false;
+        this._toggleNewRecordingShortcut.disabled = true;
     }
 
     // Static
