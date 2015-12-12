@@ -138,6 +138,7 @@ class Page : public Supplementable<Page> {
 public:
     WEBCORE_EXPORT static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     WEBCORE_EXPORT static void clearPreviousItemFromAllPages(HistoryItem*);
+    WEBCORE_EXPORT static void setTabSuspensionEnabled(bool);
 
     WEBCORE_EXPORT explicit Page(PageConfiguration&);
     WEBCORE_EXPORT ~Page();
@@ -365,6 +366,8 @@ public:
     // with exponential growth in the number of frames.
     static const int maxNumberOfFrames = 1000;
 
+    static bool s_tabSuspensionIsEnabled;
+
     void setEditable(bool isEditable) { m_isEditable = isEditable; }
     bool isEditable() { return m_isEditable; }
 
@@ -491,6 +494,7 @@ public:
 
     void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
     bool showAllPlugins() const;
+    void setIsTabSuspended(bool);
 
 private:
     WEBCORE_EXPORT void initGroup();
@@ -516,6 +520,9 @@ private:
 
     void hiddenPageDOMTimerThrottlingStateChanged();
     void setTimerThrottlingEnabled(bool);
+    bool canTabSuspend();
+    void scheduleTabSuspension(bool);
+    void tabSuspensionTimerFired();
 
     const std::unique_ptr<Chrome> m_chrome;
     const std::unique_ptr<DragCaretController> m_dragCaretController;
@@ -605,6 +612,7 @@ private:
     bool m_isEditable;
     bool m_isPrerender;
     ViewState::Flags m_viewState;
+    PageActivityState::Flags m_pageActivityState;
 
     LayoutMilestones m_requestedLayoutMilestones;
 
@@ -655,6 +663,8 @@ private:
     SessionID m_sessionID;
 
     bool m_isClosing;
+    bool m_shouldTabSuspend { false };
+    Timer m_tabSuspensionTimer;
 
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
     

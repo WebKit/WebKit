@@ -4573,9 +4573,6 @@ void Document::setInPageCache(bool flag)
     FrameView* v = view();
     Page* page = this->page();
 
-    if (page)
-        page->lockAllOverlayScrollbarsToHidden(flag);
-
     if (flag) {
         if (v) {
             // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
@@ -4608,6 +4605,9 @@ void Document::documentWillBecomeInactive()
 
 void Document::suspend()
 {
+    if (m_isSuspended)
+        return;
+
     documentWillBecomeInactive();
 
     for (auto* element : m_documentSuspensionCallbackElements)
@@ -4619,14 +4619,31 @@ void Document::suspend()
     m_didDispatchViewportPropertiesChanged = false;
 #endif
 
+    ASSERT(page());
+    page()->lockAllOverlayScrollbarsToHidden(true);
+
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
             view->compositor().cancelCompositingLayerUpdate();
     }
+
+    suspendScriptedAnimationControllerCallbacks();
+    suspendActiveDOMObjects(ActiveDOMObject::PageCache);
+
+    ASSERT(m_frame);
+    m_frame->clearTimers();
+
+    m_visualUpdatesAllowed = false;
+    m_visualUpdatesSuppressionTimer.stop();
+
+    m_isSuspended = true;
 }
 
 void Document::resume()
 {
+    if (!m_isSuspended)
+        return;
+
     Vector<Element*> elements;
     copyToVector(m_documentSuspensionCallbackElements, elements);
     for (auto* element : elements)
@@ -4640,6 +4657,14 @@ void Document::resume()
 
     ASSERT(m_frame);
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
+    m_frame->animation().resumeAnimationsForDocument(this);
+
+    resumeActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
+    resumeScriptedAnimationControllerCallbacks();
+
+    m_visualUpdatesAllowed = true;
+
+    m_isSuspended = false;
 }
 
 void Document::registerForDocumentSuspensionCallbacks(Element* e)

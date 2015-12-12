@@ -1,3 +1,23 @@
+2015-12-12  Katlyn Graff  <kgraff@apple.com>
+
+        Safari background tabs should be fully suspended where possible.
+        https://bugs.webkit.org/show_bug.cgi?id=150515
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a runtime flag enabling tab suspension, default off.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2015-12-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add a setting to allow the mock media capture devices to be enabled and disabled

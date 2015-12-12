@@ -1,3 +1,36 @@
+2015-12-12  Katlyn Graff  <kgraff@apple.com>
+
+        Safari background tabs should be fully suspended where possible.
+        https://bugs.webkit.org/show_bug.cgi?id=150515
+
+        Reviewed by Ryosuke Niwa.
+
+        Support for tab suspension for Mac, enabled by defaults writing to WebKitTabSuspension.
+        Page-down suspension consolidated with PageCache suspension code in Document::
+        suspend and Document::resume. Pages canTabSuspend if cacheable, nonvisible, nonprerender,
+        and nonactive.
+
+        * dom/Document.cpp: moved scrollbar handling from setInPageCache to suspend/resume
+        (WebCore::Document::suspend): moved scrollbar, dom, animation, timer, and visual update suspending into here
+        (WebCore::Document::resume): moved scrollbar, dom, animation, timer, and visual update resuming into here
+        * dom/Document.h: added m_isSuspended to prevent repeat calls from PageCache/Tab Suspension contention
+        * history/CachedFrame.cpp: moved dom, animation, and timer suspension into Document::suspend
+        (WebCore::CachedFrame::CachedFrame):
+       * history/PageCache.cpp: Added a few nullchecks to prevent crashes if canCacheFrame is called but document is null
+        (WebCore::PageCache::canCacheFrame):
+        * page/Page.cpp:
+        (WebCore::Page::Page): Added timer to fire delayed suspension
+        (WebCore::Page::setPageActivityState): Added a call to schedule tab suspension
+        (WebCore::Page::setIsVisibleInternal): Added a call to schedule tab suspension
+        (WebCore::Page::canTabSuspend): Added support for suspending if cacheable, nonvisible, nonprerender, and nonactive
+        (WebCore::Page::setIsTabSuspended): Added a function to suspend or resume tabs
+        (WebCore::Page::setTabSuspensionEnabled): Added support for a defaults write enable
+        (WebCore::Page::scheduleTabSuspension): Added ability to schedule the suspension timer to fire or resume
+        (WebCore::Page::timerFired): Added a suspension timer
+        * page/Page.h:
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::activityState): Added access to m_activityState for canTabSuspend
+
 2015-12-11  Simon Fraser  <simon.fraser@apple.com>
 
         Mousewheel events don't work in iframes in RTL documents

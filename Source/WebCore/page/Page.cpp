@@ -143,6 +143,7 @@ static void networkStateChanged(bool isOnLine)
 }
 
 static const ViewState::Flags PageInitialViewState = ViewState::IsVisible | ViewState::IsInWindow;
+bool Page::s_tabSuspensionIsEnabled = false;
 
 Page::Page(PageConfiguration& pageConfiguration)
     : m_chrome(std::make_unique<Chrome>(*this, *pageConfiguration.chromeClient))
@@ -223,6 +224,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
+    , m_tabSuspensionTimer(*this, &Page::tabSuspensionTimerFired)
 {
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
 
@@ -1293,6 +1295,11 @@ void Page::setViewState(ViewState::Flags viewState)
 void Page::setPageActivityState(PageActivityState::Flags activityState)
 {
     chrome().client().setPageActivityState(activityState);
+    
+    if (activityState == PageActivityState::NoFlags && !isVisible())
+        scheduleTabSuspension(true);
+    else
+        scheduleTabSuspension(false);
 }
 
 void Page::setIsVisible(bool isVisible)
@@ -1344,6 +1351,8 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (FrameView* view = mainFrame().view())
             view->hide();
     }
+
+    scheduleTabSuspension(!isVisible);
 }
 
 void Page::setIsPrerender()
@@ -1842,5 +1851,49 @@ void Page::setResourceUsageOverlayVisible(bool visible)
         m_resourceUsageOverlay = std::make_unique<ResourceUsageOverlay>(*this);
 }
 #endif
+
+bool Page::canTabSuspend()
+{
+    return s_tabSuspensionIsEnabled && !m_isPrerender && (m_pageThrottler.activityState() == PageActivityState::NoFlags) && PageCache::singleton().canCache(this);
+}
+
+void Page::setIsTabSuspended(bool shouldSuspend)
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document()) {
+            if (shouldSuspend)
+                document->suspend();
+            else
+                document->resume();
+        }
+    }
+}
+
+void Page::setTabSuspensionEnabled(bool enable)
+{
+    s_tabSuspensionIsEnabled = enable;
+}
+
+void Page::scheduleTabSuspension(bool shouldSuspend)
+{
+    if (m_shouldTabSuspend == shouldSuspend)
+        return;
+    
+    if (shouldSuspend && canTabSuspend()) {
+        m_shouldTabSuspend = shouldSuspend;
+        m_tabSuspensionTimer.startOneShot(0);
+    } else {
+        m_tabSuspensionTimer.stop();
+        if (!shouldSuspend) {
+            m_shouldTabSuspend = shouldSuspend;
+            setIsTabSuspended(false);
+        }
+    }
+}
+
+void Page::tabSuspensionTimerFired()
+{
+    setIsTabSuspended(true);
+}
 
 } // namespace WebCore

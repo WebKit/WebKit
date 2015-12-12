@@ -142,6 +142,10 @@ struct WebProcessCreationParameters {
 
 #endif // PLATFORM(COCOA)
 
+#if PLATFORM(MAC)
+    bool shouldEnableTabSuspension;
+#endif
+
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     HashMap<String, bool> notificationPermissions;
 #endif

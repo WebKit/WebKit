@@ -43,6 +43,9 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , shouldEnableJIT(false)
     , shouldEnableFTLJIT(false)
 #endif
+#if PLATFORM(MAC)
+    , shouldEnableTabSuspension(false)
+#endif
     , memoryCacheDisabled(false)
 #if ENABLE(SERVICE_CONTROLS)
     , hasImageServices(false)
@@ -116,6 +119,10 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << !!bundleParameterData;
     if (bundleParameterData)
         encoder << bundleParameterData->dataReference();
+#endif
+
+#if PLATFORM(MAC)
+    encoder << shouldEnableTabSuspension;
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -255,6 +262,11 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
 
         parameters.bundleParameterData = API::Data::create(dataReference.data(), dataReference.size());
     }
+#endif
+
+#if PLATFORM(MAC)
+    if (!decoder.decode(parameters.shouldEnableTabSuspension))
+        return false;
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

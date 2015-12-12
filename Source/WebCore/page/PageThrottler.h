@@ -59,6 +59,7 @@ public:
     PageThrottler(Page&);
 
     void didReceiveUserInput() { m_userInputHysteresis.impulse(); }
+    PageActivityState::Flags activityState() { return m_activityState; }
     void pluginDidEvaluateWhileAudioIsPlaying() { m_audiblePluginHysteresis.impulse(); }
     PageActivityAssertionToken mediaActivityToken();
     PageActivityAssertionToken pageLoadActivityToken();
