@@ -1,3 +1,15 @@
+2015-12-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Mousewheel events don't work in iframes in RTL documents
+        https://bugs.webkit.org/show_bug.cgi?id=152200
+
+        Reviewed by Beth Dakin.
+        
+        Try dispatching wheel events to an iframe in an RTL document.
+
+        * fast/scrolling/rtl-point-in-iframe-expected.txt: Added.
+        * fast/scrolling/rtl-point-in-iframe.html: Added.
+
 2015-12-11  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !rect.isEmpty() in WebCore::GraphicsContext::drawRect

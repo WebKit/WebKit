@@ -1,3 +1,19 @@
+2015-12-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Mousewheel events don't work in iframes in RTL documents
+        https://bugs.webkit.org/show_bug.cgi?id=152200
+
+        Reviewed by Beth Dakin.
+        
+        When dispatching wheel events, the testing of the event point against the
+        non-fast scrollable region was broken in an RTL document. Fix by taking
+        the scrollOrigin into account in ScrollingTreeFrameScrollingNode::viewToContentsOffset().
+
+        Test: fast/scrolling/rtl-point-in-iframe.html
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::viewToContentsOffset):
+
 2015-12-11  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !rect.isEmpty() in WebCore::GraphicsContext::drawRect
