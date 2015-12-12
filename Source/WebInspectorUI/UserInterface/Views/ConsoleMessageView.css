@@ -30,12 +30,12 @@
 }
 
 .console-user-command.special-user-log > .console-message-text {
-    padding: 1px 6px;
+    padding: 0 6px 1px;
     border-radius: 3px;
     border: 1px solid transparent;
     background-color: hsl(212, 92%, 54%);
     color: white;
-    font-size: 10px;
+    font: 10px -apple-system, sans-serif;
     -webkit-user-select: none;
 }
 

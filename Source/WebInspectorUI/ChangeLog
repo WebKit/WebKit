@@ -1,3 +1,13 @@
+2015-12-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: "Selected Element" should use sans-serif font, not monospace
+        https://bugs.webkit.org/show_bug.cgi?id=152212
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-user-command.special-user-log > .console-message-text):
+
 2015-12-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: When logging strings, detect stack traces and show them as StackTraceView
