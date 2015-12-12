@@ -1,5 +1,21 @@
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/optional-arguments.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152194
+
+        Reviewed by Alex Christensen.
+
+        No new tests (At least one failing test now passes).
+
+        * Modules/indexeddb/client/IDBCursorImpl.cpp:
+        (WebCore::IDBClient::IDBCursor::continueFunction): Allow 'undefined' for the key.
+        
+        * Modules/indexeddb/client/IDBObjectStoreImpl.cpp:
+        (WebCore::IDBClient::IDBObjectStore::add): Ditto.
+        (WebCore::IDBClient::IDBObjectStore::put): Ditto.
+
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
         Followup to:
         Modern IDB: storage/indexeddb/index-count.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152175

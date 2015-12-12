@@ -214,13 +214,17 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& state, JSC::JSVa
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
-    auto idbKey = scriptValueToIDBKey(execState, key);
+    RefPtr<IDBKey> idbKey;
+    if (!key.isUndefined())
+        idbKey = scriptValueToIDBKey(execState, key);
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, InlineKeyCheck::Perform, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCodeWithMessage& ec)
 {
-    auto idbKey = scriptValueToIDBKey(execState, key);
+    RefPtr<IDBKey> idbKey;
+    if (!key.isUndefined())
+        idbKey = scriptValueToIDBKey(execState, key);
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, InlineKeyCheck::Perform, ec);
 }
 

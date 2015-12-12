@@ -1,5 +1,17 @@
 2015-12-11  Brady Eidson  <beidson@apple.com>
 
+        Modern IDB: storage/indexeddb/optional-arguments.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=152194
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * storage/indexeddb/invalid-keys-expected.txt: Updated for new error message.
+        * storage/indexeddb/optional-arguments-expected.txt: Remove results that expect IDBObjectStore.openKeyCursor() to be
+          a thing. That method no longer exists in the spec and was already removed from the test.
+
+2015-12-11  Brady Eidson  <beidson@apple.com>
+
         Modern IDB: storage/indexeddb/cursor-continue.html fails.
         https://bugs.webkit.org/show_bug.cgi?id=152192
 

@@ -220,7 +220,10 @@ void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecat
     }
 
     DOMRequestState requestState(context);
-    RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
+    RefPtr<IDBKey> key;
+    if (!keyValue.jsValue().isUndefined())
+        key = scriptValueToIDBKey(&requestState, keyValue);
+
     continueFunction(key.get(), ec);
 }
 

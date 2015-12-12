@@ -55,30 +55,6 @@ PASS cursor.direction is "next"
 PASS continues is 1
 
 verifyCursor():
-request = store.openKeyCursor()
-cursor = request.result
-PASS cursor.direction is "next"
-PASS continues is 5
-
-verifyCursor():
-request = store.openKeyCursor(null)
-cursor = request.result
-PASS cursor.direction is "next"
-PASS continues is 5
-
-verifyCursor():
-request = store.openKeyCursor(IDBKeyRange.lowerBound(4))
-cursor = request.result
-PASS cursor.direction is "next"
-PASS continues is 2
-
-verifyCursor():
-request = store.openKeyCursor(3)
-cursor = request.result
-PASS cursor.direction is "next"
-PASS continues is 1
-
-verifyCursor():
 request = index.openCursor()
 cursor = request.result
 PASS cursor.direction is "next"
