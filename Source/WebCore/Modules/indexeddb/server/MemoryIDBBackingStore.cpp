@@ -346,6 +346,30 @@ IDBError MemoryIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
     return IDBError();
 }
 
+IDBError MemoryIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, double newKeyNumber)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::maybeUpdateKeyGeneratorNumber");
+    ASSERT(objectStoreIdentifier);
+    ASSERT_UNUSED(transactionIdentifier, m_transactions.contains(transactionIdentifier));
+    ASSERT_UNUSED(transactionIdentifier, m_transactions.get(transactionIdentifier)->isWriting());
+
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    RELEASE_ASSERT(objectStore);
+
+    if (newKeyNumber < objectStore->currentKeyGeneratorValue())
+        return { };
+
+    uint64_t newKeyInteger(newKeyNumber);
+    if (newKeyInteger <= newKeyNumber)
+        ++newKeyInteger;
+
+    ASSERT(newKeyInteger > newKeyNumber);
+
+    objectStore->setKeyGeneratorValue(newKeyInteger);
+
+    return { };
+}
+
 IDBError MemoryIDBBackingStore::openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo& info, IDBGetResult& outData)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::openCursor");

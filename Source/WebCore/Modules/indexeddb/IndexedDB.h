@@ -79,6 +79,7 @@ enum class KeyPathType {
 
 enum class ObjectStoreOverwriteMode {
     Overwrite,
+    OverwriteForCursor,
     NoOverwrite,
 };
 
