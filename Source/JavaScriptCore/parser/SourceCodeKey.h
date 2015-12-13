@@ -45,7 +45,7 @@ public:
         : m_sourceCode(sourceCode)
         , m_name(name)
         , m_flags((static_cast<unsigned>(codeType) << 3) | (static_cast<unsigned>(builtinMode) << 2) | (static_cast<unsigned>(strictMode) << 1) | static_cast<unsigned>(thisTDZMode))
-        , m_hash(string().impl()->hash())
+        , m_hash(sourceCode.hash())
     {
     }
 
@@ -64,7 +64,7 @@ public:
 
     // To save memory, we compute our string on demand. It's expected that source
     // providers cache their strings to make this efficient.
-    String string() const { return m_sourceCode.toString(); }
+    StringView string() const { return m_sourceCode.view(); }
 
     bool operator==(const SourceCodeKey& other) const
     {

@@ -40,6 +40,7 @@ class AtomicStringImpl;
 class CString;
 class String;
 class StringImpl;
+class StringView;
 class UniquedStringImpl;
 
 class PrintStream {
@@ -70,6 +71,7 @@ public:
 };
 
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char*);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringView&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);

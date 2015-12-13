@@ -61,7 +61,7 @@ public:
 
     const JSC::SourceCode& jsSourceCode() const { return m_code; }
 
-    const String& source() const { return m_provider->source(); }
+    StringView source() const { return m_provider->source(); }
 
     int startLine() const { return m_code.firstLine(); }
 

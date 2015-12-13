@@ -37,13 +37,16 @@ public:
     CachedScript(const ResourceRequest&, const String& charset, SessionID);
     virtual ~CachedScript();
 
-    const String& script();
+    StringView script();
+    unsigned scriptHash();
 
     String mimeType() const;
 
 #if ENABLE(NOSNIFF)
     bool mimeTypeAllowedByNosniff() const;
 #endif
+
+    void didReplaceSharedBufferContents() override;
 
 private:
     virtual bool mayTryReplaceEncodedData() const override { return true; }
@@ -57,6 +60,10 @@ private:
     virtual void destroyDecodedData() override;
 
     String m_script;
+
+    enum ASCIIResourceOptimizationState { Unknown, DataAndDecodedStringHaveSameBytes, DataAndDecodedStringHaveDifferentBytes };
+    ASCIIResourceOptimizationState m_ASCIIOptimizationState { Unknown };
+
     RefPtr<TextResourceDecoder> m_decoder;
 };
 

@@ -161,7 +161,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             *result = downcast<CachedCSSStyleSheet>(*cachedResource).sheetText();
             return !result->isNull();
         case CachedResource::Script:
-            *result = downcast<CachedScript>(*cachedResource).script();
+            *result = downcast<CachedScript>(*cachedResource).script().toString();
             return true;
         case CachedResource::RawResource: {
             auto* buffer = cachedResource->resourceBuffer();

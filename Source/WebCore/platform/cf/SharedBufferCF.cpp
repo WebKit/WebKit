@@ -92,13 +92,14 @@ void SharedBuffer::clearPlatformData()
     m_cfData = 0;
 }
 
-void SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer& newContents)
+bool SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer& newContents)
 {
     if (!newContents.m_cfData)
-        return;
+        return false;
 
     clear();
     m_cfData = newContents.m_cfData;
+    return true;
 }
 
 bool SharedBuffer::maybeAppendPlatformData(SharedBuffer* newContents)

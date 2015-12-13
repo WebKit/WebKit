@@ -990,7 +990,7 @@ private:
     }
 
     void printUnexpectedTokenText(WTF::PrintStream&);
-    ALWAYS_INLINE String getToken() {
+    ALWAYS_INLINE StringView getToken() {
         SourceProvider* sourceProvider = m_source->provider();
         return sourceProvider->getRange(tokenStart(), tokenEndPosition().offset);
     }

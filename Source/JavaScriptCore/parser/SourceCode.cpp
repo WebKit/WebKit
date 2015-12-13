@@ -36,7 +36,7 @@ CString SourceCode::toUTF8() const
     if (!m_provider)
         return CString("", 0);
     
-    return m_provider->source().impl()->utf8ForRange(m_startChar, m_endChar - m_startChar);
+    return m_provider->source().substring(m_startChar, m_endChar - m_startChar).utf8();
 }
 
 } // namespace JSC

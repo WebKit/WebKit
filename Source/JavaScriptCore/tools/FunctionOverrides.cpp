@@ -106,7 +106,7 @@ FunctionOverrides::FunctionOverrides(const char* overridesFileName)
 
 static void initializeOverrideInfo(const SourceCode& origCode, const String& newBody, FunctionOverrides::OverrideInfo& info)
 {
-    String origProviderStr = origCode.provider()->source();
+    String origProviderStr = origCode.provider()->source().toString();
     unsigned origBraceStart = origCode.startOffset();
     unsigned origFunctionStart = origProviderStr.reverseFind("function", origBraceStart);
     unsigned headerLength = origBraceStart - origFunctionStart;
@@ -135,7 +135,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     ASSERT(Options::functionOverrides());
     FunctionOverrides& overrides = FunctionOverrides::overrides();
 
-    auto it = overrides.m_entries.find(origCode.toString());
+    auto it = overrides.m_entries.find(origCode.view().toString());
     if (it == overrides.m_entries.end())
         return false;
 

@@ -167,7 +167,7 @@ JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const SourceCode& sour
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
-    globalObject->moduleLoader()->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.toString());
+    globalObject->moduleLoader()->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.view().toString());
     if (exec->hadException())
         return rejectPromise(exec, globalObject);
 
@@ -204,7 +204,7 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source)
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
 
     // Insert the given source code to the ModuleLoader registry as the fetched registry entry.
-    globalObject->moduleLoader()->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.toString());
+    globalObject->moduleLoader()->provide(exec, key, ModuleLoaderObject::Status::Fetch, source.view().toString());
     if (exec->hadException())
         return rejectPromise(exec, globalObject);
 

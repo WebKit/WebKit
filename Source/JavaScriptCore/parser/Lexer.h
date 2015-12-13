@@ -139,7 +139,7 @@ private:
     ALWAYS_INLINE const T* currentSourcePtr() const;
     ALWAYS_INLINE void setOffsetFromSourcePtr(const T* sourcePtr, unsigned lineStartOffset) { setOffset(offsetFromSourcePtr(sourcePtr), lineStartOffset); }
 
-    ALWAYS_INLINE void setCodeStart(const StringImpl*);
+    ALWAYS_INLINE void setCodeStart(const StringView&);
 
     ALWAYS_INLINE const Identifier* makeIdentifier(const LChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeIdentifier(const UChar* characters, size_t length);
@@ -289,17 +289,17 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeEmptyIdentifier()
 }
 
 template <>
-ALWAYS_INLINE void Lexer<LChar>::setCodeStart(const StringImpl* sourceString)
+ALWAYS_INLINE void Lexer<LChar>::setCodeStart(const StringView& sourceString)
 {
-    ASSERT(sourceString->is8Bit());
-    m_codeStart = sourceString->characters8();
+    ASSERT(sourceString.is8Bit());
+    m_codeStart = sourceString.characters8();
 }
 
 template <>
-ALWAYS_INLINE void Lexer<UChar>::setCodeStart(const StringImpl* sourceString)
+ALWAYS_INLINE void Lexer<UChar>::setCodeStart(const StringView& sourceString)
 {
-    ASSERT(!sourceString->is8Bit());
-    m_codeStart = sourceString->characters16();
+    ASSERT(!sourceString.is8Bit());
+    m_codeStart = sourceString.characters16();
 }
 
 template <typename T>

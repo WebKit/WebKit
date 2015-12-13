@@ -69,14 +69,50 @@ String CachedScript::mimeType() const
     return extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)).lower();
 }
 
-const String& CachedScript::script()
+static bool encodingMayBeAllASCII(const String& encoding)
+{
+    return encoding == "UTF-8" || encoding == "ISO-8859-1" || encoding == "ASCII";
+}
+
+StringView CachedScript::script()
 {
     if (!m_script && m_data) {
+        if (m_ASCIIOptimizationState == Unknown
+            && encodingMayBeAllASCII(encoding())
+            && m_data->size()
+            && charactersAreAllASCII(reinterpret_cast<const LChar*>(m_data->data()), m_data->size())) {
+
+            m_script = StringImpl::createWithoutCopying(reinterpret_cast<const LChar*>(m_data->data()), m_data->size());
+            m_ASCIIOptimizationState = DataAndDecodedStringHaveSameBytes;
+
+            // If the encoded and decoded data are the same, there is no decoded data cost!
+            setDecodedSize(0);
+            m_decodedDataDeletionTimer.stop();
+            return m_script;
+        }
         m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());
+        m_ASCIIOptimizationState = DataAndDecodedStringHaveDifferentBytes;
         setDecodedSize(m_script.sizeInBytes());
     }
-    m_decodedDataDeletionTimer.restart();
+    if (m_ASCIIOptimizationState == DataAndDecodedStringHaveDifferentBytes)
+        m_decodedDataDeletionTimer.restart();
     return m_script;
+}
+
+unsigned CachedScript::scriptHash()
+{
+    script();
+    return m_script.impl()->hash();
+}
+
+void CachedScript::didReplaceSharedBufferContents()
+{
+    // We receive this callback when the CachedResource's internal SharedBuffer has had its contents
+    // replaced by the memory-mapping-of-file-backed-resources optimization. If m_script is just a
+    // non-copying wrapper around the old SharedBuffer contents, we have to retarget it.
+    if (m_ASCIIOptimizationState == DataAndDecodedStringHaveSameBytes)
+        m_script = StringImpl::createWithoutCopying(reinterpret_cast<const LChar*>(m_data->data()), m_data->size());
+    CachedResource::didReplaceSharedBufferContents();
 }
 
 void CachedScript::finishLoading(SharedBuffer* data)

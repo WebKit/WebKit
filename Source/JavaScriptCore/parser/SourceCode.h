@@ -79,10 +79,16 @@ namespace JSC {
 
         bool isHashTableDeletedValue() const { return m_provider.isHashTableDeletedValue(); }
 
-        String toString() const
+        unsigned hash() const
+        {
+            ASSERT(m_provider);
+            return m_provider->hash();
+        }
+
+        StringView view() const
         {
             if (!m_provider)
-                return String();
+                return StringView();
             return m_provider->getRange(m_startChar, m_endChar);
         }
         

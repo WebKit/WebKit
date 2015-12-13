@@ -78,14 +78,15 @@ bool SharedBuffer::maybeAppendPlatformData(SharedBuffer*)
     return false;
 }
 
-void SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer& newContents)
+bool SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer& newContents)
 {
     if (!newContents.hasPlatformData())
-        return;
+        return false;
 
     clear();
     // FIXME: Use GRefPtr instead of GUniquePtr for the SoupBuffer.
     m_soupBuffer.swap(newContents.m_soupBuffer);
+    return true;
 }
 
 } // namespace WebCore

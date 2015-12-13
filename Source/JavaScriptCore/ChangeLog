@@ -1,3 +1,60 @@
+2015-12-13  Andreas Kling  <akling@apple.com>
+
+        CachedScript could have a copy-free path for all-ASCII scripts.
+        <https://webkit.org/b/152203>
+
+        Reviewed by Antti Koivisto.
+
+        Make SourceProvider vend a StringView instead of a String.
+        This relaxes the promises that providers have to make about string lifetimes.
+
+        This means that on the WebCore side, CachedScript is free to cache a String
+        internally, while only ever exposing it as a temporary StringView.
+
+        A few extra copies (CPU, not memory) are introduced, none of them on hot paths.
+
+        * API/JSScriptRef.cpp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::sourceCodeForTools):
+        (JSC::CodeBlock::dumpSource):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchDidParseSource):
+        (Inspector::ScriptDebugServer::dispatchFailedToParseSource):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jsc.cpp:
+        (functionFindTypeForExpression):
+        (functionHasBasicBlockExecuted):
+        (functionBasicBlockExecutionCount):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::setCode):
+        * parser/Lexer.h:
+        (JSC::Lexer<LChar>::setCodeStart):
+        (JSC::Lexer<UChar>::setCodeStart):
+        * parser/Parser.h:
+        (JSC::Parser::getToken):
+        * parser/SourceCode.cpp:
+        (JSC::SourceCode::toUTF8):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::hash):
+        (JSC::SourceCode::view):
+        (JSC::SourceCode::toString): Deleted.
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::string):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::getRange):
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToError):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+        (JSC::FunctionOverrides::initializeOverrideFor):
+
 2015-12-12  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Add lowering for B3's Store8 opcode

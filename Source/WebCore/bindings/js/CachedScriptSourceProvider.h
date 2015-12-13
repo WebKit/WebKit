@@ -44,7 +44,8 @@ public:
         m_cachedScript->removeClient(this);
     }
 
-    const String& source() const { return m_cachedScript->script(); }
+    unsigned hash() const override { return m_cachedScript->scriptHash(); }
+    StringView source() const override { return m_cachedScript->script(); }
 
 private:
     CachedScriptSourceProvider(CachedScript* cachedScript)

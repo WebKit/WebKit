@@ -53,6 +53,11 @@ void printInternal(PrintStream& out, const char* string)
     out.printf("%s", string);
 }
 
+void printInternal(PrintStream& out, const StringView& string)
+{
+    out.print(string.utf8());
+}
+
 void printInternal(PrintStream& out, const CString& string)
 {
     out.print(string.data());

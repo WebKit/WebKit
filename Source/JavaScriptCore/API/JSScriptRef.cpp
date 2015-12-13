@@ -46,7 +46,12 @@ public:
         return WTF::adoptRef(*new OpaqueJSScript(vm, url, startingLineNumber, source));
     }
 
-    virtual const String& source() const override
+    unsigned hash() const override
+    {
+        return m_source.impl()->hash();
+    }
+
+    StringView source() const override
     {
         return m_source;
     }

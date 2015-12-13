@@ -543,10 +543,10 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_lineNumber = source.firstLine();
     m_lastToken = -1;
     
-    const String& sourceString = source.provider()->source();
+    StringView sourceString = source.provider()->source();
 
     if (!sourceString.isNull())
-        setCodeStart(sourceString.impl());
+        setCodeStart(sourceString);
     else
         m_codeStart = 0;
 

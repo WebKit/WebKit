@@ -199,7 +199,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 
     ScriptDebugListener::Script script;
     script.url = sourceProvider->url();
-    script.source = sourceProvider->source();
+    script.source = sourceProvider->source().toString();
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
     script.isContentScript = isContentScript;
@@ -231,7 +231,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
     String url = sourceProvider->url();
-    const String& data = sourceProvider->source();
+    String data = sourceProvider->source().toString();
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     Vector<ScriptDebugListener*> copy;

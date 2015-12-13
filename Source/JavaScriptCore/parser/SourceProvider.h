@@ -43,10 +43,11 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE virtual ~SourceProvider();
 
-        virtual const String& source() const = 0;
-        String getRange(int start, int end) const
+        virtual unsigned hash() const = 0;
+        virtual StringView source() const = 0;
+        StringView getRange(int start, int end) const
         {
-            return source().substringSharingImpl(start, end - start);
+            return source().substring(start, end - start);
         }
 
         const String& url() const { return m_url; }
@@ -86,8 +87,13 @@ namespace JSC {
         {
             return adoptRef(*new StringSourceProvider(source, url, startPosition));
         }
+        
+        unsigned hash() const override
+        {
+            return m_source.impl()->hash();
+        }
 
-        virtual const String& source() const override
+        virtual StringView source() const override
         {
             return m_source;
         }
@@ -110,7 +116,12 @@ namespace JSC {
             return adoptRef(*new WebAssemblySourceProvider(data, url));
         }
 
-        virtual const String& source() const override
+        unsigned hash() const override
+        {
+            return m_source.impl()->hash();
+        }
+
+        virtual StringView source() const override
         {
             return m_source;
         }

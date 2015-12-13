@@ -60,7 +60,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     int expressionStart = divotPoint - startOffset;
     int expressionStop = divotPoint + endOffset;
 
-    const String& sourceString = codeBlock->source()->source();
+    StringView sourceString = codeBlock->source()->source();
     if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
         return;
     
@@ -71,24 +71,23 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     
     String message = asString(jsMessage)->value(callFrame);
     if (expressionStart < expressionStop)
-        message = appender(message, codeBlock->source()->getRange(expressionStart, expressionStop) , type, ErrorInstance::FoundExactSource);
+        message = appender(message, codeBlock->source()->getRange(expressionStart, expressionStop).toString(), type, ErrorInstance::FoundExactSource);
     else {
         // No range information, so give a few characters of context.
-        const StringImpl* data = sourceString.impl();
         int dataLength = sourceString.length();
         int start = expressionStart;
         int stop = expressionStart;
         // Get up to 20 characters of context to the left and right of the divot, clamping to the line.
         // Then strip whitespace.
-        while (start > 0 && (expressionStart - start < 20) && (*data)[start - 1] != '\n')
+        while (start > 0 && (expressionStart - start < 20) && sourceString[start - 1] != '\n')
             start--;
-        while (start < (expressionStart - 1) && isStrWhiteSpace((*data)[start]))
+        while (start < (expressionStart - 1) && isStrWhiteSpace(sourceString[start]))
             start++;
-        while (stop < dataLength && (stop - expressionStart < 20) && (*data)[stop] != '\n')
+        while (stop < dataLength && (stop - expressionStart < 20) && sourceString[stop] != '\n')
             stop++;
-        while (stop > expressionStart && isStrWhiteSpace((*data)[stop - 1]))
+        while (stop > expressionStart && isStrWhiteSpace(sourceString[stop - 1]))
             stop--;
-        message = appender(message, codeBlock->source()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
+        message = appender(message, codeBlock->source()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
     }
     exception->putDirect(*vm, vm->propertyNames->message, jsString(vm, message));
 

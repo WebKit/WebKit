@@ -196,7 +196,7 @@ CString CodeBlock::sourceCodeForTools() const
     unsigned rangeEnd = delta + unlinked->startOffset() + unlinked->sourceLength();
     return toCString(
         "function ",
-        provider->source().impl()->utf8ForRange(rangeStart, rangeEnd - rangeStart));
+        provider->source().substring(rangeStart, rangeEnd - rangeStart).utf8());
 }
 
 CString CodeBlock::sourceCodeOnOneLine() const
@@ -554,14 +554,14 @@ void CodeBlock::dumpSource(PrintStream& out)
     ScriptExecutable* executable = ownerScriptExecutable();
     if (executable->isFunctionExecutable()) {
         FunctionExecutable* functionExecutable = reinterpret_cast<FunctionExecutable*>(executable);
-        String source = functionExecutable->source().provider()->getRange(
+        StringView source = functionExecutable->source().provider()->getRange(
             functionExecutable->parametersStartOffset(),
             functionExecutable->typeProfilingEndOffset() + 1); // Type profiling end offset is the character before the '}'.
         
         out.print("function ", inferredName(), source);
         return;
     }
-    out.print(executable->source().toString());
+    out.print(executable->source().view());
 }
 
 void CodeBlock::dumpBytecode()

@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         
         String functionHeader = executable->isArrowFunction() ? "" : "function ";
         
-        String source = executable->source().provider()->getRange(
+        StringView source = executable->source().provider()->getRange(
             executable->parametersStartOffset(),
             executable->parametersStartOffset() + executable->source().length());
         return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(exec), source));

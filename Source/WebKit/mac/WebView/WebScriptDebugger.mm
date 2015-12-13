@@ -51,7 +51,7 @@ using namespace WebCore;
 
 static NSString *toNSString(SourceProvider* sourceProvider)
 {
-    const String& sourceString = sourceProvider->source();
+    const String& sourceString = sourceProvider->source().toString();
     if (sourceString.isEmpty())
         return nil;
     return sourceString;

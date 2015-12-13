@@ -1,3 +1,30 @@
+2015-12-13  Andreas Kling  <akling@apple.com>
+
+        CachedScript could have a copy-free path for all-ASCII scripts.
+        <https://webkit.org/b/152203>
+
+        Reviewed by ANtti Koivisto.
+
+        Many (if not most) of script resources on the web contain nothing but ASCII characters.
+        Such resources, when streamed through a text decoder, will yield the exact same byte
+        sequence, except in anonymous heap memory instead of delicious file-backed pages.
+
+        Care is taken to ensure that the wrapper StringImpl is updated to target newly cached
+        resource data if an asynchronous caching notification comes in.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::tryReplaceEncodedData):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::didReplaceSharedBufferContents):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::encodingMayBeAllASCII):
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::didReplaceSharedBufferContents):
+        * loader/cache/CachedScript.h:
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::tryReplaceContentsWithPlatformBuffer):
+
 2015-12-13  Zalan Bujtas  <zalan@apple.com>
 
         Clean up absolute positioned map properly.

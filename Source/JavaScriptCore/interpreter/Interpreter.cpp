@@ -849,7 +849,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
 
     Vector<JSONPData> JSONPData;
     bool parseResult;
-    const String programSource = program->source().toString();
+    StringView programSource = program->source().view();
     if (programSource.isNull())
         return jsUndefined();
     if (programSource.is8Bit()) {

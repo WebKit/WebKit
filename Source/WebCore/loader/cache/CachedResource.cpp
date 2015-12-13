@@ -787,7 +787,10 @@ void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
     if (m_data->size() != newBuffer.size() || memcmp(m_data->data(), newBuffer.data(), m_data->size()))
         return;
 
-    m_data->tryReplaceContentsWithPlatformBuffer(newBuffer);
+    if (m_data->tryReplaceContentsWithPlatformBuffer(newBuffer)) {
+        didReplaceSharedBufferContents();
+        // FIXME: Should we call checkNotify() here to move already-decoded images to the new data source?
+    }
 }
 
 #endif
