@@ -29,9 +29,8 @@ CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;
 
 OTHER_LDFLAGS = $(OTHER_LDFLAGS) $(LDFLAGS_SHIM_$(CONFIGURATION));
 
-LDFLAGS_SHIM_Production[sdk=macosx*] = $(BUILT_PRODUCTS_DIR)/PluginProcessShim.dylib;
-LDFLAGS_SHIM_Production[sdk=macosx10.9*] = ;
-LDFLAGS_SHIM_Production[sdk=macosx10.10*] = ;
+LDFLAGS_SHIM_Production[sdk=macosx*] = LDFLAGS_SHIM_$(WK_LINK_SHIM);
+LDFLAGS_SHIM_YES = $(BUILT_PRODUCTS_DIR)/PluginProcessShim.dylib;
 
 EXCLUDED_SHIM_FILE_NAME[sdk=iphone*] = PluginProcessShim.dylib;
 

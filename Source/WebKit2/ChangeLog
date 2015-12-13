@@ -1,3 +1,23 @@
+2015-12-13  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Shims aren’t inserted properly on Yosemite when building with the El Capitan SDK
+        https://bugs.webkit.org/show_bug.cgi?id=152229
+
+        Reviewed by Darin Adler.
+
+        * Configurations/BaseTarget.xcconfig: Defined WK_LINK_SHIM on OS X to YES or NO based on the
+          target version.
+        * Configurations/BaseXPCService.xcconfig: Define WK_XPC_SERVICE_INFOPLIST_SUFFIX to
+          "-10.9-10.10" when targeting those OS X versions.
+        * Configurations/NetworkService.xcconfig: Use WK_XPC_SERVICE_INFOPLIST_SUFFIX in the
+          definition of INFOPLIST_FILE. Use WK_LINK_SHIM in the definition of OTHER_LDFLAGS.
+        * Configurations/PluginProcess.xcconfig: Use WK_LINK_SHIM in the definition of
+          LDFLAGS_SHIM_Production for OS X.
+        * Configurations/PluginService.32.xcconfig: Use WK_XPC_SERVICE_INFOPLIST_SUFFIX in the
+          definition of INFOPLIST_FILE. Use WK_LINK_SHIM in the definition of OTHER_LDFLAGS.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+
 2015-12-12  Katlyn Graff  <kgraff@apple.com>
 
         Safari background tabs should be fully suspended where possible.

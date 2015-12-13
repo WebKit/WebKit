@@ -30,14 +30,11 @@ VALID_ARCHS_macosx_YES = $(VALID_ARCHS);
 VALID_ARCHS_macosx_NO = x86_64;
 
 PRODUCT_NAME = com.apple.WebKit.Plugin.64;
-INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
-INFOPLIST_FILE[sdk=macosx10.9*] = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist;
-INFOPLIST_FILE[sdk=macosx10.10*] = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist;
+INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64$(WK_XPC_SERVICE_INFOPLIST_SUFFIX).Info.plist;
 
 OTHER_LDFLAGS = $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
-OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit $(BUILT_PRODUCTS_DIR)/PluginProcessShim.dylib;
-OTHER_LDFLAGS_PLATFORM[sdk=macosx10.9*] = -framework AppKit;
-OTHER_LDFLAGS_PLATFORM[sdk=macosx10.10*] = -framework AppKit;
+OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit $(OTHER_LDFLAGS_SHIM_$(WK_LINK_SHIM));
+OTHER_LDFLAGS_SHIM_YES = $(BUILT_PRODUCTS_DIR)/PluginProcessShim.dylib;
 
 CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;
 
