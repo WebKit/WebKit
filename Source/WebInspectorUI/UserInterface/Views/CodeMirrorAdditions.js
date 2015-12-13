@@ -627,8 +627,10 @@ WebInspector.compareCodeMirrorPositions = function(a, b)
 WebInspector.walkTokens = function(cm, mode, initialPosition, callback)
 {
     let state = CodeMirror.copyState(mode, cm.getTokenAt(initialPosition).state);
-    let lineCount = cm.lineCount();
+    if (state.localState)
+        state = state.localState;
 
+    let lineCount = cm.lineCount();
     let abort = false;
     for (lineNumber = initialPosition.line; !abort && lineNumber < lineCount; ++lineNumber) {
         let line = cm.getLine(lineNumber);

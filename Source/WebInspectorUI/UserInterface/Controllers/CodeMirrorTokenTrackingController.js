@@ -513,6 +513,8 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
             WebInspector.walkTokens(this._codeMirror, mode, position, function(tokenType, string) {
                 if (tokenType)
                     return false;
+                if (string === "(")
+                    return false;
                 if (string === "," || string === "}") {
                     shorthand = true;
                     return false;
