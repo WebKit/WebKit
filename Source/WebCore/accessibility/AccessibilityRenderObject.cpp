@@ -2704,7 +2704,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return GroupRole;
 
     if (m_renderer->isRenderBlockFlow()) {
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
         // For ATK, GroupRole maps to ATK_ROLE_PANEL. Panels are most commonly found (and hence
         // expected) in UI elements; not text blocks.
         return m_renderer->isAnonymousBlock() ? DivRole : GroupRole;

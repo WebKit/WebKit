@@ -1,3 +1,20 @@
+2015-12-13  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [EFL] Anonymous render block flow elements should be exposed as ATK_ROLE_SECTION; not ATK_ROLE_PANEL
+        https://bugs.webkit.org/show_bug.cgi?id=152079
+
+        Reviewed by Chris Fleizach.
+
+        Map the element to WebCore AccessibilityRole DivRole for EFL. As with GTK, this
+        is being done in the shared layer rather than in the platform layer because we
+        want all subsequent logic to treat anonymous render block flow elements as divs.
+
+        No new tests. We already have sufficient test coverage. The expectations
+        been updated accordingly.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+
 2015-12-12  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: storage/indexeddb/index-duplicate-keypaths.html fails.

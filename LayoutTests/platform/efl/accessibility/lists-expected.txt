@@ -65,7 +65,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: tag:dl, toolkit:WebKitEfl
 ------------
-AXRole: AXGroup
+AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -82,7 +82,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:group, toolkit:WebKitEfl
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------
 
 

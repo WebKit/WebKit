@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 AXRole: AXWebArea AXTitle:  AXDescription: 
-  AXRole: AXGroup AXTitle:  AXDescription: 
+  AXRole: AXSection AXTitle:  AXDescription: 
     AXRole: AXImageMap AXTitle: foo bar baz AXDescription: foo bar baz
       AXRole: AXLink AXTitle: foo AXDescription: foo
       AXRole: AXLink AXTitle: bar AXDescription: bar

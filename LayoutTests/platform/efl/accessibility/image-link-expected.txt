@@ -4,7 +4,7 @@ This test checks that the right accessibility tree is generated for a link insid
 
 
 AXRole: AXLink
-AXParent: AXGroup
+AXParent: AXSection
 AXChildren: 1
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 280.000000, 213.000000 }

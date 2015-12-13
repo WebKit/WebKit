@@ -26,7 +26,7 @@ State at 'canplaythrough' event:
 
 
                 description: AXDescription: 
-                role: AXRole: AXGroup
+                role: AXRole: AXSection
 
 
             description: AXDescription: Duration
@@ -38,7 +38,7 @@ State at 'canplaythrough' event:
 
 
                 description: AXDescription: 
-                role: AXRole: AXGroup
+                role: AXRole: AXSection
 
 
             description: AXDescription: Volume
