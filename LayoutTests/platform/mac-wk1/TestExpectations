@@ -61,10 +61,8 @@ imported/w3c/indexeddb
 inspector/indexeddb
 
 # IDB tests that crash
-storage/indexeddb/deleted-objects.html [ Skip ]
 storage/indexeddb/deletedatabase-delayed-by-versionchange.html [ Skip ]
 storage/indexeddb/intversion-long-queue.html [ Skip ]
-storage/indexeddb/keypath-fetch-key.html [ Skip ]
 storage/indexeddb/lazy-index-population.html [ Skip ]
 storage/indexeddb/structured-clone.html [ Skip ]
 
@@ -85,24 +83,24 @@ storage/indexeddb/mutating-cursor.html [ Skip ]
 storage/indexeddb/database-quota.html [ Skip ]
 storage/indexeddb/dont-wedge.html [ Skip ]
 storage/indexeddb/intversion-pending-version-changes-ascending.html [ Skip ]
-storage/indexeddb/lazy-index-types.html [ Skip ]
-storage/indexeddb/odd-strings.html [ Skip ]
-storage/indexeddb/transaction-basics.html [ Skip ]
 storage/indexeddb/transaction-starvation.html [ Skip ]
 storage/indexeddb/unblocked-version-changes.html [ Skip ]
 
 # IDB tests with text failures                                                             
 storage/indexeddb/database-deletepending-flag.html [ Failure ]
 storage/indexeddb/delete-closed-database-object.html [ Failure ]
+storage/indexeddb/deleted-objects.html [ Failure ]
 storage/indexeddb/intversion-gated-on-delete.html [ Failure ]
 storage/indexeddb/intversion-open-in-upgradeneeded.html [ Failure ]
 storage/indexeddb/intversion-pending-version-changes-descending.html [ Failure ]
 storage/indexeddb/intversion-pending-version-changes-same.html [ Failure ]
 storage/indexeddb/intversion-two-opens-no-versions.html [ Failure ]
+storage/indexeddb/odd-strings.html [ Failure ]
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 storage/indexeddb/open-ordering.html [ Failure ]
 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 storage/indexeddb/setversion-blocked-by-versionchange-close.html [ Failure ]
+storage/indexeddb/transaction-basics.html [ Failure ]
 storage/indexeddb/transaction-scope-sequencing.html [ Failure ]
 
 # Relies on internals.observeGC
