@@ -1,3 +1,23 @@
+2015-12-13  Zalan Bujtas  <zalan@apple.com>
+
+        Clean up absolute positioned map properly.
+        https://bugs.webkit.org/show_bug.cgi?id=152219
+        rdar://problem/23861165
+
+        Reviewed by Simon Fraser.
+
+        We insert positioned renderers into a static map (RenderBlock::gPositionedDescendantsMap) to keep track of them.
+        Since this static map is at block level, (positioned)inline renderers use their containing block to store
+        their positioned descendants.
+        This patch ensures that when an inline element can no longer hold positioned children, we remove them from
+        the inline's containing block's map. -unless the container itself can hold positioned renderers(see RenderElement::canContainAbsolutelyPositionedObjects).
+
+        Test: fast/block/positioning/crash-when-positioned-inline-has-positioned-child.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleWillChange):
+        * rendering/RenderInline.h:
+
 2015-12-13  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [EFL] Anonymous render block flow elements should be exposed as ATK_ROLE_SECTION; not ATK_ROLE_PANEL

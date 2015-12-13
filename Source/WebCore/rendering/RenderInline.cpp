@@ -164,6 +164,19 @@ static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, c
     }
 }
 
+void RenderInline::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
+{
+    RenderBoxModelObject::styleWillChange(diff, newStyle);
+
+    // Check if this inline can hold absolute positioned elmements even after the style change.
+    if (canContainAbsolutelyPositionedObjects() && newStyle.position() == StaticPosition) {
+        // RenderInlines forward their absolute positioned descendants to their (non-anonymous) containing block.
+        auto* container = containingBlockForAbsolutePosition();
+        if (container && !container->canContainAbsolutelyPositionedObjects())
+            container->removePositionedObjects(nullptr, NewContainingBlock);
+    }
+}
+
 void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
