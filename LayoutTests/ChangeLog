@@ -1,5 +1,14 @@
 2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Updating ios-simulator expectation for crashing tests http/tests/misc/large-js-program.php and js/dom/line-column-numbers.html
+        https://bugs.webkit.org/show_bug.cgi?id=152279
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
         Removing ios-simulator TestExpectations for deleted tests: streams/reference-implementation/readable-stream-cancel.html (r192186)
         and http/tests/inspector/console/access-inspected-object.html (r192186).
         https://bugs.webkit.org/show_bug.cgi?id=152131
