@@ -376,7 +376,6 @@ public:
     LValue doubleLessThanOrEqual(LValue left, LValue right) { return fcmp(LLVMRealOLE, left, right); }
     LValue doubleGreaterThan(LValue left, LValue right) { return fcmp(LLVMRealOGT, left, right); }
     LValue doubleGreaterThanOrEqual(LValue left, LValue right) { return fcmp(LLVMRealOGE, left, right); }
-    LValue doubleEqualOrUnordered(LValue left, LValue right) { return fcmp(LLVMRealUEQ, left, right); }
     LValue doubleNotEqual(LValue left, LValue right) { return fcmp(LLVMRealONE, left, right); }
     LValue doubleLessThanOrUnordered(LValue left, LValue right) { return fcmp(LLVMRealULT, left, right); }
     LValue doubleLessThanOrEqualOrUnordered(LValue left, LValue right) { return fcmp(LLVMRealULE, left, right); }

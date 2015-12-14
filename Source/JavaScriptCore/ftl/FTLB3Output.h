@@ -336,7 +336,6 @@ public:
     LValue doubleLessThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::LessEqual, origin(), left, right); }
     LValue doubleGreaterThan(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterThan, origin(), left, right); }
     LValue doubleGreaterThanOrEqual(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::GreaterEqual, origin(), left, right); }
-    LValue doubleEqualOrUnordered(LValue left, LValue right) { CRASH(); }
     LValue doubleNotEqual(LValue left, LValue right) { CRASH(); }
     LValue doubleLessThanOrUnordered(LValue left, LValue right)
     {

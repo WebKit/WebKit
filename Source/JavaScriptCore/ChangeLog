@@ -1,3 +1,17 @@
+2015-12-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove FTL::Output's doubleEqualOrUnordered()
+        https://bugs.webkit.org/show_bug.cgi?id=152234
+
+        Reviewed by Sam Weinig.
+
+        It is unused, one less thing to worry about.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleEqualOrUnordered): Deleted.
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleEqualOrUnordered): Deleted.
+
 2015-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Should not emit get_by_id for indexed property access
