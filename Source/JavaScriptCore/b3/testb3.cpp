@@ -5727,7 +5727,7 @@ void testCheckTwoMegaCombos()
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
             // saves.
@@ -5739,7 +5739,7 @@ void testCheckTwoMegaCombos()
     check2->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
             // saves.
@@ -5805,7 +5805,7 @@ void testCheckTwoNonRedundantMegaCombos()
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
             // saves.
@@ -5820,7 +5820,7 @@ void testCheckTwoNonRedundantMegaCombos()
     check2->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
             // saves.
