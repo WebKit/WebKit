@@ -132,6 +132,7 @@ public:
     virtual Value* doubleToFloatConstant(Procedure&) const;
     virtual Value* floatToDoubleConstant(Procedure&) const;
     virtual Value* absConstant(Procedure&) const;
+    virtual Value* ceilConstant(Procedure&) const;
     virtual Value* sqrtConstant(Procedure&) const;
 
     virtual TriState equalConstant(const Value* other) const;

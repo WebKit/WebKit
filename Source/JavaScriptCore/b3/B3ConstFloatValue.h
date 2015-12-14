@@ -50,6 +50,7 @@ public:
     Value* bitwiseCastConstant(Procedure&) const override;
     Value* floatToDoubleConstant(Procedure&) const override;
     Value* absConstant(Procedure&) const override;
+    Value* ceilConstant(Procedure&) const override;
     Value* sqrtConstant(Procedure&) const override;
 
     TriState equalConstant(const Value* other) const override;

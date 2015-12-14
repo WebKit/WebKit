@@ -275,6 +275,14 @@ Not32 UD:G
     Tmp
     x86: Addr
 
+CeilDouble U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
+CeilFloat U:F, UD:F
+    Tmp, Tmp
+    Addr, Tmp
+
 SqrtDouble U:F, UD:F
     Tmp, Tmp
     x86: Addr, Tmp

@@ -210,6 +210,7 @@ public:
                 VALIDATE(value->type() == Int32, ("At ", *value));
                 break;
             case Abs:
+            case Ceil:
             case Sqrt:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(isFloat(value->child(0)->type()), ("At ", *value));

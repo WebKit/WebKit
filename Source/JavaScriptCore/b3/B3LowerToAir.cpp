@@ -1654,6 +1654,11 @@ private:
             return;
         }
 
+        case Ceil: {
+            appendUnOp<Air::Oops, Air::Oops, CeilDouble, CeilFloat>(m_value->child(0));
+            return;
+        }
+
         case Sqrt: {
             appendUnOp<Air::Oops, Air::Oops, SqrtDouble, SqrtFloat>(m_value->child(0));
             return;

@@ -226,6 +226,11 @@ Value* Value::absConstant(Procedure&) const
     return nullptr;
 }
 
+Value* Value::ceilConstant(Procedure&) const
+{
+    return nullptr;
+}
+
 Value* Value::sqrtConstant(Procedure&) const
 {
     return nullptr;
@@ -363,6 +368,7 @@ Effects Value::effects() const
     case ZShr:
     case Clz:
     case Abs:
+    case Ceil:
     case Sqrt:
     case BitwiseCast:
     case SExt8:
@@ -442,6 +448,7 @@ ValueKey Value::key() const
         return ValueKey(opcode(), type());
     case Identity:
     case Abs:
+    case Ceil:
     case Sqrt:
     case SExt8:
     case SExt16:
@@ -549,6 +556,7 @@ Type Value::typeFor(Opcode opcode, Value* firstChild, Value* secondChild)
     case ZShr:
     case Clz:
     case Abs:
+    case Ceil:
     case Sqrt:
     case CheckAdd:
     case CheckSub:

@@ -30,8 +30,10 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
+#include "B3CCallValue.h"
 #include "B3ConstDoubleValue.h"
 #include "B3ConstFloatValue.h"
+#include "B3ConstPtrValue.h"
 #include "B3InsertionSetInlines.h"
 #include "B3PhaseScope.h"
 
@@ -82,6 +84,27 @@ private:
                 else
                     RELEASE_ASSERT_NOT_REACHED();
                 Value* result = m_insertionSet.insert<Value>(m_index, BitAnd, m_origin, m_value->child(0), mask);
+                m_value->replaceWithIdentity(result);
+                break;
+            }
+            case Ceil: {
+                if (MacroAssembler::supportsFloatingPointCeil())
+                    break;
+
+                Value* functionAddress = nullptr;
+                if (m_value->type() == Double)
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceil);
+                else if (m_value->type() == Float)
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, ceilf);
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+
+                Value* result = m_insertionSet.insert<CCallValue>(m_index,
+                    m_value->type(),
+                    m_origin,
+                    Effects::none(),
+                    functionAddress,
+                    m_value->child(0));
                 m_value->replaceWithIdentity(result);
                 break;
             }

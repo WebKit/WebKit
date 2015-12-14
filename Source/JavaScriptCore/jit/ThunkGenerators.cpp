@@ -828,11 +828,11 @@ MacroAssemblerCodeRef ceilThunkGenerator(VM* vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-#if CPU(ARM64)
-    jit.ceilDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
-#else
-    jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(ceil));
-#endif // CPU(ARM64)
+    if (jit.supportsFloatingPointCeil())
+        jit.ceilDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
+    else
+        jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(ceil));
+
     SpecializedThunkJIT::JumpList doubleResult;
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
     jit.returnInt32(SpecializedThunkJIT::regT0);

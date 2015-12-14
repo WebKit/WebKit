@@ -625,6 +625,12 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    NO_RETURN_DUE_TO_CRASH void ceilDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT(!supportsFloatingPointCeil());
+        CRASH();
+    }
+
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
     {
         ConvertibleLoadLabel result(this);
@@ -1209,6 +1215,7 @@ public:
 #endif
     }
     static bool supportsFloatingPointAbs() { return false; }
+    static bool supportsFloatingPointCeil() { return false; }
 
     // Stack manipulation operations:
     //

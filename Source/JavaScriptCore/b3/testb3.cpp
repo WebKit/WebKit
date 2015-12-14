@@ -3235,6 +3235,175 @@ void testAbsArgWithEffectfulDoubleConversion(float a)
     CHECK(isIdentical(effect, fabs(a)));
 }
 
+void testCeilArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Ceil, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0)));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), ceil(a)));
+}
+
+void testCeilImm(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Ceil, Origin(), argument));
+
+    CHECK(isIdentical(compileAndRun<double>(proc), ceil(a)));
+}
+
+void testCeilMem(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadDouble = root->appendNew<MemoryValue>(proc, Load, Double, Origin(), address);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Ceil, Origin(), loadDouble));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, &a), ceil(a)));
+}
+
+void testCeilCeilArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* firstCeil = root->appendNew<Value>(proc, Ceil, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
+    Value* secondCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstCeil);
+    root->appendNew<ControlValue>(proc, Return, Origin(), secondCeil);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), ceil(a)));
+}
+
+void testCeilIToD64(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argumentAsDouble = root->appendNew<Value>(proc, IToD, Origin(), argument);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Ceil, Origin(), argumentAsDouble));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), ceil(static_cast<double>(a))));
+}
+
+void testCeilIToD32(int64_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argumentAsDouble = root->appendNew<Value>(proc, IToD, Origin(), argument);
+
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Ceil, Origin(), argumentAsDouble));
+
+    CHECK(isIdentical(compileAndRun<double>(proc, a), ceil(static_cast<double>(a))));
+}
+
+void testCeilArg(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* result = root->appendNew<Value>(proc, Ceil, Origin(), argument);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+}
+
+void testCeilImm(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ConstFloatValue>(proc, Origin(), a);
+    Value* result = root->appendNew<Value>(proc, Ceil, Origin(), argument);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+}
+
+void testCeilMem(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* loadFloat = root->appendNew<MemoryValue>(proc, Load, Float, Origin(), address);
+    Value* result = root->appendNew<Value>(proc, Ceil, Origin(), loadFloat);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(ceilf(a))));
+}
+
+void testCeilCeilArg(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* firstCeil = root->appendNew<Value>(proc, Ceil, Origin(), argument);
+    Value* secondCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstCeil);
+    root->appendNew<ControlValue>(proc, Return, Origin(), secondCeil);
+
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), ceilf(a)));
+}
+
+void testCeilArgWithUselessDoubleConversion(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), floatValue);
+    Value* result = root->appendNew<Value>(proc, Ceil, Origin(), asDouble);
+    Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), result);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+}
+
+void testCeilArgWithEffectfulDoubleConversion(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* floatValue = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), floatValue);
+    Value* result = root->appendNew<Value>(proc, Ceil, Origin(), asDouble);
+    Value* floatResult = root->appendNew<Value>(proc, DoubleToFloat, Origin(), result);
+    Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
+    Value* doubleAddress = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, doubleAddress);
+    root->appendNew<ControlValue>(proc, Return, Origin(), result32);
+
+    double effect = 0;
+    int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
+    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(effect, ceilf(a)));
+}
+
 void testSqrtArg(double a)
 {
     Procedure proc;
@@ -8008,6 +8177,12 @@ void populateWithInterestingValues(Vector<Operand<FloatType>>& operands)
 {
     operands.append({ "0.", static_cast<FloatType>(0.) });
     operands.append({ "-0.", static_cast<FloatType>(-0.) });
+    operands.append({ "0.4", static_cast<FloatType>(0.5) });
+    operands.append({ "-0.4", static_cast<FloatType>(-0.5) });
+    operands.append({ "0.5", static_cast<FloatType>(0.5) });
+    operands.append({ "-0.5", static_cast<FloatType>(-0.5) });
+    operands.append({ "0.6", static_cast<FloatType>(0.5) });
+    operands.append({ "-0.6", static_cast<FloatType>(-0.5) });
     operands.append({ "1.", static_cast<FloatType>(1.) });
     operands.append({ "-1.", static_cast<FloatType>(-1.) });
     operands.append({ "2.", static_cast<FloatType>(2.) });
@@ -8637,6 +8812,19 @@ void run(const char* filter)
     RUN_UNARY(testBitwiseCastAbsBitwiseCastArg, floatingPointOperands<float>());
     RUN_UNARY(testAbsArgWithUselessDoubleConversion, floatingPointOperands<float>());
     RUN_UNARY(testAbsArgWithEffectfulDoubleConversion, floatingPointOperands<float>());
+
+    RUN_UNARY(testCeilArg, floatingPointOperands<double>());
+    RUN_UNARY(testCeilImm, floatingPointOperands<double>());
+    RUN_UNARY(testCeilMem, floatingPointOperands<double>());
+    RUN_UNARY(testCeilCeilArg, floatingPointOperands<double>());
+    RUN_UNARY(testCeilIToD64, int64Operands());
+    RUN_UNARY(testCeilIToD32, int32Operands());
+    RUN_UNARY(testCeilArg, floatingPointOperands<float>());
+    RUN_UNARY(testCeilImm, floatingPointOperands<float>());
+    RUN_UNARY(testCeilMem, floatingPointOperands<float>());
+    RUN_UNARY(testCeilCeilArg, floatingPointOperands<float>());
+    RUN_UNARY(testCeilArgWithUselessDoubleConversion, floatingPointOperands<float>());
+    RUN_UNARY(testCeilArgWithEffectfulDoubleConversion, floatingPointOperands<float>());
 
     RUN_UNARY(testSqrtArg, floatingPointOperands<double>());
     RUN_UNARY(testSqrtImm, floatingPointOperands<double>());

@@ -264,6 +264,7 @@ private:
         OP2_CVTSI2SD_VsdEd  = 0x2A,
         OP2_CVTTSD2SI_GdWsd = 0x2C,
         OP2_UCOMISD_VsdWsd  = 0x2E,
+        OP2_3BYTE_ESCAPE_3A = 0x3A,
         OP2_CMOVCC          = 0x40,
         OP2_ADDSD_VsdWsd    = 0x58,
         OP2_MULSD_VsdWsd    = 0x59,
@@ -280,7 +281,7 @@ private:
         OP2_MOVD_EdVd       = 0x7E,
         OP2_JCC_rel32       = 0x80,
         OP_SETCC            = 0x90,
-        OP2_3BYTE_ESCAPE    = 0xAE,
+        OP2_3BYTE_ESCAPE_AE = 0xAE,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_BSR             = 0xBD,
@@ -295,7 +296,9 @@ private:
     } TwoByteOpcodeID;
     
     typedef enum {
-        OP3_MFENCE          = 0xF0,
+        OP3_ROUNDSS_VssWssIb = 0x0A,
+        OP3_ROUNDSD_VsdWsdIb = 0x0B,
+        OP3_MFENCE           = 0xF0,
     } ThreeByteOpcodeID;
 
     
@@ -2349,6 +2352,41 @@ public:
         m_formatter.twoByteOp(OP2_SQRTSD_VsdWsd, (RegisterID)dst, base, offset);
     }
 
+    enum class RoundingType : uint8_t {
+        ToNearestWithTiesToEven = 0,
+        TowardNegativeInfiniti = 1,
+        TowardInfiniti = 2,
+        TowardZero = 3
+    };
+
+    void roundss_rr(XMMRegisterID src, XMMRegisterID dst, RoundingType rounding)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_3A, OP3_ROUNDSS_VssWssIb, (RegisterID)dst, (RegisterID)src);
+        m_formatter.immediate8(static_cast<uint8_t>(rounding));
+    }
+
+    void roundss_mr(int offset, RegisterID base, XMMRegisterID dst, RoundingType rounding)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_3A, OP3_ROUNDSS_VssWssIb, (RegisterID)dst, base, offset);
+        m_formatter.immediate8(static_cast<uint8_t>(rounding));
+    }
+
+    void roundsd_rr(XMMRegisterID src, XMMRegisterID dst, RoundingType rounding)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_3A, OP3_ROUNDSD_VsdWsdIb, (RegisterID)dst, (RegisterID)src);
+        m_formatter.immediate8(static_cast<uint8_t>(rounding));
+    }
+
+    void roundsd_mr(int offset, RegisterID base, XMMRegisterID dst, RoundingType rounding)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_3A, OP3_ROUNDSD_VsdWsdIb, (RegisterID)dst, base, offset);
+        m_formatter.immediate8(static_cast<uint8_t>(rounding));
+    }
+
     // Misc instructions:
 
     void int3()
@@ -2368,7 +2406,7 @@ public:
     
     void mfence()
     {
-        m_formatter.threeByteOp(OP3_MFENCE);
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_AE, OP3_MFENCE);
     }
 
     // Assembler admin methods:
@@ -2847,12 +2885,32 @@ private:
         }
 #endif
 
-        void threeByteOp(ThreeByteOpcodeID opcode)
+        void threeByteOp(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode)
         {
             m_buffer.ensureSpace(maxInstructionSize);
             m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
-            m_buffer.putByteUnchecked(OP2_3BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(twoBytePrefix);
             m_buffer.putByteUnchecked(opcode);
+        }
+
+        void threeByteOp(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode, int reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, rm);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(twoBytePrefix);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
+        }
+
+        void threeByteOp(TwoByteOpcodeID twoBytePrefix, ThreeByteOpcodeID opcode, int reg, RegisterID base, int displacement)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, base);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(twoBytePrefix);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, displacement);
         }
 
 #if CPU(X86_64)

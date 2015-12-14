@@ -1091,6 +1091,7 @@ public:
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
+    static bool supportsFloatingPointCeil() { return false; }
 
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
@@ -1572,6 +1573,12 @@ public:
     {
         moveDouble(src, dest);
         m_assembler.dabs(dest);
+    }
+
+    NO_RETURN_DUE_TO_CRASH void ceilDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT(!supportsFloatingPointCeil());
+        CRASH();
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))

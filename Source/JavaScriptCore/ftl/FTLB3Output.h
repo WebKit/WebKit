@@ -154,7 +154,7 @@ public:
     LValue lShr(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ZShr, origin(), left, castToInt32(right)); }
     LValue bitNot(LValue);
 
-    LValue ceil64(LValue operand) { CRASH(); }
+    LValue ceil64(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Ceil, origin(), value); }
     LValue ctlz32(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Clz, origin(), operand); }
     LValue addWithOverflow32(LValue left, LValue right) { CRASH(); }
     LValue subWithOverflow32(LValue left, LValue right) { CRASH(); }

@@ -1,3 +1,75 @@
+2015-12-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add ceil() support for x86 and expose it to B3
+        https://bugs.webkit.org/show_bug.cgi?id=152231
+
+        Reviewed by Geoffrey Garen.
+
+        Most x86 CPUs we care about support ceil() natively
+        with the round instruction.
+
+        This patch expose that behind a runtime flag, use it
+        in the Math.ceil() thunk and expose it to B3.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::supportsFloatingPointCeil):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointCeil):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::supportsFloatingPointCeil):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::supportsFloatingPointCeil):
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::ceilDouble):
+        (JSC::MacroAssemblerX86Common::ceilFloat):
+        (JSC::MacroAssemblerX86Common::supportsFloatingPointCeil):
+        (JSC::MacroAssemblerX86Common::supportsLZCNT):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::roundss_rr):
+        (JSC::X86Assembler::roundss_mr):
+        (JSC::X86Assembler::roundsd_rr):
+        (JSC::X86Assembler::roundsd_mr):
+        (JSC::X86Assembler::mfence):
+        (JSC::X86Assembler::X86InstructionFormatter::threeByteOp):
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::ceilConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::ceilConstant):
+        * b3/B3ConstFloatValue.h:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::ceilConstant):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::key):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testCeilArg):
+        (JSC::B3::testCeilImm):
+        (JSC::B3::testCeilMem):
+        (JSC::B3::testCeilCeilArg):
+        (JSC::B3::testCeilIToD64):
+        (JSC::B3::testCeilIToD32):
+        (JSC::B3::testCeilArgWithUselessDoubleConversion):
+        (JSC::B3::testCeilArgWithEffectfulDoubleConversion):
+        (JSC::B3::populateWithInterestingValues):
+        (JSC::B3::run):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::ceil64):
+        * jit/ThunkGenerators.cpp:
+        (JSC::ceilThunkGenerator):
+
 2015-12-14  Andreas Kling  <akling@apple.com>
 
         ResourceUsageOverlay should show GC timers.

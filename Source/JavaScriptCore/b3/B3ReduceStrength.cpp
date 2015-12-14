@@ -564,6 +564,32 @@ private:
             }
             break;
 
+        case Ceil:
+            // Turn this: Ceil(constant)
+            // Into this: ceil<value->type()>(constant)
+            if (Value* constant = m_value->child(0)->ceilConstant(m_proc)) {
+                replaceWithNewValue(constant);
+                break;
+            }
+
+            // Turn this: Ceil(Ceil(value))
+            // Into this: Ceil(value)
+            if (m_value->child(0)->opcode() == Ceil) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                break;
+            }
+
+            // Turn this: Ceil(IToD(value))
+            // Into this: IToD(value)
+            //
+            // That works for Int64 because both ARM64 and x86_64
+            // perform rounding when converting a 64bit integer to double.
+            if (m_value->child(0)->opcode() == IToD) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                break;
+            }
+            break;
+
         case Sqrt:
             // Turn this: Sqrt(constant)
             // Into this: sqrt<value->type()>(constant)

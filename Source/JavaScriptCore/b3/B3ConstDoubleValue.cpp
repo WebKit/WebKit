@@ -92,6 +92,11 @@ Value* ConstDoubleValue::absConstant(Procedure& proc) const
     return proc.add<ConstDoubleValue>(origin(), fabs(m_value));
 }
 
+Value* ConstDoubleValue::ceilConstant(Procedure& proc) const
+{
+    return proc.add<ConstDoubleValue>(origin(), ceil(m_value));
+}
+
 Value* ConstDoubleValue::sqrtConstant(Procedure& proc) const
 {
     return proc.add<ConstDoubleValue>(origin(), sqrt(m_value));

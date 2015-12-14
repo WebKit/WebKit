@@ -856,6 +856,7 @@ public:
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
+    static bool supportsFloatingPointCeil() { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -1044,6 +1045,12 @@ public:
     void negateDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.vneg(dest, src);
+    }
+
+    NO_RETURN_DUE_TO_CRASH void ceilDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT(!supportsFloatingPointCeil());
+        CRASH();
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
