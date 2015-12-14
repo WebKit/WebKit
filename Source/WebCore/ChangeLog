@@ -1,3 +1,22 @@
+2015-12-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix height computation of grid items with borders
+        https://bugs.webkit.org/show_bug.cgi?id=151800
+
+        Reviewed by Darin Adler.
+
+        When computing the logical height of grid items for the
+        default "min-height: auto;" case we were constraning the
+        min-content size using constrainLogicalHeightByMinMax()
+        instead of constrainContentLogicalHeightByMinMax(). The
+        problem of using the former is that we were adding the borders
+        twice.
+
+        Test: fast/css-grid-layout/grid-item-with-border-in-intrinsic.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight):
+
 2015-12-13  Tim Horton  <timothy_horton@apple.com>
 
         Adopt CGIOSurfaceContextCreateImageReference to avoid unnecessary readback
