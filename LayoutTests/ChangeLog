@@ -1,3 +1,31 @@
+2015-12-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] DOM click event may not be dispatched when page has :active style and <input type="search">
+        https://bugs.webkit.org/show_bug.cgi?id=144451
+        <rdar://problem/23099482>
+
+        Reviewed by Simon Fraser.
+
+        Add a test to ensure that a DOM click event is dispatched to an element in a subframe on a page
+        with a search field and that specifies a CSS :active pseudo-class that changes the tap highlight
+        color.
+
+        Additionally, add tests to ensure we update the cancel button visibility whenever the visibility
+        of the search field changes.
+
+        * fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field-expected.txt: Added.
+        * fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html: Added.
+        * fast/forms/search/search-cancel-button-visible-when-input-becomes-disabled-expected.html: Added.
+        * fast/forms/search/search-cancel-button-visible-when-input-becomes-disabled.html: Added.
+        * fast/forms/search/search-cancel-button-visible-when-input-becomes-readonly-expected.html: Added.
+        * fast/forms/search/search-cancel-button-visible-when-input-becomes-readonly.html: Added.
+        * fast/forms/search/search-cancel-in-formerly-invisible-element-expected.html: Added.
+        * fast/forms/search/search-cancel-in-formerly-invisible-element.html: Added.
+        * fast/forms/search/search-cancel-toggle-visibility-initially-hidden-expected.html: Added.
+        * fast/forms/search/search-cancel-toggle-visibility-initially-hidden.html: Added.
+        * fast/forms/search/search-cancel-toggle-visibility-initially-visible-expected.html: Added.
+        * fast/forms/search/search-cancel-toggle-visibility-initially-visible.html: Added.
+
 2015-12-14  Chris Dumez  <cdumez@apple.com>
 
         Roll out r193974 and follow-up fixes as it caused JSC crashes

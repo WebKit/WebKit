@@ -1,3 +1,34 @@
+2015-12-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] DOM click event may not be dispatched when page has :active style and <input type="search">
+        https://bugs.webkit.org/show_bug.cgi?id=144451
+        <rdar://problem/23099482>
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where a DOM click event is not dispatched to an element in a subframe on a page
+        that has a <input type="search"> and defines a CSS :active pseudo-class for the HTML body element.
+
+        On iOS we only dispatch a DOM click event if the content of the page does not change as part of
+        dispatching a DOM mousemove event at the tapped element as a means of providing a good user
+        experience on web pages that reveal or hide content based on mouse hover. Currently we consider
+        the content of the page to have changed if the visibility of any element on the page changes.
+        In particular we consider the content of the page to have changed if the visibility of a user
+        agent shadow DOM element changes (e.g. the search field cancel button). Instead we should only
+        consider visibility changes to the actual web page content and ignore visibility changes to
+        user agent shadow DOM elements.
+
+        Tests: fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html
+               fast/forms/search/search-cancel-button-visible-when-input-becomes-disabled.html
+               fast/forms/search/search-cancel-button-visible-when-input-becomes-readonly.html
+               fast/forms/search/search-cancel-in-formerly-invisible-element.html
+               fast/forms/search/search-cancel-toggle-visibility-initially-hidden.html
+               fast/forms/search/search-cancel-toggle-visibility-initially-visible.html
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::CheckForVisibilityChangeOnRecalcStyle::~CheckForVisibilityChangeOnRecalcStyle):
+        Ignore visibility changes to user agent shadow DOM elements.
+
 2015-12-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Directly use @then as much as possible

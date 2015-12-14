@@ -757,6 +757,8 @@ public:
     {
         if (!WKObservingContentChanges())
             return;
+        if (m_element->isInUserAgentShadowTree())
+            return;
         RenderStyle* style = m_element->renderStyle();
         if (!style)
             return;
