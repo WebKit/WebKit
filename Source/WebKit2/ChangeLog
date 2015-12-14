@@ -1,5 +1,11 @@
 2015-12-13  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * Configurations/PluginProcess.xcconfig:
+
+2015-12-13  Dan Bernstein  <mitz@apple.com>
+
         [Mac] Shims aren’t inserted properly on Yosemite when building with the El Capitan SDK
         https://bugs.webkit.org/show_bug.cgi?id=152229
 
