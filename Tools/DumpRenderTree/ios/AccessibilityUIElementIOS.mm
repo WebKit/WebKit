@@ -83,6 +83,8 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (void)_accessibilitySetValue:(NSString *)value;
 - (void)_accessibilityActivate;
 - (UIAccessibilityTraits)_axSelectedTrait;
+- (UIAccessibilityTraits)_axTextAreaTrait;
+- (UIAccessibilityTraits)_axSearchFieldTrait;
 - (NSString *)accessibilityARIACurrentStatus;
 - (NSUInteger)accessibilityRowCount;
 - (NSUInteger)accessibilityColumnCount;
@@ -117,6 +119,16 @@ static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* v
 JSStringRef AccessibilityUIElement::identifier()
 {
     return concatenateAttributeAndValue(@"AXIdentifier", [m_element accessibilityIdentifier]);
+}
+
+bool AccessibilityUIElement::isTextArea() const
+{
+    return ([m_element accessibilityTraits] & [m_element _axTextAreaTrait]) == [m_element _axTextAreaTrait];
+}
+
+bool AccessibilityUIElement::isSearchField() const
+{
+    return ([m_element accessibilityTraits] & [m_element _axSearchFieldTrait]) == [m_element _axSearchFieldTrait];
 }
 
 JSStringRef AccessibilityUIElement::traits()

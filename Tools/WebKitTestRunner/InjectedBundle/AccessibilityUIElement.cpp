@@ -72,6 +72,9 @@ bool AccessibilityUIElement::scrollPageLeft() { return false; }
 bool AccessibilityUIElement::scrollPageRight() { return false; }
 bool AccessibilityUIElement::hasContainedByFieldsetTrait() { return false; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement() { return nullptr; }
+bool AccessibilityUIElement::isSearchField() const { return false; }
+bool AccessibilityUIElement::isTextArea() const { return false; }
+
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.

@@ -276,6 +276,8 @@ public:
     PassRefPtr<AccessibilityUIElement> linkedElement();
     PassRefPtr<AccessibilityUIElement> headerElementAtIndex(unsigned index);
     void assistiveTechnologySimulatedFocus();
+    bool isSearchField() const;
+    bool isTextArea() const;
     
     bool scrollPageUp();
     bool scrollPageDown();

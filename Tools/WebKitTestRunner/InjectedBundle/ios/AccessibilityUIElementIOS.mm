@@ -60,6 +60,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (void)_accessibilitySetValue:(NSString *)value;
 - (void)_accessibilityActivate;
 - (UIAccessibilityTraits)_axSelectedTrait;
+- (UIAccessibilityTraits)_axTextAreaTrait;
+- (UIAccessibilityTraits)_axSearchFieldTrait;
 - (NSString *)accessibilityARIACurrentStatus;
 - (NSUInteger)accessibilityRowCount;
 - (NSUInteger)accessibilityColumnCount;
@@ -689,6 +691,16 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorEleme
     return nullptr;
 }
 
+bool AccessibilityUIElement::isTextArea() const
+{
+    return ([m_element accessibilityTraits] & [m_element _axTextAreaTrait]) == [m_element _axTextAreaTrait];
+}
+
+bool AccessibilityUIElement::isSearchField() const
+{
+    return ([m_element accessibilityTraits] & [m_element _axSearchFieldTrait]) == [m_element _axSearchFieldTrait];
+}
+    
 int AccessibilityUIElement::rowCount()
 {
     return [m_element accessibilityRowCount];

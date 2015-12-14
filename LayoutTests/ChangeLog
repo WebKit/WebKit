@@ -1,3 +1,13 @@
+2015-12-14  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS: Text field variations do not have the correct traits
+        https://bugs.webkit.org/show_bug.cgi?id=152237
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/ios-simulator/textentry-traits-expected.txt: Added.
+        * accessibility/ios-simulator/textentry-traits.html: Added.
+
 2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/viewport/ios/width-is-device-width-overflowing* tests as failing on iOS simulator

@@ -289,6 +289,10 @@ public:
     AccessibilityUIElement headerElementAtIndex(unsigned);
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
     void assistiveTechnologySimulatedFocus();
+    
+    bool isTextArea() const;
+    bool isSearchField() const;
+    
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)

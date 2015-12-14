@@ -222,6 +222,8 @@ interface AccessibilityUIElement {
     AccessibilityUIElement headerElementAtIndex(unsigned long index);
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
     void assistiveTechnologySimulatedFocus();
+    readonly attribute boolean isSearchField;
+    readonly attribute boolean isTextArea;
 
     // Fieldset
     readonly attribute boolean hasContainedByFieldsetTrait;

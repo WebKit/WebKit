@@ -272,6 +272,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (uint64_t)_axNotEnabledTrait { return (1 << 20); }
 - (uint64_t)_axRadioButtonTrait { return (1 << 21); }
 - (uint64_t)_axContainedByFieldsetTrait { return (1 << 22); }
+- (uint64_t)_axSearchFieldTrait { return (1 << 23); }
+- (uint64_t)_axTextAreaTrait { return (1 << 24); }
 
 - (BOOL)accessibilityCanFuzzyHitTest
 {
@@ -558,6 +560,20 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return traits;
 }
 
+- (uint64_t)_accessibilityTextEntryTraits
+{
+    uint64_t traits = [self _axTextEntryTrait];
+    if (m_object->isFocused())
+        traits |= ([self _axHasTextCursorTrait] | [self _axTextOperationsAvailableTrait]);
+    if (m_object->isPasswordField())
+        traits |= [self _axSecureTextFieldTrait];
+    if (m_object->roleValue() == SearchFieldRole)
+        traits |= [self _axSearchFieldTrait];
+    if (m_object->roleValue() == TextAreaRole)
+        traits |= [self _axTextAreaTrait];
+    return traits;
+}
+
 - (uint64_t)accessibilityTraits
 {
     if (![self _prepareAccessibilityCall])
@@ -572,16 +588,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             if (m_object->isVisited())
                 traits |= [self _axVisitedTrait];
             break;
-        // TextFieldRole is intended to fall through to TextAreaRole, in order to pick up the text entry and text cursor traits.
         case TextFieldRole:
-            if (m_object->isPasswordField())
-                traits |= [self _axSecureTextFieldTrait];
-            FALLTHROUGH;
         case SearchFieldRole:
         case TextAreaRole:
-            traits |= [self _axTextEntryTrait];
-            if (m_object->isFocused())
-                traits |= ([self _axHasTextCursorTrait] | [self _axTextOperationsAvailableTrait]);
+            traits |= [self _accessibilityTextEntryTraits];
             break;
         case ImageRole:
             traits |= [self _axImageTrait];
