@@ -1,3 +1,15 @@
+2015-12-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Copy message from console with a stack trace does not include source code locations
+        https://bugs.webkit.org/show_bug.cgi?id=152270
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype.toClipboardString):
+        When the the StackTrace was upgraded to a real collection of CallFrame
+        object's the CallFrame's got real SourceCodeLocation properties.
+
 2015-12-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Make TimelineOverview's graph container a subview

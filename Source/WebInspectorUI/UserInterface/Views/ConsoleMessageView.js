@@ -196,8 +196,8 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (hasStackTrace) {
             this._message.stackTrace.callFrames.forEach(function(frame) {
                 clipboardString += "\n\t" + (frame.functionName || WebInspector.UIString("(anonymous function)"));
-                if (frame.url)
-                    clipboardString += " (" + WebInspector.displayNameForURL(frame.url) + ", line " + frame.lineNumber + ")";
+                if (frame.sourceCodeLocation)
+                    clipboardString += " (" + frame.sourceCodeLocation.originalLocationString() + ")";
             });
         } else {
             let repeatString = this.repeatCount > 1 ? "x" + this.repeatCount : "";
