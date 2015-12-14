@@ -1,3 +1,12 @@
+2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaselining fast/text/emoji.html for iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152261
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/text/emoji-expected.txt:
+
 2015-12-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] DOM click event may not be dispatched when page has :active style and <input type="search">
