@@ -221,7 +221,6 @@ namespace JSC { namespace DFG {
     macro(CheckBadCell, NodeMustGenerate) \
     macro(CheckInBounds, NodeMustGenerate) \
     macro(CheckIdent, NodeMustGenerate) \
-    macro(CheckTypeInfoFlags, NodeMustGenerate) /* Takes an OpInfo with the flags you want to test are set */\
     \
     /* Optimizations for array mutation. */\
     macro(ArrayPush, NodeResultJS | NodeMustGenerate) \
@@ -279,9 +278,8 @@ namespace JSC { namespace DFG {
     macro(Breakpoint, NodeMustGenerate) \
     macro(ProfileWillCall, NodeMustGenerate) \
     macro(ProfileDidCall, NodeMustGenerate) \
-    macro(OverridesHasInstance, NodeMustGenerate | NodeResultBoolean) \
+    macro(CheckHasInstance, NodeMustGenerate) \
     macro(InstanceOf, NodeResultBoolean) \
-    macro(InstanceOfCustom, NodeMustGenerate | NodeResultBoolean) \
     macro(IsUndefined, NodeResultBoolean) \
     macro(IsBoolean, NodeResultBoolean) \
     macro(IsNumber, NodeResultBoolean) \

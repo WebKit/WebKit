@@ -1013,12 +1013,13 @@ void CodeBlock::dumpBytecode(
             ++it;
             break;
         }
-        case op_overrides_has_instance: {
+        case op_check_has_instance: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "overrides_has_instance");
-            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            int offset = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "check_has_instance");
+            out.printf("%s, %s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), offset, location + offset);
             break;
         }
         case op_instanceof: {
@@ -1027,15 +1028,6 @@ void CodeBlock::dumpBytecode(
             int r2 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "instanceof");
             out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
-            break;
-        }
-        case op_instanceof_custom: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int r2 = (++it)->u.operand;
-            int r3 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "instanceof_custom");
-            out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data());
             break;
         }
         case op_unsigned: {

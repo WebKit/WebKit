@@ -1,3 +1,143 @@
+2015-12-14  Chris Dumez  <cdumez@apple.com>
+
+        Roll out r193974 and follow-up fixes as it caused JSC crashes
+        https://bugs.webkit.org/show_bug.cgi?id=152256
+
+        Unreviewed, Roll out r193974 and follow-up fixes as it caused JSC crashes.
+
+        * API/JSCallbackObject.h:
+        * builtins/FunctionPrototype.js:
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::isBranch):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString): Deleted.
+        * bytecode/ExitKind.h:
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::getJumpTargetsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCheckHasInstance):
+        (JSC::BytecodeGenerator::emitGetById): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitTypeOf): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InstanceOfNode::emitBytecode):
+        (JSC::LogicalOpNode::emitBytecode): Deleted.
+        (JSC::LogicalOpNode::emitBytecodeInConditionContext): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCellOperand): Deleted.
+        (JSC::DFG::Node::hasTransition): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileArithAdd): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckHasInstance):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInstanceOf): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileHasIndexedProperty): Deleted.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArguments): Deleted.
+        (JSC::CCallHelpers::setupArgumentsWithExecState): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperationNoExceptionCheck): Deleted.
+        (JSC::JIT::callOperation): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined): Deleted.
+        (JSC::JIT::emitSlow_op_to_number): Deleted.
+        (JSC::JIT::emitSlow_op_to_string): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonIdentifiers.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::invalidParameterInstanceofSourceAppender):
+        (JSC::createInvalidInstanceofParameterError):
+        (JSC::createError): Deleted.
+        (JSC::createNotAFunctionError): Deleted.
+        (JSC::createNotAnObjectError): Deleted.
+        * runtime/ExceptionHelpers.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/FunctionPrototype.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create): Deleted.
+        (JSC::JSBoundFunction::customHasInstance): Deleted.
+        * runtime/JSBoundFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::throwTypeErrorGetterSetter): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::defaultHasInstance): Deleted.
+        (JSC::JSObject::getPropertyNames): Deleted.
+        (JSC::JSObject::getOwnPropertyNames): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::create): Deleted.
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::overridesHasInstance):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase<Unknown>::slot):
+        * tests/es6.yaml:
+        * tests/stress/instanceof-custom-hasinstancesymbol.js: Removed.
+        * tests/stress/symbol-hasInstance.js: Removed.
+
 2015-12-13  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove FTL::Output's doubleEqualOrUnordered()

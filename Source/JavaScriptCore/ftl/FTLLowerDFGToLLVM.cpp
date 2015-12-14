@@ -941,17 +941,11 @@ private:
         case TypeOf:
             compileTypeOf();
             break;
-        case CheckTypeInfoFlags:
-            compileCheckTypeInfoFlags();
-            break;
-        case OverridesHasInstance:
-            compileOverridesHasInstance();
+        case CheckHasInstance:
+            compileCheckHasInstance();
             break;
         case InstanceOf:
             compileInstanceOf();
-            break;
-        case InstanceOfCustom:
-            compileInstanceOfCustom();
             break;
         case CountExecution:
             compileCountExecution();
@@ -5610,40 +5604,13 @@ private:
 #endif
     }
 
-    void compileOverridesHasInstance()
-    {
-        JSFunction* defaultHasInstanceFunction = jsCast<JSFunction*>(m_node->cellOperand()->value());
-
-        LValue constructor = lowCell(m_node->child1());
-        LValue hasInstance = lowJSValue(m_node->child2());
-
-        LBasicBlock defaultHasInstance = FTL_NEW_BLOCK(m_out, ("OverridesHasInstance Symbol.hasInstance is default"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("OverridesHasInstance continuation"));
-
-        // Unlike in the DFG, we don't worry about cleaning this code up for the case where we have proven the hasInstanceValue is a constant as LLVM should fix it for us.
-
-        ASSERT(!m_node->child2().node()->isCellConstant() || defaultHasInstanceFunction == m_node->child2().node()->asCell());
-
-        ValueFromBlock notDefaultHasInstanceResult = m_out.anchor(m_out.booleanTrue);
-        m_out.branch(m_out.notEqual(hasInstance, m_out.constIntPtr(defaultHasInstanceFunction)), unsure(continuation), unsure(defaultHasInstance));
-
-        LBasicBlock lastNext = m_out.appendTo(defaultHasInstance, continuation);
-        ValueFromBlock implementsDefaultHasInstanceResult = m_out.anchor(m_out.testIsZero32(
-            m_out.load8ZeroExt32(constructor, m_heaps.JSCell_typeInfoFlags),
-            m_out.constInt32(ImplementsDefaultHasInstance)));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(m_out.boolean, implementsDefaultHasInstanceResult, notDefaultHasInstanceResult));
-    }
-
-    void compileCheckTypeInfoFlags()
+    void compileCheckHasInstance()
     {
         speculate(
-            BadTypeInfoFlags, noValue(), 0,
+            Uncountable, noValue(), 0,
             m_out.testIsZero32(
                 m_out.load8ZeroExt32(lowCell(m_node->child1()), m_heaps.JSCell_typeInfoFlags),
-                m_out.constInt32(m_node->typeInfoOperand())));
+                m_out.constInt32(ImplementsDefaultHasInstance)));
     }
     
     void compileInstanceOf()
@@ -5695,15 +5662,6 @@ private:
         m_out.appendTo(continuation, lastNext);
         setBoolean(
             m_out.phi(m_out.boolean, notCellResult, isInstanceResult, notInstanceResult));
-    }
-
-    void compileInstanceOfCustom()
-    {
-        LValue value = lowJSValue(m_node->child1());
-        LValue constructor = lowCell(m_node->child2());
-        LValue hasInstance = lowJSValue(m_node->child3());
-
-        setBoolean(m_out.bitNot(m_out.equal(m_out.constInt32(0), vmCall(m_out.int32, m_out.operation(operationInstanceOfCustom), m_callFrame, value, constructor, hasInstance))));
     }
     
     void compileCountExecution()

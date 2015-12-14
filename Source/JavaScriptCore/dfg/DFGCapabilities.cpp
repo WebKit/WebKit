@@ -128,9 +128,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_profile_type:
     case op_profile_control_flow:
     case op_mov:
-    case op_overrides_has_instance:
+    case op_check_has_instance:
     case op_instanceof:
-    case op_instanceof_custom:
     case op_is_undefined:
     case op_is_boolean:
     case op_is_number:

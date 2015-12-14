@@ -1664,49 +1664,22 @@ RegisterID* ThrowableBinaryOpNode::emitBytecode(BytecodeGenerator& generator, Re
 
 RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> hasInstanceValue = generator.newTemporary();
-    RefPtr<RegisterID> isObject = generator.newTemporary();
-    RefPtr<RegisterID> isCustom = generator.newTemporary();
+    RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
+    RefPtr<RegisterID> src2 = generator.emitNode(m_expr2);
     RefPtr<RegisterID> prototype = generator.newTemporary();
-    RefPtr<RegisterID> value = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
-    RefPtr<RegisterID> constructor = generator.emitNode(m_expr2);
-    RefPtr<RegisterID> dstReg = generator.finalDestination(dst, value.get());
-    RefPtr<Label> custom = generator.newLabel();
-    RefPtr<Label> done = generator.newLabel();
-    RefPtr<Label> typeError = generator.newLabel();
+    RefPtr<RegisterID> dstReg = generator.finalDestination(dst, src1.get());
+    RefPtr<Label> target = generator.newLabel();
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitIsObject(isObject.get(), constructor.get());
-    generator.emitJumpIfFalse(isObject.get(), typeError.get());
+    generator.emitCheckHasInstance(dstReg.get(), src1.get(), src2.get(), target.get());
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(hasInstanceValue.get(), constructor.get(), generator.vm()->propertyNames->hasInstanceSymbol);
+    generator.emitGetById(prototype.get(), src2.get(), generator.vm()->propertyNames->prototype);
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitOverridesHasInstance(isCustom.get(), constructor.get(), hasInstanceValue.get());
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitJumpIfTrue(isCustom.get(), custom.get());
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(prototype.get(), constructor.get(), generator.vm()->propertyNames->prototype);
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitInstanceOf(dstReg.get(), value.get(), prototype.get());
-
-    generator.emitJump(done.get());
-
-    generator.emitLabel(typeError.get());
-    generator.emitThrowTypeError("Right hand side of instanceof is not an object");
-
-    generator.emitLabel(custom.get());
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitInstanceOfCustom(dstReg.get(), value.get(), constructor.get(), hasInstanceValue.get());
-
-    generator.emitLabel(done.get());
-
-    return dstReg.get();
+    RegisterID* result = generator.emitInstanceOf(dstReg.get(), src1.get(), prototype.get());
+    generator.emitLabel(target.get());
+    return result;
 }
 
 // ------------------------------ LogicalOpNode ----------------------------

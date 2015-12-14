@@ -183,31 +183,17 @@ void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCas
     emitStoreCell(dst, returnValueGPR);
 }
 
-void JIT::emit_op_overrides_has_instance(Instruction* currentInstruction)
+void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    int constructor = currentInstruction[2].u.operand;
-    int hasInstanceValue = currentInstruction[3].u.operand;
+    int baseVal = currentInstruction[3].u.operand;
 
-    emitLoadPayload(hasInstanceValue, regT0);
-    // We don't jump if we know what Symbol.hasInstance would do.
-    Jump hasInstanceValueNotCell = emitJumpIfNotJSCell(hasInstanceValue);
-    Jump customhasInstanceValue = branchPtr(NotEqual, regT0, TrustedImmPtr(m_codeBlock->globalObject()->functionProtoHasInstanceSymbolFunction()));
+    emitLoadPayload(baseVal, regT0);
 
-    // We know that constructor is an object from the way bytecode is emitted for instanceof expressions.
-    emitLoadPayload(constructor, regT0);
-
-    // Check that constructor 'ImplementsHasInstance' i.e. the object is a C-API user or a bound function.
-    test8(Zero, Address(regT0, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance), regT0);
-    Jump done = jump();
-
-    hasInstanceValueNotCell.link(this);
-    customhasInstanceValue.link(this);
-    move(TrustedImm32(1), regT0);
-
-    done.link(this);
-    emitStoreBool(dst, regT0);
-
+    // Check that baseVal is a cell.
+    emitJumpSlowCaseIfNotJSCell(baseVal);
+    
+    // Check that baseVal 'ImplementsHasInstance'.
+    addSlowCase(branchTest8(Zero, Address(regT0, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance)));
 }
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
@@ -221,7 +207,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitLoadPayload(value, regT2);
     emitLoadPayload(proto, regT1);
 
-    // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
+    // Check that proto are cells.  baseVal must be a cell - this is checked by op_check_has_instance.
     emitJumpSlowCaseIfNotJSCell(value);
     emitJumpSlowCaseIfNotJSCell(proto);
     
@@ -249,10 +235,20 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     emitStoreBool(dst, regT0);
 }
 
-void JIT::emit_op_instanceof_custom(Instruction*)
+void JIT::emitSlow_op_check_has_instance(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    // This always goes to slow path since we expect it to be rare.
-    addSlowCase(jump());
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
+    int baseVal = currentInstruction[3].u.operand;
+
+    linkSlowCaseIfNotJSCell(iter, baseVal);
+    linkSlowCase(iter);
+
+    emitLoad(value, regT1, regT0);
+    emitLoad(baseVal, regT3, regT2);
+    callOperation(operationCheckHasInstance, dst, regT1, regT0, regT3, regT2);
+
+    emitJumpSlowToHot(jump(), currentInstruction[4].u.operand);
 }
 
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -268,22 +264,6 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
     emitLoad(value, regT1, regT0);
     emitLoad(proto, regT3, regT2);
     callOperation(operationInstanceOf, dst, regT1, regT0, regT3, regT2);
-}
-
-void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-    int constructor = currentInstruction[3].u.operand;
-    int hasInstanceValue = currentInstruction[4].u.operand;
-
-    linkSlowCase(iter);
-
-    emitLoad(value, regT1, regT0);
-    emitLoadPayload(constructor, regT2);
-    emitLoad(hasInstanceValue, regT4, regT3);
-    callOperation(operationInstanceOfCustom, regT1, regT0, regT2, regT4, regT3);
-    emitStoreBool(dst, returnValueGPR);
 }
 
 void JIT::emit_op_is_undefined(Instruction* currentInstruction)

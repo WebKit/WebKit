@@ -4149,52 +4149,22 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CheckTypeInfoFlags: {
-        compileCheckTypeInfoFlags(node);
-        break;
-    }
-
-    case OverridesHasInstance: {
-
-        Node* hasInstanceValueNode = node->child2().node();
-        JSFunction* defaultHasInstanceFunction = jsCast<JSFunction*>(node->cellOperand()->value());
-
-        MacroAssembler::Jump notDefault;
+    case CheckHasInstance: {
         SpeculateCellOperand base(this, node->child1());
-        JSValueOperand hasInstanceValue(this, node->child2());
-        GPRTemporary result(this);
+        GPRTemporary structure(this);
 
-        GPRReg resultGPR = result.gpr();
+        // Speculate that base 'ImplementsDefaultHasInstance'.
+        speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branchTest8(
+            MacroAssembler::Zero, 
+            MacroAssembler::Address(base.gpr(), JSCell::typeInfoFlagsOffset()), 
+            MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance)));
 
-        // If we have proven that the constructor's Symbol.hasInstance will always be the one on Function.prototype[Symbol.hasInstance]
-        // then we don't need a runtime check here. We don't worry about the case where the constructor's Symbol.hasInstance is a constant
-        // but is not the default one as fixup should have converted this check to true.
-        ASSERT(!hasInstanceValueNode->isCellConstant() || defaultHasInstanceFunction == hasInstanceValueNode->asCell());
-        if (!hasInstanceValueNode->isCellConstant())
-            notDefault = m_jit.branchPtr(MacroAssembler::NotEqual, hasInstanceValue.gpr(), TrustedImmPtr(defaultHasInstanceFunction));
-
-        // Check that base 'ImplementsDefaultHasInstance'.
-        m_jit.test8(MacroAssembler::Zero, MacroAssembler::Address(base.gpr(), JSCell::typeInfoFlagsOffset()), MacroAssembler::TrustedImm32(ImplementsDefaultHasInstance), resultGPR);
-        m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
-        MacroAssembler::Jump done = m_jit.jump();
-
-        if (notDefault.isSet()) {
-            notDefault.link(&m_jit);
-            moveTrueTo(resultGPR);
-        }
-
-        done.link(&m_jit);
-        jsValueResult(resultGPR, node, DataFormatJSBoolean);
+        noResult(node);
         break;
     }
 
     case InstanceOf: {
         compileInstanceOf(node);
-        break;
-    }
-
-    case InstanceOfCustom: {
-        compileInstanceOfCustom(node);
         break;
     }
         

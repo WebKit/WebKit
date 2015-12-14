@@ -36,18 +36,3 @@ function apply(thisValue, argumentValues)
 
     return this.@apply(thisValue, argumentValues);
 }
-
-// FIXME: this should have a different name: https://bugs.webkit.org/show_bug.cgi?id=151363
-function symbolHasInstance(value)
-{
-    "use strict";
-
-    if (typeof this !== "function")
-        return false;
-
-    if (@isBoundFunction(this))
-        return @hasInstanceBoundFunction(this, value);
-
-    let target = this.prototype;
-    return @instanceOf(value, target);
-}

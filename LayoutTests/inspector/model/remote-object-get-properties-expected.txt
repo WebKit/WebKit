@@ -202,7 +202,6 @@ ALL PROPERTIES:
     call
     bind
     constructor
-    Symbol(Symbol.hasInstance)
     toLocaleString
     valueOf
     hasOwnProperty
@@ -252,7 +251,6 @@ ALL PROPERTIES:
     call
     bind
     constructor
-    Symbol(Symbol.hasInstance)
     toLocaleString
     valueOf
     hasOwnProperty

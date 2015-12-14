@@ -50,8 +50,6 @@ const char* exitKindToString(ExitKind kind)
         return "BadConstantCache";
     case BadIndexingType:
         return "BadIndexingType";
-    case BadTypeInfoFlags:
-        return "BadTypeInfoFlags";
     case Overflow:
         return "Overflow";
     case NegativeZero:

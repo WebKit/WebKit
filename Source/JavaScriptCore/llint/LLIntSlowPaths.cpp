@@ -522,6 +522,23 @@ LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
     LLINT_RETURN(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regExp));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
+{
+    LLINT_BEGIN();
+    
+    JSValue value = LLINT_OP_C(2).jsValue();
+    JSValue baseVal = LLINT_OP_C(3).jsValue();
+    if (baseVal.isObject()) {
+        JSObject* baseObject = asObject(baseVal);
+        ASSERT(!baseObject->structure()->typeInfo().implementsDefaultHasInstance());
+        if (baseObject->structure()->typeInfo().implementsHasInstance()) {
+            JSValue result = jsBoolean(baseObject->methodTable()->customHasInstance(baseObject, exec, value));
+            LLINT_RETURN_WITH_PC_ADJUSTMENT(result, pc[4].u.operand);
+        }
+    }
+    LLINT_THROW(createInvalidInstanceofParameterError(exec, baseVal));
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_instanceof)
 {
     LLINT_BEGIN();
@@ -529,21 +546,6 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
     JSValue proto = LLINT_OP_C(3).jsValue();
     ASSERT(!value.isObject() || !proto.isObject());
     LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(exec, value, proto)));
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_instanceof_custom)
-{
-    LLINT_BEGIN();
-
-    JSValue value = LLINT_OP_C(2).jsValue();
-    JSValue constructor = LLINT_OP_C(3).jsValue();
-    JSValue hasInstanceValue = LLINT_OP_C(4).jsValue();
-
-    ASSERT(constructor.isObject());
-    ASSERT(hasInstanceValue != exec->lexicalGlobalObject()->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure()->typeInfo().implementsDefaultHasInstance());
-
-    JSValue result = jsBoolean(constructor.getObject()->hasInstance(exec, value, hasInstanceValue));
-    LLINT_RETURN(result);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_get_by_id)

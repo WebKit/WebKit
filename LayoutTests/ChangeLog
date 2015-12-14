@@ -1,3 +1,20 @@
+2015-12-14  Chris Dumez  <cdumez@apple.com>
+
+        Roll out r193974 and follow-up fixes as it caused JSC crashes
+        https://bugs.webkit.org/show_bug.cgi?id=152256
+
+        Unreviewed, roll out r193974 and follow-up fixes as it caused JSC crashes.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/exception-for-nonobject-expected.txt:
+        * js/exception-instanceof-expected.txt:
+        * js/instance-of-immediates-expected.txt:
+        * js/regress/instanceof-bound-expected.txt: Removed.
+        * js/regress/instanceof-bound.html: Removed.
+        * js/regress/script-tests/instanceof-bound.js: Removed.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-12-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Expose ReadableStream and relatives to Worker

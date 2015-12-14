@@ -141,9 +141,8 @@ bool doesGC(Graph& graph, Node* node)
     case ProfileDidCall:
     case ProfileType:
     case ProfileControlFlow:
-    case OverridesHasInstance:
+    case CheckHasInstance:
     case InstanceOf:
-    case InstanceOfCustom:
     case IsUndefined:
     case IsBoolean:
     case IsNumber:
@@ -181,7 +180,6 @@ bool doesGC(Graph& graph, Node* node)
     case CheckInBounds:
     case ConstantStoragePointer:
     case Check:
-    case CheckTypeInfoFlags:
     case MultiGetByOffset:
     case ValueRep:
     case DoubleRep:

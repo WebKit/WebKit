@@ -1487,19 +1487,25 @@ void JIT_OPERATION operationProfileWillCall(ExecState* exec, EncodedJSValue enco
         profiler->willExecute(exec, JSValue::decode(encodedValue));
 }
 
-int32_t JIT_OPERATION operationInstanceOfCustom(ExecState* exec, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance)
+EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBaseVal)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
     JSValue value = JSValue::decode(encodedValue);
-    JSValue hasInstanceValue = JSValue::decode(encodedHasInstance);
+    JSValue baseVal = JSValue::decode(encodedBaseVal);
 
-    ASSERT(hasInstanceValue != exec->lexicalGlobalObject()->functionProtoHasInstanceSymbolFunction() || !constructor->structure()->typeInfo().implementsDefaultHasInstance());
+    if (baseVal.isObject()) {
+        JSObject* baseObject = asObject(baseVal);
+        ASSERT(!baseObject->structure(vm)->typeInfo().implementsDefaultHasInstance());
+        if (baseObject->structure(vm)->typeInfo().implementsHasInstance()) {
+            bool result = baseObject->methodTable(vm)->customHasInstance(baseObject, exec, value);
+            return JSValue::encode(jsBoolean(result));
+        }
+    }
 
-    if (constructor->hasInstance(exec, value, hasInstanceValue))
-        return 1;
-    return 0;
+    vm.throwException(exec, createInvalidInstanceofParameterError(exec, baseVal));
+    return JSValue::encode(JSValue());
 }
 
 }
