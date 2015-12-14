@@ -3578,12 +3578,10 @@ void SpeculativeJIT::compileArithMul(Node* node)
 
         if (leftOperand.isPositiveConstInt32()) {
             leftRegs = resultRegs;
-            int64_t leftConst = leftOperand.asConstInt32();
-            m_jit.moveValue(JSValue(leftConst), leftRegs);
+            m_jit.moveValue(leftChild->asJSValue(), leftRegs);
         } else if (rightOperand.isPositiveConstInt32()) {
             rightRegs = resultRegs;
-            int64_t rightConst = rightOperand.asConstInt32();
-            m_jit.moveValue(JSValue(rightConst), rightRegs);
+            m_jit.moveValue(rightChild->asJSValue(), rightRegs);
         }
 
         callOperation(operationValueMul, resultRegs, leftRegs, rightRegs);

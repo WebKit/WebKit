@@ -1,5 +1,35 @@
 2015-12-14  Mark Lam  <mark.lam@apple.com>
 
+        Misc. small fixes in snippet related code.
+        https://bugs.webkit.org/show_bug.cgi?id=152259
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        - When loading a constant JSValue for a node, use the one that the node already
+          provides instead of reconstructing it.  This is not a bug, but the fix makes
+          the code cleaner.
+
+        * jit/JITBitAndGenerator.cpp:
+        (JSC::JITBitAndGenerator::generateFastPath):
+        - No need to do a bitand with a constant int 0xffffffff operand.
+
+        * jit/JITBitOrGenerator.cpp:
+        (JSC::JITBitOrGenerator::generateFastPath):
+        - Fix comments: bitor is '|', not '&'.
+        - No need to do a bitor with a constant int 0 operand.
+
+        * jit/JITBitXorGenerator.cpp:
+        (JSC::JITBitXorGenerator::generateFastPath):
+        - Fix comments: bitxor is '^', not '&'.
+
+        * jit/JITRightShiftGenerator.cpp:
+        (JSC::JITRightShiftGenerator::generateFastPath):
+        - Renamed a jump target name to be clearer about its purpose.
+
+2015-12-14  Mark Lam  <mark.lam@apple.com>
+
         We should not employ the snippet code in the DFG if no OSR exit was previously encountered.
         https://bugs.webkit.org/show_bug.cgi?id=152255
 

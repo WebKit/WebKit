@@ -40,21 +40,23 @@ void JITBitOrGenerator::generateFastPath(CCallHelpers& jit)
         JSValueRegs var = m_leftOperand.isConstInt32() ? m_right : m_left;
         SnippetOperand& constOpr = m_leftOperand.isConstInt32() ? m_leftOperand : m_rightOperand;
         
-        // Try to do intVar & intConstant.
+        // Try to do intVar | intConstant.
         m_slowPathJumpList.append(jit.branchIfNotInt32(var));
         
         jit.moveValueRegs(var, m_result);
+        if (constOpr.asConstInt32()) {
 #if USE(JSVALUE64)
-        jit.or32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
-        jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
+            jit.or32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
+            jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
 #else
-        jit.or32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
+            jit.or32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
 #endif
-        
+        }
+
     } else {
         ASSERT(!m_leftOperand.isConstInt32() && !m_rightOperand.isConstInt32());
         
-        // Try to do intVar & intVar.
+        // Try to do intVar | intVar.
         m_slowPathJumpList.append(jit.branchIfNotInt32(m_left));
         m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
 

@@ -87,14 +87,14 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
         // Try to do (intConstant >> intVar) or (intVar >> intVar).
         m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
 
-        CCallHelpers::Jump notInt;
+        CCallHelpers::Jump leftNotInt;
         if (m_leftOperand.isConstInt32()) {
 #if USE(JSVALUE32_64)
             jit.move(m_right.tagGPR(), m_result.tagGPR());
 #endif
             jit.move(CCallHelpers::Imm32(m_leftOperand.asConstInt32()), m_result.payloadGPR());
         } else {
-            notInt = jit.branchIfNotInt32(m_left);
+            leftNotInt = jit.branchIfNotInt32(m_left);
             jit.moveValueRegs(m_left, m_result);
         }
 
@@ -112,7 +112,7 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
             m_endJumpList.append(jit.jump()); // Terminate the above case before emitting more code.
 
             // Try to do (doubleVar >> intVar).
-            notInt.link(&jit);
+            leftNotInt.link(&jit);
 
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
             jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
@@ -125,7 +125,7 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
             jit.boxInt32(m_scratchGPR, m_result);
 
         } else
-            m_slowPathJumpList.append(notInt);
+            m_slowPathJumpList.append(leftNotInt);
     }
 }
 

@@ -52,14 +52,16 @@ void JITBitAndGenerator::generateFastPath(CCallHelpers& jit)
         m_slowPathJumpList.append(jit.branchIfNotInt32(var));
         
         jit.moveValueRegs(var, m_result);
+        if (constOpr.asConstInt32() != static_cast<int32_t>(0xffffffff)) {
 #if USE(JSVALUE64)
-        jit.and64(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
-        if (constOpr.asConstInt32() >= 0)
-            jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
+            jit.and64(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
+            if (constOpr.asConstInt32() >= 0)
+                jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
 #else
-        jit.and32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
+            jit.and32(CCallHelpers::Imm32(constOpr.asConstInt32()), m_result.payloadGPR());
 #endif
-        
+        }
+
     } else {
         ASSERT(!m_leftOperand.isConstInt32() && !m_rightOperand.isConstInt32());
         
