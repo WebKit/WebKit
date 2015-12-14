@@ -267,8 +267,6 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         ASSERT(m_keyRequest);
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
 
-        RetainPtr<NSData> initData = adoptNS([[NSData alloc] initWithBytes:m_initData->data() length:m_initData->length()]);
-
         RetainPtr<NSDictionary> options;
         if (!m_protocolVersions.isEmpty() && canLoadAVContentKeyRequestProtocolVersionsKey()) {
             RetainPtr<NSMutableArray> protocolVersionsOption = adoptNS([[NSMutableArray alloc] init]);
@@ -283,7 +281,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
 
         errorCode = MediaPlayer::NoError;
         systemCode = 0;
-        NSData* requestData = [m_keyRequest contentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() options:options.get() error:nil];
+        NSData* requestData = [m_keyRequest contentKeyRequestDataForApp:certificateData.get() contentIdentifier:nil options:options.get() error:nil];
         nextMessage = Uint8Array::create(static_cast<const uint8_t*>([requestData bytes]), [requestData length]);
 
         return false;
