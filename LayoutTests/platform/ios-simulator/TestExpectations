@@ -2827,3 +2827,7 @@ webkit.org/b/152134 fast/events/ios/keyboard-should-not-trigger-resize.html [ Pa
 webkit.org/b/152134 fast/events/ios/single-tap-generates-click.html [ Pass Timeout ]
 webkit.org/b/152134 fast/events/ios/unscalable-viewport-clicks-on-doubletap.html [ Pass Timeout ]
 webkit.org/b/152134 fast/events/ios/viewport-device-width-at-initial-scale-fast-clicks.html  [ Pass Timeout ]
+
+webkit.org/b/152141 fast/picture/image-picture-1x.html [ Failure ]
+webkit.org/b/152141 fast/picture/image-picture-invalid.html [ Failure ]
+webkit.org/b/152141 fast/picture/image-picture-nested.html [ Failure ]
