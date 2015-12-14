@@ -49,7 +49,7 @@
 		<key>EnvironmentVariables</key>
 		<dict>
 			<key>DYLD_INSERT_LIBRARIES</key>
-			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/WebProcess.app/Contents/MacOS/WebProcessShim.dylib</string>
+			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Frameworks/WebProcessShim.dylib</string>
 		</dict>
 	</dict>
 </dict>

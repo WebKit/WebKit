@@ -97,27 +97,15 @@ static const char* copyASanDynamicLibraryPath()
 static RetainPtr<NSString> computeProcessShimPath(const ProcessLauncher::LaunchOptions& launchOptions, NSBundle *webKitBundle)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if (launchOptions.processType == ProcessLauncher::PluginProcess) {
-        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
-        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
-        return [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
-    }
+    if (launchOptions.processType == ProcessLauncher::PluginProcess)
+        return [[webKitBundle privateFrameworksPath] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
 #endif
 
-    if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
-        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
-        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+    if (launchOptions.processType == ProcessLauncher::NetworkProcess)
+        return [[webKitBundle privateFrameworksPath] stringByAppendingPathComponent:@"SecItemShim.dylib"];
 
-        return [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"SecItemShim.dylib"];
-    }
-
-    if (launchOptions.processType == ProcessLauncher::WebProcess) {
-        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"WebProcess.app"];
-        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
-        return [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
-    }
+    if (launchOptions.processType == ProcessLauncher::WebProcess)
+        return [[webKitBundle privateFrameworksPath] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
 
     return nil;
 }

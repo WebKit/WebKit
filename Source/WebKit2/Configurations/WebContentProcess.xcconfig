@@ -26,6 +26,4 @@
 PRODUCT_NAME = WebProcess;
 INFOPLIST_FILE = WebProcess/EntryPoint/mac/LegacyProcess/Info.plist;
 
-EXCLUDED_SHIM_FILE_NAME[sdk=iphone*] = WebProcessShim.dylib;
-
 CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/WebContent-iOS.entitlements;

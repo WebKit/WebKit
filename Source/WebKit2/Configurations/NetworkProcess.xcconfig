@@ -26,6 +26,4 @@
 PRODUCT_NAME = NetworkProcess;
 INFOPLIST_FILE = NetworkProcess/EntryPoint/mac/LegacyProcess/Info.plist;
 
-EXCLUDED_SHIM_FILE_NAME[sdk=iphone*] = SecItemShim.dylib;
-
 CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/Network-iOS.entitlements;

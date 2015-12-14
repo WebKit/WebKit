@@ -25,8 +25,5 @@
 
 #include "Shim.xcconfig"
 
-INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/WebProcess.app/Contents/MacOS;
-DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/WebProcess.app/Contents/MacOS;
-
 OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework CoreServices -framework Security;

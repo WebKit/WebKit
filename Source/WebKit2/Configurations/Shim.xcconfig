@@ -25,4 +25,7 @@
 
 GCC_DYNAMIC_NO_PIC = NO;
 SKIP_INSTALL = YES;
+SKIP_INSTALL[sdk=macosx*] = NO;
 
+INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Frameworks;
+DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Frameworks;

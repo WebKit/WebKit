@@ -1,5 +1,53 @@
 2015-12-13  Dan Bernstein  <mitz@apple.com>
 
+        [Mac] Shims used by XPC services are installed inside legacy process bundles
+        https://bugs.webkit.org/show_bug.cgi?id=152233
+
+        Reviewed by Sam Weinig.
+
+        Have the shim dylibs installed in the framework’s Frameworks directory instead.
+
+        * Configurations/BaseLegacyProcess.xcconfig: Simplified now that EXCLUDED_SHIM_FILE_NAME is
+          no longer defined, because shims aren’t copied into legacy processes.
+
+        * Configurations/NetworkProcess.xcconfig: Removed definition of EXCLUDED_SHIM_FILE_NAME.
+        * Configurations/PluginProcess.xcconfig: Ditto.
+        * Configurations/WebContentProcess.xcconfig: Ditto.
+
+        * Configurations/Shim.xcconfig: Install the shims when building for OS X. Added definitions
+          of INSTALL_PATH and DYLIB_INSTALL_NAME_BASE which are now common to all shims.
+
+        * Configurations/PluginProcessShim.xcconfig: Removed definitions of INSTALL_PATH and
+          DYLIB_INSTALL_NAME_BASE from here, now that they are defined for all shims in
+          Shim.xcconfig.
+        * Configurations/SecItemShim.xcconfig: Ditto.
+        * Configurations/WebProcessShim.xcconfig:
+
+        * Configurations/WebKit.xcconfig: Added the shims to EXCLUDED_SOURCE_FILE_NAMES for iOS.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX-10.9-10.10.plist: Changed
+          the value of DYLD_INSERT_LIBRARIES to point to the shim’s new location.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist: Ditto.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX-10.9-10.10.plist: Ditto.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::computeProcessShimPath): Changed to return the new paths, which are all inside the
+          framework’s Frameworks directory.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        - Removed references to WRAPPER_NAME from the “Copy XPC services for engineering builds”
+          build phase in the All target, becase WRAPPER_NAME is empty in an aggregate target.
+        - Removed the PlugInProcess target’s dependency on the PluginProcessShim target and its
+          Copy Plug-in Process Shim build phase.
+        - Removed the NetworkProcess target’s dependency on the SecItemShim target and its Copy
+          Sec Item Shim build phase.
+        - Removed the WebProcess target’s dependency on the WebProcessShim target and its Copy
+          WebProcessShim build phase.
+        - Made the WebKit target depend on the shim targets, and added to it a Copy Shims build
+          phase that copies the shims into the framework’s Frameworks directory.
+
+2015-12-13  Dan Bernstein  <mitz@apple.com>
+
         Build fix.
 
         * Configurations/PluginProcess.xcconfig:
