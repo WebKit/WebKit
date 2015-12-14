@@ -185,8 +185,8 @@ private:
         case ArithAdd:
         case ArithSub: {
             if (op == ArithSub
-                && (Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())
-                    || m_graph.hasExitSite(node->origin.semantic, BadType))) {
+                && Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())
+                && m_graph.hasExitSite(node->origin.semantic, BadType)) {
 
                 fixEdge<UntypedUse>(node->child1());
                 fixEdge<UntypedUse>(node->child2());
@@ -230,7 +230,7 @@ private:
             Edge& leftChild = node->child1();
             Edge& rightChild = node->child2();
             if (Node::shouldSpeculateUntypedForArithmetic(leftChild.node(), rightChild.node())
-                || m_graph.hasExitSite(node->origin.semantic, BadType)) {
+                && m_graph.hasExitSite(node->origin.semantic, BadType)) {
                 fixEdge<UntypedUse>(leftChild);
                 fixEdge<UntypedUse>(rightChild);
                 node->setResult(NodeResultJS);
@@ -268,8 +268,8 @@ private:
             Edge& leftChild = node->child1();
             Edge& rightChild = node->child2();
             if (op == ArithDiv
-                && (Node::shouldSpeculateUntypedForArithmetic(leftChild.node(), rightChild.node())
-                    || m_graph.hasExitSite(node->origin.semantic, BadType))) {
+                && Node::shouldSpeculateUntypedForArithmetic(leftChild.node(), rightChild.node())
+                && m_graph.hasExitSite(node->origin.semantic, BadType)) {
                 fixEdge<UntypedUse>(leftChild);
                 fixEdge<UntypedUse>(rightChild);
                 node->setResult(NodeResultJS);
