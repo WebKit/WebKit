@@ -1,3 +1,16 @@
+2015-12-14  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some Mavericks guards in ServicesOverlayController
+        https://bugs.webkit.org/show_bug.cgi?id=152238
+
+        Reviewed by Darin Adler.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::selectionRectsDidChange): Deleted.
+        (WebCore::ServicesOverlayController::selectedTelephoneNumberRangesChanged): Deleted.
+        The whole file is already PLATFORM(MAC) guarded, and the 10.9 guards
+        are no longer necessary.
+
 2015-12-14  Daniel Bates  <dabates@apple.com>
 
         [iOS] DOM click event may not be dispatched when page has :active style and <input type="search">

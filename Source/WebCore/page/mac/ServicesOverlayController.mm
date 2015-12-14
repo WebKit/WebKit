@@ -366,7 +366,6 @@ static void compactRectsWithGapRects(Vector<LayoutRect>& rects, const Vector<Gap
 
 void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>& rects, const Vector<GapRects>& gapRects, bool isTextOnly)
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
     m_currentSelectionRects = rects;
     m_isTextOnly = isTextOnly;
 
@@ -379,19 +378,12 @@ void ServicesOverlayController::selectionRectsDidChange(const Vector<LayoutRect>
 
     LOG(Services, "ServicesOverlayController - Selection rects changed - Now have %lu\n", rects.size());
     invalidateHighlightsOfType(Highlight::SelectionType);
-#else
-    UNUSED_PARAM(rects);
-    UNUSED_PARAM(gapRects);
-    UNUSED_PARAM(isTextOnly);
-#endif
 }
 
 void ServicesOverlayController::selectedTelephoneNumberRangesChanged()
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
     LOG(Services, "ServicesOverlayController - Telephone number ranges changed\n");
     invalidateHighlightsOfType(Highlight::TelephoneNumberType);
-#endif
 }
 
 void ServicesOverlayController::invalidateHighlightsOfType(Highlight::Type type)
