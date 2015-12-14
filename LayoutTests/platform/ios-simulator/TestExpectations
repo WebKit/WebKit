@@ -2759,7 +2759,6 @@ webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
 
 fast/forms/select-element-focus-ring.html [ Failure Pass ]
 animations/keyframe-multiple-timing-functions-transform.html [ Failure Pass ]
-streams/reference-implementation/readable-stream-cancel.html [ Failure Pass ]
 compositing/visible-rect/coverage-scrolling.html [ Failure Pass ]
 
 # Imported Blink tests.

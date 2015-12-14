@@ -1072,7 +1072,6 @@ http/tests/images/jpeg-partial-load.html
 http/tests/images/png-partial-load-no-alpha.html
 http/tests/incremental/frame-focus-before-load.html
 http/tests/incremental/pause-in-script-element.pl
-http/tests/inspector/console/access-inspected-object.html
 http/tests/inspector/page/loading-iframe-document-node.html
 http/tests/navigation/metaredirect-frames.html
 http/tests/security/frameNavigation/context-for-location-assign.html

@@ -492,7 +492,6 @@ http/tests/uri/css-href.php [ Failure ]
 http/tests/appcache/crash-when-navigating-away-then-back.html
 http/tests/cache/display-image-unset-allows-cached-image-load.html
 http/tests/cache/history-only-cached-subresource-loads.html
-http/tests/inspector/console/access-inspected-object.html
 http/tests/inspector/page/loading-iframe-document-node.html
 http/tests/misc/iframe-reparenting-id-collision.html
 http/tests/misc/set-window-opener-to-null.html

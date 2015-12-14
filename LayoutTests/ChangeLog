@@ -1,5 +1,17 @@
 2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Removing ios-simulator TestExpectations for deleted tests: streams/reference-implementation/readable-stream-cancel.html (r192186)
+        and http/tests/inspector/console/access-inspected-object.html (r192186).
+        https://bugs.webkit.org/show_bug.cgi?id=152131
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
+2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
         Adding a second newline to the expected result for compositing/iframes/page-cache-layer-tree.html
         https://bugs.webkit.org/show_bug.cgi?id=152132
 
