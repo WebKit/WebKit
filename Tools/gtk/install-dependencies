@@ -131,6 +131,7 @@ function installDependenciesWithApt {
         libxcb-xfixes0-dev \
         libxfont-dev \
         libxkbfile-dev \
+        libtool-bin \
         llvm \
         llvm-dev \
         python-dev \
