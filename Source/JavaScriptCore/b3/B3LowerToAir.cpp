@@ -873,20 +873,144 @@ private:
         const CompareFloatFunctor& compareFloat, // Signature: (Arg doubleCond, Arg, Arg) -> Inst
         bool inverted = false)
     {
-        // Chew through any negations. It's not strictly necessary for this to be a loop, but we like
-        // to follow the rule that the instruction selector reduces strength whenever it doesn't
-        // require making things more complicated.
+        // NOTE: This is totally happy to match comparisons that have already been computed elsewhere
+        // since on most architectures, the cost of branching on a previously computed comparison
+        // result is almost always higher than just doing another fused compare/branch. The only time
+        // it could be worse is if we have a binary comparison and both operands are variables (not
+        // constants), and we encounter register pressure. Even in this case, duplicating the compare
+        // so that we can fuse it to the branch will be more efficient most of the time, since
+        // register pressure is not *that* common. For this reason, this algorithm will always
+        // duplicate the comparison.
+        //
+        // However, we cannot duplicate loads. The canBeInternal() on a load will assume that we
+        // already validated canBeInternal() on all of the values that got us to the load. So, even
+        // if we are sharing a value, we still need to call canBeInternal() for the purpose of
+        // tracking whether we are still in good shape to fuse loads.
+        //
+        // We could even have a chain of compare values that we fuse, and any member of the chain
+        // could be shared. Once any of them are shared, then the shared one's transitive children
+        // cannot be locked (i.e. commitInternal()). But if none of them are shared, then we want to
+        // lock all of them because that's a prerequisite to fusing the loads so that the loads don't
+        // get duplicated. For example, we might have: 
+        //
+        //     @tmp1 = LessThan(@a, @b)
+        //     @tmp2 = Equal(@tmp1, 0)
+        //     Branch(@tmp2)
+        //
+        // If either @a or @b are loads, then we want to have locked @tmp1 and @tmp2 so that they
+        // don't emit the loads a second time. But if we had another use of @tmp2, then we cannot
+        // lock @tmp1 (or @a or @b) because then we'll get into trouble when the other values that
+        // try to share @tmp1 with us try to do their lowering.
+        //
+        // There's one more wrinkle. If we don't lock an internal value, then this internal value may
+        // have already separately locked its children. So, if we're not locking a value then we need
+        // to make sure that its children aren't locked. We encapsulate this in two ways:
+        //
+        // canCommitInternal: This variable tells us if the values that we've fused so far are
+        // locked. This means that we're not sharing any of them with anyone. This permits us to fuse
+        // loads. If it's false, then we cannot fuse loads and we also need to ensure that the
+        // children of any values we try to fuse-by-sharing are not already locked. You don't have to
+        // worry about the children locking thing if you use prepareToFuse() before trying to fuse a
+        // sharable value. But, you do need to guard any load fusion by checking if canCommitInternal
+        // is true.
+        //
+        // FusionResult prepareToFuse(value): Call this when you think that you would like to fuse
+        // some value and that value is not a load. It will automatically handle the shared-or-locked
+        // issues and it will clear canCommitInternal if necessary. This will return CannotFuse
+        // (which acts like false) if the value cannot be locked and its children are locked. That's
+        // rare, but you just need to make sure that you do smart things when this happens (i.e. just
+        // use the value rather than trying to fuse it). After you call prepareToFuse(), you can
+        // still change your mind about whether you will actually fuse the value. If you do fuse it,
+        // you need to call commitFusion(value, fusionResult).
+        //
+        // commitFusion(value, fusionResult): Handles calling commitInternal(value) if fusionResult
+        // is FuseAndCommit.
+        
+        bool canCommitInternal = true;
+
+        enum FusionResult {
+            CannotFuse,
+            FuseAndCommit,
+            Fuse
+        };
+        auto prepareToFuse = [&] (Value* value) -> FusionResult {
+            if (value == m_value) {
+                // It's not actually internal. It's the root value. We're good to go.
+                return Fuse;
+            }
+
+            if (canCommitInternal && canBeInternal(value)) {
+                // We are the only users of this value. This also means that the value's children
+                // could not have been locked, since we have now proved that m_value dominates value
+                // in the data flow graph. To only other way to value is from a user of m_value. If
+                // value's children are shared with others, then they could not have been locked
+                // because their use count is greater than 1. If they are only used from value, then
+                // in order for value's children to be locked, value would also have to be locked,
+                // and we just proved that it wasn't.
+                return FuseAndCommit;
+            }
+
+            // We're going to try to share value with others. It's possible that some other basic
+            // block had already emitted code for value and then matched over its children and then
+            // locked them, in which case we just want to use value instead of duplicating it. So, we
+            // validate the children. Note that this only arises in linear chains like:
+            //
+            //     BB#1:
+            //         @1 = Foo(...)
+            //         @2 = Bar(@1)
+            //         Jump(#2)
+            //     BB#2:
+            //         @3 = Baz(@2)
+            //
+            // Notice how we could start by generating code for BB#1 and then decide to lock @1 when
+            // generating code for @2, if we have some way of fusing Bar and Foo into a single
+            // instruction. This is legal, since indeed @1 only has one user. The fact that @2 now
+            // has a tmp (i.e. @2 is pinned), canBeInternal(@2) will return false, which brings us
+            // here. In that case, we cannot match over @2 because then we'd hit a hazard if we end
+            // up deciding not to fuse Foo into the fused Baz/Bar.
+            //
+            // Happily, there are only two places where this kind of child validation happens is in
+            // rules that admit sharing, like this and effectiveAddress().
+            //
+            // N.B. We could probably avoid the need to do value locking if we committed to a well
+            // chosen code generation order. For example, if we guaranteed that all of the users of
+            // a value get generated before that value, then there's no way for the lowering of @3 to
+            // see @1 locked. But we don't want to do that, since this is a greedy instruction
+            // selector and so we want to be able to play with order.
+            for (Value* child : value->children()) {
+                if (m_locked.contains(child))
+                    return CannotFuse;
+            }
+
+            // It's safe to share value, but since we're sharing, it means that we aren't locking it.
+            // If we don't lock it, then fusing loads is off limits and all of value's children will
+            // have to go through the sharing path as well.
+            canCommitInternal = false;
+            
+            return Fuse;
+        };
+
+        auto commitFusion = [&] (Value* value, FusionResult result) {
+            if (result == FuseAndCommit)
+                commitInternal(value);
+        };
+        
+        // Chew through any inversions. This loop isn't necessary for comparisons and branches, but
+        // we do need at least one iteration of it for Check.
         for (;;) {
-            if (!canBeInternal(value) && value != m_value)
-                break;
             bool shouldInvert =
                 (value->opcode() == BitXor && value->child(1)->hasInt() && (value->child(1)->asInt() & 1) && value->child(0)->returnsBool())
                 || (value->opcode() == Equal && value->child(1)->isInt(0));
             if (!shouldInvert)
                 break;
+
+            FusionResult fusionResult = prepareToFuse(value);
+            if (fusionResult == CannotFuse)
+                break;
+            commitFusion(value, fusionResult);
+            
             value = value->child(0);
             inverted = !inverted;
-            commitInternal(value);
         }
 
         auto createRelCond = [&] (
@@ -931,51 +1055,55 @@ private:
                     return Inst();
                 };
 
-                // First handle compares that involve fewer bits than B3's type system supports.
-                // This is pretty important. For example, we want this to be a single instruction:
-                //
-                //     @1 = Load8S(...)
-                //     @2 = Const32(...)
-                //     @3 = LessThan(@1, @2)
-                //     Branch(@3)
-                
-                if (relCond.isSignedCond()) {
-                    if (Inst result = tryCompareLoadImm(Arg::Width8, Load8S, Arg::Signed))
-                        return result;
-                }
-                
-                if (relCond.isUnsignedCond()) {
-                    if (Inst result = tryCompareLoadImm(Arg::Width8, Load8Z, Arg::Unsigned))
-                        return result;
-                }
-
-                if (relCond.isSignedCond()) {
-                    if (Inst result = tryCompareLoadImm(Arg::Width16, Load16S, Arg::Signed))
-                        return result;
-                }
-                
-                if (relCond.isUnsignedCond()) {
-                    if (Inst result = tryCompareLoadImm(Arg::Width16, Load16Z, Arg::Unsigned))
-                        return result;
-                }
-
-                // Now handle compares that involve a load and an immediate.
-
                 Arg::Width width = Arg::widthForB3Type(value->child(0)->type());
-                if (Inst result = tryCompareLoadImm(width, Load, Arg::Signed))
-                    return result;
-
-                // Now handle compares that involve a load. It's not obvious that it's better to
-                // handle this before the immediate cases or not. Probably doesn't matter.
-
-                if (Inst result = tryCompare(width, loadPromise(left), tmpPromise(right))) {
-                    commitInternal(left);
-                    return result;
-                }
                 
-                if (Inst result = tryCompare(width, tmpPromise(left), loadPromise(right))) {
-                    commitInternal(right);
-                    return result;
+                if (canCommitInternal) {
+                    // First handle compares that involve fewer bits than B3's type system supports.
+                    // This is pretty important. For example, we want this to be a single
+                    // instruction:
+                    //
+                    //     @1 = Load8S(...)
+                    //     @2 = Const32(...)
+                    //     @3 = LessThan(@1, @2)
+                    //     Branch(@3)
+                
+                    if (relCond.isSignedCond()) {
+                        if (Inst result = tryCompareLoadImm(Arg::Width8, Load8S, Arg::Signed))
+                            return result;
+                    }
+                
+                    if (relCond.isUnsignedCond()) {
+                        if (Inst result = tryCompareLoadImm(Arg::Width8, Load8Z, Arg::Unsigned))
+                            return result;
+                    }
+
+                    if (relCond.isSignedCond()) {
+                        if (Inst result = tryCompareLoadImm(Arg::Width16, Load16S, Arg::Signed))
+                            return result;
+                    }
+                
+                    if (relCond.isUnsignedCond()) {
+                        if (Inst result = tryCompareLoadImm(Arg::Width16, Load16Z, Arg::Unsigned))
+                            return result;
+                    }
+
+                    // Now handle compares that involve a load and an immediate.
+
+                    if (Inst result = tryCompareLoadImm(width, Load, Arg::Signed))
+                        return result;
+
+                    // Now handle compares that involve a load. It's not obvious that it's better to
+                    // handle this before the immediate cases or not. Probably doesn't matter.
+
+                    if (Inst result = tryCompare(width, loadPromise(left), tmpPromise(right))) {
+                        commitInternal(left);
+                        return result;
+                    }
+                
+                    if (Inst result = tryCompare(width, tmpPromise(left), loadPromise(right))) {
+                        commitInternal(right);
+                        return result;
+                    }
                 }
 
                 // Now handle compares that involve an immediate and a tmp.
@@ -1062,39 +1190,41 @@ private:
                     return Inst();
                 };
 
-                // First handle test's that involve fewer bits than B3's type system supports.
+                if (canCommitInternal) {
+                    // First handle test's that involve fewer bits than B3's type system supports.
 
-                if (Inst result = tryTestLoadImm(Arg::Width8, Load8Z))
-                    return result;
+                    if (Inst result = tryTestLoadImm(Arg::Width8, Load8Z))
+                        return result;
+                    
+                    if (Inst result = tryTestLoadImm(Arg::Width8, Load8S))
+                        return result;
+                    
+                    if (Inst result = tryTestLoadImm(Arg::Width16, Load16Z))
+                        return result;
+                    
+                    if (Inst result = tryTestLoadImm(Arg::Width16, Load16S))
+                        return result;
 
-                if (Inst result = tryTestLoadImm(Arg::Width8, Load8S))
-                    return result;
-
-                if (Inst result = tryTestLoadImm(Arg::Width16, Load16Z))
-                    return result;
-
-                if (Inst result = tryTestLoadImm(Arg::Width16, Load16S))
-                    return result;
-
-                // Now handle test's that involve a load and an immediate. Note that immediates are
-                // 32-bit, and we want zero-extension. Hence, the immediate form is compiled as a
-                // 32-bit test. Note that this spits on the grave of inferior endians, such as the
-                // big one.
-                
-                if (Inst result = tryTestLoadImm(Arg::Width32, Load))
-                    return result;
-
-                // Now handle test's that involve a load.
-
-                Arg::Width width = Arg::widthForB3Type(value->child(0)->type());
-                if (Inst result = tryTest(width, loadPromise(left), tmpPromise(right))) {
-                    commitInternal(left);
-                    return result;
-                }
-
-                if (Inst result = tryTest(width, tmpPromise(left), loadPromise(right))) {
-                    commitInternal(right);
-                    return result;
+                    // Now handle test's that involve a load and an immediate. Note that immediates
+                    // are 32-bit, and we want zero-extension. Hence, the immediate form is compiled
+                    // as a 32-bit test. Note that this spits on the grave of inferior endians, such
+                    // as the big one.
+                    
+                    if (Inst result = tryTestLoadImm(Arg::Width32, Load))
+                        return result;
+                    
+                    // Now handle test's that involve a load.
+                    
+                    Arg::Width width = Arg::widthForB3Type(value->child(0)->type());
+                    if (Inst result = tryTest(width, loadPromise(left), tmpPromise(right))) {
+                        commitInternal(left);
+                        return result;
+                    }
+                    
+                    if (Inst result = tryTest(width, tmpPromise(left), loadPromise(right))) {
+                        commitInternal(right);
+                        return result;
+                    }
                 }
 
                 // Now handle test's that involve an immediate and a tmp.
@@ -1117,9 +1247,9 @@ private:
             }
         };
 
-        if (canBeInternal(value) || value == m_value) {
+        if (FusionResult fusionResult = prepareToFuse(value)) {
             if (Inst result = attemptFused()) {
-                commitInternal(value);
+                commitFusion(value, fusionResult);
                 return result;
             }
         }
@@ -1463,6 +1593,21 @@ private:
         }
 
         case BitAnd: {
+            if (m_value->child(1)->isInt(0xff)) {
+                appendUnOp<ZeroExtend8To32, ZeroExtend8To32>(m_value->child(0));
+                return;
+            }
+            
+            if (m_value->child(1)->isInt(0xffff)) {
+                appendUnOp<ZeroExtend16To32, ZeroExtend16To32>(m_value->child(0));
+                return;
+            }
+
+            if (m_value->child(1)->isInt(0xffffffff)) {
+                appendUnOp<Move32, Move32>(m_value->child(0));
+                return;
+            }
+            
             appendBinOp<And32, And64, AndDouble, AndFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
@@ -1572,18 +1717,31 @@ private:
             return;
         }
 
+        case SExt8: {
+            appendUnOp<SignExtend8To32, Air::Oops>(m_value->child(0));
+            return;
+        }
+
+        case SExt16: {
+            appendUnOp<SignExtend16To32, Air::Oops>(m_value->child(0));
+            return;
+        }
+
         case ZExt32: {
             if (highBitsAreZero(m_value->child(0))) {
                 ASSERT(tmp(m_value->child(0)) == tmp(m_value));
                 return;
             }
 
-            append(Move32, tmp(m_value->child(0)), tmp(m_value));
+            appendUnOp<Move32, Air::Oops>(m_value->child(0));
             return;
         }
 
         case SExt32: {
-            append(SignExtend32ToPtr, tmp(m_value->child(0)), tmp(m_value));
+            // FIXME: We should have support for movsbq/movswq
+            // https://bugs.webkit.org/show_bug.cgi?id=152232
+            
+            appendUnOp<SignExtend32ToPtr, Air::Oops>(m_value->child(0));
             return;
         }
 

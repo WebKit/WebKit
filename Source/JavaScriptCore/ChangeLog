@@ -1,3 +1,72 @@
+2015-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        B3->Air compare-branch fusion should fuse even if the result of the comparison is used more than once
+        https://bugs.webkit.org/show_bug.cgi?id=152198
+
+        Reviewed by Benjamin Poulain.
+
+        If we have a comparison operation that is branched on from multiple places, then we were
+        previously executing the comparison to get a boolean result in a register and then we were
+        testing/branching on that register in multiple places. This is actually less efficient than
+        just fusing the compare/branch multiple times, even though this means that the comparison
+        executes multiple times. This would only be bad if the comparison fused loads multiple times,
+        since duplicating loads is both wrong and inefficient. So, this adds the notion of sharing to
+        compare/branch fusion. If a compare is shared by multiple branches, then we refuse to fuse
+        the load.
+
+        To write the test, I needed to zero-extend 8 to 32. In the process of thinking about how to
+        do this, I realized that we needed lowerings for SExt8/SExt16. And I realized that the
+        lowerings for the other extension operations were not fully fleshed out; for example they
+        were incapable of load fusion. This patch fixes this and also adds some smart strength
+        reductions for BitAnd(@x, 0xff/0xffff/0xffffffff) - all of which should be lowered to a zero
+        extension.
+
+        This is a big win on asm.js code. It's not enough to bridge the gap to LLVM, but it's a huge
+        step in that direction.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load8SignedExtendTo32):
+        (JSC::MacroAssemblerX86Common::zeroExtend8To32):
+        (JSC::MacroAssemblerX86Common::signExtend8To32):
+        (JSC::MacroAssemblerX86Common::load16):
+        (JSC::MacroAssemblerX86Common::load16SignedExtendTo32):
+        (JSC::MacroAssemblerX86Common::zeroExtend16To32):
+        (JSC::MacroAssemblerX86Common::signExtend16To32):
+        (JSC::MacroAssemblerX86Common::store32WithAddressOffsetPatch):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movzbl_rr):
+        (JSC::X86Assembler::movsbl_rr):
+        (JSC::X86Assembler::movzwl_rr):
+        (JSC::X86Assembler::movswl_rr):
+        (JSC::X86Assembler::cmovl_rr):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckTwoMegaCombos):
+        (JSC::B3::testCheckTwoNonRedundantMegaCombos):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testTruncSExt32):
+        (JSC::B3::testSExt8):
+        (JSC::B3::testSExt8Fold):
+        (JSC::B3::testSExt8SExt8):
+        (JSC::B3::testSExt8SExt16):
+        (JSC::B3::testSExt8BitAnd):
+        (JSC::B3::testBitAndSExt8):
+        (JSC::B3::testSExt16):
+        (JSC::B3::testSExt16Fold):
+        (JSC::B3::testSExt16SExt16):
+        (JSC::B3::testSExt16SExt8):
+        (JSC::B3::testSExt16BitAnd):
+        (JSC::B3::testBitAndSExt16):
+        (JSC::B3::testSExt32BitAnd):
+        (JSC::B3::testBitAndSExt32):
+        (JSC::B3::testBasicSelect):
+        (JSC::B3::run):
+
 2015-12-14  Chris Dumez  <cdumez@apple.com>
 
         Roll out r193974 and follow-up fixes as it caused JSC crashes

@@ -288,6 +288,26 @@ Move32 U:G, D:G
 SignExtend32ToPtr U:G, D:G
     Tmp, Tmp
 
+ZeroExtend8To32 U:G, D:G
+    Tmp, Tmp
+    Addr, Tmp as load8
+    Index, Tmp as load8
+
+SignExtend8To32 U:G, D:G
+    Tmp, Tmp
+    Addr, Tmp as load8SignedExtendTo32
+    Index, Tmp as load8SignedExtendTo32
+
+ZeroExtend16To32 U:G, D:G
+    Tmp, Tmp
+    Addr, Tmp as load16
+    Index, Tmp as load16
+
+SignExtend16To32 U:G, D:G
+    Tmp, Tmp
+    Addr, Tmp as load16SignedExtendTo32
+    Index, Tmp as load16SignedExtendTo32
+
 MoveFloat U:F, D:F
     Tmp, Tmp as moveDouble
     Addr, Tmp as loadFloat

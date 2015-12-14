@@ -644,6 +644,16 @@ public:
     {
         m_assembler.movsbl_mr(address.offset, address.base, dest);
     }
+
+    void zeroExtend8To32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movzbl_rr(src, dest);
+    }
+    
+    void signExtend8To32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movsbl_rr(src, dest);
+    }
     
     void load16(BaseIndex address, RegisterID dest)
     {
@@ -665,6 +675,16 @@ public:
         m_assembler.movswl_mr(address.offset, address.base, dest);
     }
 
+    void zeroExtend16To32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movzwl_rr(src, dest);
+    }
+    
+    void signExtend16To32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movswl_rr(src, dest);
+    }
+    
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
         padBeforePatch();

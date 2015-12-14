@@ -367,6 +367,32 @@ private:
                 m_changed = true;
                 break;
             }
+
+            // Turn this: BitAnd(SExt8(value), mask) where (mask & 0xffffff00) == 0
+            // Into this: BitAnd(value, mask)
+            if (m_value->child(0)->opcode() == SExt8 && m_value->child(1)->hasInt32()
+                && !(m_value->child(1)->asInt32() & 0xffffff00)) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+            }
+
+            // Turn this: BitAnd(SExt16(value), mask) where (mask & 0xffff0000) == 0
+            // Into this: BitAnd(value, mask)
+            if (m_value->child(0)->opcode() == SExt16 && m_value->child(1)->hasInt32()
+                && !(m_value->child(1)->asInt32() & 0xffff0000)) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+            }
+
+            // Turn this: BitAnd(SExt32(value), mask) where (mask & 0xffffffff00000000) == 0
+            // Into this: BitAnd(ZExt32(value), mask)
+            if (m_value->child(0)->opcode() == SExt32 && m_value->child(1)->hasInt32()
+                && !(m_value->child(1)->asInt32() & 0xffffffff00000000llu)) {
+                m_value->child(0) = m_insertionSet.insert<Value>(
+                    m_index, ZExt32, m_value->origin(),
+                    m_value->child(0)->child(0), m_value->child(0)->child(1));
+                m_changed = true;
+            }
             break;
 
         case BitOr:
@@ -564,11 +590,112 @@ private:
             }
             break;
 
+        case SExt8:
+            // Turn this: SExt8(constant)
+            // Into this: static_cast<int8_t>(constant)
+            if (m_value->child(0)->hasInt32()) {
+                int32_t result = static_cast<int8_t>(m_value->child(0)->asInt32());
+                replaceWithNewValue(m_proc.addIntConstant(m_value, result));
+                break;
+            }
+
+            // Turn this: SExt8(SExt8(value))
+            //   or this: SExt8(SExt16(value))
+            // Into this: SExt8(value)
+            if (m_value->child(0)->opcode() == SExt8 || m_value->child(0)->opcode() == SExt16) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+            }
+
+            if (m_value->child(0)->opcode() == BitAnd && m_value->child(0)->child(1)->hasInt32()) {
+                Value* input = m_value->child(0)->child(0);
+                int32_t mask = m_value->child(0)->child(1)->asInt32();
+                
+                // Turn this: SExt8(BitAnd(input, mask)) where (mask & 0xff) == 0xff
+                // Into this: SExt8(input)
+                if ((mask & 0xff) == 0xff) {
+                    m_value->child(0) = input;
+                    m_changed = true;
+                    break;
+                }
+                
+                // Turn this: SExt8(BitAnd(input, mask)) where (mask & 0x80) == 0
+                // Into this: BitAnd(input, const & 0x7f)
+                if (!(mask & 0x80)) {
+                    replaceWithNewValue(
+                        m_proc.add<Value>(
+                            BitAnd, m_value->origin(), input,
+                            m_insertionSet.insert<Const32Value>(
+                                m_index, m_value->origin(), mask & 0x7f)));
+                    break;
+                }
+            }
+            break;
+
+        case SExt16:
+            // Turn this: SExt16(constant)
+            // Into this: static_cast<int16_t>(constant)
+            if (m_value->child(0)->hasInt32()) {
+                int32_t result = static_cast<int16_t>(m_value->child(0)->asInt32());
+                replaceWithNewValue(m_proc.addIntConstant(m_value, result));
+                break;
+            }
+
+            // Turn this: SExt16(SExt16(value))
+            // Into this: SExt16(value)
+            if (m_value->child(0)->opcode() == SExt16) {
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
+            }
+
+            // Turn this: SExt16(SExt8(value))
+            // Into this: SExt8(value)
+            if (m_value->child(0)->opcode() == SExt8) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+
+            if (m_value->child(0)->opcode() == BitAnd && m_value->child(0)->child(1)->hasInt32()) {
+                Value* input = m_value->child(0)->child(0);
+                int32_t mask = m_value->child(0)->child(1)->asInt32();
+                
+                // Turn this: SExt16(BitAnd(input, mask)) where (mask & 0xffff) == 0xffff
+                // Into this: SExt16(input)
+                if ((mask & 0xffff) == 0xffff) {
+                    m_value->child(0) = input;
+                    m_changed = true;
+                    break;
+                }
+                
+                // Turn this: SExt16(BitAnd(input, mask)) where (mask & 0x8000) == 0
+                // Into this: BitAnd(input, const & 0x7fff)
+                if (!(mask & 0x8000)) {
+                    replaceWithNewValue(
+                        m_proc.add<Value>(
+                            BitAnd, m_value->origin(), input,
+                            m_insertionSet.insert<Const32Value>(
+                                m_index, m_value->origin(), mask & 0x7fff)));
+                    break;
+                }
+            }
+            break;
+
         case SExt32:
             // Turn this: SExt32(constant)
             // Into this: static_cast<int64_t>(constant)
             if (m_value->child(0)->hasInt32()) {
                 replaceWithNewValue(m_proc.addIntConstant(m_value, m_value->child(0)->asInt32()));
+                break;
+            }
+
+            // Turn this: SExt32(BitAnd(input, mask)) where (mask & 0x80000000) == 0
+            // Into this: ZExt32(BitAnd(input, mask))
+            if (m_value->child(0)->opcode() == BitAnd && m_value->child(0)->child(1)->hasInt32()
+                && !(m_value->child(0)->child(1)->asInt32() & 0x80000000)) {
+                replaceWithNewValue(
+                    m_proc.add<Value>(
+                        ZExt32, m_value->origin(), m_value->child(0)));
                 break;
             }
             break;

@@ -1719,6 +1719,21 @@ public:
         m_formatter.twoByteOp8(OP2_MOVZX_GvEb, dst, src);
     }
 
+    void movsbl_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp8(OP2_MOVSX_GvEb, dst, src);
+    }
+
+    void movzwl_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp8(OP2_MOVZX_GvEw, dst, src);
+    }
+
+    void movswl_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp8(OP2_MOVSX_GvEw, dst, src);
+    }
+
     void cmovl_rr(Condition cond, RegisterID src, RegisterID dst)
     {
         m_formatter.twoByteOp(cmovcc(cond), dst, src);
