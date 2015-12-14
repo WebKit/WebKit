@@ -2831,3 +2831,8 @@ webkit.org/b/152134 fast/events/ios/viewport-device-width-at-initial-scale-fast-
 webkit.org/b/152141 fast/picture/image-picture-1x.html [ Failure ]
 webkit.org/b/152141 fast/picture/image-picture-invalid.html [ Failure ]
 webkit.org/b/152141 fast/picture/image-picture-nested.html [ Failure ]
+
+webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Failure ]
+webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html [ Failure ]
+webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Failure ]
+webkit.org/b/152135 fast/viewport/ios/width-is-device-width-overflowing.html [ Failure ]
