@@ -1,5 +1,5 @@
 ALERT: pageshow - not from cache
-ALERT: pagehide - entering cache
+CONSOLE MESSAGE: line 70: Use of window.alert is not allowed while unloading a page.
 ALERT: pageshow - from cache
 This tests that layers are rebuilt properly after the page is restored from the page cache.
 
@@ -112,4 +112,3 @@ This tests that layers are rebuilt properly after the page is restored from the 
     )
   )
 )
-
