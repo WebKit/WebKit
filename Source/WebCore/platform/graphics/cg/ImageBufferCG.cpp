@@ -43,6 +43,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
+
 #if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"
 #endif
@@ -177,18 +178,15 @@ static RetainPtr<CGImageRef> createCroppedImageIfNecessary(CGImageRef image, con
     return image;
 }
 
-RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior scaleBehavior) const
+static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RetainPtr<CGImageRef>&& image, IntSize internalSize, IntSize logicalSize, IntSize backingStoreSize, float resolutionScale, ScaleBehavior scaleBehavior)
 {
-    RetainPtr<CGImageRef> image;
-    if (m_resolutionScale == 1 || scaleBehavior == Unscaled) {
-        image = copyNativeImage(copyBehavior);
-        image = createCroppedImageIfNecessary(image.get(), internalSize());
-    } else {
-        image = copyNativeImage(DontCopyBackingStore);
-        RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(0, logicalSize().width(), logicalSize().height(), 8, 4 * logicalSize().width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
+    if (resolutionScale == 1 || scaleBehavior == Unscaled)
+        image = createCroppedImageIfNecessary(image.get(), internalSize);
+    else {
+        RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(0, logicalSize.width(), logicalSize.height(), 8, 4 * logicalSize.width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedLast));
         CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
-        CGContextClipToRect(context.get(), FloatRect(FloatPoint::zero(), logicalSize()));
-        FloatSize imageSizeInUserSpace = scaleSizeToUserSpace(logicalSize(), m_data.backingStoreSize, internalSize());
+        CGContextClipToRect(context.get(), FloatRect(FloatPoint::zero(), logicalSize));
+        FloatSize imageSizeInUserSpace = scaleSizeToUserSpace(logicalSize, backingStoreSize, internalSize);
         CGContextDrawImage(context.get(), FloatRect(FloatPoint::zero(), imageSizeInUserSpace), image.get());
         image = adoptCF(CGBitmapContextCreateImage(context.get()));
     }
@@ -199,9 +197,42 @@ RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavio
     return BitmapImage::create(image.get());
 }
 
+RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior scaleBehavior) const
+{
+    RetainPtr<CGImageRef> image;
+    if (m_resolutionScale == 1 || scaleBehavior == Unscaled)
+        image = copyNativeImage(copyBehavior);
+    else
+        image = copyNativeImage(DontCopyBackingStore);
+
+    return createBitmapImageAfterScalingIfNeeded(WTF::move(image), internalSize(), logicalSize(), m_data.backingStoreSize, m_resolutionScale, scaleBehavior);
+}
+
+RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffer, ScaleBehavior scaleBehavior)
+{
+    IntSize internalSize = imageBuffer->internalSize();
+    IntSize logicalSize = imageBuffer->logicalSize();
+    IntSize backingStoreSize = imageBuffer->m_data.backingStoreSize;
+    float resolutionScale = imageBuffer->m_resolutionScale;
+
+    return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(WTF::move(imageBuffer)), internalSize, logicalSize, backingStoreSize, resolutionScale, scaleBehavior);
+}
+
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
 {
     return DontCopyBackingStore;
+}
+
+RetainPtr<CGImageRef> ImageBuffer::sinkIntoNativeImage(std::unique_ptr<ImageBuffer> imageBuffer)
+{
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    if (!imageBuffer->m_data.surface)
+        return imageBuffer->copyNativeImage(DontCopyBackingStore);
+
+    return IOSurface::sinkIntoImage(IOSurface::createFromImageBuffer(WTF::move(imageBuffer)));
+#else
+    return imageBuffer->copyNativeImage(DontCopyBackingStore);
+#endif
 }
 
 RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
@@ -226,6 +257,29 @@ RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior
 #endif
 
     return image;
+}
+
+void ImageBuffer::drawConsuming(std::unique_ptr<ImageBuffer> imageBuffer, GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
+{
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    if (!imageBuffer->m_data.surface) {
+        imageBuffer->draw(destContext, destRect, srcRect, op, blendMode, useLowQualityScale);
+        return;
+    }
+    
+    ASSERT(destContext.isAcceleratedContext());
+    
+    float resolutionScale = imageBuffer->m_resolutionScale;
+    IntSize backingStoreSize = imageBuffer->m_data.backingStoreSize;
+
+    RetainPtr<CGImageRef> image = IOSurface::sinkIntoImage(IOSurface::createFromImageBuffer(WTF::move(imageBuffer)));
+    
+    FloatRect adjustedSrcRect = srcRect;
+    adjustedSrcRect.scale(resolutionScale, resolutionScale);
+    destContext.drawNativeImage(image.get(), backingStoreSize, destRect, adjustedSrcRect, op, blendMode);
+#else
+    imageBuffer->draw(destContext, destRect, srcRect, op, blendMode, useLowQualityScale);
+#endif
 }
 
 void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool)

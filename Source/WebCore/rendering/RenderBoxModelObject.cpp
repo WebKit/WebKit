@@ -840,7 +840,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 
     if (maskImage && bgLayer->clip() == TextFillBox) {
-        context.drawImageBuffer(*maskImage, maskRect, CompositeDestinationIn);
+        context.drawConsumingImageBuffer(WTF::move(maskImage), maskRect, CompositeDestinationIn);
         context.endTransparencyLayer();
     }
 }

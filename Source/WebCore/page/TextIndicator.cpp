@@ -155,7 +155,7 @@ static RefPtr<Image> takeSnapshot(Frame& frame, IntRect rect, SnapshotOptions op
     if (!buffer)
         return nullptr;
     scaleFactor = buffer->resolutionScale();
-    return buffer->copyImage(CopyBackingStore, Unscaled);
+    return ImageBuffer::sinkIntoImage(WTF::move(buffer), Unscaled);
 }
 
 static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapshotRect)

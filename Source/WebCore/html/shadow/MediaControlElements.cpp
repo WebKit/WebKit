@@ -1374,7 +1374,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
 
     layer->paint(buffer->context(), paintingRect, LayoutSize(), PaintBehaviorFlattenCompositingLayers, nullptr, RenderLayer::PaintLayerPaintingCompositingAllPhases);
 
-    return buffer->copyImage();
+    return ImageBuffer::sinkIntoImage(WTF::move(buffer));
 }
 
 void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged(const IntRect&)

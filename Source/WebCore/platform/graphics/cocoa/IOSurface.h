@@ -50,6 +50,8 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const MachSendRight&, ColorSpace);
     static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, ColorSpace);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
+    
+    static std::unique_ptr<IOSurface> createFromImageBuffer(std::unique_ptr<ImageBuffer>);
 
     WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&);
 
@@ -60,6 +62,7 @@ public:
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage();
+    static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>);
 
     IOSurfaceRef surface() const { return m_surface.get(); }
     WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();

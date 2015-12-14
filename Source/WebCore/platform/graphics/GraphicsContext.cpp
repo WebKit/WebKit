@@ -443,6 +443,33 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
     image.draw(*this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
 }
 
+void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
+{
+    if (!image)
+        return;
+    IntSize imageLogicalSize = image->logicalSize();
+    drawConsumingImageBuffer(WTF::move(image), FloatRect(destination, imageLogicalSize), FloatRect(FloatPoint(), imageLogicalSize), imagePaintingOptions);
+}
+
+void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> image, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
+{
+    if (!image)
+        return;
+    IntSize imageLogicalSize = image->logicalSize();
+    drawConsumingImageBuffer(WTF::move(image), destination, FloatRect(FloatPoint(), FloatSize(imageLogicalSize)), imagePaintingOptions);
+}
+
+void GraphicsContext::drawConsumingImageBuffer(std::unique_ptr<ImageBuffer> image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
+{
+    if (paintingDisabled() || !image)
+        return;
+    
+    // FIXME (49002): Should be InterpolationLow
+    InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
+
+    ImageBuffer::drawConsuming(WTF::move(image), *this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
+}
+
 void GraphicsContext::clip(const IntRect& rect)
 {
     clip(FloatRect(rect));

@@ -220,7 +220,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     frameView->frame().selection().setSelection(oldSelection);
     frameView->setPaintBehavior(oldPaintBehavior);
 
-    RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
+    RefPtr<Image> image = ImageBuffer::sinkIntoImage(WTF::move(buffer));
     if (!image)
         return nil;
 

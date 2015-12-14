@@ -67,6 +67,7 @@ enum ScaleBehavior {
 
 class ImageBuffer {
     WTF_MAKE_NONCOPYABLE(ImageBuffer); WTF_MAKE_FAST_ALLOCATED;
+    friend class IOSurface;
 public:
     // Will return a null pointer on allocation failure.
     static std::unique_ptr<ImageBuffer> create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale = 1, ColorSpace colorSpace = ColorSpaceSRGB)
@@ -91,6 +92,7 @@ public:
     WEBCORE_EXPORT GraphicsContext& context() const;
 
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, ScaleBehavior = Scaled) const;
+    WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(std::unique_ptr<ImageBuffer>, ScaleBehavior = Scaled);
     // Give hints on the faster copyImage Mode, return DontCopyBackingStore if it supports the DontCopyBackingStore behavior
     // or return CopyBackingStore if it doesn't.  
     static BackingStoreCopy fastCopyImageMode();
@@ -130,12 +132,15 @@ private:
     // The returned image might be larger than the internalSize(). If you want the smaller
     // image, crop the result.
     RetainPtr<CGImageRef> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
+    static RetainPtr<CGImageRef> sinkIntoNativeImage(std::unique_ptr<ImageBuffer>);
     void flushContext() const;
 #endif
     void clip(GraphicsContext&, const FloatRect&) const;
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
     void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
+
+    static void drawConsuming(std::unique_ptr<ImageBuffer>, GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
 
     inline void genericConvertToLuminanceMask();
 

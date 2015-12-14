@@ -208,7 +208,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
-    RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore, Unscaled);
+    RefPtr<Image> image = ImageBuffer::sinkIntoImage(WTF::move(buffer), Unscaled);
     if (!image)
         return;
 

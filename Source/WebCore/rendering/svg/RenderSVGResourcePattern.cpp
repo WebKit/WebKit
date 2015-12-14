@@ -113,7 +113,9 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, uns
     if (!tileImage)
         return nullptr;
 
-    RefPtr<Image> copiedImage = tileImage->copyImage(CopyBackingStore);
+    const IntSize tileImageSize = tileImage->logicalSize();
+
+    RefPtr<Image> copiedImage = ImageBuffer::sinkIntoImage(WTF::move(tileImage));
     if (!copiedImage)
         return nullptr;
 
@@ -122,7 +124,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, uns
     patternData->pattern = Pattern::create(copiedImage, true, true);
 
     // Compute pattern space transformation.
-    const IntSize tileImageSize = tileImage->logicalSize();
+
     patternData->transform.translate(tileBoundaries.x(), tileBoundaries.y());
     patternData->transform.scale(tileBoundaries.width() / tileImageSize.width(), tileBoundaries.height() / tileImageSize.height());
 

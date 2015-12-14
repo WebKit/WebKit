@@ -31,12 +31,15 @@
 #import "GraphicsContextCG.h"
 #import "IOSurfacePool.h"
 #import "IOSurfaceSPI.h"
+#import "ImageBuffer.h"
+#import "ImageBufferDataCG.h"
 #import "MachSendRight.h"
 #import <wtf/Assertions.h>
 
 extern "C" {
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
+CGImageRef CGIOSurfaceContextCreateImageReference(CGContextRef);
 }
 
 using namespace WebCore;
@@ -96,6 +99,11 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
 void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
 {
     IOSurfacePool::sharedPool().addSurface(WTF::move(surface));
+}
+
+std::unique_ptr<IOSurface> IOSurface::createFromImageBuffer(std::unique_ptr<ImageBuffer> imageBuffer)
+{
+    return WTF::move(imageBuffer->m_data.surface);
 }
 
 IOSurface::IOSurface(IntSize size, ColorSpace colorSpace, Format format)
@@ -242,6 +250,15 @@ MachSendRight IOSurface::createSendRight() const
 RetainPtr<CGImageRef> IOSurface::createImage()
 {
     return adoptCF(CGIOSurfaceContextCreateImage(ensurePlatformContext()));
+}
+
+RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface)
+{
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+    return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
+#else
+    return surface->createImage();
+#endif
 }
 
 void IOSurface::setContextSize(IntSize contextSize)
