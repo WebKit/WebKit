@@ -1,5 +1,14 @@
 2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking js/regress/generator-with-several-types.html as a flaky timeout on mac-wk1 debug.
+        https://bugs.webkit.org/show_bug.cgi?id=152272
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
         Take 2 of updating expectations for fast/events/ios tests by removing the directory's [ Pass ] expectation.
         https://bugs.webkit.org/show_bug.cgi?id=152134
 

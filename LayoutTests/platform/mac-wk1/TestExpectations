@@ -50,6 +50,8 @@ webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/co
 
 webkit.org/b/150564 svg/repaint/add-background-property-on-root.html [ Pass Timeout ]
 
+webkit.org/b/152272 [ Debug ] js/regress/generator-with-several-types.html [ Pass Timeout ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
