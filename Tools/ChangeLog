@@ -1,3 +1,15 @@
+2015-12-14  Tim Horton  <timothy_horton@apple.com>
+
+        Frequent crash under -[WKPDFView web_setMinimumSize:]_block_invoke
+        https://bugs.webkit.org/show_bug.cgi?id=152266
+        <rdar://problem/22092676>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKPDFViewResizeCrash.mm: Added.
+        Add a test that crashed before this change, and doesn't crash after.
+
 2015-12-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: Text field variations do not have the correct traits

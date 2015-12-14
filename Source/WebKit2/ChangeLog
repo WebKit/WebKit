@@ -1,5 +1,22 @@
 2015-12-14  Tim Horton  <timothy_horton@apple.com>
 
+        Frequent crash under -[WKPDFView web_setMinimumSize:]_block_invoke
+        https://bugs.webkit.org/show_bug.cgi?id=152266
+        <rdar://problem/22092676>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setMinimumSize:]):
+        We weren't retaining the UIScrollView, but depending on it surviving
+        into this block's invocation.
+
+        We don't need to do this asynchronously anymore because the referenced
+        bug is fixed, so make it happen synchronously. This also fixes the crash
+        because there's no opportunity for the scroll view to be released.
+
+2015-12-14  Tim Horton  <timothy_horton@apple.com>
+
         TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate() sets fence port on context twice
         https://bugs.webkit.org/show_bug.cgi?id=152239
         <rdar://problem/22893289>
