@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPRInfo.h"
 
+#if ENABLE(JIT)
+
 namespace JSC {
 
 #if CPU(X86_64)
@@ -35,3 +37,4 @@ const GPRReg GPRInfo::patchpointScratchRegister = MacroAssembler::s_scratchRegis
 
 } // namespace JSC
 
+#endif // ENABLE(JIT)
