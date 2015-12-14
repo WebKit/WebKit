@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "BlockExceptions.h"
 #import "Document.h"
 #import "FocusController.h"
 #import "Frame.h"
@@ -97,9 +98,11 @@ PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection& s
 
     String fullPlainTextString = plainText(makeRange(paragraphStart, paragraphEnd).get());
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     // Since we already have the range we want, we just need to grab the returned options.
     if (Class luLookupDefinitionModule = getLULookupDefinitionModuleClass())
         [luLookupDefinitionModule tokenRangeForString:fullPlainTextString range:rangeToPass options:options];
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return selectedRange.release();
 }
@@ -140,6 +143,8 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
     if (!fullCharacterRange)
         return nullptr;
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(fullCharacterRange->startPosition(), position).get()), 0);
 
     String fullPlainTextString = plainText(fullCharacterRange.get());
@@ -153,10 +158,15 @@ PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult& h
         return nullptr;
 
     return TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return nullptr;
 }
 
 static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numberOfCharactersToExpand, NSInteger& charactersAddedBeforeStart, NSInteger& charactersAddedAfterEnd)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     size_t originalLength = selection.string.length;
     [selection extendSelectionAtStart:numberOfCharactersToExpand];
     
@@ -164,10 +174,14 @@ static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numbe
     
     [selection extendSelectionAtEnd:numberOfCharactersToExpand];
     charactersAddedAfterEnd = selection.string.length - originalLength - charactersAddedBeforeStart;
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 NSString *dictionaryLookupForPDFSelection(PDFSelection *selection, NSDictionary **options)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     // Don't do anything if there is no character at the point.
     if (!selection || !selection.string.length)
         return @"";
@@ -199,6 +213,9 @@ NSString *dictionaryLookupForPDFSelection(PDFSelection *selection, NSDictionary 
     
     ASSERT([selection.string isEqualToString:[fullPlainTextString substringWithRange:extractedRange]]);
     return selection.string;
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return nil;
 }
 
 } // namespace WebCore

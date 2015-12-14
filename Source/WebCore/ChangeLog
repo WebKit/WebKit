@@ -1,3 +1,25 @@
+2015-12-14  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r189942. rdar://problem/23886455
+
+    2015-09-17  Tim Horton  <timothy_horton@apple.com>
+
+            Block Objective-C exceptions in DictionaryLookup
+            https://bugs.webkit.org/show_bug.cgi?id=149256
+
+            Reviewed by Anders Carlsson.
+
+            * editing/mac/DictionaryLookup.mm:
+            (WebCore::DictionaryLookup::rangeForSelection):
+            (WebCore::DictionaryLookup::rangeAtHitTestResult):
+            (WebCore::expandSelectionByCharacters):
+            (WebCore::DictionaryLookup::stringForPDFSelection):
+            (WebCore::showPopupOrCreateAnimationController):
+            (WebCore::DictionaryLookup::hidePopup):
+            It is possible for Lookup to throw an exception if one of its
+            related services dies for some reason. This shouldn't take down
+            our UI process, so block the exceptions.
+
 2015-12-14  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r193999.
