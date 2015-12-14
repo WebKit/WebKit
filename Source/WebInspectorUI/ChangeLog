@@ -1,3 +1,22 @@
+2015-12-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Make TimelineOverview's graph container a subview
+        https://bugs.webkit.org/show_bug.cgi?id=152235
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        Create graph container subview.
+        (WebInspector.TimelineOverview.prototype._instrumentAdded):
+        Add overview to the graph container view.
+        (WebInspector.TimelineOverview.prototype._instrumentRemoved):
+        Remove overview from the graph container view.
+        (WebInspector.TimelineOverview.prototype.layout):
+        No longer necessary to manually lay out overview graphs.
+        (WebInspector.TimelineOverview.prototype._needsLayout): Deleted.
+        Removed dead code.
+
 2015-12-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: CodeMirrorTokenTrackingController handles symbols in class definitions incorrectly

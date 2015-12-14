@@ -43,9 +43,9 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         this.element.addEventListener("gesturechange", this._handleGestureChange.bind(this));
         this.element.addEventListener("gestureend", this._handleGestureEnd.bind(this));
 
-        this._graphsContainerElement = document.createElement("div");
-        this._graphsContainerElement.classList.add("graphs-container");
-        this.element.appendChild(this._graphsContainerElement);
+        this._graphsContainerView = new WebInspector.View;
+        this._graphsContainerView.element.classList.add("graphs-container");
+        this.addSubview(this._graphsContainerView);
 
         this._timelineOverviewGraphsMap = new Map;
 
@@ -378,7 +378,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
             timelineOverviewGraph.startTime = scrollStartTime;
             timelineOverviewGraph.currentTime = this._currentTime;
             timelineOverviewGraph.endTime = scrollStartTime + visibleDuration;
-            timelineOverviewGraph.updateLayout();
         }
     }
 
@@ -389,17 +388,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         var currentWidth = parseInt(element.style.width);
         if (currentWidth !== newWidth)
             element.style.width = newWidth + "px";
-    }
-
-    _needsLayout()
-    {
-        if (!this._visible)
-            return;
-
-        if (this._scheduledLayoutUpdateIdentifier)
-            return;
-
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
     }
 
     _handleScrollEvent(event)
@@ -521,8 +509,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         overviewGraph.addEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
         this._timelineOverviewGraphsMap.set(timeline, overviewGraph);
 
-        // FIXME: use View.prototype.addSubview(overviewGraph) once <https://webkit.org/b/150982> is fixed.
-        this._graphsContainerElement.appendChild(overviewGraph.element);
+        this._graphsContainerView.addSubview(overviewGraph);
     }
 
     _instrumentRemoved(event)
@@ -538,7 +525,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
 
         let overviewGraph = this._timelineOverviewGraphsMap.take(timeline);
         overviewGraph.removeEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
-        overviewGraph.element.remove();
+        this._graphsContainerView.removeSubview(overviewGraph);
     }
 
     _markerAdded(event)
