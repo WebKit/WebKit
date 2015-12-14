@@ -3269,6 +3269,11 @@ void Document::processReferrerPolicy(const String& policy)
 {
     ASSERT(!policy.isNull());
 
+    // Documents in a Content-Disposition: attachment sandbox should never send a Referer header,
+    // even if the document has a meta tag saying otherwise.
+    if (shouldEnforceContentDispositionAttachmentSandbox())
+        return;
+
     // Note that we're supporting both the standard and legacy keywords for referrer
     // policies, as defined by http://www.w3.org/TR/referrer-policy/#referrer-policy-delivery-meta
     if (equalIgnoringCase(policy, "no-referrer") || equalIgnoringCase(policy, "never"))
@@ -4948,8 +4953,10 @@ void Document::initSecurityContext()
     setCookieURL(m_url);
     enforceSandboxFlags(m_frame->loader().effectiveSandboxFlags());
 
-    if (shouldEnforceContentDispositionAttachmentSandbox())
-        enforceSandboxFlags(SandboxAll);
+    if (shouldEnforceContentDispositionAttachmentSandbox()) {
+        setReferrerPolicy(ReferrerPolicyNever);
+        enforceSandboxFlags(SandboxAll);        
+    }
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
     setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(this));
