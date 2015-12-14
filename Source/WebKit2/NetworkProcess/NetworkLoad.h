@@ -122,6 +122,7 @@ private:
     WebCore::AuthenticationChallenge m_challenge;
     ChallengeCompletionHandler m_challengeCompletionHandler;
     ResponseCompletionHandler m_responseCompletionHandler;
+    RedirectCompletionHandler m_redirectCompletionHandler;
 #else
     RefPtr<WebCore::ResourceHandle> m_handle;
 #endif

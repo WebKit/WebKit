@@ -61,7 +61,8 @@ class NetworkSession;
 
 class NetworkSessionTaskClient {
 public:
-    virtual void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, std::function<void(const WebCore::ResourceRequest&)>) = 0;
+    typedef std::function<void(const WebCore::ResourceRequest&)> RedirectCompletionHandler;
+    virtual void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RedirectCompletionHandler) = 0;
     typedef std::function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> ChallengeCompletionHandler;
     virtual void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler) = 0;
     typedef std::function<void(WebCore::PolicyAction)> ResponseCompletionHandler;
