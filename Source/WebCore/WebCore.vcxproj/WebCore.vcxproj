@@ -12713,6 +12713,7 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLFraction.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLMath.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLMenclose.cpp" />
+    <ClCompile Include="..\rendering\mathml\MathMLOperatorDictionary.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLOperator.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLRadicalOperator.cpp" />
     <ClCompile Include="..\rendering\mathml\RenderMathMLRoot.cpp" />
@@ -21848,6 +21849,7 @@
     <ClInclude Include="..\rendering\mathml\RenderMathMLFraction.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLMath.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLMenclose.h" />
+    <ClInclude Include="..\rendering\mathml\MathMLOperatorDictionary.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLOperator.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLRadicalOperator.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLRoot.h" />

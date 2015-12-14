@@ -31,32 +31,11 @@
 #include "Font.h"
 #include "GlyphPage.h"
 #include "MathMLElement.h"
+#include "MathMLOperatorDictionary.h"
 #include "OpenTypeMathData.h"
 #include "RenderMathMLToken.h"
 
 namespace WebCore {
-
-namespace MathMLOperatorDictionary {
-
-enum Form { Infix, Prefix, Postfix };
-enum Flag {
-    Accent = 0x1, // FIXME: This must be used to implement accentunder/accent on munderover (https://bugs.webkit.org/show_bug.cgi?id=124826).
-    Fence = 0x2, // This has no visual effect but allows to expose semantic information via the accessibility tree.
-    LargeOp = 0x4,
-    MovableLimits = 0x8, // FIXME: This must be used to implement displaystyle  (https://bugs.webkit.org/show_bug.cgi?id=118737).
-    Separator = 0x10, // This has no visual effect but allows to expose semantic information via the accessibility tree.
-    Stretchy = 0x20,
-    Symmetric = 0x40
-};
-struct Entry {
-    UChar character;
-    unsigned form : 2;
-    unsigned lspace : 3;
-    unsigned rspace : 3;
-    unsigned flags : 8;
-};
-
-}
 
 class RenderMathMLOperator : public RenderMathMLToken {
 public:

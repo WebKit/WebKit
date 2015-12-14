@@ -1,3 +1,32 @@
+2015-12-14  Frederic Wang  <fred.wang@free.fr>
+
+        Move MathMLOperatorDictionary features into a separate module.
+        https://bugs.webkit.org/show_bug.cgi?id=152242
+
+        Reviewed by Martin Robinson.
+
+        The definitions, properties and search of the MathML operator dictionary are really independent of the renderer object for math operators.
+        This patch moves them in a separate module/file to make them more manageable and readable.
+        No new tests. We already have sufficient test coverage.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/mathml/MathMLOperatorDictionary.cpp:
+        (WebCore::ExtractKey):
+        (WebCore::ExtractChar):
+        (WebCore::ExtractKeyHorizontal):
+        (WebCore::MathMLOperatorDictionary::getEntry):
+        (WebCore::MathMLOperatorDictionary::isVertical):
+        * rendering/mathml/MathMLOperatorDictionary.h: Added.
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::setOperatorProperties):
+        (WebCore::MathMLOperatorDictionary::ExtractKey): Deleted.
+        (WebCore::MathMLOperatorDictionary::ExtractChar): Deleted.
+        (WebCore::MathMLOperatorDictionary::ExtractKeyHorizontal): Deleted.
+        * rendering/mathml/RenderMathMLOperator.h:
+
 2015-12-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix height computation of grid items with borders

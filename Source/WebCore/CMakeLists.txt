@@ -2506,6 +2506,7 @@ set(WebCore_SOURCES
     rendering/line/LineWidth.cpp
     rendering/line/TrailingObjects.cpp
 
+    rendering/mathml/MathMLOperatorDictionary.cpp
     rendering/mathml/RenderMathMLBlock.cpp
     rendering/mathml/RenderMathMLFenced.cpp
     rendering/mathml/RenderMathMLFraction.cpp

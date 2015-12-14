@@ -2705,6 +2705,9 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLMenclose.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\mathml\MathMLOperatorDictionary.cpp">
+      <Filter>rendering\mathml</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\mathml\RenderMathMLOperator.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
@@ -9698,6 +9701,9 @@
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLMenclose.h">
+      <Filter>rendering\mathml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\mathml\MathMLOperatorDictionary.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLOperator.h">
