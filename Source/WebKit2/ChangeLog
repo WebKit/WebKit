@@ -1,5 +1,12 @@
 2015-12-13  Dan Bernstein  <mitz@apple.com>
 
+        Another fix after r194018.
+
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/BaseXPCService.xcconfig:
+
+2015-12-13  Dan Bernstein  <mitz@apple.com>
+
         [Mac] Shims used by XPC services are installed inside legacy process bundles
         https://bugs.webkit.org/show_bug.cgi?id=152233
 
