@@ -451,6 +451,7 @@ set(JavaScriptCore_SOURCES
     jit/ExecutableAllocator.cpp
     jit/ExecutableAllocatorFixedVMPool.cpp
     jit/GCAwareJITStubRoutine.cpp
+    jit/GPRInfo.cpp
     jit/HostCallReturnValue.cpp
     jit/IntrinsicEmitter.cpp
     jit/JIT.cpp

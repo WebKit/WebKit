@@ -2472,17 +2472,66 @@ private:
     
     void compilePutById()
     {
+        Node* node = m_node;
+        
         // See above; CellUse is easier so we do only that for now.
-        ASSERT(m_node->child1().useKind() == CellUse);
+        ASSERT(node->child1().useKind() == CellUse);
+
+        LValue base = lowCell(node->child1());
+        LValue value = lowJSValue(node->child2());
+        auto uid = m_graph.identifiers()[node->identifierNumber()];
 
 #if FTL_USES_B3
-        if (verboseCompilationEnabled() || !verboseCompilationEnabled())
-            CRASH();
-#else
-        LValue base = lowCell(m_node->child1());
-        LValue value = lowJSValue(m_node->child2());
-        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
+        // FIXME: Make this do exceptions.
+        // https://bugs.webkit.org/show_bug.cgi?id=151686
 
+        B3::PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->append(base, ValueRep::SomeRegister);
+        patchpoint->append(value, ValueRep::SomeRegister);
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+
+        State* state = &m_ftlState;
+        ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->ecmaMode();
+        
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                auto generator = Box<JITPutByIdGenerator>::create(
+                    jit.codeBlock(), node->origin.semantic,
+                    state->jitCode->common.addUniqueCallSiteIndex(node->origin.semantic),
+                    params.usedRegisters(), JSValueRegs(params[0].gpr()), JSValueRegs(params[1].gpr()),
+                    GPRInfo::patchpointScratchRegister, ecmaMode,
+                    node->op() == PutByIdDirect ? Direct : NotDirect);
+
+                generator->generateFastPath(jit);
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath(
+                    [=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                        // FIXME: Make this do something.
+                        CCallHelpers::JumpList exceptions;
+
+                        generator->slowPathJump().link(&jit);
+                        CCallHelpers::Label slowPathBegin = jit.label();
+                        CCallHelpers::Call slowPathCall = callOperation(
+                            *state, params.usedRegisters(), jit, node->origin.semantic, &exceptions,
+                            generator->slowPathFunction(), InvalidGPRReg,
+                            CCallHelpers::TrustedImmPtr(generator->stubInfo()), params[1].gpr(),
+                            params[0].gpr(), CCallHelpers::TrustedImmPtr(uid)).call();
+                        jit.jump().linkTo(done, &jit);
+
+                        generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                        jit.addLinkTask(
+                            [=] (LinkBuffer& linkBuffer) {
+                                generator->finalize(linkBuffer);
+                            });
+                    });
+            });
+#else
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
 
@@ -2504,9 +2553,9 @@ private:
         setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
         m_ftlState.putByIds.append(PutByIdDescriptor(
-            stackmapID, m_node->origin.semantic, uid,
-            m_graph.executableFor(m_node->origin.semantic)->ecmaMode(),
-            m_node->op() == PutByIdDirect ? Direct : NotDirect));
+            stackmapID, node->origin.semantic, uid,
+            m_graph.executableFor(node->origin.semantic)->ecmaMode(),
+            node->op() == PutByIdDirect ? Direct : NotDirect));
 #endif
     }
     

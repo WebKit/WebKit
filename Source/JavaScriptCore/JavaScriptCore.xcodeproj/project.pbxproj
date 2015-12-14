@@ -481,6 +481,7 @@
 		0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F919D2215853CDE004A4E7D /* Watchpoint.cpp */; };
 		0F919D2615853CE3004A4E7D /* Watchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F919D2315853CDE004A4E7D /* Watchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F919D2715856770004A4E7D /* SymbolTable.cpp */; };
+		0F93274D1C1F66AA00CF6564 /* GPRInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */; };
 		0F93329D14CA7DC30085F3C6 /* CallLinkStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */; };
 		0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */; };
@@ -2592,6 +2593,7 @@
 		0F919D2215853CDE004A4E7D /* Watchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchpoint.cpp; sourceTree = "<group>"; };
 		0F919D2315853CDE004A4E7D /* Watchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchpoint.h; sourceTree = "<group>"; };
 		0F919D2715856770004A4E7D /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
+		0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPRInfo.cpp; sourceTree = "<group>"; };
 		0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkStatus.cpp; sourceTree = "<group>"; };
 		0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkStatus.h; sourceTree = "<group>"; };
 		0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetByIdStatus.cpp; sourceTree = "<group>"; };
@@ -4892,6 +4894,7 @@
 				0F24E53E17EA9F5900ABB217 /* FPRInfo.h */,
 				0F766D2D15A8DCDD008F363E /* GCAwareJITStubRoutine.cpp */,
 				0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */,
+				0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */,
 				0F24E53F17EA9F5900ABB217 /* GPRInfo.h */,
 				0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */,
 				0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */,
@@ -4904,11 +4907,11 @@
 				A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */,
 				FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */,
 				FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */,
+				FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */,
 				FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */,
 				FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */,
 				FE3A06AF1C10CB6F00390FDD /* JITBitXorGenerator.cpp */,
 				FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */,
-				FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */,
 				86CC85A20EE79B7400288682 /* JITCall.cpp */,
 				146FE51111A710430087AE66 /* JITCall32_64.cpp */,
 				0F8F94431667635200D61971 /* JITCode.cpp */,
@@ -8755,6 +8758,7 @@
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
 				0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */,
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
+				0F93274D1C1F66AA00CF6564 /* GPRInfo.cpp in Sources */,
 				0F485327187DFDEC0083B687 /* FTLAvailableRecovery.cpp in Sources */,
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,
 				0F338E1B1BF286EA0013C88F /* B3BlockInsertionSet.cpp in Sources */,

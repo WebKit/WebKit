@@ -1,3 +1,20 @@
+2015-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should do PutById
+        https://bugs.webkit.org/show_bug.cgi?id=152268
+
+        Reviewed by Saam Barati.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createGenericCompare): I realized that we were missing some useful matching rules.
+        * b3/testb3.cpp: Added a bunch of tests.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById): Do the things.
+        * jit/GPRInfo.cpp: Added. I had to do this yucky thing because clang was having issues compiling references to this from deeply nested lambdas.
+        * jit/GPRInfo.h: Added a comment about how patchpointScratchRegister is bizarre and should probably die.
+
 2015-12-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add ceil() support for x86 and expose it to B3

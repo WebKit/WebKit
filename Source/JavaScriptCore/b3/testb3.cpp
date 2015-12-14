@@ -5166,6 +5166,186 @@ void testBranchEqualFoldPtr(intptr_t value)
     CHECK(compileAndRun<int>(proc) == !value);
 }
 
+void testBranchLoadPtr()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    intptr_t cond;
+    cond = 42;
+    CHECK(invoke<int>(*code, &cond) == 1);
+    cond = 0;
+    CHECK(invoke<int>(*code, &cond) == 0);
+}
+
+void testBranchLoad32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    int32_t cond;
+    cond = 42;
+    CHECK(invoke<int>(*code, &cond) == 1);
+    cond = 0;
+    CHECK(invoke<int>(*code, &cond) == 0);
+}
+
+void testBranchLoad8S()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load8S, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    int8_t cond;
+    cond = -1;
+    CHECK(invoke<int>(*code, &cond) == 1);
+    cond = 0;
+    CHECK(invoke<int>(*code, &cond) == 0);
+}
+
+void testBranchLoad8Z()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load8Z, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    uint8_t cond;
+    cond = 1;
+    CHECK(invoke<int>(*code, &cond) == 1);
+    cond = 0;
+    CHECK(invoke<int>(*code, &cond) == 0);
+}
+
+void testBranchLoad16S()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load16S, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    int16_t cond;
+    cond = -1;
+    CHECK(invoke<int>(*code, &cond) == 1);
+    cond = 0;
+    CHECK(invoke<int>(*code, &cond) == 0);
+}
+
+void testBranchLoad16Z()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load16Z, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    uint16_t cond;
+    cond = 1;
+    CHECK(invoke<int>(*code, &cond) == 1);
+    cond = 0;
+    CHECK(invoke<int>(*code, &cond) == 0);
+}
+
 void testComplex(unsigned numVars, unsigned numConstructs)
 {
     double before = monotonicallyIncreasingTimeMS();
@@ -8914,6 +9094,12 @@ void run(const char* filter)
     RUN(testBranchNotEqualFoldPtr(0));
     RUN(testBranchEqualFoldPtr(42));
     RUN(testBranchEqualFoldPtr(0));
+    RUN(testBranchLoadPtr());
+    RUN(testBranchLoad32());
+    RUN(testBranchLoad8S());
+    RUN(testBranchLoad8Z());
+    RUN(testBranchLoad16S());
+    RUN(testBranchLoad16Z());
 
     RUN(testComplex(64, 128));
     RUN(testComplex(64, 256));

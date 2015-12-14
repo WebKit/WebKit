@@ -453,7 +453,11 @@ public:
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
     static const GPRReg nonPreservedNonArgumentGPR = X86Registers::r10; // regT5 (regT4 on Windows)
-    static const GPRReg patchpointScratchRegister = MacroAssembler::s_scratchRegister;
+
+    // FIXME: I believe that all uses of this are dead in the sense that it just causes the scratch
+    // register allocator to select a different register and potentially spill things. It would be better
+    // if we instead had a more explicit way of saying that we don't have a scratch register.
+    static const GPRReg patchpointScratchRegister;
 
     static GPRReg toRegister(unsigned index)
     {

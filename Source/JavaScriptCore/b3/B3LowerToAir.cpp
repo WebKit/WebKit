@@ -1131,6 +1131,15 @@ private:
         Arg::Width width = Arg::widthForB3Type(value->type());
         Arg resCond = Arg::resCond(MacroAssembler::NonZero).inverted(inverted);
         
+        auto tryTest = [&] (
+            Arg::Width width, const ArgPromise& left, const ArgPromise& right) -> Inst {
+            if (Inst result = test(width, resCond, left, right))
+                return result;
+            if (Inst result = test(width, resCond, right, left))
+                return result;
+            return Inst();
+        };
+
         auto attemptFused = [&] () -> Inst {
             switch (value->opcode()) {
             case NotEqual:
@@ -1165,15 +1174,6 @@ private:
                 Arg leftImm = imm(left);
                 Arg rightImm = imm(right);
                 
-                auto tryTest = [&] (
-                    Arg::Width width, const ArgPromise& left, const ArgPromise& right) -> Inst {
-                    if (Inst result = test(width, resCond, left, right))
-                        return result;
-                    if (Inst result = test(width, resCond, right, left))
-                        return result;
-                    return Inst();
-                };
-
                 auto tryTestLoadImm = [&] (Arg::Width width, B3::Opcode loadOpcode) -> Inst {
                     if (rightImm && rightImm.isRepresentableAs(width, Arg::Unsigned)) {
                         if (Inst result = tryTest(width, loadPromise(left, loadOpcode), rightImm)) {
@@ -1250,6 +1250,35 @@ private:
         if (FusionResult fusionResult = prepareToFuse(value)) {
             if (Inst result = attemptFused()) {
                 commitFusion(value, fusionResult);
+                return result;
+            }
+        }
+
+        if (canCommitInternal && value->as<MemoryValue>()) {
+            // Handle things like Branch(Load8Z(value))
+
+            if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8Z), Arg::imm(-1))) {
+                commitInternal(value);
+                return result;
+            }
+
+            if (Inst result = tryTest(Arg::Width8, loadPromise(value, Load8S), Arg::imm(-1))) {
+                commitInternal(value);
+                return result;
+            }
+
+            if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16Z), Arg::imm(-1))) {
+                commitInternal(value);
+                return result;
+            }
+
+            if (Inst result = tryTest(Arg::Width16, loadPromise(value, Load16S), Arg::imm(-1))) {
+                commitInternal(value);
+                return result;
+            }
+
+            if (Inst result = tryTest(width, loadPromise(value), Arg::imm(-1))) {
+                commitInternal(value);
                 return result;
             }
         }
