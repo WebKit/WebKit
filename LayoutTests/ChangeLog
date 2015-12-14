@@ -1,3 +1,13 @@
+2015-12-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Update TestExpectations with the following changes:
+          - Remove expectations for tests removed after r193411 r193426 and r19366.
+          - Merge repeated expectations from some tests.
+          - Mark tests failing after r188159.
+          - Update list of imported/blink tests failing.
+
 2015-12-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix height computation of grid items with borders

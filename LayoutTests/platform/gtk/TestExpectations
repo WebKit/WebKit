@@ -82,7 +82,9 @@ Bug(GTK) fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFi
 # written in a platform-specific way. They should either be moved to
 # the right platform or re-written in a more platform-agnostic way.
 webkit.org/b/98348 accessibility/internal-link-anchors2.html [ WontFix Missing ]
-webkit.org/b/98348 accessibility/radio-button-group-members.html [ WontFix Missing ]
+# Things specific to AX API (at least at the moment)
+webkit.org/b/98348 accessibility/radio-button-group-members.html [ Skip ]
+webkit.org/b/141074 accessibility/auto-filled-value.html [ Skip ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 webkit.org/b/98925 fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
@@ -453,7 +455,6 @@ webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout 
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
 # HighDPI support is not enabled
-webkit.org/b/131347 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ Timeout ]
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ ImageOnlyFailure Pass ]
 webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [ ImageOnlyFailure ]
@@ -558,8 +559,6 @@ webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [
 webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 webkit.org/b/142289 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 
-webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
-
 webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 
 webkit.org/b/143233 media/media-source/media-source-append-buffer-with-append-window.html [ Pass Failure ]
@@ -603,7 +602,7 @@ webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 
 # This tests fail since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
-webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
+webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure Timeout ]
 webkit.org/b/146731 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
 webkit.org/b/146731 fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
 webkit.org/b/146731 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
@@ -916,7 +915,6 @@ Bug(GTK) fast/events/onchange-range-slider.html [ Failure Pass ]
 Bug(GTK) fast/events/onchange-searchfield.html [ Failure Pass ]
 Bug(GTK) fast/events/onchange-select-popup.html [ Failure Pass ]
 Bug(GTK) fast/forms/incremental-dom-property.html [ Pass Timeout ]
-Bug(GTK) fast/forms/select/menulist-type-ahead-find.html [ Pass Timeout ]
 Bug(GTK) fast/forms/select/optgroup-disabled.html [ Pass Timeout ]
 Bug(GTK) fast/forms/select-selected.html [ Pass Timeout ]
 Bug(GTK) js/dom/exceptions-thrown-in-callbacks.html [ Failure Pass ]
@@ -1155,7 +1153,6 @@ webkit.org/b/145167 transforms/2d/perspective-not-fixed-container.html [ ImageOn
 webkit.org/b/145170 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure Pass ]
 webkit.org/b/145170 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure Pass ]
 
-webkit.org/b/145256 media/video-controller-child-rate.html [ Failure Pass ]
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
 
 webkit.org/b/145261 fast/workers/stress-js-execution.html [ Failure Pass ]
@@ -1294,8 +1291,6 @@ webkit.org/b/122571 [ Debug ] inspector/unit-tests/test-harness-trivially-works.
 
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
-Bug(GTK) fast/forms/select/optgroup-clicking.html [ Timeout ]
-
 Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
 
 webkit.org/b/132128 fast/text/international/embed-bidi-style-in-isolate-crash.html [ Timeout Pass ]
@@ -1431,9 +1426,13 @@ webkit.org/b/148940 fast/events/touch/touch-event-frames.html [ Skip ]
 webkit.org/b/148940 fast/events/touch/touch-event-pageXY.html [ Skip ]
 webkit.org/b/148940 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
 
-# Things specific to AX API (at least at the moment)
-accessibility/radio-button-group-members.html [ Skip ]
-accessibility/auto-filled-value.html [ Skip ]
+# This tests were moved on r188159 from platform/mac/fast/forms/
+webkit.org/b/152247 fast/forms/attributed-strings.html [ Skip ]
+webkit.org/b/152247 fast/forms/focus-option-control-on-page.html [ Skip ]
+webkit.org/b/152247 fast/forms/indeterminate-progress-inline-height.html [ Skip ]
+webkit.org/b/152247 fast/forms/input-appearance-spinbutton-up.html [ Skip ]
+webkit.org/b/152247 fast/forms/input-appearance-spinbutton.html [ Skip ]
+webkit.org/b/152247 fast/forms/listbox-scrollbar-hit-test.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests with architecture-specific results
@@ -1849,9 +1848,6 @@ webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
 
-webkit.org/b/100846 inspector/debugger/pause-dedicated-worker.html [ Skip ]
-webkit.org/b/100846 inspector/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]
-
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
@@ -2089,7 +2085,6 @@ storage/indexeddb/cursor-advance.html [ Skip ]
 storage/indexeddb/cursor-basics.html [ Skip ]
 storage/indexeddb/cursor-continue.html [ Skip ]
 storage/indexeddb/cursor-continue-validity.html [ Skip ]
-storage/indexeddb/cursor-continueprimarykey.html [ Skip ]
 storage/indexeddb/cursor-index-delete.html [ Skip ]
 storage/indexeddb/cursor-key-order.html [ Skip ]
 storage/indexeddb/cursor-leak.html [ Skip ] # Missing needed WKTR feature?
@@ -2097,7 +2092,6 @@ storage/indexeddb/cursor-overloads.html [ Skip ]
 storage/indexeddb/cursor-primary-key-order.html [ Skip ]
 storage/indexeddb/cursor-request-cycle.html [ Skip ] # Missing needed WKTR feature?
 storage/indexeddb/cursor-update.html [ Skip ]
-storage/indexeddb/data-corruption.html [ Skip ]
 storage/indexeddb/database-close.html [ Skip ]
 storage/indexeddb/database-closepending-flag.html [ Skip ]
 storage/indexeddb/database-quota.html [ Skip ]
@@ -2111,7 +2105,6 @@ storage/indexeddb/deletedatabase-not-blocked.html [ Skip ]
 storage/indexeddb/deleted-objects.html [ Skip ]
 storage/indexeddb/duplicates.html [ Skip ] # Difference between null + undefined
 storage/indexeddb/events.html [ Skip ]
-storage/indexeddb/factory-basics.html [ Skip ] # indexedDB.webkitGetDatabaseNames is missing)
 storage/indexeddb/factory-cmp.html [ Skip ]
 storage/indexeddb/factory-deletedatabase.html [ Skip ]
 storage/indexeddb/get-keyrange.html [ Skip ]
@@ -2136,7 +2129,6 @@ storage/indexeddb/metadata.html [ Skip ]
 storage/indexeddb/noblobs.html [ Skip ] # Missing DRT file/blob support
 storage/indexeddb/objectstore-autoincrement.html [ Skip ]
 storage/indexeddb/objectstore-basics.html [ Skip ]
-storage/indexeddb/objectstore-keycursor.html [ Skip ]
 storage/indexeddb/odd-strings.html [ Skip ]
 storage/indexeddb/optional-arguments.html [ Skip ]
 storage/indexeddb/persistence.html [ Skip ]
@@ -2534,6 +2526,11 @@ imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Timeout ]
 
+webkit.org/b/151267 imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure Pass ]
+webkit.org/b/151267 imported/blink/compositing/invisible-subtree-compositing-and-preserves-3d.html [ ImageOnlyFailure Pass ]
+webkit.org/b/151267 imported/blink/compositing/squashing/abspos-under-abspos-overflow-scroll.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/squashing/clip-to-squashed-layer-size.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/compositing/squashing/overflow-scroll-grandchildren.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/squash-overflow-hidden-contents.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/squashing/squash-overflow-hidden-scrolltop.html [ ImageOnlyFailure ]
@@ -2547,24 +2544,36 @@ webkit.org/b/151267 imported/blink/css3/blending/svg-blend-overlapping-elements.
 webkit.org/b/151267 imported/blink/css3/blending/svg-isolation-foreign-no-isolation.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/css3/blending/svg-isolation-nested-svg-no-isolation.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/editing/selection/deleteFromDocument-crash.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/canvas/canvas-clip-stack-persistence.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/css/fixed-overlaps-absolute-in-clip.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/fast/css/tab-size-complex-path.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/css/text-overflow-ellipsis-button.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/css/transformed-overflow-hidden-clips-fixed.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/fast/events/click-focus-keydown-no-ring.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/gradients/large-horizontal-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/gradients/large-vertical-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/multicol/composited-layer-single-fragment.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/fast/multicol/composited-relpos-2nd-column.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/multicol/composited-relpos-simple.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/replaced/viewport-percentage-height-with-dynamic-container-height.html [ ImageOnlyFailure Pass ]
+webkit.org/b/151267 imported/blink/fast/sub-pixel/clip-sub-pixel-composited-layer.html [ ImageOnlyFailure Pass ]
+webkit.org/b/151267 imported/blink/fast/sub-pixel/negative-composited-offset.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/sub-pixel/sub-pixel-transparency-layer.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/text/international/complex-text-space-in-second-font.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/text/tab-renders-as-space.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/fast/text/word-spacing-nbsp.html [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/fast/transforms/transform-update-frame-overflow.html [ ImageOnlyFailure Pass ]
+webkit.org/b/151267 imported/blink/scrollbars/avoid-double-scrollbars-when-html-element-is-not-the-renderview.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/custom/feDisplacementMap-invalid-selector.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/big-viewbox.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/feOffset-nonuniform-scale.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/filter-huge-clamping.svg [ ImageOnlyFailure ]
+webkit.org/b/151267 imported/blink/transforms/inline-transform-and-clipping-roots.html [ ImageOnlyFailure Pass ]
 webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
 webkit.org/b/152057 accessibility/textarea-selected-text-range.html [ Failure Timeout ]
