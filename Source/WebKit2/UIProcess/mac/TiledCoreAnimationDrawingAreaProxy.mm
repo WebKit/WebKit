@@ -166,7 +166,6 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate()
         return MachSendRight();
 
     MachSendRight fencePort = MachSendRight::adopt([rootLayerContext createFencePort]);
-    [rootLayerContext setFencePort:fencePort.sendRight()];
 
     // Invalidate the fence if a synchronous message arrives while it's installed,
     // because we won't be able to reply during the fence-wait.

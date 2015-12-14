@@ -1,3 +1,15 @@
+2015-12-14  Tim Horton  <timothy_horton@apple.com>
+
+        TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate() sets fence port on context twice
+        https://bugs.webkit.org/show_bug.cgi?id=152239
+        <rdar://problem/22893289>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate):
+        No need to setFencePort; createFencePort also installs it on the creating context.
+
 2015-12-12  Alex Christensen  <achristensen@webkit.org>
 
         Use existing code for redirects when using NETWORK_SESSION
