@@ -1,3 +1,37 @@
+2015-12-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Directly use @then as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=151631
+
+        Reviewed by Darin Adler.
+
+        Moved from @Promise.prototype.@then.@call(promise,...) to promise.@then.(...)
+        for promise objects that are not exposed to user scripts.
+
+        Updated promiseInvokeXX stream utility functions to ensure that returned promise always has a @then.
+        This allows improving the readability of code calling promiseInvokeXX functions.
+        Changed invokeOrNoop to promiseInvokeOrNoopNoCatch as invokeOrNoop
+        result is always wrapped as a promise using Promise.resolve.
+
+        No change in behavior.
+
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream):
+        * Modules/streams/ReadableStreamInternals.js:
+        (teeReadableStream):
+        (teeReadableStreamBranch2CancelFunction):
+        (cancelReadableStream):
+        * Modules/streams/StreamInternals.js:
+        (shieldingPromiseResolve): introduced this routine to ensure the returned promise has a @then property.
+        (promiseInvokeOrNoopNoCatch):
+        (promiseInvokeOrNoop):
+        (promiseInvokeOrFallbackOrNoop):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        (abort):
+        * Modules/streams/WritableStreamInternals.js:
+        (callOrScheduleWritableStreamAdvanceQueue):
+
 2015-12-14  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Expose ReadableStream and relatives to Worker

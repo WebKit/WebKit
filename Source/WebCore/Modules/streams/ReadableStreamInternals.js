@@ -96,7 +96,7 @@ function teeReadableStream(stream, shouldClone)
         "cancel": @teeReadableStreamBranch2CancelFunction(teeState, stream)
     });
 
-    @Promise.prototype.@then.@call(reader.closed, undefined, function(e) {
+    reader.@closedPromiseCapability.@promise.@then(undefined, function(e) {
         if (teeState.closedOrErrored)
             return;
         @errorReadableStream(branch1, e);
@@ -146,9 +146,9 @@ function teeReadableStreamBranch1CancelFunction(teeState, stream)
         teeState.canceled1 = true;
         teeState.reason1 = r;
         if (teeState.canceled2) {
-            @Promise.prototype.@then.@call(@cancelReadableStream(stream, [teeState.reason1, teeState.reason2]),
-                                           teeState.cancelPromiseCapability.@resolve,
-                                           teeState.cancelPromiseCapability.@reject);
+            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).@then(
+                teeState.cancelPromiseCapability.@resolve,
+                teeState.cancelPromiseCapability.@reject);
         }
         return teeState.cancelPromiseCapability.@promise;
     }
@@ -162,9 +162,9 @@ function teeReadableStreamBranch2CancelFunction(teeState, stream)
         teeState.canceled2 = true;
         teeState.reason2 = r;
         if (teeState.canceled1) {
-            @Promise.prototype.@then.@call(@cancelReadableStream(stream, [teeState.reason1, teeState.reason2]),
-                                           teeState.cancelPromiseCapability.@resolve,
-                                           teeState.cancelPromiseCapability.@reject);
+            @cancelReadableStream(stream, [teeState.reason1, teeState.reason2]).@then(
+                teeState.cancelPromiseCapability.@resolve,
+                teeState.cancelPromiseCapability.@reject);
         }
         return teeState.cancelPromiseCapability.@promise;
     }
@@ -234,8 +234,7 @@ function requestReadableStreamPull(stream)
 
     stream.@pulling = true;
 
-    const promise = @promiseInvokeOrNoop(stream.@underlyingSource, "pull", [stream.@controller]);
-    @Promise.prototype.@then.@call(promise, function() {
+    @promiseInvokeOrNoop(stream.@underlyingSource, "pull", [stream.@controller]).@then(function() {
         stream.@pulling = false;
         if (stream.@pullAgain) {
             stream.@pullAgain = false;
@@ -273,7 +272,7 @@ function cancelReadableStream(stream, reason)
         return @Promise.@reject(stream.@storedError);
     stream.@queue = @newQueue();
     @finishClosingReadableStream(stream);
-    return @Promise.prototype.@then.@call(@promiseInvokeOrNoop(stream.@underlyingSource, "cancel", [reason]), function() { });
+    return @promiseInvokeOrNoop(stream.@underlyingSource, "cancel", [reason]).@then(function() { });
 }
 
 function finishClosingReadableStream(stream)

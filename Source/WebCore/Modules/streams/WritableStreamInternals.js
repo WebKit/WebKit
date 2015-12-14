@@ -77,7 +77,7 @@ function callOrScheduleWritableStreamAdvanceQueue(stream)
     "use strict";
 
     if (!stream.@started)
-        @Promise.prototype.@then.@call(stream.@startedPromise, function() { @writableStreamAdvanceQueue(stream); });
+        stream.@startedPromise.@then(function() { @writableStreamAdvanceQueue(stream); });
     else
         @writableStreamAdvanceQueue(stream);
 }
@@ -99,7 +99,7 @@ function writableStreamAdvanceQueue(stream)
     }
 
     stream.@writing = true;
-    @Promise.prototype.@then.@call(@promiseInvokeOrNoop(stream.@underlyingSink, "write", [writeRecord.chunk]),
+    @promiseInvokeOrNoop(stream.@underlyingSink, "write", [writeRecord.chunk]).@then(
         function() {
             if (stream.@state === @streamErrored)
                 return;
@@ -120,7 +120,7 @@ function closeWritableStream(stream)
     "use strict";
 
     @assert(stream.@state === @streamClosing);
-    @Promise.prototype.@then.@call(@promiseInvokeOrNoop(stream.@underlyingSink, "close"),
+    @promiseInvokeOrNoop(stream.@underlyingSink, "close").@then(
         function() {
             if (stream.@state === @streamErrored)
                 return;

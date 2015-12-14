@@ -55,8 +55,7 @@ function initializeReadableStream(underlyingSource, strategy)
     this.@controller = new @ReadableStreamController(this);
     this.@strategy = @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark);
 
-    const result = @invokeOrNoop(underlyingSource, "start", [this.@controller]);
-    @Promise.prototype.@then.@call(@Promise.@resolve(result), () => {
+    @promiseInvokeOrNoopNoCatch(underlyingSource, "start", [this.@controller]).@then(() => {
         this.@started = true;
         @requestReadableStreamPull(this);
     }, (error) => {
@@ -104,8 +103,9 @@ function pipeTo(destination, options)
 {
     "use strict";
 
-    // We are not shielding against methods and attributes of the reader and destination as those objects don't have to
-    // be necessarily ReadableStreamReader and WritableStream.
+    // FIXME: rewrite pipeTo so as to require to have 'this' as a ReadableStream and destination be a WritableStream.
+    // See https://github.com/whatwg/streams/issues/407.
+    // We should shield the pipeTo implementation at the same time.
 
     const preventClose = @isObject(options) && !!options.preventClose;
     const preventAbort = @isObject(options) && !!options.preventAbort;

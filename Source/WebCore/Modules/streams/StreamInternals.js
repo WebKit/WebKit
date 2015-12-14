@@ -27,14 +27,22 @@
 // @conditional=ENABLE(STREAMS_API)
 // @internal
 
-function invokeOrNoop(object, key, args)
+function shieldingPromiseResolve(result)
+{
+    const promise = @Promise.@resolve(result);
+    if (promise.@then === undefined)
+        promise.@then = @Promise.prototype.@then;
+    return promise;
+}
+
+function promiseInvokeOrNoopNoCatch(object, key, args)
 {
     "use strict";
 
     const method = object[key];
-    if (typeof method === "undefined")
-        return;
-    return method.@apply(object, args);
+    if (method === undefined)
+        return @Promise.@resolve();
+    return @shieldingPromiseResolve(method.@apply(object, args));
 }
 
 function promiseInvokeOrNoop(object, key, args)
@@ -42,10 +50,7 @@ function promiseInvokeOrNoop(object, key, args)
     "use strict";
 
     try {
-        const method = object[key];
-        if (typeof method === "undefined")
-            return @Promise.@resolve();
-        return @Promise.@resolve(method.@apply(object, args));
+        return @promiseInvokeOrNoopNoCatch(object, key, args);
     }
     catch(error) {
         return @Promise.@reject(error);
@@ -59,9 +64,9 @@ function promiseInvokeOrFallbackOrNoop(object, key1, args1, key2, args2)
 
     try {
         const method = object[key1];
-        if (typeof method === "undefined")
-            return @promiseInvokeOrNoop(object, key2, args2);
-        return @Promise.@resolve(method.@apply(object, args1));
+        if (method === undefined)
+            return @promiseInvokeOrNoopNoCatch(object, key2, args2);
+        return @shieldingPromiseResolve(method.@apply(object, args1));
     }
     catch(error) {
         return @Promise.@reject(error);
