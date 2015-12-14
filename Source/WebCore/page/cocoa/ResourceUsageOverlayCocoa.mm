@@ -32,6 +32,7 @@
 #include "MachVMSPI.h"
 #include "PlatformCALayer.h"
 #include <CoreGraphics/CGContext.h>
+#include <JavaScriptCore/GCActivityCallback.h>
 #include <QuartzCore/CALayer.h>
 #include <QuartzCore/CATransaction.h>
 #include <array>
@@ -185,6 +186,9 @@ struct ResourceUsageData {
 
     HashSet<CALayer *> overlayLayers;
     JSC::VM* vm { nullptr };
+
+    double timeOfNextEdenCollection { 0 };
+    double timeOfNextFullCollection { 0 };
 };
 
 ResourceUsageData::ResourceUsageData()
@@ -421,12 +425,19 @@ static void drawMemoryPie(CGContextRef context, FloatRect& rect, ResourceUsageDa
 static String formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
-        return String::format("%.3f GB", static_cast<double>(number) / 1024 * 1048576);
+        return String::format("%.3f GB", static_cast<double>(number) / (1024 * 1048576));
     if (number >= 1048576)
         return String::format("%.2f MB", static_cast<double>(number) / 1048576);
     if (number >= 1024)
         return String::format("%.1f kB", static_cast<double>(number) / 1024);
     return String::format("%lu", number);
+}
+
+static String gcTimerString(double timerFireDate, double now)
+{
+    if (!timerFireDate)
+        return ASCIILiteral("[not scheduled]");
+    return String::format("%g", timerFireDate - now);
 }
 
 void ResourceUsageOverlay::platformDraw(CGContextRef context)
@@ -460,6 +471,10 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
         showText(context, 10, y, category.color.get(), label);
         y += 10;
     }
+
+    double now = WTF::currentTime();
+    showText(context, 10, y + 10, colorForLabels, String::format("    Eden GC: %s", gcTimerString(data.timeOfNextEdenCollection, now).ascii().data()));
+    showText(context, 10, y + 20, colorForLabels, String::format("    Full GC: %s", gcTimerString(data.timeOfNextFullCollection, now).ascii().data()));
 
     drawCpuHistory(context, viewBounds.size.width - 70, 0, viewBounds.size.height, data.cpuHistory);
     drawGCHistory(context, viewBounds.size.width - 140, 0, viewBounds.size.height, data.gcHeapSizeHistory, data.categories[MemoryCategory::GCHeap].history);
@@ -609,6 +624,9 @@ NO_RETURN void runSamplerThread(void*)
             // Subtract known subchunks from the bmalloc bucket.
             // FIXME: Handle running with bmalloc disabled.
             data.categories[MemoryCategory::bmalloc].history.last() -= currentGCHeapCapacity + currentGCOwned;
+
+            data.timeOfNextEdenCollection = data.vm->heap.edenActivityCallback()->nextFireTime();
+            data.timeOfNextFullCollection = data.vm->heap.fullActivityCallback()->nextFireTime();
         }
 
         [CATransaction begin];

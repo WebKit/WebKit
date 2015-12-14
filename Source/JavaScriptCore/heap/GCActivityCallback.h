@@ -61,6 +61,10 @@ public:
 
     static bool s_shouldCreateGCTimer;
 
+#if USE(CF) || PLATFORM(EFL)
+    double nextFireTime() const { return m_nextFireTime; }
+#endif
+
 protected:
     virtual double lastGCLength() = 0;
     virtual double gcTimeSlice(size_t bytes) = 0;
@@ -109,6 +113,7 @@ protected:
 
 private:
     double m_delay;
+    double m_nextFireTime { 0 };
 #endif
 };
 

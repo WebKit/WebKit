@@ -59,7 +59,7 @@ public:
 #endif
 
     static const int normalWidth = 570;
-    static const int normalHeight = 130;
+    static const int normalHeight = 160;
 
 private:
     void pageOverlayDestroyed(PageOverlay&) override { }

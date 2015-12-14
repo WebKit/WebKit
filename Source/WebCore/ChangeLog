@@ -1,3 +1,22 @@
+2015-12-14  Andreas Kling  <akling@apple.com>
+
+        ResourceUsageOverlay should show GC timers.
+        <https://webkit.org/b/152151>
+
+        Reviewed by Darin Adler.
+
+        Add countdowns until next Eden and Full GC to the overlay. It also shows if there
+        is no garbage collection scheduled. This will be helpful in understanding why GC
+        sometimes takes a very long time to happen.
+
+        * page/ResourceUsageOverlay.h:
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::formatByteNumber): Drive-by silly math fix. :|
+        (WebCore::gcTimerString):
+        (WebCore::ResourceUsageOverlay::platformDraw):
+        (WebCore::nextFireTimeForGCTimer):
+        (WebCore::runSamplerThread):
+
 2015-12-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: Text field variations do not have the correct traits

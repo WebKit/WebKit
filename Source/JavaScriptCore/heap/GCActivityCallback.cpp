@@ -95,12 +95,14 @@ void GCActivityCallback::scheduleTimer(double newDelay)
         return;
     double delta = m_delay - newDelay;
     m_delay = newDelay;
+    m_nextFireTime = WTF::currentTime() + newDelay;
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFRunLoopTimerGetNextFireDate(m_timer.get()) - delta);
 }
 
 void GCActivityCallback::cancelTimer()
 {
     m_delay = s_decade;
+    m_nextFireTime = 0;
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 #elif PLATFORM(EFL)
