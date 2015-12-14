@@ -1,3 +1,12 @@
+2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/viewport/ios/width-is-device-width-overflowing* tests as failing on iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=152135
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2015-12-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: Text field variations do not have the correct traits
