@@ -1,3 +1,20 @@
+2015-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r162777): Remove Boost Software License from WTF
+        <http://webkit.org/b/152243>
+
+        Reviewed by Darin Adler.
+
+        The source code that the Boost Software License was referring to
+        was removed in r162777 by switching to std::atomic.
+
+        * wtf/Atomics.cpp:
+        * wtf/Atomics.h:
+        * wtf/ThreadSafeRefCounted.h:
+        - Remove Boost Software License.
+        - Update Apple Inc. copyright as needed.
+        - Refresh Apple Inc. license text.
+
 2015-12-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Inspector: Verify the identity of the other side of XPC connections
