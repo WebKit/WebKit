@@ -50,6 +50,10 @@
 
 namespace WebCore {
 
+class JSDOMGlobalObject;
+
+void addBuiltinGlobals(JSDOMGlobalObject&, JSC::VM&);
+
 class JSBuiltinFunctions {
 public:
     explicit JSBuiltinFunctions(JSC::VM& v)

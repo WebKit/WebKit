@@ -22,7 +22,6 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
-#include "WebCoreJSBuiltinInternals.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -86,8 +85,6 @@ namespace WebCore {
 
         RefPtr<DOMWindow> m_wrapped;
         JSDOMWindowShell* m_shell;
-
-        JSBuiltinInternalFunctions m_privateFunctions;
     };
 
     // Returns a JSDOMWindow or jsNull()

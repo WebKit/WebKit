@@ -27,30 +27,30 @@ PASS Reading twice on an errored stream
 PASS Reading twice on a stream that gets errored 
 FAIL Load readable-stream-reader.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-FAIL Can get the ReadableStreamReader constructor indirectly Can't find variable: ReadableStream
+PASS Can get the ReadableStreamReader constructor indirectly 
 PASS ReadableStreamReader constructor should get a ReadableStream object as argument 
-FAIL ReadableStreamReader instances should have the correct list of properties Can't find variable: ReadableStream
-FAIL ReadableStreamReader closed should always return the same promise object Can't find variable: ReadableStream
-FAIL Constructing a ReadableStreamReader directly should fail if the stream is already locked (via direct construction) Can't find variable: ReadableStream
-FAIL Getting a ReadableStreamReader via getReader should fail if the stream is already locked (via direct construction) Can't find variable: ReadableStream
-FAIL Constructing a ReadableStreamReader directly should fail if the stream is already locked (via getReader) Can't find variable: ReadableStream
-FAIL Getting a ReadableStreamReader via getReader should fail if the stream is already locked (via getReader) Can't find variable: ReadableStream
-FAIL Constructing a ReadableStreamReader directly should be OK if the stream is closed Can't find variable: ReadableStream
-FAIL Constructing a ReadableStreamReader directly should be OK if the stream is errored Can't find variable: ReadableStream
-FAIL Reading from a reader for an empty stream will wait until a chunk is available Can't find variable: ReadableStream
-FAIL cancel() on a reader does not release the reader Can't find variable: ReadableStream
-FAIL closed should be fulfilled after stream is closed (.closed access before acquiring) Can't find variable: ReadableStream
-FAIL closed should be rejected after reader releases its lock (multiple stream locks) Can't find variable: ReadableStream
-FAIL Multiple readers can access the stream in sequence Can't find variable: ReadableStream
-FAIL Cannot use an already-released reader to unlock a stream again Can't find variable: ReadableStream
-FAIL cancel() on a released reader is a no-op and does not pass through Can't find variable: ReadableStream
-FAIL Getting a second reader after erroring the stream and releasing the reader should succeed Can't find variable: ReadableStream
-FAIL ReadableStreamReader closed promise should be rejected with undefined if that is the error Can't find variable: ReadableStream
-FAIL ReadableStreamReader: if start rejects with no parameter, it should error the stream with an undefined error Can't find variable: ReadableStream
-FAIL Erroring a ReadableStream after checking closed should reject ReadableStreamReader closed promise Can't find variable: ReadableStream
-FAIL Erroring a ReadableStream before checking closed should reject ReadableStreamReader closed promise Can't find variable: ReadableStream
-FAIL Reading twice on a stream that gets closed Can't find variable: ReadableStream
-FAIL Reading twice on a closed stream Can't find variable: ReadableStream
-FAIL Reading twice on an errored stream Can't find variable: ReadableStream
-FAIL Reading twice on a stream that gets errored Can't find variable: ReadableStream
+FAIL ReadableStreamReader instances should have the correct list of properties assert_equals: method should be non-enumerable expected false but got true
+PASS ReadableStreamReader closed should always return the same promise object 
+PASS Constructing a ReadableStreamReader directly should fail if the stream is already locked (via direct construction) 
+PASS Getting a ReadableStreamReader via getReader should fail if the stream is already locked (via direct construction) 
+PASS Constructing a ReadableStreamReader directly should fail if the stream is already locked (via getReader) 
+PASS Getting a ReadableStreamReader via getReader should fail if the stream is already locked (via getReader) 
+PASS Constructing a ReadableStreamReader directly should be OK if the stream is closed 
+PASS Constructing a ReadableStreamReader directly should be OK if the stream is errored 
+PASS Reading from a reader for an empty stream will wait until a chunk is available 
+PASS cancel() on a reader does not release the reader 
+PASS closed should be fulfilled after stream is closed (.closed access before acquiring) 
+PASS closed should be rejected after reader releases its lock (multiple stream locks) 
+PASS Multiple readers can access the stream in sequence 
+PASS Cannot use an already-released reader to unlock a stream again 
+PASS cancel() on a released reader is a no-op and does not pass through 
+PASS Getting a second reader after erroring the stream and releasing the reader should succeed 
+PASS ReadableStreamReader closed promise should be rejected with undefined if that is the error 
+PASS ReadableStreamReader: if start rejects with no parameter, it should error the stream with an undefined error 
+PASS Erroring a ReadableStream after checking closed should reject ReadableStreamReader closed promise 
+PASS Erroring a ReadableStream before checking closed should reject ReadableStreamReader closed promise 
+PASS Reading twice on a stream that gets closed 
+PASS Reading twice on a closed stream 
+PASS Reading twice on an errored stream 
+PASS Reading twice on a stream that gets errored 
 

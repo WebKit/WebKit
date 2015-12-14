@@ -27,14 +27,14 @@
 #ifndef WebCoreJSBuiltinInternals_h
 #define WebCoreJSBuiltinInternals_h
 
+#if ENABLE(MEDIA_STREAM)
+#include "RTCPeerConnectionInternalsBuiltins.h"
+#endif
+
 #if ENABLE(STREAMS_API)
 #include "ReadableStreamInternalsBuiltins.h"
 #include "StreamInternalsBuiltins.h"
 #include "WritableStreamInternalsBuiltins.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include "RTCPeerConnectionInternalsBuiltins.h"
 #endif
 
 #if ENABLE(STREAMS_API) || ENABLE(MEDIA_STREAM)
@@ -43,64 +43,33 @@
 
 namespace WebCore {
 
+class JSDOMGlobalObject;
+
 class JSBuiltinInternalFunctions {
 public:
-explicit JSBuiltinInternalFunctions(JSC::VM& v)
-        : vm(v)
-#if ENABLE(STREAMS_API)
-        , m_readableStreamInternalsFunctions(vm)
-        , m_streamInternalsFunctions(vm)
-        , m_writableStreamInternalsFunctions(vm)
-#endif
-#if ENABLE(MEDIA_STREAM)
-        , m_rtcPeerConnectionInternalsFunctions(vm)
-#endif
-    { }
+    explicit JSBuiltinInternalFunctions(JSC::VM&);
 
+#if ENABLE(MEDIA_STREAM)
+    RTCPeerConnectionInternalsBuiltinFunctions rtcPeerConnectionInternals() { return m_rtcPeerConnectionInternalsFunctions; }
+#endif
 #if ENABLE(STREAMS_API)
     ReadableStreamInternalsBuiltinFunctions readableStreamInternals() { return m_readableStreamInternalsFunctions; }
     StreamInternalsBuiltinFunctions streamInternals() { return m_streamInternalsFunctions; }
     WritableStreamInternalsBuiltinFunctions writableStreamInternals() { return m_writableStreamInternalsFunctions; }
 #endif
-#if ENABLE(MEDIA_STREAM)
-    RTCPeerConnectionInternalsBuiltinFunctions rtcPeerConnectionInternals() { return m_rtcPeerConnectionInternalsFunctions; }
-#endif
-    void visit(JSC::SlotVisitor& visitor) {
-#if ENABLE(STREAMS_API)
-        m_readableStreamInternalsFunctions.visit(visitor);
-        m_streamInternalsFunctions.visit(visitor);
-        m_writableStreamInternalsFunctions.visit(visitor);
-#endif
-#if ENABLE(MEDIA_STREAM)
-        m_rtcPeerConnectionInternalsFunctions.visit(visitor);
-#endif
-#ifndef SKIP_UNUSED_PARAM
-        UNUSED_PARAM(visitor);
-#endif
-    }
-    void init(JSC::JSGlobalObject& globalObject) {
-#if ENABLE(STREAMS_API)
-        m_readableStreamInternalsFunctions.init(globalObject);
-        m_streamInternalsFunctions.init(globalObject);
-        m_writableStreamInternalsFunctions.init(globalObject);
-#endif
-#if ENABLE(MEDIA_STREAM)
-        m_rtcPeerConnectionInternalsFunctions.init(globalObject);
-#endif
-#ifndef SKIP_UNUSED_PARAM
-        UNUSED_PARAM(globalObject);
-#endif
-    }
+
+    void visit(JSC::SlotVisitor&);
+    void initialize(JSDOMGlobalObject&, JSC::VM&);
 
 private:
     JSC::VM& vm;
+#if ENABLE(MEDIA_STREAM)
+    RTCPeerConnectionInternalsBuiltinFunctions m_rtcPeerConnectionInternalsFunctions;
+#endif
 #if ENABLE(STREAMS_API)
     ReadableStreamInternalsBuiltinFunctions m_readableStreamInternalsFunctions;
     StreamInternalsBuiltinFunctions m_streamInternalsFunctions;
     WritableStreamInternalsBuiltinFunctions m_writableStreamInternalsFunctions;
-#endif
-#if ENABLE(MEDIA_STREAM)
-    RTCPeerConnectionInternalsBuiltinFunctions m_rtcPeerConnectionInternalsFunctions;
 #endif
 
 };

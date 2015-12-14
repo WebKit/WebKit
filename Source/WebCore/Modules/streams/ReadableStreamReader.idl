@@ -30,6 +30,7 @@
 [
     Conditional=STREAMS_API,
     CustomConstructor,
+    GlobalContext=DOMWindow&WorkerGlobalScope,
     JSBuiltin,
     NoInterfaceObject
 ] interface ReadableStreamReader {

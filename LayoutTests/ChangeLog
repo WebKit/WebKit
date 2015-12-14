@@ -1,3 +1,15 @@
+2015-12-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Expose ReadableStream and relatives to Worker
+        https://bugs.webkit.org/show_bug.cgi?id=152066
+
+        Reviewed by Darin Adler.
+
+        Adding ByteLengthQueuingStrategy, CountQueuingStrategy and ReadableStream as worker constructors.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+
 2015-12-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed gardening.

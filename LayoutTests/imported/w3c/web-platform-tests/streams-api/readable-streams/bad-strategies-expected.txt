@@ -6,18 +6,9 @@ PASS Readable stream: invalid strategy.highWaterMark
 PASS Readable stream: invalid strategy.size return value 
 FAIL Load bad-strategies.js with SharedWorker assert_unreached: SharedWorker is unavailable Reached unreachable code
 FAIL Untitled undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
-FAIL Readable stream: throwing strategy.size getter assert_throws: construction should re-throw the error function "() => {
-    new ReadableStream({}, {
-      get size() {
- ..." threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "Error: a unique string" ("Error")
-FAIL Readable stream: throwing strategy.size method Can't find variable: ReadableStream
-FAIL Readable stream: throwing strategy.highWaterMark getter assert_throws: construction should re-throw the error function "() => {
-    new ReadableStream({}, {
-      size() {
-     ..." threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "Error: a unique string" ("Error")
-FAIL Readable stream: invalid strategy.highWaterMark assert_throws: construction should throw a RangeError for -1 function "() => {
-      new ReadableStream({}, {
-        size() {
- ..." threw object "ReferenceError: Can't find variable: ReadableStream" ("ReferenceError") expected object "RangeError" ("RangeError")
-FAIL Readable stream: invalid strategy.size return value Can't find variable: ReadableStream
+PASS Readable stream: throwing strategy.size getter 
+PASS Readable stream: throwing strategy.size method 
+PASS Readable stream: throwing strategy.highWaterMark getter 
+PASS Readable stream: invalid strategy.highWaterMark 
+PASS Readable stream: invalid strategy.size return value 
 
