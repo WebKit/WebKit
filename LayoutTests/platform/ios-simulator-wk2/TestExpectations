@@ -9,7 +9,6 @@
 fast/harness/ui-side-scripts.html [ Pass ]
 fast/harness/concurrent-ui-side-scripts.html [ Pass ]
 fast/zooming/ios [ Pass ]
-fast/events/ios [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.

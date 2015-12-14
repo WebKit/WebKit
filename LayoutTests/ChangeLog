@@ -1,5 +1,14 @@
 2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Take 2 of updating expectations for fast/events/ios tests by removing the directory's [ Pass ] expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=152134
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
         Take 2 of updating expectations for fast/viewport/ios tests by removing the directory's [ Pass ] expectation.
         https://bugs.webkit.org/show_bug.cgi?id=152135
 
