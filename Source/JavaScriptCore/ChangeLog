@@ -1,3 +1,48 @@
+2015-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Should not emit get_by_id for indexed property access
+        https://bugs.webkit.org/show_bug.cgi?id=151354
+
+        Reviewed by Darin Adler.
+
+        Before this patch, `a["1"]` is converted to `a.1` get_by_id operation in the bytecode compiler.
+        get_by_id emits IC. IC rely on the fact that Structure transition occur when adding / removing object's properties.
+        However, it's not true for indexed element properties. They are stored in the element storage and Structure transition does not occur.
+
+        For example, in the following case,
+
+             function getOne(a) { return a['1']; }
+
+             for (var i = 0; i < 36; ++i)
+                 getOne({2: true});
+
+             if (!getOne({1: true}))
+                 throw new Error("OUT");
+
+        In this case, `a['1']` creates get_by_id. `getOne({2: true})` calls makes getOne's get_by_id to create IC says that,
+        "when comming this structure chain, there is no property in "1", so we should return `undefined`".
+
+        After that, we call `getOne({1: true})`. But in this case, `{2: true}` and `{1: true}` have the same structure chain,
+        because indexed property addition does not occur structure transition.
+        So previous IC fast path is used and return `undefined`. But the correct answer is returning `true`.
+
+        This patch fixes the above issue. When there is string bracket access, we only emits get_by_id if the given string is not an index.
+        There are bugs in get_by_id, put_by_id, put_by_id (direct). But only get_by_id poses user observable issue.
+        Because in the put_by_id case, the generic path just says "this put is uncacheable".
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::isNonIndexStringElement):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ObjectPatternNode::bindValue):
+        * tests/stress/element-property-get-should-not-handled-with-get-by-id.js: Added.
+        (getOne):
+
 2015-12-13  Andreas Kling  <akling@apple.com>
 
         CachedScript could have a copy-free path for all-ASCII scripts.

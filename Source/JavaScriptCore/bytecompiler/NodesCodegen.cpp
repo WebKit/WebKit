@@ -602,11 +602,16 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
 
 // ------------------------------ BracketAccessorNode --------------------------------
 
+static bool isNonIndexStringElement(ExpressionNode& element)
+{
+    return element.isString() && !parseIndex(static_cast<StringNode&>(element).value());
+}
+
 RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (m_base->isSuperNode()) {
         // FIXME: Should we generate the profiler info?
-        if (m_subscript->isString()) {
+        if (isNonIndexStringElement(*m_subscript)) {
             const Identifier& id = static_cast<StringNode*>(m_subscript)->value();
             return generator.emitGetById(generator.finalDestination(dst), emitSuperBaseForCallee(generator), id);
         }
@@ -616,7 +621,7 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
     RegisterID* ret;
     RegisterID* finalDest = generator.finalDestination(dst);
 
-    if (m_subscript->isString()) {
+    if (isNonIndexStringElement(*m_subscript)) {
         RefPtr<RegisterID> base = generator.emitNode(m_base);
         ret = generator.emitGetById(finalDest, base.get(), static_cast<StringNode*>(m_subscript)->value());
     } else {
@@ -846,20 +851,20 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toString(BytecodeGenerator& ge
 RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     bool baseIsSuper = m_base->isSuperNode();
-    bool subscriptIsString = m_subscript->isString();
+    bool subscriptIsNonIndexString = isNonIndexStringElement(*m_subscript);
 
     RefPtr<RegisterID> base;
     if (baseIsSuper)
         base = emitSuperBaseForCallee(generator);
     else {
-        if (subscriptIsString)
+        if (subscriptIsNonIndexString)
             base = generator.emitNode(m_base);
         else
             base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
     }
 
     RefPtr<RegisterID> function;
-    if (subscriptIsString) {
+    if (subscriptIsNonIndexString) {
         generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
         function = generator.emitGetById(generator.tempDestination(dst), base.get(), static_cast<StringNode*>(m_subscript)->value());
     } else {
@@ -1977,7 +1982,7 @@ RegisterID* AssignBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* forwardResult = (dst == generator.ignoredResult()) ? result.get() : generator.moveToDestinationIfNeeded(generator.tempDestination(result.get()), result.get());
 
-    if (m_subscript->isString())
+    if (isNonIndexStringElement(*m_subscript))
         generator.emitPutById(base.get(), static_cast<StringNode*>(m_subscript)->value(), forwardResult);
     else
         generator.emitPutByVal(base.get(), property.get(), forwardResult);
@@ -3485,9 +3490,16 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         auto& target = m_targetPatterns[i];
         RefPtr<RegisterID> temp = generator.newTemporary();
-        if (!target.propertyExpression)
-            generator.emitGetById(temp.get(), rhs, target.propertyName);
-        else {
+        if (!target.propertyExpression) {
+            // Should not emit get_by_id for indexed ones.
+            Optional<uint32_t> optionalIndex = parseIndex(target.propertyName);
+            if (!optionalIndex)
+                generator.emitGetById(temp.get(), rhs, target.propertyName);
+            else {
+                RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(optionalIndex.value()));
+                generator.emitGetByVal(temp.get(), rhs, index.get());
+            }
+        } else {
             RefPtr<RegisterID> propertyName = generator.emitNode(target.propertyExpression);
             generator.emitGetByVal(temp.get(), rhs, propertyName.get());
         }
