@@ -545,13 +545,6 @@ fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html [ 
 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
 
 # CSS3 Text tests that fail:
-css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ ImageOnlyFailure ]
-css3/blending/blend-mode-body-composited-child-background-color.html [ ImageOnlyFailure ]
-css3/blending/blend-mode-body-composited-child.html [ ImageOnlyFailure ]
-css3/blending/blend-mode-clip-accelerated-blending-child.html [ ImageOnlyFailure ]
-css3/blending/blend-mode-clip-accelerated-blending-double.html [ ImageOnlyFailure ]
-css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html [ ImageOnlyFailure ]
-css3/blending/blend-mode-clip-rect-accelerated-blending.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure ]
 
 # Font tests that fail:
