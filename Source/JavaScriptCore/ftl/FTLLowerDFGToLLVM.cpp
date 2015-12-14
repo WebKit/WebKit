@@ -9442,14 +9442,13 @@ private:
     {
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(lowValue, highValue);
         
-        unsigned offset = value->numChildren();
         value->appendColdAnys(buildExitArguments(exitDescriptor, origin.forExit, lowValue));
 
         State* state = &m_ftlState;
         value->setGenerator(
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 exitDescriptor->emitOSRExit(
-                    *state, kind, origin, jit, params, offset, isExceptionHandler);
+                    *state, kind, origin, jit, params, 0, isExceptionHandler);
             });
     }
 #endif

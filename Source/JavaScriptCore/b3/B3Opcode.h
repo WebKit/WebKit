@@ -174,9 +174,8 @@ enum Opcode : int16_t {
     // after the first CheckAdd executes, the second CheckAdd could not have possibly taken slow
     // path. Therefore, the second CheckAdd's callback is irrelevant.
     //
-    // Note that the first two children of these operations have ValueRep's, both as input constraints and
-    // in the reps provided to the generator. The output constraints could be anything, and should not be
-    // inspected for meaning. If you want to capture the values of the inputs, use stackmap arguments.
+    // Note that the first two children of these operations have ValueRep's as input constraints but do
+    // not have output constraints.
     CheckAdd,
     CheckSub,
     CheckMul,
@@ -184,8 +183,8 @@ enum Opcode : int16_t {
     // Check that side-exits. Use the CheckValue class. Like CheckAdd and friends, this has a
     // stackmap with a generation callback. This takes an int argument that this branches on, with
     // full branch fusion in the instruction selector. A true value jumps to the generator's slow
-    // path. Note that the predicate child is has both an input and output ValueRep. The input constraint
-    // must be Any, and the output could be anything.
+    // path. Note that the predicate child is has both an input ValueRep. The input constraint must be
+    // WarmAny. It will not have an output constraint.
     Check,
 
     // SSA support, in the style of DFG SSA.

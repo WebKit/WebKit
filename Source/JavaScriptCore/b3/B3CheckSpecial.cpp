@@ -143,9 +143,6 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     ASSERT(value);
 
     Vector<ValueRep> reps;
-    for (unsigned i = numB3Args(value); i--;)
-        reps.append(ValueRep());
-
     appendRepsImpl(context, m_numCheckArgs + 1, inst, reps);
 
     // Set aside the args that are relevant to undoing the operation. This is because we don't want to

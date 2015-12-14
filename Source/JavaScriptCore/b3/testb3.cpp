@@ -5597,7 +5597,7 @@ void testSimpleCheck()
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
             // saves.
@@ -5629,7 +5629,7 @@ void testCheckLessThan()
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
             // saves.
@@ -5675,7 +5675,7 @@ void testCheckMegaCombo()
     check->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 1);
+            CHECK(!params.size());
 
             // This should always work because a function this simple should never have callee
             // saves.
@@ -5872,11 +5872,11 @@ void testCheckAddImm()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isConstant());
-            CHECK(params[3].value() == 42);
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isConstant());
+            CHECK(params[1].value() == 42);
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(42), FPRInfo::fpRegT1);
             jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
@@ -5908,11 +5908,11 @@ void testCheckAddImmCommute()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isConstant());
-            CHECK(params[3].value() == 42);
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isConstant());
+            CHECK(params[1].value() == 42);
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(42), FPRInfo::fpRegT1);
             jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
@@ -5944,11 +5944,11 @@ void testCheckAddImmSomeRegister()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt32ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt32ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -5981,11 +5981,11 @@ void testCheckAdd()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt32ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt32ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6014,11 +6014,11 @@ void testCheckAdd64()
     checkAdd->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt64ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt64ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt64ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6088,11 +6088,11 @@ void testCheckSubImm()
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isConstant());
-            CHECK(params[3].value() == 42);
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isConstant());
+            CHECK(params[1].value() == 42);
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(42), FPRInfo::fpRegT1);
             jit.subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
@@ -6125,11 +6125,11 @@ void testCheckSubBadImm()
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isConstant());
-            CHECK(params[3].value() == badImm);
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isConstant());
+            CHECK(params[1].value() == badImm);
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(badImm), FPRInfo::fpRegT1);
             jit.subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
@@ -6163,11 +6163,11 @@ void testCheckSub()
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt32ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt32ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6201,11 +6201,11 @@ void testCheckSub64()
     checkSub->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt64ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt64ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt64ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6274,9 +6274,9 @@ void testCheckNeg()
     checkNeg->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 3);
-            CHECK(params[2].isGPR());
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 1);
+            CHECK(params[0].isGPR());
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT1);
             jit.negateDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6304,9 +6304,9 @@ void testCheckNeg64()
     checkNeg->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 3);
-            CHECK(params[2].isGPR());
-            jit.convertInt64ToDouble(params[2].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 1);
+            CHECK(params[0].isGPR());
+            jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT1);
             jit.negateDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6339,11 +6339,11 @@ void testCheckMul()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt32ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt32ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.mulDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6380,11 +6380,11 @@ void testCheckMulMemory()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt32ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt32ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.mulDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();
@@ -6426,11 +6426,11 @@ void testCheckMul2()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isConstant());
-            CHECK(params[3].value() == 2);
-            jit.convertInt32ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isConstant());
+            CHECK(params[1].value() == 2);
+            jit.convertInt32ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
             jit.convertInt32ToDouble(CCallHelpers::TrustedImm32(2), FPRInfo::fpRegT1);
             jit.mulDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
@@ -6460,11 +6460,11 @@ void testCheckMul64()
     checkMul->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            CHECK(params.size() == 4);
-            CHECK(params[2].isGPR());
-            CHECK(params[3].isGPR());
-            jit.convertInt64ToDouble(params[2].gpr(), FPRInfo::fpRegT0);
-            jit.convertInt64ToDouble(params[3].gpr(), FPRInfo::fpRegT1);
+            CHECK(params.size() == 2);
+            CHECK(params[0].isGPR());
+            CHECK(params[1].isGPR());
+            jit.convertInt64ToDouble(params[0].gpr(), FPRInfo::fpRegT0);
+            jit.convertInt64ToDouble(params[1].gpr(), FPRInfo::fpRegT1);
             jit.mulDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
             jit.emitFunctionEpilogue();
             jit.ret();

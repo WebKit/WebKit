@@ -1,5 +1,62 @@
 2015-12-14  Filip Pizlo  <fpizlo@apple.com>
 
+        B3 should not give ValueReps for the non-stackmap children of a CheckValue to the generator callback
+        https://bugs.webkit.org/show_bug.cgi?id=152224
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, a stackmap generator for a Check had to know how many children the B3 value for the
+        Check had at the time of code generation. That meant that B3 could not change the kind of Check
+        that it was - for example it cannot turn a Check into a Patchpoint and it cannot turn a CheckAdd
+        into a Check. But just changing the contract so that the stackmap generation params only get the
+        stackmap children of the check means that B3 can transform Checks as it likes.
+
+        This is meant to aid sinking values into checks.
+
+        Also, I found that the effects of a Check did not include HeapRange::top(). I think it's best if
+        exitsSideways does not imply reading top, the way that it does in DFG. In the DFG, that makes
+        sense because the exit analysis is orthogonal, so the clobber analysis tells you about the reads
+        not counting OSR exit - if you need to you can conditionally merge that with World based on a
+        separate exit analysis. But in B3, the Effects object tells you about both exiting and reading,
+        and it's computed by one analysis. Prior to this change, Check was not setting reads to top() so
+        we were effectively saying that Effects::reads is meaningless when exitsSideways is true. It
+        seems more sensible to instead force the analysis to set reads to top() when setting
+        exitsSideways to true, not least because we only have one such analysis and many users. But it
+        also makes sense for another reason: it allows us to bound the set of things that the program
+        will read after it exits. That might not be useful to us now, but it's a nice feature to get for
+        free. I've seen language features that have behave like exitsSideways that don't also read top,
+        like an array bounds check that causes sudden termination without making any promises about how
+        pretty the crash dump will look.
+
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::generate):
+        * b3/B3Opcode.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        * b3/testb3.cpp:
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCheckLessThan):
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testCheckAddImmCommute):
+        (JSC::B3::testCheckAddImmSomeRegister):
+        (JSC::B3::testCheckAdd):
+        (JSC::B3::testCheckAdd64):
+        (JSC::B3::testCheckSubImm):
+        (JSC::B3::testCheckSubBadImm):
+        (JSC::B3::testCheckSub):
+        (JSC::B3::testCheckSub64):
+        (JSC::B3::testCheckNeg):
+        (JSC::B3::testCheckNeg64):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul2):
+        (JSC::B3::testCheckMul64):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::blessSpeculation):
+
+2015-12-14  Filip Pizlo  <fpizlo@apple.com>
+
         Air: Support Architecture-specific forms and Opcodes
         https://bugs.webkit.org/show_bug.cgi?id=151736
 
