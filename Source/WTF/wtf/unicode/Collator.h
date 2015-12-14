@@ -32,6 +32,7 @@
 #include <unicode/uconfig.h>
 #include <wtf/Noncopyable.h>
 
+struct UCharIterator;
 struct UCollator;
 
 namespace WTF {
@@ -66,6 +67,8 @@ private:
     bool m_shouldSortLowercaseFirst;
     UCollator* m_collator;
 };
+
+UCharIterator createIterator(StringView);
 
 #endif
 

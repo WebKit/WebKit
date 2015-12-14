@@ -1,3 +1,18 @@
+2015-12-14  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Make UCharIterator createIterator(StringView) visible to other classes
+        https://bugs.webkit.org/show_bug.cgi?id=151917
+
+        Reviewed by Darin Adler.
+
+        Make UCharIterator createIterator(StringView) in CollatorICU.cpp visible
+        to other classes so that future patches that will ucol_strcollIter
+        (including Bug 147604) can use it.
+
+        * wtf/unicode/Collator.h:
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::createIterator):
+
 2015-12-14  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r162777): Remove Boost Software License from WTF

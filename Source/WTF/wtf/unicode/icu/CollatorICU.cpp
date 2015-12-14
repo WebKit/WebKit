@@ -236,7 +236,7 @@ static UCharIterator createLatin1Iterator(const LChar* characters, int length)
     return iterator;
 }
 
-static UCharIterator createIterator(StringView string)
+UCharIterator createIterator(StringView string)
 {
     if (string.is8Bit())
         return createLatin1Iterator(string.characters8(), string.length());
