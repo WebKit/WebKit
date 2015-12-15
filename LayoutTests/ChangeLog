@@ -1,3 +1,12 @@
+2015-12-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Changing expectation for storage/indexeddb/deleted-objects.html to [ Failure Crash ]
+        https://bugs.webkit.org/show_bug.cgi?id=152264
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2015-12-15  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align][css-grid] Overflow alignment value 'true' renamed to 'unsafe'
