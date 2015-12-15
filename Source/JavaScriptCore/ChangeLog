@@ -1,3 +1,11 @@
+2015-12-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after 194062.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPointCeil): Added.
+        (JSC::MacroAssemblerARM::ceilDouble): Added.
+
 2015-12-14  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should account for localsOffset

@@ -1122,6 +1122,7 @@ public:
         return s_isVFPPresent;
     }
     static bool supportsFloatingPointAbs() { return false; }
+    static bool supportsFloatingPointCeil() { return false; }
 
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
@@ -1142,6 +1143,12 @@ public:
     {
         move(TrustedImm32(reinterpret_cast<ARMWord>(address.m_value)), ARMRegisters::S0);
         m_assembler.doubleDtrUp(ARMAssembler::LoadDouble, dest, ARMRegisters::S0, 0);
+    }
+
+    NO_RETURN_DUE_TO_CRASH void ceilDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT(!supportsFloatingPointCeil());
+        CRASH();
     }
 
     void storeFloat(FPRegisterID src, BaseIndex address)
