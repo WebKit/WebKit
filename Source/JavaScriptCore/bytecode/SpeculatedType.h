@@ -390,6 +390,11 @@ inline bool isUntypedSpeculationForArithmetic(SpeculatedType value)
     return !(value & (SpecFullNumber | SpecBoolean));
 }
 
+inline bool isUntypedSpeculationForBitOps(SpeculatedType value)
+{
+    return !(value & (SpecFullNumber | SpecBoolean | SpecOther));
+}
+
 void dumpSpeculation(PrintStream&, SpeculatedType);
 void dumpSpeculationAbbreviated(PrintStream&, SpeculatedType);
 

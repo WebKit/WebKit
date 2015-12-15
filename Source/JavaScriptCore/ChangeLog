@@ -1,3 +1,126 @@
+2015-12-15  Mark Lam  <mark.lam@apple.com>
+
+        Polymorphic operand types for DFG and FTL bit operators.
+        https://bugs.webkit.org/show_bug.cgi?id=152191
+
+        Reviewed by Saam Barati.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isUntypedSpeculationForBitOps):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateUntypedForBitOps):
+        - Added check for types not supported by ValueToInt32, and therefore should be
+          treated as untyped for bitops.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        - Handled untyped operands.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        - Added DFG slow path functions for bitops.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitUntypedBitOp):
+        (JSC::DFG::SpeculativeJIT::compileBitwiseOp):
+        (JSC::DFG::SpeculativeJIT::emitUntypedRightShiftBitOp):
+        (JSC::DFG::SpeculativeJIT::compileShiftOp):
+        * dfg/DFGSpeculativeJIT.h:
+        - Added DFG backend support untyped operands for bitops.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        - Limit bitops strength reduction only to when we don't have untyped operands.
+          This is because values that are not int32s need to be converted to int32.
+          Without untyped operands, the ValueToInt32 node takes care of this.
+          With untyped operands, we cannot use ValueToInt32, and need to do the conversion
+          in the code emitted for the bitop node itself.  For example:
+
+              5.5 | 0; // yields 5 because ValueToInt32 converts the 5.5 to a 5.
+              "abc" | 0; // would yield "abc" instead of the expected 0 if we let
+                         // strength reduction do its thing.
+
+        * ftl/FTLCompileBinaryOp.cpp:
+        (JSC::FTL::generateBinaryBitOpFastPath):
+        (JSC::FTL::generateRightShiftFastPath):
+        (JSC::FTL::generateBinaryOpFastPath):
+
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::BitAndDescriptor::BitAndDescriptor):
+        (JSC::FTL::BitAndDescriptor::icSize):
+        (JSC::FTL::BitAndDescriptor::nodeType):
+        (JSC::FTL::BitAndDescriptor::opName):
+        (JSC::FTL::BitAndDescriptor::slowPathFunction):
+        (JSC::FTL::BitAndDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::BitOrDescriptor::BitOrDescriptor):
+        (JSC::FTL::BitOrDescriptor::icSize):
+        (JSC::FTL::BitOrDescriptor::nodeType):
+        (JSC::FTL::BitOrDescriptor::opName):
+        (JSC::FTL::BitOrDescriptor::slowPathFunction):
+        (JSC::FTL::BitOrDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::BitXorDescriptor::BitXorDescriptor):
+        (JSC::FTL::BitXorDescriptor::icSize):
+        (JSC::FTL::BitXorDescriptor::nodeType):
+        (JSC::FTL::BitXorDescriptor::opName):
+        (JSC::FTL::BitXorDescriptor::slowPathFunction):
+        (JSC::FTL::BitXorDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::BitLShiftDescriptor::BitLShiftDescriptor):
+        (JSC::FTL::BitLShiftDescriptor::icSize):
+        (JSC::FTL::BitLShiftDescriptor::nodeType):
+        (JSC::FTL::BitLShiftDescriptor::opName):
+        (JSC::FTL::BitLShiftDescriptor::slowPathFunction):
+        (JSC::FTL::BitLShiftDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::BitRShiftDescriptor::BitRShiftDescriptor):
+        (JSC::FTL::BitRShiftDescriptor::icSize):
+        (JSC::FTL::BitRShiftDescriptor::nodeType):
+        (JSC::FTL::BitRShiftDescriptor::opName):
+        (JSC::FTL::BitRShiftDescriptor::slowPathFunction):
+        (JSC::FTL::BitRShiftDescriptor::nonNumberSlowPathFunction):
+        (JSC::FTL::BitURShiftDescriptor::BitURShiftDescriptor):
+        (JSC::FTL::BitURShiftDescriptor::icSize):
+        (JSC::FTL::BitURShiftDescriptor::nodeType):
+        (JSC::FTL::BitURShiftDescriptor::opName):
+        (JSC::FTL::BitURShiftDescriptor::slowPathFunction):
+        (JSC::FTL::BitURShiftDescriptor::nonNumberSlowPathFunction):
+        - Added support for bitop ICs.
+
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfBitAnd):
+        (JSC::FTL::sizeOfBitOr):
+        (JSC::FTL::sizeOfBitXor):
+        (JSC::FTL::sizeOfBitLShift):
+        (JSC::FTL::sizeOfBitRShift):
+        (JSC::FTL::sizeOfBitURShift):
+        * ftl/FTLInlineCacheSize.h:
+        - Added new bitop IC sizes.  These are just estimates for now that work adequately,
+          and are shown to not impact performance on benchmarks.  We will re-tune these
+          sizes values later in another patch once all snippet ICs have been added.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitAnd):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitOr):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitXor):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitRShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitLShift):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileBitURShift):
+        - Added support for bitop ICs.
+
+        * jit/JITLeftShiftGenerator.cpp:
+        (JSC::JITLeftShiftGenerator::generateFastPath):
+        * jit/JITLeftShiftGenerator.h:
+        (JSC::JITLeftShiftGenerator::JITLeftShiftGenerator):
+        * jit/JITRightShiftGenerator.cpp:
+        (JSC::JITRightShiftGenerator::generateFastPath):
+        - The shift MASM operatons need to ensure that the shiftAmount is not in the same
+          register as the destination register.  With the baselineJIT and DFG, this is
+          ensured in how we allocate these registers, and hence, the bug does not manifest.
+          With the FTL, these registers are not guaranteed to be unique.  Hence, we need
+          to fix the shift op snippet code to compensate for this. 
+
 2015-12-15  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] SyntaxError if AssignmentElement is `eval` or `arguments` in strict code
@@ -1605,7 +1728,6 @@
         (JSC::ArrayPrototype::finishCreation):
         * runtime/CommonIdentifiers.h:
 
->>>>>>> .r193940
 2015-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should have basic GetById support

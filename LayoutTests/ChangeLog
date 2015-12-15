@@ -1,3 +1,41 @@
+2015-12-15  Mark Lam  <mark.lam@apple.com>
+
+        Polymorphic operand types for DFG and FTL bit operators.
+        https://bugs.webkit.org/show_bug.cgi?id=152191
+
+        Reviewed by Saam Barati.
+
+        * js/regress/ftl-polymorphic-bitand-expected.txt: Added.
+        * js/regress/ftl-polymorphic-bitand.html: Added.
+        * js/regress/ftl-polymorphic-bitor-expected.txt: Added.
+        * js/regress/ftl-polymorphic-bitor.html: Added.
+        * js/regress/ftl-polymorphic-bitxor-expected.txt: Added.
+        * js/regress/ftl-polymorphic-bitxor.html: Added.
+        * js/regress/ftl-polymorphic-lshift-expected.txt: Added.
+        * js/regress/ftl-polymorphic-lshift.html: Added.
+        * js/regress/ftl-polymorphic-rshift-expected.txt: Added.
+        * js/regress/ftl-polymorphic-rshift.html: Added.
+        * js/regress/ftl-polymorphic-urshift-expected.txt: Added.
+        * js/regress/ftl-polymorphic-urshift.html: Added.
+        * js/regress/script-tests/ftl-polymorphic-bitand.js: Added.
+        (o1.valueOf):
+        (foo):
+        * js/regress/script-tests/ftl-polymorphic-bitor.js: Added.
+        (o1.valueOf):
+        (foo):
+        * js/regress/script-tests/ftl-polymorphic-bitxor.js: Added.
+        (o1.valueOf):
+        (foo):
+        * js/regress/script-tests/ftl-polymorphic-lshift.js: Added.
+        (o1.valueOf):
+        (foo):
+        * js/regress/script-tests/ftl-polymorphic-rshift.js: Added.
+        (o1.valueOf):
+        (foo):
+        * js/regress/script-tests/ftl-polymorphic-urshift.js: Added.
+        (o1.valueOf):
+        (foo):
+
 2015-12-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Test that RTCPeerConnection promise functions reject on closed state

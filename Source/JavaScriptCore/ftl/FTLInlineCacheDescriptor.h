@@ -164,6 +164,84 @@ protected:
     SnippetOperand m_rightOperand;
 };
 
+class BitAndDescriptor : public BinaryOpDescriptor {
+public:
+    BitAndDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+        : BinaryOpDescriptor(nodeType(), stackmapID, codeOrigin, icSize(), opName(), slowPathFunction(), leftOperand, rightOperand)
+    { }
+
+    static size_t icSize() { return sizeOfBitAnd(); }
+    static unsigned nodeType() { return DFG::BitAnd; }
+    static const char* opName() { return "BitAnd"; }
+    static J_JITOperation_EJJ slowPathFunction() { return DFG::operationValueBitAnd; }
+    static J_JITOperation_EJJ nonNumberSlowPathFunction() { return slowPathFunction(); }
+};
+
+class BitOrDescriptor : public BinaryOpDescriptor {
+public:
+    BitOrDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+        : BinaryOpDescriptor(nodeType(), stackmapID, codeOrigin, icSize(), opName(), slowPathFunction(), leftOperand, rightOperand)
+    { }
+
+    static size_t icSize() { return sizeOfBitOr(); }
+    static unsigned nodeType() { return DFG::BitOr; }
+    static const char* opName() { return "BitOr"; }
+    static J_JITOperation_EJJ slowPathFunction() { return DFG::operationValueBitOr; }
+    static J_JITOperation_EJJ nonNumberSlowPathFunction() { return slowPathFunction(); }
+};
+
+class BitXorDescriptor : public BinaryOpDescriptor {
+public:
+    BitXorDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+        : BinaryOpDescriptor(nodeType(), stackmapID, codeOrigin, icSize(), opName(), slowPathFunction(), leftOperand, rightOperand)
+    { }
+
+    static size_t icSize() { return sizeOfBitXor(); }
+    static unsigned nodeType() { return DFG::BitXor; }
+    static const char* opName() { return "BitXor"; }
+    static J_JITOperation_EJJ slowPathFunction() { return DFG::operationValueBitXor; }
+    static J_JITOperation_EJJ nonNumberSlowPathFunction() { return slowPathFunction(); }
+};
+
+class BitLShiftDescriptor : public BinaryOpDescriptor {
+public:
+    BitLShiftDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+        : BinaryOpDescriptor(nodeType(), stackmapID, codeOrigin, icSize(), opName(), slowPathFunction(), leftOperand, rightOperand)
+    { }
+
+    static size_t icSize() { return sizeOfBitLShift(); }
+    static unsigned nodeType() { return DFG::BitLShift; }
+    static const char* opName() { return "BitLShift"; }
+    static J_JITOperation_EJJ slowPathFunction() { return DFG::operationValueBitLShift; }
+    static J_JITOperation_EJJ nonNumberSlowPathFunction() { return slowPathFunction(); }
+};
+
+class BitRShiftDescriptor : public BinaryOpDescriptor {
+public:
+    BitRShiftDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+        : BinaryOpDescriptor(nodeType(), stackmapID, codeOrigin, icSize(), opName(), slowPathFunction(), leftOperand, rightOperand)
+    { }
+
+    static size_t icSize() { return sizeOfBitRShift(); }
+    static unsigned nodeType() { return DFG::BitRShift; }
+    static const char* opName() { return "BitRShift"; }
+    static J_JITOperation_EJJ slowPathFunction() { return DFG::operationValueBitRShift; }
+    static J_JITOperation_EJJ nonNumberSlowPathFunction() { return slowPathFunction(); }
+};
+
+class BitURShiftDescriptor : public BinaryOpDescriptor {
+public:
+    BitURShiftDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)
+        : BinaryOpDescriptor(nodeType(), stackmapID, codeOrigin, icSize(), opName(), slowPathFunction(), leftOperand, rightOperand)
+    { }
+
+    static size_t icSize() { return sizeOfBitURShift(); }
+    static unsigned nodeType() { return DFG::BitURShift; }
+    static const char* opName() { return "BitURShift"; }
+    static J_JITOperation_EJJ slowPathFunction() { return DFG::operationValueBitURShift; }
+    static J_JITOperation_EJJ nonNumberSlowPathFunction() { return slowPathFunction(); }
+};
+
 class ArithDivDescriptor : public BinaryOpDescriptor {
 public:
     ArithDivDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const SnippetOperand& leftOperand, const SnippetOperand& rightOperand)

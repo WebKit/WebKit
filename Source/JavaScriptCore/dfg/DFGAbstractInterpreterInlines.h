@@ -233,6 +233,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case BitRShift:
     case BitLShift:
     case BitURShift: {
+        if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse) {
+            clobberWorld(node->origin.semantic, clobberLimit);
+            forNode(node).setType(m_graph, SpecInt32);
+            break;
+        }
+
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
         if (left && right && left.isInt32() && right.isInt32()) {

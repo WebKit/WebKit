@@ -32,6 +32,14 @@ namespace JSC {
 
 void JITLeftShiftGenerator::generateFastPath(CCallHelpers& jit)
 {
+    ASSERT(m_scratchGPR != InvalidGPRReg);
+    ASSERT(m_scratchGPR != m_left.payloadGPR());
+    ASSERT(m_scratchGPR != m_right.payloadGPR());
+#if USE(JSVALUE32_64)
+    ASSERT(m_scratchGPR != m_left.tagGPR());
+    ASSERT(m_scratchGPR != m_right.tagGPR());
+#endif
+
     ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
 
     m_didEmitFastPath = true;
@@ -47,6 +55,12 @@ void JITLeftShiftGenerator::generateFastPath(CCallHelpers& jit)
         // Try to do (intConstant << intVar) or (intVar << intVar).
         m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
 
+        GPRReg rightOperandGPR = m_right.payloadGPR();
+        if (rightOperandGPR == m_result.payloadGPR()) {
+            jit.move(rightOperandGPR, m_scratchGPR);
+            rightOperandGPR = m_scratchGPR;
+        }
+
         if (m_leftOperand.isConstInt32()) {
 #if USE(JSVALUE32_64)
             jit.move(m_right.tagGPR(), m_result.tagGPR());
@@ -57,7 +71,7 @@ void JITLeftShiftGenerator::generateFastPath(CCallHelpers& jit)
             jit.moveValueRegs(m_left, m_result);
         }
 
-        jit.lshift32(m_right.payloadGPR(), m_result.payloadGPR());
+        jit.lshift32(rightOperandGPR, m_result.payloadGPR());
     }
 
 #if USE(JSVALUE64)

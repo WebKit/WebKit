@@ -121,12 +121,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CheckStructureImmediate:
         return;
         
-    case BitAnd:
-    case BitOr:
-    case BitXor:
-    case BitLShift:
-    case BitRShift:
-    case BitURShift:
     case ArithIMul:
     case ArithAbs:
     case ArithClz32:
@@ -161,6 +155,20 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetExecutable:
     case BottomValue:
     case TypeOf:
+        def(PureValue(node));
+        return;
+
+    case BitAnd:
+    case BitOr:
+    case BitXor:
+    case BitLShift:
+    case BitRShift:
+    case BitURShift:
+        if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse) {
+            read(World);
+            write(Heap);
+            return;
+        }
         def(PureValue(node));
         return;
 

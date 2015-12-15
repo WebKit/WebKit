@@ -2263,21 +2263,37 @@ private:
     
     void compileBitAnd()
     {
+        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+            compileUntypedBinaryOp<BitAndDescriptor>();
+            return;
+        }
         setInt32(m_out.bitAnd(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
     void compileBitOr()
     {
+        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+            compileUntypedBinaryOp<BitOrDescriptor>();
+            return;
+        }
         setInt32(m_out.bitOr(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
     void compileBitXor()
     {
+        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+            compileUntypedBinaryOp<BitXorDescriptor>();
+            return;
+        }
         setInt32(m_out.bitXor(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
     void compileBitRShift()
     {
+        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+            compileUntypedBinaryOp<BitRShiftDescriptor>();
+            return;
+        }
         setInt32(m_out.aShr(
             lowInt32(m_node->child1()),
             m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
@@ -2285,6 +2301,10 @@ private:
     
     void compileBitLShift()
     {
+        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+            compileUntypedBinaryOp<BitLShiftDescriptor>();
+            return;
+        }
         setInt32(m_out.shl(
             lowInt32(m_node->child1()),
             m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
@@ -2292,6 +2312,10 @@ private:
     
     void compileBitURShift()
     {
+        if (m_node->child1().useKind() == UntypedUse || m_node->child2().useKind() == UntypedUse) {
+            compileUntypedBinaryOp<BitURShiftDescriptor>();
+            return;
+        }
         setInt32(m_out.lShr(
             lowInt32(m_node->child1()),
             m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));

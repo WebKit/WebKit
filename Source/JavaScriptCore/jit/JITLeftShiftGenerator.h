@@ -35,8 +35,8 @@ namespace JSC {
 class JITLeftShiftGenerator : public JITBitBinaryOpGenerator {
 public:
     JITLeftShiftGenerator(const SnippetOperand& leftOperand, const SnippetOperand& rightOperand,
-        JSValueRegs result, JSValueRegs left, JSValueRegs right, GPRReg unused = InvalidGPRReg)
-        : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right, unused)
+        JSValueRegs result, JSValueRegs left, JSValueRegs right, GPRReg scratchGPR)
+        : JITBitBinaryOpGenerator(leftOperand, rightOperand, result, left, right, scratchGPR)
     { }
 
     void generateFastPath(CCallHelpers&);

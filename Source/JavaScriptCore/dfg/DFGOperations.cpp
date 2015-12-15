@@ -173,6 +173,84 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
     return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->rareData(exec, inlineCapacity)->allocationProfile()->structure());
 }
 
+EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    int32_t a = op1.toInt32(exec);
+    int32_t b = op2.toInt32(exec);
+    return JSValue::encode(jsNumber(a & b));
+}
+
+EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    int32_t a = op1.toInt32(exec);
+    int32_t b = op2.toInt32(exec);
+    return JSValue::encode(jsNumber(a | b));
+}
+
+EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    int32_t a = op1.toInt32(exec);
+    int32_t b = op2.toInt32(exec);
+    return JSValue::encode(jsNumber(a ^ b));
+}
+
+EncodedJSValue JIT_OPERATION operationValueBitLShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    int32_t a = op1.toInt32(exec);
+    uint32_t b = op2.toUInt32(exec);
+    return JSValue::encode(jsNumber(a << (b & 0x1f)));
+}
+
+EncodedJSValue JIT_OPERATION operationValueBitRShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    int32_t a = op1.toInt32(exec);
+    uint32_t b = op2.toUInt32(exec);
+    return JSValue::encode(jsNumber(a >> (b & 0x1f)));
+}
+
+EncodedJSValue JIT_OPERATION operationValueBitURShift(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    JSValue op2 = JSValue::decode(encodedOp2);
+
+    uint32_t a = op1.toUInt32(exec);
+    uint32_t b = op2.toUInt32(exec);
+    return JSValue::encode(jsNumber(static_cast<int32_t>(a >> (b & 0x1f))));
+}
+
 EncodedJSValue JIT_OPERATION operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     VM* vm = &exec->vm();

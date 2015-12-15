@@ -74,7 +74,7 @@ private:
         case BitOr:
             handleCommutativity();
 
-            if (m_node->child2()->isInt32Constant() && !m_node->child2()->asInt32()) {
+            if (m_node->child1().useKind() != UntypedUse && m_node->child2()->isInt32Constant() && !m_node->child2()->asInt32()) {
                 convertToIdentityOverChild1();
                 break;
             }
@@ -88,7 +88,7 @@ private:
         case BitLShift:
         case BitRShift:
         case BitURShift:
-            if (m_node->child2()->isInt32Constant() && !(m_node->child2()->asInt32() & 0x1f)) {
+            if (m_node->child1().useKind() != UntypedUse && m_node->child2()->isInt32Constant() && !(m_node->child2()->asInt32() & 0x1f)) {
                 convertToIdentityOverChild1();
                 break;
             }

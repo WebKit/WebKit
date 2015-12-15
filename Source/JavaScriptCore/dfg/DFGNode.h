@@ -2033,6 +2033,16 @@ struct Node {
         return op1->shouldSpeculateUntypedForArithmetic() || op2->shouldSpeculateUntypedForArithmetic();
     }
     
+    bool shouldSpeculateUntypedForBitOps()
+    {
+        return isUntypedSpeculationForBitOps(prediction());
+    }
+    
+    static bool shouldSpeculateUntypedForBitOps(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateUntypedForBitOps() || op2->shouldSpeculateUntypedForBitOps();
+    }
+    
     static bool shouldSpeculateBoolean(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateBoolean() && op2->shouldSpeculateBoolean();

@@ -87,21 +87,27 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
         // Try to do (intConstant >> intVar) or (intVar >> intVar).
         m_slowPathJumpList.append(jit.branchIfNotInt32(m_right));
 
+        GPRReg rightOperandGPR = m_right.payloadGPR();
+        if (rightOperandGPR == m_result.payloadGPR())
+            rightOperandGPR = m_scratchGPR;
+
         CCallHelpers::Jump leftNotInt;
         if (m_leftOperand.isConstInt32()) {
+            jit.move(m_right.payloadGPR(), rightOperandGPR);
 #if USE(JSVALUE32_64)
             jit.move(m_right.tagGPR(), m_result.tagGPR());
 #endif
             jit.move(CCallHelpers::Imm32(m_leftOperand.asConstInt32()), m_result.payloadGPR());
         } else {
             leftNotInt = jit.branchIfNotInt32(m_left);
+            jit.move(m_right.payloadGPR(), rightOperandGPR);
             jit.moveValueRegs(m_left, m_result);
         }
 
         if (m_shiftType == SignedShift)
-            jit.rshift32(m_right.payloadGPR(), m_result.payloadGPR());
+            jit.rshift32(rightOperandGPR, m_result.payloadGPR());
         else
-            jit.urshift32(m_right.payloadGPR(), m_result.payloadGPR());
+            jit.urshift32(rightOperandGPR, m_result.payloadGPR());
 #if USE(JSVALUE64)
         jit.or64(GPRInfo::tagTypeNumberRegister, m_result.payloadGPR());
 #endif
