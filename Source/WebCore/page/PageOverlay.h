@@ -78,6 +78,7 @@ public:
     virtual PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
 
     void setPage(Page*);
+    Page* page() const { return m_page; }
     WEBCORE_EXPORT void setNeedsDisplay(const IntRect& dirtyRect);
     WEBCORE_EXPORT void setNeedsDisplay();
 

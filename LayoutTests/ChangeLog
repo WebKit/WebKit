@@ -1,3 +1,19 @@
+2015-12-15  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r191849): There's no yellow bouncy highlight when using Find on Page on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=152241
+        <rdar://problem/23642574>
+
+        Reviewed by Simon Fraser.
+
+        * pageoverlay/overlay-small-frame-mouse-events-expected.txt: Added.
+        * pageoverlay/overlay-small-frame-mouse-events.html: Added.
+        Add a test ensuring that small-frame overlays get mouse events.
+
+        * pageoverlay/overlay-small-frame-paints-expected.txt: Added.
+        * pageoverlay/overlay-small-frame-paints.html: Added.
+        Add a test ensuring that small-frame overlays get paint callbacks.
+
 2015-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Features] TrueType fonts trigger real features even when synthesis is applied

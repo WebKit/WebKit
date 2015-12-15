@@ -385,7 +385,7 @@ enum MediaControlEvent {
     [Conditional=VIDEO] void simulateSystemWake();
     [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(Element element);
 
-    [RaisesException] void installMockPageOverlay(PageOverlayType type);
+    [RaisesException] MockPageOverlay installMockPageOverlay(PageOverlayType type);
     [RaisesException] DOMString pageOverlayLayerTreeAsText();
 
     void setPageMuted(boolean muted);

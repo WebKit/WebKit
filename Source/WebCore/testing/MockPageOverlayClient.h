@@ -26,6 +26,7 @@
 #ifndef MockPageOverlayClient_h
 #define MockPageOverlayClient_h
 
+#include "MockPageOverlay.h"
 #include "PageOverlay.h"
 #include <wtf/HashSet.h>
 
@@ -40,7 +41,7 @@ public:
 
     explicit MockPageOverlayClient();
 
-    void installOverlay(MainFrame&, PageOverlay::OverlayType);
+    Ref<MockPageOverlay> installOverlay(MainFrame&, PageOverlay::OverlayType);
     void uninstallAllOverlays();
 
     String layerTreeAsText(MainFrame&);
@@ -59,7 +60,7 @@ private:
     virtual bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;
     virtual Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
 
-    HashSet<PageOverlay*> m_overlays;
+    HashSet<MockPageOverlay*> m_overlays;
 };
 
 }

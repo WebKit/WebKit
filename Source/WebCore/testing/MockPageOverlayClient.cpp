@@ -26,11 +26,14 @@
 #include "config.h"
 #include "MockPageOverlayClient.h"
 
+#include "Document.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "MainFrame.h"
 #include "PageOverlayController.h"
+#include "PlatformMouseEvent.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -44,19 +47,24 @@ MockPageOverlayClient::MockPageOverlayClient()
 {
 }
 
-void MockPageOverlayClient::installOverlay(MainFrame& mainFrame, PageOverlay::OverlayType overlayType)
+Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(MainFrame& mainFrame, PageOverlay::OverlayType overlayType)
 {
-    RefPtr<PageOverlay> overlay = PageOverlay::create(*this, overlayType);
-    mainFrame.pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
-    m_overlays.add(overlay.get());
+    auto overlay = PageOverlay::create(*this, overlayType);
+    mainFrame.pageOverlayController().installPageOverlay(overlay.ptr(), PageOverlay::FadeMode::DoNotFade);
+
+    auto mockOverlay = MockPageOverlay::create(overlay.ptr());
+    m_overlays.add(mockOverlay.ptr());
+
+    return mockOverlay;
 }
 
 void MockPageOverlayClient::uninstallAllOverlays()
 {
     while (!m_overlays.isEmpty()) {
-        PageOverlay* overlay = m_overlays.takeAny();
-        ASSERT(overlay->controller());
-        overlay->controller()->uninstallPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
+        MockPageOverlay* mockOverlay = m_overlays.takeAny();
+        PageOverlayController* overlayController = mockOverlay->overlay()->controller();
+        ASSERT(overlayController);
+        overlayController->uninstallPageOverlay(mockOverlay->overlay(), PageOverlay::FadeMode::DoNotFade);
     }
 }
 
@@ -67,7 +75,12 @@ String MockPageOverlayClient::layerTreeAsText(MainFrame& mainFrame)
 
 void MockPageOverlayClient::pageOverlayDestroyed(PageOverlay& overlay)
 {
-    m_overlays.remove(&overlay);
+    for (auto& mockOverlay : m_overlays) {
+        if (mockOverlay->overlay() == &overlay) {
+            m_overlays.remove(mockOverlay);
+            return;
+        }
+    }
 }
 
 void MockPageOverlayClient::willMoveToPage(PageOverlay&, Page*)
@@ -80,8 +93,20 @@ void MockPageOverlayClient::didMoveToPage(PageOverlay& overlay, Page* page)
         overlay.setNeedsDisplay();
 }
 
-void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect&)
+void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {
+    StringBuilder message;
+    message.appendLiteral("MockPageOverlayClient::drawRect dirtyRect (");
+    message.appendNumber(dirtyRect.x());
+    message.appendLiteral(", ");
+    message.appendNumber(dirtyRect.y());
+    message.appendLiteral(", ");
+    message.appendNumber(dirtyRect.width());
+    message.appendLiteral(", ");
+    message.appendNumber(dirtyRect.height());
+    message.appendLiteral(")");
+    overlay.page()->mainFrame().document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, message.toString());
+
     GraphicsContextStateSaver stateSaver(context);
 
     FloatRect insetRect = overlay.bounds();
@@ -97,8 +122,16 @@ void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& cont
     context.strokeRect(insetRect, 20);
 }
 
-bool MockPageOverlayClient::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
+bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouseEvent& event)
 {
+    StringBuilder message;
+    message.appendLiteral("MockPageOverlayClient::mouseEvent location (");
+    message.appendNumber(event.position().x());
+    message.appendLiteral(", ");
+    message.appendNumber(event.position().y());
+    message.appendLiteral(")");
+    overlay.page()->mainFrame().document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, message.toString());
+
     return false;
 }
 

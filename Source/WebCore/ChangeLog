@@ -1,3 +1,51 @@
+2015-12-15  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r191849): There's no yellow bouncy highlight when using Find on Page on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=152241
+        <rdar://problem/23642574>
+
+        Reviewed by Simon Fraser.
+
+        Tests: pageoverlay/overlay-small-frame-mouse-events.html
+               pageoverlay/overlay-small-frame-paints.html
+
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::bounds):
+        Revert r191849's change that made bounds() actually return the frame()
+        if we frame is manually overriden.
+
+        (WebCore::PageOverlay::mouseEvent):
+        Convert the mouse event the rest of the way into overlay coordinates (by
+        applying the overlay's frame origin) before deciding whether to handle
+        the event.
+
+        * page/PageOverlay.h:
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/Internals.cpp:
+        (WebCore::Internals::installMockPageOverlay):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockPageOverlay.cpp: Added.
+        (WebCore::MockPageOverlay::create):
+        (WebCore::MockPageOverlay::MockPageOverlay):
+        (WebCore::MockPageOverlay::setFrame):
+        * testing/MockPageOverlay.h: Added.
+        (WebCore::MockPageOverlay::overlay):
+        * testing/MockPageOverlay.idl: Added.
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::installOverlay):
+        (WebCore::MockPageOverlayClient::uninstallAllOverlays):
+        (WebCore::MockPageOverlayClient::pageOverlayDestroyed):
+        (WebCore::MockPageOverlayClient::drawRect):
+        (WebCore::MockPageOverlayClient::mouseEvent):
+        * testing/MockPageOverlayClient.h:
+        Make internals.installMockPageOverlay return a MockPageOverlay object so
+        tests can manipulate their overlay. For now, expose setFrame.
+        Also, log when MockPageOverlayClient gets asked to paint or receives a mouse event,
+        which will show up in test output. Slightly unconventional, but very convenient.
+
 2015-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Font Features] TrueType fonts trigger real features even when synthesis is applied

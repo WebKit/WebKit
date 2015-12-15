@@ -75,7 +75,7 @@ PageOverlayController* PageOverlay::controller() const
 IntRect PageOverlay::bounds() const
 {
     if (!m_overrideFrame.isEmpty())
-        return m_overrideFrame;
+        return { { }, m_overrideFrame.size() };
 
     FrameView* frameView = m_page->mainFrame().view();
 
@@ -187,6 +187,7 @@ bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
 
     if (m_overlayType == PageOverlay::OverlayType::Document)
         mousePositionInOverlayCoordinates = m_page->mainFrame().view()->windowToContents(mousePositionInOverlayCoordinates);
+    mousePositionInOverlayCoordinates.moveBy(-frame().location());
 
     // Ignore events outside the bounds.
     if (m_shouldIgnoreMouseEventsOutsideBounds && !bounds().contains(mousePositionInOverlayCoordinates))

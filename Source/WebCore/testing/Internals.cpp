@@ -82,6 +82,7 @@
 #include "MediaPlayer.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
+#include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -2990,16 +2991,15 @@ void Internals::setMockMediaPlaybackTargetPickerState(const String& deviceName, 
 }
 #endif
 
-
-void Internals::installMockPageOverlay(const String& overlayType, ExceptionCode& ec)
+RefPtr<MockPageOverlay> Internals::installMockPageOverlay(const String& overlayType, ExceptionCode& ec)
 {
     Document* document = contextDocument();
     if (!document || !document->frame()) {
         ec = INVALID_ACCESS_ERR;
-        return;
+        return nullptr;
     }
 
-    MockPageOverlayClient::singleton().installOverlay(document->frame()->mainFrame(), overlayType == "view" ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
+    return MockPageOverlayClient::singleton().installOverlay(document->frame()->mainFrame(), overlayType == "view" ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
 }
 
 String Internals::pageOverlayLayerTreeAsText(ExceptionCode& ec) const

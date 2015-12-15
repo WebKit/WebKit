@@ -130,7 +130,7 @@
 		07277E5317D018CC0015534D /* JSMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4717D018CC0015534D /* JSMediaStreamTrack.h */; };
 		07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */; };
 		07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */; };
-		07297FA71C1881C5003F0735 /* UserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */; settings = {ASSET_TAGS = (); }; };
+		07297FA71C1881C5003F0735 /* UserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */; };
 		07297FA81C1881C5003F0735 /* UserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072AE1E5183C0741000A5988 /* PluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1DF183C0741000A5988 /* PluginReplacement.h */; };
 		072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 072AE1E0183C0741000A5988 /* QuickTimePluginReplacement.mm */; };
@@ -1113,6 +1113,7 @@
 		2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4461917915C00034184 /* WebCoreCALayerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3EF44B1917915C00034184 /* WebCoreCALayerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D3EF4471917915C00034184 /* WebCoreCALayerExtras.mm */; };
 		2D413F611A187A3F0041A521 /* LookupSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D413F601A187A3F0041A521 /* LookupSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D6F3E921C1F85550061DBD4 /* JSMockPageOverlay.cpp */; };
 		2D46F04E17B96FBD005647F0 /* IntPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D46F04D17B96FBD005647F0 /* IntPoint.cpp */; };
 		2D46F05017B96FD2005647F0 /* IntSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D46F04F17B96FD2005647F0 /* IntSize.cpp */; };
 		2D481F00146B5C4C00AA7834 /* CrossfadeGeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */; };
@@ -1139,6 +1140,9 @@
 		2D5C9D0119C7B52E00B3C5C1 /* PageOverlayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5C9CFD19C7B52E00B3C5C1 /* PageOverlayController.cpp */; };
 		2D5C9D0219C7B52E00B3C5C1 /* PageOverlayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9CFE19C7B52E00B3C5C1 /* PageOverlayController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */; };
+		2D6F3E901C1ECB270061DBD4 /* MockPageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D6F3E8A1C1ECB1C0061DBD4 /* MockPageOverlay.cpp */; };
+		2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6F3E8B1C1ECB1C0061DBD4 /* MockPageOverlay.h */; };
+		2D6F3E951C1F85550061DBD4 /* JSMockPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6F3E931C1F85550061DBD4 /* JSMockPageOverlay.h */; };
 		2D70BA1318074DDF0001908A /* PlatformCALayerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D70BA1218074DDF0001908A /* PlatformCALayerCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D70BA1518074F860001908A /* PlatformCALayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D70BA1418074F850001908A /* PlatformCALayer.cpp */; };
 		2D76BB821945632400CFD29A /* RunLoopObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D76BB801945632400CFD29A /* RunLoopObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8490,6 +8494,11 @@
 		2D5C9CFD19C7B52E00B3C5C1 /* PageOverlayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlayController.cpp; sourceTree = "<group>"; };
 		2D5C9CFE19C7B52E00B3C5C1 /* PageOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageOverlayController.h; sourceTree = "<group>"; };
 		2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDocumentImageMac.mm; sourceTree = "<group>"; };
+		2D6F3E8A1C1ECB1C0061DBD4 /* MockPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockPageOverlay.cpp; sourceTree = "<group>"; };
+		2D6F3E8B1C1ECB1C0061DBD4 /* MockPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPageOverlay.h; sourceTree = "<group>"; };
+		2D6F3E8C1C1ECB1C0061DBD4 /* MockPageOverlay.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MockPageOverlay.idl; sourceTree = "<group>"; };
+		2D6F3E921C1F85550061DBD4 /* JSMockPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockPageOverlay.cpp; sourceTree = "<group>"; };
+		2D6F3E931C1F85550061DBD4 /* JSMockPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockPageOverlay.h; sourceTree = "<group>"; };
 		2D70BA1218074DDF0001908A /* PlatformCALayerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerCocoa.h; sourceTree = "<group>"; };
 		2D70BA1418074F850001908A /* PlatformCALayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayer.cpp; sourceTree = "<group>"; };
 		2D76BB801945632400CFD29A /* RunLoopObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopObserver.h; sourceTree = "<group>"; };
@@ -16401,6 +16410,9 @@
 				A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */,
 				A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */,
 				A19AEA1C1AAA7C4900B52B25 /* MockContentFilterSettings.idl */,
+				2D6F3E8A1C1ECB1C0061DBD4 /* MockPageOverlay.cpp */,
+				2D6F3E8B1C1ECB1C0061DBD4 /* MockPageOverlay.h */,
+				2D6F3E8C1C1ECB1C0061DBD4 /* MockPageOverlay.idl */,
 				2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */,
 				2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */,
 				EB081CD81696084400553730 /* TypeConversions.h */,
@@ -16425,6 +16437,8 @@
 				CD5393D2175E018600C07123 /* JSMemoryInfo.h */,
 				A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */,
 				A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */,
+				2D6F3E921C1F85550061DBD4 /* JSMockPageOverlay.cpp */,
+				2D6F3E931C1F85550061DBD4 /* JSMockPageOverlay.h */,
 				EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */,
 				EBF5121B1696496C0056BD25 /* JSTypeConversions.h */,
 			);
@@ -24486,6 +24500,7 @@
 				417DA71E13735DFA007C57FB /* JSInternals.h in Headers */,
 				A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */,
 				53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */,
+				2D6F3E911C1ECB2F0061DBD4 /* MockPageOverlay.h in Headers */,
 				A740B59514C935AB00A77FA4 /* JSMallocStatistics.h in Headers */,
 				CD5393D4175E018600C07123 /* JSMemoryInfo.h in Headers */,
 				A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */,
@@ -27563,6 +27578,7 @@
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,
 				B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */,
 				1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */,
+				2D6F3E951C1F85550061DBD4 /* JSMockPageOverlay.h in Headers */,
 				B22279D40D00BF220071B782 /* SVGFEDiffuseLightingElement.h in Headers */,
 				B22279D70D00BF220071B782 /* SVGFEDisplacementMapElement.h in Headers */,
 				B22279DA0D00BF220071B782 /* SVGFEDistantLightElement.h in Headers */,
@@ -28402,6 +28418,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */,
 				417DA6D913734E6E007C57FB /* Internals.cpp in Sources */,
 				E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */,
 				A7BF7EDF14C9175A0014489D /* InternalSettings.cpp in Sources */,
@@ -28413,6 +28430,7 @@
 				CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */,
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
 				A1E5B31F1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp in Sources */,
+				2D6F3E901C1ECB270061DBD4 /* MockPageOverlay.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* MockCDM.cpp in Sources */,
 				A1BF6B821AA96C7D00AF4A8A /* MockContentFilter.cpp in Sources */,

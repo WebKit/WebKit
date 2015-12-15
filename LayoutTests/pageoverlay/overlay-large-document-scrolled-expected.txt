@@ -1,3 +1,8 @@
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (0, 0, 785, 585)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (4608, 4608, 400, 408)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (4096, 4608, 512, 408)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (4608, 4096, 400, 512)
+CONSOLE MESSAGE: MockPageOverlayClient::drawRect dirtyRect (4096, 4096, 512, 512)
 View-relative:
 (GraphicsLayer
   (children 1
