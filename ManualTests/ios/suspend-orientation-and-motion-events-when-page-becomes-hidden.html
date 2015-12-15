@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/suspend-orientation-and-motion-events-when-page-becomes-hidden.js"></script>
+</head>
+<body>
+<p>This test can be used to verify that <code>devicemotion</code> and <code>deviceorientation</code> events are not dispatched when the page is hidden.</p>
+<button onclick="window.open('suspend-orientation-and-motion-events-when-page-becomes-hidden.html')">Open this page in a child window to verify that this page does not receive events when the child window is the front-most window</button>
+<pre id="console"></pre>
+</body>
+</html>

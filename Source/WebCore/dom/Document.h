@@ -583,6 +583,9 @@ public:
     virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) override final;
     virtual void stopActiveDOMObjects() override final;
 
+    void suspendDeviceMotionAndOrientationUpdates();
+    void resumeDeviceMotionAndOrientationUpdates();
+
     RenderView* renderView() const { return m_renderView.get(); }
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
@@ -1745,6 +1748,7 @@ private:
 #if ENABLE(MEDIA_SESSION)
     RefPtr<MediaSession> m_defaultMediaSession;
 #endif
+    bool m_areDeviceMotionAndOrientationUpdatesSuspended { false };
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()
