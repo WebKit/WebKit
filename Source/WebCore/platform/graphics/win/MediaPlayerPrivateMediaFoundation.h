@@ -63,6 +63,8 @@ public:
     virtual void play();
     virtual void pause();
 
+    virtual bool supportsFullscreen() const;
+
     virtual FloatSize naturalSize() const;
 
     virtual bool hasVideo() const;

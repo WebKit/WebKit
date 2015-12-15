@@ -1,3 +1,18 @@
+2015-12-15  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][MediaFoundation] Full screen mode is not supported.
+        https://bugs.webkit.org/show_bug.cgi?id=152300
+
+        Reviewed by Darin Adler.
+
+        We need to let WebCore know MediaFoundation supports full screen mode.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::pause):
+        (WebCore::MediaPlayerPrivateMediaFoundation::supportsFullscreen):
+        (WebCore::MediaPlayerPrivateMediaFoundation::naturalSize):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2015-12-15  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align][css-grid] Overflow alignment value 'true' renamed to 'unsafe'

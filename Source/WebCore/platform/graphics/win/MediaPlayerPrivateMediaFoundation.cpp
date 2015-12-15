@@ -176,6 +176,11 @@ void MediaPlayerPrivateMediaFoundation::pause()
     m_paused = SUCCEEDED(m_mediaSession->Pause());
 }
 
+bool MediaPlayerPrivateMediaFoundation::supportsFullscreen() const
+{
+    return true;
+}
+
 FloatSize MediaPlayerPrivateMediaFoundation::naturalSize() const 
 {
     return m_size;
