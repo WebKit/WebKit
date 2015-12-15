@@ -79,9 +79,7 @@ class OSBuildFetcher:
             kind = ord(match.group('kind').upper()) - ord('A')
             minor = int(match.group('minor'))
             variant = ord(match.group('variant').upper()) - ord('A') + 1 if match.group('variant') else 0
-            # These fake times won't conflict with real commit time since even 99Z9999z is still in Feb 1973
-            fake_time = datetime.utcfromtimestamp((major * 100 + kind) * 10000 + minor + float(variant) / 100)
-            commit['order'] = fake_time.isoformat()
+            commit['order'] = ((major * 100 + kind) * 10000 + minor) * 100 + variant
 
 
 def available_builds_from_command(repository_name, command, lines_to_ignore):
@@ -89,6 +87,7 @@ def available_builds_from_command(repository_name, command, lines_to_ignore):
         output = subprocess.check_output(command, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as error:
         print "Failed:", str(error)
+        return []
 
     regex = re.compile(lines_to_ignore)
     return [{'repository': repository_name, 'revision': line} for line in output.split('\n') if not regex.match(line)]

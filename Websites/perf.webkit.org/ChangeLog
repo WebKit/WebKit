@@ -1,5 +1,22 @@
 2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Using fake timestamp in OS version make some results invisible
+        https://bugs.webkit.org/show_bug.cgi?id=152289
+
+        Reviewed by Stephanie Lewis.
+
+        Fix various bugs after r194088.
+
+        * public/api/commits.php:
+        (format_commit): Include the commit order.
+        * public/v2/data.js:
+        (CommitLogs._cacheConsecutiveCommits): Sort by commit order when commit time is missing.
+        * tools/pull-os-versions.py:
+        (OSBuildFetcher._assign_order): Use integer instead of fake time for commit order.
+        (available_builds_from_command): Exit early when an exception is thrown.
+
+2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo in the previous commit.
 
         * public/include/report-processor.php:

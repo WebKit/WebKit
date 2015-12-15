@@ -136,7 +136,7 @@ CommitLogs._cacheConsecutiveCommits = function (repository, from, to, consecutiv
         cachedCommits.commitsByTime.push(commit);
     });
 
-    cachedCommits.commitsByTime.sort(function (a, b) { return a.time - b.time; });
+    cachedCommits.commitsByTime.sort(function (a, b) { return a.time && b.time ? (a.time - b.time) : (a.order - b.order); });
     cachedCommits.commitsByTime.forEach(function (commit, index) { commit.cacheIndex = index; });
 }
 

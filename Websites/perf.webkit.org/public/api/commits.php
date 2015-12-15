@@ -116,6 +116,7 @@ function format_commit($commit_row, $committer_row) {
         'revision' => $commit_row['commit_revision'],
         'parent' => $commit_row['commit_parent'],
         'time' => Database::to_js_time($commit_row['commit_time']),
+        'order' => $commit_row['commit_order'],
         'authorName' => $committer_row ? $committer_row['committer_name'] : null,
         'authorEmail' => $committer_row ? $committer_row['committer_account'] : null,
         'message' => $commit_row['commit_message']
