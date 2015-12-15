@@ -1,3 +1,19 @@
+2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard can't merge when the destination platform is missing baseline/target
+        https://bugs.webkit.org/show_bug.cgi?id=152286
+
+        Reviewed by Stephanie Lewis.
+
+        The bug was caused by the query to migrate test configurations to new platform checking
+        configuration type and metric separately; that is, it assumes the configuration exists
+        only if either the same type or the same metric exists in the destination.
+
+        Fixed the bug by checking both conditions simultaneously for each configuration.
+
+        * public/admin/platforms.php:
+        * tests/admin-platforms.js: Added a test.
+
 2015-12-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard's buildbot sync config JSON duplicates too much information

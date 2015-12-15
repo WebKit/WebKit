@@ -89,4 +89,34 @@ describe("/admin/platforms", function () {
         });
     });
 
+    it("should move test configurations from the merged platform to the destination platform", function () {
+        reportsForDifferentPlatforms[0]['tests'] = {"test": { "metrics": {"FrameRate": { "baseline": [[1, 1, 1], [1, 1, 1]] } } } };
+        submitReport(reportsForDifferentPlatforms, function () {
+            var queryForConfig = 'SELECT * from test_configurations, platforms, test_metrics'
+                + ' where config_platform = platform_id and config_metric = metric_id and platform_name in ($1, $2) order by config_id';
+            queryAndFetchAll(queryForConfig, [reportsForDifferentPlatforms[0]['platform'], reportsForDifferentPlatforms[2]['platform']], function (configs) {
+                assert.equal(configs.length, 2);
+                assert.equal(configs[0]['platform_name'], reportsForDifferentPlatforms[0]['platform']);
+                assert.equal(configs[0]['metric_name'], 'FrameRate');
+                assert.equal(configs[0]['config_type'], 'baseline');
+                assert.equal(configs[1]['platform_name'], reportsForDifferentPlatforms[2]['platform']);
+                assert.equal(configs[1]['metric_name'], 'FrameRate');
+                assert.equal(configs[1]['config_type'], 'current');
+                httpPost('/admin/platforms.php', {'action': 'merge', 'id': configs[0]['platform_id'], 'destination': configs[1]['platform_id']}, function (response) {
+                    assert.equal(response.statusCode, 200);
+                    queryAndFetchAll(queryForConfig, [reportsForDifferentPlatforms[0]['platform'], reportsForDifferentPlatforms[2]['platform']], function (newConfigs) {
+                        assert.equal(newConfigs.length, 2);
+                        assert.equal(newConfigs[0]['platform_name'], reportsForDifferentPlatforms[2]['platform']);
+                        assert.equal(newConfigs[0]['metric_name'], 'FrameRate');
+                        assert.equal(newConfigs[0]['config_type'], 'baseline');
+                        assert.equal(newConfigs[1]['platform_name'], reportsForDifferentPlatforms[2]['platform']);
+                        assert.equal(newConfigs[1]['metric_name'], 'FrameRate');
+                        assert.equal(newConfigs[1]['config_type'], 'current');
+                        notifyDone();
+                    });
+                });
+            });
+        });
+    });
+
 });

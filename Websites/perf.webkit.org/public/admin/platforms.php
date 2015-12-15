@@ -21,9 +21,11 @@ function merge_platforms($platform_to_merge, $destination_platform) {
 
     // Then migrate test configurations that don't exist in the destination platform to the new platform
     // so that test runs associated with those configurations are moved to the destination.
-    if ($db->query_and_get_affected_rows('UPDATE test_configurations SET config_platform = $2
-        WHERE config_platform = $1 AND (config_metric NOT IN (SELECT config_metric FROM test_configurations WHERE config_platform = $2)
-            OR config_type NOT IN (SELECT config_type FROM test_configurations WHERE config_platform = $2))',
+    if ($db->query_and_get_affected_rows('UPDATE test_configurations as merged SET config_platform = $2
+        WHERE config_platform = $1 AND NOT EXISTS (SELECT * FROM test_configurations as destination WHERE
+            merged.config_platform = $1 AND destination.config_platform = $2
+                AND destination.config_type = merged.config_type
+                AND destination.config_metric = merged.config_metric)',
         array($platform_to_merge, $destination_platform)) === FALSE) {
         $db->rollback_transaction();
         return notice("Failed to migrate test configurations for $platform_to_merge.");
