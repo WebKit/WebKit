@@ -2125,7 +2125,7 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithRound continuation"));
 
         LValue value = lowDouble(m_node->child1());
-        LValue integerValue = m_out.ceil64(value);
+        LValue integerValue = m_out.doubleCeil(value);
         ValueFromBlock integerValueResult = m_out.anchor(integerValue);
 
         LValue realPart = m_out.doubleSub(integerValue, value);

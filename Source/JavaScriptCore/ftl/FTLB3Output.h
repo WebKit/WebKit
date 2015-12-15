@@ -154,7 +154,6 @@ public:
     LValue lShr(LValue left, LValue right) { return m_block->appendNew<B3::Value>(m_proc, B3::ZShr, origin(), left, castToInt32(right)); }
     LValue bitNot(LValue);
 
-    LValue ceil64(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Ceil, origin(), operand); }
     LValue ctlz32(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Clz, origin(), operand); }
     LValue addWithOverflow32(LValue left, LValue right) { CRASH(); }
     LValue subWithOverflow32(LValue left, LValue right) { CRASH(); }
@@ -163,6 +162,7 @@ public:
     LValue subWithOverflow64(LValue left, LValue right) { CRASH(); }
     LValue mulWithOverflow64(LValue left, LValue right) { CRASH(); }
     LValue doubleAbs(LValue value) { return m_block->appendNew<B3::Value>(m_proc, B3::Abs, origin(), value); }
+    LValue doubleCeil(LValue operand) { return m_block->appendNew<B3::Value>(m_proc, B3::Ceil, origin(), operand); }
 
     LValue doubleSin(LValue value) { return callWithoutSideEffects(B3::Double, sin, value); }
     LValue doubleCos(LValue value) { return callWithoutSideEffects(B3::Double, cos, value); }

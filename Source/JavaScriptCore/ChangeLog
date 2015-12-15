@@ -1,3 +1,17 @@
+2015-12-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Rename FTL::Output's ceil64() to doubleCeil()
+
+        Rubber-stamped by Filip Pizlo.
+
+        ceil64() was a bad name, that's the name convention we use for integers.
+
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::doubleCeil):
+        (JSC::FTL::Output::ceil64): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithRound):
+
 2015-12-14  Filip Pizlo  <fpizlo@apple.com>
 
         FTL B3 should be able to run n-body.js

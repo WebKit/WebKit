@@ -147,10 +147,6 @@ public:
     
     LValue insertElement(LValue vector, LValue element, LValue index) { return buildInsertElement(m_builder, vector, element, index); }
 
-    LValue ceil64(LValue operand)
-    {
-        return call(doubleType, ceil64Intrinsic(), operand);
-    }
     LValue ctlz32(LValue operand)
     {
         return call(int32, ctlz32Intrinsic(), operand, booleanFalse);
@@ -182,6 +178,10 @@ public:
     LValue doubleAbs(LValue value)
     {
         return call(doubleType, doubleAbsIntrinsic(), value);
+    }
+    LValue doubleCeil(LValue operand)
+    {
+        return call(doubleType, ceil64Intrinsic(), operand);
     }
 
     LValue doubleSin(LValue value)
