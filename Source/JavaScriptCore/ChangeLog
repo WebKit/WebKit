@@ -1,3 +1,16 @@
+2015-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should be able to run n-body.js
+        https://bugs.webkit.org/show_bug.cgi?id=152281
+
+        Reviewed by Benjamin Poulain.
+
+        Fix a bug where m_captured was pointing to the start of the captured vars slot rather than the
+        end, like the rest of the FTL expected.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+
 2015-12-14  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix bad copy-paste in r194062
