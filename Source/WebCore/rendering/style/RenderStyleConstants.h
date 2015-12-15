@@ -252,7 +252,7 @@ enum EAlignContent { AlignContentFlexStart, AlignContentFlexEnd, AlignContentCen
 enum EFlexDirection { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse };
 enum EFlexWrap { FlexNoWrap, FlexWrap, FlexWrapReverse };
 enum ItemPosition {ItemPositionAuto, ItemPositionStretch, ItemPositionBaseline, ItemPositionLastBaseline, ItemPositionCenter, ItemPositionStart, ItemPositionEnd, ItemPositionSelfStart, ItemPositionSelfEnd, ItemPositionFlexStart, ItemPositionFlexEnd, ItemPositionLeft, ItemPositionRight};
-enum OverflowAlignment {OverflowAlignmentDefault, OverflowAlignmentTrue, OverflowAlignmentSafe};
+enum OverflowAlignment {OverflowAlignmentDefault, OverflowAlignmentUnsafe, OverflowAlignmentSafe};
 enum ItemPositionType {NonLegacyPosition, LegacyPosition};
 enum ContentPosition {ContentPositionAuto, ContentPositionBaseline, ContentPositionLastBaseline, ContentPositionCenter, ContentPositionStart, ContentPositionEnd, ContentPositionFlexStart, ContentPositionFlexEnd, ContentPositionLeft, ContentPositionRight};
 enum ContentDistributionType {ContentDistributionDefault, ContentDistributionSpaceBetween, ContentDistributionSpaceAround, ContentDistributionSpaceEvenly, ContentDistributionStretch};

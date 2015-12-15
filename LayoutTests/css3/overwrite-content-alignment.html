@@ -5,7 +5,7 @@
 }
 .parent .child {
    display: -webkit-flex;
-   justify-content: flex-end true;
+   justify-content: flex-end unsafe;
    align-content: center safe;
 }
 #parentId .child {
@@ -25,7 +25,7 @@
 description('Test overwriting justify-content and align-content works as expected');
 
 var childOfDefaultParent = document.getElementById("childOfDefaultParent");
-shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('justify-content')", "flex-end true");
+shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('justify-content')", "flex-end unsafe");
 shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('align-content')", "center safe");
 
 var childOfParentId = document.getElementById("childOfParentId");

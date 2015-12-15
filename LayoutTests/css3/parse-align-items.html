@@ -50,12 +50,12 @@
     -webkit-align-items: flex-end;
 }
 
-#alignItemsEndTrue {
-    -webkit-align-items: end true;
+#alignItemsEndUnsafe {
+    -webkit-align-items: end unsafe;
 }
 
-#alignItemsCenterTrue {
-    -webkit-align-items: center true;
+#alignItemsCenterUnsafe {
+    -webkit-align-items: center unsafe;
 }
 
 #alignItemsSelfEndSafe {
@@ -70,12 +70,12 @@
     -webkit-align-items: right safe;
 }
 
-#alignItemsLeftTrue {
-    -webkit-align-items: left true;
+#alignItemsLeftUnsafe {
+    -webkit-align-items: left unsafe;
 }
 
-#alignItemsFlexStartTrue {
-    -webkit-align-items: flex-start true;
+#alignItemsFlexStartUnsafe {
+    -webkit-align-items: flex-start unsafe;
 }
 
 #alignItemsFlexEndSafe {
@@ -99,13 +99,13 @@
 <div id="alignItemsFlexStart"></div>
 <div id="alignItemsFlexEnd"></div>
 
-<div id="alignItemsEndTrue"></div>
-<div id="alignItemsCenterTrue"></div>
+<div id="alignItemsEndUnsafe"></div>
+<div id="alignItemsCenterUnsafe"></div>
 <div id="alignItemsSelfEndSafe"></div>
 <div id="alignItemsSelfStartSafe"></div>
 <div id="alignItemsRightSafe"></div>
-<div id="alignItemsLeftTrue"></div>
-<div id="alignItemsFlexStartTrue"></div>
+<div id="alignItemsLeftUnsafe"></div>
+<div id="alignItemsFlexStartUnsafe"></div>
 <div id="alignItemsFlexEndSafe"></div>
 <script src="resources/alignment-parsing-utils.js"></script>
 <script>
@@ -148,11 +148,11 @@ shouldBe("getComputedStyle(alignItemsFlexStart, '').getPropertyValue('-webkit-al
 var alignItemsFlexEnd = document.getElementById("alignItemsFlexEnd");
 shouldBe("getComputedStyle(alignItemsFlexEnd, '').getPropertyValue('-webkit-align-items')", "'flex-end'");
 
-var alignItemsEndTrue = document.getElementById("alignItemsEndTrue");
-shouldBe("getComputedStyle(alignItemsEndTrue, '').getPropertyValue('-webkit-align-items')", "'end true'");
+var alignItemsEndUnsafe = document.getElementById("alignItemsEndUnsafe");
+shouldBe("getComputedStyle(alignItemsEndUnsafe, '').getPropertyValue('-webkit-align-items')", "'end unsafe'");
 
-var alignItemsCenterTrue = document.getElementById("alignItemsCenterTrue");
-shouldBe("getComputedStyle(alignItemsCenterTrue, '').getPropertyValue('-webkit-align-items')", "'center true'");
+var alignItemsCenterUnsafe = document.getElementById("alignItemsCenterUnsafe");
+shouldBe("getComputedStyle(alignItemsCenterUnsafe, '').getPropertyValue('-webkit-align-items')", "'center unsafe'");
 
 var alignItemsSelfEndSafe = document.getElementById("alignItemsSelfEndSafe");
 shouldBe("getComputedStyle(alignItemsSelfEndSafe, '').getPropertyValue('-webkit-align-items')", "'self-end safe'");
@@ -163,11 +163,11 @@ shouldBe("getComputedStyle(alignItemsSelfStartSafe, '').getPropertyValue('-webki
 var alignItemsRightSafe = document.getElementById("alignItemsRightSafe");
 shouldBe("getComputedStyle(alignItemsRightSafe, '').getPropertyValue('-webkit-align-items')", "'right safe'");
 
-var alignItemsLeftTrue = document.getElementById("alignItemsLeftTrue");
-shouldBe("getComputedStyle(alignItemsLeftTrue, '').getPropertyValue('-webkit-align-items')", "'left true'");
+var alignItemsLeftUnsafe = document.getElementById("alignItemsLeftUnsafe");
+shouldBe("getComputedStyle(alignItemsLeftUnsafe, '').getPropertyValue('-webkit-align-items')", "'left unsafe'");
 
-var alignItemsFlexStartTrue = document.getElementById("alignItemsFlexStartTrue");
-shouldBe("getComputedStyle(alignItemsFlexStartTrue, '').getPropertyValue('-webkit-align-items')", "'flex-start true'");
+var alignItemsFlexStartUnsafe = document.getElementById("alignItemsFlexStartUnsafe");
+shouldBe("getComputedStyle(alignItemsFlexStartUnsafe, '').getPropertyValue('-webkit-align-items')", "'flex-start unsafe'");
 
 var alignItemsFlexEndSafe = document.getElementById("alignItemsFlexEndSafe");
 shouldBe("getComputedStyle(alignItemsFlexEndSafe, '').getPropertyValue('-webkit-align-items')", "'flex-end safe'");
@@ -185,8 +185,8 @@ document.body.appendChild(element);
 element.style.webkitAlignItems = "center";
 checkValues(element, "webkitAlignItems", "-webkit-align-items",  "center", "center");
 
-element.style.webkitAlignItems = "true start";
-checkValues(element, "webkitAlignItems", "-webkit-align-items",  "start true", "start true");
+element.style.webkitAlignItems = "unsafe start";
+checkValues(element, "webkitAlignItems", "-webkit-align-items",  "start unsafe", "start unsafe");
 
 element.style.webkitAlignItems = "flex-end safe";
 checkValues(element, "webkitAlignItems", "-webkit-align-items",  "flex-end safe", "flex-end safe");
@@ -219,26 +219,26 @@ debug("Test bad combinations of align-items");
 element = document.createElement("div");
 document.body.appendChild(element);
 
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "true auto");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "unsafe auto");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "auto safe");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "auto left");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "baseline safe");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "baseline center");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "stretch true");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "stretch unsafe");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "stretch right");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "true true");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "true safe");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "unsafe unsafe");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "unsafe safe");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "center start");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "stretch true");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "stretch unsafe");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "safe stretch");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "baseline safe");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "true baseline");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "true safe left");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "true left safe");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "left safe true safe");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "unsafe baseline");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "unsafe safe left");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "unsafe left safe");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "left safe unsafe safe");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "legacy start");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "legacy end");
-checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "legacy right true");
+checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "legacy right unsafe");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "legacy auto");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "legacy stretch");
 checkBadValues(element, "webkitAlignItems", "-webkit-align-items",  "legacy");
@@ -257,13 +257,13 @@ checkInitialValues(element, "webkitAlignItems", "-webkit-align-items", "left saf
 debug("");
 debug("Test the value 'initial' for flex containers");
 element.style.display = "-webkit-flex";
-checkInitialValues(element, "webkitAlignItems", "-webkit-align-items", "right true", "stretch");
+checkInitialValues(element, "webkitAlignItems", "-webkit-align-items", "right unsafe", "stretch");
 
 debug("");
 debug("Test the value 'inherit'");
 checkInheritValues("webkitAlignItems", "-webkit-align-items", "end");
 checkInheritValues("webkitAlignItems", "-webkit-align-items", "left safe");
-checkInheritValues("webkitAlignItems", "-webkit-align-items", "center true");
+checkInheritValues("webkitAlignItems", "-webkit-align-items", "center unsafe");
 
 </script>
 </body>

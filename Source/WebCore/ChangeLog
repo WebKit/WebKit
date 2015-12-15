@@ -1,3 +1,30 @@
+2015-12-15  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align][css-grid] Overflow alignment value 'true' renamed to 'unsafe'
+        https://bugs.webkit.org/show_bug.cgi?id=152251
+
+        Reviewed by Darin Adler.
+
+        The 'True' Overflow Alignment keyword is now defined in the Box Alignment
+        specification as 'Unsafe'.
+
+        This patch applies the required changes in the CSS parsing logic, as well
+        Grid Layout specific codebase, so it complies with the last version of the
+        spec.
+
+        No new tests, no change in functionality.
+
+        * css/CSSParser.cpp:
+        (WebCore::isAlignmentOverflowKeyword):
+        (WebCore::CSSParser::parseItemPositionOverflowPosition):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator OverflowAlignment):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderGrid.cpp:
+        (WebCore::computeOverflowAlignmentOffset):
+        * rendering/style/RenderStyleConstants.h:
+
 2015-12-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Operate with a reference to the TextureMapper wherever possible

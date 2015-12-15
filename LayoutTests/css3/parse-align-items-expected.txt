@@ -16,13 +16,13 @@ PASS getComputedStyle(alignItemsLeft, '').getPropertyValue('-webkit-align-items'
 PASS getComputedStyle(alignItemsRight, '').getPropertyValue('-webkit-align-items') is 'right'
 PASS getComputedStyle(alignItemsFlexStart, '').getPropertyValue('-webkit-align-items') is 'flex-start'
 PASS getComputedStyle(alignItemsFlexEnd, '').getPropertyValue('-webkit-align-items') is 'flex-end'
-PASS getComputedStyle(alignItemsEndTrue, '').getPropertyValue('-webkit-align-items') is 'end true'
-PASS getComputedStyle(alignItemsCenterTrue, '').getPropertyValue('-webkit-align-items') is 'center true'
+PASS getComputedStyle(alignItemsEndUnsafe, '').getPropertyValue('-webkit-align-items') is 'end unsafe'
+PASS getComputedStyle(alignItemsCenterUnsafe, '').getPropertyValue('-webkit-align-items') is 'center unsafe'
 PASS getComputedStyle(alignItemsSelfEndSafe, '').getPropertyValue('-webkit-align-items') is 'self-end safe'
 PASS getComputedStyle(alignItemsSelfStartSafe, '').getPropertyValue('-webkit-align-items') is 'self-start safe'
 PASS getComputedStyle(alignItemsRightSafe, '').getPropertyValue('-webkit-align-items') is 'right safe'
-PASS getComputedStyle(alignItemsLeftTrue, '').getPropertyValue('-webkit-align-items') is 'left true'
-PASS getComputedStyle(alignItemsFlexStartTrue, '').getPropertyValue('-webkit-align-items') is 'flex-start true'
+PASS getComputedStyle(alignItemsLeftUnsafe, '').getPropertyValue('-webkit-align-items') is 'left unsafe'
+PASS getComputedStyle(alignItemsFlexStartUnsafe, '').getPropertyValue('-webkit-align-items') is 'flex-start unsafe'
 PASS getComputedStyle(alignItemsFlexEndSafe, '').getPropertyValue('-webkit-align-items') is 'flex-end safe'
 
 Test initial value of align-items through JS
@@ -31,8 +31,8 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is 's
 Test getting and setting align-items through JS
 PASS element.style.webkitAlignItems is "center"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center"
-PASS element.style.webkitAlignItems is "start true"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start true"
+PASS element.style.webkitAlignItems is "start unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "start unsafe"
 PASS element.style.webkitAlignItems is "flex-end safe"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "flex-end safe"
 PASS element.style.webkitAlignItems is "right"
@@ -113,8 +113,8 @@ PASS element.style.webkitAlignItems is "initial"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "stretch"
 
 Test the value 'initial' for flex containers
-PASS element.style.webkitAlignItems is "right true"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "right true"
+PASS element.style.webkitAlignItems is "right unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "right unsafe"
 PASS element.style.webkitAlignItems is "initial"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "stretch"
 
@@ -127,10 +127,10 @@ PASS element.style.webkitAlignItems is "left safe"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "left safe"
 PASS element.style.webkitAlignItems is "inherit"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "left safe"
-PASS element.style.webkitAlignItems is "center true"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center true"
+PASS element.style.webkitAlignItems is "center unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center unsafe"
 PASS element.style.webkitAlignItems is "inherit"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center true"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "center unsafe"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -16,13 +16,13 @@ PASS getComputedStyle(alignSelfLeft, '').getPropertyValue('-webkit-align-self') 
 PASS getComputedStyle(alignSelfRight, '').getPropertyValue('-webkit-align-self') is 'right'
 PASS getComputedStyle(alignSelfFlexStart, '').getPropertyValue('-webkit-align-self') is 'flex-start'
 PASS getComputedStyle(alignSelfFlexEnd, '').getPropertyValue('-webkit-align-self') is 'flex-end'
-PASS getComputedStyle(alignSelfEndTrue, '').getPropertyValue('-webkit-align-self') is 'end true'
-PASS getComputedStyle(alignSelfCenterTrue, '').getPropertyValue('-webkit-align-self') is 'center true'
+PASS getComputedStyle(alignSelfEndUnsafe, '').getPropertyValue('-webkit-align-self') is 'end unsafe'
+PASS getComputedStyle(alignSelfCenterUnsafe, '').getPropertyValue('-webkit-align-self') is 'center unsafe'
 PASS getComputedStyle(alignSelfSelfEndSafe, '').getPropertyValue('-webkit-align-self') is 'self-end safe'
 PASS getComputedStyle(alignSelfSelfStartSafe, '').getPropertyValue('-webkit-align-self') is 'self-start safe'
 PASS getComputedStyle(alignSelfRightSafe, '').getPropertyValue('-webkit-align-self') is 'right safe'
-PASS getComputedStyle(alignSelfLeftTrue, '').getPropertyValue('-webkit-align-self') is 'left true'
-PASS getComputedStyle(alignSelfFlexStartTrue, '').getPropertyValue('-webkit-align-self') is 'flex-start true'
+PASS getComputedStyle(alignSelfLeftUnsafe, '').getPropertyValue('-webkit-align-self') is 'left unsafe'
+PASS getComputedStyle(alignSelfFlexStartUnsafe, '').getPropertyValue('-webkit-align-self') is 'flex-start unsafe'
 PASS getComputedStyle(alignSelfFlexEndSafe, '').getPropertyValue('-webkit-align-self') is 'flex-end safe'
 
 Test initial value of align-self through JS
@@ -31,8 +31,8 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is 'st
 Test getting and setting align-self through JS
 PASS element.style.webkitAlignSelf is "center"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "center"
-PASS element.style.webkitAlignSelf is "start true"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "start true"
+PASS element.style.webkitAlignSelf is "start unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "start unsafe"
 PASS element.style.webkitAlignSelf is "flex-end safe"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "flex-end safe"
 PASS element.style.webkitAlignSelf is "right"
@@ -113,8 +113,8 @@ PASS element.style.webkitAlignSelf is "initial"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "stretch"
 
 Test the value 'initial' for flex containers
-PASS element.style.webkitAlignSelf is "right true"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "right true"
+PASS element.style.webkitAlignSelf is "right unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "right unsafe"
 PASS element.style.webkitAlignSelf is "initial"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "stretch"
 
@@ -145,10 +145,10 @@ PASS element.style.webkitAlignSelf is "left safe"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "left safe"
 PASS element.style.webkitAlignSelf is "inherit"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "left safe"
-PASS element.style.webkitAlignSelf is "center true"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "center true"
+PASS element.style.webkitAlignSelf is "center unsafe"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "center unsafe"
 PASS element.style.webkitAlignSelf is "inherit"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "center true"
+PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-self') is "center unsafe"
 PASS successfullyParsed is true
 
 TEST COMPLETE

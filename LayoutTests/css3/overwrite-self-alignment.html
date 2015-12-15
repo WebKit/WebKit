@@ -2,12 +2,12 @@
 <style>
 .parent {
    display: -webkit-flex;
-   justify-items: flex-end true;
+   justify-items: flex-end unsafe;
    align-items: flex-start safe;
 }
 .parent .child {
    display: -webkit-flex;
-   justify-self: flex-end true;
+   justify-self: flex-end unsafe;
    align-self: flex-start safe;
 }
 #parentId {
@@ -35,7 +35,7 @@ shouldBeEqualToString("getComputedStyle(parent, '').getPropertyValue('justify-it
 shouldBeEqualToString("getComputedStyle(parent, '').getPropertyValue('align-items')", "stretch");
 
 var childOfDefaultParent = document.getElementById("childOfDefaultParent");
-shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('justify-self')", "flex-end true");
+shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('justify-self')", "flex-end unsafe");
 shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('align-self')", "flex-start safe");
 
 var childOfParentId = document.getElementById("childOfParentId");

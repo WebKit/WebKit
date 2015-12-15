@@ -21,7 +21,7 @@ body {
 .item1 {
   -webkit-grid-row: 1;
   -webkit-grid-column: 1;
-  justify-self: end true;
+  justify-self: end unsafe;
   background-color: green;
   width: 150px;
 }
@@ -29,7 +29,7 @@ body {
   -webkit-grid-row: 1;
   -webkit-grid-column: 2;
   background-color: green;
-  justify-self: end true;
+  justify-self: end unsafe;
   width: 50px;
 </style>
 <p style="height: 20px">Tests invalidation on justify-self style change. Passes if there is no red.</p>

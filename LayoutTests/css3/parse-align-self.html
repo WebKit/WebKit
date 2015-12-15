@@ -50,12 +50,12 @@
     -webkit-align-self: flex-end;
 }
 
-#alignSelfEndTrue {
-    -webkit-align-self: end true;
+#alignSelfEndUnsafe {
+    -webkit-align-self: end unsafe;
 }
 
-#alignSelfCenterTrue {
-    -webkit-align-self: center true;
+#alignSelfCenterUnsafe {
+    -webkit-align-self: center unsafe;
 }
 
 #alignSelfSelfEndSafe {
@@ -70,12 +70,12 @@
     -webkit-align-self: right safe;
 }
 
-#alignSelfLeftTrue {
-    -webkit-align-self: left true;
+#alignSelfLeftUnsafe {
+    -webkit-align-self: left unsafe;
 }
 
-#alignSelfFlexStartTrue {
-    -webkit-align-self: flex-start true;
+#alignSelfFlexStartUnsafe {
+    -webkit-align-self: flex-start unsafe;
 }
 
 #alignSelfFlexEndSafe {
@@ -98,13 +98,13 @@
 <div id="alignSelfFlexStart"></div>
 <div id="alignSelfFlexEnd"></div>
 
-<div id="alignSelfEndTrue"></div>
-<div id="alignSelfCenterTrue"></div>
+<div id="alignSelfEndUnsafe"></div>
+<div id="alignSelfCenterUnsafe"></div>
 <div id="alignSelfSelfEndSafe"></div>
 <div id="alignSelfSelfStartSafe"></div>
 <div id="alignSelfRightSafe"></div>
-<div id="alignSelfLeftTrue"></div>
-<div id="alignSelfFlexStartTrue"></div>
+<div id="alignSelfLeftUnsafe"></div>
+<div id="alignSelfFlexStartUnsafe"></div>
 <div id="alignSelfFlexEndSafe"></div>
 <script src="resources/alignment-parsing-utils.js"></script>
 <script>
@@ -147,11 +147,11 @@ shouldBe("getComputedStyle(alignSelfFlexStart, '').getPropertyValue('-webkit-ali
 var alignSelfFlexEnd = document.getElementById("alignSelfFlexEnd");
 shouldBe("getComputedStyle(alignSelfFlexEnd, '').getPropertyValue('-webkit-align-self')", "'flex-end'");
 
-var alignSelfEndTrue = document.getElementById("alignSelfEndTrue");
-shouldBe("getComputedStyle(alignSelfEndTrue, '').getPropertyValue('-webkit-align-self')", "'end true'");
+var alignSelfEndUnsafe = document.getElementById("alignSelfEndUnsafe");
+shouldBe("getComputedStyle(alignSelfEndUnsafe, '').getPropertyValue('-webkit-align-self')", "'end unsafe'");
 
-var alignSelfCenterTrue = document.getElementById("alignSelfCenterTrue");
-shouldBe("getComputedStyle(alignSelfCenterTrue, '').getPropertyValue('-webkit-align-self')", "'center true'");
+var alignSelfCenterUnsafe = document.getElementById("alignSelfCenterUnsafe");
+shouldBe("getComputedStyle(alignSelfCenterUnsafe, '').getPropertyValue('-webkit-align-self')", "'center unsafe'");
 
 var alignSelfSelfEndSafe = document.getElementById("alignSelfSelfEndSafe");
 shouldBe("getComputedStyle(alignSelfSelfEndSafe, '').getPropertyValue('-webkit-align-self')", "'self-end safe'");
@@ -162,11 +162,11 @@ shouldBe("getComputedStyle(alignSelfSelfStartSafe, '').getPropertyValue('-webkit
 var alignSelfRightSafe = document.getElementById("alignSelfRightSafe");
 shouldBe("getComputedStyle(alignSelfRightSafe, '').getPropertyValue('-webkit-align-self')", "'right safe'");
 
-var alignSelfLeftTrue = document.getElementById("alignSelfLeftTrue");
-shouldBe("getComputedStyle(alignSelfLeftTrue, '').getPropertyValue('-webkit-align-self')", "'left true'");
+var alignSelfLeftUnsafe = document.getElementById("alignSelfLeftUnsafe");
+shouldBe("getComputedStyle(alignSelfLeftUnsafe, '').getPropertyValue('-webkit-align-self')", "'left unsafe'");
 
-var alignSelfFlexStartTrue = document.getElementById("alignSelfFlexStartTrue");
-shouldBe("getComputedStyle(alignSelfFlexStartTrue, '').getPropertyValue('-webkit-align-self')", "'flex-start true'");
+var alignSelfFlexStartUnsafe = document.getElementById("alignSelfFlexStartUnsafe");
+shouldBe("getComputedStyle(alignSelfFlexStartUnsafe, '').getPropertyValue('-webkit-align-self')", "'flex-start unsafe'");
 
 var alignSelfFlexEndSafe = document.getElementById("alignSelfFlexEndSafe");
 shouldBe("getComputedStyle(alignSelfFlexEndSafe, '').getPropertyValue('-webkit-align-self')", "'flex-end safe'");
@@ -186,8 +186,8 @@ document.body.appendChild(container);
 element.style.webkitAlignSelf = "center";
 checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "center", "center");
 
-element.style.webkitAlignSelf = "true start";
-checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "start true", "start true");
+element.style.webkitAlignSelf = "unsafe start";
+checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "start unsafe", "start unsafe");
 
 element.style.webkitAlignSelf = "flex-end safe";
 checkValues(element, "webkitAlignSelf", "-webkit-align-self",  "flex-end safe", "flex-end safe");
@@ -222,26 +222,26 @@ element = document.createElement("div");
 container.appendChild(element);
 document.body.appendChild(container);
 
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true auto");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "unsafe auto");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto safe");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "auto left");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "baseline safe");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "baseline center");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch true");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch unsafe");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch right");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true true");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "unsafe unsafe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "unsafe safe");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "center start");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch true");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "stretch unsafe");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "safe stretch");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "baseline safe");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true baseline");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true safe left");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "true left safe");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "left safe true safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "unsafe baseline");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "unsafe safe left");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "unsafe left safe");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "left safe unsafe safe");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy start");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy end");
-checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy right true");
+checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy right unsafe");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy auto");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy stretch");
 checkBadValues(element, "webkitAlignSelf", "-webkit-align-self",  "legacy");
@@ -260,7 +260,7 @@ checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "left safe"
 debug("");
 debug("Test the value 'initial' for flex containers");
 container.style.display = "-webkit-flex";
-checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right true", "stretch");
+checkInitialValues(element, "webkitAlignSelf", "-webkit-align-self", "right unsafe", "stretch");
 
 debug("");
 debug("Test the value 'initial' for positioned elements");
@@ -284,7 +284,7 @@ debug("");
 debug("Test the value 'inherit'");
 checkInheritValues("webkitAlignSelf", "-webkit-align-self", "end");
 checkInheritValues("webkitAlignSelf", "-webkit-align-self", "left safe");
-checkInheritValues("webkitAlignSelf", "-webkit-align-self", "center true");
+checkInheritValues("webkitAlignSelf", "-webkit-align-self", "center unsafe");
 
 </script>
 </body>

@@ -5085,8 +5085,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(OverflowAlignment overflo
     case OverflowAlignmentDefault:
         m_value.valueID = CSSValueDefault;
         break;
-    case OverflowAlignmentTrue:
-        m_value.valueID = CSSValueTrue;
+    case OverflowAlignmentUnsafe:
+        m_value.valueID = CSSValueUnsafe;
         break;
     case OverflowAlignmentSafe:
         m_value.valueID = CSSValueSafe;
@@ -5097,15 +5097,15 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(OverflowAlignment overflo
 template<> inline CSSPrimitiveValue::operator OverflowAlignment() const
 {
     switch (m_value.valueID) {
-    case CSSValueTrue:
-        return OverflowAlignmentTrue;
+    case CSSValueUnsafe:
+        return OverflowAlignmentUnsafe;
     case CSSValueSafe:
         return OverflowAlignmentSafe;
     default:
         break;
     }
     ASSERT_NOT_REACHED();
-    return OverflowAlignmentTrue;
+    return OverflowAlignmentUnsafe;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ContentPosition contentPosition)

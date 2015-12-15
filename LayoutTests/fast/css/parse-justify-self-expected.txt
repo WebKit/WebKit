@@ -13,19 +13,19 @@ PASS getComputedStyle(justifySelfSelfEnd, '').getPropertyValue('justify-self') i
 PASS getComputedStyle(justifySelfSelfStart, '').getPropertyValue('justify-self') is 'self-start'
 PASS getComputedStyle(justifySelfLeft, '').getPropertyValue('justify-self') is 'left'
 PASS getComputedStyle(justifySelfRight, '').getPropertyValue('justify-self') is 'right'
-PASS getComputedStyle(justifySelfEndTrue, '').getPropertyValue('justify-self') is 'end true'
-PASS getComputedStyle(justifySelfCenterTrue, '').getPropertyValue('justify-self') is 'center true'
+PASS getComputedStyle(justifySelfEndUnsafe, '').getPropertyValue('justify-self') is 'end unsafe'
+PASS getComputedStyle(justifySelfCenterUnsafe, '').getPropertyValue('justify-self') is 'center unsafe'
 PASS getComputedStyle(justifySelfSelfEndSafe, '').getPropertyValue('justify-self') is 'self-end safe'
 PASS getComputedStyle(justifySelfSelfStartSafe, '').getPropertyValue('justify-self') is 'self-start safe'
 PASS getComputedStyle(justifySelfRightSafe, '').getPropertyValue('justify-self') is 'right safe'
-PASS getComputedStyle(justifySelfLeftTrue, '').getPropertyValue('justify-self') is 'left true'
+PASS getComputedStyle(justifySelfLeftUnsafe, '').getPropertyValue('justify-self') is 'left unsafe'
 
 Test initial value of justify-self through JS
 PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
 
 Test getting and setting justify-self through JS
 PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'center'
-PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start true'
+PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start unsafe'
 PASS getComputedStyle(element, '').getPropertyValue('justify-self') is 'start'
 
 Test bad combinations of justify-self

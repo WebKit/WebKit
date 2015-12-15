@@ -38,12 +38,12 @@
     justify-self: right;
 }
 
-#justifySelfEndTrue {
-    justify-self: end true;
+#justifySelfEndUnsafe {
+    justify-self: end unsafe;
 }
 
-#justifySelfCenterTrue {
-    justify-self: center true;
+#justifySelfCenterUnsafe {
+    justify-self: center unsafe;
 }
 
 #justifySelfSelfEndSafe {
@@ -58,8 +58,8 @@
     justify-self: right safe;
 }
 
-#justifySelfLeftTrue {
-    justify-self: left true;
+#justifySelfLeftUnsafe {
+    justify-self: left unsafe;
 }
 </style>
 <script src="../../resources/js-test.js"></script>
@@ -75,12 +75,12 @@
 <div id="justifySelfLeft"></div>
 <div id="justifySelfRight"></div>
 
-<div id="justifySelfEndTrue"></div>
-<div id="justifySelfCenterTrue"></div>
+<div id="justifySelfEndUnsafe"></div>
+<div id="justifySelfCenterUnsafe"></div>
 <div id="justifySelfSelfEndSafe"></div>
 <div id="justifySelfSelfStartSafe"></div>
 <div id="justifySelfRightSafe"></div>
-<div id="justifySelfLeftTrue"></div>
+<div id="justifySelfLeftUnsafe"></div>
 <script>
 description('Test that setting and getting justify-self works as expected');
 
@@ -112,11 +112,11 @@ shouldBe("getComputedStyle(justifySelfLeft, '').getPropertyValue('justify-self')
 var justifySelfRight = document.getElementById("justifySelfRight");
 shouldBe("getComputedStyle(justifySelfRight, '').getPropertyValue('justify-self')", "'right'");
 
-var justifySelfEndTrue = document.getElementById("justifySelfEndTrue");
-shouldBe("getComputedStyle(justifySelfEndTrue, '').getPropertyValue('justify-self')", "'end true'");
+var justifySelfEndUnsafe = document.getElementById("justifySelfEndUnsafe");
+shouldBe("getComputedStyle(justifySelfEndUnsafe, '').getPropertyValue('justify-self')", "'end unsafe'");
 
-var justifySelfCenterTrue = document.getElementById("justifySelfCenterTrue");
-shouldBe("getComputedStyle(justifySelfCenterTrue, '').getPropertyValue('justify-self')", "'center true'");
+var justifySelfCenterUnsafe = document.getElementById("justifySelfCenterUnsafe");
+shouldBe("getComputedStyle(justifySelfCenterUnsafe, '').getPropertyValue('justify-self')", "'center unsafe'");
 
 var justifySelfSelfEndSafe = document.getElementById("justifySelfSelfEndSafe");
 shouldBe("getComputedStyle(justifySelfSelfEndSafe, '').getPropertyValue('justify-self')", "'self-end safe'");
@@ -127,8 +127,8 @@ shouldBe("getComputedStyle(justifySelfSelfStartSafe, '').getPropertyValue('justi
 var justifySelfRightSafe = document.getElementById("justifySelfRightSafe");
 shouldBe("getComputedStyle(justifySelfRightSafe, '').getPropertyValue('justify-self')", "'right safe'");
 
-var justifySelfLeftTrue = document.getElementById("justifySelfLeftTrue");
-shouldBe("getComputedStyle(justifySelfLeftTrue, '').getPropertyValue('justify-self')", "'left true'");
+var justifySelfLeftUnsafe = document.getElementById("justifySelfLeftUnsafe");
+shouldBe("getComputedStyle(justifySelfLeftUnsafe, '').getPropertyValue('justify-self')", "'left unsafe'");
 
 debug("");
 debug("Test initial value of justify-self through JS");
@@ -145,8 +145,8 @@ shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'cen
 
 element = document.createElement("div");
 document.body.appendChild(element);
-element.style.justifySelf = "true start";
-shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start true'");
+element.style.justifySelf = "unsafe start";
+shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start unsafe'");
 
 element.style.justifySelf = "start";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
@@ -164,25 +164,25 @@ shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'sta
 element.style.justifySelf = "baseline center";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "stretch true";
+element.style.justifySelf = "stretch unsafe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 element.style.justifySelf = "stretch right";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "true true";
+element.style.justifySelf = "unsafe unsafe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "true";
+element.style.justifySelf = "unsafe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "true safe";
+element.style.justifySelf = "unsafe safe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 element.style.justifySelf = "center start";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "stretch true";
+element.style.justifySelf = "stretch unsafe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 element.style.justifySelf = "safe stretch";
@@ -191,19 +191,19 @@ shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'sta
 element.style.justifySelf = "baseline safe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "true baseline";
+element.style.justifySelf = "unsafe baseline";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "true safe";
+element.style.justifySelf = "unsafe safe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "true safe left";
+element.style.justifySelf = "unsafe safe left";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "true left safe";
+element.style.justifySelf = "unsafe left safe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
-element.style.justifySelf = "left safe true safe";
+element.style.justifySelf = "left safe unsafe safe";
 shouldBe("getComputedStyle(element, '').getPropertyValue('justify-self')", "'start'");
 
 debug("");

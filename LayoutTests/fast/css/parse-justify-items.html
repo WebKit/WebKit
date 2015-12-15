@@ -50,12 +50,12 @@
     justify-items: flex-end;
 }
 
-#justifyItemsEndTrue {
-    justify-items: end true;
+#justifyItemsEndUnsafe {
+    justify-items: end unsafe;
 }
 
-#justifyItemsCenterTrue {
-    justify-items: center true;
+#justifyItemsCenterUnsafe {
+    justify-items: center unsafe;
 }
 
 #justifyItemsSelfEndSafe {
@@ -70,12 +70,12 @@
     justify-items: right safe;
 }
 
-#justifyItemsLeftTrue {
-    justify-items: left true;
+#justifyItemsLeftUnsafe {
+    justify-items: left unsafe;
 }
 
-#justifyItemsFlexStartTrue {
-    justify-items: flex-start true;
+#justifyItemsFlexStartUnsafe {
+    justify-items: flex-start unsafe;
 }
 
 #justifyItemsFlexEndSafe {
@@ -122,13 +122,13 @@
 <div id="justifyItemsFlexStart"></div>
 <div id="justifyItemsFlexEnd"></div>
 
-<div id="justifyItemsEndTrue"></div>
-<div id="justifyItemsCenterTrue"></div>
+<div id="justifyItemsEndUnsafe"></div>
+<div id="justifyItemsCenterUnsafe"></div>
 <div id="justifyItemsSelfEndSafe"></div>
 <div id="justifyItemsSelfStartSafe"></div>
 <div id="justifyItemsRightSafe"></div>
-<div id="justifyItemsLeftTrue"></div>
-<div id="justifyItemsFlexStartTrue"></div>
+<div id="justifyItemsLeftUnsafe"></div>
+<div id="justifyItemsFlexStartUnsafe"></div>
 <div id="justifyItemsFlexEndSafe"></div>
 <div id="justifyItemsLegacyLeft"></div>
 <div id="justifyItemsLegacyCenter"></div>
@@ -177,11 +177,11 @@ shouldBe("getComputedStyle(justifyItemsFlexStart, '').getPropertyValue('justify-
 var justifyItemsFlexEnd = document.getElementById("justifyItemsFlexEnd");
 shouldBe("getComputedStyle(justifyItemsFlexEnd, '').getPropertyValue('justify-items')", "'flex-end'");
 
-var justifyItemsEndTrue = document.getElementById("justifyItemsEndTrue");
-shouldBe("getComputedStyle(justifyItemsEndTrue, '').getPropertyValue('justify-items')", "'end true'");
+var justifyItemsEndUnsafe = document.getElementById("justifyItemsEndUnsafe");
+shouldBe("getComputedStyle(justifyItemsEndUnsafe, '').getPropertyValue('justify-items')", "'end unsafe'");
 
-var justifyItemsCenterTrue = document.getElementById("justifyItemsCenterTrue");
-shouldBe("getComputedStyle(justifyItemsCenterTrue, '').getPropertyValue('justify-items')", "'center true'");
+var justifyItemsCenterUnsafe = document.getElementById("justifyItemsCenterUnsafe");
+shouldBe("getComputedStyle(justifyItemsCenterUnsafe, '').getPropertyValue('justify-items')", "'center unsafe'");
 
 var justifyItemsSelfEndSafe = document.getElementById("justifyItemsSelfEndSafe");
 shouldBe("getComputedStyle(justifyItemsSelfEndSafe, '').getPropertyValue('justify-items')", "'self-end safe'");
@@ -192,11 +192,11 @@ shouldBe("getComputedStyle(justifyItemsSelfStartSafe, '').getPropertyValue('just
 var justifyItemsRightSafe = document.getElementById("justifyItemsRightSafe");
 shouldBe("getComputedStyle(justifyItemsRightSafe, '').getPropertyValue('justify-items')", "'right safe'");
 
-var justifyItemsLeftTrue = document.getElementById("justifyItemsLeftTrue");
-shouldBe("getComputedStyle(justifyItemsLeftTrue, '').getPropertyValue('justify-items')", "'left true'");
+var justifyItemsLeftUnsafe = document.getElementById("justifyItemsLeftUnsafe");
+shouldBe("getComputedStyle(justifyItemsLeftUnsafe, '').getPropertyValue('justify-items')", "'left unsafe'");
 
-var justifyItemsFlexStartTrue = document.getElementById("justifyItemsFlexStartTrue");
-shouldBe("getComputedStyle(justifyItemsFlexStartTrue, '').getPropertyValue('justify-items')", "'flex-start true'");
+var justifyItemsFlexStartUnsafe = document.getElementById("justifyItemsFlexStartUnsafe");
+shouldBe("getComputedStyle(justifyItemsFlexStartUnsafe, '').getPropertyValue('justify-items')", "'flex-start unsafe'");
 
 var justifyItemsFlexEndSafe = document.getElementById("justifyItemsFlexEndSafe");
 shouldBe("getComputedStyle(justifyItemsFlexEndSafe, '').getPropertyValue('justify-items')", "'flex-end safe'");
@@ -232,8 +232,8 @@ document.body.appendChild(element);
 element.style.justifyItems = "center";
 checkValues(element, "justifyItems", "justify-items",  "center", "center");
 
-element.style.justifyItems = "true start";
-checkValues(element, "justifyItems", "justify-items",  "start true", "start true");
+element.style.justifyItems = "unsafe start";
+checkValues(element, "justifyItems", "justify-items",  "start unsafe", "start unsafe");
 
 element.style.justifyItems = "flex-end safe";
 checkValues(element, "justifyItems", "justify-items",  "flex-end safe", "flex-end safe");
@@ -268,26 +268,26 @@ debug("Test bad combinations of justify-items");
 element = document.createElement("div");
 document.body.appendChild(element);
 
-checkBadValues(element, "justifyItems", "justify-items",  "true auto");
+checkBadValues(element, "justifyItems", "justify-items",  "unsafe auto");
 checkBadValues(element, "justifyItems", "justify-items",  "auto safe");
 checkBadValues(element, "justifyItems", "justify-items",  "auto left");
 checkBadValues(element, "justifyItems", "justify-items",  "baseline safe");
 checkBadValues(element, "justifyItems", "justify-items",  "baseline center");
-checkBadValues(element, "justifyItems", "justify-items",  "stretch true");
+checkBadValues(element, "justifyItems", "justify-items",  "stretch unsafe");
 checkBadValues(element, "justifyItems", "justify-items",  "stretch right");
-checkBadValues(element, "justifyItems", "justify-items",  "true true");
-checkBadValues(element, "justifyItems", "justify-items",  "true safe");
+checkBadValues(element, "justifyItems", "justify-items",  "unsafe unsafe");
+checkBadValues(element, "justifyItems", "justify-items",  "unsafe safe");
 checkBadValues(element, "justifyItems", "justify-items",  "center start");
-checkBadValues(element, "justifyItems", "justify-items",  "stretch true");
+checkBadValues(element, "justifyItems", "justify-items",  "stretch unsafe");
 checkBadValues(element, "justifyItems", "justify-items",  "safe stretch");
 checkBadValues(element, "justifyItems", "justify-items",  "baseline safe");
-checkBadValues(element, "justifyItems", "justify-items",  "true baseline");
-checkBadValues(element, "justifyItems", "justify-items",  "true safe left");
-checkBadValues(element, "justifyItems", "justify-items",  "true left safe");
-checkBadValues(element, "justifyItems", "justify-items",  "left safe true safe");
+checkBadValues(element, "justifyItems", "justify-items",  "unsafe baseline");
+checkBadValues(element, "justifyItems", "justify-items",  "unsafe safe left");
+checkBadValues(element, "justifyItems", "justify-items",  "unsafe left safe");
+checkBadValues(element, "justifyItems", "justify-items",  "left safe unsafe safe");
 checkBadValues(element, "justifyItems", "justify-items",  "legacy start");
 checkBadValues(element, "justifyItems", "justify-items",  "legacy end");
-checkBadValues(element, "justifyItems", "justify-items",  "legacy right true");
+checkBadValues(element, "justifyItems", "justify-items",  "legacy right unsafe");
 checkBadValues(element, "justifyItems", "justify-items",  "legacy auto");
 checkBadValues(element, "justifyItems", "justify-items",  "legacy stretch");
 checkBadValues(element, "justifyItems", "justify-items",  "legacy");
@@ -306,14 +306,14 @@ checkInitialValues(element, "justifyItems", "justify-items", "left safe", "stret
 debug("");
 debug("Test the value 'initial' for flex containers");
 element.style.display = "-webkit-flex";
-checkInitialValues(element, "justifyItems", "justify-items", "right true", "stretch");
+checkInitialValues(element, "justifyItems", "justify-items", "right unsafe", "stretch");
 
 debug("");
 debug("Test the value 'inherit'");
 parentElement = document.createElement("div");
 checkInheritValues("justifyItems", "justify-items", "end");
 checkInheritValues("justifyItems", "justify-items", "left safe");
-checkInheritValues("justifyItems", "justify-items", "center true");
+checkInheritValues("justifyItems", "justify-items", "center unsafe");
 
 debug("");
 debug("Test the value 'legacy'");

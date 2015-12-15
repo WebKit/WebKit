@@ -3375,7 +3375,7 @@ static inline bool isBaselinePositionKeyword(CSSValueID id)
 
 static bool isAlignmentOverflowKeyword(CSSValueID id)
 {
-    return id == CSSValueTrue || id == CSSValueSafe;
+    return id == CSSValueUnsafe || id == CSSValueSafe;
 }
 
 static bool isItemPositionKeyword(CSSValueID id)
@@ -3486,7 +3486,7 @@ bool CSSParser::parseItemPositionOverflowPosition(CSSPropertyID propId, bool imp
         position = CSSValuePool::singleton().createIdentifierValue(value->id);
         value = m_valueList->next();
         if (value) {
-            if (value->id != CSSValueTrue && value->id != CSSValueSafe)
+            if (value->id != CSSValueUnsafe && value->id != CSSValueSafe)
                 return false;
             overflowAlignmentKeyword = CSSValuePool::singleton().createIdentifierValue(value->id);
         }

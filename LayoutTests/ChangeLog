@@ -1,3 +1,32 @@
+2015-12-15  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align][css-grid] Overflow alignment value 'true' renamed to 'unsafe'
+        https://bugs.webkit.org/show_bug.cgi?id=152251
+
+        The 'True' Overflow Alignment keyword is known now as 'Unsafe', so adapting
+        layout tests using such keyword.
+
+        Reviewed by Darin Adler.
+
+        * css3/overwrite-content-alignment-expected.txt:
+        * css3/overwrite-content-alignment.html:
+        * css3/overwrite-self-alignment-expected.txt:
+        * css3/overwrite-self-alignment.html:
+        * css3/parse-align-content-expected.txt:
+        * css3/parse-align-content.html:
+        * css3/parse-align-items-expected.txt:
+        * css3/parse-align-items.html:
+        * css3/parse-align-self-expected.txt:
+        * css3/parse-align-self.html:
+        * css3/parse-justify-content-expected.txt:
+        * css3/parse-justify-content.html:
+        * fast/css-grid-layout/grid-align-justify-overflow.html:
+        * fast/css-grid-layout/grid-content-alignment-overflow.html:
+        * fast/css/parse-justify-items-expected.txt:
+        * fast/css/parse-justify-items.html:
+        * fast/css/parse-justify-self-expected.txt:
+        * fast/css/parse-justify-self.html:
+
 2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Re-enabling passing test fast/viewport/ios/width-is-device-width.html, which was accidentally skipped with r194058.
