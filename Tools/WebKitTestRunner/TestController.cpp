@@ -265,6 +265,10 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
+        createOtherPage,
+        0, // runJavaScriptAlert
+        0, // runJavaScriptConfirm
+        0  // runJavaScriptPrompt
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
     
@@ -516,6 +520,10 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
+        createOtherPage,
+        0, // runJavaScriptAlert
+        0, // runJavaScriptConfirm
+        0, // runJavaScriptPrompt
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
