@@ -1,5 +1,25 @@
 2015-12-08  Harris Papadopoulos  <cpapadopoulos@apple.com>
 
+        Merge r193367. rdar://problem/23816165
+
+    2015-12-03  Sam Weinig  <sam@webkit.org>
+
+            Need completionHandler-based WebKit C SPI for alert, confirm, and prompt
+            <rdar://problem/23320863>
+            https://bugs.webkit.org/show_bug.cgi?id=151708
+
+            (Add missing function definitions)
+
+            * UIProcess/API/C/WKPage.cpp:
+            (WKPageRunJavaScriptAlertResultListenerGetTypeID):
+            (WKPageRunJavaScriptAlertResultListenerCall):
+            (WKPageRunJavaScriptConfirmResultListenerGetTypeID):
+            (WKPageRunJavaScriptConfirmResultListenerCall):
+            (WKPageRunJavaScriptPromptResultListenerGetTypeID):
+            (WKPageRunJavaScriptPromptResultListenerCall):
+
+2015-12-08  Harris Papadopoulos  <cpapadopoulos@apple.com>
+
         Merge r192911. rdar://problem/23816165
 
     2015-12-01  Sam Weinig  <sam@webkit.org>
