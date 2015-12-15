@@ -122,8 +122,10 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
     // To make engineering builds work, if the path is outside of /System set up
     // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
     // production configuration because it involves extra file system access.
-    if (isWebKitDevelopmentBuild)
+    if (isWebKitDevelopmentBuild) {
         environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
+        environmentVariables.appendValue("DYLD_LIBRARY_PATH", webKitBundle.privateFrameworksPath.fileSystemRepresentation, ':');
+    }
 
 #if ASAN_ENABLED
     static const char* asanLibraryPath = copyASanDynamicLibraryPath();
@@ -134,6 +136,7 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
 #endif
 
 #if PLATFORM(MAC)
+    // FIXME: In El Capitan and later, do this only for development builds, because in production, the executables link directly against the shims.
     if (auto shimPath = computeProcessShimPath(launchOptions, webKitBundle)) {
         // Make sure that the shim library file exists and insert it.
         const char* processShimPath = [shimPath fileSystemRepresentation];
