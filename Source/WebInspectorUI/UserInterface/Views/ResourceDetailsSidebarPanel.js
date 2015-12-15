@@ -102,11 +102,11 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         this._imageSizeSection = new WebInspector.DetailsSection("resource-type", WebInspector.UIString("Image Size"));
         this._imageSizeSection.groups = [new WebInspector.DetailsSectionGroup([this._imageWidthRow, this._imageHeightRow])];
 
-        this.contentElement.appendChild(this._typeSection.element);
-        this.contentElement.appendChild(this._locationSection.element);
-        this.contentElement.appendChild(this._requestAndResponseSection.element);
-        this.contentElement.appendChild(this._requestHeadersSection.element);
-        this.contentElement.appendChild(this._responseHeadersSection.element);
+        this.contentView.element.appendChild(this._typeSection.element);
+        this.contentView.element.appendChild(this._locationSection.element);
+        this.contentView.element.appendChild(this._requestAndResponseSection.element);
+        this.contentView.element.appendChild(this._requestHeadersSection.element);
+        this.contentView.element.appendChild(this._responseHeadersSection.element);
     }
 
     // Public
@@ -225,7 +225,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         if (urlComponents.queryString) {
             // Ensure the "Query Parameters" section is displayed, right after the "Request & Response" section.
-            this.contentElement.insertBefore(this._queryParametersSection.element, this._requestAndResponseSection.element.nextSibling);
+            this.contentView.element.insertBefore(this._queryParametersSection.element, this._requestAndResponseSection.element.nextSibling);
 
             this._queryParametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(urlComponents.queryString, true));
         } else {
@@ -382,12 +382,12 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         if (resource.type !== WebInspector.Resource.Type.Image || resource.failed) {
             var imageSectionElement = this._imageSizeSection.element;
             if (imageSectionElement.parentNode)
-                this.contentElement.removeChild(imageSectionElement);
+                this.contentView.element.removeChild(imageSectionElement);
             return;
         }
 
         // Ensure the section is displayed, right before the "Location" section.
-        this.contentElement.insertBefore(this._imageSizeSection.element, this._locationSection.element);
+        this.contentView.element.insertBefore(this._imageSizeSection.element, this._locationSection.element);
 
         // Get the metrics for this resource and fill in the metrics rows with that information.
         resource.getImageSize(function(size) {
@@ -416,7 +416,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
         }
 
         // Ensure the section is displayed, right before the "Request Headers" section.
-        this.contentElement.insertBefore(this._requestDataSection.element, this._requestHeadersSection.element);
+        this.contentView.element.insertBefore(this._requestDataSection.element, this._requestHeadersSection.element);
 
         var requestDataContentType = resource.requestDataContentType || "";
         if (requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i)) {

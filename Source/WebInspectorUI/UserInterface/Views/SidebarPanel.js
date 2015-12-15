@@ -40,9 +40,9 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
         this.element.setAttribute("role", role || "group");
         this.element.setAttribute("aria-label", label || displayName);
 
-        this._contentElement = document.createElement("div");
-        this._contentElement.className = "content";
-        this.element.appendChild(this._contentElement);
+        this._contentView = new WebInspector.View;
+        this._contentView.element.classList.add("content");
+        this.addSubview(this._contentView);
     }
 
     // Public
@@ -52,9 +52,9 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
         return this._identifier;
     }
 
-    get contentElement()
+    get contentView()
     {
-        return this._contentElement;
+        return this._contentView;
     }
 
     get visible()
@@ -128,14 +128,14 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
 
     shown()
     {
-        this._contentElement.scrollTop = this._savedScrollPosition;
+        this._contentView.element.scrollTop = this._savedScrollPosition;
 
         // Implemented by subclasses.
     }
 
     hidden()
     {
-        this._savedScrollPosition = this._contentElement.scrollTop;
+        this._savedScrollPosition = this._contentView.element.scrollTop;
 
         // Implemented by subclasses.
     }

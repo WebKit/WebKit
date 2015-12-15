@@ -47,8 +47,8 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
 
         this._statusSection = new WebInspector.DetailsSection("application-cache-status", WebInspector.UIString("Status"), [this._statusGroup]);
 
-        this.contentElement.appendChild(this._locationSection.element);
-        this.contentElement.appendChild(this._statusSection.element);
+        this.contentView.element.appendChild(this._locationSection.element);
+        this.contentView.element.appendChild(this._statusSection.element);
 
         WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.NetworkStateUpdated, this._networkStateUpdated, this);
         WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._frameManifestStatusChanged, this);

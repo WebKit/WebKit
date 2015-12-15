@@ -50,16 +50,16 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
 
     set inspectedProbeSets(newProbeSets)
     {
-        for (var probeSet of this._inspectedProbeSets) {
-            var removedSection = this._probeSetSections.get(probeSet);
-            this.contentElement.removeChild(removedSection.element);
+        for (let probeSet of this._inspectedProbeSets) {
+            let removedSection = this._probeSetSections.get(probeSet);
+            removedSection.element.remove();
         }
 
         this._inspectedProbeSets = newProbeSets;
 
-        for (var probeSet of newProbeSets) {
-            var shownSection = this._probeSetSections.get(probeSet);
-            this.contentElement.appendChild(shownSection.element);
+        for (let probeSet of newProbeSets) {
+            let shownSection = this._probeSetSections.get(probeSet);
+            this.contentView.element.appendChild(shownSection.element);
         }
     }
 

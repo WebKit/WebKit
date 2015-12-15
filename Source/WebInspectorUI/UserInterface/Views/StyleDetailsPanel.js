@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Object
+WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.View
 {
     constructor(delegate, className, identifier, label)
     {
@@ -31,11 +31,8 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
 
         this._delegate = delegate || null;
 
-        this._element = document.createElement("div");
-        this._element.className = className;
-
         // Add this offset-sections class name so the sticky headers don't overlap the navigation bar.
-        this.element.classList.add("offset-sections");
+        this.element.classList.add(className, "offset-sections");
 
         this._navigationInfo = {identifier, label};
 
@@ -44,11 +41,6 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
     }
 
     // Public
-
-    get element()
-    {
-        return this._element;
-    }
 
     get navigationInfo()
     {

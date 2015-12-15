@@ -55,10 +55,10 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         this._eventListenersSectionGroup = new WebInspector.DetailsSectionGroup;
         var eventListenersSection = new WebInspector.DetailsSection("dom-node-event-listeners", WebInspector.UIString("Event Listeners"), [this._eventListenersSectionGroup]);
 
-        this.contentElement.appendChild(identitySection.element);
-        this.contentElement.appendChild(attributesSection.element);
-        this.contentElement.appendChild(propertiesSection.element);
-        this.contentElement.appendChild(eventListenersSection.element);
+        this.contentView.element.appendChild(identitySection.element);
+        this.contentView.element.appendChild(attributesSection.element);
+        this.contentView.element.appendChild(propertiesSection.element);
+        this.contentView.element.appendChild(eventListenersSection.element);
 
         if (this._accessibilitySupported()) {
             this._accessibilityEmptyRow = new WebInspector.DetailsSectionRow(WebInspector.UIString("No Accessibility Information"));
@@ -89,9 +89,9 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
             this._accessibilityGroup = new WebInspector.DetailsSectionGroup([this._accessibilityEmptyRow]);
             var accessibilitySection = new WebInspector.DetailsSection("dom-node-accessibility", WebInspector.UIString("Accessibility"), [this._accessibilityGroup]);
 
-            this.contentElement.appendChild(accessibilitySection.element);
+            this.contentView.element.appendChild(accessibilitySection.element);
         }
-        }
+    }
 
     // Public
 

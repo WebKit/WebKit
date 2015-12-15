@@ -63,7 +63,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
                 groupElement.appendChild(labelElement);
             }, this);
 
-            this.contentElement.appendChild(this._forcedPseudoClassContainer);
+            this.contentView.element.appendChild(this._forcedPseudoClassContainer);
         }
 
         this._computedStyleDetailsPanel = new WebInspector.ComputedStyleDetailsPanel(this);
@@ -120,7 +120,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         if (!domNode)
             return;
 
-        this.contentElement.scrollTop = this._initialScrollOffset;
+        this.contentView.element.scrollTop = this._initialScrollOffset;
 
         for (var panel of this._panels) {
             panel.element._savedScrollTop = undefined;
@@ -227,30 +227,30 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
         if (this._selectedPanel) {
             this._selectedPanel.hidden();
-            this._selectedPanel.element._savedScrollTop = this.contentElement.scrollTop;
-            this._selectedPanel.element.remove();
+            this._selectedPanel.element._savedScrollTop = this.contentView.element.scrollTop;
+            this.contentView.removeSubview(this._selectedPanel);
         }
 
         this._selectedPanel = selectedPanel;
+        if (!this._selectedPanel)
+            return;
 
-        if (this._selectedPanel) {
-            this.contentElement.appendChild(this._selectedPanel.element);
+        this.contentView.addSubview(this._selectedPanel);
 
-            if (typeof this._selectedPanel.element._savedScrollTop === "number")
-                this.contentElement.scrollTop = this._selectedPanel.element._savedScrollTop;
-            else
-                this.contentElement.scrollTop = this._initialScrollOffset;
+        if (typeof this._selectedPanel.element._savedScrollTop === "number")
+            this.contentView.element.scrollTop = this._selectedPanel.element._savedScrollTop;
+        else
+            this.contentView.element.scrollTop = this._initialScrollOffset;
 
-            var hasFilter = typeof this._selectedPanel.filterDidChange === "function";
-            this.contentElement.classList.toggle("has-filter-bar", hasFilter);
-            if (this._filterBar)
-                this.contentElement.classList.toggle(WebInspector.CSSStyleDetailsSidebarPanel.FilterInProgressClassName, hasFilter && this._filterBar.hasActiveFilters());
+        let hasFilter = typeof this._selectedPanel.filterDidChange === "function";
+        this.contentView.element.classList.toggle("has-filter-bar", hasFilter);
+        if (this._filterBar)
+            this.contentView.element.classList.toggle(WebInspector.CSSStyleDetailsSidebarPanel.FilterInProgressClassName, hasFilter && this._filterBar.hasActiveFilters());
 
-            this.contentElement.classList.toggle("supports-new-rule", typeof this._selectedPanel.newRuleButtonClicked === "function");
-            this._selectedPanel.shown();
+        this.contentView.element.classList.toggle("supports-new-rule", typeof this._selectedPanel.newRuleButtonClicked === "function");
+        this._selectedPanel.shown();
 
-            this._lastSelectedSectionSetting.value = selectedPanel.navigationInfo.identifier;
-        }
+        this._lastSelectedSectionSetting.value = selectedPanel.navigationInfo.identifier;
     }
 
     _forcedPseudoClassCheckboxChanged(pseudoClass, event)
@@ -286,7 +286,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
     _filterDidChange()
     {
-        this.contentElement.classList.toggle(WebInspector.CSSStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
+        this.contentView.element.classList.toggle(WebInspector.CSSStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
 
         this._selectedPanel.filterDidChange(this._filterBar);
     }

@@ -54,7 +54,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
         this._watchExpressionsSectionGroup = new WebInspector.DetailsSectionGroup;
         this._watchExpressionsSection = new WebInspector.DetailsSection("watch-expressions", WebInspector.UIString("Watch Expressions"), [this._watchExpressionsSectionGroup], this._watchExpressionOptionsElement);
-        this.contentElement.appendChild(this._watchExpressionsSection.element);
+        this.contentView.element.appendChild(this._watchExpressionsSection.element);
 
         this._updateWatchExpressionsNavigationBar();
 
@@ -125,8 +125,8 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                     emptyRow.showEmptyMessage();
                 }
 
-                this.contentElement.removeChildren();
-                this.contentElement.appendChild(this._watchExpressionsSection.element);
+                this.contentView.element.removeChildren();
+                this.contentView.element.appendChild(this._watchExpressionsSection.element);
 
                 // Bail if the call frame changed while we were waiting for the async response.
                 if (this._callFrame !== callFrame)
@@ -136,7 +136,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                     return;
 
                 for (let callFrameSection of callFrameSections)
-                    this.contentElement.appendChild(callFrameSection.element);
+                    this.contentView.element.appendChild(callFrameSection.element);
             }
 
             // We need a timeout in place in case there are long running, pending backend dispatches. This can happen

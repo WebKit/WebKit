@@ -1,3 +1,81 @@
+2015-12-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Convert Sidebar classes to use View
+        https://bugs.webkit.org/show_bug.cgi?id=152274
+
+        Reviewed by Brian Burg.
+
+        Updated Sidebar and SidebarPanel to inherit from View. Mostly mechanical changes.
+        Once the DetailsSection class family inherits from View (https://webkit.org/b/152269),
+        directly modifying a sidebar's 'contentView' element will rarely be necessary.
+
+        * UserInterface/Views/ApplicationCacheDetailsSidebarPanel.js:
+        (WebInspector.ApplicationCacheDetailsSidebarPanel):
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.refresh):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._switchPanels):
+        Add/remove panels as subviews of the sidebar.
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._filterDidChange):
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel):
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidPause):
+
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildLayerInfoSection):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype._buildDataGridSection):
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WebInspector.ProbeDetailsSidebarPanel.prototype.set inspectedProbeSets):
+
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshURL):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshImageSizeSection):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestDataSection):
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype.refresh.):
+        (WebInspector.ScopeChainDetailsSidebarPanel.prototype.refresh):
+
+        * UserInterface/Views/SidebarPanel.js:
+        Inherit from View.
+        (WebInspector.SidebarPanel):
+        Replace the content element (the portion of the view excluding navigation
+        bars, filter bars, etc.) with a View object. A sidebar's content can be a mixture
+        of unwrapped DOM elements and View objects. For now, the content view's element
+        will be mutated directly, but once the DetailsSection class family inherits from
+        the View class the handling of details sections will be simplified.
+        (WebInspector.SidebarPanel.prototype.get contentView):
+        (WebInspector.SidebarPanel.prototype.shown):
+        (WebInspector.SidebarPanel.prototype.hidden):
+        (WebInspector.SidebarPanel.prototype.get contentElement): Deleted.
+        Replaced by WebInspector.SidebarPanel.prototype.get contentView.
+
+        * UserInterface/Views/StyleDetailsPanel.js:
+        Inherit from View.
+        (WebInspector.StyleDetailsPanel):
+        (WebInspector.StyleDetailsPanel.prototype.get element): Deleted.
+        Defer to View.element getter.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._updateTimelineOverviewHeight):
+
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateSections):
+
 2015-12-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Stack traces in console incorrectly show "(anonymous function)" for global code

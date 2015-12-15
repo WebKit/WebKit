@@ -33,7 +33,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         this._visibleContentTreeOutlines = new Set;
 
-        this.contentElement.addEventListener("scroll", this._updateContentOverflowShadowVisibility.bind(this));
+        this.contentView.element.addEventListener("scroll", this._updateContentOverflowShadowVisibility.bind(this));
 
         this._contentTreeOutline = this.createContentTreeOutline(true);
 
@@ -162,7 +162,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         contentTreeOutline.hidden = !dontHideByDefault;
         contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName);
 
-        this.contentElement.appendChild(contentTreeOutline.element);
+        this.contentView.element.appendChild(contentTreeOutline.element);
 
         if (!suppressFiltering) {
             contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAddedOrChanged, this);
@@ -479,8 +479,8 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     {
         this._updateContentOverflowShadowVisibilityIdentifier = undefined;
 
-        var scrollHeight = this.contentElement.scrollHeight;
-        var offsetHeight = this.contentElement.offsetHeight;
+        let scrollHeight = this.contentView.element.scrollHeight;
+        let offsetHeight = this.contentView.element.offsetHeight;
 
         if (scrollHeight < offsetHeight) {
             if (this._topOverflowShadowElement)
@@ -489,11 +489,11 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             return;
         }
 
-        var edgeThreshold = 1;
-        var scrollTop = this.contentElement.scrollTop;
+        let edgeThreshold = 1;
+        let scrollTop = this.contentView.element.scrollTop;
 
-        var topCoverage = Math.min(scrollTop, edgeThreshold);
-        var bottomCoverage = Math.max(0, (offsetHeight + scrollTop) - (scrollHeight - edgeThreshold));
+        let topCoverage = Math.min(scrollTop, edgeThreshold);
+        let bottomCoverage = Math.max(0, (offsetHeight + scrollTop) - (scrollHeight - edgeThreshold));
 
         if (this._topOverflowShadowElement)
             this._topOverflowShadowElement.style.opacity = (topCoverage / edgeThreshold).toFixed(1);

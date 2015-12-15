@@ -117,7 +117,7 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
         this._layerInfoSection = new WebInspector.DetailsSection("layer-info", WebInspector.UIString("Layer Info"), [this._noLayerInformationGroup]);
 
-        this.contentElement.appendChild(this._layerInfoSection.element);
+        this.contentView.element.appendChild(this._layerInfoSection.element);
     }
 
     _buildDataGridSection()
@@ -154,8 +154,7 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
         var group = new WebInspector.DetailsSectionGroup([this._childLayersRow]);
         var section = new WebInspector.DetailsSection("layer-children", WebInspector.UIString("Child Layers"), [group], null, true);
 
-        var element = this.contentElement.appendChild(section.element);
-        element.classList.add(section.identifier);
+        this.contentView.element.appendChild(section.element);
     }
 
     _buildBottomBar()

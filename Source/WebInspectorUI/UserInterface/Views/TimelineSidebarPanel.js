@@ -873,7 +873,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         }
 
         this._timelineEventsTitleBarContainer.style.top = (overviewHeight + eventTitleBarOffset) + "px";
-        this.contentElement.style.top = (overviewHeight + contentElementOffset) + "px";
+        this.contentView.element.style.top = (overviewHeight + contentElementOffset) + "px";
     }
 
     _recordGlyphMousedOver(event)

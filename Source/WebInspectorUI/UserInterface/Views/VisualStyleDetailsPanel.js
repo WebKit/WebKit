@@ -60,7 +60,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._selectorSection = new WebInspector.VisualStyleSelectorSection(this);
         this._selectorSection.addEventListener(WebInspector.VisualStyleSelectorSection.Event.SelectorChanged, this._updateSections, this);
         this._selectorSection.addEventListener(WebInspector.VisualStyleSelectorSection.Event.StyleTextChanged, this._prepareForChange, this);
-        this._element.appendChild(this._selectorSection.element);
+        this.element.appendChild(this._selectorSection.element);
 
         // Layout Section
         this._generateSection("display", WebInspector.UIString("Display"));
@@ -73,7 +73,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._generateSection("alignment", WebInspector.UIString("Alignment"));
 
         this._sections.layout = new WebInspector.DetailsSection("layout", WebInspector.UIString("Layout"), [this._groups.display.section, this._groups.position.section, this._groups.float.section, this._groups.dimensions.section, this._groups.margin.section, this._groups.padding.section, this._groups.flexbox.section, this._groups.alignment.section]);
-        this._element.appendChild(this._sections.layout.element);
+        this.element.appendChild(this._sections.layout.element);
 
         // Text Section
         this._generateSection("text-style", WebInspector.UIString("Style"));
@@ -82,7 +82,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._generateSection("text-shadow", WebInspector.UIString("Shadow"));
 
         this._sections.text = new WebInspector.DetailsSection("text", WebInspector.UIString("Text"), [this._groups.textStyle.section, this._groups.font.section, this._groups.textSpacing.section, this._groups.textShadow.section]);
-        this._element.appendChild(this._sections.text.element);
+        this.element.appendChild(this._sections.text.element);
 
         // Background Section
         this._generateSection("background-style", WebInspector.UIString("Style"));
@@ -91,13 +91,13 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._generateSection("box-shadow", WebInspector.UIString("Shadow"));
 
         this._sections.background = new WebInspector.DetailsSection("background", WebInspector.UIString("Background"), [this._groups.backgroundStyle.section, this._groups.border.section, this._groups.outline.section, this._groups.boxShadow.section]);
-        this._element.appendChild(this._sections.background.element);
+        this.element.appendChild(this._sections.background.element);
 
         // Animation Section
         this._generateSection("transition", WebInspector.UIString("Transition"));
 
         this._sections.animation = new WebInspector.DetailsSection("animation", WebInspector.UIString("Animation"), [this._groups.transition.section]);
-        this._element.appendChild(this._sections.animation.element);
+        this.element.appendChild(this._sections.animation.element);
     }
 
     // Public
@@ -155,7 +155,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
             return;
 
         let disabled = this._currentStyle[WebInspector.VisualStyleDetailsPanel.StyleDisabledSymbol];
-        this._element.classList.toggle("disabled", !!disabled);
+        this.element.classList.toggle("disabled", !!disabled);
         if (disabled)
             return;
 
