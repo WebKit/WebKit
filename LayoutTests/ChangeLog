@@ -1,3 +1,18 @@
+2015-12-15  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Gardening: Rebaseline tests
+        https://bugs.webkit.org/show_bug.cgi?id=152301
+
+        Unreviewed GTK gardening
+
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt:
+        Correct the expectations after r189202 when RangeException was
+        removed.
+        * platform/gtk/fast/dom/adopt-attribute-crash-expected.txt: Added.
+        Add a new test expectations after r187148.
+        * platform/gtk/http/tests/plugins/plugin-javascript-access-expected.txt: Added.
+        Add a new test expectations after r193363.
+
 2015-12-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Changing expectation for storage/indexeddb/deleted-objects.html to [ Failure Crash ]

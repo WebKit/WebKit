@@ -252,8 +252,6 @@ PASS win['ProgressEvent'] == '[object ProgressEventConstructor]' is true
 PASS win['ProgressEvent'] == '[object ProgressEventConstructor]' is true
 PASS win['Range'] == '[object RangeConstructor]' is true
 PASS win['Range'] == '[object RangeConstructor]' is true
-PASS win['RangeException'] == '[object RangeExceptionConstructor]' is true
-PASS win['RangeException'] == '[object RangeExceptionConstructor]' is true
 PASS win['Rect'] == '[object RectConstructor]' is true
 PASS win['Rect'] == '[object RectConstructor]' is true
 PASS win['SVGAngle'] == '[object SVGAngleConstructor]' is true
