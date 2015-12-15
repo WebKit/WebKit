@@ -1,0 +1,60 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+<style>
+body {
+    width: 900px;
+}
+.button {
+    padding: 40px;
+    background: #ccc;
+}
+.button.tapped {
+    background: green;
+}
+</style>
+
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function getUIScript()
+{
+    return `
+    (function() {
+        uiController.singleTapAtPoint(-50, 50, function() {
+            uiController.uiScriptComplete("Done");
+                });
+    })();`
+}
+
+function setUp()
+{
+    var output = '';
+    var target = document.getElementById('target');
+    target.addEventListener('touchstart', function(event) {
+        output += 'Received event ' + event.type + ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY + '<br>';
+        target.classList.toggle('tapped');
+    });
+
+    if (testRunner.runUIScript) {
+        testRunner.runUIScript(getUIScript(), function(result) {
+            output += result;
+            document.getElementById('console').innerHTML = output;
+            testRunner.notifyDone();
+        });
+    }
+}
+
+window.addEventListener('load', setUp, false);
+</script>
+</head>
+<body>
+    <div class="button" id="target">Tap me</div>
+    <pre id="console">To test manually, tap the box. If it turns green, then the test passes.</pre>
+</body>
+</html>
