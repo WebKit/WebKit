@@ -1,3 +1,63 @@
+2015-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL B3 should account for localsOffset
+        https://bugs.webkit.org/show_bug.cgi?id=152288
+
+        Reviewed by Saam Barati.
+
+        The DFG will build up some data structures that expect to know about offsets from FP. Those data
+        structures may slide by some offset when the low-level compiler (either LLVM or B3) does stack
+        allocation. So, the LLVM FTL modifies those data structures based on the real offset that it gets
+        from LLVM's stackmaps. The B3 code needs to do the same.
+
+        I had previously vowed to never put more stuff into FTLB3Compile.cpp, because I didn't want it to
+        look like FTLCompile.cpp. Up until now, I was successful because I used lambdas installed by
+        FTLLower. But in this case, I actually think that having code that just does this explicitly in
+        FTLB3Compile.cpp is least confusing. There is no particular place in FTLLower that would want to
+        care about this, and we need to ensure that we do this fixup before we run any of the stackmap
+        generators. In other words, it needs to happen before we call B3::generate(). The ordering
+        constraints seem like a good reason to have this done explicitly rather than through lambdas.
+
+        I wrote a test. The test was failing in trunk because the B3 meaning of anchor().value() is
+        different from the LLVM meaning. This caused breakage when we used this idiom:
+
+            ValueFromBlock foo = m_out.anchor(things);
+            ...(foo.value()) // we were expecting that foo.value() == things
+
+        I never liked this idiom to begin with, so instead of trying to change B3's anchor(), I changed
+        the idiom to:
+
+            LValue fooValue = things;
+            ValueFromBlock foo = m_out.anchor(fooValue);
+            ...(fooValue)
+
+        This is probably a good idea, since eventually we want B3's anchor() to just return the
+        UpsilonValue*. To get there, we want to eliminate any situations where code assumes that
+        ValueFromBlock is an actual object and not just a typedef for a pointer.
+
+        * ftl/FTLB3Compile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLB3Output.cpp:
+        (JSC::FTL::Output::appendTo):
+        (JSC::FTL::Output::lockedStackSlot):
+        * ftl/FTLB3Output.h:
+        (JSC::FTL::Output::framePointer):
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::constInt32):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileHasIndexedProperty):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::sensibleDoubleToInt32):
+        * ftl/FTLState.h:
+        (JSC::FTL::verboseCompilationEnabled):
+        * tests/stress/ftl-function-dot-arguments-with-callee-saves.js: Added.
+
 2015-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Math.random should have an intrinsic thunk and it should be later handled as a DFG Node

@@ -42,7 +42,14 @@
 #include "FTLStackMaps.h"
 #include <wtf/Noncopyable.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
+
+namespace B3 {
+class PatchpointValue;
+class StackSlotValue;
+} // namespace B3
+
+namespace FTL {
 
 inline bool verboseCompilationEnabled()
 {
@@ -75,11 +82,11 @@ public:
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
 #if FTL_USES_B3
-    LValue handleStackOverflowExceptionValue { nullptr };
-    LValue handleExceptionValue { nullptr };
-    LValue capturedValue { nullptr };
-    LValue varargsSpillSlotsValue { nullptr };
-    LValue exceptionHandlingSpillSlotValue { nullptr };
+    B3::PatchpointValue* handleStackOverflowExceptionValue { nullptr };
+    B3::PatchpointValue* handleExceptionValue { nullptr };
+    B3::StackSlotValue* capturedValue { nullptr };
+    B3::StackSlotValue* varargsSpillSlotsValue { nullptr };
+    B3::StackSlotValue* exceptionHandlingSpillSlotValue { nullptr };
 #else // FTL_USES_B3
     unsigned handleStackOverflowExceptionStackmapID { UINT_MAX };
     unsigned handleExceptionStackmapID { UINT_MAX };

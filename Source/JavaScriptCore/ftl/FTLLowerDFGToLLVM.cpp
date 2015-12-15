@@ -187,9 +187,9 @@ public:
 
 #if FTL_USES_B3
         size_t sizeOfCaptured = sizeof(JSValue) * m_graph.m_nextMachineLocal;
-        LValue capturedBase = m_out.lockedStackSlot(sizeOfCaptured);
+        B3::StackSlotValue* capturedBase = m_out.lockedStackSlot(sizeOfCaptured);
         m_captured = m_out.add(capturedBase, m_out.constIntPtr(sizeOfCaptured));
-        m_ftlState.capturedValue = m_captured;
+        m_ftlState.capturedValue = capturedBase;
 #else // FTL_USES_B3
         LValue capturedAlloca = m_out.alloca(arrayType(m_out.int64, m_graph.m_nextMachineLocal));
         
@@ -2633,12 +2633,12 @@ private:
         if (m_node->arrayMode().type() == Array::String) {
             LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("GetIndexedPropertyStorage String slow case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetIndexedPropertyStorage String continuation"));
-            
-            ValueFromBlock fastResult = m_out.anchor(
-                m_out.loadPtr(cell, m_heaps.JSString_value));
+
+            LValue fastResultValue = m_out.loadPtr(cell, m_heaps.JSString_value);
+            ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             
             m_out.branch(
-                m_out.notNull(fastResult.value()), usually(continuation), rarely(slowPath));
+                m_out.notNull(fastResultValue), usually(continuation), rarely(slowPath));
             
             LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
             
@@ -2793,11 +2793,11 @@ private:
                 rarely(slowCase), usually(fastCase));
             
             LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
-            
-            ValueFromBlock fastResult = m_out.anchor(
-                m_out.load64(baseIndex(heap, storage, index, m_node->child2())));
+
+            LValue fastResultValue = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+            ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.branch(
-                m_out.isZero64(fastResult.value()), rarely(slowCase), usually(continuation));
+                m_out.isZero64(fastResultValue), rarely(slowCase), usually(continuation));
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
@@ -3677,18 +3677,20 @@ private:
             
             LBasicBlock loop = FTL_NEW_BLOCK(m_out, ("CreateDirectArguments loop body"));
             LBasicBlock end = FTL_NEW_BLOCK(m_out, ("CreateDirectArguments loop end"));
-            
+
             ValueFromBlock originalLength;
             if (minCapacity) {
                 LValue capacity = m_out.select(
                     m_out.aboveOrEqual(length.value, m_out.constInt32(minCapacity)),
                     length.value,
                     m_out.constInt32(minCapacity));
-                originalLength = m_out.anchor(m_out.zeroExtPtr(capacity));
+                LValue originalLengthValue = m_out.zeroExtPtr(capacity);
+                originalLength = m_out.anchor(originalLengthValue);
                 m_out.jump(loop);
             } else {
-                originalLength = m_out.anchor(m_out.zeroExtPtr(length.value));
-                m_out.branch(m_out.isNull(originalLength.value()), unsure(end), unsure(loop));
+                LValue originalLengthValue = m_out.zeroExtPtr(length.value);
+                originalLength = m_out.anchor(originalLengthValue);
+                m_out.branch(m_out.isNull(originalLengthValue), unsure(end), unsure(loop));
             }
             
             lastNext = m_out.appendTo(loop, end);
@@ -4256,13 +4258,14 @@ private:
         m_out.jump(bitsContinuation);
             
         m_out.appendTo(is16Bit, bigCharacter);
-            
-        ValueFromBlock char16Bit = m_out.anchor(
-            m_out.load16ZeroExt32(m_out.baseIndex(
+
+        LValue char16BitValue = m_out.load16ZeroExt32(
+            m_out.baseIndex(
                 m_heaps.characters16, storage, m_out.zeroExtPtr(index),
-                provenValue(m_node->child2()))));
+                provenValue(m_node->child2())));
+        ValueFromBlock char16Bit = m_out.anchor(char16BitValue);
         m_out.branch(
-            m_out.aboveOrEqual(char16Bit.value(), m_out.constInt32(0x100)),
+            m_out.aboveOrEqual(char16BitValue, m_out.constInt32(0x100)),
             rarely(bigCharacter), usually(bitsContinuation));
             
         m_out.appendTo(bigCharacter, bitsContinuation);
@@ -4270,7 +4273,7 @@ private:
         Vector<ValueFromBlock, 4> results;
         results.append(m_out.anchor(vmCall(
             m_out.int64, m_out.operation(operationSingleCharacterString),
-            m_callFrame, char16Bit.value())));
+            m_callFrame, char16BitValue)));
         m_out.jump(continuation);
             
         m_out.appendTo(bitsContinuation, slowPath);
@@ -5141,9 +5144,10 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ForwardVarargs continuation"));
         
         LValue lengthAsPtr = m_out.zeroExtPtr(length);
-        ValueFromBlock loopBound = m_out.anchor(m_out.constIntPtr(data->mandatoryMinimum));
+        LValue loopBoundValue = m_out.constIntPtr(data->mandatoryMinimum);
+        ValueFromBlock loopBound = m_out.anchor(loopBoundValue);
         m_out.branch(
-            m_out.above(loopBound.value(), lengthAsPtr), unsure(undefinedLoop), unsure(mainLoopEntry));
+            m_out.above(loopBoundValue, lengthAsPtr), unsure(undefinedLoop), unsure(mainLoopEntry));
         
         LBasicBlock lastNext = m_out.appendTo(undefinedLoop, mainLoopEntry);
         LValue previousIndex = m_out.phi(m_out.intPtr, loopBound);
@@ -5158,7 +5162,7 @@ private:
         
         m_out.appendTo(mainLoopEntry, mainLoop);
         loopBound = m_out.anchor(lengthAsPtr);
-        m_out.branch(m_out.notNull(loopBound.value()), unsure(mainLoop), unsure(continuation));
+        m_out.branch(m_out.notNull(lengthAsPtr), unsure(mainLoop), unsure(continuation));
         
         m_out.appendTo(mainLoop, continuation);
         previousIndex = m_out.phi(m_out.intPtr, loopBound);
@@ -5800,10 +5804,11 @@ private:
             } else
                 m_out.jump(checkHole);
 
-            LBasicBlock lastNext = m_out.appendTo(checkHole, slowCase); 
-            ValueFromBlock checkHoleResult = m_out.anchor(
-                m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_node->child2()))));
-            m_out.branch(checkHoleResult.value(), usually(continuation), rarely(slowCase));
+            LBasicBlock lastNext = m_out.appendTo(checkHole, slowCase);
+            LValue checkHoleResultValue =
+                m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_node->child2())));
+            ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
+            m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.equal(
@@ -5836,8 +5841,9 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(checkHole, slowCase);
             LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_node->child2()));
-            ValueFromBlock checkHoleResult = m_out.anchor(m_out.doubleEqual(doubleValue, doubleValue));
-            m_out.branch(checkHoleResult.value(), usually(continuation), rarely(slowCase));
+            LValue checkHoleResultValue = m_out.doubleEqual(doubleValue, doubleValue);
+            ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
+            m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
             
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.equal(
@@ -7201,7 +7207,7 @@ private:
             });
         ValueFromBlock slowArray = m_out.anchor(slowArrayValue);
         ValueFromBlock slowButterfly = m_out.anchor(
-            m_out.loadPtr(slowArray.value(), m_heaps.JSObject_butterfly));
+            m_out.loadPtr(slowArrayValue, m_heaps.JSObject_butterfly));
 
         m_out.jump(continuation);
         
@@ -7981,11 +7987,11 @@ private:
     {
         LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("sensible doubleToInt32 slow path"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("sensible doubleToInt32 continuation"));
-        
-        ValueFromBlock fastResult = m_out.anchor(
-            m_out.sensibleDoubleToInt(doubleValue));
+
+        LValue fastResultValue = m_out.sensibleDoubleToInt(doubleValue);
+        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
         m_out.branch(
-            m_out.equal(fastResult.value(), m_out.constInt32(0x80000000)),
+            m_out.equal(fastResultValue, m_out.constInt32(0x80000000)),
             rarely(slowPath), usually(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);

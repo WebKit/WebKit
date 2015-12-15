@@ -103,7 +103,7 @@ public:
 
     LValue framePointer() { return m_block->appendNew<B3::Value>(m_proc, B3::FramePointer, origin()); }
 
-    LValue lockedStackSlot(size_t bytes);
+    B3::StackSlotValue* lockedStackSlot(size_t bytes);
 
     LValue constBool(bool value) { return m_block->appendNew<B3::Const32Value>(m_proc, origin(), value); }
     LValue constInt32(int32_t value) { return m_block->appendNew<B3::Const32Value>(m_proc, origin(), value); }
