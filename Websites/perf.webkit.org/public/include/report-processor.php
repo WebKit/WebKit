@@ -360,7 +360,7 @@ class TestRunsGenerator {
         case 'Arithmetic':
             return array_sum($values) / count($values);
         case 'Geometric':
-            return exp(array_sum(array_map(log, $values)) / count($values));
+            return xp(array_sum(array_map(function ($x) { return log($x); }, $values)) / count($values));
         case 'Harmonic':
             return count($values) / array_sum(array_map(function ($x) { return 1 / $x; }, $values));
         case 'Total':

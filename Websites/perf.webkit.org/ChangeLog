@@ -1,5 +1,11 @@
 2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r192965. Suppress a warning about log being referred to as a closure variable.
+
+        * public/include/report-processor.php:
+
+2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Using fake timestamp in OS version make some results invisible
         https://bugs.webkit.org/show_bug.cgi?id=152289
 
