@@ -1,3 +1,26 @@
+2015-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Font Features] TrueType fonts trigger real features even when synthesis is applied
+        https://bugs.webkit.org/show_bug.cgi?id=152287
+
+        Reviewed by Darin Adler.
+
+        When using a font feature that is synthesizable, and synthesis is triggered,
+        we should make sure to turn off the original font feature. Otherwise, the
+        feature will be applied twice on top of itself.
+
+        This worked for OpenType fonts, but not for TrueType fonts.
+
+        Tests: css3/font-variant-petite-caps-synthesis.html
+               css3/font-variant-small-caps-synthesis.html
+               css3/font-variant-petite-caps-synthesis-coverage.html
+               css3/font-variant-small-caps-synthesis-coverage.html
+
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::defaultSelectorForTrueTypeFeature):
+        (WebCore::removedFeature):
+        (WebCore::createCTFontWithoutSynthesizableFeatures):
+
 2015-12-15  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][MediaFoundation] Full screen mode is not supported.

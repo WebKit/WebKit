@@ -469,7 +469,40 @@ static inline std::pair<int, int> trueTypeFeature(CFDictionaryRef feature)
     return std::make_pair(rawType, rawSelector);
 }
 
-static inline RetainPtr<CFDictionaryRef> removedFeature(CFDictionaryRef feature)
+static inline CFNumberRef defaultSelectorForTrueTypeFeature(int key, CTFontRef font)
+{
+    RetainPtr<CFArrayRef> features = adoptCF(CTFontCopyFeatures(font));
+    CFIndex featureCount = CFArrayGetCount(features.get());
+    for (CFIndex i = 0; i < featureCount; ++i) {
+        CFDictionaryRef featureType = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(features.get(), i));
+        CFNumberRef featureKey = static_cast<CFNumberRef>(CFDictionaryGetValue(featureType, kCTFontFeatureTypeIdentifierKey));
+        if (!featureKey)
+            continue;
+        int rawFeatureKey;
+        CFNumberGetValue(featureKey, kCFNumberIntType, &rawFeatureKey);
+        if (rawFeatureKey != key)
+            continue;
+
+        CFArrayRef featureSelectors = static_cast<CFArrayRef>(CFDictionaryGetValue(featureType, kCTFontFeatureTypeSelectorsKey));
+        if (!featureSelectors)
+            continue;
+        CFIndex selectorsCount = CFArrayGetCount(featureSelectors);
+        for (CFIndex j = 0; j < selectorsCount; ++j) {
+            CFDictionaryRef featureSelector = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(featureSelectors, j));
+            CFNumberRef isDefault = static_cast<CFNumberRef>(CFDictionaryGetValue(featureSelector, kCTFontFeatureSelectorDefaultKey));
+            if (!isDefault)
+                continue;
+            int rawIsDefault;
+            CFNumberGetValue(isDefault, kCFNumberIntType, &rawIsDefault);
+            if (!rawIsDefault)
+                continue;
+            return static_cast<CFNumberRef>(CFDictionaryGetValue(featureSelector, kCTFontFeatureSelectorIdentifierKey));
+        }
+    }
+    return nullptr;
+}
+
+static inline RetainPtr<CFDictionaryRef> removedFeature(CFDictionaryRef feature, CTFontRef font)
 {
     bool isOpenType = isOpenTypeFeature(feature);
     bool isTrueType = isTrueTypeFeature(feature);
@@ -494,15 +527,17 @@ static inline RetainPtr<CFDictionaryRef> removedFeature(CFDictionaryRef feature)
     if (isTrueType) {
         auto trueTypeFeaturePair = trueTypeFeature(feature);
         if (trueTypeFeaturePair.first == kLowerCaseType && (trueTypeFeaturePair.second == kLowerCaseSmallCapsSelector || trueTypeFeaturePair.second == kLowerCasePetiteCapsSelector)) {
-            int rawSelector = kDefaultLowerCaseSelector;
-            RetainPtr<CFNumberRef> selector = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawSelector));
             CFDictionaryAddValue(result.get(), kCTFontFeatureTypeIdentifierKey, CFDictionaryGetValue(feature, kCTFontFeatureTypeIdentifierKey));
-            CFDictionaryAddValue(result.get(), kCTFontFeatureSelectorIdentifierKey, selector.get());
+            if (CFNumberRef defaultSelector = defaultSelectorForTrueTypeFeature(kLowerCaseType, font))
+                CFDictionaryAddValue(result.get(), kCTFontFeatureSelectorIdentifierKey, defaultSelector);
+            else
+                CFDictionaryAddValue(result.get(), kCTFontFeatureSelectorIdentifierKey, CFDictionaryGetValue(feature, kCTFontFeatureSelectorIdentifierKey));
         } else if (trueTypeFeaturePair.first == kUpperCaseType && (trueTypeFeaturePair.second == kUpperCaseSmallCapsSelector || trueTypeFeaturePair.second == kUpperCasePetiteCapsSelector)) {
-            int rawSelector = kDefaultUpperCaseSelector;
-            RetainPtr<CFNumberRef> selector = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawSelector));
             CFDictionaryAddValue(result.get(), kCTFontFeatureTypeIdentifierKey, CFDictionaryGetValue(feature, kCTFontFeatureTypeIdentifierKey));
-            CFDictionaryAddValue(result.get(), kCTFontFeatureSelectorIdentifierKey, selector.get());
+            if (CFNumberRef defaultSelector = defaultSelectorForTrueTypeFeature(kUpperCaseType, font))
+                CFDictionaryAddValue(result.get(), kCTFontFeatureSelectorIdentifierKey, defaultSelector);
+            else
+                CFDictionaryAddValue(result.get(), kCTFontFeatureSelectorIdentifierKey, CFDictionaryGetValue(feature, kCTFontFeatureSelectorIdentifierKey));
         } else {
             CFDictionaryAddValue(result.get(), kCTFontFeatureTypeIdentifierKey, CFDictionaryGetValue(feature, kCTFontFeatureTypeIdentifierKey));
             CFDictionaryAddValue(result.get(), kCTFontFeatureSelectorIdentifierKey, CFDictionaryGetValue(feature, kCTFontFeatureSelectorIdentifierKey));
@@ -520,7 +555,7 @@ static RetainPtr<CTFontRef> createCTFontWithoutSynthesizableFeatures(CTFontRef f
     RetainPtr<CFMutableArrayRef> newFeatures = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, featureCount, &kCFTypeArrayCallBacks));
     for (CFIndex i = 0; i < featureCount; ++i) {
         CFDictionaryRef feature = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(features.get(), i));
-        CFArrayAppendValue(newFeatures.get(), removedFeature(feature).get());
+        CFArrayAppendValue(newFeatures.get(), removedFeature(feature, font).get());
     }
     CFTypeRef keys[] = { kCTFontFeatureSettingsAttribute };
     CFTypeRef values[] = { newFeatures.get() };
