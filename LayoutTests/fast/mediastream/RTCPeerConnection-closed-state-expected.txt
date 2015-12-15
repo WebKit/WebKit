@@ -1,0 +1,43 @@
+Test calling RTCPeerConnection functions/attributes in closed state
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}); did not throw exception.
+PASS pc.signalingState is "stable"
+Get a sender before closing (to test removeTrack later)
+PASS sender = pc.addTrack(stream.getTracks()[0], stream) did not throw exception.
+
+Test promise-returning functions
+PASS createOffer rejected on closed state
+PASS createAnswer rejected on closed state
+PASS setLocalDescription rejected on closed state
+PASS setRemoteDescription rejected on closed state
+PASS addIceCandidate rejected on closed state
+PASS getStats rejected on closed state
+
+Test non-promise functions
+PASS pc.addTrack(stream.getTracks()[0], stream) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.removeTrack(sender) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.getSenders() did not throw exception.
+PASS pc.getReceivers() did not throw exception.
+PASS pc.getConfiguration() did not throw exception.
+PASS pc.setConfiguration({}) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.createDataChannel("foo") threw exception Error: InvalidStateError: DOM Exception 11.
+PASS pc.close() did not throw exception.
+
+Test attributes
+PASS pc.localDescription did not throw exception.
+PASS pc.currentLocalDescription did not throw exception.
+PASS pc.pendingLocalDescription did not throw exception.
+PASS pc.remoteDescription did not throw exception.
+PASS pc.currentRemoteDescription did not throw exception.
+PASS pc.pendingRemoteDescription did not throw exception.
+PASS pc.signalingState did not throw exception.
+PASS pc.iceGatheringState did not throw exception.
+PASS pc.iceConnectionState did not throw exception.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

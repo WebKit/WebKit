@@ -1,3 +1,19 @@
+2015-12-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Test that RTCPeerConnection promise functions reject on closed state
+        https://bugs.webkit.org/show_bug.cgi?id=152295
+
+        Reviewed by Eric Carlson.
+
+        Add test that verifies RTCPeerConnection's behavior in the closed state
+        (signalingState). Promise functions should reject, and (some) others
+        should throw. Remove old test that tests incorrect behavior.
+
+        * fast/mediastream/RTCPeerConnection-closed-state-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-closed-state.html: Added.
+        * fast/mediastream/RTCPeerConnection-state-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-state.html: Removed.
+
 2015-12-15  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Gardening: Rebaseline tests

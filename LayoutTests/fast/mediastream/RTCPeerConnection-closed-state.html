@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Test calling RTCPeerConnection functions/attributes in closed state");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            var pc;
+            var stream;
+            var sender;
+
+            shouldNotThrow("pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+            shouldBeEqualToString('pc.signalingState', 'stable');
+
+            var desc = new RTCSessionDescription({ "type": "offer" });
+            var candidate = new RTCIceCandidate({ "sdpMLineIndex": 0 });
+
+            navigator.mediaDevices.getUserMedia({ "video": true }).then(function (s) {
+                stream = s;
+                debug("Get a sender before closing (to test removeTrack later)");
+                shouldNotThrow('sender = pc.addTrack(stream.getTracks()[0], stream)');
+                debug("");
+
+                pc.close();
+                debug("Test promise-returning functions");
+                return pc.createOffer();
+            })
+            .then(failed, function () {
+                testPassed("createOffer rejected on closed state");
+                return pc.createAnswer();
+            })
+            .then(failed, function () {
+                testPassed("createAnswer rejected on closed state");
+                return pc.setLocalDescription();
+            })
+            .then(failed, function () {
+                testPassed("setLocalDescription rejected on closed state");
+                return pc.setRemoteDescription();
+            })
+            .then(failed, function () {
+                testPassed("setRemoteDescription rejected on closed state");
+                return pc.addIceCandidate();
+            })
+            .then(failed, function () {
+                testPassed("addIceCandidate rejected on closed state");
+                return pc.getStats();
+            })
+            .then(failed, function () {
+                testPassed("getStats rejected on closed state");
+                debug("");
+                testNonPromise()
+            })
+            .catch(function (e) {
+                testFailed("Error caught in promise chain: " + e);
+                finishJSTest();
+            });
+
+            function testNonPromise() {
+                debug("Test non-promise functions");
+                shouldThrow('pc.addTrack(stream.getTracks()[0], stream)');
+                shouldThrow('pc.removeTrack(sender)');
+                shouldNotThrow('pc.getSenders()');
+                shouldNotThrow('pc.getReceivers()');
+                shouldNotThrow('pc.getConfiguration()');
+                shouldThrow('pc.setConfiguration({})');
+                shouldThrow('pc.createDataChannel("foo")');
+                shouldNotThrow('pc.close()');
+                debug("");
+
+                debug("Test attributes");
+                shouldNotThrow("pc.localDescription");
+                shouldNotThrow("pc.currentLocalDescription");
+                shouldNotThrow("pc.pendingLocalDescription");
+                shouldNotThrow("pc.remoteDescription");
+                shouldNotThrow("pc.currentRemoteDescription");
+                shouldNotThrow("pc.pendingRemoteDescription");
+                shouldNotThrow("pc.signalingState");
+                shouldNotThrow("pc.iceGatheringState");
+                shouldNotThrow("pc.iceConnectionState");
+                debug("");
+
+                finishJSTest();
+            }
+
+            function failed() {
+                testFailed("Function should have rejected on closed state");
+                finishJSTest();
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
