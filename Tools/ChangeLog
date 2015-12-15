@@ -1,3 +1,36 @@
+2015-12-15  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r192375): DumpRenderTree.app exits immediately with no error
+        <http://webkit.org/b/152314>
+
+        Reviewed by Daniel Bates.
+
+        The change to DumpRenderTreeMain.mm in r192375 caused the iOS
+        code path to exit immediately when calling main().
+        Unfortunately, DumpRenderTreeMain.mm was used for both
+        DumpRenderTree command-line binary and DumpRenderTree.app, which
+        meant that the app would exit immediately with no error code
+        when run!
+
+        The workaround is to introduce a separate source file called
+        DumpRenderTreeAppMain.mm, similar to what WebKitTestRunner
+        already does.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Add
+        DumpRenderTreeAppMain.mm to the project.  Make it the only
+        compiled source for the DumpRenderTree.app target.
+        * DumpRenderTree/ios/DumpRenderTreeAppMain.mm: Copied from Tools/DumpRenderTree/mac/DumpRenderTreeMain.mm.
+        (main): Call DumpRenderTreeMain() on iOS.  Assert on OS X in
+        case someone tries mistakenly to use the app.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        Link to JavaScriptCore.framework on iOS for the assert.
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig:
+        Link to JavaScriptCore.framework on OS X for the assert.  Remove
+        unneeded EXCLUDED_SOURCE_FILE_NAMES setting.
+        * DumpRenderTree/mac/DumpRenderTreeMain.mm:
+        (main): Add assert for iOS so that a crash occurs if someone
+        tries to run the wrong command.
+
 2015-12-14  Tim Horton  <timothy_horton@apple.com>
 
         Frequent crash under -[WKPDFView web_setMinimumSize:]_block_invoke
