@@ -27,7 +27,6 @@
  */
 
 [
-    CustomConstructor,
-    NoInterfaceObject
-] interface TestCustomConstructorWithNoInterfaceObject {
+    JSBuiltinConstructor
+] interface TestClassWithJSBuiltinConstructor {
 };

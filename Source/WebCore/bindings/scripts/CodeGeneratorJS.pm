@@ -4727,7 +4727,20 @@ sub GenerateConstructorDefinition
     my $generatingNamedConstructor = shift;
     my $function = shift;
 
-    return if IsJSBuiltinConstructor($interface);
+
+    if (IsJSBuiltinConstructor($interface)) {
+        if ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
+            # FIXME: Add support for ConstructorCallWith
+            push(@$outputArray, <<END);
+template<> JSC::JSObject* ${className}Constructor::createJSObject()
+{
+    return ${className}::create(getDOMStructure<${className}>(globalObject()->vm(), *globalObject()), globalObject(), ${interfaceName}::create());
+}
+
+END
+        }
+        return;
+    }
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
 
@@ -5034,7 +5047,7 @@ sub IsConstructable
 {
     my $interface = shift;
 
-    return HasCustomConstructor($interface) || $interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"NamedConstructor"} || $interface->extendedAttributes->{"ConstructorTemplate"};
+    return HasCustomConstructor($interface) || $interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"NamedConstructor"} || $interface->extendedAttributes->{"ConstructorTemplate"} || $interface->extendedAttributes->{"JSBuiltinConstructor"};
 }
 
 sub HeaderNeedsPrototypeDeclaration
@@ -5082,6 +5095,7 @@ sub IsJSBuiltinConstructor
 
     return 0 if $interface->extendedAttributes->{"CustomConstructor"};
     return 1 if $interface->extendedAttributes->{"JSBuiltin"};
+    return 1 if $interface->extendedAttributes->{"JSBuiltinConstructor"};
     return 0;
 }
 
@@ -5112,7 +5126,7 @@ sub AddJSBuiltinIncludesIfNeeded()
 {
     my $interface = shift;
 
-    if ($interface->extendedAttributes->{"JSBuiltin"}) {
+    if ($interface->extendedAttributes->{"JSBuiltin"} || $interface->extendedAttributes->{"JSBuiltinConstructor"}) {
         AddToImplIncludes($interface->name . "Builtins.h");
         return;
     }

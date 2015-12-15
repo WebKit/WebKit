@@ -1,3 +1,35 @@
+2015-12-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        WebIDL generator should support the possibility for C++ classes to have a JS Builtin constructor
+        https://bugs.webkit.org/show_bug.cgi?id=152171
+
+        Reviewed by Darin Adler.
+
+        Reintroducing JSBuiltinConstructor keyword as a way to run automatically a JS builtin initialization function
+        to process the arguments passed to the DOM C++ constructor.
+
+        Specialized createJSObject for those classes.
+
+        Fixing typo in TestCustomConstructor.idl.
+
+        Covered by binding tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        (IsConstructable):
+        (IsJSBuiltinConstructor):
+        (AddJSBuiltinIncludesIfNeeded):
+        * bindings/scripts/test/GObject/WebKitDOMTestClassWithJSBuiltinConstructor.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestClassWithJSBuiltinConstructor.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestClassWithJSBuiltinConstructorPrivate.h: Added.
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp: Added.
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestClassWithJSBuiltinConstructor.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestClassWithJSBuiltinConstructor.mm: Added.
+        * bindings/scripts/test/ObjC/DOMTestClassWithJSBuiltinConstructorInternal.h: Added.
+        * bindings/scripts/test/TestClassWithJSBuiltinConstructor.idl: Copied from Source/WebCore/bindings/scripts/test/TestCustomConstructor.idl.
+        * bindings/scripts/test/TestCustomConstructor.idl:
+
 2015-12-14  Andreas Kling  <akling@apple.com>
 
         ResourceUsageOverlay should show GC timers.
