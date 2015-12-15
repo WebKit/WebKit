@@ -1,3 +1,17 @@
+2015-12-14  YongGeol Jung  <yg48.jung@samsung.com>
+
+        [Coordinated Graphics] CSS transition effect is not shown when transformed with "%" unit.
+        https://bugs.webkit.org/show_bug.cgi?id=152278
+
+        Reviewed by Darin Adler.
+
+        boxSize is encoded as FloatSize type but decoded as IntSize type.
+        So boxSize gets invalid value after decoding.
+        Due to this layer goes to out of screen during animation.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextureMapperAnimation>::decode):
+
 2015-12-14  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/23886216> REGRESSION (r194022): Production builds of PluginProcess crash on launch when not installed in /System
