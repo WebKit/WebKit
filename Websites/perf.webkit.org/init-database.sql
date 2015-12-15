@@ -87,11 +87,13 @@ CREATE TABLE commits (
     commit_revision varchar(64) NOT NULL,
     commit_parent integer REFERENCES commits ON DELETE CASCADE,
     commit_time timestamp,
+    commit_order integer,
     commit_committer integer REFERENCES committers ON DELETE CASCADE,
     commit_message text,
     commit_reported boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT commit_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision));
 CREATE INDEX commit_time_index ON commits(commit_time);
+CREATE INDEX commit_order_index ON commits(commit_order);
 
 CREATE TABLE build_commits (
     commit_build integer NOT NULL REFERENCES builds ON DELETE CASCADE,

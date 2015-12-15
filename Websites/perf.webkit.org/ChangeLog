@@ -1,5 +1,33 @@
 2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Using fake timestamp in OS version make some results invisible
+        https://bugs.webkit.org/show_bug.cgi?id=152289
+
+        Reviewed by Stephanie Lewis.
+
+        Added commit_order column to explicitly order OS versions. This fixes the bug whereby which
+        baseline results reported with only OS versions are shown with x coordinate set to 10 years ago.
+
+        To migrate the existing database, run:
+            ALTER TABLE commits ADD COLUMN commit_order integer;
+            CREATE INDEX commit_order_index ON commits(commit_order);
+
+        Then for each repository $1,
+            UPDATE commits SET (commit_time, commit_order) = (NULL, CAST(EXTRACT(epoch from commit_time) as integer))
+            WHERE commit_repository = $1;
+
+
+        * init-database.sql: Added the column.
+        * public/api/commits.php:
+        (fetch_commits_between): Use commit_order to order commits when commit_time is missing.
+        * public/api/report-commits.php:
+        (main): Set commit_order.
+        * tools/pull-os-versions.py:
+        (OSBuildFetcher.fetch_and_report_new_builds):
+        (OSBuildFetcher._assign_order): Renamed from _assign_fake_timestamps. Set the order instead of a fake timestmap.
+
+2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard can't merge when the destination platform is missing baseline/target
         https://bugs.webkit.org/show_bug.cgi?id=152286
 

@@ -64,14 +64,14 @@ class OSBuildFetcher:
         print 'Found %d builds' % len(available_builds)
 
         available_builds = filter(lambda commit: commit['revision'] not in reported_revisions, available_builds)
-        self._assign_fake_timestamps(available_builds)
+        self._assign_order(available_builds)
 
         print "Submitting %d builds" % len(available_builds)
         submit_commits(available_builds, server_config['server']['url'], server_config['slave']['name'], server_config['slave']['password'])
         reported_revisions |= set(map(lambda commit: commit['revision'], available_builds))
 
     @staticmethod
-    def _assign_fake_timestamps(builds):
+    def _assign_order(builds):
         build_name_regex = re.compile(r'(?P<major>\d+)(?P<kind>\w)(?P<minor>\d+)(?P<variant>\w*)')
         for commit in builds:
             match = build_name_regex.search(commit['revision'])
@@ -81,7 +81,7 @@ class OSBuildFetcher:
             variant = ord(match.group('variant').upper()) - ord('A') + 1 if match.group('variant') else 0
             # These fake times won't conflict with real commit time since even 99Z9999z is still in Feb 1973
             fake_time = datetime.utcfromtimestamp((major * 100 + kind) * 10000 + minor + float(variant) / 100)
-            commit['time'] = fake_time.isoformat()
+            commit['order'] = fake_time.isoformat()
 
 
 def available_builds_from_command(repository_name, command, lines_to_ignore):

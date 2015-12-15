@@ -62,6 +62,7 @@ function main($post_data) {
             'repository' => $repository_id,
             'revision' => $commit_info['revision'],
             'parent' => $parent_id,
+            'order' => array_get($commit_info, 'order'),
             'time' => array_get($commit_info, 'time'),
             'committer' => $committer_id,
             'message' => array_get($commit_info, 'message'),

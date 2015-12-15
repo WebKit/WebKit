@@ -79,11 +79,18 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
         $second_commit = commit_from_revision($db, $repository_id, $second);
         $first = $first_commit['commit_time'];
         $second = $second_commit['commit_time'];
+        $column_name = 'commit_time';
+        if (!$first || !$second) {
+            $first = $first_commit['commit_order'];
+            $second = $second_commit['commit_order'];
+            $column_name = 'commit_order';
+        }
+
         $in_order = $first < $second;
         array_push($values, $in_order ? $first : $second);
-        $statements .= ' AND commit_time >= $' . count($values);
+        $statements .= ' AND ' . $column_name . ' >= $' . count($values);
         array_push($values, $in_order ? $second : $first);
-        $statements .= ' AND commit_time <= $' . count($values);
+        $statements .= ' AND ' . $column_name . ' <= $' . count($values);
     }
 
     if ($keyword) {
@@ -95,7 +102,7 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
             AND ((committer_name LIKE $keyword_index OR committer_account LIKE $keyword_index) OR commit_revision = $revision_index)";
     }
 
-    $commits = $db->query_and_fetch_all($statements . ' ORDER BY commit_time', $values);
+    $commits = $db->query_and_fetch_all($statements . ' ORDER BY commit_time, commit_order', $values);
     if (!is_array($commits))
         exit_with_error('FailedToFetchCommits', array('repository' => $repository_id, 'first' => $first, 'second' => $second));
     foreach ($commits as &$commit)
