@@ -1,5 +1,30 @@
 2015-12-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Stack traces in console incorrectly show "(anonymous function)" for global code
+        https://bugs.webkit.org/show_bug.cgi?id=152280
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Images/Program.svg: Added.
+        * UserInterface/Images/gtk/Program.svg: Added.
+        Copied from TimelineRecordScriptEvaluated.svg.
+
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame):
+        (WebInspector.CallFrame.prototype.get programCode):
+        Add a new property to check if this call frame is in program code.
+
+        (WebInspector.CallFrame.fromPayload):
+        Detect different sources of program code (global, eval, module).
+
+        * UserInterface/Views/CallFrameIcons.css:
+        (.program-icon .icon):
+        * UserInterface/Views/CallFrameView.js:
+        (WebInspector.CallFrameView.iconClassNameForCallFrame):
+        Give program code the [S] global script icon like in profiles.
+
+2015-12-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Copy message from console with a stack trace does not include source code locations
         https://bugs.webkit.org/show_bug.cgi?id=152270
 

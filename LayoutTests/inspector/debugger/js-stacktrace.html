@@ -53,7 +53,8 @@ function test()
                 lineNumber: lineNumber,
                 columnNumber: columnNumber,
                 functionName: callFrame.functionName,
-                nativeCode: callFrame.nativeCode
+                nativeCode: callFrame.nativeCode,
+                programCode: callFrame.programCode,
             });
         }
 
@@ -112,9 +113,9 @@ function test()
     {
         var index = 0;
         for (var frame of stackTrace) {
-            if (frame.nativeCode && frame.functionName === null)
-                break;
             index++;
+            if (frame.nativeCode && frame.functionName === "eval code")
+                break;
         }
         return stackTrace.slice(0, index);
     }
@@ -123,9 +124,9 @@ function test()
     {
         var index = 0;
         for (var frame of payload) {
+            index++;
             if (frame.functionName === "eval code")
                 break;
-            index++;
         }
         return payload.slice(0, index);
     }

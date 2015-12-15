@@ -1,3 +1,13 @@
+2015-12-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stack traces in console incorrectly show "(anonymous function)" for global code
+        https://bugs.webkit.org/show_bug.cgi?id=152280
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/js-stacktrace-expected.txt:
+        * inspector/debugger/js-stacktrace.html:
+
 2015-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/deleted-objects.html as a flaky crash on mac-wk1

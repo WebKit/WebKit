@@ -6,13 +6,22 @@ console.trace():
         "lineNumber": 15,
         "columnNumber": 22,
         "functionName": "typeError",
-        "nativeCode": false
+        "nativeCode": false,
+        "programCode": false
     },
     {
         "lineNumber": 6,
         "columnNumber": 21,
         "functionName": "typeErrorWrap",
-        "nativeCode": false
+        "nativeCode": false,
+        "programCode": false
+    },
+    {
+        "lineNumber": null,
+        "columnNumber": null,
+        "functionName": "eval code",
+        "nativeCode": true,
+        "programCode": true
     }
 ]
 
@@ -29,6 +38,12 @@ Error object:
         "url": "/inspector/debugger/js-stacktrace.html",
         "lineNumber": 7,
         "columnNumber": 21
+    },
+    {
+        "functionName": "eval code",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0
     }
 ]
 
@@ -38,19 +53,29 @@ console.trace():
         "lineNumber": 15,
         "columnNumber": 22,
         "functionName": "typeError",
-        "nativeCode": false
+        "nativeCode": false,
+        "programCode": false
     },
     {
         "lineNumber": null,
         "columnNumber": null,
         "functionName": "map",
-        "nativeCode": true
+        "nativeCode": true,
+        "programCode": false
     },
     {
         "lineNumber": 22,
         "columnNumber": 20,
         "functionName": "testWithNativeCallInBetween",
-        "nativeCode": false
+        "nativeCode": false,
+        "programCode": false
+    },
+    {
+        "lineNumber": null,
+        "columnNumber": null,
+        "functionName": "eval code",
+        "nativeCode": true,
+        "programCode": true
     }
 ]
 
@@ -73,6 +98,12 @@ Error object:
         "url": "/inspector/debugger/js-stacktrace.html",
         "lineNumber": 23,
         "columnNumber": 20
+    },
+    {
+        "functionName": "eval code",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0
     }
 ]
 
