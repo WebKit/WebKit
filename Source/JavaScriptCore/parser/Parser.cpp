@@ -827,21 +827,27 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseBi
 template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAssignmentElement(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
 {
-    SavePoint savePoint = createSavePoint();
     TreeDestructuringPattern assignmentTarget = 0;
 
-    if (match(OPENBRACE) || match(OPENBRACKET))
+    if (match(OPENBRACE) || match(OPENBRACKET)) {
+        SavePoint savePoint = createSavePoint();
         assignmentTarget = parseDestructuringPattern(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth);
-    if (!assignmentTarget || match(DOT) || match(OPENBRACKET) || match(OPENPAREN) || match(TEMPLATE)) {
+        if (assignmentTarget && !match(DOT) && !match(OPENBRACKET) && !match(OPENPAREN) && !match(TEMPLATE))
+            return assignmentTarget;
         restoreSavePoint(savePoint);
-        JSTextPosition startPosition = tokenStartPosition();
-        auto element = parseMemberExpression(context);
-
-        semanticFailIfFalse(element && context.isAssignmentLocation(element), "Invalid destructuring assignment target");
-
-        return createAssignmentElement(context, element, startPosition, lastTokenEndPosition());
     }
-    return assignmentTarget;
+
+    JSTextPosition startPosition = tokenStartPosition();
+    auto element = parseMemberExpression(context);
+
+    semanticFailIfFalse(element && context.isAssignmentLocation(element), "Invalid destructuring assignment target");
+
+    if (strictMode() && m_lastIdentifier && context.isResolve(element)) {
+        failIfTrueIfStrict(m_vm->propertyNames->eval == *m_lastIdentifier, "Cannot modify 'eval' in strict mode");
+        failIfTrueIfStrict(m_vm->propertyNames->arguments == *m_lastIdentifier, "Cannot modify 'arguments' in strict mode");
+    }
+
+    return createAssignmentElement(context, element, startPosition, lastTokenEndPosition());
 }
 
 template <typename LexerType>
@@ -924,8 +930,13 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                 next();
                 if (consume(COLON))
                     innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
-                else
+                else {
+                    if (kind == DestructureToExpressions && strictMode()) {
+                        failIfTrueIfStrict(m_vm->propertyNames->eval == *propertyName, "Cannot modify 'eval' in strict mode");
+                        failIfTrueIfStrict(m_vm->propertyNames->arguments == *propertyName, "Cannot modify 'arguments' in strict mode");
+                    }
                     innerPattern = createBindingPattern(context, kind, exportType, *propertyName, identifierToken, bindingContext, duplicateIdentifier);
+                }
             } else {
                 JSTokenType tokenType = m_token.m_type;
                 switch (m_token.m_type) {

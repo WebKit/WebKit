@@ -1,3 +1,19 @@
+2015-12-15  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] SyntaxError if AssignmentElement is `eval` or `arguments` in strict code
+        https://bugs.webkit.org/show_bug.cgi?id=152302
+
+        Reviewed by Mark Lam.
+
+        `eval` and `arguments` must not be assigned to in strict code. This
+        change fixes `language/expressions/assignment/destructuring/obj-id-simple-strict.js`
+        in Test262, as well as a variety of other similar tests.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentElement):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        * tests/stress/destructuring-assignment-syntax.js:
+
 2015-12-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after 194062.
