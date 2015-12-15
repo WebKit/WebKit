@@ -1,5 +1,11 @@
 2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix a typo in the previous commit.
+
+        * public/include/report-processor.php:
+
+2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r192965. Suppress a warning about log being referred to as a closure variable.
 
         * public/include/report-processor.php:
