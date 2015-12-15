@@ -70,7 +70,7 @@ enum {
 };
 
 struct _WebKitWebsiteDataManagerPrivate {
-    RefPtr<WebsiteDataStore> websiteDataStore;
+    RefPtr<API::WebsiteDataStore> websiteDataStore;
     GUniquePtr<char> baseDataDirectory;
     GUniquePtr<char> baseCacheDirectory;
     GUniquePtr<char> localStorageDirectory;
@@ -299,12 +299,12 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(WebsiteDataStore::Configuration&& configuration)
 {
     WebKitWebsiteDataManager* manager = WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, nullptr));
-    manager->priv->websiteDataStore = WebsiteDataStore::create(WTF::move(configuration));
+    manager->priv->websiteDataStore = API::WebsiteDataStore::create(WTF::move(configuration));
 
     return manager;
 }
 
-WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager* manager)
+API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager* manager)
 {
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
     if (!priv->websiteDataStore) {
@@ -318,7 +318,7 @@ WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*
         configuration.webSQLDatabaseDirectory = !priv->webSQLDirectory ?
             API::WebsiteDataStore::defaultWebSQLDatabaseDirectory() : WebCore::filenameToString(priv->webSQLDirectory.get());
         configuration.mediaKeysStorageDirectory = API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
-        priv->websiteDataStore = WebsiteDataStore::create(WTF::move(configuration));
+        priv->websiteDataStore = API::WebsiteDataStore::create(WTF::move(configuration));
     }
 
     return *priv->websiteDataStore;

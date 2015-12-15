@@ -3744,7 +3744,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self addTrackingArea:trackingArea];
 }
 
-- (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
+- (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -3766,7 +3766,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self addTrackingArea:_data->_primaryTrackingArea.get()];
 
     _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
-    _data->_page = processPool.createWebPage(*_data->_pageClient, WTF::move(webPageConfiguration));
+    _data->_page = processPool.createWebPage(*_data->_pageClient, WTF::move(configuration));
     _data->_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
@@ -3994,19 +3994,20 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
 {
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.pageGroup = toImpl(pageGroupRef);
-    webPageConfiguration.relatedPage = toImpl(relatedPage);
+    auto configuration = API::PageConfiguration::create();
+    configuration->setProcessPool(toImpl(contextRef));
+    configuration->setPageGroup(toImpl(pageGroupRef));
+    configuration->setRelatedPage(toImpl(relatedPage));
 
-    return [self initWithFrame:frame processPool:*toImpl(contextRef) configuration:webPageConfiguration webView:nil];
+    return [self initWithFrame:frame processPool:*toImpl(contextRef) configuration:WTF::move(configuration) webView:nil];
 }
 
-- (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configuration
+- (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configurationRef
 {
-    auto& processPool = *toImpl(configuration)->processPool();
-    auto webPageConfiguration = toImpl(configuration)->webPageConfiguration();
+    Ref<API::PageConfiguration> configuration = *toImpl(configurationRef);
+    auto& processPool = *configuration->processPool();
 
-    return [self initWithFrame:frame processPool:processPool configuration:webPageConfiguration webView:nil];
+    return [self initWithFrame:frame processPool:processPool configuration:WTF::move(configuration) webView:nil];
 }
 
 - (BOOL)wantsUpdateLayer

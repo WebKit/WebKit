@@ -29,6 +29,7 @@
 
 #include "WebView.h"
 
+#include "APIPageConfiguration.h"
 #include "CoordinatedDrawingAreaProxy.h"
 #include "CoordinatedGraphicsScene.h"
 #include "CoordinatedLayerTreeHostProxy.h"
@@ -52,11 +53,11 @@ WebView::WebView(WebProcessPool* context, WebPageGroup* pageGroup)
     , m_visible(false)
     , m_opacity(1.0)
 {
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.pageGroup = pageGroup;
+    auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setPageGroup(pageGroup);
 
     // Need to call createWebPage after other data members, specifically m_visible, are initialized.
-    m_page = context->createWebPage(*this, WTF::move(webPageConfiguration));
+    m_page = context->createWebPage(*this, WTF::move(pageConfiguration));
 
     m_page->pageGroup().preferences().setAcceleratedCompositingEnabled(true);
     m_page->pageGroup().preferences().setForceCompositingMode(true);

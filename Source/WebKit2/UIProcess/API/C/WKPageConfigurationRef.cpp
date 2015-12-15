@@ -93,3 +93,13 @@ void WKPageConfigurationSetRelatedPage(WKPageConfigurationRef configuration, WKP
 {
     toImpl(configuration)->setRelatedPage(toImpl(relatedPage));
 }
+
+WKWebsiteDataStoreRef WKPageConfigurationGetWebsiteDataStore(WKPageConfigurationRef configuration)
+{
+    return toAPI(toImpl(configuration)->websiteDataStore());
+}
+
+void WKPageConfigurationSetWebsiteDataStore(WKPageConfigurationRef configuration, WKWebsiteDataStoreRef websiteDataStore)
+{
+    toImpl(configuration)->setWebsiteDataStore(toImpl(websiteDataStore));
+}

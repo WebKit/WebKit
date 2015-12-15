@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "APIPageConfiguration.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "UIKitSPI.h"
 #import "ViewGestureController.h"
@@ -225,11 +226,12 @@ using namespace WebKit;
 
     [self addSubview:_scrollView.get()];
 
-    WebKit::WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.pageGroup = toImpl(pageGroupRef);
-    webPageConfiguration.relatedPage = toImpl(relatedPage);
+    auto configuration = API::PageConfiguration::create();
+    configuration->setProcessPool(toImpl(contextRef));
+    configuration->setPageGroup(toImpl(pageGroupRef));
+    configuration->setRelatedPage(toImpl(relatedPage));
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:*toImpl(contextRef) configuration:WTF::move(webPageConfiguration) wkView:self]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:*toImpl(contextRef) configuration:WTF::move(configuration) wkView:self]);
 
     [[_contentView layer] setAnchorPoint:CGPointZero];
     [_contentView setFrame:bounds];

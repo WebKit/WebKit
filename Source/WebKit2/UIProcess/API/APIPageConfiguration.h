@@ -27,26 +27,31 @@
 #define APIPageConfiguration_h
 
 #include "APIObject.h"
+#include "WebPreferencesStore.h"
+#include <WebCore/SessionID.h>
 #include <wtf/GetPtr.h>
 
 namespace WebKit {
-struct WebPageConfiguration;
-class WebUserContentControllerProxy;
-class WebProcessPool;
+class VisitedLinkProvider;
 class WebPageGroup;
-class WebPreferences;
 class WebPageProxy;
+class WebPreferences;
+class WebProcessPool;
+class WebUserContentControllerProxy;
 }
 
 namespace API {
 
+class WebsiteDataStore;
+
 class PageConfiguration : public ObjectImpl<Object::Type::PageConfiguration> {
 public:
-    static Ref<PageConfiguration> create()
-    {
-        return adoptRef(*new PageConfiguration);
-    }
+    static Ref<PageConfiguration> create();
+
+    explicit PageConfiguration();
     virtual ~PageConfiguration();
+
+    Ref<PageConfiguration> copy() const;
 
     // FIXME: The configuration properties should return their default values
     // rather than nullptr.
@@ -63,19 +68,47 @@ public:
     WebKit::WebPreferences* preferences();
     void setPreferences(WebKit::WebPreferences*);
 
+    WebKit::WebPreferencesStore::ValueMap& preferenceValues() { return m_preferenceValues; }
+
     WebKit::WebPageProxy* relatedPage();
     void setRelatedPage(WebKit::WebPageProxy*);
 
-    WebKit::WebPageConfiguration webPageConfiguration();
+    WebKit::VisitedLinkProvider* visitedLinkProvider();
+    void setVisitedLinkProvider(WebKit::VisitedLinkProvider*);
+
+    WebsiteDataStore* websiteDataStore();
+    void setWebsiteDataStore(WebsiteDataStore*);
+
+    WebCore::SessionID sessionID();
+    void setSessionID(WebCore::SessionID);
+
+    bool treatsSHA1SignedCertificatesAsInsecure() { return m_treatsSHA1SignedCertificatesAsInsecure; }
+    void setTreatsSHA1SignedCertificatesAsInsecure(bool treatsSHA1SignedCertificatesAsInsecure) { m_treatsSHA1SignedCertificatesAsInsecure = treatsSHA1SignedCertificatesAsInsecure; } 
+
+#if PLATFORM(IOS)
+    bool alwaysRunsAtForegroundPriority() { return m_alwaysRunsAtForegroundPriority; }
+    void setAlwaysRunsAtForegroundPriority(bool alwaysRunsAtForegroundPriority) { m_alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority; } 
+#endif
 
 private:
-    PageConfiguration();
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     RefPtr<WebKit::WebPageGroup> m_pageGroup;
     RefPtr<WebKit::WebPreferences> m_preferences;
+    WebKit::WebPreferencesStore::ValueMap m_preferenceValues;
     RefPtr<WebKit::WebPageProxy> m_relatedPage;
+    RefPtr<WebKit::VisitedLinkProvider> m_visitedLinkProvider;
+
+    RefPtr<WebsiteDataStore> m_websiteDataStore;
+    // FIXME: We currently have to pass the session ID separately here to support the legacy private browsing session.
+    // Once we get rid of it we should get rid of this configuration parameter as well.
+    WebCore::SessionID m_sessionID;
+
+    bool m_treatsSHA1SignedCertificatesAsInsecure = false;
+#if PLATFORM(IOS)
+    bool m_alwaysRunsAtForegroundPriority = false;
+#endif
 };
 
 } // namespace API

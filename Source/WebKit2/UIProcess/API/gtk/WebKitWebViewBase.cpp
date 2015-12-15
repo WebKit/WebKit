@@ -29,6 +29,7 @@
 #include "config.h"
 #include "WebKitWebViewBase.h"
 
+#include "APIPageConfiguration.h"
 #include "DrawingAreaProxyImpl.h"
 #include "InputMethodFilter.h"
 #include "KeyBindingTranslator.h"
@@ -1066,12 +1067,13 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 WebKitWebViewBase* webkitWebViewBaseCreate(WebProcessPool* context, WebPreferences* preferences, WebPageGroup* pageGroup, WebUserContentControllerProxy* userContentController, WebPageProxy* relatedPage)
 {
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, nullptr));
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.preferences = preferences;
-    webPageConfiguration.pageGroup = pageGroup;
-    webPageConfiguration.relatedPage = relatedPage;
-    webPageConfiguration.userContentController = userContentController;
-    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, WTF::move(webPageConfiguration));
+
+    auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setPreferences(preferences);
+    pageConfiguration->setPageGroup(pageGroup);
+    pageConfiguration->setRelatedPage(relatedPage);
+    pageConfiguration->setUserContentController(userContentController);
+    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, WTF::move(pageConfiguration));
     return webkitWebViewBase;
 }
 
@@ -1092,7 +1094,7 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 }
 #endif // HAVE(GTK_SCALE_FACTOR)
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebProcessPool* context, WebPageConfiguration&& configuration)
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebProcessPool* context, Ref<API::PageConfiguration>&& configuration)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 

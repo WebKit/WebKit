@@ -21,6 +21,7 @@
 #include "WebKitWebContext.h"
 
 #include "APIDownloadClient.h"
+#include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
 #include "TextChecker.h"
@@ -1274,13 +1275,14 @@ void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext* context, u
 void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.preferences = webkitSettingsGetPreferences(webkit_web_view_get_settings(webView));
-    webPageConfiguration.relatedPage = relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr;
-    webPageConfiguration.userContentController = userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr;
-    webPageConfiguration.websiteDataStore = &webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
-    webPageConfiguration.sessionID = webPageConfiguration.websiteDataStore->sessionID();
-    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), WTF::move(webPageConfiguration));
+
+    auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setPreferences(webkitSettingsGetPreferences(webkit_web_view_get_settings(webView)));
+    pageConfiguration->setRelatedPage(relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr);
+    pageConfiguration->setUserContentController(userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr);
+    pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()));
+    pageConfiguration->setSessionID(pageConfiguration->websiteDataStore()->websiteDataStore().sessionID());
+    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), WTF::move(pageConfiguration));
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     context->priv->webViews.set(page->pageID(), webView);

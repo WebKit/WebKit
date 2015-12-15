@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "APIDownloadClient.h"
 #include "APILegacyContextHistoryClient.h"
+#include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
 #include "CustomProtocolManagerMessages.h"
 #include "DownloadProxy.h"
@@ -828,18 +829,18 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
     return *process;
 }
 
-PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, WebPageConfiguration configuration)
+PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
-    if (!configuration.pageGroup)
-        configuration.pageGroup = m_defaultPageGroup.ptr();
-    if (!configuration.preferences)
-        configuration.preferences = &configuration.pageGroup->preferences();
-    if (!configuration.visitedLinkProvider)
-        configuration.visitedLinkProvider = m_visitedLinkProvider.ptr();
-    if (!configuration.websiteDataStore) {
-        ASSERT(!configuration.sessionID.isValid());
-        configuration.websiteDataStore = &m_websiteDataStore->websiteDataStore();
-        configuration.sessionID = configuration.preferences->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID();
+    if (!pageConfiguration->pageGroup())
+        pageConfiguration->setPageGroup(m_defaultPageGroup.ptr());
+    if (!pageConfiguration->preferences())
+        pageConfiguration->setPreferences(&pageConfiguration->pageGroup()->preferences());
+    if (!pageConfiguration->visitedLinkProvider())
+        pageConfiguration->setVisitedLinkProvider(m_visitedLinkProvider.ptr());
+    if (!pageConfiguration->websiteDataStore()) {
+        ASSERT(!pageConfiguration->sessionID().isValid());
+        pageConfiguration->setWebsiteDataStore(m_websiteDataStore.get());
+        pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
     }
 
     RefPtr<WebProcessProxy> process;
@@ -849,14 +850,14 @@ PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, W
         if (m_haveInitialEmptyProcess) {
             process = m_processes.last();
             m_haveInitialEmptyProcess = false;
-        } else if (configuration.relatedPage) {
+        } else if (pageConfiguration->relatedPage()) {
             // Sharing processes, e.g. when creating the page via window.open().
-            process = &configuration.relatedPage->process();
+            process = &pageConfiguration->relatedPage()->process();
         } else
             process = &createNewWebProcessRespectingProcessCountLimit();
     }
 
-    return process->createWebPage(pageClient, WTF::move(configuration));
+    return process->createWebPage(pageClient, WTF::move(pageConfiguration));
 }
 
 DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request)

@@ -37,6 +37,7 @@
 #include "APINavigationAction.h"
 #include "APINavigationClient.h"
 #include "APINavigationResponse.h"
+#include "APIPageConfiguration.h"
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
@@ -125,6 +126,11 @@ WKContextRef WKPageGetContext(WKPageRef pageRef)
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
 {
     return toAPI(&toImpl(pageRef)->pageGroup());
+}
+
+WKPageConfigurationRef WKPageCopyPageConfiguration(WKPageRef pageRef)
+{
+    return toAPI(&toImpl(pageRef)->configuration().copy().leakRef());
 }
 
 void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)

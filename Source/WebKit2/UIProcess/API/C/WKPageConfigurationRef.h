@@ -51,6 +51,9 @@ WK_EXPORT void WKPageConfigurationSetPreferences(WKPageConfigurationRef configur
 WK_EXPORT WKPageRef WKPageConfigurationGetRelatedPage(WKPageConfigurationRef configuration);
 WK_EXPORT void WKPageConfigurationSetRelatedPage(WKPageConfigurationRef configuration, WKPageRef relatedPage);
 
+WK_EXPORT WKWebsiteDataStoreRef WKPageConfigurationGetWebsiteDataStore(WKPageConfigurationRef configuration);
+WK_EXPORT void WKPageConfigurationSetWebsiteDataStore(WKPageConfigurationRef configuration, WKWebsiteDataStoreRef websiteDataStore);
+
 #ifdef __cplusplus
 }
 #endif
