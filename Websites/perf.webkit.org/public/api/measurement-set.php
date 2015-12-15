@@ -1,0 +1,219 @@
+<?php
+
+require('../include/json-header.php');
+
+function main() {
+    $program_start_time = microtime(true);
+
+    $arguments = validate_arguments($_GET, array(
+        'platform' => 'int',
+        'metric' => 'int',
+        'testGroup' => 'int?',
+        'startTime' => 'int?',
+        'endTime' => 'int?'));
+
+    $platform_id = $arguments['platform'];
+    $metric_id = $arguments['metric'];
+
+    $start_time = $arguments['startTime'];
+    $end_time = $arguments['endTime'];
+    if (!!$start_time != !!$end_time)
+        exit_with_error('InvalidTimeRange', array('startTime' => $start_time, 'endTime' => $end_time));
+
+    $db = new Database;
+    if (!$db->connect())
+        exit_with_error('DatabaseConnectionFailure');
+
+    $fetcher = new MeasurementSetFetcher($db);
+    if (!$fetcher->fetch_config_list($platform_id, $metric_id)) {
+        exit_with_error('ConfigurationNotFound',
+            array('platform' => $platform_id, 'metric' => $metric_id));
+    }
+
+    $cluster_count = 0;
+    while (!$fetcher->at_end()) {
+        $content = $fetcher->fetch_next_cluster();
+        $cluster_count++;
+        if ($fetcher->at_end()) {
+            $cache_filename = "measurement-set-$platform_id-$metric_id.json";
+            $content['clusterCount'] = $cluster_count;
+            $content['elapsedTime'] = (microtime(true) - $program_start_time) * 1000;
+        } else
+            $cache_filename = "measurement-set-$platform_id-$metric_id-{$content['endTime']}.json";
+
+        $json = success_json($content);
+        generate_data_file($cache_filename, $json);
+    }
+
+    echo $json;
+}
+
+define('DAY', 24 * 3600 * 1000);
+define('YEAR', 365.24 * DAY);
+define('MONTH', 30 * DAY);
+
+class MeasurementSetFetcher {
+    function __construct($db) {
+        $this->db = $db;
+        $this->queries = NULL;
+
+        // Each cluster contains data points between two commit time
+        // as well as a point immediately before and a point immediately after these points.
+        // Clusters are fetched in chronological order.
+        $start_time = config('clusterStart');
+        $size = config('clusterSize');
+        $this->cluster_start = mktime($start_time[3], $start_time[4], 0, $start_time[1], $start_time[2], $start_time[0]) * 1000;
+        $this->next_cluster_start = $this->cluster_start;
+        $this->next_cluster_results = NULL;
+        $this->cluster_size = $size[0] * YEAR + $size[1] * MONTH + $size[2] * DAY;
+        $this->last_modified = 0;
+
+        $this->start_time = microtime(TRUE);
+    }
+
+    function fetch_config_list($platform_id, $metric_id) {
+        $config_rows = $this->db->query_and_fetch_all('SELECT *
+            FROM test_configurations WHERE config_metric = $1 AND config_platform = $2',
+            array($metric_id, $platform_id));
+        $this->config_rows = $config_rows;
+        if (!$config_rows)
+            return FALSE;
+
+        $this->queries = array();
+        $this->next_cluster_results = array();
+        $min_commit_time = microtime(TRUE) * 1000;
+        foreach ($config_rows as &$config_row) {
+            $query = $this->execute_query($config_row['config_id']);
+
+            $this->last_modified = max($this->last_modified, $config_row['config_runs_last_modified']);
+
+            $measurement_row = $this->db->fetch_next_row($query);
+            if ($measurement_row) {
+                $commit_time = 0;
+                $formatted_row = self::format_run($measurement_row, $commit_time);
+                $this->next_cluster_results[$config_row['config_type']] = array($formatted_row);
+                $min_commit_time = min($min_commit_time, $commit_time);
+            } else
+                $query = NULL;
+
+            $this->queries[$config_row['config_type']] = $query;
+        }
+
+        while ($this->next_cluster_start + $this->cluster_size < $min_commit_time)
+            $this->next_cluster_start += $this->cluster_size;
+
+        return TRUE;
+    }
+
+    function at_end() {
+        if ($this->queries === NULL)
+            return FALSE;
+        foreach ($this->queries as $name => &$query) {
+            if ($query)
+                return FALSE;
+        }
+        return TRUE;
+    }
+    
+    function fetch_next_cluster() {
+        assert($this->queries);
+
+        $results_by_config = array();
+        $current_cluster_start = $this->next_cluster_start;
+        $this->next_cluster_start += $this->cluster_size;
+
+        foreach ($this->queries as $name => &$query) {
+            assert($this->next_cluster_start);
+
+            $carry_over = array_get($this->next_cluster_results, $name);
+            if ($carry_over)
+                $results_by_config[$name] = $carry_over;
+            else
+                $results_by_config[$name] = array();
+
+            if (!$query)
+                continue;
+
+            while ($row = $this->db->fetch_next_row($query)) {
+                $commit_time = NULL;
+                $formatted_row = self::format_run($row, $commit_time);
+                array_push($results_by_config[$name], $formatted_row);
+                $row_belongs_to_next_cluster = $commit_time > $this->next_cluster_start;
+                if ($row_belongs_to_next_cluster)
+                    break;
+            }
+
+            $reached_end = !$row;
+            if ($reached_end)
+                $this->queries[$name] = NULL;
+            else {
+                $this->next_cluster_results[$name] = array_slice($results_by_config[$name], -2);
+            }
+        }
+
+        return array(
+            'clusterStart' => $this->cluster_start,
+            'clusterSize' => $this->cluster_size,
+            'configurations' => &$results_by_config,
+            'formatMap' => self::format_map(),
+            'startTime' => $current_cluster_start,
+            'endTime' => $this->next_cluster_start,
+            'lastModified' => $this->last_modified);
+    }
+
+    function execute_query($config_id) {
+        return $this->db->query('
+            SELECT test_runs.*, builds.*,
+            array_agg((commit_repository, commit_revision, commit_time)) AS revisions,
+            max(commit_time) AS revision_time, max(commit_order) AS revision_order
+                FROM builds
+                    LEFT OUTER JOIN build_commits ON commit_build = build_id
+                    LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
+                WHERE run_build = build_id AND run_config = $1 AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
+                GROUP BY build_id, run_id ORDER BY revision_time, revision_order, build_time', array($config_id));
+    }
+
+    static function format_map()
+    {
+        return array('id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions',
+            'commitTime', 'build', 'buildTime', 'buildNumber', 'builder');
+    }
+
+    private static function format_run($run, &$commit_time) {
+        $commit_time = Database::to_js_time($run['revision_time']);
+        $build_time = Database::to_js_time($run['build_time']);
+        if (!$commit_time)
+            $commit_time = $build_time;
+        return array(
+            intval($run['run_id']),
+            floatval($run['run_mean_cache']),
+            intval($run['run_iteration_count_cache']),
+            floatval($run['run_sum_cache']),
+            floatval($run['run_square_sum_cache']),
+            Database::is_true($run['run_marked_outlier']),
+            self::parse_revisions_array($run['revisions']),
+            $commit_time,
+            intval($run['build_id']),
+            $build_time,
+            $run['build_number'],
+            intval($run['build_builder']));
+    }
+
+    private static function parse_revisions_array($postgres_array) {
+        // e.g. {"(WebKit,131456,\"2012-10-16 14:53:00\")","(Chromium,162004,)"}
+        $outer_array = json_decode('[' . trim($postgres_array, '{}') . ']');
+        $revisions = array();
+        foreach ($outer_array as $item) {
+            $name_and_revision = explode(',', trim($item, '()'));
+            if (!$name_and_revision[0])
+                continue;
+            $time = Database::to_js_time(trim($name_and_revision[2], '"'));
+            array_push($revisions, array(intval(trim($name_and_revision[0], '"')), trim($name_and_revision[1], '"'), $time));
+        }
+        return $revisions;
+    }
+}
+
+main();
+
+?>

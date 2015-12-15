@@ -1,3 +1,47 @@
+2015-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add /api/measurement-set for v3 UI
+        https://bugs.webkit.org/show_bug.cgi?id=152312
+
+        Rubber-stamped by Chris Dumez.
+
+        The new API JSON allows the front end to fetch measured data in chunks called a "cluster" as specified
+        in config.json for each measurement set specified by the pair of a platform and a metric.
+
+        When the front end needs measured data in a given time range (t_0, t_1) for a measurement set, it first
+        fetches the primary cluster by /api/measurement-set/?platform=<platform-id>&metric=<metric-id>.
+        The primary cluster is the last cluster in the set (returning the first cluster here is not useful
+        since we don't typically show very old data), and provides the information needed to fetch other clusters.
+
+        Fetching the primary cluster also creates JSON files at:
+        /data/measurement-set-<platform-id>-<metric-id>-<cluster-end-time>.json
+        to allow latency free access for secondary clusters. The front end code can also fetch the cache of
+        the primary cluster at: /data/measurement-set-<platform-id>-<metric-id>.json.
+
+        Because the front end code has to behave as if all data is fetched, each cluster contains one data point
+        immediately before the first data point and one immediately after the last data point. This avoids having
+        to fetch multiple empty clusters for manually specified baseline data. To support this behavior, we generate
+        all clusters for a given measurement set at once when the primary cluster is requested.
+
+        Furthermore, all measurement sets are divided at the same time into clusters so that the boundary of clusters
+        won't shift as more data are reported to the server.
+
+        * config.json: Added clusterStart and clusterSize as options.
+        * public/api/measurement-set.php: Added.
+        (main):
+        (MeasurementSetFetcher::__construct):
+        (MeasurementSetFetcher::fetch_config_list): Finds configurations that belongs to this (platform, metric) pair.
+        (MeasurementSetFetcher::at_end): Returns true if we've reached the end of all clusters for this set.
+        (MeasurementSetFetcher::fetch_next_cluster): Generates the JSON data for the next cluster. We generate clusters
+        in increasing chronological order (the oldest first and the newest last).
+        (MeasurementSetFetcher::execute_query): Executes the main query.
+        (MeasurementSetFetcher::format_map): Returns the mapping of a measurement field to an array index. This removes
+        the need to have key names for each measurement and reduces the JSON size by ~10%.
+        (MeasurementSetFetcher::format_run): Creates an array that contains data for a single measurement. The order
+        matches that of keys in format_map.
+        (MeasurementSetFetcher::parse_revisions_array): Added. Copied from runs.php.
+        * tests/api-measurement-set.js: Added. Added tests for /api/measurement-set.
+
 2015-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Using fake timestamp in OS version make some results invisible

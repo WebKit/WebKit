@@ -13,6 +13,8 @@
         "hostname": "localhost",
         "port": 80
     },
+    "clusterStart": [2000, 1, 1, 0, 0],
+    "clusterSize": [0, 2, 0],
     "cacheDirectory": "public/data/remote-cache/",
     "remoteServer": {
         "httpdConfig": "tools/remote-server-relay.conf",
