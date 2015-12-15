@@ -159,7 +159,7 @@ bool GraphicsContext3DPrivate::prepareBuffer() const
     return true;
 }
 
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatRect& /* target */, const TransformationMatrix&, float /* opacity */)
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper&, const FloatRect& /* target */, const TransformationMatrix&, float /* opacity */)
 {
     notImplemented();
 }

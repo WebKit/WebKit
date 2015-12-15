@@ -49,17 +49,17 @@ bool TextureMapperPlatformLayerBuffer::canReuseWithoutReset(const IntSize& size,
     return m_texture && (m_texture->size() == size) && (static_cast<BitmapTextureGL*>(m_texture.get())->internalFormat() == internalFormat || internalFormat == GraphicsContext3D::DONT_CARE);
 }
 
-void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
+void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     if (m_hasManagedTexture) {
         ASSERT(m_texture);
-        textureMapper->drawTexture(*m_texture, targetRect, modelViewMatrix, opacity);
+        textureMapper.drawTexture(*m_texture, targetRect, modelViewMatrix, opacity);
         return;
     }
 
     ASSERT(m_textureID);
-    TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
-    texmapGL->drawTexture(m_textureID, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
+    TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
+    texmapGL.drawTexture(m_textureID, m_extraFlags, m_size, targetRect, modelViewMatrix, opacity);
 }
 
 } // namespace WebCore

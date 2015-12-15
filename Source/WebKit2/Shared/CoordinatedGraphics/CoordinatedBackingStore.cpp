@@ -30,7 +30,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void CoordinatedBackingStoreTile::swapBuffers(TextureMapper* textureMapper)
+void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
 {
     if (!m_surface)
         return;
@@ -44,13 +44,13 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper* textureMapper)
     }
     RefPtr<BitmapTexture> texture = this->texture();
     if (!texture) {
-        texture = textureMapper->createTexture();
+        texture = textureMapper.createTexture();
         setTexture(texture.get());
         shouldReset = true;
     }
 
-    ASSERT(textureMapper->maxTextureSize().width() >= m_tileRect.size().width());
-    ASSERT(textureMapper->maxTextureSize().height() >= m_tileRect.size().height());
+    ASSERT(textureMapper.maxTextureSize().width() >= m_tileRect.size().width());
+    ASSERT(textureMapper.maxTextureSize().height() >= m_tileRect.size().height());
     if (shouldReset)
         texture->reset(m_tileRect.size(), m_surface->supportsAlpha());
 
@@ -107,7 +107,7 @@ void CoordinatedBackingStore::setSize(const FloatSize& size)
     m_pendingSize = size;
 }
 
-void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, const FloatRect& rect)
+void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper& textureMapper, const TransformationMatrix& transform, float opacity, const FloatRect& rect)
 {
     for (auto& tile : tiles)
         tile->paint(textureMapper, transform, opacity, calculateExposedTileEdges(rect, tile->rect()));
@@ -118,7 +118,7 @@ TransformationMatrix CoordinatedBackingStore::adjustedTransformForRect(const Flo
     return TransformationMatrix::rectToRect(rect(), targetRect);
 }
 
-void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
+void CoordinatedBackingStore::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     if (m_tiles.isEmpty())
         return;
@@ -155,21 +155,21 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
     paintTilesToTextureMapper(tilesToPaint, textureMapper, adjustedTransform, opacity, rect());
 }
 
-void CoordinatedBackingStore::drawBorder(TextureMapper* textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
+void CoordinatedBackingStore::drawBorder(TextureMapper& textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (auto& tile : m_tiles.values())
-        textureMapper->drawBorder(borderColor, borderWidth, tile.rect(), adjustedTransform);
+        textureMapper.drawBorder(borderColor, borderWidth, tile.rect(), adjustedTransform);
 }
 
-void CoordinatedBackingStore::drawRepaintCounter(TextureMapper* textureMapper, int repaintCount, const Color& borderColor, const FloatRect& targetRect, const TransformationMatrix& transform)
+void CoordinatedBackingStore::drawRepaintCounter(TextureMapper& textureMapper, int repaintCount, const Color& borderColor, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (auto& tile : m_tiles.values())
-        textureMapper->drawNumber(repaintCount, borderColor, tile.rect().location(), adjustedTransform);
+        textureMapper.drawNumber(repaintCount, borderColor, tile.rect().location(), adjustedTransform);
 }
 
-void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
+void CoordinatedBackingStore::commitTileOperations(TextureMapper& textureMapper)
 {
     if (!m_pendingSize.isZero()) {
         m_size = m_pendingSize;

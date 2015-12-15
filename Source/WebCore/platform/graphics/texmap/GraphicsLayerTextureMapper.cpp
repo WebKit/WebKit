@@ -549,7 +549,7 @@ void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
     backingStore->updateContentsScale(pageScaleFactor() * deviceScaleFactor());
 
     dirtyRect.scale(pageScaleFactor() * deviceScaleFactor());
-    backingStore->updateContents(textureMapper, this, m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
+    backingStore->updateContents(*textureMapper, this, m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
 
     m_needsDisplay = false;
     m_needsDisplayRect = IntRect();

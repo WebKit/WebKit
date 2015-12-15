@@ -35,7 +35,7 @@ class TextureMapperFPSCounter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TextureMapperFPSCounter();
-    void updateFPSAndDisplay(TextureMapper*, const FloatPoint& = FloatPoint::zero(), const TransformationMatrix& = TransformationMatrix());
+    void updateFPSAndDisplay(TextureMapper&, const FloatPoint& = FloatPoint::zero(), const TransformationMatrix& = TransformationMatrix());
 
 private:
     bool m_isShowingFPS;

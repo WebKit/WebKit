@@ -468,7 +468,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateS
 #endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && !USE(COORDINATED_GRAPHICS_THREADED)
-void ImageBufferData::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
+void ImageBufferData::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     ASSERT(m_texture);
 
@@ -477,7 +477,7 @@ void ImageBufferData::paintToTextureMapper(TextureMapper* textureMapper, const F
     cairo_surface_flush(m_surface.get());
     previousActiveContext->makeContextCurrent();
 
-    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(m_texture, TextureMapperGL::ShouldBlend, m_size, targetRect, matrix, opacity);
+    static_cast<TextureMapperGL&>(textureMapper).drawTexture(m_texture, TextureMapperGL::ShouldBlend, m_size, targetRect, matrix, opacity);
 }
 #endif
 

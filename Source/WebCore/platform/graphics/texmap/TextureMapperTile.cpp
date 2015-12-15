@@ -29,7 +29,7 @@ namespace WebCore {
 
 class GraphicsLayer;
 
-void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* image, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
+void TextureMapperTile::updateContents(TextureMapper& textureMapper, Image* image, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -43,14 +43,14 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
     // Normalize targetRect to the texture's coordinates.
     targetRect.move(-m_rect.x(), -m_rect.y());
     if (!m_texture) {
-        m_texture = textureMapper->createTexture();
+        m_texture = textureMapper.createTexture();
         m_texture->reset(targetRect.size(), image->currentFrameKnownToBeOpaque() ? 0 : BitmapTexture::SupportsAlpha);
     }
 
     m_texture->updateContents(image, targetRect, sourceOffset, updateContentsFlag);
 }
 
-void TextureMapperTile::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag, float scale)
+void TextureMapperTile::updateContents(TextureMapper& textureMapper, GraphicsLayer* sourceLayer, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag, float scale)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -62,17 +62,17 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, GraphicsLay
     targetRect.move(-m_rect.x(), -m_rect.y());
 
     if (!m_texture) {
-        m_texture = textureMapper->createTexture();
+        m_texture = textureMapper.createTexture();
         m_texture->reset(targetRect.size(), BitmapTexture::SupportsAlpha);
     }
 
     m_texture->updateContents(textureMapper, sourceLayer, targetRect, sourceOffset, updateContentsFlag, scale);
 }
 
-void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, const unsigned exposedEdges)
+void TextureMapperTile::paint(TextureMapper& textureMapper, const TransformationMatrix& transform, float opacity, const unsigned exposedEdges)
 {
     if (texture().get())
-        textureMapper->drawTexture(*texture().get(), rect(), transform, opacity, exposedEdges);
+        textureMapper.drawTexture(*texture().get(), rect(), transform, opacity, exposedEdges);
 }
 
 } // namespace WebCore

@@ -65,7 +65,7 @@ public:
 
     virtual IntSize size() const = 0;
     virtual void updateContents(Image*, const IntRect&, const IntPoint& offset, UpdateContentsFlag) = 0;
-    virtual void updateContents(TextureMapper*, GraphicsLayer*, const IntRect& target, const IntPoint& offset, UpdateContentsFlag, float scale = 1);
+    virtual void updateContents(TextureMapper&, GraphicsLayer*, const IntRect& target, const IntPoint& offset, UpdateContentsFlag, float scale = 1);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine, UpdateContentsFlag) = 0;
     virtual bool isValid() const = 0;
     inline Flags flags() const { return m_flags; }
@@ -83,7 +83,7 @@ public:
     inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
     inline bool isOpaque() const { return !(m_flags & SupportsAlpha); }
 
-    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) { return this; }
+    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) { return this; }
 
 protected:
     IntSize m_contentSize;

@@ -63,7 +63,7 @@ void GraphicsSurface::copyFromTexture(uint32_t texture, const IntRect& sourceRec
     platformCopyFromTexture(texture, sourceRect);
 }
 
-void GraphicsSurface::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
+void GraphicsSurface::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     platformPaintToTextureMapper(textureMapper, targetRect, transform, opacity);
 }

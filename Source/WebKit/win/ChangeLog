@@ -1,3 +1,14 @@
+2015-12-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Operate with a reference to the TextureMapper wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=152118
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::compositeLayersToContext): TextureMapper object
+        is now operated with through a reference.
+
 2015-12-01  Darin Adler  <darin@apple.com>
 
         Fix anomaly where isMouseEvent returns false for wheel events

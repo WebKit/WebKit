@@ -110,7 +110,7 @@ public:
 #else
     virtual bool supportsAcceleratedRendering() const override { return true; }
 #endif
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float) override;
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
 #endif
 
 #if USE(COORDINATED_GRAPHICS_THREADED)

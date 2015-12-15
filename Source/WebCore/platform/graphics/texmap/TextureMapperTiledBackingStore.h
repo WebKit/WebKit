@@ -38,13 +38,13 @@ public:
     virtual ~TextureMapperTiledBackingStore() { }
 
     virtual RefPtr<BitmapTexture> texture() const override;
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float) override;
-    virtual void drawBorder(TextureMapper*, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
-    virtual void drawRepaintCounter(TextureMapper*, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
+    virtual void drawBorder(TextureMapper&, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
+    virtual void drawRepaintCounter(TextureMapper&, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
 
     void updateContentsScale(float);
-    void updateContents(TextureMapper*, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
-    void updateContents(TextureMapper*, GraphicsLayer*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
+    void updateContents(TextureMapper&, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
+    void updateContents(TextureMapper&, GraphicsLayer*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
 
     void setContentsToImage(Image* image) { m_image = image; }
 
@@ -52,7 +52,7 @@ private:
     TextureMapperTiledBackingStore() { }
 
     void createOrDestroyTilesIfNeeded(const FloatSize& backingStoreSize, const IntSize& tileSize, bool hasAlpha);
-    void updateContentsFromImageIfNeeded(TextureMapper*);
+    void updateContentsFromImageIfNeeded(TextureMapper&);
     TransformationMatrix adjustedTransformForRect(const FloatRect&);
     inline FloatRect rect() const
     {

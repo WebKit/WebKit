@@ -187,7 +187,7 @@ void AcceleratedCompositingContext::compositeLayersToContext(CompositePurpose pu
 
     m_textureMapper->beginPainting();
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().paint();
-    m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get());
+    m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
     m_textureMapper->endPainting();
 
     m_context->swapBuffers();

@@ -51,7 +51,7 @@ public:
     virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
     virtual void swapBuffersIfNeeded() override;
 #elif USE(TEXTURE_MAPPER)
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity);
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect& target, const TransformationMatrix&, float opacity);
 #endif
 
 private:

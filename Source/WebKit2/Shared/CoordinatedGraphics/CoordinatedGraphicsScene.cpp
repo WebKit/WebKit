@@ -110,7 +110,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     }
 
     currentRootLayer->paint();
-    m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get(), clipRect.location(), matrix);
+    m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location(), matrix);
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
 
@@ -143,7 +143,7 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* p
         m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), m_viewBackgroundColor);
 
     layer->paint();
-    m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get(), clipRect.location());
+    m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location());
     m_textureMapper->endPainting();
     m_textureMapper->setGraphicsContext(0);
 }
@@ -584,7 +584,7 @@ void CoordinatedGraphicsScene::removeReleasedImageBackingsIfNeeded()
 void CoordinatedGraphicsScene::commitPendingBackingStoreOperations()
 {
     for (auto& backingStore : m_backingStoresWithPendingBuffers)
-        backingStore->commitTileOperations(m_textureMapper.get());
+        backingStore->commitTileOperations(*m_textureMapper);
 
     m_backingStoresWithPendingBuffers.clear();
 }

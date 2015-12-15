@@ -44,7 +44,7 @@ RefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
     return emptyTexture;
 }
 
-void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
+void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     if (m_graphicsSurface)
         m_graphicsSurface->paintToTextureMapper(textureMapper, targetRect, transform, opacity);

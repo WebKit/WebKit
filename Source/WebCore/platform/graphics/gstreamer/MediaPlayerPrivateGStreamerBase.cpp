@@ -626,7 +626,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
 }
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
-void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
+void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (!m_player->visible())
         return;
@@ -649,10 +649,10 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textur
                 return;
 
             IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
-            texture = textureMapper->acquireTextureFromPool(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+            texture = textureMapper.acquireTextureFromPool(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
             updateTexture(static_cast<BitmapTextureGL&>(*texture), videoInfo);
         }
-        textureMapper->drawTexture(*texture, targetRect, matrix, opacity);
+        textureMapper.drawTexture(*texture, targetRect, matrix, opacity);
         return;
     }
 
@@ -678,8 +678,8 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textur
     TextureMapperGL::Flags flags = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? TextureMapperGL::ShouldBlend : 0;
 
     IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
-    TextureMapperGL* textureMapperGL = reinterpret_cast<TextureMapperGL*>(textureMapper);
-    textureMapperGL->drawTexture(textureID, flags, size, targetRect, matrix, opacity);
+    TextureMapperGL& textureMapperGL = reinterpret_cast<TextureMapperGL&>(textureMapper);
+    textureMapperGL.drawTexture(textureID, flags, size, targetRect, matrix, opacity);
     gst_video_frame_unmap(&videoFrame);
 #endif
 }

@@ -39,11 +39,11 @@ public:
 
     TextureMapperPlatformLayer() : m_client(0) { }
     virtual ~TextureMapperPlatformLayer() { }
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) = 0;
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) = 0;
     virtual void swapBuffers() { }
-    virtual void drawBorder(TextureMapper* textureMapper, const Color& color, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
+    virtual void drawBorder(TextureMapper& textureMapper, const Color& color, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
     {
-        textureMapper->drawBorder(color, borderWidth, targetRect, transform);
+        textureMapper.drawBorder(color, borderWidth, targetRect, transform);
     }
     void setClient(TextureMapperPlatformLayer::Client* client)
     {

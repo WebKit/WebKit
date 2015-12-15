@@ -39,9 +39,9 @@ public:
     inline void setTexture(BitmapTexture* texture) { m_texture = texture; }
     inline void setRect(const FloatRect& rect) { m_rect = rect; }
 
-    void updateContents(TextureMapper*, Image*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData);
-    void updateContents(TextureMapper*, GraphicsLayer*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData, float scale = 1);
-    virtual void paint(TextureMapper*, const TransformationMatrix&, float, const unsigned exposedEdges);
+    void updateContents(TextureMapper&, Image*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData);
+    void updateContents(TextureMapper&, GraphicsLayer*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData, float scale = 1);
+    virtual void paint(TextureMapper&, const TransformationMatrix&, float, const unsigned exposedEdges);
     virtual ~TextureMapperTile() { }
 
     explicit TextureMapperTile(const FloatRect& rect)

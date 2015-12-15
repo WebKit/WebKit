@@ -54,7 +54,7 @@ public:
     void updateContentsNoSwizzle(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel = 4, Platform3DObject glFormat = GraphicsContext3D::RGBA);
     virtual bool isBackedByOpenGL() const override { return true; }
 
-    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) override;
+    virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) override;
     struct FilterInfo {
         RefPtr<FilterOperation> filter;
         unsigned pass;

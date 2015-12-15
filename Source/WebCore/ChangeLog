@@ -1,3 +1,76 @@
+2015-12-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Operate with a reference to the TextureMapper wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=152118
+
+        Reviewed by Martin Robinson.
+
+        In most cases where used, the pointer to the TextureMapper is non-null, so it
+        should really be a reference. The pointer is still used for the
+        TextureMapperLayer member variable which is null until the TextureMapper object
+        is created and set on the root layer.
+
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::paintToTextureMapper):
+        * platform/graphics/cairo/ImageBufferDataCairo.h:
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/efl/GraphicsContext3DPrivate.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paintToTextureMapper):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::paintToTextureMapper):
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        * platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp:
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+        * platform/graphics/texmap/BitmapTexture.cpp:
+        (WebCore::BitmapTexture::updateContents):
+        * platform/graphics/texmap/BitmapTexture.h:
+        (WebCore::BitmapTexture::applyFilters):
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::applyFilters):
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIfNeeded):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (WebCore::TextureMapperBackingStore::drawRepaintCounter):
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        (WebCore::TextureMapperFPSCounter::updateFPSAndDisplay):
+        * platform/graphics/texmap/TextureMapperFPSCounter.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperPaintOptions::TextureMapperPaintOptions):
+        (WebCore::TextureMapperLayer::paint):
+        (WebCore::TextureMapperLayer::paintSelf):
+        (WebCore::TextureMapperLayer::paintSelfAndChildren):
+        (WebCore::TextureMapperLayer::paintUsingOverlapRegions):
+        (WebCore::TextureMapperLayer::applyMask):
+        (WebCore::TextureMapperLayer::paintIntoSurface):
+        (WebCore::commitSurface):
+        (WebCore::TextureMapperLayer::paintWithIntermediateSurface):
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (WebCore::TextureMapperPlatformLayer::drawBorder):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        * platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp:
+        (WebCore::TextureMapperSurfaceBackingStore::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperSurfaceBackingStore.h:
+        * platform/graphics/texmap/TextureMapperTile.cpp:
+        (WebCore::TextureMapperTile::updateContents):
+        (WebCore::TextureMapperTile::paint):
+        * platform/graphics/texmap/TextureMapperTile.h:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
+        (WebCore::TextureMapperTiledBackingStore::paintToTextureMapper):
+        (WebCore::TextureMapperTiledBackingStore::drawBorder):
+        (WebCore::TextureMapperTiledBackingStore::drawRepaintCounter):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.h:
+
 2015-12-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         WebIDL generator should support the possibility for C++ classes to have a JS Builtin constructor

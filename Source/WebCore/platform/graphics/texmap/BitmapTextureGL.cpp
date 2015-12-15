@@ -221,13 +221,13 @@ static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
     }
 }
 
-PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMapper, const FilterOperations& filters)
+PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters)
 {
     if (filters.isEmpty())
         return this;
 
-    TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
-    RefPtr<BitmapTexture> previousSurface = texmapGL->currentSurface();
+    TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
+    RefPtr<BitmapTexture> previousSurface = texmapGL.currentSurface();
     RefPtr<BitmapTexture> resultSurface = this;
     RefPtr<BitmapTexture> intermediateSurface;
     RefPtr<BitmapTexture> spareSurface;
@@ -243,8 +243,8 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
             bool last = (i == filters.size() - 1) && (j == numPasses - 1);
             if (!last) {
                 if (!intermediateSurface)
-                    intermediateSurface = texmapGL->acquireTextureFromPool(contentSize());
-                texmapGL->bindSurface(intermediateSurface.get());
+                    intermediateSurface = texmapGL.acquireTextureFromPool(contentSize());
+                texmapGL.bindSurface(intermediateSurface.get());
             }
 
             if (last) {
@@ -252,7 +252,7 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
                 break;
             }
 
-            texmapGL->drawFiltered(*resultSurface.get(), spareSurface.get(), *filter, j);
+            texmapGL.drawFiltered(*resultSurface.get(), spareSurface.get(), *filter, j);
             if (!j && filter->type() == FilterOperation::DROP_SHADOW) {
                 spareSurface = resultSurface;
                 resultSurface = nullptr;
@@ -261,7 +261,7 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
         }
     }
 
-    texmapGL->bindSurface(previousSurface.get());
+    texmapGL.bindSurface(previousSurface.get());
     return resultSurface;
 }
 

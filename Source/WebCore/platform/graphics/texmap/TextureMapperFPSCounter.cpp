@@ -46,7 +46,7 @@ TextureMapperFPSCounter::TextureMapperFPSCounter()
     }
 }
 
-void TextureMapperFPSCounter::updateFPSAndDisplay(TextureMapper* textureMapper, const FloatPoint& location, const TransformationMatrix& matrix)
+void TextureMapperFPSCounter::updateFPSAndDisplay(TextureMapper& textureMapper, const FloatPoint& location, const TransformationMatrix& matrix)
 {
     if (!m_isShowingFPS)
         return;
@@ -59,7 +59,7 @@ void TextureMapperFPSCounter::updateFPSAndDisplay(TextureMapper* textureMapper, 
         m_fpsTimestamp += delta;
     }
 
-    textureMapper->drawNumber(m_lastFPS, Color::black, location, matrix);
+    textureMapper.drawNumber(m_lastFPS, Color::black, location, matrix);
 }
 
 } // namespace WebCore

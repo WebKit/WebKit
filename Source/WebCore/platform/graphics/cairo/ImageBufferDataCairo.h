@@ -74,7 +74,7 @@ public:
     uint32_t m_compositorTexture;
     RefPtr<cairo_t> m_compositorCr;
 #else
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity);
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect& target, const TransformationMatrix&, float opacity);
 #endif
     uint32_t m_texture;
 #endif

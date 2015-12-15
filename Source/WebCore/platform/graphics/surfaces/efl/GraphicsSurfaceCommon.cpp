@@ -175,7 +175,7 @@ void GraphicsSurface::platformCopyFromTexture(uint32_t textureId, const IntRect&
     m_private->copyFromTexture(textureId);
 }
 
-void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
+void GraphicsSurface::platformPaintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     uint32_t texture = platformGetTextureID();
     if (!texture)
@@ -183,7 +183,7 @@ void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper,
 
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(m_private->rect(), targetRect));
-    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(texture, m_private->flags(), m_private->size(), m_private->rect(), adjustedTransform, opacity);
+    static_cast<TextureMapperGL&>(textureMapper).drawTexture(texture, m_private->flags(), m_private->size(), m_private->rect(), adjustedTransform, opacity);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const

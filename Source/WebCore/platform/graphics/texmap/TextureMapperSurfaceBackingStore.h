@@ -37,7 +37,7 @@ public:
     void setGraphicsSurface(PassRefPtr<GraphicsSurface>);
     void swapBuffersIfNeeded(uint32_t frontBuffer);
     virtual RefPtr<BitmapTexture> texture() const;
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float);
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float);
     virtual ~TextureMapperSurfaceBackingStore() { }
 
 private:

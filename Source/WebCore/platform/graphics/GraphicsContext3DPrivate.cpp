@@ -112,7 +112,7 @@ void GraphicsContext3DPrivate::swapBuffersIfNeeded()
     m_context->markLayerComposited();
 }
 #elif USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS_THREADED)
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (!m_glContext)
         return;
@@ -134,10 +134,10 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
             previousActiveContext->makeContextCurrent();
     }
 
-    TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
+    TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
     TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context->m_attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
     IntSize textureSize(m_context->m_currentWidth, m_context->m_currentHeight);
-    texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity);
+    texmapGL.drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity);
 #endif // USE(TEXTURE_MAPPER_GL)
 }
 #endif // USE(TEXTURE_MAPPER)

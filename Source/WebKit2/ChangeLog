@@ -1,3 +1,25 @@
+2015-12-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Operate with a reference to the TextureMapper wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=152118
+
+        Reviewed by Martin Robinson.
+
+        Replace pointers to the TextureMapper object with references.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::swapBuffers):
+        (WebKit::CoordinatedBackingStore::paintTilesToTextureMapper):
+        (WebKit::CoordinatedBackingStore::paintToTextureMapper):
+        (WebKit::CoordinatedBackingStore::drawBorder):
+        (WebKit::CoordinatedBackingStore::drawRepaintCounter):
+        (WebKit::CoordinatedBackingStore::commitTileOperations):
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::CoordinatedGraphicsScene::paintToGraphicsContext):
+        (WebKit::CoordinatedGraphicsScene::commitPendingBackingStoreOperations):
+
 2015-12-14  YongGeol Jung  <yg48.jung@samsung.com>
 
         [Coordinated Graphics] CSS transition effect is not shown when transformed with "%" unit.

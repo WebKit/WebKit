@@ -44,7 +44,7 @@ public:
     }
 
     inline float scale() const { return m_scale; }
-    void swapBuffers(WebCore::TextureMapper*);
+    void swapBuffers(WebCore::TextureMapper&);
     void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<WebCore::CoordinatedSurface> buffer, const WebCore::IntPoint&);
 
 private:
@@ -62,18 +62,18 @@ public:
     void removeAllTiles();
     void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<WebCore::CoordinatedSurface>, const WebCore::IntPoint&);
     static Ref<CoordinatedBackingStore> create() { return adoptRef(*new CoordinatedBackingStore); }
-    void commitTileOperations(WebCore::TextureMapper*);
+    void commitTileOperations(WebCore::TextureMapper&);
     RefPtr<WebCore::BitmapTexture> texture() const override;
     void setSize(const WebCore::FloatSize&);
-    virtual void paintToTextureMapper(WebCore::TextureMapper*, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float) override;
-    virtual void drawBorder(WebCore::TextureMapper*, const WebCore::Color&, float borderWidth, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
-    virtual void drawRepaintCounter(WebCore::TextureMapper*, int repaintCount, const WebCore::Color&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
+    virtual void paintToTextureMapper(WebCore::TextureMapper&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float) override;
+    virtual void drawBorder(WebCore::TextureMapper&, const WebCore::Color&, float borderWidth, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
+    virtual void drawRepaintCounter(WebCore::TextureMapper&, int repaintCount, const WebCore::Color&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;
 
 private:
     CoordinatedBackingStore()
         : m_scale(1.)
     { }
-    void paintTilesToTextureMapper(Vector<WebCore::TextureMapperTile*>&, WebCore::TextureMapper*, const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&);
+    void paintTilesToTextureMapper(Vector<WebCore::TextureMapperTile*>&, WebCore::TextureMapper&, const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&);
     WebCore::TransformationMatrix adjustedTransformForRect(const WebCore::FloatRect&);
     WebCore::FloatRect rect() const { return WebCore::FloatRect(WebCore::FloatPoint::zero(), m_size); }
 

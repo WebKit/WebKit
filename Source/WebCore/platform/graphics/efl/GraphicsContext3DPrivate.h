@@ -36,7 +36,7 @@ public:
 
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     void setContextLostCallback(std::unique_ptr<GraphicsContext3D::ContextLostCallback>);
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float) override;
+    virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
     virtual IntSize platformLayerSize() const override;
     virtual uint32_t copyToGraphicsSurface() override;
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const override;
