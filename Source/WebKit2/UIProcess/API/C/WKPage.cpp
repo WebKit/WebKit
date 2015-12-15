@@ -1591,13 +1591,21 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
     private:
         virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy* initiatingFrame, const SecurityOriginData& securityOriginData, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
         {
-            if (m_client.base.version < 6) {
-                if (!m_client.base.version && !m_client.createNewPage_deprecatedForUseWithV0)
-                    return nullptr;
+            if (m_client.createNewPage) {
+                auto configuration = page->configuration().copy();
+                configuration->setRelatedPage(page);
 
-                if (!m_client.createNewPage_deprecatedForUseWithV1)
-                    return nullptr;
+                auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame, securityOriginData.securityOrigin());
 
+                bool shouldOpenAppLinks = !hostsAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), resourceRequest.url());
+                auto apiNavigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.ptr(), nullptr, resourceRequest, WebCore::URL(), shouldOpenAppLinks);
+
+                auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
+
+                return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(configuration.ptr()), toAPI(apiNavigationAction.ptr()), toAPI(apiWindowFeatures.ptr()), m_client.base.clientInfo)));
+            }
+        
+            if (m_client.createNewPage_deprecatedForUseWithV1 || m_client.createNewPage_deprecatedForUseWithV0) {
                 API::Dictionary::MapType map;
                 if (windowFeatures.x)
                     map.set("x", API::Double::create(*windowFeatures.x));
@@ -1617,11 +1625,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 map.set("dialog", API::Boolean::create(windowFeatures.dialog));
                 Ref<API::Dictionary> featuresMap = API::Dictionary::create(WTF::move(map));
 
-                if (!m_client.base.version)
-                    return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
-
-                Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
-                return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV1(toAPI(page), toAPI(request.ptr()), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+                if (m_client.createNewPage_deprecatedForUseWithV1) {
+                    Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+                    return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV1(toAPI(page), toAPI(request.ptr()), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+                }
+    
+                ASSERT(m_client.createNewPage_deprecatedForUseWithV0);
+                return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
             }
 
             if (!m_client.createNewPage)

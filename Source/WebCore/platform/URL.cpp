@@ -1597,6 +1597,23 @@ bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
     return true;
 }
 
+bool hostsAreEqual(const URL& a, const URL& b)
+{
+    int hostStartA = a.hostStart();
+    int hostLengthA = a.hostEnd() - hostStartA;
+    int hostStartB = b.hostStart();
+    int hostLengthB = b.hostEnd() - hostStartB;
+    if (hostLengthA != hostLengthB)
+        return false;
+
+    for (int i = 0; i < hostLengthA; ++i) {
+        if (a.string()[hostStartA + i] != b.string()[hostStartB + i])
+            return false;
+    }
+    
+    return true;
+}
+
 String encodeWithURLEscapeSequences(const String& notEncodedString, PercentEncodeCharacterClass whatToEncode)
 {
     CString asUTF8 = notEncodedString.utf8();
