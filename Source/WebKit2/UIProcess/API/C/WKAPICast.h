@@ -64,6 +64,7 @@ class UserContentExtension;
 class UserContentExtensionStore;
 class UserScript;
 class WebsiteDataStore;
+class WindowFeatures;
 }
 
 namespace WebKit {
@@ -164,6 +165,7 @@ WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
 WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
 WK_ADD_API_MAPPING(WKWebsiteDataStoreRef, API::WebsiteDataStore)
+WK_ADD_API_MAPPING(WKWindowFeaturesRef, API::WindowFeatures)
 
 /* Enum conversions */
 

@@ -49,7 +49,7 @@ enum {
 typedef uint32_t WKPluginUnavailabilityReason;
 
 typedef void (*WKPageUIClientCallback)(WKPageRef page, const void* clientInfo);
-typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
+typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
 typedef bool (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
 typedef WKStringRef (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void *clientInfo);
@@ -101,6 +101,7 @@ typedef void (*WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWith
 typedef void (*WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void *clientInfo);
 typedef bool (*WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
 typedef WKStringRef (*WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void *clientInfo);
+typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV1)(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
 
 typedef struct WKPageUIClientBase {
     int                                                                 version;
@@ -197,7 +198,7 @@ typedef struct WKPageUIClientV1 {
     void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
-    WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
@@ -248,7 +249,7 @@ typedef struct WKPageUIClientV2 {
     void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
-    WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
@@ -304,7 +305,7 @@ typedef struct WKPageUIClientV3 {
     void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
-    WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
@@ -363,7 +364,7 @@ typedef struct WKPageUIClientV4 {
     void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
-    WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
@@ -428,7 +429,7 @@ typedef struct WKPageUIClientV5 {
     void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
-    WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
@@ -456,10 +457,8 @@ typedef struct WKPageUIClientV5 {
     WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
 } WKPageUIClientV5;
 
-enum { kWKPageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };
-typedef struct WKPageUIClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
+typedef struct WKPageUIClientV6 {
+    WKPageUIClientBase                                                  base;
 
     // Version 0.
     WKPageCreateNewPageCallback_deprecatedForUseWithV0                  createNewPage_deprecatedForUseWithV0;
@@ -468,9 +467,9 @@ typedef struct WKPageUIClient {
     WKPageTakeFocusCallback                                             takeFocus;
     WKPageFocusCallback                                                 focus;
     WKPageUnfocusCallback                                               unfocus;
-    WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV0             runJavaScriptAlert;
-    WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV0           runJavaScriptConfirm;
-    WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV0            runJavaScriptPrompt;
+    WKPageRunJavaScriptAlertCallback_deprecatedForUseWithV0             runJavaScriptAlert_deprecatedForUseWithV0;
+    WKPageRunJavaScriptConfirmCallback_deprecatedForUseWithV0           runJavaScriptConfirm_deprecatedForUseWithV0;
+    WKPageRunJavaScriptPromptCallback_deprecatedForUseWithV0            runJavaScriptPrompt_deprecatedForUseWithV0;
     WKPageSetStatusTextCallback                                         setStatusText;
     WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0        mouseDidMoveOverElement_deprecatedForUseWithV0;
     WKPageMissingPluginButtonClickedCallback_deprecatedForUseWithV0     missingPluginButtonClicked_deprecatedForUseWithV0;
@@ -503,7 +502,7 @@ typedef struct WKPageUIClient {
     void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
-    WKPageCreateNewPageCallback                                         createNewPage;
+    WKPageCreateNewPageCallback_deprecatedForUseWithV1                  createNewPage_deprecatedForUseWithV1;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
@@ -512,7 +511,28 @@ typedef struct WKPageUIClient {
     WKPageShowColorPickerCallback                                       showColorPicker;
     WKPageHideColorPickerCallback                                       hideColorPicker;
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
-} WKPageUIClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
+
+    // Version 3.
+    WKPagePinnedStateDidChangeCallback                                  pinnedStateDidChange;
+
+    // Version 4.
+    WKPageDidBeginTrackingPotentialLongMousePressCallback               didBeginTrackingPotentialLongMousePress;
+    WKPageDidRecognizeLongMousePressCallback                            didRecognizeLongMousePress;
+    WKPageDidCancelTrackingPotentialLongMousePressCallback              didCancelTrackingPotentialLongMousePress;
+    WKPageIsPlayingAudioDidChangeCallback                               isPlayingAudioDidChange;
+
+    // Version 5.
+    WKPageDecidePolicyForUserMediaPermissionRequestCallback             decidePolicyForUserMediaPermissionRequest;
+    WKPageDidClickAutoFillButtonCallback                                didClickAutoFillButton;
+    WKPageRunJavaScriptAlertCallback                                    runJavaScriptAlert;
+    WKPageRunJavaScriptConfirmCallback                                  runJavaScriptConfirm;
+    WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
+    WKPageMediaSessionMetadataDidChangeCallback                         mediaSessionMetadataDidChange;
+
+    // Version 6.
+    WKPageCreateNewPageCallback                                         createNewPage;
+
+} WKPageUIClientV6;
 
 #ifdef __cplusplus
 }

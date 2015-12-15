@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWindowFeatures.h"
+#include "config.h"
+#include "APIWindowFeatures.h"
 
-#if WK_API_ENABLED
+namespace API {
 
-#import "APIWindowFeatures.h"
-#import "WKObject.h"
-
-namespace WebKit {
-
-inline WKWindowFeatures *wrapper(API::WindowFeatures& windowFeatures)
+Ref<WindowFeatures> WindowFeatures::create(const WebCore::WindowFeatures& windowFeatures)
 {
-    ASSERT([windowFeatures.wrapper() isKindOfClass:[WKWindowFeatures class]]);
+    return adoptRef(*new WindowFeatures(windowFeatures));
+}
 
-    return (WKWindowFeatures *)windowFeatures.wrapper();
+WindowFeatures::WindowFeatures(const WebCore::WindowFeatures& windowFeatures)
+    : m_windowFeatures(windowFeatures)
+{
+}
+
+WindowFeatures::~WindowFeatures()
+{
 }
 
 }
-@interface WKWindowFeatures () <WKObject> {
-@package
-    API::ObjectStorage<API::WindowFeatures> _windowFeatures;
-}
-@end
-
-#endif
