@@ -150,6 +150,10 @@ void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void
 
 void JIT_OPERATION triggerReoptimizationNow(CodeBlock*, OSRExitBase*) WTF_INTERNAL;
 
+#if USE(JSVALUE32_64)
+double JIT_OPERATION operationRandom(JSGlobalObject*);
+#endif
+
 #if ENABLE(FTL_JIT)
 void JIT_OPERATION triggerTierUpNow(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION triggerTierUpNowInLoop(ExecState*) WTF_INTERNAL;

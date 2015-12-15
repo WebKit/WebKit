@@ -351,6 +351,11 @@ private:
             break;
         }
 
+        case ArithRandom: {
+            node->setResult(NodeResultDouble);
+            break;
+        }
+
         case ArithRound: {
             if (node->child1()->shouldSpeculateInt32OrBooleanForArithmetic() && node->canSpeculateInt32(FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());

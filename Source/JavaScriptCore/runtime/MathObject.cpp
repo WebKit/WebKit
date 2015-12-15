@@ -121,7 +121,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "max"), 2, mathProtoFuncMax, MaxIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "min"), 2, mathProtoFuncMin, MinIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "pow"), 2, mathProtoFuncPow, PowIntrinsic, DontEnum);
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "random"), 0, mathProtoFuncRandom, NoIntrinsic, DontEnum);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "random"), 0, mathProtoFuncRandom, RandomIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "round"), 1, mathProtoFuncRound, RoundIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "sign"), 1, mathProtoFuncSign, NoIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "sin"), 1, mathProtoFuncSin, SinIntrinsic, DontEnum);

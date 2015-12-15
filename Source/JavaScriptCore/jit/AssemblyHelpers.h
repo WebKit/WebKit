@@ -1371,6 +1371,11 @@ public:
         if (stackOffset)
             addPtr(TrustedImm32(stackOffset), stackPointerRegister);
     }
+
+#if USE(JSVALUE64)
+    void emitRandomThunk(JSGlobalObject*, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, FPRReg result);
+    void emitRandomThunk(GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, FPRReg result);
+#endif
     
 protected:
     VM* m_vm;

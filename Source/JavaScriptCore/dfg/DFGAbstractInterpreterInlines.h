@@ -822,6 +822,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ArithRandom: {
+        forNode(node).setType(m_graph, SpecDoubleReal);
+        break;
+    }
+
     case ArithRound: {
         JSValue operand = forNode(node->child1()).value();
         if (operand && operand.isNumber()) {

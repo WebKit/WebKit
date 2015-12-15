@@ -37,6 +37,8 @@
 
 namespace WTF {
 
+// The code used to generate random numbers are inlined manually in JIT code.
+// So it needs to stay in sync with the JIT one.
 class WeakRandom {
 public:
     WeakRandom(unsigned seed = cryptographicallyRandomNumber())
@@ -60,7 +62,8 @@ public:
 
     double get()
     {
-        return advance() / (std::numeric_limits<uint64_t>::max() + 1.0);
+        uint64_t value = advance() & ((1ULL << 53) - 1);
+        return value * (1.0 / (1ULL << 53));
     }
 
     unsigned getUint32()
@@ -80,6 +83,9 @@ public:
             return value % limit;
         }
     }
+
+    static unsigned lowOffset() { return OBJECT_OFFSETOF(WeakRandom, m_low); }
+    static unsigned highOffset() { return OBJECT_OFFSETOF(WeakRandom, m_high); }
 
 private:
     uint64_t advance()

@@ -1,3 +1,68 @@
+2015-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Math.random should have an intrinsic thunk and it should be later handled as a DFG Node
+        https://bugs.webkit.org/show_bug.cgi?id=152133
+
+        Reviewed by Geoffrey Garen.
+
+        In this patch, we implement new RandomIntrinsic. It emits a machine code to generate random numbers efficiently.
+        And later it will be recognized by DFG and converted to ArithRandom node.
+        It provides type information SpecDoubleReal since Math.random only generates a number within [0, 1.0).
+
+        Currently, only 64bit version is supported. On 32bit environment, ArithRandom will be converted to callOperation.
+        While it emits a function call, ArithRandom node on 32bit still represents SpecDoubleReal as a result type.
+
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileArithRandom):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileArithRandom):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithRandom):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::emitRandomThunkImpl):
+        (JSC::AssemblyHelpers::emitRandomThunk):
+        * jit/AssemblyHelpers.h:
+        * jit/JITOperations.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::randomThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::weakRandomOffset):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+        * tests/stress/random-53bit.js: Added.
+        (test):
+        * tests/stress/random-in-range.js: Added.
+        (test):
+
 2015-12-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Rename FTL::Output's ceil64() to doubleCeil()

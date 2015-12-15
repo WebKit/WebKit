@@ -1,3 +1,17 @@
+2015-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Math.random should have an intrinsic thunk and it should be later handled as a DFG Node
+        https://bugs.webkit.org/show_bug.cgi?id=152133
+
+        Reviewed by Geoffrey Garen.
+
+        Add new regression test.
+
+        * js/regress/math-random-expected.txt: Added.
+        * js/regress/math-random.html: Added.
+        * js/regress/script-tests/math-random.js: Added.
+        (test):
+
 2015-12-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Stack traces in console incorrectly show "(anonymous function)" for global code

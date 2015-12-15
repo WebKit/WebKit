@@ -53,6 +53,7 @@ enum Intrinsic {
     RegExpTestIntrinsic,
     StringPrototypeValueOfIntrinsic,
     IMulIntrinsic,
+    RandomIntrinsic,
     FRoundIntrinsic,
 
     // Getter intrinsics.

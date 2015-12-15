@@ -163,6 +163,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case TypeOf:
         def(PureValue(node));
         return;
+
+    case ArithRandom:
+        read(MathDotRandomState);
+        write(MathDotRandomState);
+        return;
         
     case HasGenericProperty:
     case HasStructureProperty:

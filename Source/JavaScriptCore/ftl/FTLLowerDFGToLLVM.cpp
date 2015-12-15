@@ -625,6 +625,9 @@ private:
         case ArithPow:
             compileArithPow();
             break;
+        case ArithRandom:
+            compileArithRandom();
+            break;
         case ArithRound:
             compileArithRound();
             break;
@@ -2117,6 +2120,53 @@ private:
             m_out.appendTo(continuation, lastNext);
             setDouble(m_out.phi(m_out.doubleType, powDoubleIntResult, powResult, pureNan));
         }
+    }
+
+    void compileArithRandom()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+
+        // Inlined WeakRandom::advance().
+        // uint64_t x = m_low;
+        void* lowAddress = reinterpret_cast<uint8_t*>(globalObject) + JSGlobalObject::weakRandomOffset() + WeakRandom::lowOffset();
+        LValue low = m_out.load64(m_out.absolute(lowAddress));
+        // uint64_t y = m_high;
+        void* highAddress = reinterpret_cast<uint8_t*>(globalObject) + JSGlobalObject::weakRandomOffset() + WeakRandom::highOffset();
+        LValue high = m_out.load64(m_out.absolute(highAddress));
+        // m_low = y;
+        m_out.store64(high, m_out.absolute(lowAddress));
+
+        // x ^= x << 23;
+        LValue phase1 = m_out.bitXor(m_out.shl(low, m_out.constInt64(23)), low);
+
+        // x ^= x >> 17;
+        LValue phase2 = m_out.bitXor(m_out.lShr(phase1, m_out.constInt64(17)), phase1);
+
+        // x ^= y ^ (y >> 26);
+        LValue phase3 = m_out.bitXor(m_out.bitXor(high, m_out.lShr(high, m_out.constInt64(26))), phase2);
+
+        // m_high = x;
+        m_out.store64(phase3, m_out.absolute(highAddress));
+
+        // return x + y;
+        LValue random64 = m_out.add(phase3, high);
+
+        // Extract random 53bit. [0, 53] bit is safe integer number ranges in double representation.
+        LValue random53 = m_out.bitAnd(random64, m_out.constInt64((1ULL << 53) - 1));
+
+        LValue double53Integer = m_out.intToDouble(random53);
+
+        // Convert `(53bit double integer value) / (1 << 53)` to `(53bit double integer value) * (1.0 / (1 << 53))`.
+        // In latter case, `1.0 / (1 << 53)` will become a double value represented as (mantissa = 0 & exp = 970, it means 1e-(2**54)).
+        static const double scale = 1.0 / (1ULL << 53);
+
+        // Multiplying 1e-(2**54) with the double integer does not change anything of the mantissa part of the double integer.
+        // It just reduces the exp part of the given 53bit double integer.
+        // (Except for 0.0. This is specially handled and in this case, exp just becomes 0.)
+        // Now we get 53bit precision random double value in [0, 1).
+        LValue result = m_out.doubleMul(double53Integer, m_out.constDouble(scale));
+
+        setDouble(result);
     }
 
     void compileArithRound()

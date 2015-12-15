@@ -2214,6 +2214,14 @@ bool ByteCodeParser::handleIntrinsicCall(int resultOperand, Intrinsic intrinsic,
         set(VirtualRegister(resultOperand), addToGraph(ArithIMul, left, right));
         return true;
     }
+
+    case RandomIntrinsic: {
+        if (argumentCountIncludingThis != 1)
+            return false;
+        insertChecks();
+        set(VirtualRegister(resultOperand), addToGraph(ArithRandom));
+        return true;
+    }
         
     case FRoundIntrinsic: {
         if (argumentCountIncludingThis != 2)

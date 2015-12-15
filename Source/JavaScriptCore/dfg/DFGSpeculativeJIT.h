@@ -1550,6 +1550,11 @@ public:
 #define SH4_32BIT_DUMMY_ARG
 #endif
 
+    JITCompiler::Call callOperation(D_JITOperation_G operation, FPRReg result, JSGlobalObject* globalObject)
+    {
+        m_jit.setupArguments(TrustedImmPtr(globalObject));
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(Z_JITOperation_D operation, GPRReg result, FPRReg arg1)
     {
         prepareForExternalCall();
@@ -2225,6 +2230,7 @@ public:
     void compileArithMod(Node*);
     void compileArithPow(Node*);
     void compileArithRound(Node*);
+    void compileArithRandom(Node*);
     void compileArithSqrt(Node*);
     void compileArithLog(Node*);
     void compileConstantStoragePointer(Node*);

@@ -1004,6 +1004,22 @@ MacroAssemblerCodeRef imulThunkGenerator(VM* vm)
     return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "imul");
 }
 
+MacroAssemblerCodeRef randomThunkGenerator(VM* vm)
+{
+    SpecializedThunkJIT jit(vm, 0);
+    if (!jit.supportsFloatingPoint())
+        return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
+
+#if USE(JSVALUE64)
+    jit.emitRandomThunk(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT3, SpecializedThunkJIT::fpRegT0);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+
+    return jit.finalize(vm->jitStubs->ctiNativeTailCall(vm), "random");
+#else
+    return MacroAssemblerCodeRef::createSelfManagedCodeRef(vm->jitStubs->ctiNativeCall(vm));
+#endif
+}
+
 }
 
 #endif // ENABLE(JIT)

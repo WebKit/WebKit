@@ -1228,6 +1228,13 @@ double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)
     return fmod(a, b);
 }
 
+#if USE(JSVALUE32_64)
+double JIT_OPERATION operationRandom(JSGlobalObject* globalObject)
+{
+    return globalObject->weakRandomNumber();
+}
+#endif
+
 JSCell* JIT_OPERATION operationStringFromCharCode(ExecState* exec, int32_t op1)
 {
     VM* vm = &exec->vm();

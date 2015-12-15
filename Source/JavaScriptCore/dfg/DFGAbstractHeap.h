@@ -69,6 +69,7 @@ namespace JSC { namespace DFG {
     macro(TypedArrayProperties) \
     macro(HeapObjectCount) /* Used to reflect the fact that some allocations reveal object identity */\
     macro(RegExpState) \
+    macro(MathDotRandomState) \
     macro(InternalState) \
     macro(Absolute) \
     /* Use this for writes only, to indicate that this may fire watchpoints. Usually this is never directly written but instead we test to see if a node clobbers this; it just so happens that you have to write world to clobber it. */\

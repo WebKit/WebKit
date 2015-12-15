@@ -448,6 +448,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return logThunkGenerator;
     case IMulIntrinsic:
         return imulThunkGenerator;
+    case RandomIntrinsic:
+        return randomThunkGenerator;
     default:
         return 0;
     }

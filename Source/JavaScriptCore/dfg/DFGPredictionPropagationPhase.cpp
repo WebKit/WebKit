@@ -377,6 +377,11 @@ private:
             break;
         }
 
+        case ArithRandom: {
+            changed |= setPrediction(SpecDoubleReal);
+            break;
+        }
+
         case ArithRound: {
             if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, m_pass))
                 changed |= setPrediction(SpecInt32);
