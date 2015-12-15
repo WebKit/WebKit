@@ -1,3 +1,9 @@
+2015-12-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Try to fix the CMake build
+
+        * CMakeLists.txt:
+
 2015-12-15  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r191849): There's no yellow bouncy highlight when using Find on Page on iOS

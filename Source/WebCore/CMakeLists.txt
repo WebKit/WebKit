@@ -3320,6 +3320,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MallocStatistics.idl
     testing/MemoryInfo.idl
     testing/MockContentFilterSettings.idl
+    testing/MockPageOverlay.idl
     testing/TypeConversions.idl
 )
 
