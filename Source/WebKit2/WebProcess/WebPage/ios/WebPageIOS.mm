@@ -2924,9 +2924,6 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
         m_page->setPageScaleFactor(floatBoundedScale, scrollPosition, m_isInStableState);
         hasSetPageScale = true;
-
-        if (LayerTreeHost* layerTreeHost = m_drawingArea->layerTreeHost())
-            layerTreeHost->deviceOrPageScaleFactorChanged();
         send(Messages::WebPageProxy::PageScaleFactorDidChange(floatBoundedScale));
     }
 

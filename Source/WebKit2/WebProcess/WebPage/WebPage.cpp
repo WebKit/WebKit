@@ -40,7 +40,6 @@
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
-#include "LayerTreeHost.h"
 #include "Logging.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
@@ -210,6 +209,10 @@
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
+#endif
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+#include "LayerTreeHost.h"
 #endif
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
@@ -1459,8 +1462,10 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
     for (auto* pluginView : m_pluginViews)
         pluginView->pageScaleFactorDidChange();
 
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     if (m_drawingArea->layerTreeHost())
         m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
+#endif
 
     send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
@@ -1535,8 +1540,10 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
         m_findController.deviceScaleFactorDidChange();
     }
 
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     if (m_drawingArea->layerTreeHost())
         m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
+#endif
 }
 
 float WebPage::deviceScaleFactor() const

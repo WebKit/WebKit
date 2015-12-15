@@ -1,3 +1,26 @@
+2015-12-15  Daniel Bates  <dabates@apple.com>
+
+        Guard code that uses class LayerTreeHost with USE(COORDINATED_GRAPHICS) or USE(TEXTURE_MAPPER)
+        https://bugs.webkit.org/show_bug.cgi?id=152265
+
+        Reviewed by Tim Horton.
+
+        We neither make use of LayerTreeHost on Mac nor on iOS. We should guard code that makes
+        use of this class as applicable. This also fixes the iOS Simulator build when using
+        Apple Internal software.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Guard code that used LayerTreeHost.
+        * WebProcess/WebPage/LayerTreeHost.cpp: Guard contents of file with USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER).
+        * WebProcess/WebPage/LayerTreeHost.h: Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scalePage): Ditto.
+        (WebKit::WebPage::setDeviceScaleFactor): Ditto.
+        * WebProcess/WebPage/WebPage.h: Substitute header LayerTreeContext.h for LayerTreeHost.h since we make use
+        of the enum class LayerHostingMode.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects): Remove unnecessary code; DrawingArea::layerTreeHost() always
+        returns nullptr on iOS.
+
 2015-12-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Operate with a reference to the TextureMapper wherever possible

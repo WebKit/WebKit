@@ -26,6 +26,8 @@
 #ifndef LayerTreeHost_h
 #define LayerTreeHost_h
 
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+
 #include "LayerTreeContext.h"
 #include <WebCore/Color.h>
 #include <wtf/PassRefPtr.h>
@@ -105,5 +107,7 @@ protected:
 };
 
 } // namespace WebKit
+
+#endif // USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 
 #endif // LayerTreeHost_h

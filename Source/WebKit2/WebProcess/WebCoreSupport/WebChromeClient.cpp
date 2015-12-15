@@ -33,7 +33,6 @@
 #include "HangDetectionDisabler.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleNodeHandle.h"
-#include "LayerTreeHost.h"
 #include "NavigationActionData.h"
 #include "PageBanner.h"
 #include "UserData.h"
@@ -82,6 +81,10 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 #include "RemoteScrollingCoordinator.h"
+#endif
+
+#if USE(COORDINATED_GRAPHICS)
+#include "LayerTreeHost.h"
 #endif
 
 #if PLATFORM(GTK)

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+
 #include "LayerTreeHost.h"
 
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
@@ -62,3 +65,5 @@ LayerTreeHost::~LayerTreeHost()
 }
 
 } // namespace WebKit
+
+#endif // USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)

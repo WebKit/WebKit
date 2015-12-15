@@ -39,7 +39,7 @@
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePagePolicyClient.h"
 #include "InjectedBundlePageResourceLoadClient.h"
-#include "LayerTreeHost.h"
+#include "LayerTreeContext.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "Plugin.h"
