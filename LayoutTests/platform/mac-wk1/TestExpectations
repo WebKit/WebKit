@@ -80,6 +80,7 @@ fast/history/page-cache-indexed-closed-db.html [ Skip ]
 storage/indexeddb/mozilla/cursor-mutation.html [ Skip ]
 storage/indexeddb/mozilla/cursor-mutation-objectstore-only.html [ Skip ]
 storage/indexeddb/mutating-cursor.html [ Skip ]
+webkit.org/b/152264 storage/indexeddb/deleted-objects.html [ Pass Crash ]
 
 # IDB tests that timeout                                                               
 storage/indexeddb/database-quota.html [ Skip ]
