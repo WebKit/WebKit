@@ -815,6 +815,12 @@ CString RemoteLayerTreeTransaction::description() const
     if (m_pageScaleFactor != 1)
         ts.dumpProperty("pageScaleFactor", m_pageScaleFactor);
 
+    ts.dumpProperty("minimumScaleFactor", m_minimumScaleFactor);
+    ts.dumpProperty("maximumScaleFactor", m_maximumScaleFactor);
+    ts.dumpProperty("initialScaleFactor", m_initialScaleFactor);
+    ts.dumpProperty("viewportMetaTagWidth", m_viewportMetaTagWidth);
+    ts.dumpProperty("renderTreeSize", m_renderTreeSize);
+
     ts << "root-layer " << m_rootLayerID << ")";
 
     if (!m_createdLayers.isEmpty()) {
