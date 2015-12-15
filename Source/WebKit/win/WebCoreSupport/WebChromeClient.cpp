@@ -170,14 +170,14 @@ void WebChromeClient::focusedFrameChanged(Frame*)
 static COMPtr<IPropertyBag> createWindowFeaturesPropertyBag(const WindowFeatures& features)
 {
     HashMap<String, COMVariant> map;
-    if (features.xSet)
-        map.set(WebWindowFeaturesXKey, features.x);
-    if (features.ySet)
-        map.set(WebWindowFeaturesYKey, features.y);
-    if (features.widthSet)
-        map.set(WebWindowFeaturesWidthKey, features.width);
-    if (features.heightSet)
-        map.set(WebWindowFeaturesHeightKey, features.height);
+    if (features.x)
+        map.set(WebWindowFeaturesXKey, *features.x);
+    if (features.y)
+        map.set(WebWindowFeaturesYKey, *features.y);
+    if (features.width)
+        map.set(WebWindowFeaturesWidthKey, *features.width);
+    if (features.height)
+        map.set(WebWindowFeaturesHeightKey, *features.height);
     map.set(WebWindowFeaturesMenuBarVisibleKey, features.menuBarVisible);
     map.set(WebWindowFeaturesStatusBarVisibleKey, features.statusBarVisible);
     map.set(WebWindowFeaturesToolBarVisibleKey, features.toolBarVisible);

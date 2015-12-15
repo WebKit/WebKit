@@ -55,14 +55,14 @@
     _toolbarsVisibility = @(windowFeatures.toolBarVisible || windowFeatures.locationBarVisible);
     _allowsResizing = @(windowFeatures.resizable);
 
-    if (windowFeatures.xSet)
-        _x = @(windowFeatures.x);
-    if (windowFeatures.ySet)
-        _y = @(windowFeatures.y);
-    if (windowFeatures.widthSet)
-        _width = @(windowFeatures.width);
-    if (windowFeatures.heightSet)
-        _height = @(windowFeatures.height);
+    if (windowFeatures.x)
+        _x = @(*windowFeatures.x);
+    if (windowFeatures.y)
+        _y = @(*windowFeatures.y);
+    if (windowFeatures.width)
+        _width = @(*windowFeatures.width);
+    if (windowFeatures.height)
+        _height = @(*windowFeatures.height);
 
     return self;
 }

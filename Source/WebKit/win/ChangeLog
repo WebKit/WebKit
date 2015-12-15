@@ -1,3 +1,17 @@
+2015-12-08  Harris Papadopoulos  <cpapadopoulos@apple.com>
+
+        Merge r188386. rdar://problem/23816165
+
+    2015-08-12  Anders Carlsson  <andersca@apple.com>
+
+            Use WTF::Optional in WindowFeatures
+            https://bugs.webkit.org/show_bug.cgi?id=147956
+
+            Reviewed by Sam Weinig.
+
+            * WebCoreSupport/WebChromeClient.cpp:
+            (createWindowFeaturesPropertyBag):
+
 2015-09-25  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r190235. rdar://problem/22852382

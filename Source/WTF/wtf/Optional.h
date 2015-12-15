@@ -133,6 +133,21 @@ public:
 
     explicit operator bool() const { return m_isEngaged; }
 
+    const T* operator->() const
+    {
+        ASSERT(m_isEngaged);
+        return asPtr()->operator->();
+    }
+
+    T* operator->()
+    {
+        ASSERT(m_isEngaged);
+        return asPtr()->operator->();
+    }
+
+    const T& operator*() const { return value(); }
+    T& operator*() { return value(); }
+
     T& value()
     {
         ASSERT(m_isEngaged);
