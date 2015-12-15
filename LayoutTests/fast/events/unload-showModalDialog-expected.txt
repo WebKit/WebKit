@@ -1,0 +1,7 @@
+main frame - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 14: Use of window.showModalDialog is not allowed while unloading a page.
+This test verifies that prompts are forbidden when leaving a webpage.
+
+Prompts include alert, confirm, prompt, and showModalDialog.
+
+If there is no prompt, the test passed.

@@ -1,7 +1,7 @@
 main frame - has 1 onunload handler(s)
 ALERT: window.onload
 ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
-ALERT: window.onpagehide, target = [object HTMLDocument], persisted = false
+CONSOLE MESSAGE: line 28: Use of window.alert is not allowed while unloading a page.
 main frame "pageshow/pagehide" - has 1 onunload handler(s)
 ALERT: window.onload
 ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false

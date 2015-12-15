@@ -1,3 +1,56 @@
+2015-12-14  Harris Papadopoulos  <cpapadopoulos@apple.com>
+
+        Merge r192270. rdar://problem/23435543
+
+    2015-11-10  Geoffrey Garen  <ggaren@apple.com>
+
+            alert, confirm, prompt, showModalDialog should be forbidden during page close and navigation
+            https://bugs.webkit.org/show_bug.cgi?id=150980
+
+            Reviewed by Chris Dumez.
+
+            Added tests to cover the matrix of [ alert, confirm, prompt, showModalDialog ] x [ beforeunload, unload, pagehide ].
+
+            * fast/events/beforeunload-alert-expected.txt: Added.
+            * fast/events/beforeunload-alert.html: Added.
+            * fast/events/beforeunload-confirm-expected.txt: Added.
+            * fast/events/beforeunload-confirm.html: Added.
+            * fast/events/beforeunload-prompt-expected.txt: Added.
+            * fast/events/beforeunload-prompt.html: Added.
+            * fast/events/beforeunload-showModalDialog-expected.txt: Added.
+            * fast/events/beforeunload-showModalDialog.html: Added.
+            * fast/events/onunload-expected.txt:
+            * fast/events/onunload-not-on-body-expected.txt:
+            * fast/events/onunload-window-property-expected.txt:
+            * fast/events/pagehide-alert-expected.txt: Added.
+            * fast/events/pagehide-alert.html: Added.
+            * fast/events/pagehide-confirm-expected.txt: Added.
+            * fast/events/pagehide-confirm.html: Added.
+            * fast/events/pagehide-prompt-expected.txt: Added.
+            * fast/events/pagehide-prompt.html: Added.
+            * fast/events/pagehide-showModalDialog-expected.txt: Added.
+            * fast/events/pagehide-showModalDialog.html: Added.
+            * fast/events/pageshow-pagehide-on-back-cached-expected.txt:
+            * fast/events/pageshow-pagehide-on-back-uncached-expected.txt:
+            * fast/events/resources/prompt-landing-page.html: Added.
+            * fast/events/unload-alert-expected.txt: Added.
+            * fast/events/unload-alert.html: Added.
+            * fast/events/unload-confirm-expected.txt: Added.
+            * fast/events/unload-confirm.html: Added.
+            * fast/events/unload-prompt-expected.txt: Added.
+            * fast/events/unload-prompt.html: Added.
+            * fast/events/unload-showModalDialog-expected.txt: Added.
+            * fast/events/unload-showModalDialog.html: Added.
+
+            * platform/wk2/TestExpectations: WebKit2 can't handle showModalDialog tests.
+
+            * compositing/iframes/page-cache-layer-tree-expected.txt:
+            * fast/dom/Geolocation/notimer-after-unload-expected.txt:
+            * fast/history/timed-refresh-in-cached-frame-expected.txt:
+            * fast/loader/frames-with-unload-handlers-in-page-cache-expected.txt:
+            * fast/loader/page-dismissal-modal-dialogs-expected.txt: These were
+            pre-existing tests that tried to alert during unload.
+
 2015-12-14  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r194001. rdar://problem/23581577

@@ -1,3 +1,62 @@
+2015-12-14  Harris Papadopoulos  <cpapadopoulos@apple.com>
+
+        Merge r192270. rdar://problem/23435543
+
+    2015-11-10  Geoffrey Garen  <ggaren@apple.com>
+
+            alert, confirm, prompt, showModalDialog should be forbidden during page close and navigation
+            https://bugs.webkit.org/show_bug.cgi?id=150980
+
+            Reviewed by Chris Dumez.
+
+            Tests: fast/events/beforeunload-alert.html
+                   fast/events/beforeunload-confirm.html
+                   fast/events/beforeunload-prompt.html
+                   fast/events/beforeunload-showModalDialog.html
+                   fast/events/pagehide-alert.html
+                   fast/events/pagehide-confirm.html
+                   fast/events/pagehide-prompt.html
+                   fast/events/pagehide-showModalDialog.html
+                   fast/events/unload-alert.html
+                   fast/events/unload-confirm.html
+                   fast/events/unload-prompt.html
+                   fast/events/unload-showModalDialog.html
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::stopLoading): Factored out a helper function for
+            unload event processing.
+            (WebCore::FrameLoader::handleUnloadEvents): Forbid prompts in unload
+            events just like we do in beforeunload events, and for the same reasons.
+
+            (WebCore::FrameLoader::handleBeforeUnloadEvent): Updated for renames.
+
+            * loader/FrameLoader.h:
+
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::print):
+            (WebCore::DOMWindow::alert):
+            (WebCore::DOMWindow::confirm):
+            (WebCore::DOMWindow::prompt):
+            (WebCore::DOMWindow::showModalDialog): Updated for renames. Refactored
+            some of this code to handle null pages more cleanly. In particular, we
+            sometimes used to treat null page as "everything is permitted" -- but it
+            is best practice in a permissions context to treat lack of information
+            as no permission granted rather than all permissions granted. (I don't
+            know of a way to trigger this condition in practice.)
+
+            * page/Page.cpp:
+            (WebCore::Page::Page):
+            (WebCore::Page::forbidPrompts):
+            (WebCore::Page::allowPrompts):
+            (WebCore::Page::arePromptsAllowed): Renamed to make these functions
+            reflect their new, broader context.
+
+            (WebCore::Page::incrementFrameHandlingBeforeUnloadEventCount): Deleted.
+            (WebCore::Page::decrementFrameHandlingBeforeUnloadEventCount): Deleted.
+            (WebCore::Page::isAnyFrameHandlingBeforeUnloadEvent): Deleted.
+
+            * page/Page.h:
+
 2015-12-08  Harris Papadopoulos  <cpapadopoulos@apple.com>
 
         Merge r188386. rdar://problem/23816165
