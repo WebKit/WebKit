@@ -1,3 +1,33 @@
+2015-12-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Verify that Referer Policy within Content-Disposition:attachment sandbox is always ReferrerPolicyNever
+        https://bugs.webkit.org/show_bug.cgi?id=152260
+        <rdar://problem/23884579>
+
+        Reviewed by Andy Estes.
+
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer-when-downgrade.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-no-referrer.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-origin.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-unsafe-url.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/referer-header-stripped.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/referer-header-stripped-frame.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/referer-header-stripped.js: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/subresource-request-not-include-referer-header-frame.php: Removed.
+        * http/tests/contentdispositionattachmentsandbox/subresource-request-not-include-referer-header-expected.txt: Removed.
+        * http/tests/contentdispositionattachmentsandbox/subresource-request-not-include-referer-header.html: Removed.
+
 2015-12-15  Timothy Horton  <timothy_horton@apple.com>
 
         Rebaseline some page overlay tests for WK1
