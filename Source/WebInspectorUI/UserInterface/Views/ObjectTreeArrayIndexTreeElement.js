@@ -60,6 +60,9 @@ WebInspector.ObjectTreeArrayIndexTreeElement = class ObjectTreeArrayIndexTreeEle
         nameElement.textContent = this.property.name;
         nameElement.title = this.propertyPathString(this.thisPropertyPath());
 
+        // Space. For copy/paste to have space between the index and value.
+        container.append(" ");
+
         // Value.
         var valueElement = container.appendChild(document.createElement("span"));
         valueElement.className = "index-value";

@@ -69,6 +69,9 @@ WebInspector.ObjectTreeMapEntryTreeElement = class ObjectTreeMapEntryTreeElement
         nameElement.textContent = this.displayPropertyName();
         nameElement.title = this.propertyPathString(propertyPath);
 
+        // Space. For copy/paste to have space between the key and value.
+        container.append(" ");
+
         // Value.
         var valueElement = container.appendChild(document.createElement("span"));
         valueElement.className = "index-value";

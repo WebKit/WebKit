@@ -71,6 +71,9 @@ WebInspector.ObjectTreeSetIndexTreeElement = class ObjectTreeSetIndexTreeElement
         nameElement.textContent = "\u2022";
         nameElement.title = WebInspector.UIString("Unable to determine path to property from root");
 
+        // Space. For copy/paste to have space between the bullet and value.
+        container.append(" ");
+
         // Value.
         var valueElement = container.appendChild(document.createElement("span"));
         valueElement.className = "index-value";

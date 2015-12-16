@@ -1,5 +1,30 @@
 2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve copy of console message containing Array and Map output
+        https://bugs.webkit.org/show_bug.cgi?id=152329
+
+        Reviewed by Timothy Hatcher.
+
+        Introduce a real space in the content instead of style specific
+        margins so the existing copy/paste mechanism (innerText)
+        will have spaces between index/key and value.
+
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-name): Deleted.
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.js:
+        (WebInspector.ObjectTreeArrayIndexTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeArrayIndexTreeElement):
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.css:
+        (.object-tree-array-index.object-tree-map-entry > .titles > .title > .index-name): Deleted.
+        * UserInterface/Views/ObjectTreeMapEntryTreeElement.js:
+        (WebInspector.ObjectTreeMapEntryTreeElement.prototype.titleFragment):
+        (WebInspector.ObjectTreeMapEntryTreeElement):
+        * UserInterface/Views/ObjectTreeSetIndexTreeElement.js:
+        (WebInspector.ObjectTreeSetIndexTreeElement.prototype._titleFragment):
+        (WebInspector.ObjectTreeSetIndexTreeElement):
+
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Typing object literal in the console causes a parse error
         https://bugs.webkit.org/show_bug.cgi?id=141737
 
