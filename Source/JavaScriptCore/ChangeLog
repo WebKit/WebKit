@@ -1,3 +1,18 @@
+2015-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Builtin source should be minified more
+        https://bugs.webkit.org/show_bug.cgi?id=152290
+
+        Reviewed by Darin Adler.
+
+        * Scripts/builtins/builtins_model.py:
+        (BuiltinFunction.fromString):
+        Remove primarily empty lines that would just introduce clutter.
+        We only do the minification in non-Debug configurations, which
+        is determined by the CONFIGURATION environment variable. You can
+        see how tests would generate differently, like so:
+        shell> CONFIGURATION=Release ./Tools/Scripts/run-builtins-generator-tests
+
 2015-12-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r194135.

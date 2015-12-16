@@ -49,6 +49,9 @@ multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.S)
 singleLineCommentRegExp = re.compile(r"\/\/.*?\n", re.MULTILINE | re.S)
 keyValueAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)=([^=]+?)\n", re.MULTILINE | re.S)
 flagAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)[^=]*?\n", re.MULTILINE | re.S)
+lineWithOnlySingleLineCommentRegExp = re.compile(r"^\s*\/\/\n", re.MULTILINE | re.S)
+lineWithTrailingSingleLineCommentRegExp = re.compile(r"\s*\/\/\n", re.MULTILINE | re.S)
+multipleEmptyLinesRegExp = re.compile(r"\n{2,}", re.MULTILINE | re.S)
 
 class ParseException(Exception):
     pass
@@ -100,6 +103,11 @@ class BuiltinFunction:
     @staticmethod
     def fromString(function_string):
         function_source = multilineCommentRegExp.sub("", function_string)
+        if os.getenv("CONFIGURATION", "Debug").startswith("Debug"):
+            function_source = lineWithOnlySingleLineCommentRegExp.sub("", function_source)
+            function_source = lineWithTrailingSingleLineCommentRegExp.sub("\n", function_source)
+            function_source = multipleEmptyLinesRegExp.sub("\n", function_source)
+
         function_name = functionNameRegExp.findall(function_source)[0]
         is_constructor = functionIsConstructorRegExp.match(function_source) != None
         parameters = [s.strip() for s in functionParameterFinder.findall(function_source)[0].split(',')]
