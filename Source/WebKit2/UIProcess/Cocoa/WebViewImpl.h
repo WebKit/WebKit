@@ -408,6 +408,11 @@ public:
     void rotateWithEvent(NSEvent *);
     void smartMagnifyWithEvent(NSEvent *);
 
+    void touchesBeganWithEvent(NSEvent *);
+    void touchesMovedWithEvent(NSEvent *);
+    void touchesEndedWithEvent(NSEvent *);
+    void touchesCancelledWithEvent(NSEvent *);
+
     void setLastMouseDownEvent(NSEvent *);
 
     void gestureEventWasNotHandledByWebCore(NSEvent *);
@@ -490,6 +495,8 @@ private:
 
     bool mightBeginDragWhileInactive();
     bool mightBeginScrollWhileInactive();
+
+    Vector<NSTouch *> touchesOrderedByAge();
 
     NSView <WebViewImplDelegate> *m_view;
     std::unique_ptr<PageClient> m_pageClient;
@@ -602,6 +609,9 @@ private:
     // that has been already sent to WebCore.
     RetainPtr<NSEvent> m_keyDownEventBeingResent;
     Vector<WebCore::KeypressCommand>* m_collectedKeypressCommands { nullptr };
+
+    Vector<RetainPtr<id <NSObject, NSCopying>>> m_activeTouchIdentities;
+    RetainPtr<NSArray> m_lastTouches;
 };
     
 } // namespace WebKit

@@ -512,10 +512,10 @@ private:
     RefPtr<Node> m_clickNode;
 
 #if ENABLE(IOS_GESTURE_EVENTS)
-    float m_gestureInitialDiameter { GestureUnknown };
     float m_gestureInitialRotation { GestureUnknown };
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
+    float m_gestureInitialDiameter { GestureUnknown };
     float m_gestureLastDiameter { GestureUnknown };
     float m_gestureLastRotation { GestureUnknown };
     EventTargetSet m_gestureTargets;

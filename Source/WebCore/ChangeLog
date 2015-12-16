@@ -1,3 +1,16 @@
+2015-12-15  Tim Horton  <timothy_horton@apple.com>
+
+        [Mac] Gesture Events should not have negative scale
+        https://bugs.webkit.org/show_bug.cgi?id=151065
+        <rdar://problem/23474123>
+
+        Reviewed by Anders Carlsson.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        * page/EventHandler.h:
+        Make it possible to use m_gestureInitialDiameter for Mac gesture events too.
+
 2015-12-15  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the CMake build

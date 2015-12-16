@@ -1,3 +1,45 @@
+2015-12-15  Tim Horton  <timothy_horton@apple.com>
+
+        [Mac] Gesture Events should not have negative scale
+        https://bugs.webkit.org/show_bug.cgi?id=151065
+        <rdar://problem/23474123>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/NativeWebGestureEvent.h:
+        * Shared/mac/NativeWebGestureEventMac.mm:
+        (WebKit::distanceForTouches):
+        (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+        Compute the distance between the two oldest touches, and use that as
+        the scale (really the gesture diameter) on the event, instead of
+        passing through AppKit's magnification (which is computed differently).
+        This matches the documented behavior of the existing gesture events on iOS.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView touchesBeganWithEvent:]):
+        (-[WKWebView touchesMovedWithEvent:]):
+        (-[WKWebView touchesEndedWithEvent:]):
+        (-[WKWebView touchesCancelledWithEvent:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView touchesBeganWithEvent:]):
+        (-[WKView touchesMovedWithEvent:]):
+        (-[WKView touchesEndedWithEvent:]):
+        (-[WKView touchesCancelledWithEvent:]):
+        Plumb touch events through to WebViewImpl.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::magnifyWithEvent):
+        (WebKit::WebViewImpl::touchesOrderedByAge):
+        (WebKit::WebViewImpl::touchesBeganWithEvent):
+        (WebKit::WebViewImpl::touchesMovedWithEvent):
+        (WebKit::WebViewImpl::touchesEndedWithEvent):
+        (WebKit::WebViewImpl::touchesCancelledWithEvent):
+        (WebKit::WebViewImpl::rotateWithEvent):
+        Keep track of the most recent incoming touches, by identifier, in age order.
+        Pass them through to NativeWebGestureEvent so it can determine the gesture diameter.
+
 2015-12-15  Anders Carlsson  <andersca@apple.com>
 
         Call DatabaseManager directly from WKBundle.cpp
