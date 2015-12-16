@@ -59,8 +59,12 @@ public:
                 for (unsigned childIdx = 0; childIdx < AdjacencyList::Size; ++childIdx) {
                     if (!phi->children.child(childIdx))
                         break;
-                    
-                    phi->children.child(childIdx)->variableAccessData()->unify(phi->variableAccessData());
+
+                    // We'd like to reverse the order of unification because it helps to reveal
+                    // more bugs on our end, though it's otherwise not observable. But we do it
+                    // this way because it works around a bug in open source LLVM's live-outs
+                    // computation.
+                    phi->variableAccessData()->unify(phi->children.child(childIdx)->variableAccessData());
                 }
             }
         }
